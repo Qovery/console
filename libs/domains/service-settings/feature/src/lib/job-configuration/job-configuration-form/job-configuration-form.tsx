@@ -1,30 +1,25 @@
-// TODO: Refactor cronstrue usage to only use formatCronExpression
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import cronstrue from 'cronstrue'
 import { Controller, useFormContext } from 'react-hook-form'
 import { TimezoneSetting } from '@qovery/domains/services/feature'
+import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
-import { Callout, EnableBox, ExternalLink, Heading, Icon, InputText, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Callout, EnableBox, ExternalLink, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
-import EntrypointCmdInputs from '../../entrypoint-cmd-inputs/ui/entrypoint-cmd-inputs'
 
-export interface JobConfigureSettingsProps {
+export interface JobConfigurationFormProps {
   jobType: JobType
-  loading?: boolean
 }
 
-export function JobConfigureSettings(props: JobConfigureSettingsProps) {
-  const { loading } = props
+export function JobConfigurationForm(props: JobConfigurationFormProps) {
   const { control, watch } = useFormContext<JobConfigureData>()
 
   const watchSchedule = watch('schedule')
   const watchTimezone = watch('timezone') ?? 'Etc/UTC'
   const watchMaxDuration = watch('max_duration')
 
-  return loading ? (
-    <LoaderSpinner />
-  ) : (
+  return (
     <>
       {props.jobType === ServiceTypeEnum.CRON_JOB ? (
         <Section className="gap-4">
@@ -62,71 +57,75 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
           <TimezoneSetting />
         </Section>
       ) : (
-        <Section className="gap-4">
-          <Heading>Events</Heading>
-          <p className="text-sm text-neutral-350">
-            Select one or more event where the job should be executed and the command to execute.
-          </p>
+        <Section className="space-y-4">
+          <div>
+            <Heading>Events</Heading>
+            <p className="text-sm text-neutral-subtle">
+              Select one or more event where the job should be executed and the command to execute.
+            </p>
+          </div>
 
-          <Controller
-            name="on_start.enabled"
-            control={control}
-            render={({ field }) => (
-              <EnableBox
-                className="flex flex-col gap-4"
-                checked={field.value}
-                title="Deploy"
-                name="on_start"
-                description="Execute this job when the environment/job is deployed or re-deployed"
-                setChecked={field.onChange}
-              >
-                <EntrypointCmdInputs
-                  cmdArgumentsFieldName="on_start.arguments_string"
-                  imageEntryPointFieldName="on_start.entrypoint"
-                />
-              </EnableBox>
-            )}
-          />
+          <div className="space-y-4">
+            <Controller
+              name="on_start.enabled"
+              control={control}
+              render={({ field }) => (
+                <EnableBox
+                  className="flex flex-col gap-4"
+                  checked={field.value}
+                  title="Deploy"
+                  name="on_start"
+                  description="Execute this job when the environment/job is deployed or re-deployed"
+                  setChecked={field.onChange}
+                >
+                  <EntrypointCmdInputs
+                    cmdArgumentsFieldName="on_start.arguments_string"
+                    imageEntryPointFieldName="on_start.entrypoint"
+                  />
+                </EnableBox>
+              )}
+            />
 
-          <Controller
-            name="on_stop.enabled"
-            control={control}
-            render={({ field }) => (
-              <EnableBox
-                className="flex flex-col gap-4"
-                checked={field.value}
-                title="Stop"
-                name="on_stop"
-                description="Execute this job when the environment/job stops"
-                setChecked={field.onChange}
-              >
-                <EntrypointCmdInputs
-                  cmdArgumentsFieldName="on_stop.arguments_string"
-                  imageEntryPointFieldName="on_stop.entrypoint"
-                />
-              </EnableBox>
-            )}
-          />
+            <Controller
+              name="on_stop.enabled"
+              control={control}
+              render={({ field }) => (
+                <EnableBox
+                  className="flex flex-col gap-4"
+                  checked={field.value}
+                  title="Stop"
+                  name="on_stop"
+                  description="Execute this job when the environment/job stops"
+                  setChecked={field.onChange}
+                >
+                  <EntrypointCmdInputs
+                    cmdArgumentsFieldName="on_stop.arguments_string"
+                    imageEntryPointFieldName="on_stop.entrypoint"
+                  />
+                </EnableBox>
+              )}
+            />
 
-          <Controller
-            name="on_delete.enabled"
-            control={control}
-            render={({ field }) => (
-              <EnableBox
-                className="flex flex-col gap-4"
-                checked={field.value}
-                title="Delete"
-                name="on_delete"
-                description="Execute this job when the environment/job is uninstalled or deleted"
-                setChecked={field.onChange}
-              >
-                <EntrypointCmdInputs
-                  cmdArgumentsFieldName="on_delete.arguments_string"
-                  imageEntryPointFieldName="on_delete.entrypoint"
-                />
-              </EnableBox>
-            )}
-          />
+            <Controller
+              name="on_delete.enabled"
+              control={control}
+              render={({ field }) => (
+                <EnableBox
+                  className="flex flex-col gap-4"
+                  checked={field.value}
+                  title="Delete"
+                  name="on_delete"
+                  description="Execute this job when the environment/job is uninstalled or deleted"
+                  setChecked={field.onChange}
+                >
+                  <EntrypointCmdInputs
+                    cmdArgumentsFieldName="on_delete.arguments_string"
+                    imageEntryPointFieldName="on_delete.entrypoint"
+                  />
+                </EnableBox>
+              )}
+            />
+          </div>
         </Section>
       )}
 
@@ -201,5 +200,3 @@ export function JobConfigureSettings(props: JobConfigureSettingsProps) {
     </>
   )
 }
-
-export default JobConfigureSettings

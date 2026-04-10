@@ -1,59 +1,13 @@
 import { useParams } from '@tanstack/react-router'
-import { FormProvider, useForm, useFormContext } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { type Job } from '@qovery/domains/services/data-access'
 import { useEditService, useService } from '@qovery/domains/services/feature'
-import { JobConfigureSettings, SettingsHeading } from '@qovery/shared/console-shared'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { Button, Section } from '@qovery/shared/ui'
+import { Button } from '@qovery/shared/ui'
 import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
-
-const JobConfigurationContent = ({
-  onSubmit,
-  service,
-  loading,
-}: {
-  onSubmit: () => void
-  service: Job
-  loading: boolean
-}) => {
-  const { formState } = useFormContext()
-
-  return (
-    <Section className="flex w-full flex-col justify-between">
-      <div className="">
-        <SettingsHeading
-          title={match(service)
-            .with({ service_type: 'JOB', job_type: 'CRON' }, () => 'Job configuration')
-            .with({ service_type: 'JOB', job_type: 'LIFECYCLE' }, () => 'Triggers')
-            .otherwise(() => '')}
-          description={match(service)
-            .with(
-              { service_type: 'JOB', job_type: 'CRON' },
-              () => 'Job configuration allows you to control the behavior of your service.'
-            )
-            .with(
-              { service_type: 'JOB', job_type: 'LIFECYCLE' },
-              () => 'Define the events triggering the execution of this job and the commands to execute.'
-            )
-            .otherwise(() => '')}
-        />
-        <form onSubmit={onSubmit} className="space-y-10">
-          <JobConfigureSettings
-            loading={!service}
-            jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
-          />
-          <div className="flex justify-end">
-            <Button size="lg" disabled={!formState.isValid} loading={loading}>
-              Save
-            </Button>
-          </div>
-        </form>
-      </div>
-    </Section>
-  )
-}
+import { JobConfigurationForm } from './job-configuration-form/job-configuration-form'
 
 export const JobConfiguration = () => {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
@@ -170,7 +124,38 @@ export const JobConfiguration = () => {
 
   return (
     <FormProvider {...methods}>
-      <JobConfigurationContent service={service} loading={isLoadingEditService} onSubmit={onSubmit} />
+      <div className="flex w-full flex-col justify-between">
+        <div>
+          <SettingsHeading
+            title={match(service)
+              .with({ service_type: 'JOB', job_type: 'CRON' }, () => 'Job configuration')
+              .with({ service_type: 'JOB', job_type: 'LIFECYCLE' }, () => 'Triggers')
+              .otherwise(() => '')}
+            description={match(service)
+              .with(
+                { service_type: 'JOB', job_type: 'CRON' },
+                () => 'Job configuration allows you to control the behavior of your service.'
+              )
+              .with(
+                { service_type: 'JOB', job_type: 'LIFECYCLE' },
+                () => 'Define the events triggering the execution of this job and the commands to execute.'
+              )
+              .otherwise(() => '')}
+          />
+          <div className="max-w-content-with-navigation-left">
+            <form onSubmit={onSubmit} className="space-y-10">
+              <JobConfigurationForm
+                jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
+              />
+              <div className="flex justify-end">
+                <Button type="submit" size="lg" disabled={!methods.formState.isValid} loading={isLoadingEditService}>
+                  Save
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
     </FormProvider>
   )
 }

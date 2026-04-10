@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { JobConfiguration } from '@qovery/domains/service-settings/feature'
+import { Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -12,8 +13,10 @@ function RouteComponent() {
   useDocumentTitle('Job configuration - Service settings')
 
   return (
-    <div className="px-8 pb-8 pt-6">
-      <JobConfiguration />
+    <div className="flex w-full flex-col justify-between">
+      <Section className="px-8 pb-8 pt-6">
+        <JobConfiguration />
+      </Section>
     </div>
   )
 }
