@@ -299,7 +299,7 @@ export function CpuChart({
         dataKey="Request"
         name="Request"
         type="linear"
-        stroke="var(--color-neutral-300)"
+        stroke="var(--neutral-8)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -310,7 +310,7 @@ export function CpuChart({
         dataKey="Limit"
         name="Limit"
         type="linear"
-        stroke="var(--color-red-500)"
+        stroke="var(--negative-11)"
         strokeWidth={2}
         connectNulls={false}
         dot={false}

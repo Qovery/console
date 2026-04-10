@@ -40,7 +40,7 @@ export function FlowCreateVariable({
       </div>
 
       <form className="space-y-10" onSubmit={onSubmit}>
-        <p className="mr-36 text-sm text-neutral-350">
+        <p className="mr-36 text-sm text-neutral-subtle">
           {match(templateType)
             .with(
               'CLOUDFORMATION',
@@ -68,10 +68,10 @@ export function FlowCreateVariable({
         <div>
           {variables?.length > 0 && (
             <div className="mb-3 grid gap-x-3" style={{ gridTemplateColumns }}>
-              <span className="text-sm font-medium text-neutral-400">Variable</span>
-              <span className="text-sm font-medium text-neutral-400">Value</span>
-              <span className="text-sm font-medium text-neutral-400">Scope</span>
-              <span className="pl-1.5 text-sm font-medium text-neutral-400">Secret</span>
+              <span className="text-sm font-medium text-neutral">Variable</span>
+              <span className="text-sm font-medium text-neutral">Value</span>
+              <span className="text-sm font-medium text-neutral">Scope</span>
+              <span className="pl-1.5 text-sm font-medium text-neutral">Secret</span>
               <span></span>
             </div>
           )}

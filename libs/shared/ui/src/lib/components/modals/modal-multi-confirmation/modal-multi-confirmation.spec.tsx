@@ -66,4 +66,19 @@ describe('ModalMultiConfirmation', () => {
 
     expect(container).toMatchSnapshot()
   })
+
+  it('should disable submit while async callback is pending', async () => {
+    const callback = jest.fn(() => new Promise<void>(() => {}))
+    const { userEvent } = renderComponent({
+      ...props,
+      callback,
+    })
+
+    await userEvent.click(screen.getByText('one'))
+    await userEvent.click(screen.getByText('two'))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    expect(callback).toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled()
+  })
 })

@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Controller, FormProvider, type UseFormReturn } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import {
   GitBranchSettings,
@@ -9,11 +9,10 @@ import {
   GitRepositorySetting,
 } from '@qovery/domains/organizations/feature'
 import { type HelmValuesFileData, ValuesOverrideFilesSetting } from '@qovery/domains/service-helm/feature'
-import { AutoDeploySetting } from '@qovery/domains/services/feature'
+import { AutoDeploySetting, buildHelmSourceFromGeneralData } from '@qovery/domains/services/feature'
 import { SERVICES_HELM_CREATION_GENERAL_URL, SERVICES_HELM_CREATION_VALUES_STEP_2_URL } from '@qovery/shared/routes'
 import { Button, Callout, FunnelFlowBody, Icon, InputText } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useHelmCreateContext } from '../page-helm-create-feature'
 
 function GitPathsSettings({ methods }: { methods: UseFormReturn<HelmValuesFileData> }) {
@@ -44,28 +43,11 @@ export function StepValuesOverrideFilesFeature() {
   useDocumentTitle('General - Values override as file')
 
   const { generalForm, valuesOverrideFileForm, setCurrentStep, creationFlowUrl } = useHelmCreateContext()
+  const { organizationId = '' } = useParams()
 
   const generalData = generalForm.getValues()
 
-  const source = match(generalData.source_provider)
-    .with('GIT', () => {
-      return {
-        git_repository: {
-          url: generalData.git_repository?.url ?? generalData.repository ?? '',
-          branch: generalData.branch,
-          root_path: generalData.root_path,
-          git_token_id: generalData.git_token_id,
-        },
-      }
-    })
-    .with('HELM_REPOSITORY', () => ({
-      helm_repository: {
-        repository: generalData.repository,
-        chart_name: generalData.chart_name,
-        chart_version: generalData.chart_version,
-      },
-    }))
-    .exhaustive()
+  const source = buildHelmSourceFromGeneralData(generalData)
 
   const navigate = useNavigate()
 
@@ -99,7 +81,7 @@ export function StepValuesOverrideFilesFeature() {
 
   const gitRepositorySettings = (
     <>
-      <GitProviderSetting />
+      <GitProviderSetting organizationId={organizationId} />
       {watchFieldIsPublicRepository ? (
         <>
           <GitPublicRepositorySettings hideRootPath />
@@ -116,11 +98,20 @@ export function StepValuesOverrideFilesFeature() {
       ) : (
         <>
           {watchFieldGitProvider && (
-            <GitRepositorySetting gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} />
+            <GitRepositorySetting
+              organizationId={organizationId}
+              gitProvider={watchFieldGitProvider}
+              gitTokenId={watchFieldGitTokenId}
+            />
           )}
           {watchFieldGitProvider && watchFieldGitRepository && (
             <>
-              <GitBranchSettings gitProvider={watchFieldGitProvider} gitTokenId={watchFieldGitTokenId} hideRootPath />
+              <GitBranchSettings
+                organizationId={organizationId}
+                gitProvider={watchFieldGitProvider}
+                gitTokenId={watchFieldGitTokenId}
+                hideRootPath
+              />
               {watchFieldGitBranch && <GitPathsSettings methods={valuesOverrideFileForm} />}
             </>
           )}

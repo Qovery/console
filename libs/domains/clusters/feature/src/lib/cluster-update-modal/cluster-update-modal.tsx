@@ -1,7 +1,6 @@
+import { useNavigate } from '@tanstack/react-router'
 import { type Cluster } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { INFRA_LOGS_URL } from '@qovery/shared/routes'
 import { Checkbox, Icon, InputTextSmall, ModalCrud, Tooltip, useModal } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
@@ -15,7 +14,6 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
   const { mutateAsync: deployCluster, isLoading } = useDeployCluster()
   const [, copyToClipboard] = useCopyToClipboard()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
   const methods = useForm<{ name: string; dryRun: boolean }>({
     mode: 'onChange',
     defaultValues: {
@@ -33,8 +31,12 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
       closeModal()
       // Redirecting to cluster's logs page if dry-run was selected
       if (data['dryRun']) {
-        navigate(INFRA_LOGS_URL(cluster.organization.id, cluster.id), {
-          state: { prevUrl: pathname },
+        navigate({
+          to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+          params: {
+            organizationId: cluster.organization.id,
+            clusterId: cluster.id,
+          },
         })
       }
     } catch (error) {
@@ -47,12 +49,12 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
       <ModalCrud
         title="Confirm update"
         description={
-          <p className="mb-6 text-sm text-neutral-350 dark:text-neutral-50">
+          <p className="mb-6 text-sm text-neutral-subtle">
             To confirm the update of your cluster, please type the name:
             <Tooltip content="Copy">
               <span
                 onClick={() => copyToClipboard(cluster.name)}
-                className="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+                className="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-info hover:text-info-hover"
               >
                 {cluster.name} <Icon iconName="copy" />
               </span>
@@ -95,8 +97,8 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
                 onCheckedChange={field.onChange}
               />
               <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
-                <span className="font-medium text-neutral-400">Dry-run</span>
-                <span className="text-neutral-350">Preview changes without applying them</span>
+                <span className="font-medium text-neutral">Dry-run</span>
+                <span className="text-neutral-subtle">Preview changes without applying them</span>
               </label>
             </div>
           )}

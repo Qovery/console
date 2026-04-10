@@ -7,8 +7,8 @@ export function WarningScreenMobile() {
   if (hide) return null
 
   return (
-    <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-brand-500 text-neutral-650 lg:hidden ">
-      <div className="w-[400px] rounded bg-white p-6 text-center shadow-xl">
+    <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-surface-brand-solid text-neutral lg:hidden ">
+      <div className="w-[400px] rounded bg-surface-neutral p-6 text-center shadow-xl">
         <div className="mb-4 flex justify-center">
           <img className="w-[80px]" src="/assets/logos/logo-icon.svg" alt="Qovery logo" />
         </div>
@@ -17,7 +17,7 @@ export function WarningScreenMobile() {
           <Button className="max-w-max" onClick={() => setHide(true)}>
             Continue anyway
           </Button>
-          <p className="text-xs text-neutral-350">
+          <p className="text-xs text-neutral-subtle">
             Not recommended: the console is not responsive and your experience may be degraded.
           </p>
         </div>

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`GcpExistingVPC should match snapshots 1`] = `
 <body>
@@ -13,7 +13,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
           Deploy on an existing VPC
         </h4>
         <a
-          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs"
+          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs"
           href="https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#use-existing-vpc"
           rel="noopener noreferrer"
           target="_blank"
@@ -21,7 +21,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
           How to configure your VPC
           <i
             aria-hidden="true"
-            class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+            class="fa-regular fa-arrow-up-right-from-square text-2xs leading-4"
           />
         </a>
       </div>
@@ -34,19 +34,20 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral input--label-up"
           >
             <div
               class="pointer-events-none"
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm !transition-none"
                 for="VPC Name"
               >
                 VPC Name
               </label>
               <input
-                class="input__value "
+                autocomplete="off"
+                class="input__value"
                 data-testid="input-text"
                 disabled=""
                 id="VPC Name"
@@ -67,19 +68,20 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral input--label-up"
           >
             <div
               class="pointer-events-none"
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm !transition-none"
                 for="External project id"
               >
                 External project id
               </label>
               <input
-                class="input__value "
+                autocomplete="off"
+                class="input__value"
                 data-testid="input-text"
                 disabled=""
                 id="External project id"
@@ -100,19 +102,20 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral input--label-up"
           >
             <div
               class="pointer-events-none"
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm !transition-none"
                 for="Subnetwork range name"
               >
                 Subnetwork range name
               </label>
               <input
-                class="input__value "
+                autocomplete="off"
+                class="input__value"
                 data-testid="input-text"
                 disabled=""
                 id="Subnetwork range name"
@@ -133,19 +136,20 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral input--label-up"
           >
             <div
               class="pointer-events-none"
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm !transition-none"
                 for="Pod IPv4 address range name"
               >
                 Pod IPv4 address range name
               </label>
               <input
-                class="input__value "
+                autocomplete="off"
+                class="input__value"
                 data-testid="input-text"
                 disabled=""
                 id="Pod IPv4 address range name"
@@ -166,19 +170,20 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral input--label-up"
           >
             <div
               class="pointer-events-none"
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm !transition-none"
                 for="Additional cluster Pod IPv4 ranges names"
               >
                 Additional cluster Pod IPv4 ranges names
               </label>
               <input
-                class="input__value "
+                autocomplete="off"
+                class="input__value"
                 data-testid="input-text"
                 disabled=""
                 id="Additional cluster Pod IPv4 ranges names"
@@ -199,19 +204,20 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input input--disabled input--disabled !border-neutral-250  input--label-up "
+            class="input group input--disabled input--disabled !border-neutral input--label-up"
           >
             <div
               class="pointer-events-none"
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-2 text-sm !transition-none"
                 for="IPv4 service range name"
               >
                 IPv4 service range name
               </label>
               <input
-                class="input__value "
+                autocomplete="off"
+                class="input__value"
                 data-testid="input-text"
                 disabled=""
                 id="IPv4 service range name"

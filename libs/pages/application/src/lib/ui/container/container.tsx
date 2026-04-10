@@ -1,5 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useContext, useMemo } from 'react'
+import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -8,17 +8,15 @@ import { type AnyService, type Database } from '@qovery/domains/services/data-ac
 import {
   AutoDeployBadge,
   NeedRedeployFlag,
-  ServiceActionToolbar,
+  ServiceActions,
   ServiceAvatar,
   ServiceStateChip,
   ServiceTemplateIndicator,
-  ServiceTerminalContext,
   useService,
 } from '@qovery/domains/services/feature'
 import { VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum, isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import {
-  APPLICATION_DEPLOYMENTS_URL,
   APPLICATION_GENERAL_URL,
   APPLICATION_MONITORING_GENERAL_URL,
   APPLICATION_MONITORING_URL,
@@ -41,8 +39,6 @@ export function Container({ children }: ContainerProps) {
   const { data: environment } = useEnvironment({ environmentId })
   const { data: service } = useService({ environmentId, serviceId: applicationId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id })
-
-  const { setOpen } = useContext(ServiceTerminalContext)
 
   const hasMetrics = useMemo(
     () =>
@@ -67,14 +63,6 @@ export function Container({ children }: ContainerProps) {
         location.pathname ===
         APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL,
       link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_GENERAL_URL,
-    },
-    {
-      icon: <ServiceStateChip mode="deployment" environmentId={service?.environment?.id} serviceId={service?.id} />,
-      name: 'Deployments history',
-      active:
-        location.pathname ===
-        APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
-      link: APPLICATION_URL(organizationId, projectId, environmentId, applicationId) + APPLICATION_DEPLOYMENTS_URL,
     },
     ...(hasMetrics
       ? [
@@ -124,9 +112,7 @@ export function Container({ children }: ContainerProps) {
   const headerActions = (
     <div className="flex flex-row items-center gap-4">
       <Skeleton width={150} height={36} show={!service || !environment}>
-        {service && environment && (
-          <ServiceActionToolbar serviceId={service.id} environment={environment} shellAction={() => setOpen(true)} />
-        )}
+        {service && environment && <ServiceActions serviceId={service.id} environment={environment} />}
       </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />
       <div className="flex flex-row items-center gap-2">

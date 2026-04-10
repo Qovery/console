@@ -4,7 +4,7 @@ import { memo, useCallback, useEffect, useState } from 'react'
 import { useLocation, useMatch, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { EnvironmentMode, useDeploymentStages } from '@qovery/domains/environments/feature'
-import { BreadcrumbDeploymentHistory, BreadcrumbDeploymentLogs } from '@qovery/domains/service-logs/feature'
+import { BreadcrumbDeploymentLogs } from '@qovery/domains/service-logs/feature'
 import { ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -403,30 +403,8 @@ export function Breadcrumb(props: BreadcrumbProps) {
                   statusStages={statusStages}
                 />
               </div>
-              <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
-              <BreadcrumbDeploymentHistory
-                type="DEPLOYMENT"
-                serviceId={
-                  matchDeploymentLogsVersion?.params['serviceId'] ||
-                  matchDeploymentLogsVersion?.params['serviceId'] ||
-                  ''
-                }
-                versionId={matchDeploymentLogsVersion?.params['versionId']}
-              />
             </>
           )}
-        {(matchEnvironmentStage || matchEnvironmentStageVersion || matchEnvironmentPreCheckVersion) && statusStages && (
-          <>
-            <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>
-            <BreadcrumbDeploymentHistory
-              type={matchEnvironmentPreCheckVersion ? 'PRE_CHECK' : 'STAGES'}
-              versionId={
-                matchEnvironmentStageVersion?.params['versionId'] ||
-                matchEnvironmentPreCheckVersion?.params['versionId']
-              }
-            />
-          </>
-        )}
         {matchServiceLogs && services && (
           <>
             <div className="mx-3 mt-3 h-auto w-4 text-center text-neutral-300 dark:text-neutral-500">/</div>

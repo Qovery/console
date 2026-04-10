@@ -60,7 +60,7 @@ export function FlowCreatePort({
               ports.map((customPort) => (
                 <div
                   key={`${customPort.protocol}-${customPort.name}-${customPort.external_port}`}
-                  className="grid w-full grid-cols-[auto_80px] items-center gap-4 border-b border-neutral-250 px-5 py-4 last:border-0"
+                  className="grid w-full grid-cols-[auto_80px] items-center gap-4 border-b border-neutral-250 p-4 last:border-0"
                   data-testid="form-row"
                 >
                   <div
@@ -158,7 +158,7 @@ export function FlowCreatePort({
             )}
           </BlockContent>
         ) : (
-          <EmptyState title="No port are set" description="Define a custom port for your application" />
+          <EmptyState title="No ports are set" description="Define a custom port for your application" />
         )}
       </div>
 

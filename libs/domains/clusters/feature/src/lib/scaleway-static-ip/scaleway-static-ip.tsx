@@ -64,7 +64,7 @@ export function ScalewayStaticIp({
                   disabled={disabled}
                   title="Static IP / Nat Gateways"
                   description="Your cluster will only be visible from a fixed number of public IP. On Scaleway, Nat Gateways and Elastic IPs will be setup."
-                  forceAlignTop
+                  align="top"
                   small
                 />
                 {staticIpFeature?.is_cloud_provider_paying_feature && (

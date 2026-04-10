@@ -1,13 +1,15 @@
-import { useMemo, useState } from 'react'
-import { useQueryParams } from 'use-query-params'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { useCallback, useMemo, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
+import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Button, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export function PodHealthChips({ service }: { service: AnyService }) {
+  const navigate = useNavigate()
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const [openStatus, setOpenStatus] = useState<string | null>(null)
 
   const { data: metrics = [], isLoading: isMetricsLoading } = useMetrics({
@@ -19,7 +21,21 @@ export function PodHealthChips({ service }: { service: AnyService }) {
     serviceId: service?.id,
   })
 
-  const [, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const setQueryParams = useCallback(
+    (searchParams: ServiceLogsParams) => {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        },
+        search: searchParams,
+      })
+    },
+    [navigate, organizationId, projectId, environmentId, serviceId]
+  )
 
   const pods: Pod[] = useMemo(() => {
     // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
@@ -72,25 +88,25 @@ export function PodHealthChips({ service }: { service: AnyService }) {
     switch (color) {
       case 'green':
         return isOpen
-          ? 'border-green-500/20 bg-green-500/10 text-green-500'
-          : 'bg-green-500/10 text-green-500 hover:border-green-500/20 focus:border-green-500/20 active:border-green-500/20'
+          ? 'border-positive-subtle bg-surface-positive-component text-positive-hover'
+          : 'bg-surface-positive-component text-positive'
       case 'purple':
         return isOpen
-          ? 'border-purple-400/20 bg-purple-400/10 text-[#CB1D63]'
-          : 'bg-purple-400/10 text-[#CB1D63] hover:border-purple-400/20 focus:border-purple-400/20 active:border-purple-400/20'
+          ? 'border-accent1-subtle bg-surface-accent1-component text-accent1-hover'
+          : 'bg-surface-accent1-component text-accent1'
       case 'yellow':
         return isOpen
-          ? 'border-yellow-400/20 bg-yellow-400/10 text-yellow-500'
-          : 'bg-yellow-400/10 text-yellow-500 hover:border-yellow-400/20 focus:border-yellow-400/20 active:border-yellow-400/20'
+          ? 'border-warning-subtle bg-surface-warning-component text-warning'
+          : 'bg-surface-warning-component text-warning'
       case 'red':
         return isOpen
-          ? 'border-red-500/20 bg-red-500/10 text-red-500'
-          : 'bg-red-500/10 text-red-500 hover:border-red-500/20 focus:border-red-500/20 active:border-red-500/20'
+          ? 'border-negative bg-surface-negative-component text-negative'
+          : 'bg-surface-negative-component text-negative'
       case 'neutral':
       default:
         return isOpen
-          ? 'border-neutral-300/20 bg-neutral-300/10 text-neutral-300'
-          : 'bg-neutral-300/10 text-neutral-300 hover:border-neutral-300/20 focus:border-neutral-300/20 active:border-neutral-300/20'
+          ? 'border-neutral-component bg-surface-neutral-component text-subtle'
+          : 'bg-surface-neutral-component text-subtle'
     }
   }
 
@@ -125,7 +141,7 @@ export function PodHealthChips({ service }: { service: AnyService }) {
                   <button
                     type="button"
                     className={twMerge(
-                      'inline-flex h-5 w-6 items-center justify-center rounded-full border border-transparent text-ssm font-medium outline-none transition-colors duration-75',
+                      'inline-flex h-5 w-6 items-center justify-center rounded-full border border-transparent text-ssm font-medium outline-none transition-colors duration-75 retina:border-[0.5px]',
                       getStatusChipClassNames(color, isOpen)
                     )}
                   >
@@ -180,7 +196,7 @@ export function PodHealthChips({ service }: { service: AnyService }) {
 
   if (pods.length === 0 || isMetricsLoading || isRunningStatusesLoading) {
     return (
-      <div className="text-sm text-gray-500">
+      <div className="text-subtle text-sm">
         <Skeleton height={20} width={24} rounded />
       </div>
     )

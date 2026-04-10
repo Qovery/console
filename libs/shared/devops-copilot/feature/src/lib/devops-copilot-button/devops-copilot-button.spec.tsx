@@ -1,68 +1,42 @@
-import { TooltipProvider } from '@radix-ui/react-tooltip'
 import { type ReactNode } from 'react'
-import { useFormatHotkeys } from '@qovery/shared/util-hooks'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
 import { DevopsCopilotButton } from './devops-copilot-button'
 
-jest.mock('@qovery/shared/util-hooks', () => ({
-  useFormatHotkeys: jest.fn(),
+jest.mock('posthog-js', () => ({
+  capture: jest.fn(),
 }))
 
 const mockSetDevopsCopilotOpen = jest.fn()
 
-const wrapper = ({ children, devopsCopilotOpen = false }: { children: ReactNode; devopsCopilotOpen?: boolean }) => (
-  <TooltipProvider>
-    <DevopsCopilotContext.Provider
-      value={{
-        devopsCopilotOpen,
-        setDevopsCopilotOpen: mockSetDevopsCopilotOpen,
-      }}
-    >
-      {children}
-    </DevopsCopilotContext.Provider>
-  </TooltipProvider>
+const wrapper = ({ children }: { children: ReactNode }) => (
+  <DevopsCopilotContext.Provider
+    value={{
+      devopsCopilotOpen: false,
+      setDevopsCopilotOpen: mockSetDevopsCopilotOpen,
+      sendMessageRef: undefined,
+    }}
+  >
+    {children}
+  </DevopsCopilotContext.Provider>
 )
 
 describe('DevopsCopilotButton', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useFormatHotkeys as jest.Mock).mockReturnValue('⌘')
   })
 
-  it('should render button when metaKey is available', () => {
-    const { getByText } = renderWithProviders(<DevopsCopilotButton />, { wrapper })
+  it('should render the copilot button', () => {
+    renderWithProviders(<DevopsCopilotButton />, { wrapper })
 
-    expect(getByText('AI Copilot')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'AI Copilot' })).toBeInTheDocument()
   })
 
-  it('should display correct hotkey combination', () => {
-    const { getByText } = renderWithProviders(<DevopsCopilotButton />, { wrapper })
+  it('should open the copilot panel when clicked', async () => {
+    const { userEvent } = renderWithProviders(<DevopsCopilotButton />, { wrapper })
 
-    expect(getByText('⌘')).toBeInTheDocument()
-    expect(getByText('i')).toBeInTheDocument()
-  })
-
-  it('should call setDevopsCopilotOpen when button is clicked', () => {
-    const { getByText } = renderWithProviders(<DevopsCopilotButton />, { wrapper })
-
-    getByText('AI Copilot').closest('button')?.click()
+    await userEvent.click(screen.getByRole('button', { name: 'AI Copilot' }))
 
     expect(mockSetDevopsCopilotOpen).toHaveBeenCalledWith(true)
-  })
-
-  it('should apply active styles when devopsCopilotOpen is true', () => {
-    const { getByText } = renderWithProviders(<DevopsCopilotButton />, {
-      wrapper: ({ children }) => wrapper({ children, devopsCopilotOpen: true }),
-    })
-
-    const button = getByText('AI Copilot').closest('button')
-    expect(button).toHaveClass('bg-neutral-50')
-  })
-
-  it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(<DevopsCopilotButton />, { wrapper })
-
-    expect(baseElement).toMatchSnapshot()
   })
 })

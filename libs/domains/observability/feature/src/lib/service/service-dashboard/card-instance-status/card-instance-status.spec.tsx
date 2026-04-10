@@ -68,8 +68,8 @@ describe('CardInstanceStatus', () => {
       </DashboardProvider>
     )
 
-    expect(screen.getByText('Instance errors')).toBeInTheDocument()
-    const instanceErrorsElement = screen.getByText('Instance errors').closest('div')
+    expect(screen.getByText(/Instance error(s)?/)).toBeInTheDocument()
+    const instanceErrorsElement = screen.getByText(/Instance error(s)?/).closest('div')
     const instanceErrorsValue = instanceErrorsElement?.querySelector('.font-medium')
     expect(instanceErrorsValue).toHaveTextContent('0')
   })
@@ -93,8 +93,8 @@ describe('CardInstanceStatus', () => {
       </DashboardProvider>
     )
 
-    expect(screen.getByText('Instance errors')).toBeInTheDocument()
-    const instanceErrorsElement = screen.getByText('Instance errors').closest('div')
+    expect(screen.getByText(/Instance error(s)?/)).toBeInTheDocument()
+    const instanceErrorsElement = screen.getByText(/Instance error(s)?/).closest('div')
     const instanceErrorsValue = instanceErrorsElement?.querySelector('.font-medium')
     expect(instanceErrorsValue).toHaveTextContent('2')
 
@@ -117,7 +117,7 @@ describe('CardInstanceStatus', () => {
       </DashboardProvider>
     )
 
-    const instanceErrorsElement = screen.getByText('Instance errors').closest('div')
+    const instanceErrorsElement = screen.getByText(/Instance error(s)?/).closest('div')
     const instanceErrorsValue = instanceErrorsElement?.querySelector('.font-medium')
     expect(instanceErrorsValue).toHaveTextContent('0')
   })
@@ -131,7 +131,7 @@ describe('CardInstanceStatus', () => {
       </DashboardProvider>
     )
 
-    const instanceErrorsElement = screen.getByText('Instance errors').closest('div')
+    const instanceErrorsElement = screen.getByText(/Instance error(s)?/).closest('div')
     const instanceErrorsValue = instanceErrorsElement?.querySelector('.font-medium')
     expect(instanceErrorsValue).toHaveTextContent('0')
   })

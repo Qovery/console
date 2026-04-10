@@ -6,7 +6,7 @@ import {
   type TerraformGeneralData,
   buildDockerfileFragment,
   extractDockerfileFragmentFields,
-} from '@qovery/domains/service-terraform/feature'
+} from '@qovery/domains/service-settings/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { Button } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'

@@ -1,5 +1,5 @@
 import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useContext, useMemo } from 'react'
+import { type PropsWithChildren, useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -8,15 +8,13 @@ import { type AnyService, type Database } from '@qovery/domains/services/data-ac
 import {
   NeedRedeployFlag,
   ServiceAccessModal,
-  ServiceActionToolbar,
+  ServiceActions,
   ServiceAvatar,
   ServiceStateChip,
-  ServiceTerminalContext,
 } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
-  DATABASE_DEPLOYMENTS_URL,
   DATABASE_GENERAL_URL,
   DATABASE_MONITORING_URL,
   DATABASE_SETTINGS_URL,
@@ -43,7 +41,6 @@ export interface ContainerProps {
 
 export function Container({ service, environment, children }: PropsWithChildren<ContainerProps>) {
   const { organizationId = '', projectId = '', environmentId = '', databaseId = '' } = useParams()
-  const { setOpen } = useContext(ServiceTerminalContext)
   const location = useLocation()
   const { closeModal, openModal } = useModal()
 
@@ -75,13 +72,7 @@ export function Container({ service, environment, children }: PropsWithChildren<
     <div className="flex flex-row items-center gap-4">
       <Skeleton width={150} height={36} show={!service}>
         <div className="flex">
-          {environment && service && (
-            <ServiceActionToolbar
-              serviceId={service.id}
-              environment={environment}
-              shellAction={(service as Database).mode === 'CONTAINER' ? () => setOpen(true) : undefined}
-            />
-          )}
+          {environment && service && <ServiceActions serviceId={service.id} environment={environment} />}
         </div>
       </Skeleton>
       <div className="h-4 w-px bg-neutral-250" />
@@ -130,14 +121,6 @@ export function Container({ service, environment, children }: PropsWithChildren<
       active:
         location.pathname === DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
       link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_GENERAL_URL,
-    },
-    {
-      icon: <ServiceStateChip mode="deployment" environmentId={environmentId} serviceId={databaseId} />,
-      name: 'Deployments history',
-      active:
-        location.pathname ===
-        DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
-      link: DATABASE_URL(organizationId, projectId, environmentId, databaseId) + DATABASE_DEPLOYMENTS_URL,
     },
     ...(hasMetrics
       ? [

@@ -1,0 +1,482 @@
+import { useLocation, useNavigate } from '@tanstack/react-router'
+import {
+  type Cluster,
+  type ClusterStatus,
+  EnvironmentModeEnum,
+  type KubernetesEnum,
+  OrganizationEventTargetType,
+} from 'qovery-typescript-axios'
+import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
+import { P, match } from 'ts-pattern'
+import { Button, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import {
+  isDeleteAvailable,
+  isDeployAvailable,
+  isRedeployAvailable,
+  isStopAvailable,
+  isUpdateAvailable,
+} from '@qovery/shared/util-js'
+import { ClusterAccessModal } from '../cluster-access-modal/cluster-access-modal'
+import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
+import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
+import { ClusterUpdateModal } from '../cluster-update-modal/cluster-update-modal'
+import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
+import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
+import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
+import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
+import { useUpdateEksAnywhereCommit } from '../hooks/use-update-eks-anywhere-commit/use-update-eks-anywhere-commit'
+import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
+import { SelectEksAnywhereCommitModal } from './select-eks-anywhere-commit-modal'
+
+type ActionToolbarVariant = 'default' | 'header' | 'card'
+
+function MenuManageDeployment({
+  cluster,
+  clusterStatus,
+  variant = 'default',
+}: {
+  cluster: Cluster
+  clusterStatus: ClusterStatus
+  variant?: ActionToolbarVariant
+}) {
+  const { openModalConfirmation } = useModalConfirmation()
+  const { openModal, closeModal } = useModal()
+  const { mutate: deployCluster } = useDeployCluster()
+  const { mutate: stopCluster } = useStopCluster()
+  const { mutate: upgradeCluster } = useUpgradeCluster({ organizationId: cluster.organization.id })
+  const { mutateAsync: updateEksAnywhereCommit } = useUpdateEksAnywhereCommit()
+  const hasTextActionButton = variant === 'header'
+  const actionButtonSize = variant === 'default' ? 'sm' : 'md'
+
+  if (
+    !clusterStatus.status ||
+    (!isDeployAvailable(clusterStatus?.status) &&
+      !isDeleteAvailable(clusterStatus?.status) &&
+      !isUpdateAvailable(clusterStatus?.status))
+  ) {
+    return null
+  }
+
+  const k8sUpdateAvailable =
+    clusterStatus.next_k8s_available_version &&
+    clusterStatus.next_k8s_available_version !== null &&
+    clusterStatus.status === 'DEPLOYED' &&
+    cluster.kubernetes !== 'PARTIALLY_MANAGED'
+  const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
+  const isEksAnywhereCluster = cluster.kubernetes === 'PARTIALLY_MANAGED'
+  const hasEksAnywhereGitRepository = Boolean(
+    cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository?.url
+  )
+  const eksAnywhereGitRepository = cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository as
+    | { commit_id?: string; git_commit_id?: string }
+    | undefined
+  const eksAnywhereCurrentCommitId = eksAnywhereGitRepository?.commit_id ?? eksAnywhereGitRepository?.git_commit_id
+  const canUpdateEksAnywhereVersion =
+    isEksAnywhereCluster &&
+    hasEksAnywhereGitRepository &&
+    (isDeployAvailable(clusterStatus.status) || isRedeployAvailable(clusterStatus.status))
+  const actionButtonVariant = hasTextActionButton ? 'solid' : 'outline'
+  const actionButtonColor =
+    clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : hasTextActionButton ? 'brand' : 'neutral'
+
+  const tooltipClusterNeedUpdate = clusterNeedUpdate && (
+    <Tooltip side="bottom" content="Configuration has changed and needs to be applied">
+      <div className="absolute right-2">
+        <Icon iconName="circle-exclamation" iconStyle="regular" />
+      </div>
+    </Tooltip>
+  )
+
+  const mutationDeploy = () =>
+    deployCluster({
+      organizationId: cluster.organization.id,
+      clusterId: cluster.id,
+    })
+
+  const mutationUpdate = () => {
+    openModal({
+      content: <ClusterUpdateModal cluster={cluster} />,
+    })
+  }
+  const mutationUpdateEksAnywhereVersion = () => {
+    openModal({
+      content: (
+        <SelectEksAnywhereCommitModal
+          title="Update another version"
+          description="Select the commit id you want to use."
+          submitLabel="Update"
+          organizationId={cluster.organization.id}
+          clusterId={cluster.id}
+          currentCommitId={eksAnywhereCurrentCommitId}
+          onCancel={() => closeModal()}
+          onSubmit={async (commitId) => {
+            if (commitId === eksAnywhereCurrentCommitId) {
+              closeModal()
+              mutationUpdate()
+              return
+            }
+
+            try {
+              await updateEksAnywhereCommit({
+                organizationId: cluster.organization.id,
+                clusterId: cluster.id,
+                commitId,
+              })
+              closeModal()
+              mutationUpdate()
+            } catch {
+              // Error is handled by mutation notifyOnError.
+            }
+          }}
+        >
+          <p>
+            For <strong className="font-medium text-neutral">{cluster.name}</strong>
+          </p>
+        </SelectEksAnywhereCommitModal>
+      ),
+      options: { width: 596 },
+    })
+  }
+
+  const mutationStop = () =>
+    openModalConfirmation({
+      mode: EnvironmentModeEnum.PRODUCTION,
+      title: 'Confirm stop',
+      description: 'To confirm the stop of your cluster, please type the name:',
+      warning:
+        'Please note that by stopping your cluster, some resources will still be used on your cloud provider account and still be added to your bill. To completely remove them, please use the "Remove" feature',
+      name: cluster.name,
+      action: () =>
+        stopCluster({
+          organizationId: cluster.organization.id,
+          clusterId: cluster.id,
+        }),
+    })
+  const mutationUpgrade = () =>
+    openModalConfirmation({
+      mode: EnvironmentModeEnum.PRODUCTION,
+      title: 'Confirm upgrade',
+      description: 'To confirm the upgrade of your cluster, please type the name:',
+      name: cluster.name,
+      action: () =>
+        upgradeCluster({
+          clusterId: cluster.id,
+        }),
+    })
+
+  const entries: ReactNode[] = [
+    isDeployAvailable(clusterStatus.status) && (
+      <DropdownMenu.Item
+        key="0"
+        icon={<Icon iconName="play" />}
+        onSelect={mutationDeploy}
+        className="relative"
+        color={clusterNeedUpdate ? 'yellow' : 'brand'}
+      >
+        {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
+        {tooltipClusterNeedUpdate}
+      </DropdownMenu.Item>
+    ),
+    isRedeployAvailable(clusterStatus.status) && (
+      <DropdownMenu.Item
+        key="1"
+        icon={<Icon iconName="rotate-right" />}
+        onSelect={mutationUpdate}
+        className="relative"
+        color={clusterNeedUpdate ? 'yellow' : 'brand'}
+      >
+        Update
+        {tooltipClusterNeedUpdate}
+      </DropdownMenu.Item>
+    ),
+    canUpdateEksAnywhereVersion && (
+      <DropdownMenu.Item
+        key="1bis"
+        icon={<Icon iconName="rotate-right" />}
+        onSelect={mutationUpdateEksAnywhereVersion}
+        className="relative"
+        color={clusterNeedUpdate ? 'yellow' : 'brand'}
+      >
+        Update another version
+        {tooltipClusterNeedUpdate}
+      </DropdownMenu.Item>
+    ),
+    cluster.cloud_provider !== 'GCP' &&
+      cluster.cloud_provider !== 'AZURE' &&
+      isStopAvailable(clusterStatus.status) &&
+      cluster.kubernetes !== 'PARTIALLY_MANAGED' && (
+        <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
+          Stop
+        </DropdownMenu.Item>
+      ),
+    k8sUpdateAvailable && (
+      <DropdownMenu.Item
+        key="3"
+        icon={<Icon iconName="rotate-left" />}
+        onSelect={mutationUpgrade}
+        className="relative"
+        color="yellow"
+      >
+        Upgrade K8s to {clusterStatus.next_k8s_available_version}
+        <Tooltip
+          side="bottom"
+          content="A new Kubernetes version is available. Click here to upgrade your cluster now or wait for the upgrade to be performed automatically by Qovery after a certain period."
+        >
+          <div className="absolute right-2">
+            <Icon iconName="circle-exclamation" iconStyle="regular" />
+          </div>
+        </Tooltip>
+      </DropdownMenu.Item>
+    ),
+  ].filter((e) => !!e)
+
+  return entries.length > 0 ? (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <Button
+          aria-label="Manage Deployment"
+          size={actionButtonSize}
+          variant={actionButtonVariant}
+          color={actionButtonColor}
+          iconOnly={!hasTextActionButton}
+        >
+          <Tooltip content="Manage Deployment">
+            <div className="flex h-full w-full items-center justify-center gap-1.5">
+              <Icon iconName="rocket" />
+              {hasTextActionButton && (
+                <>
+                  {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
+                  <Icon iconName="chevron-down" />
+                </>
+              )}
+            </div>
+          </Tooltip>
+        </Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>{entries.map((c) => c)}</DropdownMenu.Content>
+    </DropdownMenu.Root>
+  ) : null
+}
+
+function MenuOtherActions({
+  cluster,
+  clusterStatus,
+  variant = 'default',
+}: {
+  cluster: Cluster
+  clusterStatus: ClusterStatus
+  variant?: ActionToolbarVariant
+}) {
+  const navigate = useNavigate()
+  const { openModal } = useModal()
+  const [, copyToClipboard] = useCopyToClipboard()
+  const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
+
+  const removeCluster = (cluster: Cluster) => {
+    openModal({
+      content: <ClusterDeleteModal cluster={cluster} />,
+    })
+  }
+
+  const openAccessModal = (type: Extract<KubernetesEnum, 'MANAGED' | 'SELF_MANAGED'>) => {
+    openModal({
+      content: <ClusterAccessModal clusterId={cluster.id} type={type} />,
+      options: {
+        width: 680,
+      },
+    })
+  }
+
+  const canDelete = clusterStatus.status && isDeleteAvailable(clusterStatus.status)
+
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <Button
+          aria-label="Other actions"
+          color="neutral"
+          variant="outline"
+          size={variant === 'default' ? 'sm' : 'md'}
+          iconOnly
+        >
+          <Tooltip content="Other actions">
+            <div className="flex h-full w-full items-center justify-center">
+              <Icon width={20} iconName="ellipsis-v" />
+            </div>
+          </Tooltip>
+        </Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content>
+        <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal('MANAGED')}>
+          Access info
+        </DropdownMenu.Item>
+        <DropdownMenu.Item
+          icon={<Icon iconName="clock-rotate-left" />}
+          onSelect={() =>
+            navigate({
+              to: '/organization/$organizationId/audit-logs',
+              params: {
+                organizationId: cluster.organization.id,
+              },
+              search: {
+                targetType: OrganizationEventTargetType.CLUSTER,
+                targetId: cluster.id,
+              },
+            })
+          }
+        >
+          See audit logs
+        </DropdownMenu.Item>
+        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(cluster.id)}>
+          Copy identifier
+        </DropdownMenu.Item>
+        {cluster.kubernetes !== 'SELF_MANAGED' && (
+          <DropdownMenu.Item
+            icon={<Icon iconName="download" />}
+            onSelect={() => downloadKubeconfig({ organizationId: cluster.organization.id, clusterId: cluster.id })}
+          >
+            Get Kubeconfig
+          </DropdownMenu.Item>
+        )}
+        {canDelete && (
+          <>
+            <DropdownMenu.Separator />
+            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={() => removeCluster(cluster)}>
+              Delete cluster
+            </DropdownMenu.Item>
+          </>
+        )}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  )
+}
+
+export interface ClusterActionsProps {
+  cluster: Cluster
+  clusterStatus: ClusterStatus
+  variant?: ActionToolbarVariant
+}
+
+export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: ClusterActionsProps) {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const showSelfManagedGuideKey = 'show-self-managed-guide'
+  const { openModal, closeModal } = useModal()
+  const { data: runningStatus } = useClusterRunningStatus({
+    organizationId: cluster.organization.id,
+    clusterId: cluster.id,
+  })
+
+  const searchParams = useMemo(() => {
+    // @ts-ignore-next-line TODO needs to be fixed
+    const params = new URLSearchParams(location.search)
+    return params
+  }, [location.search])
+
+  const openInstallationGuideModal = useCallback(
+    ({ type = 'MANAGED' }: { type?: 'MANAGED' | 'ON_PREMISE' } = {}) => {
+      openModal({
+        options: {
+          width: type === 'MANAGED' ? 488 : 500,
+        },
+        content: (
+          <ClusterInstallationGuideModal
+            mode="EDIT"
+            cluster={cluster}
+            type={type}
+            onClose={() => {
+              // @ts-ignore-next-line TODO needs to be fixed
+              const newParams = new URLSearchParams(location.search)
+              newParams.delete(showSelfManagedGuideKey)
+              const newSearch = newParams.toString()
+              const newUrl = newSearch ? `${location.pathname}?${newSearch}` : location.pathname
+              window.history.replaceState({}, '', newUrl)
+              closeModal()
+            }}
+          />
+        ),
+      })
+    },
+    [cluster, location.pathname, location.search, openModal, closeModal]
+  )
+
+  useEffect(() => {
+    const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
+    if (bool) {
+      // @ts-ignore-next-line TODO needs to be fixed
+      const newParams = new URLSearchParams(location.search)
+      newParams.delete(showSelfManagedGuideKey)
+      const newSearch = newParams.toString()
+      const newUrl = newSearch ? `${location.pathname}?${newSearch}` : location.pathname
+      window.history.replaceState({}, '', newUrl)
+      openInstallationGuideModal()
+    }
+    return () => (bool ? closeModal() : undefined)
+  }, [searchParams, location.search, location.pathname, cluster.kubernetes, closeModal, openInstallationGuideModal])
+
+  const primaryActionButton = match(cluster)
+    .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => (
+      <Tooltip content="Installation guide">
+        <Button onClick={() => openInstallationGuideModal()} iconOnly size={variant === 'default' ? 'sm' : 'md'}>
+          <Icon iconName="circle-info" />
+        </Button>
+      </Tooltip>
+    ))
+    .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => (
+      <Tooltip content="Installation guide">
+        <Button
+          onClick={() => openInstallationGuideModal({ type: 'ON_PREMISE' })}
+          color={!runningStatus ? 'yellow' : 'neutral'}
+          variant="outline"
+          iconOnly
+          size={variant === 'default' ? 'sm' : 'md'}
+        >
+          <Icon iconName="circle-info" />
+        </Button>
+      </Tooltip>
+    ))
+    .otherwise(() => <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />)
+  const logsButton =
+    variant === 'card' && cluster.kubernetes !== 'SELF_MANAGED' ? (
+      <Tooltip content="Logs">
+        <Button
+          aria-label="Logs"
+          color="neutral"
+          variant="outline"
+          size="md"
+          iconOnly
+          onClick={() =>
+            navigate({
+              to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+              params: {
+                organizationId: cluster.organization.id,
+                clusterId: cluster.id,
+              },
+            })
+          }
+        >
+          <Icon iconName="scroll" />
+        </Button>
+      </Tooltip>
+    ) : null
+
+  return (
+    <div className="flex items-center gap-2">
+      {variant === 'header' ? (
+        <>
+          {primaryActionButton}
+          <MenuOtherActions cluster={cluster} clusterStatus={clusterStatus} variant={variant} />
+        </>
+      ) : (
+        <>
+          {primaryActionButton}
+          {logsButton}
+          <MenuOtherActions cluster={cluster} clusterStatus={clusterStatus} variant={variant} />
+        </>
+      )}
+    </div>
+  )
+}
+
+export default ClusterActions

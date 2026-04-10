@@ -1,4 +1,5 @@
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu'
+import { Link } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import {
@@ -9,13 +10,12 @@ import {
   type QueuedDeploymentRequestWithStagesStagesInner,
 } from 'qovery-typescript-axios'
 import { useContext, useState } from 'react'
-import { Link, useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
+import { Button, Indicator, StageStatusChip, StatusChip, Tooltip, TriggerActionIcon, Truncate } from '@qovery/shared/ui'
 import { Icon } from '@qovery/shared/ui'
 import { dateUTCString, formatDurationMinutesSeconds } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -24,6 +24,7 @@ export interface DropdownServicesProps {
   environment: Environment
   deploymentHistory: DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages
   stages: DeploymentHistoryStage[] | QueuedDeploymentRequestWithStagesStagesInner[]
+  size?: 'sm' | 'md'
 }
 
 const isDeploymentStageQueue = (data: unknown): data is QueuedDeploymentRequestWithStagesStagesInner => {
@@ -35,8 +36,7 @@ const MAX_VISIBLE_STAGES = 4
 // XXX: This component includes a workaround to enable hover functionality
 // for the DropdownMenu when using Radix, inspired by the discussion in this issue:
 // https://github.com/radix-ui/primitives/issues/1294
-export function DropdownServices({ environment, deploymentHistory, stages }: DropdownServicesProps) {
-  const { pathname } = useLocation()
+export function DropdownServices({ environment, deploymentHistory, stages, size = 'md' }: DropdownServicesProps) {
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const [open, setOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState<number | undefined>()
@@ -79,33 +79,50 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
       <div className="flex items-center">
         {currentPage > 0 && (
           <Tooltip content="See previous stage">
-            <button
-              title="Previous stage"
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              className="relative flex items-center text-neutral-350 after:block after:h-[1px] after:w-0.5 after:bg-neutral-250 after:content-['']"
+            <div
+              className={twMerge(
+                "relative flex items-center text-neutral-disabled after:block after:h-[1px] after:w-0.5 after:border-b after:border-neutral after:content-['']"
+              )}
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                fill="none"
-                viewBox="0 0 24 24"
-                className="flex items-center justify-center"
+              <button
+                title="Previous stage"
+                onClick={(e) => {
+                  setCurrentPage((prev) => prev - 1)
+                  e.preventDefault()
+                  e.stopPropagation()
+                }}
+                className={twMerge('relative flex items-center text-neutral-disabled', size === 'sm' ? 'w-5' : 'w-6')}
               >
-                <path
-                  className="fill-neutral-100 stroke-neutral-250"
-                  d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
-                />
-              </svg>
-              <Icon iconName="arrow-left" className="absolute left-1 top-1 flex h-4 w-4 items-center justify-center" />
-            </button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="100%"
+                  height="100%"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  className="flex items-center justify-center"
+                >
+                  <path
+                    fill="var(--neutral-2)"
+                    stroke="var(--neutral-6)"
+                    d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
+                  />
+                </svg>
+                <div className="absolute right-[1px] top-0 flex h-full w-full items-center justify-center">
+                  <Icon
+                    iconName="angle-left"
+                    className={twMerge('text-neutral-disabled', size === 'sm' ? 'text-sm' : 'text-base')}
+                  />
+                </div>
+              </button>
+            </div>
           </Tooltip>
         )}
 
         {visibleStages.map((stage, index) => (
           <DropdownMenu.Trigger
             key={startIndex + index}
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
               setIndex(stage, startIndex + index)
               setOpen(true)
             }}
@@ -115,9 +132,9 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
             }}
             onPointerLeave={() => setOpen(false)}
             style={{ pointerEvents: 'auto' }}
-            className="flex items-center outline-none after:block after:h-[1px] after:w-0.5 after:bg-neutral-250 after:content-[''] last:after:hidden focus:outline-none"
+            className="flex items-center py-2 outline-none after:block after:h-[1px] after:w-0.5 after:border-b after:border-neutral after:content-[''] last:after:hidden focus:outline-none"
           >
-            <StageStatusChip status={stage.status} />
+            <StageStatusChip status={stage.status} size={size} />
           </DropdownMenu.Trigger>
         ))}
 
@@ -125,26 +142,33 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           <Tooltip content="See next stage">
             <button
               title="Next stage"
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              className="relative flex items-center text-neutral-350"
+              onClick={(e) => {
+                setCurrentPage((prev) => prev + 1)
+                e.preventDefault()
+                e.stopPropagation()
+              }}
+              className={twMerge('relative flex items-center text-neutral-disabled', size === 'sm' ? 'w-5' : 'w-6')}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
+                width="100%"
+                height="100%"
                 fill="none"
                 viewBox="0 0 24 24"
                 className="flex items-center justify-center"
               >
                 <path
-                  className="fill-neutral-100 stroke-neutral-250"
+                  fill="var(--neutral-2)"
+                  stroke="var(--neutral-6)"
                   d="M1.5 8.993v0c0-.91.23-1.804.669-2.591A5.098 5.098 0 013.99 4.507s0 0 0 0L9.49 1.2h0a4.863 4.863 0 012.508-.7 4.864 4.864 0 012.51.7l5.5 3.31h0a5.097 5.097 0 011.82 1.892c.439.787.67 1.68.671 2.59v6.015c0 .91-.23 1.804-.669 2.591a5.097 5.097 0 01-1.822 1.895l-5.5 3.307h0c-.763.459-1.628.7-2.508.7-.88 0-1.746-.241-2.51-.7 0 0 0 0 0 0l-5.5-3.31h0a5.098 5.098 0 01-1.82-1.892 5.333 5.333 0 01-.671-2.589V8.993z"
                 />
               </svg>
-              <Icon
-                iconName="arrow-right"
-                className="absolute left-1 top-1  flex h-4 w-4 items-center justify-center"
-              />
+              <div className="absolute left-0 top-0 flex h-full w-full items-center justify-center">
+                <Icon
+                  iconName="angle-right"
+                  className={twMerge('text-neutral-disabled', size === 'sm' ? 'text-sm' : 'text-base')}
+                />
+              </div>
             </button>
           </Tooltip>
         )}
@@ -156,7 +180,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
           onPointerEnter={() => setOpen(true)}
           onPointerLeave={() => setOpen(false)}
           className={clsx(
-            'relative flex max-h-96 w-56 animate-[scalein_0.18s_ease_both] flex-col overflow-y-scroll rounded-md bg-neutral-50 p-2 shadow-lg shadow-gray-900/10',
+            'relative flex max-h-96 w-56 animate-[scalein_0.18s_ease_both] flex-col overflow-y-scroll rounded-md border border-neutral bg-surface-neutral-subtle shadow-lg shadow-surface-neutral-subtle',
             {
               'hidden opacity-0': currentIndex === undefined,
               '-left-[26px]': stages.length === 3,
@@ -196,12 +220,12 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                     <div
                       key={index}
                       className={twMerge(
-                        clsx('hidden w-56 rounded border border-neutral-200', {
+                        clsx('hidden w-56 rounded', {
                           'flex flex-col': currentIndex === index,
                         })
                       )}
                     >
-                      <div className="flex h-[54px] items-center gap-4 rounded-t bg-neutral-100 px-2 py-2.5">
+                      <div className="flex h-[54px] items-center gap-4 rounded-t bg-surface-neutral-subtle px-2 py-2.5">
                         <Indicator
                           align="end"
                           side="right"
@@ -211,7 +235,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                 <span>
                                   <TriggerActionIcon
                                     triggerAction={deploymentHistory.trigger_action}
-                                    className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-100 text-xs text-neutral-350"
+                                    className="relative -left-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-surface-neutral-subtle text-xs text-neutral-subtle"
                                   />
                                 </span>
                               </Tooltip>
@@ -224,7 +248,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                             </span>
                           </Tooltip>
                         </Indicator>
-                        <div className="flex flex-col text-neutral-400">
+                        <div className="flex flex-col text-neutral">
                           <span className="text-ssm font-medium">{upperCaseFirstLetter(stage.name)}</span>
                           {match(stage)
                             .with(P.when(isDeploymentStageQueue), () => null)
@@ -239,61 +263,10 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                       {match(stage)
                         .with(P.when(isDeploymentStageQueue), (s) => (
                           <>
-                            {s.services.map((service, index) => {
-                              return (
-                                <DropdownMenu.Item
-                                  key={index}
-                                  className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
-                                  asChild
-                                >
-                                  <Link
-                                    to={
-                                      ENVIRONMENT_LOGS_URL(
-                                        environment.organization.id,
-                                        environment.project.id,
-                                        environment.id
-                                      ) + ENVIRONMENT_STAGES_URL()
-                                    }
-                                    state={{ prevUrl: pathname }}
-                                  >
-                                    {service.details && (
-                                      <ServiceAvatar
-                                        border="solid"
-                                        size="sm"
-                                        service={
-                                          'job_type' in service.details
-                                            ? {
-                                                icon_uri: service.icon_uri ?? '',
-                                                serviceType: 'JOB' as const,
-                                                job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
-                                              }
-                                            : {
-                                                icon_uri: service.icon_uri ?? '',
-                                                serviceType: service.identifier.service_type as Exclude<
-                                                  AnyService['service_type'],
-                                                  'JOB'
-                                                >,
-                                              }
-                                        }
-                                      />
-                                    )}
-                                    <span className="flex flex-col">
-                                      <span className="truncate text-ssm">
-                                        <Truncate text={service.identifier.name} truncateLimit={16} />
-                                      </span>
-                                    </span>
-                                  </Link>
-                                </DropdownMenu.Item>
-                              )
-                            })}
-                          </>
-                        ))
-                        .otherwise((s) => (
-                          <>
                             {s.services.map((service, index) => (
                               <DropdownMenu.Item
                                 key={index}
-                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral-200 pl-2 pr-3 text-xs text-neutral-400 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
+                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral px-2 pr-3 text-xs text-neutral-subtle transition-colors hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle focus:outline-none"
                                 asChild
                               >
                                 <Link
@@ -302,13 +275,63 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                       environment.organization.id,
                                       environment.project.id,
                                       environment.id
-                                    ) +
-                                    DEPLOYMENT_LOGS_VERSION_URL(
-                                      service.identifier.service_id,
-                                      service.identifier.execution_id
-                                    )
+                                    ) + ENVIRONMENT_STAGES_URL()
                                   }
-                                  state={{ prevUrl: pathname }}
+                                  onClick={(event) => {
+                                    event.stopPropagation()
+                                  }}
+                                >
+                                  {service.details && (
+                                    <ServiceAvatar
+                                      border="solid"
+                                      size="sm"
+                                      service={
+                                        'job_type' in service.details
+                                          ? {
+                                              icon_uri: service.icon_uri ?? '',
+                                              serviceType: 'JOB' as const,
+                                              job_type: service.details.job_type as 'CRON' | 'LIFECYCLE',
+                                            }
+                                          : {
+                                              icon_uri: service.icon_uri ?? '',
+                                              serviceType: service.identifier.service_type as Exclude<
+                                                AnyService['service_type'],
+                                                'JOB'
+                                              >,
+                                            }
+                                      }
+                                    />
+                                  )}
+                                  <span className="flex flex-col">
+                                    <span className="truncate text-ssm">
+                                      <Truncate text={service.identifier.name} truncateLimit={16} />
+                                    </span>
+                                  </span>
+                                </Link>
+                              </DropdownMenu.Item>
+                            ))}
+                          </>
+                        ))
+                        .otherwise((s) => (
+                          <>
+                            {s.services.map((service, index) => (
+                              <DropdownMenu.Item
+                                key={index}
+                                className="flex h-[50px] w-full items-center gap-2 border-t border-neutral bg-surface-neutral px-2 pr-3 text-xs text-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle focus:outline-none"
+                                asChild
+                              >
+                                <Link
+                                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                                  params={{
+                                    organizationId: environment.organization.id,
+                                    projectId: environment.project.id,
+                                    environmentId: environment.id,
+                                    serviceId: service.identifier.service_id,
+                                    executionId: service.identifier.execution_id ?? '',
+                                  }}
+                                  onClick={(event) => {
+                                    event.stopPropagation()
+                                  }}
                                 >
                                   {service.details && (
                                     <ServiceAvatar
@@ -355,7 +378,7 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                             {(stage.status === 'ERROR' ||
                               s.services.some((service) => service.status_details?.status === 'ERROR')) && (
                               <DropdownMenu.Item
-                                className="flex w-full cursor-pointer items-center justify-between gap-2 border-t border-neutral-200 bg-brand-50 px-2 py-2 text-xs text-brand-500 transition-colors hover:bg-neutral-100 focus:bg-neutral-100 focus:outline-none"
+                                className="flex w-full cursor-pointer items-center justify-between gap-2 border-t border-neutral bg-surface-brand-subtle p-3 text-ssm text-brand transition-colors hover:bg-surface-brand-component focus:bg-surface-brand-component focus:outline-none"
                                 onSelect={() => {
                                   const executionId =
                                     'execution_id' in deploymentHistory.identifier
@@ -367,8 +390,8 @@ export function DropdownServices({ environment, deploymentHistory, stages }: Dro
                                 }}
                               >
                                 <div className="flex items-center justify-center gap-2">
-                                  <Icon iconName="sparkles" iconStyle="solid" className="text-brand-500" />
-                                  <span>Ask AI Copilot for diagnostic</span>
+                                  <Icon iconName="sparkles" iconStyle="solid" className="text-brand" />
+                                  <span>Ask for diagnostic</span>
                                 </div>
                                 <Icon iconName="arrow-right" />
                               </DropdownMenu.Item>

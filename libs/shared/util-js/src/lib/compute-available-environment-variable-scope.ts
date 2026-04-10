@@ -86,7 +86,8 @@ export function generateScopeLabel(scope: APIVariableScopeEnum): string {
     scope === APIVariableScopeEnum.APPLICATION ||
     scope === APIVariableScopeEnum.JOB ||
     scope === APIVariableScopeEnum.CONTAINER ||
-    scope === APIVariableScopeEnum.HELM
+    scope === APIVariableScopeEnum.HELM ||
+    scope === APIVariableScopeEnum.TERRAFORM
   )
     return 'Service'
   return upperCaseFirstLetter(scope) as string

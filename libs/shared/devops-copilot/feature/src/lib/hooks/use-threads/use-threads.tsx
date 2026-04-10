@@ -17,7 +17,15 @@ interface UseThreadsReturn {
   refetchThreads: () => Promise<void>
 }
 
-export const useThreads = ({ organizationId, owner }: { organizationId: string; owner: string }): UseThreadsReturn => {
+export const useThreads = ({
+  organizationId,
+  owner,
+  enabled = true,
+}: {
+  organizationId: string
+  owner: string
+  enabled?: boolean
+}): UseThreadsReturn => {
   const {
     data: threads = [],
     isLoading,
@@ -25,7 +33,7 @@ export const useThreads = ({ organizationId, owner }: { organizationId: string; 
     refetch,
   } = useQuery({
     ...queries.devopsCopilot.threads({ userId: owner, organizationId }),
-    enabled: !!organizationId && !!owner,
+    enabled: !!organizationId && !!owner && enabled,
   })
 
   return {

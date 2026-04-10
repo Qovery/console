@@ -6,10 +6,13 @@ import {
   type ClusterRequest,
   type ClusterRoutingTableRequest,
   ClustersApi,
+  type CommitResponseList,
+  OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 const clusterApi = new ClustersApi()
+const organizationApi = new OrganizationMainCallsApi()
 
 export const clusters = createQueryKeys('clusters', {
   list: ({ organizationId }: { organizationId: string }) => ({
@@ -31,6 +34,13 @@ export const clusters = createQueryKeys('clusters', {
     async queryFn() {
       const response = await clusterApi.getClusterStatus(organizationId, clusterId)
       return response.data
+    },
+  }),
+  eksAnywhereCommits: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await clusterApi.listEksAnywhereCommits(organizationId, clusterId)
+      return response.data.results ?? []
     },
   }),
   routingTable: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
@@ -73,6 +83,18 @@ export const clusters = createQueryKeys('clusters', {
     async queryFn() {
       const response = await clusterApi.getClusterKubeconfig(organizationId, clusterId)
       return response.data
+    },
+  }),
+  listServices: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await organizationApi.listServicesByOrganizationId(
+        organizationId,
+        undefined,
+        undefined,
+        clusterId
+      )
+      return response.data.results
     },
   }),
   runningStatus: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
@@ -132,6 +154,20 @@ export const mutations = {
     dryRun?: boolean
   }) {
     const response = await clusterApi.deployCluster(organizationId, clusterId, dryRun)
+    return response.data
+  },
+  async updateEksAnywhereCommit({
+    organizationId,
+    clusterId,
+    commitId,
+  }: {
+    organizationId: string
+    clusterId: string
+    commitId: string
+  }) {
+    const response = await clusterApi.updateEksAnywhereCommit(organizationId, clusterId, {
+      commit_id: commitId,
+    })
     return response.data
   },
   async stopCluster({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {

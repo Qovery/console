@@ -1,6 +1,5 @@
 import { type GitAuthProvider, type GitTokenResponse } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ExpiredTokenBadge } from '../expired-token-badge/expired-token-badge'
@@ -9,6 +8,7 @@ import { useAuthProviders } from '../hooks/use-auth-providers/use-auth-providers
 import { isGitTokenExpired, useGitTokens } from '../hooks/use-git-tokens/use-git-tokens'
 
 export interface GitProviderSettingProps {
+  organizationId: string
   disabled?: boolean
   showAuthProviders?: boolean
 }
@@ -74,9 +74,8 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
   return [...currentAuthProviders, ...currentGitTokens]
 }
 
-export function GitProviderSetting({ disabled, showAuthProviders = true }: GitProviderSettingProps) {
+export function GitProviderSetting({ disabled, organizationId, showAuthProviders = true }: GitProviderSettingProps) {
   const { control, watch, setValue, clearErrors } = useFormContext()
-  const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
 
   const { data: authProviders = [] } = useAuthProviders({ organizationId, enabled: !disabled && showAuthProviders })

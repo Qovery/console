@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ClusterType should render as AKS 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+      class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
       data-accent-color="neutral"
     >
       Self-managed
@@ -17,7 +17,7 @@ exports[`ClusterType should render as EKS 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+      class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
       data-accent-color="neutral"
     >
       EKS (Karpenter)
@@ -30,7 +30,7 @@ exports[`ClusterType should render as GCP 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+      class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
       data-accent-color="neutral"
     >
       GKE (Autopilot)
@@ -43,7 +43,7 @@ exports[`ClusterType should render as SCW 1`] = `
 <body>
   <div>
     <span
-      class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border rounded-md bg-neutral-100 border-neutral-200 text-neutral-400"
+      class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
       data-accent-color="neutral"
     >
       Kapsule

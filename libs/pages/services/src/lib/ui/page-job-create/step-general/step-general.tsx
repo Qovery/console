@@ -4,16 +4,22 @@ import { type FormEventHandler, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
+import {
+  AnnotationSetting,
+  ContainerRegistryCreateEditModal,
+  EditGitRepositorySettingsFeature,
+  GitRepositorySettings,
+  LabelSetting,
+} from '@qovery/domains/organizations/feature'
 import { type Job } from '@qovery/domains/services/data-access'
-import { AutoDeploySetting, BuildSettings, GeneralSetting } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs, JobGeneralSettings } from '@qovery/shared/console-shared'
+import { AutoDeploySetting, BuildSettings, GeneralSetting, JobGeneralSettings } from '@qovery/domains/services/feature'
+import { serviceTemplates } from '@qovery/domains/services/feature'
+import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { SERVICES_URL } from '@qovery/shared/routes'
-import { Button, Heading, Icon, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
 import { findTemplateData } from '../../../feature/page-job-create-feature/page-job-create-feature'
-import { serviceTemplates } from '../../../feature/page-new-feature/service-templates'
 
 export interface StepGeneralProps {
   jobType: JobType
@@ -25,6 +31,7 @@ export interface StepGeneralProps {
 export function StepGeneral(props: StepGeneralProps) {
   const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams()
   const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
+  const { openModal, closeModal } = useModal()
   const navigate = useNavigate()
   const { formState, watch } = useFormContext<JobGeneralData>()
   const watchServiceType = watch('serviceType')
@@ -138,6 +145,33 @@ export function StepGeneral(props: StepGeneralProps) {
             jobType={props.jobType}
             organization={props.organization}
             isEdition={false}
+            openContainerRegistryCreateEditModal={() =>
+              openModal({
+                content: (
+                  <ContainerRegistryCreateEditModal
+                    organizationId={props.organization?.id ?? ''}
+                    onClose={() => {
+                      closeModal()
+                    }}
+                  />
+                ),
+                options: {
+                  fakeModal: true,
+                  width: 680,
+                },
+              })
+            }
+            renderEditGitSettings={() => (
+              <EditGitRepositorySettingsFeature organizationId={props.organization?.id ?? ''} />
+            )}
+            renderGitRepositorySettings={({ organizationId, rootPathLabel, rootPathHint }) => (
+              <GitRepositorySettings
+                gitDisabled={false}
+                organizationId={organizationId}
+                rootPathLabel={rootPathLabel}
+                rootPathHint={rootPathHint}
+              />
+            )}
             rootPathLabel={match(props.templateType)
               .with('CLOUDFORMATION', () => 'Template folder path')
               .with('TERRAFORM', () => 'Manifest folder path')

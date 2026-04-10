@@ -88,13 +88,13 @@ export function LabelCreateEditModal({ isEdit, labelsGroup, organizationId, onCl
             />
           )}
         />
-        <span className="mb-2 block text-sm text-neutral-400">Add label key value</span>
-        <div className="rounded border border-neutral-250 bg-neutral-100 px-4 py-3">
+        <span className="mb-2 block text-sm text-neutral">Add label key value</span>
+        <div className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-3">
           <ul>
             <li className="mb-3 grid grid-cols-[6fr_6fr_1fr_1fr] gap-x-2">
-              <span className="text-sm font-medium text-neutral-350">Label keys</span>
-              <span className="pl-10 text-sm font-medium text-neutral-350">Value</span>
-              <span className="relative left-7 flex items-center gap-1 whitespace-nowrap text-sm font-medium text-neutral-350">
+              <span className="text-sm font-medium text-neutral-subtle">Label keys</span>
+              <span className="pl-10 text-sm font-medium text-neutral-subtle">Value</span>
+              <span className="relative left-7 flex items-center gap-1 whitespace-nowrap text-sm font-medium text-neutral-subtle">
                 Propagate as tag
                 <Tooltip content="Allows you to propagate the label as a tag in your cloud provider side if the format is compliant.">
                   <span>
@@ -145,7 +145,7 @@ export function LabelCreateEditModal({ isEdit, labelsGroup, organizationId, onCl
                     render={({ field }) => <InputToggle value={field.value} onChange={field.onChange} small />}
                   />
                   <Button size="md" variant="plain" type="button" onClick={() => remove(index)}>
-                    <Icon iconName="trash" className="text-sm text-neutral-400" />
+                    <Icon iconName="trash" className="text-sm text-neutral" />
                   </Button>
                 </div>
               </li>

@@ -1,0 +1,20 @@
+{
+  "name": "domains-onboarding-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/onboarding/feature/src",
+  "projectType": "library",
+  "tags": ["scope:domain", "type:feature", "slice:onboarding"],
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
+    }
+  }
+}

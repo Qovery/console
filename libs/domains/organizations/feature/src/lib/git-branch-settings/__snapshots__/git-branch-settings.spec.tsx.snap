@@ -7,7 +7,7 @@ exports[`GitBranchSettings should match snapshot 1`] = `
       class=""
     >
       <div
-        class="input input--select    "
+        class="input input--select"
         data-testid="select"
       >
         <label
@@ -103,9 +103,9 @@ exports[`GitBranchSettings should match snapshot 1`] = `
         <div
           class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
         >
-          <span
-            class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-            role="img"
+          <i
+            aria-hidden="true"
+            class="fa-solid fa-angle-down text-sm text-neutral-subtle"
           />
         </div>
       </div>
@@ -119,19 +119,20 @@ exports[`GitBranchSettings should match snapshot 1`] = `
       >
         <div
           aria-label="input-container"
-          class="input    input--label-up "
+          class="input group input--label-up"
         >
           <div
             class=""
           >
             <label
-              class="translate-y-2 text-sm"
+              class="input__label translate-y-2 text-sm !transition-none"
               for="Application root folder path"
             >
               Application root folder path
             </label>
             <input
-              class="input__value "
+              autocomplete="off"
+              class="input__value"
               data-testid="input-text"
               id="Application root folder path"
               name="root_path"
@@ -142,7 +143,7 @@ exports[`GitBranchSettings should match snapshot 1`] = `
         </div>
       </div>
       <p
-        class="mt-0.5 px-3 text-xs font-normal text-neutral-350 dark:text-neutral-50"
+        class="mt-0.5 px-3 text-xs text-neutral-subtle"
       >
         Provide the folder path in the repository where the application is located.
       </p>

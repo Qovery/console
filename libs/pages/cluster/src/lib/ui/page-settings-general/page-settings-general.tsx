@@ -1,8 +1,9 @@
 import { type Cluster } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
 import { useFormContext } from 'react-hook-form'
+import { ClusterGeneralSettings } from '@qovery/domains/clusters/feature'
 import { LabelSetting } from '@qovery/domains/organizations/feature'
-import { ClusterGeneralSettings, SettingsHeading } from '@qovery/shared/console-shared'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, Button, Callout, ExternalLink, Icon, Section } from '@qovery/shared/ui'
 
 export interface PageSettingsGeneralProps {

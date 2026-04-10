@@ -31,6 +31,7 @@ export function NeedRedeployFlag() {
 
   return (
     <Banner
+      className="relative left-1/2 w-screen -translate-x-1/2"
       color="yellow"
       buttonIconRight="rotate-right"
       buttonLabel={buttonLabel}

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/services/data-access'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
@@ -40,10 +40,11 @@ export function useCancelDeploymentService({
         'Your environment deployment is cancelling',
         undefined,
         () =>
-          navigate(
-            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-              ENVIRONMENT_STAGES_URL(data.last_deployment_id ?? '')
-          ),
+          navigate({
+            to:
+              ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
+              ENVIRONMENT_STAGES_URL(data.last_deployment_id ?? ''),
+          }),
         undefined,
         'See deployment logs'
       )

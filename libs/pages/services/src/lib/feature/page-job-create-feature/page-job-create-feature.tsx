@@ -3,6 +3,7 @@ import { type Dispatch, type SetStateAction, createContext, useContext, useEffec
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { type DockerfileSettingsData } from '@qovery/domains/services/feature'
+import { type ServiceTemplateOptionType, serviceTemplates } from '@qovery/domains/services/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -23,8 +24,6 @@ import {
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ROUTER_SERVICE_JOB_CREATION } from '../../router/router'
-import { type ServiceTemplateOptionType } from '../page-new-feature/service-templates'
-import { serviceTemplates } from '../page-new-feature/service-templates'
 import { getLocalStorageStepIntroduction } from './step-introduction-feature/util-localstorage-step'
 import { TemplateFormSync } from './template-form-sync'
 

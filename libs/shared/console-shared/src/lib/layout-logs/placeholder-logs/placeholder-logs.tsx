@@ -9,13 +9,13 @@ export interface PlaceholderLogsProps {
 
 export function PlaceholderLogs({ type, loadingStatus }: PlaceholderLogsProps) {
   return (
-    <div data-testid="placeholder-screen" className="h-full w-full bg-neutral-650 pt-[88px] text-center">
+    <div data-testid="placeholder-screen" className="h-full w-full bg-background pt-[88px] text-center">
       {type === 'infra' && (
         <div>
           {!loadingStatus || loadingStatus === 'not loaded' ? (
             <LoaderPlaceholder />
           ) : (
-            <p className="mb-1 font-medium text-neutral-50">No logs available (yet).</p>
+            <p className="mb-1 font-medium text-neutral">No logs available (yet).</p>
           )}
         </div>
       )}

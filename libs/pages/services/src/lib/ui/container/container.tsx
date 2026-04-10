@@ -13,7 +13,7 @@ import {
   useEnvironment,
   useServiceCount,
 } from '@qovery/domains/environments/feature'
-import { ShowAllVariablesToggle, VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
+import { VariablesActionToolbar, VariablesProvider } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
   CLUSTER_URL,
@@ -22,7 +22,6 @@ import {
   SERVICES_APPLICATION_CREATION_URL,
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_DATABASE_CREATION_URL,
-  SERVICES_DEPLOYMENTS_URL,
   SERVICES_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
   SERVICES_LIFECYCLE_CREATION_URL,
@@ -115,13 +114,6 @@ export function Container({ children }: PropsWithChildren) {
       link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_GENERAL_URL}`,
     },
     {
-      icon: <EnvironmentStateChip mode="last-deployment" environmentId={environmentId} />,
-      name: 'Deployments history',
-      active:
-        location.pathname === `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
-      link: `${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_DEPLOYMENTS_URL}`,
-    },
-    {
       icon: <Icon iconName="key" iconStyle="regular" />,
       name: 'Variables',
       active: location.pathname === SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_VARIABLES_URL,
@@ -196,7 +188,6 @@ export function Container({ children }: PropsWithChildren) {
     <div className="flex h-14 items-center justify-center px-5">
       {matchEnvVariableRoute ? (
         <>
-          <ShowAllVariablesToggle className="mr-2" />
           <VariablesActionToolbar
             scope="ENVIRONMENT"
             projectId={projectId}

@@ -3,7 +3,6 @@ import { AlertRuleConditionOperator, AlertSeverity } from 'qovery-typescript-axi
 import { AlertRuleConditionFunction } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { v4 as uuid } from 'uuid'
 import { type Value } from '@qovery/shared/interfaces'
@@ -177,9 +176,9 @@ export function MetricConfigurationStep({
 }: {
   isEdit?: boolean
 } = {}) {
-  const { organizationId = '' } = useParams()
   const { openModal, closeModal } = useModal()
   const {
+    organizationId,
     selectedMetrics,
     serviceName,
     alerts,
@@ -279,6 +278,9 @@ export function MetricConfigurationStep({
   const unit = getUnit(watchTag as MetricCategory)
 
   useEffect(() => {
+    if (isEdit) {
+      return
+    }
     const metric = formatMetricLabel(watchTag)
     if (metric) {
       methods.setValue('name', `Alert ${metric}`)
@@ -405,13 +407,13 @@ export function MetricConfigurationStep({
     <FunnelFlowBody key={index} customContentWidth="max-w-[52rem]">
       <FormProvider {...methods}>
         <form onSubmit={onSubmit} className="flex w-full flex-1 flex-col gap-6">
-          <Section className="flex flex-col rounded-lg border border-neutral-250">
+          <Section className="flex flex-col rounded-lg border border-neutral">
             <div className="p-4">
               <div className="flex flex-col gap-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex flex-col ">
                     <Heading>Alert conditions</Heading>
-                    <p className="text-sm text-neutral-350">
+                    <p className="text-sm text-neutral-subtle">
                       Set the metric and condition that will trigger this alert
                     </p>
                   </div>
@@ -435,7 +437,7 @@ export function MetricConfigurationStep({
                           label="Metric"
                           className="w-full"
                           name={field.name}
-                          inputClassName="text-neutral-350"
+                          inputClassName="text-neutral-subtle"
                           value={formatMetricLabel(field.value)}
                           disabled
                         />
@@ -466,7 +468,7 @@ export function MetricConfigurationStep({
                     <InputTextSmall
                       label="Target service"
                       name="service"
-                      inputClassName="pl-7 text-neutral-350"
+                      inputClassName="pl-7 text-neutral-subtle"
                       value={serviceName}
                       placeholder="Search service"
                       disabled
@@ -474,7 +476,7 @@ export function MetricConfigurationStep({
                     <Icon
                       iconName="search"
                       iconStyle="regular"
-                      className="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-neutral-350"
+                      className="absolute left-2 top-1/2 -translate-y-1/2 text-sm text-neutral-subtle"
                     />
                   </div>
                 </div>
@@ -527,7 +529,7 @@ export function MetricConfigurationStep({
                                 className={clsx('w-full', error ? 'border-red-500' : '')}
                                 inputClassName="bg-transparent pr-6"
                               />
-                              <span className="pointer-events-none absolute right-3 top-1/2 flex h-8 -translate-y-1/2 items-center text-xs text-neutral-350">
+                              <span className="pointer-events-none absolute right-3 top-1/2 flex h-8 -translate-y-1/2 items-center text-xs text-neutral-subtle">
                                 {unit}
                               </span>
                             </div>
@@ -561,14 +563,14 @@ export function MetricConfigurationStep({
                 )}
               </div>
             </div>
-            <div className="flex flex-col gap-4 border-t border-neutral-250 p-4">
+            <div className="flex flex-col gap-4 border-t border-neutral p-4">
               <div className="flex flex-col gap-1">
                 <p className="text-sm">Main condition query</p>
-                <div className="rounded border border-neutral-250 bg-neutral-100 p-3 font-code text-sm">
+                <div className="rounded border border-neutral bg-surface-neutral-subtle p-3 font-code text-sm">
                   {shouldHideConditions(metricCategory) ? (
                     <p className="text-xs uppercase text-blue-500">
-                      SEND A NOTIFICATION WHEN <span className="text-neutral-900">{serviceName}</span> HAS{' '}
-                      <span className="text-neutral-900">{formatMetricLabel(metricCategory)?.toUpperCase()}</span>
+                      SEND A NOTIFICATION WHEN <span className="text-neutral">{serviceName}</span> HAS{' '}
+                      <span className="text-neutral">{formatMetricLabel(metricCategory)?.toUpperCase()}</span>
                     </p>
                   ) : (
                     <p className="flex flex-col gap-1 text-xs uppercase text-blue-500">
@@ -576,18 +578,18 @@ export function MetricConfigurationStep({
                         SEND A NOTIFICATION WHEN{' '}
                         {!shouldHideField(metricCategory, 'function') && functionLabel && (
                           <>
-                            THE <span className="text-neutral-900">{functionLabel}</span> OF
+                            THE <span className="text-neutral">{functionLabel}</span> OF
                           </>
                         )}{' '}
-                        <span className="text-neutral-900">{formatMetricLabel(metricCategory)}</span> FOR{' '}
-                        <span className="text-neutral-900">{serviceName}</span>
+                        <span className="text-neutral">{formatMetricLabel(metricCategory)}</span> FOR{' '}
+                        <span className="text-neutral">{serviceName}</span>
                       </span>
                       {(!shouldHideField(metricCategory, 'operator') ||
                         !shouldHideField(metricCategory, 'threshold')) && (
                         <span>
                           IS{' '}
                           {!shouldHideField(metricCategory, 'operator') && (
-                            <span className="text-neutral-900">{watchCondition.operator?.replace(/_/g, ' ')}</span>
+                            <span className="text-neutral">{watchCondition.operator?.replace(/_/g, ' ')}</span>
                           )}{' '}
                           {!shouldHideField(metricCategory, 'threshold') && (
                             <span className="text-red-600">
@@ -600,7 +602,7 @@ export function MetricConfigurationStep({
                             ) : (
                               <>
                                 DURING THE{' '}
-                                <span className="text-neutral-900">
+                                <span className="text-neutral">
                                   {DURATION_OPTIONS.find((option) => option.value === watchForDuration)?.label}
                                 </span>
                               </>
@@ -614,7 +616,7 @@ export function MetricConfigurationStep({
             </div>
           </Section>
 
-          <Section className="flex flex-col gap-4 rounded-lg border border-neutral-250 p-4">
+          <Section className="flex flex-col gap-4 rounded-lg border border-neutral p-4">
             <Heading>Configuration</Heading>
 
             <div className="flex flex-col gap-1">
@@ -652,7 +654,7 @@ export function MetricConfigurationStep({
                     />
                   )}
                 />
-                <p className="pl-2 text-xs text-neutral-350">This message will be displayed in your notification.</p>
+                <p className="pl-2 text-xs text-neutral-subtle">This message will be displayed in your notification.</p>
               </div>
             </div>
 
@@ -711,7 +713,7 @@ export function MetricConfigurationStep({
             </div>
           </Section>
 
-          <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between gap-4 border-t border-neutral-250 bg-white py-4">
+          <div className="sticky bottom-0 left-0 right-0 flex items-center justify-between gap-4 border-t border-neutral bg-background py-4">
             {!isEdit && (
               <div className="flex items-center gap-2">
                 {index > 0 && (

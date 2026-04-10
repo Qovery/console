@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`ExternalLink should match with ExternalLink component 1`] = `
 <div>
   <a
-    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
+    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm"
     href="https://qovery.com"
     rel="noopener noreferrer"
     target="_blank"
@@ -11,7 +11,7 @@ exports[`ExternalLink should match with ExternalLink component 1`] = `
     My external link
     <i
       aria-hidden="true"
-      class="fa-solid fa-arrow-up-right-from-square text-xs leading-5"
+      class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
     />
   </a>
 </div>
@@ -20,8 +20,8 @@ exports[`ExternalLink should match with ExternalLink component 1`] = `
 exports[`Link should match with Link component 1`] = `
 <div>
   <a
-    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-sm"
-    href="/"
+    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm"
+    to="/"
   >
     My link
   </a>

@@ -1,6 +1,5 @@
 import {
   CLUSTER_OVERVIEW_URL,
-  CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
   CLUSTER_SETTINGS_CREDENTIALS_URL,
   CLUSTER_SETTINGS_DANGER_ZONE_URL,
   CLUSTER_SETTINGS_EKS_ANYWHERE_URL,
@@ -12,7 +11,6 @@ import {
   type Route,
 } from '@qovery/shared/routes'
 import { PageOverviewFeature } from '../feature/page-overview-feature/page-overview-feature'
-import PageSettingsAdvancedFeature from '../feature/page-settings-advanced-feature/page-settings-advanced-feature'
 import PageSettingsCredentialsFeature from '../feature/page-settings-credentials-feature/page-settings-credentials-feature'
 import { PageSettingsDangerZoneFeature } from '../feature/page-settings-danger-zone-feature/page-settings-danger-zone-feature'
 import { PageSettingsEKSAnywhereFeature } from '../feature/page-settings-eks-feature/page-settings-eks-feature'
@@ -57,10 +55,6 @@ export const ROUTER_CLUSTER_SETTINGS: Route[] = [
   {
     path: CLUSTER_SETTINGS_NETWORK_URL,
     component: <PageSettingsNetworkFeature />,
-  },
-  {
-    path: CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
-    component: <PageSettingsAdvancedFeature />,
   },
   {
     path: CLUSTER_SETTINGS_DANGER_ZONE_URL,

@@ -1,17 +1,103 @@
+// Monaco base values
+.monaco-editor {
+  background-color: var(--neutral-1) !important;
+  color: var(--neutral-12) !important;
+}
+
+.monaco-editor .margin,
+.monaco-editor .sticky-widget-line-numbers,
+.monaco-editor .sticky-widget-lines-scrollable {
+  background-color: var(--neutral-1) !important;
+}
+
+.monaco-editor .sticky-widget {
+  box-shadow: 0 4px 2px -2px var(--background-1) !important;
+  border-bottom: 1px solid var(--neutral-6) !important;
+}
+
+.monaco-editor .scroll-decoration {
+  box-shadow: 0 6px 6px -6px inset var(--background-1) !important;
+}
+
+.monaco-editor .monaco-editor-background {
+  background-color: var(--neutral-1);
+}
+
+.monaco-editor .line-numbers,
+.monaco-editor .sticky-line-number-inner {
+  color: var(--neutral-11) !important;
+}
+
+.monaco-editor .line-numbers.active-line-number {
+  color: var(--neutral-12) !important;
+}
+
+.monaco-editor .mtk22 {
+  color: var(--accent-11);
+}
+
+.monaco-editor .mtk5,
+.monaco-editor .mtk6,
+.monaco-editor .mtk1,
+.monaco-editor .bracket-highlighting-0 {
+  color: var(--info-11) !important;
+}
+
+.monaco-editor .sticky-widget .sticky-line-content:hover {
+  background-color: var(--neutral-3) !important;
+}
+
+.monaco-editor .lines-content .core-guide-indent {
+  box-shadow: 1px 0 0 0 var(--neutral-6) !important;
+}
+
+.monaco-editor .lines-content .core-guide-indent.indent-active {
+  box-shadow: 1px 0 0 0 var(--neutral-8) !important;
+}
+
+.monaco-editor .view-overlays .current-line-exact {
+  border: 2px solid var(--neutral-6) !important;
+}
+
+.monaco-editor .cursors-layer .cursor {
+  background-color: var(--neutral-11) !important; /* block caret */
+}
+
+.monaco-editor .selected-text {
+  background-color: var(--info-3) !important; /* no alpha */
+}
+
+.monaco-editor .selectionHighlight,
+.monaco-editor .wordHighlightStrong {
+  background-color: var(--neutral-1) !important;
+}
+
+.monaco-editor .codicon-folding-expanded {
+  color: var(--neutral-11) !important;
+}
+
+.monaco-editor .codicon-folding-expanded:hover {
+  color: var(--neutral-12) !important;
+}
+
+.monaco-editor .folded-background {
+  background-color: var(--info-3) !important;
+}
+
 // Audit logs simple editor
 .audit-logs-simple-code-editor > .monaco-editor,
 .audit-logs-failed-code-editor > .monaco-editor {
   .view-line {
-    background-color: #e6f6eb7f;
+    background-color: color-mix(in srgb, var(--positive-8) 10%, transparent);
   }
 
   .margin-view-overlays {
-    background-color: #e6f6eb;
-    border-left: 1px solid #30a46c;
+    background-color: var(--positive-3);
+    border-left: 1px solid var(--positive-9);
   }
 
   .line-numbers {
-    color: #218358 !important;
+    color: var(--positive-11) !important;
   }
 
   // Enforce font-family for line and number sections
@@ -29,13 +115,12 @@
   .mtk7,
   .mtk8,
   .mtk9 {
-    color: var(--color-neutral-500) !important;
+    color: var(--neutral-12) !important;
   }
 
   // JSON attributes + ':'
-  .mtk1,
   .mtk20 {
-    color: #0d74ce !important;
+    color: var(--info-11) !important;
   }
 
   // JSON brackets
@@ -45,24 +130,24 @@
   span.mtk1.bracket-highlighting-3,
   span.mtk1.bracket-highlighting-4,
   span.mtk1.bracket-highlighting-5 {
-    color: #ab6400 !important;
+    color: var(--warning-11) !important;
   }
 }
 
 // Audit logs no failed event style
 .audit-logs-simple-code-editor.monaco-editor {
   .view-line {
-    background-color: #e6f6eb7f;
+    background-color: var(--neutral-2);
     font-family: monospace !important;
   }
 
   .margin-view-overlays {
-    background-color: #e6f6eb;
-    border-left: 1px solid #30a46c;
+    background-color: var(--positive-3);
+    border-left: 1px solid var(--positive-9);
   }
 
   .line-numbers {
-    color: #218358 !important;
+    color: var(--positive-11) !important;
     font-family: monospace !important;
   }
 }
@@ -70,17 +155,110 @@
 // Audit logs failed event style
 .audit-logs-failed-code-editor > .monaco-editor {
   .view-line {
-    background-color: rgba(246, 231, 230, 0.5);
+    background-color: color-mix(in srgb, var(--negative-8) 10%, transparent);
     font-family: monospace !important;
   }
 
   .margin-view-overlays {
-    background-color: #f6e9e6;
-    border-left: 1px solid #fa0419;
+    background-color: var(--negative-3);
+    border-left: 1px solid var(--negative-9);
   }
 
   .line-numbers {
-    color: #e89381 !important;
+    color: var(--negative-11) !important;
     font-family: monospace !important;
+  }
+}
+
+// Audit logs diff
+.monaco-diff-editor.side-by-side {
+  // Enforce font-family for line and number sections
+  .view-line,
+  .line-numbers {
+    font-family: monospace !important;
+    font-size: 0.65rem;
+  }
+
+  // JSON Values
+  .mtk2,
+  .mtk3,
+  .mtk4,
+  .mtk5,
+  .mtk6,
+  .mtk7,
+  .mtk8,
+  .mtk9 {
+    color: var(--neutral-12) !important;
+  }
+
+  // JSON attributes + ':'
+  .mtk20 {
+    color: var(--info-11) !important;
+  }
+
+  // JSON brackets
+  span.mtk1.bracket-highlighting-0,
+  span.mtk1.bracket-highlighting-1,
+  span.mtk1.bracket-highlighting-2,
+  span.mtk1.bracket-highlighting-3,
+  span.mtk1.bracket-highlighting-4,
+  span.mtk1.bracket-highlighting-5 {
+    color: var(--warning-11) !important;
+  }
+
+  //global
+  div:has(> .line-numbers) {
+    border-right: 1px solid var(--neutral-6);
+  }
+
+  //modified
+  .editor.modified {
+    box-shadow: none !important;
+    border-left: 1px solid var(--neutral-6) !important;
+  }
+
+  .cdr.line-insert {
+    background-color: color-mix(in srgb, var(--positive-8) 10%, transparent);
+  }
+
+  .cdr.char-insert {
+    background-color: color-mix(in srgb, var(--positive-8) 20%, transparent);
+  }
+
+  .cmdr.gutter-insert {
+    background-color: var(--positive-3);
+  }
+
+  div:has(> .cmdr.gutter-insert) {
+    border-left: 1px solid var(--positive-9);
+  }
+
+  div:has(> .cmdr.gutter-insert) .line-numbers {
+    color: var(--positive-11) !important;
+  }
+
+  div:has(> .cmdr.gutter-insert) .mtk5 {
+    color: var(--positive-11) !important;
+  }
+
+  //original
+  .cdr.line-delete {
+    background-color: color-mix(in srgb, var(--negative-8) 10%, transparent);
+  }
+
+  .cdr.char-delete {
+    background-color: color-mix(in srgb, var(--negative-8) 20%, transparent);
+  }
+
+  .cmdr.gutter-delete {
+    background-color: var(--negative-3);
+  }
+
+  div:has(> .cmdr.gutter-delete) {
+    border-left: 1px solid var(--negative-9);
+  }
+
+  div:has(> .cmdr.gutter-delete) .line-numbers {
+    color: var(--negative-11) !important;
   }
 }

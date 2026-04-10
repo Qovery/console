@@ -27,7 +27,7 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans, handl
           className="plan-toggle group mt-2 flex cursor-pointer items-center gap-2"
           onClick={() => setShowPlans((prev) => ({ ...prev, [message.id]: !prev[message.id] }))}
         >
-          <div className="w-fit text-ssm font-medium italic text-gray-600">Plan steps</div>
+          <div className="w-fit text-ssm font-medium italic text-neutral-subtle">Plan steps</div>
           <div className="">
             <Icon
               iconName={isPlanVisible ? 'chevron-circle-up' : 'chevron-circle-down'}
@@ -43,20 +43,20 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans, handl
             <div key={index} className="flex items-start gap-2 text-sm">
               <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
               <div className="flex flex-col">
-                <span className={step.status === 'completed' ? 'text-neutral-400' : ''}>{step.description}</span>
-                <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
+                <span className={step.status === 'completed' ? 'text-neutral-subtle' : ''}>{step.description}</span>
+                <span className="text-2xs text-neutral-subtle">{step.status.replace('_', ' ')}</span>
               </div>
             </div>
           ))}
         </div>
       )}
       {renderedMarkdown}
-      <div className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
+      <div className="invisible mt-2 flex gap-2 text-xs text-neutral-subtle group-hover:visible">
         <Button
           type="button"
           variant="surface"
           className={clsx('flex items-center gap-1 px-2 py-1', {
-            'text-brand-500': message.vote === 'upvote',
+            'text-brand': message.vote === 'upvote',
           })}
           onClick={() => handleVote(message.id, 'upvote')}
         >
@@ -66,7 +66,7 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans, handl
           type="button"
           variant="surface"
           className={clsx('flex items-center gap-1 px-2 py-1', {
-            'text-brand-500': message.vote === 'downvote',
+            'text-brand': message.vote === 'downvote',
           })}
           onClick={() => handleVote(message.id, 'downvote')}
         >

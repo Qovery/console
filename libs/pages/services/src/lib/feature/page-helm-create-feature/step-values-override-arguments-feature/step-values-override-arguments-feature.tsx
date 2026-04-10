@@ -1,9 +1,8 @@
-import { type HelmRequestAllOfSourceOneOf, type HelmRequestAllOfSourceOneOf1 } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import { match } from 'ts-pattern'
 import { ValuesOverrideArgumentsSetting } from '@qovery/domains/service-helm/feature'
+import { buildHelmSourceFromGeneralData } from '@qovery/domains/services/feature'
 import { SERVICES_HELM_CREATION_SUMMARY_URL, SERVICES_HELM_CREATION_VALUES_STEP_1_URL } from '@qovery/shared/routes'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -16,28 +15,7 @@ export function StepValuesOverrideArgumentsFeature() {
 
   const generalData = generalForm.getValues()
 
-  const source = match(generalData.source_provider)
-    .with('GIT', (): HelmRequestAllOfSourceOneOf => {
-      return {
-        git_repository: {
-          url: generalData.git_repository?.url ?? generalData.repository ?? '',
-          branch: generalData.branch,
-          root_path: generalData.root_path,
-          git_token_id: generalData.git_token_id,
-        },
-      }
-    })
-    .with(
-      'HELM_REPOSITORY',
-      (): HelmRequestAllOfSourceOneOf1 => ({
-        helm_repository: {
-          repository: generalData.repository,
-          chart_name: generalData.chart_name,
-          chart_version: generalData.chart_version,
-        },
-      })
-    )
-    .exhaustive()
+  const source = buildHelmSourceFromGeneralData(generalData)
 
   const navigate = useNavigate()
 

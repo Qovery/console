@@ -16,7 +16,7 @@ export function ShowPreviousLogsButton({
     return (
       <button
         type="button"
-        className="block w-full bg-neutral-500 py-1.5 text-center text-sm font-medium text-neutral-250 transition hover:bg-neutral-550"
+        className="block w-full bg-surface-neutral py-1.5 text-center text-sm font-medium text-neutral-subtle transition hover:bg-surface-neutral-component"
         onClick={() => {
           setPauseLogs(false)
           setShowPreviousLogs(true)

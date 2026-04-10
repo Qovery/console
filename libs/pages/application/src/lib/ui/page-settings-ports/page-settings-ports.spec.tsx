@@ -125,6 +125,6 @@ describe('PageSettingsPorts', () => {
     props.ports = []
     const { baseElement } = render(<PageSettingsPorts {...props} />)
 
-    await findByText(baseElement, 'No port are set')
+    await findByText(baseElement, 'No ports are set')
   })
 })

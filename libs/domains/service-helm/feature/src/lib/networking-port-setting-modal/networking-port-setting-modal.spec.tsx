@@ -63,4 +63,19 @@ describe('NetworkingPortSettingModal', () => {
       name: 'p1234-foo',
     })
   })
+
+  it('should not close while submit is pending', async () => {
+    const onClose = jest.fn()
+    const onSubmit = jest.fn(() => new Promise<void>(() => {}))
+    const { userEvent } = renderWithProviders(<NetworkingPortSettingModal onSubmit={onSubmit} onClose={onClose} />)
+
+    await userEvent.type(screen.getByLabelText(/service name/i), 'foo')
+    await userEvent.type(screen.getByLabelText(/namespace/i), 'bar')
+    await userEvent.type(screen.getByLabelText(/service port/i), '1234')
+    await userEvent.click(screen.getByText(/create/i))
+    await userEvent.click(screen.getByText(/cancel/i))
+
+    expect(onSubmit).toHaveBeenCalled()
+    expect(onClose).not.toHaveBeenCalled()
+  })
 })

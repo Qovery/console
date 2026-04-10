@@ -47,7 +47,7 @@ export function FieldVariableSuggestion({
           type="button"
           color="neutral"
           variant="surface"
-          className="relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 hover:!border-neutral-250"
+          className="relative right-[37px] top-[1px] h-[34px] w-9 justify-center rounded-l-none border-b-0 border-r-0 border-t-0 bg-surface-neutral-componentActive hover:!border-neutral"
         >
           <Icon className="text-sm" iconName="wand-magic-sparkles" />
         </Button>

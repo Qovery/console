@@ -33,6 +33,8 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
     <div className="relative z-10">
       <Button
         color="neutral"
+        variant="surface"
+        size="md"
         className={!selectedItem ? 'hidden' : ''}
         onClick={() => {
           reset()
@@ -46,28 +48,34 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
           <Icon iconName="xmark" className="ml-2 text-sm" />
         </span>
       </Button>
-      <div className={selectedItem ? 'hidden' : ''}>
-        <Icon iconName="magnifying-glass" className="absolute left-2.5 top-1.5 text-xs text-neutral-50" />
+      <div className={clsx({ hidden: selectedItem }, 'relative')}>
+        <Icon
+          iconName="magnifying-glass"
+          className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
+        />
         <input
           placeholder={placeholder}
-          className="h-7 w-56 rounded border border-neutral-350 bg-transparent pl-7 pr-2 text-xs text-neutral-250 focus:border-brand-400 focus:outline-none"
+          className="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]"
           {...getInputProps({ ref: inputRef })}
         />
       </div>
       <div
-        className={clsx('mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded bg-neutral-600 p-2', {
-          hidden: !isOpen,
-        })}
+        className={clsx(
+          'mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)]',
+          {
+            hidden: !isOpen,
+          }
+        )}
       >
-        <ul {...getMenuProps()}>
+        <ul className="m-0 list-none p-0" {...getMenuProps()}>
           {isOpen && items.length > 0 ? (
             items.map((v, index) => (
               <li
                 key={v}
                 className={clsx(
-                  'text-medium flex h-9 w-full items-center justify-between rounded-sm px-2 text-xs text-neutral-50 transition hover:bg-neutral-550',
+                  'flex h-9 w-full items-center justify-between rounded px-2 text-xs text-neutral transition-colors hover:bg-surface-neutral-subtle',
                   {
-                    'bg-neutral-550': highlightedIndex === index,
+                    'bg-surface-neutral-subtle': highlightedIndex === index,
                   }
                 )}
                 {...getItemProps({ item: v, index })}
@@ -77,8 +85,8 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
               </li>
             ))
           ) : (
-            <p className="text-medium flex w-full flex-col py-2 text-center text-xs text-neutral-50">
-              <Icon iconName="wave-pulse" className="mb-1 block" />
+            <p className="flex w-full flex-col items-center py-2 text-center text-xs text-neutral-subtle">
+              <Icon iconName="wave-pulse" className="mb-1" />
               No results found
             </p>
           )}

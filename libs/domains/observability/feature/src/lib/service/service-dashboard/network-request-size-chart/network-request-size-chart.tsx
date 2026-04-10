@@ -9,20 +9,20 @@ import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NGINX: Queries for nginx metrics (to remove when migrating to envoy)
 const queryResponseSize = (ingressName: string) => `
-  sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"})
+  sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"}) > 0
 `
 
 const queryRequestSize = (ingressName: string) => `
-   sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"})
+   sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"}) > 0
 `
 
 // ENVOY: Queries for envoy metrics
 const queryEnvoyResponseSize = (httpRouteName: string) => `
-  sum(envoy_proxy:resp_bytes_rate:5m{httproute_name="${httpRouteName}"})
+  sum(envoy_proxy:resp_bytes_rate:5m{httproute_name="${httpRouteName}"}) > 0
 `
 
 const queryEnvoyRequestSize = (httpRouteName: string) => `
-   sum(envoy_proxy:req_bytes_rate:5m{httproute_name="${httpRouteName}"})
+   sum(envoy_proxy:req_bytes_rate:5m{httproute_name="${httpRouteName}"}) > 0
 `
 
 export function NetworkRequestSizeChart({

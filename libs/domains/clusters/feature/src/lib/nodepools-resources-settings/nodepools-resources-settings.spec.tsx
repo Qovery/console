@@ -126,5 +126,38 @@ describe('NodepoolsResourcesSettings', () => {
       expect(screen.getByText('vCPU limit: 12 vCPU;')).toBeInTheDocument()
       expect(screen.getByText('Memory limit: 24 GiB')).toBeInTheDocument()
     })
+
+    it('should display cronjob nodepool values', () => {
+      renderWithProviders(
+        wrapWithReactHookForm(<NodepoolsResourcesSettings cluster={mockCluster} filter="cronjob" />, {
+          defaultValues: {
+            karpenter: {
+              qovery_node_pools: {
+                cronjob_override: {
+                  limits: {
+                    enabled: true,
+                    max_cpu_in_vcpu: 10,
+                    max_memory_in_gibibytes: 20,
+                  },
+                  consolidation: {
+                    enabled: true,
+                    days: ['TUESDAY', 'THURSDAY'],
+                    start_time: 'PT13:00',
+                    duration: 'PT2H',
+                  },
+                  consolidate_after: '10m',
+                },
+              },
+            },
+          },
+        })
+      )
+
+      expect(screen.getByText('Cronjob nodepool')).toBeInTheDocument()
+      expect(screen.getByText('1:00 pm to 3:00 pm')).toBeInTheDocument()
+      expect(screen.getByText('Consolidate after: 10m')).toBeInTheDocument()
+      expect(screen.getByText('vCPU limit: 10 vCPU;')).toBeInTheDocument()
+      expect(screen.getByText('Memory limit: 20 GiB')).toBeInTheDocument()
+    })
   })
 })

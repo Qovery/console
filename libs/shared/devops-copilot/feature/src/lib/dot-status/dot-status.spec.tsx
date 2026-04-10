@@ -6,24 +6,24 @@ describe('DotStatus', () => {
     const { container } = render(<DotStatus color="red" />)
     const dot = container.querySelector('div')
 
-    expect(dot).toHaveClass('bg-red-500')
-    expect(dot).toHaveClass('border-red-200')
+    expect(dot).toHaveClass('bg-surface-negative-solid')
+    expect(dot).toHaveClass('border-negative-subtle')
   })
 
   it('should render yellow dot with correct styles', () => {
     const { container } = render(<DotStatus color="yellow" />)
     const dot = container.querySelector('div')
 
-    expect(dot).toHaveClass('bg-yellow-500')
-    expect(dot).toHaveClass('border-yellow-200')
+    expect(dot).toHaveClass('bg-surface-warning-solid')
+    expect(dot).toHaveClass('border-warning-subtle')
   })
 
   it('should render green dot with correct styles', () => {
     const { container } = render(<DotStatus color="green" />)
     const dot = container.querySelector('div')
 
-    expect(dot).toHaveClass('bg-green-500')
-    expect(dot).toHaveClass('border-green-200')
+    expect(dot).toHaveClass('bg-surface-positive-solid')
+    expect(dot).toHaveClass('border-positive-subtle')
   })
 
   it('should match snapshot for red', () => {

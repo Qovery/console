@@ -18,14 +18,14 @@ const statusConfig: Record<
 > = {
   ACTIVE: {
     color: 'green',
-    icon: 'check',
+    icon: 'circle-check',
     label: 'Working',
     tooltip: 'Webhook is correctly configured. Auto-deploy will trigger on git events.',
   },
   NOT_CONFIGURED: {
     color: 'red',
     icon: 'circle-question',
-    label: 'Not Configured',
+    label: 'Not configured',
     tooltip: 'No webhook found for auto-deployment. Use the Update Webhook button to configure it automatically.',
   },
   MISCONFIGURED: {
@@ -37,7 +37,7 @@ const statusConfig: Record<
   UNABLE_TO_VERIFY: {
     color: 'neutral',
     icon: 'circle-exclamation',
-    label: 'Unable to Verify',
+    label: 'Unable to verify',
     tooltip:
       "Couldn't verify webhook status. This could be due to expired credentials, insufficient permissions, or git provider API unavailability.",
   },
@@ -48,7 +48,7 @@ export function GitWebhookStatusBadge({ serviceId }: GitWebhookStatusBadgeProps)
 
   if (isLoading) {
     return (
-      <Badge color="neutral" size="sm" variant="surface" className="gap-1.5">
+      <Badge color="neutral" variant="surface" className="gap-1">
         <LoaderSpinner classWidth="w-3" />
         <span>Checking...</span>
       </Badge>
@@ -59,7 +59,7 @@ export function GitWebhookStatusBadge({ serviceId }: GitWebhookStatusBadgeProps)
     return (
       <Tooltip content="Could not fetch webhook status. Click to retry.">
         <button type="button" onClick={() => refetch()} className="inline-flex">
-          <Badge color="neutral" size="sm" variant="surface" className="cursor-pointer gap-1.5">
+          <Badge color="neutral" variant="surface" className="cursor-pointer gap-1">
             <Icon iconName="circle-exclamation" className="text-xs" />
             <span>Error</span>
           </Badge>
@@ -73,7 +73,7 @@ export function GitWebhookStatusBadge({ serviceId }: GitWebhookStatusBadgeProps)
   return (
     <Tooltip content={config.tooltip}>
       <span>
-        <Badge color={config.color} size="sm" variant="surface" className="gap-1.5">
+        <Badge color={config.color} variant="surface" className="gap-1">
           <Icon iconName={config.icon} className="text-xs" />
           <span>{config.label}</span>
         </Badge>

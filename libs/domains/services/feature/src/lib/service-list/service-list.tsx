@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
   type RowSelectionState,
   type SortingState,
@@ -10,334 +11,99 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import clsx from 'clsx'
+import { type Environment } from 'qovery-typescript-axios'
+import { type ComponentProps, Fragment, useCallback, useMemo, useState } from 'react'
+import { match } from 'ts-pattern'
 import {
-  type ApplicationGitRepository,
-  type ContainerResponse,
-  type Database,
-  type Environment,
-  type HelmSourceRepositoryResponse,
-  type Status,
-} from 'qovery-typescript-axios'
-import { ServiceSubActionDto } from 'qovery-ws-typescript-axios'
-import { type ComponentProps, Fragment, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { P, match } from 'ts-pattern'
-import {
-  type AnyService,
-  type Application,
-  type Helm,
-  type Job,
-  type Terraform,
-} from '@qovery/domains/services/data-access'
-import {
-  IconEnum,
-  ServiceTypeEnum,
-  isHelmGitSource,
-  isHelmRepositorySource,
-  isJobContainerSource,
-  isJobGitSource,
-} from '@qovery/shared/enums'
-import {
-  APPLICATION_GENERAL_URL,
-  APPLICATION_URL,
-  CLUSTER_URL,
-  DATABASE_GENERAL_URL,
-  DATABASE_URL,
-  DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENT_LOGS_URL,
-  SERVICES_GENERAL_URL,
-  SERVICES_NEW_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
-import {
-  AnimatedGradientText,
   Badge,
-  Button,
   Checkbox,
   EmptyState,
-  ExternalLink,
   Icon,
   Link,
+  Section,
   Skeleton,
   StatusChip,
   TableFilter,
   TablePrimitives,
   Tooltip,
-  Truncate,
 } from '@qovery/shared/ui'
-import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
-import { buildGitProviderUrl } from '@qovery/shared/util-git'
-import {
-  containerRegistryKindToIcon,
-  formatCronExpression,
-  pluralize,
-  twMerge,
-  upperCaseFirstLetter,
-} from '@qovery/shared/util-js'
-import { useCheckRunningStatusClosed } from '../hooks/use-check-running-status-closed/use-check-running-status-closed'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { useServices } from '../hooks/use-services/use-services'
-import { LastCommit } from '../last-commit/last-commit'
-import LastVersion from '../last-version/last-version'
-import { ServiceActionToolbar } from '../service-action-toolbar/service-action-toolbar'
-import { ServiceAvatar } from '../service-avatar/service-avatar'
-import { ServiceLinksPopover } from '../service-links-popover/service-links-popover'
-import { ServiceTemplateIndicator } from '../service-template-indicator/service-template-indicator'
+import { ServiceActions } from '../service-actions/service-actions'
 import { ServiceListActionBar } from './service-list-action-bar'
-import { ServiceListSkeleton } from './service-list-skeleton'
+import { ServiceLastDeploymentCell, ServiceNameCell, ServiceVersionCell } from './service-list-cells'
 
 const { Table } = TablePrimitives
-
-function ServiceNameCell({
-  service,
-  environment,
-  deploymentStatus,
-}: {
-  service: AnyService
-  environment: Environment
-  deploymentStatus?: Status
-}) {
-  const navigate = useNavigate()
-
-  const deploymentRequestsCount = Number(deploymentStatus?.deployment_requests_count)
-
-  const serviceLink = match(service)
-    .with(
-      { serviceType: ServiceTypeEnum.DATABASE },
-      ({ id }) =>
-        DATABASE_URL(environment.organization.id, environment.project.id, service.environment.id, id) +
-        DATABASE_GENERAL_URL
-    )
-    .otherwise(
-      ({ id }) =>
-        APPLICATION_URL(environment.organization.id, environment.project.id, service.environment.id, id) +
-        SERVICES_GENERAL_URL
-    )
-
-  const LinkDeploymentStatus = () => {
-    const environmentLog = ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id)
-    const deploymentLog = DEPLOYMENT_LOGS_VERSION_URL(service.id, deploymentStatus?.execution_id)
-    // const precheckLog = ENVIRONMENT_PRE_CHECK_LOGS_URL(deploymentStatus?.execution_id ?? '')
-
-    return match(deploymentStatus?.state)
-      .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
-        <span className="text-ssm font-normal text-neutral-350">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
-      ))
-      .with('CANCELED', () => <span className="text-ssm font-normal text-neutral-350">Last deployment aborted</span>)
-      .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', (s) => (
-        <Link
-          to={environmentLog + deploymentLog}
-          color="brand"
-          underline
-          size="ssm"
-          className="group flex truncate"
-          onClick={(e) => e.stopPropagation()}
-        >
-          <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand-500">
-            <span className="flex items-center gap-0.5">
-              {upperCaseFirstLetter(s)}... <Icon iconName="arrow-up-right" />
-            </span>
-          </AnimatedGradientText>
-        </Link>
-      ))
-      .with('DEPLOYMENT_ERROR', 'DELETE_ERROR', 'STOP_ERROR', 'RESTART_ERROR', 'BUILD_ERROR', () => (
-        <Link
-          // to={deploymentStatus?.steps === null ? environmentLog + precheckLog : environmentLog + deploymentLog}
-          to={environmentLog + deploymentLog}
-          color="red"
-          underline
-          size="ssm"
-          className="truncate"
-          onClick={(e) => e.stopPropagation()}
-        >
-          Last deployment failed
-          <Icon iconName="arrow-up-right" />
-        </Link>
-      ))
-      .otherwise(() => null)
-  }
-
-  return (
-    <div className="flex items-center justify-between">
-      <span className="flex min-w-0 items-center gap-4 text-sm font-medium text-neutral-400">
-        <ServiceTemplateIndicator service={service} size="sm">
-          <ServiceAvatar service={service} size="sm" border="solid" />
-        </ServiceTemplateIndicator>
-        {match(service)
-          .with({ serviceType: 'DATABASE' }, (db) => {
-            return (
-              <span className="flex min-w-0 shrink flex-col truncate pr-2">
-                <span className="flex items-center gap-1.5">
-                  <Tooltip content={db.name}>
-                    <Link
-                      className="inline max-w-max truncate"
-                      color="current"
-                      to={serviceLink}
-                      underline
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {db.name}
-                    </Link>
-                  </Tooltip>
-                </span>
-                <LinkDeploymentStatus />
-              </span>
-            )
-          })
-          .with({ serviceType: 'JOB' }, (job) => {
-            const schedule = match(job)
-              .with(
-                { job_type: 'CRON' },
-                ({ schedule }) =>
-                  `Triggered: ${formatCronExpression(schedule.cronjob?.scheduled_at)} (${schedule.cronjob?.timezone})`
-              )
-              .with({ job_type: 'LIFECYCLE' }, ({ schedule }) => {
-                const actions = [
-                  schedule.on_start && 'Deploy',
-                  schedule.on_stop && 'Stop',
-                  schedule.on_delete && 'Delete',
-                ]
-                  .filter(Boolean)
-                  .join(' - ')
-                return actions ? `Triggered on: ${actions}` : undefined
-              })
-              .exhaustive()
-
-            return (
-              <span className="flex min-w-0 shrink flex-col truncate pr-2">
-                <span className="flex items-center gap-1.5">
-                  <Tooltip content={service.name}>
-                    <Link
-                      className="inline max-w-max truncate"
-                      color="current"
-                      to={serviceLink}
-                      underline
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {service.name}
-                    </Link>
-                  </Tooltip>
-                  <Tooltip content={schedule}>
-                    <span className="truncate text-sm font-normal">
-                      <Icon iconName="info-circle" iconStyle="regular" />
-                    </span>
-                  </Tooltip>
-                </span>
-                <LinkDeploymentStatus />
-              </span>
-            )
-          })
-          .otherwise(() => (
-            <span className="flex min-w-0 shrink flex-col truncate pr-2">
-              <Tooltip content={service.name}>
-                <Link
-                  className="inline max-w-max truncate"
-                  color="current"
-                  to={serviceLink}
-                  underline
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {service.name}
-                </Link>
-              </Tooltip>
-              <LinkDeploymentStatus />
-            </span>
-          ))}
-
-        {deploymentRequestsCount > 0 && (
-          <Tooltip
-            content={`This service has ${deploymentRequestsCount} queued ${pluralize(deploymentRequestsCount, 'deployment')}`}
-          >
-            <Badge className="flex items-center gap-1">
-              <Icon iconName="clock-eight" iconStyle="regular" />
-              {deploymentRequestsCount}
-            </Badge>
-          </Tooltip>
-        )}
-      </span>
-      <div className="flex shrink-0 items-center gap-5">
-        <div className="flex items-center">
-          {'auto_deploy' in service && service.auto_deploy && (
-            <Tooltip content="Auto-deploy">
-              <span>
-                <Icon className="text-neutral-300" iconName="arrows-rotate" />
-              </span>
-            </Tooltip>
-          )}
-          <div onClick={(e) => e.stopPropagation()}>
-            <ServiceLinksPopover
-              organizationId={environment.organization.id}
-              projectId={environment.project.id}
-              environmentId={environment.id}
-              serviceId={service.id}
-              align="start"
-            >
-              <Button variant="surface" color="neutral" radius="full" className="ml-3">
-                <Tooltip content="Links">
-                  <div className="flex items-center gap-1">
-                    <Icon iconName="link" iconStyle="regular" />
-                    <Icon iconName="angle-down" />
-                  </div>
-                </Tooltip>
-              </Button>
-            </ServiceLinksPopover>
-          </div>
-        </div>
-        <div onClick={(e) => e.stopPropagation()}>
-          <ServiceActionToolbar
-            serviceId={service.id}
-            environment={environment}
-            shellAction={match(service)
-              .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => undefined)
-              .with(
-                { serviceType: 'DATABASE', mode: 'CONTAINER' },
-                () => () =>
-                  navigate(
-                    DATABASE_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
-                      DATABASE_GENERAL_URL,
-                    {
-                      state: {
-                        hasShell: true,
-                      },
-                    }
-                  )
-              )
-              .otherwise(
-                () => () =>
-                  navigate(
-                    APPLICATION_URL(environment.organization.id, environment.project.id, environment.id, service.id) +
-                      APPLICATION_GENERAL_URL,
-                    {
-                      state: {
-                        hasShell: true,
-                      },
-                    }
-                  )
-              )}
-          />
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
   environment: Environment
 }
 
-export function ServiceList({ environment, className, ...props }: ServiceListProps) {
-  const {
-    id: environmentId,
-    cluster_id: clusterId,
-    project: { id: projectId },
-    organization: { id: organizationId },
-  } = environment
-  const { data: services = [], isLoading: isServicesLoading } = useServices({ environmentId })
-  const { data: deploymentStages } = useListDeploymentStages({ environmentId })
-  const { data: checkRunningStatusClosed } = useCheckRunningStatusClosed({
-    clusterId,
-    environmentId,
-  })
+export const tableGridLayoutClassName =
+  'grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]'
+
+export const ServiceListSkeleton = () => {
+  return (
+    <div>
+      <div className="flex gap-2 px-3.5 py-2">
+        <Skeleton height={24} width={80} />
+        <Skeleton height={24} width={90} />
+      </div>
+      <hr className="w-full border-neutral" />
+      <div className="flex flex-col gap-8">
+        <Section className="flex flex-col gap-3.5">
+          <Table.Root className="w-full" containerClassName="rounded-lg border-none">
+            <Table.Header>
+              <Table.Row className={tableGridLayoutClassName}>
+                {[...Array(6)].map((_, index) => (
+                  <Table.ColumnHeaderCell key={index} className="flex items-center first:border-r">
+                    {index === 0 ? (
+                      <div className="flex items-center justify-between">
+                        <Skeleton height={16} width={16} />
+                      </div>
+                    ) : index === 2 ? null : (
+                      <Skeleton height={14} width={120} />
+                    )}
+                  </Table.ColumnHeaderCell>
+                ))}
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {[...Array(3)].map((_, index) => (
+                <Table.Row key={index} className={tableGridLayoutClassName}>
+                  {[...Array(6)].map((_, index) => (
+                    <Table.Cell key={index} className="flex h-14 items-center first:border-r">
+                      {index === 0 ? (
+                        <div className="flex items-center justify-between">
+                          <Skeleton height={16} width={16} />
+                        </div>
+                      ) : index === 2 ? (
+                        <Skeleton height={16} width={16} rounded />
+                      ) : (
+                        <Skeleton height={24} width={120} />
+                      )}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Root>
+        </Section>
+      </div>
+    </div>
+  )
+}
+
+export function ServiceList({ className, containerClassName, environment, ...props }: ServiceListProps) {
+  const environmentId = environment.id || ''
+  const organizationId = environment.organization.id || ''
+  const projectId = environment.project.id || ''
+
+  const { data: services } = useServices({ environmentId, suspense: true })
+  const { data: deploymentStages } = useListDeploymentStages({ environmentId, suspense: true })
+
   const [sorting, setSorting] = useState<SortingState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
   const navigate = useNavigate()
@@ -355,8 +121,19 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     return map
   }, [deploymentStages])
 
+  const actualServices = useMemo(() => {
+    return services.map((service) => {
+      return {
+        ...service,
+        status: match(service)
+          .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => service.deploymentStatus?.state)
+          .otherwise(() => service.runningStatus?.state),
+      }
+    })
+  }, [services])
+
   const sortedServices = useMemo(() => {
-    return [...services].sort((a, b) => {
+    return [...actualServices].sort((a, b) => {
       const aIsSkipped = skippedServicesMap.get(a.id) || false
       const bIsSkipped = skippedServicesMap.get(b.id) || false
 
@@ -366,9 +143,9 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
 
       return 0
     })
-  }, [services, skippedServicesMap])
+  }, [actualServices, skippedServicesMap])
 
-  const columnHelper = createColumnHelper<(typeof services)[number]>()
+  const columnHelper = createColumnHelper<(typeof actualServices)[number]>()
   const columns = useMemo(
     () => [
       columnHelper.display({
@@ -376,8 +153,7 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         enableColumnFilter: false,
         enableSorting: false,
         header: ({ table }) => (
-          <div className="h-5">
-            {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+          <div className="flex h-full w-full items-center pl-4">
             <Checkbox
               checked={
                 table.getIsSomeRowsSelected()
@@ -398,388 +174,89 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
         cell: ({ row }) => {
           const isDisabled = !row.getCanSelect()
           const checkbox = (
-            <Checkbox
-              checked={row.getIsSelected()}
-              disabled={isDisabled}
-              onCheckedChange={(checked) => {
-                if (checked === 'indeterminate') {
-                  return
-                }
-                row.toggleSelected(checked)
-              }}
-            />
+            <div className="h-4">
+              {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
+              <Checkbox
+                checked={row.getIsSelected()}
+                disabled={isDisabled}
+                onCheckedChange={(checked) => {
+                  if (checked === 'indeterminate') {
+                    return
+                  }
+                  row.toggleSelected(checked)
+                }}
+              />
+            </div>
           )
 
           return (
-            <label className="absolute inset-y-0 left-0 flex items-center p-4" onClick={(e) => e.stopPropagation()}>
-              {isDisabled ? (
-                <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
-                  <span>{checkbox}</span>
-                </Tooltip>
-              ) : (
-                checkbox
-              )}
-            </label>
+            <div className="flex h-full w-full items-center pl-4">
+              <label onClick={(e) => e.stopPropagation()}>
+                {isDisabled ? (
+                  <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
+                    <span>{checkbox}</span>
+                  </Tooltip>
+                ) : (
+                  checkbox
+                )}
+              </label>
+            </div>
           )
         },
       }),
       columnHelper.accessor('name', {
         header: 'Service',
-        enableColumnFilter: true,
-        enableSorting: false,
-        filterFn: 'arrIncludesSome',
+        enableColumnFilter: false,
+        enableSorting: true,
         size: 57,
-        meta: {
-          customFacetEntry({ value, row }) {
-            const service = row?.original
-            const serviceType = service?.serviceType
-            if (!serviceType) {
-              return null
-            }
-            return (
-              <span className="flex items-center gap-2 text-sm font-medium">
-                <ServiceAvatar service={service} size="xs" />
-                <Truncate text={value} truncateLimit={20} />
-              </span>
-            )
-          },
-        },
         cell: (info) => {
-          return (
-            <ServiceNameCell
-              service={info.row.original}
-              deploymentStatus={info.row.original.deploymentStatus}
-              environment={environment}
-            />
-          )
+          return <ServiceNameCell service={info.row.original} environment={environment} />
         },
       }),
-      columnHelper.accessor('runningStatus.stateLabel', {
-        id: 'runningStatus',
-        header: 'Service status',
-        enableColumnFilter: true,
+      columnHelper.accessor('status', {
+        header: () => null,
+        enableColumnFilter: false,
         enableSorting: false,
-        filterFn: 'arrIncludesSome',
-        size: 15,
         cell: (info) => {
-          const service = info.row.original
-          const link = match(service)
-            .with(
-              { serviceType: ServiceTypeEnum.DATABASE },
-              ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
-            )
-            .otherwise(({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL)
+          const serviceStatus = match(info.row.original)
+            .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => info.row.original.deploymentStatus?.state)
+            .otherwise(() => info.row.original.runningStatus?.state)
 
-          const value = match(service.runningStatus.triggered_action)
-            .with(
-              { sub_action: ServiceSubActionDto.TERRAFORM_PLAN_ONLY },
-              () => 'Plan ' + info.getValue()?.toLowerCase()
-            )
-            .with(
-              { sub_action: ServiceSubActionDto.TERRAFORM_PLAN_AND_APPLY },
-              () => 'Apply ' + info.getValue()?.toLowerCase()
-            )
-            .with(
-              { sub_action: ServiceSubActionDto.TERRAFORM_MIGRATE_STATE },
-              () => 'Migrate state ' + info.getValue()?.toLowerCase()
-            )
-            .with(
-              { sub_action: ServiceSubActionDto.TERRAFORM_FORCE_UNLOCK_STATE },
-              () => 'Force unlock ' + info.getValue()?.toLowerCase()
-            )
-            .with(
-              { sub_action: ServiceSubActionDto.TERRAFORM_DESTROY },
-              () => 'Destroy ' + info.getValue()?.toLocaleString()
-            )
-            .with({ sub_action: ServiceSubActionDto.NONE }, () => info.getValue())
-            .with(undefined, () => info.getValue())
-            .exhaustive()
-
-          // TODO [To update once rust-backed will be deployed]: Remove this workaround
-          if (checkRunningStatusClosed) {
-            return (
-              <Tooltip content="See cluster">
-                <Link
-                  as="button"
-                  to={CLUSTER_URL(organizationId, environment.cluster_id)}
-                  onClick={(e) => e.stopPropagation()}
-                  className="gap-2 whitespace-nowrap text-sm"
-                  size="md"
-                  color="neutral"
-                  variant="outline"
-                  radius="full"
-                >
-                  <StatusChip status="UNAVAILABLE" />
-                  Status unavailable
-                </Link>
-              </Tooltip>
-            )
-          }
-
-          const serviceStatus = match(service)
-            .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, (s) => s.deploymentStatus?.state)
-            .otherwise((s) => s.runningStatus?.state)
-
-          return (
-            <Skeleton width={102} height={34} show={!value}>
-              <div className="flex items-center gap-2">
-                <Tooltip content="See overview">
-                  <Link
-                    as="button"
-                    to={link}
-                    onClick={(e) => e.stopPropagation()}
-                    className="gap-2 whitespace-nowrap text-sm"
-                    size="md"
-                    color="neutral"
-                    variant="outline"
-                    radius="full"
-                  >
-                    <StatusChip status={serviceStatus} />
-                    {value}
-                  </Link>
-                </Tooltip>
-              </div>
-            </Skeleton>
-          )
+          return <StatusChip status={serviceStatus} />
         },
+      }),
+      columnHelper.display({
+        id: 'last_deployment',
+        header: 'Last deployment',
+        enableColumnFilter: false,
+        enableSorting: false,
+        cell: (info) => <ServiceLastDeploymentCell service={info.row.original} environment={environment} />,
       }),
       columnHelper.accessor('version', {
         header: 'Target version',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 30,
         cell: (info) => {
-          const service = info.row.original
-
-          const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) =>
-            gitRepository && (
-              <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                <div className="flex w-44 flex-col gap-1.5">
-                  <span className="flex items-center gap-2 text-neutral-400">
-                    <Icon className="h-3 w-3" name={gitRepository.provider} />
-                    <ExternalLink
-                      href={gitRepository.url}
-                      underline
-                      color="current"
-                      size="ssm"
-                      withIcon={false}
-                      className="font-normal"
-                    >
-                      <Truncate text={gitRepository.name} truncateLimit={20} />
-                    </ExternalLink>
-                  </span>
-                  {gitRepository.branch && gitRepository.url && (
-                    <span className="flex items-center gap-2 text-neutral-400">
-                      <Icon iconName="code-branch" iconStyle="regular" />
-                      <ExternalLink
-                        href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
-                        underline
-                        color="current"
-                        size="ssm"
-                        withIcon={false}
-                        className="font-normal"
-                      >
-                        <Truncate text={gitRepository.branch} truncateLimit={20} />
-                      </ExternalLink>
-                    </span>
-                  )}
-                </div>
-                <LastCommit
-                  organizationId={organizationId}
-                  projectId={projectId}
-                  gitRepository={gitRepository}
-                  service={service}
-                />
-              </div>
-            )
-          const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
-            containerImage && (
-              <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-                <div className="flex w-44 flex-col gap-1.5">
-                  <span className="flex items-center gap-2 text-neutral-350">
-                    <Icon width={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
-                    <Tooltip
-                      content={
-                        <span className="text-center">
-                          {containerImage.registry.name.length >= 20 && (
-                            <>
-                              {containerImage.registry.name} <br />
-                            </>
-                          )}{' '}
-                          {containerImage.registry.url}
-                        </span>
-                      }
-                    >
-                      <span className="text-neutral-350">
-                        {containerImage.registry.name.length >= 20 ? (
-                          <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={20} />
-                        ) : (
-                          containerImage.registry.name.toLowerCase()
-                        )}
-                      </span>
-                    </Tooltip>
-                  </span>
-                  <span className="flex items-center gap-2 text-neutral-350">
-                    <Icon width={16} name={IconEnum.CONTAINER} />
-                    <Truncate text={`${containerImage.image_name}`} truncateLimit={20} />
-                  </span>
-                </div>
-                {(service.serviceType === 'CONTAINER' ||
-                  (service.serviceType === 'JOB' && isJobContainerSource(service.source))) && (
-                  <LastVersion
-                    organizationId={organizationId}
-                    projectId={projectId}
-                    service={service}
-                    version={containerImage.tag}
-                  />
-                )}
-              </div>
-            )
-
-          const datasourceInfo = (datasource?: Pick<Database, 'accessibility' | 'mode' | 'type' | 'version'>) =>
-            datasource && (
-              <div className="flex flex-col gap-1.5 text-ssm text-neutral-350">
-                <span className="flex items-center gap-2">
-                  <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
-                  {datasource.type.toLowerCase().replace('sql', 'SQL').replace('db', 'DB')}
-                </span>
-                <span className="flex items-center gap-2">
-                  <Icon name={datasource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />v
-                  {datasource.version}
-                </span>
-              </div>
-            )
-
-          const helmInfo = (helmRepository?: HelmSourceRepositoryResponse) =>
-            helmRepository && (
-              <div className="flex items-center gap-1">
-                <div className="flex w-44 flex-col gap-1.5" onClick={(e) => e.stopPropagation()}>
-                  <span className="flex gap-2">
-                    <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
-                    <Tooltip
-                      content={
-                        <span className="text-center">
-                          {helmRepository.repository?.name.length > 20 && (
-                            <>
-                              {helmRepository.repository?.name} <br />
-                            </>
-                          )}
-                          {helmRepository.repository?.url}
-                        </span>
-                      }
-                    >
-                      <span className="text-neutral-350">
-                        {helmRepository.repository?.name.length > 20 ? (
-                          <Truncate text={helmRepository.repository?.name.toLowerCase()} truncateLimit={20} />
-                        ) : (
-                          helmRepository.repository?.name.toLowerCase()
-                        )}
-                      </span>
-                    </Tooltip>
-                  </span>
-                  <div className="flex gap-2">
-                    <Icon width={12} name={IconEnum.HELM_OFFICIAL} />
-                    <span className="text-neutral-350">
-                      <Truncate text={helmRepository.chart_name} truncateLimit={20} />
-                    </span>
-                  </div>
-                </div>
-                {service.serviceType === 'HELM' && (
-                  <LastVersion
-                    organizationId={organizationId}
-                    projectId={projectId}
-                    service={service}
-                    version={helmRepository.chart_version}
-                  />
-                )}
-              </div>
-            )
-
-          const cell = match({ service })
-            .with(
-              { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobGitSource) }) },
-              ({ service }) => {
-                const {
-                  source: { docker },
-                } = service
-                return gitInfo(service, docker?.git_repository)
-              }
-            )
-            .with(
-              { service: P.intersection({ serviceType: 'JOB' }, { source: P.when(isJobContainerSource) }) },
-              ({
-                service: {
-                  source: { image },
-                },
-              }) => containerInfo(image)
-            )
-            .with({ service: { serviceType: 'APPLICATION' } }, ({ service }) =>
-              gitInfo(service, service.git_repository)
-            )
-            .with({ service: { serviceType: 'CONTAINER' } }, ({ service: { image_name, tag, registry } }) =>
-              containerInfo({ image_name, tag, registry })
-            )
-            .with({ service: { serviceType: 'DATABASE' } }, ({ service: { accessibility, mode, type, version } }) =>
-              datasourceInfo({ accessibility, mode, type, version })
-            )
-            .with(
-              { service: P.intersection({ serviceType: 'HELM' }, { source: P.when(isHelmGitSource) }) },
-              ({ service }) => {
-                const {
-                  source: { git },
-                } = service
-                return gitInfo(service, git?.git_repository)
-              }
-            )
-            .with(
-              { service: P.intersection({ serviceType: 'HELM' }, { source: P.when(isHelmRepositorySource) }) },
-              ({
-                service: {
-                  source: { repository },
-                },
-              }) => helmInfo(repository)
-            )
-            .with({ service: { serviceType: 'TERRAFORM' } }, ({ service }) => {
-              return gitInfo(service, service?.terraform_files_source?.git?.git_repository)
-            })
-            .exhaustive()
-          return cell
+          return (
+            <ServiceVersionCell service={info.row.original} organizationId={organizationId} projectId={projectId} />
+          )
         },
       }),
-      columnHelper.accessor('deploymentStatus.last_deployment_date', {
-        header: 'Last deployment',
+      columnHelper.display({
+        id: 'actions',
+        header: 'Actions',
         enableColumnFilter: false,
-        enableSorting: true,
-        size: 3,
+        enableSorting: false,
         cell: (info) => {
-          const service = info.row.original
-          const value = info.getValue()
-          const linkLog =
-            ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-            DEPLOYMENT_LOGS_VERSION_URL(service?.id, service?.deploymentStatus?.execution_id)
-
-          return value ? (
-            <Link
-              to={linkLog}
-              className="group flex w-full translate-x-3 justify-end gap-1 text-right text-neutral-350 hover:translate-x-0 hover:text-brand-500"
-              onClick={(event) => event.stopPropagation()}
-            >
-              <Tooltip content={dateUTCString(value)} delayDuration={200}>
-                <span className="whitespace-nowrap text-ssm font-normal">{timeAgo(new Date(value))}</span>
-              </Tooltip>
-              <Icon
-                iconName="arrow-up-right"
-                iconStyle="regular"
-                className="text-ssm opacity-0 group-hover:opacity-100"
-              />
-            </Link>
-          ) : (
-            <span className="block w-full text-right">-</span>
+          return (
+            <div className="flex h-full items-center" onClick={(e) => e.stopPropagation()}>
+              <ServiceActions serviceId={info.row.original.id} environment={environment} />
+            </div>
           )
         },
       }),
     ],
-    [columnHelper, organizationId, projectId, environmentId, navigate, checkRunningStatusClosed, environment]
+    [columnHelper, environment, organizationId, projectId]
   )
 
   const table = useReactTable({
@@ -807,110 +284,152 @@ export function ServiceList({ environment, className, ...props }: ServiceListPro
     },
   })
 
-  if (services.length === 0 && isServicesLoading) {
-    return <ServiceListSkeleton />
-  }
+  const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
+
+  const statusFacetedUniqueValues = Array.from(table.getColumn('status')?.getFacetedUniqueValues().entries() ?? [])
+
+  const ServicesBadges = useCallback(() => {
+    const getLabel = (value: string, count: number) => {
+      const statusLabel = value.toLowerCase()
+
+      return match(value)
+        .with('RUNNING', 'STOPPED', () => `${count} ${statusLabel}`)
+        .with('ERROR', () => `${count} in error`)
+        .otherwise(() => `${count} ${pluralize(count, statusLabel)}`)
+    }
+
+    return statusFacetedUniqueValues.some(([value]) => value === undefined) ? (
+      <Skeleton height={24} width={70} />
+    ) : (
+      statusFacetedUniqueValues.map(([value, count]: [string, number]) => (
+        <Badge
+          key={value}
+          variant="surface"
+          color={match(value)
+            .with('RUNNING', () => 'green' as const)
+            .with('ERROR', () => 'red' as const)
+            .otherwise(() => 'neutral' as const)}
+          className="text-ssm font-medium"
+        >
+          {getLabel(value, count)}
+        </Badge>
+      ))
+    )
+  }, [statusFacetedUniqueValues])
 
   if (services.length === 0) {
     return (
       <EmptyState
         title="No service found"
         description="You can create a service from the button on the top"
-        className="mt-2 rounded-t-sm bg-white pt-10"
+        className="border-none"
+        icon="wave-pulse"
       >
         <Link
           as="button"
-          size="lg"
-          className="mt-5 gap-2"
-          to={`${SERVICES_URL(organizationId, projectId, environmentId)}${SERVICES_NEW_URL}`}
+          size="md"
+          color="neutral"
+          className="gap-1.5"
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
+          params={{ organizationId, projectId, environmentId }}
         >
-          New service
           <Icon iconName="circle-plus" iconStyle="regular" />
+          New service
         </Link>
       </EmptyState>
     )
   }
 
-  const selectedRows = table.getSelectedRowModel().rows.map(({ original }) => original)
+  const handleNavigateToService = (serviceId: string) => {
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      params: { organizationId, projectId, environmentId, serviceId },
+    })
+  }
 
   return (
-    <div className="flex grow flex-col justify-between">
-      <Table.Root className={twMerge('w-full min-w-[1080px] overflow-x-scroll text-ssm', className)} {...props}>
-        <Table.Header>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <Table.Row key={headerGroup.id}>
-              {headerGroup.headers.map((header, i) => (
-                <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'pl-4' : ''} ${i === 1 ? 'border-r pl-0' : ''} font-medium`}
-                  key={header.id}
-                  style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
-                >
-                  {header.column.getCanFilter() ? (
-                    <TableFilter column={header.column} />
-                  ) : header.column.getCanSort() ? (
-                    <button
-                      type="button"
-                      className={twMerge(
-                        'flex items-center gap-1 truncate',
-                        header.column.getCanSort() ? 'cursor-pointer select-none' : ''
-                      )}
-                      onClick={header.column.getToggleSortingHandler()}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {match(header.column.getIsSorted())
-                        .with('asc', () => <Icon className="text-ssm" iconName="arrow-down" />)
-                        .with('desc', () => <Icon className="text-ssm" iconName="arrow-up" />)
-                        .with(false, () => null)
-                        .exhaustive()}
-                    </button>
-                  ) : (
-                    flexRender(header.column.columnDef.header, header.getContext())
-                  )}
-                </Table.ColumnHeaderCell>
-              ))}
-            </Table.Row>
-          ))}
-        </Table.Header>
-        <Table.Body>
-          {table.getRowModel().rows.map((row) => (
-            <Fragment key={row.id}>
-              <Table.Row
-                className={twMerge(
-                  'h-[68px] cursor-pointer hover:bg-neutral-100',
-                  row.getIsSelected() ? 'bg-neutral-100' : ''
-                )}
-                onClick={() => {
-                  const link = match(row.original)
-                    .with(
-                      { serviceType: ServiceTypeEnum.DATABASE },
-                      ({ id }) => DATABASE_URL(organizationId, projectId, environmentId, id) + DATABASE_GENERAL_URL
-                    )
-                    .otherwise(
-                      ({ id }) => APPLICATION_URL(organizationId, projectId, environmentId, id) + SERVICES_GENERAL_URL
-                    )
-
-                  navigate(link)
-                }}
-              >
-                {row.getVisibleCells().map((cell, i) => (
-                  <Table.Cell
-                    key={cell.id}
-                    className={`px-6 ${i === 1 ? 'border-r pl-0' : ''} first:relative`}
-                    style={{ width: i === 0 ? '20px' : `${cell.column.getSize()}%` }}
+    <div>
+      <div className="flex gap-2 bg-surface-neutral px-4 py-2">
+        <ServicesBadges />
+      </div>
+      <div className="flex grow flex-col justify-between">
+        <Table.Root
+          className={twMerge(
+            'w-full min-w-[1080px] overflow-x-scroll overflow-y-scroll rounded-lg text-xs xl:overflow-auto',
+            className
+          )}
+          containerClassName={twMerge('rounded-none border-none', containerClassName)}
+          {...props}
+        >
+          <Table.Header className="border-t border-neutral">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <Table.Row key={headerGroup.id} className={`h-9 w-full ${tableGridLayoutClassName}`}>
+                {headerGroup.headers.map((header, i) => (
+                  <Table.ColumnHeaderCell
+                    key={header.id}
+                    className={twMerge(
+                      'relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0',
+                      i === 1 || i === 0 ? 'border-none p-0' : ''
+                    )}
                   >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Table.Cell>
+                    {header.column.getCanFilter() ? (
+                      <TableFilter column={header.column} />
+                    ) : header.column.getCanSort() ? (
+                      <button
+                        type="button"
+                        className={twMerge(
+                          'flex items-center gap-1 truncate',
+                          header.column.getCanSort() ? 'cursor-pointer select-none' : ''
+                        )}
+                        onClick={header.column.getToggleSortingHandler()}
+                      >
+                        {flexRender(header.column.columnDef.header, header.getContext())}
+                        {match(header.column.getIsSorted())
+                          .with('asc', () => <Icon className="text-ssm" iconName="arrow-down" />)
+                          .with('desc', () => <Icon className="text-ssm" iconName="arrow-up" />)
+                          .with(false, () => null)
+                          .exhaustive()}
+                      </button>
+                    ) : (
+                      flexRender(header.column.columnDef.header, header.getContext())
+                    )}
+                  </Table.ColumnHeaderCell>
                 ))}
               </Table.Row>
-            </Fragment>
-          ))}
-        </Table.Body>
-      </Table.Root>
-      <ServiceListActionBar
-        environment={environment}
-        selectedRows={selectedRows}
-        resetRowSelection={() => table.resetRowSelection()}
-      />
+            ))}
+          </Table.Header>
+          <Table.Body>
+            {table.getRowModel().rows.map((row) => (
+              <Fragment key={row.id}>
+                <Table.Row
+                  className={`h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle ${tableGridLayoutClassName}`}
+                  tabIndex={0}
+                  onClick={() => handleNavigateToService(row.original.id)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') handleNavigateToService(row.original.id)
+                  }}
+                >
+                  {row.getVisibleCells().map((cell, i) => (
+                    <Table.Cell
+                      key={cell.id}
+                      className={clsx('relative flex h-full items-center border-r border-neutral last:border-r-0', {
+                        'border-none p-0': i === 1 || i === 0,
+                      })}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+              </Fragment>
+            ))}
+          </Table.Body>
+        </Table.Root>
+        <ServiceListActionBar
+          environment={environment}
+          selectedRows={selectedRows}
+          resetRowSelection={() => table.resetRowSelection()}
+        />
+      </div>
     </div>
   )
 }

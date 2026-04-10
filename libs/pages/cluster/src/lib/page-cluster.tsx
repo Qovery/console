@@ -1,11 +1,6 @@
 import { useContext } from 'react'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import {
-  ClusterTerminal,
-  ClusterTerminalContext,
-  ClusterTerminalProvider,
-  useCluster,
-} from '@qovery/domains/clusters/feature'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { NotFoundPage } from '@qovery/pages/layout'
 import { CLUSTER_OVERVIEW_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { ROUTER_CLUSTER } from './router/router'
@@ -15,7 +10,6 @@ function PagesClusterWrapped() {
   const { organizationId = '', clusterId = '' } = useParams()
 
   const { data: cluster, isSuccess } = useCluster({ organizationId, clusterId })
-  const { open } = useContext(ClusterTerminalContext)
 
   // cluster can be `undefined` if the `find` method in `select` return nothing. However the query itself is still success.
   // Don't seems to have a better way for this case in react-query for now
@@ -36,17 +30,12 @@ function PagesClusterWrapped() {
           element={<Navigate replace to={CLUSTER_URL(organizationId, clusterId) + CLUSTER_OVERVIEW_URL} />}
         />
       </Routes>
-      {open && cluster && <ClusterTerminal organizationId={cluster.organization.id} clusterId={cluster.id} />}
     </Container>
   )
 }
 
 export function PagesCluster() {
-  return (
-    <ClusterTerminalProvider>
-      <PagesClusterWrapped />
-    </ClusterTerminalProvider>
-  )
+  return <PagesClusterWrapped />
 }
 
 export default PagesCluster

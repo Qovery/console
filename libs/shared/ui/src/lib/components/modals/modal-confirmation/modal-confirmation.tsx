@@ -1,4 +1,4 @@
-import { type PropsWithChildren, type ReactNode } from 'react'
+import { type PropsWithChildren, type ReactNode, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import Button from '../../button/button'
 import { Callout } from '../../callout/callout'
@@ -11,7 +11,7 @@ export interface ModalConfirmationProps extends PropsWithChildren {
   title: string
   description?: ReactNode
   name?: string
-  callback: () => void
+  callback: () => Promise<void> | void
   warning?: ReactNode
   placeholder?: string
   ctaButton?: string
@@ -35,11 +35,20 @@ export function ModalConfirmation({
 }: ModalConfirmationProps) {
   const { handleSubmit, control } = useForm()
   const { closeModal } = useModal()
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const onSubmit = handleSubmit((data) => {
+  const onSubmit = handleSubmit(async (data) => {
     if (data) {
-      closeModal()
-      callback()
+      setIsSubmitting(true)
+      try {
+        await callback()
+        closeModal()
+      } catch {
+        // Errors are handled by the caller (notifications), keep the modal open for retry.
+        return
+      } finally {
+        setIsSubmitting(false)
+      }
     }
   })
 
@@ -49,8 +58,8 @@ export function ModalConfirmation({
 
   return (
     <div className="p-6">
-      <h2 className="h4 mb-2 max-w-sm text-neutral-400 dark:text-neutral-50">{title}</h2>
-      <div className="mb-6 text-sm text-neutral-350 dark:text-neutral-50">
+      <h2 className="h4 mb-2 max-w-sm text-neutral">{title}</h2>
+      <div className="mb-6 text-sm text-neutral-subtle">
         {confirmationMethod === 'action' ? (
           description ? (
             description
@@ -66,7 +75,7 @@ export function ModalConfirmation({
               <span
                 data-testid="copy-cta"
                 onClick={copyToClipboard}
-                className="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-sky-500"
+                className="link relative -top-0.5 ml-1 inline max-w-[250px] cursor-pointer truncate text-sm text-info"
               >
                 {name} <Icon iconName="copy" />
               </span>
@@ -109,14 +118,22 @@ export function ModalConfirmation({
           </Callout.Root>
         )}
         <div className="flex justify-end gap-3">
-          <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
+          <Button
+            type="button"
+            color="neutral"
+            variant="plain"
+            size="lg"
+            onClick={() => closeModal()}
+            disabled={isSubmitting}
+          >
             Cancel
           </Button>
           <Button
             type="submit"
             size="lg"
             color={confirmationMethod === 'action' ? 'red' : 'brand'}
-            disabled={ctaButtonDisabled}
+            disabled={ctaButtonDisabled || isSubmitting}
+            loading={isSubmitting}
           >
             {ctaButton}
           </Button>

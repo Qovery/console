@@ -5,6 +5,18 @@ import * as useDeploymentStatusImport from '../hooks/use-deployment-status/use-d
 import * as useServiceImport from '../hooks/use-service/use-service'
 import NeedRedeployFlag from './need-redeploy-flag'
 
+jest.mock('@tanstack/react-router', () => ({
+  useParams: () => ({
+    organizationId: 'organization-id',
+    projectId: 'project-id',
+    environmentId: 'environment-id',
+    serviceId: 'service-id',
+    applicationId: '',
+    databaseId: '',
+  }),
+  useNavigate: () => jest.fn(),
+}))
+
 const useDeployServiceSpy = jest.spyOn(useDeployServiceImport, 'useDeployService') as jest.Mock
 
 describe('NeedRedeployFlag', () => {
@@ -53,6 +65,19 @@ describe('NeedRedeployFlag', () => {
     renderWithProviders(<NeedRedeployFlag />)
 
     screen.getByRole('button', { name: 'Redeploy now' })
+  })
+
+  it('should pass serviceId from route params to useService', () => {
+    const useServiceSpy = jest.spyOn(useServiceImport, 'useService').mockReturnValue({ data: undefined } as never)
+
+    jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({ data: undefined } as never)
+
+    renderWithProviders(<NeedRedeployFlag />)
+
+    expect(useServiceSpy).toHaveBeenCalledWith({
+      environmentId: 'environment-id',
+      serviceId: 'service-id',
+    })
   })
 
   it('should call the onSubmit function on button click', async () => {
