@@ -1,6 +1,6 @@
 import { useParams, useRouter, useSearch } from '@tanstack/react-router'
 import { DatabaseModeEnum, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useMemo } from 'react'
+import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import {
   ServiceActions,
@@ -47,9 +47,24 @@ export function HeaderLogs({
     return service?.serviceType === 'DATABASE' && service?.mode === DatabaseModeEnum.MANAGED
   }, [service])
 
-  if (!service) return null
+  const isOngoing = match(serviceStatus?.status_details?.status)
+    .with('ONGOING', 'CANCELING', () => true)
+    .otherwise(() => false)
 
-  const totalDurationSec = serviceStatus?.steps?.total_computing_duration_sec ?? 0
+  const [, forceUpdate] = useState(0)
+
+  useEffect(() => {
+    if (!isOngoing) return
+    const interval = setInterval(() => forceUpdate((n) => n + 1), 1000)
+    return () => clearInterval(interval)
+  }, [isOngoing])
+
+  const totalDurationSec =
+    isOngoing && serviceStatus?.last_deployment_date
+      ? Math.floor((Date.now() - new Date(serviceStatus.last_deployment_date).getTime()) / 1000)
+      : serviceStatus?.steps?.total_computing_duration_sec ?? 0
+
+  if (!service) return null
 
   const isNotDeployedOrStopped =
     serviceStatus?.status_details?.status === 'ERROR' ||

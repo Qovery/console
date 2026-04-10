@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
-import { type MouseEvent, Suspense, useContext } from 'react'
+import { type MouseEvent, Suspense, useContext, useEffect, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { type AnyService, type ServiceType } from '@qovery/domains/services/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
@@ -83,6 +83,18 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
     Boolean(gitRepository) &&
     Boolean(service?.id && service?.name && service?.serviceType && 'environment' in service && service.environment)
 
+  const isOngoing = match(lastDeployment?.status_details?.status)
+    .with('ONGOING', 'CANCELING', () => true)
+    .otherwise(() => false)
+
+  const [, forceUpdate] = useState(0)
+
+  useEffect(() => {
+    if (!isOngoing) return
+    const interval = setInterval(() => forceUpdate((n) => n + 1), 1000)
+    return () => clearInterval(interval)
+  }, [isOngoing])
+
   if (!lastDeployment) {
     return (
       <EmptyState
@@ -116,9 +128,6 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
     )
   }
 
-  const deploymentStartedLabel = match(lastDeployment.status_details.status)
-    .with('ONGOING', 'CANCELING', () => 'Running since')
-    .otherwise(() => undefined)
   const deploymentRelativeTime = `${timeAgo(new Date(lastDeployment.auditing_data.created_at))} ago`
 
   const preventParentLinkNavigation = (event: MouseEvent<HTMLElement>) => {
@@ -169,7 +178,6 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
             <>
               <DotSeparator />
               <span className="text-neutral-subtle">
-                {deploymentStartedLabel ? `${deploymentStartedLabel} ` : ''}
                 <Tooltip content={dateUTCString(lastDeployment.auditing_data.created_at)}>
                   <span>{deploymentRelativeTime}</span>
                 </Tooltip>

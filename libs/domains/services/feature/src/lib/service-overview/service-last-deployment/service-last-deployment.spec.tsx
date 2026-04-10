@@ -169,7 +169,7 @@ describe('ServiceLastDeployment', () => {
     expect(clickEvent.defaultPrevented).toBe(true)
   })
 
-  it('renders a running since label when the deployment is ongoing', () => {
+  it('renders a live relative time when the deployment is ongoing', () => {
     mockUseDeploymentHistory.mockReturnValue({
       data: [
         {
@@ -191,9 +191,7 @@ describe('ServiceLastDeployment', () => {
       />
     )
 
-    expect(
-      screen.getByText((_, element) => element?.textContent === 'Running since mocked-time ago')
-    ).toBeInTheDocument()
+    expect(screen.getByText('mocked-time ago')).toBeInTheDocument()
   })
 
   it('renders the AI diagnostic panel only when the last deployment failed', () => {
