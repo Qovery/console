@@ -5,7 +5,7 @@ import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
-import { Button } from '@qovery/shared/ui'
+import { Button, Section } from '@qovery/shared/ui'
 import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
 import { JobConfigurationForm } from './job-configuration-form/job-configuration-form'
 
@@ -123,39 +123,48 @@ export const JobConfiguration = () => {
   if (!service) return
 
   return (
-    <FormProvider {...methods}>
-      <div className="flex w-full flex-col justify-between">
-        <div>
-          <SettingsHeading
-            title={match(service)
-              .with({ service_type: 'JOB', job_type: 'CRON' }, () => 'Job configuration')
-              .with({ service_type: 'JOB', job_type: 'LIFECYCLE' }, () => 'Triggers')
-              .otherwise(() => '')}
-            description={match(service)
-              .with(
-                { service_type: 'JOB', job_type: 'CRON' },
-                () => 'Job configuration allows you to control the behavior of your service.'
-              )
-              .with(
-                { service_type: 'JOB', job_type: 'LIFECYCLE' },
-                () => 'Define the events triggering the execution of this job and the commands to execute.'
-              )
-              .otherwise(() => '')}
-          />
-          <div className="max-w-content-with-navigation-left">
-            <form onSubmit={onSubmit} className="space-y-10">
-              <JobConfigurationForm
-                jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
+    <div className="flex w-full flex-col justify-between">
+      <Section className="px-8 pb-8 pt-6">
+        <FormProvider {...methods}>
+          <div className="flex w-full flex-col justify-between">
+            <div>
+              <SettingsHeading
+                title={match(service)
+                  .with({ service_type: 'JOB', job_type: 'CRON' }, () => 'Job configuration')
+                  .with({ service_type: 'JOB', job_type: 'LIFECYCLE' }, () => 'Triggers')
+                  .otherwise(() => '')}
+                description={match(service)
+                  .with(
+                    { service_type: 'JOB', job_type: 'CRON' },
+                    () => 'Job configuration allows you to control the behavior of your service.'
+                  )
+                  .with(
+                    { service_type: 'JOB', job_type: 'LIFECYCLE' },
+                    () => 'Define the events triggering the execution of this job and the commands to execute.'
+                  )
+                  .otherwise(() => '')}
               />
-              <div className="flex justify-end">
-                <Button type="submit" size="lg" disabled={!methods.formState.isValid} loading={isLoadingEditService}>
-                  Save
-                </Button>
+              <div className="max-w-content-with-navigation-left">
+                <form onSubmit={onSubmit} className="space-y-10">
+                  <JobConfigurationForm
+                    jobType={service.job_type === 'CRON' ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB}
+                  />
+                  <div className="flex justify-end">
+                    <Button
+                      type="submit"
+                      size="lg"
+                      disabled={!methods.formState.isValid}
+                      loading={isLoadingEditService}
+                    >
+                      Save
+                    </Button>
+                  </div>
+                </form>
               </div>
-            </form>
+            </div>
           </div>
-        </div>
-      </div>
-    </FormProvider>
+        </FormProvider>
+      </Section>
+    </div>
   )
 }
