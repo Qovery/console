@@ -1,6 +1,9 @@
-import { type ReactNode } from 'react'
+import { type ClusterRegion } from 'qovery-typescript-axios'
+import { type ReactNode, useMemo } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
-import { Heading, InputText, InputToggle, Section } from '@qovery/shared/ui'
+import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
+import { type Value } from '@qovery/shared/interfaces'
+import { Heading, IconFlag, InputSelect, InputText, InputToggle, Section } from '@qovery/shared/ui'
 import { type ClusterEksSettingsFormData } from './cluster-eks-settings-form.utils'
 
 export interface ClusterEksSettingsProps {
@@ -13,6 +16,18 @@ export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => 
     control,
     name: 'infrastructure_charts_parameters.eks_anywhere_parameters.cluster_backup.enabled',
   })
+
+  const { data: cloudProviders = [] } = useCloudProviders()
+  const awsRegions: Value[] = useMemo(() => {
+    const awsProvider = cloudProviders.find((p) => p.short_name === 'AWS')
+    return (
+      awsProvider?.regions?.map((region: ClusterRegion) => ({
+        label: `${region.city} (${region.name})`,
+        value: region.name,
+        icon: <IconFlag code={region.country_code} />,
+      })) ?? []
+    )
+  }, [cloudProviders])
 
   return (
     <>
@@ -75,18 +90,17 @@ export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => 
             <Controller
               name="infrastructure_charts_parameters.eks_anywhere_parameters.cluster_backup.s3.region"
               control={control}
-              rules={{ required: 'Please enter a S3 region.' }}
+              rules={{ required: 'Please select a S3 region.' }}
               render={({ field, fieldState: { error } }) => (
-                <InputText
+                <InputSelect
                   dataTestId="input-backup-s3-region"
-                  type="text"
-                  name={field.name}
                   value={field.value}
-                  onChange={(e) => {
-                    field.onChange(e.target.value)
-                  }}
+                  onChange={field.onChange}
                   label="Region"
+                  options={awsRegions}
                   error={error?.message}
+                  isSearchable
+                  portal
                 />
               )}
             />
