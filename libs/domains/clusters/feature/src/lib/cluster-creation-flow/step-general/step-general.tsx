@@ -236,7 +236,7 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
               )}
             </Section>
 
-            {watchCloudProvider === 'AWS' && (
+            {watchCloudProvider === 'AWS' && watchInstallationType !== 'PARTIALLY_MANAGED' && (
               <Section className="mb-10 gap-3">
                 <Heading>Extra tags</Heading>
                 {labelsSetting}

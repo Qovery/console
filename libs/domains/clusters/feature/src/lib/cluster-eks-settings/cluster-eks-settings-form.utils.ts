@@ -84,6 +84,7 @@ export const getInfrastructureChartsParametersWithEksAnywhereGit = (
         provider: data.provider ?? currentEksAnywhereParameters?.git_repository?.provider,
       },
       yaml_file_path: yamlFilePath,
+      cluster_backup: data.infrastructure_charts_parameters?.eks_anywhere_parameters?.cluster_backup,
     },
   }
 }

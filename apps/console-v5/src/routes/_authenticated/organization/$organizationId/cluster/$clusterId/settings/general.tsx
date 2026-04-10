@@ -103,7 +103,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
               <BlockContent title="General information">
                 <ClusterGeneralSettings fromDetail />
               </BlockContent>
-              {cluster.cloud_provider === 'AWS' && (
+              {cluster.cloud_provider === 'AWS' && cluster.installation_type !== 'PARTIALLY_MANAGED' && (
                 <Section className="mb-10 gap-3">
                   <Heading>Extra tags</Heading>
                   <LabelSetting filterPropagateToCloudProvider={true} />

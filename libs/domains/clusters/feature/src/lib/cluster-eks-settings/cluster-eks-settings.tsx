@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { Heading, InputText, Section } from '@qovery/shared/ui'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
+import { Heading, InputText, InputToggle, Section } from '@qovery/shared/ui'
 import { type ClusterEksSettingsFormData } from './cluster-eks-settings-form.utils'
 
 export interface ClusterEksSettingsProps {
@@ -9,6 +9,10 @@ export interface ClusterEksSettingsProps {
 
 export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => {
   const { control } = useFormContext<ClusterEksSettingsFormData>()
+  const backupEnabled = useWatch({
+    control,
+    name: 'infrastructure_charts_parameters.eks_anywhere_parameters.cluster_backup.enabled',
+  })
 
   return (
     <>
@@ -20,6 +24,113 @@ export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => 
           </p>
         </div>
         {gitSettings}
+      </Section>
+
+      <Section className="gap-4">
+        <div className="space-y-1">
+          <Heading>Backup</Heading>
+          <p className="text-sm text-neutral-subtle">Configure the backup of your EKS Anywhere cluster.</p>
+        </div>
+
+        <Controller
+          name="infrastructure_charts_parameters.eks_anywhere_parameters.cluster_backup.enabled"
+          control={control}
+          render={({ field }) => (
+            <InputToggle
+              name={field.name}
+              value={field.value ?? false}
+              onChange={field.onChange}
+              title="Enable backup"
+              description="Enable periodic backup of the EKS Anywhere cluster state to S3."
+            />
+          )}
+        />
+
+        {backupEnabled && (
+          <>
+            <div className="space-y-1">
+              <Heading>S3</Heading>
+              <p className="text-sm text-neutral-subtle">S3 bucket configuration for backup artifacts.</p>
+            </div>
+
+            <Controller
+              name="infrastructure_charts_parameters.eks_anywhere_parameters.cluster_backup.s3.bucket"
+              control={control}
+              rules={{ required: 'Please enter a S3 bucket name.' }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  dataTestId="input-backup-s3-bucket"
+                  type="text"
+                  name={field.name}
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value)
+                  }}
+                  label="Bucket"
+                  error={error?.message}
+                />
+              )}
+            />
+
+            <Controller
+              name="infrastructure_charts_parameters.eks_anywhere_parameters.cluster_backup.s3.region"
+              control={control}
+              rules={{ required: 'Please enter a S3 region.' }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  dataTestId="input-backup-s3-region"
+                  type="text"
+                  name={field.name}
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value)
+                  }}
+                  label="Region"
+                  error={error?.message}
+                />
+              )}
+            />
+
+            <Controller
+              name="infrastructure_charts_parameters.eks_anywhere_parameters.cluster_backup.s3.role_arn"
+              control={control}
+              rules={{ required: 'Please enter an IAM role ARN.' }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  dataTestId="input-backup-s3-role-arn"
+                  type="text"
+                  name={field.name}
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value)
+                  }}
+                  label="Role ARN"
+                  hint="IAM role ARN assumed to upload backup artifacts."
+                  error={error?.message}
+                />
+              )}
+            />
+
+            <Controller
+              name="infrastructure_charts_parameters.eks_anywhere_parameters.cluster_backup.s3.key_prefix"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  dataTestId="input-backup-s3-key-prefix"
+                  type="text"
+                  name={field.name}
+                  value={field.value}
+                  onChange={(e) => {
+                    field.onChange(e.target.value)
+                  }}
+                  label="Key prefix"
+                  hint="Optional S3 key prefix used for backup object keys."
+                  error={error?.message}
+                />
+              )}
+            />
+          </>
+        )}
       </Section>
 
       <Section className="gap-4">
