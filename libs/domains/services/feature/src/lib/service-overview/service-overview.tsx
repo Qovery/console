@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { DatabaseModeEnum, type Environment } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Heading, Icon, Link, Navbar, Section } from '@qovery/shared/ui'
@@ -7,7 +7,6 @@ import { useRunningStatus } from '../hooks/use-running-status/use-running-status
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
 import { NeedRedeployFlag } from '../need-redeploy-flag/need-redeploy-flag'
-import { InstanceMetrics } from './instance-metrics/instance-metrics'
 import { ServiceHeader } from './service-header/service-header'
 import { ServiceInstance } from './service-instance/service-instance'
 import { ServiceLastDeployment } from './service-last-deployment/service-last-deployment'
@@ -31,12 +30,6 @@ function ServiceOverviewContent({
   const [activeTab, setActiveTab] = useState('variables')
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
 
-  const isDatabaseManaged = useMemo(
-    () =>
-      service?.serviceType === 'DATABASE' &&
-      (service as { mode?: DatabaseModeEnum })?.mode === DatabaseModeEnum.MANAGED,
-    [service]
-  )
   const isLifecycleJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE', [service])
   const isTerraformService = useMemo(() => service?.serviceType === 'TERRAFORM', [service])
   const isKedaAutoscaling = useMemo(
@@ -65,28 +58,6 @@ function ServiceOverviewContent({
 
   if (!service || !environment) {
     return null
-  }
-
-  if (service?.serviceType === 'DATABASE') {
-    return (
-      <>
-        <NeedRedeployFlag />
-        <Section className="flex flex-1 grow flex-col gap-6 overflow-auto pb-8 pt-6">
-          <ServiceHeader environment={environment} serviceId={service.id} service={service} />
-          {isDatabaseManaged ? (
-            <div className="flex flex-col items-center gap-1 border border-neutral bg-surface-neutral-subtle py-10 text-sm text-neutral">
-              <span className="font-medium">Metrics for managed databases are not available</span>
-              <span className="text-neutral-subtle">Check your cloud provider console to get more information</span>
-            </div>
-          ) : (
-            <Section className="gap-3">
-              <Heading>Instances</Heading>
-              <InstanceMetrics environmentId={environment.id} serviceId={service.id} service={service} />
-            </Section>
-          )}
-        </Section>
-      </>
-    )
   }
 
   return (

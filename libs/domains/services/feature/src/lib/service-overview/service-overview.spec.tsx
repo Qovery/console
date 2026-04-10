@@ -113,15 +113,14 @@ describe('ServiceOverview', () => {
     expect(screen.getByText('observability-callout')).toBeInTheDocument()
   })
 
-  it('renders managed database empty metrics message', () => {
+  it('renders service instance block for managed database', () => {
     mockUseService.mockReturnValue({
       data: { id: 'service-db-1', serviceType: 'DATABASE', mode: DatabaseModeEnum.MANAGED },
     })
 
     renderWithProviders(<ServiceOverview environment={environment} />)
 
-    expect(screen.getByText('Metrics for managed databases are not available')).toBeInTheDocument()
-    expect(screen.getByText('Check your cloud provider console to get more information')).toBeInTheDocument()
+    expect(screen.getByText('service-instance')).toBeInTheDocument()
   })
 
   it('renders terraform resources section and hides service instances block', async () => {
