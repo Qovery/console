@@ -2,9 +2,9 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import JobConfigureSettings, { type JobConfigureSettingsProps } from './job-configure-settings'
+import { JobConfigurationForm, type JobConfigurationFormProps } from './job-configuration-form'
 
-const props: JobConfigureSettingsProps = {
+const props: JobConfigurationFormProps = {
   jobType: ServiceTypeEnum.CRON_JOB,
 }
 
@@ -19,10 +19,10 @@ const defaultValues: JobConfigureData & Pick<JobGeneralData, 'image_entry_point'
   max_duration: 0,
 }
 
-describe('JobConfigureSettings', () => {
+describe('JobConfigurationForm', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
-      wrapWithReactHookForm(<JobConfigureSettings {...props} />, {
+      wrapWithReactHookForm(<JobConfigurationForm {...props} />, {
         defaultValues,
       })
     )
@@ -34,7 +34,7 @@ describe('JobConfigureSettings', () => {
 
     it('should render 3 enabled box and 3 inputs', () => {
       renderWithProviders(
-        wrapWithReactHookForm(<JobConfigureSettings jobType={ServiceTypeEnum.LIFECYCLE_JOB} />, {
+        wrapWithReactHookForm(<JobConfigurationForm jobType={ServiceTypeEnum.LIFECYCLE_JOB} />, {
           defaultValues,
         })
       )
@@ -49,7 +49,7 @@ describe('JobConfigureSettings', () => {
 
     it('should render 4 inputs and 1 select', async () => {
       renderWithProviders(
-        wrapWithReactHookForm(<JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} />, {
+        wrapWithReactHookForm(<JobConfigurationForm jobType={ServiceTypeEnum.CRON_JOB} />, {
           defaultValues,
         })
       )
@@ -60,7 +60,7 @@ describe('JobConfigureSettings', () => {
 
     it('should display the cron value in a human readable way', async () => {
       const { userEvent } = renderWithProviders(
-        wrapWithReactHookForm(<JobConfigureSettings jobType={ServiceTypeEnum.CRON_JOB} />, {
+        wrapWithReactHookForm(<JobConfigurationForm jobType={ServiceTypeEnum.CRON_JOB} />, {
           defaultValues,
         })
       )

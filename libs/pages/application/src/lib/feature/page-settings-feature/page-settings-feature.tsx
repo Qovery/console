@@ -4,7 +4,6 @@ import { useService } from '@qovery/domains/services/feature'
 import { isJobGitSource } from '@qovery/shared/enums'
 import {
   APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
-  APPLICATION_SETTINGS_CONFIGURE_URL,
   APPLICATION_SETTINGS_DANGER_ZONE_URL,
   APPLICATION_SETTINGS_DOCKERFILE_URL,
   APPLICATION_SETTINGS_HEALTHCHECKS_URL,
@@ -63,15 +62,6 @@ export function PageSettingsFeature() {
     url: pathSettings + APPLICATION_SETTINGS_DOCKERFILE_URL,
   }
 
-  const configureJobSetting = {
-    title: match(service)
-      .with({ service_type: 'JOB', job_type: 'CRON' }, () => 'Job configuration')
-      .with({ service_type: 'JOB', job_type: 'LIFECYCLE' }, () => 'Triggers')
-      .otherwise(() => ''),
-    icon: IconAwesomeEnum.GEARS,
-    url: pathSettings + APPLICATION_SETTINGS_CONFIGURE_URL,
-  }
-
   const healthchecksSettings = {
     title: 'Health Checks',
     icon: IconAwesomeEnum.SHIELD_CHECK,
@@ -128,7 +118,6 @@ export function PageSettingsFeature() {
     ])
     .with({ serviceType: 'JOB' }, (s) => [
       ...(s.job_type === 'LIFECYCLE' && isJobGitSource(s.source) ? [dockerfileSetting] : []),
-      configureJobSetting,
       advancedSettings,
       dangerzoneSettings,
     ])

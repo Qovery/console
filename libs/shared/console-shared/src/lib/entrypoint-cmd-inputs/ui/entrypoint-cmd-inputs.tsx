@@ -28,7 +28,7 @@ export function EntrypointCmdInputs({
   const watchImageTag = watch('image_tag')
 
   return (
-    <>
+    <div className="space-y-2">
       <Controller
         name={imageEntryPointFieldName}
         control={control}
@@ -74,7 +74,7 @@ export function EntrypointCmdInputs({
           </span>
         </div>
       )}
-    </>
+    </div>
   )
 }
 

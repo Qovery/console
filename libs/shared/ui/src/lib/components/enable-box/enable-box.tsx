@@ -56,7 +56,7 @@ export function EnableBox(props: EnableBoxProps) {
             {title}
           </label>
         </div>
-        {description && <p className="ml-8 text-sm text-neutral">{description}</p>}
+        {description && <p className="ml-7 text-sm text-neutral">{description}</p>}
       </div>
 
       {currentChecked && <div onClick={(e) => e.stopPropagation()}>{children}</div>}
