@@ -1,6 +1,7 @@
 import { type Job } from '@qovery/domains/services/data-access'
 import * as servicesDomain from '@qovery/domains/services/feature'
 import { cronjobFactoryMock, lifecycleJobFactoryMock } from '@qovery/shared/factories'
+import { Section } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { JobConfiguration } from './job-configuration'
 
@@ -21,6 +22,14 @@ jest.mock('@tanstack/react-router', () => ({
   }),
 }))
 
+const render = () => {
+  return renderWithProviders(
+    <Section>
+      <JobConfiguration />
+    </Section>
+  )
+}
+
 describe('PageSettingsPortsFeature with CRON JOB service', () => {
   beforeEach(() => {
     useServiceSpy.mockReturnValue({
@@ -33,7 +42,7 @@ describe('PageSettingsPortsFeature with CRON JOB service', () => {
   })
 
   it('should call edit service with correct payload', async () => {
-    const { userEvent } = renderWithProviders(<JobConfiguration />)
+    const { userEvent } = render()
 
     const inputCron = screen.getByLabelText('Schedule - Cron expression')
     const inputNbRestarts = screen.getByLabelText('Number of restarts')
@@ -82,7 +91,7 @@ describe('PageSettingsPortsFeature with LIFECYCLE JOB service', () => {
     })
   })
   it('should call edit service with correct payload', async () => {
-    const { userEvent } = renderWithProviders(<JobConfiguration />)
+    const { userEvent } = render()
 
     const checkboxDelete = screen.getByLabelText('Delete')
     await userEvent.click(checkboxDelete)
