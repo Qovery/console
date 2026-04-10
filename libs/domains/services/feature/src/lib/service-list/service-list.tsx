@@ -58,7 +58,7 @@ export const ServiceListSkeleton = () => {
             <Table.Header>
               <Table.Row className={tableGridLayoutClassName}>
                 {[...Array(6)].map((_, index) => (
-                  <Table.ColumnHeaderCell key={index} className="flex items-center first:border-r">
+                  <Table.ColumnHeaderCell key={index} className="flex items-center">
                     {index === 0 ? (
                       <div className="flex items-center justify-between">
                         <Skeleton height={16} width={16} />
@@ -74,7 +74,7 @@ export const ServiceListSkeleton = () => {
               {[...Array(3)].map((_, index) => (
                 <Table.Row key={index} className={tableGridLayoutClassName}>
                   {[...Array(6)].map((_, index) => (
-                    <Table.Cell key={index} className="flex h-14 items-center first:border-r">
+                    <Table.Cell key={index} className="flex h-14 items-center">
                       {index === 0 ? (
                         <div className="flex items-center justify-between">
                           <Skeleton height={16} width={16} />
