@@ -226,7 +226,7 @@ exports[`InstanceMetrics should match snapshot with data 1`] = `
 exports[`InstanceMetrics should match snapshot with empty data 1`] = `
 <div>
   <div
-    class="flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral bg-surface-neutral-subtle p-10 text-center text-sm text-neutral-subtle"
+    class="flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral p-10 text-center text-sm text-neutral-subtle bg-surface-neutral"
   >
     <span
       class="relative inline-flex h-10 min-h-10 w-10 min-w-10 items-center justify-center"
@@ -274,7 +274,7 @@ exports[`InstanceMetrics should match snapshot with empty data 1`] = `
 exports[`InstanceMetrics should match snapshot with null data 1`] = `
 <div>
   <div
-    class="flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral bg-surface-neutral-subtle p-10 text-center text-sm text-neutral-subtle"
+    class="flex h-56 flex-col items-center justify-center gap-4 rounded-lg border border-neutral p-10 text-center text-sm text-neutral-subtle bg-surface-neutral"
   >
     <span
       class="relative inline-flex h-10 min-h-10 w-10 min-w-10 items-center justify-center"
