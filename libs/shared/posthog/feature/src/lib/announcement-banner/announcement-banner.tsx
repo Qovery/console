@@ -86,34 +86,48 @@ export function AnnouncementBanner() {
       buttonLabel={hasActionButton ? buttonLabel : undefined}
       buttonIconRight={hasActionButton ? 'arrow-up-right-from-square' : undefined}
       onClickButton={hasActionButton ? () => window.open(buttonUrl, '_blank', 'noopener,noreferrer') : undefined}
-      dismissible={dismissible}
-      onDismiss={handleDismiss}
+      dismissible={false}
     >
-      {hasMultiple && (
-        <div className="absolute left-2 top-1/2 flex -translate-y-1/2 items-center gap-1">
-          <Button
-            type="button"
-            className={twMerge('!ml-0 flex h-6 w-6 items-center justify-center !p-0', buttonColorClass)}
-            onClick={handlePrev}
-            aria-label="Previous"
-          >
-            <Icon iconName="chevron-left" iconStyle="solid" />
-          </Button>
-          <span className="min-w-[28px] text-center text-xs">
-            {safeIndex + 1}/{visibleBanners.length}
-          </span>
-          <Button
-            type="button"
-            className={twMerge('!ml-0 flex h-6 w-6 items-center justify-center !p-0', buttonColorClass)}
-            onClick={handleNext}
-            aria-label="Next"
-          >
-            <Icon iconName="chevron-right" iconStyle="solid" />
-          </Button>
-        </div>
-      )}
       {title && <strong className="mr-2">{title}</strong>}
       {message}
+      {(hasMultiple || dismissible) && (
+        <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center">
+          {hasMultiple && (
+            <>
+              <Button
+                type="button"
+                className={twMerge('!ml-0 flex h-7 w-7 items-center justify-center !p-0', buttonColorClass)}
+                onClick={handlePrev}
+                aria-label="Previous"
+              >
+                <Icon iconName="chevron-left" iconStyle="solid" />
+              </Button>
+              <span className="min-w-[28px] text-center text-xs">{safeIndex + 1}/{visibleBanners.length}</span>
+              <Button
+                type="button"
+                className={twMerge('!ml-0 flex h-7 w-7 items-center justify-center !p-0', buttonColorClass)}
+                onClick={handleNext}
+                aria-label="Next"
+              >
+                <Icon iconName="chevron-right" iconStyle="solid" />
+              </Button>
+            </>
+          )}
+          {hasMultiple && dismissible && (
+            <div className="mx-3 h-4 w-px opacity-20" style={{ backgroundColor: 'currentColor' }} />
+          )}
+          {dismissible && (
+            <Button
+              type="button"
+              className={twMerge('!ml-0 flex h-7 w-7 items-center justify-center !p-0', buttonColorClass)}
+              onClick={handleDismiss}
+              aria-label="Dismiss"
+            >
+              <Icon iconName="xmark" iconStyle="solid" />
+            </Button>
+          )}
+        </div>
+      )}
     </Banner>
   )
 }
