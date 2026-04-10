@@ -173,12 +173,19 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         ),
         cell: ({ row }) => {
           const isDisabled = !row.getCanSelect()
+          const toggleRowSelection = () => {
+            if (isDisabled) {
+              return
+            }
+            row.toggleSelected(!row.getIsSelected())
+          }
           const checkbox = (
             <div className="h-4">
               {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
               <Checkbox
                 checked={row.getIsSelected()}
                 disabled={isDisabled}
+                onClick={(e) => e.stopPropagation()}
                 onCheckedChange={(checked) => {
                   if (checked === 'indeterminate') {
                     return
@@ -189,18 +196,22 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             </div>
           )
 
-          return (
-            <div className="flex h-full w-full items-center pl-4">
-              <label onClick={(e) => e.stopPropagation()}>
-                {isDisabled ? (
-                  <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
-                    <span>{checkbox}</span>
-                  </Tooltip>
-                ) : (
-                  checkbox
-                )}
-              </label>
-            </div>
+          return isDisabled ? (
+            <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
+              <span className="absolute inset-0 flex items-center pl-4" onClick={(e) => e.stopPropagation()}>
+                {checkbox}
+              </span>
+            </Tooltip>
+          ) : (
+            <label
+              className="absolute inset-0 flex items-center pl-4"
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleRowSelection()
+              }}
+            >
+              {checkbox}
+            </label>
           )
         },
       }),
