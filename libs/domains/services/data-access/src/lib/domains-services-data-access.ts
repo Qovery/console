@@ -716,6 +716,7 @@ type DeployRequest =
   | {
       serviceId: string
       serviceType: DatabaseType
+      applyImmediately?: boolean
     }
   | {
       serviceId: string
@@ -1015,8 +1016,8 @@ export const mutations = {
         mutation: containerActionsApi.deployContainer.bind(containerActionsApi, serviceId, request),
         serviceType,
       }))
-      .with({ serviceType: 'DATABASE' }, ({ serviceId, serviceType }) => ({
-        mutation: databaseActionsApi.deployDatabase.bind(databaseActionsApi, serviceId),
+      .with({ serviceType: 'DATABASE' }, ({ serviceId, serviceType, applyImmediately = false }) => ({
+        mutation: databaseActionsApi.deployDatabase.bind(databaseActionsApi, serviceId, applyImmediately),
         serviceType,
       }))
       .with({ serviceType: 'JOB' }, ({ serviceId, serviceType, forceEvent, request }) => ({
