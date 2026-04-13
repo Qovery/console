@@ -27,7 +27,7 @@ describe('ShowNewLogsButton', () => {
       <ShowNewLogsButton pauseLogs={true} newMessagesAvailable={true} setPauseLogs={setPauseLogs} />
     )
 
-    const button = screen.getByRole('button', { name: /new logs/i })
+    const button = screen.getByRole('button', { name: /jump to latest log/i })
     await userEvent.click(button)
     expect(setPauseLogs).toHaveBeenCalledWith(false)
   })
