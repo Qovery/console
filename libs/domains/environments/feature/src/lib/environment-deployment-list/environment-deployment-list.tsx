@@ -91,7 +91,6 @@ export function EnvironmentDeploymentList() {
   const mutationCancelDeployment = useCallback(
     ({ deploymentRequestId }: { deploymentRequestId?: string }) => {
       openModalConfirmation({
-        mode: environment?.mode,
         title: 'Confirm cancel',
         description:
           'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',

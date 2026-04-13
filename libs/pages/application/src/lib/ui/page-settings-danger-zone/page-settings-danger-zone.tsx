@@ -1,14 +1,12 @@
-import { type EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { BlockContentDelete } from '@qovery/shared/ui'
 
 export interface PageSettingsDangerZoneProps {
   deleteService: () => void
   serviceName?: string
-  environmentMode?: EnvironmentModeEnum
 }
 
 export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
-  const { deleteService, serviceName, environmentMode } = props
+  const { deleteService, serviceName } = props
   return (
     <div className="flex w-full flex-col justify-between">
       <div className="max-w-content-with-navigation-left p-8">
@@ -17,7 +15,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           ctaLabel="Delete service"
           callback={deleteService}
           modalConfirmation={{
-            mode: environmentMode,
             title: 'Delete service',
             name: serviceName,
           }}

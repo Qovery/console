@@ -1,5 +1,4 @@
 import { render, screen } from '__tests__/utils/setup-jest'
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import BlockContentDelete, { type BlockContentDeleteProps } from './block-content-delete'
 
 describe('BlockContentDelete', () => {
@@ -9,8 +8,6 @@ describe('BlockContentDelete', () => {
     callback: jest.fn(),
     modalConfirmation: {
       title: 'title',
-      description: 'description',
-      mode: EnvironmentModeEnum.DEVELOPMENT,
       name: 'test',
     },
   }

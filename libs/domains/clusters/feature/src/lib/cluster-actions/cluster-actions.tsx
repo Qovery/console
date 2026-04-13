@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from '@tanstack/react-router'
 import {
   type Cluster,
   type ClusterStatus,
-  EnvironmentModeEnum,
   type KubernetesEnum,
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
@@ -141,7 +140,6 @@ function MenuManageDeployment({
 
   const mutationStop = () =>
     openModalConfirmation({
-      mode: EnvironmentModeEnum.PRODUCTION,
       title: 'Confirm stop',
       description: 'To confirm the stop of your cluster, please type the name:',
       warning:
@@ -155,7 +153,6 @@ function MenuManageDeployment({
     })
   const mutationUpgrade = () =>
     openModalConfirmation({
-      mode: EnvironmentModeEnum.PRODUCTION,
       title: 'Confirm upgrade',
       description: 'To confirm the upgrade of your cluster, please type the name:',
       name: cluster.name,
@@ -369,8 +366,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
   })
 
   const searchParams = useMemo(() => {
-    // @ts-ignore-next-line TODO needs to be fixed
-    const params = new URLSearchParams(location.search)
+    const params = new URLSearchParams(String(location.search))
     return params
   }, [location.search])
 
@@ -386,8 +382,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
             cluster={cluster}
             type={type}
             onClose={() => {
-              // @ts-ignore-next-line TODO needs to be fixed
-              const newParams = new URLSearchParams(location.search)
+              const newParams = new URLSearchParams(String(location.search))
               newParams.delete(showSelfManagedGuideKey)
               const newSearch = newParams.toString()
               const newUrl = newSearch ? `${location.pathname}?${newSearch}` : location.pathname
@@ -404,8 +399,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
   useEffect(() => {
     const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
     if (bool) {
-      // @ts-ignore-next-line TODO needs to be fixed
-      const newParams = new URLSearchParams(location.search)
+      const newParams = new URLSearchParams(String(location.search))
       newParams.delete(showSelfManagedGuideKey)
       const newSearch = newParams.toString()
       const newUrl = newSearch ? `${location.pathname}?${newSearch}` : location.pathname
