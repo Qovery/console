@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`PortValidationStatus invalid status should match snapshot with error message 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-center"
+      data-testid="port-validation-status"
+    >
+      <span
+        class="inline-flex cursor-help"
+        data-state="closed"
+        data-testid="port-validation-trigger"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-circle-exclamation text-sm text-red-500"
+          data-testid="port-validation-icon"
+        />
+      </span>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`PortValidationStatus loading status should match snapshot 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-center"
+      data-testid="port-validation-status"
+    >
+      <span
+        data-testid="port-validation-loading"
+      >
+        <div
+          class="aspect-square border-2  rounded-full border-solid border-r-neutral-500 animate-spin w-4 "
+          data-testid="spinner"
+        />
+      </span>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`PortValidationStatus unknown status should match snapshot 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-center"
+      data-testid="port-validation-status"
+    >
+      <span
+        class="inline-flex cursor-help"
+        data-state="closed"
+        data-testid="port-validation-trigger"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-circle-question text-sm text-neutral-350"
+          data-testid="port-validation-icon"
+        />
+      </span>
+    </span>
+  </div>
+</body>
+`;
+
+exports[`PortValidationStatus valid status should match snapshot 1`] = `
+<body>
+  <div>
+    <span
+      class="inline-flex items-center"
+      data-testid="port-validation-status"
+    >
+      <span
+        class="inline-flex cursor-help"
+        data-state="closed"
+        data-testid="port-validation-trigger"
+      >
+        <i
+          aria-hidden="true"
+          class="fa-solid fa-circle-check text-sm text-green-500"
+          data-testid="port-validation-icon"
+        />
+      </span>
+    </span>
+  </div>
+</body>
+`;
