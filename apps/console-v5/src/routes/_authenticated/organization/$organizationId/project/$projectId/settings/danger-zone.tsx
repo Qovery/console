@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
 import { Suspense, useState } from 'react'
 import { useDeleteProject, useProject } from '@qovery/domains/projects/feature'
 import { BlockContentDelete, Section } from '@qovery/shared/ui'
@@ -79,7 +78,6 @@ function ProjectDangerZone() {
         ]}
         callback={deleteProject}
         modalConfirmation={{
-          mode: EnvironmentModeEnum.PRODUCTION,
           title: 'Delete project',
           name: project?.name,
         }}
