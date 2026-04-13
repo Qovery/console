@@ -9,10 +9,11 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
-import { useService } from '@qovery/domains/services/feature'
+import { useService, useDeploymentStatus as useServiceDeploymentStatus } from '@qovery/domains/services/feature'
 import { Banner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ListDeploymentLogs } from '../../list-deployment-logs/list-deployment-logs'
+import { LoaderPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 
 export interface DeploymentLogsContentProps {
   environment: Environment
@@ -113,6 +114,10 @@ export function DeploymentLogsContent({
     serviceId,
     suspense: true,
   })
+  const { data: fallbackServiceStatus } = useServiceDeploymentStatus({
+    environmentId: environment.id,
+    serviceId,
+  })
   const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({
     environmentId: environment.id,
     suspense: true,
@@ -120,9 +125,15 @@ export function DeploymentLogsContent({
 
   useDocumentTitle(`Deployment logs - ${service?.name ?? 'Loading…'}`)
 
-  const serviceStatus = getServiceStatusesById(deploymentStages, serviceId) as Status
+  const serviceStatus = (getServiceStatusesById(deploymentStages, serviceId) as Status | null) ?? fallbackServiceStatus
 
-  if (!serviceStatus && isFetchedService) return <div className="h-full w-full bg-background"></div>
+  if (!serviceStatus && isFetchedService) {
+    return (
+      <div className="flex h-full w-full items-center justify-center bg-background">
+        <LoaderPlaceholder />
+      </div>
+    )
+  }
 
   const stageFromServiceId = getStageFromServiceId(deploymentStages ?? [], serviceId)
 
