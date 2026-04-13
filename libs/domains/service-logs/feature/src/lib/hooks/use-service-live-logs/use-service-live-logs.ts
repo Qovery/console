@@ -25,22 +25,12 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
   const serviceLogsBuffer = useRef<NormalizedServiceLog[]>([])
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const [bufferedLogsCount, setBufferedLogsCount] = useState(0)
-  const [isScrollPaused, setIsScrollPaused] = useState(false)
-  const isScrollPausedRef = useRef(false)
+  const [newLogsAvailable, setNewLogsAvailable] = useState(false)
+  const [pauseLogs, setPauseLogs] = useState(false)
   const [isFetched, setIsFetched] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const [debouncedLogs, setDebouncedLogs] = useState<NormalizedServiceLog[]>([])
-
-  const setPauseLogs = useCallback((paused: boolean | ((prev: boolean) => boolean)) => {
-    setIsScrollPaused((prev) => {
-      const next = typeof paused === 'function' ? paused(prev) : paused
-      isScrollPausedRef.current = next
-      if (!next) setBufferedLogsCount(0)
-      return next
-    })
-  }, [])
 
   const flushBufferedLogs = useCallback(() => {
     if (serviceLogsBuffer.current.length > 0) {
@@ -81,7 +71,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
         version?: string
       }
     ) => {
-      if (isScrollPausedRef.current) setBufferedLogsCount((c) => c + 1)
+      setNewLogsAvailable(true)
       const normalizedLog = normalizeWebSocketLog(log)
       serviceLogsBuffer.current.push(normalizedLog)
       scheduleFlush()
@@ -100,7 +90,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
         version?: string
       }
     ) => {
-      if (isScrollPausedRef.current) setBufferedLogsCount((c) => c + 1)
+      setNewLogsAvailable(true)
       const normalizedLog = normalizeWebSocketLog(log)
 
       // Temporary fix to show NGINX logs as unknown to avoid UI issues
@@ -121,7 +111,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
         version?: string
       }
     ) => {
-      if (isScrollPausedRef.current) setBufferedLogsCount((c) => c + 1)
+      setNewLogsAvailable(true)
       const normalizedLog = normalizeWebSocketLog(log)
 
       // Temporary fix to show Envoy logs as unknown to avoid UI issues
@@ -134,7 +124,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
   const onCloseHandler = useCallback((_: QueryClient) => {
     setDebouncedLogs([])
     serviceLogsBuffer.current = []
-    setBufferedLogsCount(0)
+    setNewLogsAvailable(false)
     setIsFetched(true)
     setIsLoading(false)
   }, [])
@@ -276,10 +266,11 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
   )
 
   return {
-    data: isScrollPaused ? pausedDataLogs : debouncedLogs,
-    isScrollPaused,
+    data: pauseLogs ? pausedDataLogs : debouncedLogs,
+    pauseLogs,
     setPauseLogs,
-    bufferedLogsCount,
+    setNewLogsAvailable,
+    newLogsAvailable,
     isFetched,
     isLoading,
   }
