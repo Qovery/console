@@ -499,7 +499,7 @@ export function ListDeploymentLogs({
           </div>
         </div>
         <div
-          className="max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-12"
+          className="isolate max-h-[calc(100vh-170px)] w-full overflow-y-scroll pb-12"
           ref={refScrollSection}
           onWheel={(event) => {
             if (
