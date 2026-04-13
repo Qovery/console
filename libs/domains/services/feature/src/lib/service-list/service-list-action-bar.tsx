@@ -36,8 +36,8 @@ function ConfirmationModal({
 
   return (
     <div className="p-6">
-      <h2 className="h4 max-w-sm truncate text-neutral-400">Confirm</h2>
-      <p className="my-2 text-sm text-neutral-350">
+      <h2 className="h4 max-w-sm truncate text-neutral">Confirm</h2>
+      <p className="my-2 text-sm text-neutral-subtle">
         You are going to {verb} {count} {pluralize(count, 'service')}. Are you sure?
       </p>
       {selectedRowsCount !== count && (

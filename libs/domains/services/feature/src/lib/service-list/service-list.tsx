@@ -152,25 +152,40 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         id: 'select',
         enableColumnFilter: false,
         enableSorting: false,
-        header: ({ table }) => (
-          <div className="flex h-full w-full items-center pl-4">
-            <Checkbox
-              checked={
-                table.getIsSomeRowsSelected()
-                  ? table.getIsAllRowsSelected()
-                    ? true
-                    : 'indeterminate'
-                  : table.getIsAllRowsSelected()
-              }
-              onCheckedChange={(checked) => {
-                if (checked === 'indeterminate') {
-                  return
-                }
-                table.toggleAllRowsSelected(checked)
-              }}
-            />
-          </div>
-        ),
+        header: ({ table }) => {
+          const isAllRowsSelected = table.getIsAllRowsSelected()
+          const checked = table.getIsSomeRowsSelected()
+            ? isAllRowsSelected
+              ? true
+              : 'indeterminate'
+            : isAllRowsSelected
+          const toggleAllRowsSelection = () => {
+            table.toggleAllRowsSelected(!isAllRowsSelected)
+          }
+
+          return (
+            <div className="relative h-full w-full">
+              <label
+                className="absolute inset-0 flex items-center pl-4"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleAllRowsSelection()
+                }}
+              >
+                <Checkbox
+                  checked={checked}
+                  onClick={(e) => e.stopPropagation()}
+                  onCheckedChange={(checked) => {
+                    if (checked === 'indeterminate') {
+                      return
+                    }
+                    table.toggleAllRowsSelected(checked)
+                  }}
+                />
+              </label>
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const isDisabled = !row.getCanSelect()
           const toggleRowSelection = () => {
@@ -181,7 +196,6 @@ export function ServiceList({ className, containerClassName, environment, ...pro
           }
           const checkbox = (
             <div className="h-4">
-              {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
               <Checkbox
                 checked={row.getIsSelected()}
                 disabled={isDisabled}
