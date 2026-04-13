@@ -52,6 +52,9 @@ function SubnetsList({ title, index, subnets }: { title: string; index: string; 
 }
 
 export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
+  const clusterBackup = props.resourcesData.infrastructure_charts_parameters?.eks_anywhere_parameters?.cluster_backup
+  const showClusterBackup = Boolean(clusterBackup?.enabled)
+
   const checkIfFeaturesAvailable = () => {
     const feature = []
 
@@ -324,36 +327,31 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                       </ul>
                     </div>
 
-                    {(() => {
-                      const clusterBackup =
-                        props.resourcesData.infrastructure_charts_parameters?.eks_anywhere_parameters?.cluster_backup
-                      if (!clusterBackup?.enabled) return null
-                      return (
-                        <div>
-                          <span className="text-sm font-bold text-neutral-subtle">Backup</span>
-                          <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                    {showClusterBackup && (
+                      <div>
+                        <span className="text-sm font-bold text-neutral-subtle">Backup</span>
+                        <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                          <li>
+                            <span className="font-medium">Bucket: </span>
+                            {clusterBackup?.s3?.bucket}
+                          </li>
+                          <li>
+                            <span className="font-medium">Region: </span>
+                            {clusterBackup?.s3?.region}
+                          </li>
+                          <li>
+                            <span className="font-medium">Role ARN: </span>
+                            {clusterBackup?.s3?.role_arn}
+                          </li>
+                          {clusterBackup?.s3?.key_prefix && (
                             <li>
-                              <span className="font-medium">Bucket: </span>
-                              {clusterBackup.s3?.bucket}
+                              <span className="font-medium">Key prefix: </span>
+                              {clusterBackup.s3.key_prefix}
                             </li>
-                            <li>
-                              <span className="font-medium">Region: </span>
-                              {clusterBackup.s3?.region}
-                            </li>
-                            <li>
-                              <span className="font-medium">Role ARN: </span>
-                              {clusterBackup.s3?.role_arn}
-                            </li>
-                            {clusterBackup.s3?.key_prefix && (
-                              <li>
-                                <span className="font-medium">Key prefix: </span>
-                                {clusterBackup.s3.key_prefix}
-                              </li>
-                            )}
-                          </ul>
-                        </div>
-                      )
-                    })()}
+                          )}
+                        </ul>
+                      </div>
+                    )}
 
                     <div>
                       <span className="text-sm font-bold text-neutral-subtle">Cert Manager</span>

@@ -57,6 +57,8 @@ export const ClusterEksSettings = ({ gitSettings }: ClusterEksSettingsProps) => 
               onChange={field.onChange}
               title="Enable backup"
               description="Enable periodic backup of the EKS Anywhere cluster state to S3."
+              align="top"
+              small
             />
           )}
         />
