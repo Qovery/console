@@ -7,3 +7,4 @@ export * from './lib/hooks/use-terraform-available-versions/use-terraform-availa
 export * from './lib/terraform-variables-settings/dockerfile-fragment-inline-setting/dockerfile-fragment-inline-setting'
 export * from './lib/terraform-variables-context'
 export * from './lib/terraform-variables-utils'
+export * from './lib/terraform-creation-flow'

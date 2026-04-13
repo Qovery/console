@@ -571,7 +571,7 @@ export function ServiceNew({
               title: 'Terraform',
               description: 'Deploy external cloud resources directly from your Terraform configuration.',
               icon: <Icon name="TERRAFORM" width={32} height={32} />,
-              link: getServicesPath(organizationId, projectId, environmentId, SERVICES_TERRAFORM_CREATION_URL),
+              link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('terraform')),
               cloud_provider: cloudProvider,
               badge: 'NEW',
             },
