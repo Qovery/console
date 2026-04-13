@@ -29,7 +29,6 @@ export const StepSummary = () => {
   const { setCurrentStep, generalForm } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
   const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
-  console.log('🚀 ~ StepSummary ~ serializeForApi:', serializeForApi())
 
   useEffect(() => {
     setCurrentStep(4)
@@ -110,7 +109,6 @@ export const StepSummary = () => {
       }
 
       setIsLoadingCreate(false)
-      //   navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
       navigate({
         to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/',
         params: { organizationId, projectId, environmentId },

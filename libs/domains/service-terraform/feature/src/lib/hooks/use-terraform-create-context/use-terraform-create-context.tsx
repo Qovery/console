@@ -11,7 +11,6 @@ interface TerraformCreateContextInterface {
 
 export const TerraformCreateContext = createContext<TerraformCreateContextInterface | undefined>(undefined)
 
-// this is to avoid to set initial value twice https://stackoverflow.com/questions/49949099/react-createcontext-point-of-defaultvalue
 export const useTerraformCreateContext = () => {
   const terraformCreateContext = useContext(TerraformCreateContext)
   if (!terraformCreateContext) throw new Error('useTerraformCreateContext must be used within a TerraformCreateContext')
