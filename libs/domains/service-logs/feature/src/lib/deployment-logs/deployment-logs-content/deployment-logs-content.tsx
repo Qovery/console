@@ -109,7 +109,7 @@ export function DeploymentLogsContent({
   const { serviceId = '', executionId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
 
-  const { data: service, isFetched: isFetchedService } = useService({
+  const { data: service } = useService({
     environmentId: environment.id,
     serviceId,
     suspense: true,
@@ -127,7 +127,7 @@ export function DeploymentLogsContent({
 
   const serviceStatus = (getServiceStatusesById(deploymentStages, serviceId) as Status | null) ?? fallbackServiceStatus
 
-  if (!serviceStatus && isFetchedService) {
+  if (!serviceStatus) {
     return (
       <div className="flex h-full w-full items-center justify-center bg-background">
         <LoaderPlaceholder />
