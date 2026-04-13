@@ -1,5 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { type Cluster } from 'qovery-typescript-axios'
+import { type Cluster, KubernetesEnum } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { ClusterGeneralSettings, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
 import { LabelSetting } from '@qovery/domains/organizations/feature'
@@ -103,7 +103,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
               <BlockContent title="General information">
                 <ClusterGeneralSettings fromDetail />
               </BlockContent>
-              {cluster.cloud_provider === 'AWS' && (
+              {cluster.cloud_provider === 'AWS' && cluster.kubernetes !== KubernetesEnum.PARTIALLY_MANAGED && (
                 <Section className="mb-10 gap-3">
                   <Heading>Extra tags</Heading>
                   <LabelSetting filterPropagateToCloudProvider={true} />
