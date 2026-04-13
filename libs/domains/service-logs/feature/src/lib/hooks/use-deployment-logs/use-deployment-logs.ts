@@ -1,7 +1,7 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { useLocation } from '@tanstack/react-router'
 import { type EnvironmentLogs } from 'qovery-typescript-axios'
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -36,10 +36,20 @@ export function useDeploymentLogs({
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
 
   // States for controlling log actions, showing new, previous or paused logs
-  const [newMessagesAvailable, setNewMessagesAvailable] = useState(false)
+  const [bufferedLogsCount, setBufferedLogsCount] = useState(0)
   const [showPreviousLogs, setShowPreviousLogs] = useState(false)
-  const [pauseLogs, setPauseLogs] = useState(false)
+  const [isScrollPaused, setIsScrollPaused] = useState(false)
+  const isScrollPausedRef = useRef(false)
   const [debounceTime, setDebounceTime] = useState(1000)
+
+  const setPauseLogs = useCallback((paused: boolean | ((prev: boolean) => boolean)) => {
+    setIsScrollPaused((prev) => {
+      const next = typeof paused === 'function' ? paused(prev) : paused
+      isScrollPausedRef.current = next
+      if (!next) setBufferedLogsCount(0)
+      return next
+    })
+  }, [])
 
   const [logs, setLogs] = useState<EnvironmentLogs[]>([])
   const [messageChunks, setMessageChunks] = useState<EnvironmentLogs[][]>([])
@@ -49,7 +59,7 @@ export function useDeploymentLogs({
 
   const messageHandler = useCallback(
     (_: QueryClient, message: EnvironmentLogs[]) => {
-      setNewMessagesAvailable(true)
+      if (isScrollPausedRef.current) setBufferedLogsCount((c) => c + message.length)
       setMessageChunks((prevChunks) => {
         const lastChunk = prevChunks[prevChunks.length - 1] || []
         if (lastChunk.length < CHUNK_SIZE) {
@@ -83,27 +93,25 @@ export function useDeploymentLogs({
   const flushDelay = logs.length === 0 ? 0 : debounceTime
 
   useEffect(() => {
-    if (messageChunks.length === 0 || pauseLogs) return
+    if (messageChunks.length === 0) return
 
     const timerId = setTimeout(() => {
-      if (!pauseLogs) {
-        setMessageChunks((prevChunks) => prevChunks.slice(1))
-        setLogs((prevLogs) => {
-          const combinedLogs = [...prevLogs, ...messageChunks[0]]
+      setMessageChunks((prevChunks) => prevChunks.slice(1))
+      setLogs((prevLogs) => {
+        const combinedLogs = [...prevLogs, ...messageChunks[0]]
 
-          if (!hash && combinedLogs.length > 1000) {
-            setDebounceTime(100)
-          }
+        if (!hash && combinedLogs.length > 1000) {
+          setDebounceTime(100)
+        }
 
-          return [...new Map(combinedLogs.map((item) => [item['timestamp'], item])).values()]
-        })
-      }
+        return [...new Map(combinedLogs.map((item) => [item['timestamp'], item])).values()]
+      })
     }, flushDelay)
 
     return () => {
       clearTimeout(timerId)
     }
-  }, [messageChunks, pauseLogs, hash, flushDelay])
+  }, [messageChunks, hash, flushDelay])
 
   // Filter deployment logs by serviceId and stageId
   // Display entries when the name is "delete" or stageId is empty or equal with current stageId
@@ -135,9 +143,8 @@ export function useDeploymentLogs({
 
   return {
     data: logsByServiceId,
-    setNewMessagesAvailable,
-    newMessagesAvailable,
-    pauseLogs,
+    bufferedLogsCount,
+    isScrollPaused,
     setPauseLogs,
     showPreviousLogs,
     setShowPreviousLogs,
