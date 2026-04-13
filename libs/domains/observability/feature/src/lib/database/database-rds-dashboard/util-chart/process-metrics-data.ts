@@ -1,5 +1,9 @@
-import { type RdsMetricData } from '../hooks/use-rds-metrics/use-rds-metrics'
 import { formatTimestamp } from './format-timestamp'
+
+interface RdsMetricData {
+  metric: Record<string, string>
+  values: [number, string][]
+}
 
 // Generic helper function to process metrics data
 export function processMetricsData(
