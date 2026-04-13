@@ -1,8 +1,8 @@
-import { ServiceTypeEnum } from 'qovery-typescript-axios'
+import { DatabaseModeEnum, ServiceTypeEnum } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { ExternalLink, Icon } from '@qovery/shared/ui'
+import { EmptyState, ExternalLink, Icon } from '@qovery/shared/ui'
 import { formatCronExpression, formatMetric } from '@qovery/shared/util-js'
 import { InstanceMetrics } from '../instance-metrics/instance-metrics'
 import { GitRepository } from '../service-header/service-header'
@@ -17,6 +17,9 @@ function LabelValue({ label, children }: { label: string; children: ReactNode })
 
 export function ServiceInstance({ service }: { service: AnyService }) {
   const isCronJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'CRON', [service])
+  const isDatabaseManaged = match(service)
+    .with({ serviceType: ServiceTypeEnum.DATABASE, mode: DatabaseModeEnum.MANAGED }, () => true)
+    .otherwise(() => false)
 
   const resources = match(service)
     .with({ serviceType: ServiceTypeEnum.CONTAINER }, { serviceType: ServiceTypeEnum.APPLICATION }, (s) => {
@@ -134,23 +137,32 @@ export function ServiceInstance({ service }: { service: AnyService }) {
         </div>
       </div>
       <div className="relative -top-1.5 rounded-lg bg-surface-neutral">
-        <InstanceMetrics environmentId={service.environment.id} serviceId={service.id} service={service}>
-          {isCronJob && (
-            <div className="mt-3 grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded-lg border border-neutral bg-surface-neutral-component p-3 text-xs text-neutral">
-              <Icon className="row-span-2" iconName="circle-info" iconStyle="regular" />
-              <p>
-                The number of past Completed or Failed job execution retained in the history and their TTL can be
-                customized in the advanced settings.
-              </p>
-              <ExternalLink
-                className="text-xs"
-                href="https://www.qovery.com/docs/configuration/service-advanced-settings#cronjob-failed-jobs-history-limit"
-              >
-                See documentation
-              </ExternalLink>
-            </div>
-          )}
-        </InstanceMetrics>
+        {isDatabaseManaged ? (
+          <EmptyState
+            icon="circle-question"
+            title="Metrics for managed databases are not available"
+            description="Check your cloud provider console to get more information"
+            className="bg-surface-neutral"
+          />
+        ) : (
+          <InstanceMetrics environmentId={service.environment.id} serviceId={service.id} service={service}>
+            {isCronJob && (
+              <div className="mt-3 grid grid-cols-[min-content_1fr] gap-x-3 gap-y-1 rounded-lg border border-neutral bg-surface-neutral-component p-3 text-xs text-neutral">
+                <Icon className="row-span-2" iconName="circle-info" iconStyle="regular" />
+                <p>
+                  The number of past Completed or Failed job execution retained in the history and their TTL can be
+                  customized in the advanced settings.
+                </p>
+                <ExternalLink
+                  className="text-xs"
+                  href="https://www.qovery.com/docs/configuration/service-advanced-settings#cronjob-failed-jobs-history-limit"
+                >
+                  See documentation
+                </ExternalLink>
+              </div>
+            )}
+          </InstanceMetrics>
+        )}
       </div>
     </div>
   )

@@ -107,10 +107,22 @@ function EnvironmentsTableContent() {
   const { data: environmentsOverview } = useEnvironmentsOverview({ projectId, suspense: true })
 
   const groupedEnvs = useMemo(() => {
-    return environmentsOverview?.reduce((acc, env) => {
-      acc.set(env.mode, [...(acc.get(env.mode) || []), env])
-      return acc
-    }, new Map<EnvironmentModeEnum, EnvironmentOverviewResponse[]>())
+    if (!environmentsOverview) {
+      return undefined
+    }
+
+    const sortedEnvironments = [...environmentsOverview].sort(
+      (environmentA: EnvironmentOverviewResponse, environmentB: EnvironmentOverviewResponse) =>
+        (environmentA.name ?? '').localeCompare(environmentB.name ?? '')
+    )
+
+    return sortedEnvironments.reduce<Map<EnvironmentModeEnum, EnvironmentOverviewResponse[]>>(
+      (acc, env: EnvironmentOverviewResponse) => {
+        acc.set(env.mode, [...(acc.get(env.mode) || []), env])
+        return acc
+      },
+      new Map<EnvironmentModeEnum, EnvironmentOverviewResponse[]>()
+    )
   }, [environmentsOverview])
 
   const onCreateEnvClicked = useCallback(

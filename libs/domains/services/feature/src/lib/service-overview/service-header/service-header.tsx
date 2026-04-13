@@ -236,7 +236,7 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
               {databaseSource.masterCredentials && (
                 <Button
                   color="neutral"
-                  variant="surface"
+                  variant="outline"
                   size="xs"
                   className="gap-1"
                   onClick={() => {

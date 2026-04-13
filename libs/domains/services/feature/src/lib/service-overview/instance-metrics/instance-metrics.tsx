@@ -8,6 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
+import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
 import { Fragment, type PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
@@ -26,6 +27,7 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { formatMetric, pluralize, twMerge } from '@qovery/shared/util-js'
+import { useDeploymentStatus } from '../../hooks/use-deployment-status/use-deployment-status'
 import { useMetrics } from '../../hooks/use-metrics/use-metrics'
 import { useRunningStatus } from '../../hooks/use-running-status/use-running-status'
 import { type Pod, PodDetails } from '../../pod-details/pod-details'
@@ -48,6 +50,7 @@ export interface InstanceMetricsMemoizedProps extends PropsWithChildren {
   isMetricsError: boolean
   isRunningStatusesLoading: boolean
   isRunningStatusesError: boolean
+  showDeploymentEmptyState: boolean
 }
 
 // NOTE: Memoized component to avoid loop with re-rendering, because of the useReactTable hook and the WS subscription
@@ -66,6 +69,7 @@ function InstanceMetricsTable({
   isRunningStatusesLoading,
   isServiceError,
   isServiceLoading,
+  showDeploymentEmptyState,
 }: InstanceMetricsMemoizedProps) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [hoveredRowId, setHoveredRowId] = useState<string | null>(null)
@@ -275,8 +279,16 @@ function InstanceMetricsTable({
     )
   }, [service.serviceType, table.setSorting])
 
-  if (pods.length === 0 && !isMetricsLoading && isRunningStatusesLoading) {
-    // NOTE: runningStatuses may never resolve if service not started
+  if (
+    pods.length === 0 &&
+    !isMetricsLoading &&
+    !isMetricsError &&
+    !isRunningStatusesError &&
+    !isServiceError &&
+    (isRunningStatusesLoading || showDeploymentEmptyState)
+  ) {
+    // NOTE: runningStatuses may never resolve if service not started,
+    // and never-deployed services can resolve with no metrics and no running status.
     return <EmptyStatePodsMetrics serviceId={serviceId} environmentId={environmentId} />
   } else if (
     (pods.length === 0 && !isMetricsLoading && !isRunningStatusesLoading) ||
@@ -404,6 +416,7 @@ interface InstanceMetricsContentProps extends InstanceMetricsProps {
   isMetricsError: boolean
   isRunningStatusesLoading: boolean
   isRunningStatusesError: boolean
+  showDeploymentEmptyState: boolean
 }
 
 function InstanceMetricsContent({
@@ -415,6 +428,7 @@ function InstanceMetricsContent({
   isMetricsError,
   isRunningStatusesLoading,
   isRunningStatusesError,
+  showDeploymentEmptyState,
   children,
 }: InstanceMetricsContentProps) {
   return (
@@ -429,6 +443,7 @@ function InstanceMetricsContent({
       isMetricsError={isMetricsError}
       isRunningStatusesLoading={isRunningStatusesLoading}
       isRunningStatusesError={isRunningStatusesError}
+      showDeploymentEmptyState={showDeploymentEmptyState}
     >
       {children}
     </InstanceMetricsMemoized>
@@ -438,6 +453,7 @@ function InstanceMetricsContent({
 export function InstanceMetrics(props: InstanceMetricsProps) {
   const { environmentId, serviceId, service } = props
 
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const {
     data: metrics = [],
     isLoading: isMetricsLoading,
@@ -448,6 +464,9 @@ export function InstanceMetrics(props: InstanceMetricsProps) {
     isLoading: isRunningStatusesLoading,
     isError: isRunningStatusesError,
   } = useRunningStatus({ environmentId, serviceId })
+  const showDeploymentEmptyState =
+    deploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ||
+    deploymentStatus?.state === StateEnum.READY
 
   const pods: Pod[] = useMemo(() => {
     // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
@@ -474,6 +493,7 @@ export function InstanceMetrics(props: InstanceMetricsProps) {
       isMetricsError={isMetricsError}
       isRunningStatusesLoading={isRunningStatusesLoading}
       isRunningStatusesError={isRunningStatusesError}
+      showDeploymentEmptyState={showDeploymentEmptyState}
     >
       {props.children}
     </InstanceMetricsContent>

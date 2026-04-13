@@ -7,7 +7,7 @@ const mockUseEnvironmentsOverview = jest.fn()
 
 interface EnvironmentSectionMockProps {
   type: string
-  items: unknown[]
+  items: Array<{ name?: string }>
 }
 
 jest.mock('@tanstack/react-router', () => ({
@@ -29,7 +29,7 @@ jest.mock('../environment-action-toolbar/environment-action-toolbar', () => ({
 jest.mock('./environment-section/environment-section', () => ({
   __esModule: true,
   EnvironmentSection: ({ type, items }: EnvironmentSectionMockProps) => (
-    <div data-testid="environment-section">{`section:${type}:${items.length}`}</div>
+    <div data-testid="environment-section">{`section:${type}:${items.map(({ name }) => name).join(',')}`}</div>
   ),
 }))
 
@@ -47,9 +47,9 @@ describe('EnvironmentsTable', () => {
     })
     mockUseEnvironmentsOverview.mockReturnValue({
       data: [
-        { id: 'env-1', mode: EnvironmentModeEnum.PRODUCTION },
-        { id: 'env-2', mode: EnvironmentModeEnum.PRODUCTION },
-        { id: 'env-3', mode: EnvironmentModeEnum.DEVELOPMENT },
+        { id: 'env-1', mode: EnvironmentModeEnum.PRODUCTION, name: 'Zulu' },
+        { id: 'env-2', mode: EnvironmentModeEnum.PRODUCTION, name: 'Alpha' },
+        { id: 'env-3', mode: EnvironmentModeEnum.DEVELOPMENT, name: 'Beta' },
       ],
     })
 
@@ -58,10 +58,10 @@ describe('EnvironmentsTable', () => {
     expect(screen.getByRole('heading', { name: 'Project Alpha' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'New Environment' })).toBeInTheDocument()
     expect(screen.getAllByTestId('environment-section').map((section) => section.textContent)).toEqual([
-      'section:PRODUCTION:2',
-      'section:DEVELOPMENT:1',
-      'section:STAGING:0',
-      'section:PREVIEW:0',
+      'section:PRODUCTION:Alpha,Zulu',
+      'section:DEVELOPMENT:Beta',
+      'section:STAGING:',
+      'section:PREVIEW:',
     ])
   })
 })

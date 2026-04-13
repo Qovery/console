@@ -176,23 +176,20 @@ export function EnvironmentDeploymentList() {
                     () => (
                       <DropdownMenu.Root>
                         <DropdownMenu.Trigger asChild>
-                          <Button aria-label="Manage Deployment" color="neutral" size="md" variant="outline">
+                          <Button aria-label="Manage Deployment" color="neutral" size="md" variant="outline" iconOnly>
                             <Tooltip content="Manage Deployment">
-                              <div className="flex h-full w-full items-center justify-center">
-                                {match(state)
-                                  .with(
-                                    'DEPLOYMENT_QUEUED',
-                                    'DELETE_QUEUED',
-                                    'STOP_QUEUED',
-                                    'RESTART_QUEUED',
-                                    'QUEUED',
-                                    () => <Icon iconName="clock" iconStyle="regular" className="mr-2 text-current" />
-                                  )
-                                  .otherwise(() => (
-                                    <Icon iconName="loader" className="mr-2 animate-spin text-current" />
-                                  ))}
-                                <Icon iconName="chevron-down" className="text-current" />
-                              </div>
+                              {match(state)
+                                .with(
+                                  'DEPLOYMENT_QUEUED',
+                                  'DELETE_QUEUED',
+                                  'STOP_QUEUED',
+                                  'RESTART_QUEUED',
+                                  'QUEUED',
+                                  () => <Icon iconName="clock" iconStyle="regular" className="text-current" />
+                                )
+                                .otherwise(() => (
+                                  <Icon iconName="loader" className="animate-spin text-current" />
+                                ))}
                             </Tooltip>
                           </Button>
                         </DropdownMenu.Trigger>
