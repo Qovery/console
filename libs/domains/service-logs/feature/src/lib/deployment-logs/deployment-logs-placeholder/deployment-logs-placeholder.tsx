@@ -69,7 +69,7 @@ export function LoaderPlaceholder({
   return (
     <div className="flex w-full flex-col items-center justify-center gap-5 text-center">
       <LoaderDots />
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2">
         <p className="text-neutral">{title}</p>
         <span className="text-sm text-neutral-subtle">{description}</span>
       </div>

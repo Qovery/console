@@ -381,7 +381,7 @@ function DeploymentLogsBody({
     () => (type: FilterType) => columnFilters.some((filter) => filter.value === type),
     [columnFilters]
   )
-  const emptyStateHeightClass = hasNewDeploymentBanner ? 'h-[calc(100vh-156px)]' : 'h-[calc(100vh-116px)]'
+  const emptyStateHeightClass = hasNewDeploymentBanner ? 'h-[calc(100vh-201px)]' : 'h-[calc(100vh-161px)]'
   const logsViewportHeightClass = hasNewDeploymentBanner ? 'h-[calc(100vh-249px)]' : 'h-[calc(100vh-209px)]'
 
   const isLastVersion = deploymentHistory?.[0]?.identifier.execution_id === executionId || !executionId

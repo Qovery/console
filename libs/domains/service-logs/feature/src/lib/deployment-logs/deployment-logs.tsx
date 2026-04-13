@@ -7,7 +7,12 @@ import {
   type EnvironmentStatusesWithStagesPreCheckStage,
 } from 'qovery-typescript-axios'
 import { memo, useCallback, useEffect, useState } from 'react'
-import { useEnvironment } from '@qovery/domains/environments/feature'
+import {
+  useDeploymentHistory,
+  useEnvironment,
+  useDeploymentStages as useEnvironmentDeploymentStages,
+  useDeploymentStatus as useEnvironmentDeploymentStatus,
+} from '@qovery/domains/environments/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { Skeleton } from '@qovery/shared/ui'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
@@ -49,7 +54,7 @@ function DeploymentLogsWrapper({
   environmentStatus?: EnvironmentStatus
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
 }) {
-  if (!environment || !environmentStatus) {
+  if (!environment) {
     return <Loader />
   }
 
@@ -77,9 +82,19 @@ export function DeploymentLogs() {
     suspense: true,
   })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: environmentDeploymentHistory = [] } = useDeploymentHistory({
+    environmentId,
+    suspense: true,
+  })
+  const { data: liveDeploymentStages } = useEnvironmentDeploymentStages({ environmentId })
+  const { data: liveEnvironmentStatus } = useEnvironmentDeploymentStatus({ environmentId })
   const [deploymentStages, setDeploymentStages] = useState<DeploymentStageWithServicesStatuses[]>()
   const [environmentStatus, setEnvironmentStatus] = useState<EnvironmentStatus>()
   const [preCheckStage, setPreCheckStage] = useState<EnvironmentStatusesWithStagesPreCheckStage>()
+
+  const isLatestVersion = environmentDeploymentHistory[0]?.identifier.execution_id === executionId
+  const resolvedDeploymentStages = isLatestVersion ? liveDeploymentStages ?? deploymentStages : deploymentStages
+  const resolvedEnvironmentStatus = isLatestVersion ? liveEnvironmentStatus ?? environmentStatus : environmentStatus
 
   const messageHandler = useCallback(
     (
@@ -129,8 +144,8 @@ export function DeploymentLogs() {
       <ServiceStageIdsProvider>
         <DeploymentLogsWrapper
           environment={environment}
-          deploymentStages={deploymentStages}
-          environmentStatus={environmentStatus}
+          deploymentStages={resolvedDeploymentStages}
+          environmentStatus={resolvedEnvironmentStatus}
           preCheckStage={preCheckStage}
         />
 
