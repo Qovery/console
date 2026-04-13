@@ -89,7 +89,7 @@ describe('EnvironmentLastDeploymentSection', () => {
     expect(screen.queryByText(/Running since/i)).not.toBeInTheDocument()
   })
 
-  it('renders a running since label for an ongoing deployment', () => {
+  it('renders a live relative time for an ongoing deployment', () => {
     mockUseDeploymentHistory.mockReturnValue({
       data: [
         {
@@ -103,9 +103,7 @@ describe('EnvironmentLastDeploymentSection', () => {
 
     renderWithProviders(<EnvironmentLastDeploymentSection />)
 
-    expect(
-      screen.getByText((_, element) => element?.textContent === 'Running since mocked-time ago')
-    ).toBeInTheDocument()
+    expect(screen.getByText('mocked-time ago')).toBeInTheDocument()
   })
 
   it('renders the empty state when no deployment exists', () => {
