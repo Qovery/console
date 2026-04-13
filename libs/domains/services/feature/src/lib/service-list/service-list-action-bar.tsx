@@ -236,20 +236,20 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
           id: 'uninstall',
           title: 'Uninstall',
           description: (
-            <div className="flex flex-col gap-2 text-neutral-350">
+            <div className="flex flex-col gap-2 text-neutral">
               <span>
                 Stop and remove the services but keep all Qovery configuration, data and settings.
                 <br />
                 You can easily reinstall or redeploy later with the same configuration.
               </span>
               <div>
-                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <span className="font-medium text-neutral">What's deleted:</span>
                 <ul className="list-disc pl-4">
                   <li>All services data</li>
                 </ul>
               </div>
               <div>
-                <span className="font-medium text-neutral-400">What's kept:</span>
+                <span className="font-medium text-neutral">What's kept:</span>
                 <ul className="list-disc pl-4">
                   <li>Qovery configuration</li>
                   <li>Environment variables</li>
@@ -294,14 +294,14 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
           id: 'delete',
           title: 'Delete permanently',
           description: (
-            <div className="flex flex-col gap-2 text-neutral-350">
+            <div className="flex flex-col gap-2 text-neutral">
               <span>
                 Permanently remove the services and all associated data.
                 <br />
                 This action cannot be undone.
               </span>
               <div>
-                <span className="font-medium text-neutral-400">What's deleted:</span>
+                <span className="font-medium">What's deleted:</span>
                 <ul className="list-disc pl-4">
                   <li>All services data</li>
                   <li>Qovery configuration</li>

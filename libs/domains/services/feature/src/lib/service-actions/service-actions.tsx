@@ -747,14 +747,14 @@ function MenuOtherActions({
           id: 'delete',
           title: 'Delete permanently',
           description: (
-            <div className="flex flex-col gap-2 text-neutral-subtle">
+            <div className="flex flex-col gap-2 text-neutral">
               <span>
                 Permanently remove the service and all associated data.
                 <br />
                 This action cannot be undone.
               </span>
               <div>
-                <span className="font-medium text-neutral-subtle">What's deleted:</span>
+                <span className="font-medium">What's deleted:</span>
                 <ul className="list-disc pl-4">
                   <li>All service data</li>
                   <li>Qovery configuration</li>
