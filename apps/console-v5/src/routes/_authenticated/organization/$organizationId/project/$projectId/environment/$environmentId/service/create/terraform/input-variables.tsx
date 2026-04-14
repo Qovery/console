@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { StepVariables } from '@qovery/domains/service-terraform/feature'
+import { TerraformStepVariables } from '@qovery/domains/service-terraform/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -11,5 +11,5 @@ export const Route = createFileRoute(
 function RouteComponent() {
   useDocumentTitle('Terraform variables - Create Terraform')
 
-  return <StepVariables />
+  return <TerraformStepVariables />
 }

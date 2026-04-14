@@ -20,7 +20,7 @@ export const terraformEngines = [
   { name: 'OpenTofu', value: TerraformEngineEnum.OPEN_TOFU, icon: <Icon name={IconEnum.OPEN_TOFU} /> },
 ]
 
-export const StepSummary = () => {
+export const TerraformStepSummary = () => {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { setCurrentStep, generalForm } = useTerraformCreateContext()

@@ -4,7 +4,7 @@ import { TerraformVariablesSettings } from '@qovery/domains/service-settings/fea
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 
-export const StepVariables = () => {
+export const TerraformStepVariables = () => {
   const navigate = useNavigate()
   const { setCurrentStep } = useTerraformCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })

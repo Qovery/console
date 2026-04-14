@@ -11,7 +11,7 @@ import { Button, Callout, FunnelFlowBody, Heading, Icon, Section } from '@qovery
 import SourceSetting from '../../../source-setting/source-setting'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 
-export const StepGeneral = () => {
+export const TerraformStepGeneral = () => {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { generalForm, setCurrentStep } = useTerraformCreateContext()
   const navigate = useNavigate()

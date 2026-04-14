@@ -2,11 +2,9 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { TerraformConfigurationSettings } from '@qovery/domains/service-settings/feature'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 
-export const StepTerraformConfiguration = () => {
-  useDocumentTitle('General - Terraform configuration')
+export const TerraformStepConfiguration = () => {
   const { generalForm, setCurrentStep } = useTerraformCreateContext()
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
