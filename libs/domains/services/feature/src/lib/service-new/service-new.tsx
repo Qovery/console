@@ -167,10 +167,11 @@ function Card({
 /** Types listed in CREATE_FLOW_SLUG_BY_TYPE use /service/create/:flowSlug?template=; others use legacy URLs until migrated. */
 const servicePathSuffix = (type: ServiceType, parentSlug: string, slug: string) =>
   match(type)
-    .with('APPLICATION', 'CONTAINER', 'DATABASE', 'HELM', () => buildCreateFlowPathForType(type, parentSlug, slug))
+    .with('APPLICATION', 'CONTAINER', 'DATABASE', 'HELM', 'TERRAFORM', () =>
+      buildCreateFlowPathForType(type, parentSlug, slug)
+    )
     .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('JOB', 'CRON_JOB', () => undefined)
-    .with('TERRAFORM', () => undefined)
     .otherwise(() => buildCreateFlowPathForType(type, parentSlug, slug))
 
 interface CardOptionProps extends ServiceTemplateOptionType {

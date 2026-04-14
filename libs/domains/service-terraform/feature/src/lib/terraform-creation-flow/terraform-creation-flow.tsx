@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type PropsWithChildren, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { type TerraformGeneralData } from '@qovery/domains/service-settings/feature'
@@ -6,6 +6,7 @@ import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { TerraformCreateContext } from '../hooks/use-terraform-create-context/use-terraform-create-context'
 import { TerraformVariablesProvider } from '../terraform-variables-context'
+import { findTerraformTemplateMatch } from './terraform-create-utils/terraform-create-utils'
 
 export interface TerraformCreationFlowProps extends PropsWithChildren {
   creationFlowUrl: string
@@ -22,12 +23,14 @@ export const TerraformCreationFlow = ({ children, creationFlowUrl }: TerraformCr
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
+  const { template } = useSearch({ strict: false })
+  const templateMatch = findTerraformTemplateMatch(template)
 
   const generalForm = useForm<TerraformGeneralData>({
     defaultValues: {
-      name: '',
+      name: templateMatch.templateTitle ?? '',
       description: '',
-      icon_uri: 'app://qovery-console/terraform',
+      icon_uri: templateMatch.iconUri ?? 'app://qovery-console/terraform',
       source_provider: 'GIT',
       dockerfile_fragment_source: 'none',
       auto_deploy: false,
