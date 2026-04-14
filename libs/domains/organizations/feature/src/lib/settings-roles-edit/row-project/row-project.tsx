@@ -114,6 +114,12 @@ export function RowProject(props: RowProjectProps) {
                           checked={field.value === currentPermission}
                           onCheckedChange={(checked) => {
                             if (!checked) {
+                              field.onChange(OrganizationCustomRoleProjectPermission.NO_ACCESS)
+                              setGlobalCheckByValue(
+                                getValues(`project_permissions.${project.project_id}`),
+                                OrganizationCustomRoleProjectPermission.NO_ACCESS,
+                                setGlobalCheck
+                              )
                               return
                             }
 
