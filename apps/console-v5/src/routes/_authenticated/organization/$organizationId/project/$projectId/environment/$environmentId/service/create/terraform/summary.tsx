@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { StepSummary } from '@qovery/domains/service-terraform/feature'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary'
@@ -8,5 +9,7 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
+  useDocumentTitle('Summary - Create Terraform')
+
   return <StepSummary />
 }

@@ -11,7 +11,6 @@ import { buildDockerfileFragment } from '@qovery/domains/service-settings/featur
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
@@ -22,8 +21,6 @@ export const terraformEngines = [
 ]
 
 export const StepSummary = () => {
-  useDocumentTitle('Summary - Create Terraform')
-
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { setCurrentStep, generalForm } = useTerraformCreateContext()
