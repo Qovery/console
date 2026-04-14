@@ -254,6 +254,7 @@ function DeploymentLogsBody({
   const { organizationId = '', projectId = '', serviceId = '', executionId = '' } = useParams({ strict: false })
   const refScrollSection = useRef<HTMLDivElement>(null)
   const accumulatedScrollUp = useRef(0)
+  const [isScrolledUp, setIsScrolledUp] = useState(false)
   const { updateStageId } = useContext(ServiceStageIdsContext)
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const { mutateAsync: generateBuildUsageReport, isLoading: isBuildReportLoading } = useGenerateBuildUsageReport()
@@ -288,11 +289,11 @@ function DeploymentLogsBody({
   }, [logs, pauseLogs])
 
   const handleScroll = useCallback(() => {
-    if (!pauseLogs) return
     const section = refScrollSection.current
     if (!section) return
     const isAtBottom = section.scrollTop + section.clientHeight >= section.scrollHeight - 4
-    if (isAtBottom) {
+    setIsScrolledUp(!isAtBottom)
+    if (isAtBottom && pauseLogs) {
       setPauseLogs(false)
     }
   }, [pauseLogs, setPauseLogs])
@@ -570,7 +571,7 @@ function DeploymentLogsBody({
           <ProgressIndicator className="mb-2 pl-2" pauseLogs={pauseLogs} message="Streaming deployment logs" />
         )}
       </div>
-      {isLastVersion && (
+      {isScrolledUp && (
         <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} bufferedLogsCount={bufferedLogsCount} />
       )}
     </>
