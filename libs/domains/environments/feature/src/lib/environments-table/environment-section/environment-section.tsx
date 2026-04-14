@@ -1,10 +1,9 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
-import { Button, DeploymentAction, Heading, Icon, Section, TablePrimitives, Truncate } from '@qovery/shared/ui'
+import { Button, DeploymentAction, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { MenuManageDeployment, MenuOtherActions } from '../../environment-action-toolbar/environment-action-toolbar'
@@ -23,13 +22,6 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
   const cellClassName = 'h-auto border-l border-neutral py-2'
-  const isDesktopOrLaptop = useMediaQuery({
-    query: '(min-width: 1280px)',
-  })
-  const isVeryLargeScreen = useMediaQuery({
-    query: '(min-width: 1536px)',
-  })
-
   const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
     event.stopPropagation()
   }
@@ -56,10 +48,10 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       }}
     >
       <Table.Cell className={twMerge(cellClassName, 'border-none p-0')}>
-        <div className="flex h-full flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
-          <span className="text-wrap break-all text-sm font-medium">
-            <Truncate text={overview.name} truncateLimit={isVeryLargeScreen ? 72 : isDesktopOrLaptop ? 40 : 30} />
-          </span>
+        <div className="flex h-full min-w-0 flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
+          <Tooltip content={overview.name}>
+            <span className="block min-w-0 flex-1 truncate text-sm font-medium">{overview.name}</span>
+          </Tooltip>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
               {overview.service_count} {pluralize(overview.service_count, 'service')}
@@ -71,10 +63,16 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       <Table.Cell className={cellClassName}>
         <div className="flex h-full items-center justify-between">
           <div className="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
-            <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
-            <span className="text-neutral-subtle">
-              {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
-            </span>
+            {overview.service_count > 0 ? (
+              <>
+                <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
+                <span className="text-neutral-subtle">
+                  {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
+                </span>
+              </>
+            ) : (
+              <span className="text-sm text-neutral-subtle">No services yet</span>
+            )}
           </div>
           <EnvironmentStateChip mode="last-deployment" environmentId={overview.id} variant="monochrome" />
         </div>
@@ -87,12 +85,12 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
               params={{ organizationId, clusterId: overview.cluster.id }}
               onClick={stopRowNavigation}
               onKeyDown={stopRowNavigation}
-              className="group lg:inline-flex lg:items-center lg:gap-2"
+              className="group min-w-0 lg:inline-flex lg:items-center lg:gap-2"
             >
               <ClusterAvatar cluster={overview.cluster} size="sm" className="hidden lg:inline-block" />
-              <span className="text-wrap break-all group-hover:underline">
-                <Truncate text={overview.cluster?.name} truncateLimit={isDesktopOrLaptop ? 40 : 20} />
-              </span>
+              <Tooltip content={overview.cluster.name}>
+                <span className="block min-w-0 truncate group-hover:underline">{overview.cluster.name}</span>
+              </Tooltip>
             </Link>
           )}
         </div>

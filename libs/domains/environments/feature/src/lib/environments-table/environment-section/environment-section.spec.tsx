@@ -12,10 +12,6 @@ jest.mock('@tanstack/react-router', () => ({
   Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
-jest.mock('react-responsive', () => ({
-  useMediaQuery: () => false,
-}))
-
 jest.mock('../../hooks/use-environments/use-environments', () => ({
   __esModule: true,
   default: () => ({

@@ -252,7 +252,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
       }),
       columnHelper.display({
         id: 'last_deployment',
-        header: 'Last deployment',
+        header: 'Last operation',
         enableColumnFilter: false,
         enableSorting: false,
         cell: (info) => <ServiceLastDeploymentCell service={info.row.original} environment={environment} />,
@@ -315,12 +315,16 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
   const ServicesBadges = useCallback(() => {
     const getLabel = (value: string, count: number) => {
-      const statusLabel = value.toLowerCase()
+      const statusLabel = value.toLowerCase().split('_').join(' ')
+      const isErrorStatus = value === 'ERROR' || value.endsWith('_ERROR')
 
       return match(value)
-        .with('RUNNING', 'STOPPED', () => `${count} ${statusLabel}`)
-        .with('ERROR', () => `${count} in error`)
-        .otherwise(() => `${count} ${pluralize(count, statusLabel)}`)
+        .with('WARNING', () => `${count} ${pluralize(count, 'warning')}`)
+        .when(
+          () => isErrorStatus,
+          () => `${count} in error`
+        )
+        .otherwise(() => `${count} ${statusLabel}`)
     }
 
     return statusFacetedUniqueValues.some(([value]) => value === undefined) ? (

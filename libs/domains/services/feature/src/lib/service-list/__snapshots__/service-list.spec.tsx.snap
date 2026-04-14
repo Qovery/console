@@ -63,7 +63,7 @@ exports[`ServiceList should match snapshot 1`] = `
               <th
                 class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0"
               >
-                Last deployment
+                Last operation
               </th>
               <th
                 class="px-4 text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0"

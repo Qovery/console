@@ -1563,6 +1563,11 @@ exports[`VariableList should match snapshot 1`] = `
         class="inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl animate-action-bar-fade-out hidden"
         data-testid="sticky-action-form-toaster"
       >
+        <span
+          class="text-sm font-medium text-neutralInvert"
+        >
+          0 selected variable
+        </span>
         <div
           class="flex gap-5"
         >

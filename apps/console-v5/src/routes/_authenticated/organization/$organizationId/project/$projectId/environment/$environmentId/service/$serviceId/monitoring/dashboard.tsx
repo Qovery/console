@@ -3,7 +3,7 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useCallback, useEffect, useMemo } from 'react'
 import { match } from 'ts-pattern'
-import { useCluster, useClusterRunningStatus, useClusterStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
   EnableObservabilityButtonContactUs,
@@ -33,10 +33,6 @@ function RouteComponent() {
   const { data: serviceStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
 
-  const { data: clusterRunningStatus } = useClusterRunningStatus({
-    organizationId: environment?.organization.id ?? '',
-    clusterId: environment?.cluster_id ?? '',
-  })
   const { data: clusterStatus } = useClusterStatus({
     organizationId: environment?.organization.id ?? '',
     clusterId: environment?.cluster_id ?? '',

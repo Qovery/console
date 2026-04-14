@@ -44,7 +44,7 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
   )
 
   return deploymentStatus?.state === 'READY' ? (
-    <span className="text-sm font-normal text-neutral-subtle">Never been deployed</span>
+    <span className="text-sm font-normal text-neutral-subtle">No operations yet</span>
   ) : (
     <div className="flex w-full items-center justify-between gap-4">
       <WrappingLink>

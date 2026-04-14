@@ -86,8 +86,6 @@ export function UserMenu() {
 
         <DropdownMenu.Separator />
 
-        <DropdownMenu.Item>Give feedback</DropdownMenu.Item>
-
         <DropdownMenu.Item asChild>
           <a
             href="https://www.qovery.com"
