@@ -227,7 +227,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
       }),
       columnHelper.display({
         id: 'last_deployment',
-        header: 'Last deployment',
+        header: 'Last operation',
         enableColumnFilter: false,
         enableSorting: false,
         cell: (info) => <ServiceLastDeploymentCell service={info.row.original} environment={environment} />,
