@@ -1,14 +1,16 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
+import { Link as RouterLink } from '@tanstack/react-router'
 import {
   EnvironmentLastDeploymentSection,
   EnvironmentMode,
+  EnvironmentStateChip,
   MenuManageDeployment,
   MenuOtherActions,
   useDeploymentStatus,
   useEnvironment,
 } from '@qovery/domains/environments/feature'
-import { Heading, Icon, Link, Navbar, Section } from '@qovery/shared/ui'
+import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
@@ -47,13 +49,26 @@ function RouteComponent() {
     <div className="container mx-auto mt-6 pb-10">
       <Section className="gap-8">
         <div className="flex flex-col gap-6">
-          <div className="flex justify-between">
-            <div className="flex items-center gap-3">
-              <EnvironmentMode mode={environment.mode} variant="shrink" />
-              <Heading>{environment?.name}</Heading>
+          <div className="flex justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <EnvironmentMode mode={environment.mode} variant="shrink" className="mr-1" />
+              <Tooltip content={environment.name}>
+                <Heading className="min-w-0 max-w-full truncate">{environment.name}</Heading>
+              </Tooltip>
+              <EnvironmentStateChip className="ml-0.5 shrink-0" mode="running" environmentId={environment.id} />
+              <span className="mx-2 h-4 w-px shrink-0 bg-surface-neutral-component" />
+              <RouterLink
+                to="/organization/$organizationId/cluster/$clusterId/overview"
+                params={{ organizationId, clusterId: environment.cluster_id }}
+                className="group flex shrink-0 items-center gap-2 text-ssm"
+                color="neutral"
+              >
+                <Icon className="w-5" name={environment.cloud_provider.provider} />
+                <span className="group-hover:underline">{environment.cluster_name}</span>
+              </RouterLink>
             </div>
 
-            <div className="flex gap-2">
+            <div className="flex shrink-0 gap-2">
               <MenuOtherActions
                 environment={environment}
                 state={deploymentStatus.last_deployment_state}

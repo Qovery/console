@@ -10,7 +10,7 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { Badge, Button, ExternalLink, Heading, Icon, ToastEnum, Truncate, toast } from '@qovery/shared/ui'
+import { Badge, Button, ExternalLink, Heading, Icon, ToastEnum, Tooltip, Truncate, toast } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -105,8 +105,8 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-2">
             <ServiceAvatar
               size="sm"
               radius="none"
@@ -124,13 +124,20 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
                     }
               }
             />
-            <Heading>{service.name}</Heading>
-            <ServiceStateChip className="ml-0.5" mode="running" environmentId={environment.id} serviceId={serviceId} />
-            <span className="mx-2 h-4 w-px bg-surface-neutral-component" />
+            <Tooltip content={service.name}>
+              <Heading className="min-w-0 max-w-full truncate">{service.name}</Heading>
+            </Tooltip>
+            <ServiceStateChip
+              className="ml-0.5 shrink-0"
+              mode="running"
+              environmentId={environment.id}
+              serviceId={serviceId}
+            />
+            <span className="mx-2 h-4 w-px shrink-0 bg-surface-neutral-component" />
             <Link
               to="/organization/$organizationId/cluster/$clusterId/overview"
               params={{ organizationId, clusterId: environment.cluster_id }}
-              className="group flex items-center gap-2 text-ssm"
+              className="group flex shrink-0 items-center gap-2 text-ssm"
             >
               <Icon className="w-5" name={environment.cloud_provider.provider} />
               <span className="group-hover:underline">{environment.cluster_name}</span>
