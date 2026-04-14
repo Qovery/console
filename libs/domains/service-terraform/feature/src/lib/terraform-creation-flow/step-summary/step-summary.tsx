@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { posthog } from 'posthog-js'
+import posthog from 'posthog-js'
 import {
   TerraformAutoDeployConfigTerraformActionEnum,
   TerraformEngineEnum,
