@@ -4,7 +4,7 @@ import { type KeyboardEvent, type MouseEvent } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
-import { Button, DeploymentAction, Heading, Icon, Section, TablePrimitives, Truncate } from '@qovery/shared/ui'
+import { Button, DeploymentAction, Heading, Icon, Section, TablePrimitives, Tooltip, Truncate } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { MenuManageDeployment, MenuOtherActions } from '../../environment-action-toolbar/environment-action-toolbar'
@@ -26,10 +26,6 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const isDesktopOrLaptop = useMediaQuery({
     query: '(min-width: 1280px)',
   })
-  const isVeryLargeScreen = useMediaQuery({
-    query: '(min-width: 1536px)',
-  })
-
   const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
     event.stopPropagation()
   }
@@ -56,10 +52,10 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       }}
     >
       <Table.Cell className={twMerge(cellClassName, 'border-none p-0')}>
-        <div className="flex h-full flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
-          <span className="text-wrap break-all text-sm font-medium">
-            <Truncate text={overview.name} truncateLimit={isVeryLargeScreen ? 72 : isDesktopOrLaptop ? 40 : 30} />
-          </span>
+        <div className="flex h-full min-w-0 flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
+          <Tooltip content={overview.name}>
+            <span className="block min-w-0 flex-1 truncate text-sm font-medium">{overview.name}</span>
+          </Tooltip>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
               {overview.service_count} {pluralize(overview.service_count, 'service')}
