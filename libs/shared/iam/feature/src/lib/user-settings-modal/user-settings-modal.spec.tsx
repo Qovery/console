@@ -1,3 +1,4 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { UserSettingsModal } from './user-settings-modal'
 
@@ -33,12 +34,21 @@ jest.mock('../use-user-edit-account/use-user-edit-account', () => ({
 }))
 
 describe('UserSettingsModal', () => {
+  const renderUserSettingsModal = () =>
+    renderWithProviders(
+      <Dialog.Root open>
+        <Dialog.Content>
+          <UserSettingsModal />
+        </Dialog.Content>
+      </Dialog.Root>
+    )
+
   beforeEach(() => {
     mockMutateAsync.mockResolvedValue(undefined)
   })
 
   it('should render user info and form fields', async () => {
-    renderWithProviders(<UserSettingsModal />)
+    renderUserSettingsModal()
     await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
 
     expect(screen.getByText('John Doe')).toBeInTheDocument()
@@ -51,7 +61,7 @@ describe('UserSettingsModal', () => {
   })
 
   it('should call mutateAsync with updated email on submit', async () => {
-    const { userEvent } = renderWithProviders(<UserSettingsModal />)
+    const { userEvent } = renderUserSettingsModal()
     await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
     const emailInput = screen.getByLabelText(/communication email/i)
     const saveButton = screen.getByRole('button', { name: /save/i })
@@ -67,7 +77,7 @@ describe('UserSettingsModal', () => {
   })
 
   it('should show validation error for invalid email', async () => {
-    const { userEvent } = renderWithProviders(<UserSettingsModal />)
+    const { userEvent } = renderUserSettingsModal()
     await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
     const emailInput = screen.getByLabelText(/communication email/i)
 
@@ -78,7 +88,7 @@ describe('UserSettingsModal', () => {
   })
 
   it('should disable Save button when form is invalid', async () => {
-    const { userEvent } = renderWithProviders(<UserSettingsModal />)
+    const { userEvent } = renderUserSettingsModal()
     await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
     const emailInput = screen.getByLabelText(/communication email/i)
     const saveButton = screen.getByRole('button', { name: /save/i })

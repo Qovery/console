@@ -1,4 +1,6 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { match } from 'ts-pattern'
 import { useAuth } from '@qovery/shared/auth'
 import { type IconEnum } from '@qovery/shared/enums'
 import { Button, Icon, InputSelect, InputText } from '@qovery/shared/ui'
@@ -7,6 +9,20 @@ import { useEditUserAccount } from '../use-user-edit-account/use-user-edit-accou
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 const timezoneOffset = new Date().getTimezoneOffset() / -60
+
+function getUserGitProvider(sub?: string) {
+  if (!sub) return ''
+  return match(sub)
+    .when(
+      (s) => s.includes('Gitlab'),
+      () => 'gitlab'
+    )
+    .when(
+      (s) => s.includes('google-oauth2'),
+      () => 'google'
+    )
+    .otherwise((s) => s.split('|')[0])
+}
 
 export function UserSettingsModal() {
   const { user: userToken } = useAuth()
@@ -32,7 +48,7 @@ export function UserSettingsModal() {
     }
   })
 
-  const userGitProvider = userToken?.sub?.includes('Gitlab') ? 'gitlab' : userToken?.sub?.split('|')[0]
+  const userGitProvider = getUserGitProvider(userToken?.sub)
 
   const accountOptions = [
     {
@@ -53,9 +69,11 @@ export function UserSettingsModal() {
               alt="User profile"
             />
           </div>
-          <p className="ml-3 font-medium text-neutral">
-            {methods.watch('firstName')} {methods.watch('lastName')}
-          </p>
+          <Dialog.Title asChild>
+            <p className="ml-3 font-medium text-neutral">
+              {methods.watch('firstName')} {methods.watch('lastName')}
+            </p>
+          </Dialog.Title>
         </div>
         <hr className="relative -left-5 my-5 w-[calc(100%+40px)] border-0 border-b border-neutral" />
         <div className="mb-3 flex">
