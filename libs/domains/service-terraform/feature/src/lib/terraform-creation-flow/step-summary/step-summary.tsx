@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import posthog from 'posthog-js'
+import { posthog } from 'posthog-js'
 import {
   TerraformAutoDeployConfigTerraformActionEnum,
   TerraformEngineEnum,
@@ -25,7 +25,7 @@ export const StepSummary = () => {
   useDocumentTitle('Summary - Create Terraform')
 
   const navigate = useNavigate()
-  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { setCurrentStep, generalForm } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
   const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
@@ -101,16 +101,14 @@ export const StepSummary = () => {
         setIsLoadingCreateAndPlan(false)
       }
 
-      if (slug && option) {
-        posthog.capture('create-service', {
-          selectedServiceType: slug,
-          selectedServiceSubType: option,
-        })
-      }
+      posthog.capture('create-service', {
+        selectedServiceType: 'terraform',
+        selectedServiceSubType: 'current',
+      })
 
       setIsLoadingCreate(false)
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/',
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
         params: { organizationId, projectId, environmentId },
       })
     } catch (error) {
@@ -134,7 +132,17 @@ export const StepSummary = () => {
             <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
                 <Heading>General information</Heading>
-                <Button type="button" variant="plain" size="md" onClick={() => navigate({ to: '../general' })}>
+                <Button
+                  type="button"
+                  variant="plain"
+                  size="md"
+                  onClick={() =>
+                    navigate({
+                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general',
+                      params: { organizationId, projectId, environmentId },
+                    })
+                  }
+                >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </div>
@@ -174,7 +182,12 @@ export const StepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
-                  onClick={() => navigate({ to: '../terraform-configuration' })}
+                  onClick={() =>
+                    navigate({
+                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
+                      params: { organizationId, projectId, environmentId },
+                    })
+                  }
                 >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
@@ -214,7 +227,17 @@ export const StepSummary = () => {
             <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
                 <Heading>Input variables</Heading>
-                <Button type="button" variant="plain" size="md" onClick={() => navigate({ to: '../input-variables' })}>
+                <Button
+                  type="button"
+                  variant="plain"
+                  size="md"
+                  onClick={() =>
+                    navigate({
+                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
+                      params: { organizationId, projectId, environmentId },
+                    })
+                  }
+                >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </div>
@@ -238,7 +261,17 @@ export const StepSummary = () => {
           </div>
 
           <div className="mt-10 flex justify-between">
-            <Button type="button" size="lg" variant="plain" onClick={() => navigate({ to: '../input-variables' })}>
+            <Button
+              type="button"
+              size="lg"
+              variant="plain"
+              onClick={() =>
+                navigate({
+                  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
+                  params: { organizationId, projectId, environmentId },
+                })
+              }
+            >
               Back
             </Button>
             <div className="flex gap-2">

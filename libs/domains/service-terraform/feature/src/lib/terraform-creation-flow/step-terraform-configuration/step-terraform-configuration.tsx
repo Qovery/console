@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { TerraformConfigurationSettings } from '@qovery/domains/service-settings/feature'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
@@ -9,13 +9,17 @@ export const StepTerraformConfiguration = () => {
   useDocumentTitle('General - Terraform configuration')
   const { generalForm, setCurrentStep } = useTerraformCreateContext()
   const navigate = useNavigate()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
 
   useEffect(() => {
     setCurrentStep(2)
   }, [setCurrentStep])
 
   const onSubmit = () => {
-    navigate({ to: '../input-variables' })
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
+      params: { organizationId, projectId, environmentId },
+    })
   }
 
   return (
@@ -23,7 +27,18 @@ export const StepTerraformConfiguration = () => {
       <TerraformConfigurationSettings methods={generalForm} />
 
       <div className="mt-10 flex justify-between">
-        <Button type="button" size="lg" variant="plain" color="neutral" onClick={() => navigate({ to: '../general' })}>
+        <Button
+          type="button"
+          size="lg"
+          variant="plain"
+          color="neutral"
+          onClick={() =>
+            navigate({
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general',
+              params: { organizationId, projectId, environmentId },
+            })
+          }
+        >
           Back
         </Button>
         <div className="flex gap-3">

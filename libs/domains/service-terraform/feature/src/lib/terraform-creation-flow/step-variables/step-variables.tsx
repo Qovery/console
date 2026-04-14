@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { TerraformVariablesSettings } from '@qovery/domains/service-settings/feature'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
@@ -7,6 +7,7 @@ import { useTerraformCreateContext } from '../../hooks/use-terraform-create-cont
 export const StepVariables = () => {
   const navigate = useNavigate()
   const { setCurrentStep } = useTerraformCreateContext()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
 
   useEffect(() => {
     setCurrentStep(3)
@@ -23,12 +24,27 @@ export const StepVariables = () => {
             size="lg"
             variant="plain"
             color="neutral"
-            onClick={() => navigate({ to: '../terraform-configuration' })}
+            onClick={() =>
+              navigate({
+                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
+                params: { organizationId, projectId, environmentId },
+              })
+            }
           >
             Back
           </Button>
           <div className="flex gap-3">
-            <Button type="submit" size="lg" onClick={() => navigate({ to: '../summary' })} disabled={false}>
+            <Button
+              type="submit"
+              size="lg"
+              onClick={() =>
+                navigate({
+                  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary',
+                  params: { organizationId, projectId, environmentId },
+                })
+              }
+              disabled={false}
+            >
               Continue
             </Button>
           </div>

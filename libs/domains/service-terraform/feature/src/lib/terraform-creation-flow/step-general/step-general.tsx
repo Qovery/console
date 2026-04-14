@@ -25,7 +25,10 @@ export const StepGeneral = () => {
       data.auto_deploy = false
     }
 
-    navigate({ to: '../terraform-configuration' })
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
+      params: { organizationId, projectId, environmentId },
+    })
   })
 
   const watchFieldProvider = generalForm.watch('source_provider')
