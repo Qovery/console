@@ -571,12 +571,7 @@ function DeploymentLogsBody({
         )}
       </div>
       {isLastVersion && (
-        <ShowNewLogsButton
-          pauseLogs={pauseLogs}
-          setPauseLogs={setPauseLogs}
-          newMessagesAvailable={bufferedLogsCount > 0}
-          bufferedLogsCount={bufferedLogsCount}
-        />
+        <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} bufferedLogsCount={bufferedLogsCount} />
       )}
     </>
   )

@@ -329,12 +329,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
           </div>
         )}
         {isLiveMode && (
-          <ShowNewLogsButton
-            pauseLogs={pauseLogs}
-            setPauseLogs={setPauseLogs}
-            newMessagesAvailable={bufferedLogsCount > 0}
-            bufferedLogsCount={bufferedLogsCount}
-          />
+          <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} bufferedLogsCount={bufferedLogsCount} />
         )}
       </div>
     </div>

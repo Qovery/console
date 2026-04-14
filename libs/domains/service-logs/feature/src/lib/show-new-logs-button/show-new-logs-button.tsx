@@ -5,16 +5,10 @@ import { Button, Icon } from '@qovery/shared/ui'
 export interface ShowNewLogsButtonProps {
   pauseLogs: boolean
   setPauseLogs: Dispatch<SetStateAction<boolean>>
-  newMessagesAvailable: boolean
   bufferedLogsCount?: number
 }
 
-export function ShowNewLogsButton({
-  pauseLogs,
-  setPauseLogs,
-  newMessagesAvailable,
-  bufferedLogsCount,
-}: ShowNewLogsButtonProps) {
+export function ShowNewLogsButton({ pauseLogs, setPauseLogs, bufferedLogsCount }: ShowNewLogsButtonProps) {
   const navigate = useNavigate()
   const { hash, pathname, search } = useLocation()
 
@@ -37,7 +31,7 @@ export function ShowNewLogsButton({
             {bufferedLogsCount > 999 ? '999+' : bufferedLogsCount}
           </span>
         )}
-        <Icon iconName="arrow-down-to-line" />
+        <Icon iconName="arrow-down" />
       </Button>
     )
   }
