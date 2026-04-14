@@ -497,7 +497,7 @@ function MenuManageDeployment({
                       Force Run
                     </DropdownMenu.Item>
                   ))}
-              {isStopAvailable(state) && (
+              {isStopAvailable(state) && runningState?.state !== 'STOPPED' && (
                 <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
                   <div className="flex w-full items-center justify-between">
                     Stop
