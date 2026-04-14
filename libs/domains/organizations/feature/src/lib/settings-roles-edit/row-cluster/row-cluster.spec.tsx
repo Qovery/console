@@ -1,5 +1,8 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { OrganizationCustomRoleClusterPermission, type OrganizationCustomRoleClusterPermissionsInner } from 'qovery-typescript-axios'
+import {
+  OrganizationCustomRoleClusterPermission,
+  type OrganizationCustomRoleClusterPermissionsInner,
+} from 'qovery-typescript-axios'
 import { customRolesMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import RowCluster from './row-cluster'
