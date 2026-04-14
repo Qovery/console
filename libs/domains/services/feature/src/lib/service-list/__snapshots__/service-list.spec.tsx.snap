@@ -31,16 +31,20 @@ exports[`ServiceList should match snapshot 1`] = `
                 class="text-left font-code font-normal relative flex h-full items-center border-r border-neutral text-neutral-subtle last:border-r-0 border-none p-0"
               >
                 <div
-                  class="flex h-full w-full items-center pl-4"
+                  class="relative h-full w-full"
                 >
-                  <button
-                    aria-checked="false"
-                    class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
-                    data-state="unchecked"
-                    role="checkbox"
-                    type="button"
-                    value="on"
-                  />
+                  <label
+                    class="absolute inset-0 flex items-center pl-4"
+                  >
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </label>
                 </div>
               </th>
               <th
@@ -83,24 +87,22 @@ exports[`ServiceList should match snapshot 1`] = `
               <td
                 class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <div
-                  class="flex h-full w-full items-center pl-4"
+                <label
+                  class="absolute inset-0 flex items-center pl-4"
                 >
-                  <label>
-                    <div
-                      class="h-4"
-                    >
-                      <button
-                        aria-checked="false"
-                        class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
-                        data-state="unchecked"
-                        role="checkbox"
-                        type="button"
-                        value="on"
-                      />
-                    </div>
-                  </label>
-                </div>
+                  <div
+                    class="h-4"
+                  >
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </div>
+                </label>
               </td>
               <td
                 class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
@@ -466,24 +468,22 @@ exports[`ServiceList should match snapshot 1`] = `
               <td
                 class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <div
-                  class="flex h-full w-full items-center pl-4"
+                <label
+                  class="absolute inset-0 flex items-center pl-4"
                 >
-                  <label>
-                    <div
-                      class="h-4"
-                    >
-                      <button
-                        aria-checked="false"
-                        class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
-                        data-state="unchecked"
-                        role="checkbox"
-                        type="button"
-                        value="on"
-                      />
-                    </div>
-                  </label>
-                </div>
+                  <div
+                    class="h-4"
+                  >
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </div>
+                </label>
               </td>
               <td
                 class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
@@ -836,24 +836,22 @@ exports[`ServiceList should match snapshot 1`] = `
               <td
                 class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <div
-                  class="flex h-full w-full items-center pl-4"
+                <label
+                  class="absolute inset-0 flex items-center pl-4"
                 >
-                  <label>
-                    <div
-                      class="h-4"
-                    >
-                      <button
-                        aria-checked="false"
-                        class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
-                        data-state="unchecked"
-                        role="checkbox"
-                        type="button"
-                        value="on"
-                      />
-                    </div>
-                  </label>
-                </div>
+                  <div
+                    class="h-4"
+                  >
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </div>
+                </label>
               </td>
               <td
                 class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
@@ -1464,6 +1462,15 @@ exports[`ServiceList should match snapshot 1`] = `
                     class="flex items-center gap-2"
                   >
                     <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
+                      />
+                    </span>
+                    <span
                       class="flex"
                     >
                       <span
@@ -1497,15 +1504,6 @@ exports[`ServiceList should match snapshot 1`] = `
                         </span>
                       </button>
                     </span>
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <i
-                        aria-hidden="true"
-                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
-                      />
-                    </span>
                   </div>
                 </div>
               </td>
@@ -1530,24 +1528,22 @@ exports[`ServiceList should match snapshot 1`] = `
               <td
                 class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
               >
-                <div
-                  class="flex h-full w-full items-center pl-4"
+                <label
+                  class="absolute inset-0 flex items-center pl-4"
                 >
-                  <label>
-                    <div
-                      class="h-4"
-                    >
-                      <button
-                        aria-checked="false"
-                        class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
-                        data-state="unchecked"
-                        role="checkbox"
-                        type="button"
-                        value="on"
-                      />
-                    </div>
-                  </label>
-                </div>
+                  <div
+                    class="h-4"
+                  >
+                    <button
+                      aria-checked="false"
+                      class="group inline-flex shrink-0 items-center justify-center h-4 w-4 rounded border border-neutral bg-surface-neutral transition-colors disabled:cursor-not-allowed disabled:border-neutral disabled:bg-surface-neutral-subtle disabled:hover:border-neutral disabled:data-[state=checked]:bg-surface-neutral-subtle disabled:data-[state=checked]:border-neutral disabled:data-[state=indeterminate]:border-neutral hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid hover:data-[state=checked]:bg-surface-brand-solidHover data-[state=checked]:border-0 data-[state=indeterminate]:border-brand-strong"
+                      data-state="unchecked"
+                      role="checkbox"
+                      type="button"
+                      value="on"
+                    />
+                  </div>
+                </label>
               </td>
               <td
                 class="relative flex h-full items-center border-r border-neutral last:border-r-0 border-none p-0"
@@ -1951,6 +1947,15 @@ exports[`ServiceList should match snapshot 1`] = `
                     class="flex items-center gap-2"
                   >
                     <span
+                      class=""
+                      data-state="closed"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
+                      />
+                    </span>
+                    <span
                       class="flex"
                     >
                       <span
@@ -1983,15 +1988,6 @@ exports[`ServiceList should match snapshot 1`] = `
                           />
                         </span>
                       </button>
-                    </span>
-                    <span
-                      class=""
-                      data-state="closed"
-                    >
-                      <i
-                        aria-hidden="true"
-                        class="fa-regular fa-arrows-rotate text-xs text-neutral-subtle"
-                      />
                     </span>
                   </div>
                 </div>

@@ -18,6 +18,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useDeployService } from '../../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentHistory } from '../../hooks/use-deployment-history/use-deployment-history'
 import { LastCommitAuthor, type LastCommitAuthorProps } from '../../last-commit-author/last-commit-author'
@@ -100,8 +101,8 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
       <EmptyState
         icon="play"
         iconStyle="solid"
-        title="Application has never been deployed"
-        description="Deploy the application first"
+        title={`${upperCaseFirstLetter(service?.service_type ?? 'Service')} has never been deployed`}
+        description={`Deploy the ${service?.serviceType.toLowerCase() ?? 'service'} first`}
       >
         <Button
           className="gap-1"

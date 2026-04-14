@@ -7,7 +7,15 @@ import { useRunningStatus } from '../../hooks/use-running-status/use-running-sta
 import { useService } from '../../hooks/use-service/use-service'
 
 function Box({ title, description, icon = 'play' }: { title: string; description: string; icon?: IconName }) {
-  return <EmptyStateComponent title={title} description={description} icon={icon} iconStyle="solid" />
+  return (
+    <EmptyStateComponent
+      className="bg-surface-neutral"
+      title={title}
+      description={description}
+      icon={icon}
+      iconStyle="solid"
+    />
+  )
 }
 
 export interface EmptyStateProps {

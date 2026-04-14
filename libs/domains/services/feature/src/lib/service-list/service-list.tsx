@@ -58,7 +58,7 @@ export const ServiceListSkeleton = () => {
             <Table.Header>
               <Table.Row className={tableGridLayoutClassName}>
                 {[...Array(6)].map((_, index) => (
-                  <Table.ColumnHeaderCell key={index} className="flex items-center first:border-r">
+                  <Table.ColumnHeaderCell key={index} className="flex items-center">
                     {index === 0 ? (
                       <div className="flex items-center justify-between">
                         <Skeleton height={16} width={16} />
@@ -74,7 +74,7 @@ export const ServiceListSkeleton = () => {
               {[...Array(3)].map((_, index) => (
                 <Table.Row key={index} className={tableGridLayoutClassName}>
                   {[...Array(6)].map((_, index) => (
-                    <Table.Cell key={index} className="flex h-14 items-center first:border-r">
+                    <Table.Cell key={index} className="flex h-14 items-center">
                       {index === 0 ? (
                         <div className="flex items-center justify-between">
                           <Skeleton height={16} width={16} />
@@ -152,33 +152,54 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         id: 'select',
         enableColumnFilter: false,
         enableSorting: false,
-        header: ({ table }) => (
-          <div className="flex h-full w-full items-center pl-4">
-            <Checkbox
-              checked={
-                table.getIsSomeRowsSelected()
-                  ? table.getIsAllRowsSelected()
-                    ? true
-                    : 'indeterminate'
-                  : table.getIsAllRowsSelected()
-              }
-              onCheckedChange={(checked) => {
-                if (checked === 'indeterminate') {
-                  return
-                }
-                table.toggleAllRowsSelected(checked)
-              }}
-            />
-          </div>
-        ),
+        header: ({ table }) => {
+          const isAllRowsSelected = table.getIsAllRowsSelected()
+          const checked = table.getIsSomeRowsSelected()
+            ? isAllRowsSelected
+              ? true
+              : 'indeterminate'
+            : isAllRowsSelected
+          const toggleAllRowsSelection = () => {
+            table.toggleAllRowsSelected(!isAllRowsSelected)
+          }
+
+          return (
+            <div className="relative h-full w-full">
+              <label
+                className="absolute inset-0 flex items-center pl-4"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleAllRowsSelection()
+                }}
+              >
+                <Checkbox
+                  checked={checked}
+                  onClick={(e) => e.stopPropagation()}
+                  onCheckedChange={(checked) => {
+                    if (checked === 'indeterminate') {
+                      return
+                    }
+                    table.toggleAllRowsSelected(checked)
+                  }}
+                />
+              </label>
+            </div>
+          )
+        },
         cell: ({ row }) => {
           const isDisabled = !row.getCanSelect()
+          const toggleRowSelection = () => {
+            if (isDisabled) {
+              return
+            }
+            row.toggleSelected(!row.getIsSelected())
+          }
           const checkbox = (
             <div className="h-4">
-              {/** XXX: fix css weird 1px vertical shift when checked/unchecked **/}
               <Checkbox
                 checked={row.getIsSelected()}
                 disabled={isDisabled}
+                onClick={(e) => e.stopPropagation()}
                 onCheckedChange={(checked) => {
                   if (checked === 'indeterminate') {
                     return
@@ -189,18 +210,22 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             </div>
           )
 
-          return (
-            <div className="flex h-full w-full items-center pl-4">
-              <label onClick={(e) => e.stopPropagation()}>
-                {isDisabled ? (
-                  <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
-                    <span>{checkbox}</span>
-                  </Tooltip>
-                ) : (
-                  checkbox
-                )}
-              </label>
-            </div>
+          return isDisabled ? (
+            <Tooltip content="This service is skipped and cannot be selected for bulk deployment">
+              <span className="absolute inset-0 flex items-center pl-4" onClick={(e) => e.stopPropagation()}>
+                {checkbox}
+              </span>
+            </Tooltip>
+          ) : (
+            <label
+              className="absolute inset-0 flex items-center pl-4"
+              onClick={(e) => {
+                e.stopPropagation()
+                toggleRowSelection()
+              }}
+            >
+              {checkbox}
+            </label>
           )
         },
       }),

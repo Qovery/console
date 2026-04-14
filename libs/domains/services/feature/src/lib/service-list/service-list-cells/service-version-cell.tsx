@@ -72,12 +72,6 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <LastCommit
-            organizationId={organizationId}
-            projectId={projectId}
-            gitRepository={gitRepository}
-            service={service}
-          />
           {'auto_deploy' in service && service.auto_deploy && (
             <Tooltip content="Auto-deploy">
               <span>
@@ -85,6 +79,12 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
               </span>
             </Tooltip>
           )}
+          <LastCommit
+            organizationId={organizationId}
+            projectId={projectId}
+            gitRepository={gitRepository}
+            service={service}
+          />
         </div>
       </div>
     )

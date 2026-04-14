@@ -406,6 +406,11 @@ const serviceListProps: ServiceListProps = {
 }
 
 describe('ServiceList', () => {
+  beforeEach(() => {
+    mockNavigate.mockClear()
+    mockDeploymentStagesData = undefined
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<ServiceList {...serviceListProps} />)
     expect(baseElement).toBeTruthy()
@@ -438,6 +443,22 @@ describe('ServiceList', () => {
       },
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
     })
+  })
+
+  it('should toggle service selection when clicking the checkbox hit area', async () => {
+    const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
+
+    const checkboxes = screen.getAllByRole('checkbox')
+    const serviceCheckbox = checkboxes[1]
+    const checkboxHitArea = serviceCheckbox.closest('label')
+
+    expect(serviceCheckbox).toHaveAttribute('aria-checked', 'false')
+    expect(checkboxHitArea).toBeTruthy()
+
+    await userEvent.click(checkboxHitArea!)
+
+    expect(screen.getAllByRole('checkbox')[1]).toHaveAttribute('aria-checked', 'true')
+    expect(mockNavigate).not.toHaveBeenCalled()
   })
 
   it('should disable checkbox for skipped services', () => {

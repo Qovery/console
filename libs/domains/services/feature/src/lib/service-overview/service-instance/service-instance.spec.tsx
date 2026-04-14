@@ -1,3 +1,4 @@
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceInstance } from './service-instance'
 
@@ -58,6 +59,23 @@ describe('ServiceInstance', () => {
 
     expect(screen.getByText('HPA')).toBeInTheDocument()
     expect(screen.getByText('GPU limit:')).toBeInTheDocument()
+  })
+
+  it('renders a callout instead of metrics for managed databases', () => {
+    const service = {
+      id: 'service-db-1',
+      serviceType: 'DATABASE',
+      mode: DatabaseModeEnum.MANAGED,
+      environment: { id: 'env-1' },
+      storage: 20,
+      instance_type: 'db.t3.micro',
+    }
+
+    renderWithProviders(<ServiceInstance service={service as never} />)
+
+    expect(screen.getByText('Metrics for managed databases are not available')).toBeInTheDocument()
+    expect(screen.getByText('Check your cloud provider console to get more information')).toBeInTheDocument()
+    expect(screen.queryByText('instance-metrics')).not.toBeInTheDocument()
   })
 
   it('renders cron scheduling details and cron help callout for cron jobs', () => {
