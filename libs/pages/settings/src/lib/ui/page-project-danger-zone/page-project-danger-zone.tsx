@@ -1,4 +1,4 @@
-import { EnvironmentModeEnum, type Project } from 'qovery-typescript-axios'
+import { type Project } from 'qovery-typescript-axios'
 import { BlockContentDelete } from '@qovery/shared/ui'
 
 export interface PageProjectDangerZoneProps {
@@ -35,7 +35,6 @@ export function PageProjectDangerZone(props: PageProjectDangerZoneProps) {
           ]}
           callback={deleteProject}
           modalConfirmation={{
-            mode: EnvironmentModeEnum.PRODUCTION,
             title: 'Delete project',
             name: project?.name,
           }}

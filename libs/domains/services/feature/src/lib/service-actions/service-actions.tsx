@@ -3,7 +3,6 @@ import {
   type ApplicationGitRepository,
   type ContainerSource,
   type Environment,
-  EnvironmentModeEnum,
   type HelmSourceRepositoryResponse,
   ServiceDeploymentStatusEnum,
   StateEnum,
@@ -51,7 +50,6 @@ import { useRunningStatus } from '../hooks/use-running-status/use-running-status
 import { useService } from '../hooks/use-service/use-service'
 import { useStopService } from '../hooks/use-stop-service/use-stop-service'
 import { useUninstallService } from '../hooks/use-uninstall-service/use-uninstall-service'
-import { RedeployModal } from '../redeploy-modal/redeploy-modal'
 import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
 import { ServiceAccessModal } from '../service-access-modal/service-access-modal'
@@ -138,7 +136,6 @@ function MenuManageDeployment({
           })
           .with('destroy', () => {
             openModalConfirmation({
-              mode: EnvironmentModeEnum.PRODUCTION,
               title: 'Run destroy',
               description: (
                 <div className="flex flex-col gap-1">
@@ -180,13 +177,7 @@ function MenuManageDeployment({
   }
 
   const mutationRedeploy = () => {
-    openModalConfirmation({
-      mode: environment?.mode,
-      title: 'Confirm redeploy',
-      description: 'To confirm the redeploy of your service, please type the name:',
-      name: service.name,
-      action: () => deployService({ serviceId: service.id, serviceType: service.serviceType }),
-    })
+    deployService({ serviceId: service.id, serviceType: service.serviceType })
   }
 
   const mutationStop = () => {
@@ -197,7 +188,6 @@ function MenuManageDeployment({
       : null
 
     openModalConfirmation({
-      mode: isDatabase ? 'PRODUCTION' : environment?.mode,
       title: 'Confirm stop',
       description: 'To confirm the stopping of your service, please type the name:',
       warning: warningMessage,
@@ -222,7 +212,6 @@ function MenuManageDeployment({
       })
       .otherwise(() =>
         openModalConfirmation({
-          mode: environment.mode,
           title: 'Cancel deployment',
           description:
             'Stopping a deployment for your service will stop the deployment of the whole environment. It may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the application:',
@@ -460,25 +449,7 @@ function MenuManageDeployment({
               {isRedeployAvailable(state) && (
                 <DropdownMenu.Item
                   icon={<Icon iconName="rotate-right" />}
-                  onSelect={
-                    // Don't display modal only if:
-                    // - Service needs to be updated
-                    // - Service don't have a runningState RUNNING or ERROR
-                    serviceNeedUpdate ||
-                    !runningState ||
-                    !(runningState.state === 'RUNNING' || runningState.state === 'ERROR')
-                      ? mutationRedeploy
-                      : () =>
-                          openModal({
-                            content: (
-                              <RedeployModal
-                                organizationId={environment.organization.id}
-                                projectId={environment.project.id}
-                                service={service}
-                              />
-                            ),
-                          })
-                  }
+                  onSelect={mutationRedeploy}
                   className="relative"
                   color={displayYellowColor ? 'yellow' : 'brand'}
                 >
@@ -526,7 +497,7 @@ function MenuManageDeployment({
                       Force Run
                     </DropdownMenu.Item>
                   ))}
-              {isStopAvailable(state) && (
+              {isStopAvailable(state) && runningState?.state !== 'STOPPED' && (
                 <DropdownMenu.Item icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
                   <div className="flex w-full items-center justify-between">
                     Stop
@@ -776,14 +747,14 @@ function MenuOtherActions({
           id: 'delete',
           title: 'Delete permanently',
           description: (
-            <div className="flex flex-col gap-2 text-neutral-subtle">
+            <div className="flex flex-col gap-2 text-neutral">
               <span>
                 Permanently remove the service and all associated data.
                 <br />
                 This action cannot be undone.
               </span>
               <div>
-                <span className="font-medium text-neutral-subtle">What's deleted:</span>
+                <span className="font-medium">What's deleted:</span>
                 <ul className="list-disc pl-4">
                   <li>All service data</li>
                   <li>Qovery configuration</li>
@@ -930,26 +901,24 @@ export function ServiceActions({
       />
 
       {variant === 'default' && (
-        <>
-          <Tooltip content="Logs">
-            <Link
-              as="button"
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-              params={{
-                organizationId: environment.organization.id,
-                projectId: environment.project.id,
-                environmentId: environment.id,
-                serviceId: service.id,
-              }}
-              color="neutral"
-              variant="outline"
-              size="sm"
-              iconOnly
-            >
-              <Icon iconName="scroll" />
-            </Link>
-          </Tooltip>
-        </>
+        <Tooltip content="Logs">
+          <Link
+            as="button"
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+            params={{
+              organizationId: environment.organization.id,
+              projectId: environment.project.id,
+              environmentId: environment.id,
+              serviceId: service.id,
+            }}
+            color="neutral"
+            variant="outline"
+            size="sm"
+            iconOnly
+          >
+            <Icon iconName="scroll" />
+          </Link>
+        </Tooltip>
       )}
 
       {variant !== 'deploy-dropdown-only' && (

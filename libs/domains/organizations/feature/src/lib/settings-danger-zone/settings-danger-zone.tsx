@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { EnvironmentModeEnum, type Organization } from 'qovery-typescript-axios'
+import { type Organization } from 'qovery-typescript-axios'
 import { BlockContentDelete } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useDeleteOrganization } from '../hooks/use-delete-organization/use-delete-organization'
@@ -45,7 +45,6 @@ export function PageOrganizationDangerZone(props: PageOrganizationDangerZoneProp
           ]}
           callback={deleteOrganization}
           modalConfirmation={{
-            mode: EnvironmentModeEnum.PRODUCTION,
             title: 'Delete organization',
             name: organization?.name,
           }}

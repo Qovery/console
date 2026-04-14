@@ -6,6 +6,7 @@ import {
   StateEnum,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
@@ -78,13 +79,7 @@ export function MenuManageDeployment({
     })
 
   const mutationRedeploy = () => {
-    openModalConfirmation({
-      mode: environment.mode,
-      title: 'Confirm redeploy',
-      description: 'To confirm the redeploy of your environment, please type the name:',
-      name: environment.name,
-      action: () => deployEnvironment({ environmentId: environment.id }),
-    })
+    deployEnvironment({ environmentId: environment.id })
   }
 
   const mutationStop = () => {
@@ -96,7 +91,6 @@ export function MenuManageDeployment({
     )
 
     openModalConfirmation({
-      mode: environment.mode,
       title: 'Confirm stop',
       description: 'To confirm the stopping of your environment, please type the name:',
       warning: hasDatabase
@@ -109,7 +103,6 @@ export function MenuManageDeployment({
 
   const mutationUninstall = () => {
     openModalConfirmation({
-      mode: 'PRODUCTION',
       title: 'Confirm uninstall',
       description: 'To confirm the uninstall of your environment, please type the name:',
       warning: 'Uninstall delete all compute and data of your service',
@@ -120,7 +113,6 @@ export function MenuManageDeployment({
 
   const mutationCancelDeployment = () => {
     openModalConfirmation({
-      mode: environment.mode,
       title: 'Confirm cancel',
       description:
         'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',

@@ -2,7 +2,6 @@ import { useLocation, useNavigate } from '@tanstack/react-router'
 import {
   type Cluster,
   type ClusterStatus,
-  EnvironmentModeEnum,
   type KubernetesEnum,
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
@@ -141,7 +140,6 @@ function MenuManageDeployment({
 
   const mutationStop = () =>
     openModalConfirmation({
-      mode: EnvironmentModeEnum.PRODUCTION,
       title: 'Confirm stop',
       description: 'To confirm the stop of your cluster, please type the name:',
       warning:
@@ -155,7 +153,6 @@ function MenuManageDeployment({
     })
   const mutationUpgrade = () =>
     openModalConfirmation({
-      mode: EnvironmentModeEnum.PRODUCTION,
       title: 'Confirm upgrade',
       description: 'To confirm the upgrade of your cluster, please type the name:',
       name: cluster.name,

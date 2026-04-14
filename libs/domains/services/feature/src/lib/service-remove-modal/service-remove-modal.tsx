@@ -77,8 +77,9 @@ export function ServiceRemoveModal({
                     <label
                       key={action.id}
                       className={twMerge(
-                        'flex cursor-pointer flex-col gap-2 rounded border border-surface-neutral-subtle bg-surface-neutral-subtle p-5 text-left text-sm shadow transition-all',
-                        selectedActionId === action.id && 'border-surface-brand-solid bg-surface-brand-component'
+                        'flex cursor-pointer flex-col gap-2 rounded-md border border-neutral bg-surface-neutral-subtle p-5 text-left text-sm transition-all hover:bg-surface-neutral-component',
+                        selectedActionId === action.id &&
+                          'cursor-default border-surface-brand-solid bg-surface-brand-component hover:bg-surface-brand-component'
                       )}
                     >
                       <div className="flex items-center gap-3">

@@ -12,7 +12,6 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import {
-  EnvironmentModeEnum,
   type InviteMember,
   type InviteMemberRequest,
   type Member,
@@ -35,7 +34,6 @@ import {
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { pluralize } from '@qovery/shared/util-js'
-import { NODE_ENV } from '@qovery/shared/util-node-env'
 import { type SerializedError } from '@qovery/shared/utils'
 import { useAvailableRoles } from '../hooks/use-available-roles/use-available-roles'
 import { useCreateInviteMember } from '../hooks/use-create-invite-member/use-create-invite-member'
@@ -423,7 +421,6 @@ export function SettingsMembers() {
       title: 'Confirm ownership transfer',
       description: 'Confirm by entering the member name',
       name: user?.name,
-      mode: NODE_ENV === 'production' ? EnvironmentModeEnum.PRODUCTION : EnvironmentModeEnum.DEVELOPMENT,
       action: async () => {
         try {
           await transferOwnershipMemberRole({ organizationId, userId: user.id })

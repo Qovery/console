@@ -33,7 +33,6 @@ export function PageSettingsDangerZone(props: PageSettingsDangerZoneProps) {
           ctaLabel="Delete environment"
           callback={deleteEnvironment}
           modalConfirmation={{
-            mode: environment?.mode,
             title: 'Delete environment',
             name: environment?.name,
           }}
