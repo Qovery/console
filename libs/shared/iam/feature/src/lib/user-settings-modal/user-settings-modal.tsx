@@ -57,7 +57,7 @@ export function UserSettingsModal() {
             {methods.watch('firstName')} {methods.watch('lastName')}
           </p>
         </div>
-        <hr className="relative -left-5 my-5 w-[calc(100%+41px)] border-0 border-b border-neutral" />
+        <hr className="relative -left-5 my-5 w-[calc(100%+40px)] border-0 border-b border-neutral" />
         <div className="mb-3 flex">
           <Controller
             name="firstName"
