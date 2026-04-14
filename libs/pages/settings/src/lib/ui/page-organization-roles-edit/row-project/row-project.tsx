@@ -106,6 +106,17 @@ export function RowProject(props: RowProjectProps) {
                   <div
                     key={currentPermission}
                     className="flex h-full flex-1 items-center justify-center border-r border-neutral-250 px-4 last:border-0"
+                    onClick={() => {
+                      const fieldName = `project_permissions.${project.project_id}.${permission.environment_type}`
+                      if (getValues(fieldName) === currentPermission) {
+                        setValue(fieldName, OrganizationCustomRoleProjectPermission.NO_ACCESS)
+                        setGlobalCheckByValue(
+                          getValues(`project_permissions.${project.project_id}`),
+                          OrganizationCustomRoleProjectPermission.NO_ACCESS,
+                          setGlobalCheck
+                        )
+                      }
+                    }}
                   >
                     <Controller
                       name={`project_permissions.${project.project_id}.${permission.environment_type}`}

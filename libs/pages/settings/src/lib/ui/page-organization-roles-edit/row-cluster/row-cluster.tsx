@@ -34,7 +34,7 @@ const setGlobalCheckByValue = (
 export function RowCluster(props: RowClusterProps) {
   const { cluster, setGlobalCheck } = props
 
-  const { control, getValues } = useFormContext()
+  const { control, getValues, setValue } = useFormContext()
 
   return (
     <div className="flex h-10 border-b border-neutral-250">
@@ -50,6 +50,18 @@ export function RowCluster(props: RowClusterProps) {
           <div
             key={`${cluster.cluster_id}.${permission}`}
             className="flex h-full flex-1 items-center justify-center border-r border-neutral-250 px-4 last:border-0"
+            onClick={() => {
+              const fieldName = `cluster_permissions.${cluster.cluster_id}`
+              if (getValues(fieldName) === permission) {
+                setValue(fieldName, OrganizationCustomRoleClusterPermission.VIEWER)
+                if (setGlobalCheck)
+                  setGlobalCheckByValue(
+                    getValues(fieldName),
+                    OrganizationCustomRoleClusterPermission.VIEWER,
+                    setGlobalCheck
+                  )
+              }
+            }}
           >
             <Controller
               name={`cluster_permissions.${cluster.cluster_id}`}
