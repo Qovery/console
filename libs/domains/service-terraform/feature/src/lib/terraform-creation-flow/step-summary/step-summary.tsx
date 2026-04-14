@@ -242,17 +242,23 @@ export const TerraformStepSummary = () => {
               <ul className="list-none space-y-2 text-sm text-neutral-subtle">
                 <li>
                   <span className="font-medium">Variables:</span>
-                  <ul>
-                    {serializeForApi().map(({ key, value, secret }) => (
-                      <li key={key}>
-                        {key}: {secret ? '********' : value}
-                      </li>
-                    ))}
-                  </ul>
+                  {serializeForApi().length > 0 ? (
+                    <ul>
+                      {serializeForApi().map(({ key, value, secret }) => (
+                        <li key={key} className="text-ssm">
+                          <code>{key}:</code> <code>{secret ? '********' : value}</code>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="ml-1 text-neutral-subtle">No variables overridden</span>
+                  )}
                 </li>
-                <li>
-                  <span className="font-medium">File paths:</span> {[...tfVarsFilePaths].reverse().join(', ')}
-                </li>
+                {tfVarsFilePaths.length > 0 && (
+                  <li>
+                    <span className="font-medium">File paths:</span> {[...tfVarsFilePaths].reverse().join(', ')}
+                  </li>
+                )}
               </ul>
             </Section>
           </div>

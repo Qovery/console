@@ -3,7 +3,7 @@ import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'reac
 import { twMerge } from '@qovery/shared/util-js'
 
 const calloutRootVariants = cva(
-  ['flex', 'flex-row', 'gap-x-4', 'p-4', 'border', 'rounded', 'text-sm', 'items-center'],
+  ['flex', 'flex-row', 'gap-x-4', 'p-4', 'border', 'rounded-md', 'text-sm', 'items-center'],
   {
     variants: {
       color: {

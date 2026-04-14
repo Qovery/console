@@ -253,11 +253,11 @@ export const TerraformConfigurationSettings = ({
                     </span>
                   )}
                 </p>
-                <div className="flex justify-between gap-6 rounded bg-surface-neutral-component p-3 text-neutral">
-                  <div>
+                <div className="flex items-center justify-between gap-6 rounded bg-surface-neutral-component p-3 text-neutral">
+                  <span>
                     <span className="select-none">$ </span>
                     {cliCommand}
-                  </div>
+                  </span>
                   <CopyButton content={cliCommand} />
                 </div>
               </div>
