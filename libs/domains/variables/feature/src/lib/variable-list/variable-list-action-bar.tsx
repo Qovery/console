@@ -20,7 +20,7 @@ export function VariableListActionBar({ selectedRows = [], resetRowSelection }: 
   const deletableCount = deletableVariables.length
   const description =
     selectedCount === 0
-      ? ''
+      ? '0 selected variable'
       : `${selectedCount} selected ${pluralize(selectedCount, 'variable')}${
           deletableCount === selectedCount ? '' : ` (${deletableCount} deletable)`
         }`
