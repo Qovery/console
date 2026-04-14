@@ -31,7 +31,7 @@ export const TerraformCreationFlow = ({ children, creationFlowUrl }: TerraformCr
       source_provider: 'GIT',
       dockerfile_fragment_source: 'none',
       auto_deploy: false,
-      timeout_sec: '60',
+      timeout_sec: '3600',
       backend: {
         kubernetes: {},
       },
