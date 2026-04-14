@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import { Link as RouterLink } from '@tanstack/react-router'
+import { ClusterAvatar, useCluster } from '@qovery/domains/clusters/feature'
 import {
   EnvironmentLastDeploymentSection,
   EnvironmentMode,
@@ -24,6 +25,7 @@ function RouteComponent() {
 
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id, suspense: true })
 
   const tabs = [
     {
@@ -56,14 +58,14 @@ function RouteComponent() {
                 <Heading className="min-w-0 max-w-full truncate">{environment.name}</Heading>
               </Tooltip>
               <EnvironmentStateChip className="ml-0.5 shrink-0" mode="running" environmentId={environment.id} />
-              <span className="mx-2 h-4 w-px shrink-0 bg-surface-neutral-component" />
+              <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
               <RouterLink
                 to="/organization/$organizationId/cluster/$clusterId/overview"
                 params={{ organizationId, clusterId: environment.cluster_id }}
-                className="group flex shrink-0 items-center gap-2 text-ssm"
+                className="group flex shrink-0 items-center gap-1 text-ssm"
                 color="neutral"
               >
-                <Icon className="w-5" name={environment.cloud_provider.provider} />
+                <ClusterAvatar cluster={cluster} size="sm" />
                 <span className="group-hover:underline">{environment.cluster_name}</span>
               </RouterLink>
             </div>
