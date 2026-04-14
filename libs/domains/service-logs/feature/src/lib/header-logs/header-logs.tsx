@@ -72,12 +72,7 @@ export function HeaderLogs({
     serviceStatus?.state === 'STOPPED'
 
   return (
-    <div
-      className="flex h-12 w-full items-center justify-between border-b border-neutral bg-background"
-      style={{
-        paddingRight: 'var(--padding-sidebar, 16px)',
-      }}
-    >
+    <div className="flex h-12 w-full items-center justify-between border-b border-neutral bg-background pr-4">
       <div className="flex h-full">
         <div className="flex h-full items-center gap-3 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral">
           {match(type)
