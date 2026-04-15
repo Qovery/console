@@ -139,7 +139,7 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
         .with('aws-eks-anywhere', () => ({
           installation_type: 'PARTIALLY_MANAGED' as ClusterGeneralData['installation_type'],
           cloud_provider: CloudProviderEnum.AWS,
-          region: 'eu-west-3', // This value is hardcoded because the API doesn't support it yet
+          region: 'eu-west-3', // Default selected region for EKS Anywhere flow
         }))
         .with('aws', () => ({
           installation_type: 'MANAGED' as ClusterGeneralData['installation_type'],

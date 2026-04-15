@@ -1,15 +1,29 @@
 import { useParams } from '@tanstack/react-router'
-import { type CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
+import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
 import { CLUSTER_SETTINGS_IMAGE_REGISTRY_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Callout, ExternalLink, Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
-import { ClusterCredentialsModal } from '../cluster-credentials-modal/cluster-credentials-modal'
+import {
+  ClusterCredentialsModal,
+  type ClusterCredentialsModalCloudProvider,
+} from '../cluster-credentials-modal/cluster-credentials-modal'
 
 export interface ClusterCredentialsSettingsProps {
-  cloudProvider?: CloudProviderEnum
+  cloudProvider?: ClusterCredentialsModalCloudProvider
   isSetting?: boolean
+}
+
+export const filterCredentialsByCloudProvider = (
+  credentials: ClusterCredentials[],
+  cloudProvider?: ClusterCredentialsModalCloudProvider
+) => {
+  if (cloudProvider !== 'AWS_EKS_ANYWHERE') {
+    return credentials
+  }
+
+  return credentials.filter((credential) => credential.object_type === 'EKS_ANYWHERE_VSPHERE')
 }
 
 export function ClusterCredentialsSettings({ cloudProvider, isSetting }: ClusterCredentialsSettingsProps) {
@@ -17,11 +31,15 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting }: Cluster
   const { control, formState } = useFormContext()
   const { openModal, closeModal } = useModal()
 
+  const queryCloudProvider = cloudProvider === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProvider
+
   const { data: credentials = [], isLoading } = useCloudProviderCredentials({
     organizationId,
-    cloudProvider,
+    cloudProvider: queryCloudProvider,
   })
-  const sortedCredentials = credentials.sort((a, b) => a.name.localeCompare(b.name))
+  const sortedCredentials = [...filterCredentialsByCloudProvider(credentials, cloudProvider)].sort((a, b) =>
+    a.name.localeCompare(b.name)
+  )
 
   const openCredentialsModal = useCallback(
     (id?: string, onChange?: (e: string | string[]) => void) => {

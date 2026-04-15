@@ -1,9 +1,12 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import ClusterCredentialsSettings, { type ClusterCredentialsSettingsProps } from './cluster-credentials-settings'
+import ClusterCredentialsSettings, {
+  type ClusterCredentialsSettingsProps,
+  filterCredentialsByCloudProvider,
+} from './cluster-credentials-settings'
 
 const mockOpenModal = jest.fn()
 const mockCloseModal = jest.fn()
@@ -88,5 +91,31 @@ describe('ClusterCredentialsSettings', () => {
     await selectEvent.select(realSelect, ['my-credential'])
 
     expect(screen.getByTestId('input-credentials')).toBeInTheDocument()
+  })
+
+  it('should query AWS credentials for EKS Anywhere flow', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<ClusterCredentialsSettings cloudProvider="AWS_EKS_ANYWHERE" />, {
+        defaultValues: {
+          credentials: '',
+        },
+      })
+    )
+
+    expect(useCloudProviderCredentialsMockSpy).toHaveBeenCalledWith({
+      organizationId: 'org-123',
+      cloudProvider: 'AWS',
+    })
+  })
+
+  it('should filter non EKS Anywhere credentials in EKS Anywhere flow', () => {
+    const credentials = [
+      { id: '1', name: 'AWS role credential', object_type: 'AWS_ROLE' },
+      { id: '2', name: 'EKS Anywhere credential', object_type: 'EKS_ANYWHERE_VSPHERE' },
+    ] as ClusterCredentials[]
+
+    expect(filterCredentialsByCloudProvider(credentials, 'AWS_EKS_ANYWHERE')).toEqual([
+      { id: '2', name: 'EKS Anywhere credential', object_type: 'EKS_ANYWHERE_VSPHERE' },
+    ])
   })
 })

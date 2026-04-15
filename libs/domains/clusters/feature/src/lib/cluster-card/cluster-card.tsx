@@ -182,7 +182,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
                 {cluster.region}
               </Badge>
             )}
-            {cluster.version && (
+            {cluster.kubernetes !== 'PARTIALLY_MANAGED' && cluster.version && (
               <Badge color="neutral" variant="surface">
                 {cluster.version}
               </Badge>

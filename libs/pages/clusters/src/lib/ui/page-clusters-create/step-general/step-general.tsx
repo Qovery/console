@@ -111,7 +111,6 @@ export function StepGeneral(props: StepGeneralProps) {
                         label="Region"
                         className="mb-3"
                         options={buildRegions}
-                        disabled={watchInstallationType === 'PARTIALLY_MANAGED'}
                         onChange={field.onChange}
                         value={field.value}
                         error={error?.message}
@@ -122,7 +121,11 @@ export function StepGeneral(props: StepGeneralProps) {
                   />
 
                   <ClusterCredentialsSettings
-                    cloudProvider={currentProvider.short_name as CloudProviderEnum}
+                    cloudProvider={
+                      watchInstallationType === 'PARTIALLY_MANAGED'
+                        ? 'AWS_EKS_ANYWHERE'
+                        : (currentProvider.short_name as CloudProviderEnum)
+                    }
                     isSetting={false}
                   />
 
