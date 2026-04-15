@@ -1,4 +1,3 @@
-import { ORGANIZATION_URL } from '@qovery/shared/routes'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import OnboardingProject from './onboarding-project'
 
@@ -77,7 +76,11 @@ describe('OnboardingProject', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Back' }))
 
-    expect(mockedUsedNavigate).toHaveBeenCalledWith({ to: ORGANIZATION_URL('org-1'), replace: true })
+    expect(mockedUsedNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/overview',
+      params: { organizationId: 'org-1' },
+      replace: true,
+    })
   })
 
   it('should hide the back button when billing is skipped without a safe destination', () => {
