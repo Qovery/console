@@ -7,7 +7,7 @@ import { sortProjectsByFavorite, useFavoriteProjects, useProjects } from '@qover
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { Avatar } from '@qovery/shared/ui'
 import { Separator } from '../header'
-import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
+import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
@@ -45,6 +45,10 @@ export function Breadcrumbs() {
         .href,
       logo_url: organization.logo_url ?? undefined,
     }))
+  const createOrganizationAction: BreadcrumbMenuAction = {
+    label: 'Create organization',
+    path: '/onboarding/project',
+  }
 
   const currentOrg = useMemo(
     () => orgItems.find((organization) => organization.id === organizationId),
@@ -178,7 +182,12 @@ export function Breadcrumbs() {
               : 'flex shrink-0 items-center gap-2'
           }
         >
-          <BreadcrumbItem item={data.item} items={data.items} isCurrentScope={index === breadcrumbData.length - 1} />
+          <BreadcrumbItem
+            item={data.item}
+            items={data.items}
+            isCurrentScope={index === breadcrumbData.length - 1}
+            footerAction={index === 0 ? createOrganizationAction : undefined}
+          />
           {index < breadcrumbData.length - 1 && <Separator />}
         </div>
       ))}
