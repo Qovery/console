@@ -3,10 +3,12 @@ import { useEffect } from 'react'
 import { TerraformVariablesSettings } from '@qovery/domains/service-settings/feature'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
+import { useTerraformVariablesContext } from '../../terraform-variables-context'
 
 export const TerraformStepVariables = () => {
   const navigate = useNavigate()
   const { setCurrentStep } = useTerraformCreateContext()
+  const { errors } = useTerraformVariablesContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
 
   useEffect(() => {
@@ -43,7 +45,7 @@ export const TerraformStepVariables = () => {
                   params: { organizationId, projectId, environmentId },
                 })
               }
-              disabled={false}
+              disabled={errors.size > 0}
             >
               Continue
             </Button>
