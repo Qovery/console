@@ -2,7 +2,6 @@
 export default {
   displayName: 'shared-routes',
   preset: '../../../jest.preset.js',
-  setupFilesAfterEnv: ['jest-canvas-mock'],
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': 'babel-jest',
