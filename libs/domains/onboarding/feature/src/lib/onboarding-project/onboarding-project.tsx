@@ -119,13 +119,10 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
 
       await createCargoSignup()
 
-      posthog.capture('onboarding-organization-created', {
+      await posthog.capture('onboarding-organization-created', {
         plan: selectedPlan,
       })
-      sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
-
-      toast(ToastEnum.SUCCESS, 'Your organization and project have been created')
-
+      await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
     } catch (error) {
       if ((error as SerializedError).code === '409') {
@@ -133,6 +130,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         return
       }
     } finally {
+      toast(ToastEnum.SUCCESS, 'Your organization and project have been created')
       setIsSubmitting(false)
     }
   })
