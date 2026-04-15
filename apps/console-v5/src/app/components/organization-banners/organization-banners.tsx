@@ -3,7 +3,7 @@ import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { AnnouncementBanner } from '@qovery/shared/posthog/feature'
 import { Banner } from '@qovery/shared/ui'
-import { FreeTrialBanner } from './free-trial-banner'
+import { OrganizationFreeTrialBanner } from './organization-free-trial-banner'
 
 export function OrganizationBanners() {
   const { organizationId = '' } = useParams({ strict: false })
@@ -27,7 +27,7 @@ export function OrganizationBanners() {
         </Banner>
       ) : null}
       <AnnouncementBanner />
-      <FreeTrialBanner />
+      <OrganizationFreeTrialBanner />
     </>
   )
 }

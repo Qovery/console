@@ -8,7 +8,7 @@ import { pluralize } from '@qovery/shared/util-js'
 const FREE_TRIAL_ADD_CREDIT_CARD_MESSAGE =
   'You are on a free trial. Add a credit card to unlock managed cluster creation. If you need help, please contact us.'
 
-export function FreeTrialBanner() {
+export function OrganizationFreeTrialBanner() {
   const { organizationId = '' } = useParams({ strict: false })
   const { pathname } = useLocation()
   const {
@@ -51,4 +51,4 @@ export function FreeTrialBanner() {
   )
 }
 
-export default FreeTrialBanner
+export default OrganizationFreeTrialBanner
