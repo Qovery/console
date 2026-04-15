@@ -4,11 +4,11 @@ import posthog from 'posthog-js'
 import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useCreateOrganization, useEditBillingInfo } from '@qovery/domains/organizations/feature'
+import { useCreateOrganization, useEditBillingInfo, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
+import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, ORGANIZATION_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type SerializedError } from '@qovery/shared/utils'
@@ -31,6 +31,7 @@ export function OnboardingProject() {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const shouldSkipBilling = userSignUp?.dx_auth === true
+  const { data: organizations = [] } = useOrganizations({ enabled: shouldSkipBilling })
   const planToUse = shouldSkipBilling ? PlanEnum.USER_2025 : selectedPlan
 
   useEffect(() => {
@@ -81,10 +82,18 @@ export function OnboardingProject() {
 
   const handleBack = () => {
     if (shouldSkipBilling) {
-      navigate({ to: '/onboarding/personalize' })
-    } else {
-      navigate({ to: '/onboarding/plans' })
+      const firstOrganization = organizations[0]
+
+      if (firstOrganization) {
+        navigate({ to: ORGANIZATION_URL(firstOrganization.id), replace: true })
+        return
+      }
+
+      navigate({ to: '/' })
+      return
     }
+
+    navigate({ to: '/onboarding/plans' })
   }
 
   const onSubmit = handleSubmit(async (data) => {

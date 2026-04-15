@@ -5,7 +5,6 @@ import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
-import OnboardingRightContent from '../onboarding-right-content/onboarding-right-content'
 
 interface DefaultContextProps {
   organization_name: string
@@ -64,7 +63,6 @@ export function Container(props: PropsWithChildren) {
     },
   ]
   const currentTitle = titlesPerRoute.find((route) => route.path === currentPath)?.title ?? 'Onboarding'
-  const stepProject = currentPath === '/project'
 
   const hasDxAuth = Boolean(userSignUp?.dx_auth)
   const hasExistingOrganization = organizations.length > 0
@@ -94,13 +92,7 @@ export function Container(props: PropsWithChildren) {
       }}
     >
       <FunnelFlow totalSteps={totalSteps} currentStep={currentStep} currentTitle={currentTitle} portal>
-        <FunnelFlowBody
-          helpSectionClassName="!p-0 !bg-transparent !border-transparent"
-          helpSection={stepProject && <OnboardingRightContent step={step} />}
-          customContentWidth="w-full"
-        >
-          {children}
-        </FunnelFlowBody>
+        <FunnelFlowBody customContentWidth="w-full">{children}</FunnelFlowBody>
         <AssistantTrigger />
       </FunnelFlow>
     </ContextOnboarding.Provider>

@@ -135,7 +135,7 @@ function Personalize() {
         infrastructure_hosting: normalizedData.infrastructure_hosting,
       })
 
-      navigate({ to: `/onboarding/project` })
+      navigate({ to: `/onboarding/plans` })
     } catch (error) {
       console.error(error)
     }
