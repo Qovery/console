@@ -27,6 +27,6 @@ describe('StepProject', () => {
     const onSubmit = jest.fn()
     renderWithProviders(<Wrapper onSubmit={onSubmit} onFirstStepBack={undefined} />)
 
-    expect(screen.getByRole('button', { name: 'Back' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Back' })).not.toBeInTheDocument()
   })
 })
