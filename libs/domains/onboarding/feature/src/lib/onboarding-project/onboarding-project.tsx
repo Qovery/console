@@ -8,7 +8,6 @@ import { useCreateOrganization, useEditBillingInfo, useOrganizations } from '@qo
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL, ORGANIZATION_URL } from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type SerializedError } from '@qovery/shared/utils'
@@ -73,7 +72,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         user_role: userSignUp.user_role ?? undefined,
         qovery_usage_other: userSignUp.qovery_usage_other ?? undefined,
         user_questions: userSignUp.user_questions ?? undefined,
-        current_step: 'billing',
+        current_step: 'project',
         dx_auth: userSignUp.dx_auth ?? undefined,
         infrastructure_hosting: userSignUp.infrastructure_hosting ?? undefined,
       }
@@ -90,12 +89,16 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
 
     if (shouldSkipBilling) {
       if (firstOrganization) {
-        navigate({ to: ORGANIZATION_URL(firstOrganization.id), replace: true })
+        navigate({
+          to: `/organization/$organizationId/overview`,
+          params: { organizationId: firstOrganization.id },
+          replace: true,
+        })
       }
       return
     }
 
-    navigate({ to: '/onboarding/plans' })
+    navigate({ to: '/onboarding/personalize' })
   }
 
   const onSubmit = handleSubmit(async (data) => {
@@ -136,7 +139,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
       })
       sendDataToGTM({ event: 'onboarding-organization-created', plan: planToUse })
 
-      navigate({ to: `${ENVIRONMENTS_URL(organization.id, project.id)}${ENVIRONMENTS_GENERAL_URL}` })
+      navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
     } catch (error) {
       if ((error as SerializedError).code === '409') {
         toastError(error as unknown as SerializedError)

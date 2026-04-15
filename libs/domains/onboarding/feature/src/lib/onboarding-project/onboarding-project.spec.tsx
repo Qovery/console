@@ -91,6 +91,14 @@ describe('OnboardingProject', () => {
     expect(screen.queryByRole('button', { name: 'Back' })).not.toBeInTheDocument()
   })
 
+  it('should redirect to personalize for the standard onboarding flow', async () => {
+    const { userEvent } = renderWithProviders(<OnboardingProject />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith({ to: '/onboarding/personalize' })
+  })
+
   it('should redirect to the previous url when it is provided', async () => {
     useOrganizations.mockReturnValue({
       data: [{ id: 'org-1', name: 'First organization' }],

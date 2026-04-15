@@ -22,7 +22,7 @@ const defaultContext: DefaultContextProps = {
   organization_name: '',
   project_name: '',
   admin_email: '',
-  selectedPlan: PlanEnum.TEAM_2025,
+  selectedPlan: PlanEnum.USER_2025,
   cardToken: null,
   cardLast4: null,
   cardExpiryMonth: null,
@@ -54,10 +54,6 @@ export function Container(props: PropsWithChildren) {
       title: 'Just a few questions',
     },
     {
-      path: '/plans',
-      title: 'Free trial activation',
-    },
-    {
       path: '/project',
       title: 'Organization and Project Creation',
     },
@@ -66,7 +62,7 @@ export function Container(props: PropsWithChildren) {
 
   const hasDxAuth = Boolean(userSignUp?.dx_auth)
   const hasExistingOrganization = organizations.length > 0
-  const totalSteps = hasExistingOrganization || hasDxAuth ? 2 : titlesPerRoute.length
+  const totalSteps = 2
 
   useEffect(() => {
     if (hasDxAuth && currentPath !== '/project') {

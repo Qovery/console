@@ -1,9 +1,4 @@
-import {
-  ONBOARDING_PERSONALIZE_URL,
-  ONBOARDING_PLANS_URL,
-  ONBOARDING_PROJECT_URL,
-  ONBOARDING_URL,
-} from './sub-router/onboarding.router'
+import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from './sub-router/onboarding.router'
 
 export interface OnboardingUserSignUpState {
   current_step?: string | null
@@ -14,18 +9,6 @@ export interface OnboardingUserSignUpState {
   qovery_usage?: string | null
 }
 
-export function getOnboardingEntryUrl(userSignUp?: OnboardingUserSignUpState | null) {
-  if (userSignUp?.dx_auth || userSignUp?.current_step === 'billing') {
-    return `${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`
-  }
-
-  const hasCompletedPersonalize = Boolean(
-    userSignUp?.first_name && userSignUp?.last_name && userSignUp?.user_email && userSignUp?.qovery_usage
-  )
-
-  if (userSignUp?.current_step === 'personalize' || hasCompletedPersonalize) {
-    return `${ONBOARDING_URL}${ONBOARDING_PLANS_URL}`
-  }
-
-  return `${ONBOARDING_URL}${ONBOARDING_PERSONALIZE_URL}`
+export function getOnboardingEntryUrl(_userSignUp?: OnboardingUserSignUpState | null) {
+  return `${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`
 }
