@@ -13,3 +13,5 @@ export * from './lib/terraform-variables-settings/terraform-variables-table/terr
 export * from './lib/terraform-variables-context'
 export * from './lib/terraform-variables-utils'
 export * from './lib/terraform-creation-flow'
+export * from './lib/utils/build-dockerfile-fragment'
+export * from './lib/utils/extract-dockerfile-fragment-fields'

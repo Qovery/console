@@ -7,8 +7,8 @@ import { useCreateService, useDeployService } from '@qovery/domains/services/fea
 import { Button, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
-import { buildDockerfileFragment } from '../../terraform-general-data/terraform-general-data'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
+import { buildDockerfileFragment } from '../../utils/build-dockerfile-fragment'
 import { TERRAFORM_ENGINES } from '../../utils/terraform-engines'
 
 export const TerraformStepSummary = () => {

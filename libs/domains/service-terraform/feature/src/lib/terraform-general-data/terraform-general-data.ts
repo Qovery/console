@@ -37,38 +37,3 @@ export interface TerraformGeneralData
   dockerfile_fragment_content?: string
   dockerfile_fragment?: TerraformRequestDockerfileFragment | null
 }
-
-export function buildDockerfileFragment(data: TerraformGeneralData): TerraformRequestDockerfileFragment | null {
-  switch (data.dockerfile_fragment_source) {
-    case 'file':
-      return data.dockerfile_fragment_path ? { type: 'file', path: data.dockerfile_fragment_path } : null
-    case 'inline':
-      return data.dockerfile_fragment_content ? { type: 'inline', content: data.dockerfile_fragment_content } : null
-    case 'none':
-    default:
-      return null
-  }
-}
-
-export function extractDockerfileFragmentFields(fragment: TerraformRequestDockerfileFragment | null | undefined): {
-  dockerfile_fragment_source: DockerfileFragmentSource
-  dockerfile_fragment_path?: string
-  dockerfile_fragment_content?: string
-} {
-  if (!fragment) {
-    return { dockerfile_fragment_source: 'none' }
-  }
-  if (fragment.type === 'file' && 'path' in fragment) {
-    return {
-      dockerfile_fragment_source: 'file',
-      dockerfile_fragment_path: fragment.path,
-    }
-  }
-  if (fragment.type === 'inline' && 'content' in fragment) {
-    return {
-      dockerfile_fragment_source: 'inline',
-      dockerfile_fragment_content: fragment.content,
-    }
-  }
-  return { dockerfile_fragment_source: 'none' }
-}
