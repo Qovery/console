@@ -125,10 +125,9 @@ describe('ListDeploymentLogs', () => {
 
     useDeploymentLogs.mockReturnValue({
       data: mockLogs,
-      pauseLogs: false,
+      isScrollPaused: false,
       setPauseLogs: jest.fn(),
-      newMessagesAvailable: false,
-      setNewMessagesAvailable: jest.fn(),
+      bufferedLogsCount: 0,
       showPreviousLogs: false,
       setShowPreviousLogs: jest.fn(),
     })

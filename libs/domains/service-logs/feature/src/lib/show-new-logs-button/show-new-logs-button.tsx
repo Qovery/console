@@ -5,14 +5,14 @@ import { Button, Icon } from '@qovery/shared/ui'
 export interface ShowNewLogsButtonProps {
   pauseLogs: boolean
   setPauseLogs: Dispatch<SetStateAction<boolean>>
-  newMessagesAvailable: boolean
+  bufferedLogsCount?: number
 }
 
-export function ShowNewLogsButton({ pauseLogs, setPauseLogs, newMessagesAvailable }: ShowNewLogsButtonProps) {
+export function ShowNewLogsButton({ pauseLogs, setPauseLogs, bufferedLogsCount }: ShowNewLogsButtonProps) {
   const navigate = useNavigate()
   const { hash, pathname, search } = useLocation()
 
-  if (pauseLogs && newMessagesAvailable) {
+  if (pauseLogs) {
     return (
       <Button
         className="absolute bottom-[7px] left-1/2 flex w-72 -translate-x-1/2 items-center justify-center gap-2 text-sm"
@@ -25,8 +25,13 @@ export function ShowNewLogsButton({ pauseLogs, setPauseLogs, newMessagesAvailabl
           if (hash) navigate({ to: pathname + search })
         }}
       >
-        New logs
-        <Icon iconName="arrow-down-to-line" />
+        Jump to latest log
+        {bufferedLogsCount !== undefined && bufferedLogsCount > 0 && (
+          <span className="rounded-full bg-white/20 px-1.5 py-0.5 text-xs font-semibold tabular-nums">
+            {bufferedLogsCount > 999 ? '999+' : bufferedLogsCount}
+          </span>
+        )}
+        <Icon iconName="arrow-down" />
       </Button>
     )
   }

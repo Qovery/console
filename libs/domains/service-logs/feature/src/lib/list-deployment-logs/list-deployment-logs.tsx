@@ -239,6 +239,8 @@ interface DeploymentLogsBodyProps {
   hasNewDeploymentBanner: boolean
 }
 
+const PAUSE_SCROLL_THRESHOLD = 80
+
 function DeploymentLogsBody({
   environment,
   environmentStatus,
@@ -251,6 +253,8 @@ function DeploymentLogsBody({
   const { hash } = useLocation()
   const { organizationId = '', projectId = '', serviceId = '', executionId = '' } = useParams({ strict: false })
   const refScrollSection = useRef<HTMLDivElement>(null)
+  const accumulatedScrollUp = useRef(0)
+  const [isScrolledUp, setIsScrolledUp] = useState(false)
   const { updateStageId } = useContext(ServiceStageIdsContext)
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const { mutateAsync: generateBuildUsageReport, isLoading: isBuildReportLoading } = useGenerateBuildUsageReport()
@@ -263,10 +267,9 @@ function DeploymentLogsBody({
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId, suspense: true })
   const {
     data: logs = [],
-    pauseLogs,
+    isScrollPaused: pauseLogs,
     setPauseLogs,
-    newMessagesAvailable,
-    setNewMessagesAvailable,
+    bufferedLogsCount,
     showPreviousLogs,
     setShowPreviousLogs,
   } = useDeploymentLogs({
@@ -284,6 +287,16 @@ function DeploymentLogsBody({
 
     !pauseLogs && section.scroll(0, section.scrollHeight)
   }, [logs, pauseLogs])
+
+  const handleScroll = useCallback(() => {
+    const section = refScrollSection.current
+    if (!section) return
+    const isAtBottom = section.scrollTop + section.clientHeight >= section.scrollHeight - 4
+    setIsScrolledUp(!isAtBottom)
+    if (isAtBottom && pauseLogs) {
+      setPauseLogs(false)
+    }
+  }, [pauseLogs, setPauseLogs])
 
   // `useEffect` used to scroll to the hash id
   useEffect(() => {
@@ -516,15 +529,24 @@ function DeploymentLogsBody({
       <div
         className={clsx(logsViewportHeightClass, 'w-full overflow-y-scroll')}
         ref={refScrollSection}
+        onScroll={handleScroll}
         onWheel={(event) => {
-          if (
-            !pauseLogs &&
-            refScrollSection.current &&
-            refScrollSection.current.clientHeight !== refScrollSection.current.scrollHeight &&
-            event.deltaY < 0
-          ) {
-            setPauseLogs(true)
-            setNewMessagesAvailable(false)
+          if (pauseLogs) return
+
+          const section = refScrollSection.current
+          if (!section) return
+
+          const hasScrollableContent = section.clientHeight !== section.scrollHeight
+          if (!hasScrollableContent) return
+
+          if (event.deltaY < 0) {
+            accumulatedScrollUp.current += Math.abs(event.deltaY)
+            if (accumulatedScrollUp.current >= PAUSE_SCROLL_THRESHOLD) {
+              accumulatedScrollUp.current = 0
+              setPauseLogs(true)
+            }
+          } else {
+            accumulatedScrollUp.current = 0
           }
         }}
       >
@@ -549,12 +571,8 @@ function DeploymentLogsBody({
           <ProgressIndicator className="mb-2 pl-2" pauseLogs={pauseLogs} message="Streaming deployment logs" />
         )}
       </div>
-      {isLastVersion && (
-        <ShowNewLogsButton
-          pauseLogs={pauseLogs}
-          setPauseLogs={setPauseLogs}
-          newMessagesAvailable={newMessagesAvailable}
-        />
+      {isScrolledUp && (
+        <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} bufferedLogsCount={bufferedLogsCount} />
       )}
     </>
   )

@@ -2,7 +2,7 @@ import { getRouteApi } from '@tanstack/react-router'
 import { differenceInHours } from 'date-fns'
 import posthog from 'posthog-js'
 import { type Cluster, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
-import { memo, useEffect, useMemo, useRef } from 'react'
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { match } from 'ts-pattern'
 import { EnableObservabilityButtonContactUs } from '@qovery/domains/observability/feature'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
@@ -68,9 +68,12 @@ function Placeholder({
   }
 }
 
+const PAUSE_SCROLL_THRESHOLD = 80
+
 function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; environment: Environment }) {
   const { serviceId } = route.useParams()
   const refScrollSection = useRef<HTMLDivElement>(null)
+  const accumulatedScrollUp = useRef(0)
 
   const queryParams = route.useSearch()
 
@@ -112,10 +115,9 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   // Live logs hook - only enabled when in live mode
   const {
     data: liveLogs = [],
-    pauseLogs,
+    isScrollPaused: pauseLogs,
     setPauseLogs,
-    newLogsAvailable,
-    setNewLogsAvailable,
+    bufferedLogsCount,
     isFetched: isLiveLogsFetched,
     isLoading: isLiveLogsLoading,
   } = useServiceLiveLogs({
@@ -140,10 +142,9 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
 
   useEffect(() => {
     if (isLiveMode && serviceEnabled) {
-      setNewLogsAvailable(true)
       setPauseLogs(false)
     }
-  }, [isLiveMode, serviceEnabled, setNewLogsAvailable, setPauseLogs])
+  }, [isLiveMode, serviceEnabled, setPauseLogs])
 
   useEffect(() => {
     posthog.capture('service-logs', {
@@ -201,6 +202,16 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
 
     !pauseLogs && section.scroll(0, section.scrollHeight)
   }, [logs, pauseLogs, isLiveMode])
+
+  const handleScroll = useCallback(() => {
+    if (!isLiveMode || !pauseLogs) return
+    const section = refScrollSection.current
+    if (!section) return
+    const isAtBottom = section.scrollTop + section.clientHeight >= section.scrollHeight - 4
+    if (isAtBottom) {
+      setPauseLogs(false)
+    }
+  }, [isLiveMode, pauseLogs, setPauseLogs])
 
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
@@ -262,17 +273,24 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
           <div
             className="h-[calc(100vh-209px)] w-full overflow-y-scroll "
             ref={refScrollSection}
+            onScroll={handleScroll}
             onWheel={(event) => {
-              if (!liveLogs) return
+              if (!liveLogs || pauseLogs) return
 
               const section = refScrollSection.current
               if (!section) return
 
               const hasScrollableContent = section.clientHeight !== section.scrollHeight
+              if (!hasScrollableContent) return
 
-              if (!pauseLogs && hasScrollableContent && event.deltaY < 0) {
-                setPauseLogs(true)
-                setNewLogsAvailable(false)
+              if (event.deltaY < 0) {
+                accumulatedScrollUp.current += Math.abs(event.deltaY)
+                if (accumulatedScrollUp.current >= PAUSE_SCROLL_THRESHOLD) {
+                  accumulatedScrollUp.current = 0
+                  setPauseLogs(true)
+                }
+              } else {
+                accumulatedScrollUp.current = 0
               }
             }}
           >
@@ -311,11 +329,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
           </div>
         )}
         {isLiveMode && (
-          <ShowNewLogsButton
-            pauseLogs={pauseLogs}
-            setPauseLogs={setPauseLogs}
-            newMessagesAvailable={newLogsAvailable}
-          />
+          <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} bufferedLogsCount={bufferedLogsCount} />
         )}
       </div>
     </div>
