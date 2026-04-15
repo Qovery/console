@@ -5,6 +5,7 @@ import { type SignUpRequest } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useCreateOrganization, useEditBillingInfo } from '@qovery/domains/organizations/feature'
+import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -20,6 +21,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = useAuth()
   const sendDataToGTM = useGTMDispatch()
+  const { data: organizations = [] } = useOrganizations()
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject()
   const { mutateAsync: editBillingInfo } = useEditBillingInfo()
@@ -77,6 +79,11 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const handleBack = () => {
     if (previousUrl) {
       navigate({ href: previousUrl, replace: true })
+      return
+    }
+
+    if (organizations.length > 0) {
+      navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0].id } })
       return
     }
 
