@@ -124,13 +124,13 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
       })
       await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
+      toast(ToastEnum.SUCCESS, 'Your organization and project have been created')
     } catch (error) {
       if ((error as SerializedError).code === '409') {
         toastError(error as unknown as SerializedError)
         return
       }
     } finally {
-      toast(ToastEnum.SUCCESS, 'Your organization and project have been created')
       setIsSubmitting(false)
     }
   })
