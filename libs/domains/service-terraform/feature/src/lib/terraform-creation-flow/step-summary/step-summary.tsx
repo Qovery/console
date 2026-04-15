@@ -1,24 +1,15 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import {
-  TerraformAutoDeployConfigTerraformActionEnum,
-  TerraformEngineEnum,
-  type TerraformRequest,
-} from 'qovery-typescript-axios'
+import { TerraformAutoDeployConfigTerraformActionEnum, type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { buildDockerfileFragment } from '@qovery/domains/service-settings/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
-import { IconEnum } from '@qovery/shared/enums'
 import { Button, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
+import { buildDockerfileFragment } from '../../terraform-general-data/terraform-general-data'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
-
-export const terraformEngines = [
-  { name: 'Terraform', value: TerraformEngineEnum.TERRAFORM, icon: <Icon name={IconEnum.TERRAFORM} /> },
-  { name: 'OpenTofu', value: TerraformEngineEnum.OPEN_TOFU, icon: <Icon name={IconEnum.OPEN_TOFU} /> },
-]
+import { TERRAFORM_ENGINES } from '../../utils/terraform-engines'
 
 export const TerraformStepSummary = () => {
   const navigate = useNavigate()
@@ -192,7 +183,7 @@ export const TerraformStepSummary = () => {
               <ul className="list-none space-y-2 text-sm text-neutral-subtle">
                 <li>
                   <span className="font-medium">Terraform engine:</span>{' '}
-                  {terraformEngines.find((v) => v.value === generalData.engine)?.name} v
+                  {TERRAFORM_ENGINES.find((v) => v.value === generalData.engine)?.name} v
                   {generalData.provider_version.explicit_version}
                 </li>
                 <li>

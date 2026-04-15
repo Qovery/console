@@ -1,23 +1,20 @@
 import { clsx } from 'clsx'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import {
-  SECRET_UNCHANGED_VALUE,
-  type UIVariable,
-  formatSource,
-  getSourceBadgeClassName,
-  isCustomVariable,
-  isVariableChanged,
-  useTerraformVariablesContext,
-} from '@qovery/domains/service-terraform/feature'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { Badge, Button, Checkbox, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import {
+  SECRET_UNCHANGED_VALUE,
+  type UIVariable,
+  useTerraformVariablesContext,
+} from '../../terraform-variables-context'
+import { getSourceBadgeClassName, isCustomVariable, isVariableChanged } from '../../terraform-variables-utils'
 import { TfvarsFilesPopover } from '../terraform-tfvars-popover/terraform-tfvars-popover'
 
 const SourceCell = ({ variable }: { variable: UIVariable }) => {
   const sourceCellRef = useRef<HTMLDivElement>(null)
-  const text = formatSource(variable)
+  const text = variable.source
   const truncateLimit = 40
   const [doesOverflow, setDoesOverflow] = useState(false)
 

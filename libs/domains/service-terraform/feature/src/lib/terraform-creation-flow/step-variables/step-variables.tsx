@@ -1,8 +1,8 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
-import { TerraformVariablesSettings } from '@qovery/domains/service-settings/feature'
 import { Button, FunnelFlowBody } from '@qovery/shared/ui'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
+import { TerraformVariablesSettings } from '../../terraform-variables-settings/terraform-variables-settings'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
 
 export const TerraformStepVariables = () => {

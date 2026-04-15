@@ -2,8 +2,11 @@ import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { TerraformVariablesTable } from '@qovery/domains/service-settings/feature'
-import { TerraformVariablesProvider, useTerraformVariablesContext } from '@qovery/domains/service-terraform/feature'
+import {
+  TerraformVariablesProvider,
+  TerraformVariablesTable,
+  useTerraformVariablesContext,
+} from '@qovery/domains/service-terraform/feature'
 import { type Terraform } from '@qovery/domains/services/data-access'
 import { type TerraformGeneralData, useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'

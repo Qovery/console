@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
-import { type TerraformGeneralData } from '@qovery/domains/service-settings/feature'
+import { type TerraformGeneralData } from '../../terraform-general-data/terraform-general-data'
 
 interface TerraformCreateContextInterface {
   currentStep: number

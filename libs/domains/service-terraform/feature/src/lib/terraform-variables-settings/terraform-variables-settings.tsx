@@ -1,5 +1,5 @@
-import { TerraformVariablesTable } from '@qovery/domains/service-terraform/feature'
 import { Heading, Section } from '@qovery/shared/ui'
+import { TerraformVariablesTable } from './terraform-variables-table/terraform-variables-table'
 
 export const TerraformVariablesSettings = () => {
   return (

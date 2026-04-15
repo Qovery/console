@@ -1,10 +1,10 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type PropsWithChildren, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { type TerraformGeneralData } from '@qovery/domains/service-settings/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { TerraformCreateContext } from '../hooks/use-terraform-create-context/use-terraform-create-context'
+import { type TerraformGeneralData } from '../terraform-general-data/terraform-general-data'
 import { TerraformVariablesProvider } from '../terraform-variables-context'
 import { findTerraformTemplateMatch } from './terraform-create-utils/terraform-create-utils'
 

@@ -7,7 +7,7 @@ import {
   type TerraformGeneralData,
   buildDockerfileFragment,
   extractDockerfileFragmentFields,
-} from '@qovery/domains/service-settings/feature'
+} from '@qovery/domains/service-terraform/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
@@ -69,7 +69,7 @@ const TerraformConfigurationSettingsWrapper = () => {
           description="Customize the resources assigned to the service."
         />
         <div className="max-w-content-with-navigation-left">
-          <TerraformConfigurationSettings methods={methods} isSettings />
+          <TerraformConfigurationSettings methods={methods} />
           <div className="mt-10 flex justify-end">
             <Button
               type="submit"
