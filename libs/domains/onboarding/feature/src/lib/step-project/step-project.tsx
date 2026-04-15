@@ -1,18 +1,17 @@
-import { type Control, Controller } from 'react-hook-form'
+import { useContext } from 'react'
+import { Controller } from 'react-hook-form'
 import { Button, Icon, InputText } from '@qovery/shared/ui'
+import { ContextOnboarding } from '../container/container'
 
 export interface StepProjectProps {
   onSubmit: () => void
-  control: Control<{
-    organization_name: string
-    project_name: string
-  }>
   loading?: boolean
   onFirstStepBack?: () => void
 }
 
 export function StepProject(props: StepProjectProps) {
-  const { onSubmit, control, loading, onFirstStepBack } = props
+  const { onSubmit, loading, onFirstStepBack } = props
+  const { setContextValue } = useContext(ContextOnboarding)
 
   return (
     <div className="mx-auto max-w-content-with-navigation-left pb-10">
@@ -29,14 +28,16 @@ export function StepProject(props: StepProjectProps) {
       <form onSubmit={onSubmit}>
         <Controller
           name="organization_name"
-          control={control}
           rules={{ required: 'Please enter your organization name.' }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-3"
               label="Organization name"
               name={field.name}
-              onChange={field.onChange}
+              onChange={(event) => {
+                field.onChange(event)
+                setContextValue?.({ organization_name: event.target.value })
+              }}
               value={field.value}
               error={error?.message}
             />
@@ -44,14 +45,16 @@ export function StepProject(props: StepProjectProps) {
         />
         <Controller
           name="project_name"
-          control={control}
           rules={{ required: 'Please enter your project name.' }}
           render={({ field, fieldState: { error } }) => (
             <InputText
               className="mb-3"
               label="Project name"
               name={field.name}
-              onChange={field.onChange}
+              onChange={(event) => {
+                field.onChange(event)
+                setContextValue?.({ project_name: event.target.value })
+              }}
               value={field.value}
               error={error?.message}
             />
@@ -73,7 +76,7 @@ export function StepProject(props: StepProjectProps) {
           ) : (
             <div />
           )}
-          <Button type="submit" size="lg" loading={loading}>
+          <Button type="submit" size="lg" loading={loading} disabled={loading}>
             {loading ? 'Creating…' : 'Continue'}
           </Button>
         </div>

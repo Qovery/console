@@ -2,10 +2,9 @@ import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type SignUpRequest } from 'qovery-typescript-axios'
-import { useContext, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useCreateOrganization, useEditBillingInfo } from '@qovery/domains/organizations/feature'
-import { useOrganizations } from '@qovery/domains/organizations/feature'
+import { useContext, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { useCreateOrganization, useEditBillingInfo, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -22,19 +21,19 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const { user, getAccessTokenSilently } = useAuth()
   const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [] } = useOrganizations()
-  const { mutateAsync: createOrganization } = useCreateOrganization()
-  const { mutateAsync: createProject } = useCreateProject()
-  const { mutateAsync: editBillingInfo } = useEditBillingInfo()
-  const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
+  const { organization_name, project_name, admin_email, selectedPlan } = useContext(ContextOnboarding)
+  const { mutateAsync: createOrganization } = useCreateOrganization({ silently: true })
+  const { mutateAsync: createProject } = useCreateProject({ silently: true })
+  const { mutateAsync: editBillingInfo } = useEditBillingInfo({ silently: true })
+  const methods = useForm<{ project_name: string; organization_name: string }>({
+    defaultValues: {
+      organization_name,
+      project_name: project_name || 'main',
+    },
+  })
   const { data: userSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
-  const { organization_name, project_name, admin_email, selectedPlan, setContextValue } = useContext(ContextOnboarding)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  useEffect(() => {
-    setValue('organization_name', organization_name)
-    setValue('project_name', project_name || 'main')
-  }, [organization_name, project_name, setValue])
 
   const updateBillingInfo = async (organizationId: string) => {
     await editBillingInfo({
@@ -90,13 +89,10 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
     navigate({ to: '/onboarding/personalize' })
   }
 
-  const onSubmit = handleSubmit(async (data) => {
-    const currentData = {
-      organization_name: data.organization_name,
-      project_name: data.project_name,
-      admin_email,
+  const onSubmit = methods.handleSubmit(async (data) => {
+    if (isSubmitting) {
+      return
     }
-    setContextValue?.(currentData)
 
     setIsSubmitting(true)
 
@@ -139,7 +135,11 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
     }
   })
 
-  return <StepProject onSubmit={onSubmit} control={control} loading={isSubmitting} onFirstStepBack={handleBack} />
+  return (
+    <FormProvider {...methods}>
+      <StepProject onSubmit={onSubmit} loading={isSubmitting} onFirstStepBack={handleBack} />
+    </FormProvider>
+  )
 }
 
 export default OnboardingProject
