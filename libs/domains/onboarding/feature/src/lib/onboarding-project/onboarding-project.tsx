@@ -8,7 +8,7 @@ import { useCreateOrganization, useEditBillingInfo, useOrganizations } from '@qo
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { toastError } from '@qovery/shared/ui'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type SerializedError } from '@qovery/shared/utils'
 import { ContextOnboarding } from '../container/container'
@@ -22,7 +22,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [] } = useOrganizations()
   const { organization_name, project_name, admin_email, selectedPlan } = useContext(ContextOnboarding)
-  const { mutateAsync: createOrganization } = useCreateOrganization({ silently: true })
+  const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject({ silently: true })
   const { mutateAsync: editBillingInfo } = useEditBillingInfo({ silently: true })
   const methods = useForm<{ project_name: string; organization_name: string }>({
@@ -123,6 +123,8 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         plan: selectedPlan,
       })
       sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
+
+      toast(ToastEnum.SUCCESS, 'Your organization and project have been created')
 
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
     } catch (error) {
