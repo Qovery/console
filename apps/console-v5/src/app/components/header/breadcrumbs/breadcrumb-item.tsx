@@ -186,7 +186,11 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
             </div>
             <CommandMenu.List
               ref={listRef}
-              className="max-h-64 min-h-12 pb-3 [&>[cmdk-list-sizer]]:mx-0 [&>[cmdk-list-sizer]]:my-0"
+              className={twMerge(
+                clsx('max-h-64 min-h-12 pb-3 [&>[cmdk-list-sizer]]:mx-0 [&>[cmdk-list-sizer]]:my-0', {
+                  'max-h-52': footerAction,
+                })
+              )}
             >
               <CommandMenu.Empty>
                 <div className="px-3 py-6 text-center">
