@@ -1,6 +1,6 @@
+import { useParams } from '@tanstack/react-router'
 import { clsx } from 'clsx'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { Badge, Button, Checkbox, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -59,7 +59,7 @@ const SourceCell = ({ variable }: { variable: UIVariable }) => {
 const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const { updateKey, updateValue, toggleSecret, revertValue, isRowSelected, selectRow, hoveredRow, errors } =
     useTerraformVariablesContext()
-  const { environmentId = '' } = useParams()
+  const { environmentId = '' } = useParams({ strict: false })
   const [isVariablePopoverOpen, setIsVariablePopoverOpen] = useState(false)
   const [isCellHovered, setIsCellHovered] = useState(false)
   const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
