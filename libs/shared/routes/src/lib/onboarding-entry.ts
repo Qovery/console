@@ -2,7 +2,6 @@ import { ONBOARDING_PROJECT_URL, ONBOARDING_URL } from './sub-router/onboarding.
 
 export interface OnboardingUserSignUpState {
   current_step?: string | null
-  dx_auth?: boolean | null
   first_name?: string | null
   last_name?: string | null
   user_email?: string | null

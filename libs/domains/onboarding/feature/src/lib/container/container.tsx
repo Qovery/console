@@ -1,8 +1,6 @@
-import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useLocation } from '@tanstack/react-router'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useEffect, useState } from 'react'
-import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
 
@@ -33,16 +31,13 @@ export const ContextOnboarding = createContext<DefaultContextProps>(defaultConte
 
 export function Container(props: PropsWithChildren) {
   const { children } = props
-  const navigate = useNavigate()
   const location = useLocation()
   const [step, setStep] = useState(location.pathname.split('/').pop())
   const [contextValue, setContextValue] = useState(defaultContext)
-  const { data: organizations = [] } = useOrganizations()
-  const { data: userSignUp } = useUserSignUp()
 
   useEffect(() => {
     setStep(location.pathname.split('/').pop())
-  }, [location.pathname, setStep, step, navigate])
+  }, [location.pathname, setStep, step])
 
   const currentStepPosition = (routes: { path: string; title: string }[]) =>
     routes.findIndex((route) => route.path === currentPath) + 1
@@ -59,26 +54,8 @@ export function Container(props: PropsWithChildren) {
     },
   ]
   const currentTitle = titlesPerRoute.find((route) => route.path === currentPath)?.title ?? 'Onboarding'
-
-  const hasDxAuth = Boolean(userSignUp?.dx_auth)
-  const hasExistingOrganization = organizations.length > 0
   const totalSteps = 2
-
-  useEffect(() => {
-    if (hasDxAuth && currentPath !== '/project') {
-      navigate({ to: `/onboarding/project`, replace: true })
-    }
-  }, [currentPath, hasDxAuth, navigate])
-
-  const currentStep = hasExistingOrganization
-    ? currentPath === '/project'
-      ? 2
-      : 1
-    : hasDxAuth
-      ? currentPath === '/project'
-        ? 2
-        : 1
-      : currentStepPosition(titlesPerRoute)
+  const currentStep = currentStepPosition(titlesPerRoute)
 
   return (
     <ContextOnboarding.Provider

@@ -1,10 +1,10 @@
 import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
+import { type SignUpRequest } from 'qovery-typescript-axios'
 import { useContext, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { useCreateOrganization, useEditBillingInfo, useOrganizations } from '@qovery/domains/organizations/feature'
+import { useCreateOrganization, useEditBillingInfo } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -28,12 +28,6 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
   const { organization_name, project_name, admin_email, selectedPlan, setContextValue } = useContext(ContextOnboarding)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const shouldSkipBilling = userSignUp?.dx_auth === true
-  const { data: organizations = [] } = useOrganizations({ enabled: shouldSkipBilling })
-  const firstOrganization = organizations[0]
-  const planToUse = shouldSkipBilling ? PlanEnum.USER_2025 : selectedPlan
-  const canGoBack = Boolean(previousUrl || !shouldSkipBilling || firstOrganization)
 
   useEffect(() => {
     setValue('organization_name', organization_name)
@@ -73,7 +67,6 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         qovery_usage_other: userSignUp.qovery_usage_other ?? undefined,
         user_questions: userSignUp.user_questions ?? undefined,
         current_step: 'project',
-        dx_auth: userSignUp.dx_auth ?? undefined,
         infrastructure_hosting: userSignUp.infrastructure_hosting ?? undefined,
       }
 
@@ -84,17 +77,6 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const handleBack = () => {
     if (previousUrl) {
       navigate({ href: previousUrl, replace: true })
-      return
-    }
-
-    if (shouldSkipBilling) {
-      if (firstOrganization) {
-        navigate({
-          to: `/organization/$organizationId/overview`,
-          params: { organizationId: firstOrganization.id },
-          replace: true,
-        })
-      }
       return
     }
 
@@ -115,7 +97,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
       const organization = await createOrganization({
         organizationRequest: {
           name: data.organization_name,
-          plan: planToUse,
+          plan: selectedPlan,
           admin_emails: admin_email.length > 0 ? [admin_email] : user?.email ? [user.email] : [],
         },
       })
@@ -125,7 +107,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
 
       await updateBillingInfo(organization.id)
 
-      const project = await createProject({
+      await createProject({
         organizationId: organization.id,
         projectRequest: {
           name: data.project_name,
@@ -135,9 +117,9 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
       await createCargoSignup()
 
       posthog.capture('onboarding-organization-created', {
-        plan: planToUse,
+        plan: selectedPlan,
       })
-      sendDataToGTM({ event: 'onboarding-organization-created', plan: planToUse })
+      sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
 
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
     } catch (error) {
@@ -150,14 +132,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
     }
   })
 
-  return (
-    <StepProject
-      onSubmit={onSubmit}
-      control={control}
-      loading={isSubmitting}
-      onFirstStepBack={canGoBack ? handleBack : undefined}
-    />
-  )
+  return <StepProject onSubmit={onSubmit} control={control} loading={isSubmitting} onFirstStepBack={handleBack} />
 }
 
 export default OnboardingProject

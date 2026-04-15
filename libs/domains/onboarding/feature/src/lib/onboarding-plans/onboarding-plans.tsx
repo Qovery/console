@@ -1,6 +1,6 @@
 import type FieldContainer from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
-import { Navigate, useNavigate } from '@tanstack/react-router'
+import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
 import { type FormEvent, useContext, useEffect, useRef, useState } from 'react'
@@ -84,19 +84,12 @@ export function OnboardingPlans() {
   const { data: organizations = [] } = useOrganizations()
 
   const navigate = useNavigate()
-  const shouldSkipBilling = userSignUp?.dx_auth === true
   const plan = PLANS.find((plan) => plan.name === selectedPlan) ?? PLANS[0]
   const selectablePlans = PLANS.filter((planOption) => planOption.name !== PlanEnum.ENTERPRISE_2025)
   const backButton = organizations.length > 0
 
   useEffect(() => {
     let mounted = true
-
-    if (shouldSkipBilling) {
-      return () => {
-        mounted = false
-      }
-    }
 
     const initializeChargebee = async () => {
       try {
@@ -117,11 +110,7 @@ export function OnboardingPlans() {
     return () => {
       mounted = false
     }
-  }, [shouldSkipBilling])
-
-  if (shouldSkipBilling) {
-    return <Navigate to={`${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}`} replace />
-  }
+  }, [])
 
   const handlePlanSelect = (planName: PlanEnum) => {
     setContextValue?.({ selectedPlan: planName })
@@ -167,11 +156,6 @@ export function OnboardingPlans() {
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
-    if (shouldSkipBilling) {
-      navigate({ to: `${ONBOARDING_URL}${ONBOARDING_PROJECT_URL}` })
-      return
-    }
-
     if (!userSignUp) return
     if (!cardRef.current || !isCardReady || !cbInstance) return
 
@@ -207,7 +191,6 @@ export function OnboardingPlans() {
           qovery_usage_other: userSignUp.qovery_usage_other ?? undefined,
           user_questions: userSignUp.user_questions ?? undefined,
           current_step: 'billing',
-          dx_auth: userSignUp.dx_auth ?? undefined,
           infrastructure_hosting: userSignUp.infrastructure_hosting ?? undefined,
         }
 

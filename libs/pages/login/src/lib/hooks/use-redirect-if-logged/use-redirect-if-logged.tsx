@@ -53,7 +53,7 @@ export function useRedirectIfLogged() {
         const { data: userSignUp } = await refetchUserSignUp()
         const onboardingEntryUrl = getOnboardingEntryUrl(userSignUp)
 
-        if (!userSignUp?.current_step && !userSignUp?.dx_auth) {
+        if (!userSignUp?.current_step) {
           sendDataToGTM({ event: 'new_signup', value: user?.email })
         }
 
