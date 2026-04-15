@@ -73,16 +73,26 @@ export function useSupportChat() {
     }
   }
 
+  const whenPylonReady = (callback: () => void) => {
+    if (window.Pylon) {
+      callback()
+      return
+    }
+
+    insertPylonScriptTag()
+    document.getElementById('pylon-script')?.addEventListener('load', callback, { once: true })
+  }
+
   const showChat = () => {
     if (service === 'intercom') {
       showIntercomMessenger()
     } else {
-      window.Pylon?.('show')
+      whenPylonReady(() => window.Pylon?.('show'))
     }
   }
 
   const showPylonForm = (formSlug: string) => {
-    window.Pylon?.('showTicketForm', formSlug)
+    whenPylonReady(() => window.Pylon?.('showTicketForm', formSlug))
   }
 
   const insertPylonScriptTag = () => {
@@ -117,8 +127,12 @@ export function useSupportChat() {
   )
 
   useEffect(() => {
+    if (service === 'pylon') {
+      insertPylonScriptTag()
+    }
+
     updateUserInfo(defaultChatParams)
-  }, [defaultChatParams, updateUserInfo])
+  }, [defaultChatParams, service, updateUserInfo])
 
   return { updateUserInfo, showChat, initChat, showPylonForm }
 }

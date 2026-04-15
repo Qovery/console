@@ -128,6 +128,7 @@ function Personalize() {
       await createUserSignUp({
         ...userSignUp,
         ...normalizedData,
+        current_step: userSignUp?.current_step ?? 'personalize',
       })
 
       posthog.capture('onboarding-tailor-experience-completed', {

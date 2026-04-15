@@ -79,4 +79,33 @@ describe('OnboardingProject', () => {
 
     expect(mockedUsedNavigate).toHaveBeenCalledWith({ to: ORGANIZATION_URL('org-1'), replace: true })
   })
+
+  it('should hide the back button when billing is skipped without a safe destination', () => {
+    useOrganizations.mockReturnValue({ data: [] })
+    useUserSignUp.mockReturnValue({
+      data: { dx_auth: true },
+    })
+
+    renderWithProviders(<OnboardingProject />)
+
+    expect(screen.queryByRole('button', { name: 'Back' })).not.toBeInTheDocument()
+  })
+
+  it('should redirect to the previous url when it is provided', async () => {
+    useOrganizations.mockReturnValue({
+      data: [{ id: 'org-1', name: 'First organization' }],
+    })
+    useUserSignUp.mockReturnValue({
+      data: { dx_auth: true },
+    })
+
+    const { userEvent } = renderWithProviders(<OnboardingProject previousUrl="/organization/org-previous/overview" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
+
+    expect(mockedUsedNavigate).toHaveBeenCalledWith({
+      href: '/organization/org-previous/overview',
+      replace: true,
+    })
+  })
 })

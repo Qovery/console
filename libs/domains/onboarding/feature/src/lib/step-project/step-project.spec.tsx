@@ -1,4 +1,4 @@
-import { render } from '__tests__/utils/setup-jest'
+import { render, screen } from '__tests__/utils/setup-jest'
 import { useForm } from 'react-hook-form'
 import StepProject, { type StepProjectProps } from './step-project'
 
@@ -17,5 +17,12 @@ describe('StepProject', () => {
     const { baseElement } = render(<Wrapper onSubmit={onSubmit} />)
 
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should hide the back button when no back handler is provided', () => {
+    const onSubmit = jest.fn()
+    render(<Wrapper onSubmit={onSubmit} onFirstStepBack={undefined} />)
+
+    expect(screen.queryByRole('button', { name: 'Back' })).not.toBeInTheDocument()
   })
 })

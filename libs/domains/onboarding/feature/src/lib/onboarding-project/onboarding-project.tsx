@@ -15,7 +15,7 @@ import { type SerializedError } from '@qovery/shared/utils'
 import { ContextOnboarding } from '../container/container'
 import { StepProject } from '../step-project/step-project'
 
-export function OnboardingProject() {
+export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   useDocumentTitle('Onboarding Organization - Qovery')
 
   const navigate = useNavigate()
@@ -32,7 +32,9 @@ export function OnboardingProject() {
 
   const shouldSkipBilling = userSignUp?.dx_auth === true
   const { data: organizations = [] } = useOrganizations({ enabled: shouldSkipBilling })
+  const firstOrganization = organizations[0]
   const planToUse = shouldSkipBilling ? PlanEnum.USER_2025 : selectedPlan
+  const canGoBack = Boolean(previousUrl || !shouldSkipBilling || firstOrganization)
 
   useEffect(() => {
     setValue('organization_name', organization_name)
@@ -81,15 +83,15 @@ export function OnboardingProject() {
   }
 
   const handleBack = () => {
-    if (shouldSkipBilling) {
-      const firstOrganization = organizations[0]
+    if (previousUrl) {
+      navigate({ href: previousUrl, replace: true })
+      return
+    }
 
+    if (shouldSkipBilling) {
       if (firstOrganization) {
         navigate({ to: ORGANIZATION_URL(firstOrganization.id), replace: true })
-        return
       }
-
-      navigate({ to: '/' })
       return
     }
 
@@ -145,7 +147,14 @@ export function OnboardingProject() {
     }
   })
 
-  return <StepProject onSubmit={onSubmit} control={control} loading={isSubmitting} onFirstStepBack={handleBack} />
+  return (
+    <StepProject
+      onSubmit={onSubmit}
+      control={control}
+      loading={isSubmitting}
+      onFirstStepBack={canGoBack ? handleBack : undefined}
+    />
+  )
 }
 
 export default OnboardingProject

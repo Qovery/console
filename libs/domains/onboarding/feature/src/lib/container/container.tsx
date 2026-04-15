@@ -69,10 +69,10 @@ export function Container(props: PropsWithChildren) {
   const totalSteps = hasExistingOrganization || hasDxAuth ? 2 : titlesPerRoute.length
 
   useEffect(() => {
-    if (hasDxAuth) {
-      navigate({ to: `/onboarding/project`, state: location.state })
+    if (hasDxAuth && currentPath !== '/project') {
+      navigate({ to: `/onboarding/project`, replace: true })
     }
-  }, [currentPath, hasDxAuth, navigate, location.state])
+  }, [currentPath, hasDxAuth, navigate])
 
   const currentStep = hasExistingOrganization
     ? currentPath === '/project'

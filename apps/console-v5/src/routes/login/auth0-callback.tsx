@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
+import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
@@ -46,11 +47,7 @@ function useRedirectIfLogged() {
         }
       } else {
         const { data: userSignUp } = await refetchUserSignUp()
-        if (userSignUp?.dx_auth) {
-          navigate({ to: '/onboarding/project' })
-        } else {
-          navigate({ to: '/onboarding/personalize' })
-        }
+        navigate({ href: getOnboardingEntryUrl(userSignUp) })
       }
     }
 
