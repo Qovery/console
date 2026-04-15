@@ -119,7 +119,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
 
       await createCargoSignup()
 
-      await posthog.capture('onboarding-organization-created', {
+      posthog.capture('onboarding-organization-created', {
         plan: selectedPlan,
       })
       await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
