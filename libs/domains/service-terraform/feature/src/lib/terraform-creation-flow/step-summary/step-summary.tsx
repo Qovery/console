@@ -236,8 +236,8 @@ export const TerraformStepSummary = () => {
                   {serializeForApi().length > 0 ? (
                     <ul>
                       {serializeForApi().map(({ key, value, secret }) => (
-                        <li key={key} className="text-ssm">
-                          <code>{key}:</code> <code>{secret ? '********' : value}</code>
+                        <li key={key}>
+                          {key}: {secret ? '********' : value}
                         </li>
                       ))}
                     </ul>
