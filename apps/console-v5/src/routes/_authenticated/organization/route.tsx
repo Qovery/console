@@ -423,6 +423,7 @@ const bypassLayoutRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job',
 ]
 
 function useBypassLayout(): boolean {

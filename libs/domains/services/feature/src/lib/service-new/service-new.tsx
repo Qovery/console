@@ -549,7 +549,7 @@ export function ServiceNew({
         title: 'Lifecycle Job',
         description: 'Execute any type of script coming from Git or a Container Registry.',
         icon: <Icon name="LIFECYCLE_JOB" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_LIFECYCLE_CREATION_URL),
+        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('lifecycle-job')),
         cloud_provider: cloudProvider,
       },
       {

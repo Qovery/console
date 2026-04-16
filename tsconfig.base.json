@@ -37,6 +37,7 @@
       "@qovery/domains/projects/feature": ["libs/domains/projects/feature/src/index.ts"],
       "@qovery/domains/service-helm/data-access": ["libs/domains/service-helm/data-access/src/index.ts"],
       "@qovery/domains/service-helm/feature": ["libs/domains/service-helm/feature/src/index.ts"],
+      "@qovery/domains/service-job/feature": ["libs/domains/service-job/feature/src/index.ts"],
       "@qovery/domains/service-logs/data-access": ["libs/domains/service-logs/data-access/src/index.ts"],
       "@qovery/domains/service-logs/feature": ["libs/domains/service-logs/feature/src/index.ts"],
       "@qovery/domains/service-settings/feature": ["libs/domains/service-settings/feature/src/index.ts"],

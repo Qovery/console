@@ -105,12 +105,14 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/route'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/index'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/index'
@@ -121,6 +123,9 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
@@ -901,6 +906,14 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteImport.update(
+    {
+      id: '/project/$projectId/environment/$environmentId/service/create/lifecycle-job',
+      path: '/project/$projectId/environment/$environmentId/service/create/lifecycle-job',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteImport.update(
     {
@@ -948,6 +961,15 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       path: '/',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRouteImport.update(
+    {
+      id: '/',
+      path: '/',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRoute =
@@ -1037,6 +1059,33 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       path: '/general',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRouteImport.update(
+    {
+      id: '/general',
+      path: '/general',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRouteImport.update(
+    {
+      id: '/dockerfile',
+      path: '/dockerfile',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRouteImport.update(
+    {
+      id: '/configure',
+      path: '/configure',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute =
@@ -1446,6 +1495,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteWithChildren
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
@@ -1487,6 +1537,9 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRoute
@@ -1497,6 +1550,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
@@ -1620,6 +1674,9 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRoute
@@ -1630,6 +1687,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
@@ -1729,6 +1787,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteWithChildren
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
@@ -1770,6 +1829,9 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmSummaryRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideArgumentsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmValuesOverrideFileRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRoute
@@ -1780,6 +1842,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
@@ -1879,6 +1942,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
@@ -1920,6 +1984,9 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary'
@@ -1930,6 +1997,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
@@ -2053,6 +2121,9 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary'
@@ -2063,6 +2134,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
@@ -2161,6 +2233,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell'
@@ -2202,6 +2275,9 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/summary'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-arguments'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary'
@@ -2212,6 +2288,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
@@ -2899,6 +2976,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
+      path: '/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm'
       path: '/project/$projectId/environment/$environmentId/service/create/helm'
@@ -2940,6 +3024,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/'
+      path: '/'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/'
@@ -3010,6 +3101,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general'
+      path: '/general'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile'
+      path: '/dockerfile'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure'
+      path: '/configure'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/values-override-file'
@@ -3673,6 +3785,30 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteChildren,
   )
 
+interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute
+}
+
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteChildren: AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteChildren =
+  {
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobConfigureRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobDockerfileRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobGeneralRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute,
+  }
+
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteWithChildren =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute._addFileChildren(
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteChildren,
+  )
+
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute
@@ -3733,6 +3869,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteWithChildren
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdCloudShellRoute
@@ -3812,6 +3949,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteWithChildren,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdPreCheckLogsRoute:
