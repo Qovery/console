@@ -1,12 +1,12 @@
 import clsx from 'clsx'
 import { useThumbSurvey } from 'posthog-js/react/surveys'
 import { useMemo } from 'react'
-import { Icon } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 import { RenderMarkdown } from '../../devops-render-markdown/devops-render-markdown'
 import { getIconClass, getIconName } from '../../utils/icon-utils/icon-utils'
 import type { Message, PlanStep } from '../devops-copilot-panel'
 
-const POSTHOG_SURVEY_ID = '019d5352-0c61-0000-467f-5b534e0b5dc7'
+const POSTHOG_SURVEY_ID = '019d9659-7d54-0000-72df-43d2fa71b9d0'
 
 interface AssistantMessageProps {
   message: Message
@@ -25,26 +25,26 @@ function VoteButtons({ messageId }: { messageId: string }) {
 
   return (
     <div ref={triggerRef} className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
-      <button
+      <Button
         type="button"
-        className={clsx(
-          'flex items-center gap-1 rounded border border-neutral-200 px-2 py-1 hover:border-neutral-400',
-          { 'text-brand-500': response === 'up' }
-        )}
+        variant="surface"
+        className={clsx('flex items-center gap-1 px-2 py-1', {
+          'text-brand-500': response === 'up',
+        })}
         onClick={() => respond('up')}
       >
         <Icon iconName="thumbs-up" />
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
-        className={clsx(
-          'flex items-center gap-1 rounded border border-neutral-200 px-2 py-1 hover:border-neutral-400',
-          { 'text-brand-500': response === 'down' }
-        )}
+        variant="surface"
+        className={clsx('flex items-center gap-1 px-2 py-1', {
+          'text-brand-500': response === 'down',
+        })}
         onClick={() => respond('down')}
       >
         <Icon iconName="thumbs-down" />
-      </button>
+      </Button>
     </div>
   )
 }
