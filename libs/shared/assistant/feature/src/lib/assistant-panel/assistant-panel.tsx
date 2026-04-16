@@ -6,7 +6,6 @@ import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
 import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { useDebounce, useSupportChat } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
 import { DotStatus } from '../dot-status/dot-status'
 import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-contextual-doc-links'
@@ -24,7 +23,6 @@ export function AssistantPanel({ smaller = false, compactTopOffset = false, onCl
   const { data } = useQoveryStatus()
   const { showChat } = useSupportChat()
   const docLinks = useContextualDocLinks()
-  const [portalTarget, setPortalTarget] = useState<HTMLElement | null>(null)
   const [searchValue, setSearchValue] = useState('')
   const shouldReduceMotion = useReducedMotion()
   const debouncedSearchValue = useDebounce(searchValue, 300)
@@ -43,9 +41,7 @@ export function AssistantPanel({ smaller = false, compactTopOffset = false, onCl
     return () => document.removeEventListener('keydown', down)
   }, [onClose])
 
-  useEffect(() => {
-    setPortalTarget(document.body)
-  }, [])
+  const portalTarget = typeof document !== 'undefined' ? document.body : null
 
   const topOffset = smaller ? 'calc(6.75rem + 6px)' : compactTopOffset ? '2.75rem' : '6.75rem'
   const panelHeight = `calc(100dvh - ${topOffset})`
@@ -86,9 +82,7 @@ export function AssistantPanel({ smaller = false, compactTopOffset = false, onCl
               },
             }
       }
-      className={twMerge(
-        'fixed right-0 flex w-[368px] flex-col overflow-hidden border-l border-neutral bg-background shadow-sm will-change-[top,height,transform]'
-      )}
+      className="fixed right-0 z-overlay flex w-[368px] flex-col overflow-hidden border-l border-neutral bg-background shadow-sm will-change-[top,height,transform]"
     >
       <div className="flex justify-between px-5 pt-5">
         <div className="flex gap-3 font-bold">
