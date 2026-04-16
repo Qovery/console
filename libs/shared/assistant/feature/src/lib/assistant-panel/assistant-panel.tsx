@@ -43,7 +43,7 @@ export function AssistantPanel({ smaller = false, compactTopOffset = false, onCl
 
   const portalTarget = typeof document !== 'undefined' ? document.body : null
 
-  const topOffset = smaller ? 'calc(6.75rem + 6px)' : compactTopOffset ? '2.75rem' : '6.75rem'
+  const topOffset = smaller ? 'calc(6.75rem + 6px)' : compactTopOffset ? 'calc(2.75rem + 1px)' : 'calc(6.75rem + 1px)'
   const panelHeight = `calc(100dvh - ${topOffset})`
 
   if (!portalTarget) {
@@ -60,11 +60,11 @@ export function AssistantPanel({ smaller = false, compactTopOffset = false, onCl
           ? { duration: 0 }
           : {
               top: {
-                duration: 0.08,
+                duration: 0.12,
                 ease: [0.2, 0, 0, 1],
               },
               height: {
-                duration: 0.08,
+                duration: 0.12,
                 ease: [0.2, 0, 0, 1],
               },
               x: {
@@ -74,7 +74,7 @@ export function AssistantPanel({ smaller = false, compactTopOffset = false, onCl
                 mass: 0.5,
               },
               opacity: {
-                duration: 0.08,
+                duration: 0.12,
               },
             }
       }
