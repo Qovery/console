@@ -144,7 +144,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
             </div>
           </div>
           <div
-            class="flex flex-row gap-x-4 p-4 border rounded text-sm items-center border-info-component bg-surface-info-subtle text-info mb-3"
+            class="flex flex-row gap-x-4 p-4 border rounded-md text-sm items-center border-info-component bg-surface-info-subtle text-info mb-3"
             data-accent-color="sky"
           >
             <div
@@ -234,7 +234,7 @@ exports[`ClusterDeleteModal should match snapshot 1`] = `
             </div>
           </div>
           <div
-            class="flex flex-row gap-x-4 p-4 border rounded text-sm items-center border-warning-component bg-surface-warning-subtle text-warning mt-3"
+            class="flex flex-row gap-x-4 p-4 border rounded-md text-sm items-center border-warning-component bg-surface-warning-subtle text-warning mt-3"
             data-accent-color="yellow"
           >
             <div

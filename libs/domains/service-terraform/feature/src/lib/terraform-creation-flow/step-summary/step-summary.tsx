@@ -1,33 +1,20 @@
+import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { TerraformAutoDeployConfigTerraformActionEnum, type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import {
-  buildDockerfileFragment,
-  terraformEngines,
-  useTerraformVariablesContext,
-} from '@qovery/domains/service-terraform/feature'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
-import {
-  SERVICES_CREATION_GENERAL_URL,
-  SERVICES_GENERAL_URL,
-  SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL,
-  SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL,
-  SERVICES_URL,
-} from '@qovery/shared/routes'
 import { Button, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
-import { useTerraformCreateContext } from '../page-terraform-create-feature'
+import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
+import { useTerraformVariablesContext } from '../../terraform-variables-context'
+import { buildDockerfileFragment } from '../../utils/build-dockerfile-fragment'
+import { TERRAFORM_ENGINES } from '../../utils/terraform-engines'
 
-export function StepSummaryFeature() {
-  useDocumentTitle('Summary - Create Terraform')
-
-  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
+export const TerraformStepSummary = () => {
   const navigate = useNavigate()
-
-  const { generalForm, setCurrentStep, creationFlowUrl } = useTerraformCreateContext()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const { setCurrentStep, generalForm } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
   const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
 
@@ -102,15 +89,16 @@ export function StepSummaryFeature() {
         setIsLoadingCreateAndPlan(false)
       }
 
-      if (slug && option) {
-        posthog.capture('create-service', {
-          selectedServiceType: slug,
-          selectedServiceSubType: option,
-        })
-      }
+      posthog.capture('create-service', {
+        selectedServiceType: 'terraform',
+        selectedServiceSubType: 'current',
+      })
 
       setIsLoadingCreate(false)
-      navigate(SERVICES_URL(organizationId, projectId, environmentId) + SERVICES_GENERAL_URL)
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        params: { organizationId, projectId, environmentId },
+      })
     } catch (error) {
       setIsLoadingCreateAndPlan(false)
       setIsLoadingCreate(false)
@@ -123,25 +111,30 @@ export function StepSummaryFeature() {
         <Heading className="mb-2">Ready to create your Terraform service</Heading>
 
         <form className="space-y-10">
-          <p className="text-sm text-neutral-350">
+          <p className="text-sm text-neutral-subtle">
             The basic application setup is done, you can now deploy your application or move forward with some advanced
             setup.
           </p>
 
           <div className="flex flex-col gap-6">
-            <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+            <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
                 <Heading>General information</Heading>
                 <Button
                   type="button"
                   variant="plain"
                   size="md"
-                  onClick={() => navigate(creationFlowUrl + SERVICES_CREATION_GENERAL_URL)}
+                  onClick={() =>
+                    navigate({
+                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general',
+                      params: { organizationId, projectId, environmentId },
+                    })
+                  }
                 >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </div>
-              <ul className="list-none space-y-2 text-sm text-neutral-400">
+              <ul className="list-none space-y-2 text-sm text-neutral-subtle">
                 <li>
                   <strong className="font-medium">Name:</strong> {generalData.name}
                 </li>
@@ -153,9 +146,9 @@ export function StepSummaryFeature() {
                   </li>
                 )}
               </ul>
-              <hr className="my-4 border-t border-dashed border-neutral-250" />
+              <hr className="my-4 border-t border-dashed border-neutral" />
               {generalData.source_provider === 'GIT' && (
-                <ul className="list-none space-y-2 text-sm text-neutral-400">
+                <ul className="list-none space-y-2 text-sm text-neutral-subtle">
                   <li>
                     <strong className="font-medium">Repository:</strong>{' '}
                     {generalData.repository || generalData.git_repository?.url}
@@ -170,22 +163,27 @@ export function StepSummaryFeature() {
               )}
             </Section>
 
-            <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+            <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
                 <Heading>Terraform configuration</Heading>
                 <Button
                   type="button"
                   variant="plain"
                   size="md"
-                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_BASIC_CONFIG_URL)}
+                  onClick={() =>
+                    navigate({
+                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
+                      params: { organizationId, projectId, environmentId },
+                    })
+                  }
                 >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </div>
-              <ul className="list-none space-y-2 text-sm text-neutral-400">
+              <ul className="list-none space-y-2 text-sm text-neutral-subtle">
                 <li>
                   <span className="font-medium">Terraform engine:</span>{' '}
-                  {terraformEngines.find((v) => v.value === generalData.engine)?.name} v
+                  {TERRAFORM_ENGINES.find((v) => v.value === generalData.engine)?.name} v
                   {generalData.provider_version.explicit_version}
                 </li>
                 <li>
@@ -214,33 +212,44 @@ export function StepSummaryFeature() {
               </ul>
             </Section>
 
-            <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+            <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
                 <Heading>Input variables</Heading>
                 <Button
                   type="button"
                   variant="plain"
                   size="md"
-                  onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL)}
+                  onClick={() =>
+                    navigate({
+                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
+                      params: { organizationId, projectId, environmentId },
+                    })
+                  }
                 >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </div>
 
-              <ul className="list-none space-y-2 text-sm text-neutral-400">
+              <ul className="list-none space-y-2 text-sm text-neutral-subtle">
                 <li>
                   <span className="font-medium">Variables:</span>
-                  <ul>
-                    {serializeForApi().map(({ key, value, secret }) => (
-                      <li key={key}>
-                        {key}: {secret ? '********' : value}
-                      </li>
-                    ))}
-                  </ul>
+                  {serializeForApi().length > 0 ? (
+                    <ul>
+                      {serializeForApi().map(({ key, value, secret }) => (
+                        <li key={key}>
+                          {key}: {secret ? '********' : value}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <span className="ml-1 text-neutral-subtle">No variables overridden</span>
+                  )}
                 </li>
-                <li>
-                  <span className="font-medium">File paths:</span> {[...tfVarsFilePaths].reverse().join(', ')}
-                </li>
+                {tfVarsFilePaths.length > 0 && (
+                  <li>
+                    <span className="font-medium">File paths:</span> {[...tfVarsFilePaths].reverse().join(', ')}
+                  </li>
+                )}
               </ul>
             </Section>
           </div>
@@ -250,7 +259,12 @@ export function StepSummaryFeature() {
               type="button"
               size="lg"
               variant="plain"
-              onClick={() => navigate(creationFlowUrl + SERVICES_TERRAFORM_CREATION_INPUT_VARIABLES_URL)}
+              onClick={() =>
+                navigate({
+                  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
+                  params: { organizationId, projectId, environmentId },
+                })
+              }
             >
               Back
             </Button>
@@ -275,5 +289,3 @@ export function StepSummaryFeature() {
     </FunnelFlowBody>
   )
 }
-
-export default StepSummaryFeature
