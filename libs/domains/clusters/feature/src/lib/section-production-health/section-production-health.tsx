@@ -69,7 +69,7 @@ const CLUSTERS_OPTIONS: ClusterOption[] = [
     title: 'Local machine (demo)',
     icon: 'laptop-code',
     description:
-      'Deploy a local Kubernetes cluster on your laptop using Docker Desktop. No cloud account or credit card required!',
+      'Deploy a local Kubernetes cluster on your laptop using Docker. No cloud account or credit card required!',
     action: 'installation-guide',
     isDemo: true,
   },
