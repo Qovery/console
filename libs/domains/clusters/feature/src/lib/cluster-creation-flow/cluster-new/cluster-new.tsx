@@ -10,10 +10,12 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type MutableRefObject, type ReactElement, cloneElement, useState } from 'react'
 import { match } from 'ts-pattern'
-import { Button, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
+import { Button, Link as ButtonLink, Callout, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
 import { useClickAway, useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
+import { AddCreditCardModalFeature } from '../../add-credit-card-modal-feature/add-credit-card-modal-feature'
 import { ClusterInstallationGuideModal } from '../../cluster-installation-guide-modal/cluster-installation-guide-modal'
+import { useClusterCreationRestriction } from '../../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction'
 
 const Qovery = '/assets/logos/logo-icon.svg'
 
@@ -21,28 +23,34 @@ const ExtendedCloudProviderEnum = {
   ...CloudProviderEnum,
 }
 
-type CardOptionProps = {
+type RestrictedActionProps = {
+  disabled?: boolean
+  onDisabledClick?: () => void
+}
+
+type CardOptionProps = RestrictedActionProps & {
   title: string
   description?: string
   recommended?: boolean
   icon?: string | ReactElement
   selectedCloudProvider: Exclude<keyof typeof ExtendedCloudProviderEnum, 'ON_PREMISE'>
 } & (
-  | {
-      selectedInstallationType: 'managed'
-    }
-  | {
-      selectedInstallationType: 'self-managed'
-      openInstallationGuideModal: () => void
-    }
-  | {
-      selectedInstallationType: 'partially-managed'
-    }
-)
+    | {
+        selectedInstallationType: 'managed'
+      }
+    | {
+        selectedInstallationType: 'self-managed'
+        openInstallationGuideModal: () => void
+      }
+    | {
+        selectedInstallationType: 'partially-managed'
+      }
+  )
 
 function CardOption({ icon, title, description, selectedCloudProvider, recommended, ...props }: CardOptionProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const { showPylonForm } = useSupportChat()
+  const { disabled = false, onDisabledClick } = props
 
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
 
@@ -56,9 +64,11 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
 
   const renderContent = () => (
     <span>
-      <span className="flex flex-col text-base font-semibold text-neutral">
+      <span
+        className={twMerge('flex flex-col text-base font-semibold', disabled ? 'text-neutral-subtle' : 'text-neutral')}
+      >
         {title}
-        {recommended && (
+        {!disabled && recommended && (
           <span>
             {match({ selectedCloudProvider })
               .with({ selectedCloudProvider: 'AZURE' }, () => (
@@ -76,7 +86,9 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
           </span>
         )}
       </span>
-      <span className="inline-block text-sm text-neutral-subtle">{description}</span>
+      <span className={twMerge('inline-block text-sm', disabled ? 'text-neutral-disabled' : 'text-neutral-subtle')}>
+        {description}
+      </span>
     </span>
   )
 
@@ -89,36 +101,80 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
 
   const baseClassNames =
     'flex text-left items-start gap-4 relative rounded border border-neutral transition-all hover:border-brand-strong bg-surface-neutral p-4 transition w-[397px]'
+  const disabledClassNames = disabled
+    ? twMerge(
+        'border-neutral bg-surface-neutral-component shadow-none hover:border-neutral hover:bg-surface-neutral-component',
+        onDisabledClick ? 'cursor-pointer' : 'cursor-default'
+      )
+    : undefined
 
   return match(props)
     .with({ selectedInstallationType: 'self-managed' }, ({ selectedInstallationType, openInstallationGuideModal }) => (
       <button
-        className={baseClassNames}
+        type="button"
+        aria-disabled={disabled}
+        className={twMerge(baseClassNames, disabledClassNames)}
         onClick={(e) => {
           e.preventDefault()
+          if (disabled) {
+            onDisabledClick?.()
+            return
+          }
           handleAnalytics(selectedInstallationType)
           openInstallationGuideModal()
         }}
       >
-        {renderIcon()}
+        {renderIcon(disabled ? 'opacity-60' : undefined)}
         {renderContent()}
         <span className="absolute right-5 top-5">
-          <Icon iconName="arrow-up-right" className="text-neutral-subtle" />
+          <Icon iconName="arrow-up-right" className={disabled ? 'text-neutral-disabled' : 'text-neutral-subtle'} />
         </span>
       </button>
     ))
-    .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) => (
-      <Link
-        to="/organization/$organizationId/cluster/create/$slug"
-        params={{ organizationId, slug: selectedCloudProvider.toLowerCase() }}
-        className={baseClassNames}
-        onClick={() => handleAnalytics(selectedInstallationType)}
-      >
-        {renderIcon()}
-        {renderContent()}
-      </Link>
-    ))
+    .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) =>
+      disabled ? (
+        <button
+          type="button"
+          aria-disabled="true"
+          className={twMerge(baseClassNames, disabledClassNames)}
+          onClick={(e) => {
+            e.preventDefault()
+            onDisabledClick?.()
+          }}
+        >
+          {renderIcon('opacity-60')}
+          {renderContent()}
+        </button>
+      ) : (
+        <Link
+          to="/organization/$organizationId/cluster/create/$slug"
+          params={{ organizationId, slug: selectedCloudProvider.toLowerCase() }}
+          className={baseClassNames}
+          onClick={() => handleAnalytics(selectedInstallationType)}
+        >
+          {renderIcon()}
+          {renderContent()}
+        </Link>
+      )
+    )
     .with({ selectedInstallationType: 'partially-managed' }, ({ selectedInstallationType }) => {
+      if (isEksAnywhereEnabled && disabled) {
+        return (
+          <button
+            type="button"
+            aria-disabled="true"
+            className={twMerge(baseClassNames, disabledClassNames)}
+            onClick={(e) => {
+              e.preventDefault()
+              onDisabledClick?.()
+            }}
+          >
+            {renderIcon('opacity-60')}
+            {renderContent()}
+          </button>
+        )
+      }
+
       if (isEksAnywhereEnabled) {
         return (
           <Link
@@ -164,32 +220,33 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
     .exhaustive()
 }
 
-type CardClusterProps = {
+type CardClusterProps = RestrictedActionProps & {
   title: string
   description?: string
   icon: string | ReactElement
   index?: number
 } & (
-  | {
-      options: CardOptionProps[]
-    }
-  | {
-      openInstallationGuideModal: () => void
-      selectedInstallationType: 'demo' | 'self-managed' | 'partially-managed'
-      selectedCloudProvider:
-        | 'DIGITAL_OCEAN'
-        | 'AZURE'
-        | 'OVH_CLOUD'
-        | 'ORACLE_CLOUD'
-        | 'IBM_CLOUD'
-        | 'CIVO'
-        | 'HETZNER'
-        | 'OTHER'
-    }
-)
+    | {
+        options: CardOptionProps[]
+      }
+    | {
+        openInstallationGuideModal: () => void
+        selectedInstallationType: 'demo' | 'self-managed' | 'partially-managed'
+        selectedCloudProvider:
+          | 'DIGITAL_OCEAN'
+          | 'AZURE'
+          | 'OVH_CLOUD'
+          | 'ORACLE_CLOUD'
+          | 'IBM_CLOUD'
+          | 'CIVO'
+          | 'HETZNER'
+          | 'OTHER'
+      }
+  )
 
 function CardCluster({ title, description, icon, index = 1, ...props }: CardClusterProps) {
   const [expanded, setExpanded] = useState(false)
+  const { disabled = false, onDisabledClick } = props
 
   const ref = useClickAway(() => {
     setExpanded(false)
@@ -286,8 +343,22 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
 
     return (
       <button
-        className="relative flex h-32 w-[calc(100%/2-16px)] cursor-pointer justify-between gap-4 rounded-md border border-neutral p-4 shadow-sm transition hover:border-brand-strong lg:w-[calc(100%/3-16px)]"
+        type="button"
+        aria-disabled={disabled}
+        className={twMerge(
+          'relative flex h-32 w-[calc(100%/2-16px)] justify-between gap-4 rounded-md border border-neutral p-4 shadow-sm transition lg:w-[calc(100%/3-16px)]',
+          disabled
+            ? twMerge(
+                'bg-surface-neutral-component shadow-none hover:border-neutral hover:bg-surface-neutral-component',
+                onDisabledClick ? 'cursor-pointer' : 'cursor-default'
+              )
+            : 'cursor-pointer hover:border-brand-strong'
+        )}
         onClick={() => {
+          if (disabled) {
+            onDisabledClick?.()
+            return
+          }
           posthog.capture('select-cluster', {
             selectedCloudProvider,
             selectedInstallationType,
@@ -298,19 +369,32 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
         <div className="flex flex-col justify-between">
           <div>
             {typeof icon === 'string' ? (
-              <img className="select-none" width={32} height={32} src={icon} alt={title} />
+              <img
+                className={twMerge('select-none', disabled && 'opacity-60')}
+                width={32}
+                height={32}
+                src={icon}
+                alt={title}
+              />
             ) : (
-              cloneElement(icon as ReactElement, { className: 'w-[32px] h-[32px]' })
+              cloneElement(icon as ReactElement, { className: twMerge('h-[32px] w-[32px]', disabled && 'opacity-60') })
             )}
           </div>
-          <p className="truncate text-base font-semibold text-neutral">{title}</p>
+          <p className={twMerge('truncate text-base font-semibold', disabled ? 'text-neutral-subtle' : 'text-neutral')}>
+            {title}
+          </p>
         </div>
         {selectedInstallationType === 'demo' ? (
           <span className="absolute right-5 top-5 flex h-5 min-w-min items-center justify-center truncate rounded-full bg-surface-brand-solid px-1.5 text-[11px] font-medium leading-6 text-neutralInvert">
             3min to setup
           </span>
         ) : (
-          <div className="absolute right-5 top-5 flex items-center gap-2.5 text-neutral-subtle">
+          <div
+            className={twMerge(
+              'absolute right-5 top-5 flex items-center gap-2.5',
+              disabled ? 'text-neutral-disabled' : 'text-neutral-subtle'
+            )}
+          >
             <span className="flex h-5 items-center justify-center truncate rounded-lg border border-neutral px-1.5 text-[11px] font-semibold leading-6">
               Self-managed
             </span>
@@ -323,7 +407,11 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
 }
 
 export function ClusterNew() {
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
+  const { isClusterCreationRestricted, isNoCreditCardRestriction } = useClusterCreationRestriction({
+    organizationId,
+  })
 
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
@@ -341,6 +429,18 @@ export function ClusterNew() {
         />
       ),
     })
+
+  const openCreditCardModal = () =>
+    openModal({
+      content: <AddCreditCardModalFeature organizationId={organizationId} />,
+    })
+
+  const disabledCloudProviderProps: RestrictedActionProps = isClusterCreationRestricted
+    ? {
+        disabled: true,
+        onDisabledClick: isNoCreditCardRestriction ? openCreditCardModal : undefined,
+      }
+    : {}
 
   const cloudProviders: CardClusterProps[] = [
     {
@@ -361,6 +461,7 @@ export function ClusterNew() {
           recommended: true,
           selectedCloudProvider: 'AWS',
           selectedInstallationType: 'managed',
+          ...disabledCloudProviderProps,
         },
         {
           title: 'Self-managed',
@@ -370,6 +471,7 @@ export function ClusterNew() {
           selectedCloudProvider: 'AWS',
           selectedInstallationType: 'self-managed',
           openInstallationGuideModal,
+          ...disabledCloudProviderProps,
         },
         {
           title: 'EKS Anywhere',
@@ -378,6 +480,7 @@ export function ClusterNew() {
           icon: <Icon name="AWS" />,
           selectedCloudProvider: 'AWS',
           selectedInstallationType: 'partially-managed',
+          ...disabledCloudProviderProps,
         },
       ],
       icon: <Icon name="AWS" />,
@@ -393,6 +496,7 @@ export function ClusterNew() {
           recommended: true,
           selectedCloudProvider: 'GCP',
           selectedInstallationType: 'managed',
+          ...disabledCloudProviderProps,
         },
         {
           title: 'Self-managed',
@@ -402,6 +506,7 @@ export function ClusterNew() {
           selectedCloudProvider: 'GCP',
           selectedInstallationType: 'self-managed',
           openInstallationGuideModal,
+          ...disabledCloudProviderProps,
         },
       ],
       icon: GCP,
@@ -417,6 +522,7 @@ export function ClusterNew() {
           recommended: true,
           selectedCloudProvider: 'SCW',
           selectedInstallationType: 'managed',
+          ...disabledCloudProviderProps,
         },
         {
           title: 'Self-managed',
@@ -426,6 +532,7 @@ export function ClusterNew() {
           selectedCloudProvider: 'SCW',
           selectedInstallationType: 'self-managed',
           openInstallationGuideModal,
+          ...disabledCloudProviderProps,
         },
       ],
       icon: <Icon name="SCW" />,
@@ -441,6 +548,7 @@ export function ClusterNew() {
           recommended: true,
           selectedCloudProvider: 'AZURE',
           selectedInstallationType: 'managed',
+          ...disabledCloudProviderProps,
         },
         {
           title: 'Self-managed',
@@ -450,6 +558,7 @@ export function ClusterNew() {
           selectedCloudProvider: 'AZURE',
           selectedInstallationType: 'self-managed',
           openInstallationGuideModal,
+          ...disabledCloudProviderProps,
         },
       ],
       icon: Azure,
@@ -460,6 +569,7 @@ export function ClusterNew() {
       selectedInstallationType: 'self-managed',
       icon: <Icon name="OVH_CLOUD" />,
       openInstallationGuideModal,
+      ...disabledCloudProviderProps,
     },
     {
       title: 'Digital Ocean',
@@ -467,6 +577,7 @@ export function ClusterNew() {
       selectedInstallationType: 'self-managed',
       icon: DigitalOcean,
       openInstallationGuideModal,
+      ...disabledCloudProviderProps,
     },
     {
       title: 'Oracle Cloud Infrastructure',
@@ -474,6 +585,7 @@ export function ClusterNew() {
       selectedInstallationType: 'self-managed',
       icon: <Icon name="ORACLE_CLOUD" />,
       openInstallationGuideModal,
+      ...disabledCloudProviderProps,
     },
     {
       title: 'Hetzner',
@@ -481,6 +593,7 @@ export function ClusterNew() {
       selectedInstallationType: 'self-managed',
       icon: <Icon name="HETZNER" />,
       openInstallationGuideModal,
+      ...disabledCloudProviderProps,
     },
     {
       title: 'IBM Cloud',
@@ -488,6 +601,7 @@ export function ClusterNew() {
       selectedInstallationType: 'self-managed',
       icon: <Icon name="IBM_CLOUD" />,
       openInstallationGuideModal,
+      ...disabledCloudProviderProps,
     },
     {
       title: 'Civo',
@@ -495,6 +609,7 @@ export function ClusterNew() {
       selectedInstallationType: 'self-managed',
       icon: <Icon name="CIVO" />,
       openInstallationGuideModal,
+      ...disabledCloudProviderProps,
     },
     {
       title: 'Other',
@@ -502,6 +617,7 @@ export function ClusterNew() {
       selectedInstallationType: 'self-managed',
       icon: Kubernetes,
       openInstallationGuideModal,
+      ...disabledCloudProviderProps,
     },
   ]
 
@@ -521,6 +637,46 @@ export function ClusterNew() {
           <Heading>Or choose your hosting mode</Heading>
           <p className="text-sm text-neutral-subtle">Manage your infrastructure across different hosting mode.</p>
         </div>
+        {isClusterCreationRestricted &&
+          (isNoCreditCardRestriction ? (
+            <Callout.Root color="sky" className="mb-5 items-start">
+              <Callout.Icon>
+                <Icon iconName="circle-info" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Add a credit card to create a cluster</Callout.TextHeading>
+                <Callout.TextDescription>
+                  You need to add a credit card to your account before creating a cluster on a cloud provider. You
+                  won&apos;t be charged until your trial ends.
+                  <br />
+                  <ButtonLink
+                    as="button"
+                    color="neutral"
+                    variant="outline"
+                    className="mt-2"
+                    to="/organization/$organizationId/settings/billing-summary"
+                    params={{ organizationId }}
+                  >
+                    Add credit card
+                    <Icon iconName="arrow-right" className="ml-1" iconStyle="regular" />
+                  </ButtonLink>
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          ) : (
+            <Callout.Root color="red" className="mb-5">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>Cluster creation is restricted</Callout.TextHeading>
+                <Callout.TextDescription>
+                  Your organization has a billing restriction that prevents cluster creation. Please contact support to
+                  resolve this issue.
+                </Callout.TextDescription>
+              </Callout.Text>
+            </Callout.Root>
+          ))}
         <div className="flex w-[calc(100%+16px)] flex-wrap gap-4">
           {cloudProviders.slice(1).map((props, index) => (
             <CardCluster key={props.title} index={index} {...props} />
