@@ -91,8 +91,8 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
     <div className="w-full border-b border-neutral">
       <div
         className={clsx('grid min-h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center bg-surface-neutral', {
-          'bg-surface-neutral-component': hoveredRow === variable.source,
-          'bg-surface-neutral-componentActive hover:bg-surface-neutral-componentActive': isRowSelected(variable.id),
+          'bg-surface-neutral-component hover:bg-surface-neutral-component':
+            hoveredRow === variable.source || isRowSelected(variable.id),
           'min-h-auto': isMultiline,
         })}
       >
@@ -187,7 +187,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                   'absolute left-0 top-0 flex h-full w-full cursor-default items-center gap-2 bg-surface-neutral px-4 group-hover:bg-surface-neutral-component',
                   hoveredRow === variable.source &&
                     'bg-surface-neutral-component group-hover:bg-surface-neutral-component',
-                  isRowSelected(variable.id) && 'bg-surface-neutral-componentActive'
+                  isRowSelected(variable.id) && 'bg-surface-neutral-component'
                 )}
               >
                 <span className="text-xs text-neutral" data-testid="hide_value_secret">
@@ -216,9 +216,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
               className={twMerge(
                 'absolute right-0 top-0 mr-3 flex h-full translate-x-1 items-center gap-1 pl-3 opacity-0 group-hover:bg-surface-neutral-component',
                 isCellFocused('value') && 'bg-surface-neutral-component group-hover:bg-surface-neutral-component',
-                isCellHovered && 'translate-x-0 opacity-100',
-                isVariablePopoverOpen &&
-                  (isRowSelected(variable.id) ? 'bg-surface-neutral-componentActive' : 'bg-surface-neutral')
+                isCellHovered && 'translate-x-0 opacity-100'
               )}
             >
               {!isSecretPlaceholder && (
