@@ -124,7 +124,7 @@ export function DockerfileSettings({
           <>
             <div>
               <Heading className="mb-2">Dockerfile as raw file</Heading>
-              <p className="text-sm text-neutral-350">
+              <p className="text-sm text-neutral-subtle">
                 {match(templateType)
                   .with(
                     'CLOUDFORMATION',
@@ -186,7 +186,6 @@ export function DockerfileSettings({
                         size="xs"
                         variant="surface"
                         onClick={() => openModalDockerfileRaw(field)}
-                        className="hover:text-neutral-400"
                       >
                         <Icon iconName="pen" />
                       </Button>
@@ -197,8 +196,8 @@ export function DockerfileSettings({
                     <CodeEditor value={watchDockerfileRaw} language="dockerfile" readOnly height="300px" />
                   ) : (
                     <div className="my-4 px-10 py-5 text-center">
-                      <Icon iconName="wave-pulse" className="text-neutral-350" />
-                      <p className="mb-3 mt-1 text-xs font-medium text-neutral-350">No Dockerfile defined</p>
+                      <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                      <p className="mb-3 mt-1 text-xs font-medium text-neutral-subtle">No Dockerfile defined</p>
                       <Button type="button" size="md" onClick={() => openModalDockerfileRaw(field)}>
                         Create Dockerfile <Icon iconName="pen" className="ml-2" />
                       </Button>
@@ -212,7 +211,7 @@ export function DockerfileSettings({
           <>
             <div>
               <Heading className="mb-2">Dockerfile from git repository</Heading>
-              <p className="text-sm text-neutral-350">
+              <p className="text-sm text-neutral-subtle">
                 Specify the path containing the Dockerfile to be used to package your application.
               </p>
             </div>
@@ -238,7 +237,9 @@ export function DockerfileSettings({
                     <>
                       <span>Specify the location of your dockerfile. Expected format: myapp/Dockerfile</span>
                       <br />
-                      <ExternalLink size="xs">Create one with Docker init</ExternalLink>
+                      <ExternalLink href="https://docs.docker.com/reference/cli/docker/init/" size="xs">
+                        Create one with Docker init
+                      </ExternalLink>
                     </>
                   }
                 />
