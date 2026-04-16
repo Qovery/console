@@ -2,7 +2,6 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
-import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
@@ -200,7 +199,6 @@ export function PageClusterCreateFeature() {
           ))}
           <Route path="*" element={<Navigate replace to={creationFlowUrl + CLUSTERS_CREATION_GENERAL_URL} />} />
         </Routes>
-        <AssistantTrigger defaultOpen />
       </FunnelFlow>
     </ClusterContainerCreateContext.Provider>
   )

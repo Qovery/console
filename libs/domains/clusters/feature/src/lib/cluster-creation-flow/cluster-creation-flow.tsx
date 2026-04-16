@@ -10,7 +10,6 @@ import {
   useState,
 } from 'react'
 import { match } from 'ts-pattern'
-import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
@@ -197,7 +196,6 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
         currentTitle={steps(generalData)[currentStep - 1]?.title}
       >
         {children}
-        <AssistantTrigger defaultOpen />
       </FunnelFlow>
     </ClusterContainerCreateContext.Provider>
   )

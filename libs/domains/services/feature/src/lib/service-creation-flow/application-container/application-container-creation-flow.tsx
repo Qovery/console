@@ -9,7 +9,6 @@ import {
   useState,
 } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
-import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import type {
   ApplicationGeneralData,
   ApplicationResourcesData,
@@ -145,7 +144,6 @@ export function ApplicationContainerCreationFlow({
         currentTitle={steps[currentStep - 1]?.title}
       >
         {children}
-        <AssistantTrigger defaultOpen />
       </FunnelFlow>
     </ApplicationContainerCreateContext.Provider>
   )

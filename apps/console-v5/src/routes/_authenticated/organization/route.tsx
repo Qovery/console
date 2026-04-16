@@ -460,6 +460,12 @@ function OrganizationRoute() {
     serviceId,
     enabled: Boolean(environmentId) && Boolean(serviceId),
   })
+  const headerRef = useRef<HTMLDivElement>(null)
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const [compactAssistantPanel, setCompactAssistantPanel] = useState(false)
+  const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
+  const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
+
   const isServiceNotFound = Boolean(environmentId) && Boolean(serviceId) && isServiceSummaryFetched && !service
   const serviceNotFoundAction = (
     <Link
@@ -472,9 +478,6 @@ function OrganizationRoute() {
       Go to environment
     </Link>
   )
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
-  const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
 
   // Keep group-scoped flags aligned with the active organization
   useEffect(() => {
@@ -513,6 +516,27 @@ function OrganizationRoute() {
     }
   }, [location.pathname])
 
+  useEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+
+    if (!scrollContainer) {
+      return
+    }
+
+    const handleScroll = () => {
+      const headerHeight = headerRef.current?.offsetHeight ?? 0
+      const shouldCompact = scrollContainer.scrollTop >= headerHeight / 2
+      setCompactAssistantPanel((previous) => (previous === shouldCompact ? previous : shouldCompact))
+    }
+
+    handleScroll()
+    scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   if (bypassLayout) {
     return (
       <DevopsCopilotContext.Provider
@@ -546,16 +570,18 @@ function OrganizationRoute() {
         sendMessageRef,
       }}
     >
-      <div className="flex h-dvh w-full flex-col bg-background">
+      <div className="bg-background flex h-dvh w-full flex-col">
         {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
         <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
           <ErrorBoundary>
             <OrganizationBanners />
-            <Header />
+            <div ref={headerRef}>
+              <Header compactAssistantPanel={compactAssistantPanel} />
+            </div>
 
             <Suspense fallback={<MainLoader />}>
               <>
-                <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
+                <div className="z-header border-neutral bg-background-secondary sticky top-0 border-b px-4">
                   <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
                     {navigationContext && <NavigationBar context={navigationContext} />}
                   </Navbar.Root>

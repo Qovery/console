@@ -1,7 +1,6 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type PropsWithChildren, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { TerraformCreateContext } from '../hooks/use-terraform-create-context/use-terraform-create-context'
 import { type TerraformGeneralData } from '../terraform-general-data/terraform-general-data'
@@ -80,7 +79,6 @@ export const TerraformCreationFlow = ({ children, creationFlowUrl }: TerraformCr
       >
         <FormProvider {...generalForm}>
           <TerraformVariablesProvider>{children}</TerraformVariablesProvider>
-          <AssistantTrigger defaultOpen />
         </FormProvider>
       </FunnelFlow>
     </TerraformCreateContext.Provider>

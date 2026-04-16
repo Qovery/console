@@ -1,9 +1,9 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useNavigate } from '@tanstack/react-router'
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
-import { useCallback, useContext, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { ServiceAvatar, useFavoriteServices, useRecentServices } from '@qovery/domains/services/feature'
-import { AssistantContext } from '@qovery/shared/assistant/feature'
+import { setAssistantOpen } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { UserSettingsModal } from '@qovery/shared/iam/feature'
 import { Command, type CommandDialogProps, Icon, Truncate, useModal } from '@qovery/shared/ui'
@@ -81,7 +81,6 @@ export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpe
 export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps) {
   const navigate = useNavigate()
   const quickActions = useQuickActions()
-  const { setAssistantOpen } = useContext(AssistantContext)
   const { openModal } = useModal()
   const { data: services = [], isLoading: isLoadingServices } = useServicesSearch({ organizationId })
   const [searchInput, setSearchInput] = useState('')
@@ -213,7 +212,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         iconName: 'robot',
       },
     ],
-    [openExternalLink, onOpenChange, setAssistantOpen]
+    [openExternalLink, onOpenChange]
   )
 
   const filteredServices = useMemo(() => {
