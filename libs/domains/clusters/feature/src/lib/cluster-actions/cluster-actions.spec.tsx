@@ -128,6 +128,60 @@ describe('ClusterActions', () => {
     expect(screen.getByText('Update another version')).toBeInTheDocument()
   })
 
+  it('should show "Update" instead of "Install" for non-deployed EKS Anywhere clusters', async () => {
+    const eksAnywhereCluster = {
+      ...clusterFactoryMock(1)[0],
+      deployment_status: ClusterDeploymentStatusEnum.UP_TO_DATE,
+      kubernetes: KubernetesEnum.PARTIALLY_MANAGED,
+    }
+    const notDeployedClusterStatus: ClusterStatus = {
+      cluster_id: eksAnywhereCluster.id,
+      status: ClusterStateEnum.READY,
+      is_deployed: false,
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ClusterActions cluster={eksAnywhereCluster} clusterStatus={notDeployedClusterStatus} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+
+    expect(screen.getByRole('menuitem', { name: 'Update' })).toBeInTheDocument()
+    expect(screen.queryByRole('menuitem', { name: 'Install' })).not.toBeInTheDocument()
+  })
+
+  it('should open update modal when selecting "Update" on non-deployed EKS Anywhere cluster', async () => {
+    const eksAnywhereCluster = {
+      ...clusterFactoryMock(1)[0],
+      deployment_status: ClusterDeploymentStatusEnum.UP_TO_DATE,
+      kubernetes: KubernetesEnum.PARTIALLY_MANAGED,
+    }
+    const notDeployedClusterStatus: ClusterStatus = {
+      cluster_id: eksAnywhereCluster.id,
+      status: ClusterStateEnum.READY,
+      is_deployed: false,
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ClusterActions cluster={eksAnywhereCluster} clusterStatus={notDeployedClusterStatus} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Update' }))
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.anything(),
+      })
+    )
+  })
+
   it('should not show "Update another version" without EKS Anywhere git source', async () => {
     const eksAnywhereCluster = {
       ...clusterFactoryMock(1)[0],

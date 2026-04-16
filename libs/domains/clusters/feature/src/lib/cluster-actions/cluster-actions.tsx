@@ -76,6 +76,7 @@ function MenuManageDeployment({
     isEksAnywhereCluster &&
     hasEksAnywhereGitRepository &&
     (isDeployAvailable(clusterStatus.status) || isRedeployAvailable(clusterStatus.status))
+  const deployActionLabel = isEksAnywhereCluster ? 'Update' : clusterStatus.is_deployed ? 'Deploy' : 'Install'
   const actionButtonVariant = hasTextActionButton ? 'solid' : 'outline'
   const actionButtonColor =
     clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : hasTextActionButton ? 'brand' : 'neutral'
@@ -168,11 +169,11 @@ function MenuManageDeployment({
       <DropdownMenu.Item
         key="0"
         icon={<Icon iconName="play" />}
-        onSelect={mutationDeploy}
+        onSelect={isEksAnywhereCluster ? mutationUpdate : mutationDeploy}
         className="relative"
         color={clusterNeedUpdate ? 'yellow' : 'brand'}
       >
-        {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
+        {deployActionLabel}
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
@@ -244,7 +245,7 @@ function MenuManageDeployment({
               <Icon iconName="rocket" />
               {hasTextActionButton && (
                 <>
-                  {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
+                  {deployActionLabel}
                   <Icon iconName="chevron-down" />
                 </>
               )}

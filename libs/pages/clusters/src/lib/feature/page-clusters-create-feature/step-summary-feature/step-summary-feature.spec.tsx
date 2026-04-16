@@ -2,7 +2,7 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepSummaryFeature, { getValueByKey } from './step-summary-feature'
 
@@ -258,6 +258,25 @@ describe('StepSummaryFeature', () => {
       organizationId: '1',
       clusterId: '42',
       payload: 'file_content',
+    })
+  })
+
+  it('should navigate to clusters even if kubeconfig upload fails after partially managed cluster creation', async () => {
+    createCluster.mockResolvedValue({
+      id: '42',
+    })
+    editClusterKubeconfig.mockRejectedValue(new Error('kubeconfig upload failed'))
+
+    const { userEvent } = renderWithProviders(
+      <ContextWrapper installation_type="PARTIALLY_MANAGED">
+        <StepSummaryFeature />
+      </ContextWrapper>
+    )
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters')
     })
   })
 

@@ -163,11 +163,15 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           },
         })
         if (kubeconfigData?.file_content) {
-          await editClusterKubeconfig({
-            organizationId,
-            clusterId: cluster.id,
-            payload: kubeconfigData.file_content,
-          })
+          try {
+            await editClusterKubeconfig({
+              organizationId,
+              clusterId: cluster.id,
+              payload: kubeconfigData.file_content,
+            })
+          } catch (error) {
+            console.error(error)
+          }
         }
         navigate({ to: `/organization/${organizationId}/clusters` })
       } catch (error) {
