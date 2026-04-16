@@ -35,7 +35,7 @@ const MCP_TOOLS = [
     icon: 'folder-open',
     accessMode: 'read-only',
   },
-]
+] as const
 
 interface CommandBlockProps {
   content: string
