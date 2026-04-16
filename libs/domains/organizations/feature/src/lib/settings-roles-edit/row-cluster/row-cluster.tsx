@@ -61,16 +61,12 @@ export function RowCluster(props: RowClusterProps) {
                   value={permission}
                   checked={field.value === permission}
                   onCheckedChange={(checked) => {
-                    if (!checked) {
-                      return
-                    }
-
-                    field.onChange(permission)
-
+                    const value = checked ? permission : OrganizationCustomRoleClusterPermission.VIEWER
+                    field.onChange(value)
                     if (setGlobalCheck) {
                       setGlobalCheckByValue(
                         getValues(`cluster_permissions.${cluster.cluster_id}`),
-                        permission,
+                        value,
                         setGlobalCheck
                       )
                     }
