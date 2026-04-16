@@ -148,6 +148,38 @@ describe('ClusterActions', () => {
     expect(screen.queryByText('Update another version')).not.toBeInTheDocument()
   })
 
+  it('should show "Copy cluster JWT" in other actions for EKS Anywhere clusters', async () => {
+    const eksAnywhereCluster = {
+      ...clusterFactoryMock(1)[0],
+      deployment_status: ClusterDeploymentStatusEnum.UP_TO_DATE,
+      kubernetes: KubernetesEnum.PARTIALLY_MANAGED,
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ClusterActions cluster={eksAnywhereCluster} clusterStatus={mockClusterStatus} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+
+    expect(screen.getByText('Copy cluster JWT')).toBeInTheDocument()
+  })
+
+  it('should not show "Copy cluster JWT" for non EKS Anywhere clusters', async () => {
+    const { userEvent } = renderWithProviders(
+      <ClusterActions cluster={mockCluster} clusterStatus={mockClusterStatus} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+
+    expect(screen.queryByText('Copy cluster JWT')).not.toBeInTheDocument()
+  })
+
   it('should keep a confirmation modal for stop', async () => {
     const { userEvent } = renderWithProviders(
       <ClusterActions cluster={mockCluster} clusterStatus={mockClusterStatus} />,

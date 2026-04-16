@@ -170,6 +170,10 @@ export const mutations = {
     })
     return response.data
   },
+  async eksAnywhereClusterJwt({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+    const response = await clusterApi.getEksAnywhereClusterJwt(organizationId, clusterId)
+    return response.data.jwt
+  },
   async stopCluster({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
     const response = await clusterApi.stopCluster(organizationId, clusterId)
     return response.data

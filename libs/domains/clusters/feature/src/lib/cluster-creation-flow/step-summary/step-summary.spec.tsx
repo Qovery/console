@@ -51,6 +51,12 @@ jest.mock('../../hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info
   }),
 }))
 
+jest.mock('../../hooks/use-edit-cluster-kubeconfig/use-edit-cluster-kubeconfig', () => ({
+  useEditClusterKubeconfig: () => ({
+    mutateAsync: jest.fn(),
+  }),
+}))
+
 jest.mock('../../hooks/use-deploy-cluster/use-deploy-cluster', () => ({
   useDeployCluster: () => ({
     mutateAsync: jest.fn(),
