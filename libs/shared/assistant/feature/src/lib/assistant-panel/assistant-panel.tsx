@@ -60,25 +60,21 @@ export function AssistantPanel({ smaller = false, compactTopOffset = false, onCl
           ? { duration: 0 }
           : {
               top: {
-                type: 'spring',
-                stiffness: 760,
-                damping: 42,
-                mass: 0.55,
+                duration: 0.08,
+                ease: [0.2, 0, 0, 1],
               },
               height: {
-                type: 'spring',
-                stiffness: 760,
-                damping: 42,
-                mass: 0.55,
+                duration: 0.08,
+                ease: [0.2, 0, 0, 1],
               },
               x: {
                 type: 'spring',
-                stiffness: 700,
-                damping: 42,
-                mass: 0.6,
+                stiffness: 900,
+                damping: 40,
+                mass: 0.5,
               },
               opacity: {
-                duration: 0.12,
+                duration: 0.08,
               },
             }
       }
