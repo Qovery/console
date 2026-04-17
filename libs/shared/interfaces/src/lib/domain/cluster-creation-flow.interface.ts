@@ -40,9 +40,19 @@ export interface ClusterKubeconfigData {
 export interface KarpenterData extends ClusterFeatureKarpenterParameters {
   enabled: boolean
   qovery_node_pools: ClusterFeatureKarpenterParameters['qovery_node_pools'] & {
+    stable_override?: ClusterFeatureKarpenterParameters['qovery_node_pools']['stable_override'] & {
+      spot_enabled?: boolean
+    }
+    default_override?: ClusterFeatureKarpenterParameters['qovery_node_pools']['default_override'] & {
+      spot_enabled?: boolean
+    }
     gpu_override?: ClusterFeatureKarpenterParameters['qovery_node_pools']['gpu_override'] & {
       disk_iops?: number
       disk_throughput?: number
+      spot_enabled?: boolean
+    }
+    cronjob_override?: ClusterFeatureKarpenterParameters['qovery_node_pools']['cronjob_override'] & {
+      spot_enabled?: boolean
     }
   }
 }

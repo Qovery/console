@@ -31,7 +31,7 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
       {
         id: 'KARPENTER',
         value: {
-          spot_enabled: data['karpenter'].spot_enabled ?? false,
+          spot_enabled: false,
           disk_size_in_gib: data['karpenter'].disk_size_in_gib,
           disk_iops: data['karpenter'].disk_iops,
           disk_throughput: data['karpenter'].disk_throughput,
@@ -46,7 +46,7 @@ export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
         return {
           ...feature,
           value: {
-            spot_enabled: data['karpenter'].spot_enabled ?? false,
+            spot_enabled: false,
             disk_size_in_gib: data['karpenter'].disk_size_in_gib,
             disk_iops: data['karpenter'].disk_iops,
             disk_throughput: data['karpenter'].disk_throughput,

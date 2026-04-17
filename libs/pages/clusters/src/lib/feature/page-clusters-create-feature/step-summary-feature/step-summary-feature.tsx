@@ -267,7 +267,7 @@ export function StepSummaryFeature() {
         formatFeatures?.push({
           id: 'KARPENTER',
           value: {
-            spot_enabled: resourcesData.karpenter.spot_enabled,
+            spot_enabled: resourcesData.karpenter.spot_enabled ?? false,
             disk_size_in_gib: resourcesData.karpenter.disk_size_in_gib,
             disk_iops: resourcesData.karpenter.disk_iops,
             disk_throughput: resourcesData.karpenter.disk_throughput,

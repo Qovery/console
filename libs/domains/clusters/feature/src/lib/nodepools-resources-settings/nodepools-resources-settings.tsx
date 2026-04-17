@@ -67,9 +67,10 @@ export const formatWeekdays = (days: string[]): string => {
 export interface NodepoolsResourcesSettingsProps {
   cluster: Cluster
   filter: 'default' | 'gpu' | 'cronjob'
+  isProduction?: boolean
 }
 
-export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourcesSettingsProps) {
+export function NodepoolsResourcesSettings({ cluster, filter, isProduction }: NodepoolsResourcesSettingsProps) {
   const { openModal } = useModal()
   const { watch, setValue } = useFormContext<ClusterResourcesData>()
 
@@ -130,6 +131,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                           <NodepoolModal
                             type="stable"
                             cluster={cluster}
+                            isProduction={isProduction}
                             onChange={(data) => {
                               setValue('karpenter.qovery_node_pools.stable_override', data.stable_override)
                             }}
@@ -143,7 +145,11 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                   </Button>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <div className="flex w-1/2 flex-col gap-1">
+                  <div className="flex w-1/3 flex-col gap-1">
+                    <span className="text-neutral-350">Spot instances</span>
+                    <span>{watchStable?.spot_enabled ? 'Enabled' : 'Disabled'}</span>
+                  </div>
+                  <div className="flex w-1/3 flex-col gap-1">
                     <span className="text-neutral-350">Consolidation</span>
                     <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
                       {watchStable?.consolidation?.enabled ? (
@@ -168,7 +174,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                       )}
                     </div>
                   </div>
-                  <div className="flex w-1/2 flex-col gap-1">
+                  <div className="flex w-1/3 flex-col gap-1">
                     <span className="text-neutral-350">Resources limit</span>
                     {watchStable?.limits?.enabled ? (
                       <span>
@@ -206,6 +212,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                           <NodepoolModal
                             type="default"
                             cluster={cluster}
+                            isProduction={isProduction}
                             defaultValues={watchDefault}
                             onChange={(data) => {
                               setValue('karpenter.qovery_node_pools.default_override', data.default_override)
@@ -219,7 +226,11 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                   </Button>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex w-1/2 flex-col gap-1">
+                  <div className="flex w-1/3 flex-col gap-1">
+                    <span className="text-neutral-350">Spot instances</span>
+                    <span>{watchDefault?.spot_enabled ? 'Enabled' : 'Disabled'}</span>
+                  </div>
+                  <div className="flex w-1/3 flex-col gap-1">
                     <span className="text-neutral-350">Consolidation</span>
                     <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
                       <span className="flex flex-col justify-center">
@@ -238,7 +249,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                       </span>
                     </div>
                   </div>
-                  <div className="flex w-1/2 flex-col gap-1">
+                  <div className="flex w-1/3 flex-col gap-1">
                     <span className="text-neutral-350">Resources limit</span>
                     {watchDefault?.limits?.enabled ? (
                       <span>
@@ -279,11 +290,13 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                         <NodepoolModal
                           type="gpu"
                           cluster={cluster}
+                          isProduction={isProduction}
                           onChange={(data) => {
                             setValue('karpenter.qovery_node_pools.gpu_override', {
                               ...watchGpu,
                               limits: data.gpu_override?.limits,
                               consolidation: data.gpu_override?.consolidation,
+                              spot_enabled: data.gpu_override?.spot_enabled,
                             })
                           }}
                           defaultValues={watchGpu}
@@ -296,7 +309,11 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                 </Button>
               </div>
               <div className="flex justify-between gap-4">
-                <div className="flex w-1/2 flex-col gap-1">
+                <div className="flex w-1/3 flex-col gap-1">
+                  <span className="text-neutral-350">Spot instances</span>
+                  <span>{watchGpu?.spot_enabled ? 'Enabled' : 'Disabled'}</span>
+                </div>
+                <div className="flex w-1/3 flex-col gap-1">
                   <span className="text-neutral-350">Consolidation</span>
                   <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
                     {watchGpu?.consolidation?.enabled ? (
@@ -321,7 +338,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                     )}
                   </div>
                 </div>
-                <div className="flex w-1/2 flex-col gap-1">
+                <div className="flex w-1/3 flex-col gap-1">
                   <span className="text-neutral-350">Resources limit</span>
                   {watchGpu?.limits?.enabled ? (
                     <span>
@@ -368,6 +385,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                         <NodepoolModal
                           type="cronjob"
                           cluster={cluster}
+                          isProduction={isProduction}
                           onChange={(data) => {
                             setValue('karpenter.qovery_node_pools.cronjob_override', {
                               ...watchCronjob,
@@ -384,7 +402,11 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                 </Button>
               </div>
               <div className="flex justify-between gap-4">
-                <div className="flex w-1/2 flex-col gap-1">
+                <div className="flex w-1/3 flex-col gap-1">
+                  <span className="text-neutral-350">Spot instances</span>
+                  <span>{watchCronjob?.spot_enabled ? 'Enabled' : 'Disabled'}</span>
+                </div>
+                <div className="flex w-1/3 flex-col gap-1">
                   <span className="text-neutral-350">Consolidation</span>
                   <div className="flex flex-col justify-between gap-4 text-sm text-neutral-400">
                     {watchCronjob?.consolidation?.enabled ? (
@@ -409,7 +431,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
                     )}
                   </div>
                 </div>
-                <div className="flex w-1/2 flex-col gap-1">
+                <div className="flex w-1/3 flex-col gap-1">
                   <span className="text-neutral-350">Resources limit</span>
                   {watchCronjob?.limits?.enabled ? (
                     <span>

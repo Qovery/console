@@ -12,6 +12,7 @@ import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-fo
 import { P, match } from 'ts-pattern'
 import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip, useModal } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { SpotInstancesProductionWarning } from '../../spot-instances-production-warning/spot-instances-production-warning'
 
 type OverridePrefix = 'stable_override' | 'default_override' | 'gpu_override' | 'cronjob_override'
 
@@ -110,27 +111,37 @@ function LimitsFields({ prefix }: { prefix: OverridePrefix }) {
   )
 }
 
+export interface NodepoolModalPayload {
+  stable_override?: KarpenterStableNodePoolOverride & { spot_enabled: boolean }
+  default_override?: KarpenterDefaultNodePoolOverride & { spot_enabled: boolean }
+  gpu_override?: KarpenterNodePool['gpu_override'] & { spot_enabled: boolean }
+  cronjob_override?: KarpenterCronjobNodePoolOverride & { spot_enabled: boolean }
+}
+
 export interface NodepoolModalProps {
   type: 'stable' | 'default' | 'gpu' | 'cronjob'
   cluster: Cluster
-  onChange: (data: Omit<KarpenterNodePool, 'requirements'>) => void
-  defaultValues?:
+  isProduction?: boolean
+  onChange: (data: NodepoolModalPayload) => void
+  defaultValues?: (
     | KarpenterStableNodePoolOverride
     | KarpenterDefaultNodePoolOverride
     | KarpenterGpuNodePoolOverride
     | KarpenterCronjobNodePoolOverride
+  ) & { spot_enabled?: boolean }
 }
 
 const CPU_MIN = 6
 const MEMORY_MIN = 10
 const GPU_MIN = 0
 
-export function NodepoolModal({ type, cluster, onChange, defaultValues }: NodepoolModalProps) {
+export function NodepoolModal({ type, cluster, isProduction, onChange, defaultValues }: NodepoolModalProps) {
   const { closeModal } = useModal()
 
-  const methods = useForm<Omit<KarpenterNodePool, 'requirements'>>({
+  const methods = useForm<Omit<KarpenterNodePool, 'requirements'> & { _spot_enabled?: boolean }>({
     mode: 'onChange',
     defaultValues: {
+      _spot_enabled: defaultValues?.spot_enabled ?? false,
       default_override: {
         limits: defaultValues?.limits,
         consolidate_after: defaultValues?.consolidate_after,
@@ -181,11 +192,14 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
   const watchConsolidation = methods.watch(
     `${prefix === 'default_override' ? 'stable_override' : prefix}.consolidation.enabled`
   )
+  const watchSpotEnabled = methods.watch('_spot_enabled')
 
   const onSubmit = methods.handleSubmit(async (data) => {
-    const payload: Omit<KarpenterNodePool, 'requirements'> = match(type)
+    const spotEnabled = data._spot_enabled ?? false
+    const payload: NodepoolModalPayload = match(type)
       .with('default', () => ({
         default_override: {
+          spot_enabled: spotEnabled,
           limits: {
             enabled: data.default_override?.limits?.enabled ?? false,
             max_cpu_in_vcpu: data.default_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
@@ -197,6 +211,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
       }))
       .with('stable', () => ({
         stable_override: {
+          spot_enabled: spotEnabled,
           limits: {
             enabled: data.stable_override?.limits?.enabled ?? false,
             max_cpu_in_vcpu: data.stable_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
@@ -218,6 +233,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
       }))
       .with('gpu', () => ({
         gpu_override: {
+          spot_enabled: spotEnabled,
           limits: {
             enabled: data.gpu_override?.limits?.enabled ?? false,
             max_cpu_in_vcpu: data.gpu_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
@@ -239,6 +255,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
       }))
       .with('cronjob', () => ({
         cronjob_override: {
+          spot_enabled: spotEnabled,
           limits: {
             enabled: data.cronjob_override?.limits?.enabled ?? false,
             max_cpu_in_vcpu: data.cronjob_override?.limits?.max_cpu_in_vcpu ?? CPU_MIN,
@@ -296,6 +313,23 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
         onClose={closeModal}
         submitLabel="Confirm"
       >
+        <div className="mb-6 flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
+          <Controller
+            name="_spot_enabled"
+            control={methods.control}
+            render={({ field }) => (
+              <InputToggle
+                value={field.value}
+                onChange={field.onChange}
+                title="Enable spot instances"
+                description="Spot instances provide compute capacity at a lower cost but can be reclaimed at any time, which may cause interruptions."
+                forceAlignTop
+                small
+              />
+            )}
+          />
+          {isProduction && watchSpotEnabled && <SpotInstancesProductionWarning />}
+        </div>
         <div className="mb-6 flex flex-col gap-4 rounded border border-neutral-250 bg-neutral-100 p-4">
           <LimitsFields prefix={prefix} />
         </div>

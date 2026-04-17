@@ -17,7 +17,11 @@ import {
   useCloudProviderInstanceTypes,
   useCloudProviderInstanceTypesKarpenter,
 } from '@qovery/domains/cloud-providers/feature'
-import { GpuResourcesSettings, NodepoolsResourcesSettings } from '@qovery/domains/clusters/feature'
+import {
+  GpuResourcesSettings,
+  NodepoolsResourcesSettings,
+  SpotInstancesProductionWarning,
+} from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type ClusterResourcesData, type Value } from '@qovery/shared/interfaces'
 import {
@@ -328,42 +332,29 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                 Edit <Icon iconName="pen" iconStyle="solid" />
                               </Button>
                             </div>
-                            <div className="flex flex-col gap-4 border-t border-neutral-250 p-4">
-                              <Controller
-                                name="karpenter.spot_enabled"
-                                control={control}
-                                render={({ field }) => (
-                                  <InputToggle
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    className="items-center"
-                                    title="Enable spot instances on your cluster"
-                                    small
-                                  />
-                                )}
-                              />
-                              {props.isProduction && watchSpotEnabled && (
-                                <Callout.Root color="yellow">
-                                  <Callout.Icon>
-                                    <Icon iconName="info-circle" iconStyle="regular" />
-                                  </Callout.Icon>
-                                  <Callout.Text>
-                                    <Callout.TextDescription>
-                                      Activating spot instances on a production cluster may lead to potential downtime
-                                      for applications deployed on the stable node pool. However, you can specify in the
-                                      advanced settings to force the use of on-demand instances for your service or
-                                      database to avoid this risk.{' '}
-                                      <ExternalLink
-                                        size="sm"
-                                        href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
-                                      >
-                                        See documentation
-                                      </ExternalLink>
-                                    </Callout.TextDescription>
-                                  </Callout.Text>
-                                </Callout.Root>
-                              )}
-                            </div>
+                            {!props.fromDetail && (
+                              <div className="flex flex-col gap-3 border-t border-neutral-250 p-4">
+                                <Controller
+                                  name="karpenter.spot_enabled"
+                                  control={control}
+                                  render={({ field }) => (
+                                    <InputToggle
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      className="items-center"
+                                      title="Enable spot instances on your cluster"
+                                      small
+                                    />
+                                  )}
+                                />
+                                <p className="text-xs text-neutral-350">
+                                  Spot instances provide compute capacity at a lower cost but can be reclaimed at any
+                                  time, which may cause interruptions. You can customize spot per nodepool after cluster
+                                  creation.
+                                </p>
+                                {props.isProduction && watchSpotEnabled && <SpotInstancesProductionWarning />}
+                              </div>
+                            )}
                             {props.fromDetail && (
                               <div className="flex flex-col gap-3 border-t border-neutral-250 p-4">
                                 <Controller
@@ -421,7 +412,11 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                             )}
                           </div>
                           {watchKarpenterEnabled && props.cluster && (
-                            <NodepoolsResourcesSettings cluster={props.cluster} filter="default" />
+                            <NodepoolsResourcesSettings
+                              cluster={props.cluster}
+                              filter="default"
+                              isProduction={props.isProduction}
+                            />
                           )}
                         </motion.div>
                       </motion.div>
@@ -454,43 +449,6 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   className="overflow-hidden"
                 >
                   <GpuResourcesSettings cluster={props.cluster} clusterRegion={props.clusterRegion} />
-                  <div className="flex flex-col gap-4 border-t border-neutral-250 p-4">
-                    <Controller
-                      name="karpenter.qovery_node_pools.gpu_override.spot_enabled"
-                      control={control}
-                      render={({ field }) => (
-                        <>
-                          <InputToggle
-                            value={field.value}
-                            onChange={field.onChange}
-                            className="items-center"
-                            title="Enable spot instances on your GPU nodepools"
-                            small
-                          />
-                          {props.isProduction && field.value && (
-                            <Callout.Root color="yellow">
-                              <Callout.Icon>
-                                <Icon iconName="info-circle" iconStyle="regular" />
-                              </Callout.Icon>
-                              <Callout.Text>
-                                <Callout.TextDescription>
-                                  Activating spot instances on a production cluster may lead to potential downtime for
-                                  applications deployed to the GPU node pool. However, you can specify in the advanced
-                                  settings to force the use of on-demand instances for your service to avoid this.{' '}
-                                  <ExternalLink
-                                    size="sm"
-                                    href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
-                                  >
-                                    See documentation
-                                  </ExternalLink>
-                                </Callout.TextDescription>
-                              </Callout.Text>
-                            </Callout.Root>
-                          )}
-                        </>
-                      )}
-                    />
-                  </div>
                   {props.fromDetail && (
                     <div className="flex flex-col gap-3 border-t border-neutral-250 p-4">
                       <Controller
@@ -547,7 +505,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                     </div>
                   )}
                   {watchKarpenterEnabled && props.cluster && (
-                    <NodepoolsResourcesSettings cluster={props.cluster} filter="gpu" />
+                    <NodepoolsResourcesSettings cluster={props.cluster} filter="gpu" isProduction={props.isProduction} />
                   )}
                 </motion.div>
               )}
@@ -589,7 +547,11 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   className="overflow-hidden"
                 >
                   {watchKarpenterEnabled && props.cluster && (
-                    <NodepoolsResourcesSettings cluster={props.cluster} filter="cronjob" />
+                    <NodepoolsResourcesSettings
+                      cluster={props.cluster}
+                      filter="cronjob"
+                      isProduction={props.isProduction}
+                    />
                   )}
                 </motion.div>
               )}

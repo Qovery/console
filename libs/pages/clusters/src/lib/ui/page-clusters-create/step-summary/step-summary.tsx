@@ -225,7 +225,9 @@ export function StepSummary(props: StepSummaryProps) {
                         </li>
                         <li>
                           <strong className="font-medium">Spot instances: </strong>
-                          {(props.resourcesData.karpenter?.spot_enabled ?? false).toString()}
+                          {props.resourcesData.karpenter?.spot_enabled
+                            ? 'Enabled on Default and GPU nodepools'
+                            : 'Disabled'}
                         </li>
                       </>
                     )}
@@ -248,10 +250,6 @@ export function StepSummary(props: StepSummaryProps) {
                         />
                       </li>
                     )}
-                    <li>
-                      <strong className="font-medium">GPU nodepool spot instances: </strong>
-                      {props.resourcesData.karpenter?.qovery_node_pools?.gpu_override?.spot_enabled ? 'true' : 'false'}
-                    </li>
                   </ul>
                 </div>
                 <Button type="button" variant="plain" size="md" onClick={props.goToResources}>
