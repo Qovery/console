@@ -37,7 +37,10 @@ function ServiceAlertingContent({ organizationId, projectId, service, children }
   }
 
   const canCreateAlerts = useMemo(() => {
-    return deploymentStatus?.service_deployment_status !== 'NEVER_DEPLOYED'
+    return (
+      deploymentStatus?.service_deployment_status !== undefined &&
+      deploymentStatus?.service_deployment_status !== 'NEVER_DEPLOYED'
+    )
   }, [deploymentStatus])
 
   return (
