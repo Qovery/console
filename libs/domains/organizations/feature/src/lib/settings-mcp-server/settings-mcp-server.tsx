@@ -1,41 +1,9 @@
+import { useParams } from '@tanstack/react-router'
 import { type ReactNode, useState } from 'react'
 import { NeedHelp } from '@qovery/shared/assistant/feature'
-import { Badge, CopyButton, ExternalLink, Heading, Icon, Navbar, Section } from '@qovery/shared/ui'
+import { Button, CopyButton, Heading, Icon, Navbar, Section, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-
-const MCP_TOOLS = [
-  {
-    name: 'devops_copilot',
-    description:
-      'Send a message to the DevOps Copilot for Qovery actions. Resolve organization, project, environment, and service IDs first, then reference resources by UUID in the message.',
-    icon: 'sparkles',
-    accessMode: 'read-write',
-  },
-  {
-    name: 'get_service_logs',
-    description: 'Fetch service or application logs, optionally scoped to a deployment or a specific pod.',
-    icon: 'scroll',
-    accessMode: 'read-only',
-  },
-  {
-    name: 'list_environments',
-    description: 'List all environments available in a Qovery project.',
-    icon: 'layer-group',
-    accessMode: 'read-only',
-  },
-  {
-    name: 'list_organizations',
-    description: 'List all organizations the authenticated token can access.',
-    icon: 'building',
-    accessMode: 'read-only',
-  },
-  {
-    name: 'list_projects',
-    description: 'List all projects available in a Qovery organization.',
-    icon: 'folder-open',
-    accessMode: 'read-only',
-  },
-] as const
+import CrudModalFeature from '../settings-api-token/crud-modal-feature/crud-modal-feature'
 
 interface CommandBlockProps {
   content: string
@@ -43,8 +11,14 @@ interface CommandBlockProps {
 }
 
 function CommandBlock({ content, showPrompt = false }: CommandBlockProps) {
+  const isMultiline = content.includes('\n')
+
   return (
-    <div className="flex items-center gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
+    <div
+      className={`flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px] ${
+        isMultiline ? 'items-start' : 'items-center'
+      }`}
+    >
       <div className="min-w-0 flex-1 whitespace-pre-wrap break-words text-sm text-neutral">
         {showPrompt ? <span className="select-none">$ </span> : null}
         {content}
@@ -78,6 +52,8 @@ function InstructionSection({ number, title, description, children }: Instructio
 }
 
 export function SettingsMcpServer() {
+  const { organizationId = '' } = useParams({ strict: false })
+  const { openModal, closeModal } = useModal()
   useDocumentTitle('MCP server - Organization settings')
   const [activeClient, setActiveClient] = useState<'claude-code' | 'codex'>('claude-code')
 
@@ -100,7 +76,7 @@ export function SettingsMcpServer() {
         <div className="max-w-content-with-navigation-left space-y-8">
           <Section className="gap-4">
             <div className="space-y-1">
-              <Heading level={2}>Configure MCP server</Heading>
+              <Heading level={2}>Configure via OAuth (recommended)</Heading>
             </div>
 
             <div className="flex flex-col gap-3">
@@ -139,7 +115,7 @@ export function SettingsMcpServer() {
                       />
                     </InstructionSection>
                   ) : (
-                    <div className="flex flex-col gap-4">
+                    <div className="flex flex-col gap-5">
                       <InstructionSection
                         number={1}
                         title="Update your config.toml"
@@ -158,51 +134,50 @@ export function SettingsMcpServer() {
                   )}
                 </div>
               </div>
-
-              <p className="text-sm text-neutral-subtle">
-                You can also configure the MCP server through an API token.{' '}
-                <ExternalLink
-                  href="https://www.qovery.com/docs/copilot/mcp-server#2-api-token"
-                  size="sm"
-                  className="font-normal text-info hover:text-info"
-                >
-                  See how
-                </ExternalLink>
-                .
-              </p>
             </div>
           </Section>
 
           <Section className="gap-4">
             <div className="space-y-1">
-              <Heading level={2}>MCP tools</Heading>
-              <p className="text-sm text-neutral-subtle">
-                Our Qovery MCP server provides MCP tools that let AI assistants search through projects, environments,
-                service logs and more.
-              </p>
+              <Heading level={2}>Configure via API token</Heading>
             </div>
 
-            <div className="grid gap-2">
-              {MCP_TOOLS.map((tool) => (
-                <div
-                  key={tool.name}
-                  className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral-subtle p-4"
+            <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral p-4">
+              <div className="flex flex-col gap-5">
+                <InstructionSection
+                  number={1}
+                  title="Generate token and copy it"
+                  description="Save this token securely. You won’t be able to see it again!"
                 >
-                  <div className="flex items-center gap-2">
-                    <Icon iconName={tool.icon} className="text-sm text-neutral-subtle" />
-                    <Heading level={3}>{tool.name}</Heading>
-                    <Badge
-                      size="sm"
-                      variant="surface"
-                      color={tool.accessMode === 'read-write' ? 'yellow' : 'green'}
-                      className="px-1"
+                  <div>
+                    <Button
+                      color="brand"
+                      size="md"
+                      onClick={() =>
+                        openModal({
+                          content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} />,
+                        })
+                      }
                     >
-                      {tool.accessMode}
-                    </Badge>
+                      Generate API token
+                    </Button>
                   </div>
-                  <p className="text-sm text-neutral-subtle">{tool.description}</p>
-                </div>
-              ))}
+                </InstructionSection>
+
+                <InstructionSection
+                  number={2}
+                  title="Authenticate through your API token"
+                  description="Pass your Qovery token via query parameter or Authorization header"
+                >
+                  <CommandBlock
+                    content={`# Query parameter
+https://mcp.qovery.com/mcp?token=your_qovery_token
+
+# Authorization header
+Authorization: Token your_qovery_token`}
+                  />
+                </InstructionSection>
+              </div>
             </div>
           </Section>
         </div>

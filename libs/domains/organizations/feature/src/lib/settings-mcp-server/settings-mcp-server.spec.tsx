@@ -1,12 +1,18 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { SettingsMcpServer } from './settings-mcp-server'
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: 'org-1' }),
+}))
+
 describe('SettingsMcpServer', () => {
   it('should render heading and default Claude Code tab content', () => {
     renderWithProviders(<SettingsMcpServer />)
 
     expect(screen.getByRole('heading', { name: 'MCP server' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Configure MCP server' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Configure via OAuth (recommended)' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Configure via API token' })).toBeInTheDocument()
     expect(screen.getByText('Claude Code')).toBeInTheDocument()
     expect(screen.getByText('Codex')).toBeInTheDocument()
     expect(
@@ -24,18 +30,12 @@ describe('SettingsMcpServer', () => {
     expect(screen.getByText("codex mcp add qovery --url 'https://mcp.qovery.com/mcp'")).toBeInTheDocument()
   })
 
-  it('should display access mode badges for MCP tools', () => {
+  it('should render API token setup steps', () => {
     renderWithProviders(<SettingsMcpServer />)
 
-    expect(screen.getByText('devops_copilot')).toBeInTheDocument()
-    expect(screen.getByText('read-write')).toBeInTheDocument()
-    expect(screen.getAllByText('read-only')).toHaveLength(4)
-  })
-
-  it('should render docs link for API token setup', () => {
-    renderWithProviders(<SettingsMcpServer />)
-
-    const docsLink = screen.getByRole('link', { name: 'See how' })
-    expect(docsLink).toHaveAttribute('href', 'https://www.qovery.com/docs/copilot/mcp-server#2-api-token')
+    expect(screen.getByText('1. Generate token and copy it')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Generate API token' })).toBeInTheDocument()
+    expect(screen.getByText('2. Authenticate through your API token')).toBeInTheDocument()
+    expect(screen.getByText(/Authorization: Token your_qovery_token/)).toBeInTheDocument()
   })
 })
