@@ -8,6 +8,7 @@ const mockUseAlertRulesGhosted = jest.fn()
 const mockUseDeleteAlertRule = jest.fn()
 const mockUseEnvironment = jest.fn()
 const mockUseService = jest.fn()
+const mockUseDeploymentStatus = jest.fn()
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -32,6 +33,7 @@ jest.mock('../../hooks/use-environment/use-environment', () => ({
 
 jest.mock('@qovery/domains/services/feature', () => ({
   useService: (params: unknown) => mockUseService(params),
+  useDeploymentStatus: (params: unknown) => mockUseDeploymentStatus(params),
 }))
 
 describe('ServiceAlerting', () => {
@@ -92,6 +94,10 @@ describe('ServiceAlerting', () => {
     })
     mockUseDeleteAlertRule.mockReturnValue({
       mutate: jest.fn(),
+    })
+    mockUseDeploymentStatus.mockReturnValue({
+      data: { service_deployment_status: 'DEPLOYED' },
+      isFetched: true,
     })
   })
 
