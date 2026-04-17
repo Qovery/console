@@ -1,13 +1,13 @@
 import { useParams } from '@tanstack/react-router'
 import { FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { JobConfigurationForm } from '@qovery/domains/service-job/feature'
 import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { Button, Section } from '@qovery/shared/ui'
 import { joinArgsWithQuotes, parseCmd } from '@qovery/shared/util-js'
-import { JobConfigurationForm } from './job-configuration-form/job-configuration-form'
 
 export const JobConfiguration = () => {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
