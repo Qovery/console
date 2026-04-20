@@ -23,24 +23,20 @@ export function ConsoleMigrationPrompt({ open, onClose, onConfirm }: ConsoleMigr
             }}
           >
             <div className="overflow-hidden rounded-full border border-neutral-200 bg-white/95 shadow-[0_16px_48px_rgba(16,30,54,0.14)] backdrop-blur">
-              <div className="flex h-10 items-center justify-center gap-2 bg-gradient-to-r from-brand-500/10 via-sky-400/10 to-brand-500/5 px-4 pl-2">
+              <div className="flex h-10 items-center justify-center gap-2 bg-gradient-to-r from-brand-500/10 via-sky-400/10 to-brand-500/5 px-2">
                 <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-500/10 text-brand-500">
                   <Icon iconName="gift" className="text-xs" />
                 </div>
                 <p className="max-w-[32rem] truncate text-center text-ssm text-neutral-400">
-                  Switch to the new console and redirect future visits automatically.
+                  A new version of the Qovery console available! Join the early access now.
                 </p>
-                <div className="flex shrink-0 items-center gap-2">
-                  <Button type="button" size="sm" color="brand" onClick={onConfirm}>
+                <div className="flex shrink-0 items-center gap-0.5">
+                  <Button type="button" size="sm" color="brand" radius="full" onClick={onConfirm}>
                     Try now
                   </Button>
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="flex h-4 w-4 items-center justify-center text-neutral-400 transition-colors hover:text-neutral-350"
-                  >
-                    <Icon iconName="xmark" iconStyle="regular" />
-                  </button>
+                  <Button type="button" size="sm" variant="plain" color="neutral" radius="full" onClick={onClose}>
+                    Not interested
+                  </Button>
                 </div>
               </div>
             </div>
