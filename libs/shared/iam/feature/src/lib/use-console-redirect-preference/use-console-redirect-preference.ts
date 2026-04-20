@@ -64,16 +64,15 @@ export function getStoredConsolePreference(): ConsolePreference {
 }
 
 export function getNewConsoleUrl(currentUrl = window.location.href): string | null {
-  // const url = new URL(currentUrl)
+  const url = new URL(currentUrl)
 
-  // if (!url.hostname.startsWith('console.')) {
-  //   return null
-  // }
+  if (!url.hostname.startsWith('console.')) {
+    return null
+  }
 
-  // url.hostname = url.hostname.replace(/^console\./, 'new-console.')
+  url.hostname = url.hostname.replace(/^console\./, 'new-console.')
 
-  // return url.toString()
-  return 'https://new-console.qovery.com'
+  return url.toString()
 }
 
 export function shouldBypassLegacyConsoleRedirect(search = window.location.search): boolean {
