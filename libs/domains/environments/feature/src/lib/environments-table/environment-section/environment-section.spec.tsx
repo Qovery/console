@@ -37,7 +37,9 @@ const overview: EnvironmentOverviewResponse = {
   id: 'env-1',
   name: 'My environment',
   mode: EnvironmentModeEnum.DEVELOPMENT,
-  service_count: 2,
+  services_overview: {
+    service_count: 2,
+  },
   updated_at: '2026-03-18T10:00:00.000Z',
   deployment_status: {
     last_deployment_date: '2026-03-18T09:00:00.000Z',

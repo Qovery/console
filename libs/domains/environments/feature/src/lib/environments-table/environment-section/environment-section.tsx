@@ -54,7 +54,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           </Tooltip>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
-              {overview.service_count} {pluralize(overview.service_count, 'service')}
+              {pluralize(overview.services_overview.service_count, 'service')}
             </span>
             <EnvironmentStateChip mode="running" environmentId={overview.id} />
           </div>
@@ -63,7 +63,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       <Table.Cell className={cellClassName}>
         <div className="flex h-full items-center justify-between">
           <div className="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
-            {overview.service_count > 0 ? (
+            {overview.services_overview.service_count > 0 ? (
               <>
                 <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
                 <span className="text-neutral-subtle">
@@ -104,7 +104,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           onClick={stopRowNavigation}
           onKeyDown={stopRowNavigation}
         >
-          {environment && overview.deployment_status && overview.service_count > 0 && (
+          {environment && overview.deployment_status && overview.services_overview.service_count > 0 && (
             <>
               <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
               <MenuOtherActions environment={environment} state={overview.deployment_status?.last_deployment_state} />
