@@ -34,7 +34,7 @@ export function ConsoleMigrationPrompt({ open, onClose, onConfirm }: ConsoleMigr
                   <Button type="button" size="sm" color="brand" radius="full" onClick={onConfirm}>
                     Try now
                   </Button>
-                  <Button type="button" size="sm" variant="plain" color="neutral" radius="full" onClick={onClose}>
+                  <Button type="button" size="sm" variant="outline" color="neutral" radius="full" onClick={onClose}>
                     Not interested
                   </Button>
                 </div>
