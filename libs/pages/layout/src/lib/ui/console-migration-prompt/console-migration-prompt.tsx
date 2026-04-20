@@ -30,7 +30,7 @@ export function ConsoleMigrationPrompt({ open, onClose, onConfirm }: ConsoleMigr
                 <p className="max-w-[32rem] truncate text-center text-ssm text-neutral-400">
                   A new version of the Qovery console available! Join the early access now.
                 </p>
-                <div className="flex shrink-0 items-center gap-0.5">
+                <div className="flex shrink-0 items-center gap-1">
                   <Button type="button" size="sm" color="brand" radius="full" onClick={onConfirm}>
                     Try now
                   </Button>
