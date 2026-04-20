@@ -1,44 +1,56 @@
-import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { type JobConfigureData } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { StepConfigure, type StepConfigureProps } from './step-configure'
+import { JobCreationFlow } from '../job-creation-flow'
+import { StepConfigure } from './step-configure'
 
-const props: StepConfigureProps = {
-  jobType: ServiceTypeEnum.CRON_JOB,
-  onSubmit: jest.fn(),
-  onBack: jest.fn(),
-}
+let mockPathname = '/'
 
-const defaultValues: JobConfigureData = {
-  max_duration: 0,
-  port: 80,
-  nb_restarts: 0,
-}
+jest.mock('@tanstack/react-router', () => ({
+  useParams: () => ({
+    organizationId: 'org-1',
+    projectId: 'proj-1',
+    environmentId: 'env-1',
+  }),
+  useNavigate: () => jest.fn(),
+  useSearch: () => jest.fn(),
+  useLocation: () => ({ pathname: mockPathname, search: '' }),
+}))
 
 describe('Configure', () => {
+  beforeEach(() => {
+    mockPathname = '/'
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
-      wrapWithReactHookForm<JobConfigureData>(<StepConfigure {...props} />, {
-        defaultValues,
-      })
+      <JobCreationFlow creationFlowUrl={mockPathname}>
+        <StepConfigure />
+      </JobCreationFlow>
     )
     expect(baseElement).toBeTruthy()
   })
 
   it('for a cron job, with these defaultValues submit button should be enabled', async () => {
-    renderWithProviders(
-      wrapWithReactHookForm<JobConfigureData>(<StepConfigure {...props} jobType={ServiceTypeEnum.CRON_JOB} />, {
-        defaultValues: {
-          ...defaultValues,
-          schedule: '0 0 * * *',
-        },
-      })
+    mockPathname = '/cron'
+
+    const { userEvent } = renderWithProviders(
+      <JobCreationFlow creationFlowUrl={mockPathname}>
+        <StepConfigure />
+      </JobCreationFlow>
     )
 
     const submitButton = await screen.findByRole('button', { name: /Continue/i })
-    // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
+
+    const scheduleInput = await screen.findByLabelText('Schedule - Cron expression')
+    await userEvent.type(scheduleInput, '0 0 * * *')
+
+    const nbRestartsInput = screen.getByLabelText('Number of restarts')
+    await userEvent.clear(nbRestartsInput)
+    await userEvent.type(nbRestartsInput, '0')
+
+    const maxDurationInput = screen.getByLabelText('Max duration in seconds')
+    await userEvent.clear(maxDurationInput)
+    await userEvent.type(maxDurationInput, '300')
 
     await waitFor(() => {
       expect(submitButton).toBeEnabled()
@@ -47,17 +59,15 @@ describe('Configure', () => {
 
   it('for a lifecycle job, should have at least one of three event check to be valid', async () => {
     renderWithProviders(
-      wrapWithReactHookForm<JobConfigureData>(<StepConfigure {...props} jobType={ServiceTypeEnum.LIFECYCLE_JOB} />, {
-        defaultValues,
-      })
+      <JobCreationFlow creationFlowUrl={mockPathname}>
+        <StepConfigure />
+      </JobCreationFlow>
     )
 
     const submitButton = await screen.findByRole('button', { name: /Continue/i })
-    // https://react-hook-form.com/advanced-usage#TransformandParse
     expect(submitButton).toBeInTheDocument()
 
     const checkbox = screen.getByLabelText('Deploy')
-
     checkbox.click()
 
     await waitFor(() => {

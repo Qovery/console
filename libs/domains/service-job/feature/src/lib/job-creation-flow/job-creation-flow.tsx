@@ -78,7 +78,9 @@ export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowPr
 
   const [currentStep, setCurrentStep] = useState(1)
   const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
-  const [jobType, setJobType] = useState<JobType>(ServiceTypeEnum.LIFECYCLE_JOB)
+  const [jobType, setJobType] = useState<JobType>(
+    location.pathname.indexOf('cron') !== -1 ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB
+  )
   const [jobURL, setJobURL] = useState<string>(creationFlowUrl)
   const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum>()
   const [dockerfileDefaultContent, setDockerfileDefaultContent] = useState<string>()

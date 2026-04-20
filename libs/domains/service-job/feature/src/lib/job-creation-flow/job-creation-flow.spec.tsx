@@ -1,5 +1,5 @@
+import { HelmCreationFlow, useHelmCreateContext } from '@qovery/domains/service-helm/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { HelmCreationFlow, useHelmCreateContext } from './helm-creation-flow'
 
 const mockNavigate = jest.fn()
 const mockSearch = {
