@@ -90,12 +90,18 @@ export function SettingsMcpServer() {
                     <Navbar.Item
                       id="claude-code"
                       active={activeClient === 'claude-code'}
+                      className="cursor-pointer"
                       onClick={() => setActiveClient('claude-code')}
                     >
                       <Icon iconName="claude" iconStyle="brands" />
                       <span>Claude Code</span>
                     </Navbar.Item>
-                    <Navbar.Item id="codex" active={activeClient === 'codex'} onClick={() => setActiveClient('codex')}>
+                    <Navbar.Item
+                      id="codex"
+                      active={activeClient === 'codex'}
+                      className="cursor-pointer"
+                      onClick={() => setActiveClient('codex')}
+                    >
                       <Icon iconName="openai" iconStyle="brands" />
                       <span>Codex</span>
                     </Navbar.Item>
