@@ -6,13 +6,7 @@ import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import {
-  ONBOARDING_PERSONALIZE_URL,
-  ONBOARDING_PROJECT_URL,
-  ONBOARDING_URL,
-  ORGANIZATION_URL,
-  OVERVIEW_URL,
-} from '@qovery/shared/routes'
+import { ORGANIZATION_URL, OVERVIEW_URL, getOnboardingEntryUrl } from '@qovery/shared/routes'
 import {
   getCurrentOrganizationIdFromStorage,
   getCurrentProjectIdFromStorage,
@@ -57,12 +51,13 @@ export function useRedirectIfLogged() {
         else navigate(ORGANIZATION_URL(organizationId))
       } else {
         const { data: userSignUp } = await refetchUserSignUp()
-        if (userSignUp?.dx_auth) {
-          navigate(ONBOARDING_URL + ONBOARDING_PROJECT_URL)
-        } else {
+        const onboardingEntryUrl = getOnboardingEntryUrl(userSignUp)
+
+        if (!userSignUp?.current_step) {
           sendDataToGTM({ event: 'new_signup', value: user?.email })
-          navigate(ONBOARDING_URL + ONBOARDING_PERSONALIZE_URL)
         }
+
+        navigate(onboardingEntryUrl)
       }
     }
 

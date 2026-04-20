@@ -1,3 +1,4 @@
+import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import {
@@ -19,6 +20,7 @@ import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { LoaderSpinner, ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import {
   DEVOPS_COPILOT_API_BASE_URL,
+  GTM,
   INTERCOM,
   POSTHOG,
   POSTHOG_APIHOST,
@@ -179,18 +181,22 @@ function App() {
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+const gtmParams = { id: GTM }
+
 root.render(
   <StrictMode>
-    <FlatProviders
-      providers={[
-        ThemeProvider,
-        TooltipProvider,
-        Auth0Wrapper,
-        makeProvider(QueryClientProvider, { client: queryClient }),
-        makeProvider(IntercomProvider, { appId: INTERCOM }),
-      ]}
-    >
-      <App />
-    </FlatProviders>
+    <GTMProvider state={gtmParams}>
+      <FlatProviders
+        providers={[
+          ThemeProvider,
+          TooltipProvider,
+          Auth0Wrapper,
+          makeProvider(QueryClientProvider, { client: queryClient }),
+          makeProvider(IntercomProvider, { appId: INTERCOM }),
+        ]}
+      >
+        <App />
+      </FlatProviders>
+    </GTMProvider>
   </StrictMode>
 )

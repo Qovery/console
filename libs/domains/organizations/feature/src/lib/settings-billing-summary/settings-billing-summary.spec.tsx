@@ -1,6 +1,5 @@
 import { PlanEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { creditCardsFactoryMock } from '@qovery/shared/factories'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import * as sharedUi from '@qovery/shared/ui'
@@ -17,7 +16,6 @@ import {
 
 jest.mock('../hooks/use-credit-cards/use-credit-cards')
 jest.mock('../hooks/use-current-cost/use-current-cost')
-jest.mock('@qovery/domains/users-sign-up/feature')
 jest.mock('@qovery/shared/iam/feature')
 jest.mock('@qovery/shared/util-hooks')
 jest.mock('./invoices-list-feature/invoices-list-feature', () => ({
@@ -51,13 +49,8 @@ const pageProps: PageOrganizationBillingSummaryProps = {
 }
 
 describe('PageOrganizationBillingSummary', () => {
-  const useUserSignUpMock = useUserSignUp as jest.MockedFunction<typeof useUserSignUp>
-
   beforeEach(() => {
     jest.clearAllMocks()
-    useUserSignUpMock.mockReturnValue({
-      data: { dx_auth: false },
-    } as unknown as ReturnType<typeof useUserSignUp>)
   })
 
   it('should render successfully', () => {
@@ -113,7 +106,6 @@ describe('PageOrganizationBillingSummary', () => {
 describe('SettingsBillingSummary', () => {
   const useCreditCardsMock = useCreditCards as jest.MockedFunction<typeof useCreditCards>
   const useCurrentCostMock = useCurrentCost as jest.MockedFunction<typeof useCurrentCost>
-  const useUserSignUpMock = useUserSignUp as jest.MockedFunction<typeof useUserSignUp>
   const useUserRoleMock = useUserRole as jest.MockedFunction<typeof useUserRole>
   const useSupportChatMock = useSupportChat as jest.MockedFunction<typeof useSupportChat>
   const useDocumentTitleMock = useDocumentTitle as jest.MockedFunction<typeof useDocumentTitle>
@@ -126,9 +118,6 @@ describe('SettingsBillingSummary', () => {
     useCurrentCostMock.mockReturnValue({
       data: currentCostMock,
     } as unknown as ReturnType<typeof useCurrentCost>)
-    useUserSignUpMock.mockReturnValue({
-      data: { dx_auth: false },
-    } as unknown as ReturnType<typeof useUserSignUp>)
     useUserRoleMock.mockReturnValue({
       isQoveryAdminUser: true,
     } as unknown as ReturnType<typeof useUserRole>)

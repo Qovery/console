@@ -72,8 +72,9 @@ export function SettingsDangerZone() {
       const remainingOrganizations = organizations.filter((organization) => organization.id !== organizationId)
       localStorage.removeItem('currentOrganizationId')
       localStorage.removeItem('currentProjectId')
+
       if (remainingOrganizations.length === 0) {
-        await navigate({ to: '/login' })
+        await navigate({ to: '/onboarding/project' })
       } else {
         await navigate({
           to: '/organization/$organizationId/overview',

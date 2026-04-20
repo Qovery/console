@@ -1,7 +1,7 @@
 import { Link, useNavigate } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { Command } from 'cmdk'
-import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react'
+import { type MouseEvent, type ReactNode, useCallback, useMemo, useRef, useState } from 'react'
 import { Button, Command as CommandMenu, Icon, Popover, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -14,13 +14,22 @@ export interface BreadcrumbItemData {
   logo_url?: string
 }
 
+export interface BreadcrumbMenuAction {
+  label: string
+  path: string
+  search?: {
+    previousUrl?: string
+  }
+}
+
 interface BreadcrumbItemProps {
   item: BreadcrumbItemData
   items?: BreadcrumbItemData[]
   isCurrentScope?: boolean
+  footerAction?: BreadcrumbMenuAction
 }
 
-export function BreadcrumbItem({ item, items, isCurrentScope = false }: BreadcrumbItemProps) {
+export function BreadcrumbItem({ item, items, isCurrentScope = false, footerAction }: BreadcrumbItemProps) {
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState('')
   const [open, setOpen] = useState(false)
@@ -39,6 +48,8 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false }: Breadcru
     () => items?.filter((i) => i.label.toLowerCase().includes(searchQuery.toLowerCase())) || [],
     [items, searchQuery]
   )
+
+  const shouldRenderMenu = Boolean(footerAction) || (items?.length ?? 0) > 1
 
   const focusSearch = useCallback(() => {
     requestAnimationFrame(() => {
@@ -81,15 +92,20 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false }: Breadcru
   )
 
   const handleSelect = useCallback(
-    (path: string) => {
+    (path: string, search?: BreadcrumbMenuAction['search']) => {
       setOpen(false)
       setSearchQuery('')
-      navigate({ to: path })
+      navigate({ to: path, search })
     },
     [navigate]
   )
 
-  if (!items || items.length <= 1) {
+  const handleMenuLinkClick = useCallback((event: MouseEvent<HTMLAnchorElement>) => {
+    event.stopPropagation()
+    setOpen(false)
+  }, [])
+
+  if (!shouldRenderMenu) {
     return (
       <Link
         to={item.path}
@@ -170,7 +186,11 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false }: Breadcru
             </div>
             <CommandMenu.List
               ref={listRef}
-              className="max-h-64 min-h-12 pb-3 [&>[cmdk-list-sizer]]:mx-0 [&>[cmdk-list-sizer]]:my-0"
+              className={twMerge(
+                clsx('max-h-64 min-h-12 pb-3 [&>[cmdk-list-sizer]]:mx-0 [&>[cmdk-list-sizer]]:my-0', {
+                  'max-h-52': footerAction,
+                })
+              )}
             >
               <CommandMenu.Empty>
                 <div className="px-3 py-6 text-center">
@@ -183,11 +203,15 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false }: Breadcru
                   key={listItem.id}
                   data-current-item={item.id === listItem.id}
                   value={listItem.label}
-                  keywords={[listItem.path]}
+                  keywords={[listItem.label, listItem.path]}
                   onSelect={() => handleSelect(listItem.path)}
-                  className="mb-1 justify-between truncate rounded px-2 py-2 text-sm font-medium text-neutral last:mb-0 data-[selected=true]:bg-surface-brand-subtle data-[selected=true]:text-brand"
+                  className="mb-1 truncate rounded px-2 py-2 text-sm font-medium text-neutral last:mb-0 data-[selected=true]:bg-surface-brand-subtle data-[selected=true]:text-brand"
                 >
-                  <div className="flex min-w-0 items-center gap-3">
+                  <Link
+                    to={listItem.path}
+                    className="flex w-full min-w-0 items-center gap-3"
+                    onClick={handleMenuLinkClick}
+                  >
                     <Icon
                       iconName="check"
                       className={twMerge(
@@ -196,11 +220,34 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false }: Breadcru
                         })
                       )}
                     />
-                    <span className="truncate">{listItem.label}</span>
-                  </div>
+                    {listItem.prefix && <div className="shrink-0">{listItem.prefix}</div>}
+                    <span className="min-w-0 flex-1 truncate">{listItem.label}</span>
+                    {listItem.suffix && <div className="shrink-0">{listItem.suffix}</div>}
+                  </Link>
                 </CommandMenu.Item>
               ))}
             </CommandMenu.List>
+            {footerAction && (
+              <div className="-mx-3 w-[calc(100%+24px)] shrink-0 border-t border-neutral px-3 py-2">
+                <CommandMenu.Item
+                  forceMount
+                  value={footerAction.label}
+                  keywords={[footerAction.label, footerAction.path, 'create organization']}
+                  onSelect={() => handleSelect(footerAction.path, footerAction.search)}
+                  className="h-auto rounded px-2 py-2 text-sm font-medium text-neutral hover:bg-surface-neutral-subtle data-[selected=true]:bg-surface-brand-subtle data-[selected=true]:text-brand"
+                >
+                  <Link
+                    to={footerAction.path}
+                    search={footerAction.search}
+                    className="flex w-full min-w-0 items-center gap-2"
+                    onClick={handleMenuLinkClick}
+                  >
+                    <Icon iconName="circle-plus" iconStyle="regular" className="text-base text-brand" />
+                    <span className="min-w-0 truncate">{footerAction.label}</span>
+                  </Link>
+                </CommandMenu.Item>
+              </div>
+            )}
           </Command>
         </Popover.Content>
       </Popover.Root>

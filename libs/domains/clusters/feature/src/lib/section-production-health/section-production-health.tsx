@@ -5,8 +5,10 @@ import { type ReactNode, useMemo } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { EmptyState, Heading, Icon, Link, LogoIcon, Section, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { AddCreditCardModalFeature } from '../add-credit-card-modal-feature/add-credit-card-modal-feature'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
 import { ClusterProductionCard } from '../cluster-production-card/cluster-production-card'
+import { useClusterCreationRestriction } from '../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction'
 import useClusterStatuses from '../hooks/use-cluster-statuses/use-cluster-statuses'
 import useClusters from '../hooks/use-clusters/use-clusters'
 
@@ -24,6 +26,7 @@ type ClusterOption = {
   | {
       action: 'installation-guide'
       isDemo?: boolean
+      requiresCreditCardOnFreeTrial?: boolean
     }
 )
 
@@ -58,6 +61,7 @@ const CLUSTERS_OPTIONS: ClusterOption[] = [
       IconEnum.CIVO,
     ],
     action: 'installation-guide',
+    requiresCreditCardOnFreeTrial: true,
   },
   {
     highlight: false,
@@ -65,7 +69,7 @@ const CLUSTERS_OPTIONS: ClusterOption[] = [
     title: 'Local machine (demo)',
     icon: 'laptop-code',
     description:
-      'Deploy a local Kubernetes cluster on your laptop using Docker Desktop. No cloud account or credit card required!',
+      'Deploy a local Kubernetes cluster on your laptop using Docker. No cloud account or credit card required!',
     action: 'installation-guide',
     isDemo: true,
   },
@@ -89,6 +93,7 @@ const RELATED_DOCUMENTATION: { title: string; url: string }[] = [
 export function SectionProductionHealth() {
   const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
+  const { isNoCreditCardRestriction } = useClusterCreationRestriction({ organizationId })
   const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
   const { data: clusterStatuses = [] } = useClusterStatuses({
     organizationId,
@@ -106,6 +111,11 @@ export function SectionProductionHealth() {
       content: (
         <ClusterInstallationGuideModal mode="CREATE" isDemo={isDemo} type="ON_PREMISE" onClose={() => closeModal()} />
       ),
+    })
+
+  const openCreditCardModal = () =>
+    openModal({
+      content: <AddCreditCardModalFeature organizationId={organizationId} />,
     })
 
   const getOptionCardClassName = (highlight: boolean) =>
@@ -210,7 +220,11 @@ export function SectionProductionHealth() {
                   <button
                     key={option.title}
                     type="button"
-                    onClick={() => openInstallationGuideModal({ isDemo: option.isDemo })}
+                    onClick={() =>
+                      option.requiresCreditCardOnFreeTrial && isNoCreditCardRestriction
+                        ? openCreditCardModal()
+                        : openInstallationGuideModal({ isDemo: option.isDemo })
+                    }
                     className={getOptionCardClassName(option.highlight)}
                   >
                     {renderOptionCardContent(option)}

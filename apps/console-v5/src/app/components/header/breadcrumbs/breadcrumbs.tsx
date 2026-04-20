@@ -1,4 +1,4 @@
-import { useParams, useRouter } from '@tanstack/react-router'
+import { useLocation, useParams, useRouter } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { ClusterAvatar, useClusters } from '@qovery/domains/clusters/feature'
 import { EnvironmentMode, useEnvironments } from '@qovery/domains/environments/feature'
@@ -7,10 +7,11 @@ import { sortProjectsByFavorite, useFavoriteProjects, useProjects } from '@qover
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { Avatar } from '@qovery/shared/ui'
 import { Separator } from '../header'
-import { BreadcrumbItem, type BreadcrumbItemData } from './breadcrumb-item'
+import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } from './breadcrumb-item'
 
 export function Breadcrumbs() {
   const { buildLocation } = useRouter()
+  const location = useLocation()
   const {
     organizationId = '',
     clusterId = '',
@@ -35,6 +36,7 @@ export function Breadcrumbs() {
     organizations.find((org) => org.id !== organizationId) && organization
       ? [...organizations.filter((org) => org.id !== organizationId), organization]
       : organizations
+  const previousUrl = location.href
 
   const orgItems: BreadcrumbItemData[] = allOrganizations
     .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
@@ -45,6 +47,13 @@ export function Breadcrumbs() {
         .href,
       logo_url: organization.logo_url ?? undefined,
     }))
+  const createOrganizationAction: BreadcrumbMenuAction = {
+    label: 'Create organization',
+    path: '/onboarding/project',
+    search: {
+      previousUrl,
+    },
+  }
 
   const currentOrg = useMemo(
     () => orgItems.find((organization) => organization.id === organizationId),
@@ -178,7 +187,12 @@ export function Breadcrumbs() {
               : 'flex shrink-0 items-center gap-2'
           }
         >
-          <BreadcrumbItem item={data.item} items={data.items} isCurrentScope={index === breadcrumbData.length - 1} />
+          <BreadcrumbItem
+            item={data.item}
+            items={data.items}
+            isCurrentScope={index === breadcrumbData.length - 1}
+            footerAction={index === 0 ? createOrganizationAction : undefined}
+          />
           {index < breadcrumbData.length - 1 && <Separator />}
         </div>
       ))}

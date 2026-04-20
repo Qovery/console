@@ -16,6 +16,7 @@ export * from './sub-router/audit-logs.router'
 export * from './sub-router/alerting.router'
 export * from './sub-router/user.router'
 export * from './sub-router/terraform.router'
+export * from './onboarding-entry'
 
 export const INDEX_URL = '/'
 export const PREVIEW_CODE = '/preview-code'

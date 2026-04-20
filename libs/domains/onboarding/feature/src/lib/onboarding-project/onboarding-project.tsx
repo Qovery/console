@@ -1,42 +1,39 @@
 import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { PlanEnum, type SignUpRequest } from 'qovery-typescript-axios'
-import { useContext, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useCreateOrganization, useEditBillingInfo } from '@qovery/domains/organizations/feature'
+import { type SignUpRequest } from 'qovery-typescript-axios'
+import { useContext, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { useCreateOrganization, useEditBillingInfo, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { ENVIRONMENTS_GENERAL_URL, ENVIRONMENTS_URL } from '@qovery/shared/routes'
-import { toastError } from '@qovery/shared/ui'
+import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type SerializedError } from '@qovery/shared/utils'
 import { ContextOnboarding } from '../container/container'
 import { StepProject } from '../step-project/step-project'
 
-export function OnboardingProject() {
+export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   useDocumentTitle('Onboarding Organization - Qovery')
 
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = useAuth()
   const sendDataToGTM = useGTMDispatch()
+  const { data: organizations = [] } = useOrganizations()
+  const { organization_name, project_name, admin_email, selectedPlan } = useContext(ContextOnboarding)
   const { mutateAsync: createOrganization } = useCreateOrganization()
-  const { mutateAsync: createProject } = useCreateProject()
-  const { mutateAsync: editBillingInfo } = useEditBillingInfo()
-  const { handleSubmit, control, setValue } = useForm<{ project_name: string; organization_name: string }>()
+  const { mutateAsync: createProject } = useCreateProject({ silently: true })
+  const { mutateAsync: editBillingInfo } = useEditBillingInfo({ silently: true })
+  const methods = useForm<{ project_name: string; organization_name: string }>({
+    defaultValues: {
+      organization_name,
+      project_name: project_name || 'main',
+    },
+  })
   const { data: userSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
-  const { organization_name, project_name, admin_email, selectedPlan, setContextValue } = useContext(ContextOnboarding)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const shouldSkipBilling = userSignUp?.dx_auth === true
-  const planToUse = shouldSkipBilling ? PlanEnum.USER_2025 : selectedPlan
-
-  useEffect(() => {
-    setValue('organization_name', organization_name)
-    setValue('project_name', project_name || 'main')
-  }, [organization_name, project_name, setValue])
 
   const updateBillingInfo = async (organizationId: string) => {
     await editBillingInfo({
@@ -70,8 +67,7 @@ export function OnboardingProject() {
         user_role: userSignUp.user_role ?? undefined,
         qovery_usage_other: userSignUp.qovery_usage_other ?? undefined,
         user_questions: userSignUp.user_questions ?? undefined,
-        current_step: 'billing',
-        dx_auth: userSignUp.dx_auth ?? undefined,
+        current_step: 'project',
         infrastructure_hosting: userSignUp.infrastructure_hosting ?? undefined,
       }
 
@@ -80,20 +76,23 @@ export function OnboardingProject() {
   }
 
   const handleBack = () => {
-    if (shouldSkipBilling) {
-      navigate({ to: '/onboarding/personalize' })
-    } else {
-      navigate({ to: '/onboarding/plans' })
+    if (previousUrl) {
+      navigate({ href: previousUrl, replace: true })
+      return
     }
+
+    if (organizations.length > 0) {
+      navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0].id } })
+      return
+    }
+
+    navigate({ to: '/onboarding/personalize' })
   }
 
-  const onSubmit = handleSubmit(async (data) => {
-    const currentData = {
-      organization_name: data.organization_name,
-      project_name: data.project_name,
-      admin_email,
+  const onSubmit = methods.handleSubmit(async (data) => {
+    if (isSubmitting) {
+      return
     }
-    setContextValue?.(currentData)
 
     setIsSubmitting(true)
 
@@ -101,7 +100,7 @@ export function OnboardingProject() {
       const organization = await createOrganization({
         organizationRequest: {
           name: data.organization_name,
-          plan: planToUse,
+          plan: selectedPlan,
           admin_emails: admin_email.length > 0 ? [admin_email] : user?.email ? [user.email] : [],
         },
       })
@@ -111,7 +110,7 @@ export function OnboardingProject() {
 
       await updateBillingInfo(organization.id)
 
-      const project = await createProject({
+      await createProject({
         organizationId: organization.id,
         projectRequest: {
           name: data.project_name,
@@ -121,11 +120,11 @@ export function OnboardingProject() {
       await createCargoSignup()
 
       posthog.capture('onboarding-organization-created', {
-        plan: planToUse,
+        plan: selectedPlan,
       })
-      sendDataToGTM({ event: 'onboarding-organization-created', plan: planToUse })
-
-      navigate({ to: `${ENVIRONMENTS_URL(organization.id, project.id)}${ENVIRONMENTS_GENERAL_URL}` })
+      await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
+      navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
+      toast(ToastEnum.SUCCESS, 'Your organization and project have been created')
     } catch (error) {
       if ((error as SerializedError).code === '409') {
         toastError(error as unknown as SerializedError)
@@ -136,7 +135,11 @@ export function OnboardingProject() {
     }
   })
 
-  return <StepProject onSubmit={onSubmit} control={control} loading={isSubmitting} onFirstStepBack={handleBack} />
+  return (
+    <FormProvider {...methods}>
+      <StepProject onSubmit={onSubmit} loading={isSubmitting} onFirstStepBack={handleBack} />
+    </FormProvider>
+  )
 }
 
 export default OnboardingProject

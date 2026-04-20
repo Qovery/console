@@ -171,7 +171,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
             size="lg"
             onClick={() => authLogout()}
           >
-            <Icon name="icon-solid-arrow-left" />
+            <Icon iconName="arrow-left" />
             Disconnect
           </Button>
           <Button type="submit" size="lg" disabled={!formState.isValid}>
