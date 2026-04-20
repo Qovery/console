@@ -102,7 +102,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
         <Skeleton width="65%" height={20} show={isLoading}>
           <div
             title={cluster?.created_at && dateUTCString(cluster.created_at)}
-            className="flex h-8 items-center gap-2.5 p-1.5"
+            className="flex h-8 items-center gap-2.5 p-1.5 pl-0.5"
           >
             <Icon className="text-base text-neutral-subtle" iconName="calendar-day" iconStyle="regular" />
             Created {cluster?.created_at && timeAgo(new Date(cluster.created_at))} ago
