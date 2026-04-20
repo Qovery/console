@@ -1,6 +1,6 @@
 import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { AdvancedSettings } from './service-advanced-settings'
 
 const mockMutateEdit = jest.fn()
@@ -131,16 +131,45 @@ describe('AdvancedSettings', () => {
     if (input) await userEvent.type(input, '79')
     await userEvent.click(screen.getByTestId('submit-button'))
 
-    expect(mockMutateEdit).toHaveBeenCalledWith({
-      payload: {
-        'cronjob.success_jobs_history_limit': 3,
-        'deployment.affinity.node.required': {},
-        'deployment.custom_domain_check_enabled': true,
-        'job.delete_ttl_seconds_after_finished': 3,
-        serviceType: 'APPLICATION',
-        test_empty: 79,
+    expect(mockMutateEdit).toHaveBeenCalledWith(
+      {
+        payload: {
+          'cronjob.success_jobs_history_limit': 3,
+          'deployment.affinity.node.required': {},
+          'deployment.custom_domain_check_enabled': true,
+          'job.delete_ttl_seconds_after_finished': 3,
+          serviceType: 'APPLICATION',
+          test_empty: 79,
+        },
+        serviceId: '0',
       },
-      serviceId: '0',
+      expect.objectContaining({
+        onSuccess: expect.any(Function),
+      })
+    )
+  })
+
+  it('should hide the sticky toaster after a successful submit', async () => {
+    mockMutateEdit.mockImplementation((_variables, options) => {
+      options?.onSuccess?.()
+    })
+
+    const { userEvent, container } = renderWithProviders(
+      <AdvancedSettings
+        service={mockApplication}
+        advancedSettings={advancedSettings}
+        defaultAdvancedSettings={defaultAdvancedSettings}
+      />
+    )
+    const input = container.querySelector('textarea[name="test_empty"]')
+    if (input) await userEvent.type(input, '79')
+
+    expect(screen.getByTestId('sticky-action-form-toaster')).toBeVisible()
+
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('sticky-action-form-toaster')).not.toHaveClass('animate-action-bar-fade-in')
     })
   })
 })

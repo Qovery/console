@@ -62,11 +62,16 @@ export function ClusterAdvancedSettingsFeature() {
     })
 
     if (clusterAdvancedSettings) {
-      editClusterAdvancedSettings({
-        organizationId,
-        clusterId,
-        clusterAdvancedSettings: payload as ClusterAdvancedSettingsType,
-      })
+      editClusterAdvancedSettings(
+        {
+          organizationId,
+          clusterId,
+          clusterAdvancedSettings: payload as ClusterAdvancedSettingsType,
+        },
+        {
+          onSuccess: () => methods.reset(data),
+        }
+      )
     }
   })
 

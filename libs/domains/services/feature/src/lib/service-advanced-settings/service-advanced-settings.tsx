@@ -130,7 +130,12 @@ export function AdvancedSettings({
       }
       dataFormatted[key] = JSON.parse(dataFormatted[key])
     })
-    editAdvancedSettings({ serviceId, payload: { serviceType, ...dataFormatted } })
+    editAdvancedSettings(
+      { serviceId, payload: { serviceType, ...dataFormatted } },
+      {
+        onSuccess: () => reset(data),
+      }
+    )
   })
 
   const columns = useMemo(() => {
