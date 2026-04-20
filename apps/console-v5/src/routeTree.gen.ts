@@ -33,6 +33,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdAlertsIndexRouteImport 
 import { Route as AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport } from './routes/_authenticated/organization/$organizationId/settings/webhook'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport } from './routes/_authenticated/organization/$organizationId/settings/members'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsMcpServerRouteImport } from './routes/_authenticated/organization/$organizationId/settings/mcp-server'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/labels-annotations'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRouteImport } from './routes/_authenticated/organization/$organizationId/settings/helm-repositories'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRouteImport } from './routes/_authenticated/organization/$organizationId/settings/git-repository-access'
@@ -296,6 +297,13 @@ const AuthenticatedOrganizationOrganizationIdSettingsMembersRoute =
   AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport.update({
     id: '/members',
     path: '/members',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsMcpServerRouteImport.update({
+    id: '/mcp-server',
+    path: '/mcp-server',
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
   } as any)
@@ -1380,6 +1388,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
   '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
+  '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
@@ -1523,6 +1532,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
   '/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
+  '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
@@ -1661,6 +1671,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/git-repository-access': typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
   '/_authenticated/organization/$organizationId/settings/helm-repositories': typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   '/_authenticated/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
+  '/_authenticated/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/_authenticated/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
   '/_authenticated/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/_authenticated/organization/$organizationId/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
@@ -1810,6 +1821,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/git-repository-access'
     | '/organization/$organizationId/settings/helm-repositories'
     | '/organization/$organizationId/settings/labels-annotations'
+    | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
@@ -1953,6 +1965,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/git-repository-access'
     | '/organization/$organizationId/settings/helm-repositories'
     | '/organization/$organizationId/settings/labels-annotations'
+    | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
@@ -2090,6 +2103,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/git-repository-access'
     | '/_authenticated/organization/$organizationId/settings/helm-repositories'
     | '/_authenticated/organization/$organizationId/settings/labels-annotations'
+    | '/_authenticated/organization/$organizationId/settings/mcp-server'
     | '/_authenticated/organization/$organizationId/settings/members'
     | '/_authenticated/organization/$organizationId/settings/webhook'
     | '/_authenticated/organization/$organizationId/$clusterId/'
@@ -2379,6 +2393,13 @@ declare module '@tanstack/react-router' {
       path: '/members'
       fullPath: '/organization/$organizationId/settings/members'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/mcp-server': {
+      id: '/_authenticated/organization/$organizationId/settings/mcp-server'
+      path: '/mcp-server'
+      fullPath: '/organization/$organizationId/settings/mcp-server'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/labels-annotations': {
@@ -3274,6 +3295,7 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsGitRepositoryAccessRoute
   AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute
   AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
+  AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   AuthenticatedOrganizationOrganizationIdSettingsMembersRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
   AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   AuthenticatedOrganizationOrganizationIdSettingsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRoute
@@ -3305,6 +3327,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsHelmRepositoriesRoute,
     AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute:
       AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute,
     AuthenticatedOrganizationOrganizationIdSettingsMembersRoute:
       AuthenticatedOrganizationOrganizationIdSettingsMembersRoute,
     AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute:

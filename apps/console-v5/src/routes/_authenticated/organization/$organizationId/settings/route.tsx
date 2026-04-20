@@ -92,6 +92,12 @@ function RouteComponent() {
     icon: 'sparkles' as const,
   }
 
+  const mcpServerLink = {
+    title: 'MCP server',
+    to: `${pathSettings}/mcp-server`,
+    icon: 'code' as const,
+  }
+
   const dangerZoneLink = {
     title: 'Danger zone',
     to: `${pathSettings}/danger-zone`,
@@ -110,6 +116,7 @@ function RouteComponent() {
     webhookLink,
     apiTokenLink,
     aiCopilotLink,
+    mcpServerLink,
     ...(isOrganizationAdmin ? [dangerZoneLink] : []),
   ]
 
