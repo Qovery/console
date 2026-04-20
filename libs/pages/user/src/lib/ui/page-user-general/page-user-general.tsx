@@ -1,19 +1,30 @@
 import { type FormEventHandler } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type Value } from '@qovery/shared/interfaces'
-import { BlockContent, Button, Heading, InputSelect, InputText, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, Heading, InputSelect, InputText, InputToggle, Section } from '@qovery/shared/ui'
 
 export interface PageUserGeneralProps {
   onSubmit: FormEventHandler<HTMLFormElement>
   loading: boolean
   picture: string
   accountOptions: Value[]
+  showNewConsoleToggle: boolean
+  useNewConsoleByDefault: boolean
+  onUseNewConsoleByDefaultChange: (value: boolean) => void
 }
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
 const timezoneOffset = new Date().getTimezoneOffset() / -60
 
-export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: PageUserGeneralProps) {
+export function PageUserGeneral({
+  onSubmit,
+  loading,
+  picture,
+  accountOptions,
+  showNewConsoleToggle,
+  useNewConsoleByDefault,
+  onUseNewConsoleByDefaultChange,
+}: PageUserGeneralProps) {
   const { control, formState, watch } = useFormContext()
 
   return (
@@ -112,6 +123,17 @@ export function PageUserGeneral({ onSubmit, loading, picture, accountOptions }: 
             <p className="mb-3 mt-1 text-xs text-neutral-350">
               Timezone used to display timestamp within the interface
             </p>
+            {showNewConsoleToggle && (
+              <InputToggle
+                className="mt-4"
+                value={useNewConsoleByDefault}
+                onChange={onUseNewConsoleByDefaultChange}
+                title="Use the new console by default"
+                description="When enabled, visits to the legacy console will automatically redirect you to the new console."
+                forceAlignTop
+                small
+              />
+            )}
           </BlockContent>
           <div className="flex justify-end">
             <Button data-testid="submit-button" size="lg" type="submit" disabled={!formState.isValid} loading={loading}>

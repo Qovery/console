@@ -1,7 +1,8 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useAuth } from '@qovery/shared/auth'
 import { type IconEnum } from '@qovery/shared/enums'
-import { useEditUserAccount, useUserAccount } from '@qovery/shared/iam/feature'
+import { useConsoleRedirectPreference, useEditUserAccount, useUserAccount } from '@qovery/shared/iam/feature'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import PageUserGeneral from '../../ui/page-user-general/page-user-general'
@@ -12,6 +13,8 @@ export function PageUserGeneralFeature() {
   const { user: userToken } = useAuth()
   const { data: user } = useUserAccount()
   const { mutateAsync, isLoading: loading } = useEditUserAccount()
+  const { useNewConsoleByDefault, setUseNewConsoleByDefault } = useConsoleRedirectPreference()
+  const isNewNavigationActivationEnabled = Boolean(useFeatureFlagEnabled('new-navigation-activation'))
 
   const methods = useForm({
     mode: 'onChange',
@@ -49,6 +52,9 @@ export function PageUserGeneralFeature() {
         loading={loading}
         picture={user?.profile_picture_url as string}
         accountOptions={accountOptions}
+        showNewConsoleToggle={isNewNavigationActivationEnabled}
+        useNewConsoleByDefault={useNewConsoleByDefault}
+        onUseNewConsoleByDefaultChange={setUseNewConsoleByDefault}
       />
     </FormProvider>
   )

@@ -10,6 +10,9 @@ describe('PageUserGeneral', () => {
     loading: false,
     accountOptions: [],
     picture: '/',
+    showNewConsoleToggle: true,
+    useNewConsoleByDefault: false,
+    onUseNewConsoleByDefaultChange: jest.fn(),
   }
 
   const defaultValues = {
@@ -38,6 +41,7 @@ describe('PageUserGeneral', () => {
     screen.getByLabelText('Last name')
     screen.getAllByLabelText('Account email')
     screen.getByLabelText('Communication email')
+    screen.getByText('Use the new console by default')
   })
 
   it('should submit the form', async () => {
@@ -56,5 +60,36 @@ describe('PageUserGeneral', () => {
 
     await userEvent.click(submitButton)
     expect(mockSubmit).toHaveBeenCalled()
+  })
+
+  it('should toggle the console preference', async () => {
+    const onUseNewConsoleByDefaultChange = jest.fn()
+
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(
+        <PageUserGeneral
+          {...props}
+          onUseNewConsoleByDefaultChange={onUseNewConsoleByDefaultChange}
+          useNewConsoleByDefault={false}
+        />,
+        {
+          defaultValues: defaultValues,
+        }
+      )
+    )
+
+    await userEvent.click(screen.getByText('Use the new console by default'))
+
+    expect(onUseNewConsoleByDefaultChange).toHaveBeenCalledWith(true)
+  })
+
+  it('should not render the console preference toggle when disabled', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<PageUserGeneral {...props} showNewConsoleToggle={false} />, {
+        defaultValues: defaultValues,
+      })
+    )
+
+    expect(screen.queryByText('Use the new console by default')).not.toBeInTheDocument()
   })
 })
