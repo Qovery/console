@@ -171,7 +171,7 @@ function StepSummaryContent(props: StepSummaryProps) {
           .exhaustive()}
       </Heading>
       <form className="space-y-10">
-        <p className="text-neutral-subtle text-sm">
+        <p className="text-sm text-neutral-subtle">
           {match(props.templateType)
             .with(
               'TERRAFORM',
@@ -188,7 +188,7 @@ function StepSummaryContent(props: StepSummaryProps) {
         </p>
 
         <div className="flex flex-col gap-6">
-          <Section className="border-neutral bg-surface-neutral-subtle rounded-md border p-4">
+          <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
             <div className="flex justify-between">
               <Heading>General information</Heading>
               <Button type="button" variant="plain" size="md" onClick={props.gotoGlobalInformation}>
