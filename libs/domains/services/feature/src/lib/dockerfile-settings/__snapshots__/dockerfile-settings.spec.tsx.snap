@@ -112,7 +112,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
             Dockerfile from git repository
           </h1>
           <p
-            class="text-sm text-neutral-350"
+            class="text-sm text-neutral-subtle"
           >
             Specify the path containing the Dockerfile to be used to package your application.
           </p>
@@ -158,6 +158,7 @@ exports[`DockerfileSettings should match snapshot with children 1`] = `
             <br />
             <a
               class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs"
+              href="https://docs.docker.com/reference/cli/docker/init/"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -330,7 +331,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
             Dockerfile from git repository
           </h1>
           <p
-            class="text-sm text-neutral-350"
+            class="text-sm text-neutral-subtle"
           >
             Specify the path containing the Dockerfile to be used to package your application.
           </p>
@@ -376,6 +377,7 @@ exports[`DockerfileSettings should match snapshot without children 1`] = `
             <br />
             <a
               class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs"
+              href="https://docs.docker.com/reference/cli/docker/init/"
               rel="noopener noreferrer"
               target="_blank"
             >
