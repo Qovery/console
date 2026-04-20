@@ -22,7 +22,7 @@ export function StepResourcesContent({ templateType, onBack, onSubmit }: StepRes
       <Heading className="mb-2">Resources</Heading>
 
       <form className="space-y-10" onSubmit={onSubmit}>
-        <p className="text-neutral-subtle text-sm">Customize the resources assigned to the service.</p>
+        <p className="text-sm text-neutral-subtle">Customize the resources assigned to the service.</p>
         {match(templateType)
           .with('CLOUDFORMATION', 'TERRAFORM', () => (
             <Callout.Root color="sky">
@@ -61,7 +61,7 @@ export function StepResources() {
     !generalData?.name &&
       jobURL &&
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
+        to: jobURL + '/general',
         params: { organizationId, projectId, environmentId },
       })
   }, [generalData, navigate, environmentId, organizationId, jobURL, projectId])
@@ -78,14 +78,14 @@ export function StepResources() {
   const onSubmit = methods.handleSubmit((data) => {
     setResourcesData(data)
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables',
+      to: jobURL + '/variables',
       params: { organizationId, projectId, environmentId },
     })
   })
 
   const onBack = () => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure',
+      to: jobURL + '/configure',
       params: { organizationId, projectId, environmentId },
     })
   }

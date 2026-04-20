@@ -1,14 +1,15 @@
 import * as Collapsible from '@radix-ui/react-collapsible'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type JobLifecycleTypeEnum, type Organization } from 'qovery-typescript-axios'
-import { type FormEventHandler, useState } from 'react'
-import { useFormContext } from 'react-hook-form'
+import { type FormEventHandler, useEffect, useState } from 'react'
+import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
   AnnotationSetting,
   ContainerRegistryCreateEditModal,
   GitRepositorySettings,
   LabelSetting,
+  useOrganization,
 } from '@qovery/domains/organizations/feature'
 import { type Job } from '@qovery/domains/services/data-access'
 import { AutoDeploySetting, BuildSettings, GeneralSetting, JobGeneralSettings } from '@qovery/domains/services/feature'
@@ -16,17 +17,87 @@ import { serviceTemplates } from '@qovery/domains/services/feature'
 import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
-import { Button, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
+import { parseCmd } from '@qovery/shared/util-js'
 import { findTemplateData } from '../job-create-utils/job-create-utils'
+import { useJobCreateContext } from '../job-creation-flow'
 
-export interface StepGeneralProps {
+export interface StepGeneralContentProps {
   jobType: JobType
   templateType?: JobLifecycleTypeEnum
   onSubmit: FormEventHandler<HTMLFormElement>
   organization?: Organization
 }
 
-export function StepGeneral(props: StepGeneralProps) {
+export function StepGeneral() {
+  const { setGeneralData, generalData, dockerfileForm, setCurrentStep, jobType, templateType, jobURL } =
+    useJobCreateContext()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
+
+  const { data: organization } = useOrganization({ organizationId, suspense: true })
+
+  useEffect(() => {
+    setCurrentStep(1)
+  }, [setCurrentStep])
+
+  const methods = useForm<JobGeneralData>({
+    defaultValues: {
+      auto_deploy: true,
+      template_type: templateType,
+      ...generalData,
+    },
+    mode: 'onChange',
+  })
+
+  const onSubmit = methods.handleSubmit(async (data) => {
+    const cloneData = {
+      ...data,
+    }
+
+    if (data.is_public_repository) {
+      data.auto_deploy = false
+    }
+
+    if (data.cmd_arguments) {
+      cloneData.cmd = parseCmd(data.cmd_arguments)
+    }
+
+    if (data.serviceType === 'CONTAINER') {
+      dockerfileForm.setValue('dockerfile_path', undefined)
+      dockerfileForm.setValue('dockerfile_raw', undefined)
+      dockerfileForm.setValue('docker_target_build_stage', undefined)
+    }
+    setGeneralData(cloneData)
+
+    if (data.serviceType === ServiceTypeEnum.APPLICATION && jobType !== 'CRON_JOB') {
+      navigate({
+        to: jobURL + '/dockerfile',
+        params: { organizationId, projectId, environmentId },
+      })
+    } else {
+      navigate({
+        to: jobURL + '/configure',
+        params: { organizationId, projectId, environmentId },
+      })
+    }
+  })
+
+  return (
+    <FunnelFlowBody>
+      <FormProvider {...methods}>
+        <StepGeneralContent
+          organization={organization}
+          onSubmit={onSubmit}
+          jobType={jobType}
+          templateType={templateType}
+        />
+      </FormProvider>
+    </FunnelFlowBody>
+  )
+}
+
+function StepGeneralContent(props: StepGeneralContentProps) {
   const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams({ strict: false })
   const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
   const { openModal, closeModal } = useModal()
@@ -158,11 +229,6 @@ export function StepGeneral(props: StepGeneralProps) {
                   width: 680,
                 },
               })
-            }
-            renderEditGitSettings={
-              () => null
-              //   TODO: what was that?
-              //   <EditGitRepositorySettingsFeature organizationId={props.organization?.id ?? ''} />
             }
             renderGitRepositorySettings={({ organizationId, rootPathLabel, rootPathHint }) => (
               <GitRepositorySettings

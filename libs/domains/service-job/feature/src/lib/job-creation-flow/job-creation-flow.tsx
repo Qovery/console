@@ -1,8 +1,16 @@
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
+import { useLocation, useNavigate, useParams } from '@tanstack/react-router'
 import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
-import { type Dispatch, type PropsWithChildren, type SetStateAction, createContext, useContext, useState } from 'react'
+import {
+  type Dispatch,
+  type PropsWithChildren,
+  type SetStateAction,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
-import { type DockerfileSettingsData, type HelmGeneralData } from '@qovery/domains/services/feature'
+import { type DockerfileSettingsData } from '@qovery/domains/services/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
@@ -64,13 +72,14 @@ export interface JobCreationFlowProps extends PropsWithChildren {
 export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   // const { template } = useSearch({ strict: false })
+  const location = useLocation()
   const navigate = useNavigate()
   const jobCreationSteps = getJobCreationSteps(ServiceTypeEnum.LIFECYCLE_JOB)
 
   const [currentStep, setCurrentStep] = useState(1)
   const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
   const [jobType, setJobType] = useState<JobType>(ServiceTypeEnum.LIFECYCLE_JOB)
-  const [jobURL, setJobURL] = useState<string | undefined>()
+  const [jobURL, setJobURL] = useState<string>(creationFlowUrl)
   const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum>()
   const [dockerfileDefaultContent, setDockerfileDefaultContent] = useState<string>()
 
@@ -91,6 +100,18 @@ export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowPr
   const [variableData, setVariableData] = useState<FlowVariableData | undefined>({
     variables: [],
   })
+
+  useEffect(() => {
+    if (location.pathname.indexOf('cron') !== -1) {
+      // setJobURL(creationFlowUrl)
+      setJobType(ServiceTypeEnum.CRON_JOB)
+    } else {
+      setJobType(ServiceTypeEnum.LIFECYCLE_JOB)
+      // setJobURL(
+      //   slug && option ? SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug, option) : SERVICES_LIFECYCLE_CREATION_URL
+      // )
+    }
+  }, [setJobType, location.pathname])
 
   return (
     <JobCreateContext.Provider

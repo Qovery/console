@@ -556,7 +556,7 @@ export function ServiceNew({
         title: 'Cron Job',
         description: 'Execute any type of script at a regular basis.',
         icon: <Icon name="CRON_JOB" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_CRONJOB_CREATION_URL),
+        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('cron-job')),
         cloud_provider: cloudProvider,
       },
       {

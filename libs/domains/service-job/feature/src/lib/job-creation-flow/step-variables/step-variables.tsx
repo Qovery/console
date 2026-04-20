@@ -20,7 +20,7 @@ export function StepVariables() {
     !generalData?.name &&
       jobURL &&
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
+        to: jobURL + '/general',
         params: { organizationId, projectId, environmentId },
       })
   }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
@@ -33,14 +33,14 @@ export function StepVariables() {
   const onSubmit = methods.handleSubmit((data) => {
     setVariableData(data)
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/summary',
+      to: jobURL + '/summary',
       params: { organizationId, projectId, environmentId },
     })
   })
 
   const onBack = () => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources',
+      to: jobURL + '/resources',
       params: { organizationId, projectId, environmentId },
     })
   }

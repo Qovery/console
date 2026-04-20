@@ -108,6 +108,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/route'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/route'
@@ -115,6 +116,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/index'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/index'
@@ -137,6 +139,11 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/general'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources'
@@ -934,6 +941,14 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteImport.update(
+    {
+      id: '/project/$projectId/environment/$environmentId/service/create/cron-job',
+      path: '/project/$projectId/environment/$environmentId/service/create/cron-job',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteImport.update(
     {
@@ -992,6 +1007,15 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       path: '/',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRouteImport.update(
+    {
+      id: '/',
+      path: '/',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRoute =
@@ -1189,6 +1213,51 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       path: '/general',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRouteImport.update(
+    {
+      id: '/variables',
+      path: '/variables',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRouteImport.update(
+    {
+      id: '/summary',
+      path: '/summary',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRouteImport.update(
+    {
+      id: '/resources',
+      path: '/resources',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRouteImport.update(
+    {
+      id: '/general',
+      path: '/general',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRouteImport.update(
+    {
+      id: '/configure',
+      path: '/configure',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugVariablesRoute =
@@ -1533,6 +1602,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteWithChildren
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteWithChildren
@@ -1570,6 +1640,11 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugVariablesRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseSummaryRoute
@@ -1592,6 +1667,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute
@@ -1711,6 +1787,11 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugVariablesRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseSummaryRoute
@@ -1733,6 +1814,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute
@@ -1833,6 +1915,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteWithChildren
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteWithChildren
@@ -1870,6 +1953,11 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugResourcesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugSummaryRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugVariablesRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseGeneralRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseSummaryRoute
@@ -1892,6 +1980,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugIndexRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute
@@ -1992,6 +2081,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
@@ -2029,6 +2119,11 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary'
@@ -2051,6 +2146,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/'
@@ -2170,6 +2266,11 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary'
@@ -2192,6 +2293,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
@@ -2291,6 +2393,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
@@ -2328,6 +2431,11 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/resources'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/general'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/resources'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/summary'
@@ -2350,6 +2458,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/'
@@ -3061,6 +3170,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job'
+      path: '/project/$projectId/environment/$environmentId/service/create/cron-job'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug'
       path: '/project/$projectId/environment/$environmentId/service/create/$slug'
@@ -3109,6 +3225,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/'
+      path: '/'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/'
@@ -3263,6 +3386,41 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database/general'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseGeneralRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables'
+      path: '/variables'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/variables'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary'
+      path: '/summary'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/summary'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
+      path: '/resources'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
+      path: '/general'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
+      path: '/configure'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables'
@@ -3826,6 +3984,36 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteChildren,
   )
 
+interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRoute
+}
+
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteChildren: AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteChildren =
+  {
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobSummaryRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobVariablesRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobIndexRoute,
+  }
+
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteWithChildren =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute._addFileChildren(
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteChildren,
+  )
+
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseGeneralRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseResourcesRoute
@@ -3971,6 +4159,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteWithChildren
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobRouteRouteWithChildren
@@ -4049,6 +4238,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugRouteRouteWithChildren,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateDatabaseRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateHelmRouteRoute:

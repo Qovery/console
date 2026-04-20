@@ -35,7 +35,7 @@ export function StepConfigure() {
     !generalData?.name &&
       jobURL &&
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
+        to: jobURL + '/general',
         params: { organizationId, projectId, environmentId },
       })
   }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
@@ -78,7 +78,7 @@ export function StepConfigure() {
 
     setConfigureData(cloneData)
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources',
+      to: jobURL + '/resources',
       params: { organizationId, projectId, environmentId },
     })
   })
@@ -89,12 +89,12 @@ export function StepConfigure() {
       jobType !== 'CRON_JOB'
     ) {
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile',
+        to: jobURL + '/dockerfile',
         params: { organizationId, projectId, environmentId },
       })
     } else {
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
+        to: jobURL + '/general',
         params: { organizationId, projectId, environmentId },
       })
     }
@@ -126,7 +126,7 @@ function StepConfigureContent(props: StepConfigureProps) {
       </Heading>
 
       <form className="space-y-10" onSubmit={props.onSubmit}>
-        <p className="text-neutral-subtle text-sm">
+        <p className="text-sm text-neutral-subtle">
           {props.jobType === ServiceTypeEnum.CRON_JOB
             ? 'Job configuration allows you to control the behavior of your service.'
             : 'Define the events triggering the execution of this job and the commands to execute.'}
