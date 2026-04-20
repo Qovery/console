@@ -21,6 +21,7 @@ import { isDeploymentHistory } from '../environment-deployment-list/environment-
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
+import { useServiceCount } from '../hooks/use-service-count/use-service-count'
 
 const DotSeparator = () => (
   <svg
@@ -63,6 +64,7 @@ const EnvironmentLastDeploymentContent = () => {
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: deploymentHistory = [] } = useDeploymentHistory({ environmentId, suspense: true })
+  const { data: serviceCount = 0 } = useServiceCount({ environmentId })
   const lastDeployment = useMemo(
     () =>
       deploymentHistory.sort(
@@ -102,8 +104,10 @@ const EnvironmentLastDeploymentContent = () => {
   })
 
   const handleDeploy = () => {
+    if (!environment?.id) return
+
     deployEnvironment({
-      environmentId,
+      environmentId: environment.id,
     })
   }
 
@@ -201,10 +205,12 @@ const EnvironmentLastDeploymentContent = () => {
           description="Create and deploy your first service"
           className="h-auto p-8"
         >
-          <Button onClick={handleDeploy} color="neutral" size="md" className="gap-1.5">
-            <Icon iconName="rocket" />
-            Deploy environment
-          </Button>
+          {serviceCount > 0 && (
+            <Button onClick={handleDeploy} color="neutral" size="md" className="gap-1.5">
+              <Icon iconName="rocket" />
+              Deploy environment
+            </Button>
+          )}
         </EmptyState>
       )}
     </Section>
