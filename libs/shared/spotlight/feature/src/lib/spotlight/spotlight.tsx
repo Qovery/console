@@ -3,7 +3,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { type ServiceLightResponse } from 'qovery-typescript-axios'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { ServiceAvatar, useFavoriteServices, useRecentServices } from '@qovery/domains/services/feature'
-import { setAssistantOpen } from '@qovery/shared/assistant/feature'
+import { useSetAssistantOpen } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { UserSettingsModal } from '@qovery/shared/iam/feature'
 import { Command, type CommandDialogProps, Icon, Truncate, useModal } from '@qovery/shared/ui'
@@ -82,6 +82,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const navigate = useNavigate()
   const quickActions = useQuickActions()
   const { openModal } = useModal()
+  const setAssistantOpen = useSetAssistantOpen()
   const { data: services = [], isLoading: isLoadingServices } = useServicesSearch({ organizationId })
   const [searchInput, setSearchInput] = useState('')
   const { getRecentServices, addToRecentServices } = useRecentServices({ organizationId })
@@ -212,7 +213,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
         iconName: 'robot',
       },
     ],
-    [openExternalLink, onOpenChange]
+    [openExternalLink, onOpenChange, setAssistantOpen]
   )
 
   const filteredServices = useMemo(() => {

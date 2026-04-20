@@ -1,12 +1,14 @@
 import { Button, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { toggleAssistantOpen } from '../assistant-store/assistant-store'
+import { useToggleAssistantOpen } from '../assistant-context/assistant-context'
 
 export interface NeedHelpProps {
   className?: string
 }
 
 export function NeedHelp({ className }: NeedHelpProps) {
+  const toggleAssistantOpen = useToggleAssistantOpen()
+
   return (
     <Button
       size="xs"

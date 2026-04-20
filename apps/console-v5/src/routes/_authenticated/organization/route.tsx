@@ -5,6 +5,7 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
+import { AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
@@ -546,18 +547,20 @@ function OrganizationRoute() {
           sendMessageRef,
         }}
       >
-        {isServiceNotFound ? (
-          <NotFoundPage
-            action={serviceNotFoundAction}
-            data={{
-              title: 'Service not found',
-              message: "This service doesn't exist anymore, or the URL is incorrect.",
-            }}
-          />
-        ) : (
-          <Outlet />
-        )}
-        <DevopsCopilotTrigger />
+        <AssistantProvider>
+          {isServiceNotFound ? (
+            <NotFoundPage
+              action={serviceNotFoundAction}
+              data={{
+                title: 'Service not found',
+                message: "This service doesn't exist anymore, or the URL is incorrect.",
+              }}
+            />
+          ) : (
+            <Outlet />
+          )}
+          <DevopsCopilotTrigger />
+        </AssistantProvider>
       </DevopsCopilotContext.Provider>
     )
   }
@@ -570,42 +573,44 @@ function OrganizationRoute() {
         sendMessageRef,
       }}
     >
-      <div className="bg-background flex h-dvh w-full flex-col">
-        {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
-        <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
-          <ErrorBoundary>
-            <OrganizationBanners />
-            <div ref={headerRef}>
-              <Header compactAssistantPanel={compactAssistantPanel} />
-            </div>
+      <AssistantProvider>
+        <div className="bg-background flex h-dvh w-full flex-col">
+          {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
+          <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
+            <ErrorBoundary>
+              <OrganizationBanners />
+              <div ref={headerRef}>
+                <Header compactAssistantPanel={compactAssistantPanel} />
+              </div>
 
-            <Suspense fallback={<MainLoader />}>
-              <>
-                <div className="z-header border-neutral bg-background-secondary sticky top-0 border-b px-4">
-                  <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
-                    {navigationContext && <NavigationBar context={navigationContext} />}
-                  </Navbar.Root>
-                </div>
+              <Suspense fallback={<MainLoader />}>
+                <>
+                  <div className="z-header border-neutral bg-background-secondary sticky top-0 border-b px-4">
+                    <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
+                      {navigationContext && <NavigationBar context={navigationContext} />}
+                    </Navbar.Root>
+                  </div>
 
-                <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
-                  {isServiceNotFound ? (
-                    <NotFoundPage
-                      action={serviceNotFoundAction}
-                      data={{
-                        title: 'Service not found',
-                        message: "This service doesn't exist anymore, or the URL is incorrect.",
-                      }}
-                    />
-                  ) : (
-                    <Outlet />
-                  )}
-                </div>
-              </>
-            </Suspense>
-          </ErrorBoundary>
+                  <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
+                    {isServiceNotFound ? (
+                      <NotFoundPage
+                        action={serviceNotFoundAction}
+                        data={{
+                          title: 'Service not found',
+                          message: "This service doesn't exist anymore, or the URL is incorrect.",
+                        }}
+                      />
+                    ) : (
+                      <Outlet />
+                    )}
+                  </div>
+                </>
+              </Suspense>
+            </ErrorBoundary>
+          </div>
         </div>
-      </div>
-      <DevopsCopilotTrigger />
+        <DevopsCopilotTrigger />
+      </AssistantProvider>
     </DevopsCopilotContext.Provider>
   )
 }
