@@ -1,5 +1,5 @@
 import { AlertRuleState } from 'qovery-typescript-axios'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { ServiceAlerting } from './service-alerting'
 
 const mockUseParams = jest.fn()
@@ -8,6 +8,7 @@ const mockUseAlertRulesGhosted = jest.fn()
 const mockUseDeleteAlertRule = jest.fn()
 const mockUseEnvironment = jest.fn()
 const mockUseService = jest.fn()
+const mockUseDeploymentStatus = jest.fn()
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -32,6 +33,7 @@ jest.mock('../../hooks/use-environment/use-environment', () => ({
 
 jest.mock('@qovery/domains/services/feature', () => ({
   useService: (params: unknown) => mockUseService(params),
+  useDeploymentStatus: (params: unknown) => mockUseDeploymentStatus(params),
 }))
 
 describe('ServiceAlerting', () => {
@@ -93,6 +95,30 @@ describe('ServiceAlerting', () => {
     mockUseDeleteAlertRule.mockReturnValue({
       mutate: jest.fn(),
     })
+    mockUseDeploymentStatus.mockReturnValue({
+      data: { service_deployment_status: 'DEPLOYED' },
+      isFetched: true,
+    })
+  })
+
+  it('should display tooltip explaining alerts require deployment when service was never deployed', async () => {
+    mockUseDeploymentStatus.mockReturnValue({
+      data: { service_deployment_status: 'NEVER_DEPLOYED' },
+      isFetched: true,
+    })
+
+    const { userEvent } = renderWithProviders(<ServiceAlerting />)
+
+    const headerToolbar = screen.getByRole('heading', { name: 'Alert rules' }).parentElement
+    expect(headerToolbar).toBeInTheDocument()
+    const newAlertButton = within(headerToolbar as HTMLElement).getByRole('button', { name: /new alert/i })
+    await userEvent.hover(newAlertButton.parentElement ?? newAlertButton)
+
+    expect(
+      await screen.findByRole('tooltip', {
+        name: 'You need to deploy your service to create alerts',
+      })
+    ).toBeInTheDocument()
   })
 
   it('should render loader when environment is not loaded', () => {
