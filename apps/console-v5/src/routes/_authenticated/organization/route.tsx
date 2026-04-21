@@ -2,7 +2,9 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { useServiceSummary } from '@qovery/domains/services/feature'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { useProject } from '@qovery/domains/projects/feature'
+import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
@@ -446,7 +448,15 @@ function OrganizationRoute() {
   const needsFullWidth = useFullWidthLayout()
   const bypassLayout = useBypassLayout()
   const location = useLocation()
-  const { organizationId = '' } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { addToRecentServices } = useRecentServices({ organizationId })
+  const { data: project } = useProject({ organizationId, projectId })
+  const { data: environment } = useEnvironment({ environmentId })
+  const { data: service } = useServiceSummary({
+    environmentId,
+    serviceId,
+    enabled: Boolean(environmentId) && Boolean(serviceId),
+  })
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
   const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
@@ -460,6 +470,25 @@ function OrganizationRoute() {
     posthog.group('organization_id', organizationId)
     posthog.reloadFeatureFlags()
   }, [organizationId])
+
+  // Add the service to the recent services list (necessary for the spotlight to work)
+  useEffect(() => {
+    if (service?.id && project?.id && environment?.id) {
+      addToRecentServices({
+        id: service.id,
+        name: service.name,
+        description: service.description || '',
+        icon_uri: service.icon_uri,
+        service_type: service.service_type,
+        project_id: project.id,
+        project_name: project.name,
+        environment_id: environment.id,
+        environment_name: environment.name,
+        cluster_id: environment.cluster_id,
+        job_type: 'job_type' in service ? service.job_type : undefined,
+      })
+    }
+  }, [service?.id, project?.id, environment?.id])
 
   useLayoutEffect(() => {
     const scrollContainer = scrollContainerRef.current
