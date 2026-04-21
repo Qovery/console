@@ -195,7 +195,7 @@ function StepSummaryContent(props: StepSummaryProps) {
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
-            <ul className="list-none space-y-2 text-sm text-neutral-400">
+            <ul className="list-none space-y-2 text-sm text-neutral-subtle">
               <li>
                 <strong className="font-medium">Name:</strong> {props.generalData.name}
               </li>
@@ -212,7 +212,7 @@ function StepSummaryContent(props: StepSummaryProps) {
                 </li>
               )}
               <div className="py-2">
-                <hr className="border-t border-dashed border-neutral-250" />
+                <hr className="border-t border-dashed border-neutral" />
               </div>
 
               {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
@@ -304,14 +304,14 @@ function StepSummaryContent(props: StepSummaryProps) {
           </Section>
 
           {(props.dockerfileData?.dockerfile_path || props.dockerfileData?.dockerfile_raw) && (
-            <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+            <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
                 <Heading>Dockerfile</Heading>
                 <Button type="button" variant="plain" size="md" onClick={props.gotoDockerfileJob}>
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </div>
-              <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+              <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
                 {props.dockerfileData.dockerfile_path && (
                   <li>
                     <strong className="font-medium">Dockerfile path:</strong> {props.dockerfileData.dockerfile_path}
@@ -333,7 +333,7 @@ function StepSummaryContent(props: StepSummaryProps) {
             </Section>
           )}
 
-          <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+          <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
             <div className="flex justify-between">
               <Heading>Triggers</Heading>
               <Button type="button" variant="plain" size="md" onClick={props.gotoConfigureJob}>
@@ -344,7 +344,7 @@ function StepSummaryContent(props: StepSummaryProps) {
               <>
                 {props.configureData.on_start?.enabled && (
                   <>
-                    <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+                    <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
                       <li>
                         <strong className="font-medium">Events:</strong> Environment Start
                       </li>
@@ -357,12 +357,12 @@ function StepSummaryContent(props: StepSummaryProps) {
                         {props.configureData.on_start?.arguments || 'null'}
                       </li>
                     </ul>
-                    <hr className="my-4 border-t border-dashed border-neutral-250" />
+                    <hr className="my-4 border-t border-dashed border-neutral" />
                   </>
                 )}
                 {props.configureData.on_stop?.enabled && (
                   <>
-                    <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+                    <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
                       <li>
                         <strong className="font-medium">Events:</strong> Environment Stop
                       </li>
@@ -375,12 +375,12 @@ function StepSummaryContent(props: StepSummaryProps) {
                         {props.configureData.on_stop?.arguments || 'null'}
                       </li>
                     </ul>
-                    <hr className="my-4 border-t border-dashed border-neutral-250" />
+                    <hr className="my-4 border-t border-dashed border-neutral" />
                   </>
                 )}
                 {props.configureData.on_delete?.enabled && (
                   <>
-                    <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+                    <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
                       <li>
                         <strong className="font-medium">Events:</strong> Environment Delete
                       </li>
@@ -393,14 +393,14 @@ function StepSummaryContent(props: StepSummaryProps) {
                         {props.configureData.on_delete?.arguments || 'null'}
                       </li>
                     </ul>
-                    <hr className="my-4 border-t border-dashed border-neutral-250" />
+                    <hr className="my-4 border-t border-dashed border-neutral" />
                   </>
                 )}
               </>
             )}
             {props.jobType === ServiceTypeEnum.CRON_JOB && (
               <>
-                <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+                <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
                   <li>
                     <strong className="font-medium">Scheduled at:</strong> {props.configureData.schedule}
                   </li>
@@ -408,10 +408,10 @@ function StepSummaryContent(props: StepSummaryProps) {
                     <strong className="font-medium">Timezone:</strong> {props.configureData.timezone}
                   </li>
                 </ul>
-                <hr className="my-4 border-t border-dashed border-neutral-250" />
+                <hr className="my-4 border-t border-dashed border-neutral" />
               </>
             )}
-            <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+            <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
               <li>
                 <strong className="font-medium">Max restarts:</strong> {props.configureData.nb_restarts}
               </li>
@@ -424,14 +424,14 @@ function StepSummaryContent(props: StepSummaryProps) {
             </ul>
           </Section>
 
-          <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+          <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
             <div className="flex justify-between">
               <Heading>Resources</Heading>
               <Button type="button" variant="plain" size="md" onClick={props.gotoResources}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
-            <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+            <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
               <li>
                 <strong className="font-medium">CPU:</strong> {props.resourcesData['cpu']}
               </li>
@@ -443,14 +443,14 @@ function StepSummaryContent(props: StepSummaryProps) {
               </li>
             </ul>
           </Section>
-          <Section className="rounded border border-neutral-250 bg-neutral-100 p-4">
+          <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
             <div className="flex justify-between">
               <Heading>Environment variables</Heading>
               <Button type="button" variant="plain" size="md" onClick={props.gotoVariables}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
-            <ul className="flex list-none flex-col gap-2 text-sm text-neutral-400">
+            <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
               {props.variableData.variables && props.variableData.variables.length > 0 ? (
                 props.variableData.variables?.map((variable, index) => (
                   <li className="grid grid-cols-3" key={index}>
