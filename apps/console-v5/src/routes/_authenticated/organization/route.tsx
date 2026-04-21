@@ -9,6 +9,7 @@ import { AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
+import { useStickyBottomOffset } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
 import { NotFoundPage } from '../../../app/components/not-found-page/not-found-page'
@@ -461,9 +462,8 @@ function OrganizationRoute() {
     serviceId,
     enabled: Boolean(environmentId) && Boolean(serviceId),
   })
-  const headerRef = useRef<HTMLDivElement>(null)
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [compactAssistantPanel, setCompactAssistantPanel] = useState(false)
+  const [setNavbarRef, assistantPanelTopOffset] = useStickyBottomOffset(scrollContainerRef)
   const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
   const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
 
@@ -509,34 +509,10 @@ function OrganizationRoute() {
     }
   }, [service?.id, project?.id, environment?.id])
 
+  // Reset scroll on route change; the sticky-bottom hook reacts via its scroll listener.
   useLayoutEffect(() => {
-    const scrollContainer = scrollContainerRef.current
-
-    if (scrollContainer) {
-      scrollContainer.scrollTop = 0
-    }
+    scrollContainerRef.current?.scrollTo({ top: 0 })
   }, [location.pathname])
-
-  useEffect(() => {
-    const scrollContainer = scrollContainerRef.current
-
-    if (!scrollContainer) {
-      return
-    }
-
-    const handleScroll = () => {
-      const headerHeight = headerRef.current?.offsetHeight ?? 0
-      const shouldCompact = scrollContainer.scrollTop >= headerHeight / 2
-      setCompactAssistantPanel((previous) => (previous === shouldCompact ? previous : shouldCompact))
-    }
-
-    handleScroll()
-    scrollContainer.addEventListener('scroll', handleScroll, { passive: true })
-
-    return () => {
-      scrollContainer.removeEventListener('scroll', handleScroll)
-    }
-  }, [])
 
   if (bypassLayout) {
     return (
@@ -579,13 +555,14 @@ function OrganizationRoute() {
           <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
             <ErrorBoundary>
               <OrganizationBanners />
-              <div ref={headerRef}>
-                <Header compactAssistantPanel={compactAssistantPanel} />
-              </div>
+              <Header assistantPanelTopOffset={assistantPanelTopOffset} />
 
               <Suspense fallback={<MainLoader />}>
                 <>
-                  <div className="z-header border-neutral bg-background-secondary sticky top-0 border-b px-4">
+                  <div
+                    ref={setNavbarRef}
+                    className="z-header border-neutral bg-background-secondary sticky top-0 border-b px-4"
+                  >
                     <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
                       {navigationContext && <NavigationBar context={navigationContext} />}
                     </Navbar.Root>

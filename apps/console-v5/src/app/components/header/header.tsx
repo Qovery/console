@@ -22,7 +22,7 @@ export function Separator() {
   )
 }
 
-export function Header({ compactAssistantPanel = false }: { compactAssistantPanel?: boolean }) {
+export function Header({ assistantPanelTopOffset }: { assistantPanelTopOffset?: number }) {
   const { organizationId = '' } = useParams({ strict: false })
   const isDevopsCopilotEnabled = useFeatureFlagVariantKey('devops-copilot')
   const handleFeedbackClick = useCallback(() => {
@@ -50,7 +50,7 @@ export function Header({ compactAssistantPanel = false }: { compactAssistantPane
               <Button onClick={handleFeedbackClick} variant="outline">
                 Feedback
               </Button>
-              <AssistantTrigger compactTopOffset={compactAssistantPanel} />
+              <AssistantTrigger panelTopOffset={assistantPanelTopOffset} />
               {isDevopsCopilotEnabled && <DevopsCopilotButton />}
               <UserMenu />
             </div>

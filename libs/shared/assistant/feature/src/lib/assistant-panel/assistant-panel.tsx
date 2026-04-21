@@ -16,10 +16,13 @@ import { MintlifyHit } from '../mintlify-hit/mintlify-hit'
 export interface AssistantPanelProps {
   onClose: () => void
   smaller?: boolean
-  compactTopOffset?: boolean
+  topOffset?: number
 }
 
-export function AssistantPanel({ smaller = false, compactTopOffset = false, onClose }: AssistantPanelProps) {
+const DEFAULT_TOP_OFFSET = 'calc(6.75rem + 1px)'
+const SMALLER_TOP_OFFSET = 'calc(6.75rem + 6px)'
+
+export function AssistantPanel({ smaller = false, topOffset: measuredTopOffset, onClose }: AssistantPanelProps) {
   const { data } = useQoveryStatus()
   const { showChat } = useSupportChat()
   const docLinks = useContextualDocLinks()
@@ -43,7 +46,8 @@ export function AssistantPanel({ smaller = false, compactTopOffset = false, onCl
 
   const portalTarget = typeof document !== 'undefined' ? document.body : null
 
-  const topOffset = smaller ? 'calc(6.75rem + 6px)' : compactTopOffset ? 'calc(2.75rem + 1px)' : 'calc(6.75rem + 1px)'
+  const hasMeasuredTopOffset = measuredTopOffset !== undefined
+  const topOffset = hasMeasuredTopOffset ? `${measuredTopOffset}px` : smaller ? SMALLER_TOP_OFFSET : DEFAULT_TOP_OFFSET
   const panelHeight = `calc(100dvh - ${topOffset})`
 
   if (!portalTarget) {
@@ -60,11 +64,11 @@ export function AssistantPanel({ smaller = false, compactTopOffset = false, onCl
           ? { duration: 0 }
           : {
               top: {
-                duration: 0.12,
+                duration: hasMeasuredTopOffset ? 0 : 0.12,
                 ease: [0.2, 0, 0, 1],
               },
               height: {
-                duration: 0.12,
+                duration: hasMeasuredTopOffset ? 0 : 0.12,
                 ease: [0.2, 0, 0, 1],
               },
               x: {

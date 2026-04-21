@@ -7,15 +7,11 @@ import { AssistantPanel } from '../assistant-panel/assistant-panel'
 
 export interface AssistantTriggerProps {
   defaultOpen?: boolean
-  compactTopOffset?: boolean
   renderPanel?: boolean
+  panelTopOffset?: number
 }
 
-export function AssistantTrigger({
-  defaultOpen = false,
-  compactTopOffset = false,
-  renderPanel = true,
-}: AssistantTriggerProps) {
+export function AssistantTrigger({ defaultOpen = false, renderPanel = true, panelTopOffset }: AssistantTriggerProps) {
   const { initChat } = useSupportChat()
   const assistantOpen = useAssistantOpen()
   const setAssistantOpen = useSetAssistantOpen()
@@ -36,11 +32,7 @@ export function AssistantTrigger({
       {renderPanel && (
         <AnimatePresence>
           {assistantOpen && (
-            <AssistantPanel
-              onClose={() => setAssistantOpen(false)}
-              smaller={defaultOpen}
-              compactTopOffset={compactTopOffset}
-            />
+            <AssistantPanel onClose={() => setAssistantOpen(false)} smaller={defaultOpen} topOffset={panelTopOffset} />
           )}
         </AnimatePresence>
       )}
