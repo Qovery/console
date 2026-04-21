@@ -29,7 +29,8 @@ export function Login({ onClickAuthLogin, loading }: ILoginProps) {
 
   const validateAndConnect = () => {
     // Split domain by dots and validate each part
-    const domainWithoutDots = methods.getValues('ssoDomain').trim().replace(/\./g, '')
+    const trimmed = methods.getValues('ssoDomain').trim()
+    const domainWithoutDots = trimmed.includes('.') ? trimmed.substring(0, trimmed.lastIndexOf('.')) : trimmed
 
     // Then trigger the auth login with OIDC
     onClickAuthLogin(domainWithoutDots)
