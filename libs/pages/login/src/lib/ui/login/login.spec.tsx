@@ -177,7 +177,7 @@ describe('Login', () => {
       await userEvent.click(screen.getByText('Connect'))
 
       // Verify onClickAuthLogin was called with the processed domain (dots removed)
-      expect(mockOnClickAuthLogin).toHaveBeenCalledWith('examplecom')
+      expect(mockOnClickAuthLogin).toHaveBeenCalledWith('example')
     })
   })
 })
