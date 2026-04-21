@@ -3,6 +3,7 @@ import {
   type ClusterFeatureKarpenterParametersResponse,
   type ClusterFeatureStringResponse,
   type ClusterRequestFeaturesInner,
+  type KarpenterNodePool,
 } from 'qovery-typescript-axios'
 import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
@@ -11,6 +12,23 @@ import { ClusterMigrationModal, useCluster, useEditCluster } from '@qovery/domai
 import { type ClusterResourcesData, type SCWControlPlaneFeatureType } from '@qovery/shared/interfaces'
 import { useModal } from '@qovery/shared/ui'
 import { PageSettingsResources } from '../../ui/page-settings-resources/page-settings-resources'
+
+// Safety measure: legacy clusters only have the cluster-level `spot_enabled` set. Copy it into
+// each pool so saving the settings page (which resets the cluster-level flag to false) cannot
+// silently flip pools from spot to on-demand.
+export function backfillNodepoolSpot(pools: KarpenterNodePool, clusterSpot: boolean): KarpenterNodePool {
+  // Widen pool types to reach `spot_enabled` — remove once the SDK types expose it on every override.
+  const fill = (pool: Record<string, unknown> | undefined) =>
+    pool ? { ...pool, spot_enabled: (pool['spot_enabled'] as boolean | undefined) ?? clusterSpot } : pool
+
+  return {
+    ...pools,
+    stable_override: fill(pools.stable_override as Record<string, unknown> | undefined) as KarpenterNodePool['stable_override'],
+    default_override: fill(pools.default_override as Record<string, unknown> | undefined) as KarpenterNodePool['default_override'],
+    gpu_override: fill(pools.gpu_override as Record<string, unknown> | undefined) as KarpenterNodePool['gpu_override'],
+    cronjob_override: fill(pools.cronjob_override as Record<string, unknown> | undefined) as KarpenterNodePool['cronjob_override'],
+  }
+}
 
 export const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
   const payload = {
@@ -107,7 +125,10 @@ function SettingsResourcesFeature({ cluster }: SettingsResourcesFeatureProps) {
             disk_iops: karpenterFeature.value.disk_iops,
             disk_throughput: karpenterFeature.value.disk_throughput,
             default_service_architecture: karpenterFeature.value.default_service_architecture,
-            qovery_node_pools: karpenterFeature.value.qovery_node_pools,
+            qovery_node_pools: backfillNodepoolSpot(
+              karpenterFeature.value.qovery_node_pools,
+              karpenterFeature.value.spot_enabled
+            ),
           }
         : {
             enabled: false,
