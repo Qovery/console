@@ -1,7 +1,7 @@
 import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, createContext, useContext, useEffect, useState } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
-import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { type DockerfileSettingsData } from '@qovery/domains/services/feature'
 import { type ServiceTemplateOptionType, serviceTemplates } from '@qovery/domains/services/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
@@ -16,7 +16,6 @@ import {
   SERVICES_CRONJOB_CREATION_URL,
   SERVICES_JOB_CREATION_GENERAL_URL,
   SERVICES_JOB_CREATION_INTRODUCTION_URL,
-  SERVICES_LIFECYCLE_CREATION_URL,
   SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
   SERVICES_NEW_URL,
   SERVICES_URL,
@@ -88,9 +87,12 @@ export const findTemplateData = (slug?: string, option?: string) => {
 }
 
 export function PageJobCreateFeature() {
-  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams()
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams()
   const location = useLocation()
-  const templateData = findTemplateData(slug, option)
+  const [searchParams] = useSearchParams()
+  const template = searchParams.get('template') ?? undefined
+  const option = searchParams.get('option') ?? undefined
+  const templateData = findTemplateData(template, option)
 
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
@@ -128,11 +130,9 @@ export function PageJobCreateFeature() {
       setJobType(ServiceTypeEnum.CRON_JOB)
     } else {
       setJobType(ServiceTypeEnum.LIFECYCLE_JOB)
-      setJobURL(
-        slug && option ? SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug, option) : SERVICES_LIFECYCLE_CREATION_URL
-      )
+      setJobURL(SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL())
     }
-  }, [setJobURL, setJobType, location.pathname, slug, option])
+  }, [setJobURL, setJobType, location.pathname, template, option])
 
   const pathCreate = `${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}`
 
@@ -178,11 +178,11 @@ export function PageJobCreateFeature() {
         auto_deploy: true,
         description: '',
         name: templateData.slug ?? '',
-        serviceType: slug === 'container' ? 'CONTAINER' : 'APPLICATION',
+        serviceType: template === 'container' ? 'CONTAINER' : 'APPLICATION',
         icon_uri: templateData.icon_uri,
       }))
     }
-  }, [templateData, setGeneralData])
+  }, [templateData, template, setGeneralData])
 
   return (
     <JobContainerCreateContext.Provider

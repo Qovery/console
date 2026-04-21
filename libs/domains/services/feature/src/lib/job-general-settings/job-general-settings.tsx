@@ -60,7 +60,6 @@ export function JobGeneralSettings(props: JobGeneralSettingProps) {
           )}
         />
       )}
-
       {watchServiceType && (
         <>
           {watchServiceType === 'APPLICATION' &&

@@ -1,5 +1,5 @@
 import * as Collapsible from '@radix-ui/react-collapsible'
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type JobLifecycleTypeEnum, type Organization } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useState } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
@@ -32,6 +32,7 @@ export interface StepGeneralContentProps {
 export function StepGeneral() {
   const { setGeneralData, generalData, dockerfileForm, setCurrentStep, jobType, templateType, jobURL } =
     useJobCreateContext()
+
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
 
@@ -98,7 +99,8 @@ export function StepGeneral() {
 }
 
 function StepGeneralContent(props: StepGeneralContentProps) {
-  const { organizationId = '', environmentId = '', projectId = '', slug, option } = useParams({ strict: false })
+  const { organizationId = '', environmentId = '', projectId = '' } = useParams({ strict: false })
+  const { template, option } = useSearch({ strict: false })
   const [openExtraAttributes, setOpenExtraAttributes] = useState(false)
   const { openModal, closeModal } = useModal()
   const navigate = useNavigate()
@@ -109,10 +111,10 @@ function StepGeneralContent(props: StepGeneralContentProps) {
   // NOTE: Validation corner case where git settings can be in loading state
   const isGitSettingsValid = watchServiceType === 'APPLICATION' ? watch('branch') : true
 
-  const isTemplate = slug !== undefined
+  const isTemplate = template !== undefined
 
-  const dataTemplate = serviceTemplates.find((service) => service.slug === slug)
-  const dataOptionTemplate = option !== 'current' ? findTemplateData(slug, option) : null
+  const dataTemplate = serviceTemplates.find((service) => service.slug === template)
+  const dataOptionTemplate = option !== 'current' ? findTemplateData(template, option) : null
 
   return (
     <Section>

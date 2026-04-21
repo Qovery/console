@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from '@tanstack/react-router'
+import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type JobLifecycleTypeEnum } from 'qovery-typescript-axios'
 import {
   type Dispatch,
@@ -19,6 +19,7 @@ import {
   type JobResourcesData,
 } from '@qovery/shared/interfaces'
 import { FunnelFlow } from '@qovery/shared/ui'
+import { findTemplateData } from './job-create-utils/job-create-utils'
 
 export interface JobCreateContextInterface {
   currentStep: number
@@ -65,24 +66,44 @@ export const getJobCreationSteps = (jobType: JobType) => [
   { title: 'Ready to install' },
 ]
 
+function getLifecycleType(option?: string): JobLifecycleTypeEnum {
+  if (option?.includes('terraform')) {
+    return 'TERRAFORM'
+  }
+
+  if (option?.includes('cloudformation')) {
+    return 'CLOUDFORMATION'
+  }
+
+  return 'GENERIC'
+}
+
 export interface JobCreationFlowProps extends PropsWithChildren {
   creationFlowUrl: string
 }
 
 export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  // const { template } = useSearch({ strict: false })
+  const { template, option } = useSearch({ strict: false })
   const location = useLocation()
   const navigate = useNavigate()
   const jobCreationSteps = getJobCreationSteps(ServiceTypeEnum.LIFECYCLE_JOB)
 
+  const templateData = findTemplateData(template, option)
   const [currentStep, setCurrentStep] = useState(1)
-  const [generalData, setGeneralData] = useState<JobGeneralData | undefined>()
+  const defaultGeneralData = {
+    name: templateData?.slug ?? '',
+    description: '',
+    icon_uri: templateData?.icon_uri,
+    auto_deploy: true,
+    serviceType: templateData?.type === 'CONTAINER' ? ServiceTypeEnum.CONTAINER : ServiceTypeEnum.APPLICATION,
+  }
+  const [generalData, setGeneralData] = useState<JobGeneralData | undefined>(defaultGeneralData)
   const [jobType, setJobType] = useState<JobType>(
     location.pathname.indexOf('cron') !== -1 ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB
   )
-  const [jobURL, setJobURL] = useState<string>(creationFlowUrl)
-  const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum>()
+  const [jobURL] = useState<string>(creationFlowUrl)
+  const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum>(getLifecycleType(option))
   const [dockerfileDefaultContent, setDockerfileDefaultContent] = useState<string>()
 
   const dockerfileForm = useForm<DockerfileSettingsData>({
@@ -105,13 +126,9 @@ export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowPr
 
   useEffect(() => {
     if (location.pathname.indexOf('cron') !== -1) {
-      // setJobURL(creationFlowUrl)
       setJobType(ServiceTypeEnum.CRON_JOB)
     } else {
       setJobType(ServiceTypeEnum.LIFECYCLE_JOB)
-      // setJobURL(
-      //   slug && option ? SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(slug, option) : SERVICES_LIFECYCLE_CREATION_URL
-      // )
     }
   }, [setJobType, location.pathname])
 

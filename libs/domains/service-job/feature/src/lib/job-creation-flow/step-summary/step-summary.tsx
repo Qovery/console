@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import {
   type JobLifecycleTypeEnum,
@@ -517,7 +517,8 @@ export function StepSummary() {
   const dockerfileData = dockerfileForm.getValues()
 
   const navigate = useNavigate()
-  const { organizationId = '', projectId = '', environmentId = '', slug, option } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const search = useSearch({ strict: false })
   const [loadingCreate, setLoadingCreate] = useState(false)
   const [loadingCreateAndDeploy, setLoadingCreateAndDeploy] = useState(false)
   const { data: containerRegistry } = useContainerRegistry({
@@ -661,12 +662,10 @@ export function StepSummary() {
           setLoadingCreateAndDeploy(false)
         }
 
-        if (slug && option) {
-          posthog.capture('create-service', {
-            selectedServiceType: slug,
-            selectedServiceSubType: option,
-          })
-        }
+        posthog.capture('create-service', {
+          selectedServiceType: jobType,
+          selectedServiceSubType: search.template ?? 'current',
+        })
 
         setLoadingCreate(false)
         navigate({
