@@ -66,7 +66,7 @@ export const getJobCreationSteps = (jobType: JobType) => [
   { title: 'Ready to install' },
 ]
 
-function getLifecycleType(option?: string): JobLifecycleTypeEnum {
+function getLifecycleType(option?: string): JobLifecycleTypeEnum | undefined {
   if (option?.includes('terraform')) {
     return 'TERRAFORM'
   }
@@ -75,7 +75,7 @@ function getLifecycleType(option?: string): JobLifecycleTypeEnum {
     return 'CLOUDFORMATION'
   }
 
-  return 'GENERIC'
+  return undefined
 }
 
 export interface JobCreationFlowProps extends PropsWithChildren {
@@ -91,19 +91,24 @@ export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowPr
 
   const templateData = findTemplateData(template, option)
   const [currentStep, setCurrentStep] = useState(1)
-  const defaultGeneralData = {
-    name: templateData?.slug ?? '',
-    description: '',
-    icon_uri: templateData?.icon_uri,
-    auto_deploy: true,
-    serviceType: templateData?.type === 'CONTAINER' ? ServiceTypeEnum.CONTAINER : ServiceTypeEnum.APPLICATION,
-  }
-  const [generalData, setGeneralData] = useState<JobGeneralData | undefined>(defaultGeneralData)
+  const [generalData, setGeneralData] = useState<JobGeneralData | undefined>(
+    templateData
+      ? {
+          name: templateData.slug ?? '',
+          description: '',
+          icon_uri: templateData.icon_uri,
+          auto_deploy: true,
+          serviceType: templateData.type === 'CONTAINER' ? ServiceTypeEnum.CONTAINER : ServiceTypeEnum.APPLICATION,
+        }
+      : undefined
+  )
   const [jobType, setJobType] = useState<JobType>(
     location.pathname.indexOf('cron') !== -1 ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB
   )
   const [jobURL] = useState<string>(creationFlowUrl)
-  const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum>(getLifecycleType(option))
+  const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum | undefined>(
+    getLifecycleType(option)
+  )
   const [dockerfileDefaultContent, setDockerfileDefaultContent] = useState<string>()
 
   const dockerfileForm = useForm<DockerfileSettingsData>({
