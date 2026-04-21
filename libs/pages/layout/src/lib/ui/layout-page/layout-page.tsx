@@ -28,6 +28,7 @@ import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
 import ConsoleMigrationPrompt from '../console-migration-prompt/console-migration-prompt'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
+import { redirectToUrl } from './layout-page.utils'
 
 const CONSOLE_MIGRATION_PROMPT_CONFIRMED = 'console-migration-prompt-confirmed'
 const CONSOLE_MIGRATION_PROMPT_DISMISSED = 'console-migration-prompt-dismissed'
@@ -157,7 +158,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
     }
 
     if (window.location.href !== newConsoleUrl) {
-      window.location.assign(newConsoleUrl)
+      redirectToUrl(newConsoleUrl)
     }
   }, [newConsoleUrl, isNewConsoleDefault])
 
@@ -170,7 +171,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       target_url: newConsoleUrl,
     })
     setIsNewConsoleDefault(true)
-    window.location.assign(newConsoleUrl)
+    redirectToUrl(newConsoleUrl)
   }
 
   const handleConsoleMigrationDismiss = () => {

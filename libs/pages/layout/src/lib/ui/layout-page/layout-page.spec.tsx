@@ -117,7 +117,7 @@ describe('LayoutPage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Not interested' }))
 
-    expect(posthog.capture).toHaveBeenCalledWith('legacy-console-migration-prompt-dismissed', {
+    expect(posthog.capture).toHaveBeenCalledWith('console-migration-prompt-dismissed', {
       target_url: 'https://new-console.qovery.com/organization/123',
     })
   })
@@ -127,7 +127,7 @@ describe('LayoutPage', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Try now' }))
 
-    expect(posthog.capture).toHaveBeenCalledWith('legacy-console-migration-prompt-confirmed', {
+    expect(posthog.capture).toHaveBeenCalledWith('console-migration-prompt-confirmed', {
       target_url: 'https://new-console.qovery.com/organization/123',
     })
     expect(redirectToUrl).toHaveBeenCalledWith('https://new-console.qovery.com/organization/123')
