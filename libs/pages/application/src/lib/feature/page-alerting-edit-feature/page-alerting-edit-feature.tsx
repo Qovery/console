@@ -143,7 +143,7 @@ export function PageAlertingEditFeature() {
       .with('hpa_limit', () => 'Auto-scaling reached the maximum number of instances')
       .otherwise(() => generateConditionDescription(func, operator, threshold, unit, updatedAlert.for_duration))
 
-    if (updatedAlert && environment && containerName && ingressName) {
+    if (updatedAlert && environment && containerName && (ingressName || httpRouteName)) {
       try {
         await editAlertRule({
           alertRuleId: alertId,
