@@ -251,7 +251,8 @@ function RouteComponent() {
   }
 
   const validateAndConnect = () => {
-    const domainWithoutDots = methods.getValues('ssoDomain').trim().replace(/\./g, '')
+    const trimmed = methods.getValues('ssoDomain').trim()
+    const domainWithoutDots = trimmed.includes('.') ? trimmed.substring(0, trimmed.lastIndexOf('.')) : trimmed
     onClickAuthLogin(domainWithoutDots, 'saml_sso')
   }
 

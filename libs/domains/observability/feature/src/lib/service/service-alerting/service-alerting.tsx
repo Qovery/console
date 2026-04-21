@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
-import { type PropsWithChildren } from 'react'
-import { useService } from '@qovery/domains/services/feature'
-import { Button, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
+import { type PropsWithChildren, useMemo } from 'react'
+import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
+import { Button, Heading, Icon, Section, Tooltip, useModal } from '@qovery/shared/ui'
 import { AlertRulesOverview } from '../../alerting/alert-rules-overview/alert-rules-overview'
 import { CreateKeyAlertsModal } from '../../alerting/create-key-alerts-modal/create-key-alerts-modal'
 
@@ -9,6 +9,10 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { openModal, closeModal } = useModal()
+  const { data: deploymentStatus } = useDeploymentStatus({
+    environmentId: service?.environment?.id,
+    serviceId: service?.id,
+  })
 
   const createKeyAlertsModal = () => {
     openModal({
@@ -26,15 +30,33 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
     })
   }
 
+  const canCreateAlerts = useMemo(() => {
+    return (
+      deploymentStatus?.service_deployment_status !== undefined &&
+      deploymentStatus?.service_deployment_status !== 'NEVER_DEPLOYED'
+    )
+  }, [deploymentStatus])
+
   return (
     <Section className="w-full px-8 py-6 pb-20">
       <div className="mb-8 border-b border-neutral">
         <div className="flex w-full items-center justify-between pb-5">
           <Heading level={1}>Alert rules</Heading>
-          <Button variant="outline" color="neutral" size="md" className="gap-1.5" onClick={createKeyAlertsModal}>
-            <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
-            New alert
-          </Button>
+          <Tooltip content="You need to deploy your service to create alerts" disabled={canCreateAlerts}>
+            <div>
+              <Button
+                variant="outline"
+                color="neutral"
+                size="md"
+                className="gap-1.5"
+                onClick={createKeyAlertsModal}
+                disabled={!canCreateAlerts}
+              >
+                <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
+                New alert
+              </Button>
+            </div>
+          </Tooltip>
         </div>
       </div>
       <AlertRulesOverview organizationId={organizationId} service={service} onCreateKeyAlerts={createKeyAlertsModal}>

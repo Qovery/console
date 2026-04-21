@@ -180,7 +180,7 @@ export function AlertingCreationFlow({
       service?.min_running_instances !== service?.max_running_instances
 
     if (!containerName) return
-    if (hasPublicPort && !ingressName) return
+    if (hasPublicPort && !(ingressName || httpRouteName)) return
     if (hasAutoscaling && !hpaName) return
 
     try {

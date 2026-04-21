@@ -4,6 +4,7 @@ import axios from 'axios'
 import { useEffect } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
+import { useAuth } from '@qovery/shared/auth'
 import { getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
@@ -11,6 +12,7 @@ import { useAuthInterceptor } from '@qovery/shared/utils'
 import { consumePendingReturnTo } from '../../auth/auth0'
 
 type Auth0CallbackSearch = {
+  connection?: string
   error?: string
   error_description?: string
 }
@@ -18,13 +20,15 @@ type Auth0CallbackSearch = {
 export const Route = createFileRoute('/login/auth0-callback')({
   component: RouteComponent,
   validateSearch: (search: Record<string, unknown>): Auth0CallbackSearch => ({
+    connection: (search.connection as string) || undefined,
     error: (search.error as string) || undefined,
     error_description: (search.error_description as string) || undefined,
   }),
 })
 
-function useRedirectIfLogged() {
+function useRedirectIfLogged(connection?: string) {
   const navigate = useNavigate()
+  const { authLogin } = useAuth()
   const { isAuthenticated } = useAuth0()
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
     enabled: isAuthenticated,
@@ -32,6 +36,17 @@ function useRedirectIfLogged() {
   const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
 
   useEffect(() => {
+    if (connection && !isAuthenticated) {
+      const trimmed = connection.trim()
+      const domainWithoutDots = trimmed.includes('.') ? trimmed.substring(0, trimmed.lastIndexOf('.')) : trimmed
+
+      authLogin(domainWithoutDots).catch((error) => {
+        console.error('Auto-connection failed:', error)
+      })
+
+      return
+    }
+
     async function fetchData() {
       if (!isFetchedOrganizations) {
         return
@@ -54,13 +69,13 @@ function useRedirectIfLogged() {
     if (isAuthenticated) {
       fetchData()
     }
-  }, [navigate, isAuthenticated, organizations, isFetchedOrganizations, refetchUserSignUp])
+  }, [authLogin, connection, navigate, isAuthenticated, organizations, isFetchedOrganizations, refetchUserSignUp])
 }
 
 function PageRedirectLogin() {
-  const { error, error_description } = Route.useSearch()
+  const { connection, error, error_description } = Route.useSearch()
   useAuthInterceptor(axios, QOVERY_API)
-  useRedirectIfLogged()
+  useRedirectIfLogged(connection)
 
   if (error != null) {
     const errorDescription = error_description || 'No description available'

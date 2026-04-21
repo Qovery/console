@@ -4,6 +4,7 @@ import type { AlertRuleResponse, AlertRuleSource, AlertRuleState } from 'qovery-
 import { type PropsWithChildren, type ReactNode, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
+import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import {
   Badge,
   Button,
@@ -95,6 +96,10 @@ export function AlertRulesOverview({
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const navigate = useNavigate()
+  const { data: deploymentStatus } = useDeploymentStatus({
+    environmentId: service?.environment?.id,
+    serviceId: service?.id,
+  })
 
   const { mutate: deleteAlertRule } = useDeleteAlertRule({ organizationId })
 
@@ -149,6 +154,13 @@ export function AlertRulesOverview({
     () => selectedAlertRuleIds.size > 0 && selectedAlertRuleIds.size < selectableAlertRules.length,
     [selectedAlertRuleIds.size, selectableAlertRules.length]
   )
+
+  const canCreateAlerts = useMemo(() => {
+    return (
+      deploymentStatus?.service_deployment_status !== undefined &&
+      deploymentStatus?.service_deployment_status !== 'NEVER_DEPLOYED'
+    )
+  }, [deploymentStatus])
 
   const toggleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -241,10 +253,14 @@ export function AlertRulesOverview({
         )}
       </p>
       {onCreateKeyAlerts && (
-        <Button size="md" className="gap-1.5" onClick={onCreateKeyAlerts}>
-          <Icon iconName="plus-large" className="text-xs" />
-          New alert
-        </Button>
+        <Tooltip content="You need to deploy your service to create alerts" disabled={canCreateAlerts}>
+          <div>
+            <Button size="md" className="gap-1.5" onClick={onCreateKeyAlerts} disabled={!canCreateAlerts}>
+              <Icon iconName="plus-large" className="text-xs" />
+              New alert
+            </Button>
+          </div>
+        </Tooltip>
       )}
     </div>
   ) : (

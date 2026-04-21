@@ -198,8 +198,9 @@ export function InstanceHTTPErrorsChart({
             <Chart.LegendContent
               selectedKeys={legendSelectedKeys}
               formatter={(value) => {
-                const { status } = JSON.parse(value)
-                return `status: "${status}"` as string
+                const { status, envoy_response_code } = JSON.parse(value)
+                const s = status ?? envoy_response_code
+                return `status: "${s}"`
               }}
               {...props}
             />
