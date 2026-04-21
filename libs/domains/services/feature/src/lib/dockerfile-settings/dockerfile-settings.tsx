@@ -185,7 +185,9 @@ export function DockerfileSettings({
                         type="button"
                         size="xs"
                         variant="surface"
+                        iconOnly
                         onClick={() => openModalDockerfileRaw(field)}
+                        className="hover:text-neutral"
                       >
                         <Icon iconName="pen" />
                       </Button>
