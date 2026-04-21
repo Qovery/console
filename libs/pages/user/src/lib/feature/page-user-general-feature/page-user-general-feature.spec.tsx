@@ -1,9 +1,16 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import * as domainUserFeature from '@qovery/shared/iam/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import PageUserGeneralFeature from './page-user-general-feature'
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => false),
+}))
+
 const useEditUserAccountMockSpy = jest.spyOn(domainUserFeature, 'useEditUserAccount') as jest.Mock
 const useUserAccountMockSky = jest.spyOn(domainUserFeature, 'useUserAccount') as jest.Mock
+const useConsoleRedirectPreferenceMockSpy = jest.spyOn(domainUserFeature, 'useConsoleRedirectPreference') as jest.Mock
+const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
 
 describe('PageUserGeneral', () => {
   beforeEach(() => {
@@ -17,6 +24,11 @@ describe('PageUserGeneral', () => {
         communication_email: '',
       },
     })
+    useConsoleRedirectPreferenceMockSpy.mockReturnValue({
+      isNewConsoleDefault: false,
+      setIsNewConsoleDefault: jest.fn(),
+    })
+    useFeatureFlagEnabledMock.mockReturnValue(false)
   })
 
   it('should render successfully', () => {
@@ -41,5 +53,13 @@ describe('PageUserGeneral', () => {
       last_name: 'test',
       communication_email: 'test2@test.com',
     })
+  })
+
+  it('should render the console toggle only when the feature flag is enabled', () => {
+    useFeatureFlagEnabledMock.mockReturnValue(true)
+
+    renderWithProviders(<PageUserGeneralFeature />)
+
+    expect(screen.getByText('Use the new console by default')).toBeInTheDocument()
   })
 })
