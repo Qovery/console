@@ -88,7 +88,7 @@ export function useConsoleRedirectPreference() {
     setPreferredConsoleState(preference)
   }, [])
 
-  const setUseNewConsoleByDefault = useCallback(
+  const setIsNewConsoleDefault = useCallback(
     (value: boolean) => {
       setPreferredConsole(value ? 'new' : 'legacy')
     },
@@ -97,8 +97,8 @@ export function useConsoleRedirectPreference() {
 
   return {
     preferredConsole,
-    useNewConsoleByDefault: preferredConsole === 'new',
+    isNewConsoleDefault: preferredConsole === 'new',
     setPreferredConsole,
-    setUseNewConsoleByDefault,
+    setIsNewConsoleDefault,
   }
 }

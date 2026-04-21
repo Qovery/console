@@ -25,8 +25,8 @@ describe('PageUserGeneral', () => {
       },
     })
     useConsoleRedirectPreferenceMockSpy.mockReturnValue({
-      useNewConsoleByDefault: false,
-      setUseNewConsoleByDefault: jest.fn(),
+      isNewConsoleDefault: false,
+      setIsNewConsoleDefault: jest.fn(),
     })
     useFeatureFlagEnabledMock.mockReturnValue(false)
   })

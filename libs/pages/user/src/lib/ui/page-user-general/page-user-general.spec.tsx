@@ -11,8 +11,8 @@ describe('PageUserGeneral', () => {
     accountOptions: [],
     picture: '/',
     showNewConsoleToggle: true,
-    useNewConsoleByDefault: false,
-    onUseNewConsoleByDefaultChange: jest.fn(),
+    isNewConsoleDefault: false,
+    onNewConsoleDefaultChange: jest.fn(),
   }
 
   const defaultValues = {
@@ -63,14 +63,14 @@ describe('PageUserGeneral', () => {
   })
 
   it('should toggle the console preference', async () => {
-    const onUseNewConsoleByDefaultChange = jest.fn()
+    const onNewConsoleDefaultChange = jest.fn()
 
     const { userEvent } = renderWithProviders(
       wrapWithReactHookForm(
         <PageUserGeneral
           {...props}
-          onUseNewConsoleByDefaultChange={onUseNewConsoleByDefaultChange}
-          useNewConsoleByDefault={false}
+          onNewConsoleDefaultChange={onNewConsoleDefaultChange}
+          isNewConsoleDefault={false}
         />,
         {
           defaultValues: defaultValues,
@@ -80,7 +80,7 @@ describe('PageUserGeneral', () => {
 
     await userEvent.click(screen.getByText('Use the new console by default'))
 
-    expect(onUseNewConsoleByDefaultChange).toHaveBeenCalledWith(true)
+    expect(onNewConsoleDefaultChange).toHaveBeenCalledWith(true)
   })
 
   it('should not render the console preference toggle when disabled', () => {

@@ -13,7 +13,7 @@ export function PageUserGeneralFeature() {
   const { user: userToken } = useAuth()
   const { data: user } = useUserAccount()
   const { mutateAsync, isLoading: loading } = useEditUserAccount()
-  const { useNewConsoleByDefault, setUseNewConsoleByDefault } = useConsoleRedirectPreference()
+  const { isNewConsoleDefault, setIsNewConsoleDefault } = useConsoleRedirectPreference()
   const isNewNavigationActivationEnabled = Boolean(useFeatureFlagEnabled('new-navigation-activation'))
 
   const methods = useForm({
@@ -53,8 +53,8 @@ export function PageUserGeneralFeature() {
         picture={user?.profile_picture_url as string}
         accountOptions={accountOptions}
         showNewConsoleToggle={isNewNavigationActivationEnabled}
-        useNewConsoleByDefault={useNewConsoleByDefault}
-        onUseNewConsoleByDefaultChange={setUseNewConsoleByDefault}
+        isNewConsoleDefault={isNewConsoleDefault}
+        onNewConsoleDefaultChange={setIsNewConsoleDefault}
       />
     </FormProvider>
   )

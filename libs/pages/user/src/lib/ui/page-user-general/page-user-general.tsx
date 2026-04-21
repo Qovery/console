@@ -9,8 +9,8 @@ export interface PageUserGeneralProps {
   picture: string
   accountOptions: Value[]
   showNewConsoleToggle: boolean
-  useNewConsoleByDefault: boolean
-  onUseNewConsoleByDefaultChange: (value: boolean) => void
+  isNewConsoleDefault: boolean
+  onNewConsoleDefaultChange: (value: boolean) => void
 }
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -22,8 +22,8 @@ export function PageUserGeneral({
   picture,
   accountOptions,
   showNewConsoleToggle,
-  useNewConsoleByDefault,
-  onUseNewConsoleByDefaultChange,
+  isNewConsoleDefault,
+  onNewConsoleDefaultChange,
 }: PageUserGeneralProps) {
   const { control, formState, watch } = useFormContext()
 
@@ -126,8 +126,8 @@ export function PageUserGeneral({
             {showNewConsoleToggle && (
               <InputToggle
                 className="mt-4"
-                value={useNewConsoleByDefault}
-                onChange={onUseNewConsoleByDefaultChange}
+                value={isNewConsoleDefault}
+                onChange={onNewConsoleDefaultChange}
                 title="Use the new console by default"
                 description="When enabled, visits to the legacy console will automatically redirect you to the new console."
                 forceAlignTop

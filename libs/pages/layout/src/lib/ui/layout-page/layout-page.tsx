@@ -64,7 +64,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
-  const { useNewConsoleByDefault, setUseNewConsoleByDefault } = useConsoleRedirectPreference()
+  const { isNewConsoleDefault, setIsNewConsoleDefault } = useConsoleRedirectPreference()
   const isNewNavigationActivationEnabled = Boolean(useFeatureFlagEnabled('new-navigation-activation'))
   const isAlertingFeatureFlagEnabled = useFeatureFlagVariantKey('alerting')
   const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
@@ -144,25 +144,25 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   }, [deployingClusters])
 
   const shouldShowConsoleMigrationBanner = Boolean(
-    isNewNavigationActivationEnabled && newConsoleUrl && !useNewConsoleByDefault && !isConsoleMigrationBannerDismissed
+    isNewNavigationActivationEnabled && newConsoleUrl && !isNewConsoleDefault && !isConsoleMigrationBannerDismissed
   )
 
   useEffect(() => {
-    if (!useNewConsoleByDefault || shouldBypassLegacyConsoleRedirect() || !newConsoleUrl) {
+    if (!isNewConsoleDefault || shouldBypassLegacyConsoleRedirect() || !newConsoleUrl) {
       return
     }
 
     if (window.location.href !== newConsoleUrl) {
       window.location.assign(newConsoleUrl)
     }
-  }, [newConsoleUrl, useNewConsoleByDefault])
+  }, [newConsoleUrl, isNewConsoleDefault])
 
   const handleConsoleMigration = () => {
     if (!newConsoleUrl) {
       return
     }
 
-    setUseNewConsoleByDefault(true)
+    setIsNewConsoleDefault(true)
     window.location.assign(newConsoleUrl)
   }
 
