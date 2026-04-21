@@ -54,7 +54,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           </Tooltip>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
-              {pluralize(overview.services_overview.service_count, 'service')}
+              {overview.services_overview.service_count} {pluralize(overview.services_overview.service_count, 'service')}
             </span>
             <EnvironmentStateChip mode="running" environmentId={overview.id} />
           </div>
