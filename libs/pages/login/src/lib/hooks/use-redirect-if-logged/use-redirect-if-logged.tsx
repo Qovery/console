@@ -35,7 +35,8 @@ export function useRedirectIfLogged() {
   useEffect(() => {
     const connectionParam = searchParams.get('connection')
     if (connectionParam && !isAuthenticated) {
-      const domainWithoutDots = connectionParam.trim().replace(/\./g, '')
+      const trimmed = connectionParam.trim()
+      const domainWithoutDots = trimmed.includes('.') ? trimmed.substring(0, trimmed.lastIndexOf('.')) : trimmed
 
       // Trigger the auth login with the domain from URL parameter
       authLogin(domainWithoutDots).catch((error) => {
