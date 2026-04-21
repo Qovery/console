@@ -9,16 +9,19 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useJobCreateContext } from '../job-creation-flow'
 
 export function StepDockerfile() {
-  const { dockerfileForm, setCurrentStep, generalData, dockerfileDefaultContent, templateType } = useJobCreateContext()
+  const { dockerfileForm, setCurrentStep, generalData, dockerfileDefaultContent, templateType, jobURL } =
+    useJobCreateContext()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
 
-  //   Is that needed?
-  //   useEffect(() => {
-  //     !generalData?.name &&
-  //       jobURL &&
-  //       navigate(`${SERVICES_URL(organizationId, projectId, environmentId)}${jobURL}` + SERVICES_JOB_CREATION_GENERAL_URL)
-  //   }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
+  useEffect(() => {
+    !generalData?.name &&
+      jobURL &&
+      navigate({
+        to: jobURL + '/general',
+        params: { organizationId, projectId, environmentId },
+      })
+  }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
 
   const { mutateAsync: mutateCheckDockerfile, isLoading: isLoadingCheckDockerfile } = useCheckDockerfile()
 
