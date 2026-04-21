@@ -1,4 +1,5 @@
 import * as ToggleGroup from '@radix-ui/react-toggle-group'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useState } from 'react'
 import { useAuth } from '@qovery/shared/auth'
 import { UserSettingsModal, useUserAccount } from '@qovery/shared/iam/feature'
@@ -16,6 +17,7 @@ export function UserMenu() {
   const { theme, setTheme } = useTheme()
   const { authLogout, user: userToken } = useAuth()
   const { data: user } = useUserAccount()
+  const isNewNavigationActivationEnabled = Boolean(useFeatureFlagEnabled('new-navigation-activation'))
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const { openModal } = useModal()
 
@@ -54,7 +56,11 @@ export function UserMenu() {
 
         <DropdownMenu.Separator />
 
-        <DropdownMenu.Item onClick={() => openModal({ content: <UserSettingsModal /> })}>
+        <DropdownMenu.Item
+          onClick={() =>
+            openModal({ content: <UserSettingsModal showConsolePreferenceToggle={isNewNavigationActivationEnabled} /> })
+          }
+        >
           Profile settings
         </DropdownMenu.Item>
 

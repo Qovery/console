@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { UserSettingsModal } from './user-settings-modal'
+import { UserSettingsModal, type UserSettingsModalProps } from './user-settings-modal'
 
 const mockUser = {
   id: '1',
@@ -34,16 +34,18 @@ jest.mock('../use-user-edit-account/use-user-edit-account', () => ({
 }))
 
 describe('UserSettingsModal', () => {
-  const renderUserSettingsModal = () =>
+  const renderUserSettingsModal = (props?: UserSettingsModalProps) =>
     renderWithProviders(
       <Dialog.Root open>
         <Dialog.Content>
-          <UserSettingsModal />
+          <UserSettingsModal {...props} />
         </Dialog.Content>
       </Dialog.Root>
     )
 
   beforeEach(() => {
+    localStorage.clear()
+    document.cookie = 'qovery-console-preference=; Max-Age=0; Path=/'
     mockMutateAsync.mockResolvedValue(undefined)
   })
 
@@ -57,7 +59,28 @@ describe('UserSettingsModal', () => {
     expect(screen.getByLabelText(/communication email/i)).toHaveValue('john@example.com')
     expect(screen.getByLabelText(/account email/i)).toBeInTheDocument()
     expect(screen.getByLabelText(/timezone/i)).toBeInTheDocument()
+    expect(screen.queryByText('Use legacy interface')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
+  })
+
+  it('should render the console preference toggle when enabled', async () => {
+    localStorage.setItem('qovery-console-preference', 'new')
+
+    renderUserSettingsModal({ showConsolePreferenceToggle: true })
+    await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
+
+    expect(screen.getByText('Use legacy interface')).toBeInTheDocument()
+    expect(screen.getByText(/redirected to the legacy console interface/i)).toBeInTheDocument()
+  })
+
+  it('should update the console preference from the toggle', async () => {
+    localStorage.setItem('qovery-console-preference', 'new')
+    const { userEvent } = renderUserSettingsModal({ showConsolePreferenceToggle: true })
+    await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
+
+    await userEvent.click(screen.getByText('Use legacy interface'))
+
+    expect(localStorage.getItem('qovery-console-preference')).toBe('legacy')
   })
 
   it('should call mutateAsync with updated email on submit', async () => {
