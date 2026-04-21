@@ -7,9 +7,10 @@ import { useProject } from '@qovery/domains/projects/feature'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
-import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
+import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
+import { NotFoundPage } from '../../../app/components/not-found-page/not-found-page'
 import { OrganizationBanners } from '../../../app/components/organization-banners/organization-banners'
 import { type FileRouteTypes } from '../../../routeTree.gen'
 
@@ -452,11 +453,23 @@ function OrganizationRoute() {
   const { addToRecentServices } = useRecentServices({ organizationId })
   const { data: project } = useProject({ organizationId, projectId })
   const { data: environment } = useEnvironment({ environmentId })
-  const { data: service } = useServiceSummary({
+  const { data: service, isFetched: isServiceSummaryFetched } = useServiceSummary({
     environmentId,
     serviceId,
     enabled: Boolean(environmentId) && Boolean(serviceId),
   })
+  const isServiceNotFound = Boolean(environmentId) && Boolean(serviceId) && isServiceSummaryFetched && !service
+  const serviceNotFoundAction = (
+    <Link
+      as="button"
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
+      params={{ organizationId, projectId, environmentId }}
+      size="md"
+      className="mt-6 gap-2"
+    >
+      Go to environment
+    </Link>
+  )
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
   const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
@@ -507,7 +520,17 @@ function OrganizationRoute() {
           sendMessageRef,
         }}
       >
-        <Outlet />
+        {isServiceNotFound ? (
+          <NotFoundPage
+            action={serviceNotFoundAction}
+            data={{
+              title: 'Service not found',
+              message: "This service doesn't exist anymore, or the URL is incorrect.",
+            }}
+          />
+        ) : (
+          <Outlet />
+        )}
         <DevopsCopilotTrigger />
       </DevopsCopilotContext.Provider>
     )
@@ -537,7 +560,17 @@ function OrganizationRoute() {
                 </div>
 
                 <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
-                  <Outlet />
+                  {isServiceNotFound ? (
+                    <NotFoundPage
+                      action={serviceNotFoundAction}
+                      data={{
+                        title: 'Service not found',
+                        message: "This service doesn't exist anymore, or the URL is incorrect.",
+                      }}
+                    />
+                  ) : (
+                    <Outlet />
+                  )}
                 </div>
               </>
             </Suspense>

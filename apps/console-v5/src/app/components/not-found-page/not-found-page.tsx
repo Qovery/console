@@ -1,10 +1,12 @@
 import { type NotFoundRouteProps } from '@tanstack/react-router'
+import { type ReactNode } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { Heading, Icon, Link, LogoBrandedIcon, LogoIcon, Section } from '@qovery/shared/ui'
+import { Heading, Link, LogoIcon, Section } from '@qovery/shared/ui'
 import { type SerializedError } from '@qovery/shared/utils'
 import { useAuth0Context } from '../../../auth/auth0'
 
-type NotFoundPageProps = NotFoundRouteProps & {
+type NotFoundPageProps = Partial<NotFoundRouteProps> & {
+  action?: ReactNode
   error?: unknown
 }
 
@@ -17,7 +19,7 @@ function isNotFoundPageData(data: unknown): data is NotFoundPageData {
   return typeof data === 'object' && data !== null
 }
 
-export function NotFoundPage({ data, error }: NotFoundPageProps) {
+export function NotFoundPage({ action, data, error }: NotFoundPageProps) {
   const errorTyped = error as SerializedError | undefined
   const { isAuthenticated } = useAuth0Context()
   const { data: organizations = [] } = useOrganizations({ enabled: isAuthenticated })
@@ -32,6 +34,25 @@ export function NotFoundPage({ data, error }: NotFoundPageProps) {
     pageData?.message ??
     errorTyped?.message ??
     "The page you're looking for doesn't exist anymore, or the URL is incorrect."
+  const defaultAction = selectedOrganization ? (
+    <Link
+      as="button"
+      to="/organization/$organizationId/overview"
+      params={{ organizationId: selectedOrganization.id }}
+      size="md"
+      className="mt-6 gap-2"
+    >
+      Go to organization
+    </Link>
+  ) : isAuthenticated ? (
+    <Link as="button" to="/" size="md" className="mt-6 gap-2">
+      Go to home
+    </Link>
+  ) : (
+    <Link as="button" to="/login" search={{ redirect: '/' }} size="md" className="mt-6 gap-2">
+      Go to login
+    </Link>
+  )
 
   return (
     <Section className="flex min-h-[70vh] w-full flex-1 items-center justify-center">
@@ -41,25 +62,7 @@ export function NotFoundPage({ data, error }: NotFoundPageProps) {
 
         <p className="mt-3 max-w-xs text-sm text-neutral-subtle">{message}</p>
 
-        {selectedOrganization ? (
-          <Link
-            as="button"
-            to="/organization/$organizationId/overview"
-            params={{ organizationId: selectedOrganization.id }}
-            size="md"
-            className="mt-6 gap-2"
-          >
-            Go to organization
-          </Link>
-        ) : isAuthenticated ? (
-          <Link as="button" to="/" size="md" className="mt-6 gap-2">
-            Go to home
-          </Link>
-        ) : (
-          <Link as="button" to="/login" search={{ redirect: '/' }} size="md" className="mt-6 gap-2">
-            Go to login
-          </Link>
-        )}
+        {action ?? defaultAction}
       </div>
     </Section>
   )
