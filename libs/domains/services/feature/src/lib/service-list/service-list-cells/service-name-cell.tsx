@@ -1,4 +1,6 @@
+import { Link } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
+import { type KeyboardEvent, type MouseEvent } from 'react'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Button, Icon, Tooltip } from '@qovery/shared/ui'
@@ -8,6 +10,16 @@ import ServiceLinksPopover from '../../service-links-popover/service-links-popov
 import ServiceTemplateIndicator from '../../service-template-indicator/service-template-indicator'
 
 export function ServiceNameCell({ service, environment }: { service: AnyService; environment: Environment }) {
+  const serviceLinkParams = {
+    organizationId: environment.organization.id,
+    projectId: environment.project.id,
+    environmentId: environment.id,
+    serviceId: service.id,
+  }
+  const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
+    event.stopPropagation()
+  }
+
   return (
     <div className="flex h-full min-w-0 max-w-full items-center justify-between overflow-hidden">
       <div className="flex h-full min-w-0 flex-1 items-center gap-3">
@@ -20,9 +32,17 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
               return (
                 <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
                   <span className="flex min-w-0 items-center gap-1.5">
-                    <Tooltip content={db.name}>
-                      <span className="block min-w-0 truncate">{db.name}</span>
-                    </Tooltip>
+                    <Link
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                      params={serviceLinkParams}
+                      onClick={stopRowNavigation}
+                      onKeyDown={stopRowNavigation}
+                      className="group min-w-0"
+                    >
+                      <Tooltip content={db.name}>
+                        <span className="block min-w-0 truncate group-hover:underline">{db.name}</span>
+                      </Tooltip>
+                    </Link>
                   </span>
                 </span>
               )
@@ -49,9 +69,17 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
               return (
                 <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
                   <span className="flex min-w-0 items-center gap-1.5">
-                    <Tooltip content={service.name}>
-                      <span className="block min-w-0 flex-1 truncate">{service.name}</span>
-                    </Tooltip>
+                    <Link
+                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                      params={serviceLinkParams}
+                      onClick={stopRowNavigation}
+                      onKeyDown={stopRowNavigation}
+                      className="group min-w-0"
+                    >
+                      <Tooltip content={service.name}>
+                        <span className="block min-w-0 truncate group-hover:underline">{service.name}</span>
+                      </Tooltip>
+                    </Link>
                     <Tooltip content={schedule}>
                       <span className="shrink-0 truncate text-sm font-normal text-neutral-subtle">
                         <Icon iconName="info-circle" iconStyle="regular" />
@@ -63,9 +91,17 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
             })
             .otherwise(() => (
               <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
-                <Tooltip content={service.name}>
-                  <span className="block min-w-0 truncate">{service.name}</span>
-                </Tooltip>
+                <Link
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                  params={serviceLinkParams}
+                  onClick={stopRowNavigation}
+                  onKeyDown={stopRowNavigation}
+                  className="group min-w-0"
+                >
+                  <Tooltip content={service.name}>
+                    <span className="block min-w-0 truncate group-hover:underline">{service.name}</span>
+                  </Tooltip>
+                </Link>
               </span>
             ))}
         </div>

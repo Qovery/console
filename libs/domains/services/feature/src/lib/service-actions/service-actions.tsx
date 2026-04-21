@@ -891,7 +891,9 @@ export function ServiceActions({
   const isHeaderButton = ['header', 'deploy-dropdown-only'].includes(variant)
 
   if (!service || !deploymentStatus)
-    return <Skeleton height={variant === 'default' ? 26 : 28} width={isHeaderButton ? 96 : 67} />
+    return (
+      <Skeleton height={variant === 'default' ? 26 : 28} width={variant === 'default' || isHeaderButton ? 96 : 67} />
+    )
 
   return (
     <div className={twMerge('flex items-center gap-1.5', isHeaderButton && 'flex-row-reverse gap-2')}>

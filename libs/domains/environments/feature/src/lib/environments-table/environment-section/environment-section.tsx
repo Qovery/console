@@ -49,9 +49,17 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
     >
       <Table.Cell className={twMerge(cellClassName, 'border-none p-0')}>
         <div className="flex h-full min-w-0 flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
-          <Tooltip content={overview.name}>
-            <span className="block min-w-0 flex-1 truncate text-sm font-medium">{overview.name}</span>
-          </Tooltip>
+          <Link
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+            params={{ organizationId, projectId, environmentId: overview.id }}
+            onClick={stopRowNavigation}
+            onKeyDown={stopRowNavigation}
+            className="group min-w-0 max-w-full"
+          >
+            <Tooltip content={overview.name}>
+              <span className="block min-w-0 truncate text-sm font-medium group-hover:underline">{overview.name}</span>
+            </Tooltip>
+          </Link>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
               {pluralize(overview.services_overview.service_count, 'service')}
