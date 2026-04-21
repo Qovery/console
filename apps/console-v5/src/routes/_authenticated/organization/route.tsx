@@ -5,11 +5,10 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
-import { AssistantProvider } from '@qovery/shared/assistant/feature'
+import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
-import { useStickyBottomOffset } from '@qovery/shared/util-hooks'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
 import { NotFoundPage } from '../../../app/components/not-found-page/not-found-page'
@@ -463,7 +462,7 @@ function OrganizationRoute() {
     enabled: Boolean(environmentId) && Boolean(serviceId),
   })
   const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [setNavbarRef, assistantPanelTopOffset] = useStickyBottomOffset(scrollContainerRef)
+  const assistantAnchorRef = useRef<HTMLDivElement>(null)
   const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
   const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
 
@@ -509,10 +508,49 @@ function OrganizationRoute() {
     }
   }, [service?.id, project?.id, environment?.id])
 
-  // Reset scroll on route change; the sticky-bottom hook reacts via its scroll listener.
   useLayoutEffect(() => {
     scrollContainerRef.current?.scrollTo({ top: 0 })
   }, [location.pathname])
+
+  /**
+   * Sync the assistant panel's available height with the sticky wrapper's actual top in the viewport.
+   *
+   * CSS sticky handles the panel's top position perfectly (no JS for that), but its height cannot
+   * be expressed in pure CSS because it depends on the wrapper's current top in viewport — which
+   * varies while the header is scrolling away. We only write a CSS variable on the anchor element
+   * so downstream styles stay declarative and React does not re-render on every scroll frame.
+   *
+   * We intentionally do not throttle with rAF here: the scroll handler must run in the same frame
+   * as the browser's own scroll commit, otherwise the height lags one frame behind the sticky top
+   * and causes a visible judder. getBoundingClientRect + setProperty are cheap and the handler is
+   * passive, so this stays well within a frame budget.
+   */
+  useLayoutEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    const anchor = assistantAnchorRef.current
+
+    if (!scrollContainer || !anchor) {
+      return
+    }
+
+    const update = () => {
+      const top = Math.max(0, anchor.getBoundingClientRect().top)
+      anchor.style.setProperty('--assistant-panel-top', `${top}px`)
+    }
+
+    const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update)
+    resizeObserver?.observe(scrollContainer)
+
+    scrollContainer.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    update()
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+      resizeObserver?.disconnect()
+    }
+  }, [])
 
   if (bypassLayout) {
     return (
@@ -552,20 +590,33 @@ function OrganizationRoute() {
       <AssistantProvider>
         <div className="bg-background flex h-dvh w-full flex-col">
           {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
-          <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
+          <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
             <ErrorBoundary>
               <OrganizationBanners />
-              <Header assistantPanelTopOffset={assistantPanelTopOffset} />
+              <Header />
 
               <Suspense fallback={<MainLoader />}>
                 <>
-                  <div
-                    ref={setNavbarRef}
-                    className="z-header border-neutral bg-background-secondary sticky top-0 border-b px-4"
-                  >
+                  <div className="z-header border-neutral bg-background-secondary sticky top-0 border-b px-4">
                     <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
                       {navigationContext && <NavigationBar context={navigationContext} />}
                     </Navbar.Root>
+                  </div>
+
+                  <div
+                    ref={assistantAnchorRef}
+                    className="pointer-events-none sticky top-[calc(2.75rem+1px)] z-overlay h-0"
+                  >
+                    <div
+                      className="pointer-events-auto absolute right-0 top-0 isolate"
+                      style={{
+                        // JS updates --assistant-panel-top to the anchor's current top in the viewport.
+                        // Fallback matches the stuck state so SSR/first paint render a reasonable size.
+                        height: 'calc(100dvh - var(--assistant-panel-top, calc(2.75rem + 1px)))',
+                      }}
+                    >
+                      <AssistantPanelOutlet />
+                    </div>
                   </div>
 
                   <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>

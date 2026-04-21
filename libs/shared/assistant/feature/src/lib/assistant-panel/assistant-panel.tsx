@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import posthog from 'posthog-js'
 import { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
 import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
@@ -15,14 +14,9 @@ import { MintlifyHit } from '../mintlify-hit/mintlify-hit'
 
 export interface AssistantPanelProps {
   onClose: () => void
-  smaller?: boolean
-  topOffset?: number
 }
 
-const DEFAULT_TOP_OFFSET = 'calc(6.75rem + 1px)'
-const SMALLER_TOP_OFFSET = 'calc(6.75rem + 6px)'
-
-export function AssistantPanel({ smaller = false, topOffset: measuredTopOffset, onClose }: AssistantPanelProps) {
+export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const { data } = useQoveryStatus()
   const { showChat } = useSupportChat()
   const docLinks = useContextualDocLinks()
@@ -44,45 +38,31 @@ export function AssistantPanel({ smaller = false, topOffset: measuredTopOffset, 
     return () => document.removeEventListener('keydown', down)
   }, [onClose])
 
-  const portalTarget = typeof document !== 'undefined' ? document.body : null
-
-  const hasMeasuredTopOffset = measuredTopOffset !== undefined
-  const topOffset = hasMeasuredTopOffset ? `${measuredTopOffset}px` : smaller ? SMALLER_TOP_OFFSET : DEFAULT_TOP_OFFSET
-  const panelHeight = `calc(100dvh - ${topOffset})`
-
-  if (!portalTarget) {
-    return null
-  }
-
-  return createPortal(
-    <motion.div
-      initial={shouldReduceMotion ? false : { top: topOffset, height: panelHeight, x: 32, opacity: 0 }}
-      animate={{ top: topOffset, height: panelHeight, x: 0, opacity: 1 }}
-      exit={shouldReduceMotion ? { opacity: 0 } : { x: 32, opacity: 0 }}
-      transition={
-        shouldReduceMotion
-          ? { duration: 0 }
-          : {
-              top: {
-                duration: hasMeasuredTopOffset ? 0 : 0.12,
-                ease: [0.2, 0, 0, 1],
-              },
-              height: {
-                duration: hasMeasuredTopOffset ? 0 : 0.12,
-                ease: [0.2, 0, 0, 1],
-              },
-              x: {
-                type: 'spring',
-                stiffness: 900,
-                damping: 40,
-                mass: 0.5,
-              },
-              opacity: {
-                duration: 0.12,
-              },
-            }
+  const transition = shouldReduceMotion
+    ? { duration: 0 }
+    : {
+        x: {
+          type: 'spring' as const,
+          stiffness: 900,
+          // Critically damped (2 * sqrt(stiffness * mass) = ~42.4) to avoid visible overshoot/jitter.
+          damping: 45,
+          mass: 0.5,
+        },
+        opacity: {
+          duration: 0.12,
+        },
       }
-      className="fixed right-0 z-overlay flex w-[368px] flex-col overflow-hidden border-l border-neutral bg-background shadow-sm will-change-[top,height,transform]"
+
+  return (
+    <motion.div
+      initial={shouldReduceMotion ? false : { x: 32, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={shouldReduceMotion ? { opacity: 0 } : { x: 32, opacity: 0 }}
+      transition={transition}
+      // backfaceVisibility hint forces a dedicated compositor layer so the sliding panel
+      // doesn't trigger repaints on the sticky navbar behind it.
+      style={{ backfaceVisibility: 'hidden' }}
+      className="flex h-full w-[368px] flex-col overflow-hidden border-l border-neutral bg-background shadow-sm will-change-transform"
     >
       <div className="flex justify-between px-5 pt-5">
         <div className="flex gap-3 font-bold">
@@ -183,8 +163,7 @@ export function AssistantPanel({ smaller = false, topOffset: measuredTopOffset, 
           <div className="h-10"></div>
         )}
       </div>
-    </motion.div>,
-    portalTarget
+    </motion.div>
   )
 }
 

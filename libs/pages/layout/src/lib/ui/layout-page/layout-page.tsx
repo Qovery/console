@@ -7,7 +7,6 @@ import { match } from 'ts-pattern'
 import { ClusterDeploymentProgressCard, useClusterStatuses } from '@qovery/domains/clusters/feature'
 import { useAlerts } from '@qovery/domains/observability/feature'
 import { FreeTrialBanner, InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
-import { AssistantProvider, AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import {
   getNewConsoleUrl,
@@ -207,47 +206,44 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
               alertingNotification={hasFiringAlerts ? 'error' : undefined}
             />
           </div>
-          <AssistantProvider>
-            <div className="flex w-full grow flex-col-reverse">
-              <div>
-                <div
-                  className={`relative flex ${
-                    clusterCredentialError ? 'min-h-page-container-wbanner' : 'min-h-page-container'
-                  }`}
-                >
-                  <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">{children}</div>
-                  <AssistantTrigger />
-                  {isFeatureFlag && <DevopsCopilotTrigger />}
-                </div>
+          <div className="flex w-full grow flex-col-reverse">
+            <div>
+              <div
+                className={`relative flex ${
+                  clusterCredentialError ? 'min-h-page-container-wbanner' : 'min-h-page-container'
+                }`}
+              >
+                <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">{children}</div>
+                {isFeatureFlag && <DevopsCopilotTrigger />}
               </div>
-              {clusterCredentialError && (
-                <Banner
-                  color="yellow"
-                  onClickButton={() =>
-                    navigate(
-                      CLUSTER_URL(organizationId, invalidCluster?.id) +
-                        CLUSTER_SETTINGS_URL +
-                        CLUSTER_SETTINGS_CREDENTIALS_URL
-                    )
-                  }
-                  buttonLabel="Check the credentials configuration"
-                >
-                  The credentials for the cluster <span className="mx-1 block font-bold">{invalidCluster?.name}</span>{' '}
-                  are invalid.
-                </Banner>
-              )}
-              <FreeTrialBanner />
-              <InvoiceBanner />
-              {topBar && (
-                <TopBar>
-                  <div className="flex items-center">
-                    {spotlight && <SpotlightTrigger />}
-                    {isFeatureFlag && <DevopsCopilotButton />}
-                  </div>
-                </TopBar>
-              )}
             </div>
-          </AssistantProvider>
+            {clusterCredentialError && (
+              <Banner
+                color="yellow"
+                onClickButton={() =>
+                  navigate(
+                    CLUSTER_URL(organizationId, invalidCluster?.id) +
+                      CLUSTER_SETTINGS_URL +
+                      CLUSTER_SETTINGS_CREDENTIALS_URL
+                  )
+                }
+                buttonLabel="Check the credentials configuration"
+              >
+                The credentials for the cluster <span className="mx-1 block font-bold">{invalidCluster?.name}</span> are
+                invalid.
+              </Banner>
+            )}
+            <FreeTrialBanner />
+            <InvoiceBanner />
+            {topBar && (
+              <TopBar>
+                <div className="flex items-center">
+                  {spotlight && <SpotlightTrigger />}
+                  {isFeatureFlag && <DevopsCopilotButton />}
+                </div>
+              </TopBar>
+            )}
+          </div>
         </div>
         {showFloatingDeploymentCard && (
           <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />

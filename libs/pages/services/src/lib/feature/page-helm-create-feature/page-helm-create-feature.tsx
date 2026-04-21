@@ -9,7 +9,6 @@ import { type UseFormReturn, useForm } from 'react-hook-form'
 import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom'
 import { type HelmValuesArgumentsData, type HelmValuesFileData } from '@qovery/domains/service-helm/feature'
 import { serviceTemplates } from '@qovery/domains/services/feature'
-import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import {
   SERVICES_HELM_CREATION_GENERAL_URL,
   SERVICES_HELM_CREATION_URL,
@@ -119,7 +118,6 @@ export function PageHelmCreateFeature() {
             <Route path="*" element={<Navigate replace to={creationFlowUrl + SERVICES_HELM_CREATION_GENERAL_URL} />} />
           )}
         </Routes>
-        <AssistantTrigger defaultOpen />
       </FunnelFlow>
     </HelmCreateContext.Provider>
   )
