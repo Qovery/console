@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion'
 import posthog from 'posthog-js'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
 import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
@@ -24,6 +24,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const shouldReduceMotion = useReducedMotion()
   const debouncedSearchValue = useDebounce(searchValue, 300)
   const { data: results = [], isLoading } = useSearchDocumentation(debouncedSearchValue)
+  const searchContainerRef = useRef<HTMLDivElement>(null)
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
@@ -59,6 +60,12 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
       animate={{ x: 0, opacity: 1 }}
       exit={shouldReduceMotion ? { opacity: 0 } : { x: 32, opacity: 0 }}
       transition={transition}
+      // Focus the search input only after the entry animation finishes. Focusing during the
+      // slide-in triggers the browser's auto-scroll-into-view behavior, which causes a visible
+      // horizontal jolt on the background content.
+      onAnimationComplete={() => {
+        searchContainerRef.current?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true })
+      }}
       // backfaceVisibility hint forces a dedicated compositor layer so the sliding panel
       // doesn't trigger repaints on the sticky navbar behind it.
       style={{ backfaceVisibility: 'hidden' }}
@@ -90,14 +97,13 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
             </div>
           </div>
         )}
-        <div className="flex min-h-0 grow flex-col p-5">
+        <div ref={searchContainerRef} className="flex min-h-0 grow flex-col p-5">
           <InputSearch
             className="mb-5"
             placeholder="Search documentation…"
             onChange={(value: string) => {
               setSearchValue(value)
             }}
-            autofocus
           />
           {debouncedSearchValue.length > 0 && (
             <div className="flex min-h-0 shrink-0 grow basis-0 flex-col space-y-5 overflow-y-auto">

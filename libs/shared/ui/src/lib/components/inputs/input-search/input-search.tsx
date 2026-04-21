@@ -1,4 +1,4 @@
-import { type ReactElement, useEffect, useRef, useState } from 'react'
+import { type ReactElement, useRef, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
@@ -26,16 +26,6 @@ export function InputSearch(props: InputSearchProps) {
   const ref = useRef<HTMLInputElement>(null)
   const [toggleDelete, setToggleDelete] = useState(false)
 
-  // Focus manually with preventScroll so the browser does not scroll an ancestor
-  // to bring the input into view. This matters when the input is mounted inside an
-  // animating container (e.g. the assistant panel sliding in), where the default
-  // autofocus behavior can cause a visible layout shift during the entry animation.
-  useEffect(() => {
-    if (autofocus) {
-      ref.current?.focus({ preventScroll: true })
-    }
-  }, [autofocus])
-
   const getValue = (value: string) => {
     if (onChange) onChange(value)
     if (value !== '') {
@@ -61,6 +51,7 @@ export function InputSearch(props: InputSearchProps) {
         <input
           data-testid="input-search"
           ref={ref}
+          autoFocus={autofocus}
           className={twMerge(
             'w-full rounded border border-neutral bg-surface-neutral pl-10 pr-6 leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]',
             customSize
