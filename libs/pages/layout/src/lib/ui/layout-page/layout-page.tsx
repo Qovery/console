@@ -1,6 +1,7 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
+import posthog from 'posthog-js'
+import { useFeatureFlagEnabled, useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useMemo } from 'react'
+import { type PropsWithChildren, useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { ClusterDeploymentProgressCard, useClusterStatuses } from '@qovery/domains/clusters/feature'
@@ -8,7 +9,12 @@ import { useAlerts } from '@qovery/domains/observability/feature'
 import { FreeTrialBanner, InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
-import { useUserRole } from '@qovery/shared/iam/feature'
+import {
+  getNewConsoleUrl,
+  shouldBypassLegacyConsoleRedirect,
+  useConsoleRedirectPreference,
+  useUserRole,
+} from '@qovery/shared/iam/feature'
 import { AnnouncementBanner } from '@qovery/shared/posthog/feature'
 import {
   CLUSTER_SETTINGS_CREDENTIALS_URL,
@@ -17,9 +23,15 @@ import {
   INFRA_LOGS_URL,
 } from '@qovery/shared/routes'
 import { Banner, WarningScreenMobile } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
+import ConsoleMigrationPrompt from '../console-migration-prompt/console-migration-prompt'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
+import { redirectToUrl } from './layout-page.utils'
+
+const CONSOLE_MIGRATION_PROMPT_CONFIRMED = 'console-migration-prompt-confirmed'
+const CONSOLE_MIGRATION_PROMPT_DISMISSED = 'console-migration-prompt-dismissed'
 
 export interface LayoutPageProps {
   defaultOrganizationId: string
@@ -57,10 +69,17 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
   const { data: organization } = useOrganization({ organizationId })
   const { roles, isQoveryAdminUser } = useUserRole()
+  const { isNewConsoleDefault, setIsNewConsoleDefault } = useConsoleRedirectPreference()
+  const isNewNavigationActivationEnabled = Boolean(useFeatureFlagEnabled('new-navigation-activation'))
   const isAlertingFeatureFlagEnabled = useFeatureFlagVariantKey('alerting')
   const isFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
+  const [isConsoleMigrationBannerDismissed, setIsConsoleMigrationBannerDismissed] = useLocalStorage(
+    'legacy-console-migration-banner-dismissed',
+    false
+  )
 
   const isQoveryUserWithMobileCheck = checkQoveryUser(isQoveryAdminUser)
+  const newConsoleUrl = getNewConsoleUrl()
 
   const matchLogInfraRoute = pathname.includes(INFRA_LOGS_URL(organizationId, clusterStatuses?.[0]?.cluster_id))
 
@@ -129,6 +148,39 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
     return deployingClusters.length > 0
   }, [deployingClusters])
 
+  const shouldShowConsoleMigrationBanner = Boolean(
+    isNewNavigationActivationEnabled && newConsoleUrl && !isNewConsoleDefault && !isConsoleMigrationBannerDismissed
+  )
+
+  useEffect(() => {
+    if (!isNewConsoleDefault || shouldBypassLegacyConsoleRedirect() || !newConsoleUrl) {
+      return
+    }
+
+    if (window.location.href !== newConsoleUrl) {
+      redirectToUrl(newConsoleUrl)
+    }
+  }, [newConsoleUrl, isNewConsoleDefault])
+
+  const handleConsoleMigration = () => {
+    if (!newConsoleUrl) {
+      return
+    }
+
+    posthog.capture(CONSOLE_MIGRATION_PROMPT_CONFIRMED, {
+      target_url: newConsoleUrl,
+    })
+    setIsNewConsoleDefault(true)
+    redirectToUrl(newConsoleUrl)
+  }
+
+  const handleConsoleMigrationDismiss = () => {
+    posthog.capture(CONSOLE_MIGRATION_PROMPT_DISMISSED, {
+      target_url: newConsoleUrl,
+    })
+    setIsConsoleMigrationBannerDismissed(true)
+  }
+
   return (
     <>
       {displayQoveryAdminBanner && (
@@ -193,6 +245,11 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
         {showFloatingDeploymentCard && (
           <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
         )}
+        <ConsoleMigrationPrompt
+          open={shouldShowConsoleMigrationBanner}
+          onConfirm={handleConsoleMigration}
+          onClose={handleConsoleMigrationDismiss}
+        />
       </main>
     </>
   )
