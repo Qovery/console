@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import { useFeatureFlagEnabled, useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster, ClusterStateEnum, type Organization } from 'qovery-typescript-axios'
 import { type PropsWithChildren, useEffect, useMemo } from 'react'
@@ -27,6 +28,9 @@ import SpotlightTrigger from '../../feature/spotlight-trigger/spotlight-trigger'
 import ConsoleMigrationPrompt from '../console-migration-prompt/console-migration-prompt'
 import Navigation from '../navigation/navigation'
 import TopBar from '../top-bar/top-bar'
+
+const CONSOLE_MIGRATION_PROMPT_CONFIRMED = 'console-migration-prompt-confirmed'
+const CONSOLE_MIGRATION_PROMPT_DISMISSED = 'console-migration-prompt-dismissed'
 
 export interface LayoutPageProps {
   defaultOrganizationId: string
@@ -162,8 +166,18 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
       return
     }
 
+    posthog.capture(CONSOLE_MIGRATION_PROMPT_CONFIRMED, {
+      target_url: newConsoleUrl,
+    })
     setIsNewConsoleDefault(true)
     window.location.assign(newConsoleUrl)
+  }
+
+  const handleConsoleMigrationDismiss = () => {
+    posthog.capture(CONSOLE_MIGRATION_PROMPT_DISMISSED, {
+      target_url: newConsoleUrl,
+    })
+    setIsConsoleMigrationBannerDismissed(true)
   }
 
   return (
@@ -233,7 +247,7 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
         <ConsoleMigrationPrompt
           open={shouldShowConsoleMigrationBanner}
           onConfirm={handleConsoleMigration}
-          onClose={() => setIsConsoleMigrationBannerDismissed(true)}
+          onClose={handleConsoleMigrationDismiss}
         />
       </main>
     </>
