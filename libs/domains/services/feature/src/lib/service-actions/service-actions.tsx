@@ -70,6 +70,7 @@ function MenuManageDeployment({
   service: AnyService
   variant: ActionToolbarVariant
 }) {
+  const isHeaderButton = ['header', 'deploy-dropdown-only'].includes(variant)
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -358,10 +359,10 @@ function MenuManageDeployment({
       <DropdownMenu.Trigger asChild>
         <Button
           aria-label="Manage Deployment"
-          color={displayYellowColor ? 'yellow' : variant === 'header' ? 'brand' : 'neutral'}
-          variant={variant === 'header' ? 'solid' : 'outline'}
-          size={variant === 'header' ? 'md' : 'sm'}
-          iconOnly={['default', 'deploy-dropdown-only'].includes(variant)}
+          color={displayYellowColor ? 'yellow' : isHeaderButton ? 'brand' : 'neutral'}
+          variant={isHeaderButton ? 'solid' : 'outline'}
+          size={isHeaderButton ? 'md' : 'sm'}
+          iconOnly={variant === 'default'}
         >
           <Tooltip content="Manage Deployment">
             <div className="flex h-full w-full items-center justify-center gap-1.5">
@@ -375,7 +376,7 @@ function MenuManageDeployment({
                 .otherwise(() => (
                   <Icon iconName="rocket" />
                 ))}
-              {variant === 'header' && (
+              {isHeaderButton && (
                 <>
                   <span>Deploy</span>
                   <Icon iconName="chevron-down" />
@@ -887,12 +888,13 @@ export function ServiceActions({
 }) {
   const { data: service } = useService({ environmentId: environment.id, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
+  const isHeaderButton = ['header', 'deploy-dropdown-only'].includes(variant)
 
   if (!service || !deploymentStatus)
-    return <Skeleton height={variant === 'default' ? 26 : 28} width={variant === 'default' ? 96 : 67} />
+    return <Skeleton height={variant === 'default' ? 26 : 28} width={isHeaderButton ? 96 : 67} />
 
   return (
-    <div className={twMerge('flex items-center gap-1.5', variant === 'header' && 'flex-row-reverse gap-2')}>
+    <div className={twMerge('flex items-center gap-1.5', isHeaderButton && 'flex-row-reverse gap-2')}>
       <MenuManageDeployment
         deploymentStatus={deploymentStatus}
         environment={environment}

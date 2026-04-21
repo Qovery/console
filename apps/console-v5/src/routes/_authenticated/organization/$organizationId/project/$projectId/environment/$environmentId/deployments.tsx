@@ -1,7 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import { EnvironmentDeploymentListSkeleton } from '@qovery/domains/environments/feature'
-import { EnvironmentDeploymentList } from '@qovery/domains/environments/feature'
+import {
+  EnvironmentActionToolbar,
+  EnvironmentDeploymentList,
+  EnvironmentDeploymentListSkeleton,
+  useEnvironment,
+} from '@qovery/domains/environments/feature'
 import { Heading, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -13,6 +17,10 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   useDocumentTitle('Deployment history')
+  const { environmentId = '' } = Route.useParams()
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
+
+  if (!environment) return null
 
   return (
     <div className="container mx-auto flex min-h-page-container flex-col pt-6">
@@ -20,6 +28,7 @@ function RouteComponent() {
         <div className="flex shrink-0 flex-col gap-6">
           <div className="flex justify-between">
             <Heading>Deployments</Heading>
+            <EnvironmentActionToolbar environment={environment} variant="header" />
           </div>
           <hr className="w-full border-neutral" />
         </div>
