@@ -64,7 +64,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
     <div className="flex flex-col gap-1">
       <div className="flex items-center">
         <div className="flex w-full items-center gap-1.5">
-          <Icon iconName="check-circle" iconStyle="regular" className="text-positive" />
+          <Icon iconName="check-circle" iconStyle="regular" className="text-positiveInvert" />
           <span>Healthy {pluralize(healthyNodes - warningNodes, 'node', 'nodes')}</span>
           <span className="ml-auto block font-semibold">{healthyNodes - warningNodes}</span>
         </div>

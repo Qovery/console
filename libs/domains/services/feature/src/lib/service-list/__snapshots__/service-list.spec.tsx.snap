@@ -215,12 +215,18 @@ exports[`ServiceList should match snapshot 1`] = `
                       <span
                         class="flex min-w-0 flex-1 flex-col overflow-hidden"
                       >
-                        <span
-                          class="block min-w-0 truncate"
-                          data-state="closed"
+                        <a
+                          class="group min-w-0"
+                          params="[object Object]"
+                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                         >
-                          FRONT-END
-                        </span>
+                          <span
+                            class="block min-w-0 truncate group-hover:underline"
+                            data-state="closed"
+                          >
+                            FRONT-END
+                          </span>
+                        </a>
                       </span>
                     </div>
                     <div
@@ -596,12 +602,18 @@ exports[`ServiceList should match snapshot 1`] = `
                       <span
                         class="flex min-w-0 flex-1 flex-col overflow-hidden"
                       >
-                        <span
-                          class="block min-w-0 truncate"
-                          data-state="closed"
+                        <a
+                          class="group min-w-0"
+                          params="[object Object]"
+                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                         >
-                          back-end-A
-                        </span>
+                          <span
+                            class="block min-w-0 truncate group-hover:underline"
+                            data-state="closed"
+                          >
+                            back-end-A
+                          </span>
+                        </a>
                       </span>
                     </div>
                     <div
@@ -1256,12 +1268,18 @@ exports[`ServiceList should match snapshot 1`] = `
                         <span
                           class="flex min-w-0 items-center gap-1.5"
                         >
-                          <span
-                            class="block min-w-0 flex-1 truncate"
-                            data-state="closed"
+                          <a
+                            class="group min-w-0"
+                            params="[object Object]"
+                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                           >
-                            CRONJOB
-                          </span>
+                            <span
+                              class="block min-w-0 truncate group-hover:underline"
+                              data-state="closed"
+                            >
+                              CRONJOB
+                            </span>
+                          </a>
                           <span
                             class="shrink-0 truncate text-sm font-normal text-neutral-subtle"
                             data-state="closed"
@@ -1741,12 +1759,18 @@ exports[`ServiceList should match snapshot 1`] = `
                         <span
                           class="flex min-w-0 items-center gap-1.5"
                         >
-                          <span
-                            class="block min-w-0 flex-1 truncate"
-                            data-state="closed"
+                          <a
+                            class="group min-w-0"
+                            params="[object Object]"
+                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                           >
-                            seed_script
-                          </span>
+                            <span
+                              class="block min-w-0 truncate group-hover:underline"
+                              data-state="closed"
+                            >
+                              seed_script
+                            </span>
+                          </a>
                           <span
                             class="shrink-0 truncate text-sm font-normal text-neutral-subtle"
                             data-state="closed"

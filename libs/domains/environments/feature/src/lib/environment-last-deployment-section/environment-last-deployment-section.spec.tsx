@@ -4,6 +4,8 @@ import { EnvironmentLastDeploymentSection } from './environment-last-deployment-
 
 const mockUseEnvironment = jest.fn()
 const mockUseDeploymentHistory = jest.fn()
+const mockUseServiceCount = jest.fn()
+const mockDeployEnvironment = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -19,9 +21,13 @@ jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
   useDeploymentHistory: () => mockUseDeploymentHistory(),
 }))
 
+jest.mock('../hooks/use-service-count/use-service-count', () => ({
+  useServiceCount: () => mockUseServiceCount(),
+}))
+
 jest.mock('../hooks/use-deploy-environment/use-deploy-environment', () => ({
   useDeployEnvironment: () => ({
-    mutate: jest.fn(),
+    mutate: mockDeployEnvironment,
   }),
 }))
 
@@ -75,6 +81,10 @@ describe('EnvironmentLastDeploymentSection', () => {
       data: mockEnvironment,
       isFetched: true,
     })
+    mockUseServiceCount.mockReturnValue({
+      data: 1,
+      isFetched: true,
+    })
   })
 
   it('renders the relative time for a finished deployment', () => {
@@ -116,5 +126,36 @@ describe('EnvironmentLastDeploymentSection', () => {
 
     expect(screen.getByText('No deployment recorded yet')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /deploy environment/i })).toBeInTheDocument()
+  })
+
+  it('does not render the deploy action when the environment has no services', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
+    mockUseServiceCount.mockReturnValue({
+      data: 0,
+      isFetched: true,
+    })
+
+    renderWithProviders(<EnvironmentLastDeploymentSection />)
+
+    expect(screen.getByText('No deployment recorded yet')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /deploy environment/i })).not.toBeInTheDocument()
+  })
+
+  it('deploys the current environment from the empty state action', async () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
+
+    const { userEvent } = renderWithProviders(<EnvironmentLastDeploymentSection />)
+
+    await userEvent.click(screen.getByRole('button', { name: /deploy environment/i }))
+
+    expect(mockDeployEnvironment).toHaveBeenCalledWith({
+      environmentId: 'env-1',
+    })
   })
 })

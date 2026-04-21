@@ -1,4 +1,4 @@
-import { type OrganizationEventResponse } from 'qovery-typescript-axios'
+import { type OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -68,5 +68,67 @@ describe('RowEvent', () => {
     const target = screen.getByText(props.event?.target_name || '')
 
     expect(target).toHaveAttribute('href', '/organization/1/settings')
+  })
+
+  it.each([
+    OrganizationEventTargetType.APPLICATION,
+    OrganizationEventTargetType.CONTAINER,
+    OrganizationEventTargetType.JOB,
+    OrganizationEventTargetType.HELM,
+    OrganizationEventTargetType.TERRAFORM,
+    OrganizationEventTargetType.DATABASE,
+  ])('should render unified service link for %s target', (targetType) => {
+    renderWithProviders(
+      <RowEvent
+        {...props}
+        event={{
+          ...props.event,
+          target_type: targetType,
+          target_id: 'service-1',
+          target_name: 'service-name',
+          project_id: 'project-1',
+          environment_id: 'environment-1',
+        }}
+      />
+    )
+
+    expect(screen.getByText('service-name')).toHaveAttribute(
+      'href',
+      '/organization/1/project/project-1/environment/environment-1/service/service-1/overview'
+    )
+  })
+
+  it.each([
+    [OrganizationEventTargetType.ORGANIZATION, '/organization/1/settings'],
+    [OrganizationEventTargetType.MEMBERS_AND_ROLES, '/organization/1/settings/members'],
+    [OrganizationEventTargetType.PROJECT, '/organization/1/project/project-1/settings/general'],
+    [OrganizationEventTargetType.ENVIRONMENT, '/organization/1/project/project-1/environment/environment-1'],
+    [OrganizationEventTargetType.CLUSTER, '/organization/1/cluster/cluster-1/settings'],
+    [OrganizationEventTargetType.WEBHOOK, '/organization/1/settings/webhook'],
+    [OrganizationEventTargetType.CONTAINER_REGISTRY, '/organization/1/settings/container-registries'],
+    [OrganizationEventTargetType.ENTERPRISE_CONNECTION, '/organization/1/settings/members'],
+    [OrganizationEventTargetType.HELM_REPOSITORY, '/organization/1/settings/helm-repositories'],
+  ])('should render valid console v5 link for %s target', (targetType, href) => {
+    const targetIdByType: Partial<Record<OrganizationEventTargetType, string>> = {
+      [OrganizationEventTargetType.PROJECT]: 'project-1',
+      [OrganizationEventTargetType.ENVIRONMENT]: 'environment-1',
+      [OrganizationEventTargetType.CLUSTER]: 'cluster-1',
+    }
+
+    renderWithProviders(
+      <RowEvent
+        {...props}
+        event={{
+          ...props.event,
+          target_type: targetType,
+          target_id: targetIdByType[targetType] ?? 'target-1',
+          target_name: 'target-name',
+          project_id: 'project-1',
+          environment_id: 'environment-1',
+        }}
+      />
+    )
+
+    expect(screen.getByText('target-name')).toHaveAttribute('href', href)
   })
 })

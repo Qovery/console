@@ -2,12 +2,15 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { useServiceSummary } from '@qovery/domains/services/feature'
+import { useEnvironment } from '@qovery/domains/environments/feature'
+import { useProject } from '@qovery/domains/projects/feature'
+import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
-import { ErrorBoundary, Icon, LoaderSpinner, Navbar } from '@qovery/shared/ui'
+import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
+import { NotFoundPage } from '../../../app/components/not-found-page/not-found-page'
 import { OrganizationBanners } from '../../../app/components/organization-banners/organization-banners'
 import { type FileRouteTypes } from '../../../routeTree.gen'
 
@@ -446,7 +449,27 @@ function OrganizationRoute() {
   const needsFullWidth = useFullWidthLayout()
   const bypassLayout = useBypassLayout()
   const location = useLocation()
-  const { organizationId = '' } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { addToRecentServices } = useRecentServices({ organizationId })
+  const { data: project } = useProject({ organizationId, projectId })
+  const { data: environment } = useEnvironment({ environmentId })
+  const { data: service, isFetched: isServiceSummaryFetched } = useServiceSummary({
+    environmentId,
+    serviceId,
+    enabled: Boolean(environmentId) && Boolean(serviceId),
+  })
+  const isServiceNotFound = Boolean(environmentId) && Boolean(serviceId) && isServiceSummaryFetched && !service
+  const serviceNotFoundAction = (
+    <Link
+      as="button"
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
+      params={{ organizationId, projectId, environmentId }}
+      size="md"
+      className="mt-6 gap-2"
+    >
+      Go to environment
+    </Link>
+  )
   const scrollContainerRef = useRef<HTMLDivElement>(null)
   const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
   const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
@@ -460,6 +483,25 @@ function OrganizationRoute() {
     posthog.group('organization_id', organizationId)
     posthog.reloadFeatureFlags()
   }, [organizationId])
+
+  // Add the service to the recent services list (necessary for the spotlight to work)
+  useEffect(() => {
+    if (service?.id && project?.id && environment?.id) {
+      addToRecentServices({
+        id: service.id,
+        name: service.name,
+        description: service.description || '',
+        icon_uri: service.icon_uri,
+        service_type: service.service_type,
+        project_id: project.id,
+        project_name: project.name,
+        environment_id: environment.id,
+        environment_name: environment.name,
+        cluster_id: environment.cluster_id,
+        job_type: 'job_type' in service ? service.job_type : undefined,
+      })
+    }
+  }, [service?.id, project?.id, environment?.id])
 
   useLayoutEffect(() => {
     const scrollContainer = scrollContainerRef.current
@@ -478,7 +520,17 @@ function OrganizationRoute() {
           sendMessageRef,
         }}
       >
-        <Outlet />
+        {isServiceNotFound ? (
+          <NotFoundPage
+            action={serviceNotFoundAction}
+            data={{
+              title: 'Service not found',
+              message: "This service doesn't exist anymore, or the URL is incorrect.",
+            }}
+          />
+        ) : (
+          <Outlet />
+        )}
         <DevopsCopilotTrigger />
       </DevopsCopilotContext.Provider>
     )
@@ -508,7 +560,17 @@ function OrganizationRoute() {
                 </div>
 
                 <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
-                  <Outlet />
+                  {isServiceNotFound ? (
+                    <NotFoundPage
+                      action={serviceNotFoundAction}
+                      data={{
+                        title: 'Service not found',
+                        message: "This service doesn't exist anymore, or the URL is incorrect.",
+                      }}
+                    />
+                  ) : (
+                    <Outlet />
+                  )}
                 </div>
               </>
             </Suspense>

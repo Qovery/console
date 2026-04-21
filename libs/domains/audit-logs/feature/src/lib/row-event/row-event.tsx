@@ -10,20 +10,6 @@ import { useState } from 'react'
 import { match } from 'ts-pattern'
 import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
 import { IconEnum } from '@qovery/shared/enums'
-import {
-  APPLICATION_URL,
-  CLUSTER_SETTINGS_URL,
-  CLUSTER_URL,
-  DATABASE_GENERAL_URL,
-  DATABASE_URL,
-  SERVICES_URL,
-  SETTINGS_CONTAINER_REGISTRIES_URL,
-  SETTINGS_MEMBERS_URL,
-  SETTINGS_PROJECT_GENERAL_URL,
-  SETTINGS_PROJECT_URL,
-  SETTINGS_URL,
-  SETTINGS_WEBHOOKS,
-} from '@qovery/shared/routes'
 import { CodeDiffEditor, CodeEditor, type DiffStats, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -59,6 +45,30 @@ export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
       return null
   }
 }
+
+const serviceOverviewUrl = (organizationId: string, projectId: string, environmentId: string, serviceId: string) =>
+  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}/overview`
+
+const projectSettingsUrl = (organizationId: string, projectId: string) =>
+  `/organization/${organizationId}/project/${projectId}/settings/general`
+
+const environmentUrl = (organizationId: string, projectId: string, environmentId: string) =>
+  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}`
+
+const clusterSettingsUrl = (organizationId: string, clusterId: string) =>
+  `/organization/${organizationId}/cluster/${clusterId}/settings`
+
+const organizationSettingsUrl = (organizationId: string) => `/organization/${organizationId}/settings`
+
+const membersSettingsUrl = (organizationId: string) => `${organizationSettingsUrl(organizationId)}/members`
+
+const webhookSettingsUrl = (organizationId: string) => `${organizationSettingsUrl(organizationId)}/webhook`
+
+const containerRegistriesSettingsUrl = (organizationId: string) =>
+  `${organizationSettingsUrl(organizationId)}/container-registries`
+
+const helmRepositoriesSettingsUrl = (organizationId: string) =>
+  `${organizationSettingsUrl(organizationId)}/helm-repositories`
 
 export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth, validTargetIds } = props
@@ -104,32 +114,27 @@ export function RowEvent(props: RowEventProps) {
       </Link>
     )
 
-    const generateApplicationLink = () =>
-      customLink(`${APPLICATION_URL(organizationId, project_id!, environment_id!, target_id!)}`)
+    const generateServiceLink = () =>
+      customLink(serviceOverviewUrl(organizationId, project_id!, environment_id!, target_id!))
 
     const linkConfig: { [key in OrganizationEventTargetType]: () => JSX.Element } = {
-      [OrganizationEventTargetType.APPLICATION]: generateApplicationLink,
-      [OrganizationEventTargetType.CONTAINER]: generateApplicationLink,
-      [OrganizationEventTargetType.JOB]: generateApplicationLink,
-      [OrganizationEventTargetType.HELM]: generateApplicationLink,
-      [OrganizationEventTargetType.TERRAFORM]: generateApplicationLink,
-      [OrganizationEventTargetType.ORGANIZATION]: () => customLink(SETTINGS_URL(organizationId)),
-      [OrganizationEventTargetType.MEMBERS_AND_ROLES]: () =>
-        customLink(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
-      [OrganizationEventTargetType.PROJECT]: () =>
-        customLink(SETTINGS_URL(organizationId) + SETTINGS_PROJECT_URL(target_id!) + SETTINGS_PROJECT_GENERAL_URL),
+      [OrganizationEventTargetType.APPLICATION]: generateServiceLink,
+      [OrganizationEventTargetType.CONTAINER]: generateServiceLink,
+      [OrganizationEventTargetType.JOB]: generateServiceLink,
+      [OrganizationEventTargetType.HELM]: generateServiceLink,
+      [OrganizationEventTargetType.TERRAFORM]: generateServiceLink,
+      [OrganizationEventTargetType.ORGANIZATION]: () => customLink(organizationSettingsUrl(organizationId)),
+      [OrganizationEventTargetType.MEMBERS_AND_ROLES]: () => customLink(membersSettingsUrl(organizationId)),
+      [OrganizationEventTargetType.PROJECT]: () => customLink(projectSettingsUrl(organizationId, target_id!)),
       [OrganizationEventTargetType.ENVIRONMENT]: () =>
-        customLink(SERVICES_URL(organizationId, project_id!, target_id!), target_name),
-      [OrganizationEventTargetType.DATABASE]: () =>
-        customLink(DATABASE_URL(organizationId, project_id!, environment_id!, target_id!) + DATABASE_GENERAL_URL),
-      [OrganizationEventTargetType.CLUSTER]: () =>
-        customLink(CLUSTER_URL(organizationId, target_id!) + CLUSTER_SETTINGS_URL),
-      [OrganizationEventTargetType.WEBHOOK]: () => customLink(SETTINGS_URL(organizationId) + SETTINGS_WEBHOOKS),
+        customLink(environmentUrl(organizationId, project_id!, target_id!), target_name),
+      [OrganizationEventTargetType.DATABASE]: generateServiceLink,
+      [OrganizationEventTargetType.CLUSTER]: () => customLink(clusterSettingsUrl(organizationId, target_id!)),
+      [OrganizationEventTargetType.WEBHOOK]: () => customLink(webhookSettingsUrl(organizationId)),
       [OrganizationEventTargetType.CONTAINER_REGISTRY]: () =>
-        customLink(SETTINGS_URL(organizationId) + SETTINGS_CONTAINER_REGISTRIES_URL),
-      [OrganizationEventTargetType.ENTERPRISE_CONNECTION]: () =>
-        customLink(SETTINGS_URL(organizationId) + SETTINGS_MEMBERS_URL),
-      [OrganizationEventTargetType.HELM_REPOSITORY]: () => <span>NOT_IMPLEMENTED</span>,
+        customLink(containerRegistriesSettingsUrl(organizationId)),
+      [OrganizationEventTargetType.ENTERPRISE_CONNECTION]: () => customLink(membersSettingsUrl(organizationId)),
+      [OrganizationEventTargetType.HELM_REPOSITORY]: () => customLink(helmRepositoriesSettingsUrl(organizationId)),
     }
 
     if (event_type !== OrganizationEventType.DELETE && targetExists) {
