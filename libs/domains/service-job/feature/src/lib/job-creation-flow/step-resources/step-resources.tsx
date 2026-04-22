@@ -43,7 +43,7 @@ export function StepResourcesContent({ templateType, onBack, onSubmit }: StepRes
           <Button onClick={onBack} type="button" size="lg" variant="plain">
             Back
           </Button>
-          <Button datatest-id="button-submit" type="submit" disabled={!formState.isValid} size="lg">
+          <Button data-testid="button-submit" type="submit" disabled={!formState.isValid} size="lg">
             Continue
           </Button>
         </div>
