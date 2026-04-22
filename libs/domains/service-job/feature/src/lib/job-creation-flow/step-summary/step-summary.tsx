@@ -10,7 +10,8 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
-import { type DockerfileSettingsData, useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { type DockerfileSettingsData } from '../../dockerfile-settings/dockerfile-settings'
 import { useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {

@@ -3,9 +3,9 @@ import { useEffect } from 'react'
 import { FormProvider } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { useCheckDockerfile } from '@qovery/domains/environments/feature'
-import { DockerfileSettings } from '@qovery/domains/services/feature'
 import { Button, FunnelFlowBody, Heading, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { DockerfileSettings } from '../../dockerfile-settings/dockerfile-settings'
 import { useJobCreateContext } from '../job-creation-flow'
 
 export function StepDockerfile() {

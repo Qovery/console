@@ -4,12 +4,8 @@ import { type ReactNode } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { useCheckDockerfile, useLifecycleTemplate } from '@qovery/domains/environments/feature'
-import {
-  DockerfileSettings,
-  type DockerfileSettingsData,
-  useEditService,
-  useService,
-} from '@qovery/domains/services/feature'
+import { DockerfileSettings, type DockerfileSettingsData } from '@qovery/domains/service-job/feature'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isJobGitSource } from '@qovery/shared/enums'
 import { Button, Section } from '@qovery/shared/ui'
