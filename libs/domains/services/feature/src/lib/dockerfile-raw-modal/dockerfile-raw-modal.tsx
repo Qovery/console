@@ -68,7 +68,7 @@ ENTRYPOINT [ "/bin/sh" ]`,
             className="mb-0 rounded-l-none"
             classNameContent="p-0"
             headRight={
-              <CopyToClipboardButtonIcon className="text-xs hover:text-neutral-400" content={defaultContent} />
+              <CopyToClipboardButtonIcon className="text-xs hover:text-neutral-subtle" content={defaultContent} />
             }
           >
             <CodeEditor
