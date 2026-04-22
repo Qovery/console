@@ -57,7 +57,7 @@ export function StepGeneral() {
     }
 
     if (data.is_public_repository) {
-      data.auto_deploy = false
+      cloneData.auto_deploy = false
     }
 
     if (data.cmd_arguments) {
