@@ -147,4 +147,20 @@ describe('LayoutPage', () => {
       expect(redirectToUrl).toHaveBeenCalledWith('https://new-console.qovery.com/organization/123')
     })
   })
+
+  it('should not automatically redirect when the new navigation activation feature flag is disabled', async () => {
+    useFeatureFlagEnabledMock.mockReturnValue(false)
+    jest.spyOn(iamFeature, 'useConsoleRedirectPreference').mockReturnValue({
+      preferredConsole: 'new',
+      isNewConsoleDefault: true,
+      setPreferredConsole: jest.fn(),
+      setIsNewConsoleDefault: jest.fn(),
+    })
+
+    renderWithProviders(renderComponent({ ...props }))
+
+    await waitFor(() => {
+      expect(redirectToUrl).not.toHaveBeenCalled()
+    })
+  })
 })

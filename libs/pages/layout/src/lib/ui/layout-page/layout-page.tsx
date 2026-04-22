@@ -153,14 +153,19 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
   )
 
   useEffect(() => {
-    if (!isNewConsoleDefault || shouldBypassLegacyConsoleRedirect() || !newConsoleUrl) {
+    if (
+      !isNewNavigationActivationEnabled ||
+      !isNewConsoleDefault ||
+      shouldBypassLegacyConsoleRedirect() ||
+      !newConsoleUrl
+    ) {
       return
     }
 
     if (window.location.href !== newConsoleUrl) {
       redirectToUrl(newConsoleUrl)
     }
-  }, [newConsoleUrl, isNewConsoleDefault])
+  }, [isNewNavigationActivationEnabled, isNewConsoleDefault, newConsoleUrl])
 
   const handleConsoleMigration = () => {
     if (!newConsoleUrl) {
