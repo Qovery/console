@@ -47,7 +47,7 @@ function DockerfileSettingsFromTemplate({
 export function JobDockerfileSettings() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
 
-  const { data: service } = useService({ serviceId, serviceType: 'JOB' })
+  const { data: service } = useService({ serviceId, serviceType: 'JOB', suspense: true })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     organizationId,
     projectId,
