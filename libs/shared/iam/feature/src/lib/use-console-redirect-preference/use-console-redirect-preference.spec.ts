@@ -1,8 +1,10 @@
+import { act, renderHook, waitFor } from '@qovery/shared/util-tests'
 import {
   getNewConsolePathname,
   getNewConsoleUrl,
   getStoredConsolePreference,
   shouldBypassLegacyConsoleRedirect,
+  useConsoleRedirectPreference,
 } from './use-console-redirect-preference'
 
 const ORGANIZATION_ID = '3d542888-3d2c-474a-b1ad-712556db66da'
@@ -213,6 +215,11 @@ describe('useConsoleRedirectPreference', () => {
     ).toBe(`https://new-console.qovery.com${ENVIRONMENT_PATH}/service/${SERVICE_ID}/overview?foo=bar#hash`)
   })
 
+  it('should redirect organization fallback targets to the new console root', () => {
+    expect(getNewConsoleUrl('https://console.qovery.com/user/general')).toBe('https://new-console.qovery.com/')
+    expect(getNewConsoleUrl('https://console.qovery.com/organization')).toBe('https://new-console.qovery.com/')
+  })
+
   it('should read the preference from local storage first', () => {
     localStorage.setItem('qovery-console-preference', 'new')
     document.cookie = 'qovery-console-preference=legacy; Path=/'
@@ -224,6 +231,21 @@ describe('useConsoleRedirectPreference', () => {
     document.cookie = 'qovery-console-preference=new; Path=/'
 
     expect(getStoredConsolePreference()).toBe('new')
+  })
+
+  it('should sync preference changes across hook instances', async () => {
+    const { result: layoutPreference } = renderHook(() => useConsoleRedirectPreference())
+    const { result: userSettingsPreference } = renderHook(() => useConsoleRedirectPreference())
+
+    expect(layoutPreference.current.isNewConsoleDefault).toBe(false)
+
+    act(() => {
+      userSettingsPreference.current.setIsNewConsoleDefault(true)
+    })
+
+    await waitFor(() => {
+      expect(layoutPreference.current.isNewConsoleDefault).toBe(true)
+    })
   })
 
   it('should detect the redirect bypass query param', () => {
