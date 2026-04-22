@@ -5,12 +5,6 @@ import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner 
 import { type ReactElement, cloneElement, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import {
-  SERVICES_CRONJOB_CREATION_URL,
-  SERVICES_LIFECYCLE_CREATION_URL,
-  SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL,
-  SERVICES_TERRAFORM_CREATION_URL,
-} from '@qovery/shared/routes'
 import { Badge, Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
@@ -76,7 +70,7 @@ function buildCreateFlowPathForType(type: ServiceType, parentSlug: string, slug:
   const flowSlug = CREATE_FLOW_SLUG_BY_TYPE[type]
   if (!flowSlug) return undefined
 
-  if (type === 'DATABASE') {
+  if (type === 'DATABASE' || type === 'LIFECYCLE_JOB') {
     const templateSlug = parentSlug === flowSlug || parentSlug === 'current' ? undefined : parentSlug
     const optionSlug = slug === 'current' ? undefined : slug
     const path = getCreateFlowPath(flowSlug, templateSlug)
@@ -167,10 +161,9 @@ function Card({
 /** Types listed in CREATE_FLOW_SLUG_BY_TYPE use /service/create/:flowSlug?template=; others use legacy URLs until migrated. */
 const servicePathSuffix = (type: ServiceType, parentSlug: string, slug: string) =>
   match(type)
-    .with('APPLICATION', 'CONTAINER', 'DATABASE', 'HELM', 'TERRAFORM', () =>
+    .with('APPLICATION', 'CONTAINER', 'DATABASE', 'HELM', 'TERRAFORM', 'LIFECYCLE_JOB', () =>
       buildCreateFlowPathForType(type, parentSlug, slug)
     )
-    .with('LIFECYCLE_JOB', () => SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL(parentSlug, slug))
     .with('JOB', 'CRON_JOB', () => undefined)
     .otherwise(() => buildCreateFlowPathForType(type, parentSlug, slug))
 
@@ -549,14 +542,14 @@ export function ServiceNew({
         title: 'Lifecycle Job',
         description: 'Execute any type of script coming from Git or a Container Registry.',
         icon: <Icon name="LIFECYCLE_JOB" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_LIFECYCLE_CREATION_URL),
+        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('lifecycle-job')),
         cloud_provider: cloudProvider,
       },
       {
         title: 'Cron Job',
         description: 'Execute any type of script at a regular basis.',
         icon: <Icon name="CRON_JOB" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, SERVICES_CRONJOB_CREATION_URL),
+        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('cron-job')),
         cloud_provider: cloudProvider,
       },
       {
@@ -631,7 +624,8 @@ export function ServiceNew({
                 organizationId,
                 projectId,
                 environmentId,
-                SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL('cloudformation', 'current')
+                buildCreateFlowPathForType('LIFECYCLE_JOB', 'cloudformation', 'current') ??
+                  '/service/create/lifecycle-job'
               ),
               cloud_provider: cloudProvider,
             },

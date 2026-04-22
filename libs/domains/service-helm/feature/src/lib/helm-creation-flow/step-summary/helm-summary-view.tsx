@@ -5,7 +5,7 @@ import {
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { type HelmGeneralData } from '@qovery/domains/services/feature'
-import { Button, Heading, Icon, Section, Truncate } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section, SummaryValue, Truncate } from '@qovery/shared/ui'
 import { type HelmValuesArgumentsData } from '../../values-override-arguments-setting/values-override-arguments-setting'
 import { type HelmValuesFileData } from '../../values-override-files-setting/values-override-files-setting'
 
@@ -39,14 +39,6 @@ function EditSectionButton({ onClick, label, testId }: { onClick: () => void; la
     >
       <Icon className="text-base" iconName="gear-complex" />
     </Button>
-  )
-}
-
-function SummaryValue({ label, value, testId }: { label: string; value: string | number | boolean; testId?: string }) {
-  return (
-    <li data-testid={testId}>
-      <strong className="font-medium text-neutral">{label}:</strong> {String(value)}
-    </li>
   )
 }
 
@@ -126,11 +118,8 @@ export function HelmSummaryView({
 
             {generalData.source_provider === 'GIT' ? (
               <>
-                <SummaryValue
-                  label="Repository"
-                  value={generalData.git_repository?.name ?? generalData.repository ?? '-'}
-                />
-                <SummaryValue label="Branch" value={generalData.branch ?? '-'} />
+                <SummaryValue label="Repository" value={generalData.git_repository?.name ?? generalData.repository} />
+                <SummaryValue label="Branch" value={generalData.branch} />
                 <SummaryValue label="Chart root folder path" value={generalData.root_path || '/'} />
               </>
             ) : (
@@ -138,21 +127,19 @@ export function HelmSummaryView({
                 <SummaryValue
                   label="Repository"
                   value={
-                    helmRepositories.find(({ id }) => id === generalData.repository)?.name ??
-                    generalData.repository ??
-                    '-'
+                    helmRepositories.find(({ id }) => id === generalData.repository)?.name ?? generalData.repository
                   }
                 />
-                <SummaryValue label="Chart name" value={generalData.chart_name ?? '-'} />
-                <SummaryValue label="Version" value={generalData.chart_version ?? '-'} />
+                <SummaryValue label="Chart name" value={generalData.chart_name} />
+                <SummaryValue label="Version" value={generalData.chart_version} />
               </>
             )}
 
             <li className="py-2">
               <hr className="border-t border-dashed border-neutral" />
             </li>
-            <SummaryValue label="Helm parameters" value={generalData.arguments ?? ''} />
-            <SummaryValue label="Helm timeout" value={generalData.timeout_sec ?? '-'} />
+            <SummaryValue label="Helm parameters" value={generalData.arguments} />
+            <SummaryValue label="Helm timeout" value={generalData.timeout_sec} />
             <SummaryValue
               label="Allow cluster-wide resources"
               value={generalData.allow_cluster_wide_resources ? 'Yes' : 'No'}
@@ -177,13 +164,13 @@ export function HelmSummaryView({
               .with('GIT_REPOSITORY', () => (
                 <>
                   <SummaryValue label="File source" value="Git repository" />
-                  <SummaryValue label="Git provider" value={valuesOverrideFileData.provider ?? '-'} />
+                  <SummaryValue label="Git provider" value={valuesOverrideFileData.provider} />
                   <SummaryValue
                     label="Repository"
-                    value={valuesOverrideFileData.git_repository?.name ?? valuesOverrideFileData.repository ?? '-'}
+                    value={valuesOverrideFileData.git_repository?.name ?? valuesOverrideFileData.repository}
                   />
-                  <SummaryValue label="Branch" value={valuesOverrideFileData.branch ?? '-'} />
-                  <SummaryValue label="Overrides path" value={valuesOverrideFileData.paths ?? '-'} />
+                  <SummaryValue label="Branch" value={valuesOverrideFileData.branch} />
+                  <SummaryValue label="Overrides path" value={valuesOverrideFileData.paths} />
                   <SummaryValue
                     label="Auto-deploy"
                     value={valuesOverrideFileData.auto_deploy ? 'On' : 'Off'}

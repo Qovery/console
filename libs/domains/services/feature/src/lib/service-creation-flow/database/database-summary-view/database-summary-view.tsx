@@ -3,7 +3,7 @@ import {
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
-import { Button, Callout, Heading, Icon, Section } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
 import {
   type DatabaseCreateGeneralData,
   type DatabaseCreateResourcesData,
@@ -87,9 +87,7 @@ export function DatabaseSummaryView({
             <EditSectionButton onClick={onEditGeneral} label="Edit general information" testId="edit-general-button" />
           </div>
           <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-            <li>
-              <strong className="font-medium text-neutral">Name:</strong> {generalData.name}
-            </li>
+            <SummaryValue label="Name" value={generalData.name} />
             {generalData.description ? (
               <li>
                 <strong className="font-medium text-neutral">Description:</strong>
@@ -100,37 +98,33 @@ export function DatabaseSummaryView({
             <li className="py-2">
               <hr className="border-t border-dashed border-neutral" />
             </li>
-            <li>
-              <strong className="font-medium text-neutral">Mode:</strong>{' '}
-              {generalData.mode === DatabaseModeEnum.MANAGED ? 'Managed' : 'Container'}
-            </li>
-            <li>
-              <strong className="font-medium text-neutral">Database type:</strong>{' '}
-              {generalData.type ? formatDatabaseTypeLabel(generalData.type) : ''}
-            </li>
-            <li>
-              <strong className="font-medium text-neutral">Version:</strong> {generalData.version}
-            </li>
-            <li>
-              <strong className="font-medium text-neutral">Accessibility:</strong> {generalData.accessibility}
-            </li>
+            <SummaryValue
+              label="Mode"
+              value={generalData.mode === DatabaseModeEnum.MANAGED ? 'Managed' : 'Container'}
+            />
+            <SummaryValue
+              label="Database type"
+              value={generalData.type ? formatDatabaseTypeLabel(generalData.type) : ''}
+            />
+            <SummaryValue label="Version" value={generalData.version} />
+            <SummaryValue label="Accessibility" value={generalData.accessibility} />
             {labelsGroup.length > 0 && generalData.labels_groups?.length ? (
-              <li>
-                <strong className="font-medium text-neutral">Labels group:</strong>{' '}
-                {labelsGroup
+              <SummaryValue
+                label="Labels group"
+                value={labelsGroup
                   .filter(({ id }) => generalData.labels_groups?.includes(id))
                   .map(({ name }) => name)
                   .join(', ')}
-              </li>
+              />
             ) : null}
             {annotationsGroup.length > 0 && generalData.annotations_groups?.length ? (
-              <li>
-                <strong className="font-medium text-neutral">Annotations group:</strong>{' '}
-                {annotationsGroup
+              <SummaryValue
+                label="Annotations group"
+                value={annotationsGroup
                   .filter(({ id }) => generalData.annotations_groups?.includes(id))
                   .map(({ name }) => name)
                   .join(', ')}
-              </li>
+              />
             ) : null}
           </ul>
         </Section>
@@ -142,23 +136,15 @@ export function DatabaseSummaryView({
           </div>
           <ul className="list-none space-y-2 text-sm text-neutral-subtle">
             {isManaged ? (
-              <li>
-                <strong className="font-medium text-neutral">Instance type:</strong> {resourcesData.instance_type}
-              </li>
+              <SummaryValue label="Instance type" value={resourcesData.instance_type} />
             ) : (
               <>
-                <li>
-                  <strong className="font-medium text-neutral">CPU:</strong> {resourcesData.cpu}
-                </li>
-                <li>
-                  <strong className="font-medium text-neutral">Memory:</strong> {resourcesData.memory} MB
-                </li>
+                <SummaryValue label="CPU" value={resourcesData.cpu} />
+                <SummaryValue label="Memory" value={`${resourcesData.memory} MB`} />
               </>
             )}
             {!(isManaged && generalData.type === 'REDIS') ? (
-              <li>
-                <strong className="font-medium text-neutral">Storage:</strong> {resourcesData.storage} GB
-              </li>
+              <SummaryValue label="Storage" value={`${resourcesData.storage} GB`} />
             ) : null}
           </ul>
         </Section>

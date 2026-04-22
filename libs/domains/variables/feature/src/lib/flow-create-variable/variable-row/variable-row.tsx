@@ -131,7 +131,6 @@ export function VariableRow(props: VariableRowProps) {
           render={({ field }) => (
             <InputSelectSmall
               data-testid="scope"
-              className="w-[188px]"
               name={field.name}
               defaultValue={field.value}
               onChange={(e) => {
@@ -151,9 +150,9 @@ export function VariableRow(props: VariableRowProps) {
           />
         </div>
 
-        <div className="flex h-full w-full grow items-center">
-          <Button type="button" variant="plain" size="md" onClick={() => props.onDelete(index)}>
-            <Icon className="text-base" iconName="trash-can" iconStyle="regular" />
+        <div className="flex items-center">
+          <Button type="button" variant="outline" size="md" iconOnly onClick={() => props.onDelete(index)}>
+            <Icon className="text-base" iconName="trash" iconStyle="regular" />
           </Button>
         </div>
       </div>

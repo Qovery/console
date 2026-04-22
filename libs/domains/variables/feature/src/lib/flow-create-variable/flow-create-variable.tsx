@@ -27,7 +27,7 @@ export function FlowCreateVariable({
   availableScopes,
 }: FlowCreateVariableProps) {
   const { formState } = useFormContext<FlowVariableData>()
-  const gridTemplateColumns = '172px 172px 188px 2fr 1fr'
+  const gridTemplateColumns = '1fr 1fr 1fr 56px 32px'
 
   return (
     <Section>
