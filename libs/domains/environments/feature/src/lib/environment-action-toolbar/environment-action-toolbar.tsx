@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
   type Environment,
   EnvironmentDeploymentStatusEnum,
@@ -8,7 +9,7 @@ import {
 import { match } from 'ts-pattern'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, OVERVIEW_URL } from '@qovery/shared/routes'
 import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
@@ -244,6 +245,7 @@ export function MenuOtherActions({
   environment: Environment
   variant?: ActionToolbarVariant
 }) {
+  const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
@@ -255,7 +257,15 @@ export function MenuOtherActions({
       title: 'Delete environment',
       name: environment.name,
       confirmationMethod: 'action',
-      action: () => deleteEnvironment({ environmentId: environment.id }),
+      action: () =>
+        deleteEnvironment(
+          { environmentId: environment.id },
+          {
+            onSuccess: () => {
+              navigate({ to: OVERVIEW_URL(environment.organization.id, environment.project.id) })
+            },
+          }
+        ),
     })
   }
 
