@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Banner, Button, Icon } from '@qovery/shared/ui'
+import { Banner, Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 import {
   type AnnouncementBannerPayload,
@@ -19,6 +19,7 @@ const VARIANT_PRIORITY: Record<AnnouncementBannerPayload['variant'], number> = {
 }
 
 const BANNER_ICON_BUTTON_CLASSNAME = 'flex h-7 w-7 items-center justify-center p-0'
+const MULTIPLE_BANNERS_CONTENT_CLASSNAME = 'pl-4 pr-[170px] sm:px-[170px]'
 
 const LEGACY_DISMISSED_KEY = 'announcement_banner_dismissed'
 const DISMISSED_MESSAGES_KEY = 'announcement_banners_dismissed'
@@ -68,6 +69,7 @@ export function AnnouncementBanner() {
   const hasActionButton = Boolean(buttonLabel && buttonUrl)
   const hasMultiple = visibleBanners.length > 1
   const usesBannerDismissButton = dismissible && !hasMultiple
+  const bannerText = title ? `${title} ${message}` : message
 
   const handlePrev = () => {
     const previousIndex = (currentIndex - 1 + visibleBanners.length) % visibleBanners.length
@@ -96,19 +98,25 @@ export function AnnouncementBanner() {
   return (
     <Banner
       color={color}
+      className={hasMultiple ? MULTIPLE_BANNERS_CONTENT_CLASSNAME : undefined}
       buttonLabel={hasActionButton ? buttonLabel : undefined}
       buttonIconRight={hasActionButton ? 'arrow-up-right-from-square' : undefined}
       onClickButton={hasActionButton ? () => window.open(buttonUrl, '_blank', 'noopener,noreferrer') : undefined}
       dismissible={usesBannerDismissButton}
       onDismiss={usesBannerDismissButton ? handleDismiss : undefined}
     >
-      {title && <strong className="mr-2">{title}</strong>}
-      {message}
+      <Tooltip content={bannerText} side="bottom" classNameContent="max-w-[480px] text-center whitespace-normal">
+        <span className="min-w-0 truncate text-center" title={bannerText}>
+          {title && <strong className="mr-2">{title}</strong>}
+          {message}
+        </span>
+      </Tooltip>
       {hasMultiple && (
         <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center">
           <Button
             type="button"
             className={BANNER_ICON_BUTTON_CLASSNAME}
+            variant="plain"
             color={color}
             onClick={handlePrev}
             aria-label="Previous"
@@ -121,6 +129,7 @@ export function AnnouncementBanner() {
           <Button
             type="button"
             className={BANNER_ICON_BUTTON_CLASSNAME}
+            variant="plain"
             color={color}
             onClick={handleNext}
             aria-label="Next"
@@ -132,6 +141,7 @@ export function AnnouncementBanner() {
             <Button
               type="button"
               className={BANNER_ICON_BUTTON_CLASSNAME}
+              variant="plain"
               color={color}
               onClick={handleDismiss}
               aria-label="Dismiss"
