@@ -470,38 +470,38 @@ export function StepSummary() {
 
   const gotoGlobalInformations = useCallback(() => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
+      to: jobURL + '/general',
       params: { organizationId, projectId, environmentId },
     })
-  }, [navigate, organizationId, projectId, environmentId])
+  }, [navigate, jobURL, organizationId, projectId, environmentId])
 
   const gotoResources = useCallback(() => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources',
+      to: jobURL + '/resources',
       params: { organizationId, projectId, environmentId },
     })
-  }, [navigate, organizationId, projectId, environmentId])
+  }, [navigate, jobURL, organizationId, projectId, environmentId])
 
   const gotoConfigureJob = useCallback(() => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/configure',
+      to: jobURL + '/configure',
       params: { organizationId, projectId, environmentId },
     })
-  }, [navigate, organizationId, projectId, environmentId])
+  }, [navigate, jobURL, organizationId, projectId, environmentId])
 
   const gotoDockerfileJob = useCallback(() => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/dockerfile',
+      to: jobURL + '/dockerfile',
       params: { organizationId, projectId, environmentId },
     })
-  }, [navigate, organizationId, projectId, environmentId])
+  }, [navigate, jobURL, organizationId, projectId, environmentId])
 
   const gotoVariable = useCallback(() => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables',
+      to: jobURL + '/variables',
       params: { organizationId, projectId, environmentId },
     })
-  }, [navigate, organizationId, projectId, environmentId])
+  }, [navigate, jobURL, organizationId, projectId, environmentId])
 
   const { mutateAsync: importVariables } = useImportVariables()
   const { mutateAsync: createVariable } = useCreateVariable()
@@ -510,10 +510,10 @@ export function StepSummary() {
     !generalData?.name &&
       jobURL &&
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
+        to: jobURL + '/general',
         params: { organizationId, projectId, environmentId },
       })
-  }, [generalData, navigate, environmentId, organizationId, projectId, jobURL, gotoGlobalInformations])
+  }, [generalData, navigate, environmentId, organizationId, projectId, jobURL])
 
   const onSubmit = async (withDeploy: boolean) => {
     if (generalData && resourcesData && variableData && configureData) {
