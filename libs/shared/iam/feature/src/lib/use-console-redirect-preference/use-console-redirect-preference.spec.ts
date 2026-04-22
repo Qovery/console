@@ -5,6 +5,19 @@ import {
   shouldBypassLegacyConsoleRedirect,
 } from './use-console-redirect-preference'
 
+const ORGANIZATION_ID = '3d542888-3d2c-474a-b1ad-712556db66da'
+const PROJECT_ID = 'd83a2f1f-d90b-461f-9a45-5e8aa2fe2bc0'
+const ENVIRONMENT_ID = '857809d7-4e6e-4fa0-8f4e-aff1d8381028'
+const CLUSTER_ID = '9f7691a9-40e7-48aa-b11d-749abfd4555d'
+const SERVICE_ID = '53a015b0-c6b3-45ce-a958-8d4975368797'
+const DATABASE_ID = '51f391cc-9fe0-44a0-98d7-642fd19e01f4'
+const DEPLOYMENT_ID = '1284100d-6209-4065-a42d-d60cf5f384cc'
+const EXECUTION_ID = 'a199113f-a0a3-44f9-ab6f-bb0fdf5cb4d1'
+
+const ORGANIZATION_PATH = `/organization/${ORGANIZATION_ID}`
+const PROJECT_PATH = `${ORGANIZATION_PATH}/project/${PROJECT_ID}`
+const ENVIRONMENT_PATH = `${PROJECT_PATH}/environment/${ENVIRONMENT_ID}`
+
 describe('useConsoleRedirectPreference', () => {
   beforeEach(() => {
     localStorage.clear()
@@ -27,221 +40,177 @@ describe('useConsoleRedirectPreference', () => {
   })
 
   it('should migrate legacy overview aliases to overview routes', () => {
-    expect(getNewConsolePathname('/organization/org/audit-logs/general')).toBe('/organization/org/audit-logs')
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/audit-logs/general`)).toBe(`${ORGANIZATION_PATH}/audit-logs`)
 
-    expect(getNewConsolePathname('/organization/org/project/project/environments/general')).toBe(
-      '/organization/org/project/project/overview'
-    )
+    expect(getNewConsolePathname(`${PROJECT_PATH}/environments/general`)).toBe(`${PROJECT_PATH}/overview`)
 
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/environments/general')
-    ).toBe('/organization/org/project/project/environment/environment/overview')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/environments/general`)).toBe(`${ENVIRONMENT_PATH}/overview`)
 
-    expect(getNewConsolePathname('/organization/org/project/project/environment/environment/services/general')).toBe(
-      '/organization/org/project/project/environment/environment/overview'
-    )
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/general`)).toBe(`${ENVIRONMENT_PATH}/overview`)
   })
 
   it('should migrate renamed organization sections', () => {
-    expect(getNewConsolePathname('/organization/org/alerting/alert-rules')).toBe('/organization/org/alerts/alert-rules')
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/alerting/alert-rules`)).toBe(
+      `${ORGANIZATION_PATH}/alerts/alert-rules`
+    )
 
-    expect(getNewConsolePathname('/organization/org/settings/api')).toBe('/organization/org/settings/api-token')
-    expect(getNewConsolePathname('/organization/org/settings/credentials')).toBe(
-      '/organization/org/settings/cloud-credentials'
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/settings/api`)).toBe(`${ORGANIZATION_PATH}/settings/api-token`)
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/settings/credentials`)).toBe(
+      `${ORGANIZATION_PATH}/settings/cloud-credentials`
     )
-    expect(getNewConsolePathname('/organization/org/settings/billing-detail')).toBe(
-      '/organization/org/settings/billing-details'
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/settings/billing-detail`)).toBe(
+      `${ORGANIZATION_PATH}/settings/billing-details`
     )
-    expect(getNewConsolePathname('/organization/org/settings/webhooks')).toBe('/organization/org/settings/webhook')
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/settings/webhooks`)).toBe(
+      `${ORGANIZATION_PATH}/settings/webhook`
+    )
   })
 
   it('should migrate legacy project settings paths', () => {
-    expect(getNewConsolePathname('/organization/org/settings/project/project/general')).toBe(
-      '/organization/org/project/project/settings/general'
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/settings/${PROJECT_ID}/project/general`)).toBe(
+      `${PROJECT_PATH}/settings/general`
     )
 
-    expect(getNewConsolePathname('/organization/org/settings/project/project/danger-zone')).toBe(
-      '/organization/org/project/project/settings/danger-zone'
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/settings/${PROJECT_ID}/project/danger-zone`)).toBe(
+      `${PROJECT_PATH}/settings/danger-zone`
     )
   })
 
   it('should migrate legacy cluster paths', () => {
-    expect(getNewConsolePathname('/organization/org/clusters/general')).toBe('/organization/org/clusters')
-    expect(getNewConsolePathname('/organization/org/clusters/new')).toBe('/organization/org/cluster/new')
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/clusters/general`)).toBe(`${ORGANIZATION_PATH}/clusters`)
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/clusters/new`)).toBe(`${ORGANIZATION_PATH}/cluster/new`)
 
-    expect(getNewConsolePathname('/organization/org/clusters/create/aws/access')).toBe(
-      '/organization/org/cluster/create/aws/general'
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/clusters/create/aws/access`)).toBe(
+      `${ORGANIZATION_PATH}/cluster/create/aws/general`
     )
 
-    expect(getNewConsolePathname('/organization/org/clusters/create/aws/summary')).toBe(
-      '/organization/org/cluster/create/aws/summary'
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/clusters/create/aws/summary`)).toBe(
+      `${ORGANIZATION_PATH}/cluster/create/aws/summary`
     )
 
-    expect(getNewConsolePathname('/organization/org/cluster/cluster/logs')).toBe(
-      '/organization/org/cluster/cluster/cluster-logs'
+    expect(getNewConsolePathname(`${ORGANIZATION_PATH}/cluster/${CLUSTER_ID}/logs`)).toBe(
+      `${ORGANIZATION_PATH}/cluster/${CLUSTER_ID}/cluster-logs`
     )
   })
 
   it('should migrate legacy project environment section paths', () => {
-    expect(getNewConsolePathname('/organization/org/project/project/environments/variables')).toBe(
-      '/organization/org/project/project/variables'
-    )
+    expect(getNewConsolePathname(`${PROJECT_PATH}/environments/variables`)).toBe(`${PROJECT_PATH}/variables`)
 
-    expect(getNewConsolePathname('/organization/org/project/project/environments/deployment-rules/edit/rule')).toBe(
-      '/organization/org/project/project/deployment-rules/edit/rule'
+    expect(getNewConsolePathname(`${PROJECT_PATH}/environments/deployment-rules/edit/${DEPLOYMENT_ID}`)).toBe(
+      `${PROJECT_PATH}/deployment-rules/edit/${DEPLOYMENT_ID}`
     )
   })
 
   it('should migrate legacy environment services section paths', () => {
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/services/deployments')
-    ).toBe('/organization/org/project/project/environment/environment/deployments')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/deployments`)).toBe(`${ENVIRONMENT_PATH}/deployments`)
 
-    expect(getNewConsolePathname('/organization/org/project/project/environment/environment/services/variables')).toBe(
-      '/organization/org/project/project/environment/environment/variables'
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/variables`)).toBe(`${ENVIRONMENT_PATH}/variables`)
+
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/settings/rules`)).toBe(
+      `${ENVIRONMENT_PATH}/settings/deployment-rules`
     )
 
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/services/settings/rules')
-    ).toBe('/organization/org/project/project/environment/environment/settings/deployment-rules')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/settings/pipeline`)).toBe(
+      `${ENVIRONMENT_PATH}/overview/pipeline`
+    )
 
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/services/settings/pipeline')
-    ).toBe('/organization/org/project/project/environment/environment/overview/pipeline')
-
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/services/settings/preview-environments'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/settings/preview-environments')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/settings/preview-environments`)).toBe(
+      `${ENVIRONMENT_PATH}/settings/preview-environments`
+    )
   })
 
   it('should migrate legacy environment logs paths', () => {
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/logs/application/service-logs')
-    ).toBe('/organization/org/project/project/environment/environment/service/application/service-logs')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/logs/${SERVICE_ID}/service-logs`)).toBe(
+      `${ENVIRONMENT_PATH}/service/${SERVICE_ID}/service-logs`
+    )
 
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/logs/application/deployment-logs/execution'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/application/deployments/logs/execution')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/logs/${SERVICE_ID}/deployment-logs/${EXECUTION_ID}`)).toBe(
+      `${ENVIRONMENT_PATH}/service/${SERVICE_ID}/deployments/logs/${EXECUTION_ID}`
+    )
 
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/logs/pre-check-logs/deployment')
-    ).toBe('/organization/org/project/project/environment/environment/deployment/deployment/pre-check-logs')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/logs/pre-check-logs/${DEPLOYMENT_ID}`)).toBe(
+      `${ENVIRONMENT_PATH}/deployment/${DEPLOYMENT_ID}/pre-check-logs`
+    )
 
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/logs/stages/deployment')
-    ).toBe('/organization/org/project/project/environment/environment/deployments')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/logs/stages/${DEPLOYMENT_ID}`)).toBe(
+      `${ENVIRONMENT_PATH}/deployments`
+    )
   })
 
   it('should migrate legacy application paths to new service paths', () => {
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/application/application/general')
-    ).toBe('/organization/org/project/project/environment/environment/service/application/overview')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/application/${SERVICE_ID}/general`)).toBe(
+      `${ENVIRONMENT_PATH}/service/${SERVICE_ID}/overview`
+    )
 
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/application/application/settings/resources'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/application/settings/resources')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/application/${SERVICE_ID}/settings/resources`)).toBe(
+      `${ENVIRONMENT_PATH}/service/${SERVICE_ID}/settings/resources`
+    )
   })
 
   it('should migrate legacy database paths to new service paths', () => {
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/database/database/general')
-    ).toBe('/organization/org/project/project/environment/environment/service/database/overview')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/database/${DATABASE_ID}/general`)).toBe(
+      `${ENVIRONMENT_PATH}/service/${DATABASE_ID}/overview`
+    )
 
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/database/database/settings/danger-zone'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/database/settings/danger-zone')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/database/${DATABASE_ID}/settings/danger-zone`)).toBe(
+      `${ENVIRONMENT_PATH}/service/${DATABASE_ID}/settings/danger-zone`
+    )
   })
 
   it('should migrate legacy environment services paths to singular service paths', () => {
-    expect(getNewConsolePathname('/organization/org/project/project/environment/environment/services/new')).toBe(
-      '/organization/org/project/project/environment/environment/service/new'
-    )
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/new`)).toBe(`${ENVIRONMENT_PATH}/service/new`)
 
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/services/create/database/general'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/create/database/general')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/create/database/general`)).toBe(
+      `${ENVIRONMENT_PATH}/service/create/database/general`
+    )
   })
 
   it('should migrate legacy service creation step aliases', () => {
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/services/create/cron-job/introduction'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/create/cron-job/general')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/create/cron-job/introduction`)).toBe(
+      `${ENVIRONMENT_PATH}/service/create/cron-job/general`
+    )
 
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/services/create/cron-job/variable'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/create/cron-job/variables')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/create/cron-job/variable`)).toBe(
+      `${ENVIRONMENT_PATH}/service/create/cron-job/variables`
+    )
 
-    expect(
-      getNewConsolePathname('/organization/org/project/project/environment/environment/services/create/database/post')
-    ).toBe('/organization/org/project/project/environment/environment/service/create/database/summary')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/create/database/post`)).toBe(
+      `${ENVIRONMENT_PATH}/service/create/database/summary`
+    )
   })
 
   it('should migrate legacy service creation step paths', () => {
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/services/create/helm/values-override/repository-and-yaml'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/create/helm/values-override-file')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/create/helm/values-override/repository-and-yaml`)).toBe(
+      `${ENVIRONMENT_PATH}/service/create/helm/values-override-file`
+    )
 
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/services/create/helm/values-override/arguments'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/create/helm/values-override-arguments')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/create/helm/values-override/arguments`)).toBe(
+      `${ENVIRONMENT_PATH}/service/create/helm/values-override-arguments`
+    )
 
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/services/create/terraform/basic-configuration'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/create/terraform/terraform-configuration')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/services/create/terraform/basic-configuration`)).toBe(
+      `${ENVIRONMENT_PATH}/service/create/terraform/terraform-configuration`
+    )
   })
 
   it('should migrate legacy monitoring metric creation paths', () => {
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/application/application/monitoring/metric/cpu'
-      )
-    ).toBe(
-      '/organization/org/project/project/environment/environment/service/application/monitoring/alerts/create/metric/cpu'
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/application/${SERVICE_ID}/monitoring/metric/cpu`)).toBe(
+      `${ENVIRONMENT_PATH}/service/${SERVICE_ID}/monitoring/alerts/create/metric/cpu`
     )
 
     expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/application/application/monitoring/create/alerts/metric/cpu'
-      )
-    ).toBe(
-      '/organization/org/project/project/environment/environment/service/application/monitoring/alerts/create/metric/cpu'
-    )
+      getNewConsolePathname(`${ENVIRONMENT_PATH}/application/${SERVICE_ID}/monitoring/create/alerts/metric/cpu`)
+    ).toBe(`${ENVIRONMENT_PATH}/service/${SERVICE_ID}/monitoring/alerts/create/metric/cpu`)
 
-    expect(
-      getNewConsolePathname(
-        '/organization/org/project/project/environment/environment/application/application/monitoring/create/alerts'
-      )
-    ).toBe('/organization/org/project/project/environment/environment/service/application/monitoring/alerts')
+    expect(getNewConsolePathname(`${ENVIRONMENT_PATH}/application/${SERVICE_ID}/monitoring/create/alerts`)).toBe(
+      `${ENVIRONMENT_PATH}/service/${SERVICE_ID}/monitoring/alerts`
+    )
   })
 
   it('should migrate paths while building the new console url', () => {
     expect(
-      getNewConsoleUrl(
-        'https://console.qovery.com/organization/org/project/project/environment/environment/application/application/general?foo=bar#hash'
-      )
-    ).toBe(
-      'https://new-console.qovery.com/organization/org/project/project/environment/environment/service/application/overview?foo=bar#hash'
-    )
+      getNewConsoleUrl(`https://console.qovery.com${ENVIRONMENT_PATH}/application/${SERVICE_ID}/general?foo=bar#hash`)
+    ).toBe(`https://new-console.qovery.com${ENVIRONMENT_PATH}/service/${SERVICE_ID}/overview?foo=bar#hash`)
   })
 
   it('should read the preference from local storage first', () => {
