@@ -116,6 +116,26 @@ describe('useConsoleRedirectPreference', () => {
     ).toBe('/organization/org/project/project/environment/environment/settings/preview-environments')
   })
 
+  it('should migrate legacy environment logs paths', () => {
+    expect(
+      getNewConsolePathname('/organization/org/project/project/environment/environment/logs/application/service-logs')
+    ).toBe('/organization/org/project/project/environment/environment/service/application/service-logs')
+
+    expect(
+      getNewConsolePathname(
+        '/organization/org/project/project/environment/environment/logs/application/deployment-logs/execution'
+      )
+    ).toBe('/organization/org/project/project/environment/environment/service/application/deployments/logs/execution')
+
+    expect(
+      getNewConsolePathname('/organization/org/project/project/environment/environment/logs/pre-check-logs/deployment')
+    ).toBe('/organization/org/project/project/environment/environment/deployment/deployment/pre-check-logs')
+
+    expect(
+      getNewConsolePathname('/organization/org/project/project/environment/environment/logs/stages/deployment')
+    ).toBe('/organization/org/project/project/environment/environment/deployments')
+  })
+
   it('should migrate legacy application paths to new service paths', () => {
     expect(
       getNewConsolePathname('/organization/org/project/project/environment/environment/application/application/general')
@@ -150,6 +170,24 @@ describe('useConsoleRedirectPreference', () => {
         '/organization/org/project/project/environment/environment/services/create/database/general'
       )
     ).toBe('/organization/org/project/project/environment/environment/service/create/database/general')
+  })
+
+  it('should migrate legacy service creation step aliases', () => {
+    expect(
+      getNewConsolePathname(
+        '/organization/org/project/project/environment/environment/services/create/cron-job/introduction'
+      )
+    ).toBe('/organization/org/project/project/environment/environment/service/create/cron-job/general')
+
+    expect(
+      getNewConsolePathname(
+        '/organization/org/project/project/environment/environment/services/create/cron-job/variable'
+      )
+    ).toBe('/organization/org/project/project/environment/environment/service/create/cron-job/variables')
+
+    expect(
+      getNewConsolePathname('/organization/org/project/project/environment/environment/services/create/database/post')
+    ).toBe('/organization/org/project/project/environment/environment/service/create/database/summary')
   })
 
   it('should migrate legacy service creation step paths', () => {

@@ -102,6 +102,19 @@ export function getNewConsolePathname(pathname: string): string {
     )
     .replace(new RegExp(`^(${ENVIRONMENT_PATH_PATTERN})/services/settings/pipeline(/|$)`), '$1/overview/pipeline$2')
     .replace(new RegExp(`^(${ENVIRONMENT_PATH_PATTERN})/services/settings(/|$)`), '$1/settings$2')
+    .replace(
+      new RegExp(`^(${ENVIRONMENT_PATH_PATTERN})/logs/([^/]+)/service-logs(/|$)`),
+      '$1/service/$2/service-logs$3'
+    )
+    .replace(
+      new RegExp(`^(${ENVIRONMENT_PATH_PATTERN})/logs/([^/]+)/deployment-logs/([^/]+)(/|$)`),
+      '$1/service/$2/deployments/logs/$3$4'
+    )
+    .replace(
+      new RegExp(`^(${ENVIRONMENT_PATH_PATTERN})/logs/pre-check-logs/([^/]+)(/|$)`),
+      '$1/deployment/$2/pre-check-logs$3'
+    )
+    .replace(new RegExp(`^(${ENVIRONMENT_PATH_PATTERN})/logs(/stages/[^/]+|/stages)?(/|$)`), '$1/deployments$3')
     .replace(new RegExp(`^(${ENVIRONMENT_PATH_PATTERN})/(application|database)/([^/]+)(/|$)`), '$1/service/$3$4')
     .replace(new RegExp(`^(${ENVIRONMENT_PATH_PATTERN})/services(/|$)`), '$1/service$2')
     .replace(new RegExp(`^(${ENVIRONMENT_PATH_PATTERN}/service/[^/]+)/general(/|$)`), '$1/overview$2')
@@ -117,6 +130,9 @@ export function getNewConsolePathname(pathname: string): string {
       new RegExp(`^(${ENVIRONMENT_PATH_PATTERN}/service/[^/]+)/monitoring/metric/([^/]+)(/|$)`),
       '$1/monitoring/alerts/create/metric/$2$3'
     )
+    .replace(new RegExp(`^(${ENVIRONMENT_PATH_PATTERN}/service/create/[^/]+)/post(/|$)`), '$1/summary$2')
+    .replace(new RegExp(`^(${ENVIRONMENT_PATH_PATTERN}/service/create/[^/]+)/variable(/|$)`), '$1/variables$2')
+    .replace(new RegExp(`^(${ENVIRONMENT_PATH_PATTERN}/service/create/[^/]+)/introduction(/|$)`), '$1/general$2')
     .replace(
       new RegExp(`^(${ENVIRONMENT_PATH_PATTERN}/service/create/helm)/values-override/repository-and-yaml(/|$)`),
       '$1/values-override-file$2'
