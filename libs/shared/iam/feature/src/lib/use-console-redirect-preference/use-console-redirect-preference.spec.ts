@@ -220,14 +220,30 @@ describe('useConsoleRedirectPreference', () => {
     expect(getNewConsoleUrl('https://console.qovery.com/organization')).toBe('https://new-console.qovery.com/')
   })
 
-  it('should read the preference from local storage first', () => {
+  it('should read the preference from the shared cookie only', () => {
+    // localStorage is per-origin and would be stale across console/new-console subdomains.
+    // Regardless of what it contains, the cookie is the only source of truth.
     localStorage.setItem('qovery-console-preference', 'new')
     document.cookie = 'qovery-console-preference=legacy; Path=/'
 
-    expect(getStoredConsolePreference()).toBe('new')
+    expect(getStoredConsolePreference()).toBe('legacy')
   })
 
-  it('should fallback to cookies when local storage is empty', () => {
+  it('should default to legacy when the cookie is not set', () => {
+    localStorage.setItem('qovery-console-preference', 'new')
+
+    expect(getStoredConsolePreference()).toBe('legacy')
+  })
+
+  it('should purge any stale local storage preference on read', () => {
+    localStorage.setItem('qovery-console-preference', 'new')
+
+    getStoredConsolePreference()
+
+    expect(localStorage.getItem('qovery-console-preference')).toBeNull()
+  })
+
+  it('should return the preference stored in the cookie', () => {
     document.cookie = 'qovery-console-preference=new; Path=/'
 
     expect(getStoredConsolePreference()).toBe('new')
