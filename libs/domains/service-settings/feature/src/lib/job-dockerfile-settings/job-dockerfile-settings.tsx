@@ -1,18 +1,14 @@
+import { useParams } from '@tanstack/react-router'
 import { type LifecycleJobResponse } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { useCheckDockerfile, useLifecycleTemplate } from '@qovery/domains/environments/feature'
-import {
-  DockerfileSettings,
-  type DockerfileSettingsData,
-  useEditService,
-  useService,
-} from '@qovery/domains/services/feature'
+import { DockerfileSettings, type DockerfileSettingsData } from '@qovery/domains/service-job/feature'
+import { useEditService, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { isJobGitSource } from '@qovery/shared/enums'
-import { Button } from '@qovery/shared/ui'
+import { Button, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { TemplateIds } from '@qovery/shared/util-services'
 
@@ -44,10 +40,10 @@ function DockerfileSettingsFromTemplate({
   )
 }
 
-export function PageSettingsDockerfileFeature() {
-  const { organizationId = '', projectId = '', environmentId = '', applicationId = '' } = useParams()
+export function JobDockerfileSettings() {
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
 
-  const { data: service } = useService({ serviceId: applicationId, serviceType: 'JOB' })
+  const { data: service } = useService({ serviceId, serviceType: 'JOB', suspense: true })
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     organizationId,
     projectId,
@@ -82,7 +78,7 @@ export function PageSettingsDockerfileFeature() {
     const onSubmit = dockerfileForm.handleSubmit(async (data) => {
       if (data.dockerfile_raw) {
         editService({
-          serviceId: applicationId,
+          serviceId,
           payload: {
             ...service,
             source: {
@@ -112,7 +108,7 @@ export function PageSettingsDockerfileFeature() {
           })
 
           editService({
-            serviceId: applicationId,
+            serviceId,
             payload: {
               ...service,
               source: {
@@ -148,8 +144,8 @@ export function PageSettingsDockerfileFeature() {
           )
 
     return (
-      <div className="flex w-full flex-col justify-between">
-        <div className="max-w-content-with-navigation-left p-8">
+      <Section className="px-8 pb-8 pt-6">
+        <div className="flex w-full flex-col justify-between">
           <SettingsHeading
             title="Dockerfile"
             description={match(service.schedule.lifecycle_type)
@@ -171,20 +167,20 @@ export function PageSettingsDockerfileFeature() {
               )
               .exhaustive()}
           />
-          <DockerfileSettingsWrapper>
-            <div className="flex justify-end">
-              <Button type="submit" size="lg" loading={isLoadingEditService || isLoadingCheckDockerfile}>
-                Save
-              </Button>
-            </div>
-          </DockerfileSettingsWrapper>
+          <div className="max-w-content-with-navigation-left">
+            <DockerfileSettingsWrapper>
+              <div className="flex justify-end">
+                <Button type="submit" size="lg" loading={isLoadingEditService || isLoadingCheckDockerfile}>
+                  Save
+                </Button>
+              </div>
+            </DockerfileSettingsWrapper>
+          </div>
         </div>
-      </div>
+      </Section>
     )
   } else {
     // Could not happen as only lifecycle with git source have access to this page
     return null
   }
 }
-
-export default PageSettingsDockerfileFeature

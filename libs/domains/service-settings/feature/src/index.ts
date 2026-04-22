@@ -13,3 +13,4 @@ export * from './lib/helm-values-override-arguments-settings/helm-values-overrid
 export * from './lib/helm-networking-settings/helm-networking-settings'
 export * from './lib/job-configuration/job-configuration'
 export * from './lib/terraform-variables-settings/terraform-variables-settings'
+export * from './lib/job-dockerfile-settings/job-dockerfile-settings'

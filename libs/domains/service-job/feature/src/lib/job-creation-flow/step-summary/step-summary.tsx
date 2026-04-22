@@ -10,7 +10,7 @@ import {
 import { useCallback, useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useAnnotationsGroups, useContainerRegistry, useLabelsGroups } from '@qovery/domains/organizations/feature'
-import { type DockerfileSettingsData, useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
@@ -22,6 +22,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
 import { generateScopeLabel, prepareVariableImportRequest, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { type DockerfileSettingsData } from '../../dockerfile-settings/dockerfile-settings'
 import { useJobCreateContext } from '../job-creation-flow'
 
 interface StepSummaryProps {

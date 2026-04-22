@@ -4,7 +4,7 @@ import {
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type DockerfileSettingsData } from '@qovery/domains/services/feature'
+import { type DockerfileSettingsData } from '@qovery/domains/service-job/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
