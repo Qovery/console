@@ -20,7 +20,7 @@ import {
   type JobResourcesData,
   type VariableData,
 } from '@qovery/shared/interfaces'
-import { Button, FunnelFlowBody, Heading, Icon, Section, truncateText } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
 import { generateScopeLabel, prepareVariableImportRequest, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useJobCreateContext } from '../job-creation-flow'
 
@@ -196,20 +196,16 @@ function StepSummaryContent(props: StepSummaryProps) {
               </Button>
             </div>
             <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-              <li>
-                <strong className="font-medium">Name:</strong> {props.generalData.name}
-              </li>
+              <SummaryValue label="Name" value={props.generalData.name} />
               {props.generalData.description && (
                 <li>
-                  <strong className="font-medium">Description:</strong>
+                  <strong className="font-medium text-neutral">Description:</strong>
                   <br />
                   {props.generalData.description}
                 </li>
               )}
               {props.templateType && props.templateType !== 'GENERIC' && props.jobType === 'LIFECYCLE_JOB' && (
-                <li>
-                  <strong className="font-medium">Type:</strong> {upperCaseFirstLetter(props.templateType)}
-                </li>
+                <SummaryValue label="Type" value={upperCaseFirstLetter(props.templateType)} />
               )}
               <div className="py-2">
                 <hr className="border-t border-dashed border-neutral" />
@@ -217,88 +213,61 @@ function StepSummaryContent(props: StepSummaryProps) {
 
               {props.generalData.serviceType === ServiceTypeEnum.APPLICATION && (
                 <>
-                  <li>
-                    <strong className="font-medium">Repository:</strong>{' '}
-                    {props.generalData.repository || props.generalData.git_repository?.url}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Branch:</strong> {props.generalData.branch}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Root path:</strong> {props.generalData.root_path}
-                  </li>
+                  <SummaryValue
+                    label="Repository"
+                    value={props.generalData.repository || props.generalData.git_repository?.url}
+                  />
+                  <SummaryValue label="Branch" value={props.generalData.branch} />
+                  <SummaryValue label="Root path" value={props.generalData.root_path} />
                   {props.generalData.dockerfile_path && (
-                    <li>
-                      <strong className="font-medium">Dockerfile path:</strong> {props.generalData.dockerfile_path}
-                    </li>
+                    <SummaryValue label="Dockerfile path" value={props.generalData.dockerfile_path} />
                   )}
                   {props.generalData.docker_target_build_stage && (
-                    <li>
-                      <strong className="font-medium">Dockerfile stage:</strong>{' '}
-                      {props.generalData.docker_target_build_stage}
-                    </li>
+                    <SummaryValue label="Dockerfile stage" value={props.generalData.docker_target_build_stage} />
                   )}
-                  <li>
-                    <strong className="font-medium">Auto-deploy:</strong> {props.generalData.auto_deploy.toString()}
-                  </li>
+                  <SummaryValue label="Auto-deploy" value={props.generalData.auto_deploy.toString()} />
                 </>
               )}
               {props.generalData.serviceType === ServiceTypeEnum.CONTAINER && (
                 <>
-                  <li>
-                    <strong className="font-medium">Registry:</strong> {props.selectedRegistryName}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Image name:</strong> {props.generalData.image_name}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Image tag:</strong> {props.generalData.image_tag}
-                  </li>
+                  <SummaryValue label="Registry" value={props.selectedRegistryName} />
+                  <SummaryValue label="Image name" value={props.generalData.image_name} />
+                  <SummaryValue label="Image tag" value={props.generalData.image_tag} />
                   {props.jobType === ServiceTypeEnum.CRON_JOB && (
                     <>
                       {props.generalData.docker_target_build_stage && (
-                        <li>
-                          <strong className="font-medium">Dockerfile stage:</strong>{' '}
-                          {props.generalData.docker_target_build_stage}
-                        </li>
+                        <SummaryValue label="Dockerfile stage" value={props.generalData.docker_target_build_stage} />
                       )}
                       {props.generalData.image_entry_point && (
-                        <li>
-                          <strong className="font-medium">Image entrypoint:</strong>{' '}
-                          {props.generalData.image_entry_point}
-                        </li>
+                        <SummaryValue label="Image entrypoint" value={props.generalData.image_entry_point} />
                       )}
                       {props.generalData.cmd_arguments && (
-                        <li>
-                          <strong className="font-medium">CMD arguments:</strong> {props.generalData.cmd_arguments}
-                        </li>
+                        <SummaryValue label="CMD arguments" value={props.generalData.cmd_arguments} />
                       )}
                     </>
                   )}
-                  <li>
-                    <strong className="font-medium">Auto-deploy:</strong> {props.generalData.auto_deploy.toString()}
-                  </li>
+                  <SummaryValue label="Auto-deploy" value={props.generalData.auto_deploy.toString()} />
                 </>
               )}
               {props.labelsGroup && props.generalData.labels_groups && props.generalData.labels_groups.length > 0 && (
-                <li>
-                  <strong className="font-medium">Labels group:</strong>{' '}
-                  {props.labelsGroup
+                <SummaryValue
+                  label="Labels group"
+                  value={props.labelsGroup
                     .filter(({ id }) => props.generalData.labels_groups?.includes(id))
                     .map(({ name }) => name)
                     .join(', ')}
-                </li>
+                />
               )}
               {props.annotationsGroup &&
                 props.generalData.annotations_groups &&
                 props.generalData.annotations_groups.length > 0 && (
-                  <li>
-                    <strong className="font-medium">Annotations group:</strong>{' '}
-                    {props.annotationsGroup
+                  <SummaryValue
+                    label="Annotations group"
+                    value={props.annotationsGroup
                       .filter(({ id }) => props.generalData.annotations_groups?.includes(id))
                       .map(({ name }) => name)
                       .join(', ')}
-                  </li>
+                  />
                 )}
             </ul>
           </Section>
@@ -313,21 +282,16 @@ function StepSummaryContent(props: StepSummaryProps) {
               </div>
               <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
                 {props.dockerfileData.dockerfile_path && (
-                  <li>
-                    <strong className="font-medium">Dockerfile path:</strong> {props.dockerfileData.dockerfile_path}
-                  </li>
+                  <SummaryValue label="Dockerfile path" value={props.dockerfileData.dockerfile_path} />
                 )}
                 {props.dockerfileData.docker_target_build_stage && (
-                  <li>
-                    <strong className="font-medium">Dockerfile stage:</strong>{' '}
-                    {props.dockerfileData.docker_target_build_stage}
-                  </li>
+                  <SummaryValue label="Dockerfile stage" value={props.dockerfileData.docker_target_build_stage} />
                 )}
                 {props.dockerfileData.dockerfile_raw && (
-                  <li>
-                    <strong className="font-medium">From raw Dockerfile:</strong> {}
-                    {truncateText(props.dockerfileData.dockerfile_raw, 50)}...
-                  </li>
+                  <SummaryValue
+                    label="From raw Dockerfile"
+                    value={`${truncateText(props.dockerfileData.dockerfile_raw, 50)}...`}
+                  />
                 )}
               </ul>
             </Section>
@@ -345,17 +309,12 @@ function StepSummaryContent(props: StepSummaryProps) {
                 {props.configureData.on_start?.enabled && (
                   <>
                     <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
-                      <li>
-                        <strong className="font-medium">Events:</strong> Environment Start
-                      </li>
-                      <li>
-                        <strong className="font-medium">Entrypoint:</strong>{' '}
-                        {props.configureData.on_start?.entrypoint || 'null'}
-                      </li>
-                      <li>
-                        <strong className="font-medium">CMD Arguments:</strong>{' '}
-                        {props.configureData.on_start?.arguments || 'null'}
-                      </li>
+                      <SummaryValue label="Events" value="Environment Start" />
+                      <SummaryValue label="Entrypoint" value={props.configureData.on_start?.entrypoint || 'null'} />
+                      <SummaryValue
+                        label="CMD Arguments"
+                        value={[props.configureData.on_start?.arguments].flat().join(' ') || 'null'}
+                      />
                     </ul>
                     <hr className="my-4 border-t border-dashed border-neutral" />
                   </>
@@ -363,17 +322,12 @@ function StepSummaryContent(props: StepSummaryProps) {
                 {props.configureData.on_stop?.enabled && (
                   <>
                     <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
-                      <li>
-                        <strong className="font-medium">Events:</strong> Environment Stop
-                      </li>
-                      <li>
-                        <strong className="font-medium">Entrypoint:</strong>{' '}
-                        {props.configureData.on_stop?.entrypoint || 'null'}
-                      </li>
-                      <li>
-                        <strong className="font-medium">CMD Arguments:</strong>{' '}
-                        {props.configureData.on_stop?.arguments || 'null'}
-                      </li>
+                      <SummaryValue label="Events" value="Environment Stop" />
+                      <SummaryValue label="Entrypoint" value={props.configureData.on_stop?.entrypoint || 'null'} />
+                      <SummaryValue
+                        label="CMD Arguments"
+                        value={[props.configureData.on_stop?.arguments].flat().join(' ') || 'null'}
+                      />
                     </ul>
                     <hr className="my-4 border-t border-dashed border-neutral" />
                   </>
@@ -381,17 +335,12 @@ function StepSummaryContent(props: StepSummaryProps) {
                 {props.configureData.on_delete?.enabled && (
                   <>
                     <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
-                      <li>
-                        <strong className="font-medium">Events:</strong> Environment Delete
-                      </li>
-                      <li>
-                        <strong className="font-medium">Entrypoint:</strong>{' '}
-                        {props.configureData.on_delete?.entrypoint || 'null'}
-                      </li>
-                      <li>
-                        <strong className="font-medium">CMD Arguments:</strong>{' '}
-                        {props.configureData.on_delete?.arguments || 'null'}
-                      </li>
+                      <SummaryValue label="Events" value="Environment Delete" />
+                      <SummaryValue label="Entrypoint" value={props.configureData.on_delete?.entrypoint || 'null'} />
+                      <SummaryValue
+                        label="CMD Arguments"
+                        value={[props.configureData.on_delete?.arguments].flat().join(' ') || 'null'}
+                      />
                     </ul>
                     <hr className="my-4 border-t border-dashed border-neutral" />
                   </>
@@ -401,26 +350,16 @@ function StepSummaryContent(props: StepSummaryProps) {
             {props.jobType === ServiceTypeEnum.CRON_JOB && (
               <>
                 <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
-                  <li>
-                    <strong className="font-medium">Scheduled at:</strong> {props.configureData.schedule}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Timezone:</strong> {props.configureData.timezone}
-                  </li>
+                  <SummaryValue label="Scheduled at" value={props.configureData.schedule} />
+                  <SummaryValue label="Timezone" value={props.configureData.timezone} />
                 </ul>
                 <hr className="my-4 border-t border-dashed border-neutral" />
               </>
             )}
             <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
-              <li>
-                <strong className="font-medium">Max restarts:</strong> {props.configureData.nb_restarts}
-              </li>
-              <li>
-                <strong className="font-medium">Max duration:</strong> {props.configureData.max_duration}
-              </li>
-              <li>
-                <strong className="font-medium">Port:</strong> {props.configureData.port}
-              </li>
+              <SummaryValue label="Max restarts" value={props.configureData.nb_restarts} />
+              <SummaryValue label="Max duration" value={props.configureData.max_duration} />
+              <SummaryValue label="Port" value={props.configureData.port} />
             </ul>
           </Section>
 
@@ -432,15 +371,9 @@ function StepSummaryContent(props: StepSummaryProps) {
               </Button>
             </div>
             <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
-              <li>
-                <strong className="font-medium">CPU:</strong> {props.resourcesData['cpu']}
-              </li>
-              <li>
-                <strong className="font-medium">Memory:</strong> {props.resourcesData.memory} MB
-              </li>
-              <li>
-                <strong className="font-medium">GPU:</strong> {props.resourcesData.gpu}
-              </li>
+              <SummaryValue label="CPU" value={props.resourcesData['cpu']} />
+              <SummaryValue label="Memory" value={`${props.resourcesData.memory} MB`} />
+              <SummaryValue label="GPU" value={props.resourcesData.gpu} />
             </ul>
           </Section>
           <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">

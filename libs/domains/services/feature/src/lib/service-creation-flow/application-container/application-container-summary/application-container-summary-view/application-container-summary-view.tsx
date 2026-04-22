@@ -10,7 +10,7 @@ import {
   type FlowPortData,
   type VariableData,
 } from '@qovery/shared/interfaces'
-import { Button, Heading, Icon, Section, Truncate } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section, SummaryValue, Truncate } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
 
 export interface ApplicationContainerSummaryViewProps {
@@ -92,9 +92,7 @@ export function ApplicationContainerSummaryView({
             <EditSectionButton onClick={onEditGeneral} testId="edit-general-button" label="Edit general information" />
           </div>
           <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-            <li>
-              <strong className="font-medium text-neutral">Name:</strong> {generalData.name}
-            </li>
+            <SummaryValue label="Name" value={generalData.name} />
             {generalData.description && (
               <li>
                 <strong className="font-medium text-neutral">Description:</strong>
@@ -108,48 +106,29 @@ export function ApplicationContainerSummaryView({
 
             {generalData.serviceType === 'APPLICATION' && (
               <>
-                <li>
-                  <strong className="font-medium text-neutral">Repository:</strong>{' '}
-                  {generalData.repository || generalData.git_repository?.url}
-                </li>
-                <li>
-                  <strong className="font-medium text-neutral">Branch:</strong> {generalData.branch || '-'}
-                </li>
-                <li>
-                  <strong className="font-medium text-neutral">Root application path:</strong>{' '}
-                  {generalData.root_path || '/'}
-                </li>
-                <li>
-                  <strong className="font-medium text-neutral">Dockerfile path:</strong>{' '}
-                  {generalData.dockerfile_path || '-'}
-                </li>
+                <SummaryValue
+                  label="Repository"
+                  value={generalData.repository || generalData.git_repository?.url}
+                />
+                <SummaryValue label="Branch" value={generalData.branch} />
+                <SummaryValue label="Root application path" value={generalData.root_path || '/'} />
+                <SummaryValue label="Dockerfile path" value={generalData.dockerfile_path} />
                 {generalData.docker_target_build_stage && (
-                  <li>
-                    <strong className="font-medium text-neutral">Dockerfile stage:</strong>{' '}
-                    {generalData.docker_target_build_stage}
-                  </li>
+                  <SummaryValue label="Dockerfile stage" value={generalData.docker_target_build_stage} />
                 )}
               </>
             )}
 
             {generalData.serviceType === 'CONTAINER' && (
               <>
-                <li>
-                  <strong className="font-medium text-neutral">Registry:</strong> {selectedRegistryName || '-'}
-                </li>
-                <li>
-                  <strong className="font-medium text-neutral">Image name:</strong> {generalData.image_name || '-'}
-                </li>
-                <li>
-                  <strong className="font-medium text-neutral">Image tag:</strong> {generalData.image_tag || '-'}
-                </li>
+                <SummaryValue label="Registry" value={selectedRegistryName} />
+                <SummaryValue label="Image name" value={generalData.image_name} />
+                <SummaryValue label="Image tag" value={generalData.image_tag} />
               </>
             )}
 
             {generalData.image_entry_point && (
-              <li>
-                <strong className="font-medium text-neutral">Image entrypoint:</strong> {generalData.image_entry_point}
-              </li>
+              <SummaryValue label="Image entrypoint" value={generalData.image_entry_point} />
             )}
             {generalData.cmd_arguments && (
               <li>
@@ -157,26 +136,24 @@ export function ApplicationContainerSummaryView({
                 <Truncate text={generalData.cmd_arguments} truncateLimit={120} />
               </li>
             )}
-            <li>
-              <strong className="font-medium text-neutral">Auto-deploy:</strong> {generalData.auto_deploy.toString()}
-            </li>
+            <SummaryValue label="Auto-deploy" value={generalData.auto_deploy.toString()} />
             {labelsGroup.length > 0 && generalData.labels_groups?.length ? (
-              <li>
-                <strong className="font-medium text-neutral">Labels group:</strong>{' '}
-                {labelsGroup
+              <SummaryValue
+                label="Labels group"
+                value={labelsGroup
                   .filter(({ id }) => generalData.labels_groups?.includes(id))
                   .map(({ name }) => name)
                   .join(', ')}
-              </li>
+              />
             ) : null}
             {annotationsGroup.length > 0 && generalData.annotations_groups?.length ? (
-              <li>
-                <strong className="font-medium text-neutral">Annotations group:</strong>{' '}
-                {annotationsGroup
+              <SummaryValue
+                label="Annotations group"
+                value={annotationsGroup
                   .filter(({ id }) => generalData.annotations_groups?.includes(id))
                   .map(({ name }) => name)
                   .join(', ')}
-              </li>
+              />
             ) : null}
           </ul>
         </Section>
@@ -187,30 +164,24 @@ export function ApplicationContainerSummaryView({
             <EditSectionButton onClick={onEditResources} testId="edit-resources-button" label="Edit resources" />
           </div>
           <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-            <li>
-              <strong className="font-medium text-neutral">CPU:</strong> {resourcesData.cpu}
-            </li>
-            <li>
-              <strong className="font-medium text-neutral">Memory:</strong> {resourcesData.memory} MB
-            </li>
-            <li>
-              <strong className="font-medium text-neutral">
-                {resourcesData.autoscaling_mode === 'NONE' ? 'Instances:' : 'Instances (min/max):'}
-              </strong>{' '}
-              {resourcesData.autoscaling_mode === 'NONE'
-                ? resourcesData.min_running_instances
-                : `${resourcesData.min_running_instances} - ${resourcesData.max_running_instances}`}
-            </li>
-            <li>
-              <strong className="font-medium text-neutral">Scaling method:</strong>{' '}
-              {match(resourcesData.autoscaling_mode)
+            <SummaryValue label="CPU" value={resourcesData.cpu} />
+            <SummaryValue label="Memory" value={`${resourcesData.memory} MB`} />
+            <SummaryValue
+              label={resourcesData.autoscaling_mode === 'NONE' ? 'Instances' : 'Instances (min/max)'}
+              value={
+                resourcesData.autoscaling_mode === 'NONE'
+                  ? resourcesData.min_running_instances
+                  : `${resourcesData.min_running_instances} - ${resourcesData.max_running_instances}`
+              }
+            />
+            <SummaryValue
+              label="Scaling method"
+              value={match(resourcesData.autoscaling_mode)
                 .with('KEDA', () => 'KEDA')
                 .with('HPA', () => 'HPA')
                 .otherwise(() => 'Fixed')}
-            </li>
-            <li>
-              <strong className="font-medium text-neutral">GPU:</strong> {resourcesData.gpu}
-            </li>
+            />
+            <SummaryValue label="GPU" value={resourcesData.gpu} />
           </ul>
         </Section>
 

@@ -4,7 +4,7 @@ import { TerraformAutoDeployConfigTerraformActionEnum, type TerraformRequest } f
 import { useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
-import { Button, FunnelFlowBody, Heading, Icon, Section } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
 import { buildGitRepoUrl } from '@qovery/shared/util-js'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
@@ -135,12 +135,10 @@ export const TerraformStepSummary = () => {
                 </Button>
               </div>
               <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-                <li>
-                  <strong className="font-medium">Name:</strong> {generalData.name}
-                </li>
+                <SummaryValue label="Name" value={generalData.name} />
                 {generalData.description && (
                   <li>
-                    <strong className="font-medium">Description:</strong>
+                    <strong className="font-medium text-neutral">Description:</strong>
                     <br />
                     {generalData.description}
                   </li>
@@ -149,16 +147,12 @@ export const TerraformStepSummary = () => {
               <hr className="my-4 border-t border-dashed border-neutral" />
               {generalData.source_provider === 'GIT' && (
                 <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-                  <li>
-                    <strong className="font-medium">Repository:</strong>{' '}
-                    {generalData.repository || generalData.git_repository?.url}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Branch:</strong> {generalData.branch}
-                  </li>
-                  <li>
-                    <strong className="font-medium">Root path:</strong> {generalData.root_path}
-                  </li>
+                  <SummaryValue
+                    label="Repository"
+                    value={generalData.repository || generalData.git_repository?.url}
+                  />
+                  <SummaryValue label="Branch" value={generalData.branch} />
+                  <SummaryValue label="Root path" value={generalData.root_path} />
                 </ul>
               )}
             </Section>
@@ -181,34 +175,27 @@ export const TerraformStepSummary = () => {
                 </Button>
               </div>
               <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-                <li>
-                  <span className="font-medium">Terraform engine:</span>{' '}
-                  {TERRAFORM_ENGINES.find((v) => v.value === generalData.engine)?.name} v
-                  {generalData.provider_version.explicit_version}
-                </li>
-                <li>
-                  <span className="font-medium">Backend:</span>{' '}
-                  {'kubernetes' in generalData.backend ? 'Kubernetes' : 'User provided'}
-                </li>
-                <li>
-                  <span className="font-medium">Execution credentials:</span>{' '}
-                  {generalData.use_cluster_credentials ? 'Cluster credentials' : 'Environment variables'}
-                </li>
-                <li>
-                  <span className="font-medium">Auto-deploy:</span>{' '}
-                  {match(generalData.auto_deploy)
+                <SummaryValue
+                  label="Terraform engine"
+                  value={`${TERRAFORM_ENGINES.find((v) => v.value === generalData.engine)?.name} v${generalData.provider_version.explicit_version}`}
+                />
+                <SummaryValue
+                  label="Backend"
+                  value={'kubernetes' in generalData.backend ? 'Kubernetes' : 'User provided'}
+                />
+                <SummaryValue
+                  label="Execution credentials"
+                  value={generalData.use_cluster_credentials ? 'Cluster credentials' : 'Environment variables'}
+                />
+                <SummaryValue
+                  label="Auto-deploy"
+                  value={match(generalData.auto_deploy)
                     .with(true, () => 'On')
                     .otherwise(() => 'Off')}
-                </li>
-                <li>
-                  <span className="font-medium">CPU:</span> {generalData.job_resources.cpu_milli}
-                </li>
-                <li>
-                  <span className="font-medium">RAM:</span> {generalData.job_resources.ram_mib}mb
-                </li>
-                <li>
-                  <span className="font-medium">Storage:</span> {generalData.job_resources.storage_gib}gb
-                </li>
+                />
+                <SummaryValue label="CPU" value={generalData.job_resources.cpu_milli} />
+                <SummaryValue label="RAM" value={`${generalData.job_resources.ram_mib}mb`} />
+                <SummaryValue label="Storage" value={`${generalData.job_resources.storage_gib}gb`} />
               </ul>
             </Section>
 
