@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
-import { type DockerfileSettingsData } from '@qovery/domains/services/feature'
+import { type DockerfileSettingsData, type ServiceTemplateOptionType } from '@qovery/domains/services/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
@@ -20,6 +20,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { findTemplateData } from './job-create-utils/job-create-utils'
+import { TemplateFormSync } from './template-form-sync'
 
 export interface JobCreateContextInterface {
   currentStep: number
@@ -66,18 +67,6 @@ export const getJobCreationSteps = (jobType: JobType) => [
   { title: 'Ready to install' },
 ]
 
-function getLifecycleType(option?: string): JobLifecycleTypeEnum | undefined {
-  if (option?.includes('terraform')) {
-    return 'TERRAFORM'
-  }
-
-  if (option?.includes('cloudformation')) {
-    return 'CLOUDFORMATION'
-  }
-
-  return undefined
-}
-
 export interface JobCreationFlowProps extends PropsWithChildren {
   creationFlowUrl: string
 }
@@ -90,25 +79,31 @@ export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowPr
   const jobCreationSteps = getJobCreationSteps(ServiceTypeEnum.LIFECYCLE_JOB)
 
   const templateData = findTemplateData(template, option)
+
   const [currentStep, setCurrentStep] = useState(1)
-  const [generalData, setGeneralData] = useState<JobGeneralData | undefined>(
-    templateData
-      ? {
-          name: templateData.slug ?? '',
-          description: '',
-          icon_uri: templateData.icon_uri,
-          auto_deploy: true,
-          serviceType: templateData.type === 'CONTAINER' ? ServiceTypeEnum.CONTAINER : ServiceTypeEnum.APPLICATION,
-        }
-      : undefined
-  )
+  const [generalData, setGeneralData] = useState<JobGeneralData | undefined>(() => {
+    // Pre-fill from template data for templates without a backend template_id (e.g. s3-cli).
+    // Templates WITH a template_id are handled by <TemplateFormSync> which fetches from the
+    // backend before rendering children, so StepGeneral always mounts with the right defaults.
+    // For templates WITHOUT a template_id the funnel renders immediately, so we seed the state
+    // here (lazy initializer runs once, synchronously, before the first render) to guarantee
+    // StepGeneral's useForm sees the correct defaultValues on mount.
+    if (templateData && !('template_id' in templateData && templateData.template_id)) {
+      return {
+        auto_deploy: true,
+        description: '',
+        name: templateData.slug,
+        serviceType: templateData.slug === 'container' ? 'CONTAINER' : 'APPLICATION',
+        icon_uri: templateData.icon_uri,
+      } as JobGeneralData
+    }
+    return undefined
+  })
   const [jobType, setJobType] = useState<JobType>(
     location.pathname.indexOf('cron') !== -1 ? ServiceTypeEnum.CRON_JOB : ServiceTypeEnum.LIFECYCLE_JOB
   )
   const [jobURL] = useState<string>(creationFlowUrl)
-  const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum | undefined>(
-    getLifecycleType(option)
-  )
+  const [templateType, setTemplateType] = useState<keyof typeof JobLifecycleTypeEnum>()
   const [dockerfileDefaultContent, setDockerfileDefaultContent] = useState<string>()
 
   const dockerfileForm = useForm<DockerfileSettingsData>({
@@ -137,6 +132,28 @@ export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowPr
     }
   }, [setJobType, location.pathname])
 
+  const funnel = (
+    <FunnelFlow
+      onExit={() => {
+        if (window.confirm('Do you really want to leave?')) {
+          navigate({
+            to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
+            params: {
+              organizationId,
+              projectId,
+              environmentId,
+            },
+          })
+        }
+      }}
+      totalSteps={jobCreationSteps.length}
+      currentStep={currentStep}
+      currentTitle={jobCreationSteps[currentStep - 1]?.title}
+    >
+      {children}
+    </FunnelFlow>
+  )
+
   return (
     <JobCreateContext.Provider
       value={{
@@ -159,25 +176,17 @@ export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowPr
         setDockerfileDefaultContent,
       }}
     >
-      <FunnelFlow
-        onExit={() => {
-          if (window.confirm('Do you really want to leave?')) {
-            navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
-              params: {
-                organizationId,
-                projectId,
-                environmentId,
-              },
-            })
-          }
-        }}
-        totalSteps={jobCreationSteps.length}
-        currentStep={currentStep}
-        currentTitle={jobCreationSteps[currentStep - 1]?.title}
-      >
-        {children}
-      </FunnelFlow>
+      {templateData && 'template_id' in templateData && templateData.template_id ? (
+        // Sync general data with backend template data
+        <TemplateFormSync
+          environmentId={environmentId}
+          templateData={templateData as ServiceTemplateOptionType & { template_id: string }}
+        >
+          {funnel}
+        </TemplateFormSync>
+      ) : (
+        funnel
+      )}
     </JobCreateContext.Provider>
   )
 }
