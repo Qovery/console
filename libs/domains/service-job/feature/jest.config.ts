@@ -1,11 +1,11 @@
 /* eslint-disable */
 export default {
-  displayName: 'domains-service-helm-feature',
+  displayName: 'domains-service-job-feature',
   preset: '../../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/domains/service-helm/feature',
+  coverageDirectory: '../../../../coverage/libs/domains/service-job/feature',
 }
