@@ -64,7 +64,7 @@ describe('UserSettingsModal', () => {
   })
 
   it('should render the console preference toggle when enabled', async () => {
-    localStorage.setItem('qovery-console-preference', 'new')
+    document.cookie = 'qovery-console-preference=new; Path=/'
 
     renderUserSettingsModal({ showConsolePreferenceToggle: true })
     await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
@@ -74,13 +74,15 @@ describe('UserSettingsModal', () => {
   })
 
   it('should update the console preference from the toggle', async () => {
-    localStorage.setItem('qovery-console-preference', 'new')
+    document.cookie = 'qovery-console-preference=new; Path=/'
     const { userEvent } = renderUserSettingsModal({ showConsolePreferenceToggle: true })
     await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
 
     await userEvent.click(screen.getByText('Use legacy interface'))
 
-    expect(localStorage.getItem('qovery-console-preference')).toBe('legacy')
+    // Preference is now persisted in the shared cookie only (localStorage is not origin-safe
+    // across `console.qovery.com` and `new-console.qovery.com`).
+    expect(document.cookie).toContain('qovery-console-preference=legacy')
   })
 
   it('should call mutateAsync with updated email on submit', async () => {

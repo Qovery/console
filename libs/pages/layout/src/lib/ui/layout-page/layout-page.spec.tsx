@@ -3,7 +3,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import * as iamFeature from '@qovery/shared/iam/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import LayoutPage, { type LayoutPageProps } from './layout-page'
 import { redirectToUrl } from './layout-page.utils'
 
@@ -131,5 +131,36 @@ describe('LayoutPage', () => {
       target_url: 'https://new-console.qovery.com/organization/123',
     })
     expect(redirectToUrl).toHaveBeenCalledWith('https://new-console.qovery.com/organization/123')
+  })
+
+  it('should automatically redirect to the new console when the preference is enabled', async () => {
+    jest.spyOn(iamFeature, 'useConsoleRedirectPreference').mockReturnValue({
+      preferredConsole: 'new',
+      isNewConsoleDefault: true,
+      setPreferredConsole: jest.fn(),
+      setIsNewConsoleDefault: jest.fn(),
+    })
+
+    renderWithProviders(renderComponent({ ...props }))
+
+    await waitFor(() => {
+      expect(redirectToUrl).toHaveBeenCalledWith('https://new-console.qovery.com/organization/123')
+    })
+  })
+
+  it('should not automatically redirect when the new navigation activation feature flag is disabled', async () => {
+    useFeatureFlagEnabledMock.mockReturnValue(false)
+    jest.spyOn(iamFeature, 'useConsoleRedirectPreference').mockReturnValue({
+      preferredConsole: 'new',
+      isNewConsoleDefault: true,
+      setPreferredConsole: jest.fn(),
+      setIsNewConsoleDefault: jest.fn(),
+    })
+
+    renderWithProviders(renderComponent({ ...props }))
+
+    await waitFor(() => {
+      expect(redirectToUrl).not.toHaveBeenCalled()
+    })
   })
 })
