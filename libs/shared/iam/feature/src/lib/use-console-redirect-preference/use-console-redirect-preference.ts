@@ -2,7 +2,8 @@ import { useCallback, useEffect, useState } from 'react'
 
 export type ConsolePreference = 'legacy' | 'new'
 
-const CONSOLE_PREFERENCE_STORAGE_KEY = 'qovery-console-preference'
+// Legacy key kept only to purge stale values written before the cookie-only migration.
+const LEGACY_CONSOLE_PREFERENCE_STORAGE_KEY = 'qovery-console-preference'
 const CONSOLE_PREFERENCE_COOKIE_KEY = 'qovery-console-preference'
 const CONSOLE_PREFERENCE_CHANGED_EVENT = 'qovery-console-preference-changed'
 const LEGACY_CONSOLE_BYPASS_QUERY_PARAM = 'legacy'
@@ -34,12 +35,26 @@ function readCookieValue(cookieName: string): string | null {
   return cookie ? decodeURIComponent(cookie) : null
 }
 
+// localStorage is per-origin and does NOT propagate between `console.qovery.com` and
+// `new-console.qovery.com`. Any value stored under this key by older builds can leave
+// users ping-ponging across subdomains, so we proactively remove it on read.
+function purgeLegacyLocalStorageKey() {
+  if (typeof window === 'undefined') {
+    return
+  }
+  try {
+    window.localStorage.removeItem(LEGACY_CONSOLE_PREFERENCE_STORAGE_KEY)
+  } catch {
+    // ignore (Safari private mode, quota, ...)
+  }
+}
+
 function persistConsolePreference(preference: ConsolePreference) {
   if (typeof window === 'undefined') {
     return
   }
 
-  localStorage.setItem(CONSOLE_PREFERENCE_STORAGE_KEY, preference)
+  purgeLegacyLocalStorageKey()
 
   const domain = getCookieDomain(window.location.hostname)
   document.cookie = `${CONSOLE_PREFERENCE_COOKIE_KEY}=${encodeURIComponent(preference)}; Path=/; Max-Age=${ONE_YEAR_IN_SECONDS}; SameSite=Lax${
@@ -53,11 +68,9 @@ export function getStoredConsolePreference(): ConsolePreference {
     return 'legacy'
   }
 
-  const localStoragePreference = localStorage.getItem(CONSOLE_PREFERENCE_STORAGE_KEY)
-
-  if (isConsolePreference(localStoragePreference)) {
-    return localStoragePreference
-  }
+  // The cookie (scoped to `.qovery.com`) is the only source of truth that works across
+  // `console.qovery.com` and `new-console.qovery.com`. localStorage is intentionally ignored.
+  purgeLegacyLocalStorageKey()
 
   const cookiePreference = readCookieValue(CONSOLE_PREFERENCE_COOKIE_KEY)
 
@@ -180,18 +193,10 @@ export function useConsoleRedirectPreference() {
       setPreferredConsoleState(isConsolePreference(preference) ? preference : getStoredConsolePreference())
     }
 
-    const syncConsolePreferenceFromStorage = (event: StorageEvent) => {
-      if (event.key === CONSOLE_PREFERENCE_STORAGE_KEY) {
-        syncConsolePreference()
-      }
-    }
-
     window.addEventListener(CONSOLE_PREFERENCE_CHANGED_EVENT, syncConsolePreference)
-    window.addEventListener('storage', syncConsolePreferenceFromStorage)
 
     return () => {
       window.removeEventListener(CONSOLE_PREFERENCE_CHANGED_EVENT, syncConsolePreference)
-      window.removeEventListener('storage', syncConsolePreferenceFromStorage)
     }
   }, [])
 
