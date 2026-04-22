@@ -1,8 +1,10 @@
+import { act, renderHook, waitFor } from '@qovery/shared/util-tests'
 import {
   getLegacyConsoleUrl,
   getNewConsoleUrl,
   getStoredConsolePreference,
   shouldBypassLegacyConsoleRedirect,
+  useConsoleRedirectPreference,
 } from './use-console-redirect-preference'
 
 describe('useConsoleRedirectPreference', () => {
@@ -33,9 +35,15 @@ describe('useConsoleRedirectPreference', () => {
     expect(getLegacyConsoleUrl('http://localhost:4200/organization/123')).toBeNull()
   })
 
-  it('should read the preference from local storage first', () => {
+  it('should read the shared cookie before local storage', () => {
     localStorage.setItem('qovery-console-preference', 'new')
     document.cookie = 'qovery-console-preference=legacy; Path=/'
+
+    expect(getStoredConsolePreference()).toBe('legacy')
+  })
+
+  it('should fallback to local storage when cookie is empty', () => {
+    localStorage.setItem('qovery-console-preference', 'new')
 
     expect(getStoredConsolePreference()).toBe('new')
   })
@@ -44,6 +52,21 @@ describe('useConsoleRedirectPreference', () => {
     document.cookie = 'qovery-console-preference=new; Path=/'
 
     expect(getStoredConsolePreference()).toBe('new')
+  })
+
+  it('should sync preference changes across hook instances', async () => {
+    const { result: layoutPreference } = renderHook(() => useConsoleRedirectPreference())
+    const { result: userSettingsPreference } = renderHook(() => useConsoleRedirectPreference())
+
+    expect(layoutPreference.current.isNewConsoleDefault).toBe(false)
+
+    act(() => {
+      userSettingsPreference.current.setIsNewConsoleDefault(true)
+    })
+
+    await waitFor(() => {
+      expect(layoutPreference.current.isNewConsoleDefault).toBe(true)
+    })
   })
 
   it('should detect the redirect bypass query param', () => {
