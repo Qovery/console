@@ -147,10 +147,7 @@ export const TerraformStepSummary = () => {
               <hr className="my-4 border-t border-dashed border-neutral" />
               {generalData.source_provider === 'GIT' && (
                 <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-                  <SummaryValue
-                    label="Repository"
-                    value={generalData.repository || generalData.git_repository?.url}
-                  />
+                  <SummaryValue label="Repository" value={generalData.repository || generalData.git_repository?.url} />
                   <SummaryValue label="Branch" value={generalData.branch} />
                   <SummaryValue label="Root path" value={generalData.root_path} />
                 </ul>

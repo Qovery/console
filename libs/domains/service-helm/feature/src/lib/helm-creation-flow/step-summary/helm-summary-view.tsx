@@ -118,10 +118,7 @@ export function HelmSummaryView({
 
             {generalData.source_provider === 'GIT' ? (
               <>
-                <SummaryValue
-                  label="Repository"
-                  value={generalData.git_repository?.name ?? generalData.repository}
-                />
+                <SummaryValue label="Repository" value={generalData.git_repository?.name ?? generalData.repository} />
                 <SummaryValue label="Branch" value={generalData.branch} />
                 <SummaryValue label="Chart root folder path" value={generalData.root_path || '/'} />
               </>
@@ -129,7 +126,9 @@ export function HelmSummaryView({
               <>
                 <SummaryValue
                   label="Repository"
-                  value={helmRepositories.find(({ id }) => id === generalData.repository)?.name ?? generalData.repository}
+                  value={
+                    helmRepositories.find(({ id }) => id === generalData.repository)?.name ?? generalData.repository
+                  }
                 />
                 <SummaryValue label="Chart name" value={generalData.chart_name} />
                 <SummaryValue label="Version" value={generalData.chart_version} />

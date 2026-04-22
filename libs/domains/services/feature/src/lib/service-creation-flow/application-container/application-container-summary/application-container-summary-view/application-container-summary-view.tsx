@@ -106,10 +106,7 @@ export function ApplicationContainerSummaryView({
 
             {generalData.serviceType === 'APPLICATION' && (
               <>
-                <SummaryValue
-                  label="Repository"
-                  value={generalData.repository || generalData.git_repository?.url}
-                />
+                <SummaryValue label="Repository" value={generalData.repository || generalData.git_repository?.url} />
                 <SummaryValue label="Branch" value={generalData.branch} />
                 <SummaryValue label="Root application path" value={generalData.root_path || '/'} />
                 <SummaryValue label="Dockerfile path" value={generalData.dockerfile_path} />
