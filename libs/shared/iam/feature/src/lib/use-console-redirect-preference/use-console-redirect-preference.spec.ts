@@ -22,6 +22,100 @@ describe('useConsoleRedirectPreference', () => {
     expect(getNewConsoleUrl('http://localhost:4200/organization/123')).toBeNull()
   })
 
+  it('should migrate legacy user settings to the organization overview fallback', () => {
+    expect(getNewConsolePathname('/user/general')).toBe('/organization')
+  })
+
+  it('should migrate legacy overview aliases to overview routes', () => {
+    expect(getNewConsolePathname('/organization/org/audit-logs/general')).toBe('/organization/org/audit-logs')
+
+    expect(getNewConsolePathname('/organization/org/project/project/environments/general')).toBe(
+      '/organization/org/project/project/overview'
+    )
+
+    expect(
+      getNewConsolePathname('/organization/org/project/project/environment/environment/environments/general')
+    ).toBe('/organization/org/project/project/environment/environment/overview')
+
+    expect(getNewConsolePathname('/organization/org/project/project/environment/environment/services/general')).toBe(
+      '/organization/org/project/project/environment/environment/overview'
+    )
+  })
+
+  it('should migrate renamed organization sections', () => {
+    expect(getNewConsolePathname('/organization/org/alerting/alert-rules')).toBe('/organization/org/alerts/alert-rules')
+
+    expect(getNewConsolePathname('/organization/org/settings/api')).toBe('/organization/org/settings/api-token')
+    expect(getNewConsolePathname('/organization/org/settings/credentials')).toBe(
+      '/organization/org/settings/cloud-credentials'
+    )
+    expect(getNewConsolePathname('/organization/org/settings/billing-detail')).toBe(
+      '/organization/org/settings/billing-details'
+    )
+    expect(getNewConsolePathname('/organization/org/settings/webhooks')).toBe('/organization/org/settings/webhook')
+  })
+
+  it('should migrate legacy project settings paths', () => {
+    expect(getNewConsolePathname('/organization/org/settings/project/project/general')).toBe(
+      '/organization/org/project/project/settings/general'
+    )
+
+    expect(getNewConsolePathname('/organization/org/settings/project/project/danger-zone')).toBe(
+      '/organization/org/project/project/settings/danger-zone'
+    )
+  })
+
+  it('should migrate legacy cluster paths', () => {
+    expect(getNewConsolePathname('/organization/org/clusters/general')).toBe('/organization/org/clusters')
+    expect(getNewConsolePathname('/organization/org/clusters/new')).toBe('/organization/org/cluster/new')
+
+    expect(getNewConsolePathname('/organization/org/clusters/create/aws/access')).toBe(
+      '/organization/org/cluster/create/aws/general'
+    )
+
+    expect(getNewConsolePathname('/organization/org/clusters/create/aws/summary')).toBe(
+      '/organization/org/cluster/create/aws/summary'
+    )
+
+    expect(getNewConsolePathname('/organization/org/cluster/cluster/logs')).toBe(
+      '/organization/org/cluster/cluster/cluster-logs'
+    )
+  })
+
+  it('should migrate legacy project environment section paths', () => {
+    expect(getNewConsolePathname('/organization/org/project/project/environments/variables')).toBe(
+      '/organization/org/project/project/variables'
+    )
+
+    expect(getNewConsolePathname('/organization/org/project/project/environments/deployment-rules/edit/rule')).toBe(
+      '/organization/org/project/project/deployment-rules/edit/rule'
+    )
+  })
+
+  it('should migrate legacy environment services section paths', () => {
+    expect(
+      getNewConsolePathname('/organization/org/project/project/environment/environment/services/deployments')
+    ).toBe('/organization/org/project/project/environment/environment/deployments')
+
+    expect(getNewConsolePathname('/organization/org/project/project/environment/environment/services/variables')).toBe(
+      '/organization/org/project/project/environment/environment/variables'
+    )
+
+    expect(
+      getNewConsolePathname('/organization/org/project/project/environment/environment/services/settings/rules')
+    ).toBe('/organization/org/project/project/environment/environment/settings/deployment-rules')
+
+    expect(
+      getNewConsolePathname('/organization/org/project/project/environment/environment/services/settings/pipeline')
+    ).toBe('/organization/org/project/project/environment/environment/overview/pipeline')
+
+    expect(
+      getNewConsolePathname(
+        '/organization/org/project/project/environment/environment/services/settings/preview-environments'
+      )
+    ).toBe('/organization/org/project/project/environment/environment/settings/preview-environments')
+  })
+
   it('should migrate legacy application paths to new service paths', () => {
     expect(
       getNewConsolePathname('/organization/org/project/project/environment/environment/application/application/general')
@@ -86,6 +180,20 @@ describe('useConsoleRedirectPreference', () => {
     ).toBe(
       '/organization/org/project/project/environment/environment/service/application/monitoring/alerts/create/metric/cpu'
     )
+
+    expect(
+      getNewConsolePathname(
+        '/organization/org/project/project/environment/environment/application/application/monitoring/create/alerts/metric/cpu'
+      )
+    ).toBe(
+      '/organization/org/project/project/environment/environment/service/application/monitoring/alerts/create/metric/cpu'
+    )
+
+    expect(
+      getNewConsolePathname(
+        '/organization/org/project/project/environment/environment/application/application/monitoring/create/alerts'
+      )
+    ).toBe('/organization/org/project/project/environment/environment/service/application/monitoring/alerts')
   })
 
   it('should migrate paths while building the new console url', () => {
