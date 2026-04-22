@@ -191,7 +191,7 @@ function StepSummaryContent(props: StepSummaryProps) {
           <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
             <div className="flex justify-between">
               <Heading>General information</Heading>
-              <Button type="button" variant="plain" size="md" onClick={props.gotoGlobalInformation}>
+              <Button type="button" variant="outline" iconOnly size="md" onClick={props.gotoGlobalInformation}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
@@ -276,7 +276,7 @@ function StepSummaryContent(props: StepSummaryProps) {
             <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
                 <Heading>Dockerfile</Heading>
-                <Button type="button" variant="plain" size="md" onClick={props.gotoDockerfileJob}>
+                <Button type="button" variant="outline" iconOnly size="md" onClick={props.gotoDockerfileJob}>
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </div>
@@ -300,7 +300,7 @@ function StepSummaryContent(props: StepSummaryProps) {
           <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
             <div className="flex justify-between">
               <Heading>Triggers</Heading>
-              <Button type="button" variant="plain" size="md" onClick={props.gotoConfigureJob}>
+              <Button type="button" variant="outline" iconOnly size="md" onClick={props.gotoConfigureJob}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
@@ -366,7 +366,7 @@ function StepSummaryContent(props: StepSummaryProps) {
           <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
             <div className="flex justify-between">
               <Heading>Resources</Heading>
-              <Button type="button" variant="plain" size="md" onClick={props.gotoResources}>
+              <Button type="button" variant="outline" iconOnly size="md" onClick={props.gotoResources}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
@@ -379,7 +379,7 @@ function StepSummaryContent(props: StepSummaryProps) {
           <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
             <div className="flex justify-between">
               <Heading>Environment variables</Heading>
-              <Button type="button" variant="plain" size="md" onClick={props.gotoVariables}>
+              <Button type="button" variant="outline" iconOnly size="md" onClick={props.gotoVariables}>
                 <Icon className="text-base" iconName="gear-complex" />
               </Button>
             </div>
