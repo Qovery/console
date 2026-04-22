@@ -10,7 +10,7 @@ import {
   useState,
 } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
-import { type DockerfileSettingsData, type ServiceTemplateOptionType } from '@qovery/domains/services/feature'
+import { type ServiceTemplateOptionType } from '@qovery/domains/services/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import {
   type FlowVariableData,
@@ -19,6 +19,7 @@ import {
   type JobResourcesData,
 } from '@qovery/shared/interfaces'
 import { FunnelFlow } from '@qovery/shared/ui'
+import { type DockerfileSettingsData } from '../dockerfile-settings/dockerfile-settings'
 import { findTemplateData } from './job-create-utils/job-create-utils'
 import { TemplateFormSync } from './template-form-sync'
 
