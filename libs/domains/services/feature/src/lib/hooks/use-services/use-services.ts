@@ -32,9 +32,8 @@ export function useServices({ environmentId, suspense = false }: UseServicesProp
     })),
   })
 
-  const data = useMemo(
-    () =>
-      (services ?? []).map((service, index) => {
+  const data = useMemo(() => {
+    const nextData = (services ?? []).map((service, index) => {
         const runningStatus = runningStatusResults[index].data
         const deploymentStatus = deploymentStatusResults[index].data
 
@@ -80,8 +79,10 @@ export function useServices({ environmentId, suspense = false }: UseServicesProp
               }
             : {}),
         }
-      }),
-    [
+      })
+
+    return nextData
+  }, [
       services,
       // https://github.com/TanStack/query/issues/5137
       // As we currently use tanstack query V4, we cannot use combine to avoid infinite renders
@@ -91,7 +92,7 @@ export function useServices({ environmentId, suspense = false }: UseServicesProp
         ...runningStatusResults.map(({ data }) => data?.state),
         ...deploymentStatusResults.map(({ data }) => data?.state),
       ]),
-    ]
+    ],
   )
 
   return {

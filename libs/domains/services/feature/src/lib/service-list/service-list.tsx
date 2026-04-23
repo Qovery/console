@@ -145,9 +145,10 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     })
   }, [actualServices, skippedServicesMap])
 
-  const columnHelper = createColumnHelper<(typeof actualServices)[number]>()
   const columns = useMemo(
-    () => [
+    () => {
+      const columnHelper = createColumnHelper<(typeof actualServices)[number]>()
+      return [
       columnHelper.display({
         id: 'select',
         enableColumnFilter: false,
@@ -275,13 +276,17 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         cell: (info) => {
           return (
             <div className="flex h-full items-center" onClick={(e) => e.stopPropagation()}>
-              <ServiceActions serviceId={info.row.original.id} environment={environment} />
+              <ServiceActions
+                serviceId={info.row.original.id}
+                environment={environment}
+              />
             </div>
           )
         },
       }),
-    ],
-    [columnHelper, environment, organizationId, projectId]
+      ]
+    },
+    [environment, organizationId, projectId]
   )
 
   const table = useReactTable({
