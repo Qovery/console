@@ -19,7 +19,7 @@ export function AnnotationSetting() {
           label="Annotation Groups (optional)"
           options={annotationsGroups.map((group) => ({
             label: (
-              <span className="flex items-center gap-3">
+              <span className="flex items-center gap-1">
                 <span>{group.name}</span>
                 <Tooltip
                   classNameContent="z-10"
@@ -34,7 +34,7 @@ export function AnnotationSetting() {
                   }
                 >
                   <span>
-                    <Icon iconName="circle-info" iconStyle="regular" className="text-base" />
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtl text-sm" />
                   </span>
                 </Tooltip>
               </span>
