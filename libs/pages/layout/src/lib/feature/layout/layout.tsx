@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import posthog from 'posthog-js'
-import { type PropsWithChildren, memo, useEffect } from 'react'
+import { type PropsWithChildren, memo, useEffect, useMemo } from 'react'
 import { redirect, useParams } from 'react-router-dom'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
@@ -28,6 +28,17 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   const { refetch: fetchOrganization } = useOrganization({ organizationId, enabled: false })
 
   const { data: environment } = useEnvironment({ environmentId })
+
+  /** One cluster when env is known; avoid N /status sockets (all org clusters) while env is still loading. */
+  const statusWebSocketClusters = useMemo(() => {
+    if (environmentId) {
+      if (environment) {
+        return [{ id: environment.cluster_id }]
+      }
+      return []
+    }
+    return clusters
+  }, [clusters, environment, environmentId])
 
   useEffect(() => {
     const organizationIds = organizations.map(({ id }) => id)
@@ -62,25 +73,19 @@ export function Layout(props: PropsWithChildren<LayoutProps>) {
   return (
     <LayoutPage spotlight={spotlight} topBar={topBar} clusters={clusters} defaultOrganizationId={organizations[0]?.id}>
       <>
-        {
-          /**
-           * XXX: Here we are limited by the websocket API which requires a clusterId
-           * We need to instantiate one hook per clusterId to get the complete environment statuses of the page
-           */
-          (environment ? [{ id: environment.cluster_id }] : clusters).map(
-            ({ id }) =>
-              organizationId && (
-                <StatusWebSocketListenerMemo
-                  key={id}
-                  organizationId={organizationId}
-                  clusterId={id}
-                  projectId={projectId}
-                  environmentId={environmentId}
-                  versionId={versionId}
-                />
-              )
-          )
-        }
+        {statusWebSocketClusters.map(
+          ({ id }) =>
+            organizationId && (
+              <StatusWebSocketListenerMemo
+                key={id}
+                organizationId={organizationId}
+                clusterId={id}
+                projectId={projectId}
+                environmentId={environmentId}
+                versionId={versionId}
+              />
+            )
+        )}
         {children}
       </>
     </LayoutPage>

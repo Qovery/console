@@ -115,25 +115,6 @@ export function useStatusWebSockets({
         }
       }
     },
-    onClose(queryClient, event: CloseEvent) {
-      // NOTE: API returns a string for the reason, which allows us to know if the status is available or not
-      // clusterId is required everywhere and environmentId is necessary for the service list
-      const isNotFound = event.reason.includes('NotFound') || event.reason.includes('not found')
-      if (isNotFound && clusterId) {
-        if (environmentId) {
-          queryClient.setQueryData(queries.services.checkRunningStatusClosed(clusterId, environmentId).queryKey, {
-            clusterId,
-            environmentId,
-            reason: event.reason,
-          })
-        } else {
-          queryClient.setQueryData(queries.environments.checkRunningStatusClosed(clusterId).queryKey, {
-            clusterId,
-            reason: event.reason,
-          })
-        }
-      }
-    },
   })
 }
 

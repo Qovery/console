@@ -60,9 +60,9 @@ exports[`SelectCommitModal should match snapshot 1`] = `
               aria-hidden="true"
               class="fa-regular fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-subtle"
             />
-            Commit
+            Commits
              on 
-            Jan 15, 2024
+            Apr 03, 2026
           </div>
           <div
             class="border-l border-neutral pb-5 pl-5 pt-3"
@@ -96,7 +96,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="text-neutral-subtle"
                 >
                   committed 
-                  2 years
+                  0 seconds
                    ago
                 </span>
               </div>
@@ -150,25 +150,6 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                 </span>
               </div>
             </label>
-          </div>
-        </div>
-        <div
-          class="pl-2"
-        >
-          <div
-            class="relative pl-5 text-sm font-medium text-neutral-subtle"
-          >
-            <i
-              aria-hidden="true"
-              class="fa-regular fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-subtle"
-            />
-            Commit
-             on 
-            Jan 14, 2024
-          </div>
-          <div
-            class="border-l border-neutral pb-5 pl-5 pt-3"
-          >
             <label
               class="-mt-px flex w-full flex-row gap-3 border border-neutral p-3 first:rounded-t-md last:rounded-b-md bg-surface-neutral-subtle"
             >
@@ -211,7 +192,7 @@ exports[`SelectCommitModal should match snapshot 1`] = `
                   class="text-neutral-subtle"
                 >
                   committed 
-                  2 years
+                  0 seconds
                    ago
                 </span>
               </div>
