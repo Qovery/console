@@ -68,9 +68,6 @@ function ServiceOverviewContent({
         <div className="flex shrink-0 flex-col gap-5 pb-8 pt-6 text-sm">
           <Section className="gap-8">
             <ServiceHeader environment={environment} serviceId={service.id} service={service} />
-            {service.serviceType === 'JOB' && (
-              <JobStatusesCallout environmentId={environment.id} serviceId={service.id} />
-            )}
             {hasNoMetrics && observabilityCallout}
             <Section className="gap-3">
               <div className="flex items-center justify-between gap-2">
@@ -96,6 +93,9 @@ function ServiceOverviewContent({
             {!isTerraformService && (
               <Section className="gap-3">
                 <Heading>Instances</Heading>
+                {service.serviceType === 'JOB' && (
+                  <JobStatusesCallout environmentId={environment.id} serviceId={service.id} />
+                )}
                 <ServiceInstance service={service} />
               </Section>
             )}
