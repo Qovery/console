@@ -78,4 +78,27 @@ describe('EnvironmentSection', () => {
 
     expect(mockNavigate).not.toHaveBeenCalled()
   })
+
+  it('should display both action buttons when there are no services', async () => {
+    const noServiceOverview = {
+      ...overview,
+      services_overview: {
+        service_count: 0,
+      },
+      deployment_status: undefined,
+    } as EnvironmentOverviewResponse
+
+    const { userEvent } = renderWithProviders(
+      <EnvironmentSection type={EnvironmentModeEnum.DEVELOPMENT} items={[noServiceOverview]} />
+    )
+
+    const manageDeploymentButton = screen.getByRole('button', { name: /manage deployment/i })
+    expect(manageDeploymentButton).toBeDisabled()
+
+    await userEvent.hover(manageDeploymentButton.parentElement as HTMLElement)
+    expect(
+      await screen.findByRole('tooltip', { name: 'Add at least one service to deploy this environment' })
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /delete environment/i })).toBeInTheDocument()
+  })
 })
