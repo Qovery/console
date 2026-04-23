@@ -11,6 +11,10 @@ import StepSummary, { type StepSummaryProps } from './step-summary'
 
 const mockSetCurrentStep = jest.fn()
 const mockNavigate = jest.fn()
+const mockCreateCluster = jest.fn()
+const mockEditCloudProviderInfo = jest.fn()
+const mockEditClusterKubeconfig = jest.fn()
+const mockDeployCluster = jest.fn()
 
 const mockContextValue: ClusterContainerCreateContextInterface = {
   currentStep: 4,
@@ -40,20 +44,26 @@ function Wrapper({ children }: PropsWithChildren) {
 
 jest.mock('../../hooks/use-create-cluster/use-create-cluster', () => ({
   useCreateCluster: () => ({
-    mutateAsync: jest.fn(),
+    mutateAsync: mockCreateCluster,
     isLoading: false,
   }),
 }))
 
 jest.mock('../../hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info', () => ({
   useEditCloudProviderInfo: () => ({
-    mutateAsync: jest.fn(),
+    mutateAsync: mockEditCloudProviderInfo,
+  }),
+}))
+
+jest.mock('../../hooks/use-edit-cluster-kubeconfig/use-edit-cluster-kubeconfig', () => ({
+  useEditClusterKubeconfig: () => ({
+    mutateAsync: mockEditClusterKubeconfig,
   }),
 }))
 
 jest.mock('../../hooks/use-deploy-cluster/use-deploy-cluster', () => ({
   useDeployCluster: () => ({
-    mutateAsync: jest.fn(),
+    mutateAsync: mockDeployCluster,
     isLoading: false,
   }),
 }))
@@ -75,6 +85,14 @@ const defaultProps: StepSummaryProps = {
 describe('StepSummary', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockContextValue.generalData = {
+      name: 'test-cluster',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'us-east-1',
+      installation_type: 'MANAGED',
+      production: false,
+    }
+    mockContextValue.kubeconfigData = undefined
     useCloudProviderInstanceTypesMockSpy.mockReturnValue({
       data: [],
     })
@@ -95,6 +113,34 @@ describe('StepSummary', () => {
 
     await waitFor(() => {
       expect(mockSetCurrentStep).toHaveBeenCalled()
+    })
+  })
+
+  it('should navigate to clusters when kubeconfig upload fails after partially managed cluster creation', async () => {
+    mockContextValue.generalData = {
+      name: 'test-cluster',
+      description: 'description',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'us-east-1',
+      installation_type: 'PARTIALLY_MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.kubeconfigData = {
+      file_name: 'cluster.yml',
+      file_content: 'apiVersion: v1',
+      file_size: 123,
+    }
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditClusterKubeconfig.mockRejectedValue(new Error('kubeconfig upload failed'))
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith({ to: '/organization/org-123/clusters' })
     })
   })
 })

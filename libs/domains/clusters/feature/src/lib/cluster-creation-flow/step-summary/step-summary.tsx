@@ -12,6 +12,7 @@ import { FunnelFlowBody } from '@qovery/shared/ui'
 import { useCreateCluster } from '../../hooks/use-create-cluster/use-create-cluster'
 import { useDeployCluster } from '../../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useEditCloudProviderInfo } from '../../hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info'
+import { useEditClusterKubeconfig } from '../../hooks/use-edit-cluster-kubeconfig/use-edit-cluster-kubeconfig'
 import { steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 import { StepSummaryPresentation } from './step-summary-presentation'
 
@@ -32,6 +33,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
     useClusterContainerCreateContext()
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
+  const { mutateAsync: editClusterKubeconfig } = useEditClusterKubeconfig()
   const { mutateAsync: deployCluster, isLoading: isDeployClusterLoading } = useDeployCluster()
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
@@ -145,7 +147,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
 
     if (generalData.installation_type === 'PARTIALLY_MANAGED') {
       try {
-        await createCluster({
+        const cluster = await createCluster({
           organizationId,
           clusterRequest: {
             name: generalData.name,
@@ -160,6 +162,17 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             ...awsLabelsGroups,
           },
         })
+        if (kubeconfigData?.file_content) {
+          try {
+            await editClusterKubeconfig({
+              organizationId,
+              clusterId: cluster.id,
+              payload: kubeconfigData.file_content,
+            })
+          } catch (error) {
+            console.error(error)
+          }
+        }
         navigate({ to: `/organization/${organizationId}/clusters` })
       } catch (error) {
         console.error(error)

@@ -8,7 +8,12 @@ import { useCallback, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
-import { useCreateCluster, useDeployCluster, useEditCloudProviderInfo } from '@qovery/domains/clusters/feature'
+import {
+  useCreateCluster,
+  useDeployCluster,
+  useEditCloudProviderInfo,
+  useEditClusterKubeconfig,
+} from '@qovery/domains/clusters/feature'
 import { useLabelsGroups } from '@qovery/domains/organizations/feature'
 import {
   CLUSTERS_CREATION_EKS_URL,
@@ -40,6 +45,7 @@ export function StepSummaryFeature() {
 
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
+  const { mutateAsync: editClusterKubeconfig } = useEditClusterKubeconfig()
   const { mutateAsync: deployCluster, isLoading: isDeployClusterLoading } = useDeployCluster()
   const { data: labelsGroup = [] } = useLabelsGroups({ organizationId })
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
@@ -157,7 +163,7 @@ export function StepSummaryFeature() {
     // EKS
     if (generalData.installation_type === 'PARTIALLY_MANAGED') {
       try {
-        await createCluster({
+        const cluster = await createCluster({
           organizationId,
           clusterRequest: {
             name: generalData.name,
@@ -179,6 +185,17 @@ export function StepSummaryFeature() {
               }),
           },
         })
+        if (kubeconfigData?.file_content) {
+          try {
+            await editClusterKubeconfig({
+              organizationId,
+              clusterId: cluster.id,
+              payload: kubeconfigData.file_content,
+            })
+          } catch (error) {
+            console.error(error)
+          }
+        }
 
         navigate(CLUSTERS_URL(organizationId))
       } catch (e) {

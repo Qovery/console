@@ -2,12 +2,13 @@ import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import * as clustersDomain from '@qovery/domains/clusters/feature'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ClusterContainerCreateContext } from '../page-clusters-create-feature'
 import StepSummaryFeature, { getValueByKey } from './step-summary-feature'
 
 const useCreateClusterMockSpy = jest.spyOn(clustersDomain, 'useCreateCluster') as jest.Mock
 const useEditCloudProviderInfoMockSpy = jest.spyOn(clustersDomain, 'useEditCloudProviderInfo') as jest.Mock
+const useEditClusterKubeconfigMockSpy = jest.spyOn(clustersDomain, 'useEditClusterKubeconfig') as jest.Mock
 const useCloudProviderInstanceTypesMockSpy = jest.spyOn(
   cloudProvidersDomain,
   'useCloudProviderInstanceTypes'
@@ -47,7 +48,10 @@ jest.mock('react-router-dom', () => ({
 const STATIC_IP = 'STATIC_IP'
 
 const mockSetResourcesData = jest.fn()
-const ContextWrapper = (props: { installation_type?: 'MANAGED' | 'SELF_MANAGED'; children: ReactNode }) => {
+const ContextWrapper = (props: {
+  installation_type?: 'MANAGED' | 'SELF_MANAGED' | 'PARTIALLY_MANAGED'
+  children: ReactNode
+}) => {
   return (
     <ClusterContainerCreateContext.Provider
       value={{
@@ -98,12 +102,17 @@ const ContextWrapper = (props: { installation_type?: 'MANAGED' | 'SELF_MANAGED';
 describe('StepSummaryFeature', () => {
   const createCluster = jest.fn()
   const editCloudProviderInfo = jest.fn()
+  const editClusterKubeconfig = jest.fn()
   beforeEach(() => {
+    jest.clearAllMocks()
     useCreateClusterMockSpy.mockReturnValue({
       mutateAsync: createCluster,
     })
     useEditCloudProviderInfoMockSpy.mockReturnValue({
       mutateAsync: editCloudProviderInfo,
+    })
+    useEditClusterKubeconfigMockSpy.mockReturnValue({
+      mutateAsync: editClusterKubeconfig,
     })
     useCloudProviderInstanceTypesMockSpy.mockReturnValue({
       data: mockInstanceType,
@@ -207,6 +216,67 @@ describe('StepSummaryFeature', () => {
         kubernetes: 'SELF_MANAGED',
         features: [],
       },
+    })
+  })
+
+  it('should upload kubeconfig after creating a partially managed cluster', async () => {
+    createCluster.mockResolvedValue({
+      id: '42',
+    })
+
+    const { userEvent } = renderWithProviders(
+      <ContextWrapper installation_type="PARTIALLY_MANAGED">
+        <StepSummaryFeature />
+      </ContextWrapper>
+    )
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    expect(createCluster).toHaveBeenCalledWith({
+      organizationId: '1',
+      clusterRequest: {
+        name: 'test',
+        description: 'description',
+        production: true,
+        cloud_provider: CloudProviderEnum.AWS,
+        region: 'region',
+        kubernetes: 'PARTIALLY_MANAGED',
+        features: [],
+        cloud_provider_credentials: {
+          cloud_provider: CloudProviderEnum.AWS,
+          credentials: {
+            id: '1',
+            name: 'name',
+          },
+          region: 'region',
+        },
+        infrastructure_charts_parameters: undefined,
+      },
+    })
+
+    expect(editClusterKubeconfig).toHaveBeenCalledWith({
+      organizationId: '1',
+      clusterId: '42',
+      payload: 'file_content',
+    })
+  })
+
+  it('should navigate to clusters even if kubeconfig upload fails after partially managed cluster creation', async () => {
+    createCluster.mockResolvedValue({
+      id: '42',
+    })
+    editClusterKubeconfig.mockRejectedValue(new Error('kubeconfig upload failed'))
+
+    const { userEvent } = renderWithProviders(
+      <ContextWrapper installation_type="PARTIALLY_MANAGED">
+        <StepSummaryFeature />
+      </ContextWrapper>
+    )
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/organization/1/clusters')
     })
   })
 

@@ -23,6 +23,7 @@ import { ClusterUpdateModal } from '../cluster-update-modal/cluster-update-modal
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { useDeployCluster } from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useDownloadKubeconfig } from '../hooks/use-download-kubeconfig/use-download-kubeconfig'
+import { useEksAnywhereClusterJwt } from '../hooks/use-eks-anywhere-cluster-jwt/use-eks-anywhere-cluster-jwt'
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 import { useUpdateEksAnywhereCommit } from '../hooks/use-update-eks-anywhere-commit/use-update-eks-anywhere-commit'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
@@ -75,6 +76,7 @@ function MenuManageDeployment({
     isEksAnywhereCluster &&
     hasEksAnywhereGitRepository &&
     (isDeployAvailable(clusterStatus.status) || isRedeployAvailable(clusterStatus.status))
+  const deployActionLabel = isEksAnywhereCluster ? 'Update' : clusterStatus.is_deployed ? 'Deploy' : 'Install'
   const actionButtonVariant = hasTextActionButton ? 'solid' : 'outline'
   const actionButtonColor =
     clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : hasTextActionButton ? 'brand' : 'neutral'
@@ -167,11 +169,11 @@ function MenuManageDeployment({
       <DropdownMenu.Item
         key="0"
         icon={<Icon iconName="play" />}
-        onSelect={mutationDeploy}
+        onSelect={isEksAnywhereCluster ? mutationUpdate : mutationDeploy}
         className="relative"
         color={clusterNeedUpdate ? 'yellow' : 'brand'}
       >
-        {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
+        {deployActionLabel}
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
@@ -243,7 +245,7 @@ function MenuManageDeployment({
               <Icon iconName="rocket" />
               {hasTextActionButton && (
                 <>
-                  {clusterStatus.is_deployed ? 'Deploy' : 'Install'}
+                  {deployActionLabel}
                   <Icon iconName="chevron-down" />
                 </>
               )}
@@ -269,6 +271,7 @@ function MenuOtherActions({
   const { openModal } = useModal()
   const [, copyToClipboard] = useCopyToClipboard()
   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
+  const { mutateAsync: getEksAnywhereClusterJwt } = useEksAnywhereClusterJwt()
 
   const removeCluster = (cluster: Cluster) => {
     openModal({
@@ -283,6 +286,18 @@ function MenuOtherActions({
         width: 680,
       },
     })
+  }
+
+  const copyEksAnywhereClusterJwt = async () => {
+    try {
+      const jwt = await getEksAnywhereClusterJwt({
+        organizationId: cluster.organization.id,
+        clusterId: cluster.id,
+      })
+      copyToClipboard(jwt)
+    } catch {
+      // Error is handled by mutation notifyOnError.
+    }
   }
 
   const canDelete = clusterStatus.status && isDeleteAvailable(clusterStatus.status)
@@ -328,6 +343,11 @@ function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(cluster.id)}>
           Copy identifier
         </DropdownMenu.Item>
+        {cluster.kubernetes === 'PARTIALLY_MANAGED' && (
+          <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => void copyEksAnywhereClusterJwt()}>
+            Copy cluster JWT
+          </DropdownMenu.Item>
+        )}
         {cluster.kubernetes !== 'SELF_MANAGED' && (
           <DropdownMenu.Item
             icon={<Icon iconName="download" />}

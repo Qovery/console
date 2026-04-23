@@ -144,6 +144,20 @@ describe('ClusterCard', () => {
     expect(screen.getByText('1.21')).toBeInTheDocument()
   })
 
+  it('should not display version for partially managed cluster', () => {
+    const partiallyManagedCluster = {
+      ...mockCluster,
+      kubernetes: 'PARTIALLY_MANAGED',
+      version: '1.33',
+    } as Cluster
+
+    renderWithProviders(
+      <ClusterCard cluster={partiallyManagedCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
+    )
+
+    expect(screen.queryByText('1.33')).not.toBeInTheDocument()
+  })
+
   it('should display production badge for production clusters', () => {
     renderWithProviders(<ClusterCard cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />)
 
