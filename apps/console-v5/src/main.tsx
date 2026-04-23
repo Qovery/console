@@ -1,6 +1,7 @@
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
+import * as Sentry from '@sentry/react'
 import {
   type Mutation,
   MutationCache,
@@ -12,7 +13,7 @@ import {
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import axios from 'axios'
 import posthog from 'posthog-js'
-import { StrictMode, useEffect } from 'react'
+import { StrictMode, useEffect, useState } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { IntercomProvider } from 'react-use-intercom'
@@ -20,8 +21,10 @@ import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { LoaderSpinner, ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import {
   DEVOPS_COPILOT_API_BASE_URL,
+  GIT_SHA,
   GTM,
   INTERCOM,
+  NODE_ENV,
   POSTHOG,
   POSTHOG_APIHOST,
   QOVERY_API,
@@ -45,6 +48,10 @@ type ToastArgs = {
   labelAction?: string
   externalLink?: string
 }
+
+const SENTRY_DSN = 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024'
+
+let isSentryInitialized = false
 
 interface _QueryMeta {
   notifyOnSuccess?: boolean | ((data: unknown, query: Query<unknown, unknown, unknown>) => ToastArgs) | ToastArgs
@@ -148,23 +155,46 @@ const queryClient = new QueryClient({
 function App() {
   const auth = useAuth0Context()
 
+  const [router] = useState(() => {
+    const nextRouter = createRouter({
+      routeTree,
+      context: { auth, queryClient },
+      defaultNotFoundComponent: NotFoundPage,
+    })
+
+    if (!isSentryInitialized && NODE_ENV === 'production') {
+      Sentry.init({
+        release: GIT_SHA,
+        dsn: SENTRY_DSN,
+        integrations: [Sentry.tanstackRouterBrowserTracingIntegration(nextRouter), Sentry.replayIntegration()],
+        tracesSampleRate: 1.0,
+        replaysSessionSampleRate: 0.1,
+        replaysOnErrorSampleRate: 1.0,
+      })
+
+      isSentryInitialized = true
+    }
+
+    return nextRouter
+  })
+
   // Keep PostHog's identified user in sync once Auth0 resolves the session
   useEffect(() => {
     if (!auth.user?.sub) {
+      Sentry.setUser(null)
       return
     }
 
     posthog.identify(auth.user.sub, {
       ...auth.user,
     })
-  }, [auth.user])
 
-  // Create a new router instance
-  const router = createRouter({
-    routeTree,
-    context: { auth, queryClient },
-    defaultNotFoundComponent: NotFoundPage,
-  })
+    Sentry.setUser({
+      id: auth.user.sub,
+      email: auth.user.email,
+      username: auth.user.name,
+    })
+  }, [auth.user])
 
   useAuthInterceptor(axios, QOVERY_API)
   useAuthInterceptor(devopsCopilotAxios, DEVOPS_COPILOT_API_BASE_URL)
