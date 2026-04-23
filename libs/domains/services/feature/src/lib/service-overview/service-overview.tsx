@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
+import { JobStatusesCallout } from '@qovery/domains/service-job/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Heading, Icon, Link, Navbar, Section } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
@@ -67,6 +68,9 @@ function ServiceOverviewContent({
         <div className="flex shrink-0 flex-col gap-5 pb-8 pt-6 text-sm">
           <Section className="gap-8">
             <ServiceHeader environment={environment} serviceId={service.id} service={service} />
+            {service.serviceType === 'JOB' && (
+              <JobStatusesCallout environmentId={environment.id} serviceId={service.id} />
+            )}
             {hasNoMetrics && observabilityCallout}
             <Section className="gap-3">
               <div className="flex items-center justify-between gap-2">
