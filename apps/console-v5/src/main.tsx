@@ -13,7 +13,7 @@ import {
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import axios from 'axios'
 import posthog from 'posthog-js'
-import { StrictMode, useEffect, useState } from 'react'
+import { StrictMode, useEffect, useRef } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { IntercomProvider } from 'react-use-intercom'
@@ -154,9 +154,10 @@ const queryClient = new QueryClient({
 
 function App() {
   const auth = useAuth0Context()
+  const routerRef = useRef<ReturnType<typeof createRouter> | null>(null)
 
-  const [router] = useState(() => {
-    const nextRouter = createRouter({
+  if (!routerRef.current) {
+    routerRef.current = createRouter({
       routeTree,
       context: { auth, queryClient },
       defaultNotFoundComponent: NotFoundPage,
@@ -166,7 +167,7 @@ function App() {
       Sentry.init({
         release: GIT_SHA,
         dsn: SENTRY_DSN,
-        integrations: [Sentry.tanstackRouterBrowserTracingIntegration(nextRouter), Sentry.replayIntegration()],
+        integrations: [Sentry.tanstackRouterBrowserTracingIntegration(routerRef.current), Sentry.replayIntegration()],
         tracesSampleRate: 1.0,
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,
@@ -174,9 +175,9 @@ function App() {
 
       isSentryInitialized = true
     }
+  }
 
-    return nextRouter
-  })
+  const router = routerRef.current
 
   // Keep PostHog's identified user in sync once Auth0 resolves the session
   useEffect(() => {
