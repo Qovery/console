@@ -450,7 +450,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
         <div className="mt-2 flex flex-col gap-5">
           {isLoading ? (
             <div className="flex justify-center">
-              <LoaderSpinner className="w-6" />
+              <LoaderSpinner className="w-4" />
             </div>
           ) : (
             <>
