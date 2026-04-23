@@ -7,9 +7,10 @@ export interface ClusterTypeProps extends Omit<BadgeProps, 'color'> {
   cloudProvider: keyof typeof CloudVendorEnum
   kubernetes?: KubernetesEnum
   instanceType?: string
+  size?: 'base' | 'sm'
 }
 
-export function ClusterType({ cloudProvider, kubernetes, instanceType, ...props }: ClusterTypeProps) {
+export function ClusterType({ cloudProvider, kubernetes, instanceType, size = 'base', ...props }: ClusterTypeProps) {
   const clusterType = match([cloudProvider, kubernetes])
     .with(['AWS', KubernetesEnum.MANAGED], ['AWS', undefined], () =>
       instanceType === 'KARPENTER' ? `EKS (${upperCaseFirstLetter(instanceType)})` : 'EKS'
@@ -33,7 +34,7 @@ export function ClusterType({ cloudProvider, kubernetes, instanceType, ...props 
     .with(['IBM', P._], () => 'IBM')
     .exhaustive()
   return (
-    <Badge color="neutral" variant="surface" {...props}>
+    <Badge color="neutral" variant="surface" size={size} {...props}>
       {clusterType}
     </Badge>
   )
