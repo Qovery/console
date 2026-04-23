@@ -48,7 +48,7 @@ describe('MintlifyHit', () => {
       metadata: { ...mockResult.metadata, description: longDescription },
     }
     const { container } = render(<MintlifyHit result={result} />)
-    const descriptionElement = container.querySelector('.text-sky-400')
+    const descriptionElement = container.querySelector('.text-info')
     expect(descriptionElement?.textContent?.length).toBeLessThan(200)
     expect(descriptionElement?.textContent).toMatch(/\.\.\./)
   })

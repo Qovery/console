@@ -16,7 +16,6 @@ import {
 import { KubeconfigPreview } from '@qovery/domains/clusters/feature'
 import { DarkModeEnabler, Layout } from '@qovery/pages/layout'
 import { PageLogin, PageLogoutFeature } from '@qovery/pages/login'
-import { AssistantContext } from '@qovery/shared/assistant/feature'
 import { useAuth, useInviteMember } from '@qovery/shared/auth'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
@@ -36,7 +35,6 @@ export function App() {
   useCaptureUtmParams()
   const { isLoading } = useAuth()
   const { redirectToAcceptPageGuard, onSearchUpdate, checkTokenInStorage } = useInviteMember()
-  const [assistantOpen, setAssistantOpen] = useState(false)
   const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
   const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
 
@@ -119,45 +117,43 @@ export function App() {
           sendMessageRef,
         }}
       >
-        <AssistantContext.Provider value={{ assistantOpen, setAssistantOpen }}>
-          <ScrollToTop />
-          <Routes>
-            <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
-            <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
-            <Route path={PREVIEW_CODE} element={<PreviewCode />} />
-            <Route path={KUBECONFIG} element={<KubeconfigPreview />} />
-            {ROUTER.map((route) =>
-              route.layout ? (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={
-                    !route.protected ? (
+        <ScrollToTop />
+        <Routes>
+          <Route path={`${LOGIN_URL}/*`} element={<PageLogin />} />
+          <Route path={LOGOUT_URL} element={<PageLogoutFeature />} />
+          <Route path={PREVIEW_CODE} element={<PreviewCode />} />
+          <Route path={KUBECONFIG} element={<KubeconfigPreview />} />
+          {ROUTER.map((route) =>
+            route.layout ? (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={
+                  !route.protected ? (
+                    <DarkModeEnabler isDarkMode={route.darkMode}>
+                      <Layout topBar={route.topBar}>{route.component}</Layout>
+                    </DarkModeEnabler>
+                  ) : (
+                    <ProtectedRoute>
                       <DarkModeEnabler isDarkMode={route.darkMode}>
-                        <Layout topBar={route.topBar}>{route.component}</Layout>
+                        <Layout topBar={route.topBar} spotlight={route.spotlight}>
+                          {route.component}
+                        </Layout>
                       </DarkModeEnabler>
-                    ) : (
-                      <ProtectedRoute>
-                        <DarkModeEnabler isDarkMode={route.darkMode}>
-                          <Layout topBar={route.topBar} spotlight={route.spotlight}>
-                            {route.component}
-                          </Layout>
-                        </DarkModeEnabler>
-                      </ProtectedRoute>
-                    )
-                  }
-                />
-              ) : (
-                <Route
-                  key={route.path}
-                  path={route.path}
-                  element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
-                />
-              )
-            )}
-            <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
-          </Routes>
-        </AssistantContext.Provider>
+                    </ProtectedRoute>
+                  )
+                }
+              />
+            ) : (
+              <Route
+                key={route.path}
+                path={route.path}
+                element={!route.protected ? route.component : <ProtectedRoute>{route.component}</ProtectedRoute>}
+              />
+            )
+          )}
+          <Route path="*" element={<Navigate replace to={LOGIN_URL} />} />
+        </Routes>
       </DevopsCopilotContext.Provider>
     </GTMProvider>
   )

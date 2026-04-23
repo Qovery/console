@@ -7,7 +7,6 @@ import { match } from 'ts-pattern'
 import { ClusterDeploymentProgressCard, useClusterStatuses } from '@qovery/domains/clusters/feature'
 import { useAlerts } from '@qovery/domains/observability/feature'
 import { FreeTrialBanner, InvoiceBanner, useOrganization } from '@qovery/domains/organizations/feature'
-import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton, DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import {
   getNewConsoleUrl,
@@ -215,7 +214,6 @@ export function LayoutPage(props: PropsWithChildren<LayoutPageProps>) {
                 }`}
               >
                 <div className="flex grow flex-col px-2 pt-2 dark:px-0 dark:pt-0">{children}</div>
-                <AssistantTrigger />
                 {isFeatureFlag && <DevopsCopilotTrigger />}
               </div>
             </div>

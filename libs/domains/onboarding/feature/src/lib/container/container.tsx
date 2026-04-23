@@ -1,7 +1,6 @@
 import { useLocation } from '@tanstack/react-router'
 import { PlanEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useEffect, useState } from 'react'
-import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
 
 interface DefaultContextProps {
@@ -66,7 +65,6 @@ export function Container(props: PropsWithChildren) {
     >
       <FunnelFlow totalSteps={totalSteps} currentStep={currentStep} currentTitle={currentTitle} portal>
         <FunnelFlowBody customContentWidth="w-full">{children}</FunnelFlowBody>
-        <AssistantTrigger />
       </FunnelFlow>
     </ContextOnboarding.Provider>
   )

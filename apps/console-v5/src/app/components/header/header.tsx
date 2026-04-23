@@ -3,6 +3,7 @@ import posthog from 'posthog-js'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { Suspense, useCallback } from 'react'
 import { SpotlightTrigger } from '@qovery/pages/layout'
+import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton } from '@qovery/shared/devops-copilot/feature'
 import { Button, LogoIcon } from '@qovery/shared/ui'
 import { Breadcrumbs } from './breadcrumbs/breadcrumbs'
@@ -49,6 +50,7 @@ export function Header() {
               <Button onClick={handleFeedbackClick} variant="outline">
                 Feedback
               </Button>
+              <AssistantTrigger />
               {isDevopsCopilotEnabled && <DevopsCopilotButton />}
               <UserMenu />
             </div>

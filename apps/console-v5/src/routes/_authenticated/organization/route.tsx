@@ -5,6 +5,7 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
+import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
@@ -460,6 +461,11 @@ function OrganizationRoute() {
     serviceId,
     enabled: Boolean(environmentId) && Boolean(serviceId),
   })
+  const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const assistantAnchorRef = useRef<HTMLDivElement>(null)
+  const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
+  const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
+
   const isServiceNotFound = Boolean(environmentId) && Boolean(serviceId) && isServiceSummaryFetched && !service
   const serviceNotFoundAction = (
     <Link
@@ -472,9 +478,6 @@ function OrganizationRoute() {
       Go to environment
     </Link>
   )
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
-  const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
 
   // Keep group-scoped flags aligned with the active organization
   useEffect(() => {
@@ -506,12 +509,48 @@ function OrganizationRoute() {
   }, [service?.id, project?.id, environment?.id])
 
   useLayoutEffect(() => {
-    const scrollContainer = scrollContainerRef.current
-
-    if (scrollContainer) {
-      scrollContainer.scrollTop = 0
-    }
+    scrollContainerRef.current?.scrollTo({ top: 0 })
   }, [location.pathname])
+
+  /**
+   * Sync the assistant panel's available height with the sticky wrapper's actual top in the viewport.
+   *
+   * CSS sticky handles the panel's top position perfectly (no JS for that), but its height cannot
+   * be expressed in pure CSS because it depends on the wrapper's current top in viewport — which
+   * varies while the header is scrolling away. We only write a CSS variable on the anchor element
+   * so downstream styles stay declarative and React does not re-render on every scroll frame.
+   *
+   * We intentionally do not throttle with rAF here: the scroll handler must run in the same frame
+   * as the browser's own scroll commit, otherwise the height lags one frame behind the sticky top
+   * and causes a visible judder. getBoundingClientRect + setProperty are cheap and the handler is
+   * passive, so this stays well within a frame budget.
+   */
+  useLayoutEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    const anchor = assistantAnchorRef.current
+
+    if (!scrollContainer || !anchor) {
+      return
+    }
+
+    const update = () => {
+      const top = Math.max(0, anchor.getBoundingClientRect().top)
+      anchor.style.setProperty('--assistant-panel-top', `${top}px`)
+    }
+
+    const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update)
+    resizeObserver?.observe(scrollContainer)
+
+    scrollContainer.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    update()
+
+    return () => {
+      scrollContainer.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+      resizeObserver?.disconnect()
+    }
+  }, [])
 
   if (bypassLayout) {
     return (
@@ -522,18 +561,20 @@ function OrganizationRoute() {
           sendMessageRef,
         }}
       >
-        {isServiceNotFound ? (
-          <NotFoundPage
-            action={serviceNotFoundAction}
-            data={{
-              title: 'Service not found',
-              message: "This service doesn't exist anymore, or the URL is incorrect.",
-            }}
-          />
-        ) : (
-          <Outlet />
-        )}
-        <DevopsCopilotTrigger />
+        <AssistantProvider>
+          {isServiceNotFound ? (
+            <NotFoundPage
+              action={serviceNotFoundAction}
+              data={{
+                title: 'Service not found',
+                message: "This service doesn't exist anymore, or the URL is incorrect.",
+              }}
+            />
+          ) : (
+            <Outlet />
+          )}
+          <DevopsCopilotTrigger />
+        </AssistantProvider>
       </DevopsCopilotContext.Provider>
     )
   }
@@ -546,40 +587,58 @@ function OrganizationRoute() {
         sendMessageRef,
       }}
     >
-      <div className="flex h-dvh w-full flex-col bg-background">
-        {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
-        <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-auto">
-          <ErrorBoundary>
-            <OrganizationBanners />
-            <Header />
+      <AssistantProvider>
+        <div className="flex h-dvh w-full flex-col bg-background">
+          {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
+          <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+            <ErrorBoundary>
+              <OrganizationBanners />
+              <Header />
 
-            <Suspense fallback={<MainLoader />}>
-              <>
-                <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
-                  <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
-                    {navigationContext && <NavigationBar context={navigationContext} />}
-                  </Navbar.Root>
-                </div>
+              <Suspense fallback={<MainLoader />}>
+                <>
+                  <div className="sticky top-0 z-header border-b border-neutral bg-background-secondary px-4">
+                    <Navbar.Root activeId={activeTabId} className="container relative top-[1px] mx-0 -mt-[1px]">
+                      {navigationContext && <NavigationBar context={navigationContext} />}
+                    </Navbar.Root>
+                  </div>
 
-                <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
-                  {isServiceNotFound ? (
-                    <NotFoundPage
-                      action={serviceNotFoundAction}
-                      data={{
-                        title: 'Service not found',
-                        message: "This service doesn't exist anymore, or the URL is incorrect.",
+                  <div
+                    ref={assistantAnchorRef}
+                    className="pointer-events-none sticky top-[calc(2.75rem+1px)] z-overlay h-0"
+                  >
+                    <div
+                      className="pointer-events-auto absolute right-0 top-0 isolate"
+                      style={{
+                        // JS updates --assistant-panel-top to the anchor's current top in the viewport.
+                        // Fallback matches the stuck state so SSR/first paint render a reasonable size.
+                        height: 'calc(100dvh - var(--assistant-panel-top, calc(2.75rem + 1px)))',
                       }}
-                    />
-                  ) : (
-                    <Outlet />
-                  )}
-                </div>
-              </>
-            </Suspense>
-          </ErrorBoundary>
+                    >
+                      <AssistantPanelOutlet />
+                    </div>
+                  </div>
+
+                  <div className={needsFullWidth ? 'min-h-0' : 'container mx-auto min-h-0 px-4'}>
+                    {isServiceNotFound ? (
+                      <NotFoundPage
+                        action={serviceNotFoundAction}
+                        data={{
+                          title: 'Service not found',
+                          message: "This service doesn't exist anymore, or the URL is incorrect.",
+                        }}
+                      />
+                    ) : (
+                      <Outlet />
+                    )}
+                  </div>
+                </>
+              </Suspense>
+            </ErrorBoundary>
+          </div>
         </div>
-      </div>
-      <DevopsCopilotTrigger />
+        <DevopsCopilotTrigger />
+      </AssistantProvider>
     </DevopsCopilotContext.Provider>
   )
 }
