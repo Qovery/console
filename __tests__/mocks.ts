@@ -1,9 +1,9 @@
-import type { ComponentType } from 'react'
+import type { ComponentType, ReactNode } from 'react'
 import * as React from 'react'
 
 jest.mock('@auth0/auth0-react', () => ({
-  Auth0Provider: ({ children }) => children,
-  withAuthenticationRequired: (component) => component,
+  Auth0Provider: ({ children }: { children: ReactNode }) => children,
+  withAuthenticationRequired: (component: ComponentType) => component,
   useAuth0: () => {
     return {
       isLoading: false,
