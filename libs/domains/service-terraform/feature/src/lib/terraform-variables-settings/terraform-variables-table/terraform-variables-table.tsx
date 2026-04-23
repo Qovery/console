@@ -65,7 +65,6 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const { updateKey, updateValue, toggleSecret, revertValue, isRowSelected, selectRow, hoveredRow, errors } =
     useTerraformVariablesContext()
   const { environmentId = '' } = useParams({ strict: false })
-  const [, setIsVariablePopoverOpen] = useState(false)
   const [isCellHovered, setIsCellHovered] = useState(false)
   const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
   const isCellFocused = useCallback((cell: 'key' | 'value') => focusedCell === cell, [focusedCell])
@@ -238,7 +237,6 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                       setIsCellHovered(false)
                       setFocusedCell(undefined)
                     }
-                    setIsVariablePopoverOpen(open)
                   }}
                 >
                   <button
