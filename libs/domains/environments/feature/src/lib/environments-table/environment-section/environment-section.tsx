@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
-import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
+import { EnvironmentModeEnum, type EnvironmentOverviewResponse, StateEnum } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
@@ -15,6 +15,20 @@ const { Table } = TablePrimitives
 
 const gridLayoutClassName =
   'grid w-full grid-cols-[minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
+
+function DisabledManageDeploymentButton() {
+  return (
+    <Tooltip content="Add at least one service to deploy this environment">
+      <div>
+        <Button aria-label="Manage Deployment" color="neutral" variant="outline" size="sm" iconOnly disabled>
+          <div className="flex h-full w-full items-center justify-center gap-1.5">
+            <Icon iconName="rocket" />
+          </div>
+        </Button>
+      </div>
+    </Tooltip>
+  )
+}
 
 function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const navigate = useNavigate()
@@ -113,10 +127,17 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           onClick={stopRowNavigation}
           onKeyDown={stopRowNavigation}
         >
-          {environment && overview.deployment_status && overview.services_overview.service_count > 0 && (
+          {environment && (
             <>
-              <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
-              <MenuOtherActions environment={environment} state={overview.deployment_status?.last_deployment_state} />
+              {overview.services_overview.service_count > 0 && overview.deployment_status ? (
+                <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
+              ) : (
+                <DisabledManageDeploymentButton />
+              )}
+              <MenuOtherActions
+                environment={environment}
+                state={overview.deployment_status?.last_deployment_state ?? StateEnum.READY}
+              />
             </>
           )}
         </div>
