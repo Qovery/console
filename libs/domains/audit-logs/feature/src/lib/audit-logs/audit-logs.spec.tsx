@@ -191,3 +191,12 @@ describe.skip('PageGeneral', () => {
     expect(container).toBeTruthy()
   })
 })
+
+describe('AuditLogs layering', () => {
+  it('should apply dropdown z-index to the table header for filter popovers', () => {
+    renderWithProviders(<AuditLogs {...props} events={[]} isLoading={false} />)
+
+    const tableHeader = screen.getByTestId('table-container')
+    expect(tableHeader).toHaveClass('z-dropdown')
+  })
+})
