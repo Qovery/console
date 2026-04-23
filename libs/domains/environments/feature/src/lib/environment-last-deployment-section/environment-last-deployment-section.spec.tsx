@@ -124,7 +124,11 @@ describe('EnvironmentLastDeploymentSection', () => {
 
     renderWithProviders(<EnvironmentLastDeploymentSection />)
 
+    const emptyState = screen.getByText('No deployment recorded yet').closest('.rounded-lg')
+
     expect(screen.getByText('No deployment recorded yet')).toBeInTheDocument()
+    expect(emptyState).toHaveClass('px-4', 'py-4')
+    expect(emptyState).not.toHaveClass('h-56')
     expect(screen.getByRole('button', { name: /deploy environment/i })).toBeInTheDocument()
   })
 
