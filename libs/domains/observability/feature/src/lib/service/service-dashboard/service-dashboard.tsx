@@ -309,7 +309,7 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
               >
                 <Badge
                   variant="surface"
-                  color={resourcesMode === 'aggregate' ? 'sky' : 'purple'}
+                  color={resourcesMode === 'aggregate' ? 'sky' : 'neutral'}
                   radius="full"
                   size="sm"
                   className="h-6 gap-1 text-ssm"

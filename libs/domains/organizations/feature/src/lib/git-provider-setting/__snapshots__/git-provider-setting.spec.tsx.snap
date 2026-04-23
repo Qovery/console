@@ -11,7 +11,7 @@ exports[`GitProviderSetting should match snapshot 1`] = `
         data-testid="select"
       >
         <label
-          class="top-1.5 translate-y-2 text-sm"
+          class="input__label translate-y-[7px] text-sm"
           for="Git account"
         >
           Git account

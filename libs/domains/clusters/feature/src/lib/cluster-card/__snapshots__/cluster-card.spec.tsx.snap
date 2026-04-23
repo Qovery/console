@@ -85,7 +85,7 @@ exports[`ClusterCard should match snapshot 1`] = `
       class="mt-5 flex flex-wrap gap-2"
     >
       <span
-        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded"
         data-accent-color="neutral"
       >
         <svg
@@ -105,19 +105,19 @@ exports[`ClusterCard should match snapshot 1`] = `
         Qovery managed
       </span>
       <span
-        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded bg-surface-neutral-subtle"
         data-accent-color="neutral"
       >
         EKS
       </span>
       <span
-        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded bg-surface-neutral-subtle"
         data-accent-color="neutral"
       >
         us-east-1
       </span>
       <span
-        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded-md bg-surface-neutral-subtle"
+        class="text-neutral inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-neutral border rounded bg-surface-neutral-subtle"
         data-accent-color="neutral"
       >
         1.21
@@ -190,7 +190,7 @@ exports[`ClusterCard should match snapshot 1`] = `
         </div>
       </div>
       <span
-        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-negative-subtle border rounded-md bg-surface-negative-subtle text-negative"
+        class="inline-flex items-center shrink-0 text-xs px-1.5 h-6 border-negative-subtle border rounded bg-surface-negative-subtle text-negative"
         data-accent-color="red"
       >
         Production

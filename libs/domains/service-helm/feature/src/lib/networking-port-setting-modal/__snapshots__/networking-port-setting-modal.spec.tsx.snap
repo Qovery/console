@@ -46,7 +46,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                   class=""
                 >
                   <label
-                    class="input__label translate-y-2 text-sm"
+                    class="input__label translate-y-[7px] text-sm"
                     for="Service name"
                   >
                     Service name
@@ -68,11 +68,11 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
             class=""
           >
             <div
-              class="input input--select"
+              class="input input--select input--label-up"
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs"
+                class="input__label translate-y-[7px] text-sm"
                 for="Select protocol"
               >
                 Select protocol
@@ -175,7 +175,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                   class="pointer-events-none"
                 >
                   <label
-                    class="input__label translate-y-2 text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm !transition-none"
                     for="External port"
                   >
                     External port
@@ -209,7 +209,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                   class=""
                 >
                   <label
-                    class="input__label translate-y-2 text-sm"
+                    class="input__label translate-y-[7px] text-sm"
                     for="Namespace (optional)"
                   >
                     Namespace (optional)
@@ -243,7 +243,7 @@ exports[`NetworkingPortSettingModal should match snapshot in create state 1`] = 
                     class=""
                   >
                     <label
-                      class="input__label translate-y-2 text-sm"
+                      class="input__label translate-y-[7px] text-sm"
                       for="Port name"
                     >
                       Port name
@@ -340,7 +340,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class=""
                 >
                   <label
-                    class="input__label translate-y-2 text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm !transition-none"
                     for="Service name"
                   >
                     Service name
@@ -373,7 +373,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class=""
                 >
                   <label
-                    class="input__label translate-y-2 text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm !transition-none"
                     for="Service port"
                   >
                     Service port
@@ -395,11 +395,11 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
             class=""
           >
             <div
-              class="input input--select"
+              class="input input--select input--label-up"
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs"
+                class="input__label translate-y-[7px] text-sm"
                 for="Select protocol"
               >
                 Select protocol
@@ -502,7 +502,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class="pointer-events-none"
                 >
                   <label
-                    class="input__label translate-y-2 text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm !transition-none"
                     for="External port"
                   >
                     External port
@@ -536,7 +536,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                   class=""
                 >
                   <label
-                    class="input__label translate-y-2 text-sm !transition-none"
+                    class="input__label translate-y-[7px] text-sm !transition-none"
                     for="Namespace (optional)"
                   >
                     Namespace (optional)
@@ -570,7 +570,7 @@ exports[`NetworkingPortSettingModal should match snapshot in edit state 1`] = `
                     class=""
                   >
                     <label
-                      class="input__label translate-y-2 text-sm !transition-none"
+                      class="input__label translate-y-[7px] text-sm !transition-none"
                       for="Port name"
                     >
                       Port name

@@ -34,7 +34,7 @@ exports[`AnnotationCreateEditModal should match with snatpshot 1`] = `
                 class=""
               >
                 <label
-                  class="input__label translate-y-2 text-sm"
+                  class="input__label translate-y-[7px] text-sm"
                   for="Group name"
                 >
                   Group name
