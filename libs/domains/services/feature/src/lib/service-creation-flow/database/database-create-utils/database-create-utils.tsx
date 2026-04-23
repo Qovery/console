@@ -64,6 +64,15 @@ export function formatDatabaseTypeLabel(value: string) {
   return formattedValue
 }
 
+export function sortDatabaseVersionValues(versions?: Value[]) {
+  return [...(versions ?? [])].sort((a, b) =>
+    String(b.value).localeCompare(String(a.value), undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    })
+  )
+}
+
 export function findDatabaseTemplateMatch(template?: string, option?: string): DatabaseTemplateMatch {
   if (!template) {
     return {}
@@ -136,9 +145,13 @@ export function generateDatabaseTypeAndVersionOptions(
     }
   })
 
+  const sortedDatabaseVersionOptions = Object.fromEntries(
+    Object.entries(databaseVersionOptions).map(([key, versions]) => [key, sortDatabaseVersionValues(versions)])
+  )
+
   return {
     databaseTypeOptions: clusterVpc ? filterDatabaseTypes(databaseTypeOptions, clusterVpc) : databaseTypeOptions,
-    databaseVersionOptions,
+    databaseVersionOptions: sortedDatabaseVersionOptions,
   }
 }
 
