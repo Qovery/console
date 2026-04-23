@@ -178,7 +178,7 @@ describe('CardInstanceStatus', () => {
     expect(useInstantMetrics).toHaveBeenCalledTimes(2)
     expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
-      query: expect.stringContaining('kube_pod_container_status_restarts_total'),
+      query: expect.stringContaining('k8s_event_logger_q_k8s_events_total'),
       startTimestamp: expect.any(String),
       endTimestamp: expect.any(String),
       boardShortName: 'service_overview',
@@ -186,8 +186,8 @@ describe('CardInstanceStatus', () => {
     })
 
     const call = useInstantMetrics.mock.calls[0][0].query
-    expect(call).toContain('test-container-name')
-    expect(call).toContain('kube_pod_container_status_waiting_reason')
+    expect(call).toContain('test-service-id')
+    expect(call).toContain('k8s_event_logger_q_k8s_events_total')
   })
 
   it('should always show modal link', () => {

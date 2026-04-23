@@ -36,13 +36,13 @@ const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   (
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady",
+      reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|Killing",
       type="Warning"
     }
     -
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
-      reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady",
+      reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady|Killing",
        type="Warning"
     } offset ${dynamicRange}
   ) > 0
@@ -108,7 +108,7 @@ const getDescriptionFromK8sEvent = (reason: string): string => {
     case 'BackOff':
       return 'Container restart is being delayed due to repeated failures (CrashLoopBackOff or image-pull back-off).'
     case 'Evicted':
-      return 'Pod was evicted from the node due to resource pressure or eviction policy.'
+      return 'Pod was evicted from the node due to resource pressure (CPU, memory, or disk) or Karpenter node consolidation.'
     case 'FailedScheduling':
       return 'Scheduler could not place the pod on any node (resource constraints or node selectors).'
     case 'FailedMount':
@@ -119,6 +119,8 @@ const getDescriptionFromK8sEvent = (reason: string): string => {
       return 'Pod was pre-empted by another higher-priority pod.'
     case 'NodeNotReady':
       return 'The node hosting the pod became NotReady.'
+    case 'Killing':
+      return 'Container is being terminated by the Kubernetes node (kubelet). This can occur during node consolidation, resource pressure, or graceful shutdown.'
     default:
       return 'Unknown'
   }

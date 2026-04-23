@@ -73,15 +73,15 @@ export function EventSidebar({ events, service, isLoading = false }: EventSideba
                       <span className="font-medium">{event.reason}</span>
                       <span className="text-neutral-350">{timestamp.fullTimeString}</span>
                     </div>
-                    {event.type === 'event' && (
-                      <>
-                        <span className="text-neutral-350">
-                          {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
-                        </span>
-                        <span className="text-neutral-350">
-                          {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version?.slice(0, 8)}
-                        </span>
-                      </>
+                    {event.type === 'event' && event.repository && (
+                      <span className="text-neutral-350">
+                        {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
+                      </span>
+                    )}
+                    {event.type === 'event' && event.version && (
+                      <span className="text-neutral-350">
+                        {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version.slice(0, 8)}
+                      </span>
                     )}
                     {event.description && <span className="text-neutral-350">{event.description}</span>}
                     {event.type === 'exit-code' && (
