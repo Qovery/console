@@ -159,9 +159,6 @@ export function ServiceList({ className, containerClassName, environment, ...pro
               ? true
               : 'indeterminate'
             : isAllRowsSelected
-          const toggleAllRowsSelection = () => {
-            table.toggleAllRowsSelected(!isAllRowsSelected)
-          }
 
           return (
             <div className="relative h-full w-full">
@@ -169,7 +166,6 @@ export function ServiceList({ className, containerClassName, environment, ...pro
                 className="absolute inset-0 flex items-center pl-4"
                 onClick={(e) => {
                   e.stopPropagation()
-                  toggleAllRowsSelection()
                 }}
               >
                 <Checkbox
@@ -188,12 +184,6 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         },
         cell: ({ row }) => {
           const isDisabled = !row.getCanSelect()
-          const toggleRowSelection = () => {
-            if (isDisabled) {
-              return
-            }
-            row.toggleSelected(!row.getIsSelected())
-          }
           const checkbox = (
             <div className="h-4">
               <Checkbox
@@ -221,7 +211,6 @@ export function ServiceList({ className, containerClassName, environment, ...pro
               className="absolute inset-0 flex items-center pl-4"
               onClick={(e) => {
                 e.stopPropagation()
-                toggleRowSelection()
               }}
             >
               {checkbox}

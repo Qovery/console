@@ -1,0 +1,274 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`SelectCommitModal should match snapshot 1`] = `
+<div>
+  <div
+    class="flex flex-col gap-6 p-5"
+  >
+    <div
+      class="flex flex-col gap-2 text-sm"
+    >
+      <h2
+        class="h4 max-w-sm truncate text-neutral"
+      >
+        Deploy other version
+      </h2>
+      <p
+        class="text-neutral-subtle"
+      >
+        Type a version to deploy
+      </p>
+      For X service
+    </div>
+    <div
+      class="relative w-full"
+    >
+      <i
+        aria-hidden="true"
+        class="fa-regular fa-magnifying-glass absolute left-3 top-1/2 block -translate-y-1/2 text-base leading-none text-neutral-subtle"
+      />
+      <input
+        class="w-full rounded border border-neutral bg-surface-neutral pl-10 pr-6 text-neutral placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color] h-9 text-sm"
+        data-testid="input-search"
+        name="search"
+        placeholder="Search by commit message or commit id"
+        type="text"
+      />
+    </div>
+    <div
+      aria-required="false"
+      dir="ltr"
+      role="radiogroup"
+      style="outline: none;"
+      tabindex="0"
+    >
+      <div
+        class="relative overflow-y-auto pr-[1px] max-h-[50vh] pb-[60px]"
+        data-testid="scroll-shadow-wrapper"
+      >
+        <div
+          class="pointer-events-none sticky top-0 z-overlay -mb-4 h-5 w-full bg-scroll-shadow-up transition-opacity duration-300 opacity-0"
+          data-testid="scroll-shadow-top"
+        />
+        <div
+          class="pl-2"
+        >
+          <div
+            class="relative pl-5 text-sm font-medium text-neutral-subtle"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-code-commit absolute left-0 top-1 -translate-x-1/2 text-neutral-subtle"
+            />
+            Commits
+             on 
+            Apr 03, 2026
+          </div>
+          <div
+            class="border-l border-neutral pb-5 pl-5 pt-3"
+          >
+            <label
+              class="-mt-px flex w-full flex-row gap-3 border border-neutral p-3 first:rounded-t-md last:rounded-b-md cursor-pointer"
+            >
+              <div>
+                <button
+                  aria-checked="false"
+                  class="group transition bg-surface-neutral border border-neutral w-[20px] h-[20px] rounded-full hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid data-[state=checked]:border-0 hover:data-[state=checked]:bg-surface-brand-solidHover disabled:cursor-not-allowed disabled:hover:border disabled:bg-surface-neutral-component disabled:border-neutral-component disabled:data-[state=checked]:border-0 disabled:data-[state=checked]:bg-surface-brand-component"
+                  data-radix-collection-item=""
+                  data-state="unchecked"
+                  role="radio"
+                  tabindex="-1"
+                  type="button"
+                  value="123"
+                />
+              </div>
+              <div
+                class="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm"
+              >
+                <a
+                  class="max-w-full truncate font-medium text-neutral"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  lorem
+                </a>
+                <span
+                  class="text-neutral-subtle"
+                >
+                  committed 
+                  0 seconds
+                   ago
+                </span>
+              </div>
+              <div
+                class="flex flex-col items-end gap-2"
+              >
+                <div
+                  class="flex items-center gap-1.5"
+                >
+                  <div
+                    class="relative block rounded-full border border-neutral  "
+                    data-state="closed"
+                    data-testid="avatar"
+                    style="width: 28px; height: 28px;"
+                  >
+                    <div
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
+                    >
+                      <span
+                        class="relative text-xs font-medium text-neutral"
+                      >
+                        F
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="block w-fit cursor-pointer"
+                    data-state="closed"
+                    data-testid="tag-commit"
+                  >
+                    <span
+                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
+                      data-testid="tag"
+                    >
+                      <div
+                        class="mr-1 w-4"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-code-commit mr-1"
+                        />
+                      </div>
+                      123
+                    </span>
+                  </div>
+                </div>
+                <span
+                  class="text-xs"
+                >
+                   
+                </span>
+              </div>
+            </label>
+            <label
+              class="-mt-px flex w-full flex-row gap-3 border border-neutral p-3 first:rounded-t-md last:rounded-b-md bg-surface-neutral-subtle"
+            >
+              <div>
+                <button
+                  aria-checked="true"
+                  class="group transition bg-surface-neutral border border-neutral w-[20px] h-[20px] rounded-full hover:border-brand-strong data-[state=checked]:bg-surface-brand-solid data-[state=checked]:border-0 hover:data-[state=checked]:bg-surface-brand-solidHover disabled:cursor-not-allowed disabled:hover:border disabled:bg-surface-neutral-component disabled:border-neutral-component disabled:data-[state=checked]:border-0 disabled:data-[state=checked]:bg-surface-brand-component"
+                  data-disabled=""
+                  data-radix-collection-item=""
+                  data-state="checked"
+                  disabled=""
+                  role="radio"
+                  tabindex="-1"
+                  type="button"
+                  value="456"
+                >
+                  <span
+                    class="flex items-center justify-center w-full h-full relative"
+                    data-disabled=""
+                    data-state="checked"
+                  >
+                    <i
+                      aria-hidden="true"
+                      class="fa-regular fa-check text-xs text-neutral"
+                    />
+                  </span>
+                </button>
+              </div>
+              <div
+                class="flex min-w-0 flex-1 flex-col items-start gap-1 text-sm"
+              >
+                <a
+                  class="max-w-full truncate font-medium text-brand"
+                  rel="noreferrer"
+                  target="_blank"
+                >
+                  ipsum
+                </a>
+                <span
+                  class="text-neutral-subtle"
+                >
+                  committed 
+                  0 seconds
+                   ago
+                </span>
+              </div>
+              <div
+                class="flex flex-col items-end gap-2"
+              >
+                <div
+                  class="flex items-center gap-1.5"
+                >
+                  <div
+                    class="relative block rounded-full border border-neutral  "
+                    data-state="closed"
+                    data-testid="avatar"
+                    style="width: 28px; height: 28px;"
+                  >
+                    <div
+                      class="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-center"
+                    >
+                      <span
+                        class="relative text-xs font-medium text-neutral"
+                      >
+                        F
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    class="block w-fit cursor-pointer"
+                    data-state="closed"
+                    data-testid="tag-commit"
+                  >
+                    <span
+                      class="inline-flex items-center rounded text-xs font-bold h-7 px-2   flex items-center justify-center border font-medium  w-[90px] border-neutral text-neutral-subtle hover:bg-surface-neutral-subtle"
+                      data-testid="tag"
+                    >
+                      <div
+                        class="mr-1 w-4"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-code-commit mr-1"
+                        />
+                      </div>
+                      456
+                    </span>
+                  </div>
+                </div>
+                <span
+                  class="text-xs text-brand"
+                >
+                  Current version
+                </span>
+              </div>
+            </label>
+          </div>
+        </div>
+        <div
+          class="pointer-events-none sticky bottom-0 z-overlay -mt-4 h-5 w-full rotate-180 bg-scroll-shadow-bottom transition-opacity duration-300 opacity-0"
+          data-testid="scroll-shadow-bottom"
+        />
+      </div>
+    </div>
+    <div
+      class="absolute bottom-0 left-0 flex w-full justify-end gap-3 rounded-b-md bg-background p-5"
+    >
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 rounded-lg bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
+      >
+        Cancel
+      </button>
+      <button
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-10 px-3 rounded-lg bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert"
+        disabled=""
+      >
+        Deploy
+      </button>
+    </div>
+  </div>
+</div>
+`;
