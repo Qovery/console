@@ -7,7 +7,7 @@ exports[`InputSelect should apply disabled classes to selected value, label and 
       class=""
     >
       <div
-        class="input input--select !pointer-events-none input--has-icon !border-neutral !bg-surface-neutral-subtle"
+        class="input input--select !pointer-events-none input--has-icon !border-neutral !bg-surface-neutral-subtle input--label-up"
         data-testid="select"
       >
         <div
@@ -40,7 +40,7 @@ exports[`InputSelect should apply disabled classes to selected value, label and 
           </svg>
         </div>
         <label
-          class="!translate-y-0 !text-xs ml-8 !text-neutral-subtle"
+          class="input__label translate-y-[7px] text-sm ml-8 !text-neutral-subtle"
           for="Select Multiple"
         >
           Select Multiple

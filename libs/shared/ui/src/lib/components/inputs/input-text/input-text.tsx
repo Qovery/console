@@ -92,7 +92,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   const isInputDate = type === 'time' || type === 'date' || type === 'datetime'
   const labelClassName = twMerge(
     'input__label',
-    hasFocus ? 'text-xs' : 'translate-y-2 text-sm',
+    hasFocus ? 'text-xs' : 'translate-y-[7px] text-sm',
     isLabelTransitionDisabled && '!transition-none'
   )
 

@@ -84,8 +84,6 @@ export function InputSelect({
   const [selectedItems, setSelectedItems] = useState<MultiValue<Value> | SingleValue<Value>>([])
   const [selectedValue, setSelectedValue] = useState<string | string[]>([])
 
-  const selectedWithIconClassName = 'ml-8'
-
   const hasFocus = focused
   const hasError = error ? 'input--error' : ''
 
@@ -246,6 +244,8 @@ export function InputSelect({
 
   const currentIcon = options.find((option) => option.value === selectedValue)
   const hasIcon = !isMulti && currentIcon?.icon
+  const hasSelectedValue = Array.isArray(selectedValue) ? selectedValue.length > 0 : selectedValue.length > 0
+  const hasLabelUp = hasFocus || hasSelectedValue || Boolean(placeholder) || Boolean(hasIcon) ? 'input--label-up' : ''
 
   const inputActions =
     hasFocus && !disabled
@@ -255,12 +255,6 @@ export function InputSelect({
         : hasError
           ? 'input--error'
           : ''
-
-  const [hasLabelUp, setHasLabelUp] = useState(value?.length !== 0 ? 'input--label-up' : '')
-
-  useEffect(() => {
-    setHasLabelUp(hasFocus || selectedValue.length !== 0 ? 'input--label-up' : '')
-  }, [hasFocus, selectedValue, setHasLabelUp])
 
   const selectProps: SelectProps<Value, true, GroupBase<Value>> = {
     autoFocus,
@@ -334,7 +328,8 @@ export function InputSelect({
             'input--has-icon': hasIcon,
             '!border-neutral !bg-surface-neutral-subtle': disabled,
             'input--filter': isFilter,
-          })
+          }),
+          hasLabelUp
         )}
         data-testid={dataTestId || 'select'}
       >
@@ -350,12 +345,10 @@ export function InputSelect({
           <label
             htmlFor={label}
             className={twMerge(
-              clsx({
-                '!translate-y-0 !text-xs': hasIcon || hasLabelUp,
-                [selectedWithIconClassName]: hasIcon,
-                'top-1.5 translate-y-2 text-sm': !hasIcon && !hasLabelUp,
-                '!text-neutral-subtle': disabled,
-              })
+              'input__label',
+              hasFocus ? 'text-xs' : 'translate-y-[7px] text-sm',
+              hasIcon && 'ml-8',
+              disabled && '!text-neutral-subtle'
             )}
           >
             {label}

@@ -390,6 +390,7 @@ module.exports = {
         neutral: {
           DEFAULT: 'var(--neutral-6)',
           component: 'var(--neutral-7)',
+          componentHover: 'var(--neutral-8)',
           strong: 'var(--neutral-9)',
         },
         neutralInvert: {
