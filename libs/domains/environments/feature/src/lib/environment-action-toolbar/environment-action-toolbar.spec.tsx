@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { EnvironmentActionToolbar } from './environment-action-toolbar'
@@ -5,6 +6,8 @@ import { EnvironmentActionToolbar } from './environment-action-toolbar'
 const mockEnvironment = environmentFactoryMock(1)[0]
 const mockServices = applicationFactoryMock(3)
 const mockDeployEnvironment = jest.fn()
+const mockDeleteEnvironment = jest.fn()
+const mockNavigate = jest.fn()
 const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 
@@ -18,6 +21,14 @@ jest.mock('@tanstack/react-query', () => ({
   useQuery: () => ({
     data: mockServices,
   }),
+}))
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => mockNavigate,
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({ buildLocation: () => ({ href: '/' }) }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -43,6 +54,12 @@ jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
 jest.mock('../hooks/use-deploy-environment/use-deploy-environment', () => ({
   useDeployEnvironment: () => ({
     mutate: mockDeployEnvironment,
+  }),
+}))
+
+jest.mock('../hooks/use-delete-environment/use-delete-environment', () => ({
+  useDeleteEnvironment: () => ({
+    mutate: mockDeleteEnvironment,
   }),
 }))
 
@@ -129,5 +146,29 @@ describe('EnvironmentActionToolbar', () => {
         name: mockEnvironment.name,
       })
     )
+  })
+
+  it('should redirect to the project overview after deleting an environment', async () => {
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
+      container: document.body,
+    })
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /delete/i }))
+
+    const modalProps = mockOpenModalConfirmation.mock.calls[0][0]
+    modalProps.action()
+    const mutateOptions = mockDeleteEnvironment.mock.calls[0][1]
+    mutateOptions.onSuccess()
+
+    expect(mockDeleteEnvironment).toHaveBeenCalledWith(
+      { environmentId: mockEnvironment.id },
+      expect.objectContaining({
+        onSuccess: expect.any(Function),
+      })
+    )
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: `/organization/${mockEnvironment.organization.id}/project/${mockEnvironment.project.id}/overview`,
+    })
   })
 })

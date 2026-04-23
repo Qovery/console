@@ -9,12 +9,17 @@ import {
   type UIVariable,
   useTerraformVariablesContext,
 } from '../../terraform-variables-context'
-import { getSourceBadgeClassName, isCustomVariable, isVariableChanged } from '../../terraform-variables-utils'
+import {
+  formatSource,
+  getSourceBadgeClassName,
+  isCustomVariable,
+  isVariableChanged,
+} from '../../terraform-variables-utils'
 import { TfvarsFilesPopover } from '../terraform-tfvars-popover/terraform-tfvars-popover'
 
 const SourceCell = ({ variable }: { variable: UIVariable }) => {
   const sourceCellRef = useRef<HTMLDivElement>(null)
-  const text = variable.source
+  const text = formatSource(variable)
   const truncateLimit = 40
   const [doesOverflow, setDoesOverflow] = useState(false)
 
@@ -60,7 +65,6 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const { updateKey, updateValue, toggleSecret, revertValue, isRowSelected, selectRow, hoveredRow, errors } =
     useTerraformVariablesContext()
   const { environmentId = '' } = useParams({ strict: false })
-  const [isVariablePopoverOpen, setIsVariablePopoverOpen] = useState(false)
   const [isCellHovered, setIsCellHovered] = useState(false)
   const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
   const isCellFocused = useCallback((cell: 'key' | 'value') => focusedCell === cell, [focusedCell])
@@ -233,7 +237,6 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                       setIsCellHovered(false)
                       setFocusedCell(undefined)
                     }
-                    setIsVariablePopoverOpen(open)
                   }}
                 >
                   <button

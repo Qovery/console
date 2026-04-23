@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
+import { JobStatusesCallout } from '@qovery/domains/service-job/feature'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Heading, Icon, Link, Navbar, Section } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
@@ -92,6 +93,9 @@ function ServiceOverviewContent({
             {!isTerraformService && (
               <Section className="gap-3">
                 <Heading>Instances</Heading>
+                {service.serviceType === 'JOB' && (
+                  <JobStatusesCallout environmentId={environment.id} serviceId={service.id} />
+                )}
                 <ServiceInstance service={service} />
               </Section>
             )}
