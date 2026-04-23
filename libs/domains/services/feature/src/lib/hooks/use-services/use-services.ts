@@ -34,66 +34,65 @@ export function useServices({ environmentId, suspense = false }: UseServicesProp
 
   const data = useMemo(() => {
     const nextData = (services ?? []).map((service, index) => {
-        const runningStatus = runningStatusResults[index].data
-        const deploymentStatus = deploymentStatusResults[index].data
+      const runningStatus = runningStatusResults[index].data
+      const deploymentStatus = deploymentStatusResults[index].data
 
-        const runningStatusLabel = upperCaseFirstLetter(runningStatus?.state.replace('_', ' ') ?? 'STOPPED')
-        const deploymentStatusLabel = upperCaseFirstLetter(
-          (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace('_', ' ') ??
-            'STOPPED'
-        )
-        const isManagedDb = service.serviceType === 'DATABASE' && service.mode === 'MANAGED'
+      const runningStatusLabel = upperCaseFirstLetter(runningStatus?.state.replace('_', ' ') ?? 'STOPPED')
+      const deploymentStatusLabel = upperCaseFirstLetter(
+        (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace('_', ' ') ??
+          'STOPPED'
+      )
+      const isManagedDb = service.serviceType === 'DATABASE' && service.mode === 'MANAGED'
 
-        const runningStatusOverride = match({ runningStatus, isManagedDb })
-          .with({ runningStatus: P.any, isManagedDb: true }, () => ({
-            triggered_action: undefined,
-            ...deploymentStatus,
-            state: match(deploymentStatus?.state)
-              .with('DEPLOYED', () => 'RUNNING' as const)
-              .otherwise(() => 'UNKNOWN' as const),
-            stateLabel: match(deploymentStatus?.state)
-              .with('DEPLOYED', () => 'Running')
-              .otherwise(() => 'Unknown'),
-          }))
-          .with({ runningStatus: P.nullish, isManagedDb: false }, () => ({
-            state: undefined,
-            stateLabel: undefined,
-            triggered_action: undefined,
-          }))
-          .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
-            triggered_action: undefined, // will be unpacked from runningStatus if present
-            ...runningStatus,
-            stateLabel: runningStatusLabel,
-          }))
-          .exhaustive()
+      const runningStatusOverride = match({ runningStatus, isManagedDb })
+        .with({ runningStatus: P.any, isManagedDb: true }, () => ({
+          triggered_action: undefined,
+          ...deploymentStatus,
+          state: match(deploymentStatus?.state)
+            .with('DEPLOYED', () => 'RUNNING' as const)
+            .otherwise(() => 'UNKNOWN' as const),
+          stateLabel: match(deploymentStatus?.state)
+            .with('DEPLOYED', () => 'Running')
+            .otherwise(() => 'Unknown'),
+        }))
+        .with({ runningStatus: P.nullish, isManagedDb: false }, () => ({
+          state: undefined,
+          stateLabel: undefined,
+          triggered_action: undefined,
+        }))
+        .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
+          triggered_action: undefined, // will be unpacked from runningStatus if present
+          ...runningStatus,
+          stateLabel: runningStatusLabel,
+        }))
+        .exhaustive()
 
-        return {
-          ...service,
-          runningStatus: runningStatusOverride,
-          ...(deploymentStatus
-            ? {
-                deploymentStatus: {
-                  ...deploymentStatus,
-                  stateLabel: deploymentStatusLabel,
-                },
-              }
-            : {}),
-        }
-      })
+      return {
+        ...service,
+        runningStatus: runningStatusOverride,
+        ...(deploymentStatus
+          ? {
+              deploymentStatus: {
+                ...deploymentStatus,
+                stateLabel: deploymentStatusLabel,
+              },
+            }
+          : {}),
+      }
+    })
 
     return nextData
   }, [
-      services,
-      // https://github.com/TanStack/query/issues/5137
-      // As we currently use tanstack query V4, we cannot use combine to avoid infinite renders
-      // So we need to use service "state" to memoize data for usage like tanstack table.
-      // As useMemo cannot have variable params length, we need JSON.stringify to not be bound by the services length
-      JSON.stringify([
-        ...runningStatusResults.map(({ data }) => data?.state),
-        ...deploymentStatusResults.map(({ data }) => data?.state),
-      ]),
-    ],
-  )
+    services,
+    // https://github.com/TanStack/query/issues/5137
+    // As we currently use tanstack query V4, we cannot use combine to avoid infinite renders
+    // So we need to use service "state" to memoize data for usage like tanstack table.
+    // As useMemo cannot have variable params length, we need JSON.stringify to not be bound by the services length
+    JSON.stringify([
+      ...runningStatusResults.map(({ data }) => data?.state),
+      ...deploymentStatusResults.map(({ data }) => data?.state),
+    ]),
+  ])
 
   return {
     data,
