@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
 import { act } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -68,14 +69,15 @@ describe('ClusterProductionHealthSummaryCard', () => {
   it('renders the issues card and opens the modal when clusters have issues', async () => {
     const failingStatus = { ...deployedStatus, status: 'DEPLOYMENT_ERROR' } as ClusterStatus
 
-    const { userEvent } = renderWithProviders(
+    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
+    renderWithProviders(
       <ClusterProductionHealthSummaryCard clusters={[baseCluster]} clusterStatuses={[failingStatus]} />
     )
 
     const trigger = screen.getByRole('button', { name: /1 cluster with ongoing issue/i })
     expect(trigger).toBeInTheDocument()
 
-    await userEvent.click(trigger)
+    await user.click(trigger)
 
     expect(mockOpenModal).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -87,17 +89,17 @@ describe('ClusterProductionHealthSummaryCard', () => {
   it('resets the skeleton timeout when the cluster scope changes', () => {
     mockUseQueries.mockReturnValue([{ data: undefined }])
 
-    const { rerender } = renderWithProviders(
+    const { rerender, container } = renderWithProviders(
       <ClusterProductionHealthSummaryCard clusters={[baseCluster]} clusterStatuses={[deployedStatus]} />
     )
 
-    expect(screen.getByRole('status')).toBeInTheDocument()
+    expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
 
     act(() => {
-      jest.advanceTimersByTime(5000)
+      jest.advanceTimersByTime(8_000)
     })
 
-    expect(screen.getByText('1 cluster need attention')).toBeInTheDocument()
+    expect(screen.getByText('1 cluster needs attention')).toBeInTheDocument()
 
     const nextCluster = {
       ...baseCluster,
@@ -108,6 +110,6 @@ describe('ClusterProductionHealthSummaryCard', () => {
 
     rerender(<ClusterProductionHealthSummaryCard clusters={[nextCluster]} clusterStatuses={[deployedStatus]} />)
 
-    expect(screen.getByRole('status')).toBeInTheDocument()
+    expect(container.querySelector('[aria-busy="true"]')).toBeInTheDocument()
   })
 })
