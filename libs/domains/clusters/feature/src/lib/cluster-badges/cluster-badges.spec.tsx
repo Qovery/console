@@ -31,9 +31,7 @@ describe('ClusterBadges', () => {
   })
 
   it('should not render the Kubernetes version badge for partially managed clusters', () => {
-    renderWithProviders(
-      <ClusterBadges cluster={{ ...baseCluster, kubernetes: 'PARTIALLY_MANAGED' } as Cluster} />
-    )
+    renderWithProviders(<ClusterBadges cluster={{ ...baseCluster, kubernetes: 'PARTIALLY_MANAGED' } as Cluster} />)
 
     expect(screen.queryByText('1.21')).not.toBeInTheDocument()
   })
