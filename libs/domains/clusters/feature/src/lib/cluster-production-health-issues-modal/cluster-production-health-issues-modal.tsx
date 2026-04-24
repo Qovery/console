@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { Link } from '@tanstack/react-router'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
-import { Heading, Icon, Section } from '@qovery/shared/ui'
+import { Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
 import { ClusterBadges } from '../cluster-badges/cluster-badges'
 import {
@@ -69,17 +69,20 @@ export function ClusterProductionHealthIssuesModal({
                       className="absolute inset-0 rounded-lg"
                     />
                     <div className="pointer-events-none relative flex items-center gap-2">
-                      <Icon name={cluster.cloud_provider} width={16} height={16} />
+                      <Icon name={cluster.cloud_provider} width={16} height={16} className="flex-shrink-0" />
                       <div className="flex min-w-0 flex-1 items-center gap-2">
-                        <span className="truncate font-medium">{cluster.name}</span>
-                        <span className="block h-2 w-px border-l border-neutral" />
-                        <div className="flex min-w-0 flex-wrap gap-1">
+                        <Tooltip content={cluster.name}>
+                          <span className="pointer-events-auto min-w-0 shrink truncate font-medium">
+                            {cluster.name}
+                          </span>
+                        </Tooltip>
+                        <div className="flex shrink-0 items-center gap-1">
                           <ClusterBadges cluster={cluster} size="sm" />
                         </div>
                       </div>
                       <Icon
                         iconName="angle-right"
-                        className="ml-auto text-base text-neutral-subtle transition-colors group-hover:text-neutral"
+                        className="ml-2 flex-shrink-0 text-base text-neutral-subtle transition-colors group-hover:text-neutral"
                       />
                     </div>
                   </div>

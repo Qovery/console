@@ -37,24 +37,27 @@ type HealthCardVariant = 'positive' | 'warning' | 'negative'
 
 const VARIANT_STYLES: Record<
   HealthCardVariant,
-  { border: string; interactiveBorderHover: string; iconBg: string; iconColor: string }
+  { border: string; interactiveBorderHover: string; iconBg: string; iconBgHover: string; iconColor: string }
 > = {
   positive: {
     border: 'border-positive-subtle',
     interactiveBorderHover: 'hover:border-positive-strong focus-visible:border-positive-strong',
     iconBg: 'bg-surface-positive-subtle',
+    iconBgHover: 'group-hover:bg-surface-positive-component group-focus-visible:bg-surface-positive-component',
     iconColor: 'text-positive',
   },
   warning: {
     border: 'border-warning-subtle',
     interactiveBorderHover: 'hover:border-warning-strong focus-visible:border-warning-strong',
     iconBg: 'bg-surface-warning-subtle',
+    iconBgHover: 'group-hover:bg-surface-warning-component group-focus-visible:bg-surface-warning-component',
     iconColor: 'text-warning',
   },
   negative: {
     border: 'border-negative-subtle',
     interactiveBorderHover: 'hover:border-negative-strong focus-visible:border-negative-strong',
     iconBg: 'bg-surface-negative-subtle',
+    iconBgHover: 'group-hover:bg-surface-negative-component group-focus-visible:bg-surface-negative-component',
     iconColor: 'text-negative',
   },
 }
@@ -75,14 +78,14 @@ function HealthStatusCard({
   const styles = VARIANT_STYLES[variant]
   const baseClassName = `flex w-full items-center gap-3 rounded-lg border bg-background p-3 ${styles.border}`
   const interactiveClassName = twMerge(
-    `group text-left transition-colors hover:bg-surface-neutral-subtle focus:outline-none ${styles.interactiveBorderHover}`,
+    `group text-left transition-colors focus:outline-none ${styles.interactiveBorderHover}`,
     baseClassName
   )
 
   const content = (
     <>
       <span
-        className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border retina:border-[0.5px] ${styles.border} ${styles.iconBg}`}
+        className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border transition-colors retina:border-[0.5px] ${styles.border} ${styles.iconBg}${onClick ? ` ${styles.iconBgHover}` : ''}`}
       >
         <Icon iconName={iconName} iconStyle="regular" className={`text-base ${styles.iconColor}`} />
       </span>
