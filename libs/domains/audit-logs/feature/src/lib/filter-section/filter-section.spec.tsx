@@ -1,5 +1,5 @@
 import { type DecodedValueMap } from 'use-query-params'
-import { type queryParamsValues } from '@qovery/pages/events'
+import { type AuditLogsParams } from '@qovery/shared/router'
 import { type SelectedItem } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import FilterSection, { type CustomFilterProps } from './filter-section'
@@ -43,7 +43,7 @@ describe('FilterSection', () => {
       toTimestamp: '1704153600', // 2024-01-02 00:00:00
     }
     renderWithProviders(
-      <FilterSection {...props} queryParams={queryParamsWithTimestamp as DecodedValueMap<typeof queryParamsValues>} />
+      <FilterSection {...props} queryParams={queryParamsWithTimestamp as DecodedValueMap<AuditLogsParams>} />
     )
 
     screen.getByText(/Timestamp:/)
@@ -55,7 +55,7 @@ describe('FilterSection', () => {
       eventType: 'deployment_started',
     }
     renderWithProviders(
-      <FilterSection {...props} queryParams={queryParamsWithEventType as DecodedValueMap<typeof queryParamsValues>} />
+      <FilterSection {...props} queryParams={queryParamsWithEventType as DecodedValueMap<AuditLogsParams>} />
     )
 
     screen.getByText(/Event Type:/)
@@ -67,7 +67,7 @@ describe('FilterSection', () => {
       targetType: 'application',
     }
     renderWithProviders(
-      <FilterSection {...props} queryParams={queryParamsWithTargetType as DecodedValueMap<typeof queryParamsValues>} />
+      <FilterSection {...props} queryParams={queryParamsWithTargetType as DecodedValueMap<AuditLogsParams>} />
     )
 
     screen.getByText(/Target Type:/)
@@ -79,7 +79,7 @@ describe('FilterSection', () => {
       triggeredBy: 'john_doe',
     }
     renderWithProviders(
-      <FilterSection {...props} queryParams={queryParamsWithTriggeredBy as DecodedValueMap<typeof queryParamsValues>} />
+      <FilterSection {...props} queryParams={queryParamsWithTriggeredBy as DecodedValueMap<AuditLogsParams>} />
     )
 
     screen.getByText(/User:/)
@@ -91,7 +91,7 @@ describe('FilterSection', () => {
       origin: 'git_push',
     }
     renderWithProviders(
-      <FilterSection {...props} queryParams={queryParamsWithOrigin as DecodedValueMap<typeof queryParamsValues>} />
+      <FilterSection {...props} queryParams={queryParamsWithOrigin as DecodedValueMap<AuditLogsParams>} />
     )
 
     screen.getByText(/Source:/)
@@ -111,7 +111,7 @@ describe('FilterSection', () => {
     const { container } = renderWithProviders(
       <FilterSection
         {...props}
-        queryParams={queryParamsWithProject as DecodedValueMap<typeof queryParamsValues>}
+        queryParams={queryParamsWithProject as DecodedValueMap<AuditLogsParams>}
         targetTypeSelectedItems={selectedItems}
       />
     )
@@ -134,7 +134,7 @@ describe('FilterSection', () => {
     const { container } = renderWithProviders(
       <FilterSection
         {...props}
-        queryParams={queryParamsWithEnvironment as DecodedValueMap<typeof queryParamsValues>}
+        queryParams={queryParamsWithEnvironment as DecodedValueMap<AuditLogsParams>}
         targetTypeSelectedItems={selectedItems}
       />
     )
@@ -158,7 +158,7 @@ describe('FilterSection', () => {
     const { container } = renderWithProviders(
       <FilterSection
         {...props}
-        queryParams={queryParamsWithTarget as DecodedValueMap<typeof queryParamsValues>}
+        queryParams={queryParamsWithTarget as DecodedValueMap<AuditLogsParams>}
         targetTypeSelectedItems={selectedItems}
       />
     )
@@ -176,7 +176,7 @@ describe('FilterSection', () => {
       origin: 'git_push',
     }
     renderWithProviders(
-      <FilterSection {...props} queryParams={queryParamsWithMultiple as DecodedValueMap<typeof queryParamsValues>} />
+      <FilterSection {...props} queryParams={queryParamsWithMultiple as DecodedValueMap<AuditLogsParams>} />
     )
 
     screen.getByText(/Event Type:/)
@@ -191,7 +191,7 @@ describe('FilterSection', () => {
       eventType: 'deployment_started',
     }
     const { userEvent } = renderWithProviders(
-      <FilterSection {...props} queryParams={queryParamsWithFilter as DecodedValueMap<typeof queryParamsValues>} />
+      <FilterSection {...props} queryParams={queryParamsWithFilter as DecodedValueMap<AuditLogsParams>} />
     )
 
     const clearButton = screen.getByRole('button', { name: /Clear all filters/i })
@@ -205,7 +205,7 @@ describe('FilterSection', () => {
       eventType: 'deployment_started',
     }
     const { userEvent, container } = renderWithProviders(
-      <FilterSection {...props} queryParams={queryParamsWithFilter as DecodedValueMap<typeof queryParamsValues>} />
+      <FilterSection {...props} queryParams={queryParamsWithFilter as DecodedValueMap<AuditLogsParams>} />
     )
 
     // Find the xmark icon SVG element within the badge
@@ -243,7 +243,7 @@ describe('FilterSection', () => {
     const { container } = renderWithProviders(
       <FilterSection
         {...props}
-        queryParams={queryParamsWithHierarchy as DecodedValueMap<typeof queryParamsValues>}
+        queryParams={queryParamsWithHierarchy as DecodedValueMap<AuditLogsParams>}
         targetTypeSelectedItems={selectedItems}
       />
     )
