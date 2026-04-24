@@ -1,11 +1,10 @@
-import { Outlet, createFileRoute } from '@tanstack/react-router'
+import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/_authenticated')({
   beforeLoad: ({ context, location }) => {
     if (!context.auth.isAuthenticated && !context.auth.isLoading) {
-      // Pass current pathname as returnTo so Auth0 can restore it after login
-      context.auth.login(location.href)
-      return
+      // Route to the in-app login page instead of forcing Auth0 hosted login.
+      throw redirect({ to: '/login', search: { redirect: location.href } })
     }
   },
   component: () => <Outlet />,
