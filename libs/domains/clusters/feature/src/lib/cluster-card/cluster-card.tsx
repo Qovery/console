@@ -1,7 +1,6 @@
 import { Link, useRouter } from '@tanstack/react-router'
 import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { IconEnum } from '@qovery/shared/enums'
 import {
   AnimatedGradientText,
   Badge,
@@ -16,10 +15,9 @@ import { dateFullFormat, timeAgo } from '@qovery/shared/util-dates'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterActions } from '../cluster-actions/cluster-actions'
 import { ClusterAvatar } from '../cluster-avatar/cluster-avatar'
+import { ClusterBadges } from '../cluster-badges/cluster-badges'
 import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicator/cluster-running-status-indicator'
-import { ClusterType } from '../cluster-type/cluster-type'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
-import { hasGpuInstance } from '../utils/has-gpu-instance'
 
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
   return match(clusterDeploymentStatus?.status)
@@ -154,46 +152,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
           )}
       </div>
       <div className="mt-5 flex flex-wrap gap-2">
-        {cluster.kubernetes === 'SELF_MANAGED' ? (
-          <>
-            <Badge color="neutral">
-              <Icon name={IconEnum.KUBERNETES} height={16} width={16} className="mr-1" />
-              Self managed
-            </Badge>
-            {cluster.cloud_provider !== 'ON_PREMISE' && (
-              <Badge color="neutral" variant="surface">
-                {cluster.region}
-              </Badge>
-            )}
-          </>
-        ) : (
-          <>
-            <Badge color="neutral">
-              <Icon name={IconEnum.QOVERY} height={16} width={16} className="mr-1" />
-              Qovery managed
-            </Badge>
-            <ClusterType
-              cloudProvider={cluster.cloud_provider}
-              kubernetes={cluster.kubernetes}
-              instanceType={cluster.instance_type}
-            />
-            {cluster.cloud_provider !== 'ON_PREMISE' && (
-              <Badge color="neutral" variant="surface">
-                {cluster.region}
-              </Badge>
-            )}
-            {cluster.kubernetes !== 'PARTIALLY_MANAGED' && cluster.version && (
-              <Badge color="neutral" variant="surface">
-                {cluster.version}
-              </Badge>
-            )}
-            {hasGpuInstance(cluster) && (
-              <Badge color="neutral" variant="surface">
-                GPU pool
-              </Badge>
-            )}
-          </>
-        )}
+        <ClusterBadges cluster={cluster} />
       </div>
       <hr className="mt-5 border-neutral" />
       <div className="mt-4 flex items-center justify-between">

@@ -7,7 +7,7 @@ import { EmptyState, Heading, Icon, Link, LogoIcon, Section, useModal } from '@q
 import { twMerge } from '@qovery/shared/util-js'
 import { AddCreditCardModalFeature } from '../add-credit-card-modal-feature/add-credit-card-modal-feature'
 import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
-import { ClusterProductionCard } from '../cluster-production-card/cluster-production-card'
+import { ClusterProductionHealthSummaryCard } from '../cluster-production-health-summary-card/cluster-production-health-summary-card'
 import { useClusterCreationRestriction } from '../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction'
 import useClusterStatuses from '../hooks/use-cluster-statuses/use-cluster-statuses'
 import useClusters from '../hooks/use-clusters/use-clusters'
@@ -256,13 +256,7 @@ export function SectionProductionHealth() {
           </div>
         )
       ) : (
-        clusterProduction.map((cluster) => (
-          <ClusterProductionCard
-            key={cluster.id}
-            cluster={cluster}
-            clusterStatus={clusterStatuses?.find((c) => c.cluster_id === cluster.id)}
-          />
-        ))
+        <ClusterProductionHealthSummaryCard clusters={clusterProduction} clusterStatuses={clusterStatuses} />
       )}
     </Section>
   )

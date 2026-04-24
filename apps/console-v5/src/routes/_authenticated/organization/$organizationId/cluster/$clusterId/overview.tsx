@@ -116,16 +116,26 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
       )}
       <Section className="my-6 gap-6 pb-6">
         <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:gap-4">
-            <div className="flex items-center gap-2">
-              <Skeleton width={40} height={40} show={!cluster} rounded>
-                <ClusterAvatar cluster={cluster} />
-              </Skeleton>
-              <Skeleton width={160} height={22} show={!cluster}>
-                <Heading>{cluster?.name}</Heading>
-              </Skeleton>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex min-w-0 items-center gap-2">
+                <Skeleton width={40} height={40} show={!cluster} rounded>
+                  <ClusterAvatar cluster={cluster} />
+                </Skeleton>
+                <Skeleton width={160} height={22} show={!cluster}>
+                  <Heading className="min-w-0 max-w-full truncate">{cluster?.name}</Heading>
+                </Skeleton>
+              </div>
+              <div className="flex shrink-0">
+                <Skeleton width={150} height={36} show={!cluster && !clusterStatus}>
+                  {cluster && clusterStatus ? (
+                    <ClusterActions cluster={cluster} clusterStatus={clusterStatus} variant="header" />
+                  ) : (
+                    <div />
+                  )}
+                </Skeleton>
+              </div>
             </div>
-            <div className="hidden h-4 w-0 border-r border-neutral lg:block" />
             <div className="flex flex-wrap items-center gap-2">
               {cluster?.production && (
                 <Badge variant="surface" color="red">
@@ -187,15 +197,6 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
                   GPU pool
                 </Badge>
               )}
-            </div>
-            <div className="order-last flex w-full lg:order-none lg:ml-auto lg:w-auto">
-              <Skeleton width={150} height={36} show={!cluster && !clusterStatus}>
-                {cluster && clusterStatus ? (
-                  <ClusterActions cluster={cluster} clusterStatus={clusterStatus} variant="header" />
-                ) : (
-                  <div />
-                )}
-              </Skeleton>
             </div>
           </div>
           <hr className="w-full border-neutral" />
