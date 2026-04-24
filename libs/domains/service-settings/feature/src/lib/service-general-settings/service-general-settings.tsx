@@ -75,13 +75,14 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
   const databaseVersionOptions =
     service?.serviceType === 'DATABASE'
       ? sortDatabaseVersionValues(
-          databaseConfigurations
-            ?.find((configuration) => configuration.database_type === service.type)
-            ?.version?.filter((version) => version.supported_mode === service.mode)
-            .map((version) => ({
-              label: version.name || '',
-              value: version.name || '',
-            }))
+          (
+            databaseConfigurations
+              ?.find((configuration) => configuration.database_type === service.type)
+              ?.version?.filter((version) => version.supported_mode === service.mode) ?? []
+          ).map((version) => ({
+            label: version.name || '',
+            value: version.name || '',
+          }))
         )
       : undefined
 
