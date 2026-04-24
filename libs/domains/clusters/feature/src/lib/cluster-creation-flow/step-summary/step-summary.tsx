@@ -14,17 +14,11 @@ import { useDeployCluster } from '../../hooks/use-deploy-cluster/use-deploy-clus
 import { useEditCloudProviderInfo } from '../../hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info'
 import { useEditClusterKubeconfig } from '../../hooks/use-edit-cluster-kubeconfig/use-edit-cluster-kubeconfig'
 import { steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
+import { getValueByKey } from './get-value-by-key'
 import { StepSummaryPresentation } from './step-summary-presentation'
 
 export interface StepSummaryProps {
   organizationId: string
-}
-
-function getValueByKey(key: string, data: { [key: string]: string }[] = []): string[] {
-  return data.reduce((result: string[], obj) => {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) result.push(obj[key])
-    return result
-  }, [])
 }
 
 export function StepSummary({ organizationId }: StepSummaryProps) {
@@ -136,7 +130,6 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
         navigate({
           to: '/organization/$organizationId/cluster/$clusterId/overview',
           params: { organizationId, clusterId: cluster.id },
-          // @ts-ignore-next-line TODO needs to be fixed
           search: { 'show-self-managed-guide': true },
         })
       } catch (error) {
