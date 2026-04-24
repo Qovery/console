@@ -14,6 +14,7 @@ import {
   generateDatabaseTypeAndVersionOptions,
   getDefaultDatabaseMode,
   getDefaultManagedDatabaseInstanceType,
+  sortDatabaseVersionValues,
 } from './database-create-utils'
 
 describe('database-create-utils', () => {
@@ -70,12 +71,12 @@ describe('database-create-utils', () => {
         database_type: 'POSTGRESQL',
         version: [
           {
-            name: '16',
+            name: '10',
             supported_mode: DatabaseModeEnum.CONTAINER,
           },
           {
-            name: '15',
-            supported_mode: DatabaseModeEnum.MANAGED,
+            name: '16',
+            supported_mode: DatabaseModeEnum.CONTAINER,
           },
         ],
       },
@@ -89,9 +90,25 @@ describe('database-create-utils', () => {
       }),
     ])
     expect(options.databaseVersionOptions).toEqual({
-      'POSTGRESQL-CONTAINER': [{ label: '16', value: '16' }],
-      'POSTGRESQL-MANAGED': [{ label: '15', value: '15' }],
+      'POSTGRESQL-CONTAINER': [
+        { label: '16', value: '16' },
+        { label: '10', value: '10' },
+      ],
     })
+  })
+
+  it('sorts database versions from latest to oldest', () => {
+    expect(
+      sortDatabaseVersionValues([
+        { label: '11', value: '11' },
+        { label: '9.6', value: '9.6' },
+        { label: '12', value: '12' },
+      ])
+    ).toEqual([
+      { label: '12', value: '12' },
+      { label: '11', value: '11' },
+      { label: '9.6', value: '9.6' },
+    ])
   })
 
   it('returns the expected default database mode', () => {

@@ -13,6 +13,7 @@ import {
   type ServiceGeneralData,
   buildServiceGeneralPayload,
   getServiceGeneralDefaultValues,
+  sortDatabaseVersionValues,
   useEditService,
   useService,
 } from '@qovery/domains/services/feature'
@@ -73,13 +74,16 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
 
   const databaseVersionOptions =
     service?.serviceType === 'DATABASE'
-      ? databaseConfigurations
-          ?.find((configuration) => configuration.database_type === service.type)
-          ?.version?.filter((version) => version.supported_mode === service.mode)
-          .map((version) => ({
+      ? sortDatabaseVersionValues(
+          (
+            databaseConfigurations
+              ?.find((configuration) => configuration.database_type === service.type)
+              ?.version?.filter((version) => version.supported_mode === service.mode) ?? []
+          ).map((version) => ({
             label: version.name || '',
             value: version.name || '',
           }))
+        )
       : undefined
 
   const methods = useForm<ServiceGeneralData>({
