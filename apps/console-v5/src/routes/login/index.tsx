@@ -189,6 +189,7 @@ export const Route = createFileRoute('/login/')({
 
 function RouteComponent() {
   const { authLogin } = useAuth()
+  const search = Route.useSearch()
   const [ssoFormVisible, setSsoFormVisible] = useState(false)
   const { auth0Error, setAuth0Error } = useAuth0Error()
   const [loading, setLoading] = useState<{ provider: string; active: boolean } | undefined>()
@@ -244,7 +245,7 @@ function RouteComponent() {
       if (document.cookie.split(';').some((item) => item.trim().startsWith('jwtToken='))) {
         document.cookie = 'jwtToken=; Max-Age=-99999999; domain=.qovery.com'
       }
-      await authLogin(provider)
+      await authLogin(provider, getSafeRedirect(search.redirect))
     } catch (error) {
       console.error(error)
     }
