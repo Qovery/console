@@ -73,7 +73,7 @@ describe('NetworkingPortSettingModal', () => {
 
   it('should not close while submit is pending', async () => {
     const onClose = jest.fn()
-    const onSubmit = jest.fn(() => new Promise<void>(() => {}))
+    const onSubmit = jest.fn(() => new Promise<void>(() => undefined))
     const { userEvent } = renderWithProviders(
       <NetworkingPortSettingModal helmId="1" onSubmit={onSubmit} onClose={onClose} />
     )
