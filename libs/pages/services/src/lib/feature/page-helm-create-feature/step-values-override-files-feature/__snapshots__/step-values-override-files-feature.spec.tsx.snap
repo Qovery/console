@@ -54,11 +54,11 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                   class=""
                 >
                   <div
-                    class="input input--select"
+                    class="input input--select input--label-up"
                     data-testid="select"
                   >
                     <label
-                      class="!translate-y-0 !text-xs"
+                      class="input__label translate-y-[7px] text-sm"
                       for="File source"
                     >
                       File source
@@ -188,7 +188,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                             class=""
                           >
                             <label
-                              class="input__label translate-y-2 text-sm"
+                              class="input__label translate-y-[7px] text-sm"
                               for="Overrides path"
                             >
                               Overrides path
@@ -213,7 +213,7 @@ exports[`StepValuesOverrideFilesFeature should submit a form with a git reposito
                     </p>
                   </div>
                   <div
-                    class="flex flex-row gap-x-4 p-4 border rounded text-sm items-center border-info-component bg-surface-info-subtle text-info mt-3"
+                    class="flex flex-row gap-x-4 p-4 border rounded-md text-sm items-center border-info-component bg-surface-info-subtle text-info mt-3"
                     data-accent-color="sky"
                   >
                     <div

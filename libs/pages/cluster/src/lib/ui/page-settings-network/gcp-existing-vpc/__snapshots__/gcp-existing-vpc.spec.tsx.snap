@@ -40,7 +40,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="input__label translate-y-2 text-sm !transition-none"
+                class="input__label translate-y-[7px] text-sm !transition-none"
                 for="VPC Name"
               >
                 VPC Name
@@ -74,7 +74,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="input__label translate-y-2 text-sm !transition-none"
+                class="input__label translate-y-[7px] text-sm !transition-none"
                 for="External project id"
               >
                 External project id
@@ -108,7 +108,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="input__label translate-y-2 text-sm !transition-none"
+                class="input__label translate-y-[7px] text-sm !transition-none"
                 for="Subnetwork range name"
               >
                 Subnetwork range name
@@ -142,7 +142,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="input__label translate-y-2 text-sm !transition-none"
+                class="input__label translate-y-[7px] text-sm !transition-none"
                 for="Pod IPv4 address range name"
               >
                 Pod IPv4 address range name
@@ -176,7 +176,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="input__label translate-y-2 text-sm !transition-none"
+                class="input__label translate-y-[7px] text-sm !transition-none"
                 for="Additional cluster Pod IPv4 ranges names"
               >
                 Additional cluster Pod IPv4 ranges names
@@ -210,7 +210,7 @@ exports[`GcpExistingVPC should match snapshots 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="input__label translate-y-2 text-sm !transition-none"
+                class="input__label translate-y-[7px] text-sm !transition-none"
                 for="IPv4 service range name"
               >
                 IPv4 service range name

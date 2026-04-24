@@ -200,10 +200,10 @@ const EnvironmentLastDeploymentContent = () => {
         </div>
       ) : (
         <EmptyState
+          size="sm"
           icon="rocket"
           title="No deployment recorded yet"
           description="Create and deploy your first service"
-          className="h-auto p-8"
         >
           {serviceCount > 0 && (
             <Button onClick={handleDeploy} color="neutral" size="md" className="gap-1.5">

@@ -322,8 +322,10 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         <Badge
           key={value}
           variant="surface"
+          radius="full"
           color={match(value)
             .with('RUNNING', () => 'green' as const)
+            .with('WARNING', () => 'yellow' as const)
             .with('ERROR', () => 'red' as const)
             .otherwise(() => 'neutral' as const)}
           className="text-ssm font-medium"
@@ -339,7 +341,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
       <EmptyState
         title="No service found"
         description="You can create a service from the button on the top"
-        className="border-none"
+        className="border-none bg-surface-neutral"
         icon="wave-pulse"
       >
         <Link
@@ -366,7 +368,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
   return (
     <div>
-      <div className="flex gap-2 bg-surface-neutral px-4 py-2">
+      <div className="flex gap-1.5 bg-surface-neutral px-4 py-3">
         <ServicesBadges />
       </div>
       <div className="flex grow flex-col justify-between">

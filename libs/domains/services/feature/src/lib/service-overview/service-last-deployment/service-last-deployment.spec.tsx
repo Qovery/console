@@ -92,8 +92,12 @@ describe('ServiceLastDeployment', () => {
 
     renderWithProviders(<ServiceLastDeployment serviceId="service-123" serviceType="APPLICATION" />)
 
+    const emptyState = screen.getByText('Service has never been deployed').closest('.rounded-lg')
+
     expect(screen.getByText('Service has never been deployed')).toBeInTheDocument()
     expect(screen.getByText('Deploy the service first')).toBeInTheDocument()
+    expect(emptyState).toHaveClass('px-4', 'py-4')
+    expect(emptyState).not.toHaveClass('h-56')
     expect(screen.getByRole('button', { name: /deploy now/i })).toBeInTheDocument()
   })
 

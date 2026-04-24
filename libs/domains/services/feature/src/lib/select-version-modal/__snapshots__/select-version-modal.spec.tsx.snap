@@ -28,7 +28,7 @@ exports[`SelectVersionModal should match snapshot 1`] = `
         data-testid="select"
       >
         <label
-          class="top-1.5 translate-y-2 text-sm"
+          class="input__label translate-y-[7px] text-sm"
           for="Version"
         >
           Version
@@ -175,11 +175,11 @@ exports[`SelectVersionModal should match snapshot with helm version 1`] = `
       class=""
     >
       <div
-        class="input input--select"
+        class="input input--select input--label-up"
         data-testid="select"
       >
         <label
-          class="!translate-y-0 !text-xs"
+          class="input__label translate-y-[7px] text-sm"
           for="Version"
         >
           Version

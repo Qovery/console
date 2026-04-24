@@ -1,13 +1,13 @@
 @use '../base/variable';
 
 .input {
-  @apply relative min-h-[52px] cursor-pointer rounded-md border border-neutral-component bg-surface-neutral px-3 py-2 hover:bg-surface-neutral-component;
+  @apply relative min-h-[52px] cursor-pointer rounded-md border border-neutral bg-surface-neutral px-3 py-2 hover:border-neutral-componentHover;
   transition:
     120ms all variable.$timing-cubic,
     0 outline;
 
   label {
-    @apply absolute translate-y-2 select-none text-sm text-neutral-subtle transition-label duration-[120ms] ease-in-out;
+    @apply absolute translate-y-[7px] select-none text-sm text-neutral-subtle transition-label duration-[120ms] ease-in-out;
   }
 
   input:focus,
@@ -120,10 +120,6 @@
 .input--success {
   @apply border-positive-strong;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
-}
-
-.input__label {
-  @apply h-full w-full;
 }
 
 .input__button {

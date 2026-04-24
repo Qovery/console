@@ -47,7 +47,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
               class="pointer-events-none"
             >
               <label
-                class="input__label translate-y-2 text-sm !transition-none"
+                class="input__label translate-y-[7px] text-sm !transition-none"
                 for="Service to clone"
               >
                 Service to clone
@@ -81,7 +81,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
               class=""
             >
               <label
-                class="input__label translate-y-2 text-sm !transition-none"
+                class="input__label translate-y-[7px] text-sm !transition-none"
                 for="New service name"
               >
                 New service name
@@ -107,7 +107,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
           data-testid="select"
         >
           <label
-            class="top-1.5 translate-y-2 text-sm"
+            class="input__label translate-y-[7px] text-sm"
             for="Project"
           >
             Project
@@ -214,7 +214,7 @@ exports[`ServiceCloneModal should match snapshot 1`] = `
           data-testid="select"
         >
           <label
-            class="top-1.5 translate-y-2 text-sm"
+            class="input__label translate-y-[7px] text-sm"
             for="Environment"
           >
             Environment

@@ -31,7 +31,7 @@ export function LabelSetting({ filterPropagateToCloudProvider = false }: LabelSe
           label="Label Groups (optional)"
           options={filteredLabelsGroups.map((group) => ({
             label: (
-              <span className="flex items-center gap-3">
+              <span className="flex items-center gap-1">
                 <span>{group.name}</span>
                 <Tooltip
                   classNameContent="z-10"
@@ -46,7 +46,7 @@ export function LabelSetting({ filterPropagateToCloudProvider = false }: LabelSe
                   }
                 >
                   <span>
-                    <Icon iconName="circle-info" iconStyle="regular" className="text-base" />
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-subtle" />
                   </span>
                 </Tooltip>
               </span>

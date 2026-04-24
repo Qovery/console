@@ -14,3 +14,11 @@ Primary.args = {
   icon: 'folder-open',
   description: 'Need help? You may find these links useful',
 }
+
+export const Small = Template.bind({})
+Small.args = {
+  title: 'No deployment recorded yet',
+  icon: 'rocket',
+  description: 'Create and deploy your first service',
+  size: 'sm',
+}

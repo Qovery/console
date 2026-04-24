@@ -22,7 +22,7 @@ const badgeVariants = cva(['text-neutral', 'inline-flex', 'items-center', 'shrin
       surface: ['border'],
     },
     radius: {
-      rounded: ['rounded-md'],
+      rounded: ['rounded'],
       full: ['rounded-full'],
     },
   },
