@@ -200,7 +200,7 @@ const EnvironmentLastDeploymentContent = () => {
         </div>
       ) : (
         <EmptyState
-          size="small"
+          size="sm"
           icon="rocket"
           title="No deployment recorded yet"
           description="Create and deploy your first service"

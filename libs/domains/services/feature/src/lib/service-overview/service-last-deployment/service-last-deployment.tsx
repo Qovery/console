@@ -99,7 +99,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
   if (!lastDeployment) {
     return (
       <EmptyState
-        size="small"
+        size="sm"
         icon="play"
         iconStyle="solid"
         title={`${upperCaseFirstLetter(service?.service_type ?? 'Service')} has never been deployed`}

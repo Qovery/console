@@ -20,5 +20,5 @@ Small.args = {
   title: 'No deployment recorded yet',
   icon: 'rocket',
   description: 'Create and deploy your first service',
-  size: 'small',
+  size: 'sm',
 }

@@ -8,7 +8,7 @@ export interface EmptyStateProps extends PropsWithChildren {
   icon?: IconName | ReactNode
   iconStyle?: IconStyle
   description?: ReactNode
-  size?: 'default' | 'small'
+  size?: 'sm' | 'base'
   className?: string
 }
 
@@ -18,7 +18,7 @@ export function EmptyState({
   className,
   icon,
   iconStyle,
-  size = 'default',
+  size = 'base',
   children,
 }: EmptyStateProps) {
   const emptyStateIcon =
@@ -54,7 +54,7 @@ export function EmptyState({
       icon
     ))
 
-  if (size === 'small') {
+  if (size === 'sm') {
     return (
       <div
         className={twMerge(
