@@ -3,8 +3,9 @@ import { type OrganizationEventResponseList } from 'qovery-typescript-axios'
 import { IntercomProvider } from 'react-use-intercom'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { AuditLogsView } from './audit-logs-view'
 
-describe.skip('PageGeneralFeature', () => {
+describe.skip('AuditLogsView', () => {
   beforeEach(() => {
     mockUseFetchEvents.mockReturnValue(
       mockUseQueryResult<OrganizationEventResponseList>({
@@ -20,7 +21,7 @@ describe.skip('PageGeneralFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
     expect(baseElement).toBeTruthy()
@@ -29,7 +30,7 @@ describe.skip('PageGeneralFeature', () => {
   it('should fetch the event with correct payload', () => {
     renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
     expect(mockUseFetchEvents).toHaveBeenCalledWith('0', { pageSize: 30 })
@@ -38,7 +39,7 @@ describe.skip('PageGeneralFeature', () => {
   it('should change query params on click on next', async () => {
     const { userEvent } = renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
 
@@ -57,7 +58,7 @@ describe.skip('PageGeneralFeature', () => {
   it('should change query params on click on previous', async () => {
     const { userEvent } = renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
 
@@ -76,7 +77,7 @@ describe.skip('PageGeneralFeature', () => {
   it('should change query params on click on pageSize', async () => {
     const { userEvent } = renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
 
@@ -94,7 +95,7 @@ describe.skip('PageGeneralFeature', () => {
   it('should handle clear filter action', async () => {
     const { userEvent } = renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
 
@@ -124,7 +125,7 @@ describe.skip('PageGeneralFeature', () => {
 
     renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
 
@@ -136,7 +137,7 @@ describe.skip('PageGeneralFeature', () => {
   it('should fetch with default pageSize when not specified', () => {
     renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
 
@@ -153,7 +154,7 @@ describe.skip('PageGeneralFeature', () => {
 
     renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
 
@@ -174,7 +175,7 @@ describe.skip('PageGeneralFeature', () => {
 
     renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
 
@@ -196,7 +197,7 @@ describe.skip('PageGeneralFeature', () => {
 
     renderWithProviders(
       <IntercomProvider appId="__test__app__id__">
-        <PageGeneralFeature />
+        <AuditLogsView />
       </IntercomProvider>
     )
 

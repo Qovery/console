@@ -1,4 +1,4 @@
-import { FitAddon } from '@xterm/addon-fit'
+import type { FitAddon } from '@xterm/addon-fit'
 import { type IDisposable, type ITerminalAddon, type Terminal } from '@xterm/xterm'
 import Color from 'color'
 

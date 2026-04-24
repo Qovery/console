@@ -55,7 +55,7 @@ jest.mock('@qovery/shared/ui', () => ({
 }))
 
 jest.mock('@chargebee/chargebee-js-react-wrapper', () => {
-  const React = jest.requireActual('react') as typeof import('react')
+  const React = jest.requireActual('react')
 
   return {
     Provider: ({ children }: { children: ReactNode }) => children,
@@ -103,7 +103,7 @@ describe('SettingsBillingDetails', () => {
 
   it('should display skeletons while loading', () => {
     useCreditCardsMock.mockImplementationOnce(() => {
-      throw new Promise(() => {})
+      throw new Promise(() => undefined)
     })
 
     renderWithProviders(<SettingsBillingDetails />)
