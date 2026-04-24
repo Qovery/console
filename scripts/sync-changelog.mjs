@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 
 export const CHANGELOG_RSS_FEED_URL = 'https://www.qovery.com/changelog/rss.xml'
 const __dirname = dirname(fileURLToPath(import.meta.url))
-export const CHANGELOG_ASSET_FILE = resolve(__dirname, '../apps/console-v5/public/changelog/latest.json')
+export const CHANGELOG_ASSET_FILE = resolve(__dirname, '../apps/console/public/changelog/latest.json')
 
 export function decodeXmlEntities(value) {
   return value

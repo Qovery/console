@@ -7,7 +7,7 @@
   "files": [
     "../../../../node_modules/@nx/react/typings/cssmodule.d.ts",
     "../../../../node_modules/@nx/react/typings/image.d.ts",
-    "../../../../apps/console-v5/src/router-types.d.ts"
+    "../../../../apps/console/src/router-types.d.ts"
   ],
   "exclude": [
     "jest.config.ts",

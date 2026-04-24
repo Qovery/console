@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     root: __dirname,
-    cacheDir: '../../node_modules/.vite/apps/console-v5',
+    cacheDir: '../../node_modules/.vite/apps/console',
     server: {
       port: 4200,
       host: 'localhost',
@@ -70,7 +70,7 @@ export default defineConfig(({ mode }) => {
     //  plugins: [ nxViteTsPaths() ],
     // },
     build: {
-      outDir: '../../dist/apps/console-v5',
+      outDir: '../../dist/apps/console',
       emptyOutDir: true,
       reportCompressedSize: true,
       commonjsOptions: {

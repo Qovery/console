@@ -85,5 +85,5 @@
     }
   },
   "exclude": ["node_modules", "tmp"],
-  "files": ["apps/console-v5/src/router-types.d.ts"]
+  "files": ["apps/console/src/router-types.d.ts"]
 }

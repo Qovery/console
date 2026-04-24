@@ -20,7 +20,7 @@ export type QuickAction = { label: string; iconName: IconName; link: string }
 const toTanstackPath = (path: string): string => path.replace(/:([A-Za-z0-9_]+)/g, '$$1')
 
 export function useQuickActions(): QuickAction[] {
-  // TODO: testing-only - migrate to TanStack Router hooks for console-v5.
+  // TODO: testing-only - migrate to TanStack Router hooks for console.
   const matchRoute = useMatchRoute()
 
   const applicationMatch = matchRoute({ to: toTanstackPath(APPLICATION_URL()), fuzzy: true })

@@ -6,7 +6,7 @@ import { useToggleAssistantOpen } from '../assistant-context/assistant-context'
 /**
  * Renders only the toggle button. The panel itself is rendered separately via
  * `<AssistantPanelOutlet />` so that it can be positioned next to the sticky navbar
- * (see `apps/console-v5/src/routes/_authenticated/organization/route.tsx`).
+ * (see `apps/console/src/routes/_authenticated/organization/route.tsx`).
  */
 export function AssistantTrigger() {
   const { initChat } = useSupportChat()

@@ -7,6 +7,6 @@
   "trailingComma": "es5",
   "importOrder": ["^@qovery/(.*)$", "^[./]"],
   "importOrderSortSpecifiers": true,
-  "tailwindConfig": "./apps/console-v5/tailwind.config.js",
+  "tailwindConfig": "./apps/console/tailwind.config.js",
   "tailwindFunctions": ["clsx", "cva", "twMerge"]
 }

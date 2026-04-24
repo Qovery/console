@@ -1,7 +1,7 @@
 {
-  "name": "console-v5",
+  "name": "console",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "/apps/console-v5/src",
+  "sourceRoot": "/apps/console/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -22,7 +22,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/console-v5"
+        "outputPath": "dist/apps/console"
       },
       "configurations": {
         "development": {
@@ -37,15 +37,15 @@
       "executor": "@nx/vite:dev-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "console-v5:build"
+        "buildTarget": "console:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "console-v5:build:development",
+          "buildTarget": "console:build:development",
           "hmr": true
         },
         "production": {
-          "buildTarget": "console-v5:build:production",
+          "buildTarget": "console:build:production",
           "hmr": false
         }
       }
@@ -55,14 +55,14 @@
       "executor": "@nx/vite:preview-server",
       "defaultConfiguration": "development",
       "options": {
-        "buildTarget": "console-v5:build"
+        "buildTarget": "console:build"
       },
       "configurations": {
         "development": {
-          "buildTarget": "console-v5:build:development"
+          "buildTarget": "console:build:development"
         },
         "production": {
-          "buildTarget": "console-v5:build:production"
+          "buildTarget": "console:build:production"
         }
       }
     },
@@ -70,7 +70,7 @@
       "executor": "@nx/web:file-server",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "console-v5:build",
+        "buildTarget": "console:build",
         "spa": true
       }
     }
