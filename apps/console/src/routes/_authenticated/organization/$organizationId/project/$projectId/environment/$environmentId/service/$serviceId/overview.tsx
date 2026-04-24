@@ -4,6 +4,7 @@ import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
+import { JobStatusesCallout } from '@qovery/domains/service-job/feature'
 import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
 import { ObservabilityCallout, ServiceOverview, useService } from '@qovery/domains/services/feature'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
@@ -46,6 +47,10 @@ function RouteComponent() {
           <ObservabilityCallout>
             <EnableObservabilityModal />
           </ObservabilityCallout>
+        }
+        jobStatusesCallout={
+          service?.serviceType === 'JOB' &&
+          environment && <JobStatusesCallout environmentId={environment.id} serviceId={service.id} />
         }
       />
       {environment && service?.serviceType && (
