@@ -58,34 +58,27 @@ export function ClusterProductionHealthIssuesModal({
               </div>
               <div className="flex flex-col gap-2">
                 {group.entries.map(({ cluster }) => (
-                  <div
+                  <Link
                     key={cluster.id}
-                    className="group relative rounded-lg border border-neutral bg-surface-neutral px-3 py-3.5 text-left text-ssm text-neutral transition-colors focus-within:bg-surface-neutral-subtle hover:bg-surface-neutral-subtle"
+                    to="/organization/$organizationId/cluster/$clusterId/overview"
+                    params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
+                    onClick={onClose}
+                    className="group flex items-center gap-2 rounded-lg border border-neutral bg-surface-neutral px-3 py-3.5 text-left text-ssm text-neutral transition-colors hover:bg-surface-neutral-subtle focus-visible:bg-surface-neutral-subtle focus-visible:outline-none"
                   >
-                    <Link
-                      to="/organization/$organizationId/cluster/$clusterId/overview"
-                      params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
-                      onClick={onClose}
-                      className="absolute inset-0 rounded-lg"
-                    />
-                    <div className="pointer-events-none relative flex items-center gap-2">
-                      <Icon name={cluster.cloud_provider} width={16} height={16} className="flex-shrink-0" />
-                      <div className="flex min-w-0 flex-1 items-center gap-2">
-                        <Tooltip content={cluster.name}>
-                          <span className="pointer-events-auto min-w-0 shrink truncate font-medium">
-                            {cluster.name}
-                          </span>
-                        </Tooltip>
-                        <div className="flex shrink-0 items-center gap-1">
-                          <ClusterBadges cluster={cluster} size="sm" />
-                        </div>
+                    <Icon name={cluster.cloud_provider} width={16} height={16} className="flex-shrink-0" />
+                    <div className="flex min-w-0 flex-1 items-center gap-2">
+                      <Tooltip content={cluster.name}>
+                        <span className="min-w-0 shrink truncate font-medium">{cluster.name}</span>
+                      </Tooltip>
+                      <div className="flex shrink-0 items-center gap-1">
+                        <ClusterBadges cluster={cluster} size="sm" />
                       </div>
-                      <Icon
-                        iconName="angle-right"
-                        className="ml-2 flex-shrink-0 text-base text-neutral-subtle transition-colors group-hover:text-neutral"
-                      />
                     </div>
-                  </div>
+                    <Icon
+                      iconName="angle-right"
+                      className="ml-2 flex-shrink-0 text-base text-neutral-subtle transition-colors group-hover:text-neutral"
+                    />
+                  </Link>
                 ))}
               </div>
             </div>

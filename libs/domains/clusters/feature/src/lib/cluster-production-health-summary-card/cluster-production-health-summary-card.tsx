@@ -1,5 +1,5 @@
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, memo, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Icon, Skeleton, useModal } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
@@ -20,9 +20,11 @@ import {
 // the connection is slow and render the card anyway (with potential
 // "status unavailable" issues). While waiting we display a skeleton to avoid
 // flashing incorrect states caused by temporarily missing running-status data.
-const RUNNING_STATUS_TIMEOUT_MS = 8000
+const RUNNING_STATUS_TIMEOUT_MS = 8_000
 
-function ClusterRunningStatusSubscription({
+// Memoized so parent re-renders (e.g. from the 3s cluster-statuses polling) don't tear down
+// the websocket subscription when the cluster identity didn't change.
+const ClusterRunningStatusSubscription = memo(function ClusterRunningStatusSubscription({
   organizationId,
   clusterId,
 }: {
@@ -31,7 +33,7 @@ function ClusterRunningStatusSubscription({
 }) {
   useClusterRunningStatusSocket({ organizationId, clusterId })
   return null
-}
+})
 
 type HealthCardVariant = 'positive' | 'warning' | 'negative'
 
