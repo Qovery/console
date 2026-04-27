@@ -1,11 +1,121 @@
-import { type DatabaseTypeEnum } from 'qovery-typescript-axios'
+import {
+  CloudProviderEnum,
+  type DatabaseTypeEnum,
+  type ManagedDatabaseInstanceTypeResponse,
+} from 'qovery-typescript-axios'
+import { useEffect, useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useParams } from 'react-router-dom'
 import { match } from 'ts-pattern'
+import { useCloudProviderDatabaseInstanceTypes } from '@qovery/domains/cloud-providers/feature'
+import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type Database } from '@qovery/domains/services/data-access'
-import { Callout, ExternalLink, Icon, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
-import SettingsResourcesInstanceTypesFeature from '../../feature/settings-resources-instance-types-feature/setting-resources-instance-types-feature'
+import { type Value } from '@qovery/shared/interfaces'
+import { Callout, ExternalLink, Icon, InputSelect, InputText, Link, inputSizeUnitRules } from '@qovery/shared/ui'
+
+interface SettingsResourcesInstanceTypesProps {
+  databaseType: DatabaseTypeEnum
+  displayWarning: boolean
+  isSetting: boolean
+  organizationId: string
+  environmentId: string
+}
+
+function SettingsResourcesInstanceTypes({
+  databaseType,
+  displayWarning,
+  isSetting,
+  organizationId,
+  environmentId,
+}: SettingsResourcesInstanceTypesProps) {
+  const { control, setValue } = useFormContext()
+  const { data: environment } = useEnvironment({ environmentId })
+  const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id ?? '' })
+  const { data: databaseInstanceTypes } = useCloudProviderDatabaseInstanceTypes(
+    match(cluster?.cloud_provider || CloudProviderEnum.AWS)
+      .with('AWS', (cloudProvider) => ({
+        cloudProvider,
+        databaseType,
+        region: cluster?.region || '',
+      }))
+      .with('SCW', (cloudProvider) => ({
+        cloudProvider,
+        databaseType,
+      }))
+      .with('GCP', (cloudProvider) => ({
+        cloudProvider,
+        databaseType,
+      }))
+      .with('ON_PREMISE', 'DO', 'AZURE', 'CIVO', 'HETZNER', 'IBM', 'ORACLE', 'OVH', () => ({
+        cloudProvider: CloudProviderEnum.ON_PREMISE,
+        databaseType,
+      }))
+      .exhaustive()
+  )
+
+  const databaseInstanceTypeOptions: Value[] = useMemo(
+    () =>
+      databaseInstanceTypes?.map((instanceType: ManagedDatabaseInstanceTypeResponse) => ({
+        label: instanceType.name,
+        value: instanceType.name,
+      })) ?? [],
+    [databaseInstanceTypes]
+  )
+
+  useEffect(() => {
+    if (!isSetting && databaseInstanceTypes) {
+      const defaultInstanceType = match(databaseType)
+        .with('POSTGRESQL', () => 'db.t3.small')
+        .with('MONGODB', () => 'db.t3.small')
+        .with('MYSQL', () => 'db.t3.small')
+        .with('REDIS', () => 'cache.t3.small')
+        .exhaustive()
+
+      setValue('instance_type', defaultInstanceType)
+    }
+  }, [databaseInstanceTypes, databaseType, isSetting, setValue])
+
+  return (
+    <>
+      <Controller
+        name="instance_type"
+        control={control}
+        rules={{
+          required: 'Please select an instance type',
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            isSearchable
+            onChange={field.onChange}
+            value={field.value}
+            label="Instance type"
+            error={error?.message}
+            options={databaseInstanceTypeOptions}
+            hint="The chosen instance type has a direct impact on your cloud provider cost."
+          />
+        )}
+      />
+      {displayWarning && (
+        <Callout.Root className="mt-3" color="yellow" data-testid="settings-resources-instance-types-warning">
+          <Callout.Icon>
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            Once triggered, the update will be managed by your cloud provider and applied during the configured
+            maintenance window. Moreover, the operation might cause a service interruption.{' '}
+            <ExternalLink
+              className="mt-1"
+              href="https://www.qovery.com/docs/configuration/database#applying-changes-to-a-managed-database"
+            >
+              Have a look at the documentation first
+            </ExternalLink>
+          </Callout.Text>
+        </Callout.Root>
+      )}
+    </>
+  )
+}
 
 export interface DatabaseSettingsResourcesProps {
   database?: Database
@@ -30,15 +140,12 @@ export function DatabaseSettingsResources({
     control,
     formState: { defaultValues },
   } = useFormContext()
-  const { organizationId = '', environmentId } = useParams()
+  const { organizationId = '', environmentId = '' } = useParams()
   const { data: environment } = useEnvironment({ environmentId })
 
+  const resolvedDatabaseType = database?.type ?? databaseType
   const maxMemoryBySize = database?.maximum_memory
   const cloudProvider = environment?.cloud_provider.provider
-
-  if (database) {
-    databaseType = database.type
-  }
 
   const minVCpu = match(cloudProvider)
     .with('GCP', () => 250)
@@ -138,11 +245,13 @@ export function DatabaseSettingsResources({
           />
         </>
       )}
-      {isManaged && databaseType && (
-        <SettingsResourcesInstanceTypesFeature
-          databaseType={databaseType}
+      {isManaged && resolvedDatabaseType && (
+        <SettingsResourcesInstanceTypes
+          databaseType={resolvedDatabaseType}
           displayWarning={displayInstanceTypesWarning}
           isSetting={isSetting}
+          organizationId={organizationId}
+          environmentId={environmentId}
         />
       )}
       {/* Storage is not configurable for Redis managed databases (ElastiCache) - capacity is determined by node type */}
@@ -150,7 +259,7 @@ export function DatabaseSettingsResources({
         name="storage"
         control={control}
         rules={
-          isManaged && databaseType === 'REDIS'
+          isManaged && resolvedDatabaseType === 'REDIS'
             ? undefined
             : {
                 pattern: {
@@ -164,7 +273,7 @@ export function DatabaseSettingsResources({
               }
         }
         render={({ field, fieldState: { error } }) =>
-          isManaged && databaseType === 'REDIS' ? (
+          isManaged && resolvedDatabaseType === 'REDIS' ? (
             // Hidden field to preserve storage value for Redis managed, but it's not used by ElastiCache
             <input type="hidden" {...field} />
           ) : (
@@ -184,7 +293,7 @@ export function DatabaseSettingsResources({
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>
-          <Callout.Text className="text-neutral-350">
+          <Callout.Text>
             Once triggered, the update will be managed by your cloud provider and applied during the configured
             maintenance window. Moreover, the operation might cause a service interruption.{' '}
             <ExternalLink

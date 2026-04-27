@@ -6,7 +6,6 @@ import DatabaseSettingsResources, { type DatabaseSettingsResourcesProps } from '
 
 const props: DatabaseSettingsResourcesProps = {
   database: databaseFactoryMock(1)[0],
-  isDatabase: true,
   isManaged: true,
   databaseType: DatabaseTypeEnum.MYSQL,
 }
