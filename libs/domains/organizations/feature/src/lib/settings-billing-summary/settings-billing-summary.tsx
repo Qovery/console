@@ -3,14 +3,14 @@ import { format } from 'date-fns'
 import { type CreditCard, type OrganizationCurrentCost, PlanEnum } from 'qovery-typescript-axios'
 import { Suspense, useMemo } from 'react'
 import { type CardImages } from 'react-payment-inputs/images'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { AddCreditCardModalFeature, SettingsHeading } from '@qovery/shared/console-shared'
+import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { useModal } from '@qovery/shared/ui'
 import { Button, Callout, ExternalLink, Icon, Link, Section, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { costToHuman, formatPlanDisplay, pluralize } from '@qovery/shared/util-js'
+import { AddCreditCardModal } from '../add-credit-card-modal/add-credit-card-modal'
 import { useCreditCards } from '../hooks/use-credit-cards/use-credit-cards'
 import { useCurrentCost } from '../hooks/use-current-cost/use-current-cost'
 import InvoicesListFeature from './invoices-list-feature/invoices-list-feature'
@@ -276,7 +276,7 @@ function SettingsBillingSummaryContent() {
 
   const handleAddCreditCardClick = () => {
     openModal({
-      content: <AddCreditCardModalFeature organizationId={organizationId} />,
+      content: <AddCreditCardModal organizationId={organizationId} />,
     })
   }
 

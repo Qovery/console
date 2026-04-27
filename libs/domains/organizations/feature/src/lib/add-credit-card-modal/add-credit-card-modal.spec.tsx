@@ -1,16 +1,16 @@
 import type CbInstance from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import type { ReactNode } from 'react'
-import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import * as chargebeeUtils from '@qovery/shared/util-payment'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import AddCreditCardModalFeature, { type AddCreditCardModalFeatureProps } from './add-credit-card-modal-feature'
+import * as useAddCreditCardModule from '../hooks/use-add-credit-card/use-add-credit-card'
+import AddCreditCardModal, { type AddCreditCardModalProps } from './add-credit-card-modal'
 
 import SpyInstance = jest.SpyInstance
 
-const useAddCreditCardSpy: SpyInstance = jest.spyOn(organizationsDomain, 'useAddCreditCard')
+const useAddCreditCardSpy: SpyInstance = jest.spyOn(useAddCreditCardModule, 'useAddCreditCard')
 const loadChargebeeSpy: SpyInstance = jest.spyOn(chargebeeUtils, 'loadChargebee')
 
-const props: AddCreditCardModalFeatureProps = {
+const props: AddCreditCardModalProps = {
   organizationId: '1',
 }
 
@@ -25,7 +25,7 @@ jest.mock('@chargebee/chargebee-js-react-wrapper', () => ({
   CardCVV: () => <div data-testid="card-cvv-field" />,
 }))
 
-describe('AddCreditCardModalFeature', () => {
+describe('AddCreditCardModal', () => {
   let mockChargebeeInstance: Pick<CbInstance, 'load'>
 
   beforeEach(() => {
@@ -41,12 +41,12 @@ describe('AddCreditCardModalFeature', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<AddCreditCardModalFeature {...props} />)
+    const { baseElement } = renderWithProviders(<AddCreditCardModal {...props} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should initialize Chargebee and show loading state', async () => {
-    renderWithProviders(<AddCreditCardModalFeature organizationId="1" />)
+    renderWithProviders(<AddCreditCardModal organizationId="1" />)
 
     await waitFor(() => {
       expect(loadChargebeeSpy).toHaveBeenCalled()

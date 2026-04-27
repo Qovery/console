@@ -1,5 +1,6 @@
 export * from './lib/annotation-setting/annotation-setting'
 export * from './lib/annotation-create-edit-modal/annotation-create-edit-modal'
+export * from './lib/add-credit-card-modal/add-credit-card-modal'
 export * from './lib/label-annotation-items-list-modal/label-annotation-items-list-modal'
 export * from './lib/git-branch-settings/git-branch-settings'
 export * from './lib/git-provider-setting/git-provider-setting'
