@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useConnectGithubApp } from '@qovery/domains/organizations/feature'
 import { SETTINGS_GIT_REPOSITORY_ACCESS_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import { ToastEnum, toast } from '@qovery/shared/ui'
+import { useConnectGithubApp } from '../hooks/use-connect-github-app/use-connect-github-app'
 
 export function GithubApplicationCallbackFeature() {
   const { search } = useLocation()
