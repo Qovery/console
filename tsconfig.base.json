@@ -50,22 +50,6 @@
       "@qovery/domains/variables/data-access": ["libs/domains/variables/data-access/src/index.ts"],
       "@qovery/domains/variables/feature": ["libs/domains/variables/feature/src/index.ts"],
       "@qovery/domains/variables/util": ["libs/domains/variables/util/src/index.ts"],
-      "@qovery/pages/application": ["libs/pages/application/src/index.ts"],
-      "@qovery/pages/cluster": ["libs/pages/cluster/src/index.ts"],
-      "@qovery/pages/clusters": ["libs/pages/clusters/src/index.ts"],
-      "@qovery/pages/database": ["libs/pages/database/src/index.ts"],
-      "@qovery/pages/environments": ["libs/pages/environments/src/index.ts"],
-      "@qovery/pages/events": ["libs/pages/events/src/index.ts"],
-      "@qovery/pages/layout": ["libs/pages/layout/src/index.ts"],
-      "@qovery/pages/login": ["libs/pages/login/src/index.ts"],
-      "@qovery/pages/logs/environment": ["libs/pages/logs/environment/src/index.ts"],
-      "@qovery/pages/logs/infra": ["libs/pages/logs/infra/src/index.ts"],
-      "@qovery/pages/onboarding": ["libs/pages/onboarding/src/index.ts"],
-      "@qovery/pages/overview/feature": ["libs/pages/overview/feature/src/index.ts"],
-      "@qovery/pages/overview/ui": ["libs/pages/overview/ui/src/index.ts"],
-      "@qovery/pages/services": ["libs/pages/services/src/index.ts"],
-      "@qovery/pages/settings": ["libs/pages/settings/src/index.ts"],
-      "@qovery/pages/user": ["libs/pages/user/src/index.ts"],
       "@qovery/shared/assistant/feature": ["libs/shared/assistant/feature/src/index.ts"],
       "@qovery/shared/auth": ["libs/shared/auth/src/index.ts"],
       "@qovery/shared/console-shared": ["libs/shared/console-shared/src/index.ts"],
@@ -101,5 +85,5 @@
     }
   },
   "exclude": ["node_modules", "tmp"],
-  "files": ["apps/console-v5/src/router-types.d.ts"]
+  "files": ["apps/console/src/router-types.d.ts"]
 }

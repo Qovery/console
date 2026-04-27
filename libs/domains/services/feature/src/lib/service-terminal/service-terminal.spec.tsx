@@ -1,7 +1,5 @@
 import { type QueryClient } from '@tanstack/react-query'
-import { act, screen, waitFor } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { ServiceTerminal, type ServiceTerminalProps } from './service-terminal'
 
@@ -103,8 +101,7 @@ describe('ServiceTerminal', () => {
   })
 
   it('should restart terminal launch flow when retrying from empty state', async () => {
-    const user = userEvent.setup()
-    renderWithProviders(<ServiceTerminal {...props} />)
+    const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
 
     act(() => {
       getLatestWsSubscriptionConfig().onClose?.(
@@ -113,7 +110,7 @@ describe('ServiceTerminal', () => {
       )
     })
 
-    await user.click(screen.getByRole('button', { name: 'Relaunch' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Relaunch' }))
 
     await waitFor(() => {
       expect(screen.queryByText('Unable to launch CLI')).not.toBeInTheDocument()

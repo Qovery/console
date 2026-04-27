@@ -11,12 +11,10 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
 }))
 
 jest.mock('@qovery/domains/services/feature', () => ({
+  ...jest.requireActual('@qovery/domains/services/feature'),
   AutoDeploySection: () => null,
-  GeneralSetting: () => null,
-}))
-
-jest.mock('@qovery/shared/console-shared', () => ({
   EntrypointCmdInputs: () => null,
+  GeneralSetting: () => null,
 }))
 
 describe('ApplicationGeneralSettings', () => {

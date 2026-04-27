@@ -1,5 +1,4 @@
 import { act } from '@testing-library/react'
-import userEvent from '@testing-library/user-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import CopyToClipboardButtonIcon, { type CopyToClipboardButtonIconProps } from './copy-to-clipboard-button-icon'
 
@@ -41,15 +40,13 @@ describe('CopyToClipboardButtonIcon', () => {
 
   it('should copy content and toggle the icon', async () => {
     jest.useFakeTimers()
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
-
-    renderWithProviders(<CopyToClipboardButtonIcon {...props} />)
+    const { userEvent } = renderWithProviders(<CopyToClipboardButtonIcon {...props} />)
     const container = screen.getByTestId('copy-container')
     const icon = container.querySelector('i') as HTMLElement
 
     expect(icon).toHaveClass('fa-copy')
 
-    await user.click(container)
+    await userEvent.click(container)
     expect(mockCopyToClipboard).toHaveBeenCalledWith(props.content)
     expect(icon).toHaveClass('fa-check')
 

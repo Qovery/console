@@ -1,34 +1,77 @@
 {
   "name": "console",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/console/src",
+  "sourceRoot": "/apps/console/src",
   "projectType": "application",
   "tags": [],
   "targets": {
+    "sync-changelog": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "node scripts/sync-changelog.mjs",
+        "cwd": ".",
+        "env": {
+          "QOVERY_CHANGELOG_SYNC_STRICT": "true"
+        }
+      }
+    },
     "build": {
-      "outputs": ["{projectRoot}/{options.outputPath}", "{workspaceRoot}/dist/{projectRoot}"],
+      "executor": "@nx/vite:build",
+      "dependsOn": ["sync-changelog", "^build"],
+      "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/console"
+      },
       "configurations": {
-        "production": {},
-        "staging": {}
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "serve": {
-      "defaultConfiguration": "staging",
-      "configurations": {
-        "production": {},
-        "staging": {}
-      }
-    },
-    "test": {
+      "executor": "@nx/vite:dev-server",
+      "defaultConfiguration": "development",
       "options": {
-        "passWithNoTests": true
+        "buildTarget": "console:build"
       },
       "configurations": {
-        "ci": {
-          "ci": true,
-          "coverage": true
+        "development": {
+          "buildTarget": "console:build:development",
+          "hmr": true
+        },
+        "production": {
+          "buildTarget": "console:build:production",
+          "hmr": false
         }
+      }
+    },
+    "preview": {
+      "dependsOn": ["build"],
+      "executor": "@nx/vite:preview-server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "console:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "console:build:development"
+        },
+        "production": {
+          "buildTarget": "console:build:production"
+        }
+      }
+    },
+    "serve-static": {
+      "executor": "@nx/web:file-server",
+      "dependsOn": ["build"],
+      "options": {
+        "buildTarget": "console:build",
+        "spa": true
       }
     }
   }

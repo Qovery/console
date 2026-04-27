@@ -1,5 +1,5 @@
 import posthog from 'posthog-js'
-import { type ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { DevopsCopilotContext } from '../devops-copilot-context/devops-copilot-context'
 import { DevopsCopilotTroubleshootTrigger } from './devops-copilot-troubleshoot-trigger'
@@ -17,7 +17,7 @@ jest.mock('@qovery/shared/ui', () => ({
   ),
   Icon: ({ iconName }: { iconName: string }) => <span data-testid={`icon-${iconName}`} />,
   Tooltip: ({ children, content }: { children: ReactNode; content: ReactNode }) => {
-    const React = require('react')
+    const React = jest.requireActual('react')
 
     return (
       <div>

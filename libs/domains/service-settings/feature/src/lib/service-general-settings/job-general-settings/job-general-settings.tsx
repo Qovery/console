@@ -10,11 +10,11 @@ import {
 import { type Job } from '@qovery/domains/services/data-access'
 import {
   AutoDeploySection,
+  EntrypointCmdInputs,
   GeneralContainerSettings,
   GeneralSetting,
   JobGeneralSettings as JobGeneralSettingsComponent,
 } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { ServiceTypeEnum, isJobGitSource } from '@qovery/shared/enums'
 import { Heading, InputSelect, InputText, Section } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'

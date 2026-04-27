@@ -9,7 +9,7 @@ jest.mock('@qovery/shared/util-const', () => ({
 }))
 
 jest.mock('@qovery/shared/ui', () => {
-  const React = require('react')
+  const React = jest.requireActual('react')
   const actual = jest.requireActual('@qovery/shared/ui')
 
   return {
@@ -29,10 +29,10 @@ jest.mock('@qovery/shared/ui', () => {
       </button>
     ),
     Icon: ({ iconName }: { iconName: string }) => <span>{iconName}</span>,
-    Tooltip: ({ children }: { children: ReactNode }) => <>{children}</>,
+    Tooltip: ({ children }: { children: ReactNode }) => <span>{children}</span>,
     DropdownMenu: {
       Root: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-      Trigger: ({ children }: { children: ReactNode }) => <>{children}</>,
+      Trigger: ({ children }: { children: ReactNode }) => <span>{children}</span>,
       Content: ({ children }: { children: ReactNode }) => <div>{children}</div>,
       Item: ({ children, onClick, asChild }: { children: ReactNode; onClick?: () => void; asChild?: boolean }) => {
         if (asChild && React.isValidElement(children)) return children

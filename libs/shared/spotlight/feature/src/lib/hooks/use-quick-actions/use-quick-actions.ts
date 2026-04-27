@@ -1,69 +1,44 @@
-// @ts-nocheck
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useMatchRoute } from '@tanstack/react-router'
 import {
-  APPLICATION_URL,
   AUDIT_LOGS_PARAMS_URL,
-  CLUSTER_URL,
-  DATABASE_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
   INFRA_LOGS_URL,
-  SERVICES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
 import useServiceType from '../use-service-type/use-service-type'
 
 export type QuickAction = { label: string; iconName: IconName; link: string }
 
-const toTanstackPath = (path: string): string => path.replace(/:([A-Za-z0-9_]+)/g, '$$1')
-
 export function useQuickActions(): QuickAction[] {
-  // TODO: testing-only - migrate to TanStack Router hooks for console-v5.
   const matchRoute = useMatchRoute()
 
-  const applicationMatch = matchRoute({ to: toTanstackPath(APPLICATION_URL()), fuzzy: true })
-  const databaseMatch = matchRoute({ to: toTanstackPath(DATABASE_URL()), fuzzy: true })
-  const projectMatch = matchRoute({ to: toTanstackPath(ENVIRONMENTS_URL()), fuzzy: true })
-  const environmentMatch = matchRoute({ to: toTanstackPath(SERVICES_URL()), fuzzy: true })
-  const clusterMatch = matchRoute({ to: toTanstackPath(CLUSTER_URL()), fuzzy: true })
-
-  const serviceId = applicationMatch?.applicationId ?? databaseMatch?.databaseId
+  const serviceMatch = matchRoute({
+    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+    fuzzy: true,
+  })
+  const projectMatch = matchRoute({
+    to: '/organization/$organizationId/project/$projectId',
+    fuzzy: true,
+  })
+  const environmentMatch = matchRoute({
+    to: '/organization/$organizationId/project/$projectId/environment/$environmentId',
+    fuzzy: true,
+  })
+  const clusterMatch = matchRoute({
+    to: '/organization/$organizationId/cluster/$clusterId',
+    fuzzy: true,
+  })
+  const serviceParams = serviceMatch || undefined
 
   const { data: serviceType } = useServiceType({
-    serviceId,
-    environmentId: applicationMatch?.environmentId ?? databaseMatch?.environmentId,
+    serviceId: serviceParams?.serviceId,
+    environmentId: serviceParams?.environmentId,
   })
 
-  if (applicationMatch && serviceId) {
-    const { organizationId, projectId, environmentId } = applicationMatch
-    return [
-      {
-        label: 'See deployment logs',
-        iconName: 'scroll',
-        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_VERSION_URL(serviceId),
-      },
-      {
-        label: 'See live logs',
-        iconName: 'scroll',
-        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
-      },
-      {
-        label: 'See audit logs',
-        iconName: 'clock-rotate-left',
-        link: AUDIT_LOGS_PARAMS_URL(organizationId, {
-          targetId: serviceId,
-          targetType: serviceType,
-          projectId,
-          environmentId,
-        }),
-      },
-    ]
-  }
-
-  if (databaseMatch && serviceId) {
-    const { organizationId, projectId, environmentId } = databaseMatch
+  if (serviceMatch) {
+    const { organizationId, projectId, environmentId, serviceId } = serviceMatch
     return [
       {
         label: 'See deployment logs',

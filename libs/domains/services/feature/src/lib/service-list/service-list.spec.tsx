@@ -452,12 +452,16 @@ describe('ServiceList', () => {
     const serviceCheckbox = checkboxes[1]
     const checkboxHitArea = serviceCheckbox.closest('label')
 
-    expect(serviceCheckbox).toHaveAttribute('aria-checked', 'false')
+    expect(serviceCheckbox).not.toBeChecked()
     expect(checkboxHitArea).toBeTruthy()
 
-    await userEvent.click(checkboxHitArea!)
+    if (!checkboxHitArea) {
+      throw new Error('Expected checkbox hit area to exist.')
+    }
 
-    expect(screen.getAllByRole('checkbox')[1]).toHaveAttribute('aria-checked', 'true')
+    await userEvent.click(checkboxHitArea)
+
+    expect(screen.getAllByRole('checkbox')[1]).toBeChecked()
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 

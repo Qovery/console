@@ -1,4 +1,3 @@
-import userEvent from '@testing-library/user-event'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
 import { act } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -69,15 +68,14 @@ describe('ClusterProductionHealthSummaryCard', () => {
   it('renders the issues card and opens the modal when clusters have issues', async () => {
     const failingStatus = { ...deployedStatus, status: 'DEPLOYMENT_ERROR' } as ClusterStatus
 
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
-    renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <ClusterProductionHealthSummaryCard clusters={[baseCluster]} clusterStatuses={[failingStatus]} />
     )
 
     const trigger = screen.getByRole('button', { name: /1 cluster with ongoing issue/i })
     expect(trigger).toBeInTheDocument()
 
-    await user.click(trigger)
+    await userEvent.click(trigger)
 
     expect(mockOpenModal).toHaveBeenCalledWith(
       expect.objectContaining({

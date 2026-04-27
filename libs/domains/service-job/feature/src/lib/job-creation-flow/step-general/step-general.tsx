@@ -12,9 +12,14 @@ import {
   useOrganization,
 } from '@qovery/domains/organizations/feature'
 import { type Job } from '@qovery/domains/services/data-access'
-import { AutoDeploySetting, BuildSettings, GeneralSetting, JobGeneralSettings } from '@qovery/domains/services/feature'
+import {
+  AutoDeploySetting,
+  BuildSettings,
+  EntrypointCmdInputs,
+  GeneralSetting,
+  JobGeneralSettings,
+} from '@qovery/domains/services/feature'
 import { serviceTemplates } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobGeneralData } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, Icon, Section, useModal } from '@qovery/shared/ui'

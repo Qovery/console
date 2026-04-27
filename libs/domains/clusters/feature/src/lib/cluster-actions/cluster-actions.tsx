@@ -386,7 +386,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
   })
 
   const searchParams = useMemo(() => {
-    // @ts-ignore-next-line TODO needs to be fixed
+    // @ts-expect-error TODO needs to be fixed
     const params = new URLSearchParams(location.search)
     return params
   }, [location.search])
@@ -403,7 +403,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
             cluster={cluster}
             type={type}
             onClose={() => {
-              // @ts-ignore-next-line TODO needs to be fixed
+              // @ts-expect-error TODO needs to be fixed
               const newParams = new URLSearchParams(location.search)
               newParams.delete(showSelfManagedGuideKey)
               const newSearch = newParams.toString()
@@ -421,7 +421,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
   useEffect(() => {
     const bool = searchParams.has(showSelfManagedGuideKey) && cluster.kubernetes === 'SELF_MANAGED'
     if (bool) {
-      // @ts-ignore-next-line TODO needs to be fixed
+      // @ts-expect-error TODO needs to be fixed
       const newParams = new URLSearchParams(location.search)
       newParams.delete(showSelfManagedGuideKey)
       const newSearch = newParams.toString()

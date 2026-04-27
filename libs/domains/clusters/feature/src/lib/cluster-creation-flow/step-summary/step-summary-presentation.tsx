@@ -13,6 +13,7 @@ import {
   type Subnets,
 } from '@qovery/shared/interfaces'
 import { Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
+import { getValueByKey } from './get-value-by-key'
 
 export interface StepSummaryPresentationProps {
   onSubmit: (withDeploy: boolean) => void
@@ -29,13 +30,6 @@ export interface StepSummaryPresentationProps {
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
   detailInstanceType?: ClusterInstanceTypeResponseListResultsInner
-}
-
-function getValueByKey(key: string, data: { [key: string]: string }[] = []): string[] {
-  return data.reduce((result: string[], obj) => {
-    if (Object.prototype.hasOwnProperty.call(obj, key)) result.push(obj[key])
-    return result
-  }, [])
 }
 
 function SubnetsList({ title, index, subnets }: { title: string; index: string; subnets?: Subnets[] }) {

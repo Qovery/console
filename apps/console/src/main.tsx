@@ -1,6 +1,7 @@
-import { Auth0Provider } from '@auth0/auth0-react'
+import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
+import * as Sentry from '@sentry/react'
 import {
   type Mutation,
   MutationCache,
@@ -9,28 +10,34 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
+import axios from 'axios'
 import posthog from 'posthog-js'
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import { ErrorBoundary, type FallbackProps } from 'react-error-boundary'
+import { StrictMode, useEffect, useRef } from 'react'
+import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
-// import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-import { BrowserRouter } from 'react-router-dom'
 import { IntercomProvider } from 'react-use-intercom'
-import { QueryParamProvider } from 'use-query-params'
-import { ReactRouter6Adapter } from 'use-query-params/adapters/react-router-6'
-import { LOGIN_AUTH_REDIRECT_URL, LOGIN_URL } from '@qovery/shared/routes'
-import { ErrorFallback, ModalProvider, ToastBehavior, toastError } from '@qovery/shared/ui'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
+import { LoaderSpinner, ToastEnum, toast, toastError } from '@qovery/shared/ui'
 import {
+  DEVOPS_COPILOT_API_BASE_URL,
+  GIT_SHA,
+  GTM,
   INTERCOM,
-  OAUTH_AUDIENCE,
-  OAUTH_DOMAIN,
-  OAUTH_KEY,
+  NODE_ENV,
   POSTHOG,
   POSTHOG_APIHOST,
+  QOVERY_API,
 } from '@qovery/shared/util-node-env'
-import App from './app/app'
+import { useAuthInterceptor } from '@qovery/shared/utils'
+// TODO: Improve this import to use the shared/ui package
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import '../../../libs/shared/ui/src/lib/styles/main.scss'
+import { NotFoundPage } from './app/components/not-found-page/not-found-page'
+import { ThemeProvider } from './app/components/theme-provider/theme-provider'
+import { Auth0Wrapper, useAuth0Context } from './auth/auth0'
+// Import the generated route tree
+import { routeTree } from './routeTree.gen'
 
 type ToastArgs = {
   status?: ToastEnum
@@ -41,6 +48,10 @@ type ToastArgs = {
   labelAction?: string
   externalLink?: string
 }
+
+const SENTRY_DSN = 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024'
+
+let isSentryInitialized = false
 
 interface _QueryMeta {
   notifyOnSuccess?: boolean | ((data: unknown, query: Query<unknown, unknown, unknown>) => ToastArgs) | ToastArgs
@@ -68,10 +79,8 @@ declare module '@tanstack/react-query' {
 // posthog init
 posthog.init(POSTHOG, {
   api_host: POSTHOG_APIHOST,
+  capture_pageview: 'history_change',
 })
-
-const container = document.getElementById('root') || document.createElement('div')
-const root = createRoot(container)
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -143,43 +152,82 @@ const queryClient = new QueryClient({
   }),
 })
 
-function fallbackRender({ error, resetErrorBoundary }: FallbackProps) {
-  return <ErrorFallback className="h-screen" error={error} resetErrorBoundary={resetErrorBoundary} />
+function App() {
+  const auth = useAuth0Context()
+  const routerRef = useRef<ReturnType<typeof createRouter> | null>(null)
+
+  if (!routerRef.current) {
+    routerRef.current = createRouter({
+      routeTree,
+      context: { auth, queryClient },
+      defaultNotFoundComponent: NotFoundPage,
+    })
+
+    if (!isSentryInitialized && NODE_ENV === 'production') {
+      Sentry.init({
+        release: GIT_SHA,
+        dsn: SENTRY_DSN,
+        integrations: [Sentry.tanstackRouterBrowserTracingIntegration(routerRef.current), Sentry.replayIntegration()],
+        tracesSampleRate: 1.0,
+        replaysSessionSampleRate: 0.1,
+        replaysOnErrorSampleRate: 1.0,
+      })
+
+      isSentryInitialized = true
+    }
+  }
+
+  const router = routerRef.current
+
+  // Keep PostHog's identified user in sync once Auth0 resolves the session
+  useEffect(() => {
+    if (!auth.user?.sub) {
+      Sentry.setUser(null)
+      return
+    }
+
+    posthog.identify(auth.user.sub, {
+      ...auth.user,
+    })
+
+    Sentry.setUser({
+      id: auth.user.sub,
+      email: auth.user.email,
+      username: auth.user.name,
+    })
+  }, [auth.user])
+
+  useAuthInterceptor(axios, QOVERY_API)
+  useAuthInterceptor(devopsCopilotAxios, DEVOPS_COPILOT_API_BASE_URL)
+
+  if (auth.isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <LoaderSpinner />
+      </div>
+    )
+  }
+
+  return <RouterProvider router={router} context={{ auth, queryClient }} />
 }
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
+const gtmParams = { id: GTM }
 
 root.render(
   <StrictMode>
-    <FlatProviders
-      providers={[
-        makeProvider(IntercomProvider, { appId: INTERCOM, autoBoot: true }),
-        makeProvider(Auth0Provider, {
-          domain: OAUTH_DOMAIN,
-          clientId: OAUTH_KEY,
-          authorizationParams: {
-            redirect_uri: `${window.location.origin}${LOGIN_URL}${LOGIN_AUTH_REDIRECT_URL}`,
-            audience: OAUTH_AUDIENCE,
-          },
-          useRefreshTokensFallback: true,
-          useRefreshTokens: true,
-          cacheLocation: 'localstorage',
-          skipRedirectCallback: window.location.pathname !== LOGIN_URL + LOGIN_AUTH_REDIRECT_URL,
-        }),
-        makeProvider(QueryClientProvider, { client: queryClient }),
-      ]}
-    >
-      <BrowserRouter>
-        <QueryParamProvider adapter={ReactRouter6Adapter}>
-          <ErrorBoundary fallbackRender={fallbackRender}>
-            <TooltipProvider>
-              <ModalProvider>
-                <App />
-                <ToastBehavior />
-              </ModalProvider>
-            </TooltipProvider>
-          </ErrorBoundary>
-        </QueryParamProvider>
-      </BrowserRouter>
-      {/* <ReactQueryDevtools initialIsOpen={false} /> */}
-    </FlatProviders>
+    <GTMProvider state={gtmParams}>
+      <FlatProviders
+        providers={[
+          ThemeProvider,
+          TooltipProvider,
+          Auth0Wrapper,
+          makeProvider(QueryClientProvider, { client: queryClient }),
+          makeProvider(IntercomProvider, { appId: INTERCOM }),
+        ]}
+      >
+        <App />
+      </FlatProviders>
+    </GTMProvider>
   </StrictMode>
 )

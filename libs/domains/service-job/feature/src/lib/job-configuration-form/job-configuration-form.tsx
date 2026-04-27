@@ -1,8 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import cronstrue from 'cronstrue'
 import { Controller, useFormContext } from 'react-hook-form'
-import { TimezoneSetting } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
+import { EntrypointCmdInputs, TimezoneSetting } from '@qovery/domains/services/feature'
 import { type JobType, ServiceTypeEnum } from '@qovery/shared/enums'
 import { type JobConfigureData } from '@qovery/shared/interfaces'
 import { Callout, EnableBox, ExternalLink, Heading, Icon, InputText, Section } from '@qovery/shared/ui'

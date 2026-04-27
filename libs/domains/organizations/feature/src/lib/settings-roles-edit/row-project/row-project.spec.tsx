@@ -1,4 +1,3 @@
-import userEvent from '@testing-library/user-event'
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import {
   OrganizationCustomRoleProjectPermission,
@@ -19,8 +18,9 @@ describe('RowProject', () => {
   })
 
   it('should render header with global checkbox', async () => {
-    const user = userEvent.setup()
-    const { getByText, getByTestId } = renderWithProviders(wrapWithReactHookForm(<RowProject project={project} />))
+    const { userEvent, getByText, getByTestId } = renderWithProviders(
+      wrapWithReactHookForm(<RowProject project={project} />)
+    )
 
     getByText(project.project_name || '')
     getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`)
@@ -30,7 +30,7 @@ describe('RowProject', () => {
     getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.NO_ACCESS}`)
 
     const input = getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`) as HTMLInputElement
-    await user.click(input)
+    await userEvent.click(input)
 
     expect(input).toBeChecked()
   })
@@ -38,7 +38,6 @@ describe('RowProject', () => {
   it('should set permission to NO_ACCESS when clicking an already-selected permission (AC-1)', async () => {
     project.is_admin = false
 
-    const user = userEvent.setup()
     const defaultValues = {
       project_permissions: {
         '1': {
@@ -51,14 +50,14 @@ describe('RowProject', () => {
       },
     }
 
-    const { container } = renderWithProviders(
+    const { container, userEvent } = renderWithProviders(
       wrapWithReactHookForm(<RowProject project={project} />, { defaultValues })
     )
 
     const managerCheckbox = container.querySelector('button[value="MANAGER"]') as HTMLButtonElement
     expect(managerCheckbox).toBeChecked()
 
-    await user.click(managerCheckbox)
+    await userEvent.click(managerCheckbox)
 
     expect(managerCheckbox).not.toBeChecked()
     const noAccessCheckbox = container.querySelector('button[value="NO_ACCESS"]') as HTMLButtonElement
@@ -68,7 +67,6 @@ describe('RowProject', () => {
   it('should update global header to NO_ACCESS after all rows become NO_ACCESS (AC-2)', async () => {
     project.is_admin = false
 
-    const user = userEvent.setup()
     const defaultValues = {
       project_permissions: {
         '1': {
@@ -81,7 +79,7 @@ describe('RowProject', () => {
       },
     }
 
-    const { container, getByTestId } = renderWithProviders(
+    const { container, getByTestId, userEvent } = renderWithProviders(
       wrapWithReactHookForm(<RowProject project={project} />, { defaultValues })
     )
 
@@ -89,7 +87,7 @@ describe('RowProject', () => {
     expect(headerNoAccess).not.toBeChecked()
 
     const managerCheckbox = container.querySelector('button[value="MANAGER"]') as HTMLButtonElement
-    await user.click(managerCheckbox)
+    await userEvent.click(managerCheckbox)
 
     expect(headerNoAccess).toBeChecked()
   })
@@ -97,8 +95,9 @@ describe('RowProject', () => {
   it('should be admin by default and check global select', async () => {
     project.is_admin = true
 
-    const user = userEvent.setup()
-    const { getByTestId, getAllByTestId } = renderWithProviders(wrapWithReactHookForm(<RowProject project={project} />))
+    const { getByTestId, getAllByTestId, userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<RowProject project={project} />)
+    )
 
     const input = getByTestId(`project.${OrganizationCustomRoleProjectPermissionAdmin.ADMIN}`) as HTMLInputElement
     expect(input).toBeChecked()
@@ -108,7 +107,7 @@ describe('RowProject', () => {
       expect(permission).toBeDisabled()
     }
 
-    await user.click(input)
+    await userEvent.click(input)
 
     expect(input).not.toBeChecked()
 

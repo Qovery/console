@@ -71,7 +71,7 @@ describe('MessageList', () => {
     it('should render no messages when thread is empty', () => {
       const { container } = render(<MessageList {...defaultProps} expand={true} />)
 
-      expect(container.textContent).not.toContain('Empty State')
+      expect(container).not.toHaveTextContent('Empty State')
     })
 
     it('should not render empty state when thread has messages', () => {
