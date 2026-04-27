@@ -5,8 +5,11 @@ import {
   GitRepositorySettings,
   LabelSetting,
 } from '@qovery/domains/organizations/feature'
-import { ApplicationContainerStepGeneral, GeneralContainerSettings } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
+import {
+  ApplicationContainerStepGeneral,
+  EntrypointCmdInputs,
+  GeneralContainerSettings,
+} from '@qovery/domains/services/feature'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { serviceCreateParamsSchema } from '@qovery/shared/router'
 import { useModal } from '@qovery/shared/ui'

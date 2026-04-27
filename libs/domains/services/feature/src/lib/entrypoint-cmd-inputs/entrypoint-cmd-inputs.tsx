@@ -77,5 +77,3 @@ export function EntrypointCmdInputs({
     </div>
   )
 }
-
-export default EntrypointCmdInputs

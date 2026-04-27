@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import EntrypointCmdInputs, { displayParsedCmd } from './entrypoint-cmd-inputs'
+import { EntrypointCmdInputs, displayParsedCmd } from './entrypoint-cmd-inputs'
 
 describe('EntrypointCmdInputs', () => {
   it('should render successfully', () => {

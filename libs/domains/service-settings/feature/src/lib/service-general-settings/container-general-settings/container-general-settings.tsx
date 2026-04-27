@@ -1,8 +1,12 @@
 import { type Organization } from 'qovery-typescript-axios'
 import { AnnotationSetting, LabelSetting } from '@qovery/domains/organizations/feature'
 import { type Container } from '@qovery/domains/services/data-access'
-import { AutoDeploySection, GeneralContainerSettings, GeneralSetting } from '@qovery/domains/services/feature'
-import { EntrypointCmdInputs } from '@qovery/shared/console-shared'
+import {
+  AutoDeploySection,
+  EntrypointCmdInputs,
+  GeneralContainerSettings,
+  GeneralSetting,
+} from '@qovery/domains/services/feature'
 import { Heading, Section } from '@qovery/shared/ui'
 
 export interface ContainerGeneralSettingsProps {
