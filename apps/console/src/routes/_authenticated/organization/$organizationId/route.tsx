@@ -39,6 +39,15 @@ const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
 const isDeployingStatus = (status?: ClusterStateEnum): boolean =>
   status === ClusterState.DEPLOYMENT_QUEUED || status === ClusterState.DEPLOYING
 
+const hiddenProgressCardRouteIds = [
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+  '/_authenticated/organization/$organizationId/cluster/new',
+  '/_authenticated/organization/$organizationId/cluster/create/$slug',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create',
+]
+
 function RouteComponent() {
   const matches = useMatches()
   const mergedParams = useMemo(() => {
@@ -87,6 +96,16 @@ function RouteComponent() {
     })
   }, [clusters, clusterStatuses])
 
+  const shouldHideProgressCard = useMemo(
+    () =>
+      matches.some((match) =>
+        hiddenProgressCardRouteIds.some(
+          (routeId) => match.routeId === routeId || match.routeId?.startsWith(routeId + '/')
+        )
+      ),
+    [matches]
+  )
+
   return (
     <>
       <Suspense fallback={<Loader />}>
@@ -112,7 +131,7 @@ function RouteComponent() {
             )
         )
       }
-      {deployingClusters && deployingClusters.length > 0 && (
+      {!shouldHideProgressCard && deployingClusters && deployingClusters.length > 0 && (
         <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
       )}
     </>
