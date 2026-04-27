@@ -24,6 +24,7 @@ const mockHelmRepositories = helmRepositoriesMock(2)
 
 describe('HelmRepositoryCreateEditModal', () => {
   beforeEach(() => {
+    jest.useRealTimers()
     useCreateHelmRepositoryMockSpy.mockReturnValue({
       mutateAsync: jest.fn(),
     })
