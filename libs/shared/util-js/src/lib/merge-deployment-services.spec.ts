@@ -1,6 +1,5 @@
 import { type DeploymentHistoryEnvironmentV2 } from 'qovery-typescript-axios'
-import { type DeploymentService } from '@qovery/shared/interfaces'
-import { mergeDeploymentServices } from './merge-deployment-services'
+import { type DeploymentService, mergeDeploymentServices } from './merge-deployment-services'
 
 describe('mergeDeploymentServices', () => {
   it('should correctly merge and transform services from deployment history', () => {

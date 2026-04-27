@@ -1,5 +1,10 @@
-import { type DeploymentHistoryEnvironmentV2 } from 'qovery-typescript-axios'
-import { type DeploymentService } from '@qovery/shared/interfaces'
+import { type DeploymentHistoryEnvironmentV2, type DeploymentHistoryService } from 'qovery-typescript-axios'
+import { type ServiceTypeEnum } from '@qovery/shared/enums'
+
+export interface DeploymentService extends DeploymentHistoryService {
+  execution_id: string
+  type: ServiceTypeEnum
+}
 
 export const mergeDeploymentServices = (deploymentHistory?: DeploymentHistoryEnvironmentV2[]): DeploymentService[] => {
   if (!deploymentHistory?.length) {
