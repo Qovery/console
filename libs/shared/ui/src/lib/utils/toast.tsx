@@ -1,5 +1,4 @@
 import { toast as sonnerToast } from 'sonner'
-import { match } from 'ts-pattern'
 import { CustomToast } from '../components/toast/toast'
 
 export enum ToastEnum {
@@ -8,8 +7,14 @@ export enum ToastEnum {
   WARNING = 'WARNING',
 }
 
+const TOAST_STATUS_BY_KEY: Record<keyof typeof ToastEnum, ToastEnum> = {
+  SUCCESS: ToastEnum.SUCCESS,
+  ERROR: ToastEnum.ERROR,
+  WARNING: ToastEnum.WARNING,
+}
+
 export const toast = (
-  status: ToastEnum | keyof typeof ToastEnum,
+  status: keyof typeof ToastEnum,
   title: string,
   description?: string,
   callback?: () => void,
@@ -22,13 +27,11 @@ export const toast = (
       }
     : undefined
 
-  return match(status)
-    .with(ToastEnum.SUCCESS, ToastEnum.ERROR, ToastEnum.WARNING, (toastStatus) =>
-      sonnerToast.custom((id) => (
-        <CustomToast id={id} status={toastStatus} title={title} description={description} action={action} />
-      ))
-    )
-    .exhaustive()
+  const toastStatus = TOAST_STATUS_BY_KEY[status]
+
+  return sonnerToast.custom((id) => (
+    <CustomToast id={id} status={toastStatus} title={title} description={description} action={action} />
+  ))
 }
 
 export default toast
