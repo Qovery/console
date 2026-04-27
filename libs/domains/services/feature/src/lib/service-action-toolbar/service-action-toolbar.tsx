@@ -62,6 +62,7 @@ import {
   urlCodeEditor,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
+import { DatabaseDeployModal } from '../database-deploy-modal/database-deploy-modal'
 import { ForceUnlockModal } from '../force-unlock-modal/force-unlock-modal'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
@@ -77,7 +78,7 @@ import { SelectCommitModal } from '../select-commit-modal/select-commit-modal'
 import { SelectVersionModal } from '../select-version-modal/select-version-modal'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
-import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
+import { useServiceRemoveModal } from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
 type ActionToolbarVariant = 'default' | 'deployment'
 
@@ -138,7 +139,10 @@ function MenuManageDeployment({
   const tooltipServiceNeedUpdate =
     displayYellowColor && tooltipService('Configuration has changed and needs to be applied')
 
-  const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
+  const mutationDeploy = (applyImmediately = false) => {
+    deployService({ serviceId: service.id, serviceType: service.serviceType, applyImmediately })
+  }
+
   const mutationTerraformAction = (
     action: 'plan' | 'plan_and_apply' | 'destroy' | 'force_unlock' | 'migrate_state'
   ) => {
@@ -382,6 +386,71 @@ function MenuManageDeployment({
     })
   }
 
+  const handleDatabaseDeployModal = () => {
+    openModal({
+      content: (
+        <DatabaseDeployModal
+          title="Deploy database"
+          description="Choose when to deploy and apply your changes"
+          actions={[
+            {
+              id: 'next',
+              title: 'Next maintenance window',
+              description: (
+                <div className="flex flex-col gap-2 text-neutral-350">
+                  Redeploy your database and apply changes during the next maintenance window.
+                </div>
+              ),
+              icon: 'calendar-clock',
+              callback: () => {
+                try {
+                  mutationDeploy(false)
+                } catch (error) {
+                  console.error(error)
+                }
+              },
+            },
+            {
+              id: 'immediately',
+              title: 'Immediately',
+              description: (
+                <div className="flex flex-col gap-2 text-neutral-350">
+                  <div className="flex flex-col gap-1">
+                    <span>Redeploy your database and apply changes immediately.</span>
+                    <p>
+                      <span className="font-bold">Be careful, </span>
+                      <span>your database may be unavailable for a few minutes during this process.</span>
+                    </p>
+                  </div>
+                </div>
+              ),
+              icon: 'timer',
+              callback: () => {
+                try {
+                  mutationDeploy(true)
+                } catch (error) {
+                  console.error(error)
+                }
+              },
+            },
+          ]}
+          submitButtonText="Confirm"
+        />
+      ),
+      options: {
+        width: 740,
+      },
+    })
+  }
+
+  const handleDeploy = () => {
+    if (service.serviceType === 'DATABASE' && service.mode === 'MANAGED') {
+      handleDatabaseDeployModal()
+    } else {
+      mutationDeploy(false)
+    }
+  }
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -461,7 +530,7 @@ function MenuManageDeployment({
               {isDeployAvailable(state) && (
                 <DropdownMenu.Item
                   icon={<Icon iconName="play" />}
-                  onSelect={mutationDeploy}
+                  onSelect={handleDeploy}
                   className="relative"
                   color={displayYellowColor ? 'yellow' : 'brand'}
                 >
