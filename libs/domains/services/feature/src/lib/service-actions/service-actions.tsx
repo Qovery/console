@@ -19,8 +19,6 @@ import {
   type Job,
   type Terraform,
 } from '@qovery/domains/services/data-access'
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { ForceRunModalFeature } from '@qovery/shared/console-shared'
 import {
   isHelmGitSource,
   isHelmGitValuesOverride,
@@ -40,6 +38,7 @@ import {
   twMerge,
 } from '@qovery/shared/util-js'
 import { ConfirmationCancelLifecycleModal } from '../confirmation-cancel-lifecycle-modal/confirmation-cancel-lifecycle-modal'
+import { ForceRunModal } from '../force-run-modal/force-run-modal'
 import { ForceUnlockModal } from '../force-unlock-modal/force-unlock-modal'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
@@ -486,7 +485,7 @@ function MenuManageDeployment({
                       onSelect={() =>
                         openModal({
                           content: (
-                            <ForceRunModalFeature
+                            <ForceRunModal
                               organizationId={environment.organization.id}
                               projectId={environment.project.id}
                               service={service}
