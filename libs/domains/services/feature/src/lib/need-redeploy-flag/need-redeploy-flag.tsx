@@ -60,7 +60,6 @@ export function NeedRedeployFlag() {
                 </div>
               ),
               icon: 'calendar-clock',
-              color: 'brand',
               callback: () => {
                 try {
                   mutationDeployService(false)
@@ -84,7 +83,6 @@ export function NeedRedeployFlag() {
                 </div>
               ),
               icon: 'timer',
-              color: 'brand',
               callback: () => {
                 try {
                   mutationDeployService(true)

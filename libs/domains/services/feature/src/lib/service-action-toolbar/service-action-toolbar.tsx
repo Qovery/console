@@ -402,7 +402,6 @@ function MenuManageDeployment({
                 </div>
               ),
               icon: 'calendar-clock',
-              color: 'brand',
               callback: () => {
                 try {
                   mutationDeploy(false)
@@ -426,7 +425,6 @@ function MenuManageDeployment({
                 </div>
               ),
               icon: 'timer',
-              color: 'brand',
               callback: () => {
                 try {
                   mutationDeploy(true)

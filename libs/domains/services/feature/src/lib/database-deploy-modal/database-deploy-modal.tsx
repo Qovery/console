@@ -16,7 +16,6 @@ interface ActionItem {
   callback: (data: DatabaseDeployModalData) => void
   description?: ReactNode
   icon?: IconName
-  color?: 'brand' | 'red' | 'yellow' | 'green' | 'neutral'
 }
 
 export interface DatabaseDeployModalProps extends PropsWithChildren {
@@ -107,12 +106,7 @@ export function DatabaseDeployModal({
           <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
             Cancel
           </Button>
-          <Button
-            type="submit"
-            size="lg"
-            color={selectedAction?.color ? selectedAction?.color : 'brand'}
-            disabled={!isValid}
-          >
+          <Button type="submit" size="lg" color="brand" disabled={!isValid}>
             {submitButtonText ?? selectedAction?.title}
           </Button>
         </div>
