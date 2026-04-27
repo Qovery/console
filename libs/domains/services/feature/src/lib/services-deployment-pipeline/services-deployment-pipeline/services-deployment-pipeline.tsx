@@ -2,7 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type DeploymentStageResponse } from 'qovery-typescript-axios'
 import { type Dispatch, type SetStateAction, useEffect, useMemo, useState } from 'react'
-import { toast as toastAction } from 'react-hot-toast'
+import { toast as toastAction } from 'sonner'
 import { match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { IconEnum } from '@qovery/shared/enums'
@@ -140,7 +140,7 @@ export function ServicesDeploymentPipeline() {
   const servicesById = useMemo(() => new Map((services ?? []).map((service) => [service.id, service])), [services])
 
   const onSubmit = (newStage: StageRequest, prevStage: StageRequest) => {
-    toastAction.remove()
+    toastAction.dismiss()
 
     if (newStage.stageId === prevStage.stageId) {
       return

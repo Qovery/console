@@ -45,7 +45,6 @@ export function useCancelDeploymentService({
               ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
               ENVIRONMENT_STAGES_URL(data.last_deployment_id ?? ''),
           }),
-        undefined,
         'See deployment logs'
       )
     },

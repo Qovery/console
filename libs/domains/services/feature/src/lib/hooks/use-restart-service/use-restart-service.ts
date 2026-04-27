@@ -44,7 +44,6 @@ export function useRestartService({
                 serviceId: data.id,
               },
             }),
-          undefined,
           'See deployment queue'
         )
       } else {
@@ -59,7 +58,6 @@ export function useRestartService({
               // TODO new-nav: This should redirect to the deployment details page that we don't have yet (should redirect to '/stages' aka pipeline view, but without the executionId)
               to: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
             }),
-          undefined,
           'See deployment logs'
         )
       }

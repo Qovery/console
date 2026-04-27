@@ -53,8 +53,7 @@ export function useDeployService({
               serviceId: data.id,
             },
           }),
-        undefined,
-        'See deployment queue'
+        'See queue'
       )
     },
     meta: {

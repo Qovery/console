@@ -1,81 +1,90 @@
+import { toast as sonnerToast } from 'sonner'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { ToastEnum } from '../../utils/toast'
-import ToastBehavior, { ToastContent, type ToastProps } from './toast'
-
-const props: ToastProps = {
-  status: ToastEnum.SUCCESS,
-}
+import { ToastEnum, toast } from '../../utils/toast'
+import ToastBehavior from './toast'
 
 describe('Toast', () => {
+  beforeAll(() => {
+    // jsdom does not implement pointer capture, which sonner uses for swipe-to-dismiss.
+    window.HTMLElement.prototype.setPointerCapture = jest.fn()
+    window.HTMLElement.prototype.releasePointerCapture = jest.fn()
+    window.HTMLElement.prototype.hasPointerCapture = jest.fn()
+  })
+
+  afterEach(() => {
+    sonnerToast.dismiss()
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<ToastBehavior />)
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render a toast content', () => {
-    props.status = ToastEnum.SUCCESS
-    const { baseElement } = renderWithProviders(ToastContent(props.status))
-    expect(baseElement).toBeTruthy()
+  it('should render a title and a description', async () => {
+    renderWithProviders(<ToastBehavior />)
+
+    toast(ToastEnum.SUCCESS, 'my-title', 'my-description')
+
+    expect(await screen.findByText('my-title')).toBeInTheDocument()
+    expect(await screen.findByText('my-description')).toBeInTheDocument()
   })
 
-  it('should have a error icon', () => {
-    props.status = ToastEnum.ERROR
-    renderWithProviders(ToastContent(props.status))
+  it('should render a success icon', async () => {
+    const { baseElement } = renderWithProviders(<ToastBehavior />)
 
-    const toast = screen.queryByTestId('toast') as HTMLDivElement
-    const icon = toast.querySelector('i.fa-solid.fa-circle-exclamation')
+    toast(ToastEnum.SUCCESS, 'my-title')
 
-    expect(icon).toBeInTheDocument()
+    await screen.findByText('my-title')
+    expect(baseElement.querySelector('i.fa-regular.fa-circle-check')).toBeInTheDocument()
   })
 
-  it('should have a title', () => {
-    props.title = 'my-title'
+  it('should render an error icon', async () => {
+    const { baseElement } = renderWithProviders(<ToastBehavior />)
 
-    renderWithProviders(ToastContent(props.status, undefined, props.title))
+    toast(ToastEnum.ERROR, 'my-title')
 
-    const toastTitle = screen.queryByTestId('toast-title') as HTMLParagraphElement
-
-    expect(toastTitle?.textContent).toBe('my-title')
+    await screen.findByText('my-title')
+    expect(baseElement.querySelector('i.fa-regular.fa-circle-xmark')).toBeInTheDocument()
   })
 
-  it('should have a description', () => {
-    props.description = 'my-description'
+  it('should render a warning icon', async () => {
+    const { baseElement } = renderWithProviders(<ToastBehavior />)
 
-    renderWithProviders(ToastContent(props.status, undefined, '', props.description))
+    toast(ToastEnum.WARNING, 'my-title')
 
-    const toastTitle = screen.queryByTestId('toast-description') as HTMLParagraphElement
-
-    expect(toastTitle?.textContent).toBe('my-description')
+    await screen.findByText('my-title')
+    expect(baseElement.querySelector('i.fa-regular.fa-triangle-exclamation')).toBeInTheDocument()
   })
 
-  it('should render with a label and no icon', async () => {
-    props.description = 'my-description'
-    props.externalLink = 'https://my-link.com'
-    props.actionLabel = 'my-label'
+  it('should render an action button when label action is provided', async () => {
+    renderWithProviders(<ToastBehavior />)
 
-    const spy = jest.fn()
-    window.open = jest.fn((url: string, target: string) => ({}))
+    toast(ToastEnum.SUCCESS, 'my-title', 'my-description', undefined, 'Undo')
 
-    const { userEvent } = renderWithProviders(
-      ToastContent(
-        props.status,
-        undefined,
-        '',
-        props.description,
-        spy,
-        undefined,
-        props.actionLabel,
-        props.externalLink
-      )
-    )
+    expect(await screen.findByRole('button', { name: 'Undo' })).toBeInTheDocument()
+  })
 
-    const labelActionButton = screen.queryByTestId('label-action') as HTMLElement
+  it('should call the callback and dismiss the toast when the action button is clicked', async () => {
+    const callback = jest.fn()
+    const { userEvent } = renderWithProviders(<ToastBehavior />)
 
-    expect(labelActionButton).toHaveTextContent('my-label')
+    toast(ToastEnum.SUCCESS, 'my-title', 'my-description', callback, 'Undo')
 
-    await userEvent.click(labelActionButton)
+    const actionButton = await screen.findByRole('button', { name: 'Undo' })
+    await userEvent.click(actionButton)
 
-    expect(spy).toHaveBeenCalled()
-    expect(window.open).toHaveBeenCalledWith('https://my-link.com', '_blank')
+    expect(callback).toHaveBeenCalledTimes(1)
+  })
+
+  it('should dismiss the toast when the close button is clicked', async () => {
+    const { userEvent } = renderWithProviders(<ToastBehavior />)
+
+    toast(ToastEnum.SUCCESS, 'my-title')
+
+    const closeButton = await screen.findByRole('button', { name: 'Close toast' })
+    await userEvent.click(closeButton)
+
+    await new Promise((resolve) => setTimeout(resolve, 500))
+    expect(screen.queryByText('my-title')).not.toBeInTheDocument()
   })
 })

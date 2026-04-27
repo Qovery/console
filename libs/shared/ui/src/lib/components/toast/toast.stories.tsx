@@ -6,12 +6,6 @@ import { ToastBehavior, type ToastProps } from './toast'
 export default {
   component: ToastBehavior,
   title: 'Toaster',
-  argTypes: {
-    actionIcon: {
-      options: ['gear', 'plus', 'book', 'key'],
-      control: { type: 'select' },
-    },
-  },
 } as Meta
 
 const Template: StoryFn<ToastProps> = (args) => {
@@ -20,17 +14,7 @@ const Template: StoryFn<ToastProps> = (args) => {
       <Button
         type="button"
         size="lg"
-        onClick={() =>
-          toast(
-            args.status,
-            args.title || '',
-            args.description,
-            args.callback,
-            args.actionIcon,
-            args.actionLabel,
-            args.externalLink
-          )
-        }
+        onClick={() => toast(args.status, args.title || '', args.description, args.callback, args.actionLabel)}
       >
         Trigger toast
       </Button>
@@ -48,14 +32,13 @@ Primary.args = {
   callback: () => console.log('my-callback'),
 }
 
-export const WithActionIcon = Template.bind({})
+export const Secondary = Template.bind({})
 
-WithActionIcon.args = {
+Secondary.args = {
   status: ToastEnum.SUCCESS,
   title: 'Cluster installed',
   description: '3 applications has been deployed',
   callback: () => console.log('my-callback'),
-  actionIcon: 'pen',
 }
 export const WithActionLabel = Template.bind({})
 
@@ -65,5 +48,4 @@ WithActionLabel.args = {
   description: '3 applications has been deployed',
   callback: () => console.log('my-callback'),
   actionLabel: 'Redeploy',
-  externalLink: 'https://www.google.com',
 }

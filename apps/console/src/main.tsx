@@ -1,5 +1,4 @@
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
-import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import * as Sentry from '@sentry/react'
 import {
@@ -44,9 +43,7 @@ type ToastArgs = {
   title: string
   description?: string
   callback?: () => void
-  iconAction?: IconName
   labelAction?: string
-  externalLink?: string
 }
 
 const SENTRY_DSN = 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024'
@@ -99,13 +96,11 @@ const queryClient = new QueryClient({
             title,
             description,
             callback,
-            iconAction,
             labelAction,
-            externalLink,
           } = typeof mutation.meta.notifyOnSuccess === 'function'
             ? mutation.meta.notifyOnSuccess(data, variables, context, mutation)
             : mutation.meta.notifyOnSuccess
-          toast(status, title, description, callback, iconAction, labelAction, externalLink)
+          toast(status, title, description, callback, labelAction)
         }
       }
     },
@@ -130,13 +125,11 @@ const queryClient = new QueryClient({
             title,
             description,
             callback,
-            iconAction,
             labelAction,
-            externalLink,
           } = typeof query.meta.notifyOnSuccess === 'function'
             ? query.meta.notifyOnSuccess(data, query)
             : query.meta.notifyOnSuccess
-          toast(status, title, description, callback, iconAction, labelAction, externalLink)
+          toast(status, title, description, callback, labelAction)
         }
       }
     },

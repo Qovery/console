@@ -6140,7 +6140,6 @@ __metadata:
     react-error-boundary: 4.0.13
     react-flat-providers: 2.2.0
     react-hook-form: 7.52.0
-    react-hot-toast: 2.4.0
     react-markdown: 9.0.3
     react-payment-inputs: 1.1.9
     react-refresh: 0.14.0
@@ -6154,6 +6153,7 @@ __metadata:
     remark-gfm: 4.0.1
     semantic-release: 19.0.5
     shell-quote: 1.8.1
+    sonner: 2.0.7
     storybook: 9.1.10
     style-loader: 3.3.3
     styled-components: 5.3.11
@@ -17978,15 +17978,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"goober@npm:^2.1.10":
-  version: 2.1.12
-  resolution: "goober@npm:2.1.12"
-  peerDependencies:
-    csstype: ^3.0.10
-  checksum: 5945cbe92413031b8859d9087d125a744149e237c8bcf6c15db1998ee3d1b6d680ee4a47dd420f95684b76f72eebc34e98155e8a1cb06748d00cbdc05ede186d
-  languageName: node
-  linkType: hard
-
 "goober@npm:^2.1.16":
   version: 2.1.18
   resolution: "goober@npm:2.1.18"
@@ -26300,18 +26291,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hot-toast@npm:2.4.0":
-  version: 2.4.0
-  resolution: "react-hot-toast@npm:2.4.0"
-  dependencies:
-    goober: ^2.1.10
-  peerDependencies:
-    react: ">=16"
-    react-dom: ">=16"
-  checksum: 910214496d6821af8e643c5f7087eff6c76f1395756f3d6cf1fc07a599c582c443cbb5a4cadfc58205acf0845b77a2a10a4ca49b385e772b72edc57dfd38d016
-  languageName: node
-  linkType: hard
-
 "react-is@npm:^16.13.1, react-is@npm:^16.7.0":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -28507,6 +28486,16 @@ __metadata:
     ip: ^2.0.0
     smart-buffer: ^4.2.0
   checksum: 259d9e3e8e1c9809a7f5c32238c3d4d2a36b39b83851d0f573bfde5f21c4b1288417ce1af06af1452569cd1eb0841169afd4998f0e04ba04656f6b7f0e46d748
+  languageName: node
+  linkType: hard
+
+"sonner@npm:2.0.7":
+  version: 2.0.7
+  resolution: "sonner@npm:2.0.7"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+    react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
+  checksum: 17b521c2603662478cf86d21436dcfee7316785b4654456c5f37c1a15af35001953354653c5ff1239d91f04969835728daddbc61fa9a81a76ee075eb18073bae
   languageName: node
   linkType: hard
 

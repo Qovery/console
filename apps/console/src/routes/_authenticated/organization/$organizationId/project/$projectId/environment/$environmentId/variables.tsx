@@ -50,7 +50,6 @@ function RouteComponent() {
                     'Creation success',
                     'You need to redeploy your environment for your changes to be applied.',
                     toasterCallback,
-                    undefined,
                     'Redeploy'
                   )
                 }
@@ -70,7 +69,6 @@ function RouteComponent() {
                   'Creation success',
                   'You need to redeploy your environment for your changes to be applied.',
                   toasterCallback,
-                  undefined,
                   'Redeploy'
                 )
               }}
@@ -80,7 +78,6 @@ function RouteComponent() {
                   'Edition success',
                   'You need to redeploy your environment for your changes to be applied.',
                   toasterCallback,
-                  undefined,
                   'Redeploy'
                 )
               }}
@@ -94,7 +91,6 @@ function RouteComponent() {
                   'Deletion success',
                   `${name} has been deleted. You need to redeploy your environment for your changes to be applied.`,
                   toasterCallback,
-                  undefined,
                   'Redeploy'
                 )
               }}
