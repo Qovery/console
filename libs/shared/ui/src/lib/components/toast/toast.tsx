@@ -1,5 +1,5 @@
 import { Toaster, toast as sonnerToast } from 'sonner'
-import { twMerge } from 'tailwind-merge'
+import { twMerge } from '@qovery/shared/util-js'
 import { type ToastStatus } from '../../utils/toast'
 import Button from '../button/button'
 import { Icon } from '../icon/icon'
