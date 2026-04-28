@@ -8,6 +8,7 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { queries } from '@qovery/state/util-queries'
+import { type FileRouteTypes } from '../../../../routeTree.gen'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId')({
   component: RouteComponent,
@@ -39,14 +40,19 @@ const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
 const isDeployingStatus = (status?: ClusterStateEnum): boolean =>
   status === ClusterState.DEPLOYMENT_QUEUED || status === ClusterState.DEPLOYING
 
-const hiddenProgressCardRouteIds = [
+const hiddenProgressCardRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
   '/_authenticated/organization/$organizationId/cluster/new',
   '/_authenticated/organization/$organizationId/cluster/create/$slug',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform',
 ]
 
 function RouteComponent() {
