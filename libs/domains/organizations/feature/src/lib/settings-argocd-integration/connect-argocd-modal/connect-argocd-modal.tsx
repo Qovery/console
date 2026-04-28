@@ -2,7 +2,7 @@ import { type Cluster } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCheckArgoCdConnection, useClusters, useSaveArgoCdCredentials } from '@qovery/domains/clusters/feature'
-import { CopyButton, ExternalLink, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { CopyButton, ExternalLink, Heading, InputSelect, InputText, ModalCrud, Section } from '@qovery/shared/ui'
 
 interface ConnectArgoCdFormValues {
   targetCluster: string
@@ -149,8 +149,8 @@ export function ConnectArgoCdModal({
         }
       >
         <div className="flex flex-col gap-3">
-          <div className="rounded-md border border-neutral bg-surface-neutral p-4">
-            <h3 className="text-sm font-medium text-neutral">1. Select the cluster hosting your ArgoCD instance</h3>
+          <Section className="rounded-md border border-neutral bg-surface-neutral p-4">
+            <Heading className="text-sm">1. Select the cluster hosting your ArgoCD instance</Heading>
             <div className="mt-4">
               <Controller
                 name="targetCluster"
@@ -171,10 +171,10 @@ export function ConnectArgoCdModal({
                 )}
               />
             </div>
-          </div>
+          </Section>
 
-          <div className="rounded-md border border-neutral bg-surface-neutral p-4">
-            <h3 className="text-sm font-medium text-neutral">2. ArgoCD API endpoint</h3>
+          <Section className="rounded-md border border-neutral bg-surface-neutral p-4">
+            <Heading className="text-sm">2. ArgoCD API endpoint</Heading>
             <p className="mt-1 text-sm text-neutral-subtle">Enter the URL used to reach the ArgoCD API server.</p>
             <ExternalLink href={ARGOCD_API_ENDPOINT_GUIDE_URL} className="mt-1">
               How to find the ArgoCD API endpoint
@@ -198,19 +198,22 @@ export function ConnectArgoCdModal({
                 )}
               />
             </div>
-          </div>
+          </Section>
 
-          <div className="rounded-md border border-neutral bg-surface-neutral p-4">
-            <h3 className="text-sm font-medium text-neutral">
+          <Section className="rounded-md border border-neutral bg-surface-neutral p-4">
+            <Heading className="text-sm">
               {isEdit ? '3. Generate a new access token' : '3. Generate an access token'}
-            </h3>
+            </Heading>
             <p className="mt-1 text-sm text-neutral-subtle">
               {isEdit
                 ? 'For security reasons, Qovery cannot show the saved token. Paste a new one to update the connection.'
                 : 'Generate an API token from your ArgoCD instance and paste it below.'}
             </p>
             <div className="mt-2 flex items-center justify-between rounded-md border border-neutral bg-surface-neutral-subtle p-3">
-              <span className="text-sm text-neutral">$ {ARGOCD_TOKEN_COMMAND}</span>
+              <span className="text-sm text-neutral">
+                <span className="select-none">$ </span>
+                {ARGOCD_TOKEN_COMMAND}
+              </span>
               <CopyButton content={ARGOCD_TOKEN_COMMAND} />
             </div>
             <div className="mt-2">
@@ -233,7 +236,7 @@ export function ConnectArgoCdModal({
                 )}
               />
             </div>
-          </div>
+          </Section>
 
           {connectionError ? <p className="text-sm text-negative">{connectionError}</p> : null}
         </div>

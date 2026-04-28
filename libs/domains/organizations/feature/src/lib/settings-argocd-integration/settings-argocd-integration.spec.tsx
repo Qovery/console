@@ -1,8 +1,10 @@
 import { useParams } from '@tanstack/react-router'
-import { useDeleteArgoCdCredentials } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useOrganizationArgoCdIntegrations } from '../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations'
 import { SettingsArgoCdIntegration } from './settings-argocd-integration'
+
+const mockOpenModal = jest.fn()
+const mockCloseModal = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -11,9 +13,12 @@ jest.mock('@tanstack/react-router', () => ({
 jest.mock('../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations', () => ({
   useOrganizationArgoCdIntegrations: jest.fn(),
 }))
-jest.mock('@qovery/domains/clusters/feature', () => ({
-  ...jest.requireActual('@qovery/domains/clusters/feature'),
-  useDeleteArgoCdCredentials: jest.fn(),
+jest.mock('@qovery/shared/ui', () => ({
+  ...jest.requireActual('@qovery/shared/ui'),
+  useModal: () => ({
+    openModal: mockOpenModal,
+    closeModal: mockCloseModal,
+  }),
 }))
 
 describe('SettingsArgoCdIntegration', () => {
@@ -21,15 +26,11 @@ describe('SettingsArgoCdIntegration', () => {
   const useOrganizationArgoCdIntegrationsMock = useOrganizationArgoCdIntegrations as jest.MockedFunction<
     typeof useOrganizationArgoCdIntegrations
   >
-  const useDeleteArgoCdCredentialsMock = useDeleteArgoCdCredentials as jest.MockedFunction<
-    typeof useDeleteArgoCdCredentials
-  >
 
   beforeEach(() => {
     useParamsMock.mockReturnValue({ organizationId: 'org-1' } as never)
-    useDeleteArgoCdCredentialsMock.mockReturnValue({
-      mutateAsync: jest.fn(),
-    } as ReturnType<typeof useDeleteArgoCdCredentials>)
+    mockOpenModal.mockReset()
+    mockCloseModal.mockReset()
   })
 
   it('should render an empty state when no integration is configured', () => {
@@ -44,18 +45,41 @@ describe('SettingsArgoCdIntegration', () => {
     expect(screen.getByRole('button', { name: 'Add ArgoCD' })).toBeInTheDocument()
   })
 
-  it('should render configured integrations', () => {
+  it('should render integration cards with linked and unlinked sections', () => {
     useOrganizationArgoCdIntegrationsMock.mockReturnValue({
       data: [
         {
           id: 'integration-1',
-          clusterId: 'cluster-1',
-          clusterName: 'Cluster 1',
-          clusterCloudProvider: 'AWS',
+          agentClusterId: 'cluster-1',
+          agentClusterName: 'undeletable_cluster',
+          agentClusterCloudProvider: 'AWS',
           argoCdUrl: 'https://argocd.example.com',
-          lastCheckedAt: '2026-04-27T10:00:00.000Z',
-          createdAt: '2026-04-26T10:00:00.000Z',
-          updatedAt: '2026-04-27T10:00:00.000Z',
+          status: 'connected',
+          lastCheckedAt: '2026-04-28T12:20:00.000Z',
+          linkedClusters: [
+            {
+              id: 'linked-1',
+              destinationCluster: 'https://kubernetes.default.svc',
+              clusterId: 'cluster-1',
+              clusterName: 'AWS EKS Demo',
+              cloudProvider: 'AWS',
+              clusterType: 'Qovery managed',
+              argocdName: 'kube-system',
+              applicationsCount: 4,
+            },
+          ],
+          unlinkedClusters: [
+            {
+              id: 'unlinked-1',
+              destinationCluster: 'https://unmapped.example.com',
+              clusterId: null,
+              clusterName: null,
+              cloudProvider: null,
+              clusterType: null,
+              argocdName: 'external-prod',
+              applicationsCount: 7,
+            },
+          ],
         },
       ],
       isLoading: false,
@@ -63,8 +87,10 @@ describe('SettingsArgoCdIntegration', () => {
 
     renderWithProviders(<SettingsArgoCdIntegration />)
 
-    expect(screen.getByText('Configured integrations')).toBeInTheDocument()
-    expect(screen.getByText('Cluster 1')).toBeInTheDocument()
-    expect(screen.getByText('https://argocd.example.com')).toBeInTheDocument()
+    expect(screen.getByText('ArgoCD running on')).toBeInTheDocument()
+    expect(screen.getByText('Linked clusters (1)')).toBeInTheDocument()
+    expect(screen.getByText('Unlinked clusters (1)')).toBeInTheDocument()
+    expect(screen.getByText('AWS EKS Demo')).toBeInTheDocument()
+    expect(screen.getByText('Connected')).toBeInTheDocument()
   })
 })
