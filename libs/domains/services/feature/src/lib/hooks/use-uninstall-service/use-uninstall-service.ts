@@ -29,7 +29,7 @@ export function useUninstallService({
       })
 
       toast(
-        'SUCCESS',
+        'success',
         'Your service is queuing',
         undefined,
         () =>

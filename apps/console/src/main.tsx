@@ -17,7 +17,7 @@ import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { IntercomProvider } from 'react-use-intercom'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
-import { LoaderSpinner, ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { LoaderSpinner, type ToastStatus, toast, toastError } from '@qovery/shared/ui'
 import {
   DEVOPS_COPILOT_API_BASE_URL,
   GIT_SHA,
@@ -39,7 +39,7 @@ import { Auth0Wrapper, useAuth0Context } from './auth/auth0'
 import { routeTree } from './routeTree.gen'
 
 type ToastArgs = {
-  status?: ToastEnum
+  status?: ToastStatus
   title: string
   description?: string
   callback?: () => void
@@ -89,10 +89,10 @@ const queryClient = new QueryClient({
     onSuccess(data, variables, context, mutation) {
       if (mutation.meta?.notifyOnSuccess) {
         if (mutation.meta.notifyOnSuccess === true) {
-          toast(ToastEnum.SUCCESS, JSON.stringify(data))
+          toast('success', JSON.stringify(data))
         } else {
           const {
-            status = ToastEnum.SUCCESS,
+            status = 'success',
             title,
             description,
             callback,
@@ -118,10 +118,10 @@ const queryClient = new QueryClient({
     onSuccess(data, query) {
       if (query.meta?.notifyOnSuccess) {
         if (query.meta.notifyOnSuccess === true) {
-          toast(ToastEnum.SUCCESS, JSON.stringify(data))
+          toast('success', JSON.stringify(data))
         } else {
           const {
-            status = ToastEnum.SUCCESS,
+            status = 'success',
             title,
             description,
             callback,

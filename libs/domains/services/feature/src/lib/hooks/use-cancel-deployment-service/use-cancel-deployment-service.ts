@@ -36,7 +36,7 @@ export function useCancelDeploymentService({
       })
 
       toast(
-        'SUCCESS',
+        'success',
         'Your environment deployment is cancelling',
         undefined,
         () =>

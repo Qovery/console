@@ -1,5 +1,5 @@
 import type { Meta, StoryFn } from '@storybook/react-webpack5'
-import { ToastEnum, toast } from '../../utils/toast'
+import { toast } from '../../utils/toast'
 import Button from '../button/button'
 import { ToastBehavior, type ToastProps } from './toast'
 
@@ -26,7 +26,7 @@ const Template: StoryFn<ToastProps> = (args) => {
 export const Primary = Template.bind({})
 
 Primary.args = {
-  status: ToastEnum.SUCCESS,
+  status: 'success',
   title: 'Cluster installed',
   description: '3 applications has been deployed',
   callback: () => console.log('my-callback'),
@@ -35,7 +35,7 @@ Primary.args = {
 export const Secondary = Template.bind({})
 
 Secondary.args = {
-  status: ToastEnum.SUCCESS,
+  status: 'success',
   title: 'Cluster installed',
   description: '3 applications has been deployed',
   callback: () => console.log('my-callback'),
@@ -43,7 +43,7 @@ Secondary.args = {
 export const WithActionLabel = Template.bind({})
 
 WithActionLabel.args = {
-  status: ToastEnum.SUCCESS,
+  status: 'success',
   title: 'Cluster installed',
   description: '3 applications has been deployed',
   callback: () => console.log('my-callback'),

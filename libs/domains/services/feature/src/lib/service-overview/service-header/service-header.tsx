@@ -11,7 +11,7 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { Badge, Button, ExternalLink, Heading, Icon, ToastEnum, Tooltip, Truncate, toast } from '@qovery/shared/ui'
+import { Badge, Button, ExternalLink, Heading, Icon, Tooltip, Truncate, toast } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -101,7 +101,7 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
     }
     const connectionURI = getDatabaseConnectionUri(databaseSource, credentials)
     copyToClipboard(connectionURI)
-    toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
+    toast('success', 'Credentials copied to clipboard')
   }
 
   return (

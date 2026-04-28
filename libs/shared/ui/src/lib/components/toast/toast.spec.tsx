@@ -1,6 +1,6 @@
 import { toast as sonnerToast } from 'sonner'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { ToastEnum, toast } from '../../utils/toast'
+import { toast } from '../../utils/toast'
 import ToastBehavior from './toast'
 
 describe('Toast', () => {
@@ -23,7 +23,7 @@ describe('Toast', () => {
   it('should render a title and a description', async () => {
     renderWithProviders(<ToastBehavior />)
 
-    toast(ToastEnum.SUCCESS, 'my-title', 'my-description')
+    toast('success', 'my-title', 'my-description')
 
     expect(await screen.findByText('my-title')).toBeInTheDocument()
     expect(await screen.findByText('my-description')).toBeInTheDocument()
@@ -32,7 +32,7 @@ describe('Toast', () => {
   it('should render a success icon', async () => {
     const { baseElement } = renderWithProviders(<ToastBehavior />)
 
-    toast(ToastEnum.SUCCESS, 'my-title')
+    toast('success', 'my-title')
 
     await screen.findByText('my-title')
     expect(baseElement.querySelector('i.fa-regular.fa-circle-check')).toBeInTheDocument()
@@ -41,7 +41,7 @@ describe('Toast', () => {
   it('should render an error icon', async () => {
     const { baseElement } = renderWithProviders(<ToastBehavior />)
 
-    toast(ToastEnum.ERROR, 'my-title')
+    toast('error', 'my-title')
 
     await screen.findByText('my-title')
     expect(baseElement.querySelector('i.fa-regular.fa-circle-xmark')).toBeInTheDocument()
@@ -50,7 +50,7 @@ describe('Toast', () => {
   it('should render a warning icon', async () => {
     const { baseElement } = renderWithProviders(<ToastBehavior />)
 
-    toast(ToastEnum.WARNING, 'my-title')
+    toast('warning', 'my-title')
 
     await screen.findByText('my-title')
     expect(baseElement.querySelector('i.fa-regular.fa-triangle-exclamation')).toBeInTheDocument()
@@ -59,7 +59,7 @@ describe('Toast', () => {
   it('should render an action button when label action is provided', async () => {
     renderWithProviders(<ToastBehavior />)
 
-    toast(ToastEnum.SUCCESS, 'my-title', 'my-description', undefined, 'Undo')
+    toast('success', 'my-title', 'my-description', undefined, 'Undo')
 
     expect(await screen.findByRole('button', { name: 'Undo' })).toBeInTheDocument()
   })
@@ -68,7 +68,7 @@ describe('Toast', () => {
     const callback = jest.fn()
     const { userEvent } = renderWithProviders(<ToastBehavior />)
 
-    toast(ToastEnum.SUCCESS, 'my-title', 'my-description', callback, 'Undo')
+    toast('success', 'my-title', 'my-description', callback, 'Undo')
 
     const actionButton = await screen.findByRole('button', { name: 'Undo' })
     await userEvent.click(actionButton)
@@ -79,7 +79,7 @@ describe('Toast', () => {
   it('should dismiss the toast when the close button is clicked', async () => {
     const { userEvent } = renderWithProviders(<ToastBehavior />)
 
-    toast(ToastEnum.SUCCESS, 'my-title')
+    toast('success', 'my-title')
 
     const closeButton = await screen.findByRole('button', { name: 'Close toast' })
     await userEvent.click(closeButton)

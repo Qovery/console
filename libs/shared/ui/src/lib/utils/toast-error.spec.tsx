@@ -1,4 +1,4 @@
-import toast, { ToastEnum } from './toast'
+import toast from './toast'
 import { toastError } from './toast-error'
 
 jest.mock('./toast', () => {
@@ -18,7 +18,7 @@ describe('error toaster', () => {
     const title = 'error title'
 
     toastError(null, title, message)
-    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, title, message, undefined, undefined)
+    expect(toast).toHaveBeenCalledWith('error', title, message, undefined, undefined)
   })
 
   it('should call error toaster with error name and error message', () => {
@@ -28,18 +28,18 @@ describe('error toaster', () => {
     }
 
     toastError(error)
-    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, 'error', 'error message', undefined, undefined)
+    expect(toast).toHaveBeenCalledWith('error', 'error', 'error message', undefined, undefined)
   })
 
   it('should call error toaster with default error name', () => {
     const error = {}
     toastError(error)
-    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, 'Error', 'No message found', undefined, undefined)
+    expect(toast).toHaveBeenCalledWith('error', 'Error', 'No message found', undefined, undefined)
   })
 
   it('should call error toaster with label action', () => {
     const error = {}
     toastError(error, undefined, undefined, undefined, 'label')
-    expect(toast).toHaveBeenCalledWith(ToastEnum.ERROR, 'Error', 'No message found', undefined, 'label')
+    expect(toast).toHaveBeenCalledWith('error', 'Error', 'No message found', undefined, 'label')
   })
 })

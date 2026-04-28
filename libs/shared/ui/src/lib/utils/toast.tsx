@@ -1,20 +1,10 @@
 import { toast as sonnerToast } from 'sonner'
 import { CustomToast } from '../components/toast/toast'
 
-export enum ToastEnum {
-  SUCCESS = 'SUCCESS',
-  ERROR = 'ERROR',
-  WARNING = 'WARNING',
-}
-
-const TOAST_STATUS_BY_KEY: Record<keyof typeof ToastEnum, ToastEnum> = {
-  SUCCESS: ToastEnum.SUCCESS,
-  ERROR: ToastEnum.ERROR,
-  WARNING: ToastEnum.WARNING,
-}
+export type ToastStatus = 'success' | 'error' | 'warning'
 
 export const toast = (
-  status: keyof typeof ToastEnum,
+  status: ToastStatus,
   title: string,
   description?: string,
   callback?: () => void,
@@ -27,10 +17,8 @@ export const toast = (
       }
     : undefined
 
-  const toastStatus = TOAST_STATUS_BY_KEY[status]
-
   return sonnerToast.custom((id) => (
-    <CustomToast id={id} status={toastStatus} title={title} description={description} action={action} />
+    <CustomToast id={id} status={status} title={title} description={description} action={action} />
   ))
 }
 

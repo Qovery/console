@@ -31,7 +31,7 @@ export function useRestartService({
 
       if (data.deployment_request_id) {
         toast(
-          'SUCCESS',
+          'success',
           'Your service is queuing',
           undefined,
           () =>
@@ -50,7 +50,7 @@ export function useRestartService({
         // XXX: Waiting for the fix of https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1434
         // to implement the correct deployment redirection using `execution_id`
         toast(
-          'SUCCESS',
+          'success',
           'Your service is restarting',
           undefined,
           () =>

@@ -1,10 +1,11 @@
 import { Toaster, toast as sonnerToast } from 'sonner'
-import { type ToastEnum } from '../../utils/toast'
+import { twMerge } from 'tailwind-merge'
+import { type ToastStatus } from '../../utils/toast'
 import Button from '../button/button'
 import { Icon } from '../icon/icon'
 
 export interface ToastProps {
-  status: ToastEnum
+  status: ToastStatus
   title?: string
   description?: string
   callback?: () => void
@@ -18,19 +19,19 @@ export interface ToastActionProps {
 
 export interface CustomToastProps {
   id: string | number
-  status: ToastEnum
+  status: ToastStatus
   title: string
   description?: string
   action?: ToastActionProps
 }
 
 const statusIcon: Record<
-  ToastEnum,
+  ToastStatus,
   { iconName: 'circle-check' | 'circle-xmark' | 'triangle-exclamation'; className: string }
 > = {
-  SUCCESS: { iconName: 'circle-check', className: 'text-positive' },
-  ERROR: { iconName: 'circle-xmark', className: 'text-negative' },
-  WARNING: { iconName: 'triangle-exclamation', className: 'text-warning' },
+  success: { iconName: 'circle-check', className: 'text-positive' },
+  error: { iconName: 'circle-xmark', className: 'text-negative' },
+  warning: { iconName: 'triangle-exclamation', className: 'text-warning' },
 }
 
 export function CustomToast({ id, status, title, description, action }: CustomToastProps) {
@@ -48,7 +49,7 @@ export function CustomToast({ id, status, title, description, action }: CustomTo
         color="neutral"
         iconOnly
         aria-label="Close toast"
-        className="absolute right-2 top-2.5 text-neutral-subtle hover:!bg-transparent hover:!text-neutral"
+        className="absolute right-2 top-2.5 text-neutral-subtle hover:bg-transparent hover:text-neutral"
         onClick={() => sonnerToast.dismiss(id)}
       >
         <Icon iconName="xmark" iconStyle="regular" />
@@ -58,7 +59,7 @@ export function CustomToast({ id, status, title, description, action }: CustomTo
           <Icon
             iconStyle="regular"
             iconName={statusIcon[status].iconName}
-            className={`${statusIcon[status].className} text-ssm`}
+            className={twMerge(statusIcon[status].className)}
           />
           {title}
         </p>

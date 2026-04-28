@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { toast } from '@qovery/shared/ui'
 import type { CopilotContextData, Message } from '../../devops-copilot-panel'
 import { submitVote } from '../../submit-vote'
 
@@ -25,7 +25,7 @@ export function useVoteHandler({ thread, setThread, userId, withContext, context
         await submitVote(userId, messageId, vote, withContext ? context : { organization: context.organization })
 
         if (nextVote) {
-          toast(ToastEnum.SUCCESS, `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
+          toast('success', `Message successfully ${nextVote === 'upvote' ? 'upvoted' : 'downvoted'}`)
         }
       } catch (error) {
         console.error('Error sending vote:', error)

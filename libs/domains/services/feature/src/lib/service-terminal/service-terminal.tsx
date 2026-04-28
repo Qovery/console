@@ -138,7 +138,7 @@ export function ServiceTerminal({
 
       if (event.code !== 1006 && event.reason) {
         setTerminalLaunchError(event.reason)
-        toast('ERROR', 'Not available', event.reason)
+        toast('error', 'Not available', event.reason)
       }
     },
     [detachWebSocket]

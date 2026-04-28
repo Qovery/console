@@ -13,7 +13,7 @@ import {
   useEditCloudProviderInfo,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { BlockContent, Button, Section, ToastEnum, toast } from '@qovery/shared/ui'
+import { BlockContent, Button, Section, toast } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
@@ -67,7 +67,7 @@ function ClusterCredentialsSettingsForm() {
         cloudProviderInfoRequest: clusterCloudProviderInfoRequest,
       })
     } else {
-      toast(ToastEnum.ERROR, 'Please select a credential')
+      toast('error', 'Please select a credential')
     }
   })
 

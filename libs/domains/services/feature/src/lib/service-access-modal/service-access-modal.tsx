@@ -13,7 +13,6 @@ import {
   LoaderSpinner,
   Section,
   TabsPrimitives,
-  ToastEnum,
   Tooltip,
   toast,
 } from '@qovery/shared/ui'
@@ -68,7 +67,7 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
   const handleCopyCredentials = (credentials: Credentials) => {
     const connectionURI = getDatabaseConnectionUri(service, credentials)
     copyToClipboard(connectionURI)
-    toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
+    toast('success', 'Credentials copied to clipboard')
   }
 
   const title = match(service)

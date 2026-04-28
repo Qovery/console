@@ -1,5 +1,5 @@
 import { type SerializedError } from '@qovery/shared/utils'
-import toast, { ToastEnum } from './toast'
+import toast from './toast'
 
 export function toastError(
   error: SerializedError | Error,
@@ -9,7 +9,7 @@ export function toastError(
   labelAction?: string
 ): void {
   toast(
-    ToastEnum.ERROR,
+    'error',
     title || error.name || 'Error',
     description || error.message || 'No message found',
     callback,
