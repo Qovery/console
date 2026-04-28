@@ -1,18 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useRouter } from '@tanstack/react-router'
 import type { AxiosError } from 'axios'
 import { mutations } from '@qovery/domains/variables/data-access'
-import {
-  APPLICATION_URL,
-  APPLICATION_VARIABLES_URL,
-  ENVIRONMENTS_URL,
-  ENVIRONMENTS_VARIABLES_URL,
-  SERVICES_URL,
-  SERVICES_VARIABLES_URL,
-} from '@qovery/shared/routes'
 import { toastError } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
 export function useCreateVariable() {
+  const { buildLocation } = useRouter()
   const queryClient = useQueryClient()
   return useMutation(mutations.createVariable, {
     onSuccess() {
@@ -34,10 +28,25 @@ export function useCreateVariable() {
             service_id: serviceId,
           } = error.response.data.existing_variable
           const url = serviceId
-            ? `${APPLICATION_URL(orgId, projectId, envId, serviceId)}${APPLICATION_VARIABLES_URL}`
+            ? buildLocation({
+                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables',
+                params: {
+                  organizationId: orgId,
+                  projectId,
+                  environmentId: envId,
+                  serviceId,
+                },
+              }).href
             : envId
-              ? `${SERVICES_URL(orgId, projectId, envId)}${SERVICES_VARIABLES_URL}`
-              : `${ENVIRONMENTS_URL(orgId, projectId)}${ENVIRONMENTS_VARIABLES_URL}`
+              ? buildLocation({
+                  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/variables',
+                  params: {
+                    organizationId: orgId,
+                    projectId,
+                    environmentId: envId,
+                  },
+                }).href
+              : ''
           toastError(
             error,
             'Conflict',
