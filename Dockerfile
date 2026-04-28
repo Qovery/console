@@ -46,14 +46,14 @@ RUN --mount=type=cache,target=/root/.yarn \
 # Copy source files (use .dockerignore to exclude unnecessary files)
 COPY . .
 
-# Build console-v5 with NX cache mount for faster rebuilds
+# Build console with NX cache mount for faster rebuilds
 RUN --mount=type=cache,target=/app/node_modules/.cache/nx \
-    yarn nx build console-v5 --configuration=production
+    yarn nx build console --configuration=production
 
 # Bundle static assets with nginx
 FROM nginx:1.25-alpine
 # Copy built assets from builder
-COPY --from=builder /app/dist/apps/console-v5 /usr/share/nginx/html
+COPY --from=builder /app/dist/apps/console /usr/share/nginx/html
 # Add your nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 # Expose port
