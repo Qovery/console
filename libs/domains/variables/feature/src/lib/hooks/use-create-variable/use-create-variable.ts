@@ -46,7 +46,13 @@ export function useCreateVariable() {
                     environmentId: envId,
                   },
                 }).href
-              : ''
+              : buildLocation({
+                  to: '/organization/$organizationId/project/$projectId/variables',
+                  params: {
+                    organizationId: orgId,
+                    projectId,
+                  },
+                }).href
           toastError(
             error,
             'Conflict',
