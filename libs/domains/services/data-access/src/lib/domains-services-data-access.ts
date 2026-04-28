@@ -239,6 +239,13 @@ export const services = createQueryKeys('services', {
       return result.data
     },
   }),
+  listArgoCdServices: (environmentId: string) => ({
+    queryKey: [environmentId],
+    async queryFn() {
+      const response = await environmentApi.listServicesByEnvironmentId(environmentId)
+      return (response.data.results ?? []).filter((service) => service.service_type === 'ARGOCD_APP')
+    },
+  }),
   list: (environmentId: string) => ({
     queryKey: [environmentId],
     async queryFn() {

@@ -69,6 +69,10 @@ const serviceIcons = {
     icon: '/assets/services/application.svg',
     title: 'Application',
   },
+  'app://qovery-console/argocd': {
+    icon: '/assets/services/argocd.svg',
+    title: 'ArgoCD',
+  },
 
   // Devicons
   'app://qovery-console/apache': { icon: Apache, title: 'Apache' },
