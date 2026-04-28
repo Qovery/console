@@ -69,7 +69,6 @@ import {
   type TerraformDeploymentRestrictionRequest,
   TerraformMainCallsApi,
   type TerraformRequest,
-  type TerraformRequestDockerfileFragment,
   TerraformsApi,
   type Application as _Application,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -244,12 +243,13 @@ export const services = createQueryKeys('services', {
     queryKey: [environmentId],
     async queryFn() {
       const response = await environmentApi.listServicesByEnvironmentId(environmentId)
-      return (response.data.results || []).map((service) =>
-        match(service)
+      return (response.data.results || []).reduce<AnyService[]>((acc, service) => {
+        const mappedService = match(service)
           .with({ service_type: 'APPLICATION' }, (s) => ({
             ...s,
             serviceType: 'APPLICATION' as const,
           }))
+          .with({ service_type: 'ARGOCD_APP' }, () => null)
           .with({ service_type: 'CONTAINER' }, (s) => ({
             ...s,
             serviceType: 'CONTAINER' as const,
@@ -271,7 +271,13 @@ export const services = createQueryKeys('services', {
             serviceType: 'TERRAFORM' as const,
           }))
           .exhaustive()
-      ) as AnyService[]
+
+        if (mappedService) {
+          acc.push(mappedService as AnyService)
+        }
+
+        return acc
+      }, [])
     },
   }),
   status: ({ id: serviceId, serviceType }: { id: string; serviceType: ServiceType }) => ({
