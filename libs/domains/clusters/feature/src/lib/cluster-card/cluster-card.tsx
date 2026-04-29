@@ -37,7 +37,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
         className="group flex truncate"
         onClick={(e) => e.stopPropagation()}
       >
-        <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand-11">
+        <AnimatedGradientText shimmerWidth={80} className="group-hover:text-brand">
           <span className="flex items-center gap-0.5">
             {s === 'DRY_RUN' ? 'Evaluating changes (dry-run) ' : upperCaseFirstLetter(s) + '...'}{' '}
             <Icon iconName="arrow-up-right" />

@@ -258,7 +258,7 @@ export function CpuChart({
             dataKey="p90"
             name="p90"
             type="linear"
-            stroke="var(--color-red-400)"
+            stroke="#FF946F"
             strokeWidth={2}
             connectNulls={false}
             dot={false}

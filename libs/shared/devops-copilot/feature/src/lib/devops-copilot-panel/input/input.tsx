@@ -16,7 +16,7 @@ export const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, sto
     <div
       className={twMerge(
         clsx('relative z-[1] flex rounded-xl border border-neutral bg-background', {
-          'border-brand-strong outline outline-[3px] outline-brand-4': isFocus,
+          'border-brand-strong outline outline-[3px] outline-brand-outline': isFocus,
         })
       )}
     >

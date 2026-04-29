@@ -45,7 +45,7 @@ describe('EventSidebar', () => {
       reason: 'Container exited',
       icon: 'warning',
       key: 'container-abc123',
-      color: 'var(--color-yellow-500)',
+      color: '#F4C004',
       description: 'Exit code 1',
       pod: 'bc123',
     },

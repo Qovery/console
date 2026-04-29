@@ -34,7 +34,7 @@ export function ImageTag({
               <span>{version}</span>
               <Tooltip classNameContent="z-10" content="Image tag cannot be latest to ensure consistent deployment">
                 <span>
-                  <Icon iconName="circle-info" iconStyle="regular" className="text-base text-neutral-400" />
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-base text-neutral" />
                 </span>
               </Tooltip>
             </span>

@@ -39,7 +39,7 @@ Single.args = {
   isSearchable: false,
   menuListButton: {
     label: 'New element',
-    icon: <Icon iconName="circle-plus" className="text-brand-500" />,
+    icon: <Icon iconName="circle-plus" className="text-brand" />,
     onClick: () => console.log('new element'),
   },
 }

@@ -96,7 +96,7 @@ export function RdsDiskQueueDepthChart({
         dataKey="Disk Queue Depth"
         name="Disk Queue Depth"
         type="linear"
-        stroke="var(--color-purple-500)"
+        stroke="#B160F0"
         strokeWidth={2}
         dot={false}
         connectNulls={false}

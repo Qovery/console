@@ -143,16 +143,16 @@ export function ServiceLogsPlaceholder({
       <div className="flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col gap-1">
           {hasDeploymentIdFilter ? (
-            <p className="text-neutral-50">No logs found for the selected deployment id</p>
+            <p className="text-neutral">No logs found for the selected deployment id</p>
           ) : (
-            <p className="text-neutral-50">
+            <p className="text-neutral">
               {hasFilters
                 ? 'No logs found for the selected filters'
                 : `No logs are available for your service ${serviceName}`}
             </p>
           )}
           {databaseMode === DatabaseModeEnum.MANAGED && (
-            <p className="text-sm text-neutral-350">
+            <p className="text-sm text-neutral-subtle">
               Managed databases are handled by your cloud provider. Logs are accessible in your cloud provider console
             </p>
           )}

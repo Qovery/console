@@ -87,7 +87,7 @@ exports[`ClusterActions should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-rotate-right text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-rotate-right text-sm mr-2 min-w-5 text-brand"
         />
         Update
       </div>
@@ -100,7 +100,7 @@ exports[`ClusterActions should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-circle-stop text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-circle-stop text-sm mr-2 min-w-5 text-brand"
         />
         Stop
       </div>
@@ -203,7 +203,7 @@ exports[`ClusterActions should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-circle-info text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-circle-info text-sm mr-2 min-w-5 text-brand"
         />
         Access info
       </div>
@@ -216,7 +216,7 @@ exports[`ClusterActions should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand"
         />
         See audit logs
       </div>
@@ -229,7 +229,7 @@ exports[`ClusterActions should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand"
         />
         Copy identifier
       </div>
@@ -242,7 +242,7 @@ exports[`ClusterActions should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-download text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-download text-sm mr-2 min-w-5 text-brand"
         />
         Get Kubeconfig
       </div>
@@ -363,7 +363,7 @@ exports[`ClusterActions should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-circle-info text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-circle-info text-sm mr-2 min-w-5 text-brand"
         />
         Access info
       </div>
@@ -376,7 +376,7 @@ exports[`ClusterActions should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand"
         />
         See audit logs
       </div>
@@ -389,7 +389,7 @@ exports[`ClusterActions should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand"
         />
         Copy identifier
       </div>
@@ -402,7 +402,7 @@ exports[`ClusterActions should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-download text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-download text-sm mr-2 min-w-5 text-brand"
         />
         Get Kubeconfig
       </div>

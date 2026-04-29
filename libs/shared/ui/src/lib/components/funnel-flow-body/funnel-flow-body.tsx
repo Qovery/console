@@ -27,7 +27,7 @@ export function FunnelFlowBody(props: PropsWithChildren<FunnelFlowBodyProps>) {
           <aside className="sticky top-0 hidden w-[30%] pl-10 pt-14 lg:block">
             <div
               data-testid="funnel-body-help"
-              className={`max-w-[22.5rem] rounded border-b border-l border-neutral-200 bg-neutral-50 p-8 ${
+              className={`max-w-[22.5rem] rounded border-b border-l border-neutral bg-surface-neutral p-8 ${
                 props.helpSectionClassName || ''
               }`}
             >

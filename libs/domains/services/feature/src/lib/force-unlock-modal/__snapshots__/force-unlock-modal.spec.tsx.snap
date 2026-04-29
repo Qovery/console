@@ -52,12 +52,12 @@ exports[`ForceUnlockModal should match snapshot 1`] = `
           for="acknowledge"
         >
           <span
-            class="font-medium text-neutral-400"
+            class="font-medium text-neutral"
           >
             No other Terraform job is executing before continuing
           </span>
           <span
-            class="text-neutral-350"
+            class="text-neutral-subtle"
           >
             Unlocking while another deployment is running may corrupt the Terraform state.
           </span>

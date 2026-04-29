@@ -12,7 +12,7 @@ export function ModalAlert(props: ModalAlertProps) {
   return (
     <Dialog.Root open={props.isOpen} onOpenChange={() => setModalAlertOpen(!props.isOpen)}>
       <Dialog.Portal>
-        <Dialog.Overlay className="modal__overlay fixed left-0 top-0 z-overlay flex h-screen w-full bg-neutral-700/40" />
+        <Dialog.Overlay className="modal__overlay fixed left-0 top-0 z-overlay flex h-screen w-full bg-background-overlay" />
         <Dialog.Content
           data-testid="modal-alert"
           style={{ width: `470px`, top: '200px' }}

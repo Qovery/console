@@ -12,10 +12,10 @@ export function GCPVpcFeature() {
   }
 
   return (
-    <div className="flex flex-col justify-between rounded border border-neutral-250 bg-neutral-100 p-4">
+    <div className="flex flex-col justify-between rounded border border-neutral bg-surface-neutral p-4">
       <div className="flex justify-between">
         <div>
-          <h4 className="mb-1 text-sm font-medium text-neutral-400">Deploy on an existing VPC</h4>
+          <h4 className="mb-1 text-sm font-medium text-neutral">Deploy on an existing VPC</h4>
           <ExternalLink
             href="https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#use-existing-vpc"
             className="mb-4"

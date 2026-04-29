@@ -112,7 +112,7 @@ export function PrivateNetworkRequestSizeChart({
         key="response-size"
         dataKey="Response size"
         type="linear"
-        stroke="var(--color-brand-400)"
+        stroke="#847AE6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -123,7 +123,7 @@ export function PrivateNetworkRequestSizeChart({
         key="request-size"
         dataKey="Request size"
         type="linear"
-        stroke="var(--color-purple-400)"
+        stroke="#CB87F6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}

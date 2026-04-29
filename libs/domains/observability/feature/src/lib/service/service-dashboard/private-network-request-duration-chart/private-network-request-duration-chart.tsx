@@ -136,7 +136,7 @@ export function PrivateNetworkRequestDurationChart({
         key="50th-percentile"
         dataKey="p50"
         type="linear"
-        stroke="var(--color-purple-400)"
+        stroke="#CB87F6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -147,7 +147,7 @@ export function PrivateNetworkRequestDurationChart({
         key="95th-percentile"
         dataKey="p95"
         type="linear"
-        stroke="var(--color-brand-400)"
+        stroke="#847AE6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -158,7 +158,7 @@ export function PrivateNetworkRequestDurationChart({
         key="99th-percentile"
         dataKey="p99"
         type="linear"
-        stroke="var(--color-purple-600)"
+        stroke="#8B46CE"
         strokeWidth={2}
         dot={false}
         connectNulls={false}

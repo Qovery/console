@@ -119,7 +119,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-circle-stop text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-circle-stop text-sm mr-2 min-w-5 text-brand"
         />
         <div
           class="flex w-full items-center justify-between"
@@ -168,7 +168,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-rotate text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-rotate text-sm mr-2 min-w-5 text-brand"
         />
         Deploy latest version for..
       </div>
@@ -284,7 +284,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand"
         />
         See audit logs
       </a>
@@ -297,7 +297,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand"
         />
         Copy identifier
       </div>
@@ -310,7 +310,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-file-export text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-file-export text-sm mr-2 min-w-5 text-brand"
         />
         Export as Terraform
       </div>
@@ -323,7 +323,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand"
         />
         Clone
       </div>

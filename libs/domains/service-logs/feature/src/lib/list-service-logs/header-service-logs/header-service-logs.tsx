@@ -90,7 +90,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             color={isLiveMode ? 'brand' : 'neutral'}
             size="md"
             className={clsx('gap-1.5 pl-2.5', {
-              'bg-brand-500/10 hover:!bg-brand-500/20 focus:!bg-brand-500/20': isLiveMode,
+              'bg-surface-brand-subtle hover:!bg-surface-brand-component focus:!bg-surface-brand-component': isLiveMode,
             })}
             onClick={() => {
               if (!isLiveMode) {

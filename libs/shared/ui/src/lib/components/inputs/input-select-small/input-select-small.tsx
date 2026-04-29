@@ -57,7 +57,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
         value={value}
         disabled={disabled}
         className={twMerge(
-          'h-9 w-full cursor-pointer appearance-none rounded border border-neutral bg-surface-neutral px-3 pr-6 text-sm text-neutral transition-colors hover:bg-surface-neutral-component focus:border-brand-strong focus:outline focus:outline-[2px] focus:outline-offset-0 focus:outline-brand-4 disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-neutral-subtle disabled:hover:bg-surface-neutral',
+          'h-9 w-full cursor-pointer appearance-none rounded border border-neutral bg-surface-neutral px-3 pr-6 text-sm text-neutral transition-colors hover:bg-surface-neutral-component focus:border-brand-strong focus:outline focus:outline-[2px] focus:outline-offset-0 focus:outline-brand-outline disabled:cursor-not-allowed disabled:bg-surface-neutral disabled:text-neutral-subtle disabled:hover:bg-surface-neutral',
           inputClassName
         )}
         onChange={(e) => onClickItem(e.target.value)}

@@ -105,7 +105,7 @@ export default function StepPlans(props: StepPlansProps) {
           <form onSubmit={onSubmit} className="flex flex-1 flex-col">
             <div className="mb-8">
               {!showCardFields && (
-                <div className="rounded-md border border-neutral-200 bg-white p-4 text-sm text-neutral-350">
+                <div className="rounded-md border border-neutral bg-white p-4 text-sm text-neutral-subtle">
                   Preparing secure card fields...
                 </div>
               )}
@@ -136,13 +136,13 @@ export default function StepPlans(props: StepPlansProps) {
                 </Provider>
               )}
             </div>
-            <div className="mb-4 rounded-lg border border-brand-200 bg-brand-50 p-4 text-neutral-400 lg:hidden">
+            <div className="mb-4 rounded-lg border border-brand-subtle bg-surface-brand-subtle p-4 text-neutral lg:hidden">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-neutral-400">{selectedPlan.title}</p>
-                  <p className="text-sm text-brand-500">{getSelectedPlanPrice()}</p>
+                  <p className="text-sm font-medium text-neutral">{selectedPlan.title}</p>
+                  <p className="text-sm text-brand">{getSelectedPlanPrice()}</p>
                 </div>
-                <button type="button" className="text-sm text-neutral-350 underline" onClick={onChangePlan}>
+                <button type="button" className="text-sm text-neutral-subtle underline" onClick={onChangePlan}>
                   Change plan
                 </button>
               </div>
@@ -200,52 +200,50 @@ export default function StepPlans(props: StepPlansProps) {
           </form>
         </div>
       </div>
-      <div className="relative hidden flex-1 overflow-hidden rounded-lg border border-brand-200 lg:block">
+      <div className="relative hidden flex-1 overflow-hidden rounded-lg border border-brand-subtle lg:block">
         <Background />
 
         <div className="relative p-8">
-          <h2 className="h4 mb-6 text-center text-neutral-400">
-            Make the most out of Qovery with our <span className="text-brand-500">14-days free trial</span>
+          <h2 className="h4 mb-6 text-center text-neutral">
+            Make the most out of Qovery with our <span className="text-brand">14-days free trial</span>
           </h2>
-          <div className="rounded-md border border-brand-200 bg-white">
+          <div className="rounded-md border border-brand-subtle bg-white">
             <div className="flex border-b p-6">
               <div className="mr-4 flex flex-col items-center">
-                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-500 text-white">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-surface-brand-solid text-white">
                   <Icon iconName="rocket" iconStyle="regular" className="text-sm" />
                 </div>
                 <div className="flex flex-1 flex-col">
-                  <div className="w-2 flex-1 rounded-b-full bg-brand-500"></div>
-                  <div className="w-2 flex-1 bg-brand-50"></div>
+                  <div className="w-2 flex-1 rounded-b-full bg-surface-brand-solid"></div>
+                  <div className="w-2 flex-1 bg-surface-brand-subtle"></div>
                 </div>
-                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-50 text-brand-500">
+                <div className="flex h-8 w-8 items-center justify-center rounded-md bg-surface-brand-subtle text-brand">
                   <Icon iconName="calendar" iconStyle="regular" className="text-sm" />
                 </div>
-                <div className="w-2 flex-1 bg-brand-50"></div>
-                <div className="mb-7 flex h-8 w-8 items-center justify-center rounded-md bg-brand-50 text-brand-500">
+                <div className="w-2 flex-1 bg-surface-brand-subtle"></div>
+                <div className="mb-7 flex h-8 w-8 items-center justify-center rounded-md bg-surface-brand-subtle text-brand">
                   <Icon iconName="crown" iconStyle="regular" className="text-sm" />
                 </div>
               </div>
               <div>
                 <div className="mb-8">
-                  <h3 className="mb-1 text-sm font-medium text-neutral-400">
+                  <h3 className="mb-1 text-sm font-medium text-neutral">
                     Today: Start you trial and deploy your first app
                   </h3>
-                  <p className="text-ssm font-normal text-neutral-350">
+                  <p className="text-ssm font-normal text-neutral-subtle">
                     Access to the full extend of our features with your dedicated Qovery plan.
                   </p>
                 </div>
                 <div className="mb-8">
-                  <h3 className="mb-1 text-sm font-medium text-neutral-400">
-                    {trialReminderDate}: Approaching trial end{' '}
-                  </h3>
-                  <p className="text-ssm font-normal text-neutral-350">
+                  <h3 className="mb-1 text-sm font-medium text-neutral">{trialReminderDate}: Approaching trial end </h3>
+                  <p className="text-ssm font-normal text-neutral-subtle">
                     Take a moment to review your setup before moving to your full plan. Your remaining days are always
                     visible.
                   </p>
                 </div>
                 <div>
-                  <h3 className="mb-1 text-sm font-medium text-neutral-400">{welcomeOnboardDate}: Welcome onboard! </h3>
-                  <p className="text-ssm font-normal text-neutral-350">
+                  <h3 className="mb-1 text-sm font-medium text-neutral">{welcomeOnboardDate}: Welcome onboard! </h3>
+                  <p className="text-ssm font-normal text-neutral-subtle">
                     Your subscription will start automatically. You can cancel at anytime.{' '}
                   </p>
                 </div>
@@ -254,16 +252,16 @@ export default function StepPlans(props: StepPlansProps) {
             <div className="p-6">
               <div className="flex justify-between">
                 <div>
-                  <p className="text-sm text-neutral-400">{selectedPlan.title}</p>
-                  <p className="mb-2 text-sm text-brand-500">{getSelectedPlanPrice()}</p>
-                  <button type="button" className="text-sm text-neutral-350 underline" onClick={onChangePlan}>
+                  <p className="text-sm text-neutral">{selectedPlan.title}</p>
+                  <p className="mb-2 text-sm text-brand">{getSelectedPlanPrice()}</p>
+                  <button type="button" className="text-sm text-neutral-subtle underline" onClick={onChangePlan}>
                     Change plan
                   </button>
                 </div>
                 <div>
                   {selectedPlan.list &&
                     selectedPlan.list.slice(0, 4).map((item) => (
-                      <div key={item} className="mb-1 flex items-center text-sm text-neutral-400">
+                      <div key={item} className="mb-1 flex items-center text-sm text-neutral">
                         <Icon iconName="circle-check" iconStyle="regular" className="mr-2 text-green-500" />
                         {item}
                       </div>

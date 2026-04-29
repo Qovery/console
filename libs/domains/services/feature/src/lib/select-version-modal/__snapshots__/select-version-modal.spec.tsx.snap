@@ -9,12 +9,12 @@ exports[`SelectVersionModal should match snapshot 1`] = `
       class="flex flex-col gap-2 text-sm"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
+        class="h4 max-w-sm truncate text-neutral"
       >
         Deploy other version
       </h2>
       <p
-        class="text-neutral-350 dark:text-neutral-50"
+        class="text-neutral-subtle"
       >
         Type a version to deploy
       </p>
@@ -160,12 +160,12 @@ exports[`SelectVersionModal should match snapshot with helm version 1`] = `
       class="flex flex-col gap-2 text-sm"
     >
       <h2
-        class="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50"
+        class="h4 max-w-sm truncate text-neutral"
       >
         Deploy other version
       </h2>
       <p
-        class="text-neutral-350 dark:text-neutral-50"
+        class="text-neutral-subtle"
       >
         Type a version to deploy
       </p>

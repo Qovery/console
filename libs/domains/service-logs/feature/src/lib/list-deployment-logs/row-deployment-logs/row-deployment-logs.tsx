@@ -43,7 +43,7 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
       className={twMerge(
         clsx('group mb-0.5 flex min-h-6 select-none bg-surface-neutral text-xs', {
           'hover:bg-surface-neutral-subtle': !isHighlighted,
-          'bg-neutral-550': isHighlighted,
+          'bg-surface-neutral-componentHover': isHighlighted,
         })
       )}
     >

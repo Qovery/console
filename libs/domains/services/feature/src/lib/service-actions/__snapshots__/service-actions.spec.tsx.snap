@@ -123,7 +123,7 @@ exports[`ServiceActions should match manage deployment snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand"
         />
         Deploy another chart version
       </div>
@@ -237,7 +237,7 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand"
         />
         Audit logs
       </a>
@@ -250,7 +250,7 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand"
         />
         Copy identifiers
       </div>
@@ -263,7 +263,7 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand-9"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand"
         />
         Clone
       </div>

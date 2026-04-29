@@ -121,13 +121,13 @@ export function ClusterRunningStatusIndicator({
             )}
           </Badge>
         </Popover.Trigger>
-        <Popover.Content className="w-full max-w-96 border border-neutral-400 bg-neutral-700 p-0 text-sm text-white">
+        <Popover.Content className="w-full max-w-96 border border-neutral bg-surface-neutral p-0 text-sm text-neutral">
           {Object.entries(s.node_warnings).map(([key, message]) => (
             <div
               key={key}
               className={twMerge(
                 clsx(
-                  'flex items-center gap-[9px] border-b border-neutral-400 p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-yellow-500 last:border-0',
+                  'flex items-center gap-[9px] border-b border-neutral p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-yellow-500 last:border-0',
                   {
                     'before:bg-green-500': !isFeatureFlag,
                   }
@@ -179,13 +179,13 @@ export function ClusterRunningStatusIndicator({
             )}
           </Badge>
         </Popover.Trigger>
-        <Popover.Content className="w-full max-w-96 border border-neutral-400 bg-neutral-700 p-0 text-sm text-white">
+        <Popover.Content className="w-full max-w-96 border border-neutral bg-surface-neutral p-0 text-sm text-neutral">
           {s.qovery_components_in_failure.map((c) => (
             <div
               key={c.component_name}
               className={twMerge(
                 clsx(
-                  'flex items-center gap-[9px] border-b border-neutral-400 p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-red-500 last:border-0',
+                  'flex items-center gap-[9px] border-b border-neutral p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-red-500 last:border-0',
                   {
                     'before:bg-green-500': !isFeatureFlag,
                   }

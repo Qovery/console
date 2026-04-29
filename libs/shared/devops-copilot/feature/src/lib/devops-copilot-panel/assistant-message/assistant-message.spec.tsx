@@ -17,11 +17,11 @@ jest.mock('../../utils/icon-utils/icon-utils', () => ({
   },
   getIconClass: (status: string) => {
     const classMap: Record<string, string> = {
-      not_started: 'text-neutral-400',
+      not_started: 'text-neutral',
       in_progress: 'text-blue-500',
       completed: 'text-green-500',
     }
-    return classMap[status] || 'text-neutral-400'
+    return classMap[status] || 'text-neutral'
   },
 }))
 

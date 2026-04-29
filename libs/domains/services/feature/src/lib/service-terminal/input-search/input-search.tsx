@@ -55,7 +55,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
         />
         <input
           placeholder={placeholder}
-          className="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-8 focus:outline-none focus:transition-[border-color]"
+          className="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]"
           {...getInputProps({ ref: inputRef })}
         />
       </div>

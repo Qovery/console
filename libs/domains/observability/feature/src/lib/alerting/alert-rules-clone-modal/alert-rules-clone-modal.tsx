@@ -208,7 +208,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
                       onFocus={() => {
                         setIsDropdownOpen(true)
                       }}
-                      className="h-10 w-full rounded border border-neutral bg-transparent pl-10 pr-6 text-sm leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-11 focus:outline-none focus:transition-[border-color]"
+                      className="h-10 w-full rounded border border-neutral bg-transparent pl-10 pr-6 text-sm leading-none text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]"
                     />
                     {searchValue && (
                       <button
