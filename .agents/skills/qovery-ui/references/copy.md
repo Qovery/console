@@ -10,14 +10,14 @@
 
 ## Tone Rules
 
-| Do | Don't |
-|---|---|
-| State what happened + what to do next | State only an error code with no context |
-| Use active voice ("Deploy failed" not "Deployment was not completed") | Use passive voice to obscure agency |
-| Match the user's technical register ("cluster", "namespace", "pipeline") | Translate technical terms into vague metaphors |
-| Use sentence case for UI labels | Use ALL CAPS or Title Case For Everything |
-| Be specific about the failing entity ("Service `api-prod` failed to start") | Be generic ("An error occurred") |
-| Write labels as nouns or noun phrases | Write labels as full sentences with periods |
+| Do                                                                          | Don't                                          |
+| --------------------------------------------------------------------------- | ---------------------------------------------- |
+| State what happened + what to do next                                       | State only an error code with no context       |
+| Use active voice ("Deploy failed" not "Deployment was not completed")       | Use passive voice to obscure agency            |
+| Match the user's technical register ("cluster", "namespace", "pipeline")    | Translate technical terms into vague metaphors |
+| Use sentence case for UI labels                                             | Use ALL CAPS or Title Case For Everything      |
+| Be specific about the failing entity ("Service `api-prod` failed to start") | Be generic ("An error occurred")               |
+| Write labels as nouns or noun phrases                                       | Write labels as full sentences with periods    |
 
 ---
 
@@ -29,14 +29,14 @@ We address the user as **"you"** — this is consistent across the product. Don'
 
 ## UI Copy Patterns
 
-| Element | Rule |
-|---|---|
-| Button | Lead with the verb. 1–2 words ideal, 3 max. If it needs more, the surrounding context isn't doing its job. |
-| Destructive button | Name the object: "Delete service", not "Confirm" |
-| Labels and headings | Sentence case. No trailing periods. Questions get `?`, statements get nothing. |
-| Hint below a field | One line max. Clarifies a constraint or format — not a feature description. "Must be lowercase" is a hint. "Services are deployable units" is not. |
-| Modal title | Name the action, not the object. "Delete environment" not "Environment". Never "Settings", "Edit", or "Details" alone. |
-| Tooltip | One sentence, no period. For icon-only controls, make it a verb phrase: "Copy to clipboard" |
+| Element             | Rule                                                                                                                                               |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Button              | Lead with the verb. 1–2 words ideal, 3 max. If it needs more, the surrounding context isn't doing its job.                                         |
+| Destructive button  | Name the object: "Delete service", not "Confirm"                                                                                                   |
+| Labels and headings | Sentence case. No trailing periods. Questions get `?`, statements get nothing.                                                                     |
+| Hint below a field  | One line max. Clarifies a constraint or format — not a feature description. "Must be lowercase" is a hint. "Services are deployable units" is not. |
+| Modal title         | Name the action, not the object. "Delete environment" not "Environment". Never "Settings", "Edit", or "Details" alone.                             |
+| Tooltip             | One sentence, no period. For icon-only controls, make it a verb phrase: "Copy to clipboard"                                                        |
 
 ---
 

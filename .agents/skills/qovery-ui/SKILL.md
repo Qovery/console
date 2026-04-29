@@ -25,14 +25,14 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 
 ## Commands
 
-| Command | When to use |
-|---|---|
-| `/qovery-ui audit` | Full design review of a component or page |
-| `/qovery-ui polish` | Targeted spacing, color, and rhythm refinement |
+| Command                | When to use                                    |
+| ---------------------- | ---------------------------------------------- |
+| `/qovery-ui audit`     | Full design review of a component or page      |
+| `/qovery-ui polish`    | Targeted spacing, color, and rhythm refinement |
 | `/qovery-ui component` | Find the right component or scaffold a new one |
-| `/qovery-ui copy` | Review or write microcopy |
-| `/qovery-ui motion` | Audit or add animation |
-| `/qovery-ui craft` | Design something new from scratch |
+| `/qovery-ui copy`      | Review or write microcopy                      |
+| `/qovery-ui motion`    | Audit or add animation                         |
+| `/qovery-ui craft`     | Design something new from scratch              |
 
 ---
 
@@ -41,6 +41,7 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 **Load:** `references/colors.md`, `references/spacing.md`, `references/anti-patterns.md`, `references/accessibility.md`
 
 Four-phase review. Label every finding:
+
 - `[blocking]` — ships broken, violates semantic rules, or breaks accessibility
 - `[important]` — degrades experience, likely to cause design review rejection
 - `[nit]` — minor inconsistency, low impact
@@ -52,11 +53,11 @@ Four-phase review. Label every finding:
 
 Output format — a single markdown table, one row per issue:
 
-| Location | Severity | Issue | Fix |
-|---|---|---|---|
-| `ServiceRow.tsx:42` | `[blocking]` | `text-green-500` used for running state | Replace with `text-positive` |
-| `Modal.tsx:18` | `[important]` | Modal title is "Settings" | Rename to the action: "Configure autoscaling" |
-| `Card.tsx:9` | `[nit]` | `gap-5` off the 4px grid | Use `gap-4` or `gap-6` |
+| Location            | Severity      | Issue                                   | Fix                                           |
+| ------------------- | ------------- | --------------------------------------- | --------------------------------------------- |
+| `ServiceRow.tsx:42` | `[blocking]`  | `text-green-500` used for running state | Replace with `text-positive`                  |
+| `Modal.tsx:18`      | `[important]` | Modal title is "Settings"               | Rename to the action: "Configure autoscaling" |
+| `Card.tsx:9`        | `[nit]`       | `gap-5` off the 4px grid                | Use `gap-4` or `gap-6`                        |
 
 Finish with: total issues by severity.
 
@@ -68,10 +69,10 @@ Finish with: total issues by severity.
 
 Fix without changing functionality. Output a Before / After / Why table, one row per change:
 
-| Before | After | Why |
-|---|---|---|
-| `p-5` | `p-4` | Off the 4px grid |
-| `text-neutral-600` | `text-neutral-subtle` | Legacy token |
+| Before                | After                             | Why                                      |
+| --------------------- | --------------------------------- | ---------------------------------------- |
+| `p-5`                 | `p-4`                             | Off the 4px grid                         |
+| `text-neutral-600`    | `text-neutral-subtle`             | Legacy token                             |
 | No hover state on row | `hover:bg-surface-neutral-subtle` | Interactive elements need hover feedback |
 
 ---
@@ -92,11 +93,11 @@ Fix without changing functionality. Output a Before / After / Why table, one row
 
 Review or generate microcopy. Output findings as a Before / After / Why table:
 
-| Before | After | Why |
-|---|---|---|
-| "An error occurred" | "Deploy failed. Check the logs for details." | States what happened + what to do |
-| "ENVIRONMENT NAME" | "Environment name" | Sentence case |
-| "Confirm" | "Delete environment" | Destructive buttons name the object |
+| Before              | After                                        | Why                                 |
+| ------------------- | -------------------------------------------- | ----------------------------------- |
+| "An error occurred" | "Deploy failed. Check the logs for details." | States what happened + what to do   |
+| "ENVIRONMENT NAME"  | "Environment name"                           | Sentence case                       |
+| "Confirm"           | "Delete environment"                         | Destructive buttons name the object |
 
 ---
 
@@ -130,13 +131,13 @@ Output structured prose and a table for component choices. Do not output code. F
 
 ## Reference Files
 
-| File | Contents |
-|---|---|
-| `references/colors.md` | Token system, semantic rules, contrast, tonal scale |
-| `references/typography.md` | Type scale, weights, Roboto Mono, typographic characters |
-| `references/spacing.md` | 4px grid, visual rhythm, layout compositions, optical alignment, working memory rule |
-| `references/components.md` | Which component to use when |
-| `references/copy.md` | Tone, microcopy patterns, modal titles, button copy rules |
-| `references/motion.md` | Animation decision framework, easing, duration guide |
-| `references/anti-patterns.md` | Match-and-refuse design bans |
-| `references/accessibility.md` | Non-negotiables, ARIA, focus management |
+| File                          | Contents                                                                             |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| `references/colors.md`        | Token system, semantic rules, contrast, tonal scale                                  |
+| `references/typography.md`    | Type scale, weights, Roboto Mono, typographic characters                             |
+| `references/spacing.md`       | 4px grid, visual rhythm, layout compositions, optical alignment, working memory rule |
+| `references/components.md`    | Which component to use when                                                          |
+| `references/copy.md`          | Tone, microcopy patterns, modal titles, button copy rules                            |
+| `references/motion.md`        | Animation decision framework, easing, duration guide                                 |
+| `references/anti-patterns.md` | Match-and-refuse design bans                                                         |
+| `references/accessibility.md` | Non-negotiables, ARIA, focus management                                              |

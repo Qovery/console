@@ -21,15 +21,15 @@ Spacing is how you communicate relationships. Elements close together belong tog
 
 **Established conventions from real usage:**
 
-| Context | Value | Notes |
-|---|---|---|
-| Title (`text-sm`) + subtitle (`text-ssm`) | `gap-1` | Tightest readable gap between stacked label sizes |
-| Label-to-value inline | `gap-2` | |
-| Content rows within a card | `gap-3` or `gap-4` | |
-| Small card internal padding | `p-3` or `p-4` | |
-| Standard card internal padding | `p-4` or `p-6` | |
-| Fields within a form | `gap-4` | |
-| Field groups within a form | `gap-6` | |
+| Context                                   | Value              | Notes                                             |
+| ----------------------------------------- | ------------------ | ------------------------------------------------- |
+| Title (`text-sm`) + subtitle (`text-ssm`) | `gap-1`            | Tightest readable gap between stacked label sizes |
+| Label-to-value inline                     | `gap-2`            |                                                   |
+| Content rows within a card                | `gap-3` or `gap-4` |                                                   |
+| Small card internal padding               | `p-3` or `p-4`     |                                                   |
+| Standard card internal padding            | `p-4` or `p-6`     |                                                   |
+| Fields within a form                      | `gap-4`            |                                                   |
+| Field groups within a form                | `gap-6`            |                                                   |
 
 ---
 
@@ -70,6 +70,7 @@ A card where a secondary section — filter row, status bar, summary strip — i
 ```
 
 **Rules:**
+
 - The attached section shares the same `border-neutral` color as the card — reads as one border, not two
 - `overflow-hidden` on the parent is required — without it, the child's background bleeds past the card radius
 - Don't manually add `rounded-t-*` or `rounded-b-*` to the child — `overflow-hidden` handles it
@@ -95,7 +96,7 @@ Geometric centering often looks off. Adjust for perceived visual weight.
 - **Button with icon + text:** use slightly less padding on the icon side. Rule of thumb: icon-side padding = text-side padding − 2px.
 
 ```tsx
-<button className="pl-4 pr-3.5 flex items-center gap-2">
+<button className="flex items-center gap-2 pl-4 pr-3.5">
   <span>Continue</span>
   <ArrowRightIcon />
 </button>
@@ -114,11 +115,11 @@ Humans can hold ≤4 items in working memory at once (Miller's Law, revised by C
 
 At any decision point, count the distinct options, actions, or pieces of information a user must simultaneously consider:
 
-| Items | Status | Response |
-|---|---|---|
-| ≤4 | Within limits | Manageable as-is |
-| 5–7 | Pushing the boundary | Consider grouping or progressive disclosure |
-| 8+ | Overloaded | Users will skip, misclick, or abandon |
+| Items | Status               | Response                                    |
+| ----- | -------------------- | ------------------------------------------- |
+| ≤4    | Within limits        | Manageable as-is                            |
+| 5–7   | Pushing the boundary | Consider grouping or progressive disclosure |
+| 8+    | Overloaded           | Users will skip, misclick, or abandon       |
 
 **Practical applications:**
 

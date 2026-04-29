@@ -18,13 +18,13 @@ Users with color vision deficiencies can't distinguish red from green from gray.
 **When space allows:** prefer icon + color, or text + color. Both are fully sufficient.  
 **When space is constrained** (e.g., a status column in a dense table): icon + color + tooltip is acceptable. The tooltip becomes the text alternative and must be present on both hover and keyboard focus.
 
-| Pattern | Fix |
-|---|---|
-| Red text error below a field | Keep the text — it's sufficient on its own. |
-| A colored dot indicating running / stopped | Use `<StatusChip>` — it includes an icon SVG and has a built-in tooltip. |
-| A green badge for "healthy" | `<Badge color="green">Healthy</Badge>` — the text carries meaning, color reinforces it. |
-| A yellow border on a form to indicate "warning" | Add a `<Callout>` or a text hint — the border alone is invisible to some users. |
-| An icon-only status in a tight table cell | Wrap in `<Tooltip>` with the status name as content — the tooltip is the accessible label. |
+| Pattern                                         | Fix                                                                                        |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Red text error below a field                    | Keep the text — it's sufficient on its own.                                                |
+| A colored dot indicating running / stopped      | Use `<StatusChip>` — it includes an icon SVG and has a built-in tooltip.                   |
+| A green badge for "healthy"                     | `<Badge color="green">Healthy</Badge>` — the text carries meaning, color reinforces it.    |
+| A yellow border on a form to indicate "warning" | Add a `<Callout>` or a text hint — the border alone is invisible to some users.            |
+| An icon-only status in a tight table cell       | Wrap in `<Tooltip>` with the status name as content — the tooltip is the accessible label. |
 
 ```tsx
 // When you only have room for an icon, add a tooltip
@@ -39,29 +39,29 @@ Users with color vision deficiencies can't distinguish red from green from gray.
 
 ## Focus Management
 
-| Situation | How to handle |
-|---|---|
+| Situation                     | How to handle                                                                                                 |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------- |
 | Button or interactive control | `ButtonPrimitive` provides `focus-visible:outline-2` automatically. Never override with `focus:outline-none`. |
-| Custom interactive element | Add `focus-visible:outline-2 focus-visible:outline-brand-strong` via Tailwind directly. |
-| Modal or drawer | `<Modal>` traps focus via Radix Dialog. Don't build custom modals — they'll miss this. |
-| Route change | TanStack Router handles scroll and focus reset. Don't suppress it. |
+| Custom interactive element    | Add `focus-visible:outline-2 focus-visible:outline-brand-strong` via Tailwind directly.                       |
+| Modal or drawer               | `<Modal>` traps focus via Radix Dialog. Don't build custom modals — they'll miss this.                        |
+| Route change                  | TanStack Router handles scroll and focus reset. Don't suppress it.                                            |
 
 ---
 
 ## ARIA
 
-| Situation | What to do |
-|---|---|
-| Icon-only button | `aria-label="Action name"` on the button |
-| Button with tooltip | `<Tooltip>` handles `aria-describedby` — no manual wiring needed |
-| Loading state | `aria-busy="true"` on the region being loaded |
+| Situation                   | What to do                                                                     |
+| --------------------------- | ------------------------------------------------------------------------------ |
+| Icon-only button            | `aria-label="Action name"` on the button                                       |
+| Button with tooltip         | `<Tooltip>` handles `aria-describedby` — no manual wiring needed               |
+| Loading state               | `aria-busy="true"` on the region being loaded                                  |
 | Error message below a field | `<InputText>` handles `aria-describedby` linking to the hint — don't bypass it |
-| Expandable row or section | `aria-expanded={isExpanded}` on the trigger |
-| Live status chip | `role="status"` if the value updates dynamically |
-| Selectable list | Use Radix components — don't build custom `role="listbox"` |
-| `<button>` element | No `role="button"` — it's redundant |
-| Element with visible text | No `aria-label` — the text is sufficient |
-| Interactive element | Never `aria-hidden="true"` — it removes it from keyboard navigation |
+| Expandable row or section   | `aria-expanded={isExpanded}` on the trigger                                    |
+| Live status chip            | `role="status"` if the value updates dynamically                               |
+| Selectable list             | Use Radix components — don't build custom `role="listbox"`                     |
+| `<button>` element          | No `role="button"` — it's redundant                                            |
+| Element with visible text   | No `aria-label` — the text is sufficient                                       |
+| Interactive element         | Never `aria-hidden="true"` — it removes it from keyboard navigation            |
 
 ---
 
@@ -71,11 +71,9 @@ Users with color vision deficiencies can't distinguish red from green from gray.
 
 Every interactive element reachable by `Tab` key. Tab order follows visual order (left-to-right, top-to-bottom). No keyboard traps outside of intentional modal overlays.
 
-
 ### Dropdowns and menus
 
 Use `<DropdownMenu>` — it inherits Radix's keyboard nav (arrows, Enter, Escape). Don't build custom dropdown menus; they won't handle keyboard correctly.
-
 
 ---
 

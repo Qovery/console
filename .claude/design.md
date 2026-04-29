@@ -8,14 +8,14 @@ Qovery is a high-frequency operational interface used under pressure. Every UI d
 
 ## Stack
 
-| Layer | Choice |
-|---|---|
-| Framework | React 18 + TypeScript |
-| Styling | Tailwind CSS + SCSS — always prefer Tailwind utilities, CSS variables only as fallback |
-| Variants | CVA + `twMerge` from `@qovery/shared/util-js` |
-| Primitives | Radix UI |
-| Animation | Framer Motion |
-| Icons | FontAwesome Pro Kit via `<Icon iconStyle iconName />` |
+| Layer      | Choice                                                                                 |
+| ---------- | -------------------------------------------------------------------------------------- |
+| Framework  | React 18 + TypeScript                                                                  |
+| Styling    | Tailwind CSS + SCSS — always prefer Tailwind utilities, CSS variables only as fallback |
+| Variants   | CVA + `twMerge` from `@qovery/shared/util-js`                                          |
+| Primitives | Radix UI                                                                               |
+| Animation  | Framer Motion                                                                          |
+| Icons      | FontAwesome Pro Kit via `<Icon iconStyle iconName />`                                  |
 
 Shared UI components live in `libs/shared/ui/src/lib/components/`.
 
@@ -50,13 +50,13 @@ These apply to every surface, every time:
 
 Use `/qovery-ui` for targeted design commands. Reference files for deeper rules:
 
-| File | What's in it |
-|---|---|
-| `references/colors.md` | Token system, semantic rules, contrast requirements, tonal scale |
-| `references/typography.md` | Type scale, weights, Roboto Mono, typographic characters |
-| `references/spacing.md` | 4px grid, visual rhythm, layout compositions, optical alignment, working memory rule |
-| `references/components.md` | Which component to use when |
-| `references/copy.md` | Tone, microcopy patterns, modal titles, button copy rules |
-| `references/motion.md` | Animation decision framework, easing, duration guide |
-| `references/anti-patterns.md` | Match-and-refuse design bans |
-| `references/accessibility.md` | Non-negotiables, ARIA, focus management |
+| File                          | What's in it                                                                         |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| `references/colors.md`        | Token system, semantic rules, contrast requirements, tonal scale                     |
+| `references/typography.md`    | Type scale, weights, Roboto Mono, typographic characters                             |
+| `references/spacing.md`       | 4px grid, visual rhythm, layout compositions, optical alignment, working memory rule |
+| `references/components.md`    | Which component to use when                                                          |
+| `references/copy.md`          | Tone, microcopy patterns, modal titles, button copy rules                            |
+| `references/motion.md`        | Animation decision framework, easing, duration guide                                 |
+| `references/anti-patterns.md` | Match-and-refuse design bans                                                         |
+| `references/accessibility.md` | Non-negotiables, ARIA, focus management                                              |

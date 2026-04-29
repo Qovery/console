@@ -18,13 +18,13 @@ Before touching any color value, check for existing tokens, CSS variables, or th
 
 ## Contrast
 
-| Context | Minimum ratio | Common failure |
-|---|---|---|
-| Body text | 4.5:1 (WCAG AA) | Light gray on white |
-| Large text (≥ 18.66px or 14px bold) | 3:1 | Section headers on subtle backgrounds |
-| Interactive element boundary | 3:1 | Outline buttons on colored surfaces |
-| Focus ring | 3:1 against adjacent color | Brand ring on brand background |
-| Placeholder text | 4.5:1 | Default gray placeholder — usually fails |
+| Context                             | Minimum ratio              | Common failure                           |
+| ----------------------------------- | -------------------------- | ---------------------------------------- |
+| Body text                           | 4.5:1 (WCAG AA)            | Light gray on white                      |
+| Large text (≥ 18.66px or 14px bold) | 3:1                        | Section headers on subtle backgrounds    |
+| Interactive element boundary        | 3:1                        | Outline buttons on colored surfaces      |
+| Focus ring                          | 3:1 against adjacent color | Brand ring on brand background           |
+| Placeholder text                    | 4.5:1                      | Default gray placeholder — usually fails |
 
 Gray text on colored backgrounds looks washed out. Use a darker shade of the background hue, or transparency — never a generic neutral lifted from the neutral scale.
 
@@ -37,6 +37,7 @@ Don't eyeball contrast. Test with Stark, Contrast app, or browser devtools.
 One primary accent, used sparingly. An interface where everything pops has nothing that pops. Save the accent for the primary action and critical signals.
 
 **60/30/10** (visual weight, not pixel count):
+
 - **60%** — neutral backgrounds, base surfaces, white space
 - **30%** — text, borders, inactive states
 - **10%** — accent: CTAs, highlights, focus states
@@ -54,20 +55,20 @@ Tailwind utilities are wired in `tailwind-workspace-preset.js`.
 
 Each semantic color has a 12-step scale:
 
-| Step | Purpose |
-|---|---|
-| 1 | App background tint |
-| 2 | Subtle surface |
-| 3 | UI element background (component surface) |
-| 4 | Hovered UI element |
-| 5 | Active / pressed UI element |
-| 6 | Subtle border |
-| 7 | Component border (alpha variant available) |
-| 8 | Hovered border |
-| 9 | **Solid background** (the canonical "brand-9", "positive-9", etc.) |
-| 10 | Hovered solid background |
-| 11 | **Text / icon color** (readable on white or dark surfaces) |
-| 12 | High-contrast text |
+| Step | Purpose                                                            |
+| ---- | ------------------------------------------------------------------ |
+| 1    | App background tint                                                |
+| 2    | Subtle surface                                                     |
+| 3    | UI element background (component surface)                          |
+| 4    | Hovered UI element                                                 |
+| 5    | Active / pressed UI element                                        |
+| 6    | Subtle border                                                      |
+| 7    | Component border (alpha variant available)                         |
+| 8    | Hovered border                                                     |
+| 9    | **Solid background** (the canonical "brand-9", "positive-9", etc.) |
+| 10   | Hovered solid background                                           |
+| 11   | **Text / icon color** (readable on white or dark surfaces)         |
+| 12   | High-contrast text                                                 |
 
 **For status indicators:** use `-9` for solid fills, `-11` for text/icons on neutral backgrounds.
 
@@ -76,6 +77,7 @@ Each semantic color has a 12-step scale:
 ## Semantic Color Vocabulary
 
 ### Neutral (scaffolding)
+
 ```
 bg-surface-neutral              → var(--neutral-1)   page background
 bg-surface-neutral-subtle       → var(--neutral-2)   alternate panel / sidebar
@@ -90,6 +92,7 @@ border-neutral-componentHover   → var(--neutral-8)   hover border
 ```
 
 ### Brand (action / active state)
+
 ```
 bg-surface-brand-solid          → var(--brand-9)     primary button fill
 bg-surface-brand-solidHover     → var(--brand-10)    primary button hover
@@ -101,6 +104,7 @@ border-brand-subtle             → var(--brand-6)     subtle brand border
 ```
 
 ### Status Colors
+
 ```
 Positive (green)
   bg-surface-positive-solid     → var(--positive-9)
@@ -132,6 +136,7 @@ Info (blue)
 ```
 
 ### Special Tokens
+
 ```
 --background-1                  → main app canvas
 --background-2                  → alternate canvas layer
