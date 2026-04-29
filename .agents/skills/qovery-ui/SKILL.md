@@ -1,3 +1,8 @@
+---
+name: qovery-ui
+description: Design review and implementation guidance for the Qovery Console. Use for auditing UI components, refining spacing and color, selecting the right shared component, writing microcopy, and designing new surfaces from scratch.
+---
+
 # Qovery UI Skill
 
 Design review and implementation guidance for the Qovery Console. Read `.claude/design.md` first for orientation.

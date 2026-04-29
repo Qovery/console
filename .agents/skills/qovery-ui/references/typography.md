@@ -18,10 +18,13 @@ Five sizes. Don't introduce others.
 | Page title (H1) | `text-2xl` | 24px | `font-medium` | Page-level headings — one per page |
 | Section title (H2) | `text-base` | 16px | `font-medium` | Card headers, section breaks |
 | Body / default | `text-sm` | 14px | `font-normal` | All running content, labels, inputs |
+| Secondary descriptor | `text-ssm` | 13px | `font-normal` | Subtitle or supporting text directly below a `text-sm` label |
 | Caption / meta | `text-xs` | 12px | `font-normal` | Secondary metadata, hints, timestamps |
 | Table header | `text-xs` | 12px | `font-medium` | Column headers in `<TablePrimitives>` |
 
 **Jump in size creates hierarchy.** If two labels feel like the same level of importance, they should be the same size — differentiate with weight or color instead of introducing an in-between size.
+
+**The `text-sm` + `text-ssm` pairing** is the most common two-level label pattern in the console: a `text-sm font-medium` primary label above a `text-ssm font-normal` secondary descriptor, separated by `gap-1`. Use this instead of reaching for `text-xs` when the secondary text is still meaningful content rather than pure metadata.
 
 ---
 
