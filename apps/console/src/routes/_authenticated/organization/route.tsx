@@ -2,6 +2,7 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
@@ -266,11 +267,17 @@ function useNavigationContext(): NavigationContext | null {
   const location = useLocation()
   const params = useParams({ strict: false })
   const pathname = location.pathname
+  const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
     enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
   })
+  const { data: clusters = [] } = useClusters({
+    organizationId,
+    enabled: Boolean(organizationId),
+  })
+  const hasAlerting = clusters.some((cluster) => cluster.metrics_parameters?.configuration?.alerting?.enabled)
 
   for (const context of NAVIGATION_CONTEXTS) {
     const patternRegex = createRoutePatternRegex(context.routeIdPattern)
@@ -301,7 +308,9 @@ function useNavigationContext(): NavigationContext | null {
             ? context.tabs.filter(
                 (tab) => !(isDatabase && tab.id === 'variables') && !(isManagedDatabase && tab.id === 'cloud-shell')
               )
-            : context.tabs
+            : context.type === 'organization'
+              ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
+              : context.tabs
 
         return {
           type: context.type,
@@ -312,12 +321,11 @@ function useNavigationContext(): NavigationContext | null {
     }
   }
 
-  const organizationId = params.organizationId
-  if (typeof organizationId === 'string' && organizationId.length > 0 && pathname.startsWith('/organization/')) {
+  if (organizationId.length > 0 && pathname.startsWith('/organization/')) {
     return {
       type: 'organization',
       params: { organizationId },
-      tabs: ORGANIZATION_TABS,
+      tabs: ORGANIZATION_TABS.filter((tab) => hasAlerting || tab.id !== 'alerts'),
     }
   }
 
