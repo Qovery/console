@@ -9,6 +9,9 @@ Before working on this repo, read the relevant skills in `.agents/skills/`. Each
 | `qovery-console-standards`    | Architecture, React/TS, styling, testing, naming, workflow, pre-commit |
 | `vercel-react-best-practices` | React performance optimization (57 rules)                              |
 | `web-design-guidelines`       | UI/UX and accessibility audit                                          |
+| `qovery-ui`                   | Design review, component selection, and UI generation for the console  |
+
+For design work, use `/qovery-ui` commands: `/qovery-ui audit` (review existing UI), `/qovery-ui craft` (design something new), `/qovery-ui polish` (spacing/color refinement), `/qovery-ui component` (find the right component). Always read `.claude/design.md` first for the design context and non-negotiables.
 
 Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 
