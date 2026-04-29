@@ -38,7 +38,7 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 
 ## /audit
 
-**Load:** `references/colors.md`, `references/spacing.md`, `references/anti-patterns.md`, `references/accessibility.md`
+**Load:** `references/colors.md`, `references/spacing-layout.md`, `references/anti-patterns.md`, `references/accessibility.md`
 
 Four-phase review. Label every finding:
 
@@ -65,7 +65,7 @@ Finish with: total issues by severity.
 
 ## /polish
 
-**Load:** `references/spacing.md`, `references/colors.md`
+**Load:** `references/spacing-layout.md`, `references/colors.md`, `references/typography.md`, `references/anti-patterns.md`
 
 Fix without changing functionality. Output a Before / After / Why table, one row per change:
 
@@ -111,7 +111,7 @@ Ask first: how often will users see this? If the answer is "constantly," remove 
 
 ## /craft
 
-**Load:** `references/typography.md`, `references/spacing.md`, `references/colors.md`, `references/components.md`, `references/copy.md`
+**Load:** `references/typography.md`, `references/spacing-layout.md`, `references/colors.md`, `references/components.md`, `references/copy.md`
 
 Generative command — use when designing something new from scratch rather than reviewing existing work.
 
@@ -131,13 +131,13 @@ Output structured prose and a table for component choices. Do not output code. F
 
 ## Reference Files
 
-| File                          | Contents                                                                             |
-| ----------------------------- | ------------------------------------------------------------------------------------ |
-| `references/colors.md`        | Token system, semantic rules, contrast, tonal scale                                  |
-| `references/typography.md`    | Type scale, weights, Roboto Mono, typographic characters                             |
-| `references/spacing.md`       | 4px grid, visual rhythm, layout compositions, optical alignment, working memory rule |
-| `references/components.md`    | Which component to use when                                                          |
-| `references/copy.md`          | Tone, microcopy patterns, modal titles, button copy rules                            |
-| `references/motion.md`        | Animation decision framework, easing, duration guide                                 |
-| `references/anti-patterns.md` | Match-and-refuse design bans                                                         |
-| `references/accessibility.md` | Non-negotiables, ARIA, focus management                                              |
+| File                           | Contents                                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------ |
+| `references/colors.md`         | Token system, semantic rules, contrast, tonal scale                                  |
+| `references/typography.md`     | Type scale, weights, Roboto Mono, typographic characters                             |
+| `references/spacing-layout.md` | 4px grid, visual rhythm, layout compositions, optical alignment, working memory rule |
+| `references/components.md`     | Which component to use when                                                          |
+| `references/copy.md`           | Tone, microcopy patterns, modal titles, button copy rules                            |
+| `references/motion.md`         | Animation decision framework, easing, duration guide                                 |
+| `references/anti-patterns.md`  | Match-and-refuse design bans                                                         |
+| `references/accessibility.md`  | Non-negotiables, ARIA, focus management                                              |

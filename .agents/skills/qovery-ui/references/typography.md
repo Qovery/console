@@ -6,6 +6,7 @@
 - **Base body size:** `text-sm` (0.875rem / 14px). The entire console defaults to this — it is not a "small" size, it is the normal size.
 - **Two weights only:** 400 (`font-normal`) for body, captions, and legends; 500 (`font-medium`) for buttons, titles, badges, and smaller copy that needs weight to stay legible.
 - **Roboto Mono for tabular data:** use `font-mono` for table headers, captions containing IDs or timestamps, and any numeric values that must align in columns.
+- **Icons match adjacent text size:** an icon sitting next to `text-sm` gets `text-sm`, next to `text-xs` gets `text-xs`. FontAwesome icons are sized via `font-size`, so the Tailwind text size class controls the icon size directly. Mismatched sizes break the visual baseline and make the icon feel either too heavy or too timid relative to the label.
 
 ---
 
