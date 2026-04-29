@@ -8,7 +8,7 @@ import { useCreateOrganization, useEditBillingInfo, useOrganizations } from '@qo
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { toast, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type SerializedError } from '@qovery/shared/utils'
 import { ContextOnboarding } from '../container/container'
@@ -124,7 +124,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
       })
       await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
-      toast(ToastEnum.SUCCESS, 'Your organization and project have been created')
+      toast('success', 'Your organization and project have been created')
     } catch (error) {
       if ((error as SerializedError).code === '409') {
         toastError(error as unknown as SerializedError)

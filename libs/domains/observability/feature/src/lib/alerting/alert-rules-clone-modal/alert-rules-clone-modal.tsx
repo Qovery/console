@@ -10,7 +10,6 @@ import {
   LoaderSpinner,
   ModalCrud,
   Popover,
-  ToastEnum,
   Truncate,
   dropdownMenuItemVariants,
   toast,
@@ -156,7 +155,7 @@ export function AlertRulesCloneModal({ alertRule, alertRules, organizationId, on
           )
         )
       )
-      toast(ToastEnum.SUCCESS, 'Alert rules cloned successfully')
+      toast('success', 'Alert rules cloned successfully')
       onClose()
     } catch (error) {
       console.error('Error cloning alert rules:', error)

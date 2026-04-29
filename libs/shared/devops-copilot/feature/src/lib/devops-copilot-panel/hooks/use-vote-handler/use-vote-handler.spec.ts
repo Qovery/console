@@ -11,9 +11,6 @@ jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
   return {
     ...actual,
-    ToastEnum: {
-      SUCCESS: 'SUCCESS',
-    },
     toast: jest.fn(),
   }
 })
@@ -261,7 +258,7 @@ describe('useVoteHandler', () => {
       await result.current('msg-2', 'upvote')
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith('SUCCESS', 'Message successfully upvoted')
+        expect(mockToast).toHaveBeenCalledWith('success', 'Message successfully upvoted')
       })
     })
 
@@ -273,7 +270,7 @@ describe('useVoteHandler', () => {
       await result.current('msg-2', 'downvote')
 
       await waitFor(() => {
-        expect(mockToast).toHaveBeenCalledWith('SUCCESS', 'Message successfully downvoted')
+        expect(mockToast).toHaveBeenCalledWith('success', 'Message successfully downvoted')
       })
     })
 

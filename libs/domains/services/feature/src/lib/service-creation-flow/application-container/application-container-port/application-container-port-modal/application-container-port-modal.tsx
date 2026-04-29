@@ -2,7 +2,7 @@ import { type CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axio
 import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { type FlowPortData, type PortData } from '@qovery/shared/interfaces'
-import { ToastEnum, toast, useModal } from '@qovery/shared/ui'
+import { toast, useModal } from '@qovery/shared/ui'
 import { useEnvironment } from '../../../../hooks/use-environment/use-environment'
 import { isMatchingHealthCheck } from '../port-healthcheck/port-healthcheck'
 import { ApplicationContainerPortCrudModal } from './application-container-port-crud-modal'
@@ -77,7 +77,7 @@ export function ApplicationContainerPortModal({
 
     if (portData.ports?.some((currentPort) => currentPort.application_port === newPortRow.application_port)) {
       setLoading(false)
-      toast(ToastEnum.ERROR, 'Error', 'Port already exists for this service.')
+      toast('error', 'Error', 'Port already exists for this service.')
       return
     }
 

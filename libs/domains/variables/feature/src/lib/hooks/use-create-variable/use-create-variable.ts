@@ -38,7 +38,13 @@ export function useCreateVariable() {
             : envId
               ? `${SERVICES_URL(orgId, projectId, envId)}${SERVICES_VARIABLES_URL}`
               : `${ENVIRONMENTS_URL(orgId, projectId)}${ENVIRONMENTS_VARIABLES_URL}`
-          toastError(error, 'Conflict', error.message, undefined, undefined, 'Go to the conflicting variable', url)
+          toastError(
+            error,
+            'Conflict',
+            error.message,
+            () => window.open(url, '_blank'),
+            'Go to the conflicting variable'
+          )
         }
       } else {
         toastError(error)

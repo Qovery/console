@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { SETTINGS_GIT_REPOSITORY_ACCESS_URL, SETTINGS_URL } from '@qovery/shared/routes'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { toast } from '@qovery/shared/ui'
 import { useConnectGithubApp } from '../hooks/use-connect-github-app/use-connect-github-app'
 
 export function GithubApplicationCallbackFeature() {
@@ -28,7 +28,7 @@ export function GithubApplicationCallbackFeature() {
           navigate(SETTINGS_URL(organizationId) + SETTINGS_GIT_REPOSITORY_ACCESS_URL)
         }
       } else {
-        toast(ToastEnum.ERROR, `Github application connection error`, 'Invalid parameters')
+        toast('error', `Github application connection error`, 'Invalid parameters')
         navigate('/')
       }
     }

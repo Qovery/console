@@ -1,7 +1,7 @@
 import { type Environment } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { toast } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceHeader } from './service-header'
 
@@ -299,7 +299,7 @@ describe('ServiceHeader', () => {
 
     expect(mockGetDatabaseConnectionUri).toHaveBeenCalled()
     expect(mockCopyToClipboard).toHaveBeenCalledWith('postgres://copied-uri')
-    expect(toast).toHaveBeenCalledWith(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
+    expect(toast).toHaveBeenCalledWith('success', 'Credentials copied to clipboard')
   })
 
   it('does not show auto deploy badge for non auto-deploy job', () => {

@@ -29,7 +29,7 @@ export function useUninstallService({
       })
 
       toast(
-        'SUCCESS',
+        'success',
         'Your service is queuing',
         undefined,
         () =>
@@ -42,8 +42,7 @@ export function useUninstallService({
               serviceId: data.id,
             },
           }),
-        undefined,
-        'See deployment queue'
+        'See queue'
       )
     },
     meta: {

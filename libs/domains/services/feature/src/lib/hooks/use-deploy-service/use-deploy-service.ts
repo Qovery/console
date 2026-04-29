@@ -40,7 +40,7 @@ export function useDeployService({
       })
 
       toast(
-        'SUCCESS',
+        'success',
         'Your service is queuing',
         undefined,
         () =>
@@ -53,8 +53,7 @@ export function useDeployService({
               serviceId: data.id,
             },
           }),
-        undefined,
-        'See deployment queue'
+        'See queue'
       )
     },
     meta: {

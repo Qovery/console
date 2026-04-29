@@ -64,7 +64,7 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
       detachWebSocket()
 
       if (event.code !== 1006 && event.reason) {
-        toast('ERROR', 'Not available', event.reason)
+        toast('error', 'Not available', event.reason)
       }
     },
     [detachWebSocket]

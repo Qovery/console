@@ -1,5 +1,4 @@
 import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
-import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import * as Sentry from '@sentry/react'
 import {
@@ -18,7 +17,7 @@ import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { IntercomProvider } from 'react-use-intercom'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
-import { LoaderSpinner, ToastEnum, toast, toastError } from '@qovery/shared/ui'
+import { LoaderSpinner, type ToastStatus, toast, toastError } from '@qovery/shared/ui'
 import {
   DEVOPS_COPILOT_API_BASE_URL,
   GIT_SHA,
@@ -40,13 +39,11 @@ import { Auth0Wrapper, useAuth0Context } from './auth/auth0'
 import { routeTree } from './routeTree.gen'
 
 type ToastArgs = {
-  status?: ToastEnum
+  status?: ToastStatus
   title: string
   description?: string
   callback?: () => void
-  iconAction?: IconName
   labelAction?: string
-  externalLink?: string
 }
 
 const SENTRY_DSN = 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024'
@@ -92,20 +89,18 @@ const queryClient = new QueryClient({
     onSuccess(data, variables, context, mutation) {
       if (mutation.meta?.notifyOnSuccess) {
         if (mutation.meta.notifyOnSuccess === true) {
-          toast(ToastEnum.SUCCESS, JSON.stringify(data))
+          toast('success', JSON.stringify(data))
         } else {
           const {
-            status = ToastEnum.SUCCESS,
+            status = 'success',
             title,
             description,
             callback,
-            iconAction,
             labelAction,
-            externalLink,
           } = typeof mutation.meta.notifyOnSuccess === 'function'
             ? mutation.meta.notifyOnSuccess(data, variables, context, mutation)
             : mutation.meta.notifyOnSuccess
-          toast(status, title, description, callback, iconAction, labelAction, externalLink)
+          toast(status, title, description, callback, labelAction)
         }
       }
     },
@@ -123,20 +118,18 @@ const queryClient = new QueryClient({
     onSuccess(data, query) {
       if (query.meta?.notifyOnSuccess) {
         if (query.meta.notifyOnSuccess === true) {
-          toast(ToastEnum.SUCCESS, JSON.stringify(data))
+          toast('success', JSON.stringify(data))
         } else {
           const {
-            status = ToastEnum.SUCCESS,
+            status = 'success',
             title,
             description,
             callback,
-            iconAction,
             labelAction,
-            externalLink,
           } = typeof query.meta.notifyOnSuccess === 'function'
             ? query.meta.notifyOnSuccess(data, query)
             : query.meta.notifyOnSuccess
-          toast(status, title, description, callback, iconAction, labelAction, externalLink)
+          toast(status, title, description, callback, labelAction)
         }
       }
     },

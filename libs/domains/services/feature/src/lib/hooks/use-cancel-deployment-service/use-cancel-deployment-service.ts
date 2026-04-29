@@ -36,7 +36,7 @@ export function useCancelDeploymentService({
       })
 
       toast(
-        'SUCCESS',
+        'success',
         'Your environment deployment is cancelling',
         undefined,
         () =>
@@ -45,7 +45,6 @@ export function useCancelDeploymentService({
               ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
               ENVIRONMENT_STAGES_URL(data.last_deployment_id ?? ''),
           }),
-        undefined,
         'See deployment logs'
       )
     },

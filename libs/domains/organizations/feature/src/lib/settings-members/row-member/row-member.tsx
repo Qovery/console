@@ -13,7 +13,6 @@ import {
   Icon,
   Indicator,
   TablePrimitives,
-  ToastEnum,
   Tooltip,
   toast,
   useModalConfirmation,
@@ -207,7 +206,7 @@ export function RowMember(props: RowMemberProps) {
                       icon={<Icon iconName="copy" />}
                       onSelect={() => {
                         copyToClipboard((member as InviteMember).invitation_link)
-                        toast(ToastEnum.SUCCESS, 'Copied to your clipboard!')
+                        toast('success', 'Copied to your clipboard!')
                       }}
                     >
                       Copy invitation link

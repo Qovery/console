@@ -31,7 +31,7 @@ export function useRestartService({
 
       if (data.deployment_request_id) {
         toast(
-          'SUCCESS',
+          'success',
           'Your service is queuing',
           undefined,
           () =>
@@ -44,14 +44,13 @@ export function useRestartService({
                 serviceId: data.id,
               },
             }),
-          undefined,
           'See deployment queue'
         )
       } else {
         // XXX: Waiting for the fix of https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1434
         // to implement the correct deployment redirection using `execution_id`
         toast(
-          'SUCCESS',
+          'success',
           'Your service is restarting',
           undefined,
           () =>
@@ -59,7 +58,6 @@ export function useRestartService({
               // TODO new-nav: This should redirect to the deployment details page that we don't have yet (should redirect to '/stages' aka pipeline view, but without the executionId)
               to: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
             }),
-          undefined,
           'See deployment logs'
         )
       }
