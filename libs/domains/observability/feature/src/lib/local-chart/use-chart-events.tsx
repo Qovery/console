@@ -1,5 +1,6 @@
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
+import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { useEvents } from '../hooks/use-events/use-events'
 import { useDashboardContext } from '../util-filter/dashboard-context'
@@ -15,13 +16,17 @@ export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEve
 
   const { data: service } = useService({ serviceId })
 
+  const targetType = useMemo(() => {
+    return match(service?.serviceType)
+      .with('DATABASE', () => OrganizationEventTargetType.DATABASE)
+      .with('CONTAINER', () => OrganizationEventTargetType.CONTAINER)
+      .otherwise(() => OrganizationEventTargetType.APPLICATION)
+  }, [service?.serviceType])
+
   const { data: events } = useEvents({
     organizationId,
     serviceId,
-    targetType:
-      service?.service_type === 'CONTAINER'
-        ? OrganizationEventTargetType.CONTAINER
-        : OrganizationEventTargetType.APPLICATION,
+    targetType,
     toTimestamp: endTimestamp,
     fromTimestamp: startTimestamp,
   })

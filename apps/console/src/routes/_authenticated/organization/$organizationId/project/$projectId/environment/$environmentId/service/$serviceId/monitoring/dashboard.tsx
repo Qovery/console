@@ -6,6 +6,7 @@ import { match } from 'ts-pattern'
 import { useCluster, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
+  DatabaseRdsDashboard,
   EnableObservabilityButtonContactUs,
   EnableObservabilityContent,
   EnableObservabilityVideo,
@@ -43,19 +44,33 @@ function RouteComponent() {
     clusterId: environment?.cluster_id ?? '',
     suspense: true,
   })
+  const isManagedDatabase = service?.serviceType === 'DATABASE' && service.mode === 'MANAGED'
+  const isSupportedManagedDatabase =
+    isManagedDatabase &&
+    cluster?.cloud_provider === 'AWS' &&
+    (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
 
   const hasMetrics = useMemo(
     () =>
+      (isSupportedManagedDatabase &&
+        cluster?.metrics_parameters?.enabled === true &&
+        cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled === true) ||
       ((cluster?.cloud_provider === 'AWS' ||
         cluster?.cloud_provider === 'SCW' ||
         cluster?.cloud_provider === 'GCP' ||
         cluster?.cloud_provider === 'AZURE') &&
         cluster?.metrics_parameters?.enabled &&
         match(service?.serviceType)
-          .with('APPLICATION', 'CONTAINER', () => true)
+          .with('APPLICATION', 'CONTAINER', 'DATABASE', () => true)
           .otherwise(() => false)) ||
       false,
-    [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
+    [
+      cluster?.metrics_parameters?.enabled,
+      cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled,
+      isSupportedManagedDatabase,
+      service?.serviceType,
+      cluster?.cloud_provider,
+    ]
   )
 
   const isClusterRunning = useMemo(() => clusterStatus?.is_deployed === true, [clusterStatus?.is_deployed])
@@ -117,6 +132,10 @@ function RouteComponent() {
         </div>
       </div>
     )
+
+  if (isSupportedManagedDatabase && hasMetrics) {
+    return <DatabaseRdsDashboard />
+  }
 
   return noMetricsAvailable ? (
     <div className="px-10 py-7">

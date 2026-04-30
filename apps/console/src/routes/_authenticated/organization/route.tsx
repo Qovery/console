@@ -1,10 +1,12 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
+import { type Cluster } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
 import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
@@ -208,6 +210,33 @@ const SERVICE_TABS: NavigationTab[] = [
   },
 ]
 
+function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
+  if (!service) return false
+
+  if (service.serviceType === 'APPLICATION' || service.serviceType === 'CONTAINER') {
+    return (
+      cluster?.cloud_provider === 'AWS' ||
+      cluster?.cloud_provider === 'SCW' ||
+      cluster?.cloud_provider === 'GCP' ||
+      cluster?.cloud_provider === 'AZURE'
+    )
+  }
+
+  if (service.serviceType !== 'DATABASE') {
+    return false
+  }
+
+  if (service.mode === 'CONTAINER') {
+    return true
+  }
+
+  if (service.mode === 'MANAGED') {
+    return cluster?.cloud_provider === 'AWS' && (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
+  }
+
+  return false
+}
+
 function createRoutePatternRegex(routeIdPattern: string): RegExp {
   const patternPath = routeIdPattern.replace('/_authenticated/organization', '/organization')
   return new RegExp('^' + patternPath.replace(/\$(\w+)/g, '[^/]+') + '(/.*)?$')
@@ -273,11 +302,15 @@ function useNavigationContext(): NavigationContext | null {
     serviceId: params.serviceId,
     enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
   })
+  const { data: environment } = useEnvironment({
+    environmentId: params.environmentId,
+  })
   const { data: clusters = [] } = useClusters({
     organizationId,
     enabled: Boolean(organizationId),
   })
   const hasAlerting = clusters.some((cluster) => cluster.metrics_parameters?.configuration?.alerting?.enabled)
+  const currentCluster = clusters.find((cluster) => cluster.id === environment?.cluster_id)
 
   for (const context of NAVIGATION_CONTEXTS) {
     const patternRegex = createRoutePatternRegex(context.routeIdPattern)
@@ -300,13 +333,17 @@ function useNavigationContext(): NavigationContext | null {
       if (hasAllParams) {
         const isDatabase = service?.serviceType === 'DATABASE'
         const isManagedDatabase = isDatabase && service.mode === 'MANAGED'
+        const hasMonitoring = hasServiceMonitoringTab(service, currentCluster)
 
         // Managed databases should not have cloud shell access.
         // Databases should not expose the variables tab.
         const tabs =
           context.type === 'service'
             ? context.tabs.filter(
-                (tab) => !(isDatabase && tab.id === 'variables') && !(isManagedDatabase && tab.id === 'cloud-shell')
+                (tab) =>
+                  !(isDatabase && tab.id === 'variables') &&
+                  !(isManagedDatabase && tab.id === 'cloud-shell') &&
+                  !(tab.id === 'monitoring' && !hasMonitoring)
               )
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
