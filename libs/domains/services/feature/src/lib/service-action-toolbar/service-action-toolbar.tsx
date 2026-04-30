@@ -388,7 +388,7 @@ function MenuManageDeployment({
         <ActionToolbar.Button
           aria-label="Manage Deployment"
           color={displayYellowColor ? 'yellow' : 'neutral'}
-          size={variant === 'default' ? 'md' : 'sm'}
+          size={variant === 'deployment' ? 'sm' : 'md'}
           variant={variant === 'default' ? 'outline' : 'surface'}
           radius={variant === 'deployment' ? 'rounded' : 'none'}
         >

@@ -150,7 +150,7 @@ export function HeaderLogs({
                     serviceId={serviceId}
                     align="start"
                   >
-                    <Button variant="surface" color="neutral" radius="full" className="relative top-[1px]">
+                    <Button variant="surface" color="neutral" radius="full" size="sm" className="relative top-[1px]">
                       <Tooltip content="Links">
                         <div className="flex items-center gap-1">
                           <Icon iconName="link" iconStyle="regular" />
