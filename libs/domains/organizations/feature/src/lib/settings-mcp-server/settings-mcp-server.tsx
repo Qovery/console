@@ -173,13 +173,10 @@ export function SettingsMcpServer() {
                 <InstructionSection
                   number={2}
                   title="Authenticate through your API token"
-                  description="Pass your Qovery token via query parameter or Authorization header"
+                  description="Pass your Qovery token via Authorization header"
                 >
                   <CommandBlock
-                    content={`# Query parameter
-https://mcp.qovery.com/mcp?token=your_qovery_token
-
-# Authorization header
+                    content={`# Authorization header
 Authorization: Token your_qovery_token`}
                   />
                 </InstructionSection>
