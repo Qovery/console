@@ -80,7 +80,7 @@ function RouteComponent() {
           ...(eksAnywhereCluster ? [] : [resourcesLink]),
           imageRegistryLink,
           ...(eksAnywhereCluster ? [] : [networkLink]),
-          advancedSettingsLink,
+          ...(eksAnywhereCluster ? [] : [advancedSettingsLink]),
           dangerZoneLink,
         ]
       }

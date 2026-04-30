@@ -5,6 +5,8 @@ import { Icon, Link, ProgressBar, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { calculatePercentage, pluralize } from '@qovery/shared/util-js'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 
+const MAX_INT_32 = 2 ** 31 - 1
+
 export interface ClusterCardNodeUsageProps {
   organizationId: string
   clusterId: string
@@ -23,16 +25,20 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
   const metricsNotAvailable = typeof metrics !== 'object'
 
   const { data: cluster } = useCluster({ organizationId, clusterId })
+  const isEksAnywhereCluster = cluster?.cloud_provider === 'AWS' && cluster?.kubernetes === 'PARTIALLY_MANAGED'
+  const hasKnownMaxRunningNodes =
+    typeof cluster?.max_running_nodes === 'number' && cluster.max_running_nodes !== MAX_INT_32
 
-  const shouldDisplayMinMaxNodes = match(cluster)
+  const shouldDisplayNodeLimits = match(cluster)
     .with({ cloud_provider: 'GCP' }, () => false)
     .with({ cloud_provider: 'ON_PREMISE' }, () => false)
     .with({ cloud_provider: 'AWS', instance_type: 'KARPENTER' }, () => false)
     .otherwise(() => true)
+  const shouldUseMaxRunningNodes = shouldDisplayNodeLimits && hasKnownMaxRunningNodes
 
   const totalNodes = useMemo(
-    () => (!shouldDisplayMinMaxNodes ? metrics?.nodes?.length : cluster?.max_running_nodes) || 0,
-    [metrics?.nodes, cluster?.max_running_nodes, shouldDisplayMinMaxNodes]
+    () => (!shouldUseMaxRunningNodes ? metrics?.nodes?.length : cluster?.max_running_nodes) || 0,
+    [metrics?.nodes, cluster?.max_running_nodes, shouldUseMaxRunningNodes]
   )
 
   const healthyNodes = useMemo(
@@ -104,6 +110,10 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
         {match(cluster?.cloud_provider)
           .with('GCP', () => null)
           .with('ON_PREMISE', () => null)
+          .when(
+            () => isEksAnywhereCluster,
+            () => null
+          )
           .otherwise(() => (
             <Tooltip
               open={isMaxNodesSizeReached}
@@ -131,10 +141,10 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
       </div>
       <Skeleton width="100%" height={20} show={!cluster || metricsNotAvailable}>
         <div className="flex w-full flex-col gap-2.5">
-          {shouldDisplayMinMaxNodes && (
+          {shouldDisplayNodeLimits && (
             <div className="flex items-center justify-between text-sm text-neutral-subtle">
               <span>min: {cluster?.min_running_nodes}</span>
-              <span>max: {cluster?.max_running_nodes}</span>
+              {hasKnownMaxRunningNodes ? <span>max: {cluster?.max_running_nodes}</span> : null}
             </div>
           )}
           <Tooltip content={tooltipContent} classNameContent="w-[157px] px-2.5 py-1.5">

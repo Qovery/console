@@ -14,6 +14,7 @@ jest.mock('../hooks/use-cluster-metrics/use-cluster-metrics', () => ({
 }))
 
 describe('ClusterCardNodeUsage', () => {
+  const MAX_INT_32 = 2 ** 31 - 1
   const mockOrganizationId = 'org-123'
   const mockClusterId = 'cluster-456'
 
@@ -26,12 +27,19 @@ describe('ClusterCardNodeUsage', () => {
     })
   })
 
-  const setupMocks = (clusterProvider = 'AWS', instanceType = 'KARPENTER', runningStatus = null, metrics = null) => {
+  const setupMocks = (
+    clusterProvider = 'AWS',
+    instanceType = 'KARPENTER',
+    runningStatus = null,
+    metrics = null,
+    clusterOverrides = {}
+  ) => {
     const mockCluster = {
       cloud_provider: clusterProvider,
       instance_type: instanceType,
       min_running_nodes: 2,
       max_running_nodes: 5,
+      ...clusterOverrides,
     }
 
     const defaultRunningStatus = {
@@ -85,5 +93,18 @@ describe('ClusterCardNodeUsage', () => {
     renderWithProviders(<ClusterCardNodeUsage organizationId={mockOrganizationId} clusterId={mockClusterId} />)
     expect(screen.getByText('min: 2')).toBeInTheDocument()
     expect(screen.getByText('max: 5')).toBeInTheDocument()
+  })
+
+  it('should not display max when max running nodes is unknown', () => {
+    setupMocks('AWS', 'EC2', null, null, { max_running_nodes: MAX_INT_32 })
+    renderWithProviders(<ClusterCardNodeUsage organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    expect(screen.getByText('min: 2')).toBeInTheDocument()
+    expect(screen.queryByText(`max: ${MAX_INT_32}`)).not.toBeInTheDocument()
+  })
+
+  it('should not display resources settings link for EKS Anywhere cluster', () => {
+    setupMocks('AWS', 'MANAGED', null, null, { kubernetes: 'PARTIALLY_MANAGED' })
+    renderWithProviders(<ClusterCardNodeUsage organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+    expect(screen.queryByRole('link')).not.toBeInTheDocument()
   })
 })
