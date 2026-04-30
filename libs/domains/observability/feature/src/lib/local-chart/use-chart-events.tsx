@@ -15,13 +15,22 @@ export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEve
 
   const { data: service } = useService({ serviceId })
 
+  const targetType = useMemo(() => {
+    if (service?.serviceType === 'DATABASE') {
+      return OrganizationEventTargetType.DATABASE
+    }
+
+    if (service?.serviceType === 'CONTAINER') {
+      return OrganizationEventTargetType.CONTAINER
+    }
+
+    return OrganizationEventTargetType.APPLICATION
+  }, [service?.serviceType])
+
   const { data: events } = useEvents({
     organizationId,
     serviceId,
-    targetType:
-      service?.service_type === 'CONTAINER'
-        ? OrganizationEventTargetType.CONTAINER
-        : OrganizationEventTargetType.APPLICATION,
+    targetType,
     toTimestamp: endTimestamp,
     fromTimestamp: startTimestamp,
   })

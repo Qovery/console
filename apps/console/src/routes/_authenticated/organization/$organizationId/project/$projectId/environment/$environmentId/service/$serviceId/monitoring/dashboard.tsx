@@ -1,11 +1,13 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
+import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterStatus } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import {
+  DatabaseRdsDashboard,
   EnableObservabilityButtonContactUs,
   EnableObservabilityContent,
   EnableObservabilityVideo,
@@ -43,19 +45,21 @@ function RouteComponent() {
     clusterId: environment?.cluster_id ?? '',
     suspense: true,
   })
+  const isManagedDatabase = service?.serviceType === 'DATABASE' && service.mode === DatabaseModeEnum.MANAGED
 
   const hasMetrics = useMemo(
     () =>
+      isManagedDatabase ||
       ((cluster?.cloud_provider === 'AWS' ||
         cluster?.cloud_provider === 'SCW' ||
         cluster?.cloud_provider === 'GCP' ||
         cluster?.cloud_provider === 'AZURE') &&
         cluster?.metrics_parameters?.enabled &&
         match(service?.serviceType)
-          .with('APPLICATION', 'CONTAINER', () => true)
+          .with('APPLICATION', 'CONTAINER', 'DATABASE', () => true)
           .otherwise(() => false)) ||
       false,
-    [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
+    [cluster?.metrics_parameters?.enabled, isManagedDatabase, service?.serviceType, cluster?.cloud_provider]
   )
 
   const isClusterRunning = useMemo(() => clusterStatus?.is_deployed === true, [clusterStatus?.is_deployed])
@@ -117,6 +121,10 @@ function RouteComponent() {
         </div>
       </div>
     )
+
+  if (isManagedDatabase) {
+    return <DatabaseRdsDashboard />
+  }
 
   return noMetricsAvailable ? (
     <div className="px-10 py-7">

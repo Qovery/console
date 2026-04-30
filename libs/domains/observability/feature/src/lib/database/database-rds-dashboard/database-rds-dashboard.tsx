@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { useParams } from 'react-router-dom'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { Button, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
@@ -22,10 +22,21 @@ import RdsWriteLatencyChart from './rds-write-latency-chart/rds-write-latency-ch
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { generateDbInstance } from './util/generate-db-instance'
 
-function DatabaseRdsDashboardContent() {
-  const { environmentId = '', databaseId = '' } = useParams()
+function DashboardSectionHeader({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <Heading weight="medium" level={2}>
+        {title}
+      </Heading>
+      <p className="text-sm text-neutral-subtle">{description}</p>
+    </div>
+  )
+}
 
-  const { data: service } = useService({ serviceId: databaseId })
+function DatabaseRdsDashboardContent() {
+  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
+
+  const { data: service } = useService({ serviceId })
   const { data: environment } = useEnvironment({ environmentId })
   const {
     expandCharts,
@@ -53,8 +64,8 @@ function DatabaseRdsDashboardContent() {
   return (
     <div className="isolate">
       <div className="bg-surface sticky top-[45px] z-header h-14 w-full bg-background">
-        <div className="mx-8 flex h-full items-center justify-between gap-3 border-b border-neutral">
-          <div className="flex gap-2">
+        <div className="mx-8 flex min-h-14 flex-col justify-between gap-3 border-b border-neutral py-3 md:h-full md:min-h-0 md:flex-row md:items-center md:py-0">
+          <div className="flex flex-wrap gap-2">
             <Tooltip
               content={
                 <span>
@@ -94,7 +105,7 @@ function DatabaseRdsDashboardContent() {
               onChange={(e) => setUseLocalTime(e === 'local')}
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button
               variant="plain"
               size="xs"
@@ -116,10 +127,13 @@ function DatabaseRdsDashboardContent() {
           </div>
         </div>
       </div>
-      <div className="space-y-10 px-8 py-10">
+      <div className="space-y-8 px-8 py-8">
         <Section className="gap-4">
-          <Heading weight="medium">Overview</Heading>
-          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-3')}>
+          <DashboardSectionHeader
+            title="Health overview"
+            description="Quick signals to spot load, memory pressure, connections, and PostgreSQL maintenance issues."
+          />
+          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3')}>
             <CardUnvacuumedTransactions clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgDbConnections clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgCpuUtilization clusterId={environment.cluster_id} dbInstance={dbInstance} />
@@ -129,51 +143,60 @@ function DatabaseRdsDashboardContent() {
         </Section>
 
         <Section className="gap-4">
-          <Heading weight="medium">Resources</Heading>
+          <DashboardSectionHeader
+            title="Resources"
+            description="CPU, RAM, queue depth, and active connections for the current database instance."
+          />
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-              <RdsCpuChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+              <RdsCpuChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-              <RdsRamChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+              <RdsRamChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsDiskQueueDepthChart
-                serviceId={databaseId}
+                serviceId={serviceId}
                 clusterId={environment.cluster_id}
                 dbInstance={dbInstance}
               />
             </div>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-              <RdsConnectionsChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+              <RdsConnectionsChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
           </div>
         </Section>
 
         <Section className="gap-4">
-          <Heading weight="medium">Query Performance</Heading>
+          <DashboardSectionHeader
+            title="Query performance"
+            description="Read and write latency to help identify slow queries or degraded database responsiveness."
+          />
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-              <RdsWriteLatencyChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+              <RdsWriteLatencyChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-              <RdsReadLatencyChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+              <RdsReadLatencyChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
           </div>
         </Section>
 
         <Section className="gap-4">
-          <Heading weight="medium">Storage & I/O</Heading>
+          <DashboardSectionHeader
+            title="Storage & I/O"
+            description="Disk throughput and remaining storage capacity for following saturation trends over time."
+          />
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-              <RdsWriteIopChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+              <RdsWriteIopChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-              <RdsReadIopChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+              <RdsReadIopChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsStorageAvailableChart
-                serviceId={databaseId}
+                serviceId={serviceId}
                 clusterId={environment.cluster_id}
                 dbInstance={dbInstance}
                 storageResourceInGiB={(service as Database).storage}
@@ -187,8 +210,10 @@ function DatabaseRdsDashboardContent() {
 }
 
 export function DatabaseRdsDashboard() {
+  const { organizationId = '' } = useParams({ strict: false })
+
   return (
-    <DashboardProvider>
+    <DashboardProvider organizationId={organizationId}>
       <DatabaseRdsDashboardContent />
     </DashboardProvider>
   )

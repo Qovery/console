@@ -208,6 +208,60 @@ const SERVICE_TABS: NavigationTab[] = [
   },
 ]
 
+function hasServiceMonitoringTab(
+  service:
+    | {
+        serviceType?: string
+        mode?: string
+        type?: string
+      }
+    | null
+    | undefined,
+  cluster:
+    | {
+        cloud_provider?: string
+        metrics_parameters?: {
+          enabled?: boolean
+          configuration?: {
+            cloud_watch_export_config?: {
+              enabled?: boolean
+            }
+          }
+        }
+      }
+    | null
+    | undefined
+) {
+  if (!service) return false
+
+  if (service.serviceType === 'APPLICATION' || service.serviceType === 'CONTAINER') {
+    return (
+      cluster?.cloud_provider === 'AWS' ||
+      cluster?.cloud_provider === 'SCW' ||
+      cluster?.cloud_provider === 'GCP' ||
+      cluster?.cloud_provider === 'AZURE'
+    )
+  }
+
+  if (service.serviceType !== 'DATABASE' || !cluster?.metrics_parameters?.enabled) {
+    return false
+  }
+
+  if (service.mode === 'CONTAINER') {
+    return true
+  }
+
+  if (service.mode === 'MANAGED') {
+    return (
+      cluster.cloud_provider === 'AWS' &&
+      cluster.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled === true &&
+      (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
+    )
+  }
+
+  return false
+}
+
 function createRoutePatternRegex(routeIdPattern: string): RegExp {
   const patternPath = routeIdPattern.replace('/_authenticated/organization', '/organization')
   return new RegExp('^' + patternPath.replace(/\$(\w+)/g, '[^/]+') + '(/.*)?$')
@@ -273,11 +327,16 @@ function useNavigationContext(): NavigationContext | null {
     serviceId: params.serviceId,
     enabled: Boolean(params.environmentId) && Boolean(params.serviceId),
   })
+  const { data: environment } = useEnvironment({
+    environmentId: params.environmentId,
+    enabled: Boolean(params.environmentId),
+  })
   const { data: clusters = [] } = useClusters({
     organizationId,
     enabled: Boolean(organizationId),
   })
   const hasAlerting = clusters.some((cluster) => cluster.metrics_parameters?.configuration?.alerting?.enabled)
+  const currentCluster = clusters.find((cluster) => cluster.id === environment?.cluster_id)
 
   for (const context of NAVIGATION_CONTEXTS) {
     const patternRegex = createRoutePatternRegex(context.routeIdPattern)
@@ -300,13 +359,17 @@ function useNavigationContext(): NavigationContext | null {
       if (hasAllParams) {
         const isDatabase = service?.serviceType === 'DATABASE'
         const isManagedDatabase = isDatabase && service.mode === 'MANAGED'
+        const hasMonitoring = hasServiceMonitoringTab(service, currentCluster)
 
         // Managed databases should not have cloud shell access.
         // Databases should not expose the variables tab.
         const tabs =
           context.type === 'service'
             ? context.tabs.filter(
-                (tab) => !(isDatabase && tab.id === 'variables') && !(isManagedDatabase && tab.id === 'cloud-shell')
+                (tab) =>
+                  !(isDatabase && tab.id === 'variables') &&
+                  !(isManagedDatabase && tab.id === 'cloud-shell') &&
+                  !(tab.id === 'monitoring' && !hasMonitoring)
               )
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
