@@ -159,7 +159,17 @@ export function useMessageSubmission({ refs, state, actions }: UseMessageSubmiss
 
         lastSubmitResult.current = response
       } catch (error) {
-        console.error('Error fetching response:', error)
+        const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred.'
+        actions.setThread([
+          ...updatedThread,
+          {
+            id: Date.now().toString(),
+            text: errorMessage,
+            owner: 'assistant',
+            timestamp: Date.now(),
+          },
+        ])
+        actions.setIsLoading(false)
       } finally {
         actions.setIsFinish(true)
       }

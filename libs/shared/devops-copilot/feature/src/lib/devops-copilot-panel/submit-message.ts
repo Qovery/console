@@ -95,7 +95,13 @@ export const submitMessage = async (
       messageId: assistantMessageId || '',
     }
   } catch (error) {
-    console.error('Error:', error)
-    return null
+    if (error && typeof error === 'object' && 'response' in error) {
+      const axiosError = error as { response?: { data?: { error?: string } } }
+      const backendMessage = axiosError.response?.data?.error
+      if (backendMessage) {
+        throw new Error(backendMessage)
+      }
+    }
+    throw error
   }
 }

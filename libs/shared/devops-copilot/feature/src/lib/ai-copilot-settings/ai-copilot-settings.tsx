@@ -35,6 +35,7 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
   const orgConfig = configData?.org_config
   const isEnabled = orgConfig?.enabled ?? false
   const currentMode = orgConfig?.read_only ? 'read-only' : 'read-write'
+  const currentTokenMode = orgConfig?.token_mode ?? 'jwt'
 
   const toggleTaskMutation = useToggleAICopilotRecurringTask({ organizationId: organization.id })
   const deleteTaskMutation = useDeleteAICopilotRecurringTask({ organizationId: organization.id })
@@ -67,7 +68,11 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
               isLoading={isLoadingConfig || !orgConfig}
               isUpdating={updateConfigMutation.isLoading}
               currentMode={currentMode}
+              currentTokenMode={currentTokenMode}
               onModeChange={(mode) => updateConfigMutation.mutate({ enabled: true, readOnly: mode === 'read-only' })}
+              onTokenModeChange={(tokenMode) =>
+                updateConfigMutation.mutate({ enabled: true, readOnly: orgConfig?.read_only ?? true, tokenMode })
+              }
               onDisable={() => handleToggleCopilot(false)}
             />
 

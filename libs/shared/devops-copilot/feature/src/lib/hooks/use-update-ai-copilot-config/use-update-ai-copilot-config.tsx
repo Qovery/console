@@ -12,15 +12,26 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ enabled, readOnly, userEmail }: { enabled: boolean; readOnly: boolean; userEmail?: string }) =>
+    mutationFn: ({
+      enabled,
+      readOnly,
+      userEmail,
+      tokenMode,
+    }: {
+      enabled: boolean
+      readOnly: boolean
+      userEmail?: string
+      tokenMode?: 'jwt' | 'role'
+    }) =>
       mutations.updateOrgConfig({
         organizationId,
         enabled,
         readOnly,
         instructions: instructions || '',
         userEmail,
+        tokenMode,
       }),
-    onMutate: async ({ readOnly }) => {
+    onMutate: async ({ readOnly, tokenMode }) => {
       await queryClient.cancelQueries({
         queryKey: devopsCopilot.config({ organizationId }).queryKey,
       })
@@ -36,6 +47,7 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
                 org_config: {
                   ...old.org_config,
                   read_only: readOnly,
+                  ...(tokenMode !== undefined && { token_mode: tokenMode }),
                 },
               }
             : old

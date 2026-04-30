@@ -1,16 +1,19 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
+import clsx from 'clsx'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
 import {
   BlockContent,
   Button,
   Callout,
   Heading,
   Icon,
-  IconAwesomeEnum,
   InputSelect,
   LoaderSpinner,
   Section,
+  Tooltip,
   useModal,
 } from '@qovery/shared/ui'
 
@@ -19,14 +22,16 @@ export interface SectionAICopilotConfigurationProps {
   isLoading?: boolean
   isUpdating?: boolean
   currentMode: 'read-only' | 'read-write'
+  currentTokenMode?: 'jwt' | 'role'
   onModeChange: (mode: 'read-only' | 'read-write') => void
+  onTokenModeChange?: (tokenMode: 'jwt' | 'role') => void
   onDisable: () => void
 }
 
 function getDisableConfirmationModal(closeModal: () => void, onDisable: () => void) {
   return (
     <div className="p-6">
-      <h2 className="h4 mb-2 text-neutral-400">Disable AI Copilot</h2>
+      <h2 className="mb-2 text-base font-semibold text-neutral-400">Disable AI Copilot</h2>
       <p className="mb-6 text-sm text-neutral-350">
         Are you sure you want to disable AI Copilot? This will stop all AI-powered assistance for your organization.
       </p>
@@ -55,12 +60,15 @@ export function SectionAICopilotConfiguration({
   isLoading,
   isUpdating,
   currentMode,
+  currentTokenMode,
   onModeChange,
+  onTokenModeChange,
   onDisable,
 }: SectionAICopilotConfigurationProps) {
   const { openModal, closeModal } = useModal()
   const [selectedMode, setSelectedMode] = useState<'read-only' | 'read-write' | null>(null)
   const hasReadWriteAccess = useFeatureFlagVariantKey('copilot-read-write-access')
+
   const mode = selectedMode ?? currentMode
   const hasUnsavedChanges = selectedMode !== null && selectedMode !== currentMode
 
@@ -108,7 +116,7 @@ export function SectionAICopilotConfiguration({
           </div>
         ) : (
           <div className="space-y-6 p-6">
-            <div className={`-mx-6 px-6 ${hasReadWriteAccess ? 'border-b border-neutral-250 pb-6' : ''}`}>
+            <div className="-mx-6 border-b border-neutral-250 px-6 pb-6">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
                   <div className="mb-2 flex items-center">
@@ -130,6 +138,68 @@ export function SectionAICopilotConfiguration({
                   Disable
                 </Button>
               </div>
+            </div>
+
+
+            <div className="-mx-6 border-b border-neutral-250 px-6 pb-6">
+              <div className="mb-1 flex items-center gap-1.5">
+                <p className="text-sm font-medium text-neutral-400">Access source</p>
+                <Tooltip content="Choose which identity the AI Copilot uses to access your infrastructure.">
+                  <span className="relative top-[1px] text-neutral-350">
+                    <Icon iconName="circle-question" iconStyle="regular" />
+                  </span>
+                </Tooltip>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => onTokenModeChange?.('jwt')}
+                  className={clsx(
+                    'flex flex-1 flex-col gap-1 rounded-lg border p-3 text-left transition-colors',
+                    {
+                      'border-brand-500 bg-brand-50': currentTokenMode !== 'role',
+                      'border-neutral-250 hover:border-neutral-300': currentTokenMode === 'role',
+                    }
+                  )}
+                >
+                  <span className="flex items-center gap-2 text-sm font-medium text-neutral-400">
+                    <Icon iconName="user" className={currentTokenMode !== 'role' ? 'text-brand-500' : 'text-neutral-350'} />
+                    My account
+                  </span>
+                  <span className="text-xs text-neutral-350">The copilot acts as you, with your own permissions.</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onTokenModeChange?.('role')}
+                  className={clsx(
+                    'flex flex-1 flex-col gap-1 rounded-lg border p-3 text-left transition-colors',
+                    {
+                      'border-brand-500 bg-brand-50': currentTokenMode === 'role',
+                      'border-neutral-250 hover:border-neutral-300': accessSource !== 'copilot-role',
+                    }
+                  )}
+                >
+                  <span className="flex items-center gap-2 text-sm font-medium text-neutral-400">
+                    <Icon iconName="robot" className={currentTokenMode === 'role' ? 'text-brand-500' : 'text-neutral-350'} />
+                    Copilot role
+                  </span>
+                  <span className="text-xs text-neutral-350">
+                    The copilot uses a dedicated role with controlled permissions.
+                  </span>
+                </button>
+              </div>
+              {currentTokenMode === 'role' && (
+                <p className="mt-3 text-xs text-neutral-350">
+                  Manage access permissions in{' '}
+                  <Link
+                    to={SETTINGS_URL(organization?.id) + SETTINGS_ROLES_URL}
+                    className="text-brand-500 hover:underline"
+                  >
+                    Roles settings
+                  </Link>
+                  .
+                </p>
+              )}
             </div>
 
             <div className="space-y-4">
@@ -166,7 +236,7 @@ export function SectionAICopilotConfiguration({
 
               <Callout.Root color="sky" className="mt-4">
                 <Callout.Icon>
-                  <Icon name={IconAwesomeEnum.CIRCLE_INFO} />
+                  <Icon iconName="circle-info" />
                 </Callout.Icon>
                 <Callout.Text>
                   <Callout.TextHeading>
