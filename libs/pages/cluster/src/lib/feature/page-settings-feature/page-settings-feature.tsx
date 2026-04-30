@@ -90,7 +90,7 @@ export function PageSettingsFeature() {
           ...(eksAnywhereCluster ? [] : [resourcesLink]),
           imageRegistryLink,
           ...(eksAnywhereCluster ? [] : [networkLink]),
-          advancedSettingsLink,
+          ...(eksAnywhereCluster ? [] : [advancedSettingsLink]),
           dangerZoneLink,
         ]
       }
