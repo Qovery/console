@@ -34,7 +34,7 @@ const navbarItemVariants = cva(
     'focus-visible:outline',
     'focus-visible:outline-2',
     'focus-visible:outline-offset-2',
-    'focus-visible:outline-brand-text',
+    'focus-visible:outline-brand-11',
     'font-medium',
     'rounded-md',
   ],
@@ -213,7 +213,7 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
 
             {/* Active bottom bar indicator */}
             <div
-              className="bg-brand absolute bottom-0 left-0 h-0.5 w-[100px] origin-left rounded-t transition-transform duration-150 ease-out"
+              className="absolute bottom-0 left-0 h-0.5 w-[100px] origin-left rounded-t bg-surface-brand-solid transition-transform duration-150 ease-out"
               style={{
                 ...(activeStyle || { display: 'none' }),
               }}
