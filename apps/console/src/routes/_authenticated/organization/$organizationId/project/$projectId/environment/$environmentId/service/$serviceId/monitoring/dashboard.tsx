@@ -1,7 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster, useClusterStatus } from '@qovery/domains/clusters/feature'
@@ -45,7 +44,7 @@ function RouteComponent() {
     clusterId: environment?.cluster_id ?? '',
     suspense: true,
   })
-  const isManagedDatabase = service?.serviceType === 'DATABASE' && service.mode === DatabaseModeEnum.MANAGED
+  const isManagedDatabase = service?.serviceType === 'DATABASE' && service.mode === 'MANAGED'
   const isSupportedManagedDatabase =
     isManagedDatabase &&
     cluster?.cloud_provider === 'AWS' &&
