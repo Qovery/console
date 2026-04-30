@@ -170,29 +170,6 @@ export const mutations = {
     return response
   },
 
-  addVote: async ({
-    userSub,
-    messageId,
-    vote,
-    organizationId,
-  }: {
-    userSub: string
-    messageId: string
-    vote: 'upvote' | 'downvote'
-    organizationId: string
-  }) => {
-    const response = await devopsCopilotAxios.post(
-      `/owner/${userSub}/organization/${organizationId}/message/${messageId}/vote`,
-      {
-        user_sub: userSub,
-        vote_type: vote,
-        current_page_url: window.location.href,
-      }
-    )
-
-    return response
-  },
-
   toggleRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
     const response = await devopsCopilotAxios.post(`/organization/${organizationId}/recurring-tasks/${taskId}/toggle`)
 
