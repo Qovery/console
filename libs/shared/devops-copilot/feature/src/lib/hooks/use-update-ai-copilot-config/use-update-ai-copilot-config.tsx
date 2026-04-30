@@ -70,11 +70,13 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
         })
       }
     },
-    onError: (_err, _variables, context) => {
+    onError: (err, _variables, context) => {
       if (context?.previousConfig) {
         queryClient.setQueryData(devopsCopilot.config({ organizationId }).queryKey, context.previousConfig)
       }
-      toast(ToastEnum.ERROR, 'Failed to update AI Copilot configuration', 'Please try again later')
+      const axiosErr = err as { response?: { data?: { error?: string } } }
+      const message = axiosErr?.response?.data?.error ?? (err instanceof Error ? err.message : 'Please try again later')
+      toast(ToastEnum.ERROR, 'Failed to update AI Copilot configuration', message)
     },
     onSettled: () => {
       queryClient.invalidateQueries({

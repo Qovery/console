@@ -44,7 +44,6 @@ export interface AICopilotUserAccess {
   enabled: boolean
   read_only: boolean
   instructions?: string
-  token_configured: boolean
 }
 
 export interface AICopilotConfigResponse {

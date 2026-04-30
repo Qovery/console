@@ -1,6 +1,6 @@
+import clsx from 'clsx'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
-import clsx from 'clsx'
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { SETTINGS_ROLES_URL, SETTINGS_URL } from '@qovery/shared/routes'
@@ -140,7 +140,6 @@ export function SectionAICopilotConfiguration({
               </div>
             </div>
 
-
             <div className="-mx-6 border-b border-neutral-250 px-6 pb-6">
               <div className="mb-1 flex items-center gap-1.5">
                 <p className="text-sm font-medium text-neutral-400">Access source</p>
@@ -154,16 +153,16 @@ export function SectionAICopilotConfiguration({
                 <button
                   type="button"
                   onClick={() => onTokenModeChange?.('jwt')}
-                  className={clsx(
-                    'flex flex-1 flex-col gap-1 rounded-lg border p-3 text-left transition-colors',
-                    {
-                      'border-brand-500 bg-brand-50': currentTokenMode !== 'role',
-                      'border-neutral-250 hover:border-neutral-300': currentTokenMode === 'role',
-                    }
-                  )}
+                  className={clsx('flex flex-1 flex-col gap-1 rounded-lg border p-3 text-left transition-colors', {
+                    'border-brand-500 bg-brand-50': currentTokenMode !== 'role',
+                    'border-neutral-250 hover:border-neutral-300': currentTokenMode === 'role',
+                  })}
                 >
                   <span className="flex items-center gap-2 text-sm font-medium text-neutral-400">
-                    <Icon iconName="user" className={currentTokenMode !== 'role' ? 'text-brand-500' : 'text-neutral-350'} />
+                    <Icon
+                      iconName="user"
+                      className={currentTokenMode !== 'role' ? 'text-brand-500' : 'text-neutral-350'}
+                    />
                     My account
                   </span>
                   <span className="text-xs text-neutral-350">The copilot acts as you, with your own permissions.</span>
@@ -171,16 +170,16 @@ export function SectionAICopilotConfiguration({
                 <button
                   type="button"
                   onClick={() => onTokenModeChange?.('role')}
-                  className={clsx(
-                    'flex flex-1 flex-col gap-1 rounded-lg border p-3 text-left transition-colors',
-                    {
-                      'border-brand-500 bg-brand-50': currentTokenMode === 'role',
-                      'border-neutral-250 hover:border-neutral-300': accessSource !== 'copilot-role',
-                    }
-                  )}
+                  className={clsx('flex flex-1 flex-col gap-1 rounded-lg border p-3 text-left transition-colors', {
+                    'border-brand-500 bg-brand-50': currentTokenMode === 'role',
+                    'border-neutral-250 hover:border-neutral-300': currentTokenMode !== 'role',
+                  })}
                 >
                   <span className="flex items-center gap-2 text-sm font-medium text-neutral-400">
-                    <Icon iconName="robot" className={currentTokenMode === 'role' ? 'text-brand-500' : 'text-neutral-350'} />
+                    <Icon
+                      iconName="robot"
+                      className={currentTokenMode === 'role' ? 'text-brand-500' : 'text-neutral-350'}
+                    />
                     Copilot role
                   </span>
                   <span className="text-xs text-neutral-350">
