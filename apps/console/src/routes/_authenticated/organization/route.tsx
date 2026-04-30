@@ -325,7 +325,6 @@ function useNavigationContext(): NavigationContext | null {
   })
   const { data: environment } = useEnvironment({
     environmentId: params.environmentId,
-    enabled: Boolean(params.environmentId),
   })
   const { data: clusters = [] } = useClusters({
     organizationId,
