@@ -18,7 +18,7 @@ const baseCluster = {
   production: true,
 } as unknown as Cluster
 
-const noop = () => {}
+const noop = jest.fn()
 
 describe('ClusterProductionHealthIssuesModal', () => {
   it('renders a calmer update report when clusters only have updates available', () => {
