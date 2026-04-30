@@ -1,6 +1,8 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type ApplicationGitRepositoryRequest,
+  ArgoCDApi,
+  type ArgoCdDestinationClusterMappingRequest,
   BillingApi,
   type BillingInfoRequest,
   ContainerRegistriesApi,
@@ -53,6 +55,7 @@ const billingApi = new BillingApi()
 const customRolesApi = new OrganizationCustomRoleApi()
 const membersApi = new MembersApi()
 const githubAppApi = new GithubAppApi()
+const argoCdApi = new ArgoCDApi()
 
 export const organizations = createQueryKeys('organizations', {
   listCredentials: ({ organizationId }: { organizationId: string }) => ({
@@ -393,6 +396,13 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  argoCdDestinationClusterMappings: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await argoCdApi.listArgoCdDestinationClusterMappings(organizationId)
+      return response.data.results
+    },
+  }),
   parseTerraformVariablesFromGitRepo: ({
     organizationId,
     repository,
@@ -411,6 +421,19 @@ export const organizations = createQueryKeys('organizations', {
 })
 
 export const mutations = {
+  async saveArgoCdDestinationClusterMapping({
+    organizationId,
+    argoCdDestinationClusterMappingRequest,
+  }: {
+    organizationId: string
+    argoCdDestinationClusterMappingRequest: ArgoCdDestinationClusterMappingRequest
+  }) {
+    const response = await argoCdApi.saveArgoCdDestinationClusterMapping(
+      organizationId,
+      argoCdDestinationClusterMappingRequest
+    )
+    return response.data
+  },
   async listTfVarsFilesFromGitRepo({
     organizationId,
     repository,

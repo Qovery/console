@@ -1,19 +1,36 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
+import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
+import {
+  type ArgoCdInstanceMappingResponse,
+  type ArgoCdLinkedClusterDetails,
+  type ArgoCdUnlinkedClusterDetails,
+  type Cluster,
+  type KubernetesEnum,
+} from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { useDeleteArgoCdCredentials } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Badge, Button, EmptyState, Icon, Link, ModalConfirmation, Section, useModal } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  EmptyState,
+  Icon,
+  Link,
+  ModalConfirmation,
+  Section,
+  Skeleton,
+  useModal,
+} from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import {
-  type OrganizationArgoCdClusterType,
-  type OrganizationArgoCdIntegration,
-  type OrganizationArgoCdLinkedCluster,
-  type OrganizationArgoCdUnlinkedCluster,
-  useOrganizationArgoCdIntegrations,
-} from '../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations'
+import { queries } from '@qovery/state/util-queries'
+import { useOrganizationArgoCdIntegrations } from '../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations'
+import { useSaveArgoCdDestinationClusterMapping } from '../hooks/use-save-argocd-destination-cluster-mapping/use-save-argocd-destination-cluster-mapping'
 import { ConnectArgoCdModal } from './connect-argocd-modal/connect-argocd-modal'
 import { LinkClusterModal, type LinkClusterModalResponse } from './link-cluster-modal/link-cluster-modal'
+
+type OrganizationArgoCdClusterType = 'Qovery managed' | 'Self managed' | 'Partially managed'
 
 interface ArgoCdSectionProps {
   id: 'linked' | 'unlinked'
@@ -26,21 +43,33 @@ interface ArgoCdSectionProps {
 }
 
 interface ArgoCdIntegrationCardProps {
-  integration: OrganizationArgoCdIntegration
+  integration: ArgoCdInstanceMappingResponse
   organizationId: string
   linkedClusterIds: string[]
-  onEdit: (integration: OrganizationArgoCdIntegration) => void
-  onDelete: (integration: OrganizationArgoCdIntegration) => void
+  agentCluster?: Cluster
+  onEdit: (integration: ArgoCdInstanceMappingResponse, agentCluster?: Cluster) => void
+  onDelete: (integration: ArgoCdInstanceMappingResponse) => void
   onLinkCluster: (
     integrationId: string,
-    cluster: OrganizationArgoCdUnlinkedCluster,
+    cluster: ArgoCdUnlinkedClusterDetails,
     response: LinkClusterModalResponse
   ) => void
-  onUnlinkCluster: (integrationId: string, cluster: OrganizationArgoCdLinkedCluster) => void
+  onUnlinkCluster: (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => void
 }
 
 const getDestinationClusterName = (destinationCluster: string) =>
   destinationCluster.replace(/^https?:\/\//, '').replace(/\/$/, '')
+
+const getClusterTypeLabel = (clusterType: KubernetesEnum): OrganizationArgoCdClusterType => {
+  switch (clusterType) {
+    case 'SELF_MANAGED':
+      return 'Self managed'
+    case 'PARTIALLY_MANAGED':
+      return 'Partially managed'
+    default:
+      return 'Qovery managed'
+  }
+}
 
 function ArgoCdSection({
   id,
@@ -86,6 +115,7 @@ function ArgoCdIntegrationCard({
   integration,
   organizationId,
   linkedClusterIds,
+  agentCluster,
   onEdit,
   onDelete,
   onLinkCluster,
@@ -95,20 +125,20 @@ function ArgoCdIntegrationCard({
   const [isLinkedSectionOpen, setIsLinkedSectionOpen] = useState(true)
   const [isUnlinkedSectionOpen, setIsUnlinkedSectionOpen] = useState(false)
 
-  const hasLinkedClusters = integration.linkedClusters.length > 0
-  const hasUnlinkedClusters = integration.unlinkedClusters.length > 0
+  const hasLinkedClusters = integration.linked_clusters.length > 0
+  const hasUnlinkedClusters = integration.unlinked_clusters.length > 0
 
-  const openLinkClusterModal = (cluster: OrganizationArgoCdUnlinkedCluster) => {
+  const openLinkClusterModal = (cluster: ArgoCdUnlinkedClusterDetails) => {
     openModal({
       content: (
         <LinkClusterModal
           organizationId={organizationId}
-          argoCdClusterName={cluster.argocdName ?? getDestinationClusterName(cluster.destinationCluster)}
+          argoCdClusterName={cluster.argocd_cluster_name ?? getDestinationClusterName(cluster.argocd_cluster_url)}
           linkedClusterIds={linkedClusterIds}
           onClose={(response?: LinkClusterModalResponse) => {
             closeModal()
             if (response) {
-              onLinkCluster(integration.id, cluster, response)
+              onLinkCluster(integration.credentials_id, cluster, response)
             }
           }}
         />
@@ -122,7 +152,7 @@ function ArgoCdIntegrationCard({
   return (
     <div
       className="overflow-hidden rounded-lg bg-surface-neutral-subtle"
-      data-testid={`argocd-integration-${integration.id}`}
+      data-testid={`argocd-integration-${integration.credentials_id}`}
     >
       <div className="relative overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)]">
         <div className="flex items-center justify-between px-4 pb-2 pt-4">
@@ -130,14 +160,12 @@ function ArgoCdIntegrationCard({
             <span className="text-base font-medium text-neutral">ArgoCD running on</span>
             <Link
               to="/organization/$organizationId/cluster/$clusterId/overview"
-              params={{ organizationId, clusterId: integration.agentClusterId }}
+              params={{ organizationId, clusterId: integration.agent_cluster_id }}
               className="flex h-6 items-center gap-1 rounded-md border border-neutral bg-surface-neutral px-1.5 text-ssm font-normal text-neutral hover:bg-surface-neutral-subtle hover:text-neutral"
               data-testid="argocd-cluster-link"
             >
-              {integration.agentClusterCloudProvider ? (
-                <Icon name={integration.agentClusterCloudProvider} width="16" height="16" />
-              ) : null}
-              {integration.agentClusterName}
+              {agentCluster?.cloud_provider ? <Icon name={agentCluster.cloud_provider} width="16" height="16" /> : null}
+              {agentCluster?.name ?? integration.agent_cluster_id}
             </Link>
           </div>
           <div className="flex items-center gap-2">
@@ -147,7 +175,7 @@ function ArgoCdIntegrationCard({
               color="neutral"
               iconOnly
               data-testid="edit-argocd-integration"
-              onClick={() => onEdit(integration)}
+              onClick={() => onEdit(integration, agentCluster)}
             >
               <Icon iconName="pencil" iconStyle="regular" />
             </Button>
@@ -168,30 +196,33 @@ function ArgoCdIntegrationCard({
           <ArgoCdSection
             id="linked"
             title="Linked clusters"
-            count={integration.linkedClusters.length}
+            count={integration.linked_clusters.length}
             isOpen={isLinkedSectionOpen}
             onOpenChange={setIsLinkedSectionOpen}
             hasBottomBorder={hasUnlinkedClusters}
           >
             <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral-subtle">
-              {integration.linkedClusters.map((cluster) => (
+              {integration.linked_clusters.map((cluster) => (
                 <div
-                  key={cluster.id}
+                  key={`${integration.credentials_id}-${cluster.qovery_cluster_id}`}
                   className="flex items-center justify-between border-b border-neutral px-4 py-3 last:border-b-0"
                 >
                   <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-1.5">
-                      {cluster.cloudProvider ? <Icon name={cluster.cloudProvider} width="16" height="16" /> : null}
-                      <span className="text-ssm font-medium text-neutral">{cluster.clusterName}</span>
+                      {cluster.qovery_cluster_cloud_provider ? (
+                        <Icon name={cluster.qovery_cluster_cloud_provider} width="16" height="16" />
+                      ) : null}
+                      <span className="text-ssm font-medium text-neutral">{cluster.qovery_cluster_name}</span>
                     </div>
                     <div className="flex flex-wrap items-center gap-2 text-ssm text-neutral-subtle">
-                      {cluster.argocdName ? (
+                      {cluster.argocd_cluster_name ? (
                         <span>
-                          ArgoCD name: <span className="text-neutral">{cluster.argocdName}</span>
+                          ArgoCD name: <span className="text-neutral">{cluster.argocd_cluster_name}</span>
                         </span>
                       ) : null}
                       <span>
-                        Cluster type: <span className="text-neutral">{cluster.clusterType}</span>
+                        Cluster type:{' '}
+                        <span className="text-neutral">{getClusterTypeLabel(cluster.qovery_cluster_type)}</span>
                       </span>
                     </div>
                   </div>
@@ -201,8 +232,8 @@ function ArgoCdIntegrationCard({
                       variant="outline"
                       color="neutral"
                       iconOnly
-                      onClick={() => onUnlinkCluster(integration.id, cluster)}
-                      data-testid={`unlink-linked-cluster-${cluster.id}`}
+                      onClick={() => onUnlinkCluster(integration.credentials_id, cluster)}
+                      data-testid={`unlink-linked-cluster-${cluster.qovery_cluster_id}`}
                     >
                       <Icon iconName="link-broken" iconStyle="regular" />
                     </Button>
@@ -217,25 +248,25 @@ function ArgoCdIntegrationCard({
           <ArgoCdSection
             id="unlinked"
             title="Unlinked clusters"
-            count={integration.unlinkedClusters.length}
+            count={integration.unlinked_clusters.length}
             isOpen={isUnlinkedSectionOpen}
             onOpenChange={setIsUnlinkedSectionOpen}
             hasBottomBorder={false}
           >
             <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral-subtle">
-              {integration.unlinkedClusters.map((cluster) => (
+              {integration.unlinked_clusters.map((cluster) => (
                 <div
-                  key={cluster.id}
+                  key={`${integration.credentials_id}-${cluster.argocd_cluster_url}`}
                   className="flex items-center justify-between border-b border-neutral px-4 py-3 last:border-b-0"
                 >
                   <div className="flex flex-col gap-0.5">
                     <span className="text-ssm font-medium text-neutral">
-                      {cluster.argocdName ?? getDestinationClusterName(cluster.destinationCluster)}
+                      {cluster.argocd_cluster_name ?? getDestinationClusterName(cluster.argocd_cluster_url)}
                     </span>
                     <div className="flex flex-wrap items-center gap-2 text-ssm text-neutral-subtle">
                       <span>
                         Destination:{' '}
-                        <span className="text-neutral">{getDestinationClusterName(cluster.destinationCluster)}</span>
+                        <span className="text-neutral">{getDestinationClusterName(cluster.argocd_cluster_url)}</span>
                       </span>
                     </div>
                   </div>
@@ -245,7 +276,7 @@ function ArgoCdIntegrationCard({
                     color="neutral"
                     iconOnly
                     onClick={() => openLinkClusterModal(cluster)}
-                    data-testid={`link-unlinked-cluster-${cluster.id}`}
+                    data-testid={`link-unlinked-cluster-${cluster.argocd_cluster_url}`}
                   >
                     <Icon iconName="link" iconStyle="regular" />
                   </Button>
@@ -262,34 +293,72 @@ function ArgoCdIntegrationCard({
           {integration.status === 'connected' ? 'Connected' : 'Unknown'}
         </Badge>
         <p className="text-ssm text-neutral-subtle">
-          Last update <span className="text-neutral">{timeAgo(new Date(integration.lastCheckedAt))}</span>
+          Last update <span className="text-neutral">{timeAgo(new Date(integration.last_checked_at))}</span>
         </p>
       </div>
     </div>
   )
 }
 
-const toLinkedCluster = (
-  cluster: OrganizationArgoCdUnlinkedCluster,
-  response: LinkClusterModalResponse
-): OrganizationArgoCdLinkedCluster => ({
-  id: `linked-${response.clusterId}`,
-  destinationCluster: cluster.destinationCluster,
-  clusterId: response.clusterId,
-  clusterName: response.clusterName,
-  cloudProvider: response.clusterCloudProvider as OrganizationArgoCdIntegration['agentClusterCloudProvider'],
-  clusterType: response.clusterType as OrganizationArgoCdClusterType,
-  argocdName: cluster.argocdName,
-  applicationsCount: cluster.applicationsCount,
-})
+function ArgoCdIntegrationCardSkeleton() {
+  return (
+    <div className="overflow-hidden rounded-lg bg-surface-neutral-subtle">
+      <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)]">
+        <div className="flex items-center justify-between px-4 pb-2 pt-4">
+          <div className="flex items-center gap-2">
+            <Skeleton width={140} height={24} />
+            <Skeleton width={170} height={24} />
+          </div>
+          <div className="flex items-center gap-2">
+            <Skeleton width={28} height={28} rounded />
+            <Skeleton width={28} height={28} rounded />
+          </div>
+        </div>
+
+        <div className="border-b border-neutral px-4 py-4">
+          <Skeleton width={160} height={20} />
+        </div>
+
+        <div className="p-4">
+          <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral-subtle">
+            {[...Array(2)].map((_, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between border-b border-neutral px-4 py-3 last:border-b-0"
+              >
+                <div className="flex flex-col gap-2">
+                  <Skeleton width={170} height={18} />
+                  <Skeleton width={220} height={16} />
+                </div>
+                <Skeleton width={40} height={40} rounded />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="-mt-[7px] flex items-center gap-2 rounded-b-lg border border-t-0 border-neutral bg-surface-neutral-subtle px-4 pb-3 pt-[calc(0.75rem+7px)]">
+        <Skeleton width={100} height={28} />
+        <Skeleton width={120} height={18} />
+      </div>
+    </div>
+  )
+}
 
 export function SettingsArgoCdIntegration() {
   const { organizationId = '' } = useParams({ strict: false })
-  const { data: integrations = [] } = useOrganizationArgoCdIntegrations({
+  const {
+    data: integrations = [],
+    organizationClusters = [],
+    isLoading,
+  } = useOrganizationArgoCdIntegrations({
     organizationId,
   })
+  const queryClient = useQueryClient()
   const { openModal, closeModal } = useModal()
-  const [integrationsState, setIntegrationsState] = useState<OrganizationArgoCdIntegration[]>([])
+  const { mutateAsync: deleteArgoCdCredentials } = useDeleteArgoCdCredentials()
+  const { mutateAsync: saveArgoCdDestinationClusterMapping } = useSaveArgoCdDestinationClusterMapping()
+  const [integrationsState, setIntegrationsState] = useState<ArgoCdInstanceMappingResponse[]>([])
 
   useDocumentTitle('ArgoCD integration - Organization settings')
 
@@ -298,8 +367,13 @@ export function SettingsArgoCdIntegration() {
   }, [integrations])
 
   const configuredClusterIds = useMemo(
-    () => integrationsState.map(({ agentClusterId }) => agentClusterId),
+    () => integrationsState.map(({ agent_cluster_id }) => agent_cluster_id),
     [integrationsState]
+  )
+
+  const organizationClustersById = useMemo(
+    () => new Map(organizationClusters.map((cluster: Cluster) => [cluster.id, cluster])),
+    [organizationClusters]
   )
 
   const openCreateModal = () => {
@@ -308,7 +382,12 @@ export function SettingsArgoCdIntegration() {
         <ConnectArgoCdModal
           organizationId={organizationId}
           configuredClusterIds={configuredClusterIds}
-          onClose={closeModal}
+          onClose={async () => {
+            closeModal()
+            await queryClient.invalidateQueries({
+              queryKey: queries.organizations.argoCdDestinationClusterMappings({ organizationId }).queryKey,
+            })
+          }}
         />
       ),
       options: {
@@ -318,19 +397,24 @@ export function SettingsArgoCdIntegration() {
     })
   }
 
-  const openEditModal = (integration: OrganizationArgoCdIntegration) => {
+  const openEditModal = (integration: ArgoCdInstanceMappingResponse, agentCluster?: Cluster) => {
     openModal({
       content: (
         <ConnectArgoCdModal
           organizationId={organizationId}
           configuredClusterIds={configuredClusterIds}
           integration={{
-            clusterId: integration.agentClusterId,
-            clusterName: integration.agentClusterName,
-            clusterCloudProvider: integration.agentClusterCloudProvider,
-            argoCdUrl: integration.argoCdUrl,
+            clusterId: integration.agent_cluster_id,
+            clusterName: agentCluster?.name ?? integration.agent_cluster_id,
+            clusterCloudProvider: agentCluster?.cloud_provider,
+            argoCdUrl: integration.argocd_url,
           }}
-          onClose={closeModal}
+          onClose={async () => {
+            closeModal()
+            await queryClient.invalidateQueries({
+              queryKey: queries.organizations.argoCdDestinationClusterMappings({ organizationId }).queryKey,
+            })
+          }}
         />
       ),
       options: {
@@ -340,17 +424,24 @@ export function SettingsArgoCdIntegration() {
     })
   }
 
-  const openDeleteModal = (integration: OrganizationArgoCdIntegration) => {
+  const openDeleteModal = (integration: ArgoCdInstanceMappingResponse) => {
     openModal({
       content: (
         <ModalConfirmation
           title="Remove ArgoCD integration"
           description={`To confirm the deletion of the integration, please type "delete"`}
-          callback={() => setIntegrationsState((current) => current.filter(({ id }) => id !== integration.id))}
+          callback={async () => {
+            await deleteArgoCdCredentials({ clusterId: integration.agent_cluster_id })
+            await queryClient.invalidateQueries({
+              queryKey: queries.organizations.argoCdDestinationClusterMappings({ organizationId }).queryKey,
+            })
+            setIntegrationsState((current) =>
+              current.filter(({ credentials_id }) => credentials_id !== integration.credentials_id)
+            )
+          }}
           confirmationMethod="action"
           confirmationAction="delete"
           placeholder={`Enter "delete"`}
-          warning="This list is temporarily powered by fake data until the mapping endpoint is available."
         />
       ),
       options: {
@@ -359,43 +450,47 @@ export function SettingsArgoCdIntegration() {
     })
   }
 
-  const linkCluster = (
+  const linkCluster = async (
     integrationId: string,
-    cluster: OrganizationArgoCdUnlinkedCluster,
+    cluster: ArgoCdUnlinkedClusterDetails,
     response: LinkClusterModalResponse
   ) => {
-    setIntegrationsState((current) =>
-      current.map((integration) =>
-        integration.id !== integrationId
-          ? integration
-          : {
-              ...integration,
-              linkedClusters: [...integration.linkedClusters, toLinkedCluster(cluster, response)],
-              unlinkedClusters: integration.unlinkedClusters.filter(({ id }) => id !== cluster.id),
-            }
-      )
-    )
+    const integration = integrationsState.find(({ credentials_id }) => credentials_id === integrationId)
+
+    if (!integration) {
+      return
+    }
+
+    await saveArgoCdDestinationClusterMapping({
+      organizationId,
+      argoCdDestinationClusterMappingRequest: {
+        agent_cluster_id: integration.agent_cluster_id,
+        argocd_cluster_url: cluster.argocd_cluster_url,
+        cluster_id: response.clusterId,
+      },
+    })
+
+    await queryClient.invalidateQueries({
+      queryKey: queries.organizations.argoCdDestinationClusterMappings({ organizationId }).queryKey,
+    })
   }
 
-  const unlinkCluster = (integrationId: string, cluster: OrganizationArgoCdLinkedCluster) => {
+  const unlinkCluster = (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => {
     setIntegrationsState((current) =>
       current.map((integration) =>
-        integration.id !== integrationId
+        integration.credentials_id !== integrationId
           ? integration
           : {
               ...integration,
-              linkedClusters: integration.linkedClusters.filter(({ id }) => id !== cluster.id),
-              unlinkedClusters: [
-                ...integration.unlinkedClusters,
+              linked_clusters: integration.linked_clusters.filter(
+                ({ qovery_cluster_id }) => qovery_cluster_id !== cluster.qovery_cluster_id
+              ),
+              unlinked_clusters: [
+                ...integration.unlinked_clusters,
                 {
-                  id: `unlinked-${cluster.id}`,
-                  destinationCluster: cluster.destinationCluster,
-                  clusterId: null,
-                  clusterName: null,
-                  cloudProvider: null,
-                  clusterType: null,
-                  argocdName: cluster.argocdName,
-                  applicationsCount: cluster.applicationsCount,
+                  argocd_cluster_url: cluster.argocd_cluster_url,
+                  argocd_cluster_name: cluster.argocd_cluster_name,
+                  applications_count: cluster.applications_count,
                 },
               ],
             }
@@ -419,14 +514,19 @@ export function SettingsArgoCdIntegration() {
         </div>
 
         <div className="max-w-content-with-navigation-left">
-          {integrationsState.length > 0 ? (
+          {isLoading ? (
+            <div className="flex w-full max-w-[648px] flex-col gap-4">
+              <ArgoCdIntegrationCardSkeleton />
+            </div>
+          ) : integrationsState.length > 0 ? (
             <div className="flex w-full max-w-[648px] flex-col gap-4">
               {integrationsState.map((integration) => (
                 <ArgoCdIntegrationCard
-                  key={integration.id}
+                  key={integration.credentials_id}
                   integration={integration}
                   organizationId={organizationId}
-                  linkedClusterIds={integration.linkedClusters.map(({ clusterId }) => clusterId)}
+                  agentCluster={organizationClustersById.get(integration.agent_cluster_id)}
+                  linkedClusterIds={integration.linked_clusters.map(({ qovery_cluster_id }) => qovery_cluster_id)}
                   onEdit={openEditModal}
                   onDelete={openDeleteModal}
                   onLinkCluster={linkCluster}
