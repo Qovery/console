@@ -1,782 +1,456 @@
-import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
-import { type ReactElement, cloneElement, useMemo, useState } from 'react'
-import { match } from 'ts-pattern'
-import { type ServiceType } from '@qovery/domains/services/data-access'
-import { Badge, Button, ExternalLink, Heading, Icon, InputSearch, Link, Section } from '@qovery/shared/ui'
+import { useState } from 'react'
+import { Badge, Button, Heading, Icon, InputSearch, Link, Section, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { TemplateIds } from '@qovery/shared/util-services'
-import { ServiceIcons } from '../service-icon/service-icon'
+import { BlueprintDetailModal } from './blueprint-detail-modal/blueprint-detail-modal'
+import { BlueprintServiceDemo } from './blueprint-service-demo/blueprint-service-demo'
+import { BlueprintWizard } from './blueprint-wizard'
 import {
-  type ServiceTemplateOptionType,
-  type ServiceTemplateType,
-  type TagsEnum,
-  serviceTemplates,
-} from './service-templates'
+  type BlueprintEntry,
+  CATEGORY_LABELS,
+  type CategoryKey,
+  MOCK_BLUEPRINTS,
+  PROVIDER_CONFIG,
+  type ProviderKey,
+} from './blueprints'
 
-const CloudFormationIcon = '/assets/devicon/cloudformation.svg'
+// ─── DefaultServiceItem ───────────────────────────────────────────────────────
 
-const getEnvironmentBasePath = (organizationId: string, projectId: string, environmentId: string) =>
-  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}`
-
-const getServicesPath = (organizationId: string, projectId: string, environmentId: string, subPath: string) =>
-  `${getEnvironmentBasePath(organizationId, projectId, environmentId)}${subPath}`
-
-const CREATE_FLOW_SLUG_BY_TYPE: Partial<Record<ServiceType, string>> = {
-  APPLICATION: 'application',
-  CONTAINER: 'container',
-  DATABASE: 'database',
-  HELM: 'helm',
-  JOB: 'lifecycle-job',
-  LIFECYCLE_JOB: 'lifecycle-job',
-  CRON_JOB: 'cron-job',
-  TERRAFORM: 'terraform',
-}
-
-const CREATE_FLOW_SLUGS = new Set(Object.values(CREATE_FLOW_SLUG_BY_TYPE))
-
-/**
- * Path = flow slug (from config), template = preset id in query.
- * Works for card-by-type (Application > Next.js) and card-by-template (Apache Kafka > Container).
- * */
-function getCreateFlowPathParams(
-  type: ServiceType,
-  parentSlug: string,
-  slug: string
-): { flowSlug: string; templateSlug: string | undefined } {
-  if (slug === 'current') {
-    const flowSlug = CREATE_FLOW_SLUGS.has(parentSlug) ? parentSlug : CREATE_FLOW_SLUG_BY_TYPE[type] ?? parentSlug
-    const templateSlug = CREATE_FLOW_SLUGS.has(parentSlug) ? undefined : parentSlug
-    return { flowSlug, templateSlug }
-  }
-  const flowSlug = CREATE_FLOW_SLUGS.has(parentSlug) ? parentSlug : slug
-  const templateSlug = CREATE_FLOW_SLUGS.has(parentSlug) ? (CREATE_FLOW_SLUGS.has(slug) ? undefined : slug) : parentSlug
-  return { flowSlug, templateSlug }
-}
-
-/** Builds /service/create/:flowSlug with optional ?template= for presets. Use for any type listed in CREATE_FLOW_SLUG_BY_TYPE. */
-function getCreateFlowPath(flowSlug: string, templateSlug?: string): string {
-  const path = `/service/create/${flowSlug}`
-  if (templateSlug && templateSlug !== 'current') {
-    return `${path}?template=${encodeURIComponent(templateSlug)}`
-  }
-  return path
-}
-
-function buildCreateFlowPathForType(type: ServiceType, parentSlug: string, slug: string): string | undefined {
-  const flowSlug = CREATE_FLOW_SLUG_BY_TYPE[type]
-  if (!flowSlug) return undefined
-
-  if (type === 'DATABASE' || type === 'LIFECYCLE_JOB') {
-    const templateSlug = parentSlug === flowSlug || parentSlug === 'current' ? undefined : parentSlug
-    const optionSlug = slug === 'current' ? undefined : slug
-    const path = getCreateFlowPath(flowSlug, templateSlug)
-
-    if (optionSlug) {
-      return `${path}${templateSlug ? '&' : '?'}option=${encodeURIComponent(optionSlug)}`
-    }
-
-    return path
-  }
-
-  const { flowSlug: resolvedFlowSlug, templateSlug } = getCreateFlowPathParams(type, parentSlug, slug)
-  return getCreateFlowPath(resolvedFlowSlug, templateSlug)
-}
-
-function Card({
-  title,
-  description,
-  icon,
-  link,
-  onClick,
-  disabledCTA,
-  badge,
-}: {
-  title: string
+interface DefaultServiceItemProps {
+  icon: React.ReactNode
+  label: string
   description: string
-  icon: ReactElement
-  link?: string
+  to?: string
   onClick?: () => void
-  disabledCTA?: ReactElement
-  badge?: string
-}) {
-  const Wrapper = ({ children }: { children: ReactElement }) => {
-    const className = twMerge(
-      'flex cursor-pointer items-center justify-between gap-5 rounded border border-neutral px-5 py-4 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)]',
-      disabledCTA ? 'border-neutral bg-surface-neutral-subtle' : 'hover:bg-surface-neutral-subtle'
-    )
+  disabled?: boolean
+}
 
-    if (onClick) {
-      return (
-        <div onClick={onClick} className={className}>
-          {children}
-        </div>
-      )
-    }
+function DefaultServiceItem({ icon, label, description, to, onClick, disabled }: DefaultServiceItemProps) {
+  const inner = (
+    <>
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-surface-neutral-component">
+        {icon}
+      </span>
+      <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <span className="text-sm text-neutral">{label}</span>
+        <span className="text-ssm text-neutral-subtle">{description}</span>
+      </span>
+      {!disabled && (
+        <Icon iconName="arrow-right" iconStyle="regular" className="shrink-0 text-xs text-neutral-subtle" />
+      )}
+    </>
+  )
 
-    if (!link) {
-      return <div className={className}>{children}</div>
-    }
+  const className = twMerge(
+    'flex items-center gap-3 rounded-lg border border-neutral p-3 font-normal transition',
+    disabled ? 'cursor-default bg-surface-neutral-subtle' : 'cursor-pointer hover:bg-surface-neutral-subtle'
+  )
 
-    return (
-      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
-      <Link to={link} className={className}>
-        {children}
-      </Link>
-    )
+  if (disabled) {
+    return <div className={className}>{inner}</div>
   }
 
-  return (
-    <Wrapper>
-      <>
-        <div className="space-y-2">
-          <div className="space-y-1">
-            <div className="flex items-center gap-2">
-              <h3 className="text-ssm font-medium text-neutral">{title}</h3>
-              {badge && (
-                <Badge
-                  radius="full"
-                  variant="surface"
-                  color="purple"
-                  size="sm"
-                  className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px]  text-accent1"
-                >
-                  {badge}
-                </Badge>
-              )}
-            </div>
-            <p className="max-w-96 text-xs text-neutral-subtle">{description}</p>
-          </div>
-          {disabledCTA}
-        </div>
-        {icon}
-      </>
-    </Wrapper>
-  )
-}
-
-/** Types listed in CREATE_FLOW_SLUG_BY_TYPE use /service/create/:flowSlug?template=; others use legacy URLs until migrated. */
-const servicePathSuffix = (type: ServiceType, parentSlug: string, slug: string) =>
-  match(type)
-    .with('APPLICATION', 'CONTAINER', 'DATABASE', 'HELM', 'TERRAFORM', 'LIFECYCLE_JOB', () =>
-      buildCreateFlowPathForType(type, parentSlug, slug)
-    )
-    .with('JOB', 'CRON_JOB', () => undefined)
-    .otherwise(() => buildCreateFlowPathForType(type, parentSlug, slug))
-
-interface CardOptionProps extends ServiceTemplateOptionType {
-  parentSlug: string
-  organizationId: string
-  projectId: string
-  environmentId: string
-  isTerraformFeatureFlag?: boolean
-  onUpgradePlanClick?: () => void
-}
-
-function CardOption({
-  parentSlug,
-  slug,
-  icon,
-  title,
-  description,
-  type,
-  recommended,
-  badge,
-  template_id,
-  icon_uri,
-  organizationId,
-  projectId,
-  environmentId,
-  isTerraformFeatureFlag,
-  onUpgradePlanClick,
-}: CardOptionProps) {
-  const iconClassName = ServiceIcons[icon_uri].className
-  const pathSuffix = servicePathSuffix(type, parentSlug, slug)
-  const to = pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined
-
-  const isTerraformUpgrade = template_id === TemplateIds.TERRAFORM && !isTerraformFeatureFlag && onUpgradePlanClick
-
-  if (isTerraformUpgrade) {
+  if (onClick) {
     return (
       <div
         role="button"
         tabIndex={0}
-        onClick={onUpgradePlanClick}
-        onKeyDown={(e) => e.key === 'Enter' && onUpgradePlanClick()}
-        className="flex cursor-pointer items-start gap-3 rounded-sm border border-neutral bg-surface-neutral-subtle p-3 transition hover:bg-surface-neutral-componentHover"
+        onClick={onClick}
+        onKeyDown={(e) => e.key === 'Enter' && onClick()}
+        className={className}
       >
-        <img className={twMerge('mt-1 select-none', iconClassName)} width={24} height={24} src={icon} alt={title} />
-        <span className="flex flex-1 flex-col gap-1">
-          <span className="inline-flex items-center gap-2 text-ssm font-medium text-neutral">
-            {title}
-            {badge && (
-              <Badge
-                radius="full"
-                variant="surface"
-                color="purple"
-                size="sm"
-                className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px]  text-accent1"
-              >
-                {badge}
-              </Badge>
-            )}
-          </span>
-          <span className="inline-block text-xs text-neutral-subtle">{description}</span>
-          <p className="cursor-pointer text-xs font-medium text-neutral-subtle">
-            Upgrade your plan <Icon iconName="chevron-right" className="ml-1 text-2xs" />
-          </p>
-        </span>
+        {inner}
       </div>
     )
   }
 
-  if (!to) return null
+  return (
+    // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+    <Link to={to} className={className}>
+      {inner}
+    </Link>
+  )
+}
+
+// ─── BlueprintCard ─────────────────────────────────────────────────────────────
+
+function BlueprintCard({
+  blueprint,
+  onUse,
+  onDetails,
+}: {
+  blueprint: BlueprintEntry
+  onUse: (id: string) => void
+  onDetails: (id: string) => void
+}) {
+  const providerCfg = PROVIDER_CONFIG[blueprint.provider]
 
   return (
-    <Link
-      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
-      to={to}
-      className="flex items-start gap-3 rounded-sm border border-neutral bg-surface-neutral-component p-3 transition hover:bg-surface-neutral-componentHover"
-      onClick={() =>
-        posthog.capture('select-service', {
-          qoveryServiceType: type,
-          selectedServiceType: parentSlug,
-          selectedServiceSubType: slug,
-        })
-      }
-    >
-      <img className={twMerge('mt-1 select-none', iconClassName)} width={24} height={24} src={icon} alt={title} />
-      <span>
-        <span className="inline-flex items-center gap-2 text-ssm font-medium text-neutral">
-          {title}
-          {badge && (
-            <Badge
-              radius="full"
-              variant="surface"
-              color="purple"
-              size="sm"
-              className="h-4 border-transparent bg-surface-accent1-component px-1 text-[8px]  text-accent1"
-            >
-              {badge}
+    <div className="grid grid-rows-[1fr_auto] rounded-xl border border-neutral bg-surface-neutral-subtle">
+      {/* Inner white surface with its own outline — the outline's rounded bottom corners are the second radius arc */}
+      <div className="flex flex-col gap-3 rounded-xl bg-background p-4 outline outline-[1px] outline-neutral">
+        {/* Provider icon + new badge */}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-neutral-component">
+            {providerCfg.icon ? (
+              <img
+                src={providerCfg.icon}
+                alt={providerCfg.label}
+                className="h-5 w-5 select-none object-contain"
+              />
+            ) : (
+              <Icon iconName="layer-group" className="text-sm text-brand" />
+            )}
+          </div>
+          {blueprint.isNew && (
+            <Badge size="sm" color="brand" variant="surface">
+              New
             </Badge>
           )}
-          {recommended && (
-            <span className="relative -top-0.5 inline-block rounded bg-surface-brand-solid px-1 text-2xs text-neutralInvert">
-              Fastest
-            </span>
-          )}
-        </span>
-        <span className="inline-block text-xs text-neutral-subtle">{description}</span>
-      </span>
-      <span className="flex h-full items-center pr-1">
-        <Icon iconName="chevron-right" className="text-xs text-neutral-subtle" />
-      </span>
-    </Link>
-  )
-}
+        </div>
 
-function CardService({
-  title,
-  icon,
-  description,
-  slug,
-  options,
-  type,
-  link,
-  availableTemplates,
-  organizationId,
-  projectId,
-  environmentId,
-  cloudProvider,
-  icon_uri,
-  isTerraformFeatureFlag,
-  onUpgradePlanClick,
-}: Omit<ServiceTemplateType, 'cloud_provider'> & {
-  cloud_provider?: CloudProviderEnum | string
-  availableTemplates: LifecycleTemplateListResponseResultsInner[]
-  organizationId: string
-  projectId: string
-  environmentId: string
-  cloudProvider?: CloudProviderEnum | string
-  isTerraformFeatureFlag: boolean
-  onUpgradePlanClick?: () => void
-}) {
-  const [expanded, setExpanded] = useState(false)
-  const iconClassName = icon_uri ? ServiceIcons[icon_uri].className : undefined
+        {/* Name + description */}
+        <div className="flex flex-col gap-0.5">
+          <p className="text-sm font-medium text-neutral">{blueprint.name}</p>
+          <p className="line-clamp-2 text-ssm leading-normal text-neutral-subtle">{blueprint.description}</p>
+        </div>
 
-  if (options && !slug) {
-    return null
-  }
-
-  if (options) {
-    return (
-      <div
-        onClick={() => setExpanded(true)}
-        className={clsx({
-          'flex cursor-pointer items-center gap-6 rounded border border-neutral p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-surface-neutral-subtle':
-            true,
-          'col-span-3 bg-surface-neutral-subtle p-6': expanded,
-        })}
-      >
-        {expanded ? (
-          <div className="flex w-full flex-col gap-8">
-            <div className="relative flex gap-6">
-              <img
-                className={twMerge('select-none', iconClassName)}
-                width={52}
-                height={52}
-                src={icon as string}
-                alt={title}
-              />
-              <div>
-                <h3 className="mb-1 text-base font-medium text-neutral">{title}</h3>
-                <p className="max-w-96 text-ssm text-neutral-subtle">{description}</p>
-              </div>
-              <Button
-                className="absolute right-0 top-0"
-                color="neutral"
-                variant="surface"
-                iconOnly
-                onClick={(e) => {
-                  e.stopPropagation()
-                  setExpanded(false)
-                }}
-              >
-                <Icon iconName="xmark" />
-              </Button>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              {options
-                .filter((c) => {
-                  if (c.template_id === TemplateIds.TERRAFORM && !isTerraformFeatureFlag) return true
-                  if (c.template_id) {
-                    return availableTemplates.reduce((acc, template) => c.template_id === template.id || acc, false)
-                  }
-                  return true
-                })
-                .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-                .sort((a, b) => {
-                  if (a.recommended && !b.recommended) return -1
-                  if (!a.recommended && b.recommended) return 1
-                  return a.title.localeCompare(b.title)
-                })
-                .map((props) => (
-                  <CardOption
-                    key={props.slug}
-                    parentSlug={slug ?? ''}
-                    organizationId={organizationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                    isTerraformFeatureFlag={isTerraformFeatureFlag}
-                    onUpgradePlanClick={onUpgradePlanClick}
-                    {...props}
-                  />
-                ))}
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="flex h-full w-60 flex-col justify-between gap-2">
-              <div>
-                <h3 className="mb-1 text-ssm font-medium text-neutral">{title}</h3>
-                <p className="text-xs text-neutral-subtle">{description}</p>
-              </div>
-              <p className="text-xs font-medium text-neutral-subtle">
-                Click to select an option <Icon iconName="chevron-right" className="ml-1 text-2xs" />
-              </p>
-            </div>
-            <span className="relative">
-              {typeof icon === 'string' ? (
-                <img className={twMerge('max-h-10 w-14 select-none', iconClassName)} src={icon} alt={title} />
-              ) : (
-                cloneElement(icon as ReactElement, {
-                  className: twMerge('w-10', iconClassName),
-                })
-              )}
-            </span>
-          </>
-        )}
-      </div>
-    )
-  }
-
-  const pathSuffix = link ?? (type && slug ? servicePathSuffix(type, slug, 'current') : undefined)
-  const to = pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined
-
-  if (!to) return null
-
-  return (
-    <Link
-      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
-      to={to}
-      className="flex gap-6 rounded border border-neutral p-5 transition [box-shadow:0px_2px_8px_-1px_rgba(27,36,44,0.08),0px_2px_2px_-1px_rgba(27,36,44,0.04)] hover:bg-surface-neutral-subtle"
-      onClick={() =>
-        posthog.capture('select-service', {
-          qoveryServiceType: type,
-          selectedServiceSubType: slug,
-        })
-      }
-    >
-      <div className="w-60">
-        <h3 className="mb-1 text-ssm font-medium text-neutral">{title}</h3>
-        <p className="text-xs text-neutral-subtle">{description}</p>
-      </div>
-      <div className="flex items-center">
-        {typeof icon === 'string' ? (
-          <img className={twMerge('max-h-10 w-14 select-none', iconClassName)} src={icon} alt={title} />
-        ) : (
-          cloneElement(icon as ReactElement, {
-            className: twMerge('w-10', iconClassName),
-          })
-        )}
-      </div>
-    </Link>
-  )
-}
-
-function SectionByTag({
-  title,
-  description,
-  tag,
-  cloudProvider,
-  availableTemplates,
-  organizationId,
-  projectId,
-  environmentId,
-  isTerraformFeatureFlag,
-  onUpgradePlanClick,
-}: {
-  title: string
-  tag: keyof typeof TagsEnum
-  cloudProvider?: CloudProviderEnum | string
-  description?: string
-  availableTemplates: LifecycleTemplateListResponseResultsInner[]
-  organizationId: string
-  projectId: string
-  environmentId: string
-  isTerraformFeatureFlag: boolean
-  onUpgradePlanClick?: () => void
-}) {
-  return (
-    <Section>
-      <Heading className="mb-1">{title}</Heading>
-      {description && <p className="text-xs text-neutral-subtle">{description}</p>}
-      <div className="mt-5 grid grid-cols-3 gap-4">
-        {serviceTemplates
-          .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-          .filter(({ tag: t }) => t === tag)
-          .sort((a, b) => a.title.localeCompare(b.title))
-          .map((service) => (
-            <CardService
-              key={service.title}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              cloudProvider={cloudProvider}
-              isTerraformFeatureFlag={isTerraformFeatureFlag}
-              onUpgradePlanClick={onUpgradePlanClick}
-              {...service}
-            />
+        {/* Provider + category tags */}
+        <div className="mt-auto flex flex-wrap gap-1 pt-1">
+          <Badge size="sm" color={providerCfg.color} variant="surface">
+            {providerCfg.label}
+          </Badge>
+          {blueprint.categories.map((cat) => (
+            <Badge key={cat} size="sm" color="neutral" variant="outline">
+              {CATEGORY_LABELS[cat]}
+            </Badge>
           ))}
+        </div>
       </div>
-    </Section>
+
+      {/* Bottom action bar — transparent, grey outer background shows through */}
+      <div className="flex items-center gap-2 px-4 py-3">
+        <Button size="sm" color="neutral" variant="outline" radius="rounded" onClick={() => onUse(blueprint.id)}>
+          Use
+        </Button>
+        <Button size="sm" color="neutral" variant="plain" radius="rounded" onClick={() => onDetails(blueprint.id)}>
+          View details
+        </Button>
+        <span className="ml-auto font-mono text-xs text-neutral-subtle">v{blueprint.versions[0]?.version}</span>
+      </div>
+    </div>
   )
 }
 
-type ServiceBlock = {
-  title: string
-  description: string
-  icon: ReactElement
-  cloud_provider?: CloudProviderEnum | string
-  link?: string
-  onClick?: () => void
-  disabledCTA?: ReactElement
-  badge?: string
+// ─── FilterChip ───────────────────────────────────────────────────────────────
+
+function FilterChip({ label, active, onClick }: { label: string; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={twMerge(
+        'inline-flex h-7 items-center rounded-full border px-3 text-xs font-medium transition',
+        active
+          ? 'border-brand-component bg-surface-brand-component text-brand'
+          : 'border-neutral bg-surface-neutral-component text-neutral hover:bg-surface-neutral-componentHover'
+      )}
+    >
+      {label}
+    </button>
+  )
+}
+
+// ─── ServiceNew ───────────────────────────────────────────────────────────────
+
+const PROVIDER_FILTERS: Array<{ key: ProviderKey | 'all'; label: string }> = [
+  { key: 'all', label: 'All providers' },
+  { key: 'aws', label: 'AWS' },
+  { key: 'gcp', label: 'GCP' },
+  { key: 'helm', label: 'Helm' },
+  { key: 'qovery', label: 'Qovery' },
+]
+
+const CATEGORY_FILTERS: Array<{ key: CategoryKey | 'all'; label: string }> = [
+  { key: 'all', label: 'All categories' },
+  { key: 'database', label: 'Database' },
+  { key: 'storage', label: 'Storage' },
+  { key: 'cache', label: 'Cache' },
+  { key: 'application', label: 'Application' },
+  { key: 'networking', label: 'Networking' },
+  { key: 'messaging', label: 'Messaging' },
+  { key: 'stack', label: 'Stack' },
+]
+
+function getEnvServicePath(orgId: string, projId: string, envId: string, sub: string) {
+  return `/organization/${orgId}/project/${projId}/environment/${envId}/service${sub}`
 }
 
 export interface ServiceNewProps {
   organizationId: string
   projectId: string
   environmentId: string
-  /** From environment.cloud_provider.provider (may be string from API) */
   cloudProvider?: CloudProviderEnum | string
   availableTemplates?: LifecycleTemplateListResponseResultsInner[]
 }
 
-export function ServiceNew({
-  organizationId,
-  projectId,
-  environmentId,
-  cloudProvider,
-  availableTemplates = [],
-}: ServiceNewProps) {
-  const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
+export function ServiceNew({ organizationId, projectId, environmentId }: ServiceNewProps) {
+  const isTerraformEnabled = Boolean(useFeatureFlagEnabled('terraform'))
   const { showPylonForm } = useSupportChat()
-
-  const serviceEmpty: ServiceBlock[] = useMemo(
-    () => [
-      {
-        title: 'Application',
-        description: 'Deploy a long running service running from Git or a Container Registry.',
-        icon: <Icon name="APPLICATION" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('application')),
-        cloud_provider: cloudProvider,
-      },
-      {
-        title: 'Database',
-        description: 'Easy and fastest way to deploy the most popular databases.',
-        icon: <Icon name="DATABASE" width={32} height={32} />,
-        link: getServicesPath(
-          organizationId,
-          projectId,
-          environmentId,
-          buildCreateFlowPathForType('DATABASE', 'database', 'current') ?? '/service/create/database'
-        ),
-        cloud_provider: cloudProvider,
-      },
-      {
-        title: 'Lifecycle Job',
-        description: 'Execute any type of script coming from Git or a Container Registry.',
-        icon: <Icon name="LIFECYCLE_JOB" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('lifecycle-job')),
-        cloud_provider: cloudProvider,
-      },
-      {
-        title: 'Cron Job',
-        description: 'Execute any type of script at a regular basis.',
-        icon: <Icon name="CRON_JOB" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('cron-job')),
-        cloud_provider: cloudProvider,
-      },
-      {
-        title: 'Helm',
-        description: 'Deploy a Helm Chart on your Kubernetes cluster.',
-        icon: <Icon name="HELM" width={32} height={32} />,
-        link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('helm')),
-        cloud_provider: cloudProvider,
-      },
-      ...(isTerraformFeatureFlag
-        ? [
-            {
-              title: 'Terraform',
-              description: 'Deploy external cloud resources directly from your Terraform configuration.',
-              icon: <Icon name="TERRAFORM" width={32} height={32} />,
-              link: getServicesPath(organizationId, projectId, environmentId, getCreateFlowPath('terraform')),
-              cloud_provider: cloudProvider,
-              badge: 'NEW',
-            },
-          ]
-        : [
-            {
-              title: 'Terraform',
-              description: 'Terraform native service is available only for organizations on the Team plan or higher.',
-              icon: <Icon name="TERRAFORM" width={32} height={32} />,
-              onClick: () => showPylonForm('request-upgrade-plan'),
-              cloud_provider: cloudProvider,
-              disabledCTA: (
-                <p className="cursor-pointer text-xs font-medium text-neutral-subtle">
-                  Upgrade your plan <Icon iconName="chevron-right" className="ml-1 text-2xs" />
-                </p>
-              ),
-              badge: 'NEW',
-            },
-          ]),
-    ],
-    [cloudProvider, organizationId, projectId, environmentId, isTerraformFeatureFlag, showPylonForm]
-  )
-
+  const { openModal, closeModal } = useModal()
   const [searchInput, setSearchInput] = useState('')
+  const [activeProvider, setActiveProvider] = useState<ProviderKey | 'all'>('all')
+  const [activeCategory, setActiveCategory] = useState<CategoryKey | 'all'>('all')
+  const [showNewOnly, setShowNewOnly] = useState(false)
+  const [activeWizardBlueprint, setActiveWizardBlueprint] = useState<BlueprintEntry | null>(null)
+  const [demoOpen, setDemoOpen] = useState(false)
 
-  const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
+  const defaultServices: DefaultServiceItemProps[] = [
+    {
+      label: 'Application',
+      description: 'Deploy from Git or a container registry.',
+      icon: <Icon name="APPLICATION" width={18} height={18} />,
+      to: getEnvServicePath(organizationId, projectId, environmentId, '/create/application'),
+    },
+    {
+      label: 'Database',
+      description: 'Deploy a managed or containerized database.',
+      icon: <Icon name="DATABASE" width={18} height={18} />,
+      to: getEnvServicePath(organizationId, projectId, environmentId, '/create/database'),
+    },
+    {
+      label: 'Lifecycle job',
+      description: 'Run scripts on deploy, pause, or delete.',
+      icon: <Icon name="LIFECYCLE_JOB" width={18} height={18} />,
+      to: getEnvServicePath(organizationId, projectId, environmentId, '/create/lifecycle-job'),
+    },
+    {
+      label: 'Cron job',
+      description: 'Run scripts on a repeating schedule.',
+      icon: <Icon name="CRON_JOB" width={18} height={18} />,
+      to: getEnvServicePath(organizationId, projectId, environmentId, '/create/cron-job'),
+    },
+    {
+      label: 'Helm chart',
+      description: 'Deploy any Helm chart on your cluster.',
+      icon: <Icon name="HELM" width={18} height={18} />,
+      to: getEnvServicePath(organizationId, projectId, environmentId, '/create/helm'),
+    },
+    {
+      label: 'Terraform',
+      description: 'Provision cloud resources via Terraform.',
+      icon: <Icon name="TERRAFORM" width={18} height={18} />,
+      to: isTerraformEnabled
+        ? getEnvServicePath(organizationId, projectId, environmentId, '/create/terraform')
+        : undefined,
+      onClick: !isTerraformEnabled ? () => showPylonForm('request-upgrade-plan') : undefined,
+    },
+  ]
 
-  const handleSearchInputChange = (value: string) => {
-    if ([...serviceEmpty, ...serviceTemplates].filter(filterService).length === 0) {
-      posthog.capture('search-service', {
-        qoveryServiceType: 'INPUT_SEARCH',
-        searchValue: value,
-      })
+  const matchesSearch = (text: string) => text.toLowerCase().includes(searchInput.toLowerCase())
+
+  const filteredDefaultServices = searchInput
+    ? defaultServices.filter(({ label, description }) => matchesSearch(label) || matchesSearch(description))
+    : defaultServices
+
+  const filteredBlueprints = MOCK_BLUEPRINTS.filter((b) => {
+    if (searchInput) {
+      const inName = matchesSearch(b.name)
+      const inDesc = matchesSearch(b.description)
+      const inCat = b.categories.some((c) => matchesSearch(CATEGORY_LABELS[c]))
+      if (!inName && !inDesc && !inCat) return false
     }
+    if (activeProvider !== 'all' && b.provider !== activeProvider) return false
+    if (activeCategory !== 'all' && !b.categories.includes(activeCategory as CategoryKey)) return false
+    if (showNewOnly && !b.isNew) return false
+    return true
+  })
 
-    setSearchInput(value)
+  const handleUse = (blueprintId: string) => {
+    const blueprint = MOCK_BLUEPRINTS.find((b) => b.id === blueprintId)
+    if (!blueprint) return
+    posthog.capture('select-blueprint', { blueprintId })
+    setActiveWizardBlueprint(blueprint)
   }
 
-  const emptyState = (
-    <Section className="w-full">
-      <Heading className="mb-1">You didn't find what you want?</Heading>
-      <p className="mb-5 text-xs text-neutral-subtle">Use one of those options below.</p>
+  const handleDetails = (blueprintId: string) => {
+    const blueprint = MOCK_BLUEPRINTS.find((b) => b.id === blueprintId)
+    if (!blueprint) return
+    posthog.capture('view-blueprint-details', { blueprintId })
+    openModal({
+      content: <BlueprintDetailModal blueprint={blueprint} onClose={closeModal} onUse={handleUse} />,
+    })
+  }
 
-      <div className="grid grid-cols-3 gap-4">
-        {[
-          ...serviceEmpty,
-          ...[
-            {
-              title: 'CloudFormation',
-              description:
-                'AWS CloudFormation is a service provided by Amazon Web Services that enables users to model and manage infrastructure resources in an automated and secure manner.',
-              icon: (
-                <img className="select-none" width={32} height={32} src={CloudFormationIcon} alt="CloudFormation" />
-              ),
-              link: getServicesPath(
-                organizationId,
-                projectId,
-                environmentId,
-                buildCreateFlowPathForType('LIFECYCLE_JOB', 'cloudformation', 'current') ??
-                  '/service/create/lifecycle-job'
-              ),
-              cloud_provider: cloudProvider,
-            },
-          ],
-        ].map((service) => (
-          <Card key={service.title} {...service} />
-        ))}
-      </div>
-    </Section>
-  )
+  const handleClearFilters = () => {
+    setActiveProvider('all')
+    setActiveCategory('all')
+    setShowNewOnly(false)
+  }
+
+  const hasActiveFilter = activeProvider !== 'all' || activeCategory !== 'all' || showNewOnly
+  const isSearching = searchInput.length > 0
+
+  if (activeWizardBlueprint) {
+    return (
+      <BlueprintWizard
+        blueprint={activeWizardBlueprint}
+        organizationId={organizationId}
+        projectId={projectId}
+        environmentId={environmentId}
+        onExit={() => setActiveWizardBlueprint(null)}
+      />
+    )
+  }
+
+  if (demoOpen) {
+    // Demo: a blueprint service that's running v1.1.0 of aws-postgres on Postgres 15
+    const demoBlueprint = MOCK_BLUEPRINTS.find((b) => b.id === 'nginx-ingress')
+    if (demoBlueprint) {
+      return (
+        <BlueprintServiceDemo
+          blueprint={demoBlueprint}
+          serviceName="my-ingress"
+          currentVersion="1.2.0"
+          majorServiceVersion="NGINX 1.x"
+          onExit={() => setDemoOpen(false)}
+        />
+      )
+    }
+  }
 
   return (
     <>
-      <div className="mb-10 flex flex-col text-center">
+      <div className="mb-10 flex items-center justify-center gap-3">
         <InputSearch
           autofocus
-          placeholder="Search…"
-          className="mx-auto mb-4 w-[360px]"
+          placeholder="Search services and blueprints…"
+          className="w-[400px]"
           customSize="h-9 text-xs rounded-full"
-          onChange={handleSearchInputChange}
+          onChange={setSearchInput}
         />
-        <ExternalLink
-          className="mx-auto"
-          href="https://www.qovery.com/docs/getting-started/basic-concepts#services"
-          size="xs"
+        <Button
+          size="sm"
+          color="neutral"
+          variant="outline"
+          radius="rounded"
+          onClick={() => setDemoOpen(true)}
+          aria-label="Open blueprint service demo"
         >
-          See documentation
-        </ExternalLink>
+          <Icon iconName="flask" iconStyle="regular" className="mr-2 text-xs" />
+          Service page demo
+        </Button>
       </div>
-      <div className="mx-auto flex w-[1024px] flex-col gap-8">
-        {searchInput.length === 0 ? (
-          <>
-            <Section>
-              <Heading className="mb-1">Default Qovery services</Heading>
-              <p className="mb-5 text-xs text-neutral-subtle">
-                Services without pre-configuration. These are the basic blocks to deploy any technical stack.
-              </p>
-              <div className="grid grid-cols-3 gap-4">
-                {serviceEmpty.map((service) => (
-                  <Card key={service.title} {...service} />
-                ))}
-              </div>
-            </Section>
-            <SectionByTag
-              title="Data & Storage"
-              description="Find your perfect data and storage template with presets."
-              tag="DATA_STORAGE"
-              cloudProvider={cloudProvider}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              isTerraformFeatureFlag={isTerraformFeatureFlag}
-              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-            />
-            <SectionByTag
-              title="Back-end"
-              description="Find your perfect Back-end template with presets."
-              tag="BACK_END"
-              cloudProvider={cloudProvider}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              isTerraformFeatureFlag={isTerraformFeatureFlag}
-              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-            />
-            <SectionByTag
-              title="Front-end"
-              description="Find your perfect Front-end template with presets."
-              tag="FRONT_END"
-              cloudProvider={cloudProvider}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              isTerraformFeatureFlag={isTerraformFeatureFlag}
-              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-            />
-            <Section>
-              <Heading className="mb-1">IAC</Heading>
-              <p className="mb-5 text-xs text-neutral-subtle">
-                Deploy external cloud resources with Terraform or use IAC templates.
-              </p>
-              <div className="mt-5 grid grid-cols-3 gap-4">
-                {serviceEmpty
-                  .filter((s) => s.title === 'Terraform')
-                  .map((service) => (
-                    <Card key={service.title} {...service} />
-                  ))}
-                {serviceTemplates
-                  .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-                  .filter(({ tag: t }) => t === 'IAC')
-                  .sort((a, b) => a.title.localeCompare(b.title))
-                  .map((service) => (
-                    <CardService
-                      key={service.title}
-                      availableTemplates={availableTemplates}
-                      organizationId={organizationId}
-                      projectId={projectId}
-                      environmentId={environmentId}
-                      cloudProvider={cloudProvider}
-                      isTerraformFeatureFlag={isTerraformFeatureFlag}
-                      onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-                      {...service}
-                    />
-                  ))}
-              </div>
-            </Section>
-            <SectionByTag
-              title="More template"
-              description="Look for other template presets."
-              tag="OTHER"
-              cloudProvider={cloudProvider}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              isTerraformFeatureFlag={isTerraformFeatureFlag}
-              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-            />
-          </>
-        ) : [...serviceEmpty, ...serviceTemplates]
-            .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-            .filter(filterService).length > 0 ? (
+
+      <div className="mx-auto flex w-[1024px] flex-col gap-12 pb-24">
+        {/* Qovery services */}
+        {(!isSearching || filteredDefaultServices.length > 0) && (
           <Section>
-            <Heading className="mb-1">Search results</Heading>
-            <p className="mb-5 text-xs text-neutral-subtle">
-              Find the service you need to kickstart your next project.
-            </p>
-            <div className="grid grid-cols-3 gap-4">
-              {[...serviceEmpty, ...serviceTemplates]
-                .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-                .filter(filterService)
-                .map((service) => (
-                  <CardService
-                    key={service.title}
-                    availableTemplates={availableTemplates}
-                    organizationId={organizationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                    cloudProvider={cloudProvider}
-                    isTerraformFeatureFlag={isTerraformFeatureFlag}
-                    onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-                    {...service}
-                  />
-                ))}
+            <div className="mb-5">
+              <Heading className="text-base">Qovery services</Heading>
+              <p className="mt-1 text-ssm text-neutral-subtle">
+                Platform-managed services for applications, databases, and jobs.
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {filteredDefaultServices.map((props) => (
+                <DefaultServiceItem key={props.label} {...props} />
+              ))}
             </div>
           </Section>
-        ) : (
-          emptyState
+        )}
+
+        {/* Blueprints */}
+        {(!isSearching || filteredBlueprints.length > 0) && (
+          <Section>
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <div>
+                <Heading className="text-base">Blueprints</Heading>
+                <p className="mt-1 text-ssm text-neutral-subtle">
+                  Curated Terraform modules and Helm charts — configure, deploy, and manage from one place.
+                </p>
+              </div>
+              {filteredBlueprints.length > 0 && (
+                <span className="mt-1 shrink-0 text-xs text-neutral-subtle">
+                  {filteredBlueprints.length} blueprint{filteredBlueprints.length !== 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+
+            {/* Filter bar — hidden while searching */}
+            {!isSearching && (
+              <div className="mb-6 flex flex-col gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  {PROVIDER_FILTERS.map(({ key, label }) => (
+                    <FilterChip
+                      key={key}
+                      label={label}
+                      active={activeProvider === key}
+                      onClick={() => setActiveProvider(key)}
+                    />
+                  ))}
+                  <span className="mx-1 h-4 border-l border-neutral" />
+                  <FilterChip
+                    label="Newly added"
+                    active={showNewOnly}
+                    onClick={() => setShowNewOnly((v) => !v)}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {CATEGORY_FILTERS.map(({ key, label }) => (
+                    <FilterChip
+                      key={key}
+                      label={label}
+                      active={activeCategory === key}
+                      onClick={() => setActiveCategory(key)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {filteredBlueprints.length > 0 ? (
+              <div className="grid grid-cols-3 gap-4">
+                {filteredBlueprints.map((blueprint) => (
+                  <BlueprintCard key={blueprint.id} blueprint={blueprint} onUse={handleUse} onDetails={handleDetails} />
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center rounded-lg border border-neutral py-12 text-center">
+                <Icon iconName="box-open" className="mb-3 text-2xl text-neutral-subtle" />
+                <p className="text-sm font-medium text-neutral">No blueprints match your filters</p>
+                <p className="mt-1 text-xs text-neutral-subtle">
+                  Try a different provider or category.
+                </p>
+                {hasActiveFilter && (
+                  <Button
+                    variant="plain"
+                    color="brand"
+                    size="sm"
+                    radius="rounded"
+                    className="mt-4"
+                    onClick={handleClearFilters}
+                  >
+                    Clear filters
+                  </Button>
+                )}
+              </div>
+            )}
+          </Section>
+        )}
+
+        {/* Global empty state — search matched nothing at all */}
+        {isSearching && filteredDefaultServices.length === 0 && filteredBlueprints.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 text-center">
+            <Icon iconName="magnifying-glass" className="mb-3 text-2xl text-neutral-subtle" />
+            <p className="text-sm font-medium text-neutral">No results for &#8220;{searchInput}&#8221;</p>
+            <p className="mt-1 text-xs text-neutral-subtle">
+              Try a shorter term or clear the search to browse everything.
+            </p>
+          </div>
         )}
       </div>
     </>
