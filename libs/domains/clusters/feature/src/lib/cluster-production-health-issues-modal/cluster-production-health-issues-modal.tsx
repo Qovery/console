@@ -58,7 +58,7 @@ export function ClusterProductionHealthIssuesModal({
               <strong className="text-neutral">
                 {count} {pluralize(count, 'cluster', 'clusters')}
               </strong>{' '}
-              that need your attention. Ongoing issues are listed first, and available updates appear below.
+              that need your attention.
             </>
           )}
         </Dialog.Description>
