@@ -46,10 +46,16 @@ function RouteComponent() {
     suspense: true,
   })
   const isManagedDatabase = service?.serviceType === 'DATABASE' && service.mode === DatabaseModeEnum.MANAGED
+  const isSupportedManagedDatabase =
+    isManagedDatabase &&
+    cluster?.cloud_provider === 'AWS' &&
+    (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
 
   const hasMetrics = useMemo(
     () =>
-      isManagedDatabase ||
+      (isSupportedManagedDatabase &&
+        cluster?.metrics_parameters?.enabled === true &&
+        cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled === true) ||
       ((cluster?.cloud_provider === 'AWS' ||
         cluster?.cloud_provider === 'SCW' ||
         cluster?.cloud_provider === 'GCP' ||
@@ -59,7 +65,13 @@ function RouteComponent() {
           .with('APPLICATION', 'CONTAINER', 'DATABASE', () => true)
           .otherwise(() => false)) ||
       false,
-    [cluster?.metrics_parameters?.enabled, isManagedDatabase, service?.serviceType, cluster?.cloud_provider]
+    [
+      cluster?.metrics_parameters?.enabled,
+      cluster?.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled,
+      isSupportedManagedDatabase,
+      service?.serviceType,
+      cluster?.cloud_provider,
+    ]
   )
 
   const isClusterRunning = useMemo(() => clusterStatus?.is_deployed === true, [clusterStatus?.is_deployed])
@@ -122,7 +134,7 @@ function RouteComponent() {
       </div>
     )
 
-  if (isManagedDatabase) {
+  if (isSupportedManagedDatabase && hasMetrics) {
     return <DatabaseRdsDashboard />
   }
 

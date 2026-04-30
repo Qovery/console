@@ -22,17 +22,6 @@ import RdsWriteLatencyChart from './rds-write-latency-chart/rds-write-latency-ch
 import { SelectTimeRange } from './select-time-range/select-time-range'
 import { generateDbInstance } from './util/generate-db-instance'
 
-function DashboardSectionHeader({ title, description }: { title: string; description: string }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <Heading weight="medium" level={2}>
-        {title}
-      </Heading>
-      <p className="text-sm text-neutral-subtle">{description}</p>
-    </div>
-  )
-}
-
 function DatabaseRdsDashboardContent() {
   const { environmentId = '', serviceId = '' } = useParams({ strict: false })
 
@@ -129,10 +118,9 @@ function DatabaseRdsDashboardContent() {
       </div>
       <div className="space-y-8 px-8 py-8">
         <Section className="gap-4">
-          <DashboardSectionHeader
-            title="Health overview"
-            description="Quick signals to spot load, memory pressure, connections, and PostgreSQL maintenance issues."
-          />
+          <Heading weight="medium" level={2}>
+            Health overview
+          </Heading>
           <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3')}>
             <CardUnvacuumedTransactions clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgDbConnections clusterId={environment.cluster_id} dbInstance={dbInstance} />
@@ -143,10 +131,9 @@ function DatabaseRdsDashboardContent() {
         </Section>
 
         <Section className="gap-4">
-          <DashboardSectionHeader
-            title="Resources"
-            description="CPU, RAM, queue depth, and active connections for the current database instance."
-          />
+          <Heading weight="medium" level={2}>
+            Resources
+          </Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsCpuChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
@@ -168,10 +155,9 @@ function DatabaseRdsDashboardContent() {
         </Section>
 
         <Section className="gap-4">
-          <DashboardSectionHeader
-            title="Query performance"
-            description="Read and write latency to help identify slow queries or degraded database responsiveness."
-          />
+          <Heading weight="medium" level={2}>
+            Query performance
+          </Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsWriteLatencyChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
@@ -183,10 +169,9 @@ function DatabaseRdsDashboardContent() {
         </Section>
 
         <Section className="gap-4">
-          <DashboardSectionHeader
-            title="Storage & I/O"
-            description="Disk throughput and remaining storage capacity for following saturation trends over time."
-          />
+          <Heading weight="medium" level={2}>
+            Storage & I/O
+          </Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
             <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsWriteIopChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />

@@ -243,7 +243,7 @@ function hasServiceMonitoringTab(
     )
   }
 
-  if (service.serviceType !== 'DATABASE' || !cluster?.metrics_parameters?.enabled) {
+  if (service.serviceType !== 'DATABASE') {
     return false
   }
 
@@ -252,11 +252,7 @@ function hasServiceMonitoringTab(
   }
 
   if (service.mode === 'MANAGED') {
-    return (
-      cluster.cloud_provider === 'AWS' &&
-      cluster.metrics_parameters?.configuration?.cloud_watch_export_config?.enabled === true &&
-      (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
-    )
+    return cluster.cloud_provider === 'AWS' && (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
   }
 
   return false
