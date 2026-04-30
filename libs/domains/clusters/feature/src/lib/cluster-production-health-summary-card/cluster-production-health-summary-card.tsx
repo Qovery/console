@@ -139,7 +139,7 @@ function getWarningTitle({
 
   return (
     <>
-      {issuesCount} {pluralize(issuesCount, 'cluster', 'clusters')} {pluralize(issuesCount, 'need', 'needs')} attention
+      {issuesCount} {pluralize(issuesCount, 'cluster', 'clusters')} {pluralize(issuesCount, 'needs', 'need')} attention
     </>
   )
 }
