@@ -1,3 +1,4 @@
+import type { IconName } from '@fortawesome/fontawesome-common-types'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
 import { type ReactNode, memo, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
@@ -35,7 +36,7 @@ const ClusterRunningStatusSubscription = memo(function ClusterRunningStatusSubsc
   return null
 })
 
-type HealthCardVariant = 'positive' | 'warning' | 'negative'
+type HealthCardVariant = 'positive' | 'warning' | 'negative' | 'brand'
 
 const VARIANT_STYLES: Record<
   HealthCardVariant,
@@ -55,6 +56,13 @@ const VARIANT_STYLES: Record<
     iconBgHover: 'group-hover:bg-surface-warning-component group-focus-visible:bg-surface-warning-component',
     iconColor: 'text-warning',
   },
+  brand: {
+    border: 'border-brand-subtle',
+    interactiveBorderHover: 'hover:border-brand-strong focus-visible:border-brand-strong',
+    iconBg: 'bg-surface-brand-subtle',
+    iconBgHover: 'group-hover:bg-surface-brand-component group-focus-visible:bg-surface-brand-component',
+    iconColor: 'text-brand',
+  },
   negative: {
     border: 'border-negative-subtle',
     interactiveBorderHover: 'hover:border-negative-strong focus-visible:border-negative-strong',
@@ -73,7 +81,7 @@ function HealthStatusCard({
 }: {
   clusters: Cluster[]
   variant: HealthCardVariant
-  iconName: 'circle-check' | 'circle-exclamation'
+  iconName: IconName
   title: ReactNode
   onClick?: () => void
 }) {
@@ -110,6 +118,34 @@ function HealthStatusCard({
   }
 
   return <div className={baseClassName}>{content}</div>
+}
+
+function getWarningTitle({
+  issuesCount,
+  groupedIssues,
+}: {
+  issuesCount: number
+  groupedIssues: { kind: ClusterHealthIssueKind }[]
+}): ReactNode {
+  const hasOnlyAvailableUpdates = groupedIssues.length === 1 && groupedIssues[0]?.kind === 'update-available'
+
+  if (hasOnlyAvailableUpdates) {
+    return (
+      <>
+        Update needed on {issuesCount} {pluralize(issuesCount, 'cluster', 'clusters')}
+      </>
+    )
+  }
+
+  return (
+    <>
+      {issuesCount} {pluralize(issuesCount, 'cluster', 'clusters')} {pluralize(issuesCount, 'need', 'needs')} attention
+    </>
+  )
+}
+
+function hasOnlyAvailableUpdates(groupedIssues: { kind: ClusterHealthIssueKind }[]) {
+  return groupedIssues.length === 1 && groupedIssues[0]?.kind === 'update-available'
 }
 
 export interface ClusterProductionHealthSummaryCardProps {
@@ -178,6 +214,8 @@ export function ClusterProductionHealthSummaryCard({
     }))
   }, [clustersWithIssues])
 
+  const isUpdateOnlyState = hasOnlyAvailableUpdates(groupedIssues)
+
   const handleOpenIssuesModal = () => {
     openModal({
       options: { width: 676 },
@@ -221,14 +259,9 @@ export function ClusterProductionHealthSummaryCard({
           .otherwise(() => (
             <HealthStatusCard
               clusters={clusters}
-              variant="warning"
-              iconName="circle-exclamation"
-              title={
-                <>
-                  {issuesCount} {pluralize(issuesCount, 'cluster', 'clusters')} need{issuesCount > 1 ? '' : 's'}{' '}
-                  attention
-                </>
-              }
+              variant={isUpdateOnlyState ? 'brand' : 'warning'}
+              iconName={isUpdateOnlyState ? 'rotate' : 'circle-exclamation'}
+              title={getWarningTitle({ issuesCount, groupedIssues })}
               onClick={handleOpenIssuesModal}
             />
           ))

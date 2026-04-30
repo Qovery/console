@@ -65,6 +65,19 @@ describe('ClusterProductionHealthSummaryCard', () => {
     expect(screen.getByText('All clusters healthy')).toBeInTheDocument()
   })
 
+  it('renders the update-needed copy when clusters only have updates available', () => {
+    const outOfDateCluster = {
+      ...baseCluster,
+      deployment_status: 'OUT_OF_DATE',
+    } as Cluster
+
+    renderWithProviders(
+      <ClusterProductionHealthSummaryCard clusters={[outOfDateCluster]} clusterStatuses={[deployedStatus]} />
+    )
+
+    expect(screen.getByText('Update needed on 1 cluster')).toBeInTheDocument()
+  })
+
   it('renders the issues card and opens the modal when clusters have issues', async () => {
     const failingStatus = { ...deployedStatus, status: 'DEPLOYMENT_ERROR' } as ClusterStatus
 

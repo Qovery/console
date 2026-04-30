@@ -89,6 +89,15 @@ describe('SectionProductionHealth', () => {
     expect(managedLink).toHaveAttribute('data-params', JSON.stringify({ organizationId: 'test-org-id' }))
   })
 
+  it('should keep the all clusters link pointing to the clusters list', () => {
+    renderWithProviders(<SectionProductionHealth />)
+
+    const allClustersLink = screen.getByText('All clusters').closest('a')
+    expect(allClustersLink).toBeInTheDocument()
+    expect(allClustersLink).toHaveAttribute('data-to', '/organization/$organizationId/clusters')
+    expect(allClustersLink).toHaveAttribute('data-params', JSON.stringify({ organizationId: 'test-org-id' }))
+  })
+
   it('should open the add credit card modal from self-managed during free trial restriction', async () => {
     mockUseClusterCreationRestriction.mockReturnValue({ isNoCreditCardRestriction: true })
     const { userEvent } = renderWithProviders(<SectionProductionHealth />)

@@ -173,9 +173,21 @@ export function SectionProductionHealth() {
 
   return (
     <Section className="flex w-full flex-col gap-3">
-      <Heading className="flex items-center gap-2">
-        {clusterProduction.length > 0 ? 'Your production health' : 'Production health'}
-      </Heading>
+      <div className="flex items-center justify-between gap-3">
+        <Heading className="flex items-center gap-2">
+          {clusterProduction.length > 0 ? 'Your production health' : 'Production health'}
+        </Heading>
+        <Link
+          to="/organization/$organizationId/clusters"
+          params={{ organizationId }}
+          color="neutral"
+          size="ssm"
+          className="gap-0.5 text-neutral-subtle hover:text-neutral"
+        >
+          All clusters
+          <Icon iconName="angle-right" iconStyle="regular" />
+        </Link>
+      </div>
       {clusterProduction.length === 0 ? (
         (clusters?.length ?? 0) > 0 ? (
           <EmptyState
