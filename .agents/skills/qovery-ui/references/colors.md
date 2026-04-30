@@ -153,7 +153,14 @@ text-neutralInvert-subtle       → var(--neutral-invert-11)   secondary light t
 bg-surface-neutralInvert        → var(--neutral-invert-1)    dark surface (tooltip, popover)
 bg-surface-neutralInvert-component → var(--neutral-invert-3) elevated dark surface
 border-neutralInvert            → var(--neutral-invert-6)    border on a dark surface
+
+text-positiveInvert             → var(--positive-invert-11)  positive/green on a dark surface
+text-negativeInvert             → var(--negative-invert-11)  negative/red on a dark surface
+text-warningInvert              → var(--warning-invert-11)   warning/amber on a dark surface
+text-infoInvert                 → var(--info-invert-11)      info/blue on a dark surface
 ```
+
+Use `text-*Invert` status tokens whenever a status icon or label appears inside an invert surface (tooltip, dark popover). Using the non-invert variant (`text-positive`, `text-warning`, etc.) on a dark background will produce the light-theme value and may fail contrast.
 
 Invert tokens follow the same 1–12 scale structure as the standard palette, but resolve to the opposite theme's values — so they always produce contrast against the current surface regardless of light or dark mode.
 
