@@ -1,10 +1,12 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
+import { type Cluster } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
 import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
@@ -208,30 +210,7 @@ const SERVICE_TABS: NavigationTab[] = [
   },
 ]
 
-function hasServiceMonitoringTab(
-  service:
-    | {
-        serviceType?: string
-        mode?: string
-        type?: string
-      }
-    | null
-    | undefined,
-  cluster:
-    | {
-        cloud_provider?: string
-        metrics_parameters?: {
-          enabled?: boolean
-          configuration?: {
-            cloud_watch_export_config?: {
-              enabled?: boolean
-            }
-          }
-        }
-      }
-    | null
-    | undefined
-) {
+function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
   if (!service) return false
 
   if (service.serviceType === 'APPLICATION' || service.serviceType === 'CONTAINER') {
@@ -252,7 +231,7 @@ function hasServiceMonitoringTab(
   }
 
   if (service.mode === 'MANAGED') {
-    return cluster.cloud_provider === 'AWS' && (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
+    return cluster?.cloud_provider === 'AWS' && (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
   }
 
   return false
