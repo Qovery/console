@@ -1,4 +1,4 @@
-import { type Cluster } from 'qovery-typescript-axios'
+import { type ArgoCdInstanceMappingResponse } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCheckArgoCdConnection, useClusters, useSaveArgoCdCredentials } from '@qovery/domains/clusters/feature'
@@ -14,12 +14,7 @@ export interface ConnectArgoCdModalProps {
   organizationId: string
   onClose: () => void
   configuredClusterIds: string[]
-  integration?: {
-    clusterId: string
-    clusterName: string
-    clusterCloudProvider?: Cluster['cloud_provider']
-    argoCdUrl: string
-  }
+  integration?: ArgoCdInstanceMappingResponse
 }
 
 const ARGOCD_TOKEN_COMMAND = 'argocd account generate-token'
@@ -50,8 +45,8 @@ export function ConnectArgoCdModal({
   const methods = useForm<ConnectArgoCdFormValues>({
     mode: 'onChange',
     defaultValues: {
-      targetCluster: integration?.clusterId ?? '',
-      argoCdApiUrl: integration?.argoCdUrl ?? '',
+      targetCluster: integration?.agent_cluster_id ?? '',
+      argoCdApiUrl: integration?.argocd_url ?? '',
       accessToken: '',
     },
   })
@@ -66,8 +61,8 @@ export function ConnectArgoCdModal({
   const clusterOptions = useMemo(() => {
     const allowedClusterIds = new Set(configuredClusterIds)
 
-    if (integration?.clusterId) {
-      allowedClusterIds.delete(integration.clusterId)
+    if (integration?.agent_cluster_id) {
+      allowedClusterIds.delete(integration.agent_cluster_id)
     }
 
     const options = clusters
@@ -77,15 +72,15 @@ export function ConnectArgoCdModal({
         value: cluster.id,
       }))
 
-    if (integration && !options.some((option) => option.value === integration.clusterId)) {
+    if (integration && !options.some((option) => option.value === integration.agent_cluster_id)) {
       options.unshift({
-        label: integration.clusterName,
-        value: integration.clusterId,
+        label: integration.agent_cluster_name,
+        value: integration.agent_cluster_id,
       })
     }
 
     return options
-  }, [clusters, configuredClusterIds, integration?.clusterId])
+  }, [clusters, configuredClusterIds, integration?.agent_cluster_id, integration?.agent_cluster_name])
 
   const onSubmit = methods.handleSubmit(async ({ targetCluster, argoCdApiUrl, accessToken }) => {
     methods.clearErrors()

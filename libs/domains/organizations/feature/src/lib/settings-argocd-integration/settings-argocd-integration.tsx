@@ -5,7 +5,6 @@ import {
   type ArgoCdInstanceMappingResponse,
   type ArgoCdLinkedClusterDetails,
   type ArgoCdUnlinkedClusterDetails,
-  type Cluster,
   type KubernetesEnum,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
@@ -46,8 +45,7 @@ interface ArgoCdIntegrationCardProps {
   integration: ArgoCdInstanceMappingResponse
   organizationId: string
   linkedClusterIds: string[]
-  agentCluster?: Cluster
-  onEdit: (integration: ArgoCdInstanceMappingResponse, agentCluster?: Cluster) => void
+  onEdit: (integration: ArgoCdInstanceMappingResponse) => void
   onDelete: (integration: ArgoCdInstanceMappingResponse) => void
   onLinkCluster: (
     integrationId: string,
@@ -115,7 +113,6 @@ function ArgoCdIntegrationCard({
   integration,
   organizationId,
   linkedClusterIds,
-  agentCluster,
   onEdit,
   onDelete,
   onLinkCluster,
@@ -164,8 +161,10 @@ function ArgoCdIntegrationCard({
               className="flex h-6 items-center gap-1 rounded-md border border-neutral bg-surface-neutral px-1.5 text-ssm font-normal text-neutral hover:bg-surface-neutral-subtle hover:text-neutral"
               data-testid="argocd-cluster-link"
             >
-              {agentCluster?.cloud_provider ? <Icon name={agentCluster.cloud_provider} width="16" height="16" /> : null}
-              {agentCluster?.name ?? integration.agent_cluster_id}
+              {integration.agent_cluster_cloud_provider ? (
+                <Icon name={integration.agent_cluster_cloud_provider} width="16" height="16" />
+              ) : null}
+              {integration.agent_cluster_name}
             </Link>
           </div>
           <div className="flex items-center gap-2">
@@ -175,7 +174,7 @@ function ArgoCdIntegrationCard({
               color="neutral"
               iconOnly
               data-testid="edit-argocd-integration"
-              onClick={() => onEdit(integration, agentCluster)}
+              onClick={() => onEdit(integration)}
             >
               <Icon iconName="pencil" iconStyle="regular" />
             </Button>
@@ -347,11 +346,7 @@ function ArgoCdIntegrationCardSkeleton() {
 
 export function SettingsArgoCdIntegration() {
   const { organizationId = '' } = useParams({ strict: false })
-  const {
-    data: integrations = [],
-    organizationClusters = [],
-    isLoading,
-  } = useOrganizationArgoCdIntegrations({
+  const { data: integrations = [], isLoading } = useOrganizationArgoCdIntegrations({
     organizationId,
   })
   const queryClient = useQueryClient()
@@ -369,11 +364,6 @@ export function SettingsArgoCdIntegration() {
   const configuredClusterIds = useMemo(
     () => integrationsState.map(({ agent_cluster_id }) => agent_cluster_id),
     [integrationsState]
-  )
-
-  const organizationClustersById = useMemo(
-    () => new Map(organizationClusters.map((cluster: Cluster) => [cluster.id, cluster])),
-    [organizationClusters]
   )
 
   const openCreateModal = () => {
@@ -397,18 +387,13 @@ export function SettingsArgoCdIntegration() {
     })
   }
 
-  const openEditModal = (integration: ArgoCdInstanceMappingResponse, agentCluster?: Cluster) => {
+  const openEditModal = (integration: ArgoCdInstanceMappingResponse) => {
     openModal({
       content: (
         <ConnectArgoCdModal
           organizationId={organizationId}
           configuredClusterIds={configuredClusterIds}
-          integration={{
-            clusterId: integration.agent_cluster_id,
-            clusterName: agentCluster?.name ?? integration.agent_cluster_id,
-            clusterCloudProvider: agentCluster?.cloud_provider,
-            argoCdUrl: integration.argocd_url,
-          }}
+          integration={integration}
           onClose={async () => {
             closeModal()
             await queryClient.invalidateQueries({
@@ -525,7 +510,6 @@ export function SettingsArgoCdIntegration() {
                   key={integration.credentials_id}
                   integration={integration}
                   organizationId={organizationId}
-                  agentCluster={organizationClustersById.get(integration.agent_cluster_id)}
                   linkedClusterIds={integration.linked_clusters.map(({ qovery_cluster_id }) => qovery_cluster_id)}
                   onEdit={openEditModal}
                   onDelete={openDeleteModal}

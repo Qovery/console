@@ -50,10 +50,15 @@ describe('ConnectArgoCdModal', () => {
         organizationId="org-1"
         configuredClusterIds={['cluster-1']}
         integration={{
-          clusterId: 'cluster-1',
-          clusterName: 'Cluster 1',
-          clusterCloudProvider: 'AWS',
-          argoCdUrl: 'https://argocd.example.com',
+          agent_cluster_id: 'cluster-1',
+          agent_cluster_name: 'Cluster 1',
+          agent_cluster_cloud_provider: 'AWS',
+          credentials_id: 'cred-1',
+          argocd_url: 'https://argocd.example.com',
+          status: 'connected',
+          last_checked_at: '2026-04-28T12:20:00Z',
+          linked_clusters: [],
+          unlinked_clusters: [],
         }}
         onClose={onClose}
       />
@@ -87,10 +92,15 @@ describe('ConnectArgoCdModal', () => {
         organizationId="org-1"
         configuredClusterIds={['cluster-1']}
         integration={{
-          clusterId: 'cluster-1',
-          clusterName: 'Cluster 1',
-          clusterCloudProvider: 'AWS',
-          argoCdUrl: 'https://argocd.example.com',
+          agent_cluster_id: 'cluster-1',
+          agent_cluster_name: 'Cluster 1',
+          agent_cluster_cloud_provider: 'AWS',
+          credentials_id: 'cred-1',
+          argocd_url: 'https://argocd.example.com',
+          status: 'connected',
+          last_checked_at: '2026-04-28T12:20:00Z',
+          linked_clusters: [],
+          unlinked_clusters: [],
         }}
         onClose={onClose}
       />
