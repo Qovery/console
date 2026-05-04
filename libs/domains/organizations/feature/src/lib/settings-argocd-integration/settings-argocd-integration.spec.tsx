@@ -49,35 +49,29 @@ describe('SettingsArgoCdIntegration', () => {
     useOrganizationArgoCdIntegrationsMock.mockReturnValue({
       data: [
         {
-          id: 'integration-1',
-          agentClusterId: 'cluster-1',
-          agentClusterName: 'undeletable_cluster',
-          agentClusterCloudProvider: 'AWS',
-          argoCdUrl: 'https://argocd.example.com',
+          agent_cluster_id: 'cluster-1',
+          agent_cluster_name: 'undeletable_cluster',
+          agent_cluster_cloud_provider: 'AWS',
+          credentials_id: 'integration-1',
+          argocd_url: 'https://argocd.example.com',
           status: 'connected',
-          lastCheckedAt: '2026-04-28T12:20:00.000Z',
-          linkedClusters: [
+          last_checked_at: '2026-04-28T12:20:00.000Z',
+          linked_clusters: [
             {
-              id: 'linked-1',
-              destinationCluster: 'https://kubernetes.default.svc',
-              clusterId: 'cluster-1',
-              clusterName: 'AWS EKS Demo',
-              cloudProvider: 'AWS',
-              clusterType: 'Qovery managed',
-              argocdName: 'kube-system',
-              applicationsCount: 4,
+              argocd_cluster_url: 'https://kubernetes.default.svc',
+              argocd_cluster_name: 'kube-system',
+              qovery_cluster_id: 'cluster-1',
+              qovery_cluster_name: 'AWS EKS Demo',
+              qovery_cluster_cloud_provider: 'AWS',
+              qovery_cluster_type: 'MANAGED',
+              applications_count: 4,
             },
           ],
-          unlinkedClusters: [
+          unlinked_clusters: [
             {
-              id: 'unlinked-1',
-              destinationCluster: 'https://unmapped.example.com',
-              clusterId: null,
-              clusterName: null,
-              cloudProvider: null,
-              clusterType: null,
-              argocdName: 'external-prod',
-              applicationsCount: 7,
+              argocd_cluster_url: 'https://unmapped.example.com',
+              argocd_cluster_name: 'external-prod',
+              applications_count: 7,
             },
           ],
         },
@@ -92,5 +86,31 @@ describe('SettingsArgoCdIntegration', () => {
     expect(screen.getByText('Unlinked clusters (1)')).toBeInTheDocument()
     expect(screen.getByText('AWS EKS Demo')).toBeInTheDocument()
     expect(screen.getByText('Connected')).toBeInTheDocument()
+  })
+
+  it('should render an importing state when the integration has no cluster mapping yet', () => {
+    useOrganizationArgoCdIntegrationsMock.mockReturnValue({
+      data: [
+        {
+          agent_cluster_id: 'cluster-1',
+          agent_cluster_name: 'undeletable_cluster',
+          agent_cluster_cloud_provider: 'AWS',
+          credentials_id: 'integration-1',
+          argocd_url: 'https://argocd.example.com',
+          status: 'connected',
+          last_checked_at: '2026-04-28T12:20:00.000Z',
+          linked_clusters: [],
+          unlinked_clusters: [],
+        },
+      ],
+      isLoading: false,
+    } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
+
+    renderWithProviders(<SettingsArgoCdIntegration />)
+
+    expect(screen.getByText('Importing ArgoCD...')).toBeInTheDocument()
+    expect(screen.queryByText('Connected')).not.toBeInTheDocument()
+    expect(screen.getByTestId('edit-argocd-integration')).toBeDisabled()
+    expect(screen.getByTestId('delete-argocd-integration')).toBeDisabled()
   })
 })

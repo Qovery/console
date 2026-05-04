@@ -1,5 +1,4 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
-import { useQueryClient } from '@tanstack/react-query'
 import { useParams } from '@tanstack/react-router'
 import {
   type ArgoCdInstanceMappingResponse,
@@ -7,53 +6,19 @@ import {
   type ArgoCdUnlinkedClusterDetails,
   type KubernetesEnum,
 } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useMemo, useState } from 'react'
+import { type ReactNode, Suspense, useEffect, useMemo, useState } from 'react'
 import { useDeleteArgoCdCredentials } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import {
-  Badge,
-  Button,
-  EmptyState,
-  Icon,
-  Link,
-  ModalConfirmation,
-  Section,
-  Skeleton,
-  useModal,
-} from '@qovery/shared/ui'
+import { Badge, Button, EmptyState, Icon, Link, ModalConfirmation, Section, useModal } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { queries } from '@qovery/state/util-queries'
 import { useOrganizationArgoCdIntegrations } from '../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations'
 import { useSaveArgoCdDestinationClusterMapping } from '../hooks/use-save-argocd-destination-cluster-mapping/use-save-argocd-destination-cluster-mapping'
+import { ArgoCdIntegrationCardSkeleton } from './argocd-integration-skeleton'
 import { ConnectArgoCdModal } from './connect-argocd-modal/connect-argocd-modal'
 import { LinkClusterModal, type LinkClusterModalResponse } from './link-cluster-modal/link-cluster-modal'
 
 type OrganizationArgoCdClusterType = 'Qovery managed' | 'Self managed' | 'Partially managed'
-
-interface ArgoCdSectionProps {
-  id: 'linked' | 'unlinked'
-  title: string
-  count: number
-  isOpen: boolean
-  onOpenChange: (isOpen: boolean) => void
-  hasBottomBorder?: boolean
-  children?: ReactNode
-}
-
-interface ArgoCdIntegrationCardProps {
-  integration: ArgoCdInstanceMappingResponse
-  organizationId: string
-  linkedClusterIds: string[]
-  onEdit: (integration: ArgoCdInstanceMappingResponse) => void
-  onDelete: (integration: ArgoCdInstanceMappingResponse) => void
-  onLinkCluster: (
-    integrationId: string,
-    cluster: ArgoCdUnlinkedClusterDetails,
-    response: LinkClusterModalResponse
-  ) => void
-  onUnlinkCluster: (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => void
-}
 
 const getDestinationClusterName = (destinationCluster: string) =>
   destinationCluster.replace(/^https?:\/\//, '').replace(/\/$/, '')
@@ -67,6 +32,16 @@ const getClusterTypeLabel = (clusterType: KubernetesEnum): OrganizationArgoCdClu
     default:
       return 'Qovery managed'
   }
+}
+
+interface ArgoCdSectionProps {
+  id: 'linked' | 'unlinked'
+  title: string
+  count: number
+  isOpen: boolean
+  onOpenChange: (isOpen: boolean) => void
+  hasBottomBorder?: boolean
+  children?: ReactNode
 }
 
 function ArgoCdSection({
@@ -109,21 +84,40 @@ function ArgoCdSection({
   )
 }
 
+interface ArgoCdIntegrationCardProps {
+  integration: ArgoCdInstanceMappingResponse
+  linkedClusterIds: string[]
+  onEdit: (integration: ArgoCdInstanceMappingResponse) => void
+  onDelete: (integration: ArgoCdInstanceMappingResponse) => void
+  onLinkCluster: (
+    integrationId: string,
+    cluster: ArgoCdUnlinkedClusterDetails,
+    response: LinkClusterModalResponse
+  ) => void
+  onUnlinkCluster: (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => void
+}
+
+interface SettingsArgoCdIntegrationContentProps {
+  organizationId: string
+}
+
 function ArgoCdIntegrationCard({
   integration,
-  organizationId,
   linkedClusterIds,
   onEdit,
   onDelete,
   onLinkCluster,
   onUnlinkCluster,
 }: ArgoCdIntegrationCardProps) {
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const [isLinkedSectionOpen, setIsLinkedSectionOpen] = useState(true)
   const [isUnlinkedSectionOpen, setIsUnlinkedSectionOpen] = useState(false)
 
   const hasLinkedClusters = integration.linked_clusters.length > 0
   const hasUnlinkedClusters = integration.unlinked_clusters.length > 0
+  const isImporting = true
+  // const isImporting = integration.status === 'connected' && !hasLinkedClusters && !hasUnlinkedClusters
 
   const openLinkClusterModal = (cluster: ArgoCdUnlinkedClusterDetails) => {
     openModal({
@@ -174,6 +168,7 @@ function ArgoCdIntegrationCard({
               color="neutral"
               iconOnly
               data-testid="edit-argocd-integration"
+              disabled={isImporting}
               onClick={() => onEdit(integration)}
             >
               <Icon iconName="pencil" iconStyle="regular" />
@@ -184,6 +179,7 @@ function ArgoCdIntegrationCard({
               color="neutral"
               iconOnly
               data-testid="delete-argocd-integration"
+              disabled={isImporting}
               onClick={() => onDelete(integration)}
             >
               <Icon iconName="trash-can" iconStyle="regular" />
@@ -191,7 +187,16 @@ function ArgoCdIntegrationCard({
           </div>
         </div>
 
-        {hasLinkedClusters ? (
+        {isImporting ? (
+          <div className="border-t border-neutral bg-surface-neutral-subtle px-4 py-3">
+            <div className="flex items-center gap-2 text-ssm text-neutral">
+              <Icon iconName="loader" iconStyle="regular" className="animate-spin text-brand" />
+              <span>Importing ArgoCD…</span>
+            </div>
+          </div>
+        ) : null}
+
+        {!isImporting && hasLinkedClusters ? (
           <ArgoCdSection
             id="linked"
             title="Linked clusters"
@@ -243,7 +248,7 @@ function ArgoCdIntegrationCard({
           </ArgoCdSection>
         ) : null}
 
-        {hasUnlinkedClusters ? (
+        {!isImporting && hasUnlinkedClusters ? (
           <ArgoCdSection
             id="unlinked"
             title="Unlinked clusters"
@@ -286,76 +291,65 @@ function ArgoCdIntegrationCard({
         ) : null}
       </div>
 
-      <div className="-mt-[7px] flex items-center gap-2 rounded-b-lg border border-t-0 border-neutral bg-surface-neutral-subtle px-4 pb-3 pt-[calc(0.75rem+7px)]">
-        <Badge size="base" color="green" variant="surface" className="gap-1 font-medium">
-          <Icon iconName="circle-check" iconStyle="regular" className="text-xs text-positive" />
-          {integration.status === 'connected' ? 'Connected' : 'Unknown'}
-        </Badge>
-        <p className="text-ssm text-neutral-subtle">
-          Last update <span className="text-neutral">{timeAgo(new Date(integration.last_checked_at))}</span>
-        </p>
-      </div>
+      {!isImporting ? (
+        <div className="-mt-[7px] flex items-center gap-2 rounded-b-lg border border-t-0 border-neutral bg-surface-neutral-subtle px-4 pb-3 pt-[calc(0.75rem+7px)]">
+          <Badge size="base" color="green" variant="surface" className="gap-1 font-medium">
+            <Icon iconName="circle-check" iconStyle="regular" className="text-xs text-positive" />
+            {integration.status === 'connected' ? 'Connected' : 'Unknown'}
+          </Badge>
+          <p className="text-ssm text-neutral-subtle">
+            Last update <span className="text-neutral">{timeAgo(new Date(integration.last_checked_at))}</span>
+          </p>
+        </div>
+      ) : null}
     </div>
   )
 }
 
-function ArgoCdIntegrationCardSkeleton() {
-  return (
-    <div className="overflow-hidden rounded-lg bg-surface-neutral-subtle">
-      <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)]">
-        <div className="flex items-center justify-between px-4 pb-2 pt-4">
-          <div className="flex items-center gap-2">
-            <Skeleton width={140} height={24} />
-            <Skeleton width={170} height={24} />
-          </div>
-          <div className="flex items-center gap-2">
-            <Skeleton width={28} height={28} rounded />
-            <Skeleton width={28} height={28} rounded />
-          </div>
-        </div>
-
-        <div className="border-b border-neutral px-4 py-4">
-          <Skeleton width={160} height={20} />
-        </div>
-
-        <div className="p-4">
-          <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral-subtle">
-            {[...Array(2)].map((_, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between border-b border-neutral px-4 py-3 last:border-b-0"
-              >
-                <div className="flex flex-col gap-2">
-                  <Skeleton width={170} height={18} />
-                  <Skeleton width={220} height={16} />
-                </div>
-                <Skeleton width={40} height={40} rounded />
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <div className="-mt-[7px] flex items-center gap-2 rounded-b-lg border border-t-0 border-neutral bg-surface-neutral-subtle px-4 pb-3 pt-[calc(0.75rem+7px)]">
-        <Skeleton width={100} height={28} />
-        <Skeleton width={120} height={18} />
-      </div>
-    </div>
-  )
-}
-
-export function SettingsArgoCdIntegration() {
-  const { organizationId = '' } = useParams({ strict: false })
-  const { data: integrations = [], isLoading } = useOrganizationArgoCdIntegrations({
+function SettingsArgoCdIntegrationCreateButton({ organizationId }: SettingsArgoCdIntegrationContentProps) {
+  const { data: integrations = [] } = useOrganizationArgoCdIntegrations({
     organizationId,
+    suspense: true,
   })
-  const queryClient = useQueryClient()
   const { openModal, closeModal } = useModal()
-  const { mutateAsync: deleteArgoCdCredentials } = useDeleteArgoCdCredentials()
+  const configuredClusterIds = useMemo(
+    () => integrations.map(({ agent_cluster_id }) => agent_cluster_id),
+    [integrations]
+  )
+
+  const openCreateModal = () => {
+    openModal({
+      content: (
+        <ConnectArgoCdModal
+          organizationId={organizationId}
+          configuredClusterIds={configuredClusterIds}
+          onClose={closeModal}
+        />
+      ),
+      options: {
+        fakeModal: true,
+        width: 680,
+      },
+    })
+  }
+
+  return (
+    <Button className="gap-1.5" size="md" onClick={openCreateModal}>
+      <Icon iconName="circle-plus" iconStyle="regular" />
+      Add ArgoCD
+    </Button>
+  )
+}
+
+function SettingsArgoCdIntegrationContent({ organizationId }: SettingsArgoCdIntegrationContentProps) {
+  const { data: integrations = [] } = useOrganizationArgoCdIntegrations({
+    organizationId,
+    suspense: true,
+  })
+  const { openModal, closeModal } = useModal()
+  const { mutateAsync: deleteArgoCdCredentials } = useDeleteArgoCdCredentials({ organizationId })
   const { mutateAsync: saveArgoCdDestinationClusterMapping } = useSaveArgoCdDestinationClusterMapping()
   const [integrationsState, setIntegrationsState] = useState<ArgoCdInstanceMappingResponse[]>([])
-
-  useDocumentTitle('ArgoCD integration - Organization settings')
 
   useEffect(() => {
     setIntegrationsState(integrations)
@@ -372,12 +366,7 @@ export function SettingsArgoCdIntegration() {
         <ConnectArgoCdModal
           organizationId={organizationId}
           configuredClusterIds={configuredClusterIds}
-          onClose={async () => {
-            closeModal()
-            await queryClient.invalidateQueries({
-              queryKey: queries.organizations.argoCdDestinationClusterMappings({ organizationId }).queryKey,
-            })
-          }}
+          onClose={closeModal}
         />
       ),
       options: {
@@ -394,12 +383,7 @@ export function SettingsArgoCdIntegration() {
           organizationId={organizationId}
           configuredClusterIds={configuredClusterIds}
           integration={integration}
-          onClose={async () => {
-            closeModal()
-            await queryClient.invalidateQueries({
-              queryKey: queries.organizations.argoCdDestinationClusterMappings({ organizationId }).queryKey,
-            })
-          }}
+          onClose={closeModal}
         />
       ),
       options: {
@@ -417,9 +401,6 @@ export function SettingsArgoCdIntegration() {
           description={`To confirm the deletion of the integration, please type "delete"`}
           callback={async () => {
             await deleteArgoCdCredentials({ clusterId: integration.agent_cluster_id })
-            await queryClient.invalidateQueries({
-              queryKey: queries.organizations.argoCdDestinationClusterMappings({ organizationId }).queryKey,
-            })
             setIntegrationsState((current) =>
               current.filter(({ credentials_id }) => credentials_id !== integration.credentials_id)
             )
@@ -454,10 +435,6 @@ export function SettingsArgoCdIntegration() {
         cluster_id: response.clusterId,
       },
     })
-
-    await queryClient.invalidateQueries({
-      queryKey: queries.organizations.argoCdDestinationClusterMappings({ organizationId }).queryKey,
-    })
   }
 
   const unlinkCluster = (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => {
@@ -483,54 +460,68 @@ export function SettingsArgoCdIntegration() {
     )
   }
 
+  if (integrationsState.length === 0) {
+    return (
+      <EmptyState
+        title="No ArgoCD integration configured"
+        description="Add your first ArgoCD instance to automatically visualize linked and unlinked clusters in Qovery."
+        icon="link"
+        className="h-auto min-h-[146px] w-full max-w-[648px] p-8"
+      >
+        <Button variant="outline" color="neutral" size="md" className="gap-2" onClick={openCreateModal}>
+          <Icon iconName="circle-plus" iconStyle="regular" />
+          Add ArgoCD
+        </Button>
+      </EmptyState>
+    )
+  }
+
+  return (
+    <div className="flex w-full max-w-[648px] flex-col gap-4">
+      {integrationsState.map((integration) => (
+        <ArgoCdIntegrationCard
+          key={integration.credentials_id}
+          integration={integration}
+          linkedClusterIds={integration.linked_clusters.map(({ qovery_cluster_id }) => qovery_cluster_id)}
+          onEdit={openEditModal}
+          onDelete={openDeleteModal}
+          onLinkCluster={linkCluster}
+          onUnlinkCluster={unlinkCluster}
+        />
+      ))}
+    </div>
+  )
+}
+
+export function SettingsArgoCdIntegration() {
+  const { organizationId = '' } = useParams({ strict: false })
+
+  useDocumentTitle('ArgoCD integration - Organization settings')
+
   return (
     <div className="w-full">
       <Section className="px-8 pb-8 pt-6">
-        <div className="relative">
+        <div className="flex justify-between gap-2">
           <SettingsHeading
             title="ArgoCD integration"
-            description="Connect your ArgoCD instances to discover and monitor their linked and unlinked clusters directly in Qovery."
+            description="Connect your ArgoCD instances to discover and monitor its applications directly in Qovery."
             showNeedHelp={false}
           />
-          <Button className="absolute right-0 top-0 gap-2" size="md" onClick={openCreateModal}>
-            <Icon iconName="circle-plus" iconStyle="regular" />
-            Add ArgoCD
-          </Button>
+          <Suspense fallback={null}>
+            <SettingsArgoCdIntegrationCreateButton organizationId={organizationId} />
+          </Suspense>
         </div>
 
         <div className="max-w-content-with-navigation-left">
-          {isLoading ? (
-            <div className="flex w-full max-w-[648px] flex-col gap-4">
-              <ArgoCdIntegrationCardSkeleton />
-            </div>
-          ) : integrationsState.length > 0 ? (
-            <div className="flex w-full max-w-[648px] flex-col gap-4">
-              {integrationsState.map((integration) => (
-                <ArgoCdIntegrationCard
-                  key={integration.credentials_id}
-                  integration={integration}
-                  organizationId={organizationId}
-                  linkedClusterIds={integration.linked_clusters.map(({ qovery_cluster_id }) => qovery_cluster_id)}
-                  onEdit={openEditModal}
-                  onDelete={openDeleteModal}
-                  onLinkCluster={linkCluster}
-                  onUnlinkCluster={unlinkCluster}
-                />
-              ))}
-            </div>
-          ) : (
-            <EmptyState
-              title="No ArgoCD integration configured"
-              description="Add your first ArgoCD instance to automatically visualize linked and unlinked clusters in Qovery."
-              icon="link"
-              className="h-auto min-h-[146px] w-full max-w-[648px] p-8"
-            >
-              <Button variant="outline" color="neutral" size="md" className="gap-2" onClick={openCreateModal}>
-                <Icon iconName="circle-plus" iconStyle="regular" />
-                Add ArgoCD
-              </Button>
-            </EmptyState>
-          )}
+          <Suspense
+            fallback={
+              <div className="flex w-full max-w-[648px] flex-col gap-4">
+                <ArgoCdIntegrationCardSkeleton />
+              </div>
+            }
+          >
+            <SettingsArgoCdIntegrationContent organizationId={organizationId} />
+          </Suspense>
         </div>
       </Section>
     </div>

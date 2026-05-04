@@ -56,7 +56,9 @@ export function ConnectArgoCdModal({
     enabled: !!organizationId,
   })
   const { mutateAsync: checkArgoCdConnection, isLoading: isCheckingConnection } = useCheckArgoCdConnection()
-  const { mutateAsync: saveArgoCdCredentials, isLoading: isSavingCredentials } = useSaveArgoCdCredentials()
+  const { mutateAsync: saveArgoCdCredentials, isLoading: isSavingCredentials } = useSaveArgoCdCredentials({
+    organizationId,
+  })
 
   const clusterOptions = useMemo(() => {
     const allowedClusterIds = new Set(configuredClusterIds)
