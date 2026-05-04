@@ -42,7 +42,7 @@ describe('SettingsArgoCdIntegration', () => {
     renderWithProviders(<SettingsArgoCdIntegration />)
 
     expect(screen.getByText('No ArgoCD integration configured')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Add ArgoCD' })).toBeInTheDocument()
+    expect(screen.getAllByRole('button', { name: 'Add ArgoCD' })).toHaveLength(2)
   })
 
   it('should render integration cards with linked and unlinked sections', () => {
@@ -108,7 +108,7 @@ describe('SettingsArgoCdIntegration', () => {
 
     renderWithProviders(<SettingsArgoCdIntegration />)
 
-    expect(screen.getByText('Importing ArgoCD...')).toBeInTheDocument()
+    expect(screen.getByText('Importing ArgoCD…')).toBeInTheDocument()
     expect(screen.queryByText('Connected')).not.toBeInTheDocument()
     expect(screen.getByTestId('edit-argocd-integration')).toBeDisabled()
     expect(screen.getByTestId('delete-argocd-integration')).toBeDisabled()

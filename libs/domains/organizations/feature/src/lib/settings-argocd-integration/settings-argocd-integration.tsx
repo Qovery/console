@@ -116,8 +116,7 @@ function ArgoCdIntegrationCard({
 
   const hasLinkedClusters = integration.linked_clusters.length > 0
   const hasUnlinkedClusters = integration.unlinked_clusters.length > 0
-  const isImporting = true
-  // const isImporting = integration.status === 'connected' && !hasLinkedClusters && !hasUnlinkedClusters
+  const isImporting = integration.status === 'connected' && !hasLinkedClusters && !hasUnlinkedClusters
 
   const openLinkClusterModal = (cluster: ArgoCdUnlinkedClusterDetails) => {
     openModal({

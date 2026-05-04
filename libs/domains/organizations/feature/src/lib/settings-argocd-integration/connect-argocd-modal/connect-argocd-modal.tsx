@@ -1,5 +1,5 @@
 import { type ArgoCdInstanceMappingResponse } from 'qovery-typescript-axios'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCheckArgoCdConnection, useClusters, useSaveArgoCdCredentials } from '@qovery/domains/clusters/feature'
 import { CopyButton, ExternalLink, Heading, InputSelect, InputText, ModalCrud, Section } from '@qovery/shared/ui'
@@ -40,7 +40,6 @@ export function ConnectArgoCdModal({
   configuredClusterIds,
   integration,
 }: ConnectArgoCdModalProps) {
-  const [connectionError, setConnectionError] = useState<string>()
   const isEdit = Boolean(integration)
   const methods = useForm<ConnectArgoCdFormValues>({
     mode: 'onChange',
@@ -86,7 +85,6 @@ export function ConnectArgoCdModal({
 
   const onSubmit = methods.handleSubmit(async ({ targetCluster, argoCdApiUrl, accessToken }) => {
     methods.clearErrors()
-    setConnectionError(undefined)
 
     const argoCdCredentialsRequest = {
       argocd_url: argoCdApiUrl.trim(),
@@ -105,7 +103,6 @@ export function ConnectArgoCdModal({
       methods.setError(errorField, {
         message: errorMessage,
       })
-      setConnectionError(errorMessage)
       return
     }
 
@@ -234,8 +231,6 @@ export function ConnectArgoCdModal({
               />
             </div>
           </Section>
-
-          {connectionError ? <p className="text-sm text-negative">{connectionError}</p> : null}
         </div>
       </ModalCrud>
     </FormProvider>
