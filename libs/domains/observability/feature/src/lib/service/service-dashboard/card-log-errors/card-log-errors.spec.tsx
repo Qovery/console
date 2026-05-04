@@ -165,14 +165,22 @@ describe('CardLogErrors', () => {
     await userEvent.click(button)
 
     expect(mockedNavigate).toHaveBeenCalledWith({
-      to: expect.stringContaining(
-        `/organization/${defaultProps.organizationId}/project/${defaultProps.projectId}/environment/${defaultProps.environmentId}/logs/${defaultProps.serviceId}/service-logs?mode=history&startDate=`
-      ),
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+      params: {
+        organizationId: defaultProps.organizationId,
+        projectId: defaultProps.projectId,
+        environmentId: defaultProps.environmentId,
+        serviceId: defaultProps.serviceId,
+      },
+      search: expect.objectContaining({
+        mode: 'history',
+        level: 'error',
+      }),
     })
 
-    const navigateUrl = mockedNavigate.mock.calls[0][0].to
-    expect(navigateUrl).toMatch(/startDate=[\d-]+T[\d:.%A-Z]+/)
-    expect(navigateUrl).toMatch(/endDate=[\d-]+T[\d:.%A-Z]+/)
+    const navigateSearch = mockedNavigate.mock.calls[0][0].search
+    expect(navigateSearch.startDate).toMatch(/[\d-]+T[\d:.]+Z/)
+    expect(navigateSearch.endDate).toMatch(/[\d-]+T[\d:.]+Z/)
   })
 
   it('should call useLokiMetrics with correct parameters for short time ranges', () => {

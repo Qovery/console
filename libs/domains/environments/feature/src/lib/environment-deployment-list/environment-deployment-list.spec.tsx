@@ -82,6 +82,7 @@ const defaultDeploymentQueue = [
 
 let mockDeploymentHistory = defaultDeploymentHistory
 let mockDeploymentQueue = defaultDeploymentQueue
+const mockNavigate = jest.fn()
 
 jest.mock('../hooks/use-environment/use-environment', () => ({
   useEnvironment: () => ({
@@ -107,7 +108,7 @@ jest.mock('../hooks/use-deployment-queue/use-deployment-queue', () => ({
 jest.mock('@tanstack/react-router', () => {
   return {
     useParams: () => ({ organizationId: '1' }),
-    useNavigate: () => jest.fn(),
+    useNavigate: () => mockNavigate,
     useLocation: () => ({ pathname: '/', search: '' }),
     useRouter: () => ({
       buildLocation: () => ({ href: '/' }),
@@ -118,6 +119,7 @@ jest.mock('@tanstack/react-router', () => {
 
 describe('EnvironmentDeploymentList', () => {
   beforeEach(() => {
+    jest.clearAllMocks()
     mockDeploymentHistory = defaultDeploymentHistory
     mockDeploymentQueue = defaultDeploymentQueue
   })
@@ -132,6 +134,8 @@ describe('EnvironmentDeploymentList', () => {
     expect(screen.getByText('Trigger by')).toBeInTheDocument()
 
     expect(screen.getByText('exec-123')).toBeInTheDocument()
+    expect(screen.getByText(/30 Jan, \d{2}:00/)).toBeInTheDocument()
+    expect(screen.queryByText(/30 Jan, \d{2}:00 [AP]M/)).not.toBeInTheDocument()
     expect(screen.getAllByText('Deploy')[0]).toBeInTheDocument()
     expect(screen.getAllByText('User')[0]).toBeInTheDocument()
   })
@@ -140,6 +144,22 @@ describe('EnvironmentDeploymentList', () => {
     renderWithProviders(<EnvironmentDeploymentList />)
 
     expect(screen.getAllByText('In queue...')[0]).toBeInTheDocument()
+  })
+
+  it('should navigate to deployment details when clicking a deployment row', async () => {
+    const { userEvent } = renderWithProviders(<EnvironmentDeploymentList />)
+
+    await userEvent.click(screen.getByText('exec-123'))
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
+      params: {
+        organizationId: 'org-123',
+        projectId: 'proj-123',
+        environmentId: 'env-123',
+        deploymentId: 'exec-123',
+      },
+    })
   })
 
   it('should render empty state when no deployment data is available', async () => {

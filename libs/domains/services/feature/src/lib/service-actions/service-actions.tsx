@@ -367,7 +367,9 @@ function MenuManageDeployment({
             <div className="flex h-full w-full items-center justify-center gap-1.5">
               {match(state)
                 .with('DEPLOYING', 'RESTARTING', 'BUILDING', 'DELETING', 'CANCELING', 'STOPPING', () => (
-                  <Icon iconName="loader" className="animate-spin" />
+                  <span className="flex h-4 w-4 items-center justify-center">
+                    <Icon iconName="loader" className="block animate-spin leading-none" />
+                  </span>
                 ))
                 .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', () => (
                   <Icon iconName="clock" iconStyle="regular" />

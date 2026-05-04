@@ -5,6 +5,11 @@ import { ClusterProductionHealthSummaryCard } from './cluster-production-health-
 
 const mockOpenModal = jest.fn()
 const mockCloseModal = jest.fn()
+const mockUseFeatureFlagVariantKey = jest.fn(() => true)
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagVariantKey: () => mockUseFeatureFlagVariantKey(),
+}))
 
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
@@ -49,6 +54,7 @@ describe('ClusterProductionHealthSummaryCard', () => {
   beforeEach(() => {
     jest.useFakeTimers()
     jest.clearAllMocks()
+    mockUseFeatureFlagVariantKey.mockReturnValue(true)
     mockUseQueries.mockReturnValue([{ data: { computed_status: { global_status: 'RUNNING' } } }])
   })
 
@@ -63,6 +69,19 @@ describe('ClusterProductionHealthSummaryCard', () => {
     )
 
     expect(screen.getByText('All clusters healthy')).toBeInTheDocument()
+  })
+
+  it('renders the update-needed copy when clusters only have updates available', () => {
+    const outOfDateCluster = {
+      ...baseCluster,
+      deployment_status: 'OUT_OF_DATE',
+    } as Cluster
+
+    renderWithProviders(
+      <ClusterProductionHealthSummaryCard clusters={[outOfDateCluster]} clusterStatuses={[deployedStatus]} />
+    )
+
+    expect(screen.getByText('Update needed on 1 cluster')).toBeInTheDocument()
   })
 
   it('renders the issues card and opens the modal when clusters have issues', async () => {
@@ -82,6 +101,18 @@ describe('ClusterProductionHealthSummaryCard', () => {
         options: expect.objectContaining({ width: 676 }),
       })
     )
+  })
+
+  it('does not show running-status issues when the feature flag is disabled', () => {
+    mockUseFeatureFlagVariantKey.mockReturnValue(false)
+    mockUseQueries.mockReturnValue([{ data: { computed_status: { global_status: 'ERROR' } } }])
+
+    renderWithProviders(
+      <ClusterProductionHealthSummaryCard clusters={[baseCluster]} clusterStatuses={[deployedStatus]} />
+    )
+
+    expect(screen.getByText('All clusters healthy')).toBeInTheDocument()
+    expect(screen.queryByText(/cluster with ongoing issue/i)).not.toBeInTheDocument()
   })
 
   it('resets the skeleton timeout when the cluster scope changes', () => {

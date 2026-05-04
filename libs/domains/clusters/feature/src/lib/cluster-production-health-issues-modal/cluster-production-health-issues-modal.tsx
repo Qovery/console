@@ -31,20 +31,36 @@ export function ClusterProductionHealthIssuesModal({
   count,
   onClose,
 }: ClusterProductionHealthIssuesModalProps) {
+  const hasUpdateAvailable = groups.some((group) => group.kind === 'update-available')
+  const hasRuntimeIssue = groups.some((group) => CLUSTER_HEALTH_ISSUE_META[group.kind].severity === 'error')
+  const hasOnlyAvailableUpdates = hasUpdateAvailable && !hasRuntimeIssue && groups.length === 1
+
   return (
     <Section className="flex flex-col gap-5 p-5">
       <div className="flex flex-col gap-1.5">
         <Dialog.Title asChild>
           <Heading level={1} className="text-2xl text-neutral">
-            Clusters health issues report
+            {hasOnlyAvailableUpdates ? 'Cluster updates report' : 'Cluster health report'}
           </Heading>
         </Dialog.Title>
         <Dialog.Description className="text-ssm text-neutral-subtle">
-          We have detected{' '}
-          <strong className="text-neutral">
-            {count} {pluralize(count, 'cluster', 'clusters')}
-          </strong>{' '}
-          with ongoing {pluralize(count, 'issue', 'issues')} that are affecting their runtime.
+          {hasOnlyAvailableUpdates ? (
+            <>
+              Updates are available on{' '}
+              <strong className="text-neutral">
+                {count} {pluralize(count, 'cluster', 'clusters')}
+              </strong>
+              . Plan them when you are ready.
+            </>
+          ) : (
+            <>
+              We detected{' '}
+              <strong className="text-neutral">
+                {count} {pluralize(count, 'cluster', 'clusters')}
+              </strong>{' '}
+              that need your attention.
+            </>
+          )}
         </Dialog.Description>
       </div>
       <div className="flex flex-col gap-5">

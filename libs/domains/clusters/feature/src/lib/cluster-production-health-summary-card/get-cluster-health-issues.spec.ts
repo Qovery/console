@@ -52,6 +52,19 @@ describe('getClusterHealthIssues', () => {
     ).toContain('running-error')
   })
 
+  it('ignores running status issues when the running-status feature is disabled', () => {
+    const issues = getClusterHealthIssues({
+      cluster: baseCluster,
+      deploymentStatus: baseDeploymentStatus,
+      runningStatus: { computed_status: { global_status: 'ERROR' } } as unknown as ClusterStatusDto,
+      isRunningStatusIssueEnabled: false,
+      hasRunningStatusTimedOut: true,
+    })
+
+    expect(issues).not.toContain('running-error')
+    expect(issues).not.toContain('status-unavailable')
+  })
+
   it('flags status-unavailable when running status is NotFound', () => {
     expect(
       getClusterHealthIssues({

@@ -1,5 +1,4 @@
 import { useNavigate } from '@tanstack/react-router'
-import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { pluralize } from '@qovery/shared/util-js'
 import { useInstantMetrics } from '../../../hooks/use-instant-metrics/use-instant-metrics'
 import { useLokiMetrics } from '../../../hooks/use-loki-metrics/use-loki-metrics'
@@ -69,11 +68,21 @@ export function CardLogErrors({
       isLoading={isLoading}
       icon="scroll"
       onClick={() => {
-        const targetUrl =
-          ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) +
-          SERVICE_LOGS_URL(serviceId, undefined, undefined, 'history', startDate, endDate, 'error')
-
-        navigate({ to: targetUrl })
+        navigate({
+          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+          params: {
+            organizationId,
+            projectId,
+            environmentId,
+            serviceId,
+          },
+          search: {
+            mode: 'history',
+            startDate,
+            endDate,
+            level: 'error',
+          },
+        })
       }}
     />
   )

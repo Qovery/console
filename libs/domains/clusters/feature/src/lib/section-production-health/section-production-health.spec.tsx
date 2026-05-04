@@ -75,6 +75,7 @@ describe('SectionProductionHealth', () => {
   it('should render the cluster option cards when no cluster exists', () => {
     renderWithProviders(<SectionProductionHealth />)
 
+    expect(screen.getByRole('heading', { name: 'Production health' })).toBeInTheDocument()
     expect(screen.getByText('Qovery managed')).toBeInTheDocument()
     expect(screen.getByText('Bring your own cluster')).toBeInTheDocument()
     expect(screen.getByText('Local machine (demo)')).toBeInTheDocument()
@@ -87,6 +88,15 @@ describe('SectionProductionHealth', () => {
     expect(managedLink).toBeInTheDocument()
     expect(managedLink).toHaveAttribute('data-to', '/organization/$organizationId/cluster/new')
     expect(managedLink).toHaveAttribute('data-params', JSON.stringify({ organizationId: 'test-org-id' }))
+  })
+
+  it('should keep the all clusters link pointing to the clusters list', () => {
+    renderWithProviders(<SectionProductionHealth />)
+
+    const allClustersLink = screen.getByText('All clusters').closest('a')
+    expect(allClustersLink).toBeInTheDocument()
+    expect(allClustersLink).toHaveAttribute('data-to', '/organization/$organizationId/clusters')
+    expect(allClustersLink).toHaveAttribute('data-params', JSON.stringify({ organizationId: 'test-org-id' }))
   })
 
   it('should open the add credit card modal from self-managed during free trial restriction', async () => {

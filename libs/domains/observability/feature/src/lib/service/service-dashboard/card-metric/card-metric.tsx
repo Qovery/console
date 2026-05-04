@@ -1,5 +1,4 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import clsx from 'clsx'
 import { type ComponentProps } from 'react'
 import { Badge, Button, Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'

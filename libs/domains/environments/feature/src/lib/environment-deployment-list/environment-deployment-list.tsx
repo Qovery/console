@@ -18,7 +18,7 @@ import {
   type QueuedDeploymentRequestWithStages,
   StateEnum,
 } from 'qovery-typescript-axios'
-import { Fragment, useCallback, useMemo, useState } from 'react'
+import { Fragment, type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 // This import introduces a circular dependency with @qovery/shared/devops-copilot/feature.
 // Keep in mind for future refactoring if possible.
@@ -51,6 +51,15 @@ import { DropdownServices } from './dropdown-services/dropdown-services'
 import { TableFilterTriggerBy } from './table-filter-trigger-by/table-filter-trigger-by'
 
 const { Table } = TablePrimitives
+const interactiveRowTargetSelector = 'a,button,input,select,textarea,[role="button"],[role="menuitem"]'
+
+function stopRowNavigation(event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) {
+  event.stopPropagation()
+}
+
+function shouldIgnoreRowNavigation(target: EventTarget | null) {
+  return target instanceof HTMLElement && Boolean(target.closest(interactiveRowTargetSelector))
+}
 
 export interface EnvironmentDeploymentListProps {
   environmentId: string
@@ -105,6 +114,7 @@ export function EnvironmentDeploymentList() {
   )
 
   const columnHelper = createColumnHelper<(typeof deploymentHistory | typeof deploymentHistoryQueue)[number]>()
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('auditing_data.created_at', {
@@ -151,7 +161,7 @@ export function EnvironmentDeploymentList() {
                     {dateFullFormat(
                       isDeploymentHistory(data) ? data.auditing_data.created_at : '',
                       undefined,
-                      'dd MMM, HH:mm a'
+                      'dd MMM, HH:mm'
                     )}
                   </span>
                   <span className="truncate text-ssm text-neutral-subtle">
@@ -159,7 +169,7 @@ export function EnvironmentDeploymentList() {
                   </span>
                 </div>
               )}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2" onClick={stopRowNavigation} onKeyDown={stopRowNavigation}>
                 {match(state)
                   .with(
                     'DEPLOYING',
@@ -187,7 +197,9 @@ export function EnvironmentDeploymentList() {
                                   () => <Icon iconName="clock" iconStyle="regular" className="text-current" />
                                 )
                                 .otherwise(() => (
-                                  <Icon iconName="loader" className="animate-spin text-current" />
+                                  <span className="flex h-4 w-4 items-center justify-center">
+                                    <Icon iconName="loader" className="block animate-spin leading-none text-current" />
+                                  </span>
                                 ))}
                             </Tooltip>
                           </Button>
@@ -296,13 +308,15 @@ export function EnvironmentDeploymentList() {
 
           return (
             environment && (
-              <DropdownServices
-                environment={environment}
-                deploymentHistory={data}
-                stages={match(data)
-                  .with(P.when(isDeploymentHistory), (d) => d.stages.filter((stage) => stage.services.length > 0))
-                  .otherwise((d) => d.stages)}
-              />
+              <div onClick={stopRowNavigation} onKeyDown={stopRowNavigation}>
+                <DropdownServices
+                  environment={environment}
+                  deploymentHistory={data}
+                  stages={match(data)
+                    .with(P.when(isDeploymentHistory), (d) => d.stages.filter((stage) => stage.services.length > 0))
+                    .otherwise((d) => d.stages)}
+                />
+              </div>
             )
           )
         },
@@ -423,10 +437,18 @@ export function EnvironmentDeploymentList() {
     )
   }
 
-  const handleRowClick = (row: Row<DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages>) => {
+  const getDeploymentExecutionId = (row: Row<DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages>) => {
     const data = row.original
+    return isDeploymentHistory(data) ? data.identifier.execution_id : undefined
+  }
 
-    if (!environment || !('execution_id' in data.identifier)) return
+  const handleRowClick = (
+    event: MouseEvent<HTMLElement>,
+    row: Row<DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages>
+  ) => {
+    const executionId = getDeploymentExecutionId(row)
+
+    if (!environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
 
     navigate({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
@@ -434,7 +456,26 @@ export function EnvironmentDeploymentList() {
         organizationId: environment?.organization.id,
         projectId: environment?.project.id,
         environmentId: environment?.id,
-        deploymentId: data.identifier.execution_id,
+        deploymentId: executionId,
+      },
+    })
+  }
+
+  const handleRowKeyDown = (
+    event: KeyboardEvent<HTMLElement>,
+    row: Row<DeploymentHistoryEnvironmentV2 | QueuedDeploymentRequestWithStages>
+  ) => {
+    const executionId = getDeploymentExecutionId(row)
+
+    if (event.key !== 'Enter' || !environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
+
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
+      params: {
+        organizationId: environment?.organization.id,
+        projectId: environment?.project.id,
+        environmentId: environment?.id,
+        deploymentId: executionId,
       },
     })
   }
@@ -491,22 +532,35 @@ export function EnvironmentDeploymentList() {
           ))}
         </Table.Header>
         <Table.Body>
-          {table.getRowModel().rows.map((row) => (
-            <Fragment key={row.id}>
-              <Table.Row className="h-[68px] divide-x divide-neutral">
-                {row.getVisibleCells().map((cell) => (
-                  <Table.Cell
-                    key={cell.id}
-                    style={{
-                      width: `${cell.column.getSize()}px`,
-                    }}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </Table.Cell>
-                ))}
-              </Table.Row>
-            </Fragment>
-          ))}
+          {table.getRowModel().rows.map((row) => {
+            const executionId = getDeploymentExecutionId(row)
+
+            return (
+              <Fragment key={row.id}>
+                <Table.Row
+                  role={executionId ? 'link' : undefined}
+                  tabIndex={executionId ? 0 : undefined}
+                  className={twMerge(
+                    'h-[68px] divide-x divide-neutral',
+                    executionId ? 'cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle' : ''
+                  )}
+                  onClick={(event) => handleRowClick(event, row)}
+                  onKeyDown={(event) => handleRowKeyDown(event, row)}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <Table.Cell
+                      key={cell.id}
+                      style={{
+                        width: `${cell.column.getSize()}px`,
+                      }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </Table.Cell>
+                  ))}
+                </Table.Row>
+              </Fragment>
+            )
+          })}
         </Table.Body>
       </Table.Root>
     </div>
