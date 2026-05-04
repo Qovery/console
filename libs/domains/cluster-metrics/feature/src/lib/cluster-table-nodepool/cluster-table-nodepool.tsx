@@ -251,12 +251,12 @@ function MetricProgressBar({ type, capacity, capacityRaw, limit, limitRaw, unit 
             </div>
           </div>
           {isLimitReached && !isCapacityReached && (
-            <div className="border-neutral-subtle border-t px-2.5 py-1.5 text-warning">
+            <div className="border-t border-neutral-subtle px-2.5 py-1.5 text-warning">
               Resource limit nearly reached; further node deployments will not be possible
             </div>
           )}
           {isCapacityReached && (
-            <div className="border-neutral-subtle border-t px-2.5 py-1.5 text-warning">
+            <div className="border-t border-neutral-subtle px-2.5 py-1.5 text-warning">
               Resource reserved exceed the limit; further node deployments will not be possible
             </div>
           )}

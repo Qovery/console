@@ -19,6 +19,7 @@ const handleSubmit = (data: FieldValues, cluster: Cluster) => {
     name: data['name'],
     description: data['description'] || '',
     production: data['production'],
+    keda: data.keda ?? cluster.keda,
   }
 }
 
