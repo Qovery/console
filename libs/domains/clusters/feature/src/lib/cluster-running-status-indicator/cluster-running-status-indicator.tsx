@@ -99,7 +99,7 @@ export function ClusterRunningStatusIndicator({
         />
       ) : (
         <Tooltip content="Cannot fetch the cluster status. Please contact us if the issue persists">
-          <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
+          <Badge variant="surface" color="neutral" className="items-center gap-2 border-neutral-component pr-2">
             Status unavailable
             <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
           </Badge>
@@ -242,7 +242,7 @@ export function ClusterRunningStatusIndicator({
           className="border-neutral-subtle bg-surface-neutral-solid"
         />
       ) : (
-        <Badge variant="surface" color="neutral" className="items-center gap-2 border-neutral-subtle pr-2">
+        <Badge variant="surface" color="neutral" className="items-center gap-2 border-neutral-component pr-2">
           <span className="text-neutral">Status unavailable</span>
           <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
         </Badge>
