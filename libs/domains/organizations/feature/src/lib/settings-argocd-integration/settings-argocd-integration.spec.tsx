@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useOrganizationArgoCdIntegrations } from '../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations'
 import { SettingsArgoCdIntegration } from './settings-argocd-integration'
@@ -9,6 +10,7 @@ const mockCloseModal = jest.fn()
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 jest.mock('../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations', () => ({
   useOrganizationArgoCdIntegrations: jest.fn(),
