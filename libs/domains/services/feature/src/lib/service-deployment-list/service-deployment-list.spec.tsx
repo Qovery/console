@@ -121,6 +121,8 @@ describe('ServiceDeploymentList', () => {
     expect(screen.getByText('Trigger by')).toBeInTheDocument()
 
     expect(screen.getByText('exec-123')).toBeInTheDocument()
+    expect(screen.getByText(/23 Jan, \d{2}:55/)).toBeInTheDocument()
+    expect(screen.queryByText(/23 Jan, \d{2}:55 [AP]M/)).not.toBeInTheDocument()
     expect(screen.getAllByText('Deploy')[0]).toBeInTheDocument()
     expect(screen.getByText('version')).toBeInTheDocument()
     expect(screen.getByText('John Doe')).toBeInTheDocument()

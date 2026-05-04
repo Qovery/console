@@ -132,6 +132,8 @@ describe('EnvironmentDeploymentList', () => {
     expect(screen.getByText('Trigger by')).toBeInTheDocument()
 
     expect(screen.getByText('exec-123')).toBeInTheDocument()
+    expect(screen.getByText(/30 Jan, \d{2}:00/)).toBeInTheDocument()
+    expect(screen.queryByText(/30 Jan, \d{2}:00 [AP]M/)).not.toBeInTheDocument()
     expect(screen.getAllByText('Deploy')[0]).toBeInTheDocument()
     expect(screen.getAllByText('User')[0]).toBeInTheDocument()
   })

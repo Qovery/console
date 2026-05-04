@@ -151,7 +151,7 @@ export function EnvironmentDeploymentList() {
                     {dateFullFormat(
                       isDeploymentHistory(data) ? data.auditing_data.created_at : '',
                       undefined,
-                      'dd MMM, HH:mm a'
+                      'dd MMM, HH:mm'
                     )}
                   </span>
                   <span className="truncate text-ssm text-neutral-subtle">
