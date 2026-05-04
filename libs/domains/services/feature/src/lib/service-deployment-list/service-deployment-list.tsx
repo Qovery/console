@@ -146,7 +146,9 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                             {match(state)
                               .with('QUEUED', () => <Icon iconName="clock" iconStyle="regular" />)
                               .otherwise(() => (
-                                <Icon iconName="loader" className="animate-spin" />
+                                <span className="flex h-4 w-4 items-center justify-center">
+                                  <Icon iconName="loader" className="block animate-spin leading-none" />
+                                </span>
                               ))}
                           </Tooltip>
                         </Button>

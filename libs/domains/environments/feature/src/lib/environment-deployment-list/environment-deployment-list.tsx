@@ -187,7 +187,9 @@ export function EnvironmentDeploymentList() {
                                   () => <Icon iconName="clock" iconStyle="regular" className="text-current" />
                                 )
                                 .otherwise(() => (
-                                  <Icon iconName="loader" className="animate-spin text-current" />
+                                  <span className="flex h-4 w-4 items-center justify-center">
+                                    <Icon iconName="loader" className="block animate-spin leading-none text-current" />
+                                  </span>
                                 ))}
                             </Tooltip>
                           </Button>
