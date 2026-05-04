@@ -35,7 +35,7 @@ const SpotlightTriggerBase = ({ organizationId }: { organizationId: string }) =>
         />
         <span className="text-neutral-subtle">Search</span>
         <div className="ml-auto flex gap-1 text-neutral-subtle">
-          <Kbd className="pt-[1px]">{metaKey}</Kbd>
+          <Kbd className={`px-1 pt-[1px] ${metaKey === 'Ctrl' ? 'text-2xs' : 'text-sm'}`}>{metaKey}</Kbd>
           <Kbd>
             <svg xmlns="http://www.w3.org/2000/svg" width="6" height="8" fill="none" viewBox="0 0 6 8">
               <path
