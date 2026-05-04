@@ -140,7 +140,7 @@ export function DatabaseGeneralSettings({
                 <Callout.Icon>
                   <Icon iconName="circle-info" />
                 </Callout.Icon>
-                <Callout.Text className="text-neutral-350">
+                <Callout.Text className="text-neutral-subtle">
                   Once triggered, the update will be managed by your cloud provider and applied during the configured
                   maintenance window. Moreover, the operation might cause a service interruption.{' '}
                   <ExternalLink

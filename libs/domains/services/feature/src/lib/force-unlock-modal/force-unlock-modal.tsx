@@ -63,10 +63,8 @@ export const ForceUnlockModal = ({ environment, service }: { environment: Enviro
                 onCheckedChange={field.onChange}
               />
               <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
-                <span className="font-medium text-neutral-400">
-                  No other Terraform job is executing before continuing
-                </span>
-                <span className="text-neutral-350">
+                <span className="font-medium text-neutral">No other Terraform job is executing before continuing</span>
+                <span className="text-neutral-subtle">
                   Unlocking while another deployment is running may corrupt the Terraform state.
                 </span>
               </label>

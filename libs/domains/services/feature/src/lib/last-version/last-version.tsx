@@ -46,7 +46,7 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
+            For <strong className="font-medium text-neutral">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),
@@ -78,7 +78,7 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
+            For <strong className="font-medium text-neutral">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),

@@ -180,7 +180,7 @@ export function DiskChart({
         dataKey="read-persistent-storage"
         name="read-persistent-storage"
         type="linear"
-        stroke="var(--color-green-700)"
+        stroke="#229064"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -190,7 +190,7 @@ export function DiskChart({
         dataKey="write-ephemeral-storage"
         name="write-ephemeral-storage"
         type="linear"
-        stroke="var(--color-yellow-500)"
+        stroke="#F4C004"
         strokeWidth={2}
         connectNulls={false}
         dot={false}
@@ -200,7 +200,7 @@ export function DiskChart({
         dataKey="write-persistent-storage"
         name="write-persistent-storage"
         type="linear"
-        stroke="var(--color-yellow-700)"
+        stroke="#AF8202"
         strokeWidth={2}
         connectNulls={false}
         dot={false}

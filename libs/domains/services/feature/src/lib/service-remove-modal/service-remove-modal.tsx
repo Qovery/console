@@ -112,8 +112,8 @@ export function ServiceRemoveModal({
                       onCheckedChange={field.onChange}
                     />
                     <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
-                      <span className="font-medium text-neutral-400">Skip Terraform destroy execution</span>
-                      <span className="text-neutral-350">
+                      <span className="font-medium text-neutral">Skip Terraform destroy execution</span>
+                      <span className="text-neutral-subtle">
                         Use this if you want to skip the `terraform destroy` execution
                       </span>
                     </label>

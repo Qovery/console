@@ -1,49 +1,3 @@
-const colorsZinc = {
-  50: '#FFFFFF',
-  100: '#F8F9FC',
-  150: '#EDF1F7',
-  200: '#E2E9F3',
-  250: '#C6D3E7',
-  300: '#A0AFC5',
-  350: '#67778E',
-  400: '#383E50',
-  500: '#2A3041',
-  550: '#212738',
-  600: '#1A2031',
-  650: '#151B2B',
-  700: '#101420',
-  800: '#0B0E16',
-  900: '#000000',
-}
-
-const colorsIndigo = {
-  50: '#F2F3FE',
-  100: '#E0DDFC',
-  200: '#C2BCFA',
-  300: '#A097F2',
-  400: '#847AE6',
-  500: '#5B50D6',
-  600: '#433AB8',
-  700: '#2F289A',
-  800: '#1F197C',
-  900: '#130F66',
-}
-
-const colorsBrand = {
-  1: 'var(--brand-1)',
-  2: 'var(--brand-2)',
-  3: 'var(--brand-3)',
-  4: 'var(--brand-4)',
-  5: 'var(--brand-5)',
-  6: 'var(--brand-6)',
-  7: 'var(--brand-7)',
-  8: 'var(--brand-8)',
-  9: 'var(--brand-9)',
-  10: 'var(--brand-10)',
-  11: 'var(--brand-11)',
-  12: 'var(--brand-12)',
-}
-
 const slideEntrances = () => {
   const genSlide = (suffix, offset) => ({
     [`slidein-up-${suffix}`]: {
@@ -199,8 +153,6 @@ module.exports = {
           'radial-gradient(farthest-side at 50% 0,var(--neutral-invert-12),transparent),linear-gradient(180deg,var(--background-1) 0%,transparent 75%)',
       },
       colors: {
-        brand: { ...colorsBrand, ...colorsIndigo },
-        indigo: colorsIndigo,
         purple: {
           50: '#FCF4FF',
           100: '#F7DFFE',
@@ -285,8 +237,12 @@ module.exports = {
           800: '#93141A',
           900: '#7A0C1A',
         },
-        zink: colorsZinc,
-        neutral: colorsZinc,
+        neutral: {
+          DEFAULT: 'var(--neutral-12)',
+          subtle: 'var(--neutral-11)',
+          disabled: 'var(--neutral-10)',
+          strong: 'var(--neutral-9)',
+        },
         background: {
           DEFAULT: 'var(--background-1)',
           secondary: 'var(--background-2)',
@@ -355,7 +311,7 @@ module.exports = {
           subtle: 'var(--neutral-invert-11)',
           contrasted: 'var(--contrast-inverted)',
         },
-        brand: { DEFAULT: 'var(--brand-11)', hover: 'var(--brand-10)' },
+        brand: { DEFAULT: 'var(--brand-11)', hover: 'var(--brand-10)', strong: 'var(--brand-12)' },
         info: { DEFAULT: 'var(--info-11)', hover: 'var(--info-10)' },
         infoInvert: { DEFAULT: 'var(--info-invert-11)' },
         positive: { DEFAULT: 'var(--positive-11)', hover: 'var(--positive-10)' },
@@ -397,9 +353,12 @@ module.exports = {
           DEFAULT: 'var(--neutral-invert-6)',
         },
         brand: {
+          DEFAULT: 'var(--brand-9)',
           strong: 'var(--brand-9)',
           component: 'var(--brand-alpha-7)',
           subtle: 'var(--brand-6)',
+          text: 'var(--brand-11)',
+          outline: 'var(--brand-4)',
         },
         info: {
           strong: 'var(--info-9)',

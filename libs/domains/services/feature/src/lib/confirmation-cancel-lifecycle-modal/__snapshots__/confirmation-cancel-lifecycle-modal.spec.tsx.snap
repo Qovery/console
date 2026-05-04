@@ -41,12 +41,12 @@ exports[`ConfirmationCancelLifecycleModal should match snapshot 1`] = `
           class="mb-2 flex flex-col gap-1"
         >
           <span
-            class="text-sm font-medium text-neutral-400"
+            class="text-sm font-medium text-neutral"
           >
             Force Lifecycle job stop
           </span>
           <p
-            class="text-sm text-neutral-350"
+            class="text-sm text-neutral-subtle"
           >
             Cancel the deployment and stop the execution of any lifecycle job. Make sure that interrupting its execution is safe.
           </p>

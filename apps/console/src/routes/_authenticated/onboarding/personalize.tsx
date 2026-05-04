@@ -38,7 +38,7 @@ const dataCloudProviders = [
   {
     label: 'Other',
     value: 'OTHER',
-    icon: <Icon className="text-xs text-neutral-500" iconName="cloud" iconStyle="regular" />,
+    icon: <Icon className="text-xs text-neutral" iconName="cloud" iconStyle="regular" />,
   },
 ]
 

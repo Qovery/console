@@ -622,7 +622,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                     {isEditDirty && (
                       <>
                         <hr />
-                        <span className="text-sm text-neutral-350">Confirm your vSphere password</span>
+                        <span className="text-sm text-neutral-subtle">Confirm your vSphere password</span>
                       </>
                     )}
                     {(!isEdit || isEditDirty) && (
@@ -743,7 +743,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                       {isEditDirty && (
                         <>
                           <hr />
-                          <span className="text-sm text-neutral-350">Confirm your vSphere password</span>
+                          <span className="text-sm text-neutral-subtle">Confirm your vSphere password</span>
                         </>
                       )}
                       {(!isEdit || isEditDirty) && (

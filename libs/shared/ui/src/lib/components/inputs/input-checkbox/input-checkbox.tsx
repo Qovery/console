@@ -69,7 +69,7 @@ export function InputCheckbox(props: InputCheckboxProps) {
       {label && (
         <label
           htmlFor={id}
-          className={`h-5 cursor-pointer text-sm leading-5 text-neutral-400 dark:text-neutral-300 ${
+          className={`h-5 cursor-pointer text-sm leading-5 text-neutral ${
             big ? 'font-medium' : ''
           } ${disabled ? '' : 'cursor-pointer'}`}
         >

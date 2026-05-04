@@ -42,7 +42,7 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
     })
   )
   const linkClassName =
-    'flex min-w-0 items-center gap-1.5 whitespace-nowrap rounded text-sm font-medium transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11'
+    'flex min-w-0 items-center gap-1.5 whitespace-nowrap rounded text-sm font-medium transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text'
 
   const filteredItems = useMemo(
     () => items?.filter((i) => i.label.toLowerCase().includes(searchQuery.toLowerCase())) || [],
@@ -151,7 +151,7 @@ export function BreadcrumbItem({ item, items, isCurrentScope = false, footerActi
             iconOnly
             className={twMerge(
               clsx(
-                'relative shrink-0 text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+                'relative shrink-0 text-neutral-disabled transition-colors hover:text-neutral focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text',
                 {
                   'text-neutral': open,
                 }

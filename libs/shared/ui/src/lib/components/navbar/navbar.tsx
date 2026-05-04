@@ -213,7 +213,7 @@ const NavbarRoot = forwardRef<ElementRef<'div'>, NavbarRootProps>(function Navba
 
             {/* Active bottom bar indicator */}
             <div
-              className="absolute bottom-0 left-0 h-0.5 w-[100px] origin-left rounded-t bg-brand-9 transition-transform duration-150 ease-out"
+              className="absolute bottom-0 left-0 h-0.5 w-[100px] origin-left rounded-t bg-surface-brand-solid transition-transform duration-150 ease-out"
               style={{
                 ...(activeStyle || { display: 'none' }),
               }}

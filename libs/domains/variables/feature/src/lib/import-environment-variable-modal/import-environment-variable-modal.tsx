@@ -89,7 +89,7 @@ export function ImportEnvironmentVariableModal(props: ImportEnvironmentVariableM
         <div
           {...props.dropzoneGetRootProps({
             className:
-              'rounded outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-11',
+              'rounded outline-none focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text',
           })}
         >
           <input data-testid="drop-input" {...props.dropzoneGetInputProps()} />

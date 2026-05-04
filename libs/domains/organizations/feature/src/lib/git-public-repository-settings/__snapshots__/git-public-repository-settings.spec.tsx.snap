@@ -118,7 +118,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         </div>
       </div>
       <p
-        class="ml-4 mt-1 text-xs text-neutral-350"
+        class="ml-4 mt-1 text-xs text-neutral-subtle"
       >
         Provide the path in the repository where the service is located
       </p>

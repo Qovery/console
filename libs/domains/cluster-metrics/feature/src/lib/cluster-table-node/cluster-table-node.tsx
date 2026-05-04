@@ -55,7 +55,7 @@ function MetricProgressBar({
             <div className="flex flex-col gap-1 px-2.5 py-1.5">
               <div className="flex w-full items-center gap-1.5">
                 <span className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-brand-9" />
+                  <span className="bg-brand h-2 w-2 rounded-full" />
                   Reserved
                 </span>
                 <span className="ml-auto block">

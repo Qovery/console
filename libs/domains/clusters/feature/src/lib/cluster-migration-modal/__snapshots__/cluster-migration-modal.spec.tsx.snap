@@ -42,12 +42,12 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
               for="activation"
             >
               <span
-                class="font-medium text-neutral-400"
+                class="font-medium text-neutral"
               >
                 Karpenter activation is irreversible
               </span>
               <span
-                class="text-neutral-350"
+                class="text-neutral-subtle"
               >
                 To switch back to EKS auto-scaling, you will need to recreate your cluster and migrate your environment to the new cluster.
               </span>
@@ -78,12 +78,12 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
               for="downtime"
             >
               <span
-                class="font-medium text-neutral-400"
+                class="font-medium text-neutral"
               >
                 Downtime may occur
               </span>
               <span
-                class="text-neutral-350"
+                class="text-neutral-subtle"
               >
                 Durring the migration, you may experience some downtime on your services.
               </span>
@@ -114,12 +114,12 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
               for="environments"
             >
               <span
-                class="font-medium text-neutral-400"
+                class="font-medium text-neutral"
               >
                 Redeploying all environments
               </span>
               <span
-                class="text-neutral-350"
+                class="text-neutral-subtle"
               >
                 After the migration, we recommend redeploying all environments operating on this cluster.
               </span>
@@ -153,12 +153,12 @@ exports[`ClusterMigrationModal should match snapshot 1`] = `
                 for="compatibility"
               >
                 <span
-                  class="font-medium text-neutral-400"
+                  class="font-medium text-neutral"
                 >
                   Daemonset compatibility check
                 </span>
                 <span
-                  class="text-neutral-350"
+                  class="text-neutral-subtle"
                 >
                   If you have Daemonsets deployed via Helm, follow our guide before enabling Karpenter migration.
                 </span>

@@ -4,7 +4,7 @@ exports[`Input should match snapshot when loading 1`] = `
 <body>
   <div>
     <div
-      class="relative z-[1] flex rounded-xl border bg-background border-brand-strong outline outline-[3px] outline-brand-4"
+      class="relative z-[1] flex rounded-xl border bg-background border-brand-strong outline outline-[3px] outline-brand-outline"
     >
       <textarea
         class="min-h-12 w-full resize-none rounded-xl bg-transparent px-4 py-[13px] text-sm leading-[22px] text-neutral transition-[height] placeholder:text-neutral-subtle focus-visible:outline-none"
@@ -37,7 +37,7 @@ exports[`Input should match snapshot when not loading 1`] = `
 <body>
   <div>
     <div
-      class="relative z-[1] flex rounded-xl border bg-background border-brand-strong outline outline-[3px] outline-brand-4"
+      class="relative z-[1] flex rounded-xl border bg-background border-brand-strong outline outline-[3px] outline-brand-outline"
     >
       <textarea
         class="min-h-12 w-full resize-none rounded-xl bg-transparent px-4 py-[13px] text-sm leading-[22px] text-neutral transition-[height] placeholder:text-neutral-subtle focus-visible:outline-none"

@@ -390,7 +390,7 @@ export function InstanceStatusChart({
                     : series.metric['reason'] || 'unknown',
                 description: getDescriptionFromReason(series.metric.reason),
                 icon: series.metric.reason === 'Completed' ? 'check' : 'newspaper',
-                color: series.metric.reason === 'Completed' ? 'var(--color-yellow-600)' : 'var(--negative-11)',
+                color: series.metric.reason === 'Completed' ? '#D1A002' : 'var(--negative-11)',
                 key,
               })
             }

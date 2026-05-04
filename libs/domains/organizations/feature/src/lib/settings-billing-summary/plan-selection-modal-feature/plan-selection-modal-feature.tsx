@@ -61,7 +61,7 @@ export function PlanSelectionModal(props: PlanSelectionModalProps) {
                       <div className="flex items-center gap-2">
                         <span className="font-medium text-neutral">{plan}</span>
                         {isCurrentPlan(plan) && (
-                          <span className="rounded bg-neutral-150 px-2 py-0.5 text-xs font-medium text-neutral-subtle">
+                          <span className="rounded bg-surface-neutral-subtle px-2 py-0.5 text-xs font-medium text-neutral-subtle">
                             Current
                           </span>
                         )}

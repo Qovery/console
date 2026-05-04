@@ -248,7 +248,7 @@ The chart supports mixed visualization types including area charts, bar charts, 
             onDoubleClick={handleChartDoubleClick}
             style={{ cursor: isCtrlPressed ? 'zoom-out' : 'crosshair' }}
           >
-            <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+            <CartesianGrid horizontal={true} vertical={false} stroke="var(--neutral-6)" />
             <XAxis
               {...xAxisConfig}
               allowDataOverflow
@@ -284,7 +284,7 @@ The chart supports mixed visualization types including area charts, bar charts, 
               }}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+              tick={{ fontSize: 12, fill: 'var(--neutral-11)' }}
               tickLine={{ stroke: 'transparent' }}
               axisLine={{ stroke: 'transparent' }}
               orientation="right"
@@ -294,14 +294,14 @@ The chart supports mixed visualization types including area charts, bar charts, 
             <Area
               type="linear"
               dataKey="cpu"
-              stroke="var(--color-yellow-500)"
-              fill="var(--color-yellow-500)"
+              stroke="#F4C004"
+              fill="#F4C004"
               fillOpacity={0.15}
               strokeWidth={2}
               isAnimationActive={false}
               name="CPU"
             />
-            <Bar dataKey="memory" fill="var(--color-brand-500)" barSize={20} isAnimationActive={false} name="Memory" />
+            <Bar dataKey="memory" fill="#5B50D6" barSize={20} isAnimationActive={false} name="Memory" />
             <Line
               type="linear"
               dataKey="disk"
@@ -346,7 +346,7 @@ export const MaximalEdgeCaseLegend = {
     return (
       <Chart.Container className="h-[400px] w-full">
         <ComposedChart data={maximalEdgeCaseData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-250)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--neutral-6)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {
@@ -357,7 +357,7 @@ export const MaximalEdgeCaseLegend = {
             }}
           />
           <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tick={{ fontSize: 12, fill: 'var(--neutral-11)' }}
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'transparent' }}
             orientation="right"
@@ -397,7 +397,7 @@ export const EventMarkers = {
     return (
       <Chart.Container className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--neutral-6)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {
@@ -408,7 +408,7 @@ export const EventMarkers = {
             }}
           />
           <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tick={{ fontSize: 12, fill: 'var(--neutral-11)' }}
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'transparent' }}
             orientation="right"
@@ -418,13 +418,13 @@ export const EventMarkers = {
           <Chart.Tooltip content={<Chart.TooltipContent title="System Usage %" />} />
           <ReferenceLine
             x={1704074400000}
-            stroke="var(--color-brand-500)"
+            stroke="#5B50D6"
             strokeDasharray="3 3"
             strokeWidth={2}
             label={{
               value: 'Deploy Event',
               position: 'top',
-              fill: 'var(--color-brand-500)',
+              fill: '#5B50D6',
               fontSize: 12,
               fontWeight: 'bold',
             }}
@@ -457,7 +457,7 @@ export const LoadingState = {
     return (
       <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={sampleData} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--neutral-6)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {
@@ -468,7 +468,7 @@ export const LoadingState = {
             }}
           />
           <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tick={{ fontSize: 12, fill: 'var(--neutral-11)' }}
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'transparent' }}
             orientation="right"
@@ -478,7 +478,7 @@ export const LoadingState = {
           <Line
             type="linear"
             dataKey="cpu"
-            stroke="var(--color-yellow-500)"
+            stroke="#F4C004"
             strokeWidth={2}
             dot={false}
             connectNulls={false}
@@ -499,7 +499,7 @@ export const EmptyState = {
     return (
       <Chart.Container {...args} className="h-[300px] w-full p-5 py-2 pr-0">
         <ComposedChart data={[]} margin={{ top: 14, bottom: 0, left: 0, right: 0 }}>
-          <CartesianGrid horizontal={true} vertical={false} stroke="var(--color-neutral-200)" />
+          <CartesianGrid horizontal={true} vertical={false} stroke="var(--neutral-6)" />
           <XAxis
             {...xAxisConfig}
             tickFormatter={(timestamp) => {
@@ -510,7 +510,7 @@ export const EmptyState = {
             }}
           />
           <YAxis
-            tick={{ fontSize: 12, fill: 'var(--color-neutral-350)' }}
+            tick={{ fontSize: 12, fill: 'var(--neutral-11)' }}
             tickLine={{ stroke: 'transparent' }}
             axisLine={{ stroke: 'transparent' }}
             orientation="right"
@@ -520,7 +520,7 @@ export const EmptyState = {
           <Line
             type="linear"
             dataKey="cpu"
-            stroke="var(--color-yellow-500)"
+            stroke="#F4C004"
             strokeWidth={2}
             dot={false}
             connectNulls={false}

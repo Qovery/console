@@ -529,7 +529,7 @@ export const MultipleSelector = forwardRef<MultipleSelectorRef, MultipleSelector
         <div
           className={twMerge(
             clsx(
-              'has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 relative h-8 rounded-md border border-neutral bg-surface-neutral text-sm outline-none transition-colors focus-within:border-brand-strong focus-within:outline focus-within:outline-[2px] focus-within:outline-offset-0 focus-within:outline-brand-4 hover:border-neutral-component hover:focus-within:border-brand-strong',
+              'has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50 relative h-8 rounded-md border border-neutral bg-surface-neutral text-sm outline-none transition-colors focus-within:border-brand-strong focus-within:outline focus-within:outline-[2px] focus-within:outline-offset-0 focus-within:outline-brand-outline hover:border-neutral-component hover:focus-within:border-brand-strong',
               {
                 'cursor-text': !disabled && selected.length !== 0,
               },

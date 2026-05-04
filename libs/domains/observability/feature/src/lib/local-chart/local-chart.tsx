@@ -370,7 +370,7 @@ function createAlignedReferenceLine(event: ReferenceLineEvent) {
       key={event.key}
       name={event.key}
       x={event.timestamp}
-      stroke={event.color || 'var(--color-brand-500)'}
+      stroke={event.color || '#5B50D6'}
       strokeDasharray="3 3"
       opacity={0.4}
       strokeWidth={strokeWidth}
@@ -389,7 +389,7 @@ function createAlignedReferenceLine(event: ReferenceLineEvent) {
       label={{
         value: event.reason,
         position: 'top',
-        fill: event.color || 'var(--color-brand-500)',
+        fill: event.color || '#5B50D6',
         fontSize: 12,
         fontWeight: 'bold',
       }}

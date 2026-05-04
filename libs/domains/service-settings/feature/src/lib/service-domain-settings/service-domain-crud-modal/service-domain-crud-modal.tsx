@@ -138,13 +138,13 @@ export function ServiceDomainCrudModal({
             </div>
             <div className="space-y-3 bg-surface-neutral px-4 pb-3 pt-2 font-code text-xs">
               <div>
-                <span className="block text-brand-9">{watchDomain || '<your-domain>'} CNAME</span>
-                <span className="block text-brand-12">{cnameTarget}</span>
+                <span className="block text-brand">{watchDomain || '<your-domain>'} CNAME</span>
+                <span className="block text-brand-strong">{cnameTarget}</span>
               </div>
               {showWildcardCname ? (
                 <div>
-                  <span className="block text-brand-9">*.{watchDomain} CNAME</span>
-                  <span className="block text-brand-12">{cnameTarget}</span>
+                  <span className="block text-brand">*.{watchDomain} CNAME</span>
+                  <span className="block text-brand-strong">{cnameTarget}</span>
                 </div>
               ) : null}
             </div>
