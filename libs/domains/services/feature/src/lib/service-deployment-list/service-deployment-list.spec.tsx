@@ -1,4 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceDeploymentList } from './service-deployment-list'
 
@@ -79,6 +80,18 @@ const defaultDeploymentQueue = [
 
 let mockDeploymentHistory = defaultDeploymentHistory
 let mockDeploymentQueue = defaultDeploymentQueue
+const mockNavigate = jest.fn()
+
+jest.mock('@tanstack/react-router', () => {
+  return {
+    useNavigate: () => mockNavigate,
+    useLocation: () => ({ pathname: '/', search: '' }),
+    useRouter: () => ({
+      buildLocation: () => ({ href: '/' }),
+    }),
+    Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+  }
+})
 
 jest.mock('../hooks/use-deployment-history/use-deployment-history', () => ({
   useDeploymentHistory: () => ({
@@ -107,6 +120,7 @@ jest.mock('../hooks/use-service/use-service', () => ({
 
 describe('ServiceDeploymentList', () => {
   beforeEach(() => {
+    jest.clearAllMocks()
     mockDeploymentHistory = defaultDeploymentHistory
     mockDeploymentQueue = defaultDeploymentQueue
   })
@@ -133,6 +147,25 @@ describe('ServiceDeploymentList', () => {
     renderWithProviders(<ServiceDeploymentList environment={mockEnvironment} serviceId="service-123" />)
 
     expect(screen.getAllByText('In queue...')[0]).toBeInTheDocument()
+  })
+
+  it('should navigate to deployment logs when clicking a deployment row', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceDeploymentList environment={mockEnvironment} serviceId="service-123" />
+    )
+
+    await userEvent.click(screen.getByText('exec-123'))
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+      params: {
+        organizationId: 'org-123',
+        projectId: 'proj-123',
+        environmentId: 'env-123',
+        serviceId: 'service-123',
+        executionId: 'exec-123',
+      },
+    })
   })
 
   it('should render empty state when no deployment data is available', async () => {

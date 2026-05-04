@@ -1,4 +1,6 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
+  type Row,
   type SortingState,
   createColumnHelper,
   flexRender,
@@ -11,7 +13,7 @@ import {
 } from '@tanstack/react-table'
 import clsx from 'clsx'
 import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
-import { useCallback, useMemo, useState } from 'react'
+import { type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import { IconEnum } from '@qovery/shared/enums'
@@ -42,6 +44,15 @@ import { ServiceDeploymentListSkeleton } from './service-deployment-list-skeleto
 import { TableFilterTriggerBy } from './table-filter-trigger-by/table-filter-trigger-by'
 
 const { Table } = TablePrimitives
+const interactiveRowTargetSelector = 'a,button,input,select,textarea,[role="button"],[role="menuitem"]'
+
+function stopRowNavigation(event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) {
+  event.stopPropagation()
+}
+
+function shouldIgnoreRowNavigation(target: EventTarget | null) {
+  return target instanceof HTMLElement && Boolean(target.closest(interactiveRowTargetSelector))
+}
 
 export interface ServiceDeploymentListProps {
   serviceId: string
@@ -53,6 +64,7 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
 }
 
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
+  const navigate = useNavigate()
   const { data: service } = useService({ environmentId: environment?.id, serviceId, suspense: true })
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
@@ -94,6 +106,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   )
 
   const columnHelper = createColumnHelper<(typeof deploymentHistory | typeof deploymentHistoryQueue)[number]>()
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('auditing_data.created_at', {
@@ -136,7 +149,11 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   </span>
                 </div>
               )}
-              <div className="flex min-w-28 justify-end gap-1 text-right">
+              <div
+                className="flex min-w-28 justify-end gap-1 text-right"
+                onClick={stopRowNavigation}
+                onKeyDown={stopRowNavigation}
+              >
                 {match(state)
                   .with('ONGOING', 'CANCELING', 'QUEUED', () => (
                     <DropdownMenu.Root>
@@ -477,6 +494,51 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
     )
   }
 
+  const getDeploymentExecutionId = (row: Row<DeploymentHistoryService | (typeof deploymentHistoryQueue)[number]>) => {
+    const data = row.original
+    return isDeploymentHistory(data) ? data.identifier.execution_id : undefined
+  }
+
+  const handleRowClick = (
+    event: MouseEvent<HTMLElement>,
+    row: Row<DeploymentHistoryService | (typeof deploymentHistoryQueue)[number]>
+  ) => {
+    const executionId = getDeploymentExecutionId(row)
+
+    if (!environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
+
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+      params: {
+        organizationId: environment.organization.id,
+        projectId: environment.project.id,
+        environmentId: environment.id,
+        serviceId,
+        executionId,
+      },
+    })
+  }
+
+  const handleRowKeyDown = (
+    event: KeyboardEvent<HTMLElement>,
+    row: Row<DeploymentHistoryService | (typeof deploymentHistoryQueue)[number]>
+  ) => {
+    const executionId = getDeploymentExecutionId(row)
+
+    if (event.key !== 'Enter' || !environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
+
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+      params: {
+        organizationId: environment.organization.id,
+        projectId: environment.project.id,
+        environmentId: environment.id,
+        serviceId,
+        executionId,
+      },
+    })
+  }
+
   return (
     <div className="flex grow flex-col justify-between">
       <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
@@ -522,20 +584,34 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
           ))}
         </Table.Header>
         <Table.Body>
-          {table.getRowModel().rows.map((row) => (
-            <Table.Row key={row.id} className="h-[68px] divide-x divide-neutral border-neutral">
-              {row.getVisibleCells().map((cell, i) => (
-                <Table.Cell
-                  key={cell.id}
-                  style={{
-                    width: `${cell.column.getSize()}px`,
-                  }}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Table.Cell>
-              ))}
-            </Table.Row>
-          ))}
+          {table.getRowModel().rows.map((row) => {
+            const executionId = getDeploymentExecutionId(row)
+
+            return (
+              <Table.Row
+                key={row.id}
+                role={executionId ? 'link' : undefined}
+                tabIndex={executionId ? 0 : undefined}
+                className={twMerge(
+                  'h-[68px] divide-x divide-neutral border-neutral',
+                  executionId ? 'cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle' : ''
+                )}
+                onClick={(event) => handleRowClick(event, row)}
+                onKeyDown={(event) => handleRowKeyDown(event, row)}
+              >
+                {row.getVisibleCells().map((cell, i) => (
+                  <Table.Cell
+                    key={cell.id}
+                    style={{
+                      width: `${cell.column.getSize()}px`,
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            )
+          })}
         </Table.Body>
       </Table.Root>
     </div>
