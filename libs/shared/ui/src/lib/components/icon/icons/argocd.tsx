@@ -2,7 +2,7 @@ import { type IconProps } from '../icon'
 
 export function ArgoCdIcon(props: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" {...props} width="20" height="20" fill="none" viewBox="0 0 20 20">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 20 20" {...props}>
       <g clipPath="url(#clip0_389_14428)">
         <path fill="#B6CFEA" d="M17.84 9.98a7.786 7.786 0 1 1-15.572 0 7.786 7.786 0 0 1 15.572 0"></path>
         <path
