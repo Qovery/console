@@ -1,7 +1,12 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import { Link as RouterLink } from '@tanstack/react-router'
-import { ClusterAvatar, useCluster } from '@qovery/domains/clusters/feature'
+import {
+  ClusterAvatar,
+  ClusterRunningStatusIndicator,
+  useCluster,
+  useClusterRunningStatusSocket,
+} from '@qovery/domains/clusters/feature'
 import {
   EnvironmentLastDeploymentSection,
   EnvironmentMode,
@@ -26,6 +31,11 @@ function RouteComponent() {
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id, suspense: true })
+
+  useClusterRunningStatusSocket({
+    organizationId,
+    clusterId: environment?.cluster_id ?? '',
+  })
 
   const tabs = [
     {
@@ -59,15 +69,18 @@ function RouteComponent() {
               </Tooltip>
               <EnvironmentStateChip className="ml-0.5 shrink-0" mode="running" environmentId={environment.id} />
               <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
-              <RouterLink
-                to="/organization/$organizationId/cluster/$clusterId/overview"
-                params={{ organizationId, clusterId: environment.cluster_id }}
-                className="group flex shrink-0 items-center gap-1 text-ssm"
-                color="neutral"
-              >
+              <div className="flex shrink-0 items-center gap-1 text-ssm">
                 <ClusterAvatar cluster={cluster} size="sm" />
-                <span className="group-hover:underline">{environment.cluster_name}</span>
-              </RouterLink>
+                <RouterLink
+                  to="/organization/$organizationId/cluster/$clusterId/overview"
+                  params={{ organizationId, clusterId: environment.cluster_id }}
+                  className="hover:underline"
+                  color="neutral"
+                >
+                  {environment.cluster_name}
+                </RouterLink>
+                {cluster && <ClusterRunningStatusIndicator cluster={cluster} type="dot" />}
+              </div>
             </div>
 
             <div className="flex shrink-0 gap-2">
