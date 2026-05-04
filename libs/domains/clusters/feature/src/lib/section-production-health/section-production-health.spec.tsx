@@ -75,6 +75,7 @@ describe('SectionProductionHealth', () => {
   it('should render the cluster option cards when no cluster exists', () => {
     renderWithProviders(<SectionProductionHealth />)
 
+    expect(screen.getByRole('heading', { name: 'Production health' })).toBeInTheDocument()
     expect(screen.getByText('Qovery managed')).toBeInTheDocument()
     expect(screen.getByText('Bring your own cluster')).toBeInTheDocument()
     expect(screen.getByText('Local machine (demo)')).toBeInTheDocument()
