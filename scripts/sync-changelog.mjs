@@ -20,8 +20,8 @@ export function decodeXmlEntities(value) {
 
 export function decodeHtmlEntities(value) {
   return decodeXmlEntities(value)
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
-    .replace(/&#x([a-f0-9]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)))
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([a-f0-9]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
     .replace(/&nbsp;/g, ' ')
     .trim()
 }
