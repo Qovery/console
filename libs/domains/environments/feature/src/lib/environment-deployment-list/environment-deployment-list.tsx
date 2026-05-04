@@ -47,8 +47,8 @@ import { useCancelDeploymentQueueEnvironment } from '../hooks/use-cancel-deploym
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment-queue'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
-import { EnvironmentDeploymentDurationCell } from './environment-deployment-duration-cell'
 import { DropdownServices } from './dropdown-services/dropdown-services'
+import { EnvironmentDeploymentDurationCell } from './environment-deployment-duration-cell'
 import { TableFilterTriggerBy } from './table-filter-trigger-by/table-filter-trigger-by'
 
 const { Table } = TablePrimitives

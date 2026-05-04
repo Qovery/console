@@ -31,9 +31,7 @@ describe('ServiceDeploymentDurationCell', () => {
   })
 
   it('prefers live elapsed over API total_duration while ONGOING', () => {
-    render(
-      <ServiceDeploymentDurationCell createdAt="2025-01-23T08:55:00.000Z" status="ONGOING" totalDuration="PT1M" />
-    )
+    render(<ServiceDeploymentDurationCell createdAt="2025-01-23T08:55:00.000Z" status="ONGOING" totalDuration="PT1M" />)
 
     expect(screen.getByText('00:05:00')).toBeInTheDocument()
     expect(screen.queryByText('00:01:00')).not.toBeInTheDocument()

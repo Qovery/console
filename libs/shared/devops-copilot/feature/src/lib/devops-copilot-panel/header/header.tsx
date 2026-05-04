@@ -68,7 +68,7 @@ export function Header({
                   type="button"
                   onClick={() => setIsReadOnly(!isReadOnly)}
                   className={clsx(
-                    'focus-visible:outline-brand relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                    'relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
                     {
                       'bg-surface-warning-solid': !isReadOnly,
                       'bg-surface-neutral-componentActive': isReadOnly,

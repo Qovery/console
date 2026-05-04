@@ -34,11 +34,7 @@ describe('EnvironmentDeploymentDurationCell', () => {
 
   it('prefers live elapsed over API total_duration while DEPLOYING', () => {
     render(
-      <EnvironmentDeploymentDurationCell
-        createdAt="2025-01-23T08:55:00.000Z"
-        status="DEPLOYING"
-        totalDuration="PT1M"
-      />
+      <EnvironmentDeploymentDurationCell createdAt="2025-01-23T08:55:00.000Z" status="DEPLOYING" totalDuration="PT1M" />
     )
 
     expect(screen.getByText('00:05:00')).toBeInTheDocument()
