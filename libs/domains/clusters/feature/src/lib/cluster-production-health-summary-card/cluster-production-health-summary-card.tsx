@@ -1,15 +1,17 @@
 import type { IconName } from '@fortawesome/fontawesome-common-types'
+import { useQueries } from '@tanstack/react-query'
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import type { Cluster, ClusterStatus } from 'qovery-typescript-axios'
 import { type ReactNode, memo, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Icon, Skeleton, useModal } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
+import { queries } from '@qovery/state/util-queries'
 import {
   ClusterProductionHealthIssuesModal,
   type ClusterWithHealthIssues,
 } from '../cluster-production-health-issues-modal/cluster-production-health-issues-modal'
 import useClusterRunningStatusSocket from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
-import { useClusterRunningStatuses } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import {
   CLUSTER_HEALTH_ISSUE_ORDER,
   type ClusterHealthIssueKind,
@@ -22,6 +24,26 @@ import {
 // "status unavailable" issues). While waiting we display a skeleton to avoid
 // flashing incorrect states caused by temporarily missing running-status data.
 const RUNNING_STATUS_TIMEOUT_MS = 8_000
+const CLUSTER_RUNNING_STATUS_QUERY_OPTIONS = {
+  refetchOnMount: false,
+  refetchOnWindowFocus: false,
+  refetchOnReconnect: false,
+  staleTime: Infinity,
+} as const
+
+function useClusterRunningStatusQueries({ clusters, enabled }: { clusters: Cluster[]; enabled: boolean }) {
+  return useQueries({
+    queries: enabled
+      ? clusters.map((cluster) => ({
+          ...queries.clusters.runningStatus({
+            organizationId: cluster.organization.id,
+            clusterId: cluster.id,
+          }),
+          ...CLUSTER_RUNNING_STATUS_QUERY_OPTIONS,
+        }))
+      : [],
+  })
+}
 
 // Memoized so parent re-renders (e.g. from the 3s cluster-statuses polling) don't tear down
 // the websocket subscription when the cluster identity didn't change.
@@ -158,6 +180,7 @@ export function ClusterProductionHealthSummaryCard({
   clusterStatuses,
 }: ClusterProductionHealthSummaryCardProps) {
   const { openModal, closeModal } = useModal()
+  const isRunningStatusIssueEnabled = Boolean(useFeatureFlagVariantKey('cluster-running-status'))
   const runningStatusScopeKey = useMemo(
     () => clusters.map((cluster) => `${cluster.organization.id}:${cluster.id}`).join('|'),
     [clusters]
@@ -170,11 +193,14 @@ export function ClusterProductionHealthSummaryCard({
     return () => clearTimeout(timeoutId)
   }, [runningStatusScopeKey])
 
-  const runningStatusQueries = useClusterRunningStatuses({ clusters })
+  const runningStatusQueries = useClusterRunningStatusQueries({ clusters, enabled: isRunningStatusIssueEnabled })
 
   // Keep the skeleton up until every cluster has reported a running status
   // (real payload or explicit 'NotFound'), or the timeout fires as a safety net
-  const hasAllRunningStatuses = clusters.length === 0 || runningStatusQueries.every((query) => query.data !== undefined)
+  const hasAllRunningStatuses =
+    !isRunningStatusIssueEnabled ||
+    clusters.length === 0 ||
+    runningStatusQueries.every((query) => query.data !== undefined)
   const isReady = hasAllRunningStatuses || hasRunningStatusTimedOut
 
   const clustersWithIssues = useMemo<ClusterWithHealthIssues[]>(() => {
@@ -186,12 +212,13 @@ export function ClusterProductionHealthSummaryCard({
           cluster,
           deploymentStatus,
           runningStatus,
+          isRunningStatusIssueEnabled,
           hasRunningStatusTimedOut,
         })
         return { cluster, deploymentStatus, issues }
       })
       .filter((entry) => entry.issues.length > 0)
-  }, [clusters, clusterStatuses, runningStatusQueries, hasRunningStatusTimedOut])
+  }, [clusters, clusterStatuses, runningStatusQueries, isRunningStatusIssueEnabled, hasRunningStatusTimedOut])
 
   const issuesCount = clustersWithIssues.length
   const hasIssues = issuesCount > 0
@@ -225,13 +252,14 @@ export function ClusterProductionHealthSummaryCard({
 
   return (
     <>
-      {clusters.map((cluster) => (
-        <ClusterRunningStatusSubscription
-          key={cluster.id}
-          organizationId={cluster.organization.id}
-          clusterId={cluster.id}
-        />
-      ))}
+      {isRunningStatusIssueEnabled &&
+        clusters.map((cluster) => (
+          <ClusterRunningStatusSubscription
+            key={cluster.id}
+            organizationId={cluster.organization.id}
+            clusterId={cluster.id}
+          />
+        ))}
       {!isReady ? (
         <div className="flex w-full items-center gap-3 rounded-lg border border-neutral bg-background p-3">
           <Skeleton height={40} width={40} className="rounded-md" />
