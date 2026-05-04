@@ -1,7 +1,12 @@
 import { Link, useParams } from '@tanstack/react-router'
 import { type ApplicationGitRepository, type Credentials, type Environment } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
-import { ClusterAvatar, useCluster } from '@qovery/domains/clusters/feature'
+import {
+  ClusterAvatar,
+  ClusterRunningStatusIndicator,
+  useCluster,
+  useClusterRunningStatusSocket,
+} from '@qovery/domains/clusters/feature'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
@@ -70,6 +75,8 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
   const { data: masterCredentials } = useMasterCredentials({ serviceId, serviceType: service?.serviceType })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
 
+  useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
+
   const [, copyToClipboard] = useCopyToClipboard()
 
   const containerImage = match(service)
@@ -136,14 +143,17 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
               serviceId={serviceId}
             />
             <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
-            <Link
-              to="/organization/$organizationId/cluster/$clusterId/overview"
-              params={{ organizationId, clusterId: environment.cluster_id }}
-              className="group flex shrink-0 items-center gap-1 text-ssm"
-            >
+            <div className="flex shrink-0 items-center gap-1 text-ssm">
               <ClusterAvatar cluster={cluster} size="sm" />
-              <span className="group-hover:underline">{environment.cluster_name}</span>
-            </Link>
+              <Link
+                to="/organization/$organizationId/cluster/$clusterId/overview"
+                params={{ organizationId, clusterId: environment.cluster_id }}
+                className="hover:underline"
+              >
+                {environment.cluster_name}
+              </Link>
+              {cluster && <ClusterRunningStatusIndicator cluster={cluster} type="dot" />}
+            </div>
           </div>
           <ServiceActions environment={environment} serviceId={serviceId} variant="header" />
         </div>

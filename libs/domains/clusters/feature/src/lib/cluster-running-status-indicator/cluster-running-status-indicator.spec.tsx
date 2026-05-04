@@ -20,6 +20,52 @@ describe('ClusterRunningStatusIndicator', () => {
     jest.clearAllMocks()
   })
 
+  it('should render a positive dot when global status is RUNNING and type is dot', () => {
+    mockUseClusterRunningStatus.mockReturnValue({
+      data: {
+        computed_status: {
+          global_status: 'RUNNING',
+        },
+      },
+      isLoading: false,
+    })
+
+    const { container } = renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} type="dot" />)
+
+    expect(container.firstChild).toHaveClass('h-5', 'w-5')
+    expect(screen.getByLabelText('Running')).toHaveClass(
+      'h-[9px]',
+      'w-[9px]',
+      'rounded-full',
+      'border',
+      'border-positive-subtle',
+      'bg-surface-positive-solid'
+    )
+    expect(screen.queryByText('Running')).not.toBeInTheDocument()
+  })
+
+  it('should render a neutral dot when cluster deployment status is STOPPED and type is dot', () => {
+    mockUseClusterRunningStatus.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+    })
+
+    const { container } = renderWithProviders(
+      <ClusterRunningStatusIndicator cluster={mockCluster} clusterDeploymentStatus="STOPPED" type="dot" />
+    )
+
+    expect(container.firstChild).toHaveClass('h-5', 'w-5')
+    expect(screen.getByLabelText('Stopped')).toHaveClass(
+      'h-[9px]',
+      'w-[9px]',
+      'rounded-full',
+      'border',
+      'border-neutral-subtle',
+      'bg-surface-neutral-solid'
+    )
+    expect(screen.queryByText('Stopped')).not.toBeInTheDocument()
+  })
+
   it.skip('should render "Not installed" badge when cluster status is READY', () => {
     const readyCluster = {
       ...mockCluster,

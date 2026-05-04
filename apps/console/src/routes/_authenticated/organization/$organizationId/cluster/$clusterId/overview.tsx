@@ -13,6 +13,7 @@ import {
   ClusterActions,
   ClusterAvatar,
   ClusterNeedRedeployFlag,
+  ClusterRunningStatusIndicator,
   ClusterType,
   hasGpuInstance,
   useCluster,
@@ -137,6 +138,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-2">
+              {cluster && <ClusterRunningStatusIndicator cluster={cluster} />}
               {cluster?.production && (
                 <Badge variant="surface" color="red">
                   Production

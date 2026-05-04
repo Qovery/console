@@ -85,6 +85,11 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   useCopyToClipboard: () => [undefined, mockCopyToClipboard],
 }))
 
+jest.mock('@qovery/domains/clusters/feature', () => ({
+  ...jest.requireActual('@qovery/domains/clusters/feature'),
+  useClusterRunningStatusSocket: jest.fn(),
+}))
+
 jest.mock('../../hooks/use-service/use-service', () => ({
   useService: ({
     serviceId,
@@ -279,7 +284,7 @@ describe('ServiceHeader', () => {
 
     expect(screen.getByRole('heading', { name: 'console' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'my-cluster' })).toBeInTheDocument()
-    expect(screen.getByText('my-cluster')).toHaveClass('group-hover:underline')
+    expect(screen.getByText('my-cluster')).toHaveClass('hover:underline')
     expect(screen.getByText('my-cluster')).toBeInTheDocument()
     expect(screen.getByText('React Application the Qovery Console')).toBeInTheDocument()
     expect(screen.getByText('GitHub')).toBeInTheDocument()

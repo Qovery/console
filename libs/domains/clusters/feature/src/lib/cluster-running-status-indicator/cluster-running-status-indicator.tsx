@@ -7,12 +7,24 @@ import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 
+function ClusterRunningStatusDot({ className, status }: { className: string; status: string }) {
+  return (
+    <span className="flex h-5 w-5 items-center justify-center">
+      <Tooltip content={status}>
+        <span aria-label={status} className={twMerge('block h-[9px] w-[9px] rounded-full border', className)} />
+      </Tooltip>
+    </span>
+  )
+}
+
 export interface ClusterRunningStatusIndicatorProps {
   cluster: Cluster
+  type?: 'dot' | 'full'
   clusterDeploymentStatus?: ClusterStateEnum
 }
 
 export function ClusterRunningStatusIndicator({
+  type = 'full',
   cluster,
   clusterDeploymentStatus,
 }: ClusterRunningStatusIndicatorProps) {
@@ -42,7 +54,9 @@ export function ClusterRunningStatusIndicator({
   }, [runningStatus])
 
   if (clusterDeploymentStatus === 'STOPPED') {
-    return (
+    return type === 'dot' ? (
+      <ClusterRunningStatusDot status="Stopped" className="border-neutral-subtle bg-surface-neutral-solid" />
+    ) : (
       <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
         Stopped
         <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
@@ -51,7 +65,9 @@ export function ClusterRunningStatusIndicator({
   }
 
   if (isNotInstalled) {
-    return (
+    return type === 'dot' ? (
+      <ClusterRunningStatusDot status="Not installed" className="border-neutral-subtle bg-surface-neutral-solid" />
+    ) : (
       <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
         Not installed
         <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
@@ -60,12 +76,14 @@ export function ClusterRunningStatusIndicator({
   }
 
   if (isLoading && !runningStatus && !isTimeout) {
-    return <Skeleton width={80} height={24} />
+    return <Skeleton width={type === 'dot' ? 20 : 80} height={type === 'dot' ? 20 : 24} rounded={type === 'dot'} />
   }
 
   if (isTimeout && !runningStatus) {
     if (cluster.is_demo) {
-      return (
+      return type === 'dot' ? (
+        <ClusterRunningStatusDot status="Unknown" className="border-neutral-subtle bg-surface-neutral-solid" />
+      ) : (
         <Tooltip content="Cannot fetch the cluster status. Check the installation guide">
           <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
             Unknown
@@ -74,7 +92,12 @@ export function ClusterRunningStatusIndicator({
         </Tooltip>
       )
     } else {
-      return (
+      return type === 'dot' ? (
+        <ClusterRunningStatusDot
+          status="Status unavailable"
+          className="border-neutral-subtle bg-surface-neutral-solid"
+        />
+      ) : (
         <Tooltip content="Cannot fetch the cluster status. Please contact us if the issue persists">
           <Badge variant="surface" color="neutral" className="items-center gap-2 pr-2">
             Status unavailable
@@ -86,126 +109,145 @@ export function ClusterRunningStatusIndicator({
   }
 
   return match(runningStatus?.computed_status)
-    .with({ global_status: 'RUNNING' }, (s) => (
-      <Badge variant="surface" color="green" className="items-center gap-2 pr-2 capitalize">
-        {s.global_status.toLowerCase()}
-        <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
-      </Badge>
-    ))
-    .with({ global_status: 'WARNING' }, (s) => (
-      <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-        <Popover.Trigger disabled={!isFeatureFlag}>
-          <Badge
-            variant="surface"
-            color={isFeatureFlag ? 'yellow' : 'green'}
-            className="items-center gap-1.5 pr-2 capitalize"
-            onClick={(e) => {
-              // XXX: To avoid link redirection from the parent, we need to manage onOpenChange
-              e.preventDefault()
-              e.stopPropagation()
-              setIsPopoverOpen((prev) => !prev)
-            }}
-          >
-            {isFeatureFlag && (
-              <span className="text-default flex h-4 w-4 items-center justify-center rounded bg-surface-warning-solid text-xs font-semibold">
-                {Object.keys(s.node_warnings).length}
-              </span>
-            )}
-            {isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}
-            {Object.entries(s.node_warnings).length === 0 ? (
-              <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
-            ) : isFeatureFlag ? (
-              <Icon iconName="chevron-down" className="text-surface-positive-solid" />
-            ) : (
-              <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
-            )}
-          </Badge>
-        </Popover.Trigger>
-        <Popover.Content className="w-full max-w-96 border border-neutral bg-surface-neutral p-0 text-sm text-neutral">
-          {Object.entries(s.node_warnings).map(([key, message]) => (
-            <div
-              key={key}
-              className={twMerge(
-                clsx(
-                  'flex items-center gap-[9px] border-b border-neutral p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-yellow-500 last:border-0',
-                  {
-                    'before:bg-green-500': !isFeatureFlag,
-                  }
-                )
-              )}
+    .with({ global_status: 'RUNNING' }, (s) =>
+      type === 'dot' ? (
+        <ClusterRunningStatusDot status="Running" className="border-positive-subtle bg-surface-positive-solid" />
+      ) : (
+        <Badge variant="surface" color="green" className="items-center gap-2 pr-2 capitalize">
+          {s.global_status.toLowerCase()}
+          <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
+        </Badge>
+      )
+    )
+    .with({ global_status: 'WARNING' }, (s) =>
+      type === 'dot' ? (
+        <ClusterRunningStatusDot status="Warning" className="border-warning-subtle bg-surface-warning-solid" />
+      ) : (
+        <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+          <Popover.Trigger disabled={!isFeatureFlag}>
+            <Badge
+              variant="surface"
+              color={isFeatureFlag ? 'yellow' : 'green'}
+              className="items-center gap-1.5 pr-2 capitalize"
+              onClick={(e) => {
+                // XXX: To avoid link redirection from the parent, we need to manage onOpenChange
+                e.preventDefault()
+                e.stopPropagation()
+                setIsPopoverOpen((prev) => !prev)
+              }}
             >
-              <span className="py-1 pr-1">
-                {message.map((value, index) => (
-                  <div className="mb-1 flex items-center last:mb-0" key={index}>
-                    {key}: {value.reason} {value.message}
-                  </div>
-                ))}
-              </span>
-            </div>
-          ))}
-        </Popover.Content>
-      </Popover.Root>
-    ))
-    .with({ global_status: 'ERROR' }, (s) => (
-      <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-        <Popover.Trigger disabled={!isFeatureFlag}>
-          <Badge
-            variant="surface"
-            color={isFeatureFlag ? 'red' : 'green'}
-            className={twMerge(
-              clsx('items-center gap-1.5 border-[#FF62404D] pr-2 capitalize', {
-                'border-[#44C9794D]': !isFeatureFlag,
-              })
-            )}
-            onClick={(e) => {
-              // XXX: To avoid link redirection from the parent, we need to manage onOpenChange
-              e.preventDefault()
-              e.stopPropagation()
-              setIsPopoverOpen((prev) => !prev)
-            }}
-          >
-            {isFeatureFlag && (
-              <span className="flex h-4 w-4 items-center justify-center rounded bg-red-500 text-xs font-semibold text-white">
-                {s.qovery_components_in_failure.length}
-              </span>
-            )}
-            {isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}
-            {s.qovery_components_in_failure.length === 0 ? (
-              <span className="block h-2 w-2 rounded-full bg-current" />
-            ) : isFeatureFlag ? (
-              <Icon iconName="chevron-down" className="text-surface-negative-solid" />
-            ) : (
-              <span className="block h-2 w-2 rounded-full bg-current" />
-            )}
-          </Badge>
-        </Popover.Trigger>
-        <Popover.Content className="w-full max-w-96 border border-neutral bg-surface-neutral p-0 text-sm text-neutral">
-          {s.qovery_components_in_failure.map((c) => (
-            <div
-              key={c.component_name}
-              className={twMerge(
-                clsx(
-                  'flex items-center gap-[9px] border-b border-neutral p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-red-500 last:border-0',
-                  {
-                    'before:bg-green-500': !isFeatureFlag,
-                  }
-                )
+              {isFeatureFlag && (
+                <span className="flex h-4 w-4 items-center justify-center rounded bg-surface-warning-solid text-xs font-semibold text-neutralInvert">
+                  {Object.keys(s.node_warnings).length}
+                </span>
               )}
+              {isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}
+              {Object.entries(s.node_warnings).length === 0 ? (
+                <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
+              ) : isFeatureFlag ? (
+                <Icon iconName="chevron-down" className="text-surface-positive-solid" />
+              ) : (
+                <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
+              )}
+            </Badge>
+          </Popover.Trigger>
+          <Popover.Content className="w-full max-w-96 border border-neutral bg-surface-neutralInvert-component p-0 text-sm text-neutralInvert">
+            {Object.entries(s.node_warnings).map(([key, message]) => (
+              <div
+                key={key}
+                className={twMerge(
+                  clsx(
+                    'flex items-center gap-[9px] border-b border-neutral p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-surface-warning-solid last:border-0',
+                    {
+                      'before:bg-surface-positive-solid': !isFeatureFlag,
+                    }
+                  )
+                )}
+              >
+                <span className="py-1 pr-1">
+                  {message.map((value, index) => (
+                    <div className="mb-1 flex items-center last:mb-0" key={index}>
+                      {key}: {value.reason} {value.message}
+                    </div>
+                  ))}
+                </span>
+              </div>
+            ))}
+          </Popover.Content>
+        </Popover.Root>
+      )
+    )
+    .with({ global_status: 'ERROR' }, (s) =>
+      type === 'dot' ? (
+        <ClusterRunningStatusDot status="Error" className="border-negative-subtle bg-surface-negative-solid" />
+      ) : (
+        <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+          <Popover.Trigger disabled={!isFeatureFlag}>
+            <Badge
+              variant="surface"
+              color={isFeatureFlag ? 'red' : 'green'}
+              className={twMerge(
+                clsx('items-center gap-1.5 border-negative-subtle pr-2 capitalize', {
+                  'border-positive-subtle': !isFeatureFlag,
+                })
+              )}
+              onClick={(e) => {
+                // XXX: To avoid link redirection from the parent, we need to manage onOpenChange
+                e.preventDefault()
+                e.stopPropagation()
+                setIsPopoverOpen((prev) => !prev)
+              }}
             >
-              <span className="py-1 pr-1">
-                {c.type}: {c.component_name}
-              </span>
-            </div>
-          ))}
-        </Popover.Content>
-      </Popover.Root>
-    ))
-    .otherwise(() => (
-      <Badge variant="surface" color="neutral" className="items-center gap-2 border-[#A0AFC54D] pr-2">
-        <span className="text-neutral">Status unavailable</span>
-        <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
-      </Badge>
-    ))
+              {isFeatureFlag && (
+                <span className="flex h-4 w-4 items-center justify-center rounded bg-surface-negative-solid text-xs font-semibold text-neutralInvert">
+                  {s.qovery_components_in_failure.length}
+                </span>
+              )}
+              {isFeatureFlag ? s.global_status.toLowerCase() : 'Running'}
+              {s.qovery_components_in_failure.length === 0 ? (
+                <span className="block h-2 w-2 rounded-full bg-current" />
+              ) : isFeatureFlag ? (
+                <Icon iconName="chevron-down" className="text-surface-negative-solid" />
+              ) : (
+                <span className="block h-2 w-2 rounded-full bg-current" />
+              )}
+            </Badge>
+          </Popover.Trigger>
+          <Popover.Content className="w-full max-w-96 border border-neutral bg-surface-neutralInvert-component p-0 text-sm text-neutralInvert">
+            {s.qovery_components_in_failure.map((c) => (
+              <div
+                key={c.component_name}
+                className={twMerge(
+                  clsx(
+                    'flex items-center gap-[9px] border-b border-neutral p-1 before:block before:h-full before:min-h-7 before:w-[3px] before:bg-surface-negative-solid last:border-0',
+                    {
+                      'before:bg-surface-positive-solid': !isFeatureFlag,
+                    }
+                  )
+                )}
+              >
+                <span className="py-1 pr-1">
+                  {c.type}: {c.component_name}
+                </span>
+              </div>
+            ))}
+          </Popover.Content>
+        </Popover.Root>
+      )
+    )
+    .otherwise(() =>
+      type === 'dot' ? (
+        <ClusterRunningStatusDot
+          status="Status unavailable"
+          className="border-neutral-subtle bg-surface-neutral-solid"
+        />
+      ) : (
+        <Badge variant="surface" color="neutral" className="items-center gap-2 border-neutral-subtle pr-2">
+          <span className="text-neutral">Status unavailable</span>
+          <span className="block h-2 w-2 rounded-full bg-surface-neutral-solid" />
+        </Badge>
+      )
+    )
 }
 
 export default ClusterRunningStatusIndicator
