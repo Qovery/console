@@ -4,7 +4,7 @@ import { type Cluster, type ClusterStateEnum } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
-import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { twMerge } from '@qovery/shared/util-js'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 
 function ClusterRunningStatusDot({ className, status }: { className: string; status: string }) {
