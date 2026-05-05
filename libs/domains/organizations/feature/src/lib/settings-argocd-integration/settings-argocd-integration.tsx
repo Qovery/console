@@ -2,7 +2,6 @@ import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { useParams } from '@tanstack/react-router'
 import {
   type ArgoCdInstanceMappingResponse,
-  type ArgoCdLinkedClusterDetails,
   type ArgoCdUnlinkedClusterDetails,
   type KubernetesEnum,
 } from 'qovery-typescript-axios'
@@ -94,7 +93,6 @@ interface ArgoCdIntegrationCardProps {
     cluster: ArgoCdUnlinkedClusterDetails,
     response: LinkClusterModalResponse
   ) => void
-  onUnlinkCluster: (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => void
 }
 
 interface SettingsArgoCdIntegrationContentProps {
@@ -107,7 +105,6 @@ function ArgoCdIntegrationCard({
   onEdit,
   onDelete,
   onLinkCluster,
-  onUnlinkCluster,
 }: ArgoCdIntegrationCardProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
@@ -228,18 +225,6 @@ function ArgoCdIntegrationCard({
                         <span className="text-neutral">{getClusterTypeLabel(cluster.qovery_cluster_type)}</span>
                       </span>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      size="md"
-                      variant="outline"
-                      color="neutral"
-                      iconOnly
-                      onClick={() => onUnlinkCluster(integration.credentials_id, cluster)}
-                      data-testid={`unlink-linked-cluster-${cluster.qovery_cluster_id}`}
-                    >
-                      <Icon iconName="link-broken" iconStyle="regular" />
-                    </Button>
                   </div>
                 </div>
               ))}
@@ -436,29 +421,6 @@ function SettingsArgoCdIntegrationContent({ organizationId }: SettingsArgoCdInte
     })
   }
 
-  const unlinkCluster = (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => {
-    setIntegrationsState((current) =>
-      current.map((integration) =>
-        integration.credentials_id !== integrationId
-          ? integration
-          : {
-              ...integration,
-              linked_clusters: integration.linked_clusters.filter(
-                ({ qovery_cluster_id }) => qovery_cluster_id !== cluster.qovery_cluster_id
-              ),
-              unlinked_clusters: [
-                ...integration.unlinked_clusters,
-                {
-                  argocd_cluster_url: cluster.argocd_cluster_url,
-                  argocd_cluster_name: cluster.argocd_cluster_name,
-                  applications_count: cluster.applications_count,
-                },
-              ],
-            }
-      )
-    )
-  }
-
   if (integrationsState.length === 0) {
     return (
       <EmptyState
@@ -485,7 +447,6 @@ function SettingsArgoCdIntegrationContent({ organizationId }: SettingsArgoCdInte
           onEdit={openEditModal}
           onDelete={openDeleteModal}
           onLinkCluster={linkCluster}
-          onUnlinkCluster={unlinkCluster}
         />
       ))}
     </div>
