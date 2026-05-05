@@ -133,24 +133,6 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
           )}
         </>
       )}
-      {fromDetail && (cloudProvider === 'AWS' || cloudProvider === 'GCP') && (
-        <Controller
-          name="keda.enabled"
-          control={control}
-          render={({ field }) => (
-            <div className="mt-5">
-              <InputToggle
-                value={field.value}
-                onChange={field.onChange}
-                title="KEDA enabled"
-                description="Enable KEDA for the cluster"
-                align="top"
-                small
-              />
-            </div>
-          )}
-        />
-      )}
     </div>
   )
 }
