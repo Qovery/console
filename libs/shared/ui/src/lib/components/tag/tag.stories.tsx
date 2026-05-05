@@ -11,6 +11,6 @@ const Template: StoryFn<TagProps> = (args) => <Tag className={args.className}>{a
 export const Primary = Template.bind({})
 
 Primary.args = {
-  className: 'bg-brand-50 text-brand-500',
+  className: 'bg-surface-brand-subtle text-brand',
   children: 'PROD',
 }

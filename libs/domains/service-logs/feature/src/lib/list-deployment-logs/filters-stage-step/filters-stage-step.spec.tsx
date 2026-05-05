@@ -20,6 +20,10 @@ const defaultProps: FiltersStageStepProps = {
   isFilterActive: mockIsFilterActive,
 }
 
+jest.mock('@tanstack/react-router', () => ({
+  useLocation: () => ({ pathname: '/', hash: '' }),
+}))
+
 describe('FiltersStageStep', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -60,33 +64,5 @@ describe('FiltersStageStep', () => {
     renderWithProviders(<FiltersStageStep {...defaultProps} />)
     expect(screen.getByText('1m : 0s')).toBeInTheDocument() // BUILD duration
     expect(screen.getByText('2m : 0s')).toBeInTheDocument() // DEPLOY duration
-  })
-
-  it('applies correct classes based on status and isFilterActive', () => {
-    mockIsFilterActive.mockImplementation((type) => type === 'BUILD')
-    renderWithProviders(<FiltersStageStep {...defaultProps} />)
-
-    const buildButton = screen.getByText('Build').closest('button')
-    const deployButton = screen.getByText('Deploy').closest('button')
-
-    expect(buildButton).toHaveClass('border-brand-500', 'bg-neutral-500')
-    expect(deployButton).not.toHaveClass('border-neutral-300', 'bg-neutral-500')
-  })
-
-  it('handles different states correctly', () => {
-    const props = {
-      ...defaultProps,
-      serviceStatus: {
-        ...defaultProps.serviceStatus,
-        state: StateEnum.BUILDING,
-      },
-    }
-    renderWithProviders(<FiltersStageStep {...props} />)
-
-    const buildButton = screen.getByText('Build').closest('button')
-    const deployButton = screen.getByText('Deploy').closest('button')
-
-    expect(buildButton).toHaveClass('border-neutral-500', 'bg-neutral-650')
-    expect(deployButton).not.toHaveClass('border-brand-500', 'bg-neutral-500')
   })
 })

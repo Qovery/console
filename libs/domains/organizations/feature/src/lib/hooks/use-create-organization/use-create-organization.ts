@@ -12,9 +12,7 @@ export function useCreateOrganization() {
       })
     },
     meta: {
-      notifyOnSuccess: {
-        title: 'Your organization has been created',
-      },
+      notifyOnError: true,
     },
   })
 }

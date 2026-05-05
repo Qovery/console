@@ -1,101 +1,4 @@
-import { useMatch } from 'react-router-dom'
-import {
-  APPLICATION_DEPLOYMENTS_URL,
-  APPLICATION_GENERAL_URL,
-  APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL,
-  APPLICATION_SETTINGS_CONFIGURE_URL,
-  APPLICATION_SETTINGS_DANGER_ZONE_URL,
-  APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS,
-  APPLICATION_SETTINGS_DOMAIN_URL,
-  APPLICATION_SETTINGS_GENERAL_URL,
-  APPLICATION_SETTINGS_HEALTHCHECKS_URL,
-  APPLICATION_SETTINGS_NETWORKING_URL,
-  APPLICATION_SETTINGS_PORT_URL,
-  APPLICATION_SETTINGS_RESOURCES_URL,
-  APPLICATION_SETTINGS_STORAGE_URL,
-  APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL,
-  APPLICATION_SETTINGS_URL,
-  APPLICATION_SETTINGS_VALUES_OVERRIDE_ARGUMENTS_URL,
-  APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL,
-  APPLICATION_URL,
-  APPLICATION_VARIABLES_URL,
-  AUDIT_LOGS_GENERAL_URL,
-  AUDIT_LOGS_URL,
-  CLUSTERS_CREATION_FEATURES_URL,
-  CLUSTERS_CREATION_GENERAL_URL,
-  CLUSTERS_CREATION_KUBECONFIG_URL,
-  CLUSTERS_CREATION_RESOURCES_URL,
-  CLUSTERS_CREATION_SUMMARY_URL,
-  CLUSTERS_CREATION_URL,
-  CLUSTERS_GENERAL_URL,
-  CLUSTERS_URL,
-  CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL,
-  CLUSTER_SETTINGS_CREDENTIALS_URL,
-  CLUSTER_SETTINGS_DANGER_ZONE_URL,
-  CLUSTER_SETTINGS_GENERAL_URL,
-  CLUSTER_SETTINGS_IMAGE_REGISTRY_URL,
-  CLUSTER_SETTINGS_NETWORK_URL,
-  CLUSTER_SETTINGS_RESOURCES_URL,
-  CLUSTER_SETTINGS_URL,
-  CLUSTER_URL,
-  ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL,
-  ENVIRONMENTS_DEPLOYMENT_RULES_EDIT_URL,
-  ENVIRONMENTS_DEPLOYMENT_RULES_URL,
-  ENVIRONMENTS_GENERAL_URL,
-  ENVIRONMENTS_URL,
-  ONBOARDING_PERSONALIZE_URL,
-  ONBOARDING_PLANS_URL,
-  ONBOARDING_PROJECT_URL,
-  ONBOARDING_URL,
-  SERVICES_APPLICATION_CREATION_URL,
-  SERVICES_CREATION_GENERAL_URL,
-  SERVICES_CREATION_HEALTHCHECKS_URL,
-  SERVICES_CREATION_PORTS_URL,
-  SERVICES_CREATION_POST_URL,
-  SERVICES_CREATION_RESOURCES_URL,
-  SERVICES_CRONJOB_CREATION_URL,
-  SERVICES_DATABASE_CREATION_GENERAL_URL,
-  SERVICES_DATABASE_CREATION_POST_URL,
-  SERVICES_DATABASE_CREATION_RESOURCES_URL,
-  SERVICES_DATABASE_CREATION_URL,
-  SERVICES_DEPLOYMENTS_URL,
-  SERVICES_GENERAL_URL,
-  SERVICES_HELM_CREATION_GENERAL_URL,
-  SERVICES_HELM_CREATION_SUMMARY_URL,
-  SERVICES_HELM_CREATION_URL,
-  SERVICES_HELM_CREATION_VALUES_STEP_1_URL,
-  SERVICES_HELM_CREATION_VALUES_STEP_2_URL,
-  SERVICES_JOB_CREATION_CONFIGURE_URL,
-  SERVICES_JOB_CREATION_GENERAL_URL,
-  SERVICES_JOB_CREATION_POST_URL,
-  SERVICES_JOB_CREATION_RESOURCES_URL,
-  SERVICES_JOB_CREATION_VARIABLE_URL,
-  SERVICES_LIFECYCLE_CREATION_URL,
-  SERVICES_SETTINGS_DANGER_ZONE_URL,
-  SERVICES_SETTINGS_GENERAL_URL,
-  SERVICES_SETTINGS_PIPELINE_URL,
-  SERVICES_SETTINGS_PREVIEW_ENV_URL,
-  SERVICES_SETTINGS_RULES_URL,
-  SERVICES_SETTINGS_URL,
-  SERVICES_URL,
-  SETTINGS_API_URL,
-  SETTINGS_BILLING_SUMMARY_URL,
-  SETTINGS_BILLING_URL,
-  SETTINGS_CONTAINER_REGISTRIES_URL,
-  SETTINGS_DANGER_ZONE_URL,
-  SETTINGS_GENERAL_URL,
-  SETTINGS_GIT_REPOSITORY_ACCESS_URL,
-  SETTINGS_HELM_REPOSITORIES_URL,
-  SETTINGS_LABELS_ANNOTATIONS_URL,
-  SETTINGS_MEMBERS_URL,
-  SETTINGS_PROJECT_DANGER_ZONE_URL,
-  SETTINGS_PROJECT_GENERAL_URL,
-  SETTINGS_PROJECT_URL,
-  SETTINGS_ROLES_EDIT_URL,
-  SETTINGS_ROLES_URL,
-  SETTINGS_URL,
-  SETTINGS_WEBHOOKS,
-} from '@qovery/shared/routes'
+import { useSyncExternalStore } from 'react'
 
 const mapping = {
   '/organization/:organizationId/settings/general': [
@@ -762,314 +665,554 @@ const mapping = {
   ],
 }
 
-/**
- * TODO: This hook is a bit tedious due to limitation to our current react-router implementation.
- * This should be refactor to use [useMatches](https://reactrouter.com/en/main/hooks/use-matches).
- * Unfortunately this also requires to rewrite the whole router using [createBrowserRouter](https://reactrouter.com/en/main/routers/create-browser-router)
- * https://stackoverflow.com/a/71246254
- **/
-export function useContextualDocLinks() {
-  // ONBOARDING
-  const onBoardingPersonalizeURL = useMatch(ONBOARDING_URL + ONBOARDING_PERSONALIZE_URL)
-  const onBoardingProjectURL = useMatch(ONBOARDING_URL + ONBOARDING_PROJECT_URL)
-  const onBoardingPlansURL = useMatch(ONBOARDING_URL + ONBOARDING_PLANS_URL)
+type MappingPath = keyof typeof mapping
 
-  // AUDIT LOGS
-  const auditLogsGeneralURL = useMatch(AUDIT_LOGS_URL() + AUDIT_LOGS_GENERAL_URL)
+const legacyPatterns = Object.keys(mapping) as MappingPath[]
 
-  // PROJECT SETTINGS
-  const projectSettingsGeneralURL = useMatch(SETTINGS_URL() + SETTINGS_PROJECT_URL() + SETTINGS_PROJECT_GENERAL_URL)
-  const projectSettingsDangerZoneURL = useMatch(
-    SETTINGS_URL() + SETTINGS_PROJECT_URL() + SETTINGS_PROJECT_DANGER_ZONE_URL
+const tanstackRouteAliases: Array<{ pattern: string; target: MappingPath }> = [
+  // Onboarding
+  { pattern: '/onboarding/personalize', target: '/onboarding/personalize' },
+  { pattern: '/onboarding/project', target: '/onboarding/project' },
+  { pattern: '/onboarding/plans', target: '/onboarding/pricing' },
+
+  // Organization settings
+  { pattern: '/organization/:organizationId/audit-logs', target: '/organization/:organizationId/audit-logs/general' },
+  {
+    pattern: '/organization/:organizationId/settings/general',
+    target: '/organization/:organizationId/settings/general',
+  },
+  {
+    pattern: '/organization/:organizationId/settings/members',
+    target: '/organization/:organizationId/settings/members',
+  },
+  { pattern: '/organization/:organizationId/settings/roles', target: '/organization/:organizationId/settings/roles' },
+  {
+    pattern: '/organization/:organizationId/settings/roles/edit/:roleId',
+    target: '/organization/:organizationId/settings/roles',
+  },
+  {
+    pattern: '/organization/:organizationId/settings/billing-summary',
+    target: '/organization/:organizationId/settings/billing-summary',
+  },
+  {
+    pattern: '/organization/:organizationId/settings/billing-details',
+    target: '/organization/:organizationId/settings/billing-detail',
+  },
+  {
+    pattern: '/organization/:organizationId/settings/container-registries',
+    target: '/organization/:organizationId/settings/container-registries',
+  },
+  {
+    pattern: '/organization/:organizationId/settings/helm-repositories',
+    target: '/organization/:organizationId/settings/helm-repositories',
+  },
+  {
+    pattern: '/organization/:organizationId/settings/git-repository-access',
+    target: '/organization/:organizationId/settings/git-repository-access',
+  },
+  {
+    pattern: '/organization/:organizationId/settings/webhook',
+    target: '/organization/:organizationId/settings/webhooks',
+  },
+  { pattern: '/organization/:organizationId/settings/api-token', target: '/organization/:organizationId/settings/api' },
+  {
+    pattern: '/organization/:organizationId/settings/labels-annotations',
+    target: '/organization/:organizationId/settings/labels-annotations',
+  },
+  {
+    pattern: '/organization/:organizationId/settings/danger-zone',
+    target: '/organization/:organizationId/settings/danger-zone',
+  },
+
+  // Project
+  {
+    pattern: '/organization/:organizationId/project/:projectId/overview',
+    target: '/organization/:organizationId/project/:projectId/environments/general',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/deployment-rules',
+    target: '/organization/:organizationId/project/:projectId/environments/deployment-rules',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/deployment-rules/create',
+    target: '/organization/:organizationId/project/:projectId/environments/deployment-rules/create',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/deployment-rules/edit/:deploymentRuleId',
+    target: '/organization/:organizationId/project/:projectId/environments/deployment-rules',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/settings/general',
+    target: '/organization/:organizationId/settings/:projectId/project/general',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/settings/danger-zone',
+    target: '/organization/:organizationId/settings/:projectId/project/danger-zone',
+  },
+
+  // Environment
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/overview',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/general',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/overview/pipeline',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/general',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/deployments',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/deployments',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/deployment/:deploymentId',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/deployments',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/settings/general',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/services/settings/services/general',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/settings/deployment-rules',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/services/settings/services/rules',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/settings/preview-environments',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/services/settings/services/preview-environments',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/settings/danger-zone',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/services/settings/services/danger-zone',
+  },
+
+  // Service
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/overview',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/general',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/deployments',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/deployments',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/deployments/logs/:executionId',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/general',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/service-logs',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/general',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/variables',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/variables',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/general',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/general',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/resources',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/resources',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/configure',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/configure',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/values-override-file',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/values-override-file',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/values-override-arguments',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/values-override-arguments',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/networking',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/networking',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/storage',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/storage',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/domain',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/domain',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/health-checks',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/health-checks',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/port',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/port',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/deployment-restrictions',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/deployment-restrictions',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/advanced-settings',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/advanced-settings',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/danger-zone',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/danger-zone',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/terraform-arguments',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/terraform-arguments',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/terraform-configuration',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/terraform-arguments',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/terraform-variables',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/terraform-arguments',
+  },
+
+  // Service creation
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/application/general',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/general',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/application/resources',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/resources',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/application/ports',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/ports',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/application/health-checks',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/health-checks',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/application/summary',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/post',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/container/general',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/general',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/container/resources',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/resources',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/container/ports',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/ports',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/container/health-checks',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/health-checks',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/container/summary',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/post',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/database/general',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/database/general',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/database/resources',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/database/resources',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/database/summary',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/services/create/database/post',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/lifecycle-job/general',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/lifecyle-job/general',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/lifecycle-job/configure',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/lifecyle-job/configure',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/lifecycle-job/resources',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/lifecyle-job/resources',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/lifecycle-job/variables',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/lifecyle-job/variable',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/lifecycle-job/summary',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/lifecyle-job/post',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/cron-job/general',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/general',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/cron-job/configure',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/configure',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/cron-job/resources',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/resources',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/cron-job/variables',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/variable',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/cron-job/summary',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/cron-job/post',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/helm/general',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/helm/general',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/helm/values-override-file',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/create/helm/values-override/repository-and-yaml',
+  },
+  {
+    pattern:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/helm/values-override-arguments',
+    target:
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/create/helm/values-override/arguments',
+  },
+  {
+    pattern: '/organization/:organizationId/project/:projectId/environment/:environmentId/service/create/helm/summary',
+    target: '/organization/:organizationId/project/:projectId/environment/:environmentId/create/helm/summary',
+  },
+
+  // Clusters
+  { pattern: '/organization/:organizationId/clusters', target: '/organization/:organizationId/clusters/general' },
+  {
+    pattern: '/organization/:organizationId/cluster/:clusterId/overview',
+    target: '/organization/:organizationId/clusters/general',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/:clusterId/cluster-logs',
+    target: '/organization/:organizationId/clusters/general',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/create/:slug/general',
+    target: '/organization/:organizationId/clusters/create/general',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/create/:slug/resources',
+    target: '/organization/:organizationId/clusters/create/resources',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/create/:slug/features',
+    target: '/organization/:organizationId/clusters/create/features',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/create/:slug/summary',
+    target: '/organization/:organizationId/clusters/create/summary',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/create/:slug/kubeconfig',
+    target: '/organization/:organizationId/clusters/create/kubeconfig',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/:clusterId/settings/general',
+    target: '/organization/:organizationId/cluster/:clusterId/settings/general',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/:clusterId/settings/resources',
+    target: '/organization/:organizationId/cluster/:clusterId/settings/resources',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/:clusterId/settings/image-registry',
+    target: '/organization/:organizationId/cluster/:clusterId/settings/image-registry',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/:clusterId/settings/network',
+    target: '/organization/:organizationId/cluster/:clusterId/settings/network',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/:clusterId/settings/credentials',
+    target: '/organization/:organizationId/cluster/:clusterId/settings/credentials',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/:clusterId/settings/advanced-settings',
+    target: '/organization/:organizationId/cluster/:clusterId/settings/advanced-settings',
+  },
+  {
+    pattern: '/organization/:organizationId/cluster/:clusterId/settings/danger-zone',
+    target: '/organization/:organizationId/cluster/:clusterId/settings/danger-zone',
+  },
+]
+
+const NAVIGATION_EVENT = 'qovery:navigation'
+let isHistoryPatched = false
+
+function normalizePathname(pathname: string): string {
+  const decodedPathname = decodeURIComponent(pathname || '/')
+    .replace(/\/{2,}/g, '/')
+    .trim()
+  if (!decodedPathname || decodedPathname === '/') {
+    return '/'
+  }
+  return decodedPathname.replace(/\/+$/, '')
+}
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function matchesPattern(pattern: string, pathname: string): boolean {
+  const normalizedPattern = normalizePathname(pattern)
+  const normalizedPathname = normalizePathname(pathname)
+
+  const regex = new RegExp(
+    `^${normalizedPattern
+      .split('/')
+      .map((segment) => {
+        if (!segment) {
+          return ''
+        }
+        if (segment.startsWith(':')) {
+          return '[^/]+'
+        }
+        return escapeRegExp(segment)
+      })
+      .join('/')}/?$`
   )
 
-  // ORGANIZATION SETTINGS
-  const organizationSettingsGeneralURL = useMatch(SETTINGS_URL() + SETTINGS_GENERAL_URL)
-  const organizationSettingsMembersURL = useMatch(SETTINGS_URL() + SETTINGS_MEMBERS_URL)
-  const organizationSettingsRolesURL = useMatch(SETTINGS_URL() + SETTINGS_ROLES_URL)
-  const organizationSettingsRoleEditURL = useMatch(SETTINGS_URL() + SETTINGS_ROLES_EDIT_URL)
-  const organizationSettingsBillingSummaryURL = useMatch(SETTINGS_URL() + SETTINGS_BILLING_SUMMARY_URL)
-  const organizationSettingsBillingDetailsURL = useMatch(SETTINGS_URL() + SETTINGS_BILLING_URL)
-  const organizationSettingsLabelsAnnotationsURL = useMatch(SETTINGS_URL() + SETTINGS_LABELS_ANNOTATIONS_URL)
-  const organizationSettingsContainerRegistriesURL = useMatch(SETTINGS_URL() + SETTINGS_CONTAINER_REGISTRIES_URL)
-  const organizationSettingsHelmRepositoriesURL = useMatch(SETTINGS_URL() + SETTINGS_HELM_REPOSITORIES_URL)
-  const organizationSettingsGitRepositoryAccessURL = useMatch(SETTINGS_URL() + SETTINGS_GIT_REPOSITORY_ACCESS_URL)
-  const organizationSettingsWebhooksURL = useMatch(SETTINGS_URL() + SETTINGS_WEBHOOKS)
-  const organizationSettingsApiTokensURL = useMatch(SETTINGS_URL() + SETTINGS_API_URL)
-  const organizationSettingsDangerZoneURL = useMatch(SETTINGS_URL() + SETTINGS_DANGER_ZONE_URL)
+  return regex.test(normalizedPathname)
+}
 
-  // PROJECT GENERAL
-  const projectGeneralURL = useMatch(ENVIRONMENTS_URL() + ENVIRONMENTS_GENERAL_URL)
+function findMappingPath(pathname: string): MappingPath | undefined {
+  const normalizedPathname = normalizePathname(pathname)
 
-  // PROJECT DEPLOYMENT RULES
-  const projectDeploymentRulesURL = useMatch(ENVIRONMENTS_URL() + ENVIRONMENTS_DEPLOYMENT_RULES_URL)
-  const projectDeploymentRulesCreateURL = useMatch(ENVIRONMENTS_URL() + ENVIRONMENTS_DEPLOYMENT_RULES_CREATE_URL)
-  const projectDeploymentRulesEditURL = useMatch(ENVIRONMENTS_URL() + ENVIRONMENTS_DEPLOYMENT_RULES_EDIT_URL)
-
-  // ENVIRONMENT GENERAL
-  const environmentGeneralURL = useMatch(SERVICES_URL() + SERVICES_GENERAL_URL)
-
-  // ENVIRONMENT DEPLOYMENTS
-  const environmentDeploymentsURL = useMatch(SERVICES_URL() + SERVICES_DEPLOYMENTS_URL)
-
-  // ENVIRONMENT SETTINGS
-  const environmentSettingsGeneralURL = useMatch(SERVICES_URL() + SERVICES_SETTINGS_URL + SERVICES_SETTINGS_GENERAL_URL)
-  const environmentSettingsRulesURL = useMatch(SERVICES_URL() + SERVICES_SETTINGS_URL + SERVICES_SETTINGS_RULES_URL)
-  const environmentSettingsPipelineURL = useMatch(
-    SERVICES_URL() + SERVICES_SETTINGS_URL + SERVICES_SETTINGS_PIPELINE_URL
-  )
-  const environmentSettingsPreviewEnvURL = useMatch(
-    SERVICES_URL() + SERVICES_SETTINGS_URL + SERVICES_SETTINGS_PREVIEW_ENV_URL
-  )
-  const environmentSettingsDangerZoneURL = useMatch(
-    SERVICES_URL() + SERVICES_SETTINGS_URL + SERVICES_SETTINGS_DANGER_ZONE_URL
-  )
-
-  // APPLICATION + HELM GENERAL
-  const applicationGeneralURL = useMatch(APPLICATION_URL() + APPLICATION_GENERAL_URL)
-
-  // APPLICATION + HELM VARIABLES
-  const applicationVariablesURL = useMatch(APPLICATION_URL() + APPLICATION_VARIABLES_URL)
-
-  // APPLICATION + HELM DEPLOYMENTS
-  const applicationDeploymentsURL = useMatch(APPLICATION_URL() + APPLICATION_DEPLOYMENTS_URL)
-
-  // APPLICATION + HELM SETTINGS
-  const applicationSettingsGeneralURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_GENERAL_URL
-  )
-  const applicationSettingsResourcesURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_RESOURCES_URL
-  )
-  const applicationSettingsConfigureURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_CONFIGURE_URL
-  )
-  const applicationSettingsValuesOverrideFileURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL
-  )
-  const applicationSettingsValuesOverrideArgumentsURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_VALUES_OVERRIDE_ARGUMENTS_URL
-  )
-  const applicationSettingsNetworkingURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_NETWORKING_URL
-  )
-  const applicationSettingsStorageURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_STORAGE_URL
-  )
-  const applicationSettingsDomainURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_DOMAIN_URL
-  )
-  const applicationSettingsHealthchecksURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_HEALTHCHECKS_URL
-  )
-  const applicationSettingsPortURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_PORT_URL
-  )
-  const applicationSettingsDeploymentRestrictionsURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_DEPLOYMENT_RESTRICTIONS
-  )
-  const applicationSettingsAdvancedSettingsURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_ADVANCED_SETTINGS_URL
-  )
-  const applicationSettingsDangerZoneURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_DANGER_ZONE_URL
-  )
-
-  // APPLICATION/CONTAINER CREATION
-  const applicationCreationGeneralURL = useMatch(
-    SERVICES_URL() + SERVICES_APPLICATION_CREATION_URL + SERVICES_CREATION_GENERAL_URL
-  )
-  const applicationCreationResourcesURL = useMatch(
-    SERVICES_URL() + SERVICES_APPLICATION_CREATION_URL + SERVICES_CREATION_RESOURCES_URL
-  )
-  const applicationCreationPortsURL = useMatch(
-    SERVICES_URL() + SERVICES_APPLICATION_CREATION_URL + SERVICES_CREATION_PORTS_URL
-  )
-  const applicationCreationHealthchecksURL = useMatch(
-    SERVICES_URL() + SERVICES_APPLICATION_CREATION_URL + SERVICES_CREATION_HEALTHCHECKS_URL
-  )
-  const applicationCreationPostURL = useMatch(
-    SERVICES_URL() + SERVICES_APPLICATION_CREATION_URL + SERVICES_CREATION_POST_URL
-  )
-
-  // DATABASE CREATION
-  const databaseCreationGeneralURL = useMatch(
-    SERVICES_URL() + SERVICES_DATABASE_CREATION_URL + SERVICES_DATABASE_CREATION_GENERAL_URL
-  )
-  const databaseCreationResourcesURL = useMatch(
-    SERVICES_URL() + SERVICES_DATABASE_CREATION_URL + SERVICES_DATABASE_CREATION_RESOURCES_URL
-  )
-  const databaseCreationPostURL = useMatch(
-    SERVICES_URL() + SERVICES_DATABASE_CREATION_URL + SERVICES_DATABASE_CREATION_POST_URL
-  )
-
-  // LIFECYCLE JOB CREATION
-  const lifecycleJobCreationGeneralURL = useMatch(
-    SERVICES_URL() + SERVICES_LIFECYCLE_CREATION_URL + SERVICES_JOB_CREATION_GENERAL_URL
-  )
-  const lifecycleJobCreationConfigureURL = useMatch(
-    SERVICES_URL() + SERVICES_LIFECYCLE_CREATION_URL + SERVICES_JOB_CREATION_CONFIGURE_URL
-  )
-  const lifecycleJobCreationResourcesURL = useMatch(
-    SERVICES_URL() + SERVICES_LIFECYCLE_CREATION_URL + SERVICES_JOB_CREATION_RESOURCES_URL
-  )
-  const lifecycleJobCreationVariableURL = useMatch(
-    SERVICES_URL() + SERVICES_LIFECYCLE_CREATION_URL + SERVICES_JOB_CREATION_VARIABLE_URL
-  )
-  const lifecycleJobCreationPostURL = useMatch(
-    SERVICES_URL() + SERVICES_LIFECYCLE_CREATION_URL + SERVICES_JOB_CREATION_POST_URL
-  )
-
-  // CRON JOB CREATION
-  const cronJobCreationGeneralURL = useMatch(
-    SERVICES_URL() + SERVICES_CRONJOB_CREATION_URL + SERVICES_JOB_CREATION_GENERAL_URL
-  )
-  const cronJobCreationConfigureURL = useMatch(
-    SERVICES_URL() + SERVICES_CRONJOB_CREATION_URL + SERVICES_JOB_CREATION_CONFIGURE_URL
-  )
-  const cronJobCreationResourcesURL = useMatch(
-    SERVICES_URL() + SERVICES_CRONJOB_CREATION_URL + SERVICES_JOB_CREATION_RESOURCES_URL
-  )
-  const cronJobCreationVariableURL = useMatch(
-    SERVICES_URL() + SERVICES_CRONJOB_CREATION_URL + SERVICES_JOB_CREATION_VARIABLE_URL
-  )
-  const cronJobCreationPostURL = useMatch(
-    SERVICES_URL() + SERVICES_CRONJOB_CREATION_URL + SERVICES_JOB_CREATION_POST_URL
-  )
-
-  // HELM CREATION
-  const helmCreationGeneralURL = useMatch(
-    SERVICES_URL() + SERVICES_HELM_CREATION_URL + SERVICES_HELM_CREATION_GENERAL_URL
-  )
-  const helmCreationValuesStep1URL = useMatch(
-    SERVICES_URL() + SERVICES_HELM_CREATION_URL + SERVICES_HELM_CREATION_VALUES_STEP_1_URL
-  )
-  const helmCreationValuesStep2URL = useMatch(
-    SERVICES_URL() + SERVICES_HELM_CREATION_URL + SERVICES_HELM_CREATION_VALUES_STEP_2_URL
-  )
-  const helmCreationSummaryURL = useMatch(
-    SERVICES_URL() + SERVICES_HELM_CREATION_URL + SERVICES_HELM_CREATION_SUMMARY_URL
-  )
-
-  // CLUSTERS
-  const clustersGeneralURL = useMatch(CLUSTERS_URL() + CLUSTERS_GENERAL_URL)
-
-  // CLUSTER CREATION
-  const clusterCreationFeaturesURL = useMatch(CLUSTERS_URL() + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_FEATURES_URL)
-  const clusterCreationGeneralURL = useMatch(CLUSTERS_URL() + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_GENERAL_URL)
-  const clusterCreationKubeconfigURL = useMatch(
-    CLUSTERS_URL() + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_KUBECONFIG_URL
-  )
-  const clusterCreationResourcesURL = useMatch(CLUSTERS_URL() + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_RESOURCES_URL)
-  const clusterCreationSummaryURL = useMatch(CLUSTERS_URL() + CLUSTERS_CREATION_URL + CLUSTERS_CREATION_SUMMARY_URL)
-
-  // CLUSTER SETTINGS
-  const clusterSettingsGeneralURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_GENERAL_URL)
-  const clusterSettingsCredentialsURL = useMatch(
-    CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_CREDENTIALS_URL
-  )
-  const clusterSettingsResourcesURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_RESOURCES_URL)
-  const clusterSettingsImageRegistryURL = useMatch(
-    CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL
-  )
-  const clusterSettingsNetworkURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_NETWORK_URL)
-  const clusterSettingsAdvancedSettingsURL = useMatch(
-    CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_ADVANCED_SETTINGS_URL
-  )
-  const clusterSettingsDangerZoneURL = useMatch(CLUSTER_URL() + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_DANGER_ZONE_URL)
-  const terraformArgumentsURL = useMatch(
-    APPLICATION_URL() + APPLICATION_SETTINGS_URL + APPLICATION_SETTINGS_TERRAFORM_ARGUMENTS_URL
-  )
-
-  const matchingPattern =
-    onBoardingPersonalizeURL ??
-    onBoardingProjectURL ??
-    onBoardingPlansURL ??
-    auditLogsGeneralURL ??
-    projectSettingsGeneralURL ??
-    projectSettingsDangerZoneURL ??
-    organizationSettingsGeneralURL ??
-    organizationSettingsMembersURL ??
-    organizationSettingsRolesURL ??
-    organizationSettingsRoleEditURL ??
-    organizationSettingsBillingSummaryURL ??
-    organizationSettingsBillingDetailsURL ??
-    organizationSettingsLabelsAnnotationsURL ??
-    organizationSettingsContainerRegistriesURL ??
-    organizationSettingsHelmRepositoriesURL ??
-    organizationSettingsGitRepositoryAccessURL ??
-    organizationSettingsWebhooksURL ??
-    organizationSettingsApiTokensURL ??
-    organizationSettingsDangerZoneURL ??
-    projectGeneralURL ??
-    projectDeploymentRulesURL ??
-    projectDeploymentRulesCreateURL ??
-    projectDeploymentRulesEditURL ??
-    environmentGeneralURL ??
-    environmentDeploymentsURL ??
-    environmentSettingsGeneralURL ??
-    environmentSettingsRulesURL ??
-    environmentSettingsPipelineURL ??
-    environmentSettingsPreviewEnvURL ??
-    environmentSettingsDangerZoneURL ??
-    applicationGeneralURL ??
-    applicationVariablesURL ??
-    applicationDeploymentsURL ??
-    applicationSettingsGeneralURL ??
-    applicationSettingsResourcesURL ??
-    applicationSettingsConfigureURL ??
-    applicationSettingsValuesOverrideFileURL ??
-    applicationSettingsValuesOverrideArgumentsURL ??
-    applicationSettingsNetworkingURL ??
-    applicationSettingsStorageURL ??
-    applicationSettingsDomainURL ??
-    applicationSettingsHealthchecksURL ??
-    applicationSettingsPortURL ??
-    applicationSettingsDeploymentRestrictionsURL ??
-    applicationSettingsAdvancedSettingsURL ??
-    applicationSettingsDangerZoneURL ??
-    applicationCreationGeneralURL ??
-    applicationCreationResourcesURL ??
-    applicationCreationPortsURL ??
-    applicationCreationHealthchecksURL ??
-    applicationCreationPostURL ??
-    databaseCreationGeneralURL ??
-    databaseCreationResourcesURL ??
-    databaseCreationPostURL ??
-    lifecycleJobCreationGeneralURL ??
-    lifecycleJobCreationConfigureURL ??
-    lifecycleJobCreationResourcesURL ??
-    lifecycleJobCreationVariableURL ??
-    lifecycleJobCreationPostURL ??
-    cronJobCreationGeneralURL ??
-    cronJobCreationConfigureURL ??
-    cronJobCreationResourcesURL ??
-    cronJobCreationVariableURL ??
-    cronJobCreationPostURL ??
-    helmCreationGeneralURL ??
-    helmCreationValuesStep1URL ??
-    helmCreationValuesStep2URL ??
-    helmCreationSummaryURL ??
-    clustersGeneralURL ??
-    clusterCreationFeaturesURL ??
-    clusterCreationGeneralURL ??
-    clusterCreationKubeconfigURL ??
-    clusterCreationResourcesURL ??
-    clusterCreationSummaryURL ??
-    clusterSettingsGeneralURL ??
-    clusterSettingsCredentialsURL ??
-    clusterSettingsResourcesURL ??
-    clusterSettingsImageRegistryURL ??
-    clusterSettingsNetworkURL ??
-    clusterSettingsAdvancedSettingsURL ??
-    clusterSettingsDangerZoneURL ??
-    terraformArgumentsURL
-  const patternPath = matchingPattern?.pattern.path
-  if (patternPath && patternPath in mapping) {
-    return mapping[patternPath as keyof typeof mapping]
+  const directMatch = legacyPatterns.find((pattern) => matchesPattern(pattern, normalizedPathname))
+  if (directMatch) {
+    return directMatch
   }
 
-  return []
+  return tanstackRouteAliases.find((route) => matchesPattern(route.pattern, normalizedPathname))?.target
+}
+
+function patchHistoryEvents() {
+  if (isHistoryPatched || typeof window === 'undefined') {
+    return
+  }
+
+  const wrapHistoryMethod = (method: 'pushState' | 'replaceState') => {
+    const originalMethod = window.history[method].bind(window.history)
+
+    window.history[method] = ((...args: Parameters<History['pushState']>) => {
+      const result = originalMethod(...args)
+      window.dispatchEvent(new Event(NAVIGATION_EVENT))
+      return result
+    }) as History[typeof method]
+  }
+
+  wrapHistoryMethod('pushState')
+  wrapHistoryMethod('replaceState')
+  isHistoryPatched = true
+}
+
+function subscribe(onStoreChange: () => void) {
+  if (typeof window === 'undefined') {
+    return () => undefined
+  }
+
+  patchHistoryEvents()
+
+  window.addEventListener('popstate', onStoreChange)
+  window.addEventListener(NAVIGATION_EVENT, onStoreChange)
+
+  return () => {
+    window.removeEventListener('popstate', onStoreChange)
+    window.removeEventListener(NAVIGATION_EVENT, onStoreChange)
+  }
+}
+
+function getPathnameSnapshot() {
+  if (typeof window === 'undefined') {
+    return '/'
+  }
+
+  return normalizePathname(window.location.pathname)
+}
+
+export function useContextualDocLinks() {
+  const pathname = useSyncExternalStore(subscribe, getPathnameSnapshot, () => '/')
+  const mappingPath = findMappingPath(pathname)
+
+  return mappingPath ? mapping[mappingPath] : []
 }
 
 export default useContextualDocLinks

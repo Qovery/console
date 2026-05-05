@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { devopsCopilot, mutations } from '@qovery/shared/devops-copilot/data-access'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { toast } from '@qovery/shared/ui'
 
 export interface UseDeleteAICopilotRecurringTaskProps {
   organizationId: string
@@ -19,10 +19,10 @@ export function useDeleteAICopilotRecurringTask({ organizationId }: UseDeleteAIC
       queryClient.invalidateQueries({
         queryKey: devopsCopilot.recurringTasks({ organizationId }).queryKey,
       })
-      toast(ToastEnum.SUCCESS, 'Task deleted successfully')
+      toast('success', 'Task deleted successfully')
     },
     onError: () => {
-      toast(ToastEnum.ERROR, 'Failed to delete task', 'Please try again later')
+      toast('error', 'Failed to delete task', 'Please try again later')
     },
   })
 }

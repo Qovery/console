@@ -6,7 +6,7 @@ import { ModalMultiConfirmation } from '../modal-multi-confirmation'
 export interface UseModalMultiConfirmationProps {
   title: string
   checks: string[]
-  action: () => void
+  action: () => Promise<void> | void
   description?: ReactNode
   mode?: keyof typeof EnvironmentModeEnum | string | undefined
   warning?: ReactNode

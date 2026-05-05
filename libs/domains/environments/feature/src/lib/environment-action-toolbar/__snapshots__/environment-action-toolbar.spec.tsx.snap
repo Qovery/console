@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = `
 <body
@@ -14,65 +14,47 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
   />
   <div
     aria-hidden="true"
-    aria-orientation="horizontal"
+    class="flex items-center gap-2"
     data-aria-hidden="true"
-    data-orientation="horizontal"
-    dir="ltr"
-    role="toolbar"
-    style="outline: none;"
-    tabindex="0"
   >
     <button
       aria-controls="radix-:r7:"
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Manage Deployment"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-yellow-600 h-9 px-3 active:scale-100 first:rounded-l last:rounded-r first:border-x border border-yellow-600 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-warning-strong text-xs h-7 justify-center px-0 rounded w-7 border border-warning-subtle text-warning hover:border-warning-component hover:bg-surface-warning-subtle data-[state=open]:bg-surface-warning-subtle"
       data-state="open"
       id="radix-:r6:"
-      tabindex="-1"
       type="button"
     >
       <div
-        class="flex h-full w-full items-center justify-center"
+        class="flex h-full w-full items-center justify-center gap-1.5"
         data-state="closed"
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-play mr-4"
-        />
-        <i
-          aria-hidden="true"
-          class="fa-solid fa-chevron-down "
+          class="fa-regular fa-rocket "
         />
       </div>
     </button>
     <a
-      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7"
       data-state="closed"
-      href="/organization/123/project/123/environment/3840068565336064/logs"
-      tabindex="-1"
-      type="button"
+      params="[object Object]"
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-timeline "
+        class="fa-regular fa-timeline "
       />
     </a>
     <button
       aria-expanded="false"
       aria-haspopup="menu"
       aria-label="Other actions"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
       data-state="closed"
-      id="radix-:rc:"
-      tabindex="-1"
+      id="radix-:ra:"
       type="button"
     >
       <div
@@ -89,13 +71,13 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
   <div
     data-radix-popper-content-wrapper=""
     dir="ltr"
-    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -8px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
+    style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -8px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 100% 0px;"
   >
     <div
       aria-labelledby="radix-:r6:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550"
-      data-align="start"
+      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-down-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-up-md-faded"
+      data-align="end"
       data-orientation="vertical"
       data-radix-menu-content=""
       data-side="bottom"
@@ -107,7 +89,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       tabindex="-1"
     >
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-neutral-150 cursor-pointer hover:bg-neutral-150 text-neutral-400 relative"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-warning-component data-[highlighted]:text-warning hover:text-warning cursor-pointer hover:bg-surface-warning-component text-warning"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -115,21 +97,21 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-rotate-right text-sm mr-3 text-yellow-600"
+          class="fa-regular fa-rotate-right text-sm mr-2 min-w-5 text-warning"
         />
-        Redeploy
         <div
-          class="absolute right-2"
-          data-state="closed"
+          class="flex w-full items-center justify-between"
         >
+          Redeploy
           <i
             aria-hidden="true"
             class="fa-regular fa-circle-exclamation "
+            data-state="closed"
           />
         </div>
       </div>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -137,21 +119,21 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-circle-stop text-sm mr-3 text-brand-500"
+          class="fa-regular fa-circle-stop text-sm mr-2 min-w-5 text-brand"
         />
-        Stop
         <div
-          class="absolute right-2"
-          data-state="closed"
+          class="flex w-full items-center justify-between"
         >
+          Stop
           <i
             aria-hidden="true"
             class="fa-regular fa-circle-exclamation "
+            data-state="closed"
           />
         </div>
       </div>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-red-50 data-[highlighted]:text-red-600 cursor-pointer hover:bg-red-50 text-red-600"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-negative-component data-[highlighted]:text-negative hover:text-negative cursor-pointer hover:bg-surface-negative-component text-negative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -159,26 +141,26 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-inbox-out text-sm mr-3 text-red-600"
+          class="fa-regular fa-inbox-out text-sm mr-2 min-w-5 text-negative"
         />
-        Uninstall
         <div
-          class="absolute right-2"
-          data-state="closed"
+          class="flex w-full items-center justify-between"
         >
+          Uninstall
           <i
             aria-hidden="true"
             class="fa-regular fa-circle-exclamation "
+            data-state="closed"
           />
         </div>
       </div>
       <div
         aria-orientation="horizontal"
-        class="my-1 h-[1px] w-full bg-neutral-200 dark:bg-neutral-600"
+        class="my-1 h-[1px] w-full bg-surface-neutral-component"
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -186,7 +168,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-rotate text-sm mr-3 text-brand-500"
+          class="fa-regular fa-rotate text-sm mr-2 min-w-5 text-brand"
         />
         Deploy latest version for..
       </div>
@@ -216,65 +198,47 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
   />
   <div
     aria-hidden="true"
-    aria-orientation="horizontal"
+    class="flex items-center gap-2"
     data-aria-hidden="true"
-    data-orientation="horizontal"
-    dir="ltr"
-    role="toolbar"
-    style="outline: none;"
-    tabindex="0"
   >
     <button
       aria-expanded="false"
       aria-haspopup="menu"
       aria-label="Manage Deployment"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-yellow-600 h-9 px-3 active:scale-100 first:rounded-l last:rounded-r first:border-x border border-yellow-600 text-yellow-600 data-[state=open]:text-yellow-600 text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-warning-strong text-xs h-7 justify-center px-0 rounded w-7 border border-warning-subtle text-warning hover:border-warning-component hover:bg-surface-warning-subtle data-[state=open]:bg-surface-warning-subtle"
       data-state="closed"
-      id="radix-:rt:"
-      tabindex="-1"
+      id="radix-:rq:"
       type="button"
     >
       <div
-        class="flex h-full w-full items-center justify-center"
+        class="flex h-full w-full items-center justify-center gap-1.5"
         data-state="closed"
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-play mr-4"
-        />
-        <i
-          aria-hidden="true"
-          class="fa-solid fa-chevron-down "
+          class="fa-regular fa-rocket "
         />
       </div>
     </button>
     <a
-      class="cursor-pointer duration-100 gap-1 inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-6 px-1.5 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7"
       data-state="closed"
-      href="/organization/123/project/123/environment/3840068565336064/logs"
-      tabindex="-1"
-      type="button"
+      params="[object Object]"
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
     >
       <i
         aria-hidden="true"
-        class="fa-solid fa-timeline "
+        class="fa-regular fa-timeline "
       />
     </a>
     <button
-      aria-controls="radix-:r14:"
+      aria-controls="radix-:rv:"
       aria-expanded="true"
       aria-haspopup="menu"
       aria-label="Other actions"
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 h-9 px-3 border border-neutral-250 dark:border-neutral-400 dark:text-white dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none active:scale-100 first:rounded-l last:rounded-r first:border-x border-l-0 hover:[&:not(:active)]:border-neutral-250 text-neutral-350 hover:text-neutral-400 data-[state=open]:text-neutral-400 text-sm outline-0 min-w-[36px]"
-      data-orientation="horizontal"
-      data-radix-collection-item=""
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 justify-center px-0 rounded w-7 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
       data-state="open"
-      id="radix-:r13:"
-      tabindex="-1"
+      id="radix-:ru:"
       type="button"
     >
       <div
@@ -294,36 +258,38 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
     style="position: fixed; left: 0px; top: 0px; transform: translate(0px, 8px); min-width: max-content; --radix-popper-available-width: 0px; --radix-popper-available-height: -8px; --radix-popper-anchor-width: 0px; --radix-popper-anchor-height: 0px; --radix-popper-transform-origin: 0% 0px;"
   >
     <div
-      aria-labelledby="radix-:r13:"
+      aria-labelledby="radix-:ru:"
       aria-orientation="vertical"
-      class="flex w-[258px] flex-col gap-1 rounded-md bg-neutral-50 p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded dark:border dark:border-neutral-500 dark:bg-neutral-550"
+      class="flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-down-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-up-md-faded"
       data-align="start"
       data-orientation="vertical"
       data-radix-menu-content=""
       data-side="bottom"
       data-state="open"
       dir="ltr"
-      id="radix-:r14:"
+      id="radix-:rv:"
       role="menu"
       style="outline: none; --radix-dropdown-menu-content-transform-origin: var(--radix-popper-transform-origin); --radix-dropdown-menu-content-available-width: var(--radix-popper-available-width); --radix-dropdown-menu-content-available-height: var(--radix-popper-available-height); --radix-dropdown-menu-trigger-width: var(--radix-popper-anchor-width); --radix-dropdown-menu-trigger-height: var(--radix-popper-anchor-height); pointer-events: auto;"
       tabindex="-1"
     >
       <a
-        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550 gap-0"
+        class="transition duration-100 px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral gap-0"
         data-orientation="vertical"
         data-radix-collection-item=""
-        href="/organization/123/audit-logs/general?targetType=ENVIRONMENT&projectId=123&targetId=3840068565336064"
+        params="[object Object]"
         role="menuitem"
+        search="[object Object]"
         tabindex="-1"
+        to="/organization/$organizationId/audit-logs"
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-clock-rotate-left text-sm mr-3 text-brand-500"
+          class="fa-regular fa-clock-rotate-left text-sm mr-2 min-w-5 text-brand"
         />
         See audit logs
       </a>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -331,12 +297,12 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy text-sm mr-3 text-brand-500"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand"
         />
         Copy identifier
       </div>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -344,12 +310,12 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-file-export text-sm mr-3 text-brand-500"
+          class="fa-regular fa-file-export text-sm mr-2 min-w-5 text-brand"
         />
         Export as Terraform
       </div>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-brand-50 data-[highlighted]:text-brand-500 dark:data-[highlighted]:bg-neutral-400 dark:text-neutral-100 cursor-pointer text-neutral-400 hover:bg-brand-50 hover:text-brand-500 dark:hover:bg-neutral-550"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -357,17 +323,17 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-copy text-sm mr-3 text-brand-500"
+          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand"
         />
         Clone
       </div>
       <div
         aria-orientation="horizontal"
-        class="my-1 h-[1px] w-full bg-neutral-200 dark:bg-neutral-600"
+        class="my-1 h-[1px] w-full bg-surface-neutral-component"
         role="separator"
       />
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium rounded-sm outline-none data-[highlighted]:bg-red-50 data-[highlighted]:text-red-600 cursor-pointer hover:bg-red-50 text-red-600"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-negative-component data-[highlighted]:text-negative hover:text-negative cursor-pointer hover:bg-surface-negative-component text-negative"
         data-orientation="vertical"
         data-radix-collection-item=""
         role="menuitem"
@@ -375,7 +341,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-trash text-sm mr-3 text-red-600"
+          class="fa-regular fa-trash text-sm mr-2 min-w-5 text-negative"
         />
         Delete environment
       </div>

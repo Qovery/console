@@ -116,11 +116,11 @@ export const Modal = (props: ModalProps) => {
         <Dialog.Overlay
           data-testid="overlay"
           onClick={handleOutsideClick}
-          className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-neutral-700/20"
+          className="modal__overlay fixed left-0 top-0 z-overlay flex h-screen w-full bg-background-overlay"
         />
         {fakeModal && (
           <div
-            className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-neutral-700/20"
+            className="modal__overlay fixed left-0 top-0 flex h-screen w-full bg-background-overlay"
             onClick={handleOutsideClick}
           />
         )}
@@ -133,17 +133,20 @@ export const Modal = (props: ModalProps) => {
               ? { width: 'calc(100vw - 48px)', height: 'calc(100vh  - 48px)', top: 24 }
               : { width: `${width}px` }
           }
-          className={`modal__content fixed left-1/2 top-[84px] rounded-md bg-white shadow-[0_0_32px_rgba(0,0,0,0.08)] dark:bg-neutral-550 ${className}`}
+          className={`modal__content fixed left-1/2 top-[84px] z-modal rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
           <div className={`overflow-auto ${fullScreen ? 'h-full' : 'max-h-[80vh]'}`}>
             {cloneElement(children, {
               setOpen: setExternalOpen ? setExternalOpen : setOpen,
             })}
             {buttonClose && (
-              <Dialog.Close className="absolute right-4 top-4">
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-200 text-neutral-350 duration-300 ease-out hover:bg-neutral-250 hover:text-neutral-400">
-                  <Icon name="icon-solid-xmark" />
-                </span>
+              <Dialog.Close className="absolute right-4 top-4" asChild>
+                <button
+                  type="button"
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-background text-neutral-disabled transition-colors hover:bg-surface-neutral-componentHover hover:text-neutral"
+                >
+                  <Icon iconName="xmark" iconStyle="solid" />
+                </button>
               </Dialog.Close>
             )}
           </div>

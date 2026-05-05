@@ -1,6 +1,6 @@
 import { type ApplicationGitRepository, GitProviderEnum } from 'qovery-typescript-axios'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import LastCommit from './last-commit'
 
 const mockApplication = applicationFactoryMock(1)[0]
@@ -48,7 +48,23 @@ const gitRepository: ApplicationGitRepository = {
 
 describe('LastCommit', () => {
   it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(<LastCommit gitRepository={gitRepository} service={mockApplication} />)
+    const { baseElement } = renderWithProviders(
+      <LastCommit organizationId="1" projectId="2" gitRepository={gitRepository} service={mockApplication} />
+    )
     expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should hide the deploy from another version button when disabled', () => {
+    renderWithProviders(
+      <LastCommit
+        organizationId="1"
+        projectId="2"
+        gitRepository={gitRepository}
+        service={mockApplication}
+        showDeployFromAnotherVersionButton={false}
+      />
+    )
+
+    expect(screen.queryByRole('button', { name: /deploy from another version/i })).not.toBeInTheDocument()
   })
 })

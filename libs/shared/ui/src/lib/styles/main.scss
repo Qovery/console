@@ -1,94 +1,27 @@
 @use 'sass:meta';
 @use 'base/variable';
-@import '@awesome.me/kit-c4457d1be4/icons/css/fontawesome.css';
-@import '@awesome.me/kit-c4457d1be4/icons/css/solid.css';
-@import '@awesome.me/kit-c4457d1be4/icons/css/regular.css';
-@import '@awesome.me/kit-c4457d1be4/icons/css/brands.css';
+@use 'base/themes';
+
+@import '@awesome.me/kit-22f4eef36a/icons/css/fontawesome.css';
+@import '@awesome.me/kit-22f4eef36a/icons/css/solid.css';
+@import '@awesome.me/kit-22f4eef36a/icons/css/regular.css';
+@import '@awesome.me/kit-22f4eef36a/icons/css/brands.css';
 
 @tailwind components;
 @tailwind base;
 @tailwind utilities;
 
+// Z-index variables
 :root {
-  --color-neutral-50: theme('colors.neutral.50');
-  --color-neutral-100: theme('colors.neutral.100');
-  --color-neutral-150: theme('colors.neutral.150');
-  --color-neutral-200: theme('colors.neutral.200');
-  --color-neutral-250: theme('colors.neutral.250');
-  --color-neutral-300: theme('colors.neutral.300');
-  --color-neutral-350: theme('colors.neutral.350');
-  --color-neutral-400: theme('colors.neutral.400');
-  --color-neutral-500: theme('colors.neutral.500');
-  --color-neutral-550: theme('colors.neutral.550');
-  --color-neutral-600: theme('colors.neutral.600');
-  --color-neutral-650: theme('colors.neutral.650');
-  --color-neutral-700: theme('colors.neutral.700');
-  --color-neutral-800: theme('colors.neutral.800');
-  --color-neutral-900: theme('colors.neutral.900');
+  --header-zindex: 10;
+  --overlay-zindex: 40;
+  --modal-zindex: 50;
+  --dropdown-zindex: 60;
+  --tooltip-zindex: 70;
+  --toast-zindex: 80;
+}
 
-  --color-brand-50: theme('colors.brand.50');
-  --color-brand-100: theme('colors.brand.100');
-  --color-brand-200: theme('colors.brand.200');
-  --color-brand-300: theme('colors.brand.300');
-  --color-brand-400: theme('colors.brand.400');
-  --color-brand-500: theme('colors.brand.500');
-  --color-brand-600: theme('colors.brand.600');
-  --color-brand-700: theme('colors.brand.700');
-  --color-brand-800: theme('colors.brand.800');
-  --color-brand-900: theme('colors.brand.900');
-
-  --color-yellow-50: theme('colors.yellow.50');
-  --color-yellow-100: theme('colors.yellow.100');
-  --color-yellow-200: theme('colors.yellow.200');
-  --color-yellow-300: theme('colors.yellow.300');
-  --color-yellow-400: theme('colors.yellow.400');
-  --color-yellow-500: theme('colors.yellow.500');
-  --color-yellow-600: theme('colors.yellow.600');
-  --color-yellow-700: theme('colors.yellow.700');
-  --color-yellow-800: theme('colors.yellow.800');
-  --color-yellow-900: theme('colors.yellow.900');
-
-  --color-red-50: theme('colors.red.50');
-  --color-red-100: theme('colors.red.100');
-  --color-red-200: theme('colors.red.200');
-  --color-red-300: theme('colors.red.300');
-  --color-red-400: theme('colors.red.400');
-  --color-red-500: theme('colors.red.500');
-  --color-red-600: theme('colors.red.600');
-  --color-red-700: theme('colors.red.700');
-  --color-red-800: theme('colors.red.800');
-  --color-red-900: theme('colors.red.900');
-
-  --color-green-50: theme('colors.green.50');
-  --color-green-100: theme('colors.green.100');
-  --color-green-200: theme('colors.green.200');
-  --color-green-300: theme('colors.green.300');
-  --color-green-400: theme('colors.green.400');
-  --color-green-500: theme('colors.green.500');
-  --color-green-600: theme('colors.green.600');
-  --color-green-700: theme('colors.green.700');
-  --color-green-800: theme('colors.green.800');
-  --color-green-900: theme('colors.green.900');
-
-  --color-purple-50: theme('colors.purple.50');
-  --color-purple-100: theme('colors.purple.100');
-  --color-purple-200: theme('colors.purple.200');
-  --color-purple-300: theme('colors.purple.300');
-  --color-purple-400: theme('colors.purple.400');
-  --color-purple-500: theme('colors.purple.500');
-  --color-purple-600: theme('colors.purple.600');
-  --color-purple-700: theme('colors.purple.700');
-  --color-purple-800: theme('colors.purple.800');
-  --color-purple-900: theme('colors.purple.900');
-
-  --color-sky-50: theme('colors.sky.50');
-  --color-sky-100: theme('colors.sky.100');
-  --color-sky-200: theme('colors.sky.200');
-  --color-sky-300: theme('colors.sky.300');
-  --color-sky-400: theme('colors.sky.400');
-  --color-sky-500: theme('colors.sky.500');
-  --color-sky-600: theme('colors.sky.600');
-
+:root {
   --color-r-ams: hsl(217.2 91.2% 59.8%);
   --color-r-arn: hsl(238.7 83.5% 66.7%);
   --color-r-atl: hsl(258.3 89.5% 66.3%);
@@ -124,15 +57,38 @@
 @include meta.load-css('components/date-picker');
 
 body {
-  overflow-x: hidden;
+  overflow: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizelegibility;
-  background: theme('colors.neutral.200');
   min-height: 100vh;
+  min-width: 44.5rem;
 
   main:not(.h-screen, .layout-onboarding) {
     height: calc(100vh - theme('spacing.16'));
+  }
+
+  button,
+  a,
+  [role='link'],
+  [role='button'] {
+    &:focus {
+      outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--brand-11);
+      outline-offset: 2px;
+    }
+  }
+
+  [role='dialog'] {
+    outline: none;
+  }
+
+  ::selection {
+    background: theme('colors.surface.neutral.componentHover');
+    color: theme('colors.surface.neutralInvert.DEFAULT');
   }
 }
 
@@ -164,8 +120,8 @@ svg:focus,
   min-height: 52px;
   cursor: pointer;
   border-radius: 0.25rem;
-  border: 1px solid var(--color-neutral-250);
-  background-color: white;
+  border: 1px solid var(--neutral-6);
+  background-color: var(--neutral-1);
   padding: 0.5rem 0.75rem;
   transition:
     all 120ms cubic-bezier(0.4, 0, 0.2, 1),
@@ -175,15 +131,13 @@ svg:focus,
 
 /* Hover state */
 .chargebee-field-wrapper:hover {
-  border-color: var(--color-brand-500);
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+  border-color: var(--brand-9);
 }
 
 /* Focus state */
 .chargebee-field-wrapper.chargebee-field-focus {
-  border-color: var(--color-brand-500);
-  outline: 3px solid var(--color-brand-100);
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.05);
+  border-color: var(--brand-9);
+  outline: 2px solid var(--brand-4);
 }
 
 /* Label styling */
@@ -192,7 +146,7 @@ svg:focus,
   font-size: 0.75rem;
   line-height: 1rem;
   letter-spacing: 0.002em;
-  color: var(--color-neutral-350);
+  color: var(--color-neutral-subtle);
   font-family: Roboto, Helvetica, sans-serif;
   font-weight: 400;
   margin-bottom: 0.25rem;
@@ -225,4 +179,46 @@ svg:focus,
   display: block !important;
   width: 100% !important;
   min-height: 20px !important;
+}
+
+.chargebee-field-wrapper input {
+  color: green;
+}
+
+/* Scroll shadow */
+@property --left-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@property --right-fade {
+  syntax: '<length>';
+  inherits: false;
+  initial-value: 0;
+}
+
+@keyframes scrollfade {
+  0% {
+    --left-fade: 0;
+  }
+  10%,
+  100% {
+    --left-fade: 80px;
+  }
+  0%,
+  90% {
+    --right-fade: 80px;
+  }
+  100% {
+    --right-fade: 0;
+  }
+}
+
+.scroll-shadow {
+  overflow-x: auto;
+  mask: linear-gradient(to right, #0000, #ffff var(--left-fade) calc(100% - var(--right-fade)), #0000);
+  animation: scrollfade;
+  animation-timeline: --scrollfade;
+  scroll-timeline: --scrollfade x;
 }

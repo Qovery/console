@@ -44,17 +44,15 @@ export function MintlifyHit({ result }: MintlifyHitProps) {
   }
 
   return (
-    <ExternalLink href={getUrl()} withIcon={false}>
+    <ExternalLink href={getUrl()} withIcon={false} color="sky">
       <span className="flex flex-col gap-0.5">
         <span className="flex items-center gap-2">
-          <span className="text-sm font-medium text-sky-500">{getTitle()}</span>
+          <span className="text-sm font-medium">{getTitle()}</span>
           {isApiResult && (
-            <span className="rounded bg-purple-100 px-1.5 py-0.5 text-xs font-medium text-purple-600 dark:bg-purple-500/20 dark:text-purple-300">
-              API
-            </span>
+            <span className="rounded bg-surface-accent1-solid px-1.5 py-0.5 text-xs font-medium text-accent1">API</span>
           )}
         </span>
-        {getDescription() && <span className="text-xs text-sky-400">{getDescription()}</span>}
+        {getDescription() && <span className="text-xs">{getDescription()}</span>}
       </span>
     </ExternalLink>
   )

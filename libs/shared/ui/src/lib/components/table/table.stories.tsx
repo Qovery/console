@@ -34,11 +34,11 @@ const Template: StoryFn<TableProps> = (args) => {
           {data.map((currentData, index) => (
             <TableRow key={index} filter={filter} columnsWidth={args.columnsWidth} data={currentData} link="/">
               <>
-                <div className="px-2 text-sm text-neutral-400">
+                <div className="px-2 text-sm text-neutral">
                   {currentData.name} - {currentData.status?.state}
                 </div>
-                <div className="truncate px-2 text-xs text-neutral-400">{currentData.created_at}</div>
-                <div className="px-2 text-sm text-neutral-400">{currentData.mode}</div>
+                <div className="truncate px-2 text-xs text-neutral">{currentData.created_at}</div>
+                <div className="px-2 text-sm text-neutral">{currentData.mode}</div>
               </>
             </TableRow>
           ))}
@@ -122,14 +122,14 @@ const TemplateExpand: StoryFn<TableProps> = (args) => {
             <TableRow key={index} columnsWidth={args.columnsWidth} data={currentData} filter={filter} link="/">
               <>
                 <button onClick={() => toggleExpandedRow(currentData.id)}>Expand</button>
-                <div className="px-2 text-sm text-neutral-400">
+                <div className="px-2 text-sm text-neutral">
                   {currentData.name} - {currentData.status?.state}
                 </div>
-                <div className="truncate px-2 text-xs text-neutral-400">{currentData.created_at}</div>
-                <div className="px-2 text-sm text-neutral-400">{currentData.mode}</div>
+                <div className="truncate px-2 text-xs text-neutral">{currentData.created_at}</div>
+                <div className="px-2 text-sm text-neutral">{currentData.mode}</div>
 
                 <div
-                  className={`col-span-3 bg-brand-100 px-2 ${expandedRow === currentData.id ? 'visible' : 'hidden'}`}
+                  className={`col-span-3 bg-surface-brand-component px-2 ${expandedRow === currentData.id ? 'visible' : 'hidden'}`}
                 >
                   Expanded row
                 </div>

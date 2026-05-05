@@ -16,8 +16,8 @@
     @apply hover:text-sky-600;
   }
 
-  &.text-brand-500 {
-    @apply hover:text-brand-600;
+  &.text-brand {
+    @apply hover:text-brand-hover;
   }
 
   & [class^='icon-'],

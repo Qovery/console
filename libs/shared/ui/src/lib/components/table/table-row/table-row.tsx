@@ -21,8 +21,8 @@ export function TableRow(props: PropsWithChildren<TableRowProps>) {
   const { children, link, className = '', columnsWidth, disabled, data, filter, isNew } = props
   const [highlighted, setHighlighted] = useState(false)
 
-  const rowClasses = `grid items-center h-14 border-b-neutral-200 border-b ${
-    highlighted ? 'bg-neutral-150 hover:bg-neutral-200' : 'hover:bg-neutral-100'
+  const rowClasses = `grid items-center h-14 border-b-neutral border-b ${
+    highlighted ? 'bg-surface-neutral-subtle hover:bg-surface-neutral-component' : 'hover:bg-surface-neutral'
   } ${className} ${disabled ? 'pointer-events-none' : ''}`
 
   useEffect(() => {

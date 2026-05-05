@@ -25,8 +25,32 @@ import { useCreateVariableAlias } from '../hooks/use-create-variable-alias/use-c
 import { useCreateVariableOverride } from '../hooks/use-create-variable-override/use-create-variable-override'
 import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
 import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
+import { VariableValueEditorModal } from './variable-value-editor-modal/variable-value-editor-modal'
 
 type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
+type ValueEditorScope = Extract<Scope, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'>
+
+function isValueEditorScope(scope: Scope | undefined): scope is ValueEditorScope {
+  return ['APPLICATION', 'CONTAINER', 'JOB', 'HELM', 'TERRAFORM'].includes(scope ?? '')
+}
+
+function getValueEditorLanguage({ isFile, mountPath }: { isFile: boolean; mountPath?: string }) {
+  if (!isFile || !mountPath) {
+    return 'plaintext'
+  }
+
+  const normalizedMountPath = mountPath.toLowerCase()
+
+  if (normalizedMountPath.endsWith('.yaml') || normalizedMountPath.endsWith('.yml')) {
+    return 'yaml'
+  }
+
+  if (normalizedMountPath.endsWith('.json')) {
+    return 'json'
+  }
+
+  return 'plaintext'
+}
 
 export type CreateUpdateVariableModalProps = {
   closeModal: () => void
@@ -58,6 +82,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
   const _isFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
   const { enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
+  const [isValueEditorOpen, setIsValueEditorOpen] = useState(false)
 
   const { mutateAsync: createVariable } = useCreateVariable()
   const { mutateAsync: createVariableAlias } = useCreateVariableAlias()
@@ -128,6 +153,10 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
   const watchScope = methods.watch('scope')
+  const watchMountPath = methods.watch('mountPath')
+  const valueEditorLanguage = getValueEditorLanguage({ isFile: _isFile, mountPath: watchMountPath })
+  const valueEditorServiceId = 'serviceId' in props && isValueEditorScope(watchScope) ? props.serviceId : undefined
+  const valueEditorScope = isValueEditorScope(watchScope) ? watchScope : undefined
 
   const _onSubmit = methods.handleSubmit(async (data) => {
     const cloneData = { ...data }
@@ -330,9 +359,9 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               <Icon
                 iconName="arrow-turn-down-right"
                 iconStyle="regular"
-                className="ml-1 mr-2 text-2xs text-neutral-300"
+                className="ml-1 mr-2 text-2xs text-neutral-disabled"
               />
-              <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
+              <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-surface-info-component px-1 text-2xs font-bold text-info">
                 ALIAS
               </span>
             </div>
@@ -362,9 +391,9 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             <Icon
               iconName="arrow-turn-down-right"
               iconStyle="regular"
-              className="ml-1 mr-2 text-2xs text-neutral-300"
+              className="ml-1 mr-2 text-2xs text-neutral-subtle"
             />
-            <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-brand-500 px-1 text-2xs font-bold text-neutral-50">
+            <span className="mr-3 inline-flex h-4 items-center rounded-sm bg-surface-brand-component px-1 text-2xs font-bold text-brand">
               OVERRIDE
             </span>
           </div>
@@ -375,33 +404,59 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             name="value"
             control={methods.control}
             render={({ field: { name, onChange, value }, fieldState: { error } }) => (
-              <div className="relative">
-                <InputTextArea
-                  ref={textareaRef}
-                  className="mb-3"
-                  name={name}
-                  onChange={onChange}
-                  value={value}
-                  label="Value"
-                  error={error?.message}
-                />
-                {'environmentId' in props && (
-                  <DropdownVariable
-                    environmentId={props.environmentId}
-                    onChange={(variableKey) => handleInsertVariable({ variableKey, value: value || '', onChange })}
+              <>
+                <div className="mb-2 flex justify-end">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5"
+                    onClick={() => setIsValueEditorOpen(true)}
                   >
-                    <Button
-                      size="md"
-                      type="button"
-                      color="neutral"
-                      variant="surface"
-                      className="absolute bottom-1.5 right-1.5 w-9 justify-center"
+                    <Icon iconName="arrows-maximize" iconStyle="regular" className="text-xs" />
+                    Open editor
+                  </Button>
+                </div>
+                <div className="relative">
+                  <InputTextArea
+                    ref={textareaRef}
+                    className="mb-3"
+                    name={name}
+                    onChange={onChange}
+                    value={value}
+                    label="Value"
+                    error={error?.message}
+                  />
+                  {'environmentId' in props && (
+                    <DropdownVariable
+                      environmentId={props.environmentId}
+                      onChange={(variableKey) => handleInsertVariable({ variableKey, value: value || '', onChange })}
                     >
-                      <Icon className="text-sm" iconName="wand-magic-sparkles" />
-                    </Button>
-                  </DropdownVariable>
-                )}
-              </div>
+                      <Button
+                        size="md"
+                        type="button"
+                        color="neutral"
+                        variant="surface"
+                        className="absolute bottom-1.5 right-1.5 w-8 justify-center"
+                      >
+                        <Icon className="text-sm" iconName="wand-magic-sparkles" />
+                      </Button>
+                    </DropdownVariable>
+                  )}
+                </div>
+                <VariableValueEditorModal
+                  open={isValueEditorOpen}
+                  onOpenChange={setIsValueEditorOpen}
+                  value={value}
+                  onSave={onChange}
+                  title="Value editor"
+                  description="Edit the value in a larger editor."
+                  language={valueEditorLanguage}
+                  environmentId={'environmentId' in props ? props.environmentId : undefined}
+                  serviceId={valueEditorServiceId}
+                  scope={valueEditorScope}
+                />
+              </>
             )}
           />
         )}
@@ -413,7 +468,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             render={({ field }) => (
               <InputToggle
                 small
-                forceAlignTop
+                align="top"
                 className="mb-3 mt-5"
                 value={field.value}
                 onChange={field.onChange}
@@ -440,7 +495,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                 rightElement={
                   <Tooltip content="Scope can't be changed. Re-create the var with the right scope." side="left">
                     <div>
-                      <Icon iconName="circle-info" className="text-sm text-neutral-350" />
+                      <Icon iconName="circle-info" className="text-sm text-neutral-subtle" />
                     </div>
                   </Tooltip>
                 }

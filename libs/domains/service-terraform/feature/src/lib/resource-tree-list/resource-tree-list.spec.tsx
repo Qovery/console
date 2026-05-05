@@ -74,7 +74,7 @@ describe('ResourceTreeList', () => {
     )
 
     const selectedButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(selectedButton).toHaveClass('bg-brand-50')
+    expect(selectedButton).toHaveClass('bg-surface-brand-subtle')
   })
 
   it('should call onSelectResource when clicking a resource', async () => {
@@ -109,7 +109,7 @@ describe('ResourceTreeList', () => {
 
     // Non-matching button should have dimmed styling
     const nonMatchingButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(nonMatchingButton).toHaveClass('text-neutral-250')
+    expect(nonMatchingButton).toHaveClass('text-neutral-disabled')
   })
 
   it('should highlight matching resources when searching by type', () => {
@@ -125,7 +125,7 @@ describe('ResourceTreeList', () => {
     expect(screen.getByText('app_db')).toBeInTheDocument()
     // Non-matching resources are visible but dimmed
     const nonMatchingButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(nonMatchingButton).toHaveClass('text-neutral-250')
+    expect(nonMatchingButton).toHaveClass('text-neutral-disabled')
   })
 
   it('should highlight matching resources when searching by attribute keys', () => {
@@ -141,7 +141,7 @@ describe('ResourceTreeList', () => {
     expect(screen.getByText('app_db')).toBeInTheDocument()
     // Non-matching resources are visible but dimmed
     const nonMatchingButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(nonMatchingButton).toHaveClass('text-neutral-250')
+    expect(nonMatchingButton).toHaveClass('text-neutral-disabled')
   })
 
   it('should highlight matching resources when searching by attribute values', () => {
@@ -157,7 +157,7 @@ describe('ResourceTreeList', () => {
     expect(screen.getByText('app_db')).toBeInTheDocument()
     // Non-matching resources are visible but dimmed
     const nonMatchingButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(nonMatchingButton).toHaveClass('text-neutral-250')
+    expect(nonMatchingButton).toHaveClass('text-neutral-disabled')
   })
 
   it('should show no results message when search returns nothing', () => {

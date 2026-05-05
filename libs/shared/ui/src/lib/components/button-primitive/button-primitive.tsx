@@ -12,209 +12,224 @@ const _buttonVariants = cva(
     'active:scale-[0.97]',
     'disabled:scale-100',
     'disabled:pointer-events-none',
+    'disabled:border',
+    'disabled:border-neutral',
+    'disabled:text-neutral-disabled',
+    'disabled:bg-surface-neutral-component',
     'focus-visible:[&:not(:active)]:outline-2',
     'outline-0',
+    'select-none',
   ],
   {
     variants: {
       variant: {
-        solid: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
-        surface: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none'],
-        outline: ['shadow-sm', 'disabled:shadow-none', 'active:shadow-none', 'bg-white', 'dark:bg-neutral-600'],
-        plain: ['hover:[&:not(:focus-visible):not(:disabled)]:shadow-sm', 'active:[&:not(:focus-visible)]:shadow-none'],
+        solid: [''],
+        surface: [''],
+        outline: [''],
+        plain: [''],
       },
       color: {
-        brand: ['outline-neutral-500'],
-        neutral: ['outline-brand-500'],
-        green: ['outline-neutral-500'],
-        red: ['outline-red-500'],
-        yellow: ['outline-yellow-600'],
+        brand: ['outline-brand-strong'],
+        neutral: ['outline-neutral-strong'],
+        green: ['outline-positive-strong'],
+        red: ['outline-negative-strong'],
+        yellow: ['outline-warning-strong'],
+        current: [''],
       },
       size: {
-        xs: ['text-xs', 'h-6', 'px-2'],
+        xs: ['text-xs', 'h-6', 'px-1.5'],
         sm: ['text-xs', 'h-7', 'px-2'],
-        md: ['text-sm', 'h-9', 'px-3'],
-        lg: ['text-sm', 'h-11', 'px-5'],
+        md: ['text-sm', 'h-8', 'px-2.5'],
+        lg: ['text-sm', 'h-10', 'px-3'],
       },
       radius: {
         none: [],
-        rounded: ['rounded'],
+        rounded: [],
         full: ['rounded-full'],
+      },
+      iconOnly: {
+        true: ['justify-center', 'px-0'],
       },
     },
     compoundVariants: [
+      //sizes
       {
-        variant: ['surface', 'outline'],
-        color: 'neutral',
-        className: [
-          'border',
-          'border-neutral-250',
-          'dark:border-neutral-400',
-          'text-neutral-400',
-          'dark:text-white',
-          'hover:[&:not(:active)]:border-neutral-300',
-          'dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350',
-          'active:bg-neutral-150',
-          'disabled:text-neutral-300',
-          'disabled:bg-neutral-100',
-          'disabled:border-none',
-        ],
+        size: 'xs',
+        radius: 'rounded',
+        className: ['rounded'],
       },
       {
-        variant: ['surface', 'outline'],
-        color: 'red',
-        className: [
-          'border',
-          'border-red-500',
-          'text-neutral-400',
-          'dark:text-white',
-          'hover:[&:not(:active)]:border-red-500',
-          'dark:hover:[&:not(:active):not(:disabled)]:border-red-500',
-          'active:bg-neutral-150',
-          'disabled:text-neutral-300',
-          'disabled:bg-neutral-100',
-          'disabled:border-none',
-        ],
+        size: 'sm',
+        radius: 'rounded',
+        className: ['rounded'],
       },
       {
-        variant: 'surface',
-        color: 'neutral',
-        className: [
-          'bg-neutral-100',
-          'dark:bg-neutral-500',
-          'hover:[&:not(:active):not(:disabled)]:bg-white',
-          'dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400',
-        ],
+        size: 'md',
+        radius: 'rounded',
+        className: ['rounded-md'],
       },
       {
-        // Incomplete, waiting for other occurences to standardize
-        variant: 'surface',
-        color: 'brand',
-        className: [
-          'bg-brand-50',
-          'border',
-          'border-brand-500',
-          'text-brand-500',
-          'hover:[&:not(:active):not(:disabled)]:bg-white',
-          'dark:border-brand-400',
-          'dark:text-brand-400',
-          'dark:disabled:bg-transparent',
-        ],
+        size: 'lg',
+        radius: 'rounded',
+        className: ['rounded-lg'],
+      },
+      // icon-only sizing (square)
+      {
+        size: 'xs',
+        iconOnly: true,
+        className: ['w-6'],
       },
       {
-        variant: 'plain',
-        color: 'neutral',
-        className: [
-          'border',
-          'border-transparent',
-          'text-neutral-350',
-          'hover:[&:not(:active):not(:focus-visible)]:border-neutral-300',
-          'hover:[&:not(:disabled)]:text-neutral-400',
-          'dark:hover:[&:not(:disabled)]:text-neutral-250',
-          'focus-visible:text-neutral-400',
-          'active:bg-neutral-150',
-          'dark:active:bg-transparent',
-          'active:text-neutral-400',
-          'disabled:text-neutral-300',
-          'disabled:bg-neutral-150',
-          'disabled:border-none',
-        ],
+        size: 'sm',
+        iconOnly: true,
+        className: ['w-7'],
       },
       {
-        variant: 'plain',
-        color: 'brand',
-        className: [
-          'border',
-          'border-transparent',
-          'text-brand-500',
-          'hover:[&:not(:disabled)]:text-brand-700',
-          'hover:[&:not(:focus-visible):not(:disabled)]:shadow-none',
-          'hover:bg-transparent',
-          'focus-visible:text-brand-700',
-          'focus-visible:border-transparent',
-          'active:bg-transparent',
-          'active:text-brand-700',
-          'disabled:text-neutral-300',
-          'disabled:bg-neutral-150',
-          'disabled:border-none',
-          'p-0',
-        ],
+        size: 'md',
+        iconOnly: true,
+        className: ['w-8'],
       },
-      /*
-    // Generate all colors
-      ...['brand', 'neutral', 'green', 'red'].map((color) => ({
-        variant: 'solid',
-        color,
-        className: [
-          `bg-${color}-500`,
-          `active:bg-${color}-600`,
-          `hover:bg-${color}-400`,
-          'text-white',
-          'disabled:text-${color}-300',
-          `disabled:bg-${color}-100`,
-        ],
-      })),
-    */
-
+      {
+        size: 'lg',
+        iconOnly: true,
+        className: ['w-10'],
+      },
+      //solid variants
       {
         variant: 'solid',
         color: 'brand',
         className: [
-          'bg-brand-500',
-          'active:bg-brand-600',
-          'hover:bg-brand-400',
-          'text-white',
-          'disabled:text-brand-300',
-          'disabled:bg-brand-100',
+          'bg-surface-brand-solid',
+          'hover:bg-surface-brand-solidHover',
+          'border',
+          'border-brand-component',
+          'text-neutralInvert',
         ],
       },
       {
         variant: 'solid',
         color: 'neutral',
-        className: [
-          'bg-neutral-500',
-          'active:bg-neutral-600',
-          'hover:bg-neutral-400',
-          'text-white',
-          'disabled:text-neutral-300',
-          'disabled:bg-neutral-100',
-        ],
+        className: ['bg-surface-neutralInvert', 'hover:bg-surface-neutralInvert-component', 'text-neutralInvert'],
       },
       {
         variant: 'solid',
         color: 'green',
         className: [
-          'bg-green-500',
-          'active:bg-green-600',
-          'hover:bg-green-400',
-          'text-white',
-          'disabled:text-green-300',
-          'disabled:bg-green-100',
+          'bg-surface-positive-solid',
+          'hover:bg-surface-positive-solidHover',
+          'border',
+          'border-positive-component',
+          'text-neutral-contrasted',
         ],
       },
       {
         variant: 'solid',
         color: 'red',
         className: [
-          'bg-red-500',
-          'active:bg-red-600',
-          'hover:bg-red-400',
-          'text-white',
-          'disabled:text-red-300',
-          'disabled:bg-red-100',
+          'bg-surface-negative-solid',
+          'hover:bg-surface-negative-solidHover',
+          'border',
+          'border-negative-component',
+          'text-neutral-contrasted',
         ],
       },
       {
         variant: 'solid',
         color: 'yellow',
         className: [
-          'bg-yellow-500',
-          'active:bg-yellow-600',
-          'hover:bg-yellow-400',
+          'bg-surface-warning-solid',
+          'hover:bg-surface-warning-solidHover',
+          'border',
+          'border-warning-component',
           'text-black',
-          'disabled:text-yellow-300',
-          'disabled:bg-yellow-100',
         ],
+      },
+      //outline variant
+      {
+        variant: ['outline'],
+        color: 'neutral',
+        className: [
+          'bg-surface-neutral',
+          'border',
+          'border-neutral',
+          'hover:border-neutral-component',
+          'hover:bg-surface-neutral-subtle',
+          'data-[state=open]:bg-surface-neutral-subtle',
+          'text-neutral',
+        ],
+      },
+      {
+        variant: ['outline'],
+        color: 'red',
+        className: [
+          'border',
+          'border-negative-subtle',
+          'text-negative',
+          'hover:border-negative-component',
+          'hover:bg-surface-negative-subtle',
+          'data-[state=open]:bg-surface-negative-subtle',
+        ],
+      },
+      {
+        variant: ['outline'],
+        color: 'yellow',
+        className: [
+          'border',
+          'border-warning-subtle',
+          'text-warning',
+          'hover:border-warning-component',
+          'hover:bg-surface-warning-subtle',
+          'data-[state=open]:bg-surface-warning-subtle',
+        ],
+      },
+      //surface variant
+      {
+        variant: 'surface',
+        color: 'neutral',
+        className: ['bg-surface-neutral-component', 'hover:bg-surface-neutral-componentHover', 'text-neutral'],
+      },
+      {
+        variant: ['surface'],
+        color: 'red',
+        className: [
+          'bg-surface-negative-subtle',
+          'border',
+          'border-negative-subtle',
+          'text-negative',
+          'hover:bg-surface-negative-component',
+        ],
+      },
+      {
+        variant: 'surface',
+        color: 'brand',
+        className: [
+          'bg-surface-brand-subtle',
+          'border',
+          'border-brand-subtle',
+          'text-brand',
+          'hover:bg-surface-brand-component',
+        ],
+      },
+      //plain
+      {
+        variant: 'plain',
+        color: 'neutral',
+        className: ['text-neutral-subtle', 'hover:bg-surface-neutral-subtle'],
+      },
+      {
+        variant: 'plain',
+        color: 'red',
+        className: ['text-negative', 'hover:bg-surface-negative-subtle'],
+      },
+      {
+        variant: 'plain',
+        color: 'yellow',
+        className: ['text-warning', 'hover:bg-surface-warning-subtle'],
+      },
+      {
+        variant: 'plain',
+        color: 'brand',
+        className: ['text-brand', 'hover:bg-surface-brand-subtle'],
       },
     ],
     defaultVariants: {
@@ -245,14 +260,14 @@ export interface ButtonPrimitiveProps
     VariantProps<typeof buttonVariants> {}
 
 export const ButtonPrimitive = forwardRef<ElementRef<'button'>, ButtonPrimitiveProps>(function ButtonPrimitive(
-  { className, color, radius, size, variant, ...buttonProps },
+  { className, color, radius, size, variant, iconOnly, ...buttonProps },
   forwardedRef
 ) {
   return (
     <button
       {...buttonProps}
       ref={forwardedRef}
-      className={twMerge(buttonVariants({ color, radius, size, variant }), className)}
+      className={twMerge(buttonVariants({ color, radius, size, variant, iconOnly }), className)}
     />
   )
 })

@@ -47,8 +47,8 @@ export type NavigationLeftLinkProps = {
 export const linkClassName = (pathname: string, url?: string, badge?: string) =>
   `flex items-center py-2 px-3 text-ssm rounded font-medium cursor-pointer mt-0.5 transition ease-out duration-300 truncate ${
     url === pathname
-      ? 'is-active text-brand-500 bg-brand-50 hover:text-brand-600 hover:bg-brand-100'
-      : 'text-neutral-350 hover:text-neutral-400 hover:bg-neutral-150'
+      ? 'is-active text-brand bg-surface-brand-subtle hover:text-brand-hover hover:bg-surface-brand-component'
+      : 'text-neutral-subtle hover:text-neutral hover:bg-surface-neutral-subtle'
   } ${badge ? 'justify-between' : ''} `
 
 export function LinkContent({ link }: { link: NavigationLeftLinkProps }) {
@@ -73,6 +73,9 @@ export function LinkContent({ link }: { link: NavigationLeftLinkProps }) {
   )
 }
 
+/*
+ * @deprecated Use Sidebar instead
+ */
 export function NavigationLeft(props: NavigationLeftProps) {
   const { title, links, link, className = '' } = props
 
@@ -82,9 +85,9 @@ export function NavigationLeft(props: NavigationLeftProps) {
     <div className={twMerge('flex flex-col px-5', className)}>
       {title && (
         <div className="mb-4 flex items-center justify-between">
-          {title && <span className="pl-3 text-2xs font-bold uppercase text-neutral-350">{title}</span>}
+          {title && <span className="pl-3 text-2xs font-bold uppercase text-neutral-subtle">{title}</span>}
           {link && (
-            <span className="link cursor-pointer text-sm font-medium text-brand-500" onClick={() => link.onClick()}>
+            <span className="link cursor-pointer text-sm font-medium text-brand" onClick={() => link.onClick()}>
               {link.title}
               <Icon iconName="circle-plus" iconStyle="regular" className="ml-1" />
             </span>
@@ -109,7 +112,7 @@ export function NavigationLeft(props: NavigationLeftProps) {
                 {subLink.badge && (
                   <span
                     data-testid="sub-link-badge"
-                    className="rounded-xs rounded-sm bg-brand-500 px-1 text-3xs uppercase text-neutral-50"
+                    className="rounded-xs rounded-sm bg-surface-brand-solid px-1 text-3xs uppercase text-neutralInvert"
                   >
                     {subLink.badge}
                   </span>

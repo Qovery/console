@@ -6,7 +6,6 @@ import { Button, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { AssistantMessage } from '../assistant-message/assistant-message'
 import { type Message, type PlanStep } from '../devops-copilot-panel'
-import { EmptyState } from '../empty-state/empty-state'
 import { LoadingIndicator } from '../loading-indicator/loading-indicator'
 import { type renderStreamingMessageWithMermaid } from '../streaming-mermaid-renderer/streaming-mermaid-renderer'
 import { StreamingMessage } from '../streaming-message/streaming-message'
@@ -15,8 +14,6 @@ export interface MessageListProps {
   scrollAreaRef: RefObject<HTMLDivElement>
   expand: boolean
   thread: Message[]
-  docLinks: Array<{ label: string; link: string }>
-  isCopilotEnabled: boolean
   onSuggestionClick: (label: string) => void
   isLoading: boolean
   streamingMessage: string
@@ -35,8 +32,6 @@ export function MessageList({
   scrollAreaRef,
   expand,
   thread,
-  docLinks,
-  isCopilotEnabled,
   onSuggestionClick,
   isLoading,
   streamingMessage,
@@ -70,18 +65,12 @@ export function MessageList({
         })
       )}
     >
-      <EmptyState
-        docLinks={docLinks}
-        expand={expand}
-        onSuggestionClick={onSuggestionClick}
-        threadLength={thread.length}
-      />
       {thread.map((message: Message) => {
         return match(message.owner)
           .with('user', () => (
             <div
               key={message.id}
-              className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-brand-50 px-5 py-2.5 text-sm dark:text-neutral-500"
+              className="ml-auto min-h-max max-w-[70%] overflow-hidden rounded-[1.5rem] bg-surface-brand-subtle px-5 py-2.5 text-sm text-neutral"
             >
               <div className="whitespace-pre-wrap">{message.text}</div>
             </div>
@@ -116,10 +105,7 @@ export function MessageList({
       )}
       <div className="sticky bottom-0 left-full z-10 ml-[-40px] w-fit">
         {!isAtBottom && (
-          <Button
-            onClick={handleScrollToBottom}
-            className="m-2 flex aspect-square items-center justify-center rounded-full"
-          >
+          <Button onClick={handleScrollToBottom} className="m-2" radius="full" iconOnly>
             <Icon iconName="arrow-down" iconStyle="light" />
           </Button>
         )}

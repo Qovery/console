@@ -1,0 +1,357 @@
+import { CloudProviderEnum, PortProtocolEnum } from 'qovery-typescript-axios'
+import { type FormEvent, useEffect, useRef } from 'react'
+import { Controller, useFormContext } from 'react-hook-form'
+import { match } from 'ts-pattern'
+import {
+  Callout,
+  Checkbox,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  InputText,
+  InputToggle,
+  ModalCrud,
+  Tooltip,
+} from '@qovery/shared/ui'
+
+export interface ApplicationContainerPortCrudModalProps {
+  cloudProvider?: CloudProviderEnum
+  currentProtocol?: PortProtocolEnum
+  isEdit?: boolean
+  isMatchingHealthCheck?: boolean
+  loading?: boolean
+  hidePortName?: boolean
+  onClose: () => void
+  onSubmit: () => void
+}
+
+export function ApplicationContainerPortCrudModal({
+  cloudProvider,
+  currentProtocol,
+  isEdit,
+  isMatchingHealthCheck = false,
+  loading,
+  onClose,
+  onSubmit,
+  hidePortName,
+}: ApplicationContainerPortCrudModalProps) {
+  const modalRef = useRef<HTMLDivElement>(null)
+  const { control, watch, setValue, getFieldState } = useFormContext()
+
+  const watchProtocol = watch('protocol')
+  const watchPublicly = watch('publicly_accessible') || false
+  const watchRewritePublicPath = watch('rewrite_public_path') || false
+  const watchInternalPort = watch('internal_port') || false
+  const watchExternalPort = watch('external_port') || ''
+
+  const pattern = {
+    value: /^[0-9]+$/,
+    message: 'Please enter a number.',
+  }
+
+  useEffect(() => {
+    const subscription = watch(({ internal_port, protocol, publicly_accessible }, { name }) => {
+      if (name === 'publicly_accessible' || name === 'protocol') {
+        if (publicly_accessible) {
+          setValue(
+            'external_port',
+            protocol === PortProtocolEnum.TCP || protocol === PortProtocolEnum.UDP ? internal_port : 443
+          )
+        } else {
+          setValue('external_port', undefined)
+        }
+      }
+
+      if (name === 'internal_port') {
+        if ((publicly_accessible && protocol === PortProtocolEnum.TCP) || protocol === PortProtocolEnum.UDP) {
+          setValue('external_port', internal_port)
+        }
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [setValue, watch])
+
+  const protocolOptions = Object.keys(PortProtocolEnum)
+    .map((value: string) => ({ label: value, value: value }))
+    .filter((option) =>
+      match(cloudProvider)
+        .with(CloudProviderEnum.SCW, () => option.value !== PortProtocolEnum.UDP)
+        .with(CloudProviderEnum.GCP, () => true)
+        .with(CloudProviderEnum.AWS, () => true)
+        .with(CloudProviderEnum.ON_PREMISE, () => true)
+        .with(CloudProviderEnum.AZURE, () => true)
+        .otherwise(() => false)
+    )
+
+  useEffect(() => {
+    if (watchRewritePublicPath) {
+      const parent = modalRef.current?.parentElement
+
+      if (parent && parent.scrollTo) {
+        parent.scrollTo({
+          top: parent.scrollHeight,
+          behavior: 'smooth',
+        })
+      }
+    }
+  }, [watchRewritePublicPath])
+
+  return (
+    <ModalCrud
+      title={isEdit ? 'Edit port' : 'Set port'}
+      onSubmit={onSubmit}
+      onClose={onClose}
+      loading={loading}
+      isEdit={isEdit}
+      howItWorks={
+        <>
+          <p>
+            Select the port used by your application. You can expose publicly your service via a specific protocol, a
+            dedicated domain will be automatically assigned by Qovery.
+          </p>
+          <p>
+            HTTP/gRPC public ports are always exposed on the port 443. If multiple ports are exposed publicly, the
+            traffic redirection is done based on the subdomain.
+          </p>
+        </>
+      }
+      forwardRef={modalRef}
+    >
+      <Controller
+        name="internal_port"
+        defaultValue=""
+        control={control}
+        rules={{
+          required: 'Please enter an internal port.',
+          pattern,
+        }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            dataTestId="internal-port"
+            className="mb-5"
+            type="number"
+            name={field.name}
+            autoFocus
+            onChange={(e: FormEvent<HTMLInputElement>) => {
+              setValue('name', `p${e.currentTarget.value}`)
+              field.onChange(e)
+            }}
+            value={field.value}
+            label="Application port"
+            error={error?.message}
+            rightElement={
+              isMatchingHealthCheck && (
+                <Tooltip side="left" content="A health check is running on this port">
+                  <div>
+                    <Icon iconName="shield-check" className="text-positive hover:text-positive-hover" />
+                  </div>
+                </Tooltip>
+              )
+            }
+          />
+        )}
+      />
+
+      <Controller
+        name="protocol"
+        control={control}
+        defaultValue={PortProtocolEnum.HTTP}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            label="Select protocol"
+            value={field.value}
+            options={protocolOptions}
+            error={error?.message}
+            onChange={field.onChange}
+            className="mb-5"
+            portal
+          />
+        )}
+      />
+
+      <Controller
+        name="publicly_accessible"
+        control={control}
+        defaultValue={false}
+        render={({ field }) => (
+          <div
+            onClick={() => {
+              field.onChange(!field.value)
+              if (field.value) {
+                setValue('external_port', null)
+              }
+            }}
+            className="mb-5 mr-4 flex"
+          >
+            <InputToggle
+              onChange={field.onChange}
+              value={field.value}
+              title="Publicly exposed"
+              description="This port will be exposed over the internet via a URL automatically generated by Qovery."
+              align="top"
+              small
+            />
+          </div>
+        )}
+      />
+
+      {watchPublicly && (
+        <>
+          <Controller
+            key={`port-${watchPublicly}`}
+            name="external_port"
+            control={control}
+            rules={{
+              required: watchPublicly ? 'Please enter a public port.' : undefined,
+              pattern,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                type="number"
+                name={field.name}
+                onChange={field.onChange}
+                value={watchExternalPort}
+                label="External port"
+                error={error?.message}
+                disabled
+                className="mb-4"
+                rightElement={
+                  watchProtocol !== PortProtocolEnum.TCP &&
+                  watchProtocol !== PortProtocolEnum.UDP && (
+                    <Tooltip content="You cannot configure the port used externally" side="left">
+                      <div>
+                        <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                      </div>
+                    </Tooltip>
+                  )
+                }
+              />
+            )}
+          />
+
+          <div className={hidePortName ? 'hidden' : ''}>
+            <Controller
+              name="name"
+              defaultValue={watchInternalPort ? `p${watchInternalPort}` : ''}
+              control={control}
+              rules={{
+                required: 'Please enter a port name.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  className="mb-1"
+                  name={field.name}
+                  onChange={field.onChange}
+                  value={field.value}
+                  label="Port name"
+                  error={error?.message}
+                />
+              )}
+            />
+            <p className="mb-5 ml-3 text-xs text-neutral-subtle">Default value is p&lt;port_number&gt;.</p>
+          </div>
+
+          <div className="space-y-4">
+            <hr className="border-neutral" />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 py-2">
+                <Controller
+                  name="rewrite_public_path"
+                  control={control}
+                  render={({ field }) => (
+                    <>
+                      <Checkbox
+                        name={field.name}
+                        id={field.name}
+                        checked={field.value}
+                        onCheckedChange={(checked) => {
+                          if (!checked) {
+                            setValue('public_path', '')
+                            setValue('public_path_rewrite', '')
+                          }
+
+                          field.onChange(checked)
+                        }}
+                      />
+                      <label htmlFor="rewrite_public_path" className="text-sm font-medium text-neutral">
+                        Rewrite public URL
+                      </label>
+                    </>
+                  )}
+                />
+              </div>
+              <ExternalLink href="https://kubernetes.github.io/ingress-nginx/examples/rewrite/#rewrite-target">
+                Documentation
+              </ExternalLink>
+            </div>
+
+            {watchRewritePublicPath && (
+              <>
+                <Controller
+                  name="public_path"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      className="mb-1"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Public path"
+                      error={error?.message}
+                      hint="Path prefix on the public URL that will route traffic to this port."
+                    />
+                  )}
+                />
+                <Controller
+                  name="public_path_rewrite"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <InputText
+                      className="mb-1"
+                      name={field.name}
+                      onChange={field.onChange}
+                      value={field.value}
+                      label="Public path rewrite"
+                      error={error?.message}
+                      hint="Rewrite the incoming path before forwarding to your container."
+                    />
+                  )}
+                />
+              </>
+            )}
+          </div>
+        </>
+      )}
+
+      {(watchProtocol === PortProtocolEnum.TCP || watchProtocol === PortProtocolEnum.UDP) && watchPublicly && (
+        <Callout.Root className="mt-4" color="yellow">
+          <Callout.Icon>
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>Activating this feature will add an extra cost to your cloud provider bill.</Callout.Text>
+        </Callout.Root>
+      )}
+
+      {isMatchingHealthCheck && currentProtocol === watchProtocol && getFieldState('internal_port').isDirty && (
+        <Callout.Root className="mt-4" color="neutral">
+          <Callout.Icon>
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>The health check will be updated to use the new port value.</Callout.Text>
+        </Callout.Root>
+      )}
+
+      {isMatchingHealthCheck && currentProtocol !== watchProtocol && (
+        <Callout.Root className="mt-4" color="yellow">
+          <Callout.Icon>
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>Please verify the health check configuration.</Callout.Text>
+        </Callout.Root>
+      )}
+    </ModalCrud>
+  )
+}
+
+export default ApplicationContainerPortCrudModal

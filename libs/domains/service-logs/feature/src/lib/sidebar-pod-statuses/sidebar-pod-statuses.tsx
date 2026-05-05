@@ -1,11 +1,10 @@
+import { useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { AnimatePresence, motion } from 'framer-motion'
 import { type PropsWithChildren, useMemo, useState } from 'react'
-import { useSearchParams } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
-import { ENVIRONMENT_LOGS_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import { Icon, Link, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { usePodColor } from '@qovery/shared/util-hooks'
@@ -30,7 +29,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
     environmentId: service?.environment.id,
     serviceId: service?.id,
   })
-  const [searchParams] = useSearchParams()
+  const searchParams = useSearch({ strict: false })
   const getColorByPod = usePodColor()
 
   const pods: Pod[] = useMemo(() => {
@@ -84,7 +83,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
             color: 'bg-purple-500',
           }))
           .with('ERROR', () => ({ type: 'error', message: 'failing', color: 'bg-red-500' }))
-          .otherwise(() => ({ type: 'other', message: 'skipped', color: 'bg-neutral-400' }))
+          .otherwise(() => ({ type: 'other', message: 'skipped', color: 'bg-surface-neutral-solid' }))
 
         acc[status.type] = {
           count: (acc[status.type]?.count || 0) + 1,
@@ -153,7 +152,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
       {children}
       {service && (
         <motion.aside
-          className="relative my-1 -mr-[317px] flex h-[calc(100vh-72px)] w-[330px] border border-r-0 border-neutral-500 bg-neutral-600"
+          className="relative my-1 -mr-[317px] flex h-[calc(100vh-72px)] w-[330px] border border-r-0 border-neutral bg-surface-neutral-component"
           animate={{
             marginRight: open ? '0' : '-317px',
           }}
@@ -165,7 +164,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
         >
           <div
             className={twMerge(
-              'group h-full w-[10px] min-w-[10px] cursor-pointer bg-neutral-600 transition-colors hover:bg-neutral-500 group-hover:bg-neutral-500'
+              'group h-full w-[10px] min-w-[10px] cursor-pointer bg-surface-neutral-component transition-colors hover:bg-surface-neutral-componentActive group-hover:bg-surface-neutral-componentActive'
             )}
             onClick={toggleOpen}
           >
@@ -174,7 +173,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
               onClick={toggleOpen}
               className={twMerge(
                 clsx(
-                  'absolute top-1 flex h-9 items-center justify-center gap-1.5 rounded-l-full border border-r-0 border-neutral-500 bg-neutral-600 pl-2 pr-1 text-xs transition-colors group-hover:bg-neutral-500',
+                  'absolute top-1 flex h-9 items-center justify-center gap-1.5 rounded-l-full border border-r-0 border-neutral bg-surface-neutral-component pl-2 pr-1 text-xs transition-colors group-hover:bg-surface-neutral-componentActive',
                   {
                     '-left-[105.5px]': !open,
                     '-left-9 w-9 pl-3 pr-2': open,
@@ -200,7 +199,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                 exit={{ opacity: 1 }}
                 transition={{ delay: 0.1 }}
               >
-                <div className="flex flex-col items-center justify-center gap-4 rounded bg-neutral-550 p-6">
+                <div className="flex flex-col items-center justify-center gap-4 rounded bg-surface-neutral-componentHover p-6">
                   <DonutChart width={81} height={81} items={segments} innerRadius={30} outerRadius={40} />
                   <div className="flex flex-col items-center gap-1 text-center">
                     {segments.length > 0 ? (
@@ -231,7 +230,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                         )}
                       </p>
                     ) : (
-                      <p className="text-sm font-medium text-neutral-250">No instances</p>
+                      <p className="text-sm font-medium text-neutral">No instances</p>
                     )}
                     <div className="flex flex-wrap justify-center gap-2 text-sm">
                       {Object.entries(podStatusCount).map(
@@ -256,10 +255,13 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                         return (
                           <div
                             key={pod.podName}
-                            className={clsx('flex flex-col gap-3 rounded border-l-4 bg-neutral-650 p-3 pl-5 text-sm', {
-                              'border-red-500': pod.state === 'ERROR',
-                              'border-green-500': pod.state === 'COMPLETED',
-                            })}
+                            className={clsx(
+                              'flex flex-col gap-3 rounded border-l-4 bg-surface-neutral-subtle p-3 pl-5 text-sm',
+                              {
+                                'border-red-500': pod.state === 'ERROR',
+                                'border-green-500': pod.state === 'COMPLETED',
+                              }
+                            )}
                           >
                             <p className="flex flex-col gap-1">
                               {pod.started_at && (
@@ -284,17 +286,20 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                                   variant="surface"
                                   color="neutral"
                                   size="xs"
-                                  to={
-                                    ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
-                                    SERVICE_LOGS_URL(
-                                      service?.id,
-                                      searchParams.get('pod_name') === pod.podName ? '' : pod.podName
-                                    )
-                                  }
+                                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                                  params={{
+                                    organizationId,
+                                    projectId,
+                                    environmentId: service.environment.id,
+                                    serviceId: service.id,
+                                  }}
+                                  search={{
+                                    instance: searchParams.instance === pod.podName ? '' : pod.podName,
+                                  }}
                                   className={twMerge(
                                     clsx('gap-1.5 font-code', {
-                                      'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
-                                        searchParams.get('pod_name') === pod.podName,
+                                      'outline outline-1 outline-brand-strong hover:!border-brand-strong dark:border-brand-strong':
+                                        searchParams.instance === pod.podName,
                                     })
                                   )}
                                 >
@@ -331,7 +336,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                     ).map(([errorKey, { error, pods }]) => (
                       <div
                         key={errorKey}
-                        className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-neutral-650 p-3 pl-5 text-sm text-neutral-250"
+                        className="flex flex-col gap-3 rounded border-l-4 border-red-500 bg-surface-neutral-subtle p-3 pl-5 text-sm text-neutral"
                       >
                         <p>
                           {error.reason}:{error.message}
@@ -344,17 +349,20 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                                 variant="surface"
                                 color="neutral"
                                 size="xs"
-                                to={
-                                  ENVIRONMENT_LOGS_URL(organizationId, projectId, service.environment.id) +
-                                  SERVICE_LOGS_URL(
-                                    service?.id,
-                                    searchParams.get('pod_name') === pod.podName ? '' : pod.podName
-                                  )
-                                }
+                                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                                params={{
+                                  organizationId,
+                                  projectId,
+                                  environmentId: service.environment.id,
+                                  serviceId: service.id,
+                                }}
+                                search={{
+                                  instance: searchParams.instance === pod.podName ? '' : pod.podName,
+                                }}
                                 className={twMerge(
                                   clsx('gap-1.5 font-code', {
-                                    'outline outline-1 outline-brand-400 hover:!border-brand-400 dark:border-brand-400':
-                                      searchParams.get('pod_name') === pod.podName,
+                                    'outline outline-1 outline-brand-strong hover:!border-brand-strong dark:border-brand-strong':
+                                      searchParams.instance === pod.podName,
                                   })
                                 )}
                               >
@@ -371,7 +379,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                     ))
                   )
                 ) : (
-                  <div className="flex h-32 w-full flex-col items-center justify-center gap-1 rounded bg-neutral-550 px-5 text-center text-sm text-neutral-250">
+                  <div className="flex h-32 w-full flex-col items-center justify-center gap-1 rounded bg-surface-neutral-componentHover px-5 text-center text-sm text-neutral">
                     {segments.length > 0 ? (
                       <>
                         <p className="font-medium">Everything running fine</p>

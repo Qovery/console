@@ -179,6 +179,18 @@ export function getNewConsoleUrl(currentUrl = window.location.href): string | nu
   return url.toString()
 }
 
+export function getLegacyConsoleUrl(currentUrl = window.location.href): string | null {
+  const url = new URL(currentUrl)
+
+  if (!url.hostname.startsWith('new-console.')) {
+    return null
+  }
+
+  url.hostname = url.hostname.replace(/^new-console\./, 'console.')
+
+  return url.toString()
+}
+
 export function shouldBypassLegacyConsoleRedirect(search = window.location.search): boolean {
   const searchParams = new URLSearchParams(search)
   return searchParams.get(LEGACY_CONSOLE_BYPASS_QUERY_PARAM) === '1'

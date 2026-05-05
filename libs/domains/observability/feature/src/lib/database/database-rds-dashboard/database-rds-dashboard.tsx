@@ -1,8 +1,8 @@
+import { useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { useParams } from 'react-router-dom'
 import { type Database } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
-import { Button, Callout, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
+import { Button, Chart, Heading, Icon, InputSelectSmall, Section, Tooltip } from '@qovery/shared/ui'
 import { useEnvironment } from '../../hooks/use-environment/use-environment'
 import { DashboardProvider, useDashboardContext } from '../../util-filter/dashboard-context'
 import { CardAvailableRam } from './card-available-ram/card-available-ram'
@@ -23,9 +23,9 @@ import { SelectTimeRange } from './select-time-range/select-time-range'
 import { generateDbInstance } from './util/generate-db-instance'
 
 function DatabaseRdsDashboardContent() {
-  const { environmentId = '', databaseId = '' } = useParams()
+  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
 
-  const { data: service } = useService({ serviceId: databaseId })
+  const { data: service } = useService({ serviceId })
   const { data: environment } = useEnvironment({ environmentId })
   const {
     expandCharts,
@@ -42,7 +42,7 @@ function DatabaseRdsDashboardContent() {
 
   if (!environment || !service)
     return (
-      <div className="flex h-full w-full items-center justify-center p-5">
+      <div className="flex min-h-page-container w-full items-center justify-center p-5">
         <Chart.Loader />
       </div>
     )
@@ -52,71 +52,76 @@ function DatabaseRdsDashboardContent() {
 
   return (
     <div className="isolate">
-      <div className="sticky top-16 z-10 flex h-[68px] w-full items-center justify-between gap-3 border-b border-neutral-250 bg-white px-8">
-        <div className="flex gap-3">
-          <Tooltip
-            content={
-              <span>
-                Live refresh (15s) <br />
-                Only for time ranges ≤ 1h
-              </span>
-            }
-          >
-            <Button
-              variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
-              color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
-              size="md"
-              className={clsx('gap-1.5', isLiveUpdateEnabled && 'border border-transparent')}
-              onClick={() => {
-                if (!isLiveUpdateEnabled) {
-                  if (timeRange !== '5m' && timeRange !== '15m' && timeRange !== '30m' && timeRange !== '1h') {
-                    handleTimeRangeChange('15m')
-                  }
-                }
-                setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
-              }}
+      <div className="bg-surface sticky top-[45px] z-header h-14 w-full bg-background">
+        <div className="mx-8 flex min-h-14 flex-col justify-between gap-3 border-b border-neutral py-3 md:h-full md:min-h-0 md:flex-row md:items-center md:py-0">
+          <div className="flex flex-wrap gap-2">
+            <Tooltip
+              content={
+                <span>
+                  Live refresh (15s) <br />
+                  Only for time ranges ≤ 1h
+                </span>
+              }
             >
-              <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
-              Live
+              <Button
+                variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
+                color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
+                size="md"
+                className={clsx('gap-1.5 pl-2.5', isLiveUpdateEnabled && 'border border-transparent')}
+                onClick={() => {
+                  if (!isLiveUpdateEnabled) {
+                    if (timeRange !== '5m' && timeRange !== '15m' && timeRange !== '30m' && timeRange !== '1h') {
+                      handleTimeRangeChange('15m')
+                    }
+                  }
+                  setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
+                }}
+              >
+                <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
+                Live
+              </Button>
+            </Tooltip>
+            <SelectTimeRange />
+            <InputSelectSmall
+              name="timezone"
+              className="w-[120px] [&>i]:top-2"
+              inputClassName="h-8"
+              items={[
+                { label: 'Local Time', value: 'local' },
+                { label: 'UTC', value: 'utc' },
+              ]}
+              defaultValue={useLocalTime ? 'local' : 'utc'}
+              onChange={(e) => setUseLocalTime(e === 'local')}
+            />
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="plain"
+              size="xs"
+              className="flex items-center gap-1"
+              onClick={() => setHideEvents(!hideEvents)}
+            >
+              {hideEvents ? 'Show events' : 'Hide events'}
+              <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
             </Button>
-          </Tooltip>
-          <SelectTimeRange />
-          <InputSelectSmall
-            name="timezone"
-            className="w-[120px]"
-            items={[
-              { label: 'Local Time', value: 'local' },
-              { label: 'UTC', value: 'utc' },
-            ]}
-            defaultValue={useLocalTime ? 'local' : 'utc'}
-            onChange={(e) => setUseLocalTime(e === 'local')}
-          />
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="plain"
-            size="xs"
-            className="flex items-center gap-1"
-            onClick={() => setHideEvents(!hideEvents)}
-          >
-            {hideEvents ? 'Show events' : 'Hide events'}
-            <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
-          </Button>
-          <Button
-            variant="plain"
-            size="xs"
-            className="flex items-center gap-1"
-            onClick={() => setExpandCharts(!expandCharts)}
-          >
-            {expandCharts ? 'Collapse charts' : 'Expand charts'}
-            <Icon iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'} iconStyle="light" />
-          </Button>
+            <Button
+              variant="plain"
+              size="xs"
+              className="flex items-center gap-1"
+              onClick={() => setExpandCharts(!expandCharts)}
+            >
+              {expandCharts ? 'Collapse charts' : 'Expand charts'}
+              <Icon iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'} iconStyle="light" />
+            </Button>
+          </div>
         </div>
       </div>
-      <div className="space-y-10 px-8 py-10">
+      <div className="space-y-8 px-8 py-8">
         <Section className="gap-4">
-          <Heading weight="medium">Overview</Heading>
-          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 lg:grid-cols-3')}>
+          <Heading weight="medium" level={2}>
+            Health overview
+          </Heading>
+          <div className={clsx('grid h-full gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3')}>
             <CardUnvacuumedTransactions clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgDbConnections clusterId={environment.cluster_id} dbInstance={dbInstance} />
             <CardAvgCpuUtilization clusterId={environment.cluster_id} dbInstance={dbInstance} />
@@ -126,51 +131,57 @@ function DatabaseRdsDashboardContent() {
         </Section>
 
         <Section className="gap-4">
-          <Heading weight="medium">Resources</Heading>
+          <Heading weight="medium" level={2}>
+            Resources
+          </Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <RdsCpuChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+              <RdsCpuChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <RdsRamChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+              <RdsRamChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsDiskQueueDepthChart
-                serviceId={databaseId}
+                serviceId={serviceId}
                 clusterId={environment.cluster_id}
                 dbInstance={dbInstance}
               />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <RdsConnectionsChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+              <RdsConnectionsChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
           </div>
         </Section>
 
         <Section className="gap-4">
-          <Heading weight="medium">Query Performance</Heading>
+          <Heading weight="medium" level={2}>
+            Query performance
+          </Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <RdsWriteLatencyChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+              <RdsWriteLatencyChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <RdsReadLatencyChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+              <RdsReadLatencyChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
           </div>
         </Section>
 
         <Section className="gap-4">
-          <Heading weight="medium">Storage & I/O</Heading>
+          <Heading weight="medium" level={2}>
+            Storage & I/O
+          </Heading>
           <div className={clsx('grid gap-3', expandCharts ? 'grid-cols-1' : 'md:grid-cols-1 xl:grid-cols-2')}>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <RdsWriteIopChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+              <RdsWriteIopChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
-              <RdsReadIopChart serviceId={databaseId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+              <RdsReadIopChart serviceId={serviceId} clusterId={environment.cluster_id} dbInstance={dbInstance} />
             </div>
-            <div className="overflow-hidden rounded border border-neutral-250">
+            <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
               <RdsStorageAvailableChart
-                serviceId={databaseId}
+                serviceId={serviceId}
                 clusterId={environment.cluster_id}
                 dbInstance={dbInstance}
                 storageResourceInGiB={(service as Database).storage}
@@ -184,8 +195,10 @@ function DatabaseRdsDashboardContent() {
 }
 
 export function DatabaseRdsDashboard() {
+  const { organizationId = '' } = useParams({ strict: false })
+
   return (
-    <DashboardProvider>
+    <DashboardProvider organizationId={organizationId}>
       <DatabaseRdsDashboardContent />
     </DashboardProvider>
   )

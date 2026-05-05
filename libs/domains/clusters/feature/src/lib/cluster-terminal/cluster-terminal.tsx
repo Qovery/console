@@ -2,15 +2,14 @@ import { type QueryClient } from '@tanstack/react-query'
 import { AttachAddon } from '@xterm/addon-attach'
 import { FitAddon } from '@xterm/addon-fit'
 import { type ITerminalAddon } from '@xterm/xterm'
+import Color from 'color'
 import { DebugFlavor } from 'qovery-ws-typescript-axios'
-import { type MouseEvent as MouseDownEvent, memo, useCallback, useContext, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { XTerm } from 'react-xtermjs'
-import { Button, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
+import { LoaderSpinner, toast } from '@qovery/shared/ui'
+import { useTerminalReadiness } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
-import useClusterRunningStatus from '../hooks/use-cluster-running-status/use-cluster-running-status'
-import { ClusterTerminalContext } from './cluster-terminal-provider'
 
 const MemoizedXTerm = memo(XTerm)
 
@@ -20,58 +19,55 @@ export interface ClusterTerminalProps {
 }
 
 export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalProps) {
-  const { data: runningStatuses } = useClusterRunningStatus({
-    organizationId,
-    clusterId,
-  })
-
-  const isRunningStatusesLoading = typeof runningStatuses !== 'object'
-
-  const { setOpen } = useContext(ClusterTerminalContext)
-  const MIN_TERMINAL_HEIGHT = 248
-  const MAX_TERMINAL_HEIGHT = document.body.clientHeight - 64 - 60 // 64 (navbar) + 60 (terminal header)
-  const [terminalParentHeight, setTerminalParentHeight] = useState(MIN_TERMINAL_HEIGHT)
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
-  const isTerminalLoading = addons.length < 2 || isRunningStatusesLoading
-  const [showDelayedLoader, setShowDelayedLoader] = useState(true)
+  const isTerminalLoading = addons.length < 2
+  const { attachWebSocket, detachWebSocket, isTerminalReady } = useTerminalReadiness()
+  const showDelayedLoader = !isTerminalReady
   const fitAddon = addons[0] as FitAddon | undefined
 
-  // Lock body scroll when terminal is open
-  useEffect(() => {
-    const originalStyle = window.getComputedStyle(document.body).overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      document.body.style.overflow = originalStyle
-    }
-  }, [])
+  const getCssVariableHex = (variableName: string): string => {
+    const styles = getComputedStyle(document.documentElement)
+    return Color(styles.getPropertyValue(variableName)).hex()
+  }
 
-  // Hack to avoid having connection delay with server
-  useEffect(() => {
-    if (!isTerminalLoading) {
-      const timer = setTimeout(() => setShowDelayedLoader(false), 4_000)
-      return () => clearTimeout(timer)
-    }
-    return () => null
-  }, [isTerminalLoading])
+  const backgroundColor = getCssVariableHex('--background-1')
+  const foreground = getCssVariableHex('--neutral-12')
+  const selectionBackground = getCssVariableHex('--brand-3')
+  const selectionForeground = getCssVariableHex('--neutral-12')
+  const terminalOptions = useMemo(
+    () => ({
+      theme: {
+        background: backgroundColor,
+        foreground: foreground,
+        cursor: foreground,
+        cursorAccent: backgroundColor,
+        selectionBackground: selectionBackground,
+        selectionForeground: selectionForeground,
+      },
+    }),
+    [backgroundColor, foreground, selectionBackground, selectionForeground]
+  )
 
   const onOpenHandler = useCallback(
     (_: QueryClient, event: Event) => {
       const websocket = event.target as WebSocket
       const fitAddon = new FitAddon()
       // As WS are open twice in dev mode / strict mode it doesn't happens in production
+      attachWebSocket(websocket)
       setAddons([fitAddon, new AttachAddon(websocket)])
     },
-    [setAddons]
+    [attachWebSocket, setAddons]
   )
 
   const onCloseHandler = useCallback(
     (_: QueryClient, event: CloseEvent) => {
+      detachWebSocket()
+
       if (event.code !== 1006 && event.reason) {
-        toast('ERROR', 'Not available', event.reason)
-        setOpen(false)
+        toast('error', 'Not available', event.reason)
       }
     },
-    [setOpen]
+    [detachWebSocket]
   )
 
   // Necesssary to calculate the number of rows and columns (tty) for the terminal
@@ -98,79 +94,27 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
     if (fitAddon) {
       setTimeout(() => fitAddon.fit(), 0)
     }
-  }, [terminalParentHeight, fitAddon])
+  }, [fitAddon])
 
-  const handleMouseDown = (mouseDownEvent: MouseDownEvent<HTMLButtonElement>) => {
-    const startYPosition = mouseDownEvent.pageY
-    const startHeight = terminalParentHeight
-
-    function onMouseMove(mouseMoveEvent: MouseEvent) {
-      const deltaY = mouseMoveEvent.pageY - startYPosition
-      const newParentHeight = startHeight - deltaY
-
-      setTerminalParentHeight(Math.max(Math.min(newParentHeight, MAX_TERMINAL_HEIGHT), MIN_TERMINAL_HEIGHT))
-    }
-
-    function onMouseUp() {
-      document.body.removeEventListener('mousemove', onMouseMove)
-      document.body.removeEventListener('mouseup', onMouseUp)
-    }
-
-    document.body.addEventListener('mousemove', onMouseMove)
-    document.body.addEventListener('mouseup', onMouseUp)
-  }
-
-  return createPortal(
-    <div className="dark fixed bottom-0 left-0 w-full animate-slidein-up-md-faded bg-neutral-650">
-      <button
-        className="flex h-4 w-full items-center justify-center border-t border-neutral-500 bg-neutral-550 transition-colors hover:bg-neutral-650"
-        type="button"
-        onMouseDown={handleMouseDown}
-      >
-        <Icon iconName="grip-lines" iconStyle="regular" className="text-white" />
-      </button>
-      <div className="flex h-11 justify-end border-y border-neutral-500 px-4 py-2">
-        <div className="flex items-center gap-1">
-          {fitAddon && !showDelayedLoader && (
-            <Button
-              color="neutral"
-              variant="surface"
-              onClick={() => {
-                terminalParentHeight === MAX_TERMINAL_HEIGHT
-                  ? setTerminalParentHeight(MIN_TERMINAL_HEIGHT)
-                  : setTerminalParentHeight(MAX_TERMINAL_HEIGHT)
-              }}
-            >
-              <Icon
-                iconName={terminalParentHeight === MAX_TERMINAL_HEIGHT ? 'chevron-down' : 'chevron-up'}
-                className="text-sm"
-              />
-            </Button>
-          )}
-          <Button color="neutral" variant="surface" onClick={() => setOpen(false)}>
-            Close shell
-            <Icon iconName="xmark" className="ml-2 text-sm" />
-          </Button>
-        </div>
-      </div>
-      <div className="relative min-h-[248px] bg-neutral-700 px-4 py-2" style={{ height: terminalParentHeight }}>
+  return (
+    <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background">
+      <div className="relative h-full flex-1 border-neutral bg-background px-4 py-2">
         {isTerminalLoading ? (
           <div className="flex h-40 items-start justify-center p-5">
             <LoaderSpinner />
           </div>
         ) : (
           <>
-            <MemoizedXTerm className="h-full" addons={addons} />
+            <MemoizedXTerm className="h-full" addons={addons} options={terminalOptions} />
             {showDelayedLoader && (
-              <div className="absolute inset-0 flex items-start justify-center bg-neutral-700 pt-7">
+              <div className="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-7">
                 <LoaderSpinner />
               </div>
             )}
           </>
         )}
       </div>
-    </div>,
-    document.body
+    </div>
   )
 }
 

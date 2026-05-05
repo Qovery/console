@@ -29,6 +29,7 @@ describe('GitRepositorySetting', () => {
       wrapWithReactHookForm(
         <GitRepositorySetting
           disabled={false}
+          organizationId="org-1"
           gitProvider={GitProviderEnum.GITHUB}
           urlRepository="https://github.com/qovery/console"
         />

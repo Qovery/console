@@ -7,7 +7,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
       class="flex flex-col"
     >
       <h1
-        class="text-neutral-400 text-xl font-bold mb-2"
+        class="text-neutral text-2xl font-medium mb-2"
       >
         Values override as file
       </h1>
@@ -16,7 +16,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
       >
         <div>
           <p
-            class="text-sm text-neutral-350"
+            class="text-sm text-neutral-subtle"
           >
             Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
           </p>
@@ -24,7 +24,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
             aria-controls="radix-:rk:"
             aria-expanded="false"
             aria-haspopup="dialog"
-            class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+            class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
             data-state="closed"
             type="button"
           >
@@ -42,11 +42,11 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
             class=""
           >
             <div
-              class="input input--select    "
+              class="input input--select input--label-up"
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs"
+                class="input__label translate-y-[7px] text-sm"
                 for="File source"
               >
                 File source
@@ -71,9 +71,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
                     class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                   >
                     <span
-                      class="mr-1 text-sm text-neutral-400"
+                      class="mr-1 text-sm text-neutral"
                     >
-                      Git repository
+                      None
                     </span>
                     <input
                       aria-autocomplete="list"
@@ -116,20 +116,20 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
                 <input
                   name="File source"
                   type="hidden"
-                  value="GIT_REPOSITORY"
+                  value="NONE"
                 />
               </div>
               <input
                 name="File source"
                 type="hidden"
-                value="GIT_REPOSITORY"
+                value="NONE"
               />
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
               >
-                <span
-                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down text-sm text-neutral-subtle"
                 />
               </div>
             </div>
@@ -139,12 +139,12 @@ exports[`ValuesOverrideFilesSetting should match snapshot with GIT_REPOSITORY ty
           class="flex flex-col"
         >
           <h2
-            class="text-neutral-400 text-base font-bold mb-2"
+            class="text-neutral text-base font-medium mb-2"
           >
             Override from repository
           </h2>
           <p
-            class="mb-6 text-sm text-neutral-350"
+            class="mb-6 text-sm text-neutral-subtle"
           >
             Specify the repository and the path containing the override yaml file to be passed via the “-f” helm argument. More than one file can be used as override by adding them in the path field separated by a semi-colon. If you don’t have a repository, you can set the override manually or via a raw YAML file.
           </p>
@@ -169,7 +169,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
       class="flex flex-col"
     >
       <h1
-        class="text-neutral-400 text-xl font-bold mb-2"
+        class="text-neutral text-2xl font-medium mb-2"
       >
         Values override as file
       </h1>
@@ -178,7 +178,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
       >
         <div>
           <p
-            class="text-sm text-neutral-350"
+            class="text-sm text-neutral-subtle"
           >
             Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
           </p>
@@ -186,7 +186,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
             aria-controls="radix-:r6:"
             aria-expanded="false"
             aria-haspopup="dialog"
-            class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+            class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
             data-state="closed"
             type="button"
           >
@@ -204,11 +204,11 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
             class=""
           >
             <div
-              class="input input--select    "
+              class="input input--select input--label-up"
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs"
+                class="input__label translate-y-[7px] text-sm"
                 for="File source"
               >
                 File source
@@ -233,9 +233,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
                     class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                   >
                     <span
-                      class="mr-1 text-sm text-neutral-400"
+                      class="mr-1 text-sm text-neutral"
                     >
-                      Git repository
+                      None
                     </span>
                     <input
                       aria-autocomplete="list"
@@ -278,20 +278,20 @@ exports[`ValuesOverrideFilesSetting should match snapshot with NONE type 1`] = `
                 <input
                   name="File source"
                   type="hidden"
-                  value="GIT_REPOSITORY"
+                  value="NONE"
                 />
               </div>
               <input
                 name="File source"
                 type="hidden"
-                value="GIT_REPOSITORY"
+                value="NONE"
               />
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
               >
-                <span
-                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down text-sm text-neutral-subtle"
                 />
               </div>
             </div>
@@ -310,7 +310,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
       class="flex flex-col"
     >
       <h1
-        class="text-neutral-400 text-xl font-bold mb-2"
+        class="text-neutral text-2xl font-medium mb-2"
       >
         Values override as file
       </h1>
@@ -319,7 +319,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
       >
         <div>
           <p
-            class="text-sm text-neutral-350"
+            class="text-sm text-neutral-subtle"
           >
             Define the YAML file(s) to be applied as override to the default values.yaml delivered with the chart. It is highly recommended to store the override file(s) in a git repository.
           </p>
@@ -327,7 +327,7 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
             aria-controls="radix-:rd:"
             aria-expanded="false"
             aria-haspopup="dialog"
-            class="cursor-pointer text-sm font-medium text-brand-500 transition hover:text-brand-600"
+            class="hover:text-brandHover cursor-pointer text-sm font-medium text-brand transition"
             data-state="closed"
             type="button"
           >
@@ -345,11 +345,11 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
             class=""
           >
             <div
-              class="input input--select    "
+              class="input input--select input--label-up"
               data-testid="select"
             >
               <label
-                class="!translate-y-0 !text-xs"
+                class="input__label translate-y-[7px] text-sm"
                 for="File source"
               >
                 File source
@@ -374,9 +374,9 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                     class="input-select__value-container input-select__value-container--has-value css-1fdsijx-ValueContainer"
                   >
                     <span
-                      class="mr-1 text-sm text-neutral-400"
+                      class="mr-1 text-sm text-neutral"
                     >
-                      Git repository
+                      None
                     </span>
                     <input
                       aria-autocomplete="list"
@@ -419,20 +419,20 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                 <input
                   name="File source"
                   type="hidden"
-                  value="GIT_REPOSITORY"
+                  value="NONE"
                 />
               </div>
               <input
                 name="File source"
                 type="hidden"
-                value="GIT_REPOSITORY"
+                value="NONE"
               />
               <div
                 class="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2"
               >
-                <span
-                  class="icon-solid-angle-down shrink-0 text-sm text-neutral-400"
-                  role="img"
+                <i
+                  aria-hidden="true"
+                  class="fa-solid fa-angle-down text-sm text-neutral-subtle"
                 />
               </div>
             </div>
@@ -442,12 +442,12 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
           class="flex flex-col"
         >
           <h2
-            class="text-neutral-400 text-base font-bold mb-2"
+            class="text-neutral text-base font-medium mb-2"
           >
             Override with raw Yaml
           </h2>
           <p
-            class="mb-6 text-sm text-neutral-350"
+            class="mb-6 text-sm text-neutral-subtle"
           >
             You can define here the YAML containing the overrides you want to apply. The YAML will be stored by Qovery and can be updated later within the settings but no history will be retained.
           </p>
@@ -455,14 +455,14 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
             class="flex flex-col gap-3"
           >
             <div
-              class="mb-5 rounded border border-neutral-250 bg-neutral-100 w-full"
+              class="mb-5 rounded border border-neutral bg-surface-neutral-subtle w-full"
               data-testid="block-content"
             >
               <div
-                class="flex h-9 items-center justify-between border-b border-neutral-250 px-4"
+                class="flex h-9 items-center justify-between border-b border-neutral px-4"
               >
                 <h2
-                  class="text-ssm font-medium text-neutral-400"
+                  class="text-ssm font-medium text-neutral"
                 >
                   Raw YAML
                 </h2>
@@ -475,20 +475,20 @@ exports[`ValuesOverrideFilesSetting should match snapshot with YAML type 1`] = `
                 >
                   <i
                     aria-hidden="true"
-                    class="fa-solid fa-wave-pulse text-neutral-350"
+                    class="fa-regular fa-wave-pulse text-neutral-subtle"
                   />
                   <p
-                    class="mb-3 mt-1 text-xs font-medium text-neutral-350"
+                    class="mb-3 mt-1 text-xs font-medium text-neutral-subtle"
                   >
                     No override defined.
                   </p>
                   <button
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none bg-white dark:bg-neutral-600 outline-brand-500 text-sm h-9 px-3 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral"
                     type="button"
                   >
                     <i
                       aria-hidden="true"
-                      class="fa-solid fa-plus mr-2"
+                      class="fa-regular fa-plus mr-2"
                     />
                     Create override
                   </button>

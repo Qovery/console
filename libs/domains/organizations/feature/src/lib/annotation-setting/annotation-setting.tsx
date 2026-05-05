@@ -1,12 +1,12 @@
+import { useParams } from '@tanstack/react-router'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, Tooltip, useModal } from '@qovery/shared/ui'
 import { AnnotationCreateEditModal } from '../annotation-create-edit-modal/annotation-create-edit-modal'
 import { useAnnotationsGroups } from '../hooks/use-annotations-groups/use-annotations-groups'
 
 export function AnnotationSetting() {
   const { control } = useFormContext()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: annotationsGroups = [] } = useAnnotationsGroups({ organizationId })
   const { openModal, closeModal } = useModal()
 
@@ -19,7 +19,7 @@ export function AnnotationSetting() {
           label="Annotation Groups (optional)"
           options={annotationsGroups.map((group) => ({
             label: (
-              <span className="flex items-center gap-3">
+              <span className="flex items-center gap-1">
                 <span>{group.name}</span>
                 <Tooltip
                   classNameContent="z-10"
@@ -34,7 +34,7 @@ export function AnnotationSetting() {
                   }
                 >
                   <span>
-                    <Icon iconName="circle-info" iconStyle="regular" className="text-base" />
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtl text-sm" />
                   </span>
                 </Tooltip>
               </span>

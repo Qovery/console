@@ -24,11 +24,6 @@ jest.mock('@qovery/shared/ui', () => {
   }
 })
 
-jest.mock('../empty-state/empty-state', () => ({
-  EmptyState: ({ docLinks, expand }: { docLinks: unknown[]; expand: boolean }) =>
-    docLinks.length > 0 && expand ? <div data-testid="empty-state">Empty State</div> : null,
-}))
-
 jest.mock('../assistant-message/assistant-message', () => ({
   AssistantMessage: ({ message }: { message: Message }) => (
     <div data-testid={`assistant-message-${message.id}`}>{message.text}</div>
@@ -53,8 +48,6 @@ describe('MessageList', () => {
     scrollAreaRef,
     expand: false,
     thread: [] as Message[],
-    docLinks: [],
-    isCopilotEnabled: true,
     onSuggestionClick: mockOnSuggestionClick,
     isLoading: false,
     streamingMessage: '',
@@ -75,10 +68,10 @@ describe('MessageList', () => {
   })
 
   describe('rendering', () => {
-    it('should render empty state when thread is empty and expand is true', () => {
-      render(<MessageList {...defaultProps} expand={true} docLinks={[{ label: 'Test', link: 'https://test.com' }]} />)
+    it('should render no messages when thread is empty', () => {
+      const { container } = render(<MessageList {...defaultProps} expand={true} />)
 
-      expect(screen.getByTestId('empty-state')).toBeInTheDocument()
+      expect(container).not.toHaveTextContent('Empty State')
     })
 
     it('should not render empty state when thread has messages', () => {
@@ -235,7 +228,7 @@ describe('MessageList', () => {
       const userMessage = container.querySelector('.ml-auto')
       expect(userMessage).toBeInTheDocument()
       expect(userMessage).toHaveClass('rounded-[1.5rem]')
-      expect(userMessage).toHaveClass('bg-brand-50')
+      expect(userMessage).toHaveClass('bg-surface-brand-subtle')
     })
   })
 })

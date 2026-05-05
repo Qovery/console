@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`GitPublicRepositorySettings should match snapshot 1`] = `
 <body>
@@ -13,19 +13,20 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input     "
+            class="input group"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-[7px] text-sm"
                 for="Public repository URL (.git)"
               >
                 Public repository URL (.git)
               </label>
               <input
-                class="input__value "
+                autocomplete="off"
+                class="input__value"
                 data-testid="input-text"
                 id="Public repository URL (.git)"
                 name="repository"
@@ -37,7 +38,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         </div>
       </div>
       <a
-        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-sky-500 hover:text-sky-600 text-xs ml-3"
+        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-xs ml-3"
         href="https://github.com/qovery/console"
         rel="noopener noreferrer"
         target="_blank"
@@ -45,7 +46,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         Go to repository
         <i
           aria-hidden="true"
-          class="fa-solid fa-arrow-up-right-from-square text-2xs leading-4"
+          class="fa-regular fa-arrow-up-right-from-square text-2xs leading-4"
         />
       </a>
     </div>
@@ -58,19 +59,20 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
       >
         <div
           aria-label="input-container"
-          class="input     "
+          class="input group"
         >
           <div
             class=""
           >
             <label
-              class="translate-y-2 text-sm"
+              class="input__label translate-y-[7px] text-sm"
               for="Branch"
             >
               Branch
             </label>
             <input
-              class="input__value "
+              autocomplete="off"
+              class="input__value"
               data-testid="input-text"
               id="Branch"
               name="branch"
@@ -91,19 +93,20 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         >
           <div
             aria-label="input-container"
-            class="input    input--label-up "
+            class="input group input--label-up"
           >
             <div
               class=""
             >
               <label
-                class="translate-y-2 text-sm"
+                class="input__label translate-y-[7px] text-sm !transition-none"
                 for="Root service path"
               >
                 Root service path
               </label>
               <input
-                class="input__value "
+                autocomplete="off"
+                class="input__value"
                 data-testid="input-text"
                 id="Root service path"
                 name="root_path"
@@ -115,7 +118,7 @@ exports[`GitPublicRepositorySettings should match snapshot 1`] = `
         </div>
       </div>
       <p
-        class="ml-4 mt-1 text-xs text-neutral-350"
+        class="ml-4 mt-1 text-xs text-neutral-subtle"
       >
         Provide the path in the repository where the service is located
       </p>

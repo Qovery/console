@@ -1,34 +1,3 @@
-const colorsZinc = {
-  50: '#FFFFFF',
-  100: '#F8F9FC',
-  150: '#EDF1F7',
-  200: '#E2E9F3',
-  250: '#C6D3E7',
-  300: '#A0AFC5',
-  350: '#67778E',
-  400: '#383E50',
-  500: '#2A3041',
-  550: '#212738',
-  600: '#1A2031',
-  650: '#151B2B',
-  700: '#101420',
-  800: '#0B0E16',
-  900: '#000000',
-}
-
-const colorsIndigo = {
-  50: '#F2F3FE',
-  100: '#E0DDFC',
-  200: '#C2BCFA',
-  300: '#A097F2',
-  400: '#847AE6',
-  500: '#5B50D6',
-  600: '#433AB8',
-  700: '#2F289A',
-  800: '#1F197C',
-  900: '#130F66',
-}
-
 const slideEntrances = () => {
   const genSlide = (suffix, offset) => ({
     [`slidein-up-${suffix}`]: {
@@ -88,26 +57,44 @@ const easingFunctions = {
 
 // tailwind-workspace-preset.js
 module.exports = {
-  darkMode: ['class'],
+  darkMode: ['selector', '[data-theme="dark"]'],
   theme: {
+    container: {
+      screens: {
+        xl: '1280px',
+        '2xl': '1536px',
+      },
+    },
     extend: {
+      zIndex: {
+        header: 'var(--header-zindex)',
+        dropdown: 'var(--dropdown-zindex)',
+        overlay: 'var(--overlay-zindex)',
+        modal: 'var(--modal-zindex)',
+        tooltip: 'var(--tooltip-zindex)',
+        toast: 'var(--toast-zindex)',
+      },
       transitionProperty: {
         label: 'transform, font-size',
       },
       spacing: {
         'right-help-sidebar': '22.5rem',
-        'navbar-height': '4rem',
+        'navbar-height': '2.75rem',
+        'breadcrumb-height': '4rem',
       },
       maxWidth: {
         'content-with-navigation-left': '44.5rem',
       },
       minHeight: {
-        'page-container': 'calc(100vh - theme(spacing.navbar-height))',
-        'page-container-wbanner': 'calc(100vh - theme(spacing.navbar-height) - 40px)',
-        'page-container-wprogressbar': 'calc(100vh - theme(spacing.navbar-height) - 6px)',
+        'page-container': 'calc(100vh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height))',
+        'page-container-wbanner':
+          'calc(100vh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - 40px)',
+        'page-container-wprogressbar':
+          'calc(100vh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - 6px)',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],
+        brand: ['ReplicaLL', 'Roboto', 'Helvetica', 'sans-serif'],
         code: ['Hack', 'sans-serif'],
         icons: ['FontAwesome'],
       },
@@ -161,13 +148,11 @@ module.exports = {
       },
       backgroundImage: {
         'scroll-shadow-bottom':
-          'linear-gradient(180deg,hsla(0,0%,100%,0) 40%,hsla(0,0%,100%,0)),radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.13),transparent)',
+          'linear-gradient(180deg,var(--background-1) 0%,transparent 75%),radial-gradient(farthest-side at 50% 0,var(--neutral-invert-12),transparent)',
         'scroll-shadow-up':
-          'radial-gradient(farthest-side at 50% 0,rgba(0,0,0,.13),transparent),linear-gradient(180deg,hsla(0,0%,100%,0) 40%,hsla(0,0%,100%,0))',
+          'radial-gradient(farthest-side at 50% 0,var(--neutral-invert-12),transparent),linear-gradient(180deg,var(--background-1) 0%,transparent 75%)',
       },
       colors: {
-        brand: colorsIndigo,
-        indigo: colorsIndigo,
         purple: {
           50: '#FCF4FF',
           100: '#F7DFFE',
@@ -252,9 +237,155 @@ module.exports = {
           800: '#93141A',
           900: '#7A0C1A',
         },
-        zink: colorsZinc,
-        neutral: colorsZinc,
+        neutral: {
+          DEFAULT: 'var(--neutral-12)',
+          subtle: 'var(--neutral-11)',
+          disabled: 'var(--neutral-10)',
+          strong: 'var(--neutral-9)',
+        },
+        background: {
+          DEFAULT: 'var(--background-1)',
+          secondary: 'var(--background-2)',
+          overlay: 'var(--background-overlay)',
+        },
+        surface: {
+          neutral: {
+            DEFAULT: 'var(--neutral-1)',
+            subtle: 'var(--neutral-2)',
+            component: 'var(--neutral-3)',
+            componentHover: 'var(--neutral-4)',
+            componentActive: 'var(--neutral-5)',
+            solid: 'var(--neutral-9)',
+            contrasted: 'var(--contrast)',
+          },
+          neutralInvert: {
+            DEFAULT: 'var(--neutral-invert-1)',
+            subtle: 'var(--neutral-invert-2)',
+            component: 'var(--neutral-invert-3)',
+          },
+          brand: {
+            solid: 'var(--brand-9)',
+            solidHover: 'var(--brand-10)',
+            component: 'var(--brand-3)',
+            subtle: 'var(--brand-2)',
+          },
+          negative: {
+            solid: 'var(--negative-9)',
+            solidHover: 'var(--negative-10)',
+            component: 'var(--negative-3)',
+            subtle: 'var(--negative-2)',
+          },
+          positive: {
+            solid: 'var(--positive-9)',
+            solidHover: 'var(--positive-10)',
+            component: 'var(--positive-3)',
+            subtle: 'var(--positive-2)',
+          },
+          warning: {
+            solid: 'var(--warning-9)',
+            solidHover: 'var(--warning-10)',
+            component: 'var(--warning-3)',
+            subtle: 'var(--warning-2)',
+          },
+          info: {
+            solid: 'var(--info-9)',
+            solidHover: 'var(--info-10)',
+            component: 'var(--info-3)',
+            subtle: 'var(--info-2)',
+          },
+          accent1: {
+            solid: 'var(--accent-9)',
+            component: 'var(--accent-3)',
+          },
+        },
       },
+      textColor: {
+        neutral: {
+          DEFAULT: 'var(--neutral-12)',
+          subtle: 'var(--neutral-11)',
+          disabled: 'var(--neutral-10)',
+          contrasted: 'var(--contrast)',
+        },
+        neutralInvert: {
+          DEFAULT: 'var(--neutral-invert-12)',
+          subtle: 'var(--neutral-invert-11)',
+          contrasted: 'var(--contrast-inverted)',
+        },
+        brand: { DEFAULT: 'var(--brand-11)', hover: 'var(--brand-10)', strong: 'var(--brand-12)' },
+        info: { DEFAULT: 'var(--info-11)', hover: 'var(--info-10)' },
+        infoInvert: { DEFAULT: 'var(--info-invert-11)' },
+        positive: { DEFAULT: 'var(--positive-11)', hover: 'var(--positive-10)' },
+        positiveInvert: { DEFAULT: 'var(--positive-invert-11)' },
+        negative: { DEFAULT: 'var(--negative-11)', hover: 'var(--negative-10)' },
+        negativeInvert: { DEFAULT: 'var(--negative-invert-11)' },
+        warning: { DEFAULT: 'var(--warning-11)', hover: 'var(--warning-10)' },
+        warningInvert: { DEFAULT: 'var(--warning-invert-11)' },
+        accent1: { DEFAULT: 'var(--accent-11)', hover: 'var(--accent1-10)' },
+      },
+      fill: ({ theme }) => ({
+        ...theme('colors'),
+        neutral: {
+          ...theme('colors.neutral'),
+          DEFAULT: 'var(--neutral-12)',
+          subtle: 'var(--neutral-11)',
+          disabled: 'var(--neutral-10)',
+          strong: 'var(--neutral-9)',
+        },
+      }),
+      stroke: ({ theme }) => ({
+        ...theme('colors'),
+        neutral: {
+          ...theme('colors.neutral'),
+          DEFAULT: 'var(--neutral-12)',
+          subtle: 'var(--neutral-11)',
+          disabled: 'var(--neutral-10)',
+          strong: 'var(--neutral-9)',
+        },
+      }),
+      borderColor: {
+        neutral: {
+          DEFAULT: 'var(--neutral-6)',
+          component: 'var(--neutral-7)',
+          componentHover: 'var(--neutral-8)',
+          strong: 'var(--neutral-9)',
+        },
+        neutralInvert: {
+          DEFAULT: 'var(--neutral-invert-6)',
+        },
+        brand: {
+          DEFAULT: 'var(--brand-9)',
+          strong: 'var(--brand-9)',
+          component: 'var(--brand-alpha-7)',
+          subtle: 'var(--brand-6)',
+          text: 'var(--brand-11)',
+          outline: 'var(--brand-4)',
+        },
+        info: {
+          strong: 'var(--info-9)',
+          component: 'var(--info-alpha-7)',
+          subtle: 'var(--info-6)',
+        },
+        positive: {
+          strong: 'var(--positive-9)',
+          component: 'var(--positive-alpha-7)',
+          subtle: 'var(--positive-6)',
+        },
+        negative: {
+          strong: 'var(--negative-9)',
+          component: 'var(--negative-alpha-7)',
+          subtle: 'var(--negative-6)',
+        },
+        warning: {
+          strong: 'var(--warning-9)',
+          component: 'var(--warning-alpha-7)',
+          subtle: 'var(--warning-6)',
+        },
+        accent1: {
+          strong: 'var(--accent-9)',
+          subtle: 'var(--accent-6)',
+        },
+      },
+      outlineColor: ({ theme }) => theme('borderColor'),
       animation: {
         'action-bar-fade-in': '0.35s cubic-bezier(0.21, 1.02, 0.73, 1) 0s 1 normal forwards actionBarFadeIn',
         'action-bar-fade-out': '0.2s cubic-bezier(0.06, 0.71, 0.55, 1) 0s 1 normal forwards actionBarFadeOut',
@@ -320,40 +451,34 @@ module.exports = {
         },
         loaderDots: {
           '0%': {
-            boxShadow:
-              '0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0)',
+            boxShadow: '0px 0 transparent, 0px 0 transparent, 0px 0 transparent, 0px 0 transparent',
           },
           '12%': {
-            boxShadow:
-              '100px 0 rgba(255, 255, 255, 1), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0)',
+            boxShadow: '100px 0 var(--neutral-5), 0px 0 transparent, 0px 0 transparent, 0px 0 transparent',
           },
           '25%': {
-            boxShadow:
-              '110px 0 rgba(255, 255, 255, 1), 100px 0 rgba(255, 255, 255, 1), 0px 0 rgba(255, 255, 255, 0), 0px 0 rgba(255, 255, 255, 0)',
+            boxShadow: '110px 0 var(--neutral-5), 100px 0 var(--neutral-5), 0px 0 transparent, 0px 0 transparent',
           },
           '36%': {
             boxShadow:
-              '120px 0 rgba(255, 255, 255, 1), 110px 0 rgba(255, 255, 255, 1), 100px 0 rgba(255, 255, 255, 1), 0px 0 rgba(255, 255, 255, 0)',
+              '120px 0 var(--neutral-5), 110px 0 var(--neutral-5), 100px 0 var(--neutral-5), 0px 0 transparent',
           },
           '50%': {
             boxShadow:
-              '130px 0 rgba(255, 255, 255, 1), 120px 0 rgba(255, 255, 255, 1), 110px 0 rgba(255, 255, 255, 1), 100px 0 rgba(255, 255, 255, 1)',
+              '130px 0 var(--neutral-5), 120px 0 var(--neutral-5), 110px 0 var(--neutral-5), 100px 0 var(--neutral-5)',
           },
           '62%': {
             boxShadow:
-              '200px 0 rgba(255, 255, 255, 0), 130px 0 rgba(255, 255, 255, 1), 120px 0 rgba(255, 255, 255, 1), 110px 0 rgba(255, 255, 255, 1)',
+              '200px 0 transparent, 130px 0 var(--neutral-5), 120px 0 var(--neutral-5), 110px 0 var(--neutral-5)',
           },
           '75%': {
-            boxShadow:
-              '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 rgba(255, 255, 255, 1), 120px 0 rgba(255, 255, 255, 1)',
+            boxShadow: '200px 0 transparent, 200px 0 transparent, 130px 0 var(--neutral-5), 120px 0 var(--neutral-5)',
           },
           '87%': {
-            boxShadow:
-              '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 130px 0 rgba(255, 255, 255, 1)',
+            boxShadow: '200px 0 transparent, 200px 0 transparent, 200px 0 transparent, 130px 0 var(--neutral-5)',
           },
           '100%': {
-            boxShadow:
-              '200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0), 200px 0 rgba(255, 255, 255, 0)',
+            boxShadow: '200px 0 transparent, 200px 0 transparent, 200px 0 transparent, 200px 0 transparent',
           },
         },
         'shiny-text': {
@@ -392,5 +517,9 @@ module.exports = {
       after: ['last'],
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addVariant }) {
+      addVariant('retina', '@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi)')
+    },
+  ],
 }

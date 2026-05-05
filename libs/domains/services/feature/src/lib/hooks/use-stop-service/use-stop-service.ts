@@ -1,12 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/services/data-access'
-import {
-  APPLICATION_DEPLOYMENTS_URL,
-  APPLICATION_URL,
-  ENVIRONMENT_LOGS_URL,
-  ENVIRONMENT_STAGES_URL,
-} from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
@@ -34,28 +28,22 @@ export function useStopService({
         queryKey: queries.services.deploymentHistory({ serviceId, serviceType }).queryKey,
       })
 
-      if (data.deployment_request_id) {
-        toast(
-          'SUCCESS',
-          'Your service is queuing',
-          undefined,
-          () =>
-            navigate(APPLICATION_URL(organizationId, projectId, environmentId, data.id) + APPLICATION_DEPLOYMENTS_URL),
-          undefined,
-          'See deployment queue'
-        )
-      } else {
-        // XXX: Waiting for the fix of https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1434
-        // to implement the correct deployment redirection using `execution_id`
-        toast(
-          'SUCCESS',
-          'Your service is stopping',
-          undefined,
-          () => navigate(ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL()),
-          undefined,
-          'See deployment logs'
-        )
-      }
+      toast(
+        'success',
+        'Your service is queuing',
+        undefined,
+        () =>
+          navigate({
+            to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
+            params: {
+              organizationId,
+              projectId,
+              environmentId,
+              serviceId: data.id,
+            },
+          }),
+        'See queue'
+      )
     },
     meta: {
       notifyOnError: true,

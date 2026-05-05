@@ -1,9 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useSearch } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useQueryParams } from 'use-query-params'
 import { type ServiceLog, normalizeServiceLog, serviceLogs } from '@qovery/domains/service-logs/data-access'
 import { queries } from '@qovery/state/util-queries'
-import { queryParamsServiceLogs } from '../../list-service-logs/service-logs-context/service-logs-context'
 
 export interface UseServiceHistoryLogsProps {
   clusterId: string
@@ -36,7 +35,7 @@ const compareTimestamps = (a: bigint, b: bigint) => {
 
 export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }: UseServiceHistoryLogsProps) {
   const queryClient = useQueryClient()
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+  const queryParams = useSearch({ strict: false })
 
   const [accumulatedLogs, setAccumulatedLogs] = useState<ServiceLog[]>([])
   const [currentEndTimestampNs, setCurrentEndTimestampNs] = useState<string | null>(null)

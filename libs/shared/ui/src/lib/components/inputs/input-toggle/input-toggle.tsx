@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type ReactNode, useEffect, useState } from 'react'
 
 export interface InputToggleProps {
@@ -8,23 +9,13 @@ export interface InputToggleProps {
   description?: string
   className?: string
   dataTestId?: string
-  forceAlignTop?: boolean
+  align?: 'center' | 'top'
   disabled?: boolean
   name?: string
 }
 
 export function InputToggle(props: InputToggleProps) {
-  const {
-    small,
-    value,
-    onChange,
-    description,
-    title,
-    className = '',
-    forceAlignTop = false,
-    disabled = false,
-    name,
-  } = props
+  const { small, value, onChange, description, title, className = '', align = 'center', disabled = false, name } = props
 
   const [toggleActive, setToggleActive] = useState(value)
   const [animateEnabled, setAnimateEnabled] = useState(false)
@@ -41,6 +32,7 @@ export function InputToggle(props: InputToggleProps) {
 
   const toggleSizeBg = small ? 'w-8 h-4.5' : 'w-12 h-6'
   const toggleSizeCircle = small ? 'w-3.5 h-3.5' : 'w-5 h-5'
+  const alignmentClass = align === 'top' ? 'items-start' : 'items-center'
 
   const changeToggle = () => {
     if (disabled) return
@@ -54,9 +46,7 @@ export function InputToggle(props: InputToggleProps) {
   return (
     <div
       data-testid="input-toggle"
-      className={`flex text-sm  ${description && !forceAlignTop ? 'items-center' : 'items-start'} ${className} ${
-        disabled ? 'opacity-50' : ''
-      }`}
+      className={clsx('flex text-sm', alignmentClass, className, { 'opacity-50': disabled })}
     >
       <div
         data-testid={props.dataTestId || 'input-toggle-button'}
@@ -74,15 +64,15 @@ export function InputToggle(props: InputToggleProps) {
         />
         <div
           aria-label="bg"
-          className={`${toggleSizeBg} flex items-center rounded-full p-0.5 ${
-            animateEnabled ? 'duration-300 ease-in-out' : ''
-          } ${
-            toggleActive ? `${small ? 'bg-brand-500' : 'bg-brand-500'}` : `${small ? 'bg-neutral-300' : 'bg-gray-300'}`
-          }`}
+          className={clsx(toggleSizeBg, 'flex items-center rounded-full p-0.5', {
+            'duration-300 ease-in-out': animateEnabled,
+            'bg-surface-brand-solid': toggleActive,
+            'bg-surface-neutral-componentActive': !toggleActive,
+          })}
         >
           <div
             aria-label="circle"
-            className={`${toggleSizeCircle} transform rounded-full bg-white shadow-lg ${
+            className={`${toggleSizeCircle} transform rounded-full bg-surface-neutral shadow-lg ${
               animateEnabled ? 'duration-300 ease-in-out' : ''
             } ${toggleActive ? `${small ? 'translate-x-3.5' : 'translate-x-6'}` : ''}`}
           />
@@ -91,10 +81,10 @@ export function InputToggle(props: InputToggleProps) {
       {title && (
         <div
           onClick={changeToggle}
-          className={`${description && forceAlignTop ? 'relative -top-0.5' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''} flex flex-col gap-1`}
+          className={`${description && align === 'top' ? 'relative -top-0.5' : ''} ml-3 ${!disabled ? 'cursor-pointer' : ''} flex flex-col gap-1`}
         >
-          {title && <p className="font-medium text-neutral-400">{title}</p>}
-          {description && <div className="text-neutral-350">{description}</div>}
+          {title && <p className="font-medium text-neutral">{title}</p>}
+          {description && <div className="text-neutral-subtle">{description}</div>}
         </div>
       )}
     </div>

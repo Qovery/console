@@ -10,14 +10,9 @@ export const APPLICATION_VARIABLES_URL = '/variables'
 export const APPLICATION_SETTINGS_URL = '/settings'
 export const APPLICATION_MONITORING_URL = '/monitoring'
 export const APPLICATION_MONITORING_GENERAL_URL = '/dashboard'
-export const APPLICATION_MONITORING_ALERTS_URL = '/alerts'
-export const APPLICATION_MONITORING_ALERTS_CREATION_URL = '/create/alerts'
-export const APPLICATION_MONITORING_ALERT_EDIT_URL = (alertId = ':alertId') => `/alerts/${alertId}/edit`
-export const APPLICATION_MONITORING_ALERT_METRIC_URL = (metric = ':metric') => `/metric/${metric}`
 
 export const APPLICATION_SETTINGS_GENERAL_URL = '/general'
 export const APPLICATION_SETTINGS_RESOURCES_URL = '/resources'
-export const APPLICATION_SETTINGS_CONFIGURE_URL = '/configure'
 export const APPLICATION_SETTINGS_DOCKERFILE_URL = '/dockerfile'
 export const APPLICATION_SETTINGS_VALUES_OVERRIDE_FILE_URL = '/values-override-file'
 export const APPLICATION_SETTINGS_VALUES_OVERRIDE_ARGUMENTS_URL = '/values-override-arguments'

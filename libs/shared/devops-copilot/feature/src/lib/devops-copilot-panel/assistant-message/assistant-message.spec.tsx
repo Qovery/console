@@ -17,11 +17,11 @@ jest.mock('../../utils/icon-utils/icon-utils', () => ({
   },
   getIconClass: (status: string) => {
     const classMap: Record<string, string> = {
-      not_started: 'text-neutral-400',
+      not_started: 'text-neutral',
       in_progress: 'text-blue-500',
       completed: 'text-green-500',
     }
-    return classMap[status] || 'text-neutral-400'
+    return classMap[status] || 'text-neutral'
   },
 }))
 
@@ -152,7 +152,7 @@ describe('AssistantMessage', () => {
       render(<AssistantMessage {...defaultProps} plan={completedPlan} showPlans={{ 'msg-1': true }} />)
 
       const completedDescription = screen.getByText('Completed step')
-      expect(completedDescription).toHaveClass('text-neutral-400')
+      expect(completedDescription).toHaveClass('text-neutral-subtle')
     })
 
     it('should not apply neutral color to in-progress step description', () => {
@@ -163,7 +163,7 @@ describe('AssistantMessage', () => {
       render(<AssistantMessage {...defaultProps} plan={inProgressPlan} showPlans={{ 'msg-1': true }} />)
 
       const inProgressDescription = screen.getByText('In progress step')
-      expect(inProgressDescription).not.toHaveClass('text-neutral-400')
+      expect(inProgressDescription).not.toHaveClass('text-neutral-subtle')
     })
   })
 

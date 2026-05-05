@@ -267,13 +267,13 @@ export function TableHeadHierarchicalFilter({
     if (!isRootLevel) {
       items.push({
         name: 'Back',
-        contentLeft: <Icon iconName="arrow-left" className="delete-hover text-ssm text-neutral-350" />,
+        contentLeft: <Icon iconName="arrow-left" className="delete-hover text-ssm text-neutral-subtle" />,
         onClick: (e) => {
           // Prevent menu from auto-closing
           e.keepOpen = true
           handleBack()
         },
-        textClassName: 'text-neutral-350 delete-hover font-light',
+        textClassName: 'text-neutral-subtle delete-hover font-light',
       })
     }
 
@@ -307,7 +307,7 @@ export function TableHeadHierarchicalFilter({
         contentLeft: (
           <Icon
             iconName="check"
-            className={`text-sm ${('ALL' === item.value && !menuItemSelected) || menuItemSelected?.value === item.value ? 'text-green-400' : 'text-transparent'}`}
+            className={`text-sm ${('ALL' === item.value && !menuItemSelected) || menuItemSelected?.value === item.value ? 'text-positive' : 'text-transparent'}`}
           />
         ),
         // Show ">" icon for all items to indicate they are clickable
@@ -315,7 +315,7 @@ export function TableHeadHierarchicalFilter({
           <Icon
             iconName="arrow-right"
             // Adding menu-item__name class to have same hover css added on menu items
-            className={`text-sm text-neutral-400 ${!item.isLeaf ? 'menu-item__name text-neutral-400' : 'text-transparent'}`}
+            className={`text-sm text-neutral-subtle ${!item.isLeaf ? 'menu-item__name text-neutral' : 'text-transparent'}`}
           />
         ),
         onClick: (e) => {
@@ -379,33 +379,31 @@ export function TableHeadHierarchicalFilter({
         trigger={
           <div className="flex">
             {hasFilter ? (
-              <Button type="button" size="xs" className="whitespace-nowrap pr-6">
+              <Button type="button" color="neutral" size="sm" className="gap-1.5 whitespace-nowrap font-code">
                 {title}
+                <span
+                  role="button"
+                  className="relative flex h-6 cursor-pointer items-center text-xs"
+                  onClick={(event) => cleanFilter(event)}
+                >
+                  <Icon iconName="xmark" />
+                </span>
               </Button>
             ) : (
               <Button
                 type="button"
-                variant={isDark ? 'solid' : 'surface'}
+                variant="surface"
                 color="neutral"
-                size="xs"
-                className="items-center gap-1.5"
+                size="sm"
+                className="items-center gap-1.5 font-code"
               >
                 {title}
-                <Icon iconName="angle-down" className="relative top-[1px]" />
+                <Icon iconName="angle-down" />
               </Button>
             )}
           </div>
         }
       />
-      {hasFilter && (
-        <span
-          role="button"
-          className="relative -left-6 flex h-6 cursor-pointer items-center px-2 text-xs text-neutral-50"
-          onClick={(event) => cleanFilter(event)}
-        >
-          <Icon iconName="xmark" />
-        </span>
-      )}
     </div>
   )
 }

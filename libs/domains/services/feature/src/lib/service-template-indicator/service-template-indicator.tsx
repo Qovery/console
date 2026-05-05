@@ -4,7 +4,7 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { Icon, Indicator, type IndicatorProps, Tooltip } from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 
-const indicatorVariants = cva('rounded-full bg-white', {
+const indicatorVariants = cva('rounded-full bg-surface-neutral', {
   variants: {
     size: {
       md: ['h-6', 'w-6', 'top-2.5', 'right-2.5'],

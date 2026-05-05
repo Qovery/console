@@ -1,5 +1,5 @@
 import { Dialog } from '@radix-ui/react-dialog'
-import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ModalMultiConfirmation, { type ModalMultiConfirmationProps } from './modal-multi-confirmation'
 
 const renderComponent = (props: ModalMultiConfirmationProps) => {
@@ -65,5 +65,20 @@ describe('ModalMultiConfirmation', () => {
     const { container } = renderComponent(props)
 
     expect(container).toMatchSnapshot()
+  })
+
+  it('should disable submit while async callback is pending', async () => {
+    const callback = jest.fn(() => new Promise<void>(() => undefined))
+    const { userEvent } = renderComponent({
+      ...props,
+      callback,
+    })
+
+    await userEvent.click(screen.getByText('one'))
+    await userEvent.click(screen.getByText('two'))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    expect(callback).toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Confirm' })).toBeDisabled()
   })
 })

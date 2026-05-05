@@ -1,11 +1,20 @@
 import { type Cluster, type ClusterFeatureResponseValueObject, type ClusterStatus } from 'qovery-typescript-axios'
-import { INFRA_LOGS_URL } from '@qovery/shared/routes'
+import type { ReactNode } from 'react'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 import { ClusterCard } from './cluster-card'
 
 jest.mock('../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket')
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
 jest.mock('@qovery/shared/util-dates', () => ({
   timeAgo: jest.fn(),
   dateFullFormat: jest.fn(),
@@ -135,6 +144,20 @@ describe('ClusterCard', () => {
     expect(screen.getByText('1.21')).toBeInTheDocument()
   })
 
+  it('should not display version for partially managed cluster', () => {
+    const partiallyManagedCluster = {
+      ...mockCluster,
+      kubernetes: 'PARTIALLY_MANAGED',
+      version: '1.33',
+    } as Cluster
+
+    renderWithProviders(
+      <ClusterCard cluster={partiallyManagedCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />
+    )
+
+    expect(screen.queryByText('1.33')).not.toBeInTheDocument()
+  })
+
   it('should display production badge for production clusters', () => {
     renderWithProviders(<ClusterCard cluster={mockCluster} clusterDeploymentStatus={mockClusterDeploymentStatus} />)
 
@@ -191,6 +214,6 @@ describe('ClusterCard', () => {
 
     const link = screen.getByText('Invalid cloud credentials')
     expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('href', INFRA_LOGS_URL(mockCluster.organization.id, mockCluster.id))
+    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/cluster-logs')
   })
 })

@@ -1,7 +1,7 @@
+import { useLocation } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ServiceStepMetric, type StateEnum, type Status } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
 import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
@@ -64,14 +64,12 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
     (type === 'BUILD' && status === 'BUILDING') || (type === 'DEPLOY' && status === 'DEPLOYING')
 
   const buttonClasses = clsx(
-    'flex items-center gap-1.5 rounded-lg border border-neutral-500 bg-neutral-650 px-2.5 py-1 text-sm font-medium text-neutral-300 transition hover:border-neutral-300 hover:bg-neutral-500',
+    'flex h-8 items-center gap-1.5 rounded-lg border border-neutral bg-surface-neutral px-2.5 text-sm font-medium text-neutral-subtle transition hover:border-neutral-subtle hover:bg-surface-neutral-component',
     {
-      'text-white hover:border-green-500': status === 'SUCCESS',
-      'text-white hover:border-red-500': status === 'ERROR',
-      'text-white hover:border-brand-500': isBuildingOrDeploying,
-      'border-brand-500 bg-neutral-500': isBuildingOrDeploying && isFilterActive(type),
-      'border-green-500': status === 'SUCCESS' && isFilterActive(type),
-      'border-red-500 bg-neutral-500': status === 'ERROR' && isFilterActive(type),
+      'border-neutral-strong bg-surface-neutral-subtle text-neutral': isFilterActive(type),
+      'border-brand-component bg-surface-brand-subtle': isBuildingOrDeploying && isFilterActive(type),
+      'border-positive-strong bg-surface-positive-subtle': status === 'SUCCESS' && isFilterActive(type),
+      'border-negative-strong bg-surface-negative-subtle': status === 'ERROR' && isFilterActive(type),
     }
   )
 
@@ -113,7 +111,7 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
         side="bottom"
       >
         <span>
-          <Icon iconName="circle-info" iconStyle="regular" />
+          <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
         </span>
       </Tooltip>
     </button>
@@ -195,9 +193,9 @@ export function FiltersStageStep({
 const Separator = () => {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="8" fill="none" viewBox="0 0 16 8">
-      <path fill="#383E50" d="M0 8a4 4 0 000-8v8z"></path>
-      <path fill="#383E50" d="M2 3H14V5H2z"></path>
-      <path fill="#383E50" d="M16 8a4 4 0 110-8v8z"></path>
+      <path fill="var(--neutral-6)" d="M0 8a4 4 0 000-8v8z"></path>
+      <path fill="var(--neutral-6)" d="M2 3H14V5H2z"></path>
+      <path fill="var(--neutral-6)" d="M16 8a4 4 0 110-8v8z"></path>
     </svg>
   )
 }

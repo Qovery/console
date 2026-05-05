@@ -1,25 +1,25 @@
-import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { type Toast, toast as toastAction } from 'react-hot-toast'
-import { ToastContent } from '../components/toast/toast'
+import { toast as sonnerToast } from 'sonner'
+import { CustomToast } from '../components/toast/toast'
 
-export enum ToastEnum {
-  SUCCESS = 'SUCCESS',
-  ERROR = 'ERROR',
-  WARNING = 'WARNING',
-}
+export type ToastStatus = 'success' | 'error' | 'warning'
 
 export const toast = (
-  status: ToastEnum | keyof typeof ToastEnum,
+  status: ToastStatus,
   title: string,
   description?: string,
   callback?: () => void,
-  iconAction?: IconName,
-  labelAction?: string,
-  externalLink?: string
+  labelAction?: string
 ) => {
-  return toastAction.success((options: Toast) =>
-    ToastContent(status, options, title, description, callback, iconAction, labelAction, externalLink)
-  )
+  const action = labelAction
+    ? {
+        label: labelAction,
+        onClick: callback,
+      }
+    : undefined
+
+  return sonnerToast.custom((id) => (
+    <CustomToast id={id} status={status} title={title} description={description} action={action} />
+  ))
 }
 
 export default toast

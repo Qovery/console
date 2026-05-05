@@ -15,19 +15,16 @@ export const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, sto
   return (
     <div
       className={twMerge(
-        clsx(
-          'relative z-[1] flex rounded-xl border border-neutral-250 bg-white dark:border-neutral-500 dark:bg-neutral-550',
-          {
-            'border-brand-500 outline outline-[3px] outline-brand-100 dark:outline-1 dark:outline-brand-500': isFocus,
-          }
-        )
+        clsx('relative z-[1] flex rounded-xl border border-neutral bg-background', {
+          'border-brand-strong outline outline-[3px] outline-brand-outline': isFocus,
+        })
       )}
     >
       <textarea
         ref={ref}
         placeholder="Ask Qovery Copilot"
         autoFocus
-        className="min-h-12 w-full resize-none rounded-xl px-4 py-[13px] text-sm leading-[22px] text-neutral-400 transition-[height] placeholder:text-neutral-350 focus-visible:outline-none dark:border-neutral-350 dark:bg-transparent dark:text-white dark:placeholder:text-neutral-250"
+        className="min-h-12 w-full resize-none rounded-xl bg-transparent px-4 py-[13px] text-sm leading-[22px] text-neutral transition-[height] placeholder:text-neutral-subtle focus-visible:outline-none"
         onFocus={() => setIsFocus(true)}
         onBlur={() => setIsFocus(false)}
         {...props}
@@ -39,7 +36,7 @@ export const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, sto
             type="button"
             variant="surface"
             radius="full"
-            className="group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-500 transition-colors dark:text-white"
+            className="group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-subtle transition-colors hover:text-neutral"
             onClick={() => {
               if (loading) {
                 stop?.()
@@ -52,7 +49,7 @@ export const Input = forwardRef<HTMLTextAreaElement, InputProps>(({ onClick, sto
               <Icon iconName="arrow-up" className={loading ? 'opacity-0' : ''} />
             ) : (
               <>
-                <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:opacity-0" theme="dark" />
+                <LoaderSpinner className="absolute left-0 right-0 m-auto group-hover:opacity-0" />
                 <Icon
                   className="absolute left-0 right-0 m-auto opacity-0 group-hover:opacity-100"
                   iconName="stop"

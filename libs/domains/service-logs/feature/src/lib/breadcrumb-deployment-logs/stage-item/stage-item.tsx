@@ -50,7 +50,7 @@ export function StageItem({ stage, index, getService, serviceId, versionId, sear
     <Collapsible.Root open={isOpen} onOpenChange={setIsOpen} asChild>
       <div className="mb-2 last:mb-0">
         <Collapsible.Trigger className="w-full" asChild>
-          <button className="flex items-center justify-between px-2 pb-2 pt-1 text-sm text-neutral-250">
+          <button className="flex items-center justify-between px-2 pb-2 pt-1 text-sm text-neutral">
             <span className="flex items-center">
               <BadgeDeploymentOrder className="mr-1.5" order={index + 1} />
               <Truncate text={upperCaseFirstLetter(stage.stage?.name)} truncateLimit={40} />
@@ -70,7 +70,7 @@ export function StageItem({ stage, index, getService, serviceId, versionId, sear
                 key={service.id}
                 className={twMerge(
                   clsx(dropdownMenuItemVariants({ color: 'brand' }), 'w-full justify-between gap-1 px-2 py-1.5', {
-                    'bg-neutral-400': service.id === serviceId,
+                    'bg-surface-neutral-solid': service.id === serviceId,
                   })
                 )}
                 asChild
@@ -86,7 +86,7 @@ export function StageItem({ stage, index, getService, serviceId, versionId, sear
                     <Truncate text={fullService?.name ?? ''} truncateLimit={28} />
                   </span>
                   <span className="flex items-center gap-2">
-                    <span className="text-xs text-neutral-300">
+                    <span className="text-xs text-neutral-subtle">
                       {totalDurationSec ? (
                         <span title={dateUTCString(service.last_deployment_date ?? '')}>
                           {Math.floor(totalDurationSec / 60)}m:{totalDurationSec % 60}s

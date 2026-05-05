@@ -1,10 +1,9 @@
+import { getRouteApi } from '@tanstack/react-router'
 import { differenceInHours } from 'date-fns'
 import posthog from 'posthog-js'
 import { type Cluster, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
-import { memo, useEffect, useMemo, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { match } from 'ts-pattern'
-import { useQueryParams } from 'use-query-params'
 import { EnableObservabilityButtonContactUs } from '@qovery/domains/observability/feature'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { TablePrimitives } from '@qovery/shared/ui'
@@ -16,9 +15,13 @@ import { ShowNewLogsButton } from '../show-new-logs-button/show-new-logs-button'
 import { ShowPreviousLogsButton } from '../show-previous-logs-button/show-previous-logs-button'
 import { HeaderServiceLogs } from './header-service-logs/header-service-logs'
 import { RowServiceLogs } from './row-service-logs/row-service-logs'
-import { ServiceLogsProvider, queryParamsServiceLogs } from './service-logs-context/service-logs-context'
+import { ServiceLogsProvider } from './service-logs-context/service-logs-context'
 
 const { Table } = TablePrimitives
+
+const route = getRouteApi(
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
+)
 
 const MemoizedRowServiceLogs = memo(RowServiceLogs)
 
@@ -43,8 +46,8 @@ function Placeholder({
     return (
       <div className="flex flex-col items-center justify-center gap-4 text-center">
         <div>
-          <p className="text-neutral-50">No logs found for your request.</p>
-          <p className="text-sm text-neutral-300">Want to search on a larger time period? Try it with Observe</p>
+          <p className="text-neutral">No logs found for your request.</p>
+          <p className="text-sm text-neutral-subtle">Want to search on a larger time period? Try it with Observe</p>
         </div>
         <div className="max-w-max">
           <EnableObservabilityButtonContactUs text="Unlock with Observe plan" />
@@ -65,11 +68,14 @@ function Placeholder({
   }
 }
 
-function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; environment: Environment }) {
-  const { serviceId } = useParams()
-  const refScrollSection = useRef<HTMLDivElement>(null)
+const PAUSE_SCROLL_THRESHOLD = 80
 
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; environment: Environment }) {
+  const { serviceId } = route.useParams()
+  const refScrollSection = useRef<HTMLDivElement>(null)
+  const accumulatedScrollUp = useRef(0)
+
+  const queryParams = route.useSearch()
 
   const isLiveMode = useMemo(() => {
     if (queryParams.mode === 'live') {
@@ -101,18 +107,17 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
       return hoursRange < 24
     }, [cluster?.metrics_parameters?.enabled, queryParams.startDate, queryParams.endDate, isLiveMode]) ?? true
 
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
-  const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
+  const { data: runningStatus } = useRunningStatus({ environmentId: environment.id, serviceId, suspense: true })
 
   const serviceEnabled = service?.serviceType === 'DATABASE' ? service?.mode === 'CONTAINER' : true
 
   // Live logs hook - only enabled when in live mode
   const {
     data: liveLogs = [],
-    pauseLogs,
+    isScrollPaused: pauseLogs,
     setPauseLogs,
-    newLogsAvailable,
-    setNewLogsAvailable,
+    bufferedLogsCount,
     isFetched: isLiveLogsFetched,
     isLoading: isLiveLogsLoading,
   } = useServiceLiveLogs({
@@ -137,10 +142,9 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
 
   useEffect(() => {
     if (isLiveMode && serviceEnabled) {
-      setNewLogsAvailable(true)
       setPauseLogs(false)
     }
-  }, [isLiveMode, serviceEnabled, setNewLogsAvailable, setPauseLogs])
+  }, [isLiveMode, serviceEnabled, setPauseLogs])
 
   useEffect(() => {
     posthog.capture('service-logs', {
@@ -199,6 +203,16 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
     !pauseLogs && section.scroll(0, section.scrollHeight)
   }, [logs, pauseLogs, isLiveMode])
 
+  const handleScroll = useCallback(() => {
+    if (!isLiveMode || !pauseLogs) return
+    const section = refScrollSection.current
+    if (!section) return
+    const isAtBottom = section.scrollTop + section.clientHeight >= section.scrollHeight - 4
+    if (isAtBottom) {
+      setPauseLogs(false)
+    }
+  }, [isLiveMode, pauseLogs, setPauseLogs])
+
   const isServiceProgressing = match(runningStatus?.state)
     .with('RUNNING', 'WARNING', () => true)
     .otherwise(() => false)
@@ -220,21 +234,19 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
     (!isLogsFetched && !isLogsLoading)
   ) {
     return (
-      <div className="w-full p-1">
-        <div className="h-[calc(100vh-164px)] border border-r-0 border-t-0 border-neutral-500 bg-neutral-600">
+      <div className="w-full">
+        <div>
           <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
-          <div className="h-[calc(100vh-176px)] border-r border-neutral-500 bg-neutral-600">
-            <div className="flex h-full flex-col items-center justify-center">
-              <Placeholder
-                environment={environment}
-                hasMetricsEnabled={hasMetricsEnabled}
-                type={isLiveMode ? 'live' : 'history'}
-                isLogsFetched={isLogsFetched}
-                serviceName={service?.name}
-                itemsLength={logs.length}
-                databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
-              />
-            </div>
+          <div className="flex h-[calc(100vh-209px)] flex-col items-center justify-center">
+            <Placeholder
+              environment={environment}
+              hasMetricsEnabled={hasMetricsEnabled}
+              type={isLiveMode ? 'live' : 'history'}
+              isLogsFetched={isLogsFetched}
+              serviceName={service?.name}
+              itemsLength={logs.length}
+              databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
+            />
           </div>
         </div>
       </div>
@@ -242,11 +254,11 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   }
 
   return (
-    <div className="h-[calc(100vh-64px)] w-full max-w-[calc(100vw-64px)] overflow-hidden p-1">
-      <div className="relative h-full border border-r-0 border-t-0 border-neutral-500 bg-neutral-600 pb-7">
+    <div className="relative w-full">
+      <div>
         <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
         {isLogsLoading && isLiveMode ? (
-          <div className="flex h-full flex-col items-center justify-center pb-[68px]">
+          <div className="flex h-[calc(100vh-209px)] flex-col items-center justify-center">
             <Placeholder
               environment={environment}
               hasMetricsEnabled={hasMetricsEnabled}
@@ -259,19 +271,26 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
           </div>
         ) : (
           <div
-            className="h-[calc(100vh-160px)] w-full overflow-x-scroll overflow-y-scroll pb-3"
+            className="h-[calc(100vh-209px)] w-full overflow-y-scroll "
             ref={refScrollSection}
+            onScroll={handleScroll}
             onWheel={(event) => {
-              if (!liveLogs) return
+              if (!liveLogs || pauseLogs) return
 
               const section = refScrollSection.current
               if (!section) return
 
               const hasScrollableContent = section.clientHeight !== section.scrollHeight
+              if (!hasScrollableContent) return
 
-              if (!pauseLogs && hasScrollableContent && event.deltaY < 0) {
-                setPauseLogs(true)
-                setNewLogsAvailable(false)
+              if (event.deltaY < 0) {
+                accumulatedScrollUp.current += Math.abs(event.deltaY)
+                if (accumulatedScrollUp.current >= PAUSE_SCROLL_THRESHOLD) {
+                  accumulatedScrollUp.current = 0
+                  setPauseLogs(true)
+                }
+              } else {
+                accumulatedScrollUp.current = 0
               }
             }}
           >
@@ -282,7 +301,10 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
                 setPauseLogs={setPauseLogs}
               />
             )}
-            <Table.Root className="w-full border-separate border-spacing-y-0.5 text-xs">
+            <Table.Root
+              className="w-full border-separate border-spacing-y-0.5 text-xs"
+              containerClassName="rounded-none border-none bg-background"
+            >
               <Table.Body className="divide-y-0">
                 {logs.map((log, index) => {
                   const timestamp = log.timestamp
@@ -307,11 +329,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
           </div>
         )}
         {isLiveMode && (
-          <ShowNewLogsButton
-            pauseLogs={pauseLogs}
-            setPauseLogs={setPauseLogs}
-            newMessagesAvailable={newLogsAvailable}
-          />
+          <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} bufferedLogsCount={bufferedLogsCount} />
         )}
       </div>
     </div>
@@ -326,7 +344,7 @@ export interface ListServiceLogsProps {
 }
 
 export function ListServiceLogs({ cluster, environment, serviceStatus, environmentStatus }: ListServiceLogsProps) {
-  const { serviceId = '' } = useParams()
+  const { serviceId = '' } = route.useParams()
 
   return (
     <ServiceLogsProvider

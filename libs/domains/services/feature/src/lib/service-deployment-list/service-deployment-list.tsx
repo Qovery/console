@@ -1,4 +1,6 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
+  type Row,
   type SortingState,
   createColumnHelper,
   flexRender,
@@ -10,29 +12,20 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import posthog from 'posthog-js'
-import {
-  type DeploymentHistoryService,
-  type DeploymentHistoryTriggerAction,
-  type Environment,
-  OrganizationEventOrigin,
-  type ServiceSubActionEnum,
-} from 'qovery-typescript-axios'
-import { useCallback, useContext, useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
+import { type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
+import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, SERVICE_LOGS_URL } from '@qovery/shared/routes'
 import {
-  ActionToolbar,
-  ActionTriggerStatusChip,
   Button,
   CopyToClipboard,
+  DeploymentAction,
   DropdownMenu,
   EmptyState,
   Icon,
   Link,
+  StatusChip,
   TableFilter,
   TablePrimitives,
   Tooltip,
@@ -40,12 +33,7 @@ import {
   truncateText,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import {
-  dateFullFormat,
-  dateYearMonthDayHourMinuteSecond,
-  formatDuration,
-  formatInTimeZone,
-} from '@qovery/shared/util-dates'
+import { dateFullFormat, formatDuration } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentQueueService } from '../hooks/use-cancel-deployment-queue-service/use-cancel-deployment-queue-service'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
@@ -56,6 +44,15 @@ import { ServiceDeploymentListSkeleton } from './service-deployment-list-skeleto
 import { TableFilterTriggerBy } from './table-filter-trigger-by/table-filter-trigger-by'
 
 const { Table } = TablePrimitives
+const interactiveRowTargetSelector = 'a,button,input,select,textarea,[role="button"],[role="menuitem"]'
+
+function stopRowNavigation(event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) {
+  event.stopPropagation()
+}
+
+function shouldIgnoreRowNavigation(target: EventTarget | null) {
+  return target instanceof HTMLElement && Boolean(target.closest(interactiveRowTargetSelector))
+}
 
 export interface ServiceDeploymentListProps {
   serviceId: string
@@ -66,28 +63,19 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
   return typeof data === 'object' && data !== null && 'status' in data && 'details' in data
 }
 
-const formatTriggerAction = (
-  actionTrigger: DeploymentHistoryTriggerAction | Exclude<ServiceSubActionEnum, 'NONE'> | undefined
-) => {
-  return match(actionTrigger)
-    .with('TERRAFORM_PLAN_ONLY', () => 'Plan')
-    .with('TERRAFORM_PLAN_AND_APPLY', () => 'Plan and apply')
-    .with('TERRAFORM_MIGRATE_STATE', () => 'Migrate state')
-    .with('TERRAFORM_FORCE_UNLOCK_STATE', () => 'Force unlock')
-    .with('TERRAFORM_DESTROY', () => 'Destroy')
-    .otherwise(() => upperCaseFirstLetter(actionTrigger ?? ''))
-}
-
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
-  const { data: service } = useService({ environmentId: environment?.id, serviceId })
+  const navigate = useNavigate()
+  const { data: service } = useService({ environmentId: environment?.id, serviceId, suspense: true })
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId,
     serviceType: service?.service_type,
+    suspense: true,
   })
 
   const { data: deploymentHistoryQueue = [], isFetched: isFetchedDeloymentQueue } = useDeploymentQueue({
     serviceId,
+    suspense: true,
   })
 
   const { mutate: cancelDeploymentService } = useCancelDeploymentService({
@@ -97,16 +85,13 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   const { mutate: cancelDeploymentQueueService } = useCancelDeploymentQueueService({
     serviceId,
   })
-  const { pathname } = useLocation()
   const { openModalConfirmation } = useModalConfirmation()
-  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   const [sorting, setSorting] = useState<SortingState>([])
 
   const mutationCancelDeployment = useCallback(
     ({ deploymentRequestId }: { deploymentRequestId?: string }) => {
       openModalConfirmation({
-        mode: environment?.mode,
         title: 'Confirm cancel',
         description:
           'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
@@ -121,13 +106,14 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   )
 
   const columnHelper = createColumnHelper<(typeof deploymentHistory | typeof deploymentHistoryQueue)[number]>()
+
   const columns = useMemo(
     () => [
       columnHelper.accessor('auditing_data.created_at', {
         header: 'Date',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 40,
+        size: 420,
         cell: (info) => {
           const data = info.row.original
           const state = data.status_details?.status ?? 'NEVER'
@@ -136,55 +122,53 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
             <div
               className={twMerge(
                 clsx(
-                  'flex items-center justify-between before:absolute before:-top-[1px] before:left-0 before:block before:h-[calc(100%+2px)] before:w-1',
+                  'relative flex items-center justify-between before:absolute before:-left-4 before:-top-3 before:block before:h-[calc(100%+1.5rem)] before:w-0.5',
                   {
-                    'before:bg-brand-500': ['ONGOING', 'CANCELING'].includes(state),
-                    'before:bg-neutral-300': ['QUEUED'].includes(state),
+                    'before:bg-surface-brand-solid': ['ONGOING', 'CANCELING'].includes(state),
+                    'before:bg-neutral-subtle': ['QUEUED'].includes(state),
                   }
                 )
               )}
             >
               {state === 'QUEUED' ? (
-                <div className="flex flex-col gap-1 text-sm text-neutral-350">
+                <div className="flex flex-col gap-0.5 text-sm text-neutral-subtle">
                   <span className="font-medium">In queue...</span>
                   <span>--</span>
                 </div>
               ) : (
-                <div className="flex flex-col gap-1">
-                  <span className="text-sm font-medium text-neutral-400">
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium text-neutral">
                     {dateFullFormat(
                       'created_at' in data.auditing_data ? data.auditing_data.created_at : '',
                       undefined,
-                      'dd MMM, HH:mm a'
+                      'dd MMM, HH:mm'
                     )}
                   </span>
-                  <span className="truncate text-ssm text-neutral-350">
+                  <span className="truncate text-ssm text-neutral-subtle">
                     {isDeploymentHistory(data) ? data.identifier.execution_id : '--'}
                   </span>
                 </div>
               )}
-              <ActionToolbar.Root className="min-w-28 text-right">
+              <div
+                className="flex min-w-28 justify-end gap-1 text-right"
+                onClick={stopRowNavigation}
+                onKeyDown={stopRowNavigation}
+              >
                 {match(state)
                   .with('ONGOING', 'CANCELING', 'QUEUED', () => (
                     <DropdownMenu.Root>
                       <DropdownMenu.Trigger asChild>
-                        <ActionToolbar.Button
-                          aria-label="Manage Deployment"
-                          color="neutral"
-                          size="md"
-                          variant="outline"
-                        >
+                        <Button aria-label="Manage Deployment" color="neutral" size="md" variant="outline" iconOnly>
                           <Tooltip content="Manage Deployment">
-                            <div className="flex h-full w-full items-center justify-center">
-                              {match(state)
-                                .with('QUEUED', () => <Icon iconName="clock" iconStyle="regular" className="mr-3" />)
-                                .otherwise(() => (
-                                  <Icon iconName="loader" className="mr-3 animate-spin" />
-                                ))}
-                              <Icon iconName="chevron-down" />
-                            </div>
+                            {match(state)
+                              .with('QUEUED', () => <Icon iconName="clock" iconStyle="regular" />)
+                              .otherwise(() => (
+                                <span className="flex h-4 w-4 items-center justify-center">
+                                  <Icon iconName="loader" className="block animate-spin leading-none" />
+                                </span>
+                              ))}
                           </Tooltip>
-                        </ActionToolbar.Button>
+                        </Button>
                       </DropdownMenu.Trigger>
                       <DropdownMenu.Content>
                         {(state === 'ONGOING' || state === 'QUEUED') && (
@@ -205,78 +189,43 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                     </DropdownMenu.Root>
                   ))
                   .otherwise(() => null)}
-                {(service?.serviceType === 'TERRAFORM' ||
-                  (service?.serviceType === 'JOB' && service?.job_type !== 'CRON')) &&
-                  // Show only when logs can be available (hide during build or active deployment)
-                  match(state)
-                    .with(
-                      P.when((s) => ['ONGOING', 'CANCELING', 'QUEUED', 'BUILDING'].includes(String(s))),
-                      () => null
-                    )
-                    .otherwise(() => (
-                      <Tooltip content="Service logs">
-                        <ActionToolbar.Button asChild className="justify-center px-2">
-                          <Link
-                            to={
-                              ENVIRONMENT_LOGS_URL(
-                                environment?.organization.id,
-                                environment?.project.id,
-                                environment?.id
-                              ) +
-                              SERVICE_LOGS_URL(
-                                serviceId,
-                                undefined,
-                                isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
-                                'history',
-                                isDeploymentHistory(data)
-                                  ? dateYearMonthDayHourMinuteSecond(new Date(data.auditing_data.created_at))
-                                  : undefined
-                              )
-                            }
-                            state={{ prevUrl: pathname }}
-                          >
-                            <Icon iconName="scroll" />
-                          </Link>
-                        </ActionToolbar.Button>
-                      </Tooltip>
-                    ))}
-                <Tooltip content="Pipeline">
-                  <ActionToolbar.Button asChild className="justify-center px-2">
-                    <Link
-                      to={
-                        state === 'QUEUED'
-                          ? ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id)
-                          : ENVIRONMENT_LOGS_URL(
-                              environment?.organization.id,
-                              environment?.project.id,
-                              environment?.id
-                            ) +
-                            ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id : undefined)
-                      }
-                      state={{ prevUrl: pathname }}
-                    >
-                      <Icon iconName="timeline" />
-                    </Link>
-                  </ActionToolbar.Button>
+                <Tooltip content="Logs">
+                  <Link
+                    as="button"
+                    color="neutral"
+                    variant="outline"
+                    size="md"
+                    iconOnly
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                    params={{
+                      organizationId: environment?.organization.id ?? '',
+                      projectId: environment?.project.id ?? '',
+                      environmentId: environment?.id ?? '',
+                      serviceId,
+                      executionId: isDeploymentHistory(data) ? data.identifier.execution_id : undefined,
+                    }}
+                  >
+                    <Icon iconName="scroll" />
+                  </Link>
                 </Tooltip>
-              </ActionToolbar.Root>
+              </div>
             </div>
           )
         },
       }),
       columnHelper.accessor('status_details.status', {
         id: 'action_status',
-        header: 'Status deployment',
+        header: 'Status',
         enableColumnFilter: true,
         enableSorting: false,
         filterFn: 'arrIncludesSome',
-        size: 15,
+        size: 196,
         meta: {
           customFacetEntry({ value, count }) {
             return (
               <>
                 <span className="text-sm font-medium">{upperCaseFirstLetter(value)}</span>
-                <span className="text-xs text-neutral-350">{count}</span>
+                <span className="text-xs text-neutral-subtle">{count}</span>
               </>
             )
           },
@@ -289,85 +238,32 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
           return match(data)
             .with(P.when(isDeploymentHistory), (d) => {
               const actionStatus = d.status_details?.status
+              const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
 
               return (
-                <div className="flex items-center gap-4">
-                  <ActionTriggerStatusChip
-                    size="md"
-                    status={actionStatus}
-                    triggerAction={triggerAction}
-                    statusLink={match(actionStatus)
-                      .with(
-                        'ERROR',
-                        () =>
-                          ENVIRONMENT_LOGS_URL(environment?.organization.id, environment?.project.id, environment?.id) +
-                          ENVIRONMENT_STAGES_URL(isDeploymentHistory(data) ? data.identifier.execution_id : undefined)
-                      )
-                      .otherwise(() => undefined)}
-                  />
-                  <div className="flex flex-col gap-1">
-                    <span className="font-medium text-neutral-400">{formatTriggerAction(triggerAction)}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-ssm text-neutral-350">{upperCaseFirstLetter(actionStatus)}</span>
-                      {actionStatus === 'ERROR' && (
-                        <Tooltip
-                          classNameContent="rounded-full"
-                          side="bottom"
-                          content={
-                            <div
-                              className="flex cursor-pointer items-center gap-1.5"
-                              onClick={() => {
-                                const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
-                                posthog.capture('ai-copilot-troubleshoot-triggered', {
-                                  source: 'service-deployment-list',
-                                  deployment_id: executionId,
-                                })
-                                const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
-                                setDevopsCopilotOpen(true)
-                                sendMessageRef?.current?.(message)
-                              }}
-                            >
-                              <Icon iconName="sparkles" iconStyle="solid" className="text-brand-300" />
-                              <span className="text-sm font-thin">Ask AI Copilot for diagnostic</span>
-                              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-white">
-                                <Icon iconName="arrow-right" className="text-neutral-400" />
-                              </div>
-                            </div>
-                          }
-                        >
-                          <div
-                            onClick={() => {
-                              const executionId = isDeploymentHistory(data) ? data.identifier.execution_id : undefined
-                              posthog.capture('ai-copilot-troubleshoot-triggered', {
-                                source: 'service-deployment-list',
-                                deployment_id: executionId,
-                              })
-                              const message = `Why did my deployment fail?${executionId ? ` (deployment id: ${executionId})` : ''}`
-                              setDevopsCopilotOpen(true)
-                              sendMessageRef?.current?.(message)
-                            }}
-                            className="group cursor-pointer"
-                          >
-                            <Icon
-                              iconName="sparkles"
-                              iconStyle="solid"
-                              className="text-neutral-350 transition-colors group-hover:text-brand-500"
-                            />
-                          </div>
-                        </Tooltip>
-                      )}
-                    </div>
+                <div className="flex items-center justify-between gap-4">
+                  <DeploymentAction status={triggerAction} />
+                  <div className="flex items-center gap-2">
+                    {actionStatus === 'ERROR' && (
+                      <DevopsCopilotTroubleshootTrigger
+                        source="service-deployment-list"
+                        deploymentId={executionId}
+                        message={
+                          executionId
+                            ? `Why did my deployment fail? (execution id: ${executionId})`
+                            : 'Why did my deployment fail?'
+                        }
+                      />
+                    )}
+                    <StatusChip status={actionStatus} />
                   </div>
                 </div>
               )
             })
             .otherwise(() => (
-              <div className="flex items-center gap-4">
-                <ActionTriggerStatusChip size="md" status="QUEUED" triggerAction={triggerAction} />
-                <div className="flex flex-col gap-1">
-                  <span className="font-medium text-neutral-400">{formatTriggerAction(triggerAction)}</span>
-                  <span className="text-ssm text-neutral-350">In queue...</span>
-                </div>
+              <div className="flex items-center justify-between gap-4">
+                <DeploymentAction status={triggerAction} />
+                <StatusChip status="QUEUED" />
               </div>
             ))
         },
@@ -376,7 +272,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Duration',
         enableColumnFilter: false,
         enableSorting: true,
-        size: 12,
+        size: 120,
         cell: (info) => {
           const data = info.row.original
 
@@ -384,9 +280,9 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
             const state = data.status_details?.status
 
             return match(state)
-              .with('QUEUED', 'NEVER', () => <span className="text-neutral-350">--</span>)
+              .with('QUEUED', 'NEVER', () => <span className="text-neutral-subtle">--</span>)
               .otherwise(() => (
-                <span className="flex items-center gap-1 text-neutral-350">
+                <span className="flex items-center gap-1 text-neutral-subtle">
                   {data.total_duration ? (
                     <>
                       <Icon iconName="clock-eight" iconStyle="regular" />
@@ -398,7 +294,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                 </span>
               ))
           } else {
-            return <span className="text-neutral-350">---</span>
+            return <span className="text-neutral-subtle">---</span>
           }
         },
       }),
@@ -406,7 +302,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Version',
         enableColumnFilter: false,
         enableSorting: false,
-        size: 13,
+        size: 170,
         cell: (info) => {
           const data = info.row.original
 
@@ -504,9 +400,9 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   </Tooltip>
                 )
               )
-              .otherwise(() => <span className="text-neutral-350">--</span>)
+              .otherwise(() => <span className="text-neutral-subtle">--</span>)
           ) : (
-            <span className="text-neutral-350">--</span>
+            <span className="text-neutral-subtle">--</span>
           )
         },
       }),
@@ -514,7 +410,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         header: 'Trigger by',
         enableColumnFilter: true,
         enableSorting: false,
-        size: 20,
+        size: 250,
         filterFn: (row, _, filterValue) => {
           if (!filterValue) return true
           const { origin, triggeredBy } = filterValue
@@ -530,7 +426,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
 
           return (
             <div className="flex items-center gap-3">
-              <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-neutral-150 text-neutral-350">
+              <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-surface-neutral-component text-neutral-subtle">
                 {match(origin)
                   .with(OrganizationEventOrigin.GIT, () => <Icon iconName="code-branch" />)
                   .with(OrganizationEventOrigin.CONSOLE, () => <Icon iconName="browser" />)
@@ -540,11 +436,11 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   .with(OrganizationEventOrigin.TERRAFORM_PROVIDER, () => <Icon name={IconEnum.TERRAFORM} width="12" />)
                   .otherwise(() => null)}
               </div>
-              <div className="flex flex-col gap-1.5 text-ssm">
-                <span className="whitespace-nowrap text-neutral-400">
+              <div className="flex flex-col gap-0.5 text-ssm">
+                <span className="whitespace-nowrap text-neutral">
                   <Truncate text={triggeredBy} truncateLimit={25} />
                 </span>
-                <span className="text-neutral-350">
+                <span className="text-neutral-subtle">
                   {origin !== 'CLI' && origin !== 'API' ? upperCaseFirstLetter(origin?.replace('_', ' ')) : origin}
                 </span>
               </div>
@@ -553,7 +449,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         },
       }),
     ],
-    [columnHelper, environment, mutationCancelDeployment, pathname]
+    [columnHelper, environment, mutationCancelDeployment, service, serviceId]
   )
 
   const data = useMemo(
@@ -575,7 +471,6 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
     onSortingChange: setSorting,
     // https://github.com/TanStack/table/discussions/3192#discussioncomment-6458134
     defaultColumn: {
-      minSize: 0,
       size: Number.MAX_SAFE_INTEGER,
       maxSize: Number.MAX_SAFE_INTEGER,
     },
@@ -591,24 +486,72 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   ) {
     return (
       <EmptyState
+        icon="rocket"
         title="No deployment started"
         description="Manage the deployments by using the “Play” button in the header above"
-        className="mt-2 rounded-t-sm bg-white pt-10"
+        className="mt-2 pt-10"
       />
     )
   }
 
+  const getDeploymentExecutionId = (row: Row<DeploymentHistoryService | (typeof deploymentHistoryQueue)[number]>) => {
+    const data = row.original
+    return isDeploymentHistory(data) ? data.identifier.execution_id : undefined
+  }
+
+  const handleRowClick = (
+    event: MouseEvent<HTMLElement>,
+    row: Row<DeploymentHistoryService | (typeof deploymentHistoryQueue)[number]>
+  ) => {
+    const executionId = getDeploymentExecutionId(row)
+
+    if (!environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
+
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+      params: {
+        organizationId: environment.organization.id,
+        projectId: environment.project.id,
+        environmentId: environment.id,
+        serviceId,
+        executionId,
+      },
+    })
+  }
+
+  const handleRowKeyDown = (
+    event: KeyboardEvent<HTMLElement>,
+    row: Row<DeploymentHistoryService | (typeof deploymentHistoryQueue)[number]>
+  ) => {
+    const executionId = getDeploymentExecutionId(row)
+
+    if (event.key !== 'Enter' || !environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
+
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+      params: {
+        organizationId: environment.organization.id,
+        projectId: environment.project.id,
+        environmentId: environment.id,
+        serviceId,
+        executionId,
+      },
+    })
+  }
+
   return (
     <div className="flex grow flex-col justify-between">
-      <Table.Root className="w-full min-w-[1080px] overflow-x-scroll text-ssm">
+      <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
         <Table.Header>
           {table.getHeaderGroups().map((headerGroup) => (
-            <Table.Row key={headerGroup.id}>
-              {headerGroup.headers.map((header, i) => (
+            <Table.Row key={headerGroup.id} className="divide-x divide-neutral">
+              {headerGroup.headers.map((header) => (
                 <Table.ColumnHeaderCell
-                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} font-medium`}
+                  className="font-medium"
                   key={header.id}
-                  style={{ width: i === 0 ? '20px' : `${header.getSize()}%` }}
+                  style={{
+                    width: `${header.getSize()}px`,
+                  }}
                 >
                   {header.column.getCanFilter() ? (
                     header.id === 'auditing_data_origin' ? (
@@ -641,19 +584,34 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
           ))}
         </Table.Header>
         <Table.Body>
-          {table.getRowModel().rows.map((row) => (
-            <Table.Row key={row.id} className="h-[68px] border-neutral-200 last:!border-b">
-              {row.getVisibleCells().map((cell, i) => (
-                <Table.Cell
-                  key={cell.id}
-                  className={`px-6 ${i === 0 ? 'border-r pl-4' : ''} first:relative`}
-                  style={{ width: `${cell.column.getSize()}%` }}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </Table.Cell>
-              ))}
-            </Table.Row>
-          ))}
+          {table.getRowModel().rows.map((row) => {
+            const executionId = getDeploymentExecutionId(row)
+
+            return (
+              <Table.Row
+                key={row.id}
+                role={executionId ? 'link' : undefined}
+                tabIndex={executionId ? 0 : undefined}
+                className={twMerge(
+                  'h-[68px] divide-x divide-neutral border-neutral',
+                  executionId ? 'cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle' : ''
+                )}
+                onClick={(event) => handleRowClick(event, row)}
+                onKeyDown={(event) => handleRowKeyDown(event, row)}
+              >
+                {row.getVisibleCells().map((cell, i) => (
+                  <Table.Cell
+                    key={cell.id}
+                    style={{
+                      width: `${cell.column.getSize()}px`,
+                    }}
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </Table.Cell>
+                ))}
+              </Table.Row>
+            )
+          })}
         </Table.Body>
       </Table.Root>
     </div>

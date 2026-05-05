@@ -11,7 +11,7 @@ import { type VariableResponse as Variable } from 'qovery-typescript-axios'
 import { type ServiceType } from 'qovery-ws-typescript-axios'
 import { type ComponentProps, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { Icon, PasswordShowHide, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { EmptyState, Icon, PasswordShowHide, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useVariables } from '../hooks/use-variables/use-variables'
 
@@ -51,7 +51,7 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
               }
             >
               <span>
-                <Icon iconName="circle-info" className="text-neutral-350" />
+                <Icon iconName="circle-info" className="text-neutral-subtle" />
               </span>
             </Tooltip>
           </>
@@ -62,11 +62,11 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
           const { key, description } = info.row.original
           return (
             <div className="flex items-center gap-1">
-              <span className="text-sm text-neutral-350">{key}</span>{' '}
+              <span className="text-sm text-neutral-subtle">{key}</span>{' '}
               {description && (
                 <Tooltip content={description}>
                   <span>
-                    <Icon iconName="circle-info" className="text-neutral-350" />
+                    <Icon iconName="circle-info" className="text-neutral-subtle" />
                   </span>
                 </Tooltip>
               )}
@@ -102,20 +102,23 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
 
   if (variables.length === 0) {
     return (
-      <div className="px-3 py-8 text-center">
-        <Icon iconName="wave-pulse" className="text-neutral-350" />
-        <p className="mt-1 text-xs font-medium text-neutral-350">No output variables found</p>
-        <p className="mt-1 text-xs text-neutral-350">
-          {scopeName} output variables will appear here after your first successful deployment.
-        </p>
-      </div>
+      <EmptyState
+        title="No output variables found"
+        icon="wave-pulse"
+        className="border-none bg-surface-neutral"
+        description={`${scopeName} output variables will appear here after your first successful deployment.`}
+      />
     )
   }
 
   return (
     <div className="overflow-hidden">
-      <Table.Root className={twMerge('w-full text-ssm', className)} {...props}>
-        <Table.Header>
+      <Table.Root
+        containerClassName="border-none"
+        className={twMerge('w-full rounded-t-none text-ssm', className)}
+        {...props}
+      >
+        <Table.Header className="text-xs">
           {table.getHeaderGroups().map((headerGroup) => (
             <Table.Row key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
@@ -153,7 +156,11 @@ export function OutputVariables({ serviceId, serviceType, className, ...props }:
             <Fragment key={row.id}>
               <Table.Row className="h-12">
                 {row.getVisibleCells().map((cell) => (
-                  <Table.Cell key={cell.id} style={{ width: `${cell.column.getSize()}%` }}>
+                  <Table.Cell
+                    key={cell.id}
+                    className={twMerge(row.index > 0 && 'border-t border-neutral')}
+                    style={{ width: `${cell.column.getSize()}%` }}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </Table.Cell>
                 ))}

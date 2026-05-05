@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import {
   type ApplicationStatusDto,
@@ -5,6 +6,7 @@ import {
   type ServiceStatusDto,
   type TerraformStatusDto,
 } from 'qovery-ws-typescript-axios'
+import { useEffect, useState } from 'react'
 import { v7 as uuidv7 } from 'uuid'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
@@ -30,7 +32,22 @@ export function useStatusWebSockets({
   environmentId,
   versionId,
 }: UseStatusWebSocketsProps) {
-  const externalRequestId = uuidv7()
+  const [externalRequestId] = useState(() => uuidv7())
+  const queryClient = useQueryClient()
+  const wsEnabled = Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId)
+
+  // NOTE: remove running status cache when the environment is changed to avoid stale data
+  // @see https://qovery.atlassian.net/browse/QOV-1886
+  useEffect(() => {
+    return () => {
+      if (environmentId) {
+        queryClient.removeQueries({
+          queryKey: queries.environments.runningStatus(environmentId).queryKey,
+          exact: true,
+        })
+      }
+    }
+  }, [environmentId, queryClient])
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
@@ -41,7 +58,7 @@ export function useStatusWebSockets({
       project: projectId,
       version: versionId,
     },
-    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
+    enabled: wsEnabled,
     shouldReconnect: true,
     onMessage(queryClient, message: WSDeploymentStatus) {
       if (environmentId) {
@@ -86,7 +103,7 @@ export function useStatusWebSockets({
       external_request_id: externalRequestId,
     },
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
-    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId),
+    enabled: wsEnabled,
     onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
         // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
@@ -111,25 +128,6 @@ export function useStatusWebSockets({
             queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
             () => serviceRunningStatus
           )
-        }
-      }
-    },
-    onClose(queryClient, event: CloseEvent) {
-      // NOTE: API returns a string for the reason, which allows us to know if the status is available or not
-      // clusterId is required everywhere and environmentId is necessary for the service list
-      const isNotFound = event.reason.includes('NotFound') || event.reason.includes('not found')
-      if (isNotFound && clusterId) {
-        if (environmentId) {
-          queryClient.setQueryData(queries.services.checkRunningStatusClosed(clusterId, environmentId).queryKey, {
-            clusterId,
-            environmentId,
-            reason: event.reason,
-          })
-        } else {
-          queryClient.setQueryData(queries.environments.checkRunningStatusClosed(clusterId).queryKey, {
-            clusterId,
-            reason: event.reason,
-          })
         }
       }
     },
