@@ -12,14 +12,6 @@ export interface StepSummaryProps {
   isLoadingCreateAndDeploy?: boolean
 }
 
-function EditSectionButton({ onClick, label }: { onClick: () => void; label: string }) {
-  return (
-    <Button aria-label={label} type="button" variant="outline" color="neutral" size="md" onClick={onClick} iconOnly>
-      <Icon className="text-base" iconName="gear-complex" />
-    </Button>
-  )
-}
-
 export function StepSummary({
   blueprint,
   onBack,
@@ -34,78 +26,84 @@ export function StepSummary({
   const providerCfg = PROVIDER_CONFIG[blueprint.provider]
 
   return (
-    <Section className="space-y-10">
-      <div className="flex flex-col gap-2">
+    <Section>
+      <div className="mb-10">
         <Heading className="mb-2">Ready to create your service</Heading>
         <p className="text-sm text-neutral-subtle">
           Review your configuration. Nothing is provisioned until you create the service.
         </p>
       </div>
 
-      <div className="flex flex-col gap-6">
+      <div className="mb-10">
         {/* Blueprint section */}
-        <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
-          <div className="flex justify-between">
-            <Heading>Blueprint</Heading>
+        <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral p-4">
+          <div className="mr-2 flex-grow">
+            <Heading className="mb-3">Blueprint</Heading>
+            <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+              <li>
+                <strong className="font-medium text-neutral">Source: </strong>
+                <span className="inline-flex items-center gap-2 align-middle">
+                  {providerCfg.icon && <img src={providerCfg.icon} alt="" className="h-4 w-4 object-contain" />}
+                  {blueprint.name}
+                </span>
+              </li>
+              <SummaryValue label="Engine" value={ENGINE_LABELS[blueprint.engine]} />
+              <SummaryValue label="Version" value={`v${values.majorServiceVersion}`} />
+            </ul>
           </div>
-          <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-            <li>
-              <strong className="font-medium text-neutral">Source:</strong>{' '}
-              <span className="inline-flex items-center gap-2 align-middle">
-                {providerCfg.icon && <img src={providerCfg.icon} alt="" className="h-4 w-4 object-contain" />}
-                {blueprint.name}
-              </span>
-            </li>
-            <SummaryValue label="Engine" value={ENGINE_LABELS[blueprint.engine]} />
-            <SummaryValue label="Version" value={`v${values.majorServiceVersion}`} />
-          </ul>
         </Section>
 
         {/* Base info section */}
-        <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
-          <div className="flex justify-between">
-            <Heading>Base info</Heading>
-            <EditSectionButton onClick={onBack} label="Edit base info" />
+        <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4">
+          <div className="mr-2 flex-grow">
+            <Heading className="mb-3">Base info</Heading>
+            <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+              <SummaryValue label="Service name" value={values.serviceName} />
+            </ul>
           </div>
-          <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-            <SummaryValue label="Service name" value={values.serviceName} />
-          </ul>
+          <Button aria-label="Edit base info" type="button" variant="outline" color="neutral" size="md" onClick={onBack} iconOnly>
+            <Icon className="text-base" iconName="gear-complex" />
+          </Button>
         </Section>
 
         {/* Setup section */}
         {params.length > 0 && (
-          <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
-            <div className="flex justify-between">
-              <Heading>Setup</Heading>
-              <EditSectionButton onClick={onBack} label="Edit setup" />
+          <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4">
+            <div className="mr-2 flex-grow">
+              <Heading className="mb-3">Setup</Heading>
+              <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                {params.map((parameter) => (
+                  <SummaryValue key={parameter.id} label={parameter.label} value={values.setupParams[parameter.id] || '-'} />
+                ))}
+              </ul>
             </div>
-            <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-              {params.map((p) => (
-                <SummaryValue key={p.id} label={p.label} value={values.setupParams[p.id] || '-'} />
-              ))}
-            </ul>
+            <Button aria-label="Edit setup" type="button" variant="outline" color="neutral" size="md" onClick={onBack} iconOnly>
+              <Icon className="text-base" iconName="gear-complex" />
+            </Button>
           </Section>
         )}
 
         {/* Advanced section */}
-        <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
-          <div className="flex justify-between">
-            <Heading>Advanced settings</Heading>
-            <EditSectionButton onClick={onBack} label="Edit advanced settings" />
+        <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4">
+          <div className="mr-2 flex-grow">
+            <Heading className="mb-3">Advanced settings</Heading>
+            <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+              <SummaryValue
+                label="Credentials"
+                value={values.credentialsMode === 'cluster' ? 'Cluster IAM' : 'Environment IAM'}
+              />
+              <SummaryValue label="CPU" value={`${values.cpuMilli} mCPU`} />
+              <SummaryValue label="Memory" value={`${values.memoryMib} MiB`} />
+              <SummaryValue label="Deployment timeout" value={`${values.timeoutSec} s`} />
+            </ul>
           </div>
-          <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-            <SummaryValue
-              label="Credentials"
-              value={values.credentialsMode === 'cluster' ? 'Cluster IAM' : 'Environment IAM'}
-            />
-            <SummaryValue label="CPU" value={`${values.cpuMilli} mCPU`} />
-            <SummaryValue label="Memory" value={`${values.memoryMib} MiB`} />
-            <SummaryValue label="Deployment timeout" value={`${values.timeoutSec} s`} />
-          </ul>
+          <Button aria-label="Edit advanced settings" type="button" variant="outline" color="neutral" size="md" onClick={onBack} iconOnly>
+            <Icon className="text-base" iconName="gear-complex" />
+          </Button>
         </Section>
       </div>
 
-      <div className="flex justify-between">
+      <div className="mt-10 flex justify-between">
         <Button onClick={onBack} type="button" size="lg" variant="plain">
           Back
         </Button>
@@ -115,7 +113,7 @@ export function StepSummary({
             onClick={onCreate}
             size="lg"
             type="button"
-            variant="outline"
+            variant="surface"
             color="neutral"
           >
             Create

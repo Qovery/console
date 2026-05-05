@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Button, Heading, Icon, InputSelect, InputText, Section, Tooltip } from '@qovery/shared/ui'
 import { type BlueprintEntry } from '../blueprints'
+import { type SetupParameter, getSetupParameters } from '../blueprint-wizard/types'
 
 export interface BlueprintSettingsSectionProps {
   blueprint: BlueprintEntry
@@ -23,8 +24,16 @@ export function BlueprintSettingsSection({
   onDetach,
 }: BlueprintSettingsSectionProps) {
   const [pendingVersion, setPendingVersion] = useState(currentVersion)
+  const [paramValues, setParamValues] = useState<Record<string, string>>(() => {
+    const params = getSetupParameters(blueprint)
+    return params.reduce<Record<string, string>>((acc, p) => {
+      acc[p.id] = p.defaultValue ?? ''
+      return acc
+    }, {})
+  })
 
-  const versionOptions = blueprint.versions.map((v, i) => ({
+  const setupParams = getSetupParameters(blueprint)
+  const versionOptions = blueprint.versions.map((v) => ({
     value: v.version,
     label:
       v.version === blueprint.versions[0]?.version
@@ -34,10 +43,10 @@ export function BlueprintSettingsSection({
           : v.version,
   }))
 
-  const isDirty = pendingVersion !== currentVersion
+  const isVersionDirty = pendingVersion !== currentVersion
 
   return (
-    <Section className="gap-4">
+    <Section className="gap-6">
       <div>
         <Heading className="text-base">Blueprint</Heading>
         <p className="mt-1 text-ssm text-neutral-subtle">
@@ -46,6 +55,7 @@ export function BlueprintSettingsSection({
         </p>
       </div>
 
+      {/* Identity — read-only metadata */}
       <div className="flex flex-col gap-4">
         <InputText
           name="blueprint-name"
@@ -72,7 +82,7 @@ export function BlueprintSettingsSection({
           hint="Pin to a specific version, jump ahead, or revert. Selecting a different version opens the update review."
         />
 
-        {isDirty && (
+        {isVersionDirty && (
           <div className="flex items-center justify-end gap-2">
             <Button
               size="sm"
@@ -96,6 +106,27 @@ export function BlueprintSettingsSection({
         )}
       </div>
 
+      {/* Blueprint parameters — editable, pre-filled from the blueprint manifest. */}
+      {setupParams.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <div>
+            <h3 className="text-sm font-medium text-neutral">Blueprint parameters</h3>
+            <p className="mt-0.5 text-ssm text-neutral-subtle">
+              Values configured at provisioning. Edit and save to apply on the next deploy.
+            </p>
+          </div>
+          {setupParams.map((p) => (
+            <ParameterField
+              key={p.id}
+              parameter={p}
+              value={paramValues[p.id] ?? ''}
+              onChange={(v) => setParamValues((s) => ({ ...s, [p.id]: v }))}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Footer actions */}
       <div className="flex items-center justify-between border-t border-neutral pt-4">
         <Button size="sm" color="neutral" variant="plain" radius="rounded" onClick={onViewDetails}>
           <Icon iconName="circle-info" iconStyle="regular" className="mr-2 text-xs" />
@@ -113,6 +144,38 @@ export function BlueprintSettingsSection({
         )}
       </div>
     </Section>
+  )
+}
+
+function ParameterField({
+  parameter,
+  value,
+  onChange,
+}: {
+  parameter: SetupParameter
+  value: string
+  onChange: (v: string) => void
+}) {
+  if (parameter.type === 'select' && parameter.options) {
+    return (
+      <InputSelect
+        label={parameter.label}
+        value={value}
+        onChange={(v) => typeof v === 'string' && onChange(v)}
+        options={parameter.options}
+        hint={parameter.helper}
+      />
+    )
+  }
+  return (
+    <InputText
+      name={parameter.id}
+      label={parameter.label}
+      type={parameter.type === 'number' ? 'number' : 'text'}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      hint={parameter.helper}
+    />
   )
 }
 

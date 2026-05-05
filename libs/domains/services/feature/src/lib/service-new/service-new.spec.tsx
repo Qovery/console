@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { fireEvent } from '@testing-library/react'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceNew } from './service-new'
 
 jest.mock('@tanstack/react-router', () => ({
@@ -42,70 +43,39 @@ describe('ServiceNew', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render search input and documentation link', () => {
+  it('should render the base services and blueprints sections', () => {
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
-    expect(screen.getByPlaceholderText('Search…')).toBeInTheDocument()
-    expect(screen.getByText('See documentation')).toBeInTheDocument()
+
+    expect(screen.getByRole('heading', { name: 'Base services' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Blueprints' })).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Search blueprints...')).toBeInTheDocument()
   })
 
-  it('should render Default Qovery services section with main service types', () => {
-    renderWithProviders(
+  it('should expose core service create links', () => {
+    const { container } = renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-    expect(screen.getByRole('heading', { name: 'Default Qovery services' })).toBeInTheDocument()
-    expect(screen.getByText('Application')).toBeInTheDocument()
-    expect(screen.getByText('Database')).toBeInTheDocument()
-    expect(screen.getByText('Lifecycle Job')).toBeInTheDocument()
-    expect(screen.getByText('Cron Job')).toBeInTheDocument()
-    expect(screen.getByText('Helm')).toBeInTheDocument()
-    expect(screen.getAllByText('Terraform').length).toBeGreaterThanOrEqual(1)
-  })
-
-  it('should render template sections by tag', () => {
-    renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-    expect(screen.getByRole('heading', { name: 'Data & Storage' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Back-end' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Front-end' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'IAC' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'More template' })).toBeInTheDocument()
-  })
-
-  it('should link database entries to the database create flow', async () => {
-    const { container, userEvent } = renderWithProviders(
-      <ServiceNew
-        organizationId="org-1"
-        projectId="project-1"
-        environmentId="env-1"
-        cloudProvider="AWS"
-        availableTemplates={[]}
-      />
     )
 
     expect(
-      container.querySelector(
-        'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database"]'
-      )
+      container.querySelector('a[href="/organization/org-1/project/project-1/environment/env-1/service/create/application"]')
     ).toBeInTheDocument()
+    expect(
+      container.querySelector('a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database"]')
+    ).toBeInTheDocument()
+    expect(
+      container.querySelector('a[href="/organization/org-1/project/project-1/environment/env-1/service/create/helm"]')
+    ).toBeInTheDocument()
+  })
 
-    await userEvent.click(screen.getByText('PostgreSQL'))
+  it('should filter blueprints using the search field', () => {
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
 
-    await waitFor(() => {
-      expect(
-        container.querySelector(
-          'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=container"]'
-        )
-      ).toBeInTheDocument()
-    })
-    await waitFor(() => {
-      expect(
-        container.querySelector(
-          'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/database?template=postgresql&option=managed"]'
-        )
-      ).toBeInTheDocument()
-    })
+    fireEvent.change(screen.getByPlaceholderText('Search blueprints...'), { target: { value: 'does-not-exist' } })
+
+    expect(screen.getByText('No blueprints found')).toBeInTheDocument()
   })
 })

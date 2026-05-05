@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Badge, Button, Callout, Icon, Tooltip } from '@qovery/shared/ui'
+import { Button, Callout, Icon, Tooltip } from '@qovery/shared/ui'
 import { type BlueprintEntry, PROVIDER_CONFIG } from '../blueprints'
 
 export interface BlueprintServiceContextCardProps {
@@ -34,25 +34,20 @@ export function BlueprintServiceContextCard({
 
   return (
     <div className="flex flex-col gap-3">
-      {/* Identity strip */}
-      <div className="flex items-center justify-between gap-3 rounded-lg border border-neutral bg-surface-neutral-subtle px-4 py-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-surface-neutral-component">
+      {/* Identity strip — single line, lightweight */}
+      <div className="flex items-center justify-between gap-3 rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2">
+        <div className="flex min-w-0 items-center gap-2">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-surface-neutral-component">
             {providerCfg.icon ? (
-              <img src={providerCfg.icon} alt={providerCfg.label} className="h-5 w-5 select-none object-contain" />
+              <img src={providerCfg.icon} alt={providerCfg.label} className="h-4 w-4 select-none object-contain" />
             ) : (
-              <Icon iconName="layer-group" className="text-sm text-brand" />
+              <Icon iconName="layer-group" className="text-xs text-brand" />
             )}
           </span>
-          <div className="flex min-w-0 flex-col">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-neutral">{blueprint.name}</span>
-              <Badge size="sm" color="neutral" variant="outline">
-                <span className="font-mono">v{currentVersion}</span>
-              </Badge>
-            </div>
-            <span className="text-xs text-neutral-subtle">Provisioned from blueprint</span>
-          </div>
+          <span className="text-ssm text-neutral-subtle">Provisioned from</span>
+          <span className="text-sm font-medium text-neutral">{blueprint.name}</span>
+          <span className="text-neutral-subtle">·</span>
+          <span className="font-mono text-xs text-neutral-subtle">v{currentVersion}</span>
         </div>
         <div className="flex items-center gap-1">
           {sourceUrl && (
@@ -62,7 +57,7 @@ export function BlueprintServiceContextCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Open blueprint source"
-                className="flex h-7 w-7 items-center justify-center rounded text-neutral-subtle hover:bg-surface-neutral-component hover:text-neutral"
+                className="flex h-6 w-6 items-center justify-center rounded text-neutral-subtle hover:bg-surface-neutral-component hover:text-neutral"
               >
                 <Icon iconName="arrow-up-right-from-square" iconStyle="regular" className="text-xs" />
               </a>
@@ -88,9 +83,9 @@ export function BlueprintServiceContextCard({
         </div>
       </div>
 
-      {/* Update notice — actionable, distinguished from purely-informational major notice */}
+      {/* Update notice — informational with action; sky-toned per PRD ("not a warning") */}
       {showUpdateNotice && updateAvailable && (
-        <Callout.Root color="green">
+        <Callout.Root color="sky">
           <Callout.Icon>
             <Icon iconName="arrow-up" iconStyle="regular" />
           </Callout.Icon>
@@ -121,9 +116,9 @@ export function BlueprintServiceContextCard({
         </Callout.Root>
       )}
 
-      {/* Major version notification — informational only */}
+      {/* Major version notification — purely informational, low priority */}
       {showMajorNotice && majorVersionAvailable && (
-        <Callout.Root color="sky">
+        <Callout.Root color="neutral">
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
           </Callout.Icon>

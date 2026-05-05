@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Console",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["nx", "serve", "console"],
+      "port": 4200
+    },
+    {
+      "name": "Storybook",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["nx", "storybook", "shared-ui"],
+      "port": 4400
+    }
+  ]
+}

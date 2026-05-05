@@ -240,22 +240,22 @@ function ChangeGroup({
                     Override preserved
                   </Badge>
                 )}
-                <Badge size="sm" color="neutral" variant="outline">
+                <span className="text-xs text-neutral-subtle">
                   {c.category === 'config' ? 'Config' : 'Infrastructure'}
-                </Badge>
+                </span>
               </div>
               {(c.before !== undefined || c.after !== undefined) && (
-                <div className="mt-1 flex items-center gap-2 font-mono text-xs">
+                <div className="mt-1 flex items-center gap-2 text-xs">
                   {c.before !== undefined && (
-                    <span className="rounded bg-surface-neutral-subtle px-1.5 py-0.5 text-neutral-subtle line-through">
+                    <code className="rounded bg-surface-neutral-component px-1 text-neutral-subtle line-through">
                       {c.before}
-                    </span>
+                    </code>
                   )}
                   {c.before !== undefined && c.after !== undefined && (
                     <Icon iconName="arrow-right" iconStyle="regular" className="text-xs text-neutral-subtle" />
                   )}
                   {c.after !== undefined && (
-                    <span className="rounded bg-surface-neutral-subtle px-1.5 py-0.5 text-neutral">{c.after}</span>
+                    <code className="rounded bg-surface-neutral-component px-1 text-neutral">{c.after}</code>
                   )}
                 </div>
               )}
