@@ -1,10 +1,10 @@
+import { useParams } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { InputSelect, ModalCrud } from '@qovery/shared/ui'
 
 export interface LinkClusterModalProps {
-  organizationId: string
   argoCdClusterName: string
   linkedClusterIds?: string[]
   onClose: (response?: LinkClusterModalResponse) => void
@@ -21,12 +21,9 @@ export interface LinkClusterModalResponse {
   clusterType: 'Qovery managed' | 'Self managed'
 }
 
-export function LinkClusterModal({
-  organizationId,
-  argoCdClusterName,
-  linkedClusterIds = [],
-  onClose,
-}: LinkClusterModalProps) {
+export function LinkClusterModal({ argoCdClusterName, linkedClusterIds = [], onClose }: LinkClusterModalProps) {
+  const { organizationId = '' } = useParams({ strict: false })
+
   const methods = useForm<LinkClusterFormValues>({
     mode: 'onChange',
     defaultValues: {

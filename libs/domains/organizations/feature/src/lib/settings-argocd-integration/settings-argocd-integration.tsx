@@ -95,10 +95,6 @@ interface ArgoCdIntegrationCardProps {
   ) => void
 }
 
-interface SettingsArgoCdIntegrationContentProps {
-  organizationId: string
-}
-
 function ArgoCdIntegrationCard({
   integration,
   linkedClusterIds,
@@ -119,7 +115,6 @@ function ArgoCdIntegrationCard({
     openModal({
       content: (
         <LinkClusterModal
-          organizationId={organizationId}
           argoCdClusterName={cluster.argocd_cluster_name ?? getDestinationClusterName(cluster.argocd_cluster_url)}
           linkedClusterIds={linkedClusterIds}
           onClose={(response?: LinkClusterModalResponse) => {
@@ -290,7 +285,8 @@ function ArgoCdIntegrationCard({
   )
 }
 
-function SettingsArgoCdIntegrationCreateButton({ organizationId }: SettingsArgoCdIntegrationContentProps) {
+function SettingsArgoCdIntegrationCreateButton() {
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: integrations = [] } = useOrganizationArgoCdIntegrations({
     organizationId,
     suspense: true,
@@ -325,7 +321,8 @@ function SettingsArgoCdIntegrationCreateButton({ organizationId }: SettingsArgoC
   )
 }
 
-function SettingsArgoCdIntegrationContent({ organizationId }: SettingsArgoCdIntegrationContentProps) {
+function SettingsArgoCdIntegrationContent() {
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: integrations = [] } = useOrganizationArgoCdIntegrations({
     organizationId,
     suspense: true,
@@ -454,8 +451,6 @@ function SettingsArgoCdIntegrationContent({ organizationId }: SettingsArgoCdInte
 }
 
 export function SettingsArgoCdIntegration() {
-  const { organizationId = '' } = useParams({ strict: false })
-
   useDocumentTitle('ArgoCD integration - Organization settings')
 
   return (
@@ -468,7 +463,7 @@ export function SettingsArgoCdIntegration() {
             showNeedHelp={false}
           />
           <Suspense fallback={null}>
-            <SettingsArgoCdIntegrationCreateButton organizationId={organizationId} />
+            <SettingsArgoCdIntegrationCreateButton />
           </Suspense>
         </div>
 
@@ -480,7 +475,7 @@ export function SettingsArgoCdIntegration() {
               </div>
             }
           >
-            <SettingsArgoCdIntegrationContent organizationId={organizationId} />
+            <SettingsArgoCdIntegrationContent />
           </Suspense>
         </div>
       </Section>
