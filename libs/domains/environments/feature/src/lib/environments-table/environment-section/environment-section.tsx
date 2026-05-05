@@ -35,6 +35,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
+  const isArgoCdEnvironment = overview.services_overview.managed_by === 'ARGOCD'
   const cellClassName = 'h-auto border-l border-neutral py-2'
   const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
     event.stopPropagation()
@@ -63,17 +64,26 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
     >
       <Table.Cell className={twMerge(cellClassName, 'border-none p-0')}>
         <div className="flex h-full min-w-0 flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
-          <Link
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId"
-            params={{ organizationId, projectId, environmentId: overview.id }}
-            onClick={stopRowNavigation}
-            onKeyDown={stopRowNavigation}
-            className="group min-w-0 max-w-full"
-          >
-            <Tooltip content={overview.name}>
-              <span className="block min-w-0 truncate text-sm font-medium group-hover:underline">{overview.name}</span>
-            </Tooltip>
-          </Link>
+          <div className="flex min-w-0 items-center gap-1.5">
+            <Link
+              to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+              params={{ organizationId, projectId, environmentId: overview.id }}
+              onClick={stopRowNavigation}
+              onKeyDown={stopRowNavigation}
+              className="group min-w-0 max-w-full"
+            >
+              <Tooltip content={overview.name}>
+                <span className="block min-w-0 truncate text-sm font-medium group-hover:underline">
+                  {overview.name}
+                </span>
+              </Tooltip>
+            </Link>
+            {isArgoCdEnvironment ? (
+              <span className="flex h-4 items-center rounded-sm border border-argocd-subtle bg-surface-argocd-subtle px-0.5 text-2xs font-bold uppercase text-argocd retina:border-[0.5px]">
+                ArgoCD
+              </span>
+            ) : null}
+          </div>
           <div className="flex flex-shrink-0 items-center gap-2">
             <span className="font-normal text-neutral-subtle">
               {overview.services_overview.service_count}{' '}
