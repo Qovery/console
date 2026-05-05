@@ -85,7 +85,6 @@ function ArgoCdSection({
 
 interface ArgoCdIntegrationCardProps {
   integration: ArgoCdInstanceMappingResponse
-  linkedClusterIds: string[]
   onEdit: (integration: ArgoCdInstanceMappingResponse) => void
   onDelete: (integration: ArgoCdInstanceMappingResponse) => void
   onLinkCluster: (
@@ -95,13 +94,7 @@ interface ArgoCdIntegrationCardProps {
   ) => void
 }
 
-function ArgoCdIntegrationCard({
-  integration,
-  linkedClusterIds,
-  onEdit,
-  onDelete,
-  onLinkCluster,
-}: ArgoCdIntegrationCardProps) {
+function ArgoCdIntegrationCard({ integration, onEdit, onDelete, onLinkCluster }: ArgoCdIntegrationCardProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const [isLinkedSectionOpen, setIsLinkedSectionOpen] = useState(true)
@@ -110,6 +103,7 @@ function ArgoCdIntegrationCard({
   const hasLinkedClusters = integration.linked_clusters.length > 0
   const hasUnlinkedClusters = integration.unlinked_clusters.length > 0
   const isImporting = integration.status === 'connected' && !hasLinkedClusters && !hasUnlinkedClusters
+  const linkedClusterIds = integration.linked_clusters.map(({ qovery_cluster_id }) => qovery_cluster_id)
 
   const openLinkClusterModal = (cluster: ArgoCdUnlinkedClusterDetails) => {
     openModal({
@@ -440,7 +434,6 @@ function SettingsArgoCdIntegrationContent() {
         <ArgoCdIntegrationCard
           key={integration.credentials_id}
           integration={integration}
-          linkedClusterIds={integration.linked_clusters.map(({ qovery_cluster_id }) => qovery_cluster_id)}
           onEdit={openEditModal}
           onDelete={openDeleteModal}
           onLinkCluster={linkCluster}
