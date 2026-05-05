@@ -11,7 +11,7 @@ export function useArgoCdServices({ environmentId, suspense = false }: UseArgoCd
     ...services.listArgoCdServices(environmentId!),
     enabled: Boolean(environmentId),
     select(services) {
-      return services.sort((serviceA, serviceB) => serviceA.name.localeCompare(serviceB.name))
+      return [...services].sort((serviceA, serviceB) => serviceA.name.localeCompare(serviceB.name))
     },
     suspense,
   })
