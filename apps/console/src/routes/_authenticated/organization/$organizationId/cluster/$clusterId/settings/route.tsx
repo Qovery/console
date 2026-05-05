@@ -53,6 +53,12 @@ function RouteComponent() {
     icon: 'plug' as const,
   }
 
+  const addonsLink = {
+    title: 'Add-ons',
+    to: `${pathSettings}/addons`,
+    icon: 'puzzle-piece' as const,
+  }
+
   const advancedSettingsLink = {
     title: 'Advanced settings',
     to: `${pathSettings}/advanced-settings`,
@@ -80,6 +86,7 @@ function RouteComponent() {
           ...(eksAnywhereCluster ? [] : [resourcesLink]),
           imageRegistryLink,
           ...(eksAnywhereCluster ? [] : [networkLink]),
+          addonsLink,
           ...(eksAnywhereCluster ? [] : [advancedSettingsLink]),
           dangerZoneLink,
         ]
