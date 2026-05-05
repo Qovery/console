@@ -36,7 +36,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 )
 
 type SecretManagerOption = {
-  value: 'aws-manager' | 'aws-parameter' | 'gcp-secret'
+  value: 'AWS_SECRET_MANAGER' | 'AWS_PARAMETER_STORE' | 'GCP_SECRET_MANAGER'
   label: string
   icon: 'AWS' | 'GCP'
   typeLabel: string
@@ -92,9 +92,9 @@ type SecretManagerOption = {
 // ]
 
 const SECRET_MANAGER_OPTIONS: SecretManagerOption[] = [
-  { value: 'aws-manager', label: 'AWS Secret manager', icon: 'AWS', typeLabel: 'AWS Secret manager' },
-  { value: 'aws-parameter', label: 'AWS Parameter store', icon: 'AWS', typeLabel: 'AWS Parameter store' },
-  { value: 'gcp-secret', label: 'GCP Secret manager', icon: 'GCP', typeLabel: 'GCP Secret manager' },
+  { value: 'AWS_SECRET_MANAGER', label: 'AWS Secret manager', icon: 'AWS', typeLabel: 'AWS Secret manager' },
+  { value: 'AWS_PARAMETER_STORE', label: 'AWS Parameter store', icon: 'AWS', typeLabel: 'AWS Parameter store' },
+  { value: 'GCP_SECRET_MANAGER', label: 'GCP Secret manager', icon: 'GCP', typeLabel: 'GCP Secret manager' },
 ]
 
 function RouteComponent() {
@@ -117,8 +117,8 @@ function RouteComponent() {
       return SECRET_MANAGER_OPTIONS
     }
 
-    const gcpOption = SECRET_MANAGER_OPTIONS.find((option) => option.value === 'gcp-secret')
-    const awsOptions = SECRET_MANAGER_OPTIONS.filter((option) => option.value !== 'gcp-secret')
+    const gcpOption = SECRET_MANAGER_OPTIONS.find((option) => option.value === 'GCP_SECRET_MANAGER')
+    const awsOptions = SECRET_MANAGER_OPTIONS.filter((option) => option.value !== 'GCP_SECRET_MANAGER')
     return gcpOption ? [gcpOption, ...awsOptions] : SECRET_MANAGER_OPTIONS
   }, [cluster])
 
@@ -154,21 +154,26 @@ function RouteComponent() {
           initialValues={integration}
           onClose={closeModal}
           onSubmit={(payload) => {
-            console.log('🚀 ~ openSecretManagerModal ~ payload:', payload)
-            // setSecretManagers((prev) => {
-            //   if (integration) {
-            //     return prev.map((item) =>
-            //       item.id === integration.id
-            //         ? {
-            //             ...payload,
-            //             usedByServices: integration.usedByServices ?? 0,
-            //             associatedItems: integration.associatedItems,
-            //           }
-            //         : item
-            //     )
-            //   }
-            //   return [...prev, { ...payload, usedByServices: 0 }]
-            // })
+            setSecretManagers((prev) => {
+              if (integration) {
+                return prev.map((item) =>
+                  item.id === integration.id
+                    ? {
+                        ...payload,
+                        // usedByServices: integration.usedByServices ?? 0,
+                        // associatedItems: integration.associatedItems,
+                      }
+                    : item
+                )
+              }
+              return [
+                ...prev,
+                {
+                  ...payload,
+                  // usedByServices: 0
+                },
+              ]
+            })
           }}
         />
       ),

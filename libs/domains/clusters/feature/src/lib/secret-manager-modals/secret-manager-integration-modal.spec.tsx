@@ -6,7 +6,7 @@ import {
 
 const defaultProps: SecretManagerIntegrationModalProps = {
   option: {
-    value: 'aws-manager',
+    value: 'AWS_SECRET_MANAGER',
     label: 'AWS Secret manager',
     icon: 'AWS',
     typeLabel: 'AWS Secret manager',
