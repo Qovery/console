@@ -14,7 +14,7 @@ export const Route = createFileRoute(
 function ServiceNewContent() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
-  const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId, suspense: true })
+  const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId })
   const cloudProvider = environment?.cloud_provider?.provider
 
   useDocumentTitle('Create new service - Qovery')

@@ -507,6 +507,7 @@ function OrganizationRoute() {
     enabled: Boolean(environmentId) && Boolean(serviceId),
   })
   const scrollContainerRef = useRef<HTMLDivElement>(null)
+  const bannersRef = useRef<HTMLDivElement>(null)
   const assistantAnchorRef = useRef<HTMLDivElement>(null)
   const [devopsCopilotOpen, setDevopsCopilotOpen] = useState(false)
   const sendMessageRef = useRef<((message: string, createNewChat?: boolean) => void) | null>(null)
@@ -556,6 +557,28 @@ function OrganizationRoute() {
   useLayoutEffect(() => {
     scrollContainerRef.current?.scrollTo({ top: 0 })
   }, [location.pathname])
+
+  useLayoutEffect(() => {
+    const scrollContainer = scrollContainerRef.current
+    const banners = bannersRef.current
+
+    if (!scrollContainer || !banners) {
+      return
+    }
+
+    const update = () => {
+      scrollContainer.style.setProperty('--organization-banners-height', `${banners.offsetHeight}px`)
+    }
+
+    const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(update)
+    resizeObserver?.observe(banners)
+    update()
+
+    return () => {
+      resizeObserver?.disconnect()
+      scrollContainer.style.removeProperty('--organization-banners-height')
+    }
+  }, [])
 
   /**
    * Sync the assistant panel's available height with the sticky wrapper's actual top in the viewport.
@@ -637,7 +660,9 @@ function OrganizationRoute() {
           {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
           <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
             <ErrorBoundary>
-              <OrganizationBanners />
+              <div ref={bannersRef}>
+                <OrganizationBanners />
+              </div>
               <Header />
 
               <Suspense fallback={<MainLoader />}>
