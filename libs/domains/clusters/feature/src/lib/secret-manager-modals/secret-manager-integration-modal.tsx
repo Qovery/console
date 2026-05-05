@@ -116,6 +116,9 @@ export function SecretManagerIntegrationModal({
   })
 
   useEffect(() => {
+    // TODO [secret-manager] Double check these conditions and simplify if possible, they should be mutually exclusive but it's not very clear
+    //
+    //
     // if (shouldForceStaticCredentials) {
     //   methods.setValue('authenticationType', 'static', { shouldDirty: false })
     //   return
@@ -142,6 +145,7 @@ export function SecretManagerIntegrationModal({
     shouldForceStaticCredentials,
   ])
 
+  // TODO [secret-manager] the 3 different submit handlers are really similar, we should be able to merge them into one
   const handleSubmit = methods.handleSubmit((data) => {
     const useGcpManualPayload = activeTab === 'manual' && isGcpCluster(cluster) && option.value === 'GCP_SECRET_MANAGER'
     onSubmit({

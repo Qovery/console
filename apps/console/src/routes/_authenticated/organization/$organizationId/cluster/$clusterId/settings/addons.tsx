@@ -143,21 +143,21 @@ function RouteComponent() {
   const getSecretManagerOption = (source: SecretManagerOption['value']) =>
     SECRET_MANAGER_OPTIONS.find((option) => option.value === source) ?? SECRET_MANAGER_OPTIONS[0]
 
-  const openSecretManagerModal = (option: SecretManagerOption, integration?: SecretManagerAccess) => {
+  const openSecretManagerModal = (option: SecretManagerOption, secretManager?: SecretManagerAccess) => {
     openModal({
       content: (
         <SecretManagerIntegrationModal
           option={option}
           regionOptions={regionOptions}
           cluster={cluster}
-          mode={integration ? 'edit' : 'create'}
-          initialValues={integration}
+          mode={secretManager ? 'edit' : 'create'}
+          initialValues={secretManager}
           onClose={closeModal}
           onSubmit={(payload) => {
             setSecretManagers((prev) => {
-              if (integration) {
+              if (secretManager) {
                 return prev.map((item) =>
-                  item.id === integration.id
+                  item.id === secretManager.id
                     ? {
                         ...payload,
                         // usedByServices: integration.usedByServices ?? 0,
@@ -377,7 +377,7 @@ function RouteComponent() {
                                   size="md"
                                   iconOnly
                                   onClick={() => {
-                                    // openSecretManagerModal(getSecretManagerOption(manager.source), manager)
+                                    openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)
                                   }}
                                 >
                                   <Icon iconName="pen" iconStyle="regular" className="text-xs" />
