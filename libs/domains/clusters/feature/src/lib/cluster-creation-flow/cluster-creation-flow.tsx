@@ -33,6 +33,21 @@ export interface ClusterContainerCreateContextInterface {
   creationFlowUrl: string
 }
 
+export type ClusterAddonsSecretManager = {
+  id: string
+  name: string
+  typeLabel: string
+  authentication: 'Automatic' | 'Manual'
+  provider: 'AWS' | 'GCP'
+  source: 'aws-manager' | 'aws-parameter' | 'gcp-secret'
+  authType?: 'sts' | 'static'
+  gcpProjectId?: string
+  region?: string
+  roleArn?: string
+  accessKey?: string
+  secretAccessKey?: string
+}
+
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
   undefined
 )
