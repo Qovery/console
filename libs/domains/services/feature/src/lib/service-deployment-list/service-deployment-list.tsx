@@ -33,13 +33,14 @@ import {
   truncateText,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateFullFormat, formatDuration } from '@qovery/shared/util-dates'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentQueueService } from '../hooks/use-cancel-deployment-queue-service/use-cancel-deployment-queue-service'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment-queue'
 import { useService } from '../hooks/use-service/use-service'
+import { ServiceDeploymentDurationCell } from './service-deployment-duration-cell'
 import { ServiceDeploymentListSkeleton } from './service-deployment-list-skeleton'
 import { TableFilterTriggerBy } from './table-filter-trigger-by/table-filter-trigger-by'
 
@@ -277,25 +278,16 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
           const data = info.row.original
 
           if (isDeploymentHistory(data)) {
-            const state = data.status_details?.status
-
-            return match(state)
-              .with('QUEUED', 'NEVER', () => <span className="text-neutral-subtle">--</span>)
-              .otherwise(() => (
-                <span className="flex items-center gap-1 text-neutral-subtle">
-                  {data.total_duration ? (
-                    <>
-                      <Icon iconName="clock-eight" iconStyle="regular" />
-                      {formatDuration(data.total_duration)}
-                    </>
-                  ) : (
-                    '--'
-                  )}
-                </span>
-              ))
-          } else {
-            return <span className="text-neutral-subtle">---</span>
+            return (
+              <ServiceDeploymentDurationCell
+                createdAt={data.auditing_data.created_at}
+                status={data.status_details.status}
+                totalDuration={data.total_duration}
+              />
+            )
           }
+
+          return <span className="text-neutral-subtle">---</span>
         },
       }),
       columnHelper.accessor('details', {
