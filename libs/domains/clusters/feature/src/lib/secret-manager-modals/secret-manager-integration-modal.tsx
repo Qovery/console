@@ -22,23 +22,13 @@ import {
 } from '@qovery/shared/util-clusters'
 
 export type SecretManagerOption = {
-  value: 'aws-manager' | 'aws-parameter' | 'gcp-secret'
+  value: 'AWS_SECRET_MANAGER' | 'AWS_PARAMETER_STORE' | 'GCP_SECRET_MANAGER'
   label: string
   icon: 'AWS' | 'GCP'
   typeLabel: string
 }
 
 type IntegrationTab = 'automatic' | 'manual'
-
-type SecretManagerIntegrationFormValues = {
-  authenticationType: string
-  gcpProjectId: string
-  region: string
-  roleArn: string
-  accessKey: string
-  secretAccessKey: string
-  secretManagerName: string
-}
 
 const AUTOMATIC_INTEGRATION_DISABLED_TOOLTIP =
   'Automatic integration is unavailable because an STS manual integration is already configured.'
@@ -90,74 +80,60 @@ export function SecretManagerIntegrationModal({
       ? 'manual'
       : 'automatic'
   )
-  const methods = useForm<SecretManagerIntegrationFormValues>({
+  const methods = useForm<SecretManagerAccess>({
     mode: 'onChange',
     defaultValues: {
-      authenticationType: initialValues?.authentication.mode ?? '',
-      gcpProjectId:
-        initialValues?.endpoint.mode === 'GCP_SECRET_MANAGER' ? initialValues?.endpoint.projectId ?? '' : '',
-      region: initialValues?.endpoint.region ?? '',
-      roleArn:
-        initialValues?.authentication.mode === 'AWS_ROLE_ARN'
-          ? initialValues?.authentication.role_arn ?? ''
-          : undefined,
-      accessKey:
-        initialValues?.authentication.mode === 'AWS_STATIC_CREDENTIALS'
-          ? initialValues?.authentication.access_key ?? ''
-          : undefined,
-      secretAccessKey:
-        initialValues?.authentication.mode === 'AWS_STATIC_CREDENTIALS'
-          ? initialValues?.authentication.secret_key ?? ''
-          : undefined,
-      secretManagerName: initialValues?.name ?? '',
+      ...initialValues,
+      endpoint: {
+        ...initialValues?.endpoint,
+        mode: initialValues?.endpoint.mode ?? option.value,
+      },
     },
   })
 
-  const authenticationOptions = useMemo(
+  const authenticationOptions: { label: string; value: SecretManagerAccess['authentication']['mode'] }[] = useMemo(
     () =>
       shouldForceStaticCredentials
-        ? [{ label: 'Static credentials', value: 'static' }]
+        ? [{ label: 'Static credentials', value: 'AWS_STATIC_CREDENTIALS' }]
         : [
-            { label: 'Assume role via STS', value: 'sts' },
-            { label: 'Static credentials', value: 'static' },
+            { label: 'Assume role via STS', value: 'AWS_ROLE_ARN' },
+            { label: 'Static credentials', value: 'AWS_STATIC_CREDENTIALS' },
           ],
     [shouldForceStaticCredentials]
   )
 
-  const authenticationType = methods.watch('authenticationType')
-  const isStaticCredentials = authenticationType === 'static'
-  const isGcpSecretManagerOnAws = option.value === 'gcp-secret' && isAwsCluster(cluster)
+  // const authenticationType = methods.watch('authenticationType')
+  // const isStaticCredentials = authenticationType === 'static'
+  const isGcpSecretManagerOnAws = option.value === 'GCP_SECRET_MANAGER' && isAwsCluster(cluster)
   const isAwsSecretManagerOnGcp = option.icon === 'AWS' && isGcpCluster(cluster)
   const isManualOnlyGcpIntegration = isGcpSecretManagerOnAws
   const isManualOnlyAwsIntegration = isAwsSecretManagerOnGcp
   const isGcpManualTabOnGcpSecretManager =
-    option.value === 'gcp-secret' && isGcpCluster(cluster) && activeTab === 'manual'
+    option.value === 'GCP_SECRET_MANAGER' && isGcpCluster(cluster) && activeTab === 'manual'
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     accept: { 'application/json': ['.json'] },
   })
 
   useEffect(() => {
-    if (shouldForceStaticCredentials) {
-      methods.setValue('authenticationType', 'static', { shouldDirty: false })
-      return
-    }
-
-    if (shouldForceStsCredentials) {
-      methods.setValue('authenticationType', 'sts', { shouldDirty: false })
-      return
-    }
-
-    if (
-      (activeTab === 'manual' || isManualOnlyAwsIntegration) &&
-      !authenticationType &&
-      !(isGcpCluster(cluster) && option.value === 'gcp-secret')
-    ) {
-      methods.setValue('authenticationType', isManualOnlyAwsIntegration ? 'static' : 'sts', { shouldDirty: false })
-    }
+    // if (shouldForceStaticCredentials) {
+    //   methods.setValue('authenticationType', 'static', { shouldDirty: false })
+    //   return
+    // }
+    // if (shouldForceStsCredentials) {
+    //   methods.setValue('authenticationType', 'sts', { shouldDirty: false })
+    //   return
+    // }
+    // if (
+    //   (activeTab === 'manual' || isManualOnlyAwsIntegration) &&
+    //   !authenticationType &&
+    //   !(isGcpCluster(cluster) && option.value === 'gcp-secret')
+    // ) {
+    //   methods.setValue('authenticationType', isManualOnlyAwsIntegration ? 'static' : 'sts', { shouldDirty: false })
+    // }
   }, [
     activeTab,
-    authenticationType,
+    // authenticationType,
     cluster,
     isManualOnlyAwsIntegration,
     methods,
@@ -167,54 +143,23 @@ export function SecretManagerIntegrationModal({
   ])
 
   const handleSubmit = methods.handleSubmit((data) => {
-    const useGcpManualPayload = activeTab === 'manual' && isGcpCluster(cluster) && option.value === 'gcp-secret'
+    const useGcpManualPayload = activeTab === 'manual' && isGcpCluster(cluster) && option.value === 'GCP_SECRET_MANAGER'
     onSubmit({
-      id: initialValues?.id ?? `secret-manager-${Date.now()}`,
-      name: data.secretManagerName.trim() || 'Secret manager',
-      typeLabel: option.typeLabel,
-      authentication: activeTab === 'manual' ? 'Manual' : 'Automatic',
-      provider: option.icon,
-      source: option.value,
-      authType: useGcpManualPayload
-        ? 'static'
-        : activeTab === 'manual' && data.authenticationType
-          ? (data.authenticationType as 'sts' | 'static')
-          : undefined,
-      gcpProjectId: data.gcpProjectId || undefined,
-      region: data.region || undefined,
-      roleArn: data.roleArn || undefined,
-      accessKey: data.accessKey || undefined,
-      secretAccessKey: data.secretAccessKey || undefined,
+      ...data,
     })
     onClose()
   })
 
   const handleGcpAwsSubmit = methods.handleSubmit((data) => {
     onSubmit({
-      id: initialValues?.id ?? `secret-manager-${Date.now()}`,
-      name: data.secretManagerName.trim() || 'Secret manager',
-      typeLabel: option.typeLabel,
-      authentication: 'Manual',
-      provider: option.icon,
-      source: option.value,
-      authType: 'static',
+      ...data,
     })
     onClose()
   })
 
   const handleAwsManualOnlySubmit = methods.handleSubmit((data) => {
     onSubmit({
-      id: initialValues?.id ?? `secret-manager-${Date.now()}`,
-      name: data.secretManagerName.trim() || 'Secret manager',
-      typeLabel: option.typeLabel,
-      authentication: 'Manual',
-      provider: option.icon,
-      source: option.value,
-      authType: 'static',
-      region: data.region || undefined,
-      roleArn: undefined,
-      accessKey: data.accessKey || undefined,
-      secretAccessKey: data.secretAccessKey || undefined,
+      ...data,
     })
     onClose()
   })
@@ -257,7 +202,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
           <Dropzone typeFile=".json" isDragActive={isDragActive} />
         </div>
         <Controller
-          name="secretManagerName"
+          name="name"
           control={methods.control}
           render={({ field }) => (
             <InputText
@@ -290,7 +235,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
           <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
             <h3 className="text-sm font-medium text-neutral">2. Fill in these information</h3>
             <Controller
-              name="region"
+              name="endpoint.region"
               control={methods.control}
               render={({ field }) => (
                 <InputSelect
@@ -305,21 +250,26 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               )}
             />
             <Controller
-              name="accessKey"
+              name="authentication.access_key"
               control={methods.control}
               render={({ field }) => (
                 <InputText name={field.name} label="Access key" value={field.value} onChange={field.onChange} />
               )}
             />
             <Controller
-              name="secretAccessKey"
+              name="authentication.secret_key"
               control={methods.control}
               render={({ field }) => (
-                <InputText name={field.name} label="Secret access key" value={field.value} onChange={field.onChange} />
+                <InputText
+                  name={field.name}
+                  label="Secret access key"
+                  value={field.value ?? ''}
+                  onChange={field.onChange}
+                />
               )}
             />
             <Controller
-              name="secretManagerName"
+              name="name"
               control={methods.control}
               render={({ field }) => (
                 <InputText
@@ -336,7 +286,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
       ) : (
         <>
           <Controller
-            name="authenticationType"
+            name="authentication.mode"
             control={methods.control}
             render={({ field }) => {
               const authenticationTypeSelect = (
@@ -363,12 +313,12 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
             }}
           />
 
-          {!authenticationType && (
+          {!methods.watch('authentication.mode') && (
             <p className="text-sm text-neutral-subtle">
               Select an authentication type to see the required information.
             </p>
           )}
-          {authenticationType && isStaticCredentials ? (
+          {methods.watch('authentication.mode') && methods.watch('authentication.mode') === 'AWS_STATIC_CREDENTIALS' ? (
             <>
               <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
                 <h3 className="text-sm font-medium text-neutral">1. Create a user for Qovery</h3>
@@ -383,7 +333,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
                 <h3 className="text-sm font-medium text-neutral">2. Fill in these information</h3>
                 <Controller
-                  name="region"
+                  name="endpoint.region"
                   control={methods.control}
                   render={({ field }) => (
                     <InputSelect
@@ -398,26 +348,26 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   )}
                 />
                 <Controller
-                  name="accessKey"
+                  name="authentication.access_key"
                   control={methods.control}
                   render={({ field }) => (
                     <InputText name={field.name} label="Access key" value={field.value} onChange={field.onChange} />
                   )}
                 />
                 <Controller
-                  name="secretAccessKey"
+                  name="authentication.secret_key"
                   control={methods.control}
                   render={({ field }) => (
                     <InputText
                       name={field.name}
                       label="Secret access key"
-                      value={field.value}
+                      value={field.value ?? ''}
                       onChange={field.onChange}
                     />
                   )}
                 />
                 <Controller
-                  name="secretManagerName"
+                  name="name"
                   control={methods.control}
                   render={({ field }) => (
                     <InputText
@@ -431,7 +381,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                 />
               </div>
             </>
-          ) : authenticationType ? (
+          ) : methods.watch('authentication.mode') ? (
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
                 <h3 className="text-sm font-medium text-neutral">1. Connect to your AWS Console</h3>
@@ -457,7 +407,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
                 <h3 className="text-sm font-medium text-neutral">3. Provide your credentials info</h3>
                 <Controller
-                  name="region"
+                  name="endpoint.region"
                   control={methods.control}
                   render={({ field }) => (
                     <InputSelect
@@ -472,14 +422,14 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   )}
                 />
                 <Controller
-                  name="roleArn"
+                  name="authentication.role_arn"
                   control={methods.control}
                   render={({ field }) => (
                     <InputText name={field.name} label="Role ARN" value={field.value} onChange={field.onChange} />
                   )}
                 />
                 <Controller
-                  name="secretManagerName"
+                  name="name"
                   control={methods.control}
                   render={({ field }) => (
                     <InputText
@@ -603,7 +553,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               <div className="flex flex-col gap-4">
                 {option.icon === 'GCP' && (
                   <Controller
-                    name="gcpProjectId"
+                    name="endpoint.projectId"
                     control={methods.control}
                     render={({ field }) => (
                       <InputText
@@ -616,7 +566,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   />
                 )}
                 <Controller
-                  name="region"
+                  name="endpoint.region"
                   control={methods.control}
                   render={({ field }) => (
                     <InputSelect
@@ -631,7 +581,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   )}
                 />
                 <Controller
-                  name="secretManagerName"
+                  name="name"
                   control={methods.control}
                   render={({ field }) => (
                     <InputText
