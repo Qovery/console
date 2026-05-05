@@ -4,6 +4,7 @@ export interface FunnelFlowBodyProps {
   helpSectionClassName?: string
   helpSection?: ReactNode
   customContentWidth?: string
+  contentClassName?: string
 }
 
 export function FunnelFlowBody(props: PropsWithChildren<FunnelFlowBodyProps>) {
@@ -13,7 +14,11 @@ export function FunnelFlowBody(props: PropsWithChildren<FunnelFlowBodyProps>) {
         <div className="pointer-events-none absolute h-full w-full bg-background" style={{ left: '-30%' }}></div>
       )}
       <div className="flex w-full overflow-auto">
-        <section className={`w-full bg-background pt-14 ${props.helpSection ? 'lg:w-[70%]' : 'overflow-auto'}`}>
+        <section
+          className={`w-full pt-14 ${props.contentClassName ?? 'bg-background'} ${
+            props.helpSection ? 'lg:w-[70%]' : 'overflow-auto'
+          }`}
+        >
           <div
             data-testid="funnel-body-content"
             className={`relative mx-auto px-8 pb-14 ${

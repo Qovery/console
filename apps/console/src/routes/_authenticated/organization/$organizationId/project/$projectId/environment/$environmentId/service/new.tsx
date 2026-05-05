@@ -20,21 +20,18 @@ function ServiceNewContent() {
   useDocumentTitle('Create new service - Qovery')
 
   return (
-    <Section className="flex w-full flex-1 flex-col pb-24 pt-8">
+    <Section className="flex w-full flex-1 flex-col pb-10 pt-6">
       <Link
         color="brand"
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
         params={{ organizationId, projectId, environmentId }}
-        className="mb-8 gap-1 text-sm"
+        className="mb-2 w-fit gap-1 text-xs"
       >
         <Icon iconName="arrow-left" />
         Back to services list
       </Link>
-      <div className="mb-4 flex flex-col text-center">
-        <Heading className="mb-2 text-2xl text-neutral">Create new service</Heading>
-        <p className="text-sm text-neutral-subtle">
-          Step into the Qovery service and embrace the power of collaboration to kickstart your next project.
-        </p>
+      <div className="mb-6 border-b border-neutral pb-6">
+        <Heading className="text-2xl text-neutral">Create a new service</Heading>
       </div>
       <ServiceNew
         organizationId={organizationId}
