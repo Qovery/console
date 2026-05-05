@@ -2,7 +2,6 @@ import { mkdir, stat, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-export const CHANGELOG_RSS_FEED_URL = 'https://www.qovery.com/changelog/rss.xml'
 export const CHANGELOG_PAGE_URL = 'https://www.qovery.com/changelog'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 export const CHANGELOG_ASSET_FILE = resolve(__dirname, '../apps/console/public/changelog/latest.json')
@@ -106,21 +105,21 @@ export function parseLatestChangelogFromHtmlPage(htmlPage) {
     return []
   }
 
-  const [, rawUrl, rawName] = latestLink
+  const [, rawUrl, rawLinkContent] = latestLink
   const url = new URL(decodeHtmlEntities(rawUrl), CHANGELOG_PAGE_URL).href
-  const name = stripHtmlTags(rawName)
   const firstPublishedAt = extractPublishedAtFromChangelogUrl(url)
+
+  // Extract the title from the <h2> inside the link, fallback to full link content
+  const headingMatch = rawLinkContent.match(/<h2\b[^>]*>([\s\S]*?)<\/h2>/i)
+  const name = stripHtmlTags(headingMatch ? headingMatch[1] : rawLinkContent)
 
   if (!name || !firstPublishedAt) {
     return []
   }
 
-  const contentAfterTitle = htmlPage.slice(latestLink.index + latestLink[0].length)
-  const summary = stripHtmlTags(
-    contentAfterTitle
-      .split(/<a\b[^>]*href=["'][^"']*\/changelog\/\d{4}-\d{2}-\d{2}[^"']*["'][^>]*>/i)[0]
-      .split(/Read full release notes/i)[0]
-  )
+  // Extract summary from the first <p> inside the link content
+  const pMatch = rawLinkContent.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)
+  const summary = pMatch ? stripHtmlTags(pMatch[1]) : ''
 
   return [
     {
