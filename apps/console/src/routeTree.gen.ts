@@ -83,6 +83,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
@@ -732,6 +733,15 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSet
     {
       id: '/advanced-settings',
       path: '/advanced-settings',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRouteImport.update(
+    {
+      id: '/addons',
+      path: '/addons',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
     } as any,
@@ -1574,6 +1584,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/organization/$organizationId/project/$projectId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   '/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
+  '/organization/$organizationId/cluster/$clusterId/settings/addons': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/credentials': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
@@ -1732,6 +1743,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/cluster/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/organization/$organizationId/project/$projectId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   '/organization/$organizationId/settings/roles': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
+  '/organization/$organizationId/cluster/$clusterId/settings/addons': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/credentials': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
@@ -1889,6 +1901,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/cluster/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   '/_authenticated/organization/$organizationId/settings/roles/': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
@@ -2056,6 +2069,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId'
     | '/organization/$organizationId/project/$projectId'
     | '/organization/$organizationId/settings/roles'
+    | '/organization/$organizationId/cluster/$clusterId/settings/addons'
     | '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
     | '/organization/$organizationId/cluster/$clusterId/settings/credentials'
     | '/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
@@ -2214,6 +2228,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId'
     | '/organization/$organizationId/project/$projectId'
     | '/organization/$organizationId/settings/roles'
+    | '/organization/$organizationId/cluster/$clusterId/settings/addons'
     | '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
     | '/organization/$organizationId/cluster/$clusterId/settings/credentials'
     | '/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
@@ -2370,6 +2385,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/'
     | '/_authenticated/organization/$organizationId/project/$projectId/'
     | '/_authenticated/organization/$organizationId/settings/roles/'
+    | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
@@ -3009,6 +3025,13 @@ declare module '@tanstack/react-router' {
       path: '/advanced-settings'
       fullPath: '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons': {
+      id: '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons'
+      path: '/addons'
+      fullPath: '/organization/$organizationId/cluster/$clusterId/settings/addons'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/': {
@@ -3735,6 +3758,7 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteWithChildren =
   )
 
 interface AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
@@ -3748,6 +3772,8 @@ interface AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRo
 
 const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteChildren: AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteChildren =
   {
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAddonsRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute:
       AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute:
