@@ -35,11 +35,10 @@ export function CustomTab({
 
   const onCreateVariableToast = () =>
     toast(
-      'SUCCESS',
+      'success',
       'Creation success',
       'You need to redeploy your service for your changes to be applied.',
       toasterCallback,
-      undefined,
       'Redeploy'
     )
 
@@ -160,11 +159,10 @@ export function CustomTab({
       onCreateVariable={onCreateVariableToast}
       onEditVariable={() => {
         toast(
-          'SUCCESS',
+          'success',
           'Edition success',
           'You need to redeploy your service for your changes to be applied.',
           toasterCallback,
-          undefined,
           'Redeploy'
         )
       }}
@@ -174,11 +172,10 @@ export function CustomTab({
           name = name.substring(0, 30) + '...'
         }
         toast(
-          'SUCCESS',
+          'success',
           'Deletion success',
           `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
           toasterCallback,
-          undefined,
           'Redeploy'
         )
       }}

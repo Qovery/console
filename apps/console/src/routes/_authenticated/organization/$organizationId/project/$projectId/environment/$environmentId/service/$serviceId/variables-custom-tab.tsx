@@ -13,11 +13,10 @@ interface CustomTabProps {
 export function CustomTab({ scope, organizationId, projectId, environmentId, serviceId, toasterCallback }: CustomTabProps) {
   const onCreateVariableToast = () =>
     toast(
-      'SUCCESS',
+      'success',
       'Creation success',
       'You need to redeploy your service for your changes to be applied.',
       toasterCallback,
-      undefined,
       'Redeploy'
     )
 
@@ -43,11 +42,10 @@ export function CustomTab({ scope, organizationId, projectId, environmentId, ser
       onCreateVariable={onCreateVariableToast}
       onEditVariable={() => {
         toast(
-          'SUCCESS',
+          'success',
           'Edition success',
           'You need to redeploy your service for your changes to be applied.',
           toasterCallback,
-          undefined,
           'Redeploy'
         )
       }}
@@ -57,11 +55,10 @@ export function CustomTab({ scope, organizationId, projectId, environmentId, ser
           name = name.substring(0, 30) + '...'
         }
         toast(
-          'SUCCESS',
+          'success',
           'Deletion success',
           `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
           toasterCallback,
-          undefined,
           'Redeploy'
         )
       }}

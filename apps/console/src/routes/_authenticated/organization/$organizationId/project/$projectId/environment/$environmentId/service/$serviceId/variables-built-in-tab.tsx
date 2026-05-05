@@ -13,11 +13,10 @@ interface BuiltInTabProps {
 export function BuiltInTab({ scope, organizationId, projectId, environmentId, serviceId, toasterCallback }: BuiltInTabProps) {
   const onCreateVariableToast = () =>
     toast(
-      'SUCCESS',
+      'success',
       'Creation success',
       'You need to redeploy your service for your changes to be applied.',
       toasterCallback,
-      undefined,
       'Redeploy'
     )
 
@@ -34,11 +33,10 @@ export function BuiltInTab({ scope, organizationId, projectId, environmentId, se
       onCreateVariable={onCreateVariableToast}
       onEditVariable={() => {
         toast(
-          'SUCCESS',
+          'success',
           'Edition success',
           'You need to redeploy your service for your changes to be applied.',
           toasterCallback,
-          undefined,
           'Redeploy'
         )
       }}
@@ -48,11 +46,10 @@ export function BuiltInTab({ scope, organizationId, projectId, environmentId, se
           name = name.substring(0, 30) + '...'
         }
         toast(
-          'SUCCESS',
+          'success',
           'Deletion success',
           `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
           toasterCallback,
-          undefined,
           'Redeploy'
         )
       }}

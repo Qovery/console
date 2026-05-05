@@ -56,19 +56,19 @@ function RouteComponent() {
                       <VariablesActionToolbar
                         scope="PROJECT"
                         projectId={projectId}
-                        onCreateVariable={() => toast('SUCCESS', 'Creation success')}
+                        onCreateVariable={() => toast('success', 'Creation success')}
                       />
                     }
                     scope="PROJECT"
                     projectId={projectId}
                     onCreateVariable={() => {
-                      toast('SUCCESS', 'Creation success')
+                      toast('success', 'Creation success')
                     }}
                     onEditVariable={() => {
-                      toast('SUCCESS', 'Edition success')
+                      toast('success', 'Edition success')
                     }}
                     onDeleteVariable={() => {
-                      toast('SUCCESS', 'Deletion success')
+                      toast('success', 'Deletion success')
                     }}
                   />
                 )}
@@ -80,13 +80,13 @@ function RouteComponent() {
                     scope="PROJECT"
                     projectId={projectId}
                     onCreateVariable={() => {
-                      toast('SUCCESS', 'Creation success')
+                      toast('success', 'Creation success')
                     }}
                     onEditVariable={() => {
-                      toast('SUCCESS', 'Edition success')
+                      toast('success', 'Edition success')
                     }}
                     onDeleteVariable={() => {
-                      toast('SUCCESS', 'Deletion success')
+                      toast('success', 'Deletion success')
                     }}
                   />
                 )}

@@ -297,11 +297,10 @@ function AddSecretModal({
             render={({ field }) => (
               <InputSelect
                 className="mb-3 w-full"
-                name={field.name}
                 label="Source"
                 portal
                 options={SECRET_SOURCES.map((option) => ({
-                  label: option.label,
+                  label: option.tableLabel,
                   value: option.value,
                   icon: (
                     <Icon
@@ -327,7 +326,6 @@ function AddSecretModal({
             render={({ field }) => (
               <InputSelect
                 className="mb-3 w-full"
-                name={field.name}
                 label="Reference"
                 options={REFERENCE_OPTIONS.map((reference) => ({ label: reference, value: reference }))}
                 value={field.value}
@@ -446,11 +444,10 @@ function AttachSecretsModal({ selectedCount, onClose, onAttach }: AttachSecretsM
             render={({ field }) => (
               <InputSelect
                 className="mb-3 w-full"
-                name={field.name}
                 label="Source"
                 portal
                 options={SECRET_SOURCES.map((option) => ({
-                  label: option.label,
+                  label: option.tableLabel,
                   value: option.value,
                   icon: (
                     <Icon

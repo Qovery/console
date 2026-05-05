@@ -91,11 +91,10 @@ function RouteComponent() {
                         environmentId={environmentId}
                         onCreateVariable={() =>
                           toast(
-                            'SUCCESS',
+                            'success',
                             'Creation success',
                             'You need to redeploy your environment for your changes to be applied.',
                             toasterCallback,
-                            undefined,
                             'Redeploy'
                           )
                         }
@@ -107,21 +106,19 @@ function RouteComponent() {
                     environmentId={environmentId}
                     onCreateVariable={() => {
                       toast(
-                        'SUCCESS',
+                        'success',
                         'Creation success',
                         'You need to redeploy your environment for your changes to be applied.',
                         toasterCallback,
-                        undefined,
                         'Redeploy'
                       )
                     }}
                     onEditVariable={() => {
                       toast(
-                        'SUCCESS',
+                        'success',
                         'Edition success',
                         'You need to redeploy your environment for your changes to be applied.',
                         toasterCallback,
-                        undefined,
                         'Redeploy'
                       )
                     }}
@@ -131,11 +128,10 @@ function RouteComponent() {
                         name = name.substring(0, 30) + '...'
                       }
                       toast(
-                        'SUCCESS',
+                        'success',
                         'Deletion success',
                         `${name} has been deleted. You need to redeploy your environment for your changes to be applied.`,
                         toasterCallback,
-                        undefined,
                         'Redeploy'
                       )
                     }}
@@ -157,21 +153,19 @@ function RouteComponent() {
                     environmentId={environmentId}
                     onCreateVariable={() => {
                       toast(
-                        'SUCCESS',
+                        'success',
                         'Creation success',
                         'You need to redeploy your environment for your changes to be applied.',
                         toasterCallback,
-                        undefined,
                         'Redeploy'
                       )
                     }}
                     onEditVariable={() => {
                       toast(
-                        'SUCCESS',
+                        'success',
                         'Edition success',
                         'You need to redeploy your environment for your changes to be applied.',
                         toasterCallback,
-                        undefined,
                         'Redeploy'
                       )
                     }}
@@ -181,11 +175,10 @@ function RouteComponent() {
                         name = name.substring(0, 30) + '...'
                       }
                       toast(
-                        'SUCCESS',
+                        'success',
                         'Deletion success',
                         `${name} has been deleted. You need to redeploy your environment for your changes to be applied.`,
                         toasterCallback,
-                        undefined,
                         'Redeploy'
                       )
                     }}

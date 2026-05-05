@@ -230,7 +230,7 @@ function AttachSecretsModal({ selectedCount, onClose, onAttach }: AttachSecretsM
                 label="Source"
                 portal
                 options={SECRET_SOURCES.map((option) => ({
-                  label: option.label,
+                  label: option.tableLabel,
                   value: option.value,
                   icon: (
                     <Icon

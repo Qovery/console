@@ -20,11 +20,10 @@ export function BuiltInTab({
 }: BuiltInTabProps) {
   const onCreateVariableToast = () =>
     toast(
-      'SUCCESS',
+      'success',
       'Creation success',
       'You need to redeploy your service for your changes to be applied.',
       toasterCallback,
-      undefined,
       'Redeploy'
     )
 
@@ -41,11 +40,10 @@ export function BuiltInTab({
       onCreateVariable={onCreateVariableToast}
       onEditVariable={() => {
         toast(
-          'SUCCESS',
+          'success',
           'Edition success',
           'You need to redeploy your service for your changes to be applied.',
           toasterCallback,
-          undefined,
           'Redeploy'
         )
       }}
@@ -55,11 +53,10 @@ export function BuiltInTab({
           name = name.substring(0, 30) + '...'
         }
         toast(
-          'SUCCESS',
+          'success',
           'Deletion success',
           `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
           toasterCallback,
-          undefined,
           'Redeploy'
         )
       }}
