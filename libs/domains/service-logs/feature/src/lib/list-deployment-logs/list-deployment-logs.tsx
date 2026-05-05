@@ -142,7 +142,6 @@ export interface ListDeploymentLogsProps {
   stage?: Stage
   environmentStatus?: EnvironmentStatus
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
-  hasNewDeploymentBanner?: boolean
 }
 
 interface DeploymentLogsHeaderProps {
@@ -236,7 +235,6 @@ interface DeploymentLogsBodyProps {
   environmentStatus?: EnvironmentStatus
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
   deploymentHistory: DeploymentHistoryEnvironmentV2[]
-  hasNewDeploymentBanner: boolean
 }
 
 const PAUSE_SCROLL_THRESHOLD = 80
@@ -248,7 +246,6 @@ function DeploymentLogsBody({
   stage,
   preCheckStage,
   deploymentHistory,
-  hasNewDeploymentBanner,
 }: DeploymentLogsBodyProps) {
   const { hash } = useLocation()
   const { organizationId = '', projectId = '', serviceId = '', executionId = '' } = useParams({ strict: false })
@@ -394,9 +391,6 @@ function DeploymentLogsBody({
     () => (type: FilterType) => columnFilters.some((filter) => filter.value === type),
     [columnFilters]
   )
-  const emptyStateHeightClass = hasNewDeploymentBanner ? 'h-[calc(100vh-201px)]' : 'h-[calc(100vh-161px)]'
-  const logsViewportHeightClass = hasNewDeploymentBanner ? 'h-[calc(100vh-249px)]' : 'h-[calc(100vh-209px)]'
-
   const isLastVersion = deploymentHistory?.[0]?.identifier.execution_id === executionId || !executionId
   const currentDeployment = executionId
     ? deploymentHistory.find((d) => d.identifier.execution_id === executionId)
@@ -435,7 +429,7 @@ function DeploymentLogsBody({
 
   if (!logs || logs.length === 0 || !serviceStatus.is_part_last_deployment) {
     return (
-      <div className={clsx(emptyStateHeightClass, 'w-full')}>
+      <div className="min-h-0 w-full flex-1">
         <div className="flex h-full flex-col items-center justify-between bg-background">
           <div className="flex h-full flex-col items-center justify-center">
             <DeploymentLogsPlaceholder
@@ -527,7 +521,7 @@ function DeploymentLogsBody({
         </div>
       </div>
       <div
-        className={clsx(logsViewportHeightClass, 'w-full overflow-y-scroll')}
+        className="min-h-0 w-full flex-1 overflow-y-scroll"
         ref={refScrollSection}
         onScroll={handleScroll}
         onWheel={(event) => {
@@ -584,7 +578,6 @@ export function ListDeploymentLogs({
   serviceStatus,
   stage,
   preCheckStage,
-  hasNewDeploymentBanner = false,
 }: ListDeploymentLogsProps) {
   const { executionId = '', serviceId = '' } = useParams({ strict: false })
   const { data: deploymentHistory = [] } = useServiceDeploymentHistory({
@@ -594,25 +587,22 @@ export function ListDeploymentLogs({
   })
 
   return (
-    <div className="h-full w-full overflow-hidden">
-      <div className="relative h-full bg-background">
-        <DeploymentLogsHeader
-          environment={environment}
-          serviceStatus={serviceStatus}
-          environmentStatus={environmentStatus}
-          deploymentHistory={deploymentHistory}
-        />
-        <DeploymentLogsBody
-          key={executionId || 'latest'}
-          environment={environment}
-          serviceStatus={serviceStatus}
-          stage={stage}
-          environmentStatus={environmentStatus}
-          preCheckStage={preCheckStage}
-          deploymentHistory={deploymentHistory}
-          hasNewDeploymentBanner={hasNewDeploymentBanner}
-        />
-      </div>
+    <div className="relative flex min-h-0 w-full flex-1 flex-col overflow-hidden bg-background">
+      <DeploymentLogsHeader
+        environment={environment}
+        serviceStatus={serviceStatus}
+        environmentStatus={environmentStatus}
+        deploymentHistory={deploymentHistory}
+      />
+      <DeploymentLogsBody
+        key={executionId || 'latest'}
+        environment={environment}
+        serviceStatus={serviceStatus}
+        stage={stage}
+        environmentStatus={environmentStatus}
+        preCheckStage={preCheckStage}
+        deploymentHistory={deploymentHistory}
+      />
     </div>
   )
 }

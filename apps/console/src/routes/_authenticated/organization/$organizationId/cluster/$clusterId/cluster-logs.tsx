@@ -37,7 +37,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="flex h-[calc(100dvh-108px)] w-full flex-col overflow-hidden">
+    <div className="flex h-page-container w-full flex-col overflow-hidden">
       {isLogsLoading && !isLogsFetched ? (
         <div className="flex h-full flex-1 flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-3">

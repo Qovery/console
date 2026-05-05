@@ -85,12 +85,17 @@ module.exports = {
       maxWidth: {
         'content-with-navigation-left': '44.5rem',
       },
+      height: {
+        'page-container':
+          'calc(100dvh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - var(--organization-banners-height, 0px))',
+      },
       minHeight: {
-        'page-container': 'calc(100vh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height))',
+        'page-container':
+          'calc(100dvh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - var(--organization-banners-height, 0px))',
         'page-container-wbanner':
-          'calc(100vh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - 40px)',
+          'calc(100dvh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - 40px)',
         'page-container-wprogressbar':
-          'calc(100vh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - 6px)',
+          'calc(100dvh - theme(spacing.navbar-height) - theme(spacing.breadcrumb-height) - 6px)',
       },
       fontFamily: {
         sans: ['Roboto', 'Helvetica', 'sans-serif'],

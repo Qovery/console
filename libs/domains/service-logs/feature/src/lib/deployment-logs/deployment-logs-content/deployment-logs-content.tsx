@@ -163,10 +163,11 @@ export function DeploymentLogsContent({
       .otherwise(() => false)
 
   return (
-    <>
+    <div className="flex h-page-container flex-col overflow-hidden">
       {showBannerNew && (
         <Banner
           color="brand"
+          className="shrink-0"
           buttonLabel="See latest"
           buttonIconRight="arrow-right"
           onClickButton={() =>
@@ -192,9 +193,8 @@ export function DeploymentLogsContent({
         environmentStatus={environmentStatus}
         stage={stageFromServiceId}
         preCheckStage={preCheckStage}
-        hasNewDeploymentBanner={showBannerNew}
       />
-    </>
+    </div>
   )
 }
 
