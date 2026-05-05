@@ -1,3 +1,4 @@
+import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -13,7 +14,12 @@ import {
   Navbar,
   Tooltip,
 } from '@qovery/shared/ui'
-import { type ClusterAddonsSecretManager } from '../cluster-creation-flow/cluster-creation-flow'
+import {
+  hasAwsAutomaticIntegrationConfigured,
+  hasAwsManualStsIntegrationConfigured,
+  isAwsCluster,
+  isGcpCluster,
+} from '@qovery/shared/util-clusters'
 
 export type SecretManagerOption = {
   value: 'aws-manager' | 'aws-parameter' | 'gcp-secret'
@@ -40,37 +46,37 @@ const AUTOMATIC_INTEGRATION_DISABLED_TOOLTIP =
 export interface SecretManagerIntegrationModalProps {
   option: SecretManagerOption
   regionOptions: Array<{ label: string; value: string; icon?: JSX.Element }>
-  clusterProvider?: string
-  hasAwsAutomaticIntegrationConfigured?: boolean
-  hasAwsManualStsIntegrationConfigured?: boolean
+  cluster?: Cluster
   mode?: 'create' | 'edit'
-  initialValues?: ClusterAddonsSecretManager
+  initialValues?: SecretManagerAccess
   onClose: () => void
-  onSubmit: (payload: ClusterAddonsSecretManager) => void
+  onSubmit: (payload: SecretManagerAccess) => void
 }
 
 export function SecretManagerIntegrationModal({
   option,
   regionOptions,
-  clusterProvider,
-  hasAwsAutomaticIntegrationConfigured = false,
-  hasAwsManualStsIntegrationConfigured = false,
+  cluster,
   mode = 'create',
   initialValues,
   onClose,
   onSubmit,
 }: SecretManagerIntegrationModalProps) {
-  const isAwsCluster = clusterProvider === 'AWS'
-  const isAwsIntegration = option.icon === 'AWS'
-  const hasConfiguredAwsAutomaticIntegration = isAwsCluster && isAwsIntegration && hasAwsAutomaticIntegrationConfigured
-  const hasConfiguredAwsManualStsIntegration = isAwsCluster && isAwsIntegration && hasAwsManualStsIntegrationConfigured
+  // const isAwsIntegration = option.icon === 'AWS'
+  const hasConfiguredAwsAutomaticIntegration = hasAwsAutomaticIntegrationConfigured(
+    cluster?.secret_manager_accesses ?? []
+  )
+  const hasConfiguredAwsManualStsIntegration = hasAwsManualStsIntegrationConfigured(
+    cluster?.secret_manager_accesses ?? []
+  )
   const blockedAwsIntegrationLabel = hasConfiguredAwsAutomaticIntegration
     ? 'Automatic'
     : hasConfiguredAwsManualStsIntegration
       ? 'Assume role'
       : undefined
-  const isEditingAwsManualStsIntegration =
-    mode === 'edit' && initialValues?.authentication === 'Manual' && initialValues?.authType === 'sts'
+  const isEditingAwsManualStsIntegration = mode === 'edit' && initialValues?.authentication.mode === 'AWS_ROLE_ARN'
+  // const isEditingAwsManualStsIntegration =
+  //   mode === 'edit' && initialValues?.authentication.mode === 'Manual' && initialValues?.authType === 'sts'
   const shouldForceStaticCredentials = Boolean(blockedAwsIntegrationLabel) && !isEditingAwsManualStsIntegration
   const shouldForceStsCredentials = isEditingAwsManualStsIntegration
   const showAutomaticTabFirst = !blockedAwsIntegrationLabel
@@ -80,17 +86,29 @@ export function SecretManagerIntegrationModal({
       : AUTOMATIC_INTEGRATION_DISABLED_TOOLTIP
 
   const [activeTab, setActiveTab] = useState<IntegrationTab>(() =>
-    initialValues?.authentication === 'Manual' || Boolean(blockedAwsIntegrationLabel) ? 'manual' : 'automatic'
+    initialValues?.authentication.mode === 'AWS_ROLE_ARN' || Boolean(blockedAwsIntegrationLabel)
+      ? 'manual'
+      : 'automatic'
   )
   const methods = useForm<SecretManagerIntegrationFormValues>({
     mode: 'onChange',
     defaultValues: {
-      authenticationType: initialValues?.authType ?? '',
-      gcpProjectId: initialValues?.gcpProjectId ?? '',
-      region: initialValues?.region ?? '',
-      roleArn: initialValues?.roleArn ?? '',
-      accessKey: initialValues?.accessKey ?? '',
-      secretAccessKey: initialValues?.secretAccessKey ?? '',
+      authenticationType: initialValues?.authentication.mode ?? '',
+      gcpProjectId:
+        initialValues?.endpoint.mode === 'GCP_SECRET_MANAGER' ? initialValues?.endpoint.projectId ?? '' : '',
+      region: initialValues?.endpoint.region ?? '',
+      roleArn:
+        initialValues?.authentication.mode === 'AWS_ROLE_ARN'
+          ? initialValues?.authentication.role_arn ?? ''
+          : undefined,
+      accessKey:
+        initialValues?.authentication.mode === 'AWS_STATIC_CREDENTIALS'
+          ? initialValues?.authentication.access_key ?? ''
+          : undefined,
+      secretAccessKey:
+        initialValues?.authentication.mode === 'AWS_STATIC_CREDENTIALS'
+          ? initialValues?.authentication.secret_key ?? ''
+          : undefined,
       secretManagerName: initialValues?.name ?? '',
     },
   })
@@ -108,12 +126,12 @@ export function SecretManagerIntegrationModal({
 
   const authenticationType = methods.watch('authenticationType')
   const isStaticCredentials = authenticationType === 'static'
-  const isGcpCluster = clusterProvider === 'GCP'
-  const isGcpSecretManagerOnAws = option.value === 'gcp-secret' && isAwsCluster
-  const isAwsSecretManagerOnGcp = option.icon === 'AWS' && isGcpCluster
+  const isGcpSecretManagerOnAws = option.value === 'gcp-secret' && isAwsCluster(cluster)
+  const isAwsSecretManagerOnGcp = option.icon === 'AWS' && isGcpCluster(cluster)
   const isManualOnlyGcpIntegration = isGcpSecretManagerOnAws
   const isManualOnlyAwsIntegration = isAwsSecretManagerOnGcp
-  const isGcpManualTabOnGcpSecretManager = option.value === 'gcp-secret' && isGcpCluster && activeTab === 'manual'
+  const isGcpManualTabOnGcpSecretManager =
+    option.value === 'gcp-secret' && isGcpCluster(cluster) && activeTab === 'manual'
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     multiple: false,
     accept: { 'application/json': ['.json'] },
@@ -133,14 +151,14 @@ export function SecretManagerIntegrationModal({
     if (
       (activeTab === 'manual' || isManualOnlyAwsIntegration) &&
       !authenticationType &&
-      !(isGcpCluster && option.value === 'gcp-secret')
+      !(isGcpCluster(cluster) && option.value === 'gcp-secret')
     ) {
       methods.setValue('authenticationType', isManualOnlyAwsIntegration ? 'static' : 'sts', { shouldDirty: false })
     }
   }, [
     activeTab,
     authenticationType,
-    isGcpCluster,
+    cluster,
     isManualOnlyAwsIntegration,
     methods,
     option.value,
@@ -149,7 +167,7 @@ export function SecretManagerIntegrationModal({
   ])
 
   const handleSubmit = methods.handleSubmit((data) => {
-    const useGcpManualPayload = activeTab === 'manual' && isGcpCluster && option.value === 'gcp-secret'
+    const useGcpManualPayload = activeTab === 'manual' && isGcpCluster(cluster) && option.value === 'gcp-secret'
     onSubmit({
       id: initialValues?.id ?? `secret-manager-${Date.now()}`,
       name: data.secretManagerName.trim() || 'Secret manager',

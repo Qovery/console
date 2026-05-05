@@ -1,6 +1,6 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { type CloudProvider, type ClusterRegion } from 'qovery-typescript-axios'
+import { type CloudProvider, type ClusterRegion, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
@@ -11,8 +11,23 @@ import {
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Badge, Button, DropdownMenu, Icon, IconFlag, Indicator, Section, useModal } from '@qovery/shared/ui'
-import { isGCPCluster } from '@qovery/shared/util-clusters'
+import {
+  Badge,
+  Button,
+  DropdownMenu,
+  Icon,
+  IconFlag,
+  Indicator,
+  Section,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
+import {
+  getReadableSecretManagerAuth,
+  getReadableSecretManagerProvider,
+  getSecretManagerProvider,
+  isGcpCluster,
+} from '@qovery/shared/util-clusters'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons')(
   {
@@ -27,54 +42,54 @@ type SecretManagerOption = {
   typeLabel: string
 }
 
-type SecretManagerItem = {
-  id: string
-  name: string
-  typeLabel: string
-  authentication: 'Automatic' | 'Manual'
-  provider: 'AWS' | 'GCP'
-  source: SecretManagerOption['value']
-  authType?: 'sts' | 'static'
-  region?: string
-  roleArn?: string
-  accessKey?: string
-  secretAccessKey?: string
-  usedByServices?: number
-  associatedItems?: SecretManagerAssociatedProject[]
-}
+// type SecretManagerItem = {
+//   id: string
+//   name: string
+//   typeLabel: string
+//   authentication: 'Automatic' | 'Manual'
+//   provider: 'AWS' | 'GCP'
+//   source: SecretManagerOption['value']
+//   authType?: 'sts' | 'static'
+//   region?: string
+//   roleArn?: string
+//   accessKey?: string
+//   secretAccessKey?: string
+//   usedByServices?: number
+//   associatedItems?: SecretManagerAssociatedProject[]
+// }
 
-const BASE_SECRET_MANAGERS: SecretManagerItem[] = [
-  {
-    id: 'secret-manager-prod',
-    name: 'Prod secret manager',
-    typeLabel: 'AWS Secret manager',
-    authentication: 'Automatic',
-    provider: 'AWS' as const,
-    source: 'aws-manager',
-    usedByServices: 32,
-    // associatedItems: createSecretManagerAssociatedItems(32),
-  },
-  {
-    id: 'secret-manager-gcp-staging',
-    name: 'GCP staging secret manager',
-    typeLabel: 'GCP secret manager',
-    authentication: 'Manual',
-    provider: 'GCP' as const,
-    source: 'gcp-secret',
-    authType: 'static',
-    usedByServices: 0,
-  },
-  {
-    id: 'secret-manager-parameter',
-    name: 'AWS Parameter store',
-    typeLabel: 'AWS Parameter store',
-    authentication: 'Manual',
-    provider: 'AWS' as const,
-    source: 'aws-parameter',
-    authType: 'sts',
-    usedByServices: 0,
-  },
-]
+// const BASE_SECRET_MANAGERS: SecretManagerItem[] = [
+//   {
+//     id: 'secret-manager-prod',
+//     name: 'Prod secret manager',
+//     typeLabel: 'AWS Secret manager',
+//     authentication: 'Automatic',
+//     provider: 'AWS' as const,
+//     source: 'aws-manager',
+//     usedByServices: 32,
+//     // associatedItems: createSecretManagerAssociatedItems(32),
+//   },
+//   {
+//     id: 'secret-manager-gcp-staging',
+//     name: 'GCP staging secret manager',
+//     typeLabel: 'GCP secret manager',
+//     authentication: 'Manual',
+//     provider: 'GCP' as const,
+//     source: 'gcp-secret',
+//     authType: 'static',
+//     usedByServices: 0,
+//   },
+//   {
+//     id: 'secret-manager-parameter',
+//     name: 'AWS Parameter store',
+//     typeLabel: 'AWS Parameter store',
+//     authentication: 'Manual',
+//     provider: 'AWS' as const,
+//     source: 'aws-parameter',
+//     authType: 'sts',
+//     usedByServices: 0,
+//   },
+// ]
 
 const SECRET_MANAGER_OPTIONS: SecretManagerOption[] = [
   { value: 'aws-manager', label: 'AWS Secret manager', icon: 'AWS', typeLabel: 'AWS Secret manager' },
@@ -84,9 +99,13 @@ const SECRET_MANAGER_OPTIONS: SecretManagerOption[] = [
 
 function RouteComponent() {
   const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const { data: cluster } = useCluster({ organizationId, clusterId, suspense: true })
+
+  console.log('secret_manager_accesses', cluster?.secret_manager_accesses)
+
   const { data: cloudProviders = [] } = useCloudProviders({ suspense: true })
 
   const [kedaEnabled, setKedaEnabled] = useState(cluster?.keda?.enabled ?? false)
@@ -94,7 +113,7 @@ function RouteComponent() {
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
 
   const secretManagerDropdownOptions = useMemo(() => {
-    if (!isGCPCluster(cluster)) {
+    if (!isGcpCluster(cluster)) {
       return SECRET_MANAGER_OPTIONS
     }
 
@@ -117,45 +136,39 @@ function RouteComponent() {
     [currentProvider]
   )
 
-  const [secretManagers, setSecretManagers] = useState<SecretManagerItem[]>(() => BASE_SECRET_MANAGERS)
-  const hasAwsAutomaticIntegrationConfigured = secretManagers.some(
-    (secretManager) => secretManager.provider === 'AWS' && secretManager.authentication === 'Automatic'
-  )
-  const hasAwsManualStsIntegrationConfigured = secretManagers.some(
-    (secretManager) =>
-      secretManager.provider === 'AWS' && secretManager.authentication === 'Manual' && secretManager.authType === 'sts'
+  const [secretManagers, setSecretManagers] = useState<SecretManagerAccess[]>(
+    () => cluster?.secret_manager_accesses ?? []
   )
 
   const getSecretManagerOption = (source: SecretManagerOption['value']) =>
     SECRET_MANAGER_OPTIONS.find((option) => option.value === source) ?? SECRET_MANAGER_OPTIONS[0]
 
-  const openSecretManagerModal = (option: SecretManagerOption, integration?: SecretManagerItem) => {
+  const openSecretManagerModal = (option: SecretManagerOption, integration?: SecretManagerAccess) => {
     openModal({
       content: (
         <SecretManagerIntegrationModal
           option={option}
           regionOptions={regionOptions}
-          clusterProvider={cluster?.cloud_provider}
-          hasAwsAutomaticIntegrationConfigured={hasAwsAutomaticIntegrationConfigured}
-          hasAwsManualStsIntegrationConfigured={hasAwsManualStsIntegrationConfigured}
+          cluster={cluster}
           mode={integration ? 'edit' : 'create'}
           initialValues={integration}
           onClose={closeModal}
           onSubmit={(payload) => {
-            setSecretManagers((prev) => {
-              if (integration) {
-                return prev.map((item) =>
-                  item.id === integration.id
-                    ? {
-                        ...payload,
-                        usedByServices: integration.usedByServices ?? 0,
-                        associatedItems: integration.associatedItems,
-                      }
-                    : item
-                )
-              }
-              return [...prev, { ...payload, usedByServices: 0 }]
-            })
+            console.log('🚀 ~ openSecretManagerModal ~ payload:', payload)
+            // setSecretManagers((prev) => {
+            //   if (integration) {
+            //     return prev.map((item) =>
+            //       item.id === integration.id
+            //         ? {
+            //             ...payload,
+            //             usedByServices: integration.usedByServices ?? 0,
+            //             associatedItems: integration.associatedItems,
+            //           }
+            //         : item
+            //     )
+            //   }
+            //   return [...prev, { ...payload, usedByServices: 0 }]
+            // })
           }}
         />
       ),
@@ -166,11 +179,32 @@ function RouteComponent() {
     })
   }
 
-  const openSecretManagerAssociatedServicesModal = (integration: SecretManagerItem) => {
+  const handleDeleteSecretManager = (integration: SecretManagerAccess) => {
+    openModalConfirmation({
+      title: 'Delete secret manager',
+      name: integration.name,
+      confirmationMethod: 'action',
+      confirmationAction: 'delete',
+      action: () => {
+        // TODO [secret-manager] Double check if secret manager is used by any service
+
+        // const hasSecrets = (integration.usedByServices ?? 0) > 0
+        // if (hasSecrets) {
+        //   openDeletionHelper(integration)
+        // } else {
+        // }
+
+        setSecretManagers((prev) => prev.filter((item) => item.id !== integration.id))
+      },
+    })
+  }
+
+  const openSecretManagerAssociatedServicesModal = (integration: SecretManagerAccess) => {
     openModal({
       content: (
         <SecretManagerAssociatedServicesModal
-          associatedItems={integration.associatedItems ?? []}
+          // associatedItems={integration.associatedItems ?? []}
+          associatedItems={[]}
           organizationId={organizationId}
           title="Associated services"
           description={`${integration.name} is referenced by the following environments and services.`}
@@ -188,8 +222,9 @@ function RouteComponent() {
 
     const updatedCluster = {
       ...cluster,
+      secret_manager_accesses: secretManagers,
       keda: {
-        enabled: isGCPCluster(cluster) ? false : kedaEnabled,
+        enabled: isGcpCluster(cluster) ? false : kedaEnabled,
       },
     }
 
@@ -292,15 +327,17 @@ function RouteComponent() {
                             }`}
                           >
                             <div className="flex min-w-0 flex-1 items-center gap-3">
-                              <Icon name={manager.provider} width={24} height={24} />
+                              <Icon name={getSecretManagerProvider(manager)} width={24} height={24} />
                               <div className="flex min-w-0 flex-1 flex-col gap-1 text-[13px] leading-4">
                                 <p className="truncate font-medium text-neutral">{manager.name}</p>
                                 <div className="flex flex-nowrap items-center gap-2 text-neutral-subtle">
                                   <span>
-                                    Type: <span className="text-neutral">{manager.typeLabel}</span>
+                                    Type:{' '}
+                                    <span className="text-neutral">{getReadableSecretManagerProvider(manager)}</span>
                                   </span>
                                   <span>
-                                    Authentication: <span className="text-neutral">{manager.authentication}</span>
+                                    Authentication:{' '}
+                                    <span className="text-neutral">{getReadableSecretManagerAuth(manager)}</span>
                                   </span>
                                 </div>
                               </div>
@@ -309,7 +346,7 @@ function RouteComponent() {
                               <Indicator
                                 content={
                                   <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
-                                    {manager.usedByServices ?? 0}
+                                    {/* {manager.usedByServices ?? 0} */}
                                   </span>
                                 }
                               >
@@ -320,22 +357,23 @@ function RouteComponent() {
                                   size="md"
                                   iconOnly
                                   className="relative"
-                                  disabled={(manager.usedByServices ?? 0) === 0}
+                                  disabled={true}
+                                  // disabled={(manager.usedByServices ?? 0) === 0}
                                   onClick={() => openSecretManagerAssociatedServicesModal(manager)}
                                 >
                                   <Icon iconName="layer-group" iconStyle="regular" />
                                 </Button>
                               </Indicator>
-                              {manager.authentication !== 'Automatic' && (
+                              {manager.authentication.mode !== 'AUTOMATICALLY_CONFIGURED' && (
                                 <Button
                                   type="button"
                                   variant="outline"
                                   color="neutral"
                                   size="md"
                                   iconOnly
-                                  onClick={() =>
-                                    openSecretManagerModal(getSecretManagerOption(manager.source), manager)
-                                  }
+                                  onClick={() => {
+                                    // openSecretManagerModal(getSecretManagerOption(manager.source), manager)
+                                  }}
                                 >
                                   <Icon iconName="pen" iconStyle="regular" className="text-xs" />
                                 </Button>
