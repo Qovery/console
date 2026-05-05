@@ -13,8 +13,7 @@ export function useServices({ environmentId, suspense = false }: UseServicesProp
   const { data: services, isLoading: isServicesLoading } = useQuery({
     ...queries.services.list(environmentId!),
     select(services) {
-      services.sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
-      return services
+      return [...services].sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
     },
     enabled: Boolean(environmentId),
     suspense,

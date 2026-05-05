@@ -16,6 +16,7 @@ import {
   useDeploymentStatus,
   useEnvironment,
 } from '@qovery/domains/environments/feature'
+import { ArgoCdServiceList } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
@@ -96,7 +97,7 @@ function RouteComponent() {
         </div>
         <div className="flex flex-col gap-8">
           <EnvironmentLastDeploymentSection />
-          <Section className="flex flex-col gap-3.5">
+          <Section className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <Heading level={2}>Services</Heading>
               <Link
@@ -129,6 +130,7 @@ function RouteComponent() {
                 </div>
               </div>
             </div>
+            <ArgoCdServiceList environment={environment} />
           </Section>
         </div>
       </Section>

@@ -1,17 +1,19 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  ArgoCDApi,
+  type ArgoCdCredentialsRequest,
   type ClusterAdvancedSettings,
   type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,
   type ClusterRequest,
   type ClusterRoutingTableRequest,
   ClustersApi,
-  type CommitResponseList,
   OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 const clusterApi = new ClustersApi()
+const argoCdApi = new ArgoCDApi()
 const organizationApi = new OrganizationMainCallsApi()
 
 export const clusters = createQueryKeys('clusters', {
@@ -82,6 +84,13 @@ export const clusters = createQueryKeys('clusters', {
     queryKey: [organizationId, clusterId],
     async queryFn() {
       const response = await clusterApi.getClusterKubeconfig(organizationId, clusterId)
+      return response.data
+    },
+  }),
+  argoCdCredentials: ({ clusterId }: { clusterId: string }) => ({
+    queryKey: [clusterId],
+    async queryFn() {
+      const response = await argoCdApi.getArgoCdCredentials(clusterId)
       return response.data
     },
   }),
@@ -241,5 +250,28 @@ export const mutations = {
   async upgradeCluster({ clusterId }: { clusterId: string }) {
     const response = await clusterApi.upgradeCluster(clusterId)
     return response.data
+  },
+  async checkArgoCdConnection({
+    clusterId,
+    argoCdCredentialsRequest,
+  }: {
+    clusterId: string
+    argoCdCredentialsRequest: ArgoCdCredentialsRequest
+  }) {
+    const response = await argoCdApi.checkArgoCdConnection(clusterId, argoCdCredentialsRequest)
+    return response.data
+  },
+  async saveArgoCdCredentials({
+    clusterId,
+    argoCdCredentialsRequest,
+  }: {
+    clusterId: string
+    argoCdCredentialsRequest: ArgoCdCredentialsRequest
+  }) {
+    const response = await argoCdApi.saveArgoCdCredentials(clusterId, argoCdCredentialsRequest)
+    return response.data
+  },
+  async deleteArgoCdCredentials({ clusterId }: { clusterId: string }) {
+    await argoCdApi.deleteArgoCdCredentials(clusterId)
   },
 }

@@ -7,6 +7,7 @@ import BitbucketIcon from './icons-git/bitbucket'
 import { GithubIcon, GithubWhiteIcon } from './icons-git/github'
 import GitlabIcon from './icons-git/gitlab'
 import ApplicationIcon from './icons/application'
+import ArgoCdIcon from './icons/argocd'
 import AWSIcon from './icons/aws'
 import AWSGrayIcon from './icons/aws-gray'
 import AzureIcon from './icons/azure'
@@ -116,6 +117,8 @@ export const Icon = forwardRef<HTMLElement, IconProps | FontAwesomeIconProps>(fu
       return <GCPGrayIcon {...formattedProps} />
     case IconEnum.APPLICATION:
       return <ApplicationIcon {...formattedProps} />
+    case IconEnum.ARGOCD:
+      return <ArgoCdIcon {...formattedProps} />
     case IconEnum.AZURE:
       return <AzureIcon {...formattedProps} />
     case IconEnum.DATABASE:
