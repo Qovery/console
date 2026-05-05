@@ -155,18 +155,7 @@ export async function syncChangelogFeed({
   try {
     let changelogs = []
 
-    try {
-      const rssFeed = await fetchChangelogSource(
-        fetchImpl,
-        CHANGELOG_RSS_FEED_URL,
-        'application/rss+xml, application/xml, text/xml'
-      )
-      changelogs = parseLatestChangelogFromRssFeed(rssFeed)
-    } catch (error) {
-      consoleWarn('Unable to refresh Qovery changelog RSS asset. Falling back to the changelog page.', error)
-    }
-
-    if (changelogs.length === 0) {
+    {
       const htmlPage = await fetchChangelogSource(fetchImpl, CHANGELOG_PAGE_URL, 'text/html')
       changelogs = parseLatestChangelogFromHtmlPage(htmlPage)
     }

@@ -48,7 +48,7 @@ COPY . .
 
 # Build console with NX cache mount for faster rebuilds
 RUN --mount=type=cache,target=/app/node_modules/.cache/nx \
-    yarn nx build console --configuration=production
+    yarn nx build console --configuration=production --skip-nx-cache
 
 # Bundle static assets with nginx
 FROM nginx:1.25-alpine
