@@ -106,21 +106,21 @@ export function parseLatestChangelogFromHtmlPage(htmlPage) {
     return []
   }
 
-  const [, rawUrl, rawName] = latestLink
+  const [, rawUrl, rawLinkContent] = latestLink
   const url = new URL(decodeHtmlEntities(rawUrl), CHANGELOG_PAGE_URL).href
-  const name = stripHtmlTags(rawName)
   const firstPublishedAt = extractPublishedAtFromChangelogUrl(url)
+
+  // Extract the title from the <h1> or <h2> inside the link, fallback to full link content
+  const headingMatch = rawLinkContent.match(/<h[12]\b[^>]*>([\s\S]*?)<\/h[12]>/i)
+  const name = stripHtmlTags(headingMatch ? headingMatch[1] : rawLinkContent)
 
   if (!name || !firstPublishedAt) {
     return []
   }
 
-  const contentAfterTitle = htmlPage.slice(latestLink.index + latestLink[0].length)
-  const summary = stripHtmlTags(
-    contentAfterTitle
-      .split(/<a\b[^>]*href=["'][^"']*\/changelog\/\d{4}-\d{2}-\d{2}[^"']*["'][^>]*>/i)[0]
-      .split(/Read full release notes/i)[0]
-  )
+  // Extract summary from the first <p> inside the link content
+  const pMatch = rawLinkContent.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)
+  const summary = pMatch ? stripHtmlTags(pMatch[1]) : ''
 
   return [
     {
