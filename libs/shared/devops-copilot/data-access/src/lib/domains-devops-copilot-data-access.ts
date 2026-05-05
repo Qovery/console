@@ -25,6 +25,7 @@ export interface AICopilotOrgConfig {
   enabled: boolean
   read_only: boolean
   instructions?: string
+  token_mode?: 'jwt' | 'role'
 }
 
 export interface AICopilotRoleConfig {
@@ -145,7 +146,13 @@ export const mutations = {
     )
 
     if (!response.ok) {
-      throw new Error(`Failed to send message: ${response.status}`)
+      let errorMessage = `Failed to send message: ${response.status}`
+      try {
+        const errorBody = await response.json()
+        if (errorBody?.error) errorMessage = errorBody.error
+        // eslint-disable-next-line no-empty
+      } catch (_) {}
+      throw new Error(errorMessage)
     }
 
     return response
@@ -188,18 +195,21 @@ export const mutations = {
     readOnly,
     instructions,
     userEmail,
+    tokenMode,
   }: {
     organizationId: string
     enabled: boolean
     readOnly: boolean
     instructions?: string
     userEmail?: string
+    tokenMode?: 'jwt' | 'role'
   }) => {
     const response = await devopsCopilotAxios.put(`/organization/${organizationId}/config/org`, {
       enabled,
       read_only: readOnly,
       instructions: instructions || '',
       user_email: userEmail,
+      ...(tokenMode !== undefined && { token_mode: tokenMode }),
     })
 
     return response.data
