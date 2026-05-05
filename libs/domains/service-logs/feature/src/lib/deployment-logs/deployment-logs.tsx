@@ -26,7 +26,7 @@ const WebSocketListenerMemo = memo(MetricsWebSocketListener)
 
 function Loader() {
   return (
-    <div className="flex h-[calc(100vh-125px)] flex-col">
+    <div className="flex h-page-container flex-col">
       <div className="flex h-12 items-center gap-3 border-b border-neutral px-4">
         <Skeleton width={105} height={28} />
         <Skeleton width={124} height={28} />
@@ -34,7 +34,7 @@ function Loader() {
         <Skeleton width={305} height={28} />
       </div>
 
-      <div className="flex h-[calc(100%-48px)] flex-col items-center justify-between">
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-between">
         <div className="flex h-full flex-col items-center justify-center">
           <LoaderPlaceholder />
         </div>

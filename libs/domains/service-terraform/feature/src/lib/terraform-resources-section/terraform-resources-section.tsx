@@ -72,7 +72,7 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
   }
 
   return (
-    <div className="flex h-[calc(100dvh-theme(spacing.navbar-height)-4rem)] flex-col gap-4">
+    <div className="flex h-page-container flex-col gap-4">
       {/* Split panel: Tree list (with search) and Details */}
       <div className="flex h-full">
         {/* Left panel: Search + Resource tree list */}

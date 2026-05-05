@@ -234,104 +234,100 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
     (!isLogsFetched && !isLogsLoading)
   ) {
     return (
-      <div className="w-full">
-        <div>
-          <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
-          <div className="flex h-[calc(100vh-209px)] flex-col items-center justify-center">
-            <Placeholder
-              environment={environment}
-              hasMetricsEnabled={hasMetricsEnabled}
-              type={isLiveMode ? 'live' : 'history'}
-              isLogsFetched={isLogsFetched}
-              serviceName={service?.name}
-              itemsLength={logs.length}
-              databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
-            />
-          </div>
+      <div className="flex h-page-container w-full flex-col overflow-hidden">
+        <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+          <Placeholder
+            environment={environment}
+            hasMetricsEnabled={hasMetricsEnabled}
+            type={isLiveMode ? 'live' : 'history'}
+            isLogsFetched={isLogsFetched}
+            serviceName={service?.name}
+            itemsLength={logs.length}
+            databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
+          />
         </div>
       </div>
     )
   }
 
   return (
-    <div className="relative w-full">
-      <div>
-        <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
-        {isLogsLoading && isLiveMode ? (
-          <div className="flex h-[calc(100vh-209px)] flex-col items-center justify-center">
-            <Placeholder
-              environment={environment}
-              hasMetricsEnabled={hasMetricsEnabled}
-              type="live"
-              isLogsFetched={isLogsFetched}
-              serviceName={service?.name}
-              itemsLength={logs.length}
-              databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
-            />
-          </div>
-        ) : (
-          <div
-            className="h-[calc(100vh-209px)] w-full overflow-y-scroll "
-            ref={refScrollSection}
-            onScroll={handleScroll}
-            onWheel={(event) => {
-              if (!liveLogs || pauseLogs) return
+    <div className="relative flex h-page-container w-full flex-col overflow-hidden">
+      <HeaderServiceLogs logs={logs} isLiveMode={isLiveMode} refetchHistoryLogs={refetchHistoryLogs} />
+      {isLogsLoading && isLiveMode ? (
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center">
+          <Placeholder
+            environment={environment}
+            hasMetricsEnabled={hasMetricsEnabled}
+            type="live"
+            isLogsFetched={isLogsFetched}
+            serviceName={service?.name}
+            itemsLength={logs.length}
+            databaseMode={service?.serviceType === 'DATABASE' ? service.mode : undefined}
+          />
+        </div>
+      ) : (
+        <div
+          className="min-h-0 w-full flex-1 overflow-y-scroll"
+          ref={refScrollSection}
+          onScroll={handleScroll}
+          onWheel={(event) => {
+            if (!liveLogs || pauseLogs) return
 
-              const section = refScrollSection.current
-              if (!section) return
+            const section = refScrollSection.current
+            if (!section) return
 
-              const hasScrollableContent = section.clientHeight !== section.scrollHeight
-              if (!hasScrollableContent) return
+            const hasScrollableContent = section.clientHeight !== section.scrollHeight
+            if (!hasScrollableContent) return
 
-              if (event.deltaY < 0) {
-                accumulatedScrollUp.current += Math.abs(event.deltaY)
-                if (accumulatedScrollUp.current >= PAUSE_SCROLL_THRESHOLD) {
-                  accumulatedScrollUp.current = 0
-                  setPauseLogs(true)
-                }
-              } else {
+            if (event.deltaY < 0) {
+              accumulatedScrollUp.current += Math.abs(event.deltaY)
+              if (accumulatedScrollUp.current >= PAUSE_SCROLL_THRESHOLD) {
                 accumulatedScrollUp.current = 0
+                setPauseLogs(true)
               }
-            }}
+            } else {
+              accumulatedScrollUp.current = 0
+            }
+          }}
+        >
+          {!isLiveMode && hasMoreLogs && historyLogs.length > 0 && (
+            <ShowPreviousLogsButton
+              showPreviousLogs={!hasMoreLogs}
+              setShowPreviousLogs={loadPreviousLogs}
+              setPauseLogs={setPauseLogs}
+            />
+          )}
+          <Table.Root
+            className="w-full border-separate border-spacing-y-0.5 text-xs"
+            containerClassName="rounded-none border-none bg-background"
           >
-            {!isLiveMode && hasMoreLogs && historyLogs.length > 0 && (
-              <ShowPreviousLogsButton
-                showPreviousLogs={!hasMoreLogs}
-                setShowPreviousLogs={loadPreviousLogs}
-                setPauseLogs={setPauseLogs}
-              />
-            )}
-            <Table.Root
-              className="w-full border-separate border-spacing-y-0.5 text-xs"
-              containerClassName="rounded-none border-none bg-background"
-            >
-              <Table.Body className="divide-y-0">
-                {logs.map((log, index) => {
-                  const timestamp = log.timestamp
-                  return (
-                    <MemoizedRowServiceLogs
-                      key={timestamp + index}
-                      service={service}
-                      log={log}
-                      hasMultipleContainers={hasMultipleContainers}
-                      highlightedText={queryParams.message || queryParams.search}
-                    />
-                  )
-                })}
-              </Table.Body>
-            </Table.Root>
-            {isLiveMode ? (
-              isServiceProgressing &&
-              isLogsFetched && <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
-            ) : (
-              <div className="h-8" />
-            )}
-          </div>
-        )}
-        {isLiveMode && (
-          <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} bufferedLogsCount={bufferedLogsCount} />
-        )}
-      </div>
+            <Table.Body className="divide-y-0">
+              {logs.map((log, index) => {
+                const timestamp = log.timestamp
+                return (
+                  <MemoizedRowServiceLogs
+                    key={timestamp + index}
+                    service={service}
+                    log={log}
+                    hasMultipleContainers={hasMultipleContainers}
+                    highlightedText={queryParams.message || queryParams.search}
+                  />
+                )
+              })}
+            </Table.Body>
+          </Table.Root>
+          {isLiveMode ? (
+            isServiceProgressing &&
+            isLogsFetched && <ProgressIndicator pauseLogs={pauseLogs} message="Streaming service logs" />
+          ) : (
+            <div className="h-8" />
+          )}
+        </div>
+      )}
+      {isLiveMode && (
+        <ShowNewLogsButton pauseLogs={pauseLogs} setPauseLogs={setPauseLogs} bufferedLogsCount={bufferedLogsCount} />
+      )}
     </div>
   )
 }
