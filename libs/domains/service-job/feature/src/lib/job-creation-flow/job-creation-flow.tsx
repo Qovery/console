@@ -122,6 +122,7 @@ export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowPr
 
   const [variableData, setVariableData] = useState<FlowVariableData | undefined>({
     variables: [],
+    externalSecrets: [],
   })
 
   useEffect(() => {

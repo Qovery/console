@@ -20,7 +20,7 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ClusterCredentialsSettings } from '../../cluster-credentials-settings/cluster-credentials-settings'
 import { ClusterGeneralSettings } from '../../cluster-general-settings/cluster-general-settings'
-import { defaultResourcesData, useClusterContainerCreateContext } from '../cluster-creation-flow'
+import { defaultResourcesData, steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 
 export interface StepGeneralProps extends PropsWithChildren {
   organizationId: string
@@ -31,7 +31,7 @@ export interface StepGeneralProps extends PropsWithChildren {
 export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGeneralProps) {
   useDocumentTitle('General - Create Cluster')
 
-  const { generalData, setGeneralData, setResourcesData } = useClusterContainerCreateContext()
+  const { generalData, setGeneralData, setResourcesData, setCurrentStep } = useClusterContainerCreateContext()
 
   const methods = useForm<ClusterGeneralData>({
     defaultValues: { installation_type: 'LOCAL_DEMO', production: false, ...generalData },
@@ -44,6 +44,13 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
       methods.reset({ production: false, ...generalData })
     }
   }, [generalData, methods])
+
+  useEffect(() => {
+    const stepIndex = steps(generalData).findIndex((step) => step.key === 'general') + 1
+    if (stepIndex > 0) {
+      setCurrentStep(stepIndex)
+    }
+  }, [setCurrentStep, generalData])
 
   const { control, formState, watch } = methods
 
