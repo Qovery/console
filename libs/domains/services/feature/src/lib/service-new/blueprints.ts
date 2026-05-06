@@ -156,15 +156,6 @@ S3 bucket names must be **globally unique** across all AWS accounts and regions.
     documentationUrl: 'https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html',
     repositoryUrl: 'https://github.com/Qovery/qovery-service-catalog',
     repositorySlug: 'qovery-blueprints/aws-postgres',
-    readme: `## What will be created
-- 1 RDS PostgreSQL instance
-- Parameter group and subnet group
-- Security group rules
-
-## Configuration
-- Database name and admin user
-- Instance class
-- Storage size`,
     versions: [
       { version: '1.0.0', releaseDate: '2026-04-22' },
     ],

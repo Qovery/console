@@ -202,19 +202,6 @@ export function ServiceNew({ organizationId, projectId, environmentId }: Service
   return (
     <>
       <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6">
-        <Section className="flex flex-col gap-3">
-          <Link
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service"
-            params={{ organizationId, projectId, environmentId }}
-            className="inline-flex w-fit items-center gap-1 text-xs font-medium text-brand hover:text-brand-hover"
-          >
-            <Icon iconName="arrow-left" iconStyle="regular" className="text-xs" />
-            Back to services list
-          </Link>
-          <Heading className="text-3xl">Create a new service</Heading>
-          <div className="h-px w-full bg-neutral" />
-        </Section>
-
         <Section className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <Heading className="text-base">Base services</Heading>

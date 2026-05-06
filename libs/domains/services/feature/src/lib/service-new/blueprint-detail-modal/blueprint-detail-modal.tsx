@@ -4,7 +4,8 @@ import { type BlueprintEntry, PROVIDER_CONFIG, SERVICE_KIND_LABELS } from '../bl
 export interface BlueprintDetailModalProps {
   blueprint: BlueprintEntry
   onClose: () => void
-  onUse: (blueprintId: string) => void
+  onUse?: (blueprintId: string) => void
+  readOnly?: boolean
 }
 
 function extractReadmeTitle(markdown: string): string | null {
@@ -17,7 +18,7 @@ function extractReadmeTitle(markdown: string): string | null {
 
 function extractReadmeDescription(markdown: string): string | null {
   const lines = markdown.split('\n')
-  const firstTitleIndex = lines.findIndex((line) => line.trim().startsWith('# '))
+  const firstTitleIndex = lines.findIndex((line) => /^#{1,6}\s+/.test(line.trim()))
   if (firstTitleIndex === -1) return null
 
   const linesAfterTitle = lines.slice(firstTitleIndex + 1)
@@ -28,13 +29,13 @@ function extractReadmeDescription(markdown: string): string | null {
     const trimmed = line.trim()
     if (!started) {
       if (!trimmed || trimmed === '---') continue
-      if (trimmed.startsWith('#')) break
+      if (/^#{1,6}\s+/.test(trimmed)) break
       paragraphLines.push(trimmed)
       started = true
       continue
     }
 
-    if (!trimmed || trimmed === '---' || trimmed.startsWith('#')) break
+    if (!trimmed || trimmed === '---' || /^#{1,6}\s+/.test(trimmed)) break
     paragraphLines.push(trimmed)
   }
 
@@ -171,19 +172,22 @@ function renderSectionTitle(title: string) {
   )
 }
 
-export function BlueprintDetailModal({ blueprint, onClose, onUse }: BlueprintDetailModalProps) {
+export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = false }: BlueprintDetailModalProps) {
   const providerCfg = PROVIDER_CONFIG[blueprint.provider]
   const readme = blueprint.readme ?? ''
   const title = extractReadmeTitle(readme) ?? blueprint.name
   const description = extractReadmeDescription(readme) ?? blueprint.description
 
-  const createsSection = extractReadmeSection(readme, 'What this blueprint creates')
+  const createsSection =
+    extractReadmeSection(readme, 'What this blueprint creates') || extractReadmeSection(readme, 'What will be created')
   const architectureSection = extractReadmeSection(readme, 'Architecture')
   const parametersSection = extractReadmeSection(readme, 'Parameters')
   const outputsSection = extractReadmeSection(readme, 'Outputs')
   const securityDefaultsSection = extractReadmeSection(readme, 'Security defaults')
   const namingConstraintsSection = extractReadmeSection(readme, 'Naming constraints')
   const usageNotesSection = extractReadmeSection(readme, 'Usage notes')
+  const configurationSection =
+    extractReadmeSection(readme, 'Configuration') || extractReadmeSection(readme, "What you'll need to configure")
 
   const createsRows = parseResourceRows(createsSection)
   const parametersTable = parseMarkdownTable(parametersSection)
@@ -193,6 +197,8 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse }: BlueprintDet
   const namingParagraphs = extractParagraphText(namingConstraintsSection)
   const namingItems = extractBulletItems(namingConstraintsSection)
   const usageItems = extractBulletItems(usageNotesSection)
+  const configurationItems = extractBulletItems(configurationSection)
+  const configurationParagraphs = extractParagraphText(configurationSection)
 
   const repositoryLabel = blueprint.repositorySlug ?? 'Blueprint repository'
 
@@ -315,27 +321,47 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse }: BlueprintDet
             </ul>
           </div>
         )}
+
+        {(configurationItems.length > 0 || configurationParagraphs.length > 0) && (
+          <div className="mt-5">
+            {renderSectionTitle('Configuration')}
+            {configurationParagraphs.map((paragraph) => (
+              <p key={paragraph} className="text-neutral">
+                {paragraph}
+              </p>
+            ))}
+            {configurationItems.length > 0 && (
+              <ul className="mt-2 list-disc space-y-2 pl-5 text-neutral">
+                {configurationItems.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </div>
 
-      <div className="absolute bottom-0 left-0 right-0 border-t border-neutral bg-background px-6 py-4">
-        <div className="flex items-center justify-end gap-2">
-          <Button size="md" color="neutral" variant="plain" radius="rounded" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            size="md"
-            color="brand"
-            variant="solid"
-            radius="rounded"
-            onClick={() => {
-              onUse(blueprint.id)
-              onClose()
-            }}
-          >
-            Deploy blueprint
-          </Button>
+      {!readOnly && (
+        <div className="absolute bottom-0 left-0 right-0 border-t border-neutral bg-background px-6 py-4">
+          <div className="flex items-center justify-end gap-2">
+            <Button size="md" color="neutral" variant="plain" radius="rounded" onClick={onClose}>
+              Cancel
+            </Button>
+            <Button
+              size="md"
+              color="brand"
+              variant="solid"
+              radius="rounded"
+              onClick={() => {
+                onUse?.(blueprint.id)
+                onClose()
+              }}
+            >
+              Deploy blueprint
+            </Button>
+          </div>
         </div>
-      </div>
+      )}
     </Section>
   )
 }
