@@ -35,6 +35,12 @@ function RouteComponent() {
     icon: 'key' as const,
   }
 
+  const dnsProviderLink = {
+    title: 'DNS provider',
+    to: `${pathSettings}/dns-provider`,
+    icon: 'globe' as const,
+  }
+
   const resourcesLink = {
     title: 'Resources',
     to: `${pathSettings}/resources`,
@@ -68,7 +74,13 @@ function RouteComponent() {
   const eksAnywhereCluster = isEksAnywhereEnabled && cluster?.kubernetes === 'PARTIALLY_MANAGED'
 
   const LINKS_SETTINGS = match(cluster)
-    .with({ kubernetes: 'SELF_MANAGED' }, () => [generalLink, imageRegistryLink, advancedSettingsLink, dangerZoneLink])
+    .with({ kubernetes: 'SELF_MANAGED' }, () => [
+      generalLink,
+      dnsProviderLink,
+      imageRegistryLink,
+      advancedSettingsLink,
+      dangerZoneLink,
+    ])
     .with(
       { cloud_provider: 'AWS', kubernetes: 'MANAGED' },
       { cloud_provider: 'AWS', kubernetes: 'PARTIALLY_MANAGED' },
@@ -80,6 +92,7 @@ function RouteComponent() {
           ...(eksAnywhereCluster ? [] : [resourcesLink]),
           imageRegistryLink,
           ...(eksAnywhereCluster ? [] : [networkLink]),
+          dnsProviderLink,
           ...(eksAnywhereCluster ? [] : [advancedSettingsLink]),
           dangerZoneLink,
         ]
@@ -91,6 +104,7 @@ function RouteComponent() {
       resourcesLink,
       imageRegistryLink,
       networkLink,
+      dnsProviderLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
@@ -99,6 +113,7 @@ function RouteComponent() {
       credentialsLink,
       imageRegistryLink,
       networkLink,
+      dnsProviderLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
@@ -108,6 +123,7 @@ function RouteComponent() {
       resourcesLink,
       imageRegistryLink,
       networkLink,
+      dnsProviderLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
