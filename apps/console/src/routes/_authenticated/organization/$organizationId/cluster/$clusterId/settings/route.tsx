@@ -121,6 +121,7 @@ function RouteComponent() {
       imageRegistryLink,
       networkLink,
       dnsProviderLink,
+      addonsLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])

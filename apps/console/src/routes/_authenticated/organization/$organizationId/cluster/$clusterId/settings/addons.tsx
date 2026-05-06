@@ -4,9 +4,12 @@ import { type CloudProvider, type ClusterRegion, type SecretManagerAccess } from
 import { useMemo, useState } from 'react'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
-  type SecretManagerAssociatedProject,
+  AddonToggleCard,
+  SECRET_MANAGER_OPTIONS,
   SecretManagerAssociatedServicesModal,
   SecretManagerIntegrationModal,
+  SecretManagerList,
+  getSecretManagerOption,
   useCluster,
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
@@ -17,17 +20,11 @@ import {
   DropdownMenu,
   Icon,
   IconFlag,
-  Indicator,
   Section,
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import {
-  getReadableSecretManagerAuth,
-  getReadableSecretManagerProvider,
-  getSecretManagerProvider,
-  isGcpCluster,
-} from '@qovery/shared/util-clusters'
+import { isGcpCluster } from '@qovery/shared/util-clusters'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons')(
   {
@@ -35,67 +32,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   }
 )
 
-type SecretManagerOption = {
-  value: 'AWS_SECRET_MANAGER' | 'AWS_PARAMETER_STORE' | 'GCP_SECRET_MANAGER'
-  label: string
-  icon: 'AWS' | 'GCP'
-  typeLabel: string
-}
 
-// type SecretManagerItem = {
-//   id: string
-//   name: string
-//   typeLabel: string
-//   authentication: 'Automatic' | 'Manual'
-//   provider: 'AWS' | 'GCP'
-//   source: SecretManagerOption['value']
-//   authType?: 'sts' | 'static'
-//   region?: string
-//   roleArn?: string
-//   accessKey?: string
-//   secretAccessKey?: string
-//   usedByServices?: number
-//   associatedItems?: SecretManagerAssociatedProject[]
-// }
-
-// const BASE_SECRET_MANAGERS: SecretManagerItem[] = [
-//   {
-//     id: 'secret-manager-prod',
-//     name: 'Prod secret manager',
-//     typeLabel: 'AWS Secret manager',
-//     authentication: 'Automatic',
-//     provider: 'AWS' as const,
-//     source: 'aws-manager',
-//     usedByServices: 32,
-//     // associatedItems: createSecretManagerAssociatedItems(32),
-//   },
-//   {
-//     id: 'secret-manager-gcp-staging',
-//     name: 'GCP staging secret manager',
-//     typeLabel: 'GCP secret manager',
-//     authentication: 'Manual',
-//     provider: 'GCP' as const,
-//     source: 'gcp-secret',
-//     authType: 'static',
-//     usedByServices: 0,
-//   },
-//   {
-//     id: 'secret-manager-parameter',
-//     name: 'AWS Parameter store',
-//     typeLabel: 'AWS Parameter store',
-//     authentication: 'Manual',
-//     provider: 'AWS' as const,
-//     source: 'aws-parameter',
-//     authType: 'sts',
-//     usedByServices: 0,
-//   },
-// ]
-
-const SECRET_MANAGER_OPTIONS: SecretManagerOption[] = [
-  { value: 'AWS_SECRET_MANAGER', label: 'AWS Secret manager', icon: 'AWS', typeLabel: 'AWS Secret manager' },
-  { value: 'AWS_PARAMETER_STORE', label: 'AWS Parameter store', icon: 'AWS', typeLabel: 'AWS Parameter store' },
-  { value: 'GCP_SECRET_MANAGER', label: 'GCP Secret manager', icon: 'GCP', typeLabel: 'GCP Secret manager' },
-]
 
 function RouteComponent() {
   const { openModal, closeModal } = useModal()
@@ -140,10 +77,7 @@ function RouteComponent() {
     () => cluster?.secret_manager_accesses ?? []
   )
 
-  const getSecretManagerOption = (source: SecretManagerOption['value']) =>
-    SECRET_MANAGER_OPTIONS.find((option) => option.value === source) ?? SECRET_MANAGER_OPTIONS[0]
-
-  const openSecretManagerModal = (option: SecretManagerOption, secretManager?: SecretManagerAccess) => {
+  const openSecretManagerModal = (option: typeof SECRET_MANAGER_OPTIONS[number], secretManager?: SecretManagerAccess) => {
     openModal({
       content: (
         <SecretManagerIntegrationModal
@@ -254,33 +188,13 @@ function RouteComponent() {
         <div className="max-w-content-with-navigation-left">
           <div className="divide-y divide-neutral overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0_0_4px_0_rgba(0,0,0,0.01),0_2px_3px_0_rgba(0,0,0,0.02)]">
             <div className="p-4">
-              <div className="flex flex-col gap-3">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-neutral">KEDA autoscaler</span>
-                    <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
-                      Free
-                    </Badge>
-                  </div>
-                  <p className="text-sm text-neutral-subtle">
-                    Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this
-                    cluster.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    color="neutral"
-                    variant={kedaEnabled ? 'surface' : 'outline'}
-                    size="md"
-                    className="gap-2"
-                    onClick={() => setKedaEnabled((prev) => !prev)}
-                  >
-                    <Icon iconName="circle-check" iconStyle="regular" className="text-xs" />
-                    {kedaEnabled ? 'Activated' : 'Activate'}
-                  </Button>
-                </div>
-              </div>
+              <AddonToggleCard
+                title="KEDA autoscaler"
+                description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this cluster."
+                badge={{ label: 'Free', color: 'green' }}
+                activated={kedaEnabled}
+                onToggle={() => setKedaEnabled((prev) => !prev)}
+              />
             </div>
 
             {secretManagerEnabled && (
@@ -313,91 +227,21 @@ function RouteComponent() {
                             key={option.value}
                             color="neutral"
                             icon={<Icon name={option.icon} width={16} height={16} />}
-                            onSelect={() => {
-                              openSecretManagerModal(option)
-                            }}
+                            onSelect={() => openSecretManagerModal(option)}
                           >
                             {option.label}
                           </DropdownMenu.Item>
                         ))}
                       </DropdownMenu.Content>
                     </DropdownMenu.Root>
-                    {secretManagers.length > 0 && (
-                      <div className="w-full rounded-md border border-neutral bg-surface-neutral-subtle">
-                        {secretManagers.map((manager, index) => (
-                          <div
-                            key={manager.id}
-                            className={`flex items-center justify-between gap-3 p-3 ${
-                              index < secretManagers.length - 1 ? 'border-b border-neutral' : ''
-                            }`}
-                          >
-                            <div className="flex min-w-0 flex-1 items-center gap-3">
-                              <Icon name={getSecretManagerProvider(manager)} width={24} height={24} />
-                              <div className="flex min-w-0 flex-1 flex-col gap-1 text-[13px] leading-4">
-                                <p className="truncate font-medium text-neutral">{manager.name}</p>
-                                <div className="flex flex-nowrap items-center gap-2 text-neutral-subtle">
-                                  <span>
-                                    Type:{' '}
-                                    <span className="text-neutral">{getReadableSecretManagerProvider(manager)}</span>
-                                  </span>
-                                  <span>
-                                    Authentication:{' '}
-                                    <span className="text-neutral">{getReadableSecretManagerAuth(manager)}</span>
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                              <Indicator
-                                content={
-                                  <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
-                                    {/* {manager.usedByServices ?? 0} */}
-                                  </span>
-                                }
-                              >
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  color="neutral"
-                                  size="md"
-                                  iconOnly
-                                  className="relative"
-                                  disabled={true}
-                                  // disabled={(manager.usedByServices ?? 0) === 0}
-                                  onClick={() => openSecretManagerAssociatedServicesModal(manager)}
-                                >
-                                  <Icon iconName="layer-group" iconStyle="regular" />
-                                </Button>
-                              </Indicator>
-                              {manager.authentication.mode !== 'AUTOMATICALLY_CONFIGURED' && (
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  color="neutral"
-                                  size="md"
-                                  iconOnly
-                                  onClick={() => {
-                                    openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)
-                                  }}
-                                >
-                                  <Icon iconName="pen" iconStyle="regular" className="text-xs" />
-                                </Button>
-                              )}
-                              <Button
-                                type="button"
-                                variant="outline"
-                                color="neutral"
-                                size="md"
-                                iconOnly
-                                onClick={() => handleDeleteSecretManager(manager)}
-                              >
-                                <Icon iconName="trash" iconStyle="regular" className="text-xs" />
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
+                    <SecretManagerList
+                      secretManagers={secretManagers}
+                      onEdit={(manager) =>
+                        openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)
+                      }
+                      onDelete={handleDeleteSecretManager}
+                      onViewAssociatedServices={openSecretManagerAssociatedServicesModal}
+                    />
                   </div>
                 </div>
               </div>
