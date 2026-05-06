@@ -85,9 +85,8 @@ function RouteComponent() {
           credentialsLink,
           ...(eksAnywhereCluster ? [] : [resourcesLink]),
           imageRegistryLink,
-          ...(eksAnywhereCluster ? [] : [networkLink]),
-          addonsLink,
-          ...(eksAnywhereCluster ? [] : [advancedSettingsLink]),
+          ...(eksAnywhereCluster ? [] : [networkLink, advancedSettingsLink, addonsLink]),
+          advancedSettingsLink,
           dangerZoneLink,
         ]
       }
@@ -106,6 +105,7 @@ function RouteComponent() {
       credentialsLink,
       imageRegistryLink,
       networkLink,
+      addonsLink,
       advancedSettingsLink,
       dangerZoneLink,
     ])
