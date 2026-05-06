@@ -5,6 +5,7 @@ import {
   type ClusterAdvancedSettings,
   type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,
+  type ClusterDnsProviderRequest,
   type ClusterRequest,
   type ClusterRoutingTableRequest,
   ClustersApi,
@@ -56,6 +57,13 @@ export const clusters = createQueryKeys('clusters', {
     queryKey: [organizationId, clusterId],
     async queryFn() {
       const response = await clusterApi.getOrganizationCloudProviderInfo(organizationId, clusterId)
+      return response.data
+    },
+  }),
+  dnsProvider: ({ clusterId }: { clusterId: string }) => ({
+    queryKey: [clusterId],
+    async queryFn() {
+      const response = await clusterApi.getClusterDnsProvider(clusterId)
       return response.data
     },
   }),
@@ -213,6 +221,16 @@ export const mutations = {
       clusterId,
       cloudProviderInfoRequest
     )
+    return response.data
+  },
+  async editDnsProvider({
+    clusterId,
+    clusterDnsProviderRequest,
+  }: {
+    clusterId: string
+    clusterDnsProviderRequest: ClusterDnsProviderRequest
+  }) {
+    const response = await clusterApi.editClusterDnsProvider(clusterId, clusterDnsProviderRequest)
     return response.data
   },
   async editRoutingTable({

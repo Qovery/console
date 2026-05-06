@@ -80,6 +80,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/dns-provider'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
@@ -705,6 +706,15 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhere
     {
       id: '/eks-anywhere',
       path: '/eks-anywhere',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRouteImport.update(
+    {
+      id: '/dns-provider',
+      path: '/dns-provider',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
     } as any,
@@ -1577,6 +1587,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/credentials': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
+  '/organization/$organizationId/cluster/$clusterId/settings/dns-provider': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRoute
   '/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRoute
   '/organization/$organizationId/cluster/$clusterId/settings/general': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute
   '/organization/$organizationId/cluster/$clusterId/settings/image-registry': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute
@@ -1735,6 +1746,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/credentials': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   '/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
+  '/organization/$organizationId/cluster/$clusterId/settings/dns-provider': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRoute
   '/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRoute
   '/organization/$organizationId/cluster/$clusterId/settings/general': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute
   '/organization/$organizationId/cluster/$clusterId/settings/image-registry': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute
@@ -1892,6 +1904,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/dns-provider': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute
@@ -2059,6 +2072,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
     | '/organization/$organizationId/cluster/$clusterId/settings/credentials'
     | '/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
+    | '/organization/$organizationId/cluster/$clusterId/settings/dns-provider'
     | '/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
     | '/organization/$organizationId/cluster/$clusterId/settings/general'
     | '/organization/$organizationId/cluster/$clusterId/settings/image-registry'
@@ -2217,6 +2231,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
     | '/organization/$organizationId/cluster/$clusterId/settings/credentials'
     | '/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
+    | '/organization/$organizationId/cluster/$clusterId/settings/dns-provider'
     | '/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
     | '/organization/$organizationId/cluster/$clusterId/settings/general'
     | '/organization/$organizationId/cluster/$clusterId/settings/image-registry'
@@ -2373,6 +2388,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/advanced-settings'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/credentials'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone'
+    | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/dns-provider'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/general'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/image-registry'
@@ -2988,6 +3004,13 @@ declare module '@tanstack/react-router' {
       path: '/eks-anywhere'
       fullPath: '/organization/$organizationId/cluster/$clusterId/settings/eks-anywhere'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/dns-provider': {
+      id: '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/dns-provider'
+      path: '/dns-provider'
+      fullPath: '/organization/$organizationId/cluster/$clusterId/settings/dns-provider'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/danger-zone': {
@@ -3738,6 +3761,7 @@ interface AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRo
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsAdvancedSettingsRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute
   AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsImageRegistryRoute
@@ -3754,6 +3778,8 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRouteC
       AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsCredentialsRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute:
       AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDangerZoneRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsDnsProviderRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRoute:
       AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsEksAnywhereRoute,
     AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsGeneralRoute:
