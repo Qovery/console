@@ -118,7 +118,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
           <>
             <span className="ml-0.5 mr-2 h-4 w-px shrink-0 bg-surface-neutral-component" />
             <span className="flex h-5 items-center rounded border border-argocd-subtle bg-surface-argocd-subtle px-0.5 text-xs font-bold uppercase text-argocd retina:border-[0.5px]">
-              ArgoCD
+              ARGOCD
             </span>
           </>
         )}
@@ -175,7 +175,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
     }))
     .otherwise(() => undefined)
 
-  const argoCdSource = match(service)
+  const isArgoCdService = match(service)
     .with({ service_type: 'ARGOCD_APP' }, () => true)
     .otherwise(() => false)
 
@@ -335,18 +335,20 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           <Truncate text={argoCdSourceTargetRevision} truncateLimit={18} />
         </Badge>
       ) : null} */}
-      <ServiceLinksPopover
-        organizationId={organizationId}
-        projectId={projectId}
-        environmentId={environmentId}
-        serviceId={serviceId}
-      >
-        <Button className="gap-1" size="xs" color="neutral" variant="outline">
-          <Icon iconName="link" iconStyle="regular" />
-          Links
-          <Icon iconName="angle-down" iconStyle="regular" />
-        </Button>
-      </ServiceLinksPopover>
+      {!isArgoCdService && (
+        <ServiceLinksPopover
+          organizationId={organizationId}
+          projectId={projectId}
+          environmentId={environmentId}
+          serviceId={serviceId}
+        >
+          <Button className="gap-1" size="xs" color="neutral" variant="outline">
+            <Icon iconName="link" iconStyle="regular" />
+            Links
+            <Icon iconName="angle-down" iconStyle="regular" />
+          </Button>
+        </ServiceLinksPopover>
+      )}
     </div>
   )
 }

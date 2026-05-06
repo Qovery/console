@@ -78,7 +78,7 @@ jest.mock('@tanstack/react-router', () => ({
     params?: unknown
     [key: string]: unknown
   }) => (
-    <a href={typeof to === 'string' ? to : '#'} {...props}>
+    <a href={typeof to === 'string' ? to : '/'} {...props}>
       {children}
     </a>
   ),
@@ -329,7 +329,7 @@ describe('ServiceHeader', () => {
 
     expect(screen.getByRole('heading', { name: 'kube-dns-prod' })).toBeInTheDocument()
     expect(screen.getByText('ARGOCD')).toBeInTheDocument()
-    expect(screen.queryByText('service-state-chip')).not.toBeInTheDocument()
+    expect(screen.getByText('service-state-chip')).toBeInTheDocument()
     expect(screen.queryByText('service-action-toolbar')).not.toBeInTheDocument()
   })
 })
