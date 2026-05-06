@@ -298,6 +298,6 @@ export const handleTerraformSubmit = (data: TerraformGeneralData, terraform: Ter
   },
   terraform_variables_source: {
     ...terraform.terraform_variables_source,
-    tf_vars: [],
+    tf_vars: terraform.terraform_variables_source?.tf_vars ?? [],
   },
 })
