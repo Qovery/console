@@ -12,6 +12,7 @@ import {
   ApplicationMainCallsApi,
   type ApplicationRequest,
   ApplicationsApi,
+  ArgoCDApi,
   type CleanFailedJobsRequest,
   ContainerActionsApi,
   type ContainerAdvancedSettings,
@@ -71,6 +72,7 @@ import {
   type TerraformRequest,
   TerraformsApi,
   type Application as _Application,
+  type ArgocdAppResponse as _ArgoCd,
   type CloneServiceRequest as _CloneServiceRequest,
   type ContainerResponse as _Container,
   type Database as _Database,
@@ -135,6 +137,7 @@ const customDomainContainerApi = new ContainerCustomDomainApi()
 const customDomainHelmApi = new HelmCustomDomainApi()
 
 const deploymentQueueActionsApi = new DeploymentQueueActionsApi()
+const argoCdApi = new ArgoCDApi()
 
 const serviceMainCallsApi = new ServiceMainCallsApi()
 
@@ -150,6 +153,7 @@ export type DatabaseType = Extract<ServiceType, 'DATABASE'>
 export type JobType = Extract<ServiceType, 'JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
 export type TerraformType = Extract<ServiceType, 'TERRAFORM'>
+export type ArgoCdType = Extract<ServiceType, 'ARGOCD_APP'>
 
 // XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
 // Waiting to have this implementation available in the edition interfaces.
@@ -177,8 +181,11 @@ export type Terraform = _Terraform & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: TerraformType
 }
-
-export type AnyService = Application | Database | Container | Job | Helm | Terraform
+export type ArgoCd = _ArgoCd & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: ArgoCdType
+}
+export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd
 
 export type AdvancedSettings =
   | ApplicationAdvancedSettings
@@ -250,41 +257,13 @@ export const services = createQueryKeys('services', {
     queryKey: [environmentId],
     async queryFn() {
       const response = await environmentApi.listServicesByEnvironmentId(environmentId)
-      return (response.data.results || []).reduce<AnyService[]>((acc, service) => {
-        const mappedService = match(service)
-          .with({ service_type: 'APPLICATION' }, (s) => ({
-            ...s,
-            serviceType: 'APPLICATION' as const,
-          }))
-          .with({ service_type: 'ARGOCD_APP' }, () => null)
-          .with({ service_type: 'CONTAINER' }, (s) => ({
-            ...s,
-            serviceType: 'CONTAINER' as const,
-          }))
-          .with({ service_type: 'DATABASE' }, (s) => ({
-            ...s,
-            serviceType: 'DATABASE' as const,
-          }))
-          .with({ service_type: 'JOB' }, (s) => ({
-            ...s,
-            serviceType: 'JOB' as const,
-          }))
-          .with({ service_type: 'HELM' }, (s) => ({
-            ...s,
-            serviceType: 'HELM' as const,
-          }))
-          .with({ service_type: 'TERRAFORM' }, (s) => ({
-            ...s,
-            serviceType: 'TERRAFORM' as const,
-          }))
-          .exhaustive()
-
-        if (mappedService) {
-          acc.push(mappedService as AnyService)
-        }
-
-        return acc
-      }, [])
+      return (response.data.results || []).map(
+        (service) =>
+          ({
+            ...service,
+            serviceType: service.service_type,
+          }) as AnyService
+      )
     },
   }),
   status: ({ id: serviceId, serviceType }: { id: string; serviceType: ServiceType }) => ({
@@ -357,6 +336,13 @@ export const services = createQueryKeys('services', {
           ...(await terraformMainCallsApi.getTerraform(serviceId)).data,
           serviceType: 'TERRAFORM' as const,
         }))
+        .with('ARGOCD_APP', async () => {
+          const service = (await argoCdApi.getArgoCdApp(serviceId)).data
+          return {
+            ...service,
+            serviceType: 'ARGOCD_APP' as const,
+          }
+        })
         .exhaustive()
       return service
     },

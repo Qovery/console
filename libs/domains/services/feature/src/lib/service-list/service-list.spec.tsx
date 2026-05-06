@@ -3,13 +3,14 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceList, type ServiceListProps } from './service-list'
 
 let mockDeploymentStagesData: unknown = undefined
+let mockServicesData: unknown = undefined
 jest.mock('../hooks/use-list-deployment-stages/use-list-deployment-stages', () => ({
   useListDeploymentStages: () => ({ data: mockDeploymentStagesData }),
 }))
 
 jest.mock('../hooks/use-services/use-services', () => ({
   useServices: () => ({
-    data: [
+    data: mockServicesData ?? [
       {
         id: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
         created_at: '2023-10-25T09:00:13.39717Z',
@@ -325,6 +326,17 @@ jest.mock('../hooks/use-services/use-services', () => ({
           stateLabel: 'Never deployed',
         },
       },
+      {
+        id: 'argocd-service-id',
+        name: 'ARGOCD APP',
+        description: '',
+        environment: {
+          id: '55867c71-56f9-4b4f-ab22-5904c9dbafda',
+        },
+        service_type: 'ARGOCD_APP',
+        serviceType: 'ARGOCD_APP',
+        icon_uri: 'app://qovery-console/argocd',
+      },
     ],
   }),
 }))
@@ -409,6 +421,7 @@ describe('ServiceList', () => {
   beforeEach(() => {
     mockNavigate.mockClear()
     mockDeploymentStagesData = undefined
+    mockServicesData = undefined
   })
 
   it('should render successfully', () => {
@@ -429,6 +442,33 @@ describe('ServiceList', () => {
     const rows = screen.getAllByRole('row')
     expect(rows).toHaveLength(5)
   })
+
+  it('should not display ArgoCD services', () => {
+    renderWithProviders(<ServiceList {...serviceListProps} />)
+    expect(screen.queryByText('ARGOCD APP')).not.toBeInTheDocument()
+  })
+
+  it('should display empty state when only ArgoCD services exist', () => {
+    mockServicesData = [
+      {
+        id: 'argocd-service-id',
+        name: 'ARGOCD APP',
+        description: '',
+        environment: {
+          id: '55867c71-56f9-4b4f-ab22-5904c9dbafda',
+        },
+        service_type: 'ARGOCD_APP',
+        serviceType: 'ARGOCD_APP',
+        icon_uri: 'app://qovery-console/argocd',
+      },
+    ]
+
+    renderWithProviders(<ServiceList {...serviceListProps} />)
+
+    expect(screen.getByText('No service found')).toBeInTheDocument()
+    expect(screen.queryByText('ARGOCD APP')).not.toBeInTheDocument()
+  })
+
   it('should navigate to service on row click', async () => {
     const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
     const rows = screen.getAllByRole('row')

@@ -188,6 +188,13 @@ const SERVICE_TABS: NavigationTab[] = [
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
   },
   {
+    id: 'manifest',
+    label: 'Manifest',
+    iconName: 'file-lines',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest',
+  },
+  {
     id: 'monitoring',
     label: 'Monitoring',
     iconName: 'chart-column',
@@ -209,6 +216,8 @@ const SERVICE_TABS: NavigationTab[] = [
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings',
   },
 ]
+
+const ARGOCD_SERVICE_TAB_IDS = ['overview', 'cloud-shell', 'manifest']
 
 function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
   if (!service) return false
@@ -240,6 +249,27 @@ function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
 function createRoutePatternRegex(routeIdPattern: string): RegExp {
   const patternPath = routeIdPattern.replace('/_authenticated/organization', '/organization')
   return new RegExp('^' + patternPath.replace(/\$(\w+)/g, '[^/]+') + '(/.*)?$')
+}
+
+function getServiceTabs(service?: AnyService, cluster?: Cluster) {
+  const isArgoCdService = service?.service_type === 'ARGOCD_APP'
+
+  if (isArgoCdService) {
+    return SERVICE_TABS.filter((tab) => ARGOCD_SERVICE_TAB_IDS.includes(tab.id))
+  }
+
+  const isDatabase = service?.serviceType === 'DATABASE'
+  const isManagedDatabase = isDatabase && service.mode === 'MANAGED'
+  const hasMonitoring = hasServiceMonitoringTab(service, cluster)
+
+  // Managed databases should not have cloud shell access.
+  // Databases should not expose the variables tab.
+  return SERVICE_TABS.filter(
+    (tab) =>
+      !(isDatabase && tab.id === 'variables') &&
+      !(isManagedDatabase && tab.id === 'cloud-shell') &&
+      !(tab.id === 'monitoring' && !hasMonitoring)
+  )
 }
 
 /**
@@ -331,20 +361,9 @@ function useNavigationContext(): NavigationContext | null {
       }
 
       if (hasAllParams) {
-        const isDatabase = service?.serviceType === 'DATABASE'
-        const isManagedDatabase = isDatabase && service.mode === 'MANAGED'
-        const hasMonitoring = hasServiceMonitoringTab(service, currentCluster)
-
-        // Managed databases should not have cloud shell access.
-        // Databases should not expose the variables tab.
         const tabs =
           context.type === 'service'
-            ? context.tabs.filter(
-                (tab) =>
-                  !(isDatabase && tab.id === 'variables') &&
-                  !(isManagedDatabase && tab.id === 'cloud-shell') &&
-                  !(tab.id === 'monitoring' && !hasMonitoring)
-              )
+            ? getServiceTabs(service, currentCluster)
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
               : context.tabs

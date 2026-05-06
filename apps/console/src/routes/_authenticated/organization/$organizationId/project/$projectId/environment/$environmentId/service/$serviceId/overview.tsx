@@ -31,10 +31,10 @@ function RouteComponent() {
         cluster?.cloud_provider === 'GCP' ||
         cluster?.cloud_provider === 'AZURE') &&
       !cluster?.metrics_parameters?.enabled &&
-      match(service?.serviceType)
+      match(service?.service_type)
         .with('APPLICATION', 'CONTAINER', () => true)
         .otherwise(() => false),
-    [cluster?.metrics_parameters?.enabled, service?.serviceType, cluster?.cloud_provider]
+    [cluster?.metrics_parameters?.enabled, service?.service_type, cluster?.cloud_provider]
   )
 
   return (
