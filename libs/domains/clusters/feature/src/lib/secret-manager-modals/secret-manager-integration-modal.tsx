@@ -145,26 +145,8 @@ export function SecretManagerIntegrationModal({
     shouldForceStaticCredentials,
   ])
 
-  // TODO [secret-manager] the 3 different submit handlers are really similar, we should be able to merge them into one
   const handleSubmit = methods.handleSubmit((data) => {
-    const useGcpManualPayload = activeTab === 'manual' && isGcpCluster(cluster) && option.value === 'GCP_SECRET_MANAGER'
-    onSubmit({
-      ...data,
-    })
-    onClose()
-  })
-
-  const handleGcpAwsSubmit = methods.handleSubmit((data) => {
-    onSubmit({
-      ...data,
-    })
-    onClose()
-  })
-
-  const handleAwsManualOnlySubmit = methods.handleSubmit((data) => {
-    onSubmit({
-      ...data,
-    })
+    onSubmit({ ...data })
     onClose()
   })
 
@@ -456,7 +438,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
   if (isManualOnlyGcpIntegration) {
     return (
       <FormProvider {...methods}>
-        <form onSubmit={handleGcpAwsSubmit} className="flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="px-5 pt-5">
             <h2 className="text-lg font-medium text-neutral">{`${option.label} integration`}</h2>
             <p className="mt-1 text-sm text-neutral-subtle">
@@ -480,7 +462,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
   if (isManualOnlyAwsIntegration) {
     return (
       <FormProvider {...methods}>
-        <form onSubmit={handleAwsManualOnlySubmit} className="flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col">
           <div className="px-5 pt-5">
             <h2 className="text-lg font-medium text-neutral">{`${option.label} integration`}</h2>
             <p className="mt-1 text-sm text-neutral-subtle">
