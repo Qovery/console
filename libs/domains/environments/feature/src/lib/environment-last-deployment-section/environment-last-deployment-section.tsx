@@ -1,6 +1,6 @@
 import { useLinkProps, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { Suspense, useContext, useEffect, useMemo, useState } from 'react'
+import { Suspense, useContext, useMemo } from 'react'
 import { P, match } from 'ts-pattern'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import {
@@ -22,6 +22,7 @@ import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { useServiceCount } from '../hooks/use-service-count/use-service-count'
+import { useIntervalTick } from '@qovery/shared/util-hooks'
 
 const DotSeparator = () => (
   <svg
@@ -81,13 +82,7 @@ const EnvironmentLastDeploymentContent = () => {
     [lastDeployment?.status]
   )
 
-  const [, forceUpdate] = useState(0)
-
-  useEffect(() => {
-    if (!isOngoing) return
-    const interval = setInterval(() => forceUpdate((n) => n + 1), 1000)
-    return () => clearInterval(interval)
-  }, [isOngoing])
+  useIntervalTick(isOngoing)
 
   const deploymentRelativeTime = !lastDeployment
     ? ''

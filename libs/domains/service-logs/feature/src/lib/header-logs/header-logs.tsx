@@ -1,6 +1,6 @@
 import { useParams, useRouter, useSearch } from '@tanstack/react-router'
 import { DatabaseModeEnum, type Environment, type EnvironmentStatus, type Status } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useEffect, useMemo, useState } from 'react'
+import { type PropsWithChildren, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import {
   ServiceActions,
@@ -12,6 +12,7 @@ import {
 import { Button, DeploymentAction, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
 import { pluralize, trimId } from '@qovery/shared/util-js'
+import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { PodHealthChips } from '../pod-health-chips/pod-health-chips'
 
 export interface HeaderLogsProps extends PropsWithChildren {
@@ -51,13 +52,7 @@ export function HeaderLogs({
     .with('ONGOING', 'CANCELING', () => true)
     .otherwise(() => false)
 
-  const [, forceUpdate] = useState(0)
-
-  useEffect(() => {
-    if (!isOngoing) return
-    const interval = setInterval(() => forceUpdate((n) => n + 1), 1000)
-    return () => clearInterval(interval)
-  }, [isOngoing])
+  useIntervalTick(isOngoing)
 
   const totalDurationSec =
     isOngoing && serviceStatus?.last_deployment_date
