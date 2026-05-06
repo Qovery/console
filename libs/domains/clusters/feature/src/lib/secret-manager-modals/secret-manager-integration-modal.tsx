@@ -326,7 +326,10 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                       label="Region"
                       value={field.value}
                       placeholder="Select a region"
-                      onChange={(value) => field.onChange(value as string)}
+                      onChange={(value) => {
+                        field.onChange(value as string)
+                        methods.setValue('authentication.region', value as string)
+                      }}
                       options={regionOptions}
                       isSearchable
                       portal
