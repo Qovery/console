@@ -24,7 +24,7 @@ function VoteButtons({ messageId }: { messageId: string }) {
   })
 
   return (
-    <div ref={triggerRef} className="invisible mt-2 flex gap-2 text-xs text-neutral-400 group-hover:visible">
+    <div ref={triggerRef} className="mt-2 flex gap-2 text-xs text-neutral-400">
       <Button
         type="button"
         variant="surface"
