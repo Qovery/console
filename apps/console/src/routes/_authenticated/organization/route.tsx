@@ -92,7 +92,7 @@ const CLUSTER_TABS: NavigationTab[] = [
   },
   {
     id: 'cloud-shell',
-    label: 'Cloud shell',
+    label: 'Cloud Shell',
     iconName: 'terminal',
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
   },
@@ -113,7 +113,7 @@ const PROJECT_TABS: NavigationTab[] = [
   },
   {
     id: 'deployment-rules',
-    label: 'Deployment rules',
+    label: 'Deployment Rules',
     iconName: 'ruler',
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules',
   },
@@ -182,7 +182,7 @@ const SERVICE_TABS: NavigationTab[] = [
   },
   {
     id: 'cloud-shell',
-    label: 'Cloud shell',
+    label: 'Cloud Shell',
     iconName: 'terminal',
     routeId:
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',

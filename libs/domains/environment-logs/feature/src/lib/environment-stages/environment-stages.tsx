@@ -11,6 +11,7 @@ import { type PropsWithChildren } from 'react'
 import { EnvironmentActionToolbar, useDeploymentHistory } from '@qovery/domains/environments/feature'
 import {
   Button,
+  CopyToClipboardButtonIcon,
   DropdownMenu,
   Icon,
   Link,
@@ -99,7 +100,17 @@ export function EnvironmentStages({
                     }}
                   >
                     <Tooltip content={deployment.identifier.execution_id}>
-                      <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                      <span className="group flex items-center gap-0.5 truncate">
+                        <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                        {deployment.identifier.execution_id && (
+                          <CopyToClipboardButtonIcon
+                            content={deployment.identifier.execution_id}
+                            tooltipContent="Copy execution id"
+                            className="opacity-0 transition-opacity group-hover:opacity-100"
+                            iconClassName="text-xs"
+                          />
+                        )}
+                      </span>
                     </Tooltip>
                     <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
                       {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}

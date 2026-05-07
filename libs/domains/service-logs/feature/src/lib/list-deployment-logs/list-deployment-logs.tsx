@@ -23,7 +23,15 @@ import { P, match } from 'ts-pattern'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
-import { Button, DropdownMenu, Icon, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import {
+  Button,
+  CopyToClipboardButtonIcon,
+  DropdownMenu,
+  Icon,
+  StatusChip,
+  TablePrimitives,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 import { DeploymentLogsPlaceholder } from '../deployment-logs/deployment-logs-placeholder/deployment-logs-placeholder'
@@ -212,7 +220,17 @@ const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
                   replace={true}
                 >
                   <Tooltip content={deployment.identifier.execution_id}>
-                    <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                    <span className="group flex items-center gap-0.5 truncate">
+                      <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                      {deployment.identifier.execution_id && (
+                        <CopyToClipboardButtonIcon
+                          content={deployment.identifier.execution_id}
+                          tooltipContent="Copy execution id"
+                          className="opacity-0 transition-opacity group-hover:opacity-100"
+                          iconClassName="text-xs"
+                        />
+                      )}
+                    </span>
                   </Tooltip>
                   <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
                     {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}

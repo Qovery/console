@@ -8,7 +8,17 @@ import {
 } from 'qovery-typescript-axios'
 import { memo, useEffect, useMemo, useRef } from 'react'
 import { useDeploymentHistory } from '@qovery/domains/environments/feature'
-import { Button, DropdownMenu, Icon, Link, LoaderDots, StatusChip, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import {
+  Button,
+  CopyToClipboardButtonIcon,
+  DropdownMenu,
+  Icon,
+  Link,
+  LoaderDots,
+  StatusChip,
+  TablePrimitives,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { trimId } from '@qovery/shared/util-js'
 import { HeaderPreCheckLogs } from '../header-pre-check-logs/header-pre-check-logs'
@@ -121,7 +131,17 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
                       replace={true}
                     >
                       <Tooltip content={deployment.identifier.execution_id}>
-                        <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                        <span className="group flex items-center gap-0.5 truncate">
+                          <span>{trimId(deployment.identifier.execution_id ?? '')}</span>
+                          {deployment.identifier.execution_id && (
+                            <CopyToClipboardButtonIcon
+                              content={deployment.identifier.execution_id}
+                              tooltipContent="Copy execution id"
+                              className="opacity-0 transition-opacity group-hover:opacity-100"
+                              iconClassName="text-xs"
+                            />
+                          )}
+                        </span>
                       </Tooltip>
                       <span className="flex items-center gap-2.5 text-xs text-neutral-subtle">
                         {dateYearMonthDayHourMinuteSecond(new Date(deployment.auditing_data.created_at))}
