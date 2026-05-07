@@ -121,6 +121,8 @@ export function InputSelect({
     } else {
       if (items && items.length > 0) {
         setSelectedValue(items[0]?.value)
+      } else {
+        setSelectedValue([])
       }
     }
   }, [value, isMulti, options])

@@ -497,15 +497,6 @@ export const serviceTemplates: ServiceTemplateType[] = [
         type: 'DATABASE',
       },
       {
-        slug: 'managed',
-        title: 'Managed',
-        description: 'Create a MongoDB database using a managed service.',
-        icon: AWS,
-        icon_uri: 'app://qovery-console/mongodb',
-        type: 'DATABASE',
-        cloud_provider: 'AWS',
-      },
-      {
         slug: 'terraform',
         template_id: TemplateIds.TERRAFORM,
         badge: 'NEW',
