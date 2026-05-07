@@ -16,7 +16,7 @@ export function AnimatedGradientText({ children, className, shimmerWidth = 100 }
         } as CSSProperties
       }
       className={twMerge(
-        'from-brand-text via-brand-accent to-brand-text relative inline-flex animate-[shiny-text_3s_linear_infinite] items-center bg-gradient-to-r via-60% bg-clip-text text-transparent [background-position:0_0] [background-size:var(--shimmer-width)_100%]',
+        'relative inline-flex animate-[shiny-text_3s_linear_infinite] items-center bg-gradient-to-r from-[var(--brand-11)] via-[var(--brand-7)] via-60% to-[var(--brand-11)] bg-clip-text text-transparent [background-position:0_0] [background-size:var(--shiny-width)_100%]',
         className
       )}
     >
