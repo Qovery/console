@@ -104,7 +104,7 @@ export function HeaderLogs({
                         serviceId={serviceId}
                         align="start"
                       >
-                        <Button variant="outline" color="neutral" className="relative">
+                        <Button variant="outline" color="neutral" size="sm" className="relative">
                           <div className="flex items-center gap-1">
                             <Icon iconName="link" iconStyle="regular" />
                             {pluralize(filteredLinks.length, 'Link', 'Links')}
@@ -175,7 +175,7 @@ export function HeaderLogs({
                         serviceId={serviceId}
                         align="start"
                       >
-                        <Button variant="outline" color="neutral" className="relative">
+                        <Button variant="outline" color="neutral" size="sm" className="relative">
                           <div className="flex items-center gap-1">
                             <Icon iconName="link" iconStyle="regular" />
                             {pluralize(filteredLinks.length, 'Link', 'Links')}
