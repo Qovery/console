@@ -96,7 +96,7 @@ function RouteComponent() {
 
   const aiLink = {
     type: 'group',
-    title: 'AI',
+    title: 'AI settings',
     icon: 'sparkles' as const,
     children: [
       { title: 'AI Copilot', to: `${pathSettings}/ai-copilot` },
