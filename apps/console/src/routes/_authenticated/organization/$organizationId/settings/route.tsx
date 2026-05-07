@@ -94,16 +94,14 @@ function RouteComponent() {
     icon: 'rectangle-api' as const,
   }
 
-  const aiCopilotLink = {
-    title: 'AI Copilot',
-    to: `${pathSettings}/ai-copilot`,
+  const aiLink = {
+    type: 'group',
+    title: 'AI',
     icon: 'sparkles' as const,
-  }
-
-  const mcpServerLink = {
-    title: 'MCP server',
-    to: `${pathSettings}/mcp-server`,
-    icon: 'code' as const,
+    children: [
+      { title: 'AI Copilot', to: `${pathSettings}/ai-copilot` },
+      { title: 'MCP server', to: `${pathSettings}/mcp-server` },
+    ],
   }
 
   const dangerZoneLink = {
@@ -124,8 +122,7 @@ function RouteComponent() {
     gitRepositoriesAccessLink,
     webhookLink,
     apiTokenLink,
-    aiCopilotLink,
-    mcpServerLink,
+    aiLink,
     ...(isOrganizationAdmin ? [dangerZoneLink] : []),
   ]
 
@@ -136,22 +133,14 @@ function RouteComponent() {
           <Sidebar.Root className="mt-6">
             {LINKS_SETTINGS.map((link) => {
               if ('children' in link) {
-                const rolesBasePath = `${pathSettings}/roles`
-                const rolesActive = pathname === rolesBasePath || pathname.startsWith(`${rolesBasePath}/`)
+                const isChildPathActive = (childPath: string) =>
+                  pathname === childPath || pathname.startsWith(`${childPath}/`)
+                const groupActive = link.children.some((child) => isChildPathActive(child.to))
 
                 return (
-                  <Sidebar.Group
-                    key={link.title}
-                    title={link.title}
-                    icon={link.icon}
-                    defaultOpen={link.title === 'Team' ? rolesActive : undefined}
-                  >
+                  <Sidebar.Group key={link.title} title={link.title} icon={link.icon} defaultOpen={groupActive}>
                     {link.children.map((child) => (
-                      <Sidebar.SubItem
-                        key={child.to}
-                        to={child.to}
-                        active={child.title === 'Roles & permissions' ? rolesActive : undefined}
-                      >
+                      <Sidebar.SubItem key={child.to} to={child.to} active={isChildPathActive(child.to)}>
                         {child.title}
                       </Sidebar.SubItem>
                     ))}
