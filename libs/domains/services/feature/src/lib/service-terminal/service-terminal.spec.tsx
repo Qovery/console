@@ -26,6 +26,7 @@ const props: ServiceTerminalProps = {
   projectId: '0',
   environmentId: '0',
   serviceId: '0',
+  serviceType: 'APPLICATION',
 }
 
 const useReactQueryWsSubscriptionMock = jest.mocked(useReactQueryWsSubscription)

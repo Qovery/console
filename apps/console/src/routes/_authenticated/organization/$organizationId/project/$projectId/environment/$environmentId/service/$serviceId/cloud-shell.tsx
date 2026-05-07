@@ -52,6 +52,7 @@ function RouteComponent() {
           projectId={environment.project.id}
           environmentId={environment.id}
           serviceId={service.id}
+          serviceType={service.serviceType}
         />
       </div>
     </div>

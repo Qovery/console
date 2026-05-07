@@ -6,6 +6,7 @@ import Color from 'color'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { XTerm } from 'react-xtermjs'
 import { match } from 'ts-pattern'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { Button, EmptyState, ExternalLink, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
 import { useTerminalReadiness } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
@@ -25,6 +26,7 @@ export interface ServiceTerminalProps {
   projectId: string
   environmentId: string
   serviceId: string
+  serviceType: ServiceType
 }
 
 export function ServiceTerminal({
@@ -33,6 +35,7 @@ export function ServiceTerminal({
   projectId,
   environmentId,
   serviceId,
+  serviceType,
 }: ServiceTerminalProps) {
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const hasWrittenShellBannerRef = useRef(false)
@@ -174,6 +177,7 @@ export function ServiceTerminal({
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      service_type: serviceType,
       pod_name: selectedPod,
       container_name: selectedContainer,
       tty_height: rows.toString(),
