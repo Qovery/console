@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import { OutputVariables } from '@qovery/domains/variables/feature'
@@ -8,13 +8,6 @@ import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
 import { NeedRedeployFlag } from '../need-redeploy-flag/need-redeploy-flag'
 import { BlueprintDetailModal } from '../service-new/blueprint-detail-modal/blueprint-detail-modal'
-import {
-  BlueprintUpdateReview,
-  MOCK_ADDED_FIELDS,
-  MOCK_CHANGED_FIELDS,
-  MOCK_REMOVED_FIELDS,
-  MOCK_REQUIRED_INPUTS,
-} from '../service-new/blueprint-update-review/blueprint-update-review'
 import { BlueprintUpdateReviewModal } from '../service-new/blueprint-update-review-modal/blueprint-update-review-modal'
 import { MOCK_BLUEPRINTS } from '../service-new/blueprints'
 import { ServiceHeader } from './service-header/service-header'
@@ -44,9 +37,9 @@ function ServiceOverviewContent({
 }: ServiceOverviewProps) {
   const { environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('variables')
   const [isBlueprintDetailsOpen, setBlueprintDetailsOpen] = useState(false)
-  const [updateReviewTarget, setUpdateReviewTarget] = useState<string | null>(null)
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
   const { openModal, closeModal } = useModal()
   const activeBlueprint = SHOW_BLUEPRINT_CONTEXT ? BLUEPRINT_SOURCE : null
@@ -60,7 +53,19 @@ function ServiceOverviewContent({
           releaseNotesUrl={activeBlueprint.repositoryUrl}
           changesSummary={{ added: 3, changed: 2, removed: 1 }}
           onCancel={closeModal}
-          onReview={() => { closeModal(); setUpdateReviewTarget('2.1') }}
+          onReview={() => {
+            closeModal()
+            navigate({
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update-blueprint',
+              params: {
+                organizationId: environment.organization.id,
+                projectId: environment.project.id,
+                environmentId,
+                serviceId,
+              },
+              search: { targetVersion: '2.1', from: 'overview' },
+            })
+          }}
         />
       ),
       options: { width: 488, fakeModal: true },
@@ -95,24 +100,6 @@ function ServiceOverviewContent({
 
   if (!service || !environment) {
     return null
-  }
-
-  if (updateReviewTarget && activeBlueprint) {
-    return (
-      <BlueprintUpdateReview
-        blueprintName={activeBlueprint.name}
-        currentVersion={activeBlueprint.versions[1]?.version ?? '2.0'}
-        targetVersion={updateReviewTarget}
-        releaseNotesUrl={activeBlueprint.repositoryUrl}
-        requiredInputs={MOCK_REQUIRED_INPUTS}
-        changedFields={MOCK_CHANGED_FIELDS}
-        addedFields={MOCK_ADDED_FIELDS}
-        removedFields={MOCK_REMOVED_FIELDS}
-        onBack={() => setUpdateReviewTarget(null)}
-        onDeploy={() => setUpdateReviewTarget(null)}
-        onDeployWithPreview={() => setUpdateReviewTarget(null)}
-      />
-    )
   }
 
   return (

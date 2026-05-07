@@ -32,19 +32,19 @@ export function BlueprintUpdateReviewModal({
                 href={releaseNotesUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-info underline decoration-info underline-offset-2"
+                className="decoration-info text-info underline underline-offset-2"
               >
                 release notes
               </a>
             ) : (
-              <span className="text-info underline decoration-info underline-offset-2">release notes</span>
+              <span className="decoration-info text-info underline underline-offset-2">release notes</span>
             )}{' '}
             for more details.
           </p>
         </div>
         <div className="flex flex-col gap-2">
           <p className="text-sm font-medium text-neutral-subtle">Changes</p>
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-1.5">
             <Badge size="base" variant="surface" color="green" className="gap-1 font-medium">
               <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
               {`${changesSummary.added} fields added`}

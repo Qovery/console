@@ -6,6 +6,7 @@ export const serviceCreateParamsSchema = z.object({
   source: serviceCreateSourceEnum.optional(),
   template: z.string().optional(),
   option: z.string().optional(),
+  blueprintId: z.string().optional(),
 })
 
 export type ServiceCreateParams = z.infer<typeof serviceCreateParamsSchema>

@@ -12,6 +12,10 @@ function RouteComponent() {
   const { organizationId = '', projectId = '', environmentId = '', slug } = useParams({ strict: false })
   const creationFlowUrl = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/${slug}`
 
+  if (slug === 'blueprint') {
+    return <Outlet />
+  }
+
   const defaultServiceType = slug === 'container' ? ServiceTypeEnum.CONTAINER : ServiceTypeEnum.APPLICATION
 
   return (

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Accordion, Badge, Button, Callout, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
+import { Badge, Button, FunnelFlow, Heading, Icon, InputText, Section } from '@qovery/shared/ui'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -56,7 +56,6 @@ export const MOCK_REQUIRED_INPUTS: RequiredInput[] = [
     id: 'notification_topic_arn',
     label: 'SNS notification topic ARN',
     helper: 'ARN of the SNS topic to receive S3 event notifications.',
-    placeholder: 'arn:aws:sns:us-east-1:123456789012:my-topic',
   },
 ]
 
@@ -75,25 +74,13 @@ export const MOCK_CHANGED_FIELDS: ChangedField[] = [
     category: 'Config',
     currentValue: 'AES256',
     newDefault: 'aws:kms',
-    isUserOverride: false,
-  },
-  {
-    id: 'cors_allowed_origins',
-    label: 'CORS allowed origins',
-    category: 'Config',
-    currentValue: 'https://app.acme.com',
-    newDefault: '(empty)',
-    isUserOverride: true,
-  },
-  {
-    id: 'versioning',
-    label: 'Versioning',
-    category: 'Config',
-    currentValue: 'enabled',
-    newDefault: 'suspended',
     isUserOverride: true,
   },
 ]
+
+const MOCK_OVERRIDE_VALUES: Record<string, string | null> = {
+  encryption_algorithm: 'aws:kms:alias/acme-service-key',
+}
 
 export const MOCK_ADDED_FIELDS: AddedField[] = [
   {
@@ -107,7 +94,7 @@ export const MOCK_ADDED_FIELDS: AddedField[] = [
     id: 'access_log_bucket',
     label: 'Access log destination bucket',
     category: 'Config',
-    defaultValue: '',
+    defaultValue: 'acme-access-logs',
     helper: 'Leave empty to disable access logging.',
   },
   {
@@ -136,275 +123,363 @@ export const MOCK_REMOVED_FIELDS: RemovedField[] = [
   },
 ]
 
+type ReviewStepId = 'required' | 'optional' | 'modified' | 'removed'
+
+const REVIEW_STEPS: { id: ReviewStepId; title: string; iconName: string; description?: string }[] = [
+  {
+    id: 'required',
+    title: 'New required values',
+    iconName: 'circle-plus',
+    description: 'These new fields have no default value. You need to fill them before deploying the update.',
+  },
+  {
+    id: 'optional',
+    title: 'New optional values',
+    iconName: 'chart-bullet',
+    description: 'These new fields include defaults, and you can override them if needed.',
+  },
+  {
+    id: 'modified',
+    title: 'Modified values',
+    iconName: 'arrows-rotate',
+    description: 'Default values have been updated. Your overrides are preserved until you reset them.',
+  },
+  {
+    id: 'removed',
+    title: 'Removed values',
+    iconName: 'circle-minus',
+  },
+]
+
+const REVIEW_CARD_CLASSNAME =
+  'rounded-[12px] border border-neutral bg-surface-neutral shadow-[0_0_2px_rgba(0,0,0,0.01),0_2px_1.5px_rgba(0,0,0,0.02)]'
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function BlueprintUpdateReview({
   blueprintName,
-  currentVersion,
   targetVersion,
-  releaseNotesUrl,
   requiredInputs,
   changedFields,
   addedFields,
   removedFields,
   onBack,
   onDeploy,
-  onDeployWithPreview,
 }: BlueprintUpdateReviewProps) {
+  const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [inputValues, setInputValues] = useState<Record<string, string>>({})
   const [additionValues, setAdditionValues] = useState<Record<string, string>>(
-    Object.fromEntries(addedFields.map((f) => [f.id, f.defaultValue]))
+    Object.fromEntries(addedFields.map((field) => [field.id, field.defaultValue]))
   )
-  const [revertedFields, setRevertedFields] = useState<Set<string>>(new Set())
+  const [defaultValues, setDefaultValues] = useState<Record<string, string>>(
+    Object.fromEntries(changedFields.map((field) => [field.id, field.newDefault]))
+  )
+  const [overrideValues, setOverrideValues] = useState<Record<string, string | null>>(
+    Object.fromEntries(
+      changedFields.map((field) => [
+        field.id,
+        field.isUserOverride ? MOCK_OVERRIDE_VALUES[field.id] ?? field.currentValue : null,
+      ])
+    )
+  )
+  const [editingFieldId, setEditingFieldId] = useState<string | null>(null)
 
-  const isDeployEnabled = requiredInputs.every((f) => Boolean(inputValues[f.id]?.trim()))
-  const hasDestructiveRemoves = removedFields.some((f) => f.isDestructive)
+  const currentStep = REVIEW_STEPS[currentStepIndex]
+  const completedStepIds = new Set(REVIEW_STEPS.slice(0, currentStepIndex).map((step) => step.id))
 
-  const handleRevert = (fieldId: string) => {
-    setRevertedFields((prev) => new Set(prev).add(fieldId))
+  const isRequiredStepComplete = requiredInputs.every((field) => Boolean(inputValues[field.id]?.trim()))
+  const canConfirmDeploy = currentStep.id === 'removed' && isRequiredStepComplete
+
+  const continueToNextStep = () => {
+    setCurrentStepIndex((previous) => Math.min(previous + 1, REVIEW_STEPS.length - 1))
+  }
+
+  const renderCollapsedStepCard = (step: (typeof REVIEW_STEPS)[number], isCompleted: boolean, isCurrent: boolean) => {
+    const titleClassName = isCurrent || isCompleted ? 'text-neutral' : 'text-neutral-subtle'
+
+    return (
+      <div key={step.id} className={REVIEW_CARD_CLASSNAME}>
+        <div className="flex items-center justify-between gap-3 p-4">
+          <div className="flex min-w-0 items-center gap-2">
+            <Icon iconName={step.iconName} iconStyle="regular" className="text-sm text-neutral-subtle" />
+            <p className={`truncate text-base font-medium ${titleClassName}`}>{step.title}</p>
+          </div>
+          {isCompleted ? <Icon iconName="circle-check" iconStyle="regular" className="text-sm text-positive" /> : null}
+        </div>
+      </div>
+    )
+  }
+
+  const renderContinueButton = (disabled = false) => (
+    <div>
+      <Button
+        type="button"
+        size="md"
+        color="neutral"
+        variant="solid"
+        radius="rounded"
+        disabled={disabled}
+        onClick={continueToNextStep}
+      >
+        <span className="inline-flex items-center gap-2">
+          Continue
+          <Icon iconName="arrow-right" iconStyle="regular" className="text-sm" />
+        </span>
+      </Button>
+    </div>
+  )
+
+  const renderStepContent = () => {
+    if (currentStep.id === 'required') {
+      return (
+        <>
+          <div className="flex flex-col gap-3">
+            {requiredInputs.length > 0 ? (
+              requiredInputs.map((field) => (
+                <InputText
+                  key={field.id}
+                  name={field.id}
+                  label={field.label}
+                  hint={field.helper}
+                  value={inputValues[field.id] ?? ''}
+                  onChange={(event) => setInputValues((previous) => ({ ...previous, [field.id]: event.target.value }))}
+                />
+              ))
+            ) : (
+              <p className="text-sm text-neutral-subtle">No new required values were introduced in this update.</p>
+            )}
+          </div>
+          {renderContinueButton(!isRequiredStepComplete)}
+        </>
+      )
+    }
+
+    if (currentStep.id === 'optional') {
+      return (
+        <>
+          <div className="flex flex-col gap-3">
+            {addedFields.length > 0 ? (
+              addedFields.map((field) => (
+                <InputText
+                  key={field.id}
+                  name={field.id}
+                  label={field.label}
+                  hint={field.helper}
+                  value={additionValues[field.id] ?? ''}
+                  onChange={(event) =>
+                    setAdditionValues((previous) => ({ ...previous, [field.id]: event.target.value }))
+                  }
+                />
+              ))
+            ) : (
+              <p className="text-sm text-neutral-subtle">No new optional values were introduced in this update.</p>
+            )}
+          </div>
+          {renderContinueButton()}
+        </>
+      )
+    }
+
+    if (currentStep.id === 'modified') {
+      return (
+        <>
+          <div className="rounded-md border border-neutral bg-surface-neutral-subtle">
+            {changedFields.length > 0 ? (
+              changedFields.map((field, index) => {
+                const hasOverride = Boolean(overrideValues[field.id])
+                const isEditing = editingFieldId === field.id
+
+                return (
+                  <div
+                    key={field.id}
+                    className={`flex justify-between gap-3 p-3 ${isEditing ? 'items-start' : 'items-center'} ${index !== changedFields.length - 1 ? 'border-b border-neutral' : ''}`}
+                  >
+                    {isEditing ? (
+                      <div className="flex min-w-0 flex-1 items-center gap-2">
+                        <div className="min-w-0 flex-1">
+                          <InputText
+                            name={`${field.id}-override`}
+                            label={field.label}
+                            value={overrideValues[field.id] ?? defaultValues[field.id] ?? ''}
+                            onChange={(event) =>
+                              setOverrideValues((previous) => ({
+                                ...previous,
+                                [field.id]: event.target.value || null,
+                              }))
+                            }
+                          />
+                        </div>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          color="neutral"
+                          size="lg"
+                          iconOnly
+                          className="h-12 w-12"
+                          aria-label={`Save ${field.label}`}
+                          onClick={() => setEditingFieldId(null)}
+                        >
+                          <Icon iconName="floppy-disk" iconStyle="regular" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-ssm text-neutral">{field.label}</p>
+                          <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-ssm text-neutral-subtle">
+                            <div className="flex items-center gap-1.5">
+                              <span>Default:</span>
+                              <code className="rounded bg-surface-neutral-component px-1.5 py-0.5 font-mono text-2xs text-neutral">
+                                {field.currentValue}
+                              </code>
+                              <Icon iconName="arrow-right" iconStyle="regular" className="text-xs" />
+                              <code className="rounded bg-surface-neutral-component px-1.5 py-0.5 font-mono text-2xs text-neutral">
+                                {defaultValues[field.id]}
+                              </code>
+                            </div>
+                            {hasOverride ? (
+                              <div className="flex items-center gap-1.5">
+                                <span>Override:</span>
+                                <code className="rounded border border-info-subtle bg-surface-info-component px-1.5 py-0.5 font-mono text-2xs text-info">
+                                  {overrideValues[field.id]}
+                                </code>
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+
+                        <div className="flex shrink-0 items-center gap-2">
+                          {hasOverride ? (
+                            <Button
+                              type="button"
+                              variant="outline"
+                              color="neutral"
+                              size="xs"
+                              iconOnly
+                              aria-label={`Reset ${field.label} override`}
+                              onClick={() => setOverrideValues((previous) => ({ ...previous, [field.id]: null }))}
+                            >
+                              <Icon iconName="rotate-left" iconStyle="regular" className="text-xs" />
+                            </Button>
+                          ) : null}
+                          <Button
+                            type="button"
+                            variant="outline"
+                            color="neutral"
+                            size="xs"
+                            iconOnly
+                            aria-label={`Edit ${field.label}`}
+                            onClick={() => setEditingFieldId(field.id)}
+                          >
+                            <Icon iconName="pen" iconStyle="regular" className="text-xs" />
+                          </Button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )
+              })
+            ) : (
+              <p className="p-3 text-sm text-neutral-subtle">No default values were modified in this update.</p>
+            )}
+          </div>
+          {renderContinueButton()}
+        </>
+      )
+    }
+
+    return (
+      <div className="rounded-md border border-neutral bg-surface-neutral-subtle">
+        {removedFields.length > 0 ? (
+          removedFields.map((field, index) => (
+            <div
+              key={field.id}
+              className={`flex items-center justify-between gap-3 p-3 ${index !== removedFields.length - 1 ? 'border-b border-neutral' : ''}`}
+            >
+              <p className="text-sm text-neutral">{field.label}</p>
+              {field.currentValue ? (
+                <div className="flex items-center gap-1.5 text-sm text-neutral-subtle">
+                  <span>Default:</span>
+                  <code className="rounded bg-surface-neutral-component px-1.5 py-0.5 font-mono text-2xs text-neutral">
+                    {field.currentValue}
+                  </code>
+                  <Icon iconName="arrow-right" iconStyle="regular" className="text-xs" />
+                  <Badge size="sm" color="red" variant="surface">
+                    Deleted
+                  </Badge>
+                </div>
+              ) : (
+                <Badge size="sm" color="red" variant="surface">
+                  Deleted
+                </Badge>
+              )}
+            </div>
+          ))
+        ) : (
+          <p className="p-3 text-sm text-neutral-subtle">No values were removed in this version.</p>
+        )}
+      </div>
+    )
   }
 
   return (
-    <Section className="flex min-h-0 flex-1 flex-col gap-0">
-      {/* Scrollable content */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="mx-auto max-w-[720px] px-6 py-8">
-          {/* ── Header ── */}
-          <div className="mb-8">
-            <Heading className="mb-1 text-2xl">Update to v{targetVersion}</Heading>
-            <p className="text-sm text-neutral-subtle">
-              Deploying {blueprintName} · v{currentVersion}{' → '}v{targetVersion}
-            </p>
-            {releaseNotesUrl && (
-              <a
-                href={releaseNotesUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-1 inline-flex items-center gap-1 text-sm text-neutral-subtle underline decoration-neutral-component underline-offset-2 hover:text-neutral"
-              >
-                View release notes
-                <Icon iconName="arrow-up-right-from-square" iconStyle="regular" className="text-xs" />
-              </a>
-            )}
-          </div>
+    <FunnelFlow
+      onExit={onBack}
+      totalSteps={1}
+      currentStep={1}
+      currentTitle="Review & update"
+    >
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-[620px] flex-col text-sm">
+        <Section className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-6">
+          <div className="flex flex-col gap-6 pb-6">
+            <div className="flex flex-col gap-2">
+              <Heading className="text-2xl">
+                {blueprintName} blueprint update to {targetVersion}
+              </Heading>
+              <p className="text-base text-neutral-subtle">
+                Review these changes before updating your blueprint to the latest version.
+              </p>
+            </div>
 
-          <div className="flex flex-col gap-4">
-            {/* ── Required inputs (blocking) ── */}
-            {requiredInputs.length > 0 && (
-              <Section>
-                <div className="overflow-hidden rounded-lg border border-neutral">
-                  <div className="flex items-start gap-3 border-b border-neutral bg-surface-neutral-subtle px-4 py-3">
-                    <Icon iconName="circle-exclamation" iconStyle="regular" className="mt-0.5 shrink-0 text-sm text-neutral" />
-                    <div className="min-w-0">
-                      <p className="font-medium text-neutral">Required inputs</p>
-                      <p className="mt-0.5 text-xs text-neutral-subtle">
-                        These new fields must be filled before you can deploy.
-                      </p>
+            <div className="flex flex-col gap-3">
+              {REVIEW_STEPS.map((step, index) => {
+                if (index !== currentStepIndex) {
+                  return renderCollapsedStepCard(step, completedStepIds.has(step.id), false)
+                }
+
+                return (
+                  <div key={step.id} className={REVIEW_CARD_CLASSNAME}>
+                    <div className="flex items-center gap-2 p-4">
+                      <Icon iconName={step.iconName} iconStyle="regular" className="text-sm text-neutral-subtle" />
+                      <p className="text-base font-medium text-neutral">{step.title}</p>
+                    </div>
+
+                    <div className="flex flex-col gap-4 px-4 pb-4">
+                      {step.description ? <p className="text-sm text-neutral-subtle">{step.description}</p> : null}
+                      {renderStepContent()}
                     </div>
                   </div>
-                  <div className="flex flex-col gap-4 p-4">
-                    {requiredInputs.map((field) => (
-                      <InputText
-                        key={field.id}
-                        name={field.id}
-                        label={field.label}
-                        placeholder={field.placeholder}
-                        hint={field.helper}
-                        value={inputValues[field.id] ?? ''}
-                        onChange={(e) => setInputValues((prev) => ({ ...prev, [field.id]: e.target.value }))}
-                      />
-                    ))}
-                  </div>
-                </div>
-              </Section>
-            )}
-
-            {/* ── Changes ── */}
-            {changedFields.length > 0 && (
-              <Section>
-                <div className="overflow-hidden rounded-lg border border-neutral">
-                  <div className="flex items-center gap-2 border-b border-neutral bg-surface-neutral-subtle px-4 py-2">
-                    <Badge size="sm" color="neutral" variant="surface">
-                      ~ Changed
-                    </Badge>
-                    <span className="text-xs text-neutral-subtle">{changedFields.length} changed</span>
-                  </div>
-                  <div className="divide-y divide-neutral">
-                    {changedFields.map((field) => {
-                      const isReverted = revertedFields.has(field.id)
-                      return (
-                        <div key={field.id} className="flex items-start justify-between gap-4 px-4 py-3">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <span className="text-sm text-neutral">{field.label}</span>
-                              <span className="text-xs text-neutral-subtle">{field.category}</span>
-                              {field.isUserOverride && !isReverted && (
-                                <Badge size="sm" color="yellow" variant="surface">
-                                  Override preserved
-                                </Badge>
-                              )}
-                            </div>
-                            <div className="mt-1.5 flex items-center gap-2 text-xs">
-                              <code className={`rounded bg-surface-neutral-component px-1.5 py-0.5 text-neutral ${isReverted ? 'line-through opacity-50' : ''}`}>
-                                {field.currentValue}
-                              </code>
-                              <Icon iconName="arrow-right" iconStyle="regular" className="shrink-0 text-xs text-neutral-subtle" />
-                              <code className="rounded bg-surface-neutral-component px-1.5 py-0.5 text-neutral">
-                                {field.newDefault}
-                              </code>
-                            </div>
-                          </div>
-                          {field.isUserOverride && !isReverted && (
-                            <button
-                              type="button"
-                              onClick={() => handleRevert(field.id)}
-                              className="shrink-0 text-xs text-neutral-subtle underline decoration-neutral-component underline-offset-2 hover:text-neutral"
-                            >
-                              Reset to default
-                            </button>
-                          )}
-                          {isReverted && (
-                            <span className="shrink-0 text-xs text-neutral-subtle">Reverted</span>
-                          )}
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              </Section>
-            )}
-
-            {/* ── Additions (collapsed) ── */}
-            {addedFields.length > 0 && (
-              <Section>
-                <Accordion.Root type="single" collapsible className="overflow-hidden rounded-lg border border-neutral">
-                  <Accordion.Item value="additions" className="mt-0 rounded-none first:rounded-none last:rounded-none">
-                    <Accordion.Trigger className="w-full justify-start gap-3 bg-surface-neutral-subtle px-4 py-2 text-left">
-                      <div className="flex items-center gap-2">
-                        <Badge size="sm" color="green" variant="surface">
-                          + Added
-                        </Badge>
-                        <span className="text-xs text-neutral-subtle">
-                          {addedFields.length} new field{addedFields.length !== 1 && 's'} with defaults
-                        </span>
-                      </div>
-                    </Accordion.Trigger>
-                    <Accordion.Content>
-                      <div className="flex flex-col gap-4 border-t border-neutral p-4">
-                        {addedFields.map((field) => (
-                          <div key={field.id}>
-                            <div className="mb-1">
-                              <span className="text-xs text-neutral-subtle">{field.category}</span>
-                            </div>
-                            <InputText
-                              name={field.id}
-                              label={field.label}
-                              hint={field.helper}
-                              value={additionValues[field.id] ?? ''}
-                              onChange={(e) =>
-                                setAdditionValues((prev) => ({ ...prev, [field.id]: e.target.value }))
-                              }
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </Accordion.Content>
-                  </Accordion.Item>
-                </Accordion.Root>
-              </Section>
-            )}
-
-            {/* ── Removes (collapsed) ── */}
-            {removedFields.length > 0 && (
-              <Section>
-                {hasDestructiveRemoves && (
-                  <div className="mb-3">
-                    <Callout.Root color="red">
-                      <Callout.Icon>
-                        <Icon iconName="triangle-exclamation" iconStyle="regular" />
-                      </Callout.Icon>
-                      <Callout.Text>
-                        <Callout.TextHeading>Destructive removals</Callout.TextHeading>
-                        <Callout.TextDescription>
-                          {removedFields.filter((f) => f.isDestructive).length} resource
-                          {removedFields.filter((f) => f.isDestructive).length !== 1 && 's'} will be permanently
-                          destroyed when you deploy. This cannot be undone.
-                        </Callout.TextDescription>
-                      </Callout.Text>
-                    </Callout.Root>
-                  </div>
-                )}
-                <Accordion.Root type="single" collapsible className="overflow-hidden rounded-lg border border-neutral">
-                  <Accordion.Item value="removes" className="mt-0 rounded-none first:rounded-none last:rounded-none">
-                    <Accordion.Trigger className="w-full justify-start gap-3 bg-surface-neutral-subtle px-4 py-2 text-left">
-                      <div className="flex items-center gap-2">
-                        <Badge size="sm" color="red" variant="surface">
-                          − Removed
-                        </Badge>
-                        <span className="text-xs text-neutral-subtle">{removedFields.length} removed</span>
-                        {hasDestructiveRemoves && (
-                          <Badge size="sm" color="red" variant="surface">
-                            <Icon iconName="triangle-exclamation" iconStyle="regular" className="mr-1 text-xs" />
-                            Destructive
-                          </Badge>
-                        )}
-                      </div>
-                    </Accordion.Trigger>
-                    <Accordion.Content>
-                      <div className="divide-y divide-neutral border-t border-neutral">
-                        {removedFields.map((field) => (
-                          <div key={field.id} className="flex items-start justify-between gap-4 px-4 py-3">
-                            <div className="min-w-0 flex-1">
-                              <div className="flex flex-wrap items-center gap-2">
-                                <span className={`text-sm ${field.isDestructive ? 'text-negative' : 'text-neutral'}`}>
-                                  {field.label}
-                                </span>
-                                <span className="text-xs text-neutral-subtle">{field.category}</span>
-                                {field.isDestructive && (
-                                  <Badge size="sm" color="red" variant="surface">
-                                    Destructive
-                                  </Badge>
-                                )}
-                              </div>
-                              {field.currentValue && (
-                                <div className="mt-1.5">
-                                  <code className={`rounded px-1.5 py-0.5 text-xs line-through ${field.isDestructive ? 'bg-surface-error-subtle text-negative' : 'bg-surface-neutral-component text-neutral-subtle'}`}>
-                                    {field.currentValue}
-                                  </code>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </Accordion.Content>
-                  </Accordion.Item>
-                </Accordion.Root>
-              </Section>
-            )}
+                )
+              })}
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* ── Footer ── */}
-      <div className="shrink-0 border-t border-neutral bg-background px-6 py-4">
-        <div className="mx-auto flex max-w-[720px] items-center justify-between gap-3">
-          <Button size="lg" color="neutral" variant="surface" onClick={onBack}>
-            Cancel
+        </Section>
+        <div className="shrink-0 border-t border-neutral pb-6 pt-4">
+          <Button
+            size="lg"
+            color="brand"
+            variant="solid"
+            radius="rounded"
+            disabled={!canConfirmDeploy}
+            onClick={onDeploy}
+            className="w-full justify-center"
+          >
+            Deploy update
+            <Icon iconName="arrow-right" iconStyle="regular" className="ml-1.5" />
           </Button>
-          <div className="flex items-center gap-2">
-            <Button size="lg" color="neutral" variant="surface" disabled={!isDeployEnabled} onClick={onDeployWithPreview}>
-              <Icon iconName="eye" iconStyle="regular" className="mr-1.5" />
-              Deploy with preview
-            </Button>
-            <Button size="lg" color="brand" variant="solid" radius="rounded" disabled={!isDeployEnabled} onClick={onDeploy}>
-              Deploy
-              <Icon iconName="rocket" iconStyle="regular" className="ml-1.5" />
-            </Button>
-          </div>
         </div>
       </div>
-    </Section>
+    </FunnelFlow>
   )
 }
 

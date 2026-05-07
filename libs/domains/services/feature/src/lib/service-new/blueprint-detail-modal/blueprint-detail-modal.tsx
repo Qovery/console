@@ -199,13 +199,35 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
   const usageItems = extractBulletItems(usageNotesSection)
   const configurationItems = extractBulletItems(configurationSection)
   const configurationParagraphs = extractParagraphText(configurationSection)
+  const sectionOrder = [
+    'creates',
+    'architecture',
+    'parameters',
+    'outputs',
+    'security',
+    'naming',
+    'usage',
+    'configuration',
+  ] as const
+  const visibleSections = {
+    creates: createsRows.length > 0,
+    architecture: Boolean(architectureCode),
+    parameters: Boolean(parametersTable),
+    outputs: Boolean(outputsTable),
+    security: securityItems.length > 0 || Boolean(securityDefaultsSection),
+    naming: namingParagraphs.length > 0 || namingItems.length > 0,
+    usage: usageItems.length > 0,
+    configuration: configurationItems.length > 0 || configurationParagraphs.length > 0,
+  }
+  const firstVisibleSection = sectionOrder.find((section) => visibleSections[section])
+  const getSectionSpacing = (section: (typeof sectionOrder)[number]) => (firstVisibleSection === section ? 'mt-8' : 'mt-6')
 
   const repositoryLabel = blueprint.repositorySlug ?? 'Blueprint repository'
 
   return (
     <Section className="flex h-full flex-col gap-0 p-0">
-      <div className="flex-1 overflow-auto p-6 pb-24 text-sm">
-        <div className="border-b border-neutral pb-5">
+      <div className={`flex-1 overflow-auto p-6 text-sm ${readOnly ? 'pb-6' : 'pb-24'}`}>
+        <div>
           <div className="mb-2 flex items-center gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-surface-neutral-component">
               {providerCfg.icon ? (
@@ -225,7 +247,7 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
               {repositoryLabel}
             </Badge>
             <Badge size="base" color="neutral" variant="outline" className="gap-1">
-              {providerCfg.icon ? <img src={providerCfg.icon} alt={providerCfg.label} width={12} height={12} /> : null}
+              {providerCfg.icon ? <img src={providerCfg.icon} alt="" aria-hidden="true" width={12} height={12} /> : null}
               {providerCfg.label}
             </Badge>
             <Badge size="base" color="neutral" variant="outline" className="gap-1">
@@ -236,7 +258,7 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
         </div>
 
         {createsRows.length > 0 && (
-          <div className="mt-5">
+          <div className={getSectionSpacing('creates')}>
             {renderSectionTitle('What this blueprint creates')}
             <TablePrimitives.Table.Root className="text-sm" containerClassName="rounded border border-neutral bg-surface-neutral">
               <TablePrimitives.Table.Body>
@@ -256,30 +278,30 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
         )}
 
         {architectureCode && (
-          <div className="mt-5">
+          <div className={getSectionSpacing('architecture')}>
             {renderSectionTitle('Architecture')}
             <div className="rounded border border-neutral bg-surface-neutral-subtle p-4">
-              <pre className="overflow-x-auto whitespace-pre font-mono text-sm leading-5 text-neutral-subtle">{architectureCode}</pre>
+              <pre className="overflow-x-auto whitespace-pre font-mono text-sm leading-5 text-neutral">{architectureCode}</pre>
             </div>
           </div>
         )}
 
         {parametersTable && (
-          <div className="mt-5">
+          <div className={getSectionSpacing('parameters')}>
             {renderSectionTitle('Parameters')}
             {renderTable(parametersTable.headers, parametersTable.rows)}
           </div>
         )}
 
         {outputsTable && (
-          <div className="mt-5">
+          <div className={getSectionSpacing('outputs')}>
             {renderSectionTitle('Outputs')}
             {renderTable(outputsTable.headers, outputsTable.rows)}
           </div>
         )}
 
         {(securityItems.length > 0 || securityDefaultsSection) && (
-          <div className="mt-5">
+          <div className={getSectionSpacing('security')}>
             {renderSectionTitle('Security defaults')}
             {securityItems.length > 0 ? (
               <ul className="list-disc space-y-2 pl-5 text-neutral">
@@ -294,7 +316,7 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
         )}
 
         {(namingParagraphs.length > 0 || namingItems.length > 0) && (
-          <div className="mt-5">
+          <div className={getSectionSpacing('naming')}>
             {renderSectionTitle('Naming constraints')}
             {namingParagraphs.map((paragraph) => (
               <p key={paragraph} className="text-neutral">
@@ -312,7 +334,7 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
         )}
 
         {usageItems.length > 0 && (
-          <div className="mt-5">
+          <div className={getSectionSpacing('usage')}>
             {renderSectionTitle('Usage notes')}
             <ul className="list-disc space-y-2 pl-5 text-neutral">
               {usageItems.map((item) => (
@@ -323,7 +345,7 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
         )}
 
         {(configurationItems.length > 0 || configurationParagraphs.length > 0) && (
-          <div className="mt-5">
+          <div className={getSectionSpacing('configuration')}>
             {renderSectionTitle('Configuration')}
             {configurationParagraphs.map((paragraph) => (
               <p key={paragraph} className="text-neutral">

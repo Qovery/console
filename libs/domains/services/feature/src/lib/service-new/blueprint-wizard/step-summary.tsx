@@ -54,37 +54,58 @@ export function StepSummary({
         </Section>
 
         {/* Base info section */}
-        <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4">
+        <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral p-4">
           <div className="mr-2 flex-grow">
             <Heading className="mb-3">Base info</Heading>
             <ul className="list-none space-y-2 text-sm text-neutral-subtle">
               <SummaryValue label="Service name" value={values.serviceName} />
+              <SummaryValue label="API token" value={values.api_token_name || '-'} />
             </ul>
           </div>
-          <Button aria-label="Edit base info" type="button" variant="outline" color="neutral" size="md" onClick={onBack} iconOnly>
+          <Button
+            aria-label="Edit base info"
+            type="button"
+            variant="outline"
+            color="neutral"
+            size="md"
+            onClick={onBack}
+            iconOnly
+          >
             <Icon className="text-base" iconName="gear-complex" />
           </Button>
         </Section>
 
         {/* Setup section */}
         {params.length > 0 && (
-          <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4">
+          <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral p-4">
             <div className="mr-2 flex-grow">
               <Heading className="mb-3">Setup</Heading>
               <ul className="list-none space-y-2 text-sm text-neutral-subtle">
                 {params.map((parameter) => (
-                  <SummaryValue key={parameter.id} label={parameter.label} value={values.setupParams[parameter.id] || '-'} />
+                  <SummaryValue
+                    key={parameter.id}
+                    label={parameter.label}
+                    value={values.setupParams[parameter.id] || '-'}
+                  />
                 ))}
               </ul>
             </div>
-            <Button aria-label="Edit setup" type="button" variant="outline" color="neutral" size="md" onClick={onBack} iconOnly>
+            <Button
+              aria-label="Edit setup"
+              type="button"
+              variant="outline"
+              color="neutral"
+              size="md"
+              onClick={onBack}
+              iconOnly
+            >
               <Icon className="text-base" iconName="gear-complex" />
             </Button>
           </Section>
         )}
 
         {/* Advanced section */}
-        <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4">
+        <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral p-4">
           <div className="mr-2 flex-grow">
             <Heading className="mb-3">Advanced settings</Heading>
             <ul className="list-none space-y-2 text-sm text-neutral-subtle">
@@ -97,7 +118,15 @@ export function StepSummary({
               <SummaryValue label="Deployment timeout" value={`${values.timeoutSec} s`} />
             </ul>
           </div>
-          <Button aria-label="Edit advanced settings" type="button" variant="outline" color="neutral" size="md" onClick={onBack} iconOnly>
+          <Button
+            aria-label="Edit advanced settings"
+            type="button"
+            variant="outline"
+            color="neutral"
+            size="md"
+            onClick={onBack}
+            iconOnly
+          >
             <Icon className="text-base" iconName="gear-complex" />
           </Button>
         </Section>

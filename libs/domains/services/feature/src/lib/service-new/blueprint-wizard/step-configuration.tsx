@@ -1,11 +1,14 @@
-import { type ReactNode, useRef, useState } from 'react'
+import { type OrganizationApiTokenCreate } from 'qovery-typescript-axios'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, Heading, Icon, InputSelect, InputText, Section } from '@qovery/shared/ui'
+import { CrudModalFeature, useApiTokens } from '@qovery/domains/organizations/feature'
+import { Button, Heading, Icon, InputSelect, InputText, Section, useModal } from '@qovery/shared/ui'
 import { type BlueprintEntry } from '../blueprints'
 import { type BlueprintWizardFormData, getSetupParameters } from './types'
 
 export interface StepConfigurationProps {
   blueprint: BlueprintEntry
+  organizationId: string
   onNext: () => void
 }
 
@@ -16,20 +19,19 @@ const CARD_CLASSNAME =
   'rounded-[12px] border border-neutral bg-surface-neutral shadow-[0_0_2px_rgba(0,0,0,0.01),0_2px_1.5px_rgba(0,0,0,0.02)]'
 
 function WizardStickyFooter({ children }: { children: ReactNode }) {
-  return (
-    <div className="shrink-0 border-t border-neutral bg-background-secondary pb-6 pt-4">
-      {children}
-    </div>
-  )
+  return <div className="shrink-0 border-t border-neutral pb-6 pt-4">{children}</div>
 }
 
-export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps) {
+export function StepConfiguration({ blueprint, organizationId, onNext }: StepConfigurationProps) {
   const methods = useFormContext<BlueprintWizardFormData>()
   const setupParams = getSetupParameters(blueprint)
+  const { data: apiTokens = [] } = useApiTokens({ organizationId })
+  const { openModal, closeModal } = useModal()
   const [activeStage, setActiveStage] = useState<ConfigStage>('service')
   const [isServiceCompleted, setIsServiceCompleted] = useState(false)
   const [isSetupCompleted, setIsSetupCompleted] = useState(false)
   const [openOverrideSection, setOpenOverrideSection] = useState<OverrideSection | null>(null)
+  const selectedApiTokenId = methods.watch('api_token_id')
 
   const defaultResourcesRef = useRef({
     cpuMilli: methods.getValues('cpuMilli'),
@@ -56,9 +58,34 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
     label: index === 0 ? `${version.version} (latest)` : version.version,
     value: version.version,
   }))
+  const tokenOptions = apiTokens.map((token) => ({
+    value: token.id,
+    label: token.name ?? token.id,
+  }))
+
+  useEffect(() => {
+    if (selectedApiTokenId || apiTokens.length === 0) return
+    const fallbackToken = apiTokens[0]
+    methods.setValue('api_token_id', fallbackToken.id, { shouldDirty: false })
+    methods.setValue('api_token_name', fallbackToken.name ?? fallbackToken.id, { shouldDirty: false })
+  }, [apiTokens, methods, selectedApiTokenId])
+
+  const handleTokenSelection = (tokenId: string, fieldOnChange: (value: string) => void) => {
+    const token = apiTokens.find(({ id }) => id === tokenId)
+    fieldOnChange(tokenId)
+    methods.setValue('api_token_name', token?.name ?? token?.id ?? null)
+  }
+
+  const handleCreateToken = (token: OrganizationApiTokenCreate | undefined, fieldOnChange: (value: string) => void) => {
+    if (token) {
+      fieldOnChange(token.id)
+      methods.setValue('api_token_name', token.name ?? token.id)
+    }
+    closeModal()
+  }
 
   const continueService = async () => {
-    const valid = await methods.trigger(['serviceName', 'majorServiceVersion'], { shouldFocus: true })
+    const valid = await methods.trigger(['serviceName', 'majorServiceVersion', 'api_token_id'], { shouldFocus: true })
     if (!valid) return
 
     setIsServiceCompleted(true)
@@ -86,7 +113,7 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
   }
 
   return (
-    <div className="mx-auto flex h-full min-h-0 w-full max-w-[620px] flex-col bg-background-secondary text-sm">
+    <div className="mx-auto flex h-full min-h-0 w-full max-w-[620px] flex-col text-sm">
       <form className="flex min-h-0 flex-1 flex-col overflow-hidden" onSubmit={methods.handleSubmit(() => onNext())}>
         <Section className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-6">
           <div className="flex flex-col gap-2">
@@ -96,336 +123,398 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
 
           <div className="mt-6 flex flex-col gap-3">
             <div className={CARD_CLASSNAME}>
-            {activeStage === 'service' ? (
-              <>
-                <div className="flex items-center gap-1.5 p-4">
-                  <Icon iconName="circle-info" className="text-sm text-neutral" />
-                  <p className="text-base font-medium text-neutral">Service informations</p>
-                </div>
-                <div className="flex flex-col gap-4 px-4 pb-4">
-                  <div className="flex flex-col gap-3">
-                    <Controller
-                      name="serviceName"
-                      control={methods.control}
-                      rules={{
-                        required: 'Enter a service name.',
-                      }}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputText
-                          name={field.name}
-                          value={field.value}
-                          onChange={field.onChange}
-                          label="Service name"
-                          error={error?.message}
-                        />
-                      )}
-                    />
-
-                    <Controller
-                      name="majorServiceVersion"
-                      control={methods.control}
-                      rules={{ required: 'Pick a version.' }}
-                      render={({ field, fieldState: { error } }) => (
-                        <InputSelect
-                          label="Service version"
-                          value={field.value}
-                          onChange={field.onChange}
-                          options={versionOptions}
-                          error={error?.message}
-                        />
-                      )}
-                    />
+              {activeStage === 'service' ? (
+                <>
+                  <div className="flex items-center gap-1.5 p-4">
+                    <Icon iconName="circle-info" className="text-sm text-neutral" />
+                    <p className="text-base font-medium text-neutral">Service informations</p>
                   </div>
-
-                  <div>
-                    <Button type="button" size="md" color="neutral" variant="solid" radius="rounded" onClick={continueService}>
-                      <span className="inline-flex items-center gap-2">
-                        Continue
-                        <Icon iconName="arrow-right" iconStyle="regular" className="text-sm" />
-                      </span>
-                    </Button>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <button
-                type="button"
-                className="flex w-full items-center justify-between p-4 text-left"
-                onClick={() => setActiveStage('service')}
-              >
-                <div className="flex items-center gap-1.5">
-                  <Icon iconName="circle-info" className="text-sm text-neutral" />
-                  <p className="text-base font-medium text-neutral">Service informations</p>
-                </div>
-                {isServiceCompleted ? <Icon iconName="circle-check" className="text-sm text-positive" /> : null}
-              </button>
-            )}
-          </div>
-
-          <div className={CARD_CLASSNAME}>
-            {activeStage === 'setup' ? (
-              <>
-                <div className="flex items-center gap-1.5 p-4">
-                  <Icon iconName="chart-bullet" className="text-sm text-neutral" />
-                  <p className="text-base font-medium text-neutral">Blueprint setup</p>
-                </div>
-                <div className="flex flex-col gap-4 px-4 pb-4">
-                  {setupParams.length === 0 ? (
-                    <p className="text-neutral-subtle">This blueprint has no parameters to configure.</p>
-                  ) : (
+                  <div className="flex flex-col gap-4 px-4 pb-4">
                     <div className="flex flex-col gap-3">
-                      {setupParams.map((param) => (
-                        <Controller
-                          key={param.id}
-                          name={`setupParams.${param.id}`}
-                          control={methods.control}
-                          rules={param.required ? { required: `${param.label} is required.` } : undefined}
-                          render={({ field, fieldState: { error } }) =>
-                            param.type === 'select' && param.options ? (
-                              <InputSelect
-                                label={param.label}
-                                value={field.value}
-                                onChange={field.onChange}
-                                options={param.options}
-                                error={error?.message}
-                              />
-                            ) : (
-                              <InputText
-                                name={field.name}
-                                value={field.value}
-                                onChange={field.onChange}
-                                label={param.label}
-                                type={param.type === 'number' ? 'number' : 'text'}
-                                error={error?.message}
-                              />
-                            )
-                          }
-                        />
-                      ))}
+                      <Controller
+                        name="api_token_id"
+                        control={methods.control}
+                        rules={{ required: 'Please select an API token.' }}
+                        render={({ field, fieldState: { error } }) => (
+                          <InputSelect
+                            label="API Token"
+                            value={field.value ?? undefined}
+                            options={tokenOptions}
+                            onChange={(value) => {
+                              if (typeof value === 'string') {
+                                handleTokenSelection(value, field.onChange)
+                              }
+                            }}
+                            error={error?.message}
+                            menuListButton={{
+                              title: 'Select token',
+                              label: 'Create API token',
+                              onClick: () =>
+                                openModal({
+                                  content: (
+                                    <CrudModalFeature
+                                      organizationId={organizationId}
+                                      onClose={closeModal}
+                                      onCreated={(token) => handleCreateToken(token, field.onChange)}
+                                    />
+                                  ),
+                                }),
+                            }}
+                            isSearchable
+                          />
+                        )}
+                      />
+
+                      <Controller
+                        name="serviceName"
+                        control={methods.control}
+                        rules={{
+                          required: 'Enter a service name.',
+                        }}
+                        render={({ field, fieldState: { error } }) => (
+                          <InputText
+                            name={field.name}
+                            value={field.value}
+                            onChange={field.onChange}
+                            label="Service name"
+                            error={error?.message}
+                          />
+                        )}
+                      />
+
+                      <Controller
+                        name="majorServiceVersion"
+                        control={methods.control}
+                        rules={{ required: 'Pick a version.' }}
+                        render={({ field, fieldState: { error } }) => (
+                          <InputSelect
+                            label="Service version"
+                            value={field.value}
+                            onChange={field.onChange}
+                            options={versionOptions}
+                            error={error?.message}
+                          />
+                        )}
+                      />
                     </div>
-                  )}
 
-                  <div>
-                    <Button type="button" size="md" color="neutral" variant="solid" radius="rounded" onClick={continueSetup}>
-                      <span className="inline-flex items-center gap-2">
-                        Continue
-                        <Icon iconName="arrow-right" iconStyle="regular" className="text-sm" />
-                      </span>
-                    </Button>
-                  </div>
-                </div>
-              </>
-            ) : (
-              <button
-                type="button"
-                className="flex w-full items-center justify-between p-4 text-left"
-                disabled={!isServiceCompleted}
-                onClick={() => {
-                  if (isServiceCompleted) {
-                    setActiveStage('setup')
-                  }
-                }}
-              >
-                <div className="flex items-center gap-1.5">
-                  <Icon iconName="chart-bullet" className="text-sm text-neutral" />
-                  <p className={`text-base font-medium ${isServiceCompleted ? 'text-neutral' : 'text-neutral-subtle'}`}>
-                    Blueprint setup
-                  </p>
-                </div>
-                {isSetupCompleted ? <Icon iconName="circle-check" className="text-sm text-positive" /> : null}
-              </button>
-            )}
-          </div>
-
-          <div className={CARD_CLASSNAME}>
-            {activeStage === 'overrides' ? (
-              <>
-                <div className="flex flex-col gap-1 p-4">
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center gap-1.5">
-                      <Icon iconName="code" className="text-sm text-neutral" />
-                      <p className="text-base font-medium text-neutral">Overrides</p>
+                    <div>
+                      <Button
+                        type="button"
+                        size="md"
+                        color="neutral"
+                        variant="solid"
+                        radius="rounded"
+                        onClick={continueService}
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          Continue
+                          <Icon iconName="arrow-right" iconStyle="regular" className="text-sm" />
+                        </span>
+                      </Button>
                     </div>
-                    <span className="text-neutral-subtle">·</span>
-                    <p className="text-sm text-neutral-subtle">For advanced users</p>
                   </div>
-                  <p className="text-sm text-neutral-subtle">
-                    Use overrides to customize how your service is built or run. Entirely optional.
-                  </p>
-                </div>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between p-4 text-left"
+                  onClick={() => setActiveStage('service')}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <Icon iconName="circle-info" className="text-sm text-neutral" />
+                    <p className="text-base font-medium text-neutral">Service informations</p>
+                  </div>
+                  {isServiceCompleted ? <Icon iconName="circle-check" className="text-sm text-positive" /> : null}
+                </button>
+              )}
+            </div>
 
-                <div className="border-t border-neutral">
-                  <button
-                    type="button"
-                    className="group flex h-12 w-full items-center justify-between px-4"
-                    onClick={() => setOpenOverrideSection((value) => (value === 'bucket' ? null : 'bucket'))}
-                  >
-                    <span className="font-medium text-neutral-subtle transition-colors group-hover:text-neutral">Bucket</span>
-                    <Icon
-                      iconName={openOverrideSection === 'bucket' ? 'angle-up' : 'angle-down'}
-                      className="text-sm text-neutral-subtle transition-colors group-hover:text-neutral"
-                    />
-                  </button>
+            <div className={CARD_CLASSNAME}>
+              {activeStage === 'setup' ? (
+                <>
+                  <div className="flex items-center gap-1.5 p-4">
+                    <Icon iconName="chart-bullet" className="text-sm text-neutral" />
+                    <p className="text-base font-medium text-neutral">Blueprint setup</p>
+                  </div>
+                  <div className="flex flex-col gap-4 px-4 pb-4">
+                    {setupParams.length === 0 ? (
+                      <p className="text-neutral-subtle">This blueprint has no parameters to configure.</p>
+                    ) : (
+                      <div className="flex flex-col gap-3">
+                        {setupParams.map((param) => (
+                          <Controller
+                            key={param.id}
+                            name={`setupParams.${param.id}`}
+                            control={methods.control}
+                            rules={param.required ? { required: `${param.label} is required.` } : undefined}
+                            render={({ field, fieldState: { error } }) =>
+                              param.type === 'select' && param.options ? (
+                                <InputSelect
+                                  label={param.label}
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  options={param.options}
+                                  error={error?.message}
+                                />
+                              ) : (
+                                <InputText
+                                  name={field.name}
+                                  value={field.value}
+                                  onChange={field.onChange}
+                                  label={param.label}
+                                  type={param.type === 'number' ? 'number' : 'text'}
+                                  error={error?.message}
+                                />
+                              )
+                            }
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                    <div>
+                      <Button
+                        type="button"
+                        size="md"
+                        color="neutral"
+                        variant="solid"
+                        radius="rounded"
+                        onClick={continueSetup}
+                      >
+                        <span className="inline-flex items-center gap-2">
+                          Continue
+                          <Icon iconName="arrow-right" iconStyle="regular" className="text-sm" />
+                        </span>
+                      </Button>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-between p-4 text-left"
+                  disabled={!isServiceCompleted}
+                  onClick={() => {
+                    if (isServiceCompleted) {
+                      setActiveStage('setup')
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <Icon iconName="chart-bullet" className="text-sm text-neutral" />
+                    <p
+                      className={`text-base font-medium ${isServiceCompleted ? 'text-neutral' : 'text-neutral-subtle'}`}
+                    >
+                      Blueprint setup
+                    </p>
+                  </div>
+                  {isSetupCompleted ? <Icon iconName="circle-check" className="text-sm text-positive" /> : null}
+                </button>
+              )}
+            </div>
+
+            <div className={CARD_CLASSNAME}>
+              {activeStage === 'overrides' ? (
+                <>
+                  <div className="flex flex-col gap-1 p-4">
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1.5">
+                        <Icon iconName="code" className="text-sm text-neutral" />
+                        <p className="text-base font-medium text-neutral">Overrides</p>
+                      </div>
+                      <span className="text-neutral-subtle">·</span>
+                      <p className="text-sm text-neutral-subtle">For advanced users</p>
+                    </div>
+                    <p className="text-sm text-neutral-subtle">
+                      Use overrides to customize how your service is built or run. Entirely optional.
+                    </p>
+                  </div>
 
                   <div className="border-t border-neutral">
                     <button
                       type="button"
                       className="group flex h-12 w-full items-center justify-between px-4"
-                      onClick={() => setOpenOverrideSection((value) => (value === 'resources' ? null : 'resources'))}
+                      onClick={() => setOpenOverrideSection((value) => (value === 'bucket' ? null : 'bucket'))}
                     >
-                      <span
-                        className={`font-medium transition-colors ${
-                          openOverrideSection === 'resources' ? 'text-neutral' : 'text-neutral-subtle group-hover:text-neutral'
-                        }`}
-                      >
-                        Resources
+                      <span className="font-medium text-neutral-subtle transition-colors group-hover:text-neutral">
+                        Bucket
                       </span>
                       <Icon
-                        iconName={openOverrideSection === 'resources' ? 'angle-up' : 'angle-down'}
-                        className={`text-sm transition-colors ${
-                          openOverrideSection === 'resources' ? 'text-neutral' : 'text-neutral-subtle group-hover:text-neutral'
-                        }`}
+                        iconName={openOverrideSection === 'bucket' ? 'angle-up' : 'angle-down'}
+                        className="text-sm text-neutral-subtle transition-colors group-hover:text-neutral"
                       />
                     </button>
 
-                    {openOverrideSection === 'resources' ? (
-                      <div className="flex flex-col gap-3 px-4 pb-4">
-                        <div className="grid grid-cols-2 gap-3">
-                          <Controller
-                            name="cpuMilli"
-                            control={methods.control}
-                            rules={{ required: true, min: 100 }}
-                            render={({ field, fieldState: { error } }) => (
-                              <InputText
-                                name={field.name}
-                                value={String(field.value)}
-                                onChange={(event) => field.onChange(Number(event.target.value))}
-                                label="vCPU (milli)"
-                                type="number"
-                                error={error?.message}
-                              />
-                            )}
-                          />
-                          <Controller
-                            name="memoryMib"
-                            control={methods.control}
-                            rules={{ required: true, min: 64 }}
-                            render={({ field, fieldState: { error } }) => (
-                              <InputText
-                                name={field.name}
-                                value={String(field.value)}
-                                onChange={(event) => field.onChange(Number(event.target.value))}
-                                label="Memory (MiB)"
-                                type="number"
-                                error={error?.message}
-                              />
-                            )}
-                          />
-                        </div>
-
-                        <Controller
-                          name="timeoutSec"
-                          control={methods.control}
-                          rules={{ required: true, min: 60 }}
-                          render={({ field, fieldState: { error } }) => (
-                            <InputText
-                              name={field.name}
-                              value={String(field.value)}
-                              onChange={(event) => field.onChange(Number(event.target.value))}
-                              label="Timeout (ms)"
-                              type="number"
-                              error={error?.message}
-                            />
-                          )}
+                    <div className="border-t border-neutral">
+                      <button
+                        type="button"
+                        className="group flex h-12 w-full items-center justify-between px-4"
+                        onClick={() => setOpenOverrideSection((value) => (value === 'resources' ? null : 'resources'))}
+                      >
+                        <span
+                          className={`font-medium transition-colors ${
+                            openOverrideSection === 'resources'
+                              ? 'text-neutral'
+                              : 'text-neutral-subtle group-hover:text-neutral'
+                          }`}
+                        >
+                          Resources
+                        </span>
+                        <Icon
+                          iconName={openOverrideSection === 'resources' ? 'angle-up' : 'angle-down'}
+                          className={`text-sm transition-colors ${
+                            openOverrideSection === 'resources'
+                              ? 'text-neutral'
+                              : 'text-neutral-subtle group-hover:text-neutral'
+                          }`}
                         />
+                      </button>
 
-                        <div className="flex items-center gap-2">
-                          <Button
-                            type="button"
-                            size="md"
-                            color="neutral"
-                            variant="solid"
-                            radius="rounded"
-                            disabled={!isResourceDirty}
-                            onClick={saveResourceOverrides}
-                          >
-                            <span className="inline-flex items-center gap-2">
-                              <Icon iconName="floppy-disk" className="text-sm" />
-                              Save
-                            </span>
-                          </Button>
-                          {hasResourceOverrides ? (
+                      {openOverrideSection === 'resources' ? (
+                        <div className="flex flex-col gap-3 px-4 pb-4">
+                          <div className="grid grid-cols-2 gap-3">
+                            <Controller
+                              name="cpuMilli"
+                              control={methods.control}
+                              rules={{ required: true, min: 100 }}
+                              render={({ field, fieldState: { error } }) => (
+                                <InputText
+                                  name={field.name}
+                                  value={String(field.value)}
+                                  onChange={(event) => field.onChange(Number(event.target.value))}
+                                  label="vCPU (milli)"
+                                  type="number"
+                                  error={error?.message}
+                                />
+                              )}
+                            />
+                            <Controller
+                              name="memoryMib"
+                              control={methods.control}
+                              rules={{ required: true, min: 64 }}
+                              render={({ field, fieldState: { error } }) => (
+                                <InputText
+                                  name={field.name}
+                                  value={String(field.value)}
+                                  onChange={(event) => field.onChange(Number(event.target.value))}
+                                  label="Memory (MiB)"
+                                  type="number"
+                                  error={error?.message}
+                                />
+                              )}
+                            />
+                          </div>
+
+                          <Controller
+                            name="timeoutSec"
+                            control={methods.control}
+                            rules={{ required: true, min: 60 }}
+                            render={({ field, fieldState: { error } }) => (
+                              <InputText
+                                name={field.name}
+                                value={String(field.value)}
+                                onChange={(event) => field.onChange(Number(event.target.value))}
+                                label="Timeout (ms)"
+                                type="number"
+                                error={error?.message}
+                              />
+                            )}
+                          />
+
+                          <div className="flex items-center gap-2">
                             <Button
                               type="button"
                               size="md"
                               color="neutral"
-                              variant="outline"
+                              variant="solid"
                               radius="rounded"
-                              onClick={resetResourceOverrides}
+                              disabled={!isResourceDirty}
+                              onClick={saveResourceOverrides}
                             >
                               <span className="inline-flex items-center gap-2">
-                                <Icon iconName="rotate-left" className="text-sm" />
-                                Reset to default
+                                <Icon iconName="floppy-disk" className="text-sm" />
+                                Save
                               </span>
                             </Button>
-                          ) : null}
+                            {hasResourceOverrides ? (
+                              <Button
+                                type="button"
+                                size="md"
+                                color="neutral"
+                                variant="outline"
+                                radius="rounded"
+                                onClick={resetResourceOverrides}
+                              >
+                                <span className="inline-flex items-center gap-2">
+                                  <Icon iconName="rotate-left" className="text-sm" />
+                                  Reset to default
+                                </span>
+                              </Button>
+                            ) : null}
+                          </div>
                         </div>
-                      </div>
-                    ) : null}
-                  </div>
+                      ) : null}
+                    </div>
 
-                  <div className="border-t border-neutral">
-                    <button
-                      type="button"
-                      className="group flex h-12 w-full items-center justify-between px-4"
-                      onClick={() => setOpenOverrideSection((value) => (value === 'network' ? null : 'network'))}
-                    >
-                      <span className="font-medium text-neutral-subtle transition-colors group-hover:text-neutral">Network</span>
-                      <Icon
-                        iconName={openOverrideSection === 'network' ? 'angle-up' : 'angle-down'}
-                        className="text-sm text-neutral-subtle transition-colors group-hover:text-neutral"
-                      />
-                    </button>
-                  </div>
+                    <div className="border-t border-neutral">
+                      <button
+                        type="button"
+                        className="group flex h-12 w-full items-center justify-between px-4"
+                        onClick={() => setOpenOverrideSection((value) => (value === 'network' ? null : 'network'))}
+                      >
+                        <span className="font-medium text-neutral-subtle transition-colors group-hover:text-neutral">
+                          Network
+                        </span>
+                        <Icon
+                          iconName={openOverrideSection === 'network' ? 'angle-up' : 'angle-down'}
+                          className="text-sm text-neutral-subtle transition-colors group-hover:text-neutral"
+                        />
+                      </button>
+                    </div>
 
-                  <div className="border-t border-neutral">
-                    <button
-                      type="button"
-                      className="group flex h-12 w-full items-center justify-between px-4"
-                      onClick={() => setOpenOverrideSection((value) => (value === 'authentication' ? null : 'authentication'))}
-                    >
-                      <span className="font-medium text-neutral-subtle transition-colors group-hover:text-neutral">
-                        Authentication
-                      </span>
-                      <Icon
-                        iconName={openOverrideSection === 'authentication' ? 'angle-up' : 'angle-down'}
-                        className="text-sm text-neutral-subtle transition-colors group-hover:text-neutral"
-                      />
-                    </button>
+                    <div className="border-t border-neutral">
+                      <button
+                        type="button"
+                        className="group flex h-12 w-full items-center justify-between px-4"
+                        onClick={() =>
+                          setOpenOverrideSection((value) => (value === 'authentication' ? null : 'authentication'))
+                        }
+                      >
+                        <span className="font-medium text-neutral-subtle transition-colors group-hover:text-neutral">
+                          Authentication
+                        </span>
+                        <Icon
+                          iconName={openOverrideSection === 'authentication' ? 'angle-up' : 'angle-down'}
+                          className="text-sm text-neutral-subtle transition-colors group-hover:text-neutral"
+                        />
+                      </button>
+                    </div>
                   </div>
-                </div>
-              </>
-            ) : (
-              <button
-                type="button"
-                className="flex w-full items-center gap-2 p-4 text-left"
-                disabled={!isSetupCompleted}
-                onClick={() => {
-                  if (isSetupCompleted) {
-                    setActiveStage('overrides')
-                  }
-                }}
-              >
-                <div className="flex items-center gap-1.5">
-                  <Icon iconName="code" className="text-sm text-neutral" />
-                  <p className={`text-base font-medium ${isSetupCompleted ? 'text-neutral' : 'text-neutral-subtle'}`}>Overrides</p>
-                </div>
-                <span className="text-neutral-subtle">·</span>
-                <p className="text-sm text-neutral-subtle">For advanced users</p>
-              </button>
-            )}
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="flex w-full items-center gap-2 p-4 text-left"
+                  disabled={!isSetupCompleted}
+                  onClick={() => {
+                    if (isSetupCompleted) {
+                      setActiveStage('overrides')
+                    }
+                  }}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <Icon iconName="code" className="text-sm text-neutral" />
+                    <p className={`text-base font-medium ${isSetupCompleted ? 'text-neutral' : 'text-neutral-subtle'}`}>
+                      Overrides
+                    </p>
+                  </div>
+                  <span className="text-neutral-subtle">·</span>
+                  <p className="text-sm text-neutral-subtle">For advanced users</p>
+                </button>
+              )}
+            </div>
           </div>
-        </div>
         </Section>
         <WizardStickyFooter>
           <Button

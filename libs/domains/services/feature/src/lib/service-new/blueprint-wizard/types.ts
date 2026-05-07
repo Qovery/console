@@ -6,6 +6,8 @@ export interface BlueprintWizardFormData {
   environmentId: string
   majorServiceVersion: string
   serviceName: string
+  api_token_id?: string | null
+  api_token_name?: string | null
 
   // Setup — blueprint-specific parameter values keyed by parameter id
   setupParams: Record<string, string>
@@ -26,7 +28,9 @@ export function getDefaultFormData(
     environmentId: context.environmentId,
     // For MVP: latest version selected. The selector exists but only one option is offered.
     majorServiceVersion: blueprint.versions[0]?.version ?? '',
-    serviceName: '',
+    serviceName: blueprint.name,
+    api_token_id: null,
+    api_token_name: null,
     setupParams: getDefaultSetupParams(blueprint),
     credentialsMode: 'cluster',
     cpuMilli: 500,
@@ -50,7 +54,13 @@ export interface SetupParameter {
 
 const SETUP_PARAMS_BY_BLUEPRINT: Record<string, SetupParameter[]> = {
   'aws-s3': [
-    { id: 'bucketName', label: 'Bucket name', type: 'text', required: true, helper: 'Globally unique. Lowercase, numbers, hyphens.' },
+    {
+      id: 'bucketName',
+      label: 'Bucket name',
+      type: 'text',
+      required: true,
+      helper: 'Globally unique. Lowercase, numbers, hyphens.',
+    },
     {
       id: 'versioning',
       label: 'Versioning',
@@ -110,7 +120,16 @@ const SETUP_PARAMS_BY_BLUEPRINT: Record<string, SetupParameter[]> = {
   ],
   'nginx-ingress': [
     { id: 'replicaCount', label: 'Replica count', type: 'number', defaultValue: '2' },
-    { id: 'tlsEnabled', label: 'TLS enabled', type: 'select', defaultValue: 'true', options: [{ value: 'true', label: 'Yes' }, { value: 'false', label: 'No' }] },
+    {
+      id: 'tlsEnabled',
+      label: 'TLS enabled',
+      type: 'select',
+      defaultValue: 'true',
+      options: [
+        { value: 'true', label: 'Yes' },
+        { value: 'false', label: 'No' },
+      ],
+    },
   ],
   'data-platform': [
     { id: 'bucketName', label: 'Storage bucket name', type: 'text', required: true },

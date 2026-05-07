@@ -1,4 +1,3 @@
-import { createPortal } from 'react-dom'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FunnelFlow, FunnelFlowBody } from '@qovery/shared/ui'
@@ -17,7 +16,7 @@ export interface BlueprintWizardProps {
 
 const STEP_TITLES = ['Configuration', 'Summary']
 
-export function BlueprintWizard({ blueprint, projectId, environmentId, onExit }: BlueprintWizardProps) {
+export function BlueprintWizard({ blueprint, organizationId, projectId, environmentId, onExit }: BlueprintWizardProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndDeploy, setIsLoadingCreateAndDeploy] = useState(false)
@@ -53,34 +52,30 @@ export function BlueprintWizard({ blueprint, projectId, environmentId, onExit }:
     }
   }
 
-  return createPortal(
-    <div className="fixed inset-0 z-modal bg-background-secondary">
-      <FunnelFlow
-        onExit={handleExit}
-        totalSteps={STEP_TITLES.length}
-        currentStep={currentStep}
-        currentTitle={STEP_TITLES[currentStep - 1] ?? ''}
-        contentClassName="bg-background-secondary"
-      >
-        <FormProvider {...methods}>
-          {currentStep === 1 ? (
-            <StepConfiguration blueprint={blueprint} onNext={() => setCurrentStep(2)} />
-          ) : (
-            <FunnelFlowBody customContentWidth="max-w-[44rem]" contentClassName="bg-background-secondary">
-              <StepSummary
-                blueprint={blueprint}
-                onBack={() => setCurrentStep(1)}
-                onCreate={handleCreate}
-                onCreateAndDeploy={handleCreateAndDeploy}
-                isLoadingCreate={isLoadingCreate}
-                isLoadingCreateAndDeploy={isLoadingCreateAndDeploy}
-              />
-            </FunnelFlowBody>
-          )}
-        </FormProvider>
-      </FunnelFlow>
-    </div>,
-    document.body
+  return (
+    <FunnelFlow
+      onExit={handleExit}
+      totalSteps={STEP_TITLES.length}
+      currentStep={currentStep}
+      currentTitle={STEP_TITLES[currentStep - 1] ?? ''}
+    >
+      <FormProvider {...methods}>
+        {currentStep === 1 ? (
+          <StepConfiguration blueprint={blueprint} organizationId={organizationId} onNext={() => setCurrentStep(2)} />
+        ) : (
+          <FunnelFlowBody customContentWidth="max-w-[44rem]">
+            <StepSummary
+              blueprint={blueprint}
+              onBack={() => setCurrentStep(1)}
+              onCreate={handleCreate}
+              onCreateAndDeploy={handleCreateAndDeploy}
+              isLoadingCreate={isLoadingCreate}
+              isLoadingCreateAndDeploy={isLoadingCreateAndDeploy}
+            />
+          </FunnelFlowBody>
+        )}
+      </FormProvider>
+    </FunnelFlow>
   )
 }
 

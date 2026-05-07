@@ -1,12 +1,12 @@
+import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
-import { useState, type ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import { Button, Heading, Icon, InputSearch, Link, Section, SidePanel } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { BlueprintDetailModal } from './blueprint-detail-modal/blueprint-detail-modal'
-import { BlueprintWizard } from './blueprint-wizard'
 import { type BlueprintEntry, MOCK_BLUEPRINTS, PROVIDER_CONFIG } from './blueprints'
 
 interface DefaultServiceItemProps {
@@ -24,7 +24,9 @@ function DefaultServiceItem({ icon, label, to, onClick, disabled }: DefaultServi
       <span className="flex min-w-0 flex-1">
         <span className="truncate text-sm font-medium text-neutral">{label}</span>
       </span>
-      {!disabled && <Icon iconName="angle-right" iconStyle="regular" className="shrink-0 text-sm text-neutral-subtle" />}
+      {!disabled && (
+        <Icon iconName="angle-right" iconStyle="regular" className="shrink-0 text-sm text-neutral-subtle" />
+      )}
     </>
   )
 
@@ -76,8 +78,8 @@ function BlueprintCard({
   const providerCfg = PROVIDER_CONFIG[blueprint.provider]
 
   return (
-    <div className="grid h-full grid-rows-[1fr_auto] rounded-md border border-neutral bg-surface-neutral-subtle">
-      <div className="flex flex-1 flex-col gap-3 rounded-md bg-surface-neutral p-4 outline outline-1 outline-neutral">
+    <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
+      <div className="flex flex-col gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-surface-neutral-component">
           {providerCfg.icon ? (
             <img src={providerCfg.icon} alt={providerCfg.label} className="h-5 w-5 select-none object-contain" />
@@ -85,14 +87,12 @@ function BlueprintCard({
             <Icon iconName="layer-group" className="text-sm text-brand" />
           )}
         </div>
-
         <div className="flex flex-col gap-1">
           <p className="text-sm font-medium text-neutral">{blueprint.name}</p>
-          <p className="line-clamp-3 text-ssm leading-normal text-neutral-subtle">{blueprint.description}</p>
+          <p className="text-sm text-neutral-subtle">{blueprint.description}</p>
         </div>
       </div>
-
-      <div className="flex items-center gap-2 px-4 py-3">
+      <div className="flex items-center gap-1">
         <Button size="sm" color="neutral" variant="outline" radius="rounded" onClick={() => onDeploy(blueprint.id)}>
           Deploy
         </Button>
@@ -117,10 +117,10 @@ export interface ServiceNewProps {
 }
 
 export function ServiceNew({ organizationId, projectId, environmentId }: ServiceNewProps) {
+  const navigate = useNavigate()
   const isTerraformEnabled = Boolean(useFeatureFlagEnabled('terraform'))
   const { showPylonForm } = useSupportChat()
   const [blueprintSearch, setBlueprintSearch] = useState('')
-  const [activeWizardBlueprint, setActiveWizardBlueprint] = useState<BlueprintEntry | null>(null)
   const [detailBlueprint, setDetailBlueprint] = useState<BlueprintEntry | null>(null)
 
   const defaultServices: DefaultServiceItemProps[] = [
@@ -176,7 +176,12 @@ export function ServiceNew({ organizationId, projectId, environmentId }: Service
     if (!blueprint) return
 
     posthog.capture('select-blueprint', { blueprintId })
-    setActiveWizardBlueprint(blueprint)
+
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general',
+      params: { organizationId, projectId, environmentId, slug: 'blueprint' },
+      search: { blueprintId },
+    })
   }
 
   const handleDetails = (blueprintId: string) => {
@@ -185,18 +190,6 @@ export function ServiceNew({ organizationId, projectId, environmentId }: Service
 
     posthog.capture('view-blueprint-details', { blueprintId })
     setDetailBlueprint(blueprint)
-  }
-
-  if (activeWizardBlueprint) {
-    return (
-      <BlueprintWizard
-        blueprint={activeWizardBlueprint}
-        organizationId={organizationId}
-        projectId={projectId}
-        environmentId={environmentId}
-        onExit={() => setActiveWizardBlueprint(null)}
-      />
-    )
   }
 
   return (
@@ -221,7 +214,9 @@ export function ServiceNew({ organizationId, projectId, environmentId }: Service
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex flex-col gap-1">
               <Heading className="text-base">Blueprints</Heading>
-              <p className="text-sm text-neutral-subtle">Qovery managed blueprints that you can deploy in a few clicks</p>
+              <p className="text-sm text-neutral-subtle">
+                Qovery managed blueprints that you can deploy in a few clicks
+              </p>
             </div>
             <InputSearch
               placeholder="Search blueprints..."
