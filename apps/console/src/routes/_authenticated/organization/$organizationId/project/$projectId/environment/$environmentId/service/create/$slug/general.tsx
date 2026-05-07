@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { Navigate, createFileRoute, useNavigate } from '@tanstack/react-router'
 import {
   AnnotationSetting,
   ContainerRegistryCreateEditModal,
@@ -7,8 +7,10 @@ import {
 } from '@qovery/domains/organizations/feature'
 import {
   ApplicationContainerStepGeneral,
+  BlueprintWizard,
   EntrypointCmdInputs,
   GeneralContainerSettings,
+  MOCK_BLUEPRINTS,
 } from '@qovery/domains/services/feature'
 import { type ApplicationGeneralData } from '@qovery/shared/interfaces'
 import { serviceCreateParamsSchema } from '@qovery/shared/router'
@@ -26,6 +28,35 @@ function General() {
   const { organizationId = '', projectId = '', environmentId = '', slug } = Route.useParams()
   const navigate = useNavigate()
   const search = Route.useSearch()
+
+  if (slug === 'blueprint') {
+    const blueprint = search.blueprintId ? MOCK_BLUEPRINTS.find((item) => item.id === search.blueprintId) : undefined
+
+    if (!blueprint) {
+      return (
+        <Navigate
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
+          params={{ organizationId, projectId, environmentId }}
+          replace
+        />
+      )
+    }
+
+    return (
+      <BlueprintWizard
+        blueprint={blueprint}
+        organizationId={organizationId}
+        projectId={projectId}
+        environmentId={environmentId}
+        onExit={() =>
+          navigate({
+            to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
+            params: { organizationId, projectId, environmentId },
+          })
+        }
+      />
+    )
+  }
 
   const { openModal, closeModal } = useModal()
 

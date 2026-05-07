@@ -1,16 +1,24 @@
-import { useParams } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import { OutputVariables } from '@qovery/domains/variables/feature'
-import { Heading, Icon, Link, Navbar, Section } from '@qovery/shared/ui'
+import { Heading, Icon, Link, Navbar, Section, SidePanel, useModal } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
 import { NeedRedeployFlag } from '../need-redeploy-flag/need-redeploy-flag'
+import { BlueprintDetailModal } from '../service-new/blueprint-detail-modal/blueprint-detail-modal'
+import { BlueprintUpdateReviewModal } from '../service-new/blueprint-update-review-modal/blueprint-update-review-modal'
+import { MOCK_BLUEPRINTS } from '../service-new/blueprints'
 import { ServiceHeader } from './service-header/service-header'
 import { ServiceInstance } from './service-instance/service-instance'
 import { ServiceLastDeployment } from './service-last-deployment/service-last-deployment'
 import { ServiceOverviewSkeleton } from './service-overview-skeleton'
+
+// ─── Blueprint preview toggle ────────────────────────────────────────────────
+// Keep this prototype path simple: overview reuses the exact catalog blueprint entry.
+const SHOW_BLUEPRINT_CONTEXT = true
+const BLUEPRINT_SOURCE = MOCK_BLUEPRINTS[0] ?? null
 
 export interface ServiceOverviewProps {
   environment?: Environment
@@ -29,8 +37,40 @@ function ServiceOverviewContent({
 }: ServiceOverviewProps) {
   const { environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('variables')
+  const [isBlueprintDetailsOpen, setBlueprintDetailsOpen] = useState(false)
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
+  const { openModal, closeModal } = useModal()
+  const activeBlueprint = SHOW_BLUEPRINT_CONTEXT ? BLUEPRINT_SOURCE : null
+
+  const openUpdateReview = () => {
+    if (!activeBlueprint) return
+    openModal({
+      content: (
+        <BlueprintUpdateReviewModal
+          targetVersion="2.1"
+          releaseNotesUrl={activeBlueprint.repositoryUrl}
+          changesSummary={{ added: 3, changed: 2, removed: 1 }}
+          onCancel={closeModal}
+          onReview={() => {
+            closeModal()
+            navigate({
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update-blueprint',
+              params: {
+                organizationId: environment.organization.id,
+                projectId: environment.project.id,
+                environmentId,
+                serviceId,
+              },
+              search: { targetVersion: '2.1', from: 'overview' },
+            })
+          }}
+        />
+      ),
+      options: { width: 488, fakeModal: true },
+    })
+  }
 
   const isLifecycleJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE', [service])
   const isTerraformService = useMemo(() => service?.serviceType === 'TERRAFORM', [service])
@@ -68,7 +108,25 @@ function ServiceOverviewContent({
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 pb-24">
         <div className="flex shrink-0 flex-col gap-5 pb-8 pt-6 text-sm">
           <Section className="gap-8">
-            <ServiceHeader environment={environment} serviceId={service.id} service={service} />
+            <ServiceHeader
+              environment={environment}
+              serviceId={service.id}
+              service={service}
+              blueprintContext={
+                activeBlueprint
+                  ? {
+                      blueprintName: activeBlueprint.name,
+                      repositorySlug: activeBlueprint.repositorySlug,
+                      repositoryUrl: activeBlueprint.repositoryUrl,
+                      serviceVersion:
+                        service.serviceType === 'DATABASE' ? service.version : activeBlueprint.versions[0]?.version,
+                      updateAvailable: true,
+                      onReviewUpdate: openUpdateReview,
+                      onOpenBlueprintDetails: () => setBlueprintDetailsOpen(true),
+                    }
+                  : undefined
+              }
+            />
             {hasNoMetrics && observabilityCallout}
             <Section className="gap-3">
               <div className="flex items-center justify-between gap-2">
@@ -160,6 +218,11 @@ function ServiceOverviewContent({
           </Section>
         </div>
       </div>
+      <SidePanel open={isBlueprintDetailsOpen} onOpenChange={setBlueprintDetailsOpen} width={940}>
+        {activeBlueprint ? (
+          <BlueprintDetailModal blueprint={activeBlueprint} onClose={() => setBlueprintDetailsOpen(false)} readOnly />
+        ) : null}
+      </SidePanel>
     </>
   )
 }

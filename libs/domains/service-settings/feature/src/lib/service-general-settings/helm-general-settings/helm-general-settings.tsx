@@ -1,4 +1,5 @@
 import { type Organization } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { EditGitRepositorySettings } from '@qovery/domains/organizations/feature'
 import { DeploymentSetting, SourceSetting } from '@qovery/domains/service-helm/feature'
@@ -10,9 +11,16 @@ import { Callout, Heading, Icon, Section } from '@qovery/shared/ui'
 export interface HelmGeneralSettingsProps {
   service: Helm
   organization: Organization
+  isBlueprintManaged?: boolean
+  blueprintSection?: ReactNode
 }
 
-export function HelmGeneralSettings({ service, organization }: HelmGeneralSettingsProps) {
+export function HelmGeneralSettings({
+  service,
+  organization,
+  isBlueprintManaged = false,
+  blueprintSection,
+}: HelmGeneralSettingsProps) {
   const { watch } = useFormContext()
   const watchFieldProvider = watch('source_provider')
 
@@ -23,36 +31,46 @@ export function HelmGeneralSettings({ service, organization }: HelmGeneralSettin
         <GeneralSetting label="Service name" service={service} />
       </Section>
 
-      <Section className="gap-4">
-        <Heading>Source</Heading>
-        <SourceSetting disabled />
-        {watchFieldProvider === 'GIT' && (
-          <div className="mt-3">
-            <EditGitRepositorySettings
-              organizationId={organization.id}
-              gitRepository={isHelmGitSource(service.source) ? service.source.git?.git_repository : undefined}
-            />
-          </div>
-        )}
-      </Section>
+      {isBlueprintManaged ? (
+        <Section className="gap-1">
+          <Heading>Blueprint</Heading>
+          {blueprintSection}
+        </Section>
+      ) : (
+        <Section className="gap-4">
+          <Heading>Source</Heading>
+          <SourceSetting disabled />
+          {watchFieldProvider === 'GIT' && (
+            <div className="mt-3">
+              <EditGitRepositorySettings
+                organizationId={organization.id}
+                gitRepository={isHelmGitSource(service.source) ? service.source.git?.git_repository : undefined}
+              />
+            </div>
+          )}
+        </Section>
+      )}
 
-      <Section className="gap-4">
-        <Heading>Deploy</Heading>
-        <DeploymentSetting />
-        {watchFieldProvider === 'GIT' && <AutoDeploySection serviceId={service.id} source="GIT" />}
-        {watchFieldProvider === 'HELM_REPOSITORY' && (
-          <Callout.Root color="sky" className="mt-5 items-center">
-            <Callout.Icon>
-              <Icon iconName="circle-info" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>
-              <Callout.TextHeading>
-                Git automations are disabled when using Helm repositories (auto-deploy, automatic preview environments)
-              </Callout.TextHeading>
-            </Callout.Text>
-          </Callout.Root>
-        )}
-      </Section>
+      {!isBlueprintManaged && (
+        <Section className="gap-4">
+          <Heading>Deploy</Heading>
+          <DeploymentSetting />
+          {watchFieldProvider === 'GIT' && <AutoDeploySection serviceId={service.id} source="GIT" />}
+          {watchFieldProvider === 'HELM_REPOSITORY' && (
+            <Callout.Root color="sky" className="mt-5 items-center">
+              <Callout.Icon>
+                <Icon iconName="circle-info" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                <Callout.TextHeading>
+                  Git automations are disabled when using Helm repositories (auto-deploy, automatic preview
+                  environments)
+                </Callout.TextHeading>
+              </Callout.Text>
+            </Callout.Root>
+          )}
+        </Section>
+      )}
     </>
   )
 }

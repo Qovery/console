@@ -11,6 +11,7 @@ export interface FunnelFlowProps extends PropsWithChildren {
   exitTo?: string
   onExit?: () => void
   portal?: boolean
+  contentClassName?: string
 }
 
 const FunnelFlowContent = (props: FunnelFlowProps) => {
@@ -43,7 +44,10 @@ const FunnelFlowContent = (props: FunnelFlowProps) => {
           className="absolute inset-0 h-full origin-left bg-surface-brand-component transition-transform duration-700 ease-in-out"
         />
       </div>
-      <div data-testid="funnel-content" className="relative flex min-h-0 flex-grow">
+      <div
+        data-testid="funnel-content"
+        className={`relative flex min-h-0 flex-grow ${props.contentClassName ?? 'bg-background'}`}
+      >
         {props.children}
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { type Organization, TerraformAutoDeployConfigTerraformActionEnum } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { EditGitRepositorySettings } from '@qovery/domains/organizations/feature'
 import { type Terraform } from '@qovery/domains/services/data-access'
@@ -14,9 +15,16 @@ const triggeredActionItems = [
 export interface TerraformGeneralSettingsProps {
   service: Terraform
   organization: Organization
+  isBlueprintManaged?: boolean
+  blueprintSection?: ReactNode
 }
 
-export function TerraformGeneralSettings({ service, organization }: TerraformGeneralSettingsProps) {
+export function TerraformGeneralSettings({
+  service,
+  organization,
+  isBlueprintManaged = false,
+  blueprintSection,
+}: TerraformGeneralSettingsProps) {
   const { control } = useFormContext()
 
   return (
@@ -26,35 +34,44 @@ export function TerraformGeneralSettings({ service, organization }: TerraformGen
         <GeneralSetting label="Service name" service={service} />
       </Section>
 
-      <Section className="gap-4">
-        <Heading>Source</Heading>
-        <EditGitRepositorySettings
-          organizationId={organization.id}
-          gitRepository={service.terraform_files_source?.git?.git_repository}
-          rootPathLabel="Terraform root folder path"
-          rootPathHint="Provide the folder path where the Terraform code is located in the repository."
-        />
-      </Section>
-
-      <Section className="gap-4">
-        <Heading>Build and deploy</Heading>
-        <AutoDeploySection serviceId={service.id} source="TERRAFORM">
-          <Controller
-            name="terraform_action"
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                label="Triggered action"
-                options={triggeredActionItems}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-                portal
-              />
-            )}
+      {isBlueprintManaged ? (
+        <Section className="gap-1">
+          <Heading>Blueprint</Heading>
+          {blueprintSection}
+        </Section>
+      ) : (
+        <Section className="gap-4">
+          <Heading>Source</Heading>
+          <EditGitRepositorySettings
+            organizationId={organization.id}
+            gitRepository={service.terraform_files_source?.git?.git_repository}
+            rootPathLabel="Terraform root folder path"
+            rootPathHint="Provide the folder path where the Terraform code is located in the repository."
           />
-        </AutoDeploySection>
-      </Section>
+        </Section>
+      )}
+
+      {!isBlueprintManaged && (
+        <Section className="gap-4">
+          <Heading>Build and deploy</Heading>
+          <AutoDeploySection serviceId={service.id} source="TERRAFORM">
+            <Controller
+              name="terraform_action"
+              control={control}
+              render={({ field, fieldState: { error } }) => (
+                <InputSelect
+                  label="Triggered action"
+                  options={triggeredActionItems}
+                  onChange={field.onChange}
+                  value={field.value}
+                  error={error?.message}
+                  portal
+                />
+              )}
+            />
+          </AutoDeploySection>
+        </Section>
+      )}
     </>
   )
 }

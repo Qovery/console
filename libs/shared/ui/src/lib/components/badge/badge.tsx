@@ -28,6 +28,11 @@ const badgeVariants = cva(['text-neutral', 'inline-flex', 'items-center', 'shrin
   },
   compoundVariants: [
     {
+      size: 'base',
+      radius: 'rounded',
+      className: ['rounded-md'],
+    },
+    {
       variant: 'surface',
       color: 'neutral',
       className: ['bg-surface-neutral-subtle'],

@@ -103,6 +103,7 @@ export * from './lib/settings-container-registries/settings-container-registries
 export * from './lib/settings-billing-summary/settings-billing-summary'
 export * from './lib/settings-webhook/settings-webhook'
 export * from './lib/settings-api-token/settings-api-token'
+export * from './lib/settings-api-token/crud-modal-feature/crud-modal-feature'
 export * from './lib/settings-mcp-server/settings-mcp-server'
 export * from './lib/settings-argocd-integration/settings-argocd-integration'
 export * from './lib/settings-danger-zone/settings-danger-zone'

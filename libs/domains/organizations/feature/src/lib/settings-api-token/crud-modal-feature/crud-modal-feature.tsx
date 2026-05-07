@@ -1,5 +1,5 @@
 import { type OrganizationApiTokenCreateRequest } from 'qovery-typescript-axios'
-import { type OrganizationAvailableRole } from 'qovery-typescript-axios'
+import { type OrganizationApiTokenCreate, type OrganizationAvailableRole } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
@@ -144,10 +144,11 @@ function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudModalProp
 interface CrudModalFeatureProps {
   onClose: () => void
   organizationId?: string
+  onCreated?: (token: OrganizationApiTokenCreate) => void
 }
 
 export function CrudModalFeature(props: CrudModalFeatureProps) {
-  const { organizationId = '', onClose } = props
+  const { organizationId = '', onClose, onCreated } = props
   const { mutateAsync: createApiToken } = useCreateApiToken()
   const { data: availableRoles = [], isFetched: isFetchedAvailableRoles } = useAvailableRoles({ organizationId })
 
@@ -167,6 +168,7 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
       const token = await createApiToken({ organizationId, apiTokenCreateRequest: data })
       onClose()
       if (token) {
+        onCreated?.(token)
         openModal({
           content: <ValueModal token={token.token ?? ''} onClose={closeModal} />,
         })
