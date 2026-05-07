@@ -86,7 +86,7 @@ const CLUSTER_TABS: NavigationTab[] = [
   },
   {
     id: 'cluster-logs',
-    label: 'Cluster deployment logs',
+    label: 'Cluster Deployment Logs',
     iconName: 'scroll',
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   },
