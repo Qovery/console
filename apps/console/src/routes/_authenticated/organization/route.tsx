@@ -175,7 +175,7 @@ const SERVICE_TABS: NavigationTab[] = [
   },
   {
     id: 'service-logs',
-    label: 'Service Logs',
+    label: 'Service logs',
     iconName: 'scroll',
     routeId:
       '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
