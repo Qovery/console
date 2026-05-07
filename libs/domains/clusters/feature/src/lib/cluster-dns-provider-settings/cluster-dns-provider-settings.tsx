@@ -194,7 +194,7 @@ function DnsProviderFields({ disabled }: { disabled: boolean }) {
           />
           <ControllerInputText
             name="cloudflareApiToken"
-            label="API token"
+            label="Cloudflare API token"
             type="password"
             disabled={disabled}
             hint={SECRET_HINT}
@@ -385,7 +385,7 @@ export function ClusterDnsProviderSettings({
         <div className="max-w-content-with-navigation-left">
           <form onSubmit={methods.handleSubmit(handleSubmit)}>
             {disabled && (
-              <Callout.Root color="neutral" className="mb-4">
+              <Callout.Root color="sky" className="mb-4">
                 <Callout.Icon>
                   <Icon iconName="lock" iconStyle="regular" />
                 </Callout.Icon>
