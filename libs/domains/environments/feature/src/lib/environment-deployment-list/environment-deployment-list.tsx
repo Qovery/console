@@ -28,6 +28,7 @@ import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   Button,
+  CopyToClipboardButtonIcon,
   DeploymentAction,
   DropdownMenu,
   EmptyState,
@@ -165,8 +166,18 @@ export function EnvironmentDeploymentList() {
                       'dd MMM, HH:mm'
                     )}
                   </span>
-                  <span className="truncate text-ssm text-neutral-subtle">
-                    {isDeploymentHistory(data) ? data.identifier.execution_id : '--'}
+                  <span className="group flex min-w-0 items-center gap-0.5 text-ssm text-neutral-subtle">
+                    <span className="truncate">{isDeploymentHistory(data) ? data.identifier.execution_id : '--'}</span>
+                    {isDeploymentHistory(data) && data.identifier.execution_id && (
+                      <span onClick={stopRowNavigation} onMouseDown={stopRowNavigation} onKeyDown={stopRowNavigation}>
+                        <CopyToClipboardButtonIcon
+                          content={data.identifier.execution_id}
+                          tooltipContent="Copy execution id"
+                          className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
+                          iconClassName="text-xs"
+                        />
+                      </span>
+                    )}
                   </span>
                 </div>
               )}

@@ -1,7 +1,7 @@
 import { useParams, useRouter } from '@tanstack/react-router'
 import { type EnvironmentStatusesWithStagesPreCheckStage } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import { Button, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Button, CopyToClipboardButtonIcon, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface HeaderPreCheckLogsProps extends PropsWithChildren {
@@ -49,9 +49,19 @@ export function HeaderPreCheckLogs({ preCheckStage, children }: HeaderPreCheckLo
             <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
           </svg>
           <Tooltip side="bottom" content={<span>Execution id: {deploymentId}</span>}>
-            <span className="flex items-center gap-1.5 truncate">
+            <span className="group flex items-center gap-1 truncate">
               <Icon iconName="code" iconStyle="regular" className="text-sm text-neutral-subtle" />
-              <span className="font-normal text-neutral">{trimId(deploymentId)}</span>
+              <span className="flex items-center gap-0.5 truncate">
+                <span className="font-normal text-neutral">{trimId(deploymentId)}</span>
+                {deploymentId && (
+                  <CopyToClipboardButtonIcon
+                    content={deploymentId}
+                    tooltipContent="Copy execution id"
+                    className="opacity-0 transition-opacity group-hover:opacity-100"
+                    iconClassName="text-xs"
+                  />
+                )}
+              </span>
             </span>
           </Tooltip>
         </div>

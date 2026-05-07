@@ -1,7 +1,7 @@
 import download from 'downloadjs'
 import { type Cluster, type ClusterLogs, type ClusterStatus } from 'qovery-typescript-axios'
 import { type RefObject } from 'react'
-import { Badge, Button, Icon, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, CopyToClipboardButtonIcon, Icon, Tooltip } from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/util-js'
 
 export interface ClusterHeaderLogsProps {
@@ -46,9 +46,19 @@ export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, da
           </Badge>
         </Tooltip>
         <Tooltip side="bottom" content={<span>Execution id: {lastExecutionId}</span>}>
-          <span className="flex items-center gap-1.5 truncate">
+          <span className="group flex items-center gap-1 truncate">
             <Icon iconName="code" iconStyle="regular" className="text-sm text-neutral-subtle" />
-            <span className="font-normal text-neutral">{trimId(lastExecutionId)}</span>
+            <span className="flex items-center gap-0.5 truncate">
+              <span className="font-normal text-neutral">{trimId(lastExecutionId)}</span>
+              {lastExecutionId && (
+                <CopyToClipboardButtonIcon
+                  content={lastExecutionId}
+                  tooltipContent="Copy execution id"
+                  className="opacity-0 transition-opacity group-hover:opacity-100"
+                  iconClassName="text-xs"
+                />
+              )}
+            </span>
           </span>
         </Tooltip>
       </div>

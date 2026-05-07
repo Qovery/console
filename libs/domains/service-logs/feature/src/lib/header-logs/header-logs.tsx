@@ -9,7 +9,7 @@ import {
   useLinks,
   useService,
 } from '@qovery/domains/services/feature'
-import { Button, DeploymentAction, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { Button, CopyToClipboardButtonIcon, DeploymentAction, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { pluralize, trimId } from '@qovery/shared/util-js'
@@ -128,9 +128,19 @@ export function HeaderLogs({
                     <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
                   </svg>
                   <Tooltip side="bottom" content={<span>Execution id: {executionId}</span>}>
-                    <span className="flex items-center gap-1.5 truncate">
+                    <span className="group flex items-center gap-1 truncate">
                       <Icon iconName="code" iconStyle="regular" className="text-sm text-neutral-subtle" />
-                      <span className="font-normal text-neutral">{trimId(executionId ?? '')}</span>
+                      <span className="flex items-center gap-0.5 truncate">
+                        <span className="font-normal text-neutral">{trimId(executionId ?? '')}</span>
+                        {executionId && (
+                          <CopyToClipboardButtonIcon
+                            content={executionId}
+                            tooltipContent="Copy execution id"
+                            className="opacity-0 transition-opacity group-hover:opacity-100"
+                            iconClassName="text-xs"
+                          />
+                        )}
+                      </span>
                     </span>
                   </Tooltip>
                 </div>
@@ -143,8 +153,16 @@ export function HeaderLogs({
                   {service.name}
                 </span>
                 <Tooltip side="bottom" content={<span>Execution id: {environmentStatus?.last_deployment_id}</span>}>
-                  <span>
+                  <span className="group flex items-center gap-1">
                     <Icon className="text-base text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
+                    {environmentStatus?.last_deployment_id && (
+                      <CopyToClipboardButtonIcon
+                        content={environmentStatus.last_deployment_id}
+                        tooltipContent="Copy execution id"
+                        className="ml-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+                        iconClassName="text-xs"
+                      />
+                    )}
                   </span>
                 </Tooltip>
                 {!isNotDeployedOrStopped && !isManagedDatabase && filteredLinks.length > 0 && (
