@@ -60,6 +60,13 @@ const databaseConfigurations = [
       { name: '15', supported_mode: 'MANAGED' },
     ],
   },
+  {
+    database_type: 'MONGODB',
+    version: [
+      { name: '6.0', supported_mode: 'CONTAINER' },
+      { name: '5.0', supported_mode: 'MANAGED' },
+    ],
+  },
 ] as DatabaseConfiguration[]
 
 jest.mock('@qovery/shared/assistant/feature', () => ({
@@ -245,5 +252,52 @@ describe('DatabaseStepGeneral', () => {
         })
       )
     })
+  })
+
+  it('resets type and version when switching to managed mode with MongoDB selected', async () => {
+    const { userEvent } = renderComponent({
+      cloudProvider: 'AWS',
+      clusterVpcValue: clusterVpc,
+      generalValues: {
+        mode: DatabaseModeEnum.CONTAINER,
+        type: DatabaseTypeEnum.MONGODB,
+        version: '6.0',
+      },
+    })
+
+    const managedRadio = screen.getByRole('radio', { name: /managed mode/i })
+    await userEvent.click(managedRadio)
+
+    expect(screen.getByLabelText('Database type')).toHaveValue('')
+  })
+
+  it('does not include MongoDB in the database type options when managed mode is selected', async () => {
+    const { userEvent } = renderComponent({
+      cloudProvider: 'AWS',
+      clusterVpcValue: clusterVpc,
+      generalValues: {
+        mode: DatabaseModeEnum.MANAGED,
+      },
+    })
+
+    const typeSelect = screen.getByLabelText('Database type')
+    await userEvent.click(typeSelect)
+
+    expect(screen.queryByRole('option', { name: 'MongoDB' })).not.toBeInTheDocument()
+  })
+
+  it('does include MongoDB in the database type options when container mode is selected', async () => {
+    const { userEvent } = renderComponent({
+      cloudProvider: 'AWS',
+      clusterVpcValue: clusterVpc,
+      generalValues: {
+        mode: DatabaseModeEnum.CONTAINER,
+      },
+    })
+
+    const typeSelect = screen.getByLabelText('Database type')
+    await userEvent.click(typeSelect)
+
+    expect(screen.getByRole('option', { name: 'MongoDB' })).toBeInTheDocument()
   })
 })

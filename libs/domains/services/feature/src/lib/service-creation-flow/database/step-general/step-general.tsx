@@ -62,14 +62,23 @@ export function DatabaseStepGeneral({
   const watchMode = methods.watch('mode')
   const watchAccessibility = methods.watch('accessibility')
 
-  const databaseOptions = useMemo(
-    () =>
-      generateDatabaseTypeAndVersionOptions(
-        databaseConfigurations,
-        watchMode === DatabaseModeEnum.MANAGED ? clusterVpc : undefined
-      ),
-    [clusterVpc, databaseConfigurations, watchMode]
-  )
+  const databaseOptions = useMemo(() => {
+    const options = generateDatabaseTypeAndVersionOptions(
+      databaseConfigurations,
+      watchMode === DatabaseModeEnum.MANAGED ? clusterVpc : undefined
+    )
+
+    // Filter out MongoDB option for managed mode (not supported)
+    // @see https://qovery.atlassian.net/browse/QOV-1898
+    if (watchMode === DatabaseModeEnum.MANAGED) {
+      return {
+        ...options,
+        databaseTypeOptions: options.databaseTypeOptions.filter(({ value }) => value !== DatabaseTypeEnum.MONGODB),
+      }
+    }
+
+    return options
+  }, [clusterVpc, databaseConfigurations, watchMode])
 
   const showManagedWithVpcOptions =
     generateDatabaseTypeAndVersionOptions(databaseConfigurations, clusterVpc).databaseTypeOptions.length > 0
@@ -162,7 +171,11 @@ export function DatabaseStepGeneral({
                         value={DatabaseModeEnum.MANAGED}
                         name={field.name}
                         description="Managed by your cloud provider. Back-ups and snapshots will be periodically created."
-                        onChange={field.onChange}
+                        onChange={(value) => {
+                          field.onChange(value)
+                          methods.resetField('type', { keepDirty: false, keepTouched: false })
+                          methods.resetField('version')
+                        }}
                         formValue={field.value}
                         label="Managed mode"
                       />
