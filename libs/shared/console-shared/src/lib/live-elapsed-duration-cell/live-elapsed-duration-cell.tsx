@@ -1,6 +1,6 @@
-import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { Icon } from '@qovery/shared/ui'
 import { dateDifference } from '@qovery/shared/util-dates'
+import { useIntervalTick } from '@qovery/shared/util-hooks'
 
 export function LiveElapsedDuration({ createdAt }: { createdAt: string }) {
   useIntervalTick()

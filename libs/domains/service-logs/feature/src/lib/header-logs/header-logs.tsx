@@ -11,8 +11,8 @@ import {
 } from '@qovery/domains/services/feature'
 import { Button, DeploymentAction, Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { dateUTCString } from '@qovery/shared/util-dates'
-import { pluralize, trimId } from '@qovery/shared/util-js'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
+import { pluralize, trimId } from '@qovery/shared/util-js'
 import { PodHealthChips } from '../pod-health-chips/pod-health-chips'
 
 export interface HeaderLogsProps extends PropsWithChildren {

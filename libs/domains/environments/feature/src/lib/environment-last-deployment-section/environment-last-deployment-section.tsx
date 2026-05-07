@@ -16,13 +16,13 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
+import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { DropdownServices } from '../environment-deployment-list/dropdown-services/dropdown-services'
 import { isDeploymentHistory } from '../environment-deployment-list/environment-deployment-list'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { useServiceCount } from '../hooks/use-service-count/use-service-count'
-import { useIntervalTick } from '@qovery/shared/util-hooks'
 
 const DotSeparator = () => (
   <svg
