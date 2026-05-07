@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
-import { type MouseEvent, Suspense, useContext, useEffect, useState } from 'react'
+import { type MouseEvent, Suspense, useContext } from 'react'
 import { P, match } from 'ts-pattern'
 import { type AnyService, type ServiceType } from '@qovery/domains/services/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
@@ -18,6 +18,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
+import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useDeployService } from '../../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentHistory } from '../../hooks/use-deployment-history/use-deployment-history'
@@ -88,13 +89,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
     .with('ONGOING', 'CANCELING', () => true)
     .otherwise(() => false)
 
-  const [, forceUpdate] = useState(0)
-
-  useEffect(() => {
-    if (!isOngoing) return
-    const interval = setInterval(() => forceUpdate((n) => n + 1), 1000)
-    return () => clearInterval(interval)
-  }, [isOngoing])
+  useIntervalTick(isOngoing)
 
   if (!lastDeployment) {
     return (

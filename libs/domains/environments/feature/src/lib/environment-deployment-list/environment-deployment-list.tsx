@@ -40,7 +40,7 @@ import {
   Truncate,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { dateFullFormat, formatDuration } from '@qovery/shared/util-dates'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import { isCancelBuildAvailable, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
 import { useCancelDeploymentQueueEnvironment } from '../hooks/use-cancel-deployment-queue-environment/use-cancel-deployment-queue-environment'
@@ -48,6 +48,7 @@ import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deploy
 import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment-queue'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { DropdownServices } from './dropdown-services/dropdown-services'
+import { EnvironmentDeploymentDurationCell } from './environment-deployment-duration-cell'
 import { TableFilterTriggerBy } from './table-filter-trigger-by/table-filter-trigger-by'
 
 const { Table } = TablePrimitives
@@ -330,31 +331,16 @@ export function EnvironmentDeploymentList() {
           const data = info.row.original
 
           if (isDeploymentHistory(data)) {
-            const state = data.status
-
-            return match(state)
-              .with(
-                'DEPLOYING',
-                'RESTARTING',
-                'BUILDING',
-                'DELETING',
-                'CANCELING',
-                'STOPPING',
-                'DEPLOYMENT_QUEUED',
-                'DELETE_QUEUED',
-                'STOP_QUEUED',
-                'RESTART_QUEUED',
-                () => <span className="text-neutral-subtle">--</span>
-              )
-              .otherwise(() => (
-                <span className="flex items-center gap-1 text-neutral-subtle">
-                  <Icon iconName="clock-eight" iconStyle="regular" />
-                  {formatDuration(data.total_duration)}
-                </span>
-              ))
-          } else {
-            return <span className="text-neutral-subtle">---</span>
+            return (
+              <EnvironmentDeploymentDurationCell
+                createdAt={data.auditing_data.created_at}
+                status={data.status}
+                totalDuration={data.total_duration}
+              />
+            )
           }
+
+          return <span className="text-neutral-subtle">---</span>
         },
       }),
       columnHelper.accessor('auditing_data.origin', {

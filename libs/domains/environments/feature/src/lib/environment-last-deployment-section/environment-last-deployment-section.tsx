@@ -1,6 +1,6 @@
 import { useLinkProps, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { Suspense, useContext, useEffect, useMemo, useState } from 'react'
+import { Suspense, useContext, useMemo } from 'react'
 import { P, match } from 'ts-pattern'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import {
@@ -16,6 +16,7 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
+import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { DropdownServices } from '../environment-deployment-list/dropdown-services/dropdown-services'
 import { isDeploymentHistory } from '../environment-deployment-list/environment-deployment-list'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
@@ -81,13 +82,7 @@ const EnvironmentLastDeploymentContent = () => {
     [lastDeployment?.status]
   )
 
-  const [, forceUpdate] = useState(0)
-
-  useEffect(() => {
-    if (!isOngoing) return
-    const interval = setInterval(() => forceUpdate((n) => n + 1), 1000)
-    return () => clearInterval(interval)
-  }, [isOngoing])
+  useIntervalTick(isOngoing)
 
   const deploymentRelativeTime = !lastDeployment
     ? ''
