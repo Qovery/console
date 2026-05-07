@@ -560,7 +560,7 @@ function OrganizationRoute() {
       addToRecentServices({
         id: service.id,
         name: service.name,
-        description: service.description || '',
+        description: 'description' in service ? service.description || '' : '',
         icon_uri: service.icon_uri,
         service_type: service.service_type,
         project_id: project.id,

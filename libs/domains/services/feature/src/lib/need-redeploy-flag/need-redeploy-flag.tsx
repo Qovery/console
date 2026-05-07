@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { ServiceDeploymentStatusEnum } from 'qovery-typescript-axios'
+import { isEditableService } from '@qovery/domains/services/data-access'
 import { Banner } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
@@ -31,7 +32,7 @@ export function NeedRedeployFlag() {
     (serviceDeploymentStatusState === ServiceDeploymentStatusEnum.OUT_OF_DATE ? 'Redeploy' : 'Deploy') + ' now'
 
   const mutationDeployService = () => {
-    if (service) {
+    if (service && isEditableService(service)) {
       deployService({ serviceId: service.id, serviceType: service.serviceType })
       navigate({
         to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',

@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent, Suspense, useContext } from 'react'
 import { P, match } from 'ts-pattern'
-import { type AnyService, type ServiceType } from '@qovery/domains/services/data-access'
+import { type AnyService, type EditableServiceType } from '@qovery/domains/services/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import {
@@ -26,7 +26,7 @@ import { LastCommitAuthor, type LastCommitAuthorProps } from '../../last-commit-
 import { LastCommit, type LastCommitProps } from '../../last-commit/last-commit'
 import { isDeploymentHistory } from '../../service-deployment-list/service-deployment-list'
 
-type DeployServiceType = Exclude<ServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB'>
+type DeployServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB'>
 
 const DotSeparator = () => (
   <svg

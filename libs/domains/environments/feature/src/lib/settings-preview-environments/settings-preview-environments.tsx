@@ -3,7 +3,7 @@ import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type AnyService, type EditableService, isEditableService } from '@qovery/domains/services/data-access'
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
@@ -150,7 +150,8 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
 
       const updatePromises = services
         .filter(
-          (service): service is Exclude<AnyService, { serviceType: 'DATABASE' }> => service.serviceType !== 'DATABASE'
+          (service): service is Exclude<EditableService, { serviceType: 'DATABASE' }> =>
+            isEditableService(service) && service.serviceType !== 'DATABASE'
         )
         .map(async (service) => {
           const request = {

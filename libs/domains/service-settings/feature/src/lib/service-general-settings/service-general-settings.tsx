@@ -9,6 +9,7 @@ import {
   useAnnotationsGroups,
   useLabelsGroups,
 } from '@qovery/domains/organizations/feature'
+import { isEditableService } from '@qovery/domains/services/data-access'
 import {
   type ServiceGeneralData,
   buildServiceGeneralPayload,
@@ -70,7 +71,7 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
     environmentId,
   })
 
-  const defaultValues = service ? getServiceGeneralDefaultValues(service) : {}
+  const defaultValues = service && isEditableService(service) ? getServiceGeneralDefaultValues(service) : {}
 
   const databaseVersionOptions =
     service?.serviceType === 'DATABASE'
@@ -91,14 +92,14 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
     reValidateMode: 'onChange',
     defaultValues: {
       name: service?.name,
-      description: service?.description,
+      description: service && 'description' in service ? service.description : undefined,
       icon_uri: service?.icon_uri,
       ...defaultValues,
     },
   })
 
   const onSubmit = methods.handleSubmit((data) => {
-    if (!service) {
+    if (!service || !isEditableService(service)) {
       return
     }
 
@@ -126,6 +127,10 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
   }
 
   if (!service || !organization) {
+    return null
+  }
+
+  if (!isEditableService(service)) {
     return null
   }
 

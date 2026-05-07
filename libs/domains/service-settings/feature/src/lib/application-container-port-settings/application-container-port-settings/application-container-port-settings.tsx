@@ -99,7 +99,7 @@ function ApplicationContainerPortSettingsContent() {
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { data: customDomains } = useCustomDomains({
     serviceId,
-    serviceType: service?.serviceType ?? 'APPLICATION',
+    serviceType: service?.serviceType,
   })
   const { mutate: editService } = useEditService({
     organizationId,

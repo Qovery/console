@@ -6,13 +6,15 @@ import {
   type ContainerAdvancedSettings,
   type HelmAdvancedSettings,
   type JobAdvancedSettings,
+  type TerraformAdvancedSettings,
 } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
-  type AnyService,
   type Database,
+  type EditableService,
   type AdvancedSettings as _AdvancedSettings,
+  isEditableService,
 } from '@qovery/domains/services/data-access'
 import {
   CopyToClipboardButtonIcon,
@@ -46,9 +48,10 @@ type AdvancedSettingsData =
   | { advancedSettings: ContainerAdvancedSettings; defaultAdvancedSettings: ContainerAdvancedSettings }
   | { advancedSettings: JobAdvancedSettings; defaultAdvancedSettings: JobAdvancedSettings }
   | { advancedSettings: HelmAdvancedSettings; defaultAdvancedSettings: HelmAdvancedSettings }
+  | { advancedSettings: TerraformAdvancedSettings; defaultAdvancedSettings: TerraformAdvancedSettings }
 
 export type AdvancedSettingsProps = {
-  service: Exclude<AnyService, Database>
+  service: Exclude<EditableService, Database>
 } & (AdvancedSettingsData | { advancedSettings?: never; defaultAdvancedSettings?: never })
 
 export function AdvancedSettings({
@@ -106,7 +109,7 @@ export function AdvancedSettings({
     for (const [k1, v1] of Object.entries(advancedSettings)) {
       for (const [k2, v2] of Object.entries(defaultAdvancedSettings)) {
         if (k1 === k2) {
-          entries.push({ name: k1, defaultValue: v2, value: v1 })
+          entries.push({ name: k1, defaultValue: formatValue(v2), value: formatValue(v1) })
         }
       }
     }
@@ -293,11 +296,11 @@ export function ServiceAdvancedSettings() {
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
 
   if (!service) return null
-  if (service.serviceType === 'DATABASE') {
+  if (!isEditableService(service) || service.serviceType === 'DATABASE') {
     return <p className="text-sm text-neutral-subtle">No advanced settings available for this service.</p>
   }
 
-  return <AdvancedSettings service={service as Exclude<AnyService, Database>} />
+  return <AdvancedSettings service={service as Exclude<EditableService, Database>} />
 }
 
 export function ServiceAdvancedSettingsLoader() {

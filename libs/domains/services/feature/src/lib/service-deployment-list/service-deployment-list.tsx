@@ -15,6 +15,7 @@ import clsx from 'clsx'
 import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
+import { isEditableServiceType } from '@qovery/domains/services/data-access'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -68,7 +69,7 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
   const navigate = useNavigate()
   const { data: service } = useService({ environmentId: environment?.id, serviceId, suspense: true })
-  const deploymentHistoryServiceType = service?.service_type === 'ARGOCD_APP' ? undefined : service?.service_type
+  const deploymentHistoryServiceType = isEditableServiceType(service?.service_type) ? service.service_type : undefined
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId,

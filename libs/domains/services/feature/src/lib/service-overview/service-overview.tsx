@@ -1,7 +1,13 @@
 import { useParams } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import {
+  type AnyService,
+  type EditableService,
+  type Job,
+  type Terraform,
+  isEditableService,
+} from '@qovery/domains/services/data-access'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { Heading, Icon, Link, Navbar, Section } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
@@ -21,7 +27,13 @@ export interface ServiceOverviewProps {
   jobStatusesCallout?: ReactNode
 }
 
-function ServiceLastDeploymentSection({ environment, service }: { environment: Environment; service: AnyService }) {
+function ServiceLastDeploymentSection({
+  environment,
+  service,
+}: {
+  environment: Environment
+  service: EditableService
+}) {
   return (
     <Section className="gap-3">
       <div className="flex items-center justify-between gap-2">
@@ -72,7 +84,7 @@ function ServiceScaledObjectSection({ scaledObject }: { scaledObject: ScaledObje
   )
 }
 
-function ServiceLifecycleOutputVariablesSection({ service }: { service: AnyService }) {
+function ServiceLifecycleOutputVariablesSection({ service }: { service: Job }) {
   return (
     <Section className="gap-3">
       <Heading>Output Variables</Heading>
@@ -87,7 +99,7 @@ function ServiceTerraformResourcesSection({
   service,
   terraformResourcesSection,
 }: {
-  service: AnyService
+  service: Terraform
   terraformResourcesSection?: ReactNode
 }) {
   const [activeTab, setActiveTab] = useState('variables')
@@ -146,7 +158,6 @@ function ServiceOverviewContent({
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
 
-  const isArgoCdService = useMemo(() => service?.service_type === 'ARGOCD_APP', [service])
   const isLifecycleJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE', [service])
   const isTerraformService = useMemo(() => service?.serviceType === 'TERRAFORM', [service])
   const isKedaAutoscaling = useMemo(
@@ -179,19 +190,21 @@ function ServiceOverviewContent({
 
   return (
     <>
-      {!isArgoCdService && <NeedRedeployFlag />}
+      {isEditableService(service) && <NeedRedeployFlag />}
       <div className="flex min-h-0 flex-1 grow flex-col gap-6 pb-24">
         <div className="flex shrink-0 flex-col gap-5 pb-8 pt-6 text-sm">
           <Section className="gap-8">
             <ServiceHeader environment={environment} serviceId={service.id} service={service} />
             {hasNoMetrics && observabilityCallout}
-            {!isArgoCdService && <ServiceLastDeploymentSection environment={environment} service={service} />}
-            {!isTerraformService && !isArgoCdService && (
+            {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
+            {!isTerraformService && isEditableService(service) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />
             )}
             {isKedaAutoscaling && scaledObject && <ServiceScaledObjectSection scaledObject={scaledObject} />}
-            {isLifecycleJob && <ServiceLifecycleOutputVariablesSection service={service} />}
-            {isTerraformService && (
+            {service.serviceType === 'JOB' && service.job_type === 'LIFECYCLE' && (
+              <ServiceLifecycleOutputVariablesSection service={service} />
+            )}
+            {service.serviceType === 'TERRAFORM' && (
               <ServiceTerraformResourcesSection
                 service={service}
                 terraformResourcesSection={terraformResourcesSection}

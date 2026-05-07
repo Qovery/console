@@ -15,6 +15,7 @@ import clsx from 'clsx'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
+import { isEditableService } from '@qovery/domains/services/data-access'
 import {
   Badge,
   Checkbox,
@@ -121,7 +122,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     return map
   }, [deploymentStages])
 
-  const serviceList = useMemo(() => services.filter((service) => service.service_type !== 'ARGOCD_APP'), [services])
+  const serviceList = useMemo(() => services.filter(isEditableService), [services])
 
   const actualServices = useMemo(() => {
     return serviceList.map((service) => {

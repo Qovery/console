@@ -186,12 +186,17 @@ export type ArgoCd = _ArgoCd & {
   serviceType: ArgoCdType
 }
 export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd
+export type ReadOnlyService = ArgoCd
+export type EditableService = Exclude<AnyService, ReadOnlyService>
+export type EditableServiceType = Exclude<ServiceType, ArgoCdType>
+export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType>
 
 export type AdvancedSettings =
   | ApplicationAdvancedSettings
   | ContainerAdvancedSettings
   | JobAdvancedSettings
   | HelmAdvancedSettings
+  | TerraformAdvancedSettings
 
 export function isApplication(service: AnyService): service is Application {
   return service.service_type === 'APPLICATION'
@@ -211,6 +216,14 @@ export function isJob(service: AnyService): service is Job {
 
 export function isHelm(service: AnyService): service is Helm {
   return service.service_type === 'HELM'
+}
+
+export function isEditableService(service: AnyService): service is EditableService {
+  return service.service_type !== 'ARGOCD_APP'
+}
+
+export function isEditableServiceType(serviceType?: ServiceType): serviceType is EditableServiceType {
+  return serviceType !== undefined && serviceType !== 'ARGOCD_APP'
 }
 
 export const services = createQueryKeys('services', {
@@ -266,7 +279,7 @@ export const services = createQueryKeys('services', {
       )
     },
   }),
-  status: ({ id: serviceId, serviceType }: { id: string; serviceType: ServiceType }) => ({
+  status: ({ id: serviceId, serviceType }: { id: string; serviceType: EditableServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const fn = match(serviceType)
@@ -281,7 +294,7 @@ export const services = createQueryKeys('services', {
       return response.data
     },
   }),
-  deploymentRestrictions: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
+  deploymentRestrictions: ({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const fn = match(serviceType)
@@ -397,7 +410,7 @@ export const services = createQueryKeys('services', {
     pageSize,
   }: {
     serviceId: string
-    serviceType: ServiceType
+    serviceType: EditableServiceType
     pageSize?: number
   }) => ({
     queryKey: [serviceId],
@@ -480,7 +493,7 @@ export const services = createQueryKeys('services', {
         .exhaustive()
     },
   }),
-  defaultAdvancedSettings: ({ serviceType }: { serviceType: Exclude<ServiceType, 'DATABASE'> }) => ({
+  defaultAdvancedSettings: ({ serviceType }: { serviceType: AdvancedSettingsServiceType }) => ({
     queryKey: [serviceType],
     async queryFn() {
       const { query } = match(serviceType)
@@ -506,13 +519,7 @@ export const services = createQueryKeys('services', {
       return response.data
     },
   }),
-  advancedSettings: ({
-    serviceId,
-    serviceType,
-  }: {
-    serviceId: string
-    serviceType: Exclude<ServiceType, 'DATABASE'>
-  }) => ({
+  advancedSettings: ({ serviceId, serviceType }: { serviceId: string; serviceType: AdvancedSettingsServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const { query } = match(serviceType)
@@ -606,7 +613,7 @@ export const services = createQueryKeys('services', {
 
 type CloneServiceRequest = {
   serviceId: string
-  serviceType: ServiceType
+  serviceType: EditableServiceType
   payload: _CloneServiceRequest
 }
 
@@ -863,7 +870,7 @@ export const mutations = {
     skipDestroy,
   }: {
     serviceId: string
-    serviceType: ServiceType
+    serviceType: EditableServiceType
     skipDestroy?: boolean
   }) {
     const { mutation } = match(serviceType)
@@ -962,7 +969,7 @@ export const mutations = {
     const response = await environmentActionApi.rebootServices(environment.id, payload)
     return response.data
   },
-  async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+  async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
         mutation: applicationActionsApi.rebootApplication.bind(applicationActionsApi),
@@ -1046,7 +1053,7 @@ export const mutations = {
     const response = await environmentActionApi.uninstallSelectedServices(environment.id, payload)
     return response.data
   },
-  async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) {
+  async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
         mutation: applicationActionsApi.stopApplication.bind(applicationActionsApi),
@@ -1079,7 +1086,7 @@ export const mutations = {
     skipDestroy,
   }: {
     serviceId: string
-    serviceType: ServiceType
+    serviceType: EditableServiceType
     skipDestroy?: boolean
   }) {
     const { mutation } = match(serviceType)

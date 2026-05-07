@@ -226,6 +226,7 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
     .with({ service: { serviceType: 'TERRAFORM' } }, ({ service }) => {
       return gitInfo(service, service?.terraform_files_source?.git?.git_repository)
     })
+    .with({ service: { serviceType: 'ARGOCD_APP' } }, () => null)
     .exhaustive()
   return cell
 }

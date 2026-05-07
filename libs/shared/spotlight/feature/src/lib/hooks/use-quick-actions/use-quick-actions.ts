@@ -1,5 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useMatchRoute } from '@tanstack/react-router'
+import { isEditableServiceType } from '@qovery/domains/services/data-access'
 import {
   AUDIT_LOGS_PARAMS_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
@@ -55,7 +56,7 @@ export function useQuickActions(): QuickAction[] {
         iconName: 'clock-rotate-left',
         link: AUDIT_LOGS_PARAMS_URL(organizationId, {
           targetId: serviceId,
-          targetType: serviceType,
+          targetType: isEditableServiceType(serviceType) ? serviceType : undefined,
           projectId,
           environmentId,
         }),

@@ -1,6 +1,7 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { match } from 'ts-pattern'
+import { isEditableService } from '@qovery/domains/services/data-access'
 import { useDeployService, useService } from '@qovery/domains/services/feature'
 import {
   ImportEnvironmentVariableModalFeature,
@@ -42,7 +43,7 @@ function RouteComponent() {
   const { openModal, closeModal } = useModal()
 
   const toasterCallback = () => {
-    if (!service?.serviceType) {
+    if (!service || !isEditableService(service)) {
       return
     }
     deployService({

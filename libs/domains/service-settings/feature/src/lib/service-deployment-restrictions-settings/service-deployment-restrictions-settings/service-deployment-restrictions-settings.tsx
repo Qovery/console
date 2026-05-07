@@ -163,7 +163,7 @@ function ServiceDeploymentRestrictionsSettingsInner({
 
   return (
     <BlockContent title="Deployment restrictions" classNameContent="p-0">
-      {deploymentRestrictions.map((deploymentRestriction, index) => (
+      {deploymentRestrictions.map((deploymentRestriction: DeploymentRestriction, index: number) => (
         <div
           key={deploymentRestriction.id}
           className="flex w-full items-center justify-between gap-2 border-b border-neutral px-4 py-3 last:border-0"

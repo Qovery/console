@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import { isEditableService } from '@qovery/domains/services/data-access'
 import { useDeleteService, useService } from '@qovery/domains/services/feature'
 import { BlockContentDelete } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -14,8 +15,12 @@ export function ServiceDangerZoneSettings({ onDeleteSuccess }: ServiceDangerZone
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
 
+  if (service && !isEditableService(service)) {
+    return null
+  }
+
   const mutationDeleteService = async () => {
-    if (!service) {
+    if (!service || !isEditableService(service)) {
       return
     }
 
