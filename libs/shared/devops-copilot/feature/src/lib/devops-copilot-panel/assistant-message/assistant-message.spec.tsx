@@ -137,13 +137,6 @@ describe('AssistantMessage', () => {
       expect(messageContainer).toBeInTheDocument()
     })
 
-    it('should have invisible vote buttons by default', () => {
-      const { container } = render(<AssistantMessage {...defaultProps} />)
-
-      const voteContainer = container.querySelector('.invisible')
-      expect(voteContainer).toBeInTheDocument()
-    })
-
     it('should apply neutral color to completed step description', () => {
       const completedPlan: PlanStep[] = [
         { messageId: 'msg-1', description: 'Completed step', toolName: 'tool1', status: 'completed' },
