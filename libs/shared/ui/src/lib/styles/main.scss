@@ -87,7 +87,7 @@ body {
   }
 
   ::selection {
-    background: theme('colors.surface.neutral.componentHover');
+    background: theme('colors.surface.info.component');
     color: theme('colors.surface.neutralInvert.DEFAULT');
   }
 }
