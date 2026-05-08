@@ -241,10 +241,12 @@ export function MenuManageDeployment({
 export function MenuOtherActions({
   state,
   environment,
+  cloneUseCaseId,
   variant = 'default',
 }: {
   state: StateEnum
   environment: Environment
+  cloneUseCaseId?: string
   variant?: ActionToolbarVariant
 }) {
   const navigate = useNavigate()
@@ -278,6 +280,7 @@ export function MenuOtherActions({
   }
 
   const openCloneModal = () => {
+    const modalWidth = cloneUseCaseId === 'multi-source' ? 676 : undefined
     openModal({
       content: (
         <CreateCloneEnvironmentModal
@@ -285,10 +288,12 @@ export function MenuOtherActions({
           projectId={environment.project.id}
           organizationId={environment.organization.id}
           environmentToClone={environment}
+          cloneUseCaseId={cloneUseCaseId}
         />
       ),
       options: {
         fakeModal: true,
+        ...(modalWidth ? { width: modalWidth } : {}),
       },
     })
   }
@@ -352,9 +357,14 @@ export function MenuOtherActions({
 export interface EnvironmentActionToolbarProps {
   environment: Environment
   variant?: ActionToolbarVariant
+  cloneUseCaseId?: string
 }
 
-export function EnvironmentActionToolbar({ environment, variant = 'default' }: EnvironmentActionToolbarProps) {
+export function EnvironmentActionToolbar({
+  environment,
+  variant = 'default',
+  cloneUseCaseId,
+}: EnvironmentActionToolbarProps) {
   const { data: countServices, isFetched: isFetchedServices } = useServiceCount({ environmentId: environment.id })
 
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
@@ -387,7 +397,7 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
               <Icon iconName="timeline" />
             </Link>
           </Tooltip>
-          <MenuOtherActions environment={environment} state={deploymentStatus.state} />
+          <MenuOtherActions environment={environment} state={deploymentStatus.state} cloneUseCaseId={cloneUseCaseId} />
         </>
       )}
     </div>

@@ -22,6 +22,9 @@ import { LoaderSpinner } from '../../loader-spinner/loader-spinner'
 
 export interface InputSelectProps {
   className?: string
+  inputClassName?: string
+  valueClassName?: string
+  iconClassName?: string
   label?: string
   value?: string | string[]
   options: Value[]
@@ -55,6 +58,9 @@ export interface InputSelectProps {
 
 export function InputSelect({
   className = '',
+  inputClassName = '',
+  valueClassName = '',
+  iconClassName = '',
   label,
   value,
   options,
@@ -201,7 +207,8 @@ export function InputSelect({
         clsx('mr-1 text-sm', {
           'text-neutral-subtle': disabled,
           'text-neutral': !disabled,
-        })
+        }),
+        valueClassName
       )}
     >
       {props.data.label}
@@ -331,7 +338,8 @@ export function InputSelect({
             '!border-neutral !bg-surface-neutral-subtle': disabled,
             'input--filter': isFilter,
           }),
-          hasLabelUp
+          hasLabelUp,
+          inputClassName
         )}
         data-testid={dataTestId || 'select'}
       >
@@ -372,7 +380,8 @@ export function InputSelect({
                 clsx('text-sm', {
                   'text-neutral-disabled': disabled,
                   'text-neutral-subtle': !disabled,
-                })
+                }),
+                iconClassName
               )}
             />
           </div>

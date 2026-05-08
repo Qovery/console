@@ -24,22 +24,43 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
-  FlowCreateVariable: ({ onAdd, onBack, onSubmit }: Record<string, (...args: unknown[]) => void>) => (
-    <form onSubmit={onSubmit}>
-      <button type="button" onClick={onAdd}>
-        Add Variable
-      </button>
-      <button type="button" onClick={onBack}>
-        Back
-      </button>
-      <button type="submit">Continue</button>
-    </form>
+  CreateUpdateVariableModal: ({
+    onSubmitLocal,
+    scope,
+    isFile,
+  }: {
+    onSubmitLocal?: (data: {
+      key: string
+      value: string
+      scope: 'APPLICATION' | 'CONTAINER'
+      isSecret: boolean
+      isFile: boolean
+      mountPath?: string
+    }) => void
+    scope: 'APPLICATION' | 'CONTAINER'
+    isFile?: boolean
+  }) => (
+    <button
+      type="button"
+      onClick={() =>
+        onSubmitLocal?.({
+          key: isFile ? 'CONFIG_FILE' : 'NODE_ENV',
+          value: isFile ? '{"key":"value"}' : 'production',
+          scope,
+          isSecret: false,
+          isFile: !!isFile,
+          mountPath: isFile ? '/vault/secrets/config-file' : undefined,
+        })
+      }
+    >
+      Confirm variable modal
+    </button>
   ),
 }))
 
 function VariablesState() {
   const { variablesForm } = useApplicationContainerCreateContext()
-  return <div data-testid="variables-state">{JSON.stringify(variablesForm.watch('variables'))}</div>
+  return <div data-testid="variables-state">{JSON.stringify(variablesForm.watch())}</div>
 }
 
 describe('ApplicationContainerStepVariables', () => {
@@ -63,7 +84,8 @@ describe('ApplicationContainerStepVariables', () => {
       </ApplicationContainerCreationFlow>
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add Variable' }))
+    await userEvent.click(screen.getByRole('button', { name: /^add variable$/i }))
+    await userEvent.click(screen.getByRole('button', { name: /confirm variable modal/i }))
 
     await waitFor(() => {
       expect(screen.getByTestId('variables-state')).toHaveTextContent('"scope":"APPLICATION"')
@@ -80,7 +102,7 @@ describe('ApplicationContainerStepVariables', () => {
       </ApplicationContainerCreationFlow>
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
+    await userEvent.click(screen.getByRole('button', { name: /^back$/i }))
 
     expect(onBack).toHaveBeenCalled()
   })
@@ -95,7 +117,7 @@ describe('ApplicationContainerStepVariables', () => {
       </ApplicationContainerCreationFlow>
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+    await userEvent.click(screen.getByRole('button', { name: /^continue$/i }))
 
     expect(onSubmit).toHaveBeenCalled()
   })

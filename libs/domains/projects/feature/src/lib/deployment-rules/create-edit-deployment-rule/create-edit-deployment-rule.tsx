@@ -8,6 +8,7 @@ import { type Value } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
+  Callout,
   Heading,
   Icon,
   InputSelect,
@@ -299,10 +300,19 @@ export function CreateEditDeploymentRule(props: CreateEditDeploymentRuleProps) {
                         onChange={field.onChange}
                         value={field.value}
                         error={error?.message}
-                        className="mb-5"
+                        className="mb-3"
                       />
                     )}
                   />
+                  <Callout.Root color="sky" className="gap-x-3 p-3">
+                    <Callout.Icon>
+                      <Icon iconName="circle-info" iconStyle="regular" />
+                    </Callout.Icon>
+                    <Callout.Text className="text-info">
+                      If a service using external secrets is ran on another cluster Qovery will automatically detach
+                      those secrets.
+                    </Callout.Text>
+                  </Callout.Root>
                 </BlockContent>
 
                 <BlockContent title="Setup to apply - Start & stop">

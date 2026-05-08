@@ -30,9 +30,9 @@ function DisabledManageDeploymentButton() {
   )
 }
 
-function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
-  const navigate = useNavigate()
+function EnvRow({ overview, cloneUseCaseId }: { overview: EnvironmentOverviewResponse; cloneUseCaseId?: string }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
   const cellClassName = 'h-auto border-l border-neutral py-2'
@@ -137,6 +137,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
               <MenuOtherActions
                 environment={environment}
                 state={overview.deployment_status?.last_deployment_state ?? StateEnum.READY}
+                cloneUseCaseId={cloneUseCaseId}
               />
             </>
           )}
@@ -150,10 +151,12 @@ export function EnvironmentSection({
   type,
   items,
   onCreateEnvClicked,
+  cloneUseCaseId,
 }: {
   type: EnvironmentModeEnum
   items: EnvironmentOverviewResponse[]
   onCreateEnvClicked?: () => void
+  cloneUseCaseId?: string
 }) {
   const title = match(type)
     .with('PRODUCTION', () => 'Production')
@@ -221,7 +224,7 @@ export function EnvironmentSection({
 
           <Table.Body className="divide-y divide-neutral">
             {items.map((environmentOverview) => (
-              <EnvRow key={environmentOverview.id} overview={environmentOverview} />
+              <EnvRow key={environmentOverview.id} overview={environmentOverview} cloneUseCaseId={cloneUseCaseId} />
             ))}
           </Table.Body>
         </Table.Root>

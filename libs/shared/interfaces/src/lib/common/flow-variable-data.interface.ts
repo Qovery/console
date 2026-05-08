@@ -10,6 +10,18 @@ export interface VariableData {
   description?: string
 }
 
+export interface ExternalSecretData {
+  name: string
+  reference: string
+  description?: string
+  filePath?: string
+  isFile?: boolean
+  source?: string | null
+  sourceIcon?: 'aws' | 'gcp'
+  scope?: 'Application' | 'Environment'
+}
+
 export interface FlowVariableData {
   variables: VariableData[]
+  externalSecrets: ExternalSecretData[]
 }

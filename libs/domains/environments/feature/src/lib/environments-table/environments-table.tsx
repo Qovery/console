@@ -100,7 +100,11 @@ function EnvironmentsTableSkeleton() {
   )
 }
 
-function EnvironmentsTableContent() {
+export interface EnvironmentsTableProps {
+  cloneUseCaseId?: string
+}
+
+function EnvironmentsTableContent({ cloneUseCaseId }: EnvironmentsTableProps) {
   const { openModal, closeModal } = useModal()
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: project } = useProject({ organizationId, projectId, suspense: true })
@@ -134,14 +138,16 @@ function EnvironmentsTableContent() {
             projectId={projectId}
             organizationId={organizationId}
             type={type}
+            cloneUseCaseId={cloneUseCaseId}
           />
         ),
         options: {
           fakeModal: true,
+          ...(cloneUseCaseId === 'multi-source' ? { width: 676 } : {}),
         },
       })
     },
-    [projectId, organizationId, closeModal, openModal]
+    [projectId, organizationId, closeModal, openModal, cloneUseCaseId]
   )
 
   const Sections = useCallback(() => {
@@ -155,11 +161,12 @@ function EnvironmentsTableContent() {
             type={section}
             items={groupedEnvs?.get(section) || []}
             onCreateEnvClicked={() => onCreateEnvClicked(section)}
+            cloneUseCaseId={cloneUseCaseId}
           />
         ))}
       </>
     )
-  }, [groupedEnvs, onCreateEnvClicked])
+  }, [groupedEnvs, onCreateEnvClicked, cloneUseCaseId])
 
   return (
     <div className="container mx-auto mt-6 pb-10">
@@ -189,12 +196,12 @@ function EnvironmentsTableContent() {
   )
 }
 
-export function EnvironmentsTable() {
+export function EnvironmentsTable({ cloneUseCaseId }: EnvironmentsTableProps) {
   useDocumentTitle('Environments - Qovery')
 
   return (
     <Suspense fallback={<EnvironmentsTableSkeleton />}>
-      <EnvironmentsTableContent />
+      <EnvironmentsTableContent cloneUseCaseId={cloneUseCaseId} />
     </Suspense>
   )
 }

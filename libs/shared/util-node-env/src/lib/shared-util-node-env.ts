@@ -4,6 +4,7 @@ declare global {
     interface ProcessEnv {
       NODE_ENV: string
       NX_PUBLIC_GIT_SHA: string
+      NX_PUBLIC_GIT_BRANCH: string
       NX_PUBLIC_QOVERY_API: string
       NX_PUBLIC_QOVERY_WS: string
       NX_PUBLIC_OAUTH_DOMAIN: string
@@ -25,6 +26,7 @@ declare global {
 
 export const NODE_ENV = process.env.NODE_ENV,
   GIT_SHA = process.env.NX_PUBLIC_GIT_SHA,
+  GIT_BRANCH = process.env.NX_PUBLIC_GIT_BRANCH,
   QOVERY_API = process.env.NX_PUBLIC_QOVERY_API,
   QOVERY_WS = process.env.NX_PUBLIC_QOVERY_WS,
   OAUTH_DOMAIN = process.env.NX_PUBLIC_OAUTH_DOMAIN,
