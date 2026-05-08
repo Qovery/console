@@ -33,6 +33,8 @@ const mockContextValue: ClusterContainerCreateContextInterface = {
   setFeaturesData: jest.fn(),
   kubeconfigData: undefined,
   setKubeconfigData: jest.fn(),
+  addonsData: { observabilityActivated: false, kedaActivated: false, secretManagers: [] },
+  setAddonsData: jest.fn(),
   creationFlowUrl: '/organization/org-123/cluster/create/aws',
 }
 
