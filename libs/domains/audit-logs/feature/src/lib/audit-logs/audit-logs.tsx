@@ -288,7 +288,7 @@ export function AuditLogs({
         filter={filter}
         setFilter={setFilter}
         className="rounded border border-neutral"
-        classNameHead="z-dropdown rounded-t"
+        classNameHead="z-dropdown rounded-t font-code top-[2.8rem]"
         columnsWidth={columnsWidth}
       >
         <div>
