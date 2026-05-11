@@ -7,15 +7,7 @@ import {
   Route53DnsProviderRequestProviderEnum,
   Route53StaticCredentialsRequestTypeEnum,
 } from 'qovery-typescript-axios'
-import {
-  Controller,
-  FormProvider,
-  type RegisterOptions,
-  type SubmitHandler,
-  useForm,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form'
+import { Controller, FormProvider, type SubmitHandler, useForm, useFormContext, useWatch } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { type Value } from '@qovery/shared/interfaces'
@@ -174,165 +166,167 @@ function DnsProviderFields({ disabled }: { disabled: boolean }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <ControllerInputSelect name="provider" label="DNS provider" options={DNS_PROVIDER_OPTIONS} disabled={disabled} />
+      <Controller
+        name="provider"
+        control={control}
+        rules={{ required: 'Please select a DNS provider.' }}
+        render={({ field, fieldState: { error } }) => (
+          <InputSelect
+            label="DNS provider"
+            options={DNS_PROVIDER_OPTIONS}
+            onChange={field.onChange}
+            value={typeof field.value === 'string' ? field.value : undefined}
+            disabled={disabled}
+            error={error?.message}
+            dataTestId="input-provider"
+          />
+        )}
+      />
 
-      <ControllerInputText
+      <Controller
         name="domain"
-        label="Domain"
-        disabled={disabled || isQoveryProvider}
+        control={control}
         rules={{ required: 'Please enter a domain.' }}
+        render={({ field, fieldState: { error } }) => (
+          <InputText
+            name={field.name}
+            label="Domain"
+            value={typeof field.value === 'string' ? field.value : ''}
+            onChange={field.onChange}
+            disabled={disabled || isQoveryProvider}
+            error={error?.message}
+            dataTestId="input-domain"
+          />
+        )}
       />
 
       {provider === 'CLOUDFLARE' && (
         <>
-          <ControllerInputText
+          <Controller
             name="cloudflareEmail"
-            label="Email"
-            type="email"
-            disabled={disabled}
+            control={control}
             rules={{ required: 'Please enter the Cloudflare email.' }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                label="Email"
+                type="email"
+                value={typeof field.value === 'string' ? field.value : ''}
+                onChange={field.onChange}
+                disabled={disabled}
+                error={error?.message}
+                dataTestId="input-cloudflareEmail"
+              />
+            )}
           />
-          <ControllerInputText
+          <Controller
             name="cloudflareApiToken"
-            label="Cloudflare API token"
-            type="password"
-            disabled={disabled}
-            hint={SECRET_HINT}
+            control={control}
             rules={{ required: disabled ? false : 'Please enter the Cloudflare API token.' }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                label="Cloudflare API token"
+                type="password"
+                value={typeof field.value === 'string' ? field.value : ''}
+                onChange={field.onChange}
+                disabled={disabled}
+                hint={SECRET_HINT}
+                error={error?.message}
+                dataTestId="input-cloudflareApiToken"
+              />
+            )}
           />
-          <ControllerInputToggle
+          <Controller
             name="cloudflareProxied"
-            title="Proxy DNS records through Cloudflare"
-            disabled={disabled}
+            control={control}
+            render={({ field }) => (
+              <InputToggle
+                name={field.name}
+                value={Boolean(field.value)}
+                onChange={field.onChange}
+                title="Proxy DNS records through Cloudflare"
+                disabled={disabled}
+                dataTestId="input-cloudflareProxied"
+                small
+              />
+            )}
           />
         </>
       )}
 
       {provider === 'ROUTE53' && (
         <>
-          <ControllerInputText
+          <Controller
             name="route53AwsAccessKeyId"
-            label="AWS access key ID"
-            disabled={disabled}
+            control={control}
             rules={{ required: 'Please enter the AWS access key ID.' }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                label="AWS access key ID"
+                value={typeof field.value === 'string' ? field.value : ''}
+                onChange={field.onChange}
+                disabled={disabled}
+                error={error?.message}
+                dataTestId="input-route53AwsAccessKeyId"
+              />
+            )}
           />
-          <ControllerInputText
+          <Controller
             name="route53AwsSecretAccessKey"
-            label="AWS secret access key"
-            type="password"
-            disabled={disabled}
-            hint={SECRET_HINT}
+            control={control}
             rules={{ required: disabled ? false : 'Please enter the AWS secret access key.' }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                label="AWS secret access key"
+                type="password"
+                value={typeof field.value === 'string' ? field.value : ''}
+                onChange={field.onChange}
+                disabled={disabled}
+                hint={SECRET_HINT}
+                error={error?.message}
+                dataTestId="input-route53AwsSecretAccessKey"
+              />
+            )}
           />
-          <ControllerInputText
+          <Controller
             name="route53AwsRegion"
-            label="AWS region"
-            disabled={disabled}
+            control={control}
             rules={{ required: 'Please enter the AWS region.' }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                label="AWS region"
+                value={typeof field.value === 'string' ? field.value : ''}
+                onChange={field.onChange}
+                disabled={disabled}
+                error={error?.message}
+                dataTestId="input-route53AwsRegion"
+              />
+            )}
           />
-          <ControllerInputText name="route53HostedZoneId" label="Hosted zone ID" disabled={disabled} />
+          <Controller
+            name="route53HostedZoneId"
+            control={control}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                label="Hosted zone ID"
+                value={typeof field.value === 'string' ? field.value : ''}
+                onChange={field.onChange}
+                disabled={disabled}
+                error={error?.message}
+                dataTestId="input-route53HostedZoneId"
+              />
+            )}
+          />
         </>
       )}
 
       {errors.root?.message && <p className="px-3 text-xs text-negative">{errors.root.message}</p>}
     </div>
-  )
-}
-
-type ControllerInputTextProps = {
-  name: keyof ClusterDnsProviderFormValues
-  label: string
-  type?: 'text' | 'password' | 'email'
-  disabled?: boolean
-  hint?: string
-  rules?: RegisterOptions<ClusterDnsProviderFormValues, keyof ClusterDnsProviderFormValues>
-}
-
-function ControllerInputText({ name, label, type = 'text', disabled, hint, rules }: ControllerInputTextProps) {
-  const { control } = useFormContext<ClusterDnsProviderFormValues>()
-
-  return (
-    <Controller
-      name={name}
-      control={control}
-      rules={rules}
-      render={({ field, fieldState: { error } }) => (
-        <InputText
-          name={field.name}
-          label={label}
-          type={type}
-          value={typeof field.value === 'string' ? field.value : ''}
-          onChange={field.onChange}
-          disabled={disabled}
-          hint={hint}
-          error={error?.message}
-          dataTestId={`input-${name}`}
-        />
-      )}
-    />
-  )
-}
-
-function ControllerInputSelect({
-  name,
-  label,
-  options,
-  disabled,
-}: {
-  name: keyof ClusterDnsProviderFormValues
-  label: string
-  options: Value[]
-  disabled?: boolean
-}) {
-  const { control } = useFormContext<ClusterDnsProviderFormValues>()
-
-  return (
-    <Controller
-      name={name}
-      control={control}
-      rules={{ required: 'Please select a DNS provider.' }}
-      render={({ field, fieldState: { error } }) => (
-        <InputSelect
-          label={label}
-          options={options}
-          onChange={field.onChange}
-          value={typeof field.value === 'string' ? field.value : undefined}
-          disabled={disabled}
-          error={error?.message}
-          dataTestId={`input-${name}`}
-        />
-      )}
-    />
-  )
-}
-
-function ControllerInputToggle({
-  name,
-  title,
-  disabled,
-}: {
-  name: keyof ClusterDnsProviderFormValues
-  title: string
-  disabled?: boolean
-}) {
-  const { control } = useFormContext<ClusterDnsProviderFormValues>()
-
-  return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field }) => (
-        <InputToggle
-          name={field.name}
-          value={Boolean(field.value)}
-          onChange={field.onChange}
-          title={title}
-          disabled={disabled}
-          dataTestId={`input-${name}`}
-          small
-        />
-      )}
-    />
   )
 }
 

@@ -1,6 +1,6 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { type ClusterDnsProviderRequest } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import {
   ClusterDnsProviderSettings,
   canEditDnsProvider,
@@ -21,14 +21,27 @@ export const Route = createFileRoute(
 function RouteComponent() {
   useDocumentTitle('DNS provider - Cluster settings')
 
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center p-8">
+          <LoaderSpinner className="w-4" />
+        </div>
+      }
+    >
+      <ClusterDnsProviderSettingsFeature />
+    </Suspense>
+  )
+}
+
+function ClusterDnsProviderSettingsFeature() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const [submitError, setSubmitError] = useState<string>()
-  const { data: organization, isLoading: isOrganizationLoading } = useOrganization({ organizationId })
-  const { data: clusterDnsProvider, isLoading: isClusterDnsProviderLoading } = useClusterDnsProvider({ clusterId })
+  const { data: organization } = useOrganization({ organizationId, suspense: true })
+  const { data: clusterDnsProvider } = useClusterDnsProvider({ clusterId, suspense: true })
   const { mutateAsync: editClusterDnsProvider, isLoading: isEditClusterDnsProviderLoading } =
     useEditClusterDnsProvider()
 
-  const isLoading = isOrganizationLoading || isClusterDnsProviderLoading
   const isEditable = canEditDnsProvider(organization?.plan)
 
   const onSubmit = async (clusterDnsProviderRequest: ClusterDnsProviderRequest) => {
@@ -50,14 +63,6 @@ function RouteComponent() {
 
       return undefined
     }
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center p-8">
-        <LoaderSpinner className="w-4" />
-      </div>
-    )
   }
 
   return (
