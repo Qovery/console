@@ -158,7 +158,7 @@ describe('ServiceOverview', () => {
       data: {
         id: 'argocd-service-1',
         service_type: 'ARGOCD_APP',
-        serviceType: 'APPLICATION',
+        serviceType: 'ARGOCD_APP',
         autoscaling: { mode: 'FIXED' },
       },
     })
@@ -166,6 +166,7 @@ describe('ServiceOverview', () => {
     renderWithProviders(<ServiceOverview environment={environment} />)
 
     expect(screen.getByText('service-header')).toBeInTheDocument()
+    expect(screen.getByText('instance-metrics')).toBeInTheDocument()
     expect(screen.queryByText('need-redeploy-flag')).not.toBeInTheDocument()
     expect(screen.queryByText('service-last-deployment')).not.toBeInTheDocument()
     expect(screen.queryByText('service-instance')).not.toBeInTheDocument()

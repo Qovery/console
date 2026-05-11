@@ -14,6 +14,7 @@ import { useRunningStatus } from '../hooks/use-running-status/use-running-status
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
 import { NeedRedeployFlag } from '../need-redeploy-flag/need-redeploy-flag'
+import { InstanceMetrics } from './instance-metrics/instance-metrics'
 import { ServiceHeader } from './service-header/service-header'
 import { ServiceInstance } from './service-instance/service-instance'
 import { ServiceLastDeployment } from './service-last-deployment/service-last-deployment'
@@ -71,6 +72,15 @@ function ServiceInstancesSection({
       <Heading>Instances</Heading>
       {jobStatusesCallout}
       <ServiceInstance service={service} />
+    </Section>
+  )
+}
+
+function ServiceMetricsSection({ environmentId, service }: { environmentId: string; service: AnyService }) {
+  return (
+    <Section className="gap-3">
+      <Heading>Instances</Heading>
+      <InstanceMetrics environmentId={environmentId} serviceId={service.id} service={service} />
     </Section>
   )
 }
@@ -199,6 +209,9 @@ function ServiceOverviewContent({
             {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
             {!isTerraformService && isEditableService(service) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />
+            )}
+            {service.serviceType === 'ARGOCD_APP' && (
+              <ServiceMetricsSection environmentId={environment.id} service={service} />
             )}
             {isKedaAutoscaling && scaledObject && <ServiceScaledObjectSection scaledObject={scaledObject} />}
             {service.serviceType === 'JOB' && service.job_type === 'LIFECYCLE' && (

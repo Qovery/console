@@ -1,5 +1,5 @@
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type EditableService } from '@qovery/domains/services/data-access'
 import { InputRadio, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useRestartService } from '../hooks/use-restart-service/use-restart-service'
@@ -7,7 +7,7 @@ import { useRestartService } from '../hooks/use-restart-service/use-restart-serv
 export interface RedeployModalProps {
   organizationId: string
   projectId: string
-  service: AnyService
+  service: EditableService
 }
 
 export function RedeployModal({ service, organizationId, projectId }: RedeployModalProps) {
