@@ -87,7 +87,7 @@ export function AuditLogsView() {
   const urlParams = route.useSearch()
 
   const [filter, setFilter] = useState<TableFilterProps[]>([])
-  const isSyncingFiltersFromUrl = useRef(false)
+  const filterSyncedFromUrlRef = useRef<TableFilterProps[] | null>(null)
   const [targetTypeSelectedItems, setTargetTypeSelectedItems] = useState<SelectedItem[]>([])
   const [targetTypeNavigationStack, setTargetTypeNavigationStack] = useState<NavigationLevel[] | undefined>(undefined)
   const [targetTypeLevel, setTargetTypeLevel] = useState<number | undefined>(undefined)
@@ -129,15 +129,15 @@ export function AuditLogsView() {
         return prev
       }
 
-      isSyncingFiltersFromUrl.current = true
+      filterSyncedFromUrlRef.current = nextFilter
       return nextFilter
     })
   }, [urlParams])
 
   // Sync table filters -> queryParams
   useEffect(() => {
-    if (isSyncingFiltersFromUrl.current) {
-      isSyncingFiltersFromUrl.current = false
+    if (filterSyncedFromUrlRef.current && areFiltersEqual(filter, filterSyncedFromUrlRef.current)) {
+      filterSyncedFromUrlRef.current = null
       return
     }
 
