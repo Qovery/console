@@ -1,0 +1,20 @@
+{
+  "name": "domains-service-settings-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/service-settings/feature/src",
+  "projectType": "library",
+  "tags": ["scope:domain", "type:feature", "slice:service-settings"],
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
+    }
+  }
+}

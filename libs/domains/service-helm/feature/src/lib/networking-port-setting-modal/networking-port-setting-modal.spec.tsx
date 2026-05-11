@@ -12,13 +12,16 @@ jest.mock('../hooks/use-kubernetes-services/use-kubernetes-services', () => ({
 
 describe('NetworkingPortSettingModal', () => {
   it('should match snapshot in create state', () => {
-    const { baseElement } = renderWithProviders(<NetworkingPortSettingModal onSubmit={jest.fn()} onClose={jest.fn()} />)
+    const { baseElement } = renderWithProviders(
+      <NetworkingPortSettingModal helmId="1" onSubmit={jest.fn()} onClose={jest.fn()} />
+    )
     screen.getByText(/create/i)
     expect(baseElement).toMatchSnapshot()
   })
   it('should match snapshot in edit state', () => {
     const { baseElement } = renderWithProviders(
       <NetworkingPortSettingModal
+        helmId="1"
         port={{
           internal_port: 1234,
 
@@ -37,13 +40,17 @@ describe('NetworkingPortSettingModal', () => {
   })
   it('should close on cancel', async () => {
     const onClose = jest.fn()
-    const { userEvent } = renderWithProviders(<NetworkingPortSettingModal onSubmit={jest.fn()} onClose={onClose} />)
+    const { userEvent } = renderWithProviders(
+      <NetworkingPortSettingModal helmId="1" onSubmit={jest.fn()} onClose={onClose} />
+    )
     await userEvent.click(screen.getByText(/cancel/i))
     expect(onClose).toHaveBeenCalled()
   })
   it('should submit port', async () => {
     const onSubmit = jest.fn()
-    const { userEvent } = renderWithProviders(<NetworkingPortSettingModal onSubmit={onSubmit} onClose={jest.fn()} />)
+    const { userEvent } = renderWithProviders(
+      <NetworkingPortSettingModal helmId="1" onSubmit={onSubmit} onClose={jest.fn()} />
+    )
     await userEvent.click(screen.getByText(/cancel/i))
 
     await userEvent.type(screen.getByLabelText(/service name/i), 'foo')
@@ -62,5 +69,22 @@ describe('NetworkingPortSettingModal', () => {
       protocol: 'GRPC',
       name: 'p1234-foo',
     })
+  })
+
+  it('should not close while submit is pending', async () => {
+    const onClose = jest.fn()
+    const onSubmit = jest.fn(() => new Promise<void>(() => undefined))
+    const { userEvent } = renderWithProviders(
+      <NetworkingPortSettingModal helmId="1" onSubmit={onSubmit} onClose={onClose} />
+    )
+
+    await userEvent.type(screen.getByLabelText(/service name/i), 'foo')
+    await userEvent.type(screen.getByLabelText(/namespace/i), 'bar')
+    await userEvent.type(screen.getByLabelText(/service port/i), '1234')
+    await userEvent.click(screen.getByText(/create/i))
+    await userEvent.click(screen.getByText(/cancel/i))
+
+    expect(onSubmit).toHaveBeenCalled()
+    expect(onClose).not.toHaveBeenCalled()
   })
 })

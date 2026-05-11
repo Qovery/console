@@ -88,11 +88,7 @@ function SelectImageVersion({
               <span>{version}</span>
               <Tooltip classNameContent="z-10" content="Image tag cannot be latest to ensure consistent deployment">
                 <span>
-                  <Icon
-                    iconName="circle-info"
-                    iconStyle="regular"
-                    className="text-base text-neutral-400 dark:text-neutral-50"
-                  />
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-base text-neutral" />
                 </span>
               </Tooltip>
             </span>
@@ -172,8 +168,8 @@ export function SelectVersionModal({
   return (
     <div className="flex flex-col gap-6 p-5">
       <div className="flex flex-col gap-2 text-sm">
-        <h2 className="h4 max-w-sm truncate text-neutral-400 dark:text-neutral-50">{title}</h2>
-        <p className="text-neutral-350 dark:text-neutral-50">{description}</p>
+        <h2 className="h4 max-w-sm truncate text-neutral">{title}</h2>
+        <p className="text-neutral-subtle">{description}</p>
         {children}
       </div>
       {'repository' in props ? (

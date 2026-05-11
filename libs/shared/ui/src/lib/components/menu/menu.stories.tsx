@@ -18,7 +18,7 @@ const menus: MenuData = [
       {
         name: 'Test 1',
         link: { url: '/', external: false },
-        contentLeft: <Icon name="icon-solid-layer-group" className="text-brand-400 dark:text-brand-300" />,
+        contentLeft: <Icon name="icon-solid-layer-group" className="text-brand" />,
       },
       {
         name: 'Test 2',

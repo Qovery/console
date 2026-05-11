@@ -6,7 +6,6 @@ import { Tooltip } from '../tooltip/tooltip'
 
 export interface PasswordShowHideProps extends ComponentPropsWithoutRef<'input'> {
   value: string
-  defaultVisible?: boolean
   isSecret?: boolean
   canCopy?: boolean
   canEdit?: boolean
@@ -17,62 +16,43 @@ export function PasswordShowHide({
   canCopy = true,
   canEdit = false,
   className,
-  defaultVisible = false,
   isSecret,
   value,
   onChange,
   ...props
 }: PasswordShowHideProps) {
-  const [_visible, setVisible] = useState(false)
-  const visible = defaultVisible || _visible
-
   return isSecret ? (
-    <span className={twMerge('flex items-center gap-2 text-sm text-neutral-300', className)} {...props}>
+    <span className={twMerge('flex h-5 items-center gap-2 text-sm text-neutral-disabled', className)} {...props}>
       <Tooltip content="Secret variable">
         <span>
           <Icon className="block w-4" iconName="lock-keyhole" iconStyle="regular" />
         </span>
       </Tooltip>
-      <span className="pt-1.5 text-xl font-medium tracking-widest" data-testid="hide_value_secret">
+      <span className="pt-1.5 font-medium tracking-widest" data-testid="hide_value_secret">
         ********
       </span>
     </span>
   ) : (
-    <span className={twMerge('flex items-center gap-2 text-sm', className)} {...props}>
-      <Tooltip content={visible ? 'Hide variable' : 'View variable'}>
-        <button
-          type="button"
-          className="w-4 text-brand-500"
-          onClick={() => setVisible((visible) => !visible)}
-          data-testid="toggle-button"
-        >
-          {visible ? <Icon iconName="eye-slash" iconStyle="regular" /> : <Icon iconName="eye" iconStyle="regular" />}
-        </button>
-      </Tooltip>
-      {visible ? (
-        <>
-          {canEdit ? (
-            <input
-              name="value"
-              value={value}
-              onChange={(e) => {
-                onChange?.(e)
-              }}
-              className="h-full w-full bg-transparent text-sm text-neutral-400 outline-none"
-            />
-          ) : (
-            <span className="truncate text-brand-500" data-testid="visible_value">
-              {value}
-            </span>
-          )}
-          {canCopy && Boolean(value) && <CopyToClipboardButtonIcon content={value!} iconClassName="text-brand-500" />}
-        </>
+    <span className={twMerge('group flex h-5 w-full items-center gap-2 text-sm', className)} {...props}>
+      {canEdit ? (
+        <input
+          name="value"
+          value={value}
+          onChange={(e) => {
+            onChange?.(e)
+          }}
+          className="h-full w-full bg-transparent text-neutral outline-none"
+        />
       ) : (
-        <Tooltip content={value}>
-          <span className="pt-1.5 text-xl font-medium tracking-widest text-neutral-350" data-testid="hide_value">
-            ********
-          </span>
-        </Tooltip>
+        <span className="truncate text-neutral" data-testid="visible_value">
+          {value}
+        </span>
+      )}
+      {canCopy && Boolean(value) && (
+        <CopyToClipboardButtonIcon
+          content={value!}
+          iconClassName="text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+        />
       )}
     </span>
   )

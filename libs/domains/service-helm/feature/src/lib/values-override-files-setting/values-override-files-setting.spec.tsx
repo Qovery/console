@@ -2,9 +2,15 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { ValuesOverrideFilesSetting, type ValuesOverrideFilesSettingProps } from './values-override-files-setting'
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({
+    environmentId: 'env-1',
+  }),
+}))
+
 describe('ValuesOverrideFilesSetting', () => {
   const props: ValuesOverrideFilesSettingProps = {
-    type: 'NONE',
     source: {
       git_repository: {
         url: 'github.com',
@@ -31,6 +37,7 @@ describe('ValuesOverrideFilesSetting', () => {
     },
     watchFieldType: 'NONE',
     gitRepositorySettings: <div>git repository dom</div>,
+    onSubmit: jest.fn(),
   }
 
   it('should match snapshot with NONE type', () => {

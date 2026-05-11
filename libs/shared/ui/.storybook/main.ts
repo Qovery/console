@@ -14,7 +14,7 @@ const config: StorybookConfig = {
 
   staticDirs: [
     '../src/lib',
-    { from: '../../../../node_modules/@awesome.me/kit-c4457d1be4/icons/webfonts', to: '/assets/fonts/font-awesome' },
+    { from: '../../../../node_modules/@awesome.me/kit-22f4eef36a/icons/webfonts', to: '/assets/fonts/font-awesome' },
   ],
 
   typescript: {

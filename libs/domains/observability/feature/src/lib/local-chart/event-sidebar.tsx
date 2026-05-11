@@ -16,15 +16,15 @@ export function EventSidebar({ events, service, isLoading = false }: EventSideba
   const { useLocalTime } = useDashboardContext()
 
   return (
-    <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral-250">
-      <p className="border-b border-neutral-250 bg-neutral-100 px-4 py-2 text-xs font-medium text-neutral-500">
+    <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral">
+      <p className="border-b border-neutral bg-surface-neutral-subtle px-4 py-2 text-xs font-medium text-neutral-subtle">
         {pluralize(events.length, 'Event', 'Events')} associated
       </p>
       <div className="h-full overflow-y-auto">
         {isLoading ? (
           <>
             {Array.from({ length: 8 }).map((_, idx) => (
-              <div key={idx} className="flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500">
+              <div key={idx} className="flex gap-2 border-b border-neutral px-4 py-2 text-sm text-neutral-subtle">
                 <Skeleton className="h-5 min-h-5 w-5 min-w-5" rounded />
                 <div className="flex w-full flex-col gap-1 text-xs">
                   <div className="flex w-full items-center justify-between gap-2">
@@ -43,7 +43,7 @@ export function EventSidebar({ events, service, isLoading = false }: EventSideba
               return (
                 <div
                   key={key}
-                  className="flex gap-2 border-b border-neutral-250 px-4 py-2 text-sm text-neutral-500 hover:bg-neutral-150"
+                  className="flex gap-2 border-b border-neutral px-4 py-2 text-sm text-neutral-subtle hover:bg-surface-neutral-componentHover"
                   data-event-key={key}
                   onMouseEnter={() => {
                     const referenceLine = document.querySelectorAll(`.recharts-reference-line-line[name="${key}"]`)
@@ -60,33 +60,33 @@ export function EventSidebar({ events, service, isLoading = false }: EventSideba
                 >
                   <span
                     className="flex h-5 min-h-5 w-5 min-w-5 items-center justify-center rounded-full"
-                    style={{ backgroundColor: event.color ?? 'var(--color-red-500)' }}
+                    style={{ backgroundColor: event.color ?? 'var(--negative-11)' }}
                   >
                     <Icon
                       iconName={event.icon}
                       iconStyle={event.iconStyle ?? 'regular'}
-                      className="text-xs text-white"
+                      className="text-xs text-neutralInvert"
                     />
                   </span>
                   <div className="flex w-full flex-col gap-1 text-xs">
                     <div className="flex w-full items-center justify-between gap-2">
                       <span className="font-medium">{event.reason}</span>
-                      <span className="text-neutral-350">{timestamp.fullTimeString}</span>
+                      <span className="text-neutral-subtle">{timestamp.fullTimeString}</span>
                     </div>
                     {event.type === 'event' && (
                       <>
-                        <span className="text-neutral-350">
+                        <span className="text-neutral-subtle">
                           {service?.serviceType === 'CONTAINER' ? 'Image name' : 'Repository'}: {event.repository}
                         </span>
-                        <span className="text-neutral-350">
+                        <span className="text-neutral-subtle">
                           {service?.serviceType === 'CONTAINER' ? 'Tag' : 'Version'}: {event.version?.slice(0, 8)}
                         </span>
                       </>
                     )}
-                    {event.description && <span className="text-neutral-350">{event.description}</span>}
+                    {event.description && <span className="text-neutral-subtle">{event.description}</span>}
                     {event.type === 'exit-code' && (
                       <div className="flex items-center gap-1">
-                        <span className="text-neutral-350">Instance name:</span>
+                        <span className="text-neutral-subtle">Instance name:</span>
                         <Tooltip content={event.pod ?? ''}>
                           <Badge
                             variant="surface"
@@ -110,7 +110,7 @@ export function EventSidebar({ events, service, isLoading = false }: EventSideba
           </>
         ) : (
           <div className="flex h-full items-center justify-center text-sm">
-            <p className="text-neutral-350">No events associated</p>
+            <p className="text-neutral-subtle">No events associated</p>
           </div>
         )}
       </div>

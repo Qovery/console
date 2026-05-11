@@ -8,7 +8,7 @@ export const RestartedIcon = forwardRef<SVGSVGElement, IconSVGProps>(function Re
 ) {
   return (
     <svg
-      className={twMerge('text-green-500', className)}
+      className={twMerge('text-positive', className)}
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"

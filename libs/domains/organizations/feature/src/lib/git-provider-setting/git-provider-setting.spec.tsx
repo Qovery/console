@@ -37,7 +37,9 @@ jest.mock('../hooks/use-git-tokens/use-git-tokens', () => {
 
 describe('GitProviderSetting', () => {
   it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GitProviderSetting disabled={false} />))
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm(<GitProviderSetting disabled={false} organizationId="org-1" />)
+    )
     expect(baseElement).toMatchSnapshot()
   })
 

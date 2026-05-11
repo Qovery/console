@@ -77,7 +77,9 @@ export function InputCreditCard(props: InputCreditCardProps) {
 
   const hasError = error && error.length > 0 ? 'input--error' : ''
 
-  const isDisabled = disabled ? 'input--disabled !border-neutral-250' : ''
+  const inputActions = hasFocus ? 'input--focused' : disabled ? 'input--disabled' : ''
+
+  const isDisabled = disabled ? 'input--disabled !border-neutral' : ''
 
   useEffect(() => {
     switch (props.type) {
@@ -125,7 +127,7 @@ export function InputCreditCard(props: InputCreditCardProps) {
       <div className="relative">
         <div
           aria-label="input-container"
-          className={`input ${props.type === 'number' ? '!pl-12' : ''} ${isDisabled} ${hasError} ${hasLabelUp} `}
+          className={`input ${props.type === 'number' ? '!pl-12' : ''} ${inputActions} ${isDisabled} ${hasError} ${hasLabelUp} `}
           ref={inputRef}
         >
           {props.type === 'number' && (
@@ -156,7 +158,7 @@ export function InputCreditCard(props: InputCreditCardProps) {
           </div>
         </div>
       </div>
-      {error && <p className="mt-1 px-4 text-xs font-medium text-red-500">{error}</p>}
+      {error && <p className="mt-1 px-4 text-xs font-medium text-negative">{error}</p>}
     </div>
   )
 }

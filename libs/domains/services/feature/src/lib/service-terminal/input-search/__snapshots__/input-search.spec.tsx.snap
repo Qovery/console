@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`InputSearch should match snapshot 1`] = `
 <body>
@@ -7,22 +7,22 @@ exports[`InputSearch should match snapshot 1`] = `
       class="relative z-10"
     >
       <button
-        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100 hidden"
+        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral hidden"
       >
         my-value
         <span>
           <i
             aria-hidden="true"
-            class="fa-solid fa-xmark ml-2 text-sm"
+            class="fa-regular fa-xmark ml-2 text-sm"
           />
         </span>
       </button>
       <div
-        class=""
+        class="relative"
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
+          class="fa-regular fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
         />
         <input
           aria-activedescendant=""
@@ -31,7 +31,7 @@ exports[`InputSearch should match snapshot 1`] = `
           aria-expanded="false"
           aria-labelledby="downshift-:r6:-label"
           autocomplete="off"
-          class="h-7 w-56 rounded border border-neutral-350 bg-transparent pl-7 pr-2 text-xs text-neutral-250 focus:border-brand-400 focus:outline-none"
+          class="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]"
           id="downshift-:r6:-input"
           placeholder="placeholder"
           role="combobox"
@@ -39,19 +39,20 @@ exports[`InputSearch should match snapshot 1`] = `
         />
       </div>
       <div
-        class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded bg-neutral-600 p-2 hidden"
+        class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] hidden"
       >
         <ul
           aria-labelledby="downshift-:r6:-label"
+          class="m-0 list-none p-0"
           id="downshift-:r6:-menu"
           role="listbox"
         >
           <p
-            class="text-medium flex w-full flex-col py-2 text-center text-xs text-neutral-50"
+            class="flex w-full flex-col items-center py-2 text-center text-xs text-neutral-subtle"
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-wave-pulse mb-1 block"
+              class="fa-regular fa-wave-pulse mb-1"
             />
             No results found
           </p>
@@ -69,22 +70,22 @@ exports[`InputSearch should match with snapshot 1`] = `
       class="relative z-10"
     >
       <button
-        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded bg-neutral-500 active:bg-neutral-600 hover:bg-neutral-400 text-white disabled:text-neutral-300 disabled:bg-neutral-100 hidden"
+        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral hidden"
       >
         my-value
         <span>
           <i
             aria-hidden="true"
-            class="fa-solid fa-xmark ml-2 text-sm"
+            class="fa-regular fa-xmark ml-2 text-sm"
           />
         </span>
       </button>
       <div
-        class=""
+        class="relative"
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-magnifying-glass absolute left-2.5 top-1.5 text-xs text-neutral-50"
+          class="fa-regular fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
         />
         <input
           aria-activedescendant=""
@@ -93,7 +94,7 @@ exports[`InputSearch should match with snapshot 1`] = `
           aria-expanded="false"
           aria-labelledby="downshift-:rd:-label"
           autocomplete="off"
-          class="h-7 w-56 rounded border border-neutral-350 bg-transparent pl-7 pr-2 text-xs text-neutral-250 focus:border-brand-400 focus:outline-none"
+          class="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]"
           id="downshift-:rd:-input"
           placeholder="placeholder"
           role="combobox"
@@ -101,19 +102,20 @@ exports[`InputSearch should match with snapshot 1`] = `
         />
       </div>
       <div
-        class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded bg-neutral-600 p-2 hidden"
+        class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] hidden"
       >
         <ul
           aria-labelledby="downshift-:rd:-label"
+          class="m-0 list-none p-0"
           id="downshift-:rd:-menu"
           role="listbox"
         >
           <p
-            class="text-medium flex w-full flex-col py-2 text-center text-xs text-neutral-50"
+            class="flex w-full flex-col items-center py-2 text-center text-xs text-neutral-subtle"
           >
             <i
               aria-hidden="true"
-              class="fa-solid fa-wave-pulse mb-1 block"
+              class="fa-regular fa-wave-pulse mb-1"
             />
             No results found
           </p>

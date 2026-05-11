@@ -1,6 +1,11 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { Spotlight } from './spotlight'
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useMatchRoute: () => () => undefined,
+}))
+
 describe('Spotlight', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<Spotlight organizationId="000" open={true} />)

@@ -5,13 +5,20 @@ interface UseClusterStatusesProps {
   organizationId: string
   refetchInterval?: number
   enabled?: boolean
+  suspense?: boolean
 }
 
-export function useClusterStatuses({ organizationId, refetchInterval, enabled }: UseClusterStatusesProps) {
+export function useClusterStatuses({
+  organizationId,
+  refetchInterval,
+  enabled,
+  suspense = false,
+}: UseClusterStatusesProps) {
   return useQuery({
     ...queries.clusters.listStatuses({ organizationId }),
     refetchInterval,
     enabled,
+    suspense,
   })
 }
 

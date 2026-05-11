@@ -2,16 +2,16 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import * as useCreateCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
-import * as useEditCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import * as useDeleteCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
+import * as useEditCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import { getByText, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useClusterCloudProviderInfoHook from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 import ClusterCredentialsModal, { type ClusterCredentialsModalProps, handleSubmit } from './cluster-credentials-modal'
 
 jest.mock('@qovery/domains/cloud-providers/feature', () => ({
   useCreateCloudProviderCredential: jest.fn(),
-  useEditCloudProviderCredential: jest.fn(),
   useDeleteCloudProviderCredential: jest.fn(),
+  useEditCloudProviderCredential: jest.fn(),
 }))
 
 jest.mock('posthog-js/react', () => ({
@@ -25,8 +25,8 @@ jest.mock('../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-i
 let props: ClusterCredentialsModalProps
 
 const mockCreateCredential = jest.fn()
-const mockEditCredential = jest.fn()
 const mockDeleteCredential = jest.fn()
+const mockEditCredential = jest.fn()
 const mockUseFeatureFlagEnabled = useFeatureFlagEnabled as jest.Mock
 
 describe('ClusterCredentialsModal', () => {
@@ -45,13 +45,13 @@ describe('ClusterCredentialsModal', () => {
       isLoading: false,
     })
 
+    jest.spyOn(useDeleteCloudProviderCredentialHook, 'useDeleteCloudProviderCredential').mockReturnValue({
+      mutateAsync: mockDeleteCredential,
+    })
+
     jest.spyOn(useEditCloudProviderCredentialHook, 'useEditCloudProviderCredential').mockReturnValue({
       mutateAsync: mockEditCredential,
       isLoading: false,
-    })
-
-    jest.spyOn(useDeleteCloudProviderCredentialHook, 'useDeleteCloudProviderCredential').mockReturnValue({
-      mutateAsync: mockDeleteCredential,
     })
 
     jest.spyOn(useClusterCloudProviderInfoHook, 'useClusterCloudProviderInfo').mockReturnValue({
@@ -90,7 +90,6 @@ describe('ClusterCredentialsModal', () => {
     await userEvent.type(roleArnInput, 'arn:aws:iam::123456789012:role/test-role')
     await userEvent.click(submitButton)
 
-    // Verify API was called
     expect(mockCreateCredential).toHaveBeenCalled()
     expect(props.onClose).toHaveBeenCalled()
   })

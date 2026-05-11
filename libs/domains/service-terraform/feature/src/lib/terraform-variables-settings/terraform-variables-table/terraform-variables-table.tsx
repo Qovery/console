@@ -1,16 +1,21 @@
+import { useParams } from '@tanstack/react-router'
+import { clsx } from 'clsx'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { Badge, Button, Checkbox, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { TfvarsFilesPopover } from '../terraform-tfvars-popover/terraform-tfvars-popover'
-import { SECRET_UNCHANGED_VALUE, type UIVariable, useTerraformVariablesContext } from '../terraform-variables-context'
+import {
+  SECRET_UNCHANGED_VALUE,
+  type UIVariable,
+  useTerraformVariablesContext,
+} from '../../terraform-variables-context'
 import {
   formatSource,
   getSourceBadgeClassName,
   isCustomVariable,
   isVariableChanged,
-} from '../terraform-variables-utils'
+} from '../../terraform-variables-utils'
+import { TfvarsFilesPopover } from '../terraform-tfvars-popover/terraform-tfvars-popover'
 
 const SourceCell = ({ variable }: { variable: UIVariable }) => {
   const sourceCellRef = useRef<HTMLDivElement>(null)
@@ -41,7 +46,7 @@ const SourceCell = ({ variable }: { variable: UIVariable }) => {
 
   return (
     <div
-      className="no-scrollbar inline-flex h-full items-center overflow-y-auto border-r border-neutral-250 px-2 lg:px-4"
+      className="no-scrollbar inline-flex h-full items-center overflow-y-auto border-r border-neutral px-4"
       ref={sourceCellRef}
     >
       <Badge className={twMerge(getSourceBadgeClassName(variable), 'font-medium')} variant="surface">
@@ -59,8 +64,7 @@ const SourceCell = ({ variable }: { variable: UIVariable }) => {
 const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const { updateKey, updateValue, toggleSecret, revertValue, isRowSelected, selectRow, hoveredRow, errors } =
     useTerraformVariablesContext()
-  const { environmentId = '' } = useParams()
-  const [isVariablePopoverOpen, setIsVariablePopoverOpen] = useState(false)
+  const { environmentId = '' } = useParams({ strict: false })
   const [isCellHovered, setIsCellHovered] = useState(false)
   const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
   const isCellFocused = useCallback((cell: 'key' | 'value') => focusedCell === cell, [focusedCell])
@@ -88,16 +92,15 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   }, [isSecretPlaceholder, focusValueTextarea])
 
   return (
-    <div className="w-full border-b border-neutral-250">
+    <div className="w-full border-b border-neutral">
       <div
-        className={twMerge(
-          'grid min-h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center',
-          hoveredRow ? (hoveredRow === variable.source ? 'bg-neutral-100' : 'bg-white') : 'bg-white',
-          isRowSelected(variable.id) && 'bg-neutral-150 hover:bg-neutral-150',
-          isMultiline && 'min-h-auto'
-        )}
+        className={clsx('grid min-h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center bg-surface-neutral', {
+          'bg-surface-neutral-component hover:bg-surface-neutral-component':
+            hoveredRow === variable.source || isRowSelected(variable.id),
+          'min-h-auto': isMultiline,
+        })}
       >
-        <div className="flex h-full items-center justify-center border-r border-neutral-250">
+        <div className="flex h-full items-center justify-center border-r border-neutral">
           <Checkbox
             checked={isRowSelected(variable.id)}
             onCheckedChange={() => selectRow(variable.id)}
@@ -107,17 +110,12 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         {/* Variable name cell */}
         <div
           className={twMerge(
-            'h-full border-r border-neutral-250 transition-all duration-100',
-            isCustomVariable(variable) && 'hover:bg-neutral-100',
-            (isCellFocused('key') || isRowSelected(variable.id)) && 'bg-neutral-150 hover:bg-neutral-150'
+            'h-full border-r border-neutral',
+            isCustomVariable(variable) && 'hover:bg-surface-neutral-component',
+            isCellFocused('key') && 'bg-surface-neutral-component hover:bg-surface-neutral-component'
           )}
         >
-          <div
-            className={twMerge(
-              'flex h-full w-full items-center border border-transparent',
-              errors.get(variable.id)?.field === 'key' && 'border-red-500'
-            )}
-          >
+          <div className={twMerge('flex h-full w-full items-center border border-transparent')}>
             {variable.isNew ? (
               <input
                 name="key"
@@ -127,7 +125,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 }}
                 className={twMerge(
                   'peer h-full w-full bg-transparent px-4 text-sm outline-none',
-                  isCellFocused('key') && 'bg-neutral-150 hover:bg-neutral-150'
+                  isCellFocused('key') && 'bg-surface-neutral-component hover:bg-surface-neutral-component'
                 )}
                 onFocus={() => setFocusedCell('key')}
                 onBlur={() => setFocusedCell(undefined)}
@@ -140,12 +138,12 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 spellCheck={false}
               />
             ) : (
-              <span className="px-4 text-sm text-neutral-350">{variable.key}</span>
+              <span className="px-4 text-sm text-neutral">{variable.key}</span>
             )}
             {variable.description && (
               <Tooltip content={variable.description}>
                 <span
-                  className="-ml-2 text-neutral-300 hover:text-neutral-400"
+                  className="-ml-2 text-neutral-disabled hover:text-neutral-subtle"
                   role="img"
                   aria-label="Variable description"
                   data-tooltip-content={variable.description}
@@ -156,8 +154,8 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             )}
             {errors.get(variable.id)?.field === 'key' && (
               <Tooltip content={errors.get(variable.id)?.message}>
-                <div className="mr-4">
-                  <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
+                <div className="mr-3">
+                  <Icon iconName="circle-exclamation" iconStyle="regular" className="text-negative" />
                 </div>
               </Tooltip>
             )}
@@ -165,7 +163,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         </div>
         {/* Variable value cell */}
         <div
-          className="group relative flex h-full min-h-[44px] items-center border-r border-neutral-250"
+          className="group relative flex h-full min-h-[44px] items-center border-r border-neutral"
           onMouseEnter={() => {
             setIsCellHovered(true)
           }}
@@ -179,16 +177,24 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           <div
             className={twMerge(
               // Ensure the pseudo-element is behind by using after:-z-10
-              'relative z-0 flex h-full w-full items-center border border-transparent after:pointer-events-none after:absolute after:bottom-0 after:left-0 after:right-0 after:top-0 after:-z-10 after:h-full after:w-full after:transition-all after:duration-100 group-hover:after:bg-neutral-100',
-              isCellFocused('value') && 'after:bg-neutral-150 group-hover:after:bg-neutral-150',
+              'relative z-0 flex h-full w-full items-center border border-transparent after:pointer-events-none after:absolute after:-left-[1px] after:-top-[1px] after:bottom-0 after:right-0 after:-z-10 after:h-[calc(100%+2px)] after:w-[calc(100%+2px)] group-hover:after:bg-surface-neutral-component',
+              isCellFocused('value') &&
+                'after:bg-surface-neutral-component group-hover:after:bg-surface-neutral-component',
               !isSecretPlaceholder && 'cursor-text',
-              errors.get(variable.id)?.field === 'value' && 'border-red-500'
+              errors.get(variable.id)?.field === 'value' && 'border-surface-negative'
             )}
             onClick={onValueCellClick}
           >
             {isSecretPlaceholder && (
-              <div className="absolute left-0 top-0 flex h-full w-full cursor-default items-center gap-2 bg-white px-4 transition-all duration-100 group-hover:bg-neutral-100">
-                <span className="text-xs text-neutral-350" data-testid="hide_value_secret">
+              <div
+                className={twMerge(
+                  'absolute left-0 top-0 flex h-full w-full cursor-default items-center gap-2 bg-surface-neutral px-4 group-hover:bg-surface-neutral-component',
+                  hoveredRow === variable.source &&
+                    'bg-surface-neutral-component group-hover:bg-surface-neutral-component',
+                  isRowSelected(variable.id) && 'bg-surface-neutral-component'
+                )}
+              >
+                <span className="text-xs text-neutral" data-testid="hide_value_secret">
                   ● ● ● ● ● ● ● ●
                 </span>
               </div>
@@ -203,7 +209,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
               onFocus={() => setFocusedCell('value')}
               onBlur={() => setFocusedCell(undefined)}
               className={twMerge(
-                'vertical-align-middle h-5 w-full resize-none bg-transparent px-4 text-sm text-neutral-400 outline-none',
+                'vertical-align-middle h-5 w-full resize-none bg-transparent px-4 text-sm text-neutral outline-none',
                 isMultiline && 'h-full min-h-5 resize-y py-3'
               )}
               style={{ minHeight: textareaMinHeight }}
@@ -212,10 +218,9 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
             />
             <div
               className={twMerge(
-                'absolute right-0 top-0 mr-4 flex h-full translate-x-1 items-center gap-2 pl-3 opacity-0 transition-all duration-100 group-hover:bg-neutral-100',
-                isCellFocused('value') && 'bg-neutral-150 group-hover:bg-neutral-150',
-                isCellHovered && 'translate-x-0 opacity-100',
-                isVariablePopoverOpen && 'bg-white'
+                'absolute right-0 top-0 mr-3 flex h-full translate-x-1 items-center gap-1 pl-3 opacity-0 group-hover:bg-surface-neutral-component',
+                isCellFocused('value') && 'bg-surface-neutral-component group-hover:bg-surface-neutral-component',
+                isCellHovered && 'translate-x-0 opacity-100'
               )}
             >
               {!isSecretPlaceholder && (
@@ -232,16 +237,15 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                       setIsCellHovered(false)
                       setFocusedCell(undefined)
                     }
-                    setIsVariablePopoverOpen(open)
                   }}
                 >
                   <button
                     className={twMerge(
-                      'justify-center border-none bg-transparent px-1 text-neutral-350 hover:text-neutral-400'
+                      'justify-center border-none bg-transparent px-1 text-neutral-subtle hover:text-neutral'
                     )}
                     type="button"
                   >
-                    <Icon className="text-sm" iconName="wand-magic-sparkles" />
+                    <Icon className="text-xs" iconName="wand-magic-sparkles" />
                   </button>
                 </DropdownVariable>
               )}
@@ -249,24 +253,24 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 <button
                   type="button"
                   onClick={() => focusValueTextarea()}
-                  className="px-1 text-neutral-350 hover:text-neutral-400"
+                  className="px-1 text-neutral-subtle hover:text-neutral"
                 >
-                  <Icon iconName="pen" iconStyle="regular" />
+                  <Icon className="text-xs" iconName="pen" iconStyle="regular" />
                 </button>
               )}
               {isVariableChanged(variable) && (
                 <button
                   type="button"
                   onClick={() => revertValue(variable.id)}
-                  className="px-1 text-neutral-350 hover:text-neutral-400"
+                  className="px-1 text-neutral-subtle hover:text-neutral"
                 >
-                  <Icon iconName="rotate-left" iconStyle="regular" />
+                  <Icon className="text-xs" iconName="rotate-left" iconStyle="regular" />
                 </button>
               )}
               {errors.get(variable.id)?.field === 'value' && (
                 <Tooltip content={errors.get(variable.id)?.message}>
                   <span className="px-1">
-                    <Icon iconName="circle-exclamation" iconStyle="regular" className="text-red-500" />
+                    <Icon className="text-xs text-negative" iconName="circle-exclamation" iconStyle="regular" />
                   </span>
                 </Tooltip>
               )}
@@ -277,7 +281,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
         <SourceCell variable={variable} />
         {/* Secret toggle cell */}
         <button
-          className="flex items-center justify-center text-center text-sm text-neutral-400"
+          className="flex items-center justify-center text-center text-sm text-neutral"
           type="button"
           onClick={() => {
             toggleSecret(variable.id)
@@ -286,7 +290,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
           <Icon
             iconName={variable.secret ? 'lock-keyhole' : 'lock-keyhole-open'}
             iconStyle="regular"
-            className={variable.secret ? 'text-neutral-400' : 'text-neutral-300'}
+            className={variable.secret ? 'text-neutral' : 'text-neutral-disabled'}
           />
         </button>
       </div>
@@ -315,23 +319,23 @@ const TerraformVariablesRows = () => {
   )
 
   return (
-    <div className="flex flex-col items-center justify-center border-t border-neutral-250">
-      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center border-b border-neutral-250 bg-neutral-100">
-        <div className="flex h-full items-center justify-center border-r border-neutral-250">
+    <div className="flex flex-col items-center justify-center border-t border-neutral">
+      <div className="grid h-[44px] w-full grid-cols-[52px_1fr_1fr_1fr_52px] items-center border-b border-neutral bg-surface-neutral-subtle">
+        <div className="flex h-full items-center justify-center border-r border-neutral">
           <Checkbox
             disabled={!isSelectAllCheckboxEnabled}
             onCheckedChange={onSelectAllToggle}
             checked={isAllSelected}
           />
         </div>
-        <div className="flex h-full items-center border-r border-neutral-250">
-          <span className="px-4 text-sm text-neutral-400">Variable</span>
+        <div className="flex h-full items-center border-r border-neutral">
+          <span className="px-4 text-sm text-neutral">Variable</span>
         </div>
-        <div className="flex h-full items-center border-r border-neutral-250">
-          <span className="px-4 text-sm text-neutral-400">Value</span>
+        <div className="flex h-full items-center border-r border-neutral">
+          <span className="px-4 text-sm text-neutral">Value</span>
         </div>
-        <div className="flex h-full items-center border-r border-neutral-250">
-          <span className="px-4 text-sm text-neutral-400">Source</span>
+        <div className="flex h-full items-center border-r border-neutral">
+          <span className="px-4 text-sm text-neutral">Source</span>
         </div>
       </div>
 
@@ -344,12 +348,12 @@ const TerraformVariablesRows = () => {
 
 const TerraformVariablesLoadingState = () => {
   return (
-    <div className="flex items-center justify-center border-b border-t border-neutral-250 bg-neutral-100 p-4">
+    <div className="flex min-h-40 items-center justify-center border-b border-t border-neutral bg-surface-neutral">
       <div className="flex flex-col items-center gap-4 py-4">
-        <LoaderSpinner classWidth="w-6" theme="light" />
+        <LoaderSpinner classWidth="w-6" />
         <div className="flex flex-col items-center gap-1">
-          <span className="text-center text-sm font-medium text-neutral-350">Fetching .tfvars files...</span>
-          <span className="text-center text-sm text-neutral-350">Pulling your Terraform variable definitions.</span>
+          <span className="text-center text-sm font-medium text-neutral">Fetching .tfvars files...</span>
+          <span className="text-center text-sm text-neutral-subtle">Pulling your Terraform variable definitions.</span>
         </div>
       </div>
     </div>
@@ -358,10 +362,10 @@ const TerraformVariablesLoadingState = () => {
 
 const TerraformVariablesEmptyState = () => {
   return (
-    <div className="flex items-center justify-center border-b border-t border-neutral-250 bg-neutral-100 p-4">
+    <div className="flex min-h-40 items-center justify-center border-b border-t border-neutral bg-surface-neutral">
       <div className="flex flex-col items-center gap-2 py-4">
-        <Icon iconName="key" iconStyle="regular" className="text-lg text-neutral-300" />
-        <span className="text-center text-sm text-neutral-350">
+        <Icon iconName="key" iconStyle="regular" className="text-lg text-neutral-subtle" />
+        <span className="text-center text-sm text-neutral-subtle">
           Load a .tfvars file or manually add variables
           <br />
           to configure your Terraform service.
@@ -384,9 +388,9 @@ export const TerraformVariablesTable = () => {
   }, [addVariable])
 
   return (
-    <div className="flex flex-col rounded-lg border border-neutral-250">
+    <div className="flex flex-col rounded-lg border border-neutral bg-surface-neutral">
       <div className="flex items-center justify-between px-4 py-3">
-        <span className="text-sm font-medium text-neutral-400">Variable configuration</span>
+        <span className="text-sm font-medium text-neutral">Variable configuration</span>
         <TfvarsFilesPopover />
       </div>
 
@@ -407,7 +411,7 @@ export const TerraformVariablesTable = () => {
             Delete selected
           </Button>
         )}
-        <Button size="md" variant="surface" className="gap-1.5" type="button" onClick={onAddVariable}>
+        <Button size="md" variant="outline" className="gap-1.5" type="button" onClick={onAddVariable}>
           Add variable
           <Icon iconName="plus" iconStyle="regular" />
         </Button>

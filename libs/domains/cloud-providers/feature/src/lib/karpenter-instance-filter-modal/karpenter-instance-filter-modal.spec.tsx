@@ -66,7 +66,7 @@ describe('KarpenterInstanceFilterModal', () => {
     const mockOnChange = jest.fn()
     const mockOnClose = jest.fn()
 
-    const { userEvent, debug, baseElement } = renderWithProviders(
+    const { userEvent } = renderWithProviders(
       <KarpenterInstanceFilterModal clusterRegion="us-east-1" onChange={mockOnChange} onClose={mockOnClose} />
     )
 

@@ -1,8 +1,28 @@
+import { type ReactNode } from 'react'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 import { useServiceInstances } from '../hooks/use-service-instances/use-service-instances'
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
 import { SearchServiceLogs } from './search-service-logs'
+
+jest.mock('@tanstack/react-router', () => {
+  const mockSearch = {}
+  return {
+    ...jest.requireActual('@tanstack/react-router'),
+    useSearch: () => mockSearch,
+    useNavigate: () => jest.fn(),
+    useParams: () => ({ organizationId: '1' }),
+    useLocation: () => ({ pathname: '/', search: '' }),
+    useRouter: () => ({
+      buildLocation: () => ({ href: '/' }),
+    }),
+    Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+      <a {...props} href={`${props.to}`}>
+        {children}
+      </a>
+    ),
+  }
+})
 
 jest.mock('../hooks/use-service-levels/use-service-levels')
 jest.mock('../hooks/use-service-instances/use-service-instances')

@@ -3,7 +3,7 @@ import { type IconProps } from '../icon'
 export function DatabaseIcon(props: IconProps) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 20 20">
-      <g opacity="0.7">
+      <g opacity="1">
         <path
           fill="#42E8E0"
           stroke="#42E8E0"

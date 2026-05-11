@@ -26,6 +26,7 @@ export function AutoDeploySetting({ source, className = '', titleSuffix }: AutoD
             className={className}
             value={field.value}
             onChange={field.onChange}
+            align="center"
             title={
               titleSuffix ? (
                 <span className="flex items-center gap-2">
@@ -36,7 +37,6 @@ export function AutoDeploySetting({ source, className = '', titleSuffix }: AutoD
                 title
               )
             }
-            forceAlignTop
             small
           />
         )

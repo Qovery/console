@@ -1,11 +1,39 @@
 import { addMinutes, subMinutes } from 'date-fns'
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { BooleanParam, type QueryParamConfig, StringParam, useQueryParam } from 'use-query-params'
 import { v4 as uuidv4 } from 'uuid'
 import { convertDatetoTimestamp } from '@qovery/shared/util-dates'
 import { type TimeRangeOption, createTimeRangeHandler } from './time-range'
 
+const TIME_RANGE_OPTIONS: TimeRangeOption[] = [
+  '5m',
+  '15m',
+  '30m',
+  '1h',
+  '3h',
+  '6h',
+  '12h',
+  '24h',
+  '2d',
+  '7d',
+  '30d',
+  'custom',
+]
+
+const isTimeRangeOption = (value: string | undefined): value is TimeRangeOption =>
+  !!value && TIME_RANGE_OPTIONS.includes(value as TimeRangeOption)
+
+export interface DashboardQueryParams {
+  useLocalTime?: boolean
+  timeRange?: TimeRangeOption
+  startDate?: string
+  endDate?: string
+  hideEvents?: boolean
+  expandCharts?: boolean
+  isLiveUpdateEnabled?: boolean
+}
+
 interface DashboardContextType {
+  organizationId: string
   // Time and timezone states
   useLocalTime: boolean
   setUseLocalTime: (value: boolean) => void
@@ -69,13 +97,44 @@ interface DashboardContextType {
 
 const DashboardContext = createContext<DashboardContextType | undefined>(undefined)
 
+type DashboardProviderProps = PropsWithChildren<{
+  organizationId?: string
+  queryParams?: DashboardQueryParams
+  setQueryParams?: (updates: Partial<DashboardQueryParams>) => void
+}>
+
 // TODO: Remove dupplicate timetamp and date values when migrating to new date-picker
 // TODO: Session storage navigation cross-service synchronization
-export function DashboardProvider({ children }: PropsWithChildren) {
-  const [useLocalTime = false, setUseLocalTime] = useQueryParam('useLocalTime', BooleanParam)
-  const [timeRange = '1h', setTimeRange] = useQueryParam<TimeRangeOption>(
-    'timeRange',
-    StringParam as QueryParamConfig<TimeRangeOption, TimeRangeOption>
+export function DashboardProvider({
+  children,
+  organizationId = '',
+  queryParams: externalQueryParams,
+  setQueryParams,
+}: DashboardProviderProps) {
+  const [localQueryParams, setLocalQueryParams] = useState<DashboardQueryParams>({})
+  const queryParams = externalQueryParams ?? localQueryParams
+
+  const updateQueryParams = useCallback(
+    (updates: Partial<DashboardQueryParams>) => {
+      if (setQueryParams) {
+        setQueryParams(updates)
+        return
+      }
+
+      setLocalQueryParams((prev) => ({ ...prev, ...updates }))
+    },
+    [setQueryParams]
+  )
+
+  const useLocalTime = queryParams.useLocalTime ?? false
+  const timeRange: TimeRangeOption = isTimeRangeOption(queryParams.timeRange) ? queryParams.timeRange : '1h'
+  const setUseLocalTime = useCallback(
+    (value: boolean) => updateQueryParams({ useLocalTime: value }),
+    [updateQueryParams]
+  )
+  const setTimeRange = useCallback(
+    (value: TimeRangeOption) => updateQueryParams({ timeRange: value }),
+    [updateQueryParams]
   )
   const [defaultDateRange] = useState(() => {
     const now = new Date()
@@ -85,18 +144,27 @@ export function DashboardProvider({ children }: PropsWithChildren) {
       endDate: now.toISOString(),
     }
   })
-  const [startDateParam, setStartDate] = useQueryParam('startDate', StringParam)
-  const [endDateParam, setEndDate] = useQueryParam('endDate', StringParam)
-  const startDate = startDateParam ?? defaultDateRange.startDate
-  const endDate = endDateParam ?? defaultDateRange.endDate
+  const startDate = queryParams.startDate ?? defaultDateRange.startDate
+  const endDate = queryParams.endDate ?? defaultDateRange.endDate
+  const setStartDate = useCallback((value: string) => updateQueryParams({ startDate: value }), [updateQueryParams])
+  const setEndDate = useCallback((value: string) => updateQueryParams({ endDate: value }), [updateQueryParams])
 
   // Trace ID for tracing requests (stable across re-renders)
   const [traceId] = useState(() => uuidv4())
 
   // Actions
-  const [hideEvents = false, setHideEvents] = useQueryParam('hideEvents', BooleanParam)
-  const [expandCharts = false, setExpandCharts] = useQueryParam('expandCharts', BooleanParam)
-  const [isLiveUpdateEnabled = false, setIsLiveUpdateEnabled] = useQueryParam('isLiveUpdateEnabled', BooleanParam)
+  const hideEvents = queryParams.hideEvents ?? false
+  const expandCharts = queryParams.expandCharts ?? false
+  const isLiveUpdateEnabled = queryParams.isLiveUpdateEnabled ?? false
+  const setHideEvents = useCallback((value: boolean) => updateQueryParams({ hideEvents: value }), [updateQueryParams])
+  const setExpandCharts = useCallback(
+    (value: boolean) => updateQueryParams({ expandCharts: value }),
+    [updateQueryParams]
+  )
+  const setIsLiveUpdateEnabled = useCallback(
+    (value: boolean) => updateQueryParams({ isLiveUpdateEnabled: value }),
+    [updateQueryParams]
+  )
 
   // Track the last time range selected from dropdown (not from zoom)
   const [lastDropdownTimeRange, setLastDropdownTimeRange] = useState<TimeRangeOption>('1h')
@@ -142,20 +210,23 @@ export function DashboardProvider({ children }: PropsWithChildren) {
       // Track this as the last dropdown selection
       setLastDropdownTimeRange(range)
       // Create a new time range handler that doesn't cause circular dependencies
-      createTimeRangeHandler(setTimeRange, setStartDate, setEndDate)(range)
+      createTimeRangeHandler((value) => setTimeRange(value), setStartDate, setEndDate)(range)
     },
-    [resetChartZoom]
+    [resetChartZoom, setTimeRange, setStartDate, setEndDate]
   )
 
-  const handleZoomTimeRangeChange = useCallback((startTimestamp: number, endTimestamp: number) => {
-    // Convert timestamps to ISO strings and update dates
-    const startDateISO = new Date(startTimestamp * 1000).toISOString()
-    const endDateISO = new Date(endTimestamp * 1000).toISOString()
+  const handleZoomTimeRangeChange = useCallback(
+    (startTimestamp: number, endTimestamp: number) => {
+      // Convert timestamps to ISO strings and update dates
+      const startDateISO = new Date(startTimestamp * 1000).toISOString()
+      const endDateISO = new Date(endTimestamp * 1000).toISOString()
 
-    setStartDate(startDateISO)
-    setEndDate(endDateISO)
-    setTimeRange('custom')
-  }, [])
+      setStartDate(startDateISO)
+      setEndDate(endDateISO)
+      setTimeRange('custom')
+    },
+    [setTimeRange, setStartDate, setEndDate]
+  )
 
   // Adjust dates when startDate and endDate are identical
   // This ensures a valid time range for queries by expanding to a 60-minute range
@@ -261,7 +332,7 @@ export function DashboardProvider({ children }: PropsWithChildren) {
       /* Event sidebar hover synchronization */
       /* When hovering over a sidebar event, highlight the corresponding reference line */
       [data-event-key]:hover {
-        background-color: var(--color-neutral-150);
+        background-color: var(--neutral-4);
       }
 
       .recharts-reference-line-line {
@@ -291,6 +362,7 @@ export function DashboardProvider({ children }: PropsWithChildren) {
 
   const value = useMemo<DashboardContextType>(
     () => ({
+      organizationId,
       useLocalTime: useLocalTime ?? false,
       hideEvents: hideEvents ?? false,
       expandCharts: expandCharts ?? false,
@@ -327,6 +399,7 @@ export function DashboardProvider({ children }: PropsWithChildren) {
       traceId,
     }),
     [
+      organizationId,
       useLocalTime,
       hideEvents,
       expandCharts,

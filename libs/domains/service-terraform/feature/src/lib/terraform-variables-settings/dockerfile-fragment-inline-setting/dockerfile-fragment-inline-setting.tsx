@@ -30,5 +30,3 @@ export function DockerfileFragmentInlineSetting({ onSubmit, content }: Dockerfil
     />
   )
 }
-
-export default DockerfileFragmentInlineSetting

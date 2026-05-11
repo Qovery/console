@@ -42,6 +42,14 @@ jest.mock('../hooks/use-outdated-services/use-outdated-services', () => ({
   }),
 }))
 
+jest.mock('../hooks/use-list-deployment-stages/use-list-deployment-stages', () => ({
+  useListDeploymentStages: () => ({
+    data: [],
+    isLoading: false,
+    error: {},
+  }),
+}))
+
 jest.mock('../hooks/use-deploy-all-services/use-deploy-all-services', () => {
   const mutate = jest.fn()
   return {
@@ -142,10 +150,10 @@ describe('UpdateAllModal', () => {
     const firstRow = rows[0]
     await userEvent.click(firstRow)
 
-    expect(firstRow).toHaveClass('bg-brand-50', 'border-brand-500')
+    expect(firstRow).toHaveClass('bg-surface-brand-subtle', 'border-brand-strong')
 
     const secondRow = rows[1]
-    expect(secondRow).toHaveClass('border-t-brand-500')
+    expect(secondRow).toHaveClass('border-t-brand-strong')
 
     const submitButton = screen.getByTestId('submit-button')
 

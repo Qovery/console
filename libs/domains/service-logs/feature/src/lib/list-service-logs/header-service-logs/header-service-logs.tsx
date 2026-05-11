@@ -1,17 +1,15 @@
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { subDays, subHours } from 'date-fns'
 import { useCallback, useMemo, useState } from 'react'
-import { match } from 'ts-pattern'
-import { useQueryParams } from 'use-query-params'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
-import { ServiceStateChip, useService } from '@qovery/domains/services/feature'
-import { DEPLOYMENT_LOGS_VERSION_URL, ENVIRONMENT_LOGS_URL } from '@qovery/shared/routes'
-import { Button, DatePicker, DropdownMenu, Icon, Link, Tooltip } from '@qovery/shared/ui'
+import { useService } from '@qovery/domains/services/feature'
+import { type ServiceLogsParams } from '@qovery/shared/router'
+import { Button, DatePicker, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { HeaderLogs } from '../../header-logs/header-logs'
 import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
-import { queryParamsServiceLogs } from '../service-logs-context/service-logs-context'
 
 export interface HeaderServiceLogsProps {
   logs: NormalizedServiceLog[]
@@ -31,9 +29,11 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
   } = useServiceLogsContext()
 
   const [isOpenDatePicker, setIsOpenDatePicker] = useState(false)
-  const [queryParams, setQueryParams] = useQueryParams(queryParamsServiceLogs)
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
+  const queryParams = useSearch({ strict: false })
 
-  const { data: service } = useService({ environmentId: environment.id, serviceId })
+  const { data: service } = useService({ environmentId: environment.id, serviceId, suspense: true })
 
   const startDate = useMemo(
     () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
@@ -44,6 +44,22 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
     [queryParams.endDate]
   )
   const hasDeploymentId = Boolean(queryParams.deploymentId)
+
+  const setQueryParams = useCallback(
+    (searchParams: ServiceLogsParams) => {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        params: {
+          organizationId,
+          projectId,
+          environmentId,
+          serviceId,
+        },
+        search: searchParams,
+      })
+    },
+    [navigate, organizationId, projectId, environmentId, serviceId]
+  )
 
   const clearDate = useCallback(() => {
     setQueryParams({
@@ -66,33 +82,15 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
         serviceId={serviceId}
         serviceStatus={serviceStatus}
         environmentStatus={environmentStatus}
-      >
-        <Link
-          as="button"
-          className="gap-1.5"
-          variant="surface"
-          to={
-            ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) +
-            DEPLOYMENT_LOGS_VERSION_URL(serviceId, serviceStatus.execution_id)
-          }
-        >
-          {match(service)
-            .with({ serviceType: 'DATABASE' }, (db) => db.mode === 'CONTAINER')
-            .otherwise(() => true) ? (
-            <ServiceStateChip mode="deployment" environmentId={environment.id} serviceId={serviceId} />
-          ) : null}
-          Go to latest deployment
-          <Icon iconName="arrow-right" />
-        </Link>
-      </HeaderLogs>
-      <div className="flex h-[60px] w-full items-center justify-between gap-2 border-b border-neutral-500 px-4 py-2.5">
+      />
+      <div className="flex w-full items-center justify-between gap-2 border-b border-neutral bg-background px-4 py-2.5">
         <div className="flex w-full items-center gap-2">
           <Button
             variant="surface"
             color={isLiveMode ? 'brand' : 'neutral'}
             size="md"
             className={clsx('gap-1.5 pl-2.5', {
-              'bg-brand-500/10 hover:!bg-brand-500/20 focus:!bg-brand-500/20': isLiveMode,
+              'bg-surface-brand-subtle hover:!bg-surface-brand-component focus:!bg-surface-brand-component': isLiveMode,
             })}
             onClick={() => {
               if (!isLiveMode) {
@@ -100,8 +98,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
               } else {
                 const now = new Date()
                 setQueryParams({
-                  startDate: subHours(now, 1),
-                  endDate: now,
+                  startDate: subHours(now, 1).toISOString(),
+                  endDate: now.toISOString(),
                   mode: 'history',
                 })
               }
@@ -119,8 +117,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           <DatePicker
             onChange={(startDate, endDate) => {
               setQueryParams({
-                startDate,
-                endDate,
+                startDate: startDate.toISOString(),
+                endDate: endDate.toISOString(),
                 mode: 'history',
               })
               setIsOpenDatePicker(false)
@@ -129,14 +127,14 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             maxDate={new Date()}
             minDate={subDays(new Date(), 84)}
             defaultDates={defaultDates}
-            showTimeInput
+            showDateTimeInputs
             useLocalTime
             onClickOutside={() => setIsOpenDatePicker(false)}
           >
             {!startDate && !endDate ? (
               <Button
                 type="button"
-                variant="surface"
+                variant="outline"
                 color="neutral"
                 className="gap-2"
                 size="md"
@@ -146,22 +144,17 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                 <Icon iconName="clock" iconStyle="regular" className="relative top-[1px]" />
               </Button>
             ) : (
-              <Button
-                type="button"
-                size="md"
-                onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
-                className={clsx('min-w-[337px]', {
-                  'min-w-max': hasDeploymentId,
-                })}
-              >
-                {hasDeploymentId && startDate && !endDate ? (
-                  <>from: {dateYearMonthDayHourMinuteSecond(startDate, true, false)}</>
-                ) : (
-                  <>
-                    from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
-                    {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
-                  </>
-                )}
+              <Button type="button" size="md" onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}>
+                <span className="inline-flex text-nowrap">
+                  {hasDeploymentId && startDate && !endDate ? (
+                    <>from: {dateYearMonthDayHourMinuteSecond(startDate, true, false)}</>
+                  ) : (
+                    <>
+                      from: {dateYearMonthDayHourMinuteSecond(startDate ?? new Date(), true, false)} - to:{' '}
+                      {dateYearMonthDayHourMinuteSecond(endDate ?? new Date(), true, false)}
+                    </>
+                  )}
+                </span>
                 <span
                   data-testid="clear-timestamp"
                   className="relative left-1 px-1 py-1"
@@ -178,12 +171,12 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           </DatePicker>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" variant="surface" color="neutral" className="gap-1.5">
+              <Button size="md" variant="outline" color="neutral" className="gap-1.5">
                 {updateTimeContextValue.utc ? 'UTC' : 'Browser time'}
                 <Icon iconName="chevron-down" iconStyle="regular" />
               </Button>
             </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
+            <DropdownMenu.Content className="z-header">
               <DropdownMenu.Item
                 className="gap-2"
                 onSelect={() =>
@@ -195,7 +188,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                 <Icon
                   iconName="check"
                   iconStyle="regular"
-                  className={`text-green-500 ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+                  className={`text-positive ${!updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
                 />
                 Browser time
               </DropdownMenu.Item>
@@ -210,7 +203,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                 <Icon
                   iconName="check"
                   iconStyle="regular"
-                  className={`text-green-500 ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
+                  className={`text-positive ${updateTimeContextValue.utc ? 'opacity-100' : 'opacity-0'}`}
                 />
                 UTC
               </DropdownMenu.Item>
@@ -226,13 +219,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
         <Tooltip
           content={Object.values(queryParams).some((value) => value) ? 'Download filtered logs' : 'Download logs'}
         >
-          <Button
-            onClick={() => downloadLogs(logs)}
-            size="md"
-            variant="surface"
-            color="neutral"
-            className="w-9 justify-center"
-          >
+          <Button onClick={() => downloadLogs(logs)} size="md" variant="outline" iconOnly>
             <Icon iconName="file-arrow-down" iconStyle="regular" />
           </Button>
         </Tooltip>

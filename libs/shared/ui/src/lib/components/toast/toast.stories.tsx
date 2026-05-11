@@ -1,17 +1,11 @@
 import type { Meta, StoryFn } from '@storybook/react-webpack5'
-import { ToastEnum, toast } from '../../utils/toast'
+import { toast } from '../../utils/toast'
 import Button from '../button/button'
 import { ToastBehavior, type ToastProps } from './toast'
 
 export default {
   component: ToastBehavior,
   title: 'Toaster',
-  argTypes: {
-    actionIcon: {
-      options: ['gear', 'plus', 'book', 'key'],
-      control: { type: 'select' },
-    },
-  },
 } as Meta
 
 const Template: StoryFn<ToastProps> = (args) => {
@@ -20,17 +14,7 @@ const Template: StoryFn<ToastProps> = (args) => {
       <Button
         type="button"
         size="lg"
-        onClick={() =>
-          toast(
-            args.status,
-            args.title || '',
-            args.description,
-            args.callback,
-            args.actionIcon,
-            args.actionLabel,
-            args.externalLink
-          )
-        }
+        onClick={() => toast(args.status, args.title || '', args.description, args.callback, args.actionLabel)}
       >
         Trigger toast
       </Button>
@@ -42,28 +26,26 @@ const Template: StoryFn<ToastProps> = (args) => {
 export const Primary = Template.bind({})
 
 Primary.args = {
-  status: ToastEnum.SUCCESS,
+  status: 'success',
   title: 'Cluster installed',
   description: '3 applications has been deployed',
   callback: () => console.log('my-callback'),
 }
 
-export const WithActionIcon = Template.bind({})
+export const Secondary = Template.bind({})
 
-WithActionIcon.args = {
-  status: ToastEnum.SUCCESS,
+Secondary.args = {
+  status: 'success',
   title: 'Cluster installed',
   description: '3 applications has been deployed',
   callback: () => console.log('my-callback'),
-  actionIcon: 'pen',
 }
 export const WithActionLabel = Template.bind({})
 
 WithActionLabel.args = {
-  status: ToastEnum.SUCCESS,
+  status: 'success',
   title: 'Cluster installed',
   description: '3 applications has been deployed',
   callback: () => console.log('my-callback'),
   actionLabel: 'Redeploy',
-  externalLink: 'https://www.google.com',
 }

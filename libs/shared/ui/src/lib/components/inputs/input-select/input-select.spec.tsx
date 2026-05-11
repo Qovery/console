@@ -75,7 +75,23 @@ describe('InputSelect', () => {
     props.disabled = true
     renderWithProviders(<InputSelect {...props} />)
     const select = screen.getByTestId('select')
-    expect(select).toHaveClass('!bg-neutral-100')
+    expect(select).toHaveClass('!bg-surface-neutral-subtle')
+  })
+
+  it('should apply disabled classes to selected value, label and arrow icon', () => {
+    props.disabled = true
+    props.value = 'test1'
+    const { baseElement } = renderWithProviders(<InputSelect {...props} />)
+
+    const select = screen.getByTestId('select')
+    const label = select.querySelector('label')
+    const selectedValue = screen.getByText('Test 1')
+    const arrowIcon = select.querySelector('.fa-angle-down')
+
+    expect(label).toHaveClass('!text-neutral-subtle')
+    expect(selectedValue).toHaveClass('text-neutral-subtle')
+    expect(arrowIcon).toHaveClass('text-neutral-disabled')
+    expect(baseElement).toMatchSnapshot()
   })
 
   it('should have a edit button when option is selected', async () => {

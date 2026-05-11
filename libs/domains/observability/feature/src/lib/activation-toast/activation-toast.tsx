@@ -29,14 +29,14 @@ export function ActivationToast() {
             e.stopPropagation()
             setIsOpen(false)
           }}
-          className="absolute right-3 top-3 z-[1] flex h-4 w-4 items-center justify-center text-neutral-400 transition-colors hover:text-neutral-350"
+          className="absolute right-3 top-3 z-[1] flex h-4 w-4 items-center justify-center text-neutral transition-colors hover:text-neutral-subtle"
         >
           <Icon iconName="xmark" iconStyle="regular" />
         </button>
         <div className="relative flex flex-col gap-2 text-sm">
           <div>
             <p className="font-medium">Observability is here!</p>
-            <span className="text-neutral-350">Easier troubleshooting for your team.</span>
+            <span className="text-neutral-subtle">Easier troubleshooting for your team.</span>
           </div>
           <button className="max-w-max font-medium text-sky-500 transition-colors hover:text-sky-600 group-hover:text-sky-400">
             More info <Icon iconName="angle-right" iconStyle="regular" />

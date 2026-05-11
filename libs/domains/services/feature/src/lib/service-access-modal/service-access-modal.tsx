@@ -2,7 +2,6 @@ import type { Credentials, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typ
 import { match } from 'ts-pattern'
 import { type Application, type Container, type Database } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
-import { APPLICATION_SETTINGS_PORT_URL, APPLICATION_SETTINGS_URL, APPLICATION_URL } from '@qovery/shared/routes'
 import {
   Accordion,
   Button,
@@ -14,7 +13,6 @@ import {
   LoaderSpinner,
   Section,
   TabsPrimitives,
-  ToastEnum,
   Tooltip,
   toast,
 } from '@qovery/shared/ui'
@@ -22,7 +20,7 @@ import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import useMasterCredentials from '../hooks/use-master-credentials/use-master-credentials'
 import SectionExpand from './section-expand/section-expand'
 
-const { Tabs } = TabsPrimitives
+const { TabsRoot, TabsList, TabsTrigger, TabsContent } = TabsPrimitives
 
 export interface ServiceAccessModalProps {
   organizationId: string
@@ -69,7 +67,7 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
   const handleCopyCredentials = (credentials: Credentials) => {
     const connectionURI = getDatabaseConnectionUri(service, credentials)
     copyToClipboard(connectionURI)
-    toast(ToastEnum.SUCCESS, 'Credentials copied to clipboard')
+    toast('success', 'Credentials copied to clipboard')
   }
 
   const title = match(service)
@@ -77,15 +75,15 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
     .otherwise(() => '3. Access')
 
   return (
-    <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
+    <div className="flex flex-col gap-1.5 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
       <span className="font-medium">{title}</span>
-      <p className="mb-1.5 text-neutral-350">
+      <p className="mb-1.5 text-neutral-subtle">
         Get the connection URI and connect to the database with your favourite client.
       </p>
       <Button
         className="max-w-max gap-2"
         color="neutral"
-        variant="surface"
+        variant="outline"
         size="md"
         onClick={() => handleCopyCredentials(masterCredentials!)}
       >
@@ -123,34 +121,34 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
 
   return (
     <Section className="p-5">
-      <Heading className="h4 max-w-sm truncate text-neutral-400">Access from</Heading>
-      <p className="mb-4 mt-2 text-sm text-neutral-350">
+      <Heading className="h4 max-w-sm truncate text-neutral">Access from</Heading>
+      <p className="mb-4 mt-2 text-sm text-neutral-subtle">
         This section explains how to connect to this service from another service or from your local machine.
       </p>
-      <Tabs.Root defaultValue="another-service">
-        <Tabs.List className="w-full">
-          <Tabs.Trigger size="md" value="another-service" className="flex-auto justify-start pl-0">
+      <TabsRoot defaultValue="another-service">
+        <TabsList className="w-full">
+          <TabsTrigger value="another-service" className="flex-1">
             Another service
-          </Tabs.Trigger>
+          </TabsTrigger>
           {match(service)
             .with({ serviceType: 'DATABASE', accessibility: 'PUBLIC' }, () => (
-              <Tabs.Trigger size="md" value="public-access" className="flex-auto justify-start pl-0">
+              <TabsTrigger value="public-access" className="flex-1">
                 Public access
-              </Tabs.Trigger>
+              </TabsTrigger>
             ))
             .otherwise(() => (
-              <Tabs.Trigger size="md" value="local-machine" className="flex-auto justify-start pl-0">
+              <TabsTrigger value="local-machine" className="flex-1">
                 Local machine
-              </Tabs.Trigger>
+              </TabsTrigger>
             ))}
-        </Tabs.List>
+        </TabsList>
         <div className="mt-6">
-          <Tabs.Content className="flex flex-col gap-4" value="another-service">
+          <TabsContent className="flex flex-col gap-4" value="another-service">
             <Accordion.Root type="multiple" className="flex flex-col gap-4">
               {serviceType !== 'DATABASE' && (
-                <div className="flex flex-col gap-1.5 rounded border border-neutral-250 px-4 py-3 text-sm">
+                <div className="flex flex-col gap-1.5 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
                   <span className="font-medium">How to connect</span>
-                  <p className="text-neutral-350">
+                  <p className="text-neutral-subtle">
                     You can interconnect services via the declared ports and the Qovery BUILT_IN environment variables.
                     These variables contains the connection parameter of the service and they are automatically injected
                     on every service of the environment. To match the variables naming convention within your code,
@@ -165,14 +163,16 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 >
                   {!ports || ports.length === 0 ? (
                     <div className="flex w-full flex-col gap-2 py-4 text-center text-sm">
-                      <span className="font-medium text-neutral-350">No ports declared yet.</span>
+                      <span className="font-medium text-neutral-subtle">No ports declared yet.</span>
                       <Link
                         className="justify-center"
-                        to={
-                          APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
-                          APPLICATION_SETTINGS_URL +
-                          APPLICATION_SETTINGS_PORT_URL
-                        }
+                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/port"
+                        params={{
+                          organizationId,
+                          projectId,
+                          environmentId: service.environment.id,
+                          serviceId: service.id,
+                        }}
                         onClick={() => onClose()}
                       >
                         Declare a port in application settings
@@ -183,30 +183,28 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                       {ports.map((port) => (
                         <div
                           key={port.id}
-                          className="flex h-14 items-center justify-between border-b border-neutral-250 px-4 last:border-0"
+                          className="flex h-14 items-center justify-between border-b border-neutral px-4 last:border-0"
                         >
-                          <div className="flex gap-6 text-neutral-350">
-                            <p className="text-neutral-350">
-                              Application port:{' '}
-                              <span className="font-medium text-neutral-400">{port.internal_port}</span>
+                          <div className="flex gap-6 text-neutral-subtle">
+                            <p className="text-neutral-subtle">
+                              Application port: <span className="font-medium text-neutral">{port.internal_port}</span>
                             </p>
                             {port.external_port && (
-                              <p className="text-neutral-350">
-                                External port:{' '}
-                                <span className="font-medium text-neutral-400">{port.external_port}</span>
+                              <p className="text-neutral-subtle">
+                                External port: <span className="font-medium text-neutral">{port.external_port}</span>
                               </p>
                             )}
-                            <p className="text-neutral-350">
+                            <p className="text-neutral-subtle">
                               Public:{' '}
-                              <span className="font-medium text-neutral-400">
+                              <span className="font-medium text-neutral">
                                 {port.publicly_accessible ? 'Yes' : 'No'}
                               </span>
                             </p>
-                            <p className="text-neutral-350">
-                              Protocol: <span className="font-medium text-neutral-400">{port.protocol}</span>
+                            <p className="text-neutral-subtle">
+                              Protocol: <span className="font-medium text-neutral">{port.protocol}</span>
                             </p>
-                            <p className="text-neutral-350">
-                              Port name: <span className="font-medium text-neutral-400">{port.name}</span>
+                            <p className="text-neutral-subtle">
+                              Port name: <span className="font-medium text-neutral">{port.name}</span>
                             </p>
                           </div>
                         </div>
@@ -214,11 +212,13 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                       <div className="flex h-14 items-center justify-center">
                         <Link
                           onClick={() => onClose()}
-                          to={
-                            APPLICATION_URL(organizationId, projectId, service.environment.id, service.id) +
-                            APPLICATION_SETTINGS_URL +
-                            APPLICATION_SETTINGS_PORT_URL
-                          }
+                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/port"
+                          params={{
+                            organizationId,
+                            projectId,
+                            environmentId: service.environment.id,
+                            serviceId: service.id,
+                          }}
                         >
                           Declare a port in application settings
                         </Link>
@@ -251,28 +251,32 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                     ?.map((variable) => (
                       <div
                         key={variable.id}
-                        className="flex flex-col justify-center gap-1 border-b border-neutral-250 px-4 py-3 last:border-0"
+                        className="flex flex-col justify-center gap-1 border-b border-neutral px-4 py-3 last:border-0"
                       >
                         <div className="flex items-center gap-2">
                           <div className="flex items-center truncate">
                             {variable.aliased_variable && (
-                              <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-teal-500 px-1 text-2xs font-bold text-neutral-50">
+                              <span className="mr-2 inline-flex h-5 items-center rounded-sm bg-surface-info-component px-1 text-2xs font-bold text-info">
                                 ALIAS
                               </span>
                             )}
-                            <span className="truncate text-sm font-medium text-neutral-400">{variable.key}</span>
+                            <span className="truncate text-sm font-medium text-neutral">{variable.key}</span>
                             {variable.description && (
                               <Tooltip content={variable.description}>
                                 <span>
-                                  <Icon iconName="circle-info" iconStyle="regular" className="ml-2 text-neutral-350" />
+                                  <Icon
+                                    iconName="circle-info"
+                                    iconStyle="regular"
+                                    className="ml-2 text-neutral-subtle"
+                                  />
                                 </span>
                               </Tooltip>
                             )}
                           </div>
                         </div>
                         {variable.aliased_variable && (
-                          <div className="flex flex-row gap-1 text-xs text-neutral-350">
-                            <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-300" />
+                          <div className="flex flex-row gap-1 text-xs text-neutral-subtle">
+                            <Icon iconName="arrow-turn-down-right" className="text-2xs text-neutral-subtle" />
                             <span>{variable.aliased_variable.key}</span>
                           </div>
                         )}
@@ -281,20 +285,20 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 )}
               </SectionExpand>
             </Accordion.Root>
-          </Tabs.Content>
-          <Tabs.Content className="flex flex-col gap-4" value="local-machine">
-            <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
+          </TabsContent>
+          <TabsContent className="flex flex-col gap-4" value="local-machine">
+            <div className="flex flex-col gap-2 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
               <span className="font-medium">1. Download/Update Qovery CLI</span>
-              <p className="text-neutral-350">
+              <p className="text-neutral-subtle">
                 Download and install the Qovery CLI (or update its version to the latest version)
               </p>
               <ExternalLink href="https://www.qovery.com/docs/cli/overview#installation">
                 https://www.qovery.com/docs/cli/overview#installation
               </ExternalLink>
             </div>
-            <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
+            <div className="flex flex-col gap-2 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
               <span className="font-medium">2. Connect via port-forward</span>
-              <p className="text-neutral-350">
+              <p className="text-neutral-subtle">
                 {serviceType === 'DATABASE' ? (
                   <>
                     Run the following command from your terminal. <br />
@@ -306,7 +310,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                   'Replace the local-port/target-port and run the following command from your terminal.'
                 )}
               </p>
-              <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+              <div className="flex gap-6 rounded-sm border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
                 <div>
                   <span className="select-none">$ </span>
                   {connectPortForward}
@@ -317,10 +321,10 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
             {serviceType === 'DATABASE' ? (
               <SectionDatabaseConnectionUri service={service} />
             ) : (
-              <div className="flex flex-col gap-2 rounded border border-neutral-250 px-4 py-3 text-sm">
+              <div className="flex flex-col gap-2 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
                 <span className="font-medium">3. Connect via shell</span>
-                <p className="text-neutral-350">Run the following command from your terminal.</p>
-                <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                <p className="text-neutral-subtle">Run the following command from your terminal.</p>
+                <div className="flex gap-6 rounded-sm border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
                   <div>
                     <span className="select-none">$ </span>
                     {connectShell}
@@ -329,14 +333,14 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 </div>
               </div>
             )}
-          </Tabs.Content>
+          </TabsContent>
           {serviceType === 'DATABASE' && (
-            <Tabs.Content className="flex flex-col gap-4" value="public-access">
+            <TabsContent className="flex flex-col gap-4" value="public-access">
               <SectionDatabaseConnectionUri service={service} />
-            </Tabs.Content>
+            </TabsContent>
           )}
         </div>
-      </Tabs.Root>
+      </TabsRoot>
     </Section>
   )
 }

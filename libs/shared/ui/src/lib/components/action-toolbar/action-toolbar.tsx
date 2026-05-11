@@ -18,6 +18,7 @@ const toolbarButtonVariants = cva(['active:scale-100'], {
       green: [],
       red: [],
       yellow: [],
+      current: [],
     },
   },
   compoundVariants: [
@@ -30,10 +31,11 @@ const toolbarButtonVariants = cva(['active:scale-100'], {
         'first:border-r-0',
         'first:border-x',
         'border-l-0',
-        'hover:[&:not(:active)]:border-neutral-250',
-        'text-neutral-350',
-        'hover:text-neutral-400',
-        'data-[state=open]:text-neutral-400',
+        'hover:border-neutral-strong',
+        'active:bg-surface-neutral-subtle',
+        'data-[state=open]:bg-surface-neutral-subtle',
+        'data-[state=open]:border-neutral-strong',
+        'text-neutral-subtle',
         'text-sm',
         'outline-0',
         'min-w-[36px]',
@@ -45,8 +47,12 @@ const toolbarButtonVariants = cva(['active:scale-100'], {
       className: [
         'first:rounded-l',
         'last:rounded-r',
-        'hover:bg-brand-600',
-        'data-[state=open]:bg-brand-600',
+        'first:border-r-0',
+        'first:border-x',
+        'border-l-0',
+        'hover:border-brand-strong',
+        'data-[state=open]:bg-surface-brand-solidHover',
+        'data-[state=open]:border-brand-strong',
         'text-sm',
         'outline-0',
         'min-w-[36px]',
@@ -62,9 +68,11 @@ const toolbarButtonVariants = cva(['active:scale-100'], {
         'first:border-x',
         'border-l-0',
         'border',
-        'border-yellow-600',
-        'text-yellow-600',
-        'data-[state=open]:text-yellow-600',
+        'border-warning-component',
+        'hover:border-warning-strong',
+        'data-[state=open]:bg-surface-warning-subtle',
+        'data-[state=open]:border-warning-strong',
+        'text-warning',
         'text-sm',
         'outline-0',
         'min-w-[36px]',
@@ -79,14 +87,24 @@ interface ToolbarButtonProps
     VariantProps<typeof buttonVariants> {}
 
 const ToolbarButton = forwardRef<ElementRef<typeof Toolbar.Button>, ToolbarButtonProps>(function Item(
-  { children, className, color = 'neutral', radius = 'none', size = 'md', variant = 'outline', ...props },
+  {
+    children,
+    className,
+    color = 'neutral',
+    radius = 'none',
+    size = 'md',
+    variant = 'outline',
+    iconOnly = false,
+    ...props
+  },
   forwardedRef
 ) {
   return (
     <Toolbar.Button
       className={twMerge(
-        buttonVariants({ color, radius, size, variant }),
+        buttonVariants({ color, radius, size, variant, iconOnly }),
         toolbarButtonVariants({ color, variant }),
+        iconOnly && 'min-w-0',
         className
       )}
       {...props}

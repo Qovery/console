@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '__tests__/utils/setup-jest'
+import { fireEvent, render, screen, waitFor } from '__tests__/utils/setup-jest'
 import InputText, { type InputTextProps } from './input-text'
 
 describe('InputText', () => {
@@ -58,5 +58,39 @@ describe('InputText', () => {
 
     const input = screen.getByRole('textbox')
     expect(input).toHaveClass('!pr-9')
+  })
+
+  it('should keep the label up when the field is prefilled', () => {
+    props.value = 'prefilled value'
+
+    render(<InputText {...props} />)
+
+    expect(screen.getByLabelText('input-container')).toHaveClass('input--label-up')
+    expect(screen.getByRole('textbox')).toHaveValue('prefilled value')
+  })
+
+  it('should disable the label transition while syncing a prefilled value', async () => {
+    props.value = 'prefilled value'
+
+    render(<InputText {...props} />)
+
+    const label = screen.getByText(props.label)
+
+    expect(label).toHaveClass('!transition-none')
+
+    await waitFor(() => expect(screen.getByText(props.label)).not.toHaveClass('!transition-none'))
+  })
+
+  it('should disable the label transition when a value is injected after focus', async () => {
+    const { rerender } = render(<InputText {...props} value="" />)
+
+    fireEvent.focus(screen.getByRole('textbox'))
+
+    rerender(<InputText {...props} value="prefilled value" />)
+
+    expect(screen.getByLabelText('input-container')).toHaveClass('input--label-up')
+    expect(screen.getByText(props.label)).toHaveClass('!transition-none')
+
+    await waitFor(() => expect(screen.getByText(props.label)).not.toHaveClass('!transition-none'))
   })
 })

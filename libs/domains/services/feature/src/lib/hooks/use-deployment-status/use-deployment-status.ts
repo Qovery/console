@@ -5,9 +5,10 @@ import useListStatuses from '../use-list-statuses/use-list-statuses'
 export interface UseDeploymentStatusProps {
   environmentId?: string
   serviceId?: string
+  suspense?: boolean
 }
 
-export function useDeploymentStatus({ environmentId, serviceId }: UseDeploymentStatusProps) {
+export function useDeploymentStatus({ environmentId, serviceId, suspense = false }: UseDeploymentStatusProps) {
   const webSocketResult = useQuery({
     // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
     ...queries.services.deploymentStatus(environmentId!!, serviceId!!),
@@ -16,12 +17,13 @@ export function useDeploymentStatus({ environmentId, serviceId }: UseDeploymentS
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
     staleTime: Infinity,
+    suspense,
   })
 
   // NOTE: Deployment status by WS isn't enough because WS can something return no message.
   // We need to fallback on service status, unfortunately we have to play with endpoints to get
   // a service status without knowing its type (eg. application, container ...)
-  const { data: environmentStatus, ...rest } = useListStatuses({ environmentId })
+  const { data: environmentStatus, ...rest } = useListStatuses({ environmentId, suspense })
   const serviceStatuses = [
     ...(environmentStatus?.applications ?? []),
     ...(environmentStatus?.containers ?? []),

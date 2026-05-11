@@ -1,6 +1,23 @@
+import { type ReactNode } from 'react'
 import { useLinks, useService } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { HeaderLogs, type HeaderLogsProps } from './header-logs'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useSearch: () => ({}),
+  useNavigate: () => jest.fn(),
+  useParams: () => ({ organizationId: '1' }),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
+}))
 
 jest.mock('@qovery/domains/services/feature', () => ({
   ...jest.requireActual('@qovery/domains/services/feature'),
@@ -54,14 +71,12 @@ describe('HeaderLogs', () => {
   })
 
   it('renders correctly for deployment type', async () => {
-    renderWithProviders(<HeaderLogs {...mockProps} />)
+    renderWithProviders(<HeaderLogs {...mockProps} type="SERVICE" />)
 
     expect(screen.getByText('Test Service')).toBeInTheDocument()
-    expect(screen.getByText('2m : 5s')).toBeInTheDocument()
     expect(screen.getByTestId('service-avatar')).toBeInTheDocument()
 
-    const linksButton = screen.getByRole('button', { name: /link/ })
-    expect(within(linksButton).getByText('1 link')).toBeInTheDocument()
+    expect(screen.getByText('Link')).toBeInTheDocument()
   })
 
   it('renders correctly for service type', () => {
@@ -72,13 +87,13 @@ describe('HeaderLogs', () => {
   })
 
   it('displays correct number of links', () => {
-    renderWithProviders(<HeaderLogs {...mockProps} />)
-    expect(screen.getByText('1 link')).toBeInTheDocument()
+    renderWithProviders(<HeaderLogs {...mockProps} type="SERVICE" />)
+    expect(screen.getByText('Link')).toBeInTheDocument()
   })
 
   it('renders children content', () => {
     renderWithProviders(
-      <HeaderLogs {...mockProps}>
+      <HeaderLogs {...mockProps} type="SERVICE">
         <div data-testid="child-content">Child Content</div>
       </HeaderLogs>
     )

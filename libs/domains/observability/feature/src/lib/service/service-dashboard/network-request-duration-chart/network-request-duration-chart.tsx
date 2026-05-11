@@ -254,7 +254,7 @@ export function NetworkRequestDurationChart({
         dataKey="p50 (nginx)"
         name="p50 (nginx)"
         type="linear"
-        stroke="var(--color-purple-400)"
+        stroke="#CB87F6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -266,7 +266,7 @@ export function NetworkRequestDurationChart({
         dataKey="p95 (nginx)"
         name="p95 (nginx)"
         type="linear"
-        stroke="var(--color-brand-400)"
+        stroke="#847AE6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -278,7 +278,7 @@ export function NetworkRequestDurationChart({
         dataKey="p99 (nginx)"
         name="p99 (nginx)"
         type="linear"
-        stroke="var(--color-purple-600)"
+        stroke="#8B46CE"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -293,7 +293,7 @@ export function NetworkRequestDurationChart({
             dataKey="p50 (envoy)"
             name="p50 (envoy)"
             type="linear"
-            stroke="var(--color-green-400)"
+            stroke="#70DE91"
             strokeWidth={2}
             dot={false}
             connectNulls={false}
@@ -305,7 +305,7 @@ export function NetworkRequestDurationChart({
             dataKey="p95 (envoy)"
             name="p95 (envoy)"
             type="linear"
-            stroke="var(--color-sky-400)"
+            stroke="#3AB0E9"
             strokeWidth={2}
             dot={false}
             connectNulls={false}
@@ -317,7 +317,7 @@ export function NetworkRequestDurationChart({
             dataKey="p99 (envoy)"
             name="p99 (envoy)"
             type="linear"
-            stroke="var(--color-green-600)"
+            stroke="#31AC6F"
             strokeWidth={2}
             dot={false}
             connectNulls={false}

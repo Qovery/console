@@ -27,6 +27,11 @@ jest.mock('../hooks/use-labels-groups/use-labels-groups', () => {
   }
 })
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: '1' }),
+}))
+
 describe('LabelSetting', () => {
   it('should match snapshot', () => {
     const { baseElement } = renderWithProviders(wrapWithReactHookForm(<LabelSetting />))

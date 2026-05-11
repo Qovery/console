@@ -1,7 +1,24 @@
+import { type ReactNode } from 'react'
 import { TablePrimitives } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ServiceLogsProvider } from '../service-logs-context/service-logs-context'
 import RowServiceLogs from './row-service-logs'
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useSearch: () => ({}),
+  useNavigate: () => jest.fn(),
+  useParams: () => ({ organizationId: '1' }),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
+}))
 
 const { Table } = TablePrimitives
 

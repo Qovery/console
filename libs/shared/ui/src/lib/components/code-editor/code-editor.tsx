@@ -1,9 +1,4 @@
-import {
-  Editor as CodeEditorMonaco,
-  type EditorProps as CodeEditorMonacoProps,
-  type Monaco,
-} from '@monaco-editor/react'
-import type { editor } from 'monaco-editor'
+import { Editor as CodeEditorMonaco, type EditorProps as CodeEditorMonacoProps } from '@monaco-editor/react'
 import LoaderSpinner from '../loader-spinner/loader-spinner'
 import './code-editor.scss'
 

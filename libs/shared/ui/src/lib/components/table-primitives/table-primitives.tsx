@@ -3,28 +3,40 @@ import { twMerge } from '@qovery/shared/util-js'
 
 // Inspired by https://github.com/radix-ui/themes/blob/a63bd6920370d824be1db26f717147dc4a2501f1/packages/radix-ui-themes/src/components/table.tsx
 
-interface TableRootProps extends ComponentPropsWithoutRef<'table'> {}
+interface TableRootProps extends ComponentPropsWithoutRef<'table'> {
+  containerClassName?: string
+}
 
 const TableRoot = forwardRef<ElementRef<'table'>, TableRootProps>(function TableRoot(
-  { children, className, ...rest },
+  { children, className, containerClassName, ...rest },
   ref
 ) {
   return (
-    <table
-      ref={ref}
-      className={twMerge('min-w-full divide-y divide-neutral-200 text-sm text-neutral-400', className)}
-      {...rest}
+    <div
+      className={twMerge(
+        'no-scrollbar overflow-y-hidden overflow-x-scroll rounded-md border border-neutral bg-surface-neutral',
+        containerClassName
+      )}
     >
-      {children}
-    </table>
+      <table
+        ref={ref}
+        className={twMerge('min-w-full divide-y divide-neutral text-sm text-neutral', className)}
+        {...rest}
+      >
+        {children}
+      </table>
+    </div>
   )
 })
 
 interface TableHeaderProps extends ComponentPropsWithoutRef<'thead'> {}
 
-const TableHeader = forwardRef<ElementRef<'thead'>, TableHeaderProps>(function TableHeader({ children, ...rest }, ref) {
+const TableHeader = forwardRef<ElementRef<'thead'>, TableHeaderProps>(function TableHeader(
+  { children, className, ...rest },
+  ref
+) {
   return (
-    <thead ref={ref} {...rest}>
+    <thead className={className} ref={ref} {...rest}>
       {children}
     </thead>
   )
@@ -37,7 +49,7 @@ const TableBody = forwardRef<ElementRef<'tbody'>, TableBodyProps>(function Table
   ref
 ) {
   return (
-    <tbody className={twMerge('divide-y divide-neutral-200', className)} ref={ref} {...rest}>
+    <tbody className={twMerge('divide-y divide-neutral', className)} ref={ref} {...rest}>
       {children}
     </tbody>
   )
@@ -60,7 +72,7 @@ const TableCell = forwardRef<ElementRef<'td'>, TableCellProps>(function TableCel
   ref
 ) {
   return (
-    <td ref={ref} className={twMerge('h-14 px-4 py-0', className)} {...rest}>
+    <td ref={ref} className={twMerge('h-14 border-neutral px-4 py-0', className)} {...rest}>
       {children}
     </td>
   )
@@ -86,7 +98,7 @@ const TableColumnHeaderCell = forwardRef<ElementRef<'th'>, TableColumnHeaderCell
   ref
 ) {
   return (
-    <th ref={ref} className={twMerge('h-11 px-4 text-left', className)} {...rest}>
+    <th ref={ref} className={twMerge('h-11 border-neutral px-4 text-left font-code font-normal', className)} {...rest}>
       {children}
     </th>
   )

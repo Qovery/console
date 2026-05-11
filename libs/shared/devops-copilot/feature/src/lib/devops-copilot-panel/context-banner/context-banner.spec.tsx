@@ -126,7 +126,7 @@ describe('ContextBanner', () => {
       expect(banner).toBeInTheDocument()
       expect(banner).toHaveClass('rounded-t-xl')
       expect(banner).toHaveClass('border')
-      expect(banner).toHaveClass('bg-neutral-100')
+      expect(banner).toHaveClass('bg-surface-neutral-subtle')
     })
 
     it('should have close button positioned absolutely', () => {

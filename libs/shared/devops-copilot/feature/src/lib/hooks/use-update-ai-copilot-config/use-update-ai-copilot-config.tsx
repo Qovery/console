@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import posthog from 'posthog-js'
 import { type AICopilotConfigResponse, devopsCopilot, mutations } from '@qovery/shared/devops-copilot/data-access'
-import { ToastEnum, toast } from '@qovery/shared/ui'
+import { toast } from '@qovery/shared/ui'
 
 export interface UseUpdateAICopilotConfigProps {
   organizationId: string
@@ -46,13 +46,13 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
     onSuccess: (_data, variables) => {
       const modeName = variables.readOnly ? 'Read-Only' : 'Read-Write'
       if (variables.enabled) {
-        toast(ToastEnum.SUCCESS, `AI Copilot enabled with ${modeName} mode`)
+        toast('success', `AI Copilot enabled with ${modeName} mode`)
         posthog.capture('ai-copilot-enabled', {
           organization_id: organizationId,
           mode: modeName,
         })
       } else {
-        toast(ToastEnum.SUCCESS, 'AI Copilot disabled successfully')
+        toast('success', 'AI Copilot disabled successfully')
         posthog.capture('ai-copilot-disabled', {
           organization_id: organizationId,
         })
@@ -62,7 +62,7 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
       if (context?.previousConfig) {
         queryClient.setQueryData(devopsCopilot.config({ organizationId }).queryKey, context.previousConfig)
       }
-      toast(ToastEnum.ERROR, 'Failed to update AI Copilot configuration', 'Please try again later')
+      toast('error', 'Failed to update AI Copilot configuration', 'Please try again later')
     },
     onSettled: () => {
       queryClient.invalidateQueries({

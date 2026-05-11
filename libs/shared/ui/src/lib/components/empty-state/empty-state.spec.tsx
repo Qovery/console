@@ -1,19 +1,17 @@
 import { renderWithProviders } from '@qovery/shared/util-tests'
-import EmptyState, { type EmptyStateProps } from './empty-state'
-
-const props: EmptyStateProps = {
-  title: 'No Storage are set',
-}
+import EmptyState from './empty-state'
 
 describe('EmptyState', () => {
-  it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<EmptyState {...props} />)
-    expect(baseElement).toBeTruthy()
-  })
-
   it('should match snapshot', () => {
-    props.description = 'Need help? You may find these links useful'
-    const { baseElement } = renderWithProviders(<EmptyState {...props} />)
+    const { baseElement } = renderWithProviders(
+      <EmptyState
+        title="No Storage are set"
+        icon="folder-open"
+        description="Need help? You may find these links useful"
+      >
+        <button>Create project</button>
+      </EmptyState>
+    )
     expect(baseElement).toMatchSnapshot()
   })
 })

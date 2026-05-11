@@ -8,11 +8,12 @@ export function useAuth() {
    * Authentification login
    * Gitlab uppercase is needed
    */
-  const authLogin = async (provider?: string) => {
+  const authLogin = async (provider?: string, returnTo?: string) => {
     await loginWithRedirect({
       authorizationParams: {
         connection: provider,
       },
+      appState: returnTo ? { returnTo } : undefined,
     })
   }
 

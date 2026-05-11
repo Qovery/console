@@ -8,7 +8,7 @@ export const BuildErrorIcon = forwardRef<SVGSVGElement, IconSVGProps>(function B
 ) {
   return (
     <svg
-      className={twMerge('text-red-500', className)}
+      className={twMerge('text-negative', className)}
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"

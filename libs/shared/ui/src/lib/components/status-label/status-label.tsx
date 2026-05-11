@@ -18,7 +18,7 @@ export function StatusLabel(props: StatusLabelProps) {
   return (
     <span
       className={twMerge(
-        'flex h-8 shrink-0 items-center truncate rounded-full border border-neutral-250 px-3 text-xs font-medium text-neutral-400',
+        'flex h-8 shrink-0 items-center truncate rounded-full border border-neutral px-3 text-xs font-medium text-neutral',
         className
       )}
       data-testid="status-label"

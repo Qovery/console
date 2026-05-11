@@ -58,8 +58,8 @@ export function ConfirmationCancelLifecycleModal({
                 onCheckedChange={field.onChange}
               />
               <div className="mb-2 flex flex-col gap-1">
-                <span className="text-sm font-medium text-neutral-400">Force Lifecycle job stop</span>
-                <p className="text-sm text-neutral-350">
+                <span className="text-sm font-medium text-neutral">Force Lifecycle job stop</span>
+                <p className="text-sm text-neutral-subtle">
                   Cancel the deployment and stop the execution of any lifecycle job. Make sure that interrupting its
                   execution is safe.
                 </p>

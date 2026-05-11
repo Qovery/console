@@ -22,7 +22,7 @@ export function AutoDeploySection({ serviceId, source, className, children }: Au
   const showSyncButton = webhookStatus && webhookStatus.status !== 'ACTIVE'
 
   return (
-    <div className="overflow-hidden rounded-md border border-neutral-200">
+    <div className="overflow-hidden rounded-md border border-neutral">
       <div className="flex items-center justify-between p-4">
         <AutoDeploySetting
           source={source}
@@ -43,7 +43,7 @@ export function AutoDeploySection({ serviceId, source, className, children }: Au
         )}
       </div>
       {children && autoDeployEnabled && (
-        <div className="border-t border-neutral-200 bg-neutral-100 p-4">{children}</div>
+        <div className="border-t border-neutral bg-surface-neutral-subtle p-4">{children}</div>
       )}
     </div>
   )

@@ -36,8 +36,8 @@ export function TableHeadSort<T>(props: TableHeadSortProps<T>) {
   return (
     <div
       data-testid="table-head-sort"
-      className={`transition-color transition-timing cursor-pointer select-none text-xs font-medium duration-100 hover:text-neutral-400 ${
-        isSort ? 'text-neutral-400' : 'text-neutral-400'
+      className={`transition-color transition-timing cursor-pointer select-none text-xs font-medium duration-100 hover:text-neutral ${
+        isSort ? 'text-neutral' : 'text-neutral'
       }`}
       onClick={() => toggleSort()}
     >

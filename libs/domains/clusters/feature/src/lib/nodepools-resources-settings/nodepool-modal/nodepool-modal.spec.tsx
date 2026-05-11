@@ -44,6 +44,15 @@ describe('NodepoolModal', () => {
     expect(screen.getByText('Operates every day, 24 hours a day')).toBeInTheDocument()
   })
 
+  it('should render correctly for cronjob type', () => {
+    renderWithProviders(<NodepoolModal {...defaultProps} type="cronjob" />)
+
+    expect(screen.getByText('Nodepool cronjob')).toBeInTheDocument()
+    expect(screen.getByLabelText('vCPU')).toBeInTheDocument()
+    expect(screen.getByLabelText('Memory (GiB)')).toBeInTheDocument()
+    expect(screen.getByText('Consolidation schedule')).toBeInTheDocument()
+  })
+
   it('should validate minimum values for CPU and Memory', async () => {
     const { userEvent } = renderWithProviders(<NodepoolModal {...defaultProps} />)
 

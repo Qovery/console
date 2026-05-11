@@ -19,7 +19,7 @@ describe('InputRadioBox', () => {
   it('should render with nothing selected', () => {
     const { baseElement } = render(<InputRadioBox {...props} />)
     const radioBox = getByTestId(baseElement, 'input-radio-box')
-    expect(radioBox).toHaveClass('bg-neutral-100 border-neutral-250')
+    expect(radioBox).toHaveClass('bg-surface-neutral-subtle border-neutral')
   })
 
   it('should select on click', async () => {
@@ -36,7 +36,7 @@ describe('InputRadioBox', () => {
   it('should display border color and background if selected', async () => {
     const { baseElement } = render(<InputRadioBox {...props} name="selected" fieldValue="start" />)
     const radioBox = getByTestId(baseElement, 'input-radio-box')
-    expect(radioBox).toHaveClass('bg-brand-50 border-brand-500')
+    expect(radioBox).toHaveClass('bg-surface-brand-subtle border-brand-strong')
   })
 
   it('should display description if provided', async () => {

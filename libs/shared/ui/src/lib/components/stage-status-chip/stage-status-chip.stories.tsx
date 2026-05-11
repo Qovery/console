@@ -16,7 +16,7 @@ const Story: Meta<typeof StageStatusChip> = {
   },
   decorators: [
     (Story) => (
-      <div style={{ background: 'white', padding: '3em' }}>
+      <div style={{ background: 'bg-background', padding: '3em' }}>
         <div className="inline-flex">
           <Story />
         </div>

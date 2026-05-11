@@ -7,6 +7,17 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
     }
   }
 }

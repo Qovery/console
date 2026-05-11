@@ -99,7 +99,7 @@ export function GitPublicRepositorySettings({
               />
             )}
           />
-          <p className="ml-4 mt-1 text-xs text-neutral-350">{rootPathHint}</p>
+          <p className="ml-4 mt-1 text-xs text-neutral-subtle">{rootPathHint}</p>
         </div>
       )}
     </>

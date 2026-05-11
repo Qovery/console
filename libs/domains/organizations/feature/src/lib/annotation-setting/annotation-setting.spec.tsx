@@ -20,6 +20,11 @@ jest.mock('../hooks/use-annotations-groups/use-annotations-groups', () => {
   }
 })
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: '1' }),
+}))
+
 describe('AnnotationSetting', () => {
   it('should match snapshot', () => {
     const { baseElement } = renderWithProviders(wrapWithReactHookForm(<AnnotationSetting />))

@@ -12,7 +12,7 @@ export function useCancelDeploymentQueueEnvironment({ environmentId }: { environ
         queryKey: queries.environments.deploymentQueue({ environmentId }).queryKey,
       })
 
-      toast('SUCCESS', 'Your environment deployment is cancelling')
+      toast('success', 'Your environment deployment is cancelling')
     },
     meta: {
       notifyOnError: true,

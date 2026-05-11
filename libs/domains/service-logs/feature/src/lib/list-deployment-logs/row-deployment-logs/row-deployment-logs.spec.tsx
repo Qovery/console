@@ -1,6 +1,11 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { RowDeploymentLogs } from './row-deployment-logs'
 
+jest.mock('@tanstack/react-router', () => ({
+  useLocation: () => ({ pathname: '/', hash: '' }),
+  useNavigate: jest.fn(),
+}))
+
 describe('RowDeploymentLogs', () => {
   const mockProps = {
     index: 0,

@@ -1,6 +1,6 @@
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
-import { useParams } from 'react-router-dom'
+import { match } from 'ts-pattern'
 import { useService } from '@qovery/domains/services/feature'
 import { useEvents } from '../hooks/use-events/use-events'
 import { useDashboardContext } from '../util-filter/dashboard-context'
@@ -12,18 +12,21 @@ export interface UseChartEventsProps {
 }
 
 export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEventsProps) {
-  const { organizationId = '' } = useParams()
-  const { startTimestamp, endTimestamp } = useDashboardContext()
+  const { organizationId, startTimestamp, endTimestamp } = useDashboardContext()
 
   const { data: service } = useService({ serviceId })
+
+  const targetType = useMemo(() => {
+    return match(service?.serviceType)
+      .with('DATABASE', () => OrganizationEventTargetType.DATABASE)
+      .with('CONTAINER', () => OrganizationEventTargetType.CONTAINER)
+      .otherwise(() => OrganizationEventTargetType.APPLICATION)
+  }, [service?.serviceType])
 
   const { data: events } = useEvents({
     organizationId,
     serviceId,
-    targetType:
-      service?.service_type === 'CONTAINER'
-        ? OrganizationEventTargetType.CONTAINER
-        : OrganizationEventTargetType.APPLICATION,
+    targetType,
     toTimestamp: endTimestamp,
     fromTimestamp: startTimestamp,
   })
@@ -58,7 +61,7 @@ export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEve
             timestamp: eventTimestamp,
             reason: 'Deploy failed',
             icon: 'xmark' as const,
-            color: 'var(--color-red-500)',
+            color: 'var(--negative-11)',
             key,
             version,
             repository,
@@ -69,7 +72,7 @@ export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEve
             timestamp: eventTimestamp,
             reason: 'Deployed',
             icon: 'check' as const,
-            color: 'var(--color-green-500)',
+            color: 'var(--positive-11)',
             key,
             version,
             repository,
@@ -81,7 +84,7 @@ export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEve
             reason: 'Trigger deploy',
             icon: 'play' as const,
             iconStyle: 'solid' as const,
-            color: 'var(--color-brand-500)',
+            color: '#5B50D6',
             key,
             version,
             repository,
@@ -93,7 +96,7 @@ export function useChartEvents({ serviceId, additionalEvents = [] }: UseChartEve
           timestamp: eventTimestamp,
           reason: 'Unknown',
           icon: 'question' as const,
-          color: 'var(--color-neutral-350)',
+          color: 'var(--neutral-11)',
           key,
           version,
           repository,

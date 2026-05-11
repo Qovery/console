@@ -1,8 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
+import { useMatches, useParams } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo } from 'react'
-import { useMatch, useParams } from 'react-router-dom'
 import { type IntercomProps, useIntercom } from 'react-use-intercom'
-import { ONBOARDING_URL } from '@qovery/shared/routes'
 
 type IntercomChatSettings = Partial<IntercomProps>
 
@@ -32,14 +31,14 @@ declare global {
 
 export function useSupportChat() {
   const { user } = useAuth0()
-  const { organizationId } = useParams()
+  const { organizationId } = useParams({ strict: false })
 
   const { update: updateIntercom, shutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
-  const matchesOnboardingRoutes = useMatch({ path: ONBOARDING_URL, end: false })
+  const matches = useMatches()
 
   const service = useMemo(() => {
-    return matchesOnboardingRoutes ? 'intercom' : 'pylon'
-  }, [matchesOnboardingRoutes])
+    return matches.some((match) => match.routeId.startsWith('/_authenticated/onboarding')) ? 'intercom' : 'pylon'
+  }, [matches])
 
   const defaultChatParams = useMemo(() => {
     let defaultChatParams = undefined
@@ -74,16 +73,26 @@ export function useSupportChat() {
     }
   }
 
+  const whenPylonReady = (callback: () => void) => {
+    if (window.Pylon) {
+      callback()
+      return
+    }
+
+    insertPylonScriptTag()
+    document.getElementById('pylon-script')?.addEventListener('load', callback, { once: true })
+  }
+
   const showChat = () => {
     if (service === 'intercom') {
       showIntercomMessenger()
     } else {
-      window.Pylon?.('show')
+      whenPylonReady(() => window.Pylon?.('show'))
     }
   }
 
   const showPylonForm = (formSlug: string) => {
-    window.Pylon?.('showTicketForm', formSlug)
+    whenPylonReady(() => window.Pylon?.('showTicketForm', formSlug))
   }
 
   const insertPylonScriptTag = () => {
@@ -118,8 +127,12 @@ export function useSupportChat() {
   )
 
   useEffect(() => {
+    if (service === 'pylon') {
+      insertPylonScriptTag()
+    }
+
     updateUserInfo(defaultChatParams)
-  }, [defaultChatParams, updateUserInfo])
+  }, [defaultChatParams, service, updateUserInfo])
 
   return { updateUserInfo, showChat, initChat, showPylonForm }
 }

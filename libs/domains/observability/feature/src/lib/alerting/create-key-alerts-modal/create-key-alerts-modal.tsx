@@ -1,13 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useNavigate } from '@tanstack/react-router'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import {
-  APPLICATION_MONITORING_ALERTS_CREATION_URL,
-  APPLICATION_MONITORING_ALERT_METRIC_URL,
-  APPLICATION_MONITORING_URL,
-  APPLICATION_URL,
-} from '@qovery/shared/routes'
 import { Icon, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { type MetricCategory } from '../alerting-creation-flow/alerting-creation-flow.types'
@@ -84,14 +78,27 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
   })
 
   const onSubmit = methods.handleSubmit((data) => {
+    const environmentId = service?.environment?.id
+    const serviceId = service?.id
+    const firstMetric = data.metrics[0]
+    if (!environmentId || !serviceId || !firstMetric) return
+
     const templatesParam = data.metrics.join(',')
-    const basePath =
-      APPLICATION_URL(organizationId, projectId, service?.environment?.id, service?.id) +
-      APPLICATION_MONITORING_URL +
-      APPLICATION_MONITORING_ALERTS_CREATION_URL
 
     onClose()
-    navigate(`${basePath}${APPLICATION_MONITORING_ALERT_METRIC_URL(data.metrics[0])}?templates=${templatesParam}`)
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric',
+      params: {
+        organizationId,
+        projectId,
+        environmentId,
+        serviceId,
+        metric: firstMetric,
+      },
+      search: {
+        templates: templatesParam,
+      },
+    })
   })
 
   const watchMetrics = methods.watch('metrics')
@@ -123,7 +130,7 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
                 <InputTextSmall
                   label="Targeted service"
                   name="targetedService"
-                  inputClassName="pl-7 text-neutral-350"
+                  inputClassName="pl-7 text-neutral-subtle"
                   value={service?.name ?? ''}
                   onChange={(value) => field.onChange(value)}
                   disabled={!!service}
@@ -134,13 +141,13 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
             <Icon
               iconName="search"
               iconStyle="regular"
-              className="absolute left-2 top-1/2 mt-[1px] -translate-y-1/2 text-sm text-neutral-350"
+              className="absolute left-2 top-1/2 mt-[1px] -translate-y-1/2 text-sm text-neutral-subtle"
             />
           </div>
           <div className="flex flex-col gap-4">
             <div className="flex flex-col text-sm">
-              <h3 className="text-sm font-medium text-neutral-400">Metric categories</h3>
-              <p className="text-neutral-350">Choose the metric categories you want to generate alerts for</p>
+              <h3 className="text-sm font-medium text-neutral">Metric categories</h3>
+              <p className="text-neutral-subtle">Choose the metric categories you want to generate alerts for</p>
             </div>
             {/* This is a workaround to prevent the button from being focused when the user open the modal */}
             <button type="button" className="pointer-events-none absolute h-0 w-0 select-none"></button>
@@ -161,19 +168,21 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
                       }
                     }}
                     className={twMerge(
-                      'group flex items-center gap-2 rounded-lg border p-2 outline-none transition-colors hover:border-brand-500 focus:border-brand-500 focus:ring-2 focus:ring-brand-100',
-                      isSelected ? 'border-brand-500' : 'border-neutral-200 bg-white'
+                      'group flex items-center gap-2 rounded-lg border p-2 outline-none transition-colors hover:border-brand-strong focus:border-brand-strong',
+                      isSelected ? 'border-brand-strong' : 'border-neutral bg-background'
                     )}
                   >
                     <div
                       className={twMerge(
-                        'flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-150 text-neutral-400 transition-colors group-hover:bg-brand-50 group-hover:text-brand-500',
-                        isSelected ? 'bg-brand-50 text-brand-500' : 'bg-neutral-150 text-neutral-400'
+                        'flex h-8 w-8 items-center justify-center rounded-lg bg-surface-neutral-subtle text-neutral-subtle transition-colors group-hover:bg-surface-brand-subtle group-hover:text-brand',
+                        isSelected
+                          ? 'bg-surface-brand-subtle text-brand'
+                          : 'bg-surface-neutral-subtle text-neutral-subtle'
                       )}
                     >
                       <Icon iconName={metric.iconName} iconStyle="regular" className="text-base" />
                     </div>
-                    <span className="text-sm font-medium text-neutral-400">{metric.label}</span>
+                    <span className="text-sm font-medium text-neutral">{metric.label}</span>
                   </button>
                 )
               })}

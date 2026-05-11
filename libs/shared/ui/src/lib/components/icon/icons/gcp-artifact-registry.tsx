@@ -17,7 +17,7 @@ export function GcpArtifactRegistryIcon(props: IconProps) {
         <polygon fillRule="evenodd" fill="#3367D6" points="0.8,8 0.8,16.5 3,17.8 3,6.7" />
         <polygon fillRule="evenodd" fill="#3367D6" points="0.8,8 3,7.5 3,6.7" />
         <polygon
-          fill-rule="evenodd"
+          fillRule="evenodd"
           fill="#5C85DE"
           points="18,2.4 18,5 21,6.7 21,17.8 18,19.5 18,22.1 23.2,19.1 23.2,5.4"
         />

@@ -1,5 +1,5 @@
+import { useParams } from '@tanstack/react-router'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { Icon, InputSelect, Tooltip, useModal } from '@qovery/shared/ui'
 import { useLabelsGroups } from '../hooks/use-labels-groups/use-labels-groups'
 import { LabelCreateEditModal } from '../label-create-edit-modal/label-create-edit-modal'
@@ -10,7 +10,7 @@ export interface LabelSettingProps {
 
 export function LabelSetting({ filterPropagateToCloudProvider = false }: LabelSettingProps = {}) {
   const { control } = useFormContext()
-  const { organizationId = '' } = useParams()
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: labelsGroups = [] } = useLabelsGroups({ organizationId })
   const { openModal, closeModal } = useModal()
 
@@ -31,7 +31,7 @@ export function LabelSetting({ filterPropagateToCloudProvider = false }: LabelSe
           label="Label Groups (optional)"
           options={filteredLabelsGroups.map((group) => ({
             label: (
-              <span className="flex items-center gap-3">
+              <span className="flex items-center gap-1">
                 <span>{group.name}</span>
                 <Tooltip
                   classNameContent="z-10"
@@ -46,7 +46,7 @@ export function LabelSetting({ filterPropagateToCloudProvider = false }: LabelSe
                   }
                 >
                   <span>
-                    <Icon iconName="circle-info" iconStyle="regular" className="text-base" />
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-subtle" />
                   </span>
                 </Tooltip>
               </span>

@@ -19,7 +19,9 @@ jest.mock('../hooks/use-branches/use-branches', () => {
 
 describe('GitBranchSettings', () => {
   it('should match snapshot', () => {
-    const { baseElement } = renderWithProviders(wrapWithReactHookForm(<GitBranchSettings gitProvider="GITHUB" />))
+    const { baseElement } = renderWithProviders(
+      wrapWithReactHookForm(<GitBranchSettings organizationId="org-1" gitProvider="GITHUB" />)
+    )
     expect(baseElement).toMatchSnapshot()
   })
 })

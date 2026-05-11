@@ -104,7 +104,7 @@ export function RdsWriteLatencyChart({
         dataKey="Write Latency"
         name="Write Latency"
         type="linear"
-        stroke="var(--color-brand-500)"
+        stroke="#5B50D6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}

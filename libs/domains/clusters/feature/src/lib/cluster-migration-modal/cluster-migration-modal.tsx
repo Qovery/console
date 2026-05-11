@@ -36,8 +36,8 @@ export function ClusterMigrationModal({ onClose, onSubmit }: ClusterMigrationMod
                   onCheckedChange={field.onChange}
                 />
                 <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
-                  <span className="font-medium text-neutral-400">Karpenter activation is irreversible</span>
-                  <span className="text-neutral-350">
+                  <span className="font-medium text-neutral">Karpenter activation is irreversible</span>
+                  <span className="text-neutral-subtle">
                     To switch back to EKS auto-scaling, you will need to recreate your cluster and migrate your
                     environment to the new cluster.
                   </span>
@@ -61,8 +61,8 @@ export function ClusterMigrationModal({ onClose, onSubmit }: ClusterMigrationMod
                   onCheckedChange={field.onChange}
                 />
                 <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
-                  <span className="font-medium text-neutral-400">Downtime may occur</span>
-                  <span className="text-neutral-350">
+                  <span className="font-medium text-neutral">Downtime may occur</span>
+                  <span className="text-neutral-subtle">
                     Durring the migration, you may experience some downtime on your services.
                   </span>
                 </label>
@@ -85,8 +85,8 @@ export function ClusterMigrationModal({ onClose, onSubmit }: ClusterMigrationMod
                   onCheckedChange={field.onChange}
                 />
                 <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
-                  <span className="font-medium text-neutral-400">Redeploying all environments</span>
-                  <span className="text-neutral-350">
+                  <span className="font-medium text-neutral">Redeploying all environments</span>
+                  <span className="text-neutral-subtle">
                     After the migration, we recommend redeploying all environments operating on this cluster.
                   </span>
                 </label>
@@ -110,8 +110,8 @@ export function ClusterMigrationModal({ onClose, onSubmit }: ClusterMigrationMod
                 />
                 <div className="flex flex-col gap-1">
                   <label className="relative -top-1 flex flex-col gap-1 text-sm" htmlFor={field.name}>
-                    <span className="font-medium text-neutral-400">Daemonset compatibility check</span>
-                    <span className="text-neutral-350">
+                    <span className="font-medium text-neutral">Daemonset compatibility check</span>
+                    <span className="text-neutral-subtle">
                       If you have Daemonsets deployed via Helm, follow our guide before enabling Karpenter migration.
                     </span>
                   </label>

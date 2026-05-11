@@ -12,7 +12,7 @@ export function useCancelDeploymentQueueService({ serviceId }: { serviceId: stri
         queryKey: queries.services.deploymentQueue({ serviceId }).queryKey,
       })
 
-      toast('SUCCESS', 'Your service deployment is cancelling')
+      toast('success', 'Your service deployment is cancelling')
     },
     meta: {
       notifyOnError: true,

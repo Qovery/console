@@ -1,11 +1,22 @@
-import { useQueryParams } from 'use-query-params'
+import { type ReactNode } from 'react'
 import { useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { PodHealthChips } from './pod-health-chips'
 
-jest.mock('use-query-params', () => ({
-  ...jest.requireActual('use-query-params'),
-  useQueryParams: jest.fn(),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useSearch: () => ({}),
+  useNavigate: () => jest.fn(),
+  useParams: () => ({ organizationId: '1' }),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
 }))
 
 jest.mock('@qovery/domains/services/feature', () => ({
@@ -24,11 +35,6 @@ const baseService = {
 }
 
 describe('PodHealthChips', () => {
-  beforeEach(() => {
-    const mockUseQueryParams = useQueryParams as jest.Mock
-    mockUseQueryParams.mockReturnValue([null, jest.fn()])
-  })
-
   afterEach(() => {
     jest.clearAllMocks()
   })

@@ -179,36 +179,40 @@ export const Tooltip = memo(({ active, unit, payload, customLabel }: TooltipProp
     })
 
   return (
-    <div className="rounded-md bg-neutral-600 text-xs shadow-lg">
-      <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutral-400 px-3 py-2">
-        <span className="text-xs font-medium text-neutral-50">{customLabel}</span>
-        <span className="text-xs text-neutral-250">{dataPoint?.fullTime}</span>
+    <div className="rounded-md bg-surface-neutralInvert-component text-xs text-neutral shadow-lg">
+      <div className="mb-2 flex items-center justify-between gap-4 border-b border-neutralInvert px-3 py-2">
+        <span className="text-xs font-medium text-neutralInvert">{customLabel}</span>
+        <span className="text-xs text-neutralInvert-subtle">{dataPoint?.fullTime}</span>
       </div>
       <div className="space-y-1 px-2 pb-2">
         {(MAX_ITEMS ? processedEntries.slice(0, MAX_ITEMS) : processedEntries).map((entry, index) => (
           <div key={index} className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 rounded-full" style={{ backgroundColor: entry.color }} />
-              <span className="text-neutral-50">{getDisplayName(entry.dataKey)}</span>
+              <span className="text-neutralInvert">{getDisplayName(entry.dataKey)}</span>
             </div>
-            <span className="text-neutral-50">{formatValue(entry.value, unit)}</span>
+            <span className="text-neutralInvert">{formatValue(entry.value, unit)}</span>
           </div>
         ))}
       </div>
       {MAX_ITEMS && processedEntries.length > MAX_ITEMS && (
         <div className="flex h-3 items-center px-2 pb-3.5 pt-1">
-          <span className="text-neutral-250">+{processedEntries.length - MAX_ITEMS} more</span>
+          <span className="text-neutralInvert-subtle">+{processedEntries.length - MAX_ITEMS} more</span>
         </div>
       )}
       {metaKey && (
-        <div className="border-t border-neutral-400 px-2 py-2">
-          <div className="flex flex-wrap items-center gap-3 text-neutral-250">
+        <div className="border-t border-neutralInvert px-2 py-2">
+          <div className="flex flex-wrap items-center gap-3 text-neutralInvert">
             <div className="flex items-center gap-1">
-              <Kbd className="bg-neutral-500 text-2xs font-medium text-neutral-50">DRAG</Kbd>
+              <Kbd className="w-fit border border-neutralInvert bg-surface-neutralInvert-subtle px-0.5 text-2xs font-medium text-neutralInvert">
+                DRAG
+              </Kbd>
               <span>Zoom In</span>
             </div>
             <div className="flex items-center gap-1">
-              <Kbd className="bg-neutral-500 text-2xs font-medium text-neutral-50">DBL-CLICK</Kbd>
+              <Kbd className="w-fit border border-neutralInvert bg-surface-neutralInvert-subtle px-0.5 text-2xs font-medium text-neutralInvert">
+                DBL-CLICK
+              </Kbd>
               <span>Reset</span>
             </div>
           </div>

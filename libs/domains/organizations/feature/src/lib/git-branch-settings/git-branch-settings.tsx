@@ -1,10 +1,10 @@
 import { type GitProviderEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useParams } from 'react-router-dom'
 import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 import { useBranches } from '../hooks/use-branches/use-branches'
 
 export interface GitBranchSettingsProps {
+  organizationId: string
   gitProvider: keyof typeof GitProviderEnum
   gitTokenId?: string
   disabled?: boolean
@@ -14,6 +14,7 @@ export interface GitBranchSettingsProps {
 }
 
 export function GitBranchSettings({
+  organizationId,
   disabled,
   gitProvider,
   gitTokenId,
@@ -22,7 +23,6 @@ export function GitBranchSettings({
   rootPathHint = 'Provide the folder path in the repository where the application is located.',
 }: GitBranchSettingsProps) {
   const { control, watch } = useFormContext()
-  const { organizationId = '' } = useParams()
 
   const watchFieldGitRepository = watch('git_repository')
   const watchFieldBranch = watch('branch')

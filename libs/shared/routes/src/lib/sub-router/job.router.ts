@@ -1,7 +1,12 @@
 export const SERVICES_CRONJOB_CREATION_URL = '/create/cron-job'
 export const SERVICES_LIFECYCLE_CREATION_URL = '/create/lifecyle-job'
-export const SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL = (slug = ':slug', option = ':option') =>
-  `/create/lifecyle-job/${slug}/${option}`
+export const SERVICES_LIFECYCLE_TEMPLATE_CREATION_URL = (template?: string, option?: string) => {
+  const params = new URLSearchParams()
+  if (template) params.set('template', template)
+  if (option && option !== 'current') params.set('option', option)
+  const qs = params.toString()
+  return `/service/create/lifecycle-job${qs ? `?${qs}` : ''}`
+}
 
 // subrouter for job steps /create/general /create/settings etc...
 export const SERVICES_JOB_CREATION_INTRODUCTION_URL = '/introduction'

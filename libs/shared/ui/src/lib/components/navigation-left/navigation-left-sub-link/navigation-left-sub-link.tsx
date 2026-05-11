@@ -34,7 +34,7 @@ export function NavigationLeftSubLink({ link, children }: NavigationLeftSubLinkP
       <div
         data-testid="link"
         onClick={() => setOpen(!open)}
-        className="mt-0.5 flex cursor-pointer select-none items-center justify-between truncate rounded px-3 py-2 text-ssm font-medium text-neutral-350 transition duration-300 ease-out hover:bg-neutral-150 hover:text-neutral-400"
+        className="mt-0.5 flex cursor-pointer select-none items-center justify-between truncate rounded px-3 py-2 text-ssm font-medium text-neutral-subtle transition duration-300 ease-out hover:bg-surface-neutral-subtle hover:text-neutral"
       >
         <span className="flex truncate">
           <LinkContent link={link} />

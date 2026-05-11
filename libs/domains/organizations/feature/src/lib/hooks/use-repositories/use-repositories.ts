@@ -7,15 +7,17 @@ export interface UseRepositoriesProps {
   gitProvider: GitProviderEnum
   gitToken?: string
   enabled?: boolean
+  suspense?: boolean
 }
 
-export function useRepositories({ organizationId, gitProvider, enabled, gitToken }: UseRepositoriesProps) {
+export function useRepositories({ organizationId, gitProvider, enabled, gitToken, suspense }: UseRepositoriesProps) {
   return useQuery({
     ...queries.organizations.repositories({ organizationId, gitProvider, gitToken }),
     meta: {
       notifyOnError: true,
     },
     enabled,
+    suspense,
     refetchOnWindowFocus: false,
   })
 }

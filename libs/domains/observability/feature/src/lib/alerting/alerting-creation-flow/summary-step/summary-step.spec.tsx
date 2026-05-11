@@ -7,12 +7,12 @@ import { SummaryStep } from './summary-step'
 
 const mockMutateAsync = jest.fn()
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => jest.fn(),
-  useParams: () => ({ organizationId: 'org-123', applicationId: 'service-123' }),
-  useLocation: () => ({ pathname: '/summary' }),
-  useSearchParams: () => [{ toString: () => '' }],
+  useParams: () => ({ organizationId: 'org-123', serviceId: 'service-123' }),
+  useRouterState: ({ select }: { select: (state: { location: { pathname: string; searchStr: string } }) => unknown }) =>
+    select({ location: { pathname: '/summary', searchStr: '' } }),
 }))
 
 jest.mock('@qovery/domains/services/feature', () => ({
@@ -47,6 +47,7 @@ const createAlert = (overrides: Partial<AlertConfiguration> = {}): AlertConfigur
   condition: { kind: 'BUILT', function: 'AVG', operator: 'ABOVE', threshold: 80, promql: '' },
   severity: 'CRITICAL' as AlertSeverity,
   alert_receiver_ids: ['channel-1'],
+  presentation: { summary: 'My description' },
   skipped: false,
   ...overrides,
 })
@@ -59,6 +60,7 @@ const renderWithContext = (alerts: AlertConfiguration[], selectedMetrics: string
   const Wrapper = ({ children }: { children: ReactNode }) => (
     <AlertingCreationFlowContext.Provider
       value={{
+        organizationId: 'org-123',
         selectedMetrics,
         serviceId: 'service-123',
         serviceName: 'My Service',
@@ -66,9 +68,11 @@ const renderWithContext = (alerts: AlertConfiguration[], selectedMetrics: string
         setCurrentStepIndex: mockSetCurrentStepIndex,
         alerts,
         setAlerts: mockSetAlerts,
+        onNavigateToMetric: jest.fn(),
         onComplete: mockOnComplete,
         totalSteps: selectedMetrics.length + 1,
         containerName: 'container-1',
+        isLoading: false,
       }}
     >
       {children}

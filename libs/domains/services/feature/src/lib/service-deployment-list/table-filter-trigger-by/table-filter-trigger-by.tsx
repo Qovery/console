@@ -100,7 +100,7 @@ export function TableFilterTriggerBy({
           {column.getIsFiltered() ? (
             <button
               type="button"
-              className="absolute right-0 h-7 cursor-pointer px-2 text-center leading-7 text-white"
+              className="absolute right-0 h-7 cursor-pointer px-2 text-center leading-7 text-neutralInvert"
               onClick={clearFilter}
             >
               <Icon iconName="xmark" />
@@ -109,7 +109,7 @@ export function TableFilterTriggerBy({
         </div>
         <DropdownMenu.Content asChild>
           <Popover.Content className="max-h-80 w-60 overflow-y-auto p-2">
-            <span className="px-2 pb-2 pt-1 text-sm text-neutral-350">Trigger by</span>
+            <span className="px-2 pb-2 pt-1 text-sm text-neutral-subtle">Trigger by</span>
             {sortedUniqueValues.map(
               ([value]) =>
                 value != null && (
@@ -128,8 +128,8 @@ export function TableFilterTriggerBy({
                   </Fragment>
                 )
             )}
-            <hr className="my-2 -ml-2 w-[calc(100%+20px)] border-neutral-200" />
-            <span className="px-2 pb-2 pt-1 text-sm text-neutral-350">From</span>
+            <hr className="my-2 -ml-2 w-[calc(100%+20px)] border-neutral" />
+            <span className="px-2 pb-2 pt-1 text-sm text-neutral-subtle">From</span>
             {triggeredByValues.map((value) => (
               <Fragment key={value}>
                 <Popover.Close>

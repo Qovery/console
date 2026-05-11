@@ -8,7 +8,7 @@ export const WarningIcon = forwardRef<SVGSVGElement, IconSVGProps>(function Warn
 ) {
   return (
     <svg
-      className={twMerge('text-yellow-600', className)}
+      className={twMerge('text-warning', className)}
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"

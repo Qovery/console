@@ -5,10 +5,9 @@ import { DashboardProvider } from '../../../util-filter/dashboard-context'
 import { CardLogErrors } from './card-log-errors'
 
 const mockedNavigate = jest.fn()
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => mockedNavigate,
-  useLocation: () => ({ pathname: '/test' }),
 }))
 
 jest.mock('../../../hooks/use-instant-metrics/use-instant-metrics')
@@ -92,7 +91,7 @@ describe('CardLogErrors', () => {
       </DashboardProvider>
     )
 
-    expect(screen.getByText('0 log errors')).toBeInTheDocument()
+    expect(screen.getByText('0 log error')).toBeInTheDocument()
     expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 
@@ -130,7 +129,7 @@ describe('CardLogErrors', () => {
       </DashboardProvider>
     )
 
-    expect(screen.getByText('0 log errors')).toBeInTheDocument()
+    expect(screen.getByText('0 log error')).toBeInTheDocument()
     expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 
@@ -143,7 +142,7 @@ describe('CardLogErrors', () => {
       </DashboardProvider>
     )
 
-    expect(screen.getByText('0 log errors')).toBeInTheDocument()
+    expect(screen.getByText('0 log error')).toBeInTheDocument()
     expect(screen.getByText('total log errors detected in the selected time range')).toBeInTheDocument()
   })
 
@@ -165,18 +164,23 @@ describe('CardLogErrors', () => {
     const button = screen.getByRole('button')
     await userEvent.click(button)
 
-    expect(mockedNavigate).toHaveBeenCalledWith(
-      expect.stringContaining(
-        `/organization/${defaultProps.organizationId}/project/${defaultProps.projectId}/environment/${defaultProps.environmentId}/logs/${defaultProps.serviceId}/service-logs?mode=history&startDate=`
-      ),
-      {
-        state: { prevUrl: '/test' },
-      }
-    )
+    expect(mockedNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+      params: {
+        organizationId: defaultProps.organizationId,
+        projectId: defaultProps.projectId,
+        environmentId: defaultProps.environmentId,
+        serviceId: defaultProps.serviceId,
+      },
+      search: expect.objectContaining({
+        mode: 'history',
+        level: 'error',
+      }),
+    })
 
-    const navigateUrl = mockedNavigate.mock.calls[0][0]
-    expect(navigateUrl).toMatch(/startDate=[\d-]+T[\d:.%A-Z]+/)
-    expect(navigateUrl).toMatch(/endDate=[\d-]+T[\d:.%A-Z]+/)
+    const navigateSearch = mockedNavigate.mock.calls[0][0].search
+    expect(navigateSearch.startDate).toMatch(/[\d-]+T[\d:.]+Z/)
+    expect(navigateSearch.endDate).toMatch(/[\d-]+T[\d:.]+Z/)
   })
 
   it('should call useLokiMetrics with correct parameters for short time ranges', () => {

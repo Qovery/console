@@ -11,6 +11,6 @@ export const trimId = (
   return match(type)
     .with('start', () => start)
     .with('end', () => end)
-    .with('both', () => `${start}...${end}`)
+    .with('both', () => `${start}…${end}`)
     .exhaustive()
 }

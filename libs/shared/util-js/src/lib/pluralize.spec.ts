@@ -16,4 +16,8 @@ describe('pluralize function', () => {
   it('should return the plural form for count greater than 1 with default plural form', () => {
     expect(pluralize(5, 'apple')).toBe('apples')
   })
+
+  it('should return the singular form for count 0', () => {
+    expect(pluralize(0, 'apple')).toBe('apple')
+  })
 })

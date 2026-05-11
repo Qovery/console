@@ -135,10 +135,10 @@ export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
             }}
           />
           <Collapsible.Trigger className="flex w-full items-center justify-between gap-3">
-            <span className="text-neutral-400">
+            <span className="text-neutral">
               {title.toUpperCase()} - {getInstanceTypeCategory(title)}
             </span>
-            <Icon className="text-sm text-neutral-350" iconName={open ? 'chevron-up' : 'chevron-down'} />
+            <Icon className="text-sm text-neutral-subtle" iconName={open ? 'chevron-up' : 'chevron-down'} />
           </Collapsible.Trigger>
         </div>
 
@@ -161,7 +161,7 @@ export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
                           checked={false}
                           disabled
                         />
-                        <label htmlFor={`${title}-${attribute.instance_family}`} className="text-neutral-400">
+                        <label htmlFor={`${title}-${attribute.instance_family}`} className="text-neutral">
                           {attribute.instance_family}
                         </label>
                       </div>
@@ -184,7 +184,7 @@ export function InstanceCategory({ title, attributes }: InstanceCategoryProps) {
                               field.onChange(newValue)
                             }}
                           />
-                          <label htmlFor={`${title}-${attribute.instance_family}`} className="text-neutral-400">
+                          <label htmlFor={`${title}-${attribute.instance_family}`} className="text-neutral">
                             {attribute.instance_family}
                           </label>
                         </div>

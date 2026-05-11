@@ -1,18 +1,16 @@
+import * as TanstackRouter from '@tanstack/react-router'
 import { type AlertRuleResponse } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useAlerts from '../../hooks/use-alerts/use-alerts'
 import { IssueOverview } from './issue-overview'
 
 const mockUseAlerts = jest.spyOn(useAlerts, 'useAlerts') as jest.Mock
-
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: () => ({ organizationId: 'org-123' }),
-}))
+const mockUseParams = jest.spyOn(TanstackRouter, 'useParams') as jest.Mock
 
 describe('IssueOverview', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockUseParams.mockReturnValue({ organizationId: 'org-123' })
   })
 
   it('should render loader when loading', () => {
@@ -60,6 +58,7 @@ describe('IssueOverview', () => {
         severity: 'HIGH',
         enabled: true,
         alert_receiver_ids: [],
+        source: 'MANAGED',
         presentation: { color: '#FF0000', icon: 'cpu' },
         state: 'NOTIFIED',
         is_up_to_date: true,
@@ -72,6 +71,7 @@ describe('IssueOverview', () => {
             description: 'Service description',
             icon_uri: 'icon-uri',
             service_type: 'APPLICATION',
+            cluster_id: 'cluster-1',
             project_id: 'project-1',
             project_name: 'Project 1',
             environment_id: 'env-1',
@@ -99,6 +99,7 @@ describe('IssueOverview', () => {
         severity: 'CRITICAL',
         enabled: true,
         alert_receiver_ids: [],
+        source: 'MANAGED',
         presentation: { color: '#FF0000', icon: 'memory' },
         state: 'NOTIFIED',
         is_up_to_date: true,
@@ -111,6 +112,7 @@ describe('IssueOverview', () => {
             description: 'Service description',
             icon_uri: 'icon-uri',
             service_type: 'CONTAINER',
+            cluster_id: 'cluster-1',
             project_id: 'project-2',
             project_name: 'Project 2',
             environment_id: 'env-2',
@@ -156,6 +158,7 @@ describe('IssueOverview', () => {
         severity: 'MEDIUM',
         enabled: false,
         alert_receiver_ids: [],
+        source: 'MANAGED',
         presentation: { color: '#FFCC00', icon: 'cpu' },
         state: 'NOTIFIED',
         is_up_to_date: true,
@@ -168,6 +171,7 @@ describe('IssueOverview', () => {
             description: 'Service description',
             icon_uri: 'icon-uri',
             service_type: 'APPLICATION',
+            cluster_id: 'cluster-1',
             project_id: 'project-1',
             project_name: 'Project 1',
             environment_id: 'env-1',

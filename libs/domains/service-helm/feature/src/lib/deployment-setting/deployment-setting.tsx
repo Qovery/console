@@ -36,7 +36,7 @@ export function DeploymentSetting() {
             />
           )}
         />
-        <p className="ml-3 mt-1 text-xs text-neutral-350">
+        <p className="ml-3 mt-1 text-xs text-neutral-subtle">
           Specify the helm arguments to be used during the helm install/upgrade. Expected format: -h 0.0.0.0
           <br />
           <ExternalLink size="xs" href="https://helm.sh/docs/helm/helm_install/" className="mt-0.5">
@@ -45,18 +45,18 @@ export function DeploymentSetting() {
         </p>
       </div>
       {((watchCmdArguments && watchChartName && watchVersion) || watchBranch) && (
-        <div className="flex flex-col gap-1 rounded border border-neutral-200 bg-neutral-150 px-3 py-2 text-neutral-350">
-          <span className="select-none text-xs">Helm install format:</span>
+        <div className="flex min-h-[52px] flex-col justify-center rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2">
+          <span className="select-none text-xs text-neutral-subtle">Helm install format:</span>
           {!watchBranch ? (
-            <span className="break-words text-sm">
+            <span className="break-words text-sm text-neutral-disabled">
               {`helm upgrade --install -n {{KUBERNETES_NAMESPACE}} {{RELEASE_NAME}} . ${displayParsedCmd(watchCmdArguments ?? '')}`}
             </span>
           ) : watchChartName ? (
-            <span className="break-words text-sm">
+            <span className="break-words text-sm text-neutral-disabled">
               {`helm install ${watchChartName} {{RELEASE_NAME}} ${watchVersion ? `--version ${watchVersion}` : ''} ${displayParsedCmd(watchCmdArguments ?? '')}`}
             </span>
           ) : (
-            <span className="break-words text-sm">
+            <span className="break-words text-sm text-neutral-disabled">
               {`helm install {{RELEASE_NAME}} ${watchVersion ? `--version ${watchVersion}` : ''} ./${watchRootPath?.substring(1) ?? ''} ${displayParsedCmd(watchCmdArguments ?? '')}`}
             </span>
           )}
@@ -90,7 +90,7 @@ export function DeploymentSetting() {
             className="mt-2"
             value={field.value}
             onChange={field.onChange}
-            forceAlignTop
+            align="top"
             small
           />
         )}

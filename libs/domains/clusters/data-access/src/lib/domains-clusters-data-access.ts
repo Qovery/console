@@ -1,15 +1,20 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  ArgoCDApi,
+  type ArgoCdCredentialsRequest,
   type ClusterAdvancedSettings,
   type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,
   type ClusterRequest,
   type ClusterRoutingTableRequest,
   ClustersApi,
+  OrganizationMainCallsApi,
 } from 'qovery-typescript-axios'
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 const clusterApi = new ClustersApi()
+const argoCdApi = new ArgoCDApi()
+const organizationApi = new OrganizationMainCallsApi()
 
 export const clusters = createQueryKeys('clusters', {
   list: ({ organizationId }: { organizationId: string }) => ({
@@ -31,6 +36,13 @@ export const clusters = createQueryKeys('clusters', {
     async queryFn() {
       const response = await clusterApi.getClusterStatus(organizationId, clusterId)
       return response.data
+    },
+  }),
+  eksAnywhereCommits: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await clusterApi.listEksAnywhereCommits(organizationId, clusterId)
+      return response.data.results ?? []
     },
   }),
   routingTable: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
@@ -73,6 +85,25 @@ export const clusters = createQueryKeys('clusters', {
     async queryFn() {
       const response = await clusterApi.getClusterKubeconfig(organizationId, clusterId)
       return response.data
+    },
+  }),
+  argoCdCredentials: ({ clusterId }: { clusterId: string }) => ({
+    queryKey: [clusterId],
+    async queryFn() {
+      const response = await argoCdApi.getArgoCdCredentials(clusterId)
+      return response.data
+    },
+  }),
+  listServices: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await organizationApi.listServicesByOrganizationId(
+        organizationId,
+        undefined,
+        undefined,
+        clusterId
+      )
+      return response.data.results
     },
   }),
   runningStatus: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
@@ -133,6 +164,24 @@ export const mutations = {
   }) {
     const response = await clusterApi.deployCluster(organizationId, clusterId, dryRun)
     return response.data
+  },
+  async updateEksAnywhereCommit({
+    organizationId,
+    clusterId,
+    commitId,
+  }: {
+    organizationId: string
+    clusterId: string
+    commitId: string
+  }) {
+    const response = await clusterApi.updateEksAnywhereCommit(organizationId, clusterId, {
+      commit_id: commitId,
+    })
+    return response.data
+  },
+  async eksAnywhereClusterJwt({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+    const response = await clusterApi.getEksAnywhereClusterJwt(organizationId, clusterId)
+    return response.data.jwt
   },
   async stopCluster({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
     const response = await clusterApi.stopCluster(organizationId, clusterId)
@@ -201,5 +250,28 @@ export const mutations = {
   async upgradeCluster({ clusterId }: { clusterId: string }) {
     const response = await clusterApi.upgradeCluster(clusterId)
     return response.data
+  },
+  async checkArgoCdConnection({
+    clusterId,
+    argoCdCredentialsRequest,
+  }: {
+    clusterId: string
+    argoCdCredentialsRequest: ArgoCdCredentialsRequest
+  }) {
+    const response = await argoCdApi.checkArgoCdConnection(clusterId, argoCdCredentialsRequest)
+    return response.data
+  },
+  async saveArgoCdCredentials({
+    clusterId,
+    argoCdCredentialsRequest,
+  }: {
+    clusterId: string
+    argoCdCredentialsRequest: ArgoCdCredentialsRequest
+  }) {
+    const response = await argoCdApi.saveArgoCdCredentials(clusterId, argoCdCredentialsRequest)
+    return response.data
+  },
+  async deleteArgoCdCredentials({ clusterId }: { clusterId: string }) {
+    await argoCdApi.deleteArgoCdCredentials(clusterId)
   },
 }

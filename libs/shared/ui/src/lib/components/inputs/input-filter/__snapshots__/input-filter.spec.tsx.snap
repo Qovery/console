@@ -1,17 +1,17 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`InputFilter should match input filter with loading 1`] = `
 <div>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
       type="button"
     >
       <div
         class="flex w-12 justify-center"
       >
         <div
-          class="aspect-square border-2  rounded-full border-solid border-neutral-350 border-r-neutral-50 animate-spin w-4 "
+          class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
           data-testid="spinner"
         />
       </div>
@@ -24,7 +24,7 @@ exports[`InputFilter should match input filter with value 1`] = `
 <div>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
       type="button"
     >
       Option 1
@@ -35,7 +35,7 @@ exports[`InputFilter should match input filter with value 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-solid fa-xmark "
+          class="fa-regular fa-xmark "
         />
       </span>
     </button>
@@ -47,13 +47,13 @@ exports[`InputFilter should match input filter without value 1`] = `
 <div>
   <div>
     <button
-      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 gap-2"
+      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral gap-2"
       type="button"
     >
       Filter
       <i
         aria-hidden="true"
-        class="fa-solid fa-magnifying-glass "
+        class="fa-regular fa-magnifying-glass "
       />
     </button>
   </div>

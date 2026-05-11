@@ -1,6 +1,5 @@
 import { subDays } from 'date-fns'
 import { useState } from 'react'
-import { StringParam, useQueryParam } from 'use-query-params'
 import { Button, DatePicker, Icon, InputSelectSmall } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
@@ -16,6 +15,7 @@ export function SelectTimeRange() {
     startTimestamp,
     handleTimeRangeChange,
     timeRange,
+    setTimeRange,
     useLocalTime,
     resetChartZoom,
     setIsDatePickerOpen,
@@ -23,7 +23,6 @@ export function SelectTimeRange() {
     isLiveUpdateEnabled,
     setIsLiveUpdateEnabled,
   } = useDashboardContext()
-  const [queryTimeRange, setQueryTimeRange] = useQueryParam('timeRange', StringParam)
   const [isOpenTimestamp, setIsOpenTimestamp] = useState(false)
 
   const startDateValid = startTimestamp && !isNaN(new Date(startTimestamp).getTime())
@@ -38,26 +37,26 @@ export function SelectTimeRange() {
           setEndDate(endDate.toISOString())
           setIsOpenTimestamp(false)
           setIsDatePickerOpen(false)
-          setQueryTimeRange('custom')
+          setTimeRange('custom')
         }}
         isOpen={isOpenTimestamp}
         maxDate={new Date()}
         minDate={subDays(new Date(), 30)}
         defaultDates={startDateValid && endDateValid ? [new Date(startTimestamp), new Date(endTimestamp)] : undefined}
-        showTimeInput
+        showDateTimeInputs
         useLocalTime={useLocalTime}
         onClickOutside={() => {
           setIsOpenTimestamp(!isOpenTimestamp)
           setIsDatePickerOpen(!isOpenTimestamp)
         }}
       >
-        {queryTimeRange !== 'custom' ? (
+        {timeRange !== 'custom' ? (
           <Button
             type="button"
             variant="surface"
             color="neutral"
-            className="rounded-r-none border-r-0 active:scale-100"
             size="md"
+            className="rounded-r-none border-r-0 active:scale-100"
             onClick={() => {
               setIsOpenTimestamp(!isOpenTimestamp)
               setIsDatePickerOpen(!isOpenTimestamp)
@@ -85,7 +84,6 @@ export function SelectTimeRange() {
               onClick={(event) => {
                 event.stopPropagation()
                 handleTimeRangeChange(lastDropdownTimeRange)
-                setQueryTimeRange(lastDropdownTimeRange)
               }}
             >
               <Icon iconName="xmark" />
@@ -93,11 +91,11 @@ export function SelectTimeRange() {
           </Button>
         )}
       </DatePicker>
-      {queryTimeRange !== 'custom' && (
+      {timeRange !== 'custom' && (
         <InputSelectSmall
           name="time-range"
-          className="w-[180px]"
-          inputClassName="rounded-l-none"
+          className="w-[180px] [&>i]:top-2"
+          inputClassName="rounded-l-none h-8"
           items={timeRangeOptions}
           defaultValue={timeRange}
           onChange={(e) => {

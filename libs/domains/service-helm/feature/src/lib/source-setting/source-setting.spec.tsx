@@ -2,6 +2,13 @@ import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import { HelmChartsSetting, SourceSetting } from './source-setting'
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({
+    organizationId: '0',
+  }),
+}))
+
 jest.mock('../hooks/use-helm-repositories/use-helm-repositories', () => {
   return {
     ...jest.requireActual('../hooks/use-helm-repositories/use-helm-repositories'),

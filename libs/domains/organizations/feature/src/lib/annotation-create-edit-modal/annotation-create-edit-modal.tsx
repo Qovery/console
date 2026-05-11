@@ -119,12 +119,12 @@ export function AnnotationCreateEditModal({
             />
           )}
         />
-        <span className="mb-2 block text-sm text-neutral-400">Add annotation key value</span>
-        <div className="rounded border border-neutral-250 bg-neutral-100 px-4 py-3">
+        <span className="mb-2 block text-sm text-neutral">Add annotation key value</span>
+        <div className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-3">
           <ul>
             <li className="mb-3 grid grid-cols-[6fr_6fr_1fr] gap-x-2">
-              <span className="text-sm font-medium text-neutral-350">Annotation keys</span>
-              <span className="text-sm font-medium text-neutral-350">Value</span>
+              <span className="text-sm font-medium text-neutral-subtle">Annotation keys</span>
+              <span className="text-sm font-medium text-neutral-subtle">Value</span>
               <span></span>
             </li>
             {fields.map((field, index) => (
@@ -163,7 +163,7 @@ export function AnnotationCreateEditModal({
                     )}
                   />
                   <Button size="md" variant="plain" type="button" onClick={() => remove(index)}>
-                    <Icon iconName="trash" className="text-neutral-400" />
+                    <Icon iconName="trash" className="text-neutral" />
                   </Button>
                 </div>
               </li>
@@ -184,8 +184,8 @@ export function AnnotationCreateEditModal({
             <Icon iconName="plus" className="ml-2" />
           </Button>
         </div>
-        <span className="mb-2 mt-4 block text-sm text-neutral-400">Select scope (Kubernetes objects)</span>
-        <div className="h-[194px] overflow-y-auto rounded border border-neutral-250 bg-neutral-100 px-4 py-3">
+        <span className="mb-2 mt-4 block text-sm text-neutral">Select scope (Kubernetes objects)</span>
+        <div className="h-[194px] overflow-y-auto rounded border border-neutral bg-surface-neutral-subtle px-4 py-3">
           {Object.keys(OrganizationAnnotationsGroupScopeEnum)
             .sort()
             .map((key) => (
@@ -202,7 +202,7 @@ export function AnnotationCreateEditModal({
                       checked={field.value}
                       onCheckedChange={field.onChange}
                     />
-                    <label className="text-sm font-medium text-neutral-400" htmlFor={key}>
+                    <label className="text-sm font-medium text-neutral" htmlFor={key}>
                       {key}
                     </label>
                   </div>

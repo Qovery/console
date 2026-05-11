@@ -46,7 +46,7 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
+            For <strong className="font-medium text-neutral">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),
@@ -78,7 +78,7 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
           }}
         >
           <p>
-            For <strong className="font-medium text-neutral-400 dark:text-neutral-50">{service.name}</strong>
+            For <strong className="font-medium text-neutral">{service.name}</strong>
           </p>
         </SelectVersionModal>
       ),
@@ -117,7 +117,7 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
 
   return (
     <span className="flex">
-      <Badge variant="surface" className="min-w-7 max-w-[81px] rounded-r-none border-r-0 border-neutral-250">
+      <Badge variant="outline" className="min-w-7 max-w-[81px] rounded-r-none border-r-0 bg-surface-neutral">
         <span className="flex h-full w-full items-center justify-center truncate">
           <Truncate text={version} truncateLimit={8} />
         </span>
@@ -125,7 +125,7 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
       <Tooltip content="Deploy from another version">
         <Button
           type="button"
-          variant="surface"
+          variant="outline"
           size="xs"
           className="w-7 justify-center gap-1 rounded-l-none px-1.5"
           onClick={(e) => deployVersion(e)}

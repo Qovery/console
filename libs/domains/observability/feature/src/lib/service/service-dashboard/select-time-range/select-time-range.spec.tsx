@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom'
-import { useQueryParam } from 'use-query-params'
 import { render, screen } from '@qovery/shared/util-tests'
 import { SelectTimeRange } from './select-time-range'
 
@@ -7,11 +6,6 @@ const mockUseDashboardContext = jest.fn()
 
 jest.mock('../../../util-filter/dashboard-context', () => ({
   useDashboardContext: () => mockUseDashboardContext(),
-}))
-
-jest.mock('use-query-params', () => ({
-  useQueryParam: jest.fn(),
-  StringParam: jest.fn(),
 }))
 
 jest.mock('date-fns', () => ({
@@ -50,6 +44,7 @@ const defaultContext = {
   startTimestamp: '1698834400000',
   handleTimeRangeChange: jest.fn(),
   timeRange: '1h' as const,
+  setTimeRange: jest.fn(),
   useLocalTime: false,
   resetChartZoom: jest.fn(),
   setIsDatePickerOpen: jest.fn(),
@@ -61,7 +56,6 @@ const defaultContext = {
 describe('SelectTimeRange', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useQueryParam as jest.Mock).mockReturnValue(['1h', jest.fn()])
     mockUseDashboardContext.mockReturnValue(defaultContext)
   })
 
@@ -70,12 +64,12 @@ describe('SelectTimeRange', () => {
     expect(container).toBeTruthy()
   })
 
-  it('should render calendar button when queryTimeRange is not custom', () => {
+  it('should render calendar button when timeRange is not custom', () => {
     render(<SelectTimeRange />)
     expect(screen.getByRole('button')).toBeInTheDocument()
   })
 
-  it('should render time range selector when queryTimeRange is not custom', () => {
+  it('should render time range selector when timeRange is not custom', () => {
     render(<SelectTimeRange />)
     expect(screen.getByTestId('input-select-small')).toBeInTheDocument()
   })

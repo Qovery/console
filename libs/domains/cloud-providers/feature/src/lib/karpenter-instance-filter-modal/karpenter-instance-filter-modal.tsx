@@ -241,10 +241,10 @@ function KarpenterInstanceForm({
   return (
     <FormProvider {...methods}>
       <ModalCrud title="Karpenter Instance Visual filter" onClose={onClose} onSubmit={onSubmit} submitLabel="Confirm">
-        <div className="flex rounded-md border border-neutral-200">
+        <div className="flex rounded-md border border-neutral">
           <div className="flex max-h-[60vh] w-1/2 flex-col gap-2 overflow-y-scroll p-2">
-            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <span className="flex w-full justify-between font-semibold text-neutral-400">Architecture</span>
+            <div className="flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
+              <span className="flex w-full justify-between font-semibold text-neutral">Architecture</span>
               <div className="grid grid-cols-2 gap-1">
                 <div className="flex items-center gap-3">
                   <Controller
@@ -336,8 +336,8 @@ function KarpenterInstanceForm({
                 </Callout.Root>
               )}
             </div>
-            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <div className="flex w-full justify-between font-semibold text-neutral-400">
+            <div className="flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
+              <div className="flex w-full justify-between font-semibold text-neutral">
                 Size
                 <div className="flex gap-0.5">
                   {watchSizes.length === 0 ? (
@@ -391,8 +391,8 @@ function KarpenterInstanceForm({
                 ))}
               </div>
             </div>
-            <div className="flex flex-col gap-4 rounded border border-neutral-200 bg-neutral-100 p-4">
-              <div className="flex w-full justify-between font-semibold text-neutral-400">
+            <div className="flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
+              <div className="flex w-full justify-between font-semibold text-neutral">
                 Categories/Families
                 <div className="flex gap-0.5">
                   {Object.keys(watchCategories).length === 0 ? (
@@ -474,14 +474,14 @@ function KarpenterInstanceForm({
               </div>
             </div>
           </div>
-          <div className="flex max-h-[60vh] w-1/2 flex-col gap-4 overflow-y-scroll border-l border-neutral-200 p-6">
+          <div className="flex max-h-[60vh] w-1/2 flex-col gap-4 overflow-y-scroll border-l border-neutral p-6">
             <div className="flex w-full items-center justify-between">
-              <span className="font-semibold text-neutral-400">Selected instance types: {dataFiltered.length}</span>
+              <span className="font-semibold text-neutral">Selected instance types: {dataFiltered.length}</span>
               <Tooltip
                 classNameContent="max-w-80"
                 content="Karpenter will create nodes based on the specified list of instance types. By selecting specific instance types, you can control the performance, cost, and architecture of the nodes in your cluster."
               >
-                <span className="text-neutral-400">
+                <span className="text-neutral">
                   <Icon iconName="info-circle" iconStyle="regular" />
                 </span>
               </Tooltip>
@@ -502,7 +502,7 @@ function KarpenterInstanceForm({
               </Callout.Root>
             )}
             {dataFiltered.length > 0 && (
-              <div className="flex flex-wrap text-neutral-400">
+              <div className="flex flex-wrap text-neutral">
                 {(!extendSelection ? dataFiltered.slice(0, DISPLAY_LIMIT) : dataFiltered).map((instanceType, index) => (
                   <span key={instanceType.name} className="mr-1 inline-block last:mr-0">
                     {instanceType.name}

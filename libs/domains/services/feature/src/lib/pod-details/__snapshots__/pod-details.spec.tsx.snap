@@ -1,25 +1,27 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`PodDetails should match snapshot with container based pod and with multiple containers 1`] = `
 <body>
   <div>
     <div
-      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden bg-surface-neutral-subtle pb-4 pl-4 pr-20 pt-3"
     >
-      <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
-      />
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
-        href="/organization//project//environment//logs/1/service-logs"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative z-dropdown max-w-fit gap-0.5"
+        params="[object Object]"
+        search="[object Object]"
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
         type="button"
       >
         Logs
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll "
+          class="fa-regular fa-scroll "
         />
       </a>
+      <div
+        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-component"
+      />
       <div
         data-orientation="horizontal"
         dir="ltr"
@@ -35,7 +37,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
           <button
             aria-controls="radix-:rm:-content-pod-container-1"
             aria-selected="true"
-            class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 rounded-full text-2xs px-2 h-5 font-semibold border"
+            class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle rounded-full text-2xs px-2 h-5 font-semibold border"
             data-orientation="horizontal"
             data-radix-collection-item=""
             data-state="active"
@@ -45,14 +47,14 @@ exports[`PodDetails should match snapshot with container based pod and with mult
             type="button"
           >
             <div
-              class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-surface-positive-solid"
             />
             pod-container-1
           </button>
           <button
             aria-controls="radix-:rm:-content-pod-container-2"
             aria-selected="false"
-            class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 rounded-full text-2xs px-2 h-5 font-semibold border"
+            class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle rounded-full text-2xs px-2 h-5 font-semibold border"
             data-orientation="horizontal"
             data-radix-collection-item=""
             data-state="inactive"
@@ -62,7 +64,7 @@ exports[`PodDetails should match snapshot with container based pod and with mult
             type="button"
           >
             <div
-              class="mr-1 h-1.5 w-1.5 rounded-full bg-red-500"
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-surface-negative-solid"
             />
             pod-container-2
           </button>
@@ -84,25 +86,25 @@ exports[`PodDetails should match snapshot with container based pod and with mult
               class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
             >
               <dt
-                class="text-neutral-350 dark:text-neutral-300 col-span-2 mb-2"
+                class="text-neutral-subtle col-span-2 mb-2"
               >
                 Container image:
               </dt>
               <dd
-                class="font-medium text-neutral-400 dark:font-normal dark:text-white mb-2 flex gap-1"
+                class="font-medium text-neutral mb-2 flex gap-1"
               >
                 foobar-img
               </dd>
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
-                class="text-neutral-350 dark:text-neutral-300"
+                class="text-neutral-subtle"
               >
                 Current status:
               </dt>
               <dd
-                class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+                class="font-medium text-neutral"
               >
                 <span>
                   <span
@@ -138,20 +140,19 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
 <body>
   <div>
     <div
-      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden bg-surface-neutral-subtle pb-4 pl-4 pr-20 pt-3"
     >
-      <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
-      />
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
-        href="/organization//project//environment//logs/1/service-logs"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative z-dropdown max-w-fit gap-0.5"
+        params="[object Object]"
+        search="[object Object]"
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
         type="button"
       >
         Logs
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll "
+          class="fa-regular fa-scroll "
         />
       </a>
       <div
@@ -169,7 +170,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
           <button
             aria-controls="radix-:re:-content-pod-container-1"
             aria-selected="true"
-            class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 rounded-full text-2xs px-2 h-5 font-semibold border"
+            class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle rounded-full text-2xs px-2 h-5 font-semibold border"
             data-orientation="horizontal"
             data-radix-collection-item=""
             data-state="active"
@@ -179,7 +180,7 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
             type="button"
           >
             <div
-              class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-surface-positive-solid"
             />
             pod-container-1
           </button>
@@ -201,15 +202,15 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
               class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
             >
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
-                class="text-neutral-350 dark:text-neutral-300 mb-2"
+                class="text-neutral-subtle mb-2"
               >
                 Current status:
               </dt>
               <dd
-                class="font-medium text-neutral-400 dark:font-normal dark:text-white mb-2"
+                class="font-medium text-neutral mb-2"
               >
                 <span>
                   <span
@@ -223,28 +224,28 @@ exports[`PodDetails should match snapshot with git based pod and with last_termi
                 </span>
               </dd>
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
-                class="text-neutral-350 dark:text-neutral-300 mb-2"
+                class="text-neutral-subtle mb-2"
               >
                 State reason:
               </dt>
               <dd
-                class="font-medium text-neutral-400 dark:font-normal dark:text-white mb-2"
+                class="font-medium text-neutral mb-2"
               >
                 Baz reason
               </dd>
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
-                class="text-neutral-350 dark:text-neutral-300 mb-2"
+                class="text-neutral-subtle mb-2"
               >
                 State message:
               </dt>
               <dd
-                class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+                class="font-medium text-neutral"
               >
                 Baz
                  (
@@ -266,20 +267,19 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
 <body>
   <div>
     <div
-      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden bg-surface-neutral-subtle pb-4 pl-4 pr-20 pt-3"
     >
-      <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
-      />
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
-        href="/organization//project//environment//logs/1/service-logs"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative z-dropdown max-w-fit gap-0.5"
+        params="[object Object]"
+        search="[object Object]"
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
         type="button"
       >
         Logs
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll "
+          class="fa-regular fa-scroll "
         />
       </a>
       <div
@@ -297,7 +297,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
           <button
             aria-controls="radix-:r6:-content-pod-container-1"
             aria-selected="true"
-            class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brand-500 hover:border-brand-500 border-neutral-250 dark:border-neutral-350 data-[state=active]:border-brand-500 dark:data-[state=active]:border-brand-500 data-[state=active]:text-brand-500 dark:data-[state=active]:text-white dark:hover:text-white disabled:border-neutral-200 disabled:text-neutral-300 dark:disabled:border-neutral-400 dark:disabled:text-neutral-350 transition text-neutral-350 dark:text-neutral-300 rounded-full text-2xs px-2 h-5 font-semibold border"
+            class="relative flex items-center justify-center shrink-0 select-none box-border hover:text-brandHover hover:border-brand-strong border-neutral data-[state=active]:border-brand-strong data-[state=active]:text-brand disabled:border-neutral disabled:text-neutral-disabled transition text-neutral-subtle rounded-full text-2xs px-2 h-5 font-semibold border"
             data-orientation="horizontal"
             data-radix-collection-item=""
             data-state="active"
@@ -307,7 +307,7 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
             type="button"
           >
             <div
-              class="mr-1 h-1.5 w-1.5 rounded-full bg-green-500"
+              class="mr-1 h-1.5 w-1.5 rounded-full bg-surface-positive-solid"
             />
             pod-container-1
           </button>
@@ -329,15 +329,15 @@ exports[`PodDetails should match snapshot with git based pod and without last_te
               class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
             >
               <span
-                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+                class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
               />
               <dt
-                class="text-neutral-350 dark:text-neutral-300"
+                class="text-neutral-subtle"
               >
                 Current status:
               </dt>
               <dd
-                class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+                class="font-medium text-neutral"
               >
                 <span>
                   <span
@@ -363,35 +363,34 @@ exports[`PodDetails should match snapshot with pod error with 0 containers 1`] =
 <body>
   <div>
     <div
-      class="dark relative flex flex-col gap-y-3 overflow-hidden pb-4 pl-4 pr-20 pt-3"
+      class="relative flex flex-col gap-y-3 overflow-hidden bg-surface-neutral-subtle pb-4 pl-4 pr-20 pt-3"
     >
-      <div
-        class="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-neutral-300"
-      />
       <a
-        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none focus-visible:[&:not(:active)]:outline-2 outline-0 shadow-sm disabled:shadow-none active:shadow-none outline-brand-500 text-xs h-7 px-2 rounded border border-neutral-250 dark:border-neutral-400 text-neutral-400 dark:text-white hover:[&:not(:active)]:border-neutral-300 dark:hover:[&:not(:active):not(:disabled)]:border-neutral-350 active:bg-neutral-150 disabled:text-neutral-300 disabled:bg-neutral-100 disabled:border-none bg-neutral-100 dark:bg-neutral-500 hover:[&:not(:active):not(:disabled)]:bg-white dark:hover:[&:not(:active):not(:disabled)]:bg-neutral-400 absolute right-2 top-2 gap-2"
-        href="/organization//project//environment//logs/1/service-logs?instance=app-z0fb41d62-5c7fdb6f5f-44wpd"
+        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral relative z-dropdown max-w-fit gap-0.5"
+        params="[object Object]"
+        search="[object Object]"
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
         type="button"
       >
         Logs
         <i
           aria-hidden="true"
-          class="fa-solid fa-scroll "
+          class="fa-regular fa-scroll "
         />
       </a>
       <dl
         class="grid gap-2 grid-cols-[20px_100px_minmax(0,_1fr)] gap-x-2 gap-y-0"
       >
         <span
-          class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-neutral-700 before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-neutral-300"
+          class="relative top-[1px] z-0 inline-flex h-4 w-4 items-center justify-center bg-surface-neutral-subtle before:block before:h-1.5 before:w-1.5 before:rounded-full before:bg-surface-neutralInvert"
         />
         <dt
-          class="text-neutral-350 dark:text-neutral-300"
+          class="text-neutral-subtle"
         >
           Current status:
         </dt>
         <dd
-          class="font-medium text-neutral-400 dark:font-normal dark:text-white"
+          class="font-medium text-neutral"
         >
           <span
             class="flex gap-1.5"

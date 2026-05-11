@@ -1,13 +1,13 @@
+import { clsx } from 'clsx'
 import { type Commit, type DeployAllRequest, type Environment } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { isJobGitSource } from '@qovery/shared/enums'
 import {
+  Avatar,
   Button,
+  Checkbox,
   Icon,
-  InputCheckbox,
-  LegacyAvatar,
-  LegacyAvatarStyle,
   LoaderSpinner,
   ScrollShadowWrapper,
   TagCommit,
@@ -15,6 +15,7 @@ import {
   Truncate,
   useModal,
 } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deploy-all-services'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
 import { type OutdatedService, useOutdatedServices } from '../hooks/use-outdated-services/use-outdated-services'
@@ -109,16 +110,23 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
   const getNameForCommit = (application: OutdatedService, commitId?: string): string | undefined => {
     return findCommitById(application, commitId)?.author_name
   }
+
+  const getInitials = (fullName: string) =>
+    fullName
+      .split(' ')
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((name) => name.charAt(0).toUpperCase())
+      .join('')
+
   const isChecked = (serviceId: string) => selectedServiceIds.includes(serviceId)
 
   return (
     <div className="p-6">
-      <h2 className="h4 mb-1 max-w-sm truncate text-neutral-400 dark:text-neutral-50">Deploy latest version for..</h2>
-      <p className="mb-4 text-sm text-neutral-350 dark:text-neutral-50">
-        Select the services you want to update to the latest version
-      </p>
+      <h2 className="h4 mb-1 max-w-sm truncate text-neutral">Deploy latest version for..</h2>
+      <p className="mb-4 text-sm text-neutral-subtle">Select the services you want to update to the latest version</p>
 
-      <div className="mb-4 flex items-center justify-between text-sm text-neutral-400 dark:text-neutral-50">
+      <div className="mb-4 flex items-center justify-between text-sm text-neutral">
         <p>
           For{' '}
           <strong className="font-medium">
@@ -128,11 +136,11 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
 
         {outdatedServices.length > 0 &&
           (selectedServiceIds.length > 0 ? (
-            <Button onClick={unselectAll} data-testid="deselect-all" size="sm" variant="surface" color="neutral">
+            <Button onClick={unselectAll} data-testid="deselect-all" size="sm" variant="outline" color="neutral">
               Deselect All
             </Button>
           ) : (
-            <Button onClick={selectAll} data-testid="select-all" size="sm" variant="surface" color="neutral">
+            <Button onClick={selectAll} data-testid="select-all" size="sm" variant="outline" color="neutral">
               Select All
             </Button>
           ))}
@@ -152,6 +160,11 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                 .otherwise(() => undefined)
 
               const skipped = isSkipped(application.id)
+              const deployedCommitAuthorName =
+                getNameForCommit(application, gitRepository?.deployed_commit_id) || 'Unknown'
+              const deployedCommitAuthorAvatarUrl = getAvatarForCommit(application, gitRepository?.deployed_commit_id)
+              const latestCommitAuthorName = application.commits[0].author_name || ''
+              const latestCommitAuthorAvatarUrl = application.commits[0].author_avatar_url || ''
 
               return (
                 <Tooltip
@@ -162,24 +175,32 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                   <li
                     data-testid="outdated-service-row"
                     onClick={skipped ? undefined : () => checkService(application.id)}
-                    className={`${index === 0 ? 'rounded-t' : ''} ${
-                      outdatedServices.length - 1 === index ? 'rounded-b !border-b' : ''
-                    } flex justify-between border border-b-0 p-4 dark:border-neutral-400 ${
-                      skipped
-                        ? 'cursor-default border-neutral-250 opacity-50'
-                        : isChecked(application.id)
-                          ? `border border-brand-500 bg-brand-50 dark:bg-neutral-500`
-                          : 'border-neutral-250'
-                    } ${!skipped && outdatedServices && isChecked(outdatedServices[index - 1]?.id) && 'border-t-brand-500'}`}
+                    className={twMerge(
+                      'flex justify-between border border-b-0 border-neutral p-4',
+                      index === 0 && 'rounded-t',
+                      outdatedServices.length - 1 === index && 'rounded-b !border-b',
+                      clsx({
+                        'cursor-default opacity-50': skipped,
+                        'cursor-pointer': !skipped,
+                        'border-brand-strong bg-surface-brand-subtle': !skipped && isChecked(application.id),
+                        'border-t-brand-strong': !skipped && isChecked(outdatedServices[index - 1]?.id),
+                      })
+                    )}
                   >
-                    <div className="flex font-medium text-neutral-400 dark:text-neutral-50">
-                      <InputCheckbox
-                        name={application.id}
-                        value={application.id}
-                        isChecked={isChecked(application.id)}
-                        disabled={skipped}
-                        className="mr-4"
-                      />
+                    <div className="flex font-medium text-neutral">
+                      <span className="mr-4 flex items-center" onClick={(e) => e.stopPropagation()}>
+                        <Checkbox
+                          name={application.id}
+                          checked={isChecked(application.id)}
+                          disabled={skipped}
+                          onCheckedChange={(checked) => {
+                            if (checked === 'indeterminate') {
+                              return
+                            }
+                            checkService(application.id)
+                          }}
+                        />
+                      </span>
                       <Truncate truncateLimit={31} text={application.name} />
                     </div>
                     <div className="ml-auto flex items-center">
@@ -189,29 +210,43 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
                         onClick={(e) => e.stopPropagation()}
                       >
                         {}
-                        <LegacyAvatar
-                          size={28}
-                          className="mr-2"
-                          style={LegacyAvatarStyle.STROKED}
-                          firstName={getNameForCommit(application, gitRepository?.deployed_commit_id) || 'Unknown'}
-                          url={getAvatarForCommit(application, gitRepository?.deployed_commit_id)}
-                        />
+                        <Tooltip content={deployedCommitAuthorName}>
+                          <Avatar
+                            size="custom"
+                            border="solid"
+                            className="mr-2 h-7 w-7"
+                            src={deployedCommitAuthorAvatarUrl}
+                            alt={deployedCommitAuthorName}
+                            fallback={
+                              <span className="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-xs font-medium text-neutral">
+                                {getInitials(deployedCommitAuthorName)}
+                              </span>
+                            }
+                          />
+                        </Tooltip>
                         <TagCommit withBackground commitId={gitRepository?.deployed_commit_id} />
                       </div>
-                      <Icon iconName="arrow-left" className="mx-2 -scale-100 text-neutral-400" />
+                      <Icon iconName="arrow-left" className="mx-2 -scale-100 text-neutral-subtle" />
                       {application.commits && Boolean(application.commits.length) && (
                         <div
                           data-testid="last-commit-block"
                           className={`flex items-center ${!isChecked(application.id) ? 'opacity-50' : ''}`}
                           onClick={(e) => e.stopPropagation()}
                         >
-                          <LegacyAvatar
-                            size={28}
-                            className="mr-2"
-                            style={LegacyAvatarStyle.STROKED}
-                            firstName={application.commits[0].author_name || ''}
-                            url={application.commits[0].author_avatar_url || ''}
-                          />
+                          <Tooltip content={latestCommitAuthorName} disabled={!latestCommitAuthorName}>
+                            <Avatar
+                              size="custom"
+                              border="solid"
+                              className="mr-2 h-7 w-7"
+                              src={latestCommitAuthorAvatarUrl}
+                              alt={latestCommitAuthorName}
+                              fallback={
+                                <span className="flex h-full w-full items-center justify-center rounded-full bg-surface-neutral-subtle text-xs font-medium text-neutral">
+                                  {getInitials(latestCommitAuthorName)}
+                                </span>
+                              }
+                            />
+                          </Tooltip>
                           <TagCommit withBackground commitId={application.commits[0].git_commit_id} />
                         </div>
                       )}
@@ -224,12 +259,12 @@ export function UpdateAllModal({ environment }: UpdateAllModalProps) {
         </ScrollShadowWrapper>
       ) : (
         <div className="px-3 py-6 text-center" data-testid="empty-state">
-          <Icon iconName="wave-pulse" className="text-neutral-350" />
-          <p className="mt-1 text-xs font-medium text-neutral-350">No outdated services found</p>
+          <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+          <p className="mt-1 text-xs font-medium text-neutral-subtle">No outdated services found</p>
         </div>
       )}
 
-      <div className="sticky bottom-0 -mb-6 flex justify-end gap-3 bg-white py-6 dark:bg-neutral-550">
+      <div className="sticky bottom-0 -mb-6 flex justify-end gap-3 bg-background py-6">
         <Button data-testid="cancel-button" color="neutral" variant="plain" size="lg" onClick={closeModal}>
           Cancel
         </Button>

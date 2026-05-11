@@ -16,14 +16,14 @@ const Story: Meta<typeof Avatar> = {
 
 export const Primary = {
   args: {
-    className: 'bg-neutral-100',
+    className: 'bg-surface-neutral',
     fallback: <Icon name="SERVICES" />,
   },
 }
 
 export const Border = {
   args: {
-    className: 'bg-neutral-100',
+    className: 'bg-surface-neutral',
     border: 'solid',
     fallback: <Icon name="SERVICES" />,
   },

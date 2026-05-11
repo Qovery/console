@@ -1,5 +1,5 @@
 import { type AlertRuleResponse } from 'qovery-typescript-axios'
-import { Button, Icon, ToastEnum, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, Icon, toast, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useDeleteAlertRule } from '../../../hooks/use-delete-alert-rule/use-delete-alert-rule'
 import { AlertRulesCloneModal } from '../../alert-rules-clone-modal/alert-rules-clone-modal'
@@ -34,7 +34,7 @@ export function AlertRulesActionBar({
           await Promise.allSettled(
             deletableAlertRules.map((alertRule) => deleteAlertRule({ alertRuleId: alertRule.id }))
           )
-          toast(ToastEnum.SUCCESS, 'Alert rules deleted successfully')
+          toast('success', 'Alert rules deleted successfully')
           resetRowSelection()
         } catch (error) {
           console.error(error)
@@ -73,7 +73,7 @@ export function AlertRulesActionBar({
         >
           <div
             className={twMerge(
-              'flex h-14 items-center justify-between rounded border border-neutral-200 bg-neutral-50 pl-4 pr-3 text-sm font-medium text-neutral-400 shadow-xl',
+              'flex h-14 items-center justify-between rounded border border-neutral bg-surface-neutral pl-4 pr-3 text-sm font-medium text-neutral shadow-xl',
               hasSelection ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
             )}
           >
@@ -92,7 +92,7 @@ export function AlertRulesActionBar({
                 <Button
                   size="md"
                   variant="outline"
-                  className="items-center gap-2 text-red-500"
+                  className="items-center gap-2 text-negative"
                   onClick={handleDeleteAllAlertRules}
                   disabled={deletableAlertRules.length === 0}
                 >

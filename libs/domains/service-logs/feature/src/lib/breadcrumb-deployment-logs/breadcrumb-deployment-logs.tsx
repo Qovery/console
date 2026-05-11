@@ -102,13 +102,13 @@ export function BreadcrumbDeploymentLogs({
   return (
     <div className="flex items-center justify-center">
       <div className="flex flex-col">
-        <span className="ml-2 text-xs font-medium text-neutral-350 dark:text-neutral-300">Deployment logs</span>
+        <span className="ml-2 text-xs font-medium text-neutral-subtle">Deployment logs</span>
         <div className="flex items-center gap-1">
           <DropdownMenu.Root open={open} onOpenChange={(open) => setOpen(open)}>
             <Popover.Root open={open} onOpenChange={(open) => setOpen(open)}>
               <span className="flex items-center justify-between pl-2">
                 <BadgeDeploymentOrder className="mr-1.5" order={currentFindStageIndex} />
-                <span className="mr-3 text-sm font-medium text-neutral-50">{currentService?.name}</span>
+                <span className="mr-3 text-sm font-medium text-neutral">{currentService?.name}</span>
                 <Popover.Trigger>
                   <Button type="button" variant="plain" radius="full">
                     <Icon iconName="angle-down" />
@@ -116,7 +116,7 @@ export function BreadcrumbDeploymentLogs({
                 </Popover.Trigger>
               </span>
               <DropdownMenu.Content asChild>
-                <Popover.Content className="-ml-2.5 flex min-w-96 flex-col gap-3 rounded-md border-transparent bg-neutral-700 p-3 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded">
+                <Popover.Content className="-ml-2.5 flex min-w-96 flex-col gap-3 rounded-md border border-neutral bg-surface-neutral p-3 text-neutral shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-up-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-down-md-faded">
                   {/* 
                     `stopPropagation` is used to prevent the event from `DropdownMenu.Root` parent
                     fix issue with item focus if we use input search
@@ -125,11 +125,11 @@ export function BreadcrumbDeploymentLogs({
                   <div className="flex flex-col gap-3" onKeyDown={(e) => e.stopPropagation()}>
                     <InputSearch
                       placeholder="Search..."
-                      className="mb-1 dark:bg-neutral-600"
+                      className="mb-1"
                       onChange={(value) => setSearchTerm(value)}
                       autofocus
                     />
-                    <div className="flex items-center gap-3 text-sm font-medium text-neutral-50">
+                    <div className="flex items-center gap-3 text-sm font-medium text-neutral">
                       <Checkbox
                         name="skipped"
                         id="skipped"
@@ -157,8 +157,8 @@ export function BreadcrumbDeploymentLogs({
                       ))
                     ) : (
                       <div className="px-3 py-6 text-center">
-                        <Icon iconName="wave-pulse" className="text-neutral-350" />
-                        <p className="mt-1 text-xs font-medium text-neutral-350">No result for this search</p>
+                        <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                        <p className="mt-1 text-xs font-medium text-neutral-subtle">No result for this search</p>
                       </div>
                     )}
                   </div>

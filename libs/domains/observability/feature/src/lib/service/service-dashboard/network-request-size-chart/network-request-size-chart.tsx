@@ -9,20 +9,20 @@ import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NGINX: Queries for nginx metrics (to remove when migrating to envoy)
 const queryResponseSize = (ingressName: string) => `
-  sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"})
+  sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"}) > 0
 `
 
 const queryRequestSize = (ingressName: string) => `
-   sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"})
+   sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"}) > 0
 `
 
 // ENVOY: Queries for envoy metrics
 const queryEnvoyResponseSize = (httpRouteName: string) => `
-  sum(envoy_proxy:resp_bytes_rate:5m{httproute_name="${httpRouteName}"})
+  sum(envoy_proxy:resp_bytes_rate:5m{httproute_name="${httpRouteName}"}) > 0
 `
 
 const queryEnvoyRequestSize = (httpRouteName: string) => `
-   sum(envoy_proxy:req_bytes_rate:5m{httproute_name="${httpRouteName}"})
+   sum(envoy_proxy:req_bytes_rate:5m{httproute_name="${httpRouteName}"}) > 0
 `
 
 export function NetworkRequestSizeChart({
@@ -198,7 +198,7 @@ export function NetworkRequestSizeChart({
         dataKey="Response size (nginx)"
         name="Response size (nginx)"
         type="linear"
-        stroke="var(--color-brand-400)"
+        stroke="#847AE6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -210,7 +210,7 @@ export function NetworkRequestSizeChart({
         dataKey="Request size (nginx)"
         name="Request size (nginx)"
         type="linear"
-        stroke="var(--color-purple-400)"
+        stroke="#CB87F6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}
@@ -225,7 +225,7 @@ export function NetworkRequestSizeChart({
             dataKey="Response size (envoy)"
             name="Response size (envoy)"
             type="linear"
-            stroke="var(--color-green-400)"
+            stroke="#70DE91"
             strokeWidth={2}
             dot={false}
             connectNulls={false}
@@ -237,7 +237,7 @@ export function NetworkRequestSizeChart({
             dataKey="Request size (envoy)"
             name="Request size (envoy)"
             type="linear"
-            stroke="var(--color-sky-400)"
+            stroke="#3AB0E9"
             strokeWidth={2}
             dot={false}
             connectNulls={false}

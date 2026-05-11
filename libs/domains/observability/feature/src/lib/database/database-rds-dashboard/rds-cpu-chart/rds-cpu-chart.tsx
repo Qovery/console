@@ -66,7 +66,7 @@ export function RdsCpuChart({
         dataKey="CPU Usage"
         name="CPU Usage"
         type="linear"
-        stroke="var(--color-brand-500)"
+        stroke="#5B50D6"
         strokeWidth={2}
         dot={false}
         connectNulls={false}

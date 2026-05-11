@@ -1,6 +1,19 @@
+import { type ReactNode } from 'react'
 import { useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import SidebarPodStatuses, { type SidebarPodStatusesProps } from './sidebar-pod-statuses'
+
+jest.mock('@tanstack/react-router', () => ({
+  useNavigate: () => jest.fn(),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useSearch: () => ({
+    instance: '',
+  }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
+  }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+}))
 
 jest.mock('@qovery/domains/services/feature', () => ({
   useMetrics: jest.fn(),

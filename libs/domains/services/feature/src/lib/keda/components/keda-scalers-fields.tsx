@@ -77,25 +77,25 @@ export function KedaScalersFields({
 
       {/* Scalers list */}
       <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <label className="text-sm font-medium text-neutral-400">Scalers</label>
+        <div className="mt-6 flex items-center justify-between">
+          <label className="text-base font-medium text-neutral">Scalers</label>
           <Button size="xs" type="button" onClick={handleAddScaler} disabled={disabled}>
             Add scaler
           </Button>
         </div>
 
         {scalers.length === 0 && (
-          <p className="text-xs text-neutral-350">No scalers configured. Click "Add scaler" to get started.</p>
+          <p className="text-xs text-neutral-subtle">No scalers configured. Click "Add scaler" to get started.</p>
         )}
 
         {scalers.map((_: unknown, index: number) => (
           <div
             key={index}
-            className="flex flex-col gap-3 rounded border border-neutral-250 bg-neutral-100 p-4"
+            className="flex flex-col gap-3 rounded border border-neutral bg-surface-neutral-subtle p-4"
             data-testid="scaler-row"
           >
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium text-neutral-400">Scaler #{index + 1}</span>
+              <span className="text-sm font-medium text-neutral">Scaler #{index + 1}</span>
               <Button
                 size="xs"
                 type="button"
@@ -143,7 +143,9 @@ export function KedaScalersFields({
 
                 return (
                   <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-neutral-400">Configuration (YAML)</label>
+                    <label className="text-sm font-medium text-neutral" htmlFor={field.name}>
+                      Configuration (YAML)
+                    </label>
                     <CodeEditor
                       height={height}
                       language="yaml"
@@ -153,7 +155,7 @@ export function KedaScalersFields({
                         readOnly: disabled,
                       }}
                     />
-                    <p className="text-xs text-neutral-350">Paste raw YAML for this scaler</p>
+                    <p className="text-xs text-neutral-subtle">Paste raw YAML for this scaler</p>
                   </div>
                 )
               }}
@@ -169,9 +171,7 @@ export function KedaScalersFields({
 
                 return (
                   <div className="flex flex-col gap-1">
-                    <label className="text-sm font-medium text-neutral-400">
-                      Trigger Authentication (YAML) - Optional
-                    </label>
+                    <label className="text-sm font-medium text-neutral">Trigger Authentication (YAML) - Optional</label>
                     <CodeEditor
                       height={height}
                       language="yaml"
@@ -181,7 +181,9 @@ export function KedaScalersFields({
                         readOnly: disabled,
                       }}
                     />
-                    <p className="text-xs text-neutral-350">Paste raw YAML for the trigger authentication (optional)</p>
+                    <p className="text-xs text-neutral-subtle">
+                      Paste raw YAML for the trigger authentication (optional)
+                    </p>
                   </div>
                 )
               }}

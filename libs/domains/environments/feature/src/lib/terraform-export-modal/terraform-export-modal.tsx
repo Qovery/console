@@ -42,7 +42,7 @@ export function TerraformExportModal({ environmentId }: TerraformExportModalProp
               onChange={field.onChange}
               title="Export secrets"
               description="An optional toggle for secure secrets."
-              forceAlignTop
+              align="top"
               small
             />
           )}

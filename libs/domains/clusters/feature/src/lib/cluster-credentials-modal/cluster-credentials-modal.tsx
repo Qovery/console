@@ -166,7 +166,7 @@ function CalloutEdit({
         <Icon iconName="circle-exclamation" iconStyle="regular" />
       </Callout.Icon>
       <Callout.Text>
-        <Callout.TextDescription className="flex flex-col gap-1">
+        <Callout.TextDescription className="flex flex-col gap-1 text-warning">
           The credential change won't be applied to the mirroring registry of this cluster. Make sure to update the
           credentials properly in this cluster's mirroring registry section.
           {clusterId && (
@@ -205,8 +205,8 @@ export function ClusterCredentialsModal({
   const apiCloudProvider: CloudProviderEnum = cloudProviderLocal === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProviderLocal
 
   const { mutateAsync: createCloudProviderCredential, isLoading: isLoadingCreate } = useCreateCloudProviderCredential()
-  const { mutateAsync: editCloudProviderCredential, isLoading: isLoadingEdit } = useEditCloudProviderCredential()
   const { mutateAsync: deleteCloudProviderCredential } = useDeleteCloudProviderCredential()
+  const { mutateAsync: editCloudProviderCredential, isLoading: isLoadingEdit } = useEditCloudProviderCredential()
 
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -394,7 +394,6 @@ export function ClusterCredentialsModal({
       },
     })
   }
-
   const watchType = methods.watch('type')
   const watchAzureApplicationId = methods.watch('azure_application_id')
   const watchAzureSubscriptionId = methods.watch('azure_subscription_id')
@@ -488,9 +487,9 @@ export function ClusterCredentialsModal({
           {(isAwsStaticCredential || isEksAnywhereStaticCredential) && (
             <>
               {isAwsMode && (
-                <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                  <h2 className="text-sm font-medium text-neutral-400">1. Create a user for Qovery</h2>
-                  <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
+                <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+                  <h2 className="text-sm font-medium text-neutral">1. Create a user for Qovery</h2>
+                  <p className="text-sm text-neutral-subtle">Follow the instructions available on this page</p>
                   <ExternalLink
                     href="https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster"
                     size="sm"
@@ -501,20 +500,20 @@ export function ClusterCredentialsModal({
               )}
               {cloudProviderLocal === 'GCP' && (
                 <>
-                  <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                    <h2 className="text-sm font-medium text-neutral-400">
+                  <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+                    <h2 className="text-sm font-medium text-neutral">
                       1. Connect to your GCP Console and create/open a project
                     </h2>
-                    <p className="text-sm text-neutral-350">Make sure you are connected to the right GCP account</p>
+                    <p className="text-sm text-neutral-subtle">Make sure you are connected to the right GCP account</p>
                     <ExternalLink href="https://console.cloud.google.com/" size="sm">
                       https://console.cloud.google.com/
                     </ExternalLink>
                   </div>
-                  <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                    <h2 className="text-sm font-medium text-neutral-400">
+                  <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+                    <h2 className="text-sm font-medium text-neutral">
                       2. Open the embedded Google shell and run the following command
                     </h2>
-                    <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                    <div className="flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
                       <div>
                         <span className="select-none">$ </span>
                         curl https://setup.qovery.com/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT
@@ -529,9 +528,9 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                 </>
               )}
               {cloudProviderLocal === 'SCW' && (
-                <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                  <h2 className="text-sm font-medium text-neutral-400">1. Generate Access key Id/Secret Access Key</h2>
-                  <p className="text-sm text-neutral-350">Follow the instructions available on this page</p>
+                <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+                  <h2 className="text-sm font-medium text-neutral">1. Generate Access key Id/Secret Access Key</h2>
+                  <p className="text-sm text-neutral-subtle">Follow the instructions available on this page</p>
                   <ExternalLink
                     href="https://www.qovery.com/docs/getting-started/installation/scaleway#step-1%3A-create-scaleway-credentials"
                     size="sm"
@@ -544,18 +543,18 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
           )}
           {isAwsStsCredential || isEksAnywhereRoleCredential ? (
             <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                <h2 className="text-sm font-medium text-neutral-400">1. Connect to your AWS Console</h2>
-                <p className="text-sm text-neutral-350">Make sure you are connected to the right AWS account</p>
+              <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+                <h2 className="text-sm font-medium text-neutral">1. Connect to your AWS Console</h2>
+                <p className="text-sm text-neutral-subtle">Make sure you are connected to the right AWS account</p>
                 <ExternalLink href="https://aws.amazon.com/fr/console/" size="sm">
                   https://aws.amazon.com/fr/console/
                 </ExternalLink>
               </div>
-              <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                <h2 className="text-sm font-medium text-neutral-400">
+              <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+                <h2 className="text-sm font-medium text-neutral">
                   2. Create a role for Qovery and grant assume role permissions
                 </h2>
-                <p className="text-sm text-neutral-350">
+                <p className="text-sm text-neutral-subtle">
                   Execute the following Cloudformation stack and retrieve the role ARN from the “Output” section.
                 </p>
                 <ExternalLink
@@ -565,8 +564,8 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   Cloudformation stack
                 </ExternalLink>
               </div>
-              <div className="flex flex-col gap-4 rounded border border-neutral-250 p-4">
-                <h2 className="text-sm font-medium text-neutral-400">3. Insert here the role ARN</h2>
+              <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
+                <h2 className="text-sm font-medium text-neutral">3. Insert here the role ARN</h2>
                 <Controller
                   name="name"
                   control={methods.control}
@@ -623,7 +622,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                     {isEditDirty && (
                       <>
                         <hr />
-                        <span className="text-sm text-neutral-350">Confirm your vSphere password</span>
+                        <span className="text-sm text-neutral-subtle">Confirm your vSphere password</span>
                       </>
                     )}
                     {(!isEdit || isEditDirty) && (
@@ -652,8 +651,8 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-4 rounded border border-neutral-250 p-4">
-              <h2 className="text-sm font-medium text-neutral-400">
+            <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
+              <h2 className="text-sm font-medium text-neutral">
                 {cloudProviderLocal === 'GCP'
                   ? '3. Download the key.json generated and drag and drop it here'
                   : cloudProvider === 'AZURE'
@@ -698,8 +697,8 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   />
                   {isEditDirty && (
                     <>
-                      <hr />
-                      <span className="text-sm text-neutral-350">Confirm your secret key</span>
+                      <hr className="border-neutral" />
+                      <span className="text-sm text-neutral-subtle">Confirm your secret key</span>
                     </>
                   )}
                   {(!isEdit || isEditDirty) && (
@@ -744,7 +743,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                       {isEditDirty && (
                         <>
                           <hr />
-                          <span className="text-sm text-neutral-350">Confirm your vSphere password</span>
+                          <span className="text-sm text-neutral-subtle">Confirm your vSphere password</span>
                         </>
                       )}
                       {(!isEdit || isEditDirty) && (
@@ -792,8 +791,8 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   />
                   {isEditDirty && (
                     <>
-                      <hr />
-                      <span className="text-sm text-neutral-350">Confirm your secret key</span>
+                      <hr className="border-neutral" />
+                      <span className="text-sm text-neutral-subtle">Confirm your secret key</span>
                     </>
                   )}
                   {(!isEdit || isEditDirty) && (
@@ -867,12 +866,12 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                           <Dropzone typeFile=".json" isDragActive={isDragActive} />
                         </div>
                       ) : fileDetails ? (
-                        <div className="mb-[90px] flex items-center justify-between rounded border border-neutral-200 p-4">
-                          <div className="flex items-center pl-2 text-neutral-400">
+                        <div className="mb-[90px] flex items-center justify-between rounded border border-neutral p-4">
+                          <div className="flex items-center pl-2 text-neutral">
                             <Icon iconName="file-arrow-down" className="mr-4" />
                             <p className="flex flex-col gap-1">
                               <span className="text-xs font-medium">{fileDetails.name}</span>
-                              <span className="text-xs text-neutral-350">{fileDetails.size} Ko</span>
+                              <span className="text-xs text-neutral-subtle">{fileDetails.size} Ko</span>
                             </p>
                           </div>
                           <Button
@@ -942,28 +941,30 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
 
                 return (
                   <>
-                    <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                      <h2 className="text-sm font-medium text-neutral-400">
+                    <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+                      <h2 className="text-sm font-medium text-neutral">
                         2. Connect to your Azure Console and go to shell console
                       </h2>
-                      <p className="text-sm text-neutral-350">Make sure you are connected to the right Azure account</p>
+                      <p className="text-sm text-neutral-subtle">
+                        Make sure you are connected to the right Azure account
+                      </p>
                       <ExternalLink href="https://portal.azure.com/" size="sm">
                         https://portal.azure.com/
                       </ExternalLink>
                     </div>
-                    <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                      <h2 className="text-sm font-medium text-neutral-400">
+                    <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
+                      <h2 className="text-sm font-medium text-neutral">
                         3. Open the embedded Azure shell and run the following command
                       </h2>
                       <div>
-                        <p className="text-sm text-neutral-350">
+                        <p className="text-sm text-neutral-subtle">
                           Select `Bash`, then `No storage account required` and your subscription ID.
                         </p>
-                        <p className="text-sm text-neutral-350">
+                        <p className="text-sm text-neutral-subtle">
                           Please note that this script can take up to 30 seconds to complete.
                         </p>
                       </div>
-                      <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                      <div className="flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
                         <div>
                           <span className="select-none">$ </span>
                           {snippet}

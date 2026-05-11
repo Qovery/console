@@ -38,17 +38,7 @@ export function useServiceRemoveModal() {
   useEffect(() => {
     if (serviceRemoveModal) {
       openModal({
-        content: (
-          <ServiceRemoveModal
-            title={serviceRemoveModal.title}
-            actions={serviceRemoveModal.actions}
-            hasSkipDestroy={serviceRemoveModal.hasSkipDestroy}
-            entities={serviceRemoveModal.entities}
-            description={serviceRemoveModal.description}
-            name={serviceRemoveModal.name}
-            warning={serviceRemoveModal.warning}
-          />
-        ),
+        content: <ServiceRemoveModal {...serviceRemoveModal} />,
         options: {
           width: 740,
         },

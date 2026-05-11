@@ -8,9 +8,10 @@ type QoveryStatus = Array<{
   isParent: boolean
 }>
 
-export function useQoveryStatus() {
+export function useQoveryStatus(enabled = true) {
   return useQuery({
     queryKey: ['qoveryStatus'],
+    enabled,
     queryFn: () =>
       fetch('https://status.qovery.com/v2/components.json')
         .then((res) => res.json())

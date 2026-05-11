@@ -3,11 +3,13 @@ import { queries } from '@qovery/state/util-queries'
 
 export interface UseApiTokensProps {
   organizationId: string
+  suspense?: boolean
 }
 
-export function useApiTokens({ organizationId }: UseApiTokensProps) {
+export function useApiTokens({ organizationId, suspense = false }: UseApiTokensProps) {
   return useQuery({
     ...queries.organizations.apiTokens({ organizationId }),
+    suspense,
     select(data) {
       if (!data) {
         return data

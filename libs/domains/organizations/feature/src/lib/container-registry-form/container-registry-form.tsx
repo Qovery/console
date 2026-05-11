@@ -330,15 +330,17 @@ export function ContainerRegistryForm({
                           .with(ContainerRegistryKindEnum.GITHUB_CR, () => (
                             <>
                               The prefix is the part of the URL before the repository name.For example, in{' '}
-                              <code className="rounded bg-neutral-100 px-1">ghcr.io/qovery/my-app</code>, the prefix is{' '}
-                              <code className="rounded bg-neutral-100 px-1">qovery</code>
+                              <code className="rounded bg-surface-neutral-component px-1">ghcr.io/qovery/my-app</code>,
+                              the prefix is <code className="rounded bg-surface-neutral-component px-1">qovery</code>
                             </>
                           ))
                           .with(ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR, () => (
                             <>
                               The prefix is the part of the URL before the repository name. For example, in{' '}
-                              <code className="rounded bg-neutral-100 px-1">host.ghe.com/qovery/my-app</code>, the
-                              prefix is <code className="rounded bg-neutral-100 px-1">qovery</code>
+                              <code className="rounded bg-surface-neutral-component px-1">
+                                host.ghe.com/qovery/my-app
+                              </code>
+                              , the prefix is <code className="rounded bg-surface-neutral-component px-1">qovery</code>
                             </>
                           ))
                           .otherwise(() => undefined)}
@@ -351,8 +353,8 @@ export function ContainerRegistryForm({
               />
               {isEditDirty && (
                 <>
-                  <hr />
-                  <span className="text-sm text-neutral-350">
+                  <hr className="border-neutral" />
+                  <span className="text-sm text-neutral-subtle">
                     {watchKind === ContainerRegistryKindEnum.GITHUB_CR ||
                     watchKind === ContainerRegistryKindEnum.GITLAB_CR ||
                     watchKind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
@@ -391,7 +393,7 @@ export function ContainerRegistryForm({
                         error={error?.message}
                       />
                       {watchKind === ContainerRegistryKindEnum.DOCKER_HUB && (
-                        <p className="my-1 text-xs text-neutral-350">
+                        <p className="my-1 text-xs text-neutral-subtle">
                           We encourage you to set credentials for Docker Hub due to the limits on the pull rate.
                           <ExternalLink href="https://www.docker.com/increase-rate-limits" className="ml-1" size="xs">
                             See here
@@ -429,7 +431,7 @@ export function ContainerRegistryForm({
         />
       )}
 
-      <hr />
+      <hr className="border-neutral" />
 
       {(cluster?.cloud_provider === 'AWS' || watchKind === ContainerRegistryKindEnum.ECR) && (
         <Controller
@@ -492,8 +494,8 @@ export function ContainerRegistryForm({
           />
           {isEditDirty && (
             <>
-              <hr />
-              <span className="text-sm text-neutral-350">Confirm your secret key</span>
+              <hr className="border-neutral" />
+              <span className="text-sm text-neutral-subtle">Confirm your secret key</span>
             </>
           )}
           {(!isEdit || isEditDirty) && (
@@ -553,8 +555,8 @@ export function ContainerRegistryForm({
           />
           {isEditDirty && (
             <>
-              <hr />
-              <span className="text-sm text-neutral-350">Confirm your secret key</span>
+              <hr className="border-neutral" />
+              <span className="text-sm text-neutral-subtle">Confirm your secret key</span>
             </>
           )}
           {(!isEdit || isEditDirty) && (
@@ -592,12 +594,12 @@ export function ContainerRegistryForm({
                 <Dropzone typeFile=".json" isDragActive={isDragActive} />
               </div>
             ) : fileDetails ? (
-              <div className="mb-[90px] flex items-center justify-between rounded border border-neutral-200 p-4">
-                <div className="flex items-center pl-2 text-neutral-400">
+              <div className="mb-[90px] flex items-center justify-between rounded border border-neutral p-4">
+                <div className="flex items-center pl-2 text-neutral">
                   <Icon iconName="file-arrow-down" className="mr-4" />
                   <p className="flex flex-col gap-1">
                     <span className="text-xs font-medium">{fileDetails.name}</span>
-                    <span className="text-xs text-neutral-350">{fileDetails.size} Ko</span>
+                    <span className="text-xs text-neutral-subtle">{fileDetails.size} Ko</span>
                   </p>
                 </div>
                 <Button
@@ -618,8 +620,8 @@ export function ContainerRegistryForm({
       )}
       {watchKind === ContainerRegistryKindEnum.AZURE_CR && (
         <div className="flex flex-col gap-y-4">
-          <div className="flex flex-col gap-4 rounded border border-neutral-250 p-4">
-            <h2 className="text-sm font-medium text-neutral-400">1. Fill these information</h2>
+          <div className="flex flex-col gap-4 rounded border border-neutral p-4">
+            <h2 className="text-sm font-medium text-neutral">1. Fill these information</h2>
             <Controller
               name="config.azure_tenant_id"
               control={methods.control}
@@ -656,28 +658,28 @@ export function ContainerRegistryForm({
 
           {watchAzureApplicationId && (
             <>
-              <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                <h2 className="text-sm font-medium text-neutral-400">
+              <div className="flex flex-col gap-2 rounded border border-neutral p-4">
+                <h2 className="text-sm font-medium text-neutral">
                   2. Connect to your Azure Console and go to shell console
                 </h2>
-                <p className="text-sm text-neutral-350">Make sure you are connected to the right Azure account</p>
+                <p className="text-sm text-neutral-subtle">Make sure you are connected to the right Azure account</p>
                 <ExternalLink href="https://portal.azure.com/" size="sm">
                   https://portal.azure.com/
                 </ExternalLink>
               </div>
-              <div className="flex flex-col gap-2 rounded border border-neutral-250 p-4">
-                <h2 className="text-sm font-medium text-neutral-400">
+              <div className="flex flex-col gap-2 rounded border border-neutral p-4">
+                <h2 className="text-sm font-medium text-neutral">
                   3. Open the embedded Azure shell and run the following command
                 </h2>
                 <div>
-                  <p className="text-sm text-neutral-350">
+                  <p className="text-sm text-neutral-subtle">
                     Select `Bash`, then `No storage account required` and your subscription ID.
                   </p>
-                  <p className="text-sm text-neutral-350">
+                  <p className="text-sm text-neutral-subtle">
                     Please note that this script can take up to 30 seconds to complete.
                   </p>
                 </div>
-                <div className="flex gap-6 rounded-sm bg-neutral-150 p-3 text-neutral-400">
+                <div className="flex gap-6 rounded-sm bg-surface-neutral-component p-3 text-neutral">
                   <div>
                     <span className="select-none">$ </span>
                     {snippet}

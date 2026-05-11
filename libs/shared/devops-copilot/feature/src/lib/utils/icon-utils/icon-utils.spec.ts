@@ -26,28 +26,28 @@ describe('icon-utils', () => {
   describe('getIconClass', () => {
     it('should return green color class for completed status', () => {
       const result = getIconClass('completed')
-      expect(result).toContain('text-green-500')
+      expect(result).toContain('text-positive')
     })
 
     it('should return yellow color and spin animation for in_progress status', () => {
       const result = getIconClass('in_progress')
       expect(result).toContain('animate-spin')
-      expect(result).toContain('text-yellow-500')
+      expect(result).toContain('text-warning')
     })
 
     it('should return blue color class for waiting status', () => {
       const result = getIconClass('waiting')
-      expect(result).toContain('text-blue-500')
+      expect(result).toContain('text-info')
     })
 
     it('should return red color class for error status', () => {
       const result = getIconClass('error')
-      expect(result).toContain('text-red-500')
+      expect(result).toContain('text-negative')
     })
 
     it('should return gray color class for unknown status', () => {
       const result = getIconClass('unknown')
-      expect(result).toContain('text-gray-400')
+      expect(result).toContain('text-neutral-subtle')
     })
   })
 })

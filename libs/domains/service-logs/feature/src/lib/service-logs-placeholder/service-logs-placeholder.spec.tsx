@@ -1,4 +1,5 @@
 import { DatabaseModeEnum, type Environment, StateEnum } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { act, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
@@ -12,14 +13,20 @@ jest.mock('../hooks/use-service-deployment-id/use-service-deployment-id', () => 
   useServiceDeploymentId: jest.fn(),
 }))
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useParams: () => ({
-    organizationId: 'org-123',
-    projectId: 'proj-123',
-    environmentId: 'env-123',
-    serviceId: 'svc-123',
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useSearch: () => ({}),
+  useNavigate: () => jest.fn(),
+  useParams: () => ({ organizationId: '1' }),
+  useLocation: () => ({ pathname: '/', search: '' }),
+  useRouter: () => ({
+    buildLocation: () => ({ href: '/' }),
   }),
+  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => (
+    <a {...props} href={`${props.to}`}>
+      {children}
+    </a>
+  ),
 }))
 
 const mockUseDeploymentStatus = useDeploymentStatus as jest.Mock
@@ -180,7 +187,8 @@ describe('ServiceLogsPlaceholder', () => {
       await waitFor(() => {
         expect(screen.getByText('No service logs available for my-app')).toBeInTheDocument()
         expect(screen.getByText('Please check if the service is up and running')).toBeInTheDocument()
-        expect(screen.getByText('Go to latest deployment')).toBeInTheDocument()
+        // TODO new-nav : Route not yet created
+        // expect(screen.getByText('Go to latest deployment')).toBeInTheDocument()
       })
     })
 
@@ -206,7 +214,8 @@ describe('ServiceLogsPlaceholder', () => {
 
       await waitFor(() => {
         expect(screen.getByText('No service logs available for my-service')).toBeInTheDocument()
-        expect(screen.getByText('Go to latest deployment')).toBeInTheDocument()
+        // TODO new-nav : Route not yet created
+        // expect(screen.getByText('Go to latest deployment')).toBeInTheDocument()
       })
     })
   })

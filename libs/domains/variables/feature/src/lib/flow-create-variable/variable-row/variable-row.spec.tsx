@@ -4,6 +4,13 @@ import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import VariableRow, { type VariableRowProps } from './variable-row'
 
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({
+    environmentId: 'env-1',
+  }),
+}))
+
 const props: VariableRowProps = {
   index: 0,
   onDelete: jest.fn(),

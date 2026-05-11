@@ -1,0 +1,20 @@
+{
+  "name": "domains-audit-logs-feature",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/domains/audit-logs/feature/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "test": {
+      "options": {
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "coverage": true
+        }
+      }
+    }
+  }
+}

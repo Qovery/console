@@ -1,5 +1,6 @@
 import { act, renderHook, waitFor } from '@qovery/shared/util-tests'
 import {
+  getLegacyConsoleUrl,
   getNewConsolePathname,
   getNewConsoleUrl,
   getStoredConsolePreference,
@@ -35,6 +36,17 @@ describe('useConsoleRedirectPreference', () => {
   it('should return null when current host is not the legacy console', () => {
     expect(getNewConsoleUrl('https://new-console.qovery.com/organization/123')).toBeNull()
     expect(getNewConsoleUrl('http://localhost:4200/organization/123')).toBeNull()
+  })
+
+  it('should return the legacy console url for new console hosts', () => {
+    expect(getLegacyConsoleUrl('https://new-console.qovery.com/organization/123?foo=bar#hash')).toBe(
+      'https://console.qovery.com/organization/123?foo=bar#hash'
+    )
+  })
+
+  it('should return null when current host is not the new console', () => {
+    expect(getLegacyConsoleUrl('https://console.qovery.com/organization/123')).toBeNull()
+    expect(getLegacyConsoleUrl('http://localhost:4200/organization/123')).toBeNull()
   })
 
   it('should migrate legacy user settings to the organization overview fallback', () => {

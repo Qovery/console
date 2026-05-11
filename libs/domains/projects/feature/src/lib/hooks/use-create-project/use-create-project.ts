@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/projects/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useCreateProject() {
+export function useCreateProject({ silently = false } = {}) {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.createProject, {
@@ -12,9 +12,13 @@ export function useCreateProject() {
       })
     },
     meta: {
-      notifyOnSuccess: {
-        title: 'Your project has been created',
-      },
+      ...(silently
+        ? {}
+        : {
+            notifyOnSuccess: {
+              title: 'Your project has been created',
+            },
+          }),
       notifyOnError: true,
     },
   })

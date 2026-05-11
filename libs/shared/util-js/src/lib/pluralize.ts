@@ -2,6 +2,10 @@ const pluralRules = new Intl.PluralRules('en-US')
 
 // Inspired by https://2ality.com/2019/12/intl-pluralrules.html#a-simple-tool-function-for-pluralization
 export function pluralize(count: number, singular: string, plural?: string) {
+  if (count === 0) {
+    return singular
+  }
+
   plural ??= `${singular}s`
   const grammaticalNumber = pluralRules.select(count)
   switch (grammaticalNumber) {

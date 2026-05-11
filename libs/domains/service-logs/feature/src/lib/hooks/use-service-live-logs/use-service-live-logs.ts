@@ -1,7 +1,6 @@
 import { type QueryClient } from '@tanstack/react-query'
+import { useParams, useSearch } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { useQueryParams } from 'use-query-params'
 import {
   type NormalizedServiceLog,
   buildLokiQuery,
@@ -9,7 +8,6 @@ import {
 } from '@qovery/domains/service-logs/data-access'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
-import { queryParamsServiceLogs } from '../../list-service-logs/service-logs-context/service-logs-context'
 
 export interface UseServiceLiveLogsProps {
   clusterId?: string
@@ -21,18 +19,28 @@ const DEBOUNCE_TIME = 400
 const LIMIT = 200
 
 export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: UseServiceLiveLogsProps) {
-  const { organizationId, projectId, environmentId } = useParams()
-  const [queryParams] = useQueryParams(queryParamsServiceLogs)
+  const { organizationId, projectId, environmentId } = useParams({ strict: false })
+  const queryParams = useSearch({ strict: false })
 
   const serviceLogsBuffer = useRef<NormalizedServiceLog[]>([])
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  const [newLogsAvailable, setNewLogsAvailable] = useState(false)
-  const [pauseLogs, setPauseLogs] = useState(false)
+  const [bufferedLogsCount, setBufferedLogsCount] = useState(0)
+  const [isScrollPaused, setIsScrollPaused] = useState(false)
+  const isScrollPausedRef = useRef(false)
   const [isFetched, setIsFetched] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const [debouncedLogs, setDebouncedLogs] = useState<NormalizedServiceLog[]>([])
+
+  const setPauseLogs = useCallback((paused: boolean | ((prev: boolean) => boolean)) => {
+    setIsScrollPaused((prev) => {
+      const next = typeof paused === 'function' ? paused(prev) : paused
+      isScrollPausedRef.current = next
+      if (!next) setBufferedLogsCount(0)
+      return next
+    })
+  }, [])
 
   const flushBufferedLogs = useCallback(() => {
     if (serviceLogsBuffer.current.length > 0) {
@@ -73,7 +81,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
         version?: string
       }
     ) => {
-      setNewLogsAvailable(true)
+      if (isScrollPausedRef.current) setBufferedLogsCount((c) => c + 1)
       const normalizedLog = normalizeWebSocketLog(log)
       serviceLogsBuffer.current.push(normalizedLog)
       scheduleFlush()
@@ -92,7 +100,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
         version?: string
       }
     ) => {
-      setNewLogsAvailable(true)
+      if (isScrollPausedRef.current) setBufferedLogsCount((c) => c + 1)
       const normalizedLog = normalizeWebSocketLog(log)
 
       // Temporary fix to show NGINX logs as unknown to avoid UI issues
@@ -113,7 +121,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
         version?: string
       }
     ) => {
-      setNewLogsAvailable(true)
+      if (isScrollPausedRef.current) setBufferedLogsCount((c) => c + 1)
       const normalizedLog = normalizeWebSocketLog(log)
 
       // Temporary fix to show Envoy logs as unknown to avoid UI issues
@@ -126,7 +134,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
   const onCloseHandler = useCallback((_: QueryClient) => {
     setDebouncedLogs([])
     serviceLogsBuffer.current = []
-    setNewLogsAvailable(false)
+    setBufferedLogsCount(0)
     setIsFetched(true)
     setIsLoading(false)
   }, [])
@@ -268,11 +276,10 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
   )
 
   return {
-    data: pauseLogs ? pausedDataLogs : debouncedLogs,
-    pauseLogs,
+    data: isScrollPaused ? pausedDataLogs : debouncedLogs,
+    isScrollPaused,
     setPauseLogs,
-    setNewLogsAvailable,
-    newLogsAvailable,
+    bufferedLogsCount,
     isFetched,
     isLoading,
   }

@@ -22,13 +22,13 @@ jest.mock('../../utils/icon-utils/icon-utils', () => ({
   },
   getIconClass: (status: string) => {
     const classMap: Record<string, string> = {
-      not_started: 'text-neutral-400',
-      in_progress: 'text-blue-500',
-      completed: 'text-green-500',
-      waiting: 'text-yellow-500',
-      error: 'text-red-500',
+      not_started: 'text-neutral',
+      in_progress: 'animate-spin text-warning',
+      completed: 'text-positive',
+      waiting: 'text-info',
+      error: 'text-negative',
     }
-    return classMap[status] || 'text-neutral-400'
+    return classMap[status] || 'text-neutral'
   },
 }))
 
@@ -175,14 +175,14 @@ describe('LoadingIndicator', () => {
       render(<LoadingIndicator {...defaultProps} showPlans={{ temp: true }} />)
 
       const completedStep = screen.getByText('Step 1')
-      expect(completedStep).toHaveClass('text-neutral-400')
+      expect(completedStep).toHaveClass('text-neutral-subtle')
     })
 
     it('should not apply neutral color to in-progress step', () => {
       render(<LoadingIndicator {...defaultProps} showPlans={{ temp: true }} />)
 
       const inProgressStep = screen.getByText('Step 2')
-      expect(inProgressStep).not.toHaveClass('text-neutral-400')
+      expect(inProgressStep).not.toHaveClass('text-neutral-subtle')
     })
 
     it('should have cursor-pointer on clickable container', () => {

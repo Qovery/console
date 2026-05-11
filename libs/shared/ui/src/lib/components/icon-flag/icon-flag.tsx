@@ -9,7 +9,11 @@ export function IconFlag(props: IconFlagProps) {
   const { code = 'US', className = '' } = props
 
   return (
-    <ReactCountryFlag className={`!h-[11px] !w-[14px] rounded-sm drop-shadow ${className}`} countryCode={code} svg />
+    <ReactCountryFlag
+      className={`!h-[11px] !w-[14px] rounded-sm border border-neutral retina:border-[0.5px] ${className}`}
+      countryCode={code}
+      svg
+    />
   )
 }
 

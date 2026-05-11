@@ -1,5 +1,5 @@
 import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-types'
-import { type ComponentPropsWithoutRef, type SVGAttributes } from 'react'
+import { type ComponentPropsWithoutRef, type SVGAttributes, forwardRef } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import IconFa from '../icon-fa/icon-fa'
 import { type IconAwesomeEnum } from './icon-awesome.enum'
@@ -7,6 +7,7 @@ import BitbucketIcon from './icons-git/bitbucket'
 import { GithubIcon, GithubWhiteIcon } from './icons-git/github'
 import GitlabIcon from './icons-git/gitlab'
 import ApplicationIcon from './icons/application'
+import ArgoCdIcon from './icons/argocd'
 import AWSIcon from './icons/aws'
 import AWSGrayIcon from './icons/aws-gray'
 import AzureIcon from './icons/azure'
@@ -66,10 +67,17 @@ export interface IconSVGProps extends SVGAttributes<SVGElement> {
   children?: never
 }
 
-export function Icon(props: IconProps | FontAwesomeIconProps) {
+export const Icon = forwardRef<HTMLElement, IconProps | FontAwesomeIconProps>(function Icon(props, ref) {
   if ('iconName' in props) {
-    const { iconStyle = 'solid', iconName, className, ...rest } = props
-    return <i aria-hidden className={`fa-${iconStyle} fa-${iconName} ${className ? className : ''}`} {...rest} />
+    const { iconStyle = 'regular', iconName, className, ...rest } = props
+    return (
+      <i
+        ref={ref as React.Ref<HTMLElement>}
+        aria-hidden
+        className={`fa-${iconStyle} fa-${iconName} ${className ? className : ''}`}
+        {...rest}
+      />
+    )
   }
 
   const formattedProps = { ...props }
@@ -109,6 +117,8 @@ export function Icon(props: IconProps | FontAwesomeIconProps) {
       return <GCPGrayIcon {...formattedProps} />
     case IconEnum.APPLICATION:
       return <ApplicationIcon {...formattedProps} />
+    case IconEnum.ARGOCD:
+      return <ArgoCdIcon {...formattedProps} />
     case IconEnum.AZURE:
       return <AzureIcon {...formattedProps} />
     case IconEnum.DATABASE:
@@ -183,6 +193,8 @@ export function Icon(props: IconProps | FontAwesomeIconProps) {
     default:
       return <IconFa {...formattedProps} />
   }
-}
+})
+
+Icon.displayName = 'Icon'
 
 export default Icon

@@ -36,12 +36,12 @@ const buttons = (
 
 const actions = (
   <>
-    <Tag className="bg-brand-50 text-brand-500">PROD</Tag>
-    <div className="inline-flex h-6 items-center gap-2 rounded border border-neutral-200 bg-white px-2 text-xs font-medium">
+    <Tag className="bg-surface-brand-subtle text-brand">PROD</Tag>
+    <div className="inline-flex h-6 items-center gap-2 rounded border border-neutral bg-white px-2 text-xs font-medium">
       <Icon name={IconEnum.AWS} width="16" />
       <p className="max-w-[54px] truncate">community-test</p>
     </div>
-    <Tag className="gap-2 bg-neutral-150">
+    <Tag className="gap-2 bg-surface-neutral-subtle">
       <span className="h-2 w-2 rounded-lg bg-orange-300"></span>
       <span className="h-2 w-2 rounded-lg bg-teal-500"></span>
     </Tag>

@@ -17,24 +17,24 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
           </Callout.Text>
         </Callout.Root>
       )}
-      <ul className="flex flex-col gap-4 text-sm font-medium text-neutral-400">
-        <li className="rounded border border-neutral-200 p-3">
+      <ul className="flex flex-col gap-4 text-sm font-medium text-neutral">
+        <li className="rounded border border-neutral p-3">
           <h5 className="mb-1 text-sm font-medium">1. Download/Update Qovery CLI</h5>
-          <p className="mb-2 font-normal text-neutral-350">
+          <p className="mb-2 font-normal text-neutral-subtle">
             Download and install the Qovery CLI (or update its version to the latest version).
           </p>
           <ExternalLink href="https://www.qovery.com/docs/cli/overview#installation">
             https://www.qovery.com/docs/cli/overview#installation
           </ExternalLink>
         </li>
-        <li className="rounded border border-neutral-200 p-3">
+        <li className="rounded border border-neutral p-3">
           <h5 className="mb-1 text-sm font-medium">
             2. {type === 'LOCAL_DEMO' ? 'Install your cluster' : 'Install Qovery on your cluster'}
           </h5>
-          <p className="mb-2  font-normal text-neutral-350">
+          <p className="mb-2 font-normal text-neutral-subtle">
             Run the following command from your terminal and follow the instructions.
           </p>
-          <pre className="flex items-center justify-between rounded-sm bg-neutral-150 p-3 font-mono text-neutral-400">
+          <pre className="flex items-center justify-between rounded-sm bg-surface-neutral-subtle p-3 font-mono text-neutral">
             {type === 'LOCAL_DEMO' ? (
               <>
                 <span>
@@ -52,9 +52,9 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
             )}
           </pre>
         </li>
-        <li className="rounded border border-neutral-200 p-3">
+        <li className="rounded border border-neutral p-3">
           <h5 className="mb-1 text-sm font-medium">3. Deploy your first environment!</h5>
-          <p className="font-normal text-neutral-350">
+          <p className="font-normal text-neutral-subtle">
             Once the installation is completed, get back to the Qovery console and deploy your first environment on your
             brand new cluster.
           </p>

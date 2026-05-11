@@ -1,5 +1,5 @@
 import { type HelmPortRequestPortsInner, PortProtocolEnum } from 'qovery-typescript-axios'
-import { type FormEvent } from 'react'
+import { type FormEvent, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { InputSelect, InputText, LoaderSpinner, ModalCrud } from '@qovery/shared/ui'
 import { useKubernetesServices } from '../hooks/use-kubernetes-services/use-kubernetes-services'
@@ -8,11 +8,12 @@ export interface NetworkingPortSettingModalProps {
   helmId: string
   port?: HelmPortRequestPortsInner
   onClose: () => void
-  onSubmit: (port: HelmPortRequestPortsInner) => void
+  onSubmit: (port: HelmPortRequestPortsInner) => Promise<void> | void
 }
 
 export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: NetworkingPortSettingModalProps) {
   const isEdit = !!port
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const methods = useForm({
     defaultValues: {
       internal_port: `${port?.internal_port ?? ''}`,
@@ -64,15 +65,25 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
     <FormProvider {...methods}>
       <ModalCrud
         title={isEdit ? 'Edit port' : 'Set port'}
-        onSubmit={methods.handleSubmit((data) =>
-          onSubmit({
-            ...data,
-            internal_port: Number(data['internal_port']), // need to cast to Number
-            external_port: Number(data['external_port']),
-          })
-        )}
-        onClose={onClose}
+        onSubmit={methods.handleSubmit(async (data) => {
+          setIsSubmitting(true)
+          try {
+            await onSubmit({
+              ...data,
+              internal_port: Number(data['internal_port']), // need to cast to Number
+              external_port: Number(data['external_port']),
+            })
+          } finally {
+            setIsSubmitting(false)
+          }
+        })}
+        onClose={() => {
+          if (!isSubmitting) {
+            onClose()
+          }
+        }}
         isEdit={isEdit}
+        loading={isSubmitting}
         howItWorks={
           <>
             <p>Specify:</p>
@@ -261,7 +272,7 @@ export function NetworkingPortSettingModal({ helmId, port, onClose, onSubmit }: 
                     />
                   )}
                 />
-                <p className="mb-5 ml-3 text-xs text-neutral-350">{`Port Name allows to customize the subdomain assigned to reach the application
+                <p className="mb-5 ml-3 text-xs text-neutral-subtle">{`Port Name allows to customize the subdomain assigned to reach the application
 port from the internet. Default value is p<port_number>-<service_name>`}</p>
               </div>
             </>

@@ -10,7 +10,7 @@ jest.mock('@qovery/shared/ui', () => ({
   Heading: ({ children }: { children: ReactNode }) => <h3>{children}</h3>,
   Icon: ({ iconName }: { iconName: string }) => <i data-testid={`icon-${iconName}`}>icon</i>,
   Section: ({ children }: { children: ReactNode }) => <section>{children}</section>,
-  Skeleton: ({ children, show }: { children: ReactNode; show?: boolean }) =>
+  Skeleton: ({ children, show = true }: { children: ReactNode; show?: boolean }) =>
     show ? <div>Loading...</div> : <div>{children}</div>,
   Tooltip: ({ children, content }: { children: ReactNode; content?: ReactNode }) => (
     <div data-testid="tooltip" data-content={typeof content === 'string' ? content : ''}>

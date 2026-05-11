@@ -44,24 +44,24 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
   ]
 
   return (
-    <div className="flex flex-col gap-2.5 rounded border border-neutral-250 p-4">
-      <p className="text-sm text-neutral-350">Total cluster resources</p>
-      <ul className="flex w-full flex-col text-sm text-neutral-400">
+    <div className="flex flex-col gap-2.5 rounded border border-neutral bg-surface-neutral p-4">
+      <p className="text-sm text-neutral-subtle">Total cluster resources</p>
+      <ul className="flex w-full flex-col text-sm text-neutral">
         {resources.map(({ label, icon, value, isPercentage }) =>
           isPercentage ? (
             <li key={label} className="grid h-8 w-full grid-cols-[1fr_auto] items-center gap-1 p-1.5">
               <span className="flex max-w-[140px] items-center gap-2.5 overflow-hidden">
-                <Icon className="shrink-0 text-base text-neutral-300" iconName={icon} iconStyle="regular" />
+                <Icon className="shrink-0 text-base text-neutral-subtle" iconName={icon} iconStyle="regular" />
                 <span className="truncate whitespace-nowrap">{label}</span>
               </span>
               <Skeleton width={160} height={20} show={typeof metrics !== 'object' ? true : false}>
-                <p className="flex items-center gap-1 text-right text-neutral-400">
+                <p className="flex items-center gap-1 text-right text-neutral">
                   <span className="font-medium">{value.used}</span>
-                  <span className="flex items-center gap-1.5 text-neutral-350">
+                  <span className="flex items-center gap-1.5 text-neutral-subtle">
                     <span>
                       /{value.total} {value.unit}
                     </span>
-                    <span className="block h-[3px] w-[3px] rounded-full bg-neutral-300" />
+                    <span className="block h-[3px] w-[3px] rounded-full bg-surface-neutral-solid" />
                     {value.percent}%
                   </span>
                 </p>
@@ -70,13 +70,13 @@ export function ClusterCardResources({ organizationId, clusterId }: ClusterCardR
           ) : (
             <li key={label} className="grid h-8 w-full grid-cols-[1fr_auto] items-center gap-1 p-1.5">
               <span className="flex max-w-[140px] items-center gap-2.5 overflow-hidden">
-                <Icon className="shrink-0 text-base text-neutral-300" iconName={icon} iconStyle="regular" />
+                <Icon className="shrink-0 text-base text-neutral-subtle" iconName={icon} iconStyle="regular" />
                 <span className="truncate whitespace-nowrap">{label}</span>
               </span>
               <Skeleton width={160} height={20} show={typeof metrics !== 'object' ? true : false}>
-                <p className="flex items-center gap-1 text-right text-neutral-400">
+                <p className="flex items-center gap-1 text-right text-neutral">
                   <span className="font-medium">{value.total}</span>
-                  <span className="text-neutral-350">{value.unit}</span>
+                  <span className="text-neutral-subtle">{value.unit}</span>
                 </p>
               </Skeleton>
             </li>

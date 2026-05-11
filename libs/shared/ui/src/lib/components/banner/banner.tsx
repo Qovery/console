@@ -1,6 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type VariantProps, cva } from 'class-variance-authority'
-import { type PropsWithChildren, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, type PropsWithChildren, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Button from '../button/button'
 import Icon from '../icon/icon'
@@ -8,28 +8,26 @@ import Icon from '../icon/icon'
 const bannerVariants = cva('flex h-10 items-center justify-center text-sm font-medium', {
   variants: {
     color: {
-      brand: ['bg-brand-500', 'text-white'],
-      yellow: ['bg-yellow-500', 'text-yellow-900'],
-      purple: ['bg-purple-500', 'text-white'],
-      red: ['bg-red-500', 'text-white'],
+      brand: ['bg-surface-brand-component', 'text-brand'],
+      yellow: ['bg-surface-warning-component', 'text-warning'],
+      purple: ['bg-surface-accent1-component', 'text-accent1'],
+      red: ['bg-surface-negative-component', 'text-negative'],
     },
   },
 })
+type BannerDivProps = Omit<ComponentPropsWithoutRef<'div'>, 'color'>
 
 export type BannerColor = NonNullable<VariantProps<typeof bannerVariants>['color']>
 
-export const bannerButtonVariants = cva('', {
-  variants: {
-    color: {
-      brand: ['bg-brand-400/50', 'hover:bg-brand-400/75', 'text-white'],
-      yellow: ['bg-yellow-600/50', 'hover:bg-yellow-600/75', 'text-yellow-900'],
-      purple: ['bg-purple-400', 'hover:bg-purple-600', 'text-white'],
-      red: ['bg-red-400', 'hover:bg-red-600', 'text-white'],
-    },
-  },
-})
+// Map banner colors to the subset supported by Button (no `purple` on Button)
+const BANNER_TO_BUTTON_COLOR: Record<BannerColor, 'brand' | 'yellow' | 'red'> = {
+  brand: 'brand',
+  yellow: 'yellow',
+  red: 'red',
+  purple: 'brand',
+}
 
-export interface BannerProps extends VariantProps<typeof bannerVariants> {
+export interface BannerProps extends BannerDivProps, VariantProps<typeof bannerVariants> {
   buttonLabel?: string
   buttonIconRight?: IconName
   onClickButton?: () => void
@@ -38,18 +36,26 @@ export interface BannerProps extends VariantProps<typeof bannerVariants> {
 }
 
 export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>(function Banner(
-  { children, buttonLabel, buttonIconRight, onClickButton, color = 'yellow', dismissible = false, onDismiss },
+  {
+    children,
+    buttonLabel,
+    buttonIconRight,
+    onClickButton,
+    color = 'yellow',
+    dismissible = false,
+    onDismiss,
+    className,
+    ...props
+  },
   forwardedRef
 ) {
+  const buttonColor = color ? BANNER_TO_BUTTON_COLOR[color] : 'brand'
+
   return (
-    <div className={twMerge(bannerVariants({ color }), 'relative')} ref={forwardedRef}>
+    <div className={twMerge(bannerVariants({ color }), 'relative', className)} ref={forwardedRef} {...props}>
       {children}
       {buttonLabel && (
-        <Button
-          type="button"
-          className={twMerge('ml-4 gap-1', bannerButtonVariants({ color }))}
-          onClick={onClickButton}
-        >
+        <Button type="button" className="ml-4 gap-1" variant="solid" color={buttonColor} onClick={onClickButton}>
           {buttonLabel}
           {buttonIconRight && <Icon iconName={buttonIconRight} />}
         </Button>
@@ -57,10 +63,8 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
       {dismissible && (
         <Button
           type="button"
-          className={twMerge(
-            'absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center p-0',
-            bannerButtonVariants({ color })
-          )}
+          className="absolute right-2 top-1/2 flex h-7 w-7 -translate-y-1/2 items-center justify-center p-0"
+          color={buttonColor}
           onClick={onDismiss}
           aria-label="Dismiss"
         >

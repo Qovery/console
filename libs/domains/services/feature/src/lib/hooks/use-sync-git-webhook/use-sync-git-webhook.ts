@@ -16,7 +16,7 @@ export function useSyncGitWebhook({ serviceId }: UseSyncGitWebhookProps) {
       queryClient.invalidateQueries({
         queryKey: queries.services.gitWebhookStatus(serviceId).queryKey,
       })
-      toast('SUCCESS', 'Webhook synchronized successfully')
+      toast('success', 'Webhook synchronized successfully')
     },
     meta: {
       notifyOnError: true,

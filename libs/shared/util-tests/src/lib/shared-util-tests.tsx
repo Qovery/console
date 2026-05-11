@@ -54,7 +54,7 @@ function renderWithProviders(
   window.ResizeObserver = ResizeObserver
 
   return {
-    userEvent: userEvent.setup(),
+    userEvent: userEvent.setup({ advanceTimers: jest.advanceTimersByTime.bind(jest) }),
     ...render(ui, { wrapper: Wrapper, ...renderOptions }),
   }
 }

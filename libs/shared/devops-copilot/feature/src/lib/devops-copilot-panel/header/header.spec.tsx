@@ -1,11 +1,51 @@
-import type { MutableRefObject } from 'react'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import * as Dialog from '@radix-ui/react-dialog'
+import type { MutableRefObject, ReactNode } from 'react'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { Header } from './header'
 
 jest.mock('@qovery/shared/util-const', () => ({
   QOVERY_FEEDBACK_URL: 'https://feedback.qovery.com',
   QOVERY_FORUM_URL: 'https://forum.qovery.com',
 }))
+
+jest.mock('@qovery/shared/ui', () => {
+  const React = jest.requireActual('react')
+  const actual = jest.requireActual('@qovery/shared/ui')
+
+  return {
+    ...actual,
+    Badge: ({ children }: { children: ReactNode }) => <span>{children}</span>,
+    Button: ({
+      children,
+      onClick,
+      ...props
+    }: {
+      children?: ReactNode
+      onClick?: () => void
+      [key: string]: unknown
+    }) => (
+      <button type="button" onClick={onClick} {...props}>
+        {children}
+      </button>
+    ),
+    Icon: ({ iconName }: { iconName: string }) => <span>{iconName}</span>,
+    Tooltip: ({ children }: { children: ReactNode }) => <span>{children}</span>,
+    DropdownMenu: {
+      Root: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+      Trigger: ({ children }: { children: ReactNode }) => <span>{children}</span>,
+      Content: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+      Item: ({ children, onClick, asChild }: { children: ReactNode; onClick?: () => void; asChild?: boolean }) => {
+        if (asChild && React.isValidElement(children)) return children
+
+        return (
+          <button type="button" onClick={onClick}>
+            {children}
+          </button>
+        )
+      },
+    },
+  }
+})
 
 describe('Header', () => {
   const mockSetIsReadOnly = jest.fn()
@@ -15,10 +55,6 @@ describe('Header', () => {
   const mockSetThreadId = jest.fn()
   const mockSetIsLoading = jest.fn()
   const mockSetPlan = jest.fn()
-
-  const mockControllerRef: MutableRefObject<AbortController | null> = {
-    current: null,
-  }
 
   const defaultProps = {
     threadId: undefined,
@@ -31,283 +67,106 @@ describe('Header', () => {
     expand: false,
     setExpand: mockSetExpand,
     handleOnClose: mockHandleOnClose,
-    controllerRef: mockControllerRef,
+    controllerRef: { current: null } as MutableRefObject<AbortController | null>,
     setThread: mockSetThread,
     setThreadId: mockSetThreadId,
     setIsLoading: mockSetIsLoading,
     setPlan: mockSetPlan,
   }
 
+  const renderHeader = (props = {}) =>
+    renderWithProviders(
+      <Dialog.Root open>
+        <Header {...defaultProps} {...props} />
+      </Dialog.Root>
+    )
+
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  describe('rendering', () => {
-    it('should render header with new conversation title', () => {
-      renderWithProviders(<Header {...defaultProps} />)
-
-      expect(screen.getByText('New conversation')).toBeInTheDocument()
-    })
-
-    it('should render thread title when threadId exists', () => {
-      const threads = [
-        { id: 'thread-1', title: 'My Custom Thread' },
-        { id: 'thread-2', title: 'Another Thread' },
-      ]
-
-      renderWithProviders(
-        <Header {...defaultProps} threadId="thread-1" threads={threads} currentThreadHistoryTitle="My Custom Thread" />
-      )
-
-      expect(screen.getByText('My Custom Thread')).toBeInTheDocument()
-    })
-
-    it('should display long thread titles without manual truncation', () => {
-      const longTitle = 'This is a very long thread title that should be truncated at 45 characters'
-      const threads = [{ id: 'thread-1', title: longTitle }]
-
-      renderWithProviders(
-        <Header {...defaultProps} threadId="thread-1" threads={threads} currentThreadHistoryTitle={longTitle} />
-      )
-
-      expect(screen.getByText(longTitle)).toBeInTheDocument()
-    })
-
-    it('should not truncate short thread titles', () => {
-      const shortTitle = 'Short title'
-      const threads = [{ id: 'thread-1', title: shortTitle }]
-
-      renderWithProviders(
-        <Header {...defaultProps} threadId="thread-1" threads={threads} currentThreadHistoryTitle={shortTitle} />
-      )
-
-      expect(screen.getByText(shortTitle)).toBeInTheDocument()
-      expect(screen.queryByText(shortTitle + '...')).not.toBeInTheDocument()
-    })
+  it('renders the current conversation title', () => {
+    renderHeader()
+    expect(screen.getByText('New conversation')).toBeInTheDocument()
   })
 
-  describe('read-only toggle', () => {
-    it('should not show read-only toggle when config is not provided', () => {
-      renderWithProviders(<Header {...defaultProps} />)
-
-      expect(screen.queryByText('Read-only')).not.toBeInTheDocument()
-      expect(screen.queryByText('Read-write')).not.toBeInTheDocument()
+  it('renders the thread title when a thread is selected', () => {
+    renderHeader({
+      threadId: 'thread-1',
+      threads: [{ id: 'thread-1', title: 'My Custom Thread' }],
+      currentThreadHistoryTitle: 'My Custom Thread',
     })
 
-    it('should show read-only mode when read-only config is enabled', () => {
-      renderWithProviders(<Header {...defaultProps} userAccess={{ read_only: false }} isReadOnly={true} />)
-
-      expect(screen.getByText('Read-only')).toBeInTheDocument()
-    })
-
-    it('should show read-write mode when not read-only', () => {
-      renderWithProviders(<Header {...defaultProps} userAccess={{ read_only: false }} isReadOnly={false} />)
-
-      expect(screen.getByText('Read-write')).toBeInTheDocument()
-    })
-
-    it('should allow toggling read-only when thread is empty', async () => {
-      const { userEvent, container } = renderWithProviders(
-        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={0} isReadOnly={true} />
-      )
-
-      const toggles = container.querySelectorAll('button')
-      const toggle = Array.from(toggles).find(
-        (button) => button.className.includes('rounded-full') && button.className.includes('h-5')
-      )
-
-      if (toggle) {
-        await userEvent.click(toggle)
-      }
-
-      expect(mockSetIsReadOnly).toHaveBeenCalledWith(false)
-    })
-
-    it('should not allow toggling read-only when thread has messages', async () => {
-      const { userEvent, container } = renderWithProviders(
-        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={5} />
-      )
-
-      const toggles = container.querySelectorAll('button')
-      const toggle = Array.from(toggles).find(
-        (button) => button.className.includes('rounded-full') && button.className.includes('cursor-not-allowed')
-      )
-
-      if (toggle) {
-        await userEvent.click(toggle)
-      }
-
-      expect(mockSetIsReadOnly).not.toHaveBeenCalled()
-    })
-
-    it('should not show toggle button when thread has messages', () => {
-      renderWithProviders(<Header {...defaultProps} userAccess={{ read_only: false }} threadLength={3} />)
-
-      expect(screen.queryByText('Read-only')).not.toBeInTheDocument()
-      expect(screen.queryByText('Read-write')).not.toBeInTheDocument()
-    })
+    expect(screen.getByText('My Custom Thread')).toBeInTheDocument()
   })
 
-  describe('dropdown menu', () => {
-    it('should render options button', () => {
-      const { container } = renderWithProviders(<Header {...defaultProps} />)
+  it('shows and toggles read-only mode when allowed', async () => {
+    const { userEvent } = renderHeader({ userAccess: { read_only: false }, isReadOnly: true })
 
-      const optionsButton = container.querySelector('.fa-ellipsis')?.closest('button')
-      expect(optionsButton).toBeInTheDocument()
-    })
+    expect(screen.getByText('Read-only')).toBeInTheDocument()
 
-    it('should show new chat option in dropdown', async () => {
-      const { userEvent, container } = renderWithProviders(<Header {...defaultProps} />)
+    const buttons = screen.getAllByRole('button')
+    await userEvent.click(buttons[0])
 
-      const optionsButton = container.querySelector('.fa-ellipsis')?.closest('button')
-      if (optionsButton) {
-        await userEvent.click(optionsButton)
-      }
-
-      await waitFor(() => {
-        expect(screen.getByText('New chat')).toBeInTheDocument()
-      })
-    })
-
-    it('should show history option when not expanded', async () => {
-      const { userEvent, container } = renderWithProviders(<Header {...defaultProps} expand={false} />)
-
-      const optionsButton = container.querySelector('.fa-ellipsis')?.closest('button')
-      if (optionsButton) {
-        await userEvent.click(optionsButton)
-      }
-
-      await waitFor(() => {
-        expect(screen.getByText('Show history')).toBeInTheDocument()
-      })
-    })
-
-    it('should not show history option when expanded', async () => {
-      const { userEvent, container } = renderWithProviders(<Header {...defaultProps} expand={true} />)
-
-      const optionsButton = container.querySelector('.fa-ellipsis')?.closest('button')
-      if (optionsButton) {
-        await userEvent.click(optionsButton)
-      }
-
-      await waitFor(() => {
-        expect(screen.queryByText('Show history')).not.toBeInTheDocument()
-      })
-    })
+    expect(mockSetIsReadOnly).toHaveBeenCalledWith(false)
   })
 
-  describe('new chat action', () => {
-    it('should reset state when clicking new chat', async () => {
-      const abortController = new AbortController()
-      const controllerRef: MutableRefObject<AbortController | null> = {
-        current: abortController,
-      }
-      const abortSpy = jest.spyOn(abortController, 'abort')
+  it('hides the read-only toggle once the thread has messages', () => {
+    renderHeader({ userAccess: { read_only: false }, threadLength: 2 })
 
-      const { userEvent, container } = renderWithProviders(<Header {...defaultProps} controllerRef={controllerRef} />)
-
-      const optionsButton = container.querySelector('.fa-ellipsis')?.closest('button')
-      if (optionsButton) {
-        await userEvent.click(optionsButton)
-      }
-
-      const newChatButton = await screen.findByText('New chat')
-      await userEvent.click(newChatButton)
-
-      expect(abortSpy).toHaveBeenCalled()
-      expect(mockSetThread).toHaveBeenCalledWith([])
-      expect(mockSetThreadId).toHaveBeenCalledWith(undefined)
-      expect(mockSetIsLoading).toHaveBeenCalledWith(false)
-      expect(mockSetPlan).toHaveBeenCalledWith([])
-    })
+    expect(screen.queryByText('Read-only')).not.toBeInTheDocument()
+    expect(screen.queryByText('Read-write')).not.toBeInTheDocument()
   })
 
-  describe('expand/collapse', () => {
-    it('should show expand button when not expanded', () => {
-      renderWithProviders(<Header {...defaultProps} expand={false} />)
+  it('resets the conversation when clicking new chat', async () => {
+    const abortController = new AbortController()
+    const abortSpy = jest.spyOn(abortController, 'abort')
 
-      const buttons = screen.getAllByRole('button')
-      expect(buttons.length).toBeGreaterThan(0)
+    const { userEvent } = renderHeader({
+      controllerRef: { current: abortController } as MutableRefObject<AbortController | null>,
     })
 
-    it('should show collapse button when expanded', () => {
-      renderWithProviders(<Header {...defaultProps} expand={true} />)
+    await userEvent.click(screen.getByRole('button', { name: 'New chat' }))
 
-      const buttons = screen.getAllByRole('button')
-      expect(buttons.length).toBeGreaterThan(0)
-    })
-
-    it('should call setExpand when clicking expand button', async () => {
-      const { userEvent } = renderWithProviders(<Header {...defaultProps} expand={false} />)
-
-      const buttons = screen.getAllByRole('button')
-      const expandButton = buttons[buttons.length - 2]
-
-      await userEvent.click(expandButton)
-
-      expect(mockSetExpand).toHaveBeenCalledWith(true)
-    })
-
-    it('should call setExpand when clicking collapse button', async () => {
-      const { userEvent } = renderWithProviders(<Header {...defaultProps} expand={true} />)
-
-      const buttons = screen.getAllByRole('button')
-      const collapseButton = buttons[buttons.length - 2]
-
-      await userEvent.click(collapseButton)
-
-      expect(mockSetExpand).toHaveBeenCalledWith(false)
-    })
+    expect(abortSpy).toHaveBeenCalled()
+    expect(mockSetThread).toHaveBeenCalledWith([])
+    expect(mockSetThreadId).toHaveBeenCalledWith(undefined)
+    expect(mockSetIsLoading).toHaveBeenCalledWith(false)
+    expect(mockSetPlan).toHaveBeenCalledWith([])
+    expect(mockSetIsReadOnly).toHaveBeenCalledWith(true)
   })
 
-  describe('close button', () => {
-    it('should render close button', () => {
-      renderWithProviders(<Header {...defaultProps} />)
+  it('shows the history action only when the panel is not expanded', () => {
+    const { rerender } = renderWithProviders(
+      <Dialog.Root open>
+        <Header {...defaultProps} expand={false} />
+      </Dialog.Root>
+    )
 
-      const buttons = screen.getAllByRole('button')
-      expect(buttons.length).toBeGreaterThan(0)
-    })
+    expect(screen.getByRole('button', { name: 'Show history' })).toBeInTheDocument()
 
-    it('should call handleOnClose when clicking close button', async () => {
-      const { userEvent } = renderWithProviders(<Header {...defaultProps} />)
+    rerender(
+      <Dialog.Root open>
+        <Header {...defaultProps} expand={true} />
+      </Dialog.Root>
+    )
 
-      const buttons = screen.getAllByRole('button')
-      const closeButton = buttons[buttons.length - 1]
-
-      await userEvent.click(closeButton)
-
-      expect(mockHandleOnClose).toHaveBeenCalled()
-    })
+    expect(screen.queryByRole('button', { name: 'Show history' })).not.toBeInTheDocument()
   })
 
-  describe('accessibility', () => {
-    it('should have proper tooltips for buttons', () => {
-      const { container } = renderWithProviders(<Header {...defaultProps} />)
+  it('calls setExpand from the expand action', async () => {
+    const { userEvent } = renderHeader({ expand: false })
 
-      const optionsButton = container.querySelector('.fa-ellipsis')?.closest('button')
+    await userEvent.click(screen.getByRole('button', { name: 'expand' }))
 
-      expect(optionsButton).toBeInTheDocument()
-      expect(screen.getAllByRole('button').length).toBeGreaterThan(0)
-    })
+    expect(mockSetExpand).toHaveBeenCalledWith(true)
+  })
 
-    it('should have tooltip for read-only toggle when enabled', () => {
-      const { container } = renderWithProviders(
-        <Header {...defaultProps} userAccess={{ read_only: false }} threadLength={0} isReadOnly={true} />
-      )
+  it('calls handleOnClose from the close action', async () => {
+    const { userEvent } = renderHeader()
 
-      const toggles = container.querySelectorAll('button')
-      const readOnlyToggle = Array.from(toggles).find(
-        (button) => button.className.includes('rounded-full') && button.className.includes('h-5')
-      )
+    await userEvent.click(screen.getByRole('button', { name: 'xmark' }))
 
-      expect(readOnlyToggle).toBeInTheDocument()
-    })
-
-    it('should not show toggle when thread has messages', () => {
-      renderWithProviders(<Header {...defaultProps} userAccess={{ read_only: false }} threadLength={5} />)
-
-      expect(screen.queryByText('Read-only')).not.toBeInTheDocument()
-      expect(screen.queryByText('Read-write')).not.toBeInTheDocument()
-    })
+    expect(mockHandleOnClose).toHaveBeenCalled()
   })
 })

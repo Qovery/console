@@ -1,14 +1,12 @@
-import { EnvironmentModeEnum } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useCallback } from 'react'
 import useModal from '../../../modal/use-modal/use-modal'
 import { ModalConfirmation } from '../modal-confirmation'
 
 export interface UseModalConfirmationProps {
   title: string
   description?: ReactNode
-  action: () => void
+  action: () => Promise<void> | void
   name?: string
-  mode?: keyof typeof EnvironmentModeEnum | string | undefined
   warning?: ReactNode
   placeholder?: string
   confirmationMethod?: 'name' | 'action'
@@ -16,15 +14,10 @@ export interface UseModalConfirmationProps {
 }
 
 export function useModalConfirmation() {
-  const [modalConfirmation, openModalConfirmation] = useState<UseModalConfirmationProps>()
   const { openModal } = useModal()
 
-  useEffect(() => {
-    if (
-      modalConfirmation?.confirmationMethod === 'action' ||
-      modalConfirmation?.mode === EnvironmentModeEnum.PRODUCTION ||
-      modalConfirmation?.mode === EnvironmentModeEnum.STAGING
-    ) {
+  const openModalConfirmation = useCallback(
+    (modalConfirmation: UseModalConfirmationProps) => {
       openModal({
         content: (
           <ModalConfirmation
@@ -39,10 +32,9 @@ export function useModalConfirmation() {
           />
         ),
       })
-    } else {
-      modalConfirmation?.action()
-    }
-  }, [modalConfirmation, openModal])
+    },
+    [openModal]
+  )
 
   return { openModalConfirmation }
 }

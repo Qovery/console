@@ -1,15 +1,10 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useMatch } from 'react-router-dom'
+import { useMatchRoute } from '@tanstack/react-router'
 import {
-  APPLICATION_URL,
   AUDIT_LOGS_PARAMS_URL,
-  CLUSTER_URL,
-  DATABASE_URL,
   DEPLOYMENT_LOGS_VERSION_URL,
-  ENVIRONMENTS_URL,
   ENVIRONMENT_LOGS_URL,
   INFRA_LOGS_URL,
-  SERVICES_URL,
   SERVICE_LOGS_URL,
 } from '@qovery/shared/routes'
 import useServiceType from '../use-service-type/use-service-type'
@@ -17,47 +12,33 @@ import useServiceType from '../use-service-type/use-service-type'
 export type QuickAction = { label: string; iconName: IconName; link: string }
 
 export function useQuickActions(): QuickAction[] {
-  const applicationMatch = useMatch({ path: APPLICATION_URL(), end: false })
-  const databaseMatch = useMatch({ path: DATABASE_URL(), end: false })
-  const projectMatch = useMatch({ path: ENVIRONMENTS_URL(), end: false })
-  const environmentMatch = useMatch({ path: SERVICES_URL(), end: false })
-  const clusterMatch = useMatch({ path: CLUSTER_URL(), end: false })
+  const matchRoute = useMatchRoute()
 
-  const serviceId = applicationMatch?.params['applicationId'] ?? databaseMatch?.params['databaseId']
+  const serviceMatch = matchRoute({
+    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+    fuzzy: true,
+  })
+  const projectMatch = matchRoute({
+    to: '/organization/$organizationId/project/$projectId',
+    fuzzy: true,
+  })
+  const environmentMatch = matchRoute({
+    to: '/organization/$organizationId/project/$projectId/environment/$environmentId',
+    fuzzy: true,
+  })
+  const clusterMatch = matchRoute({
+    to: '/organization/$organizationId/cluster/$clusterId',
+    fuzzy: true,
+  })
+  const serviceParams = serviceMatch || undefined
 
   const { data: serviceType } = useServiceType({
-    serviceId,
-    environmentId: applicationMatch?.params['environmentId'] ?? databaseMatch?.params['environmentId'],
+    serviceId: serviceParams?.serviceId,
+    environmentId: serviceParams?.environmentId,
   })
 
-  if (applicationMatch && serviceId) {
-    const { organizationId, projectId, environmentId } = applicationMatch.params
-    return [
-      {
-        label: 'See deployment logs',
-        iconName: 'scroll',
-        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + DEPLOYMENT_LOGS_VERSION_URL(serviceId),
-      },
-      {
-        label: 'See live logs',
-        iconName: 'scroll',
-        link: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + SERVICE_LOGS_URL(serviceId),
-      },
-      {
-        label: 'See audit logs',
-        iconName: 'clock-rotate-left',
-        link: AUDIT_LOGS_PARAMS_URL(organizationId, {
-          targetId: serviceId,
-          targetType: serviceType,
-          projectId,
-          environmentId,
-        }),
-      },
-    ]
-  }
-
-  if (databaseMatch && serviceId) {
-    const { organizationId, projectId, environmentId } = databaseMatch.params
+  if (serviceMatch) {
+    const { organizationId, projectId, environmentId, serviceId } = serviceMatch
     return [
       {
         label: 'See deployment logs',
@@ -83,7 +64,7 @@ export function useQuickActions(): QuickAction[] {
   }
 
   if (environmentMatch) {
-    const { organizationId, projectId, environmentId } = environmentMatch.params
+    const { organizationId, projectId, environmentId } = environmentMatch
     return [
       {
         label: 'See logs',
@@ -103,7 +84,7 @@ export function useQuickActions(): QuickAction[] {
   }
 
   if (projectMatch) {
-    const { organizationId, projectId } = projectMatch.params
+    const { organizationId, projectId } = projectMatch
     return [
       {
         label: 'See audit logs',
@@ -118,7 +99,7 @@ export function useQuickActions(): QuickAction[] {
   }
 
   if (clusterMatch) {
-    const { organizationId, clusterId } = clusterMatch.params
+    const { organizationId, clusterId } = clusterMatch
     return [
       { label: 'See logs', iconName: 'scroll', link: INFRA_LOGS_URL(organizationId, clusterId) },
       {

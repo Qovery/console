@@ -16,9 +16,9 @@ export function Truncate(props: TruncateProps) {
     return (
       <Tooltip
         delayDuration={delayDuration}
-        content={text.length >= defaultTooltipLimit ? `${truncateText(text, defaultTooltipLimit)}...` : text}
+        content={text.length >= defaultTooltipLimit ? `${truncateText(text, defaultTooltipLimit)}…` : text}
       >
-        <span data-testid="truncate-text">{truncateText(text, truncateLimit)}...</span>
+        <span data-testid="truncate-text">{truncateText(text, truncateLimit)}…</span>
       </Tooltip>
     )
   } else {

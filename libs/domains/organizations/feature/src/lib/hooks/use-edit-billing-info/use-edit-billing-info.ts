@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useEditBillingInfo() {
+export function useEditBillingInfo({ silently = false } = {}) {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.editBillingInfo, {
@@ -12,9 +12,13 @@ export function useEditBillingInfo() {
       })
     },
     meta: {
-      notifyOnSuccess: {
-        title: 'Billing information updated',
-      },
+      ...(silently
+        ? {}
+        : {
+            notifyOnSuccess: {
+              title: 'Billing information updated',
+            },
+          }),
       notifyOnError: true,
     },
   })

@@ -17,7 +17,7 @@ export const GpuResourcesSettings = ({ cluster, clusterRegion = '' }: GpuResourc
   const watchKarpenter = watch('karpenter')
 
   return (
-    <div className="flex border-t border-neutral-250 p-4 text-sm font-medium text-neutral-400">
+    <div className="flex border-t border-neutral p-4 text-sm font-medium text-neutral">
       <div className="w-full">
         <p className="mb-2">
           Instance types scope{' '}
@@ -25,7 +25,7 @@ export const GpuResourcesSettings = ({ cluster, clusterRegion = '' }: GpuResourc
             classNameContent="max-w-80"
             content="Karpenter will create nodes based on the specified list of instance types. By selecting specific instance types, you can control the performance, cost, and architecture of the nodes in your cluster."
           >
-            <span className="text-neutral-400">
+            <span className="text-neutral-subtle">
               <Icon iconName="info-circle" iconStyle="regular" />
             </span>
           </Tooltip>

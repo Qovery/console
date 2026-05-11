@@ -31,8 +31,8 @@ export function LoadingIndicator({ loadingText, plan, showPlans, onTogglePlans }
             <div key={index} className="flex items-start gap-2 text-sm">
               <Icon iconName={getIconName(step.status)} className={getIconClass(step.status)} />
               <div className="flex flex-col">
-                <span className={clsx({ 'text-neutral-400': step.status === 'completed' })}>{step.description}</span>
-                <span className="text-2xs text-neutral-400">{step.status.replace('_', ' ')}</span>
+                <span className={clsx({ 'text-neutral-subtle': step.status === 'completed' })}>{step.description}</span>
+                <span className="text-2xs text-neutral-subtle">{step.status.replace('_', ' ')}</span>
               </div>
             </div>
           ))}
