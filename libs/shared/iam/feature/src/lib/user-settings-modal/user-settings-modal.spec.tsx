@@ -1,6 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { UserSettingsModal, type UserSettingsModalProps } from './user-settings-modal'
+import { UserSettingsModal } from './user-settings-modal'
 
 const mockUser = {
   id: '1',
@@ -34,11 +34,11 @@ jest.mock('../use-user-edit-account/use-user-edit-account', () => ({
 }))
 
 describe('UserSettingsModal', () => {
-  const renderUserSettingsModal = (props?: UserSettingsModalProps) =>
+  const renderUserSettingsModal = () =>
     renderWithProviders(
       <Dialog.Root open>
         <Dialog.Content>
-          <UserSettingsModal {...props} />
+          <UserSettingsModal />
         </Dialog.Content>
       </Dialog.Root>
     )
@@ -61,28 +61,6 @@ describe('UserSettingsModal', () => {
     expect(screen.getByLabelText(/timezone/i)).toBeInTheDocument()
     expect(screen.queryByText('Use legacy interface')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: /save/i })).toBeInTheDocument()
-  })
-
-  it('should render the console preference toggle when enabled', async () => {
-    document.cookie = 'qovery-console-preference=new; Path=/'
-
-    renderUserSettingsModal({ showConsolePreferenceToggle: true })
-    await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
-
-    expect(screen.getByText('Use legacy interface')).toBeInTheDocument()
-    expect(screen.getByText(/redirected to the legacy console interface/i)).toBeInTheDocument()
-  })
-
-  it('should update the console preference from the toggle', async () => {
-    document.cookie = 'qovery-console-preference=new; Path=/'
-    const { userEvent } = renderUserSettingsModal({ showConsolePreferenceToggle: true })
-    await waitFor(() => expect(screen.getByRole('button', { name: /save/i })).toBeEnabled())
-
-    await userEvent.click(screen.getByText('Use legacy interface'))
-
-    // Preference is now persisted in the shared cookie only (localStorage is not origin-safe
-    // across `console.qovery.com` and `new-console.qovery.com`).
-    expect(document.cookie).toContain('qovery-console-preference=legacy')
   })
 
   it('should call mutateAsync with updated email on submit', async () => {
