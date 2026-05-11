@@ -1,10 +1,10 @@
 import { getRouteApi, useParams } from '@tanstack/react-router'
 import { OrganizationEventTargetType } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
-import { type EventQueryParams, useFetchEvents, useFetchValidTargetIds } from '@qovery/domains/audit-logs/data-access'
+import { useEffect, useRef, useState } from 'react'
+import { useFetchEvents, useFetchValidTargetIds } from '@qovery/domains/audit-logs/data-access'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { eventsFactoryMock } from '@qovery/shared/factories'
-import { DEFAULT_PAGE_SIZE } from '@qovery/shared/router'
+import { type AuditLogsParams, DEFAULT_PAGE_SIZE } from '@qovery/shared/router'
 import { ALL, type NavigationLevel, type SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -12,6 +12,71 @@ import { AuditLogs } from '../audit-logs/audit-logs'
 import { initializeSelectedItemsFromQueryParams } from '../utils/target-type-selection-utils'
 
 const route = getRouteApi('/_authenticated/organization/$organizationId/audit-logs')
+
+const AUDIT_LOG_FILTER_PARAMS = new Set<keyof AuditLogsParams>([
+  'eventType',
+  'targetType',
+  'triggeredBy',
+  'origin',
+  'fromTimestamp',
+  'toTimestamp',
+  'projectId',
+  'environmentId',
+  'targetId',
+])
+
+function toTableFilterKey(key: string) {
+  return key.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`)
+}
+
+function toSearchParamKey(key: string) {
+  return key.replace(/_([a-z])/g, (_, letter: string) => letter.toUpperCase()) as keyof AuditLogsParams
+}
+
+function createFiltersFromUrlParams(urlParams: AuditLogsParams): TableFilterProps[] {
+  return Array.from(AUDIT_LOG_FILTER_PARAMS).reduce<TableFilterProps[]>((filters, searchKey) => {
+    const value = urlParams[searchKey]
+    if (value) {
+      filters.push({ key: toTableFilterKey(searchKey), value: value.toString() })
+    }
+    return filters
+  }, [])
+}
+
+function areFiltersEqual(a: TableFilterProps[], b: TableFilterProps[]): boolean {
+  if (a.length !== b.length) {
+    return false
+  }
+
+  return a.every((filter, index) => filter.key === b[index].key && filter.value === b[index].value)
+}
+
+function areSearchParamsEqual(a: AuditLogsParams, b: AuditLogsParams): boolean {
+  const keys = new Set([...Object.keys(a), ...Object.keys(b)] as Array<keyof AuditLogsParams>)
+
+  return Array.from(keys).every((key) => a[key] === b[key])
+}
+
+function createUrlParamsFromFilters(filter: TableFilterProps[], urlParams: AuditLogsParams): AuditLogsParams {
+  return filter.reduce<AuditLogsParams>(
+    (nextUrlParams, currentFilter) => {
+      if (!currentFilter.key) {
+        return nextUrlParams
+      }
+
+      const searchKey = toSearchParamKey(currentFilter.key)
+      if (!AUDIT_LOG_FILTER_PARAMS.has(searchKey)) {
+        return nextUrlParams
+      }
+
+      return {
+        ...nextUrlParams,
+        [searchKey]: currentFilter.value === ALL ? undefined : currentFilter.value,
+      }
+    },
+    { ...urlParams }
+  )
+}
 
 export function AuditLogsView() {
   useDocumentTitle('Audit Logs - Qovery')
@@ -22,10 +87,11 @@ export function AuditLogsView() {
   const urlParams = route.useSearch()
 
   const [filter, setFilter] = useState<TableFilterProps[]>([])
+  const isSyncingFiltersFromUrl = useRef(false)
   const [targetTypeSelectedItems, setTargetTypeSelectedItems] = useState<SelectedItem[]>([])
   const [targetTypeNavigationStack, setTargetTypeNavigationStack] = useState<NavigationLevel[] | undefined>(undefined)
   const [targetTypeLevel, setTargetTypeLevel] = useState<number | undefined>(undefined)
-  const { data: eventsData, isLoading } = useFetchEvents(organizationId, urlParams)
+  const { data: eventsData, isLoading } = useFetchEvents(organizationId, { ...urlParams })
   const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId })
   const { data: validTargetIds } = useFetchValidTargetIds(organizationId)
   const { showChat } = useSupportChat()
@@ -57,124 +123,36 @@ export function AuditLogsView() {
 
   // Sync queryParams -> table filters
   useEffect(() => {
-    if (urlParams.eventType) {
-      setFilter((prev) => {
-        const isAlreadyPresent = prev.some((item) => item.key === 'event_type' && item.value === urlParams.eventType)
-        if (!isAlreadyPresent) {
-          return [...prev, { key: 'event_type', value: urlParams.eventType || '' }]
-        }
+    const nextFilter = createFiltersFromUrlParams(urlParams)
+    setFilter((prev) => {
+      if (areFiltersEqual(prev, nextFilter)) {
         return prev
-      })
-    }
+      }
 
-    if (urlParams.targetType) {
-      setFilter((prev) => {
-        const isAlreadyPresent = prev.some((item) => item.key === 'target_type' && item.value === urlParams.targetType)
-        if (!isAlreadyPresent) {
-          return [...prev, { key: 'target_type', value: urlParams.targetType || '' }]
-        }
-        return prev
-      })
-    }
-
-    if (urlParams.triggeredBy) {
-      setFilter((prev) => {
-        const isAlreadyPresent = prev.some(
-          (item) => item.key === 'triggered_by' && item.value === urlParams.triggeredBy
-        )
-        if (!isAlreadyPresent) {
-          return [...prev, { key: 'triggered_by', value: urlParams.triggeredBy || '' }]
-        }
-        return prev
-      })
-    }
-
-    if (urlParams.origin) {
-      setFilter((prev) => {
-        const isAlreadyPresent = prev.some((item) => item.key === 'origin' && item.value === urlParams.origin)
-        if (!isAlreadyPresent) {
-          return [...prev, { key: 'origin', value: urlParams.origin || '' }]
-        }
-        return prev
-      })
-    }
-
-    // Special case to handle the Timestamp filter as it relies
-    if (urlParams.fromTimestamp && urlParams.toTimestamp) {
-      setFilter((prev) => {
-        const fromTimestampAlreadyPresent = prev.some(
-          (item) => item.key === 'from_timestamp' && item.value === urlParams.fromTimestamp
-        )
-        const toTimestampAlreadyPresent = prev.some(
-          (item) => item.key === 'to_timestamp' && item.value === urlParams.toTimestamp
-        )
-        if (!fromTimestampAlreadyPresent && !toTimestampAlreadyPresent) {
-          return [
-            ...prev,
-            { key: 'from_timestamp', value: urlParams.fromTimestamp || '' },
-            { key: 'to_timestamp', value: urlParams.toTimestamp || '' },
-          ]
-        }
-        return prev
-      })
-    }
-
-    if (urlParams.projectId) {
-      setFilter((prev) => {
-        const isAlreadyPresent = prev.some((item) => item.key === 'project_id' && item.value === urlParams.projectId)
-        if (!isAlreadyPresent) {
-          return [...prev, { key: 'project_id', value: urlParams.projectId || '' }]
-        }
-        return prev
-      })
-    }
-    if (urlParams.environmentId) {
-      setFilter((prev) => {
-        const isAlreadyPresent = prev.some(
-          (item) => item.key === 'environment_id' && item.value === urlParams.environmentId
-        )
-        if (!isAlreadyPresent) {
-          return [...prev, { key: 'environment_id', value: urlParams.environmentId || '' }]
-        }
-        return prev
-      })
-    }
-    if (urlParams.targetId) {
-      setFilter((prev) => {
-        const isAlreadyPresent = prev.some((item) => item.key === 'target_id' && item.value === urlParams.targetId)
-        if (!isAlreadyPresent) {
-          return [...prev, { key: 'target_id', value: urlParams.targetId || '' }]
-        }
-        return prev
-      })
-    }
+      isSyncingFiltersFromUrl.current = true
+      return nextFilter
+    })
   }, [urlParams])
 
   // Sync table filters -> queryParams
   useEffect(() => {
-    let nextUrlParams = { ...urlParams }
-    for (let i = 0; i < filter.length; i++) {
-      const currentFilter: TableFilterProps = filter[i]
-      const key = currentFilter.key as keyof EventQueryParams
-      const currentKey = key
-        .toLowerCase()
-        .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', ''))
-
-      if (currentFilter.value === ALL) {
-        nextUrlParams = {
-          ...nextUrlParams,
-          [currentKey]: undefined,
-        }
-      } else {
-        nextUrlParams = {
-          ...nextUrlParams,
-          [currentKey]: currentFilter.value,
-        }
-      }
-      navigate({
-        search: nextUrlParams,
-      })
+    if (isSyncingFiltersFromUrl.current) {
+      isSyncingFiltersFromUrl.current = false
+      return
     }
+
+    if (filter.length === 0) {
+      return
+    }
+
+    const nextUrlParams = createUrlParamsFromFilters(filter, urlParams)
+    if (areSearchParamsEqual(urlParams, nextUrlParams)) {
+      return
+    }
+
+    navigate({
+      search: nextUrlParams,
+    })
   }, [filter, urlParams, navigate])
 
   const onPrevious = () => {
