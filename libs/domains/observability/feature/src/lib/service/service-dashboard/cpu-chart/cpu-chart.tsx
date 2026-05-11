@@ -12,13 +12,13 @@ import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 const queryCpuUsageByPod = (rateInterval: string, selector: string) =>
-  `sum by (pod) (rate(container_cpu_usage_seconds_total{${selector}}[${rateInterval}]))`
+  `sum by (pod) (max by (namespace, pod, container) (rate(container_cpu_usage_seconds_total{${selector}}[${rateInterval}])))`
 
 const queryCpuUsageP50 = (rateInterval: string, selector: string) =>
-  `quantile(0.50, rate(container_cpu_usage_seconds_total{${selector}}[${rateInterval}]))`
+  `quantile(0.50, sum by (pod) (max by (namespace, pod, container) (rate(container_cpu_usage_seconds_total{${selector}}[${rateInterval}]))))`
 
 const queryCpuUsageP90 = (rateInterval: string, selector: string) =>
-  `quantile(0.90, rate(container_cpu_usage_seconds_total{${selector}}[${rateInterval}]))`
+  `quantile(0.90, sum by (pod) (max by (namespace, pod, container) (rate(container_cpu_usage_seconds_total{${selector}}[${rateInterval}]))))`
 
 const queryCpuLimit = (selector: string) =>
   `sum (bottomk(1, kube_pod_container_resource_limits{resource="cpu",${selector}}))`

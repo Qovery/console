@@ -11,11 +11,14 @@ import { convertPodName } from '../../../util-chart/convert-pod-name'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
-const queryMemoryUsageByPod = (selector: string) => `sum by (pod) (container_memory_working_set_bytes{${selector}})`
+const queryMemoryUsageByPod = (selector: string) =>
+  `sum by (pod) (max by (namespace, pod, container) (container_memory_working_set_bytes{${selector}}))`
 
-const queryMemoryUsageP50 = (selector: string) => `quantile(0.50, container_memory_working_set_bytes{${selector}})`
+const queryMemoryUsageP50 = (selector: string) =>
+  `quantile(0.50, sum by (pod) (max by (namespace, pod, container) (container_memory_working_set_bytes{${selector}})))`
 
-const queryMemoryUsageP90 = (selector: string) => `quantile(0.90, container_memory_working_set_bytes{${selector}})`
+const queryMemoryUsageP90 = (selector: string) =>
+  `quantile(0.90, sum by (pod) (max by (namespace, pod, container) (container_memory_working_set_bytes{${selector}})))`
 
 const queryMemoryLimit = (selector: string) =>
   `sum (bottomk(1, kube_pod_container_resource_limits{resource="memory", ${selector}}))`
