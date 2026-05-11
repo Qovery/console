@@ -3,11 +3,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { useAuth } from '@qovery/shared/auth'
 import { type IconEnum } from '@qovery/shared/enums'
-import { Button, Icon, InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
-import {
-  getLegacyConsoleUrl,
-  useConsoleRedirectPreference,
-} from '../use-console-redirect-preference/use-console-redirect-preference'
+import { Button, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { useUserAccount } from '../use-user-account/use-user-account'
 import { useEditUserAccount } from '../use-user-edit-account/use-user-edit-account'
 
@@ -28,15 +24,10 @@ function getUserGitProvider(sub?: string) {
     .otherwise((s) => s.split('|')[0])
 }
 
-export interface UserSettingsModalProps {
-  showConsolePreferenceToggle?: boolean
-}
-
-export function UserSettingsModal({ showConsolePreferenceToggle = false }: UserSettingsModalProps) {
+export function UserSettingsModal() {
   const { user: userToken } = useAuth()
   const { data: user } = useUserAccount()
   const { mutateAsync, isLoading: loading } = useEditUserAccount()
-  const { isNewConsoleDefault, setIsNewConsoleDefault } = useConsoleRedirectPreference()
 
   const methods = useForm({
     mode: 'onChange',
@@ -58,18 +49,6 @@ export function UserSettingsModal({ showConsolePreferenceToggle = false }: UserS
   })
 
   const userGitProvider = getUserGitProvider(userToken?.sub)
-
-  const handleLegacyInterfaceChange = (value: boolean) => {
-    setIsNewConsoleDefault(!value)
-
-    if (value) {
-      const legacyConsoleUrl = getLegacyConsoleUrl()
-
-      if (legacyConsoleUrl) {
-        window.location.assign(legacyConsoleUrl)
-      }
-    }
-  }
 
   const accountOptions = [
     {
@@ -174,17 +153,6 @@ export function UserSettingsModal({ showConsolePreferenceToggle = false }: UserS
           disabled
           hint="Timezone used to display timestamp within the interface"
         />
-        {showConsolePreferenceToggle && (
-          <InputToggle
-            className="mt-4"
-            value={!isNewConsoleDefault}
-            onChange={handleLegacyInterfaceChange}
-            title="Use legacy interface"
-            description="When enabled, you will be redirected to the legacy console interface."
-            align="top"
-            small
-          />
-        )}
         <div className="mt-6 flex justify-end">
           <Button size="lg" type="submit" disabled={!methods.formState.isValid} loading={loading}>
             Save
