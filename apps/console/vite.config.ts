@@ -72,7 +72,6 @@ export default defineConfig(({ mode }) => {
     build: {
       outDir: '../../dist/apps/console',
       emptyOutDir: true,
-      assetsInlineLimit: 0,
       reportCompressedSize: true,
       commonjsOptions: {
         transformMixedEsModules: true,
