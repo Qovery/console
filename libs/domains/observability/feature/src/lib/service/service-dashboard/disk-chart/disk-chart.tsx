@@ -8,16 +8,16 @@ import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 const queryDiskReadNvme = (selector: string) =>
-  `sum (rate(container_fs_reads_bytes_total{${selector}, device=~"/dev/nvme.*"}[1m]))`
+  `sum (max by (namespace, pod, container, device) (rate(container_fs_reads_bytes_total{${selector}, device=~"/dev/nvme.*"}[1m])))`
 
 const queryDiskReadNonNvme = (selector: string) =>
-  `sum by (device) (rate(container_fs_reads_bytes_total{${selector}, device!~"/dev/nvme.*", device!=""}[1m]))`
+  `sum by (device) (max by (namespace, pod, container, device) (rate(container_fs_reads_bytes_total{${selector}, device!~"/dev/nvme.*", device!=""}[1m])))`
 
 const queryDiskWriteNvme = (selector: string) =>
-  `sum by (device) (rate(container_fs_writes_bytes_total{${selector}, device=~"/dev/nvme.*"}[1m]))`
+  `sum by (device) (max by (namespace, pod, container, device) (rate(container_fs_writes_bytes_total{${selector}, device=~"/dev/nvme.*"}[1m])))`
 
 const queryDiskWriteNonNvme = (selector: string) =>
-  `sum by (device) (rate(container_fs_writes_bytes_total{${selector}, device!~"/dev/nvme.*", device!=""}[1m]))`
+  `sum by (device) (max by (namespace, pod, container, device) (rate(container_fs_writes_bytes_total{${selector}, device!~"/dev/nvme.*", device!=""}[1m])))`
 
 export function DiskChart({
   clusterId,
