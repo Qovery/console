@@ -50,6 +50,21 @@ const SENTRY_DSN = 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.s
 
 let isSentryInitialized = false
 
+function initSentry() {
+  if (isSentryInitialized || NODE_ENV !== 'production') return
+
+  try {
+    Sentry.init({
+      release: GIT_SHA,
+      dsn: SENTRY_DSN,
+    })
+
+    isSentryInitialized = true
+  } catch (error) {
+    console.error('Failed to initialize Sentry', error)
+  }
+}
+
 interface _QueryMeta {
   notifyOnSuccess?: boolean | ((data: unknown, query: Query<unknown, unknown, unknown>) => ToastArgs) | ToastArgs
   notifyOnError?: boolean | { title: string; description?: string }
@@ -155,22 +170,13 @@ function App() {
       context: { auth, queryClient },
       defaultNotFoundComponent: NotFoundPage,
     })
-
-    if (!isSentryInitialized && NODE_ENV === 'production') {
-      Sentry.init({
-        release: GIT_SHA,
-        dsn: SENTRY_DSN,
-        integrations: [Sentry.tanstackRouterBrowserTracingIntegration(routerRef.current), Sentry.replayIntegration()],
-        tracesSampleRate: 1.0,
-        replaysSessionSampleRate: 0.1,
-        replaysOnErrorSampleRate: 1.0,
-      })
-
-      isSentryInitialized = true
-    }
   }
 
   const router = routerRef.current
+
+  useEffect(() => {
+    initSentry()
+  }, [])
 
   // Keep PostHog's identified user in sync once Auth0 resolves the session
   useEffect(() => {
