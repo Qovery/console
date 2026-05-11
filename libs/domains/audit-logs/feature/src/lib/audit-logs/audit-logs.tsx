@@ -287,7 +287,7 @@ export function AuditLogs({
         data={events}
         filter={filter}
         setFilter={setFilter}
-        className="rounded border border-neutral"
+        className="min-w-[1140px] rounded border border-neutral"
         classNameHead="z-dropdown rounded-t font-code top-[2.8rem]"
         columnsWidth={columnsWidth}
       >
