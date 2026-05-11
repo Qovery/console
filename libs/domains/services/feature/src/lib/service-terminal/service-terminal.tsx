@@ -89,12 +89,12 @@ export function ServiceTerminal({
   const selectedOrDefaultContainerName =
     selectedContainer ?? runningStatuses?.pods.find((pod) => pod.name === selectedOrDefaultPodName)?.containers[0]?.name
   const connectShellCommand = buildCommand(
-    `qovery shell https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${serviceId}`,
+    `qovery shell https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}`,
     selectedOrDefaultPodName ? `--pod=${selectedOrDefaultPodName}` : undefined,
     selectedOrDefaultContainerName ? `--container=${selectedOrDefaultContainerName}` : undefined
   )
   const portForwardCommand = buildCommand(
-    `qovery port-forward https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${serviceId} --port local-port:target-port`
+    `qovery port-forward https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId} --port local-port:target-port`
   )
   // Keep it as a callback so the banner copy action resolves the latest command at click time, necesssary
   // to allow users to use those commands in their private terminal without having to go through the documentation
