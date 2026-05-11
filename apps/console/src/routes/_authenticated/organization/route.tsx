@@ -268,6 +268,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster) {
     (tab) =>
       !(isDatabase && tab.id === 'variables') &&
       !(isManagedDatabase && tab.id === 'cloud-shell') &&
+      tab.id !== 'manifest' &&
       !(tab.id === 'monitoring' && !hasMonitoring)
   )
 }
