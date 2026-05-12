@@ -2,8 +2,9 @@ import {
   type AnnotationsGroupAssociatedItemType,
   type OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
+import { IconEnum } from '@qovery/shared/enums'
 import { Heading, Icon, InputSearch, Link, LoaderSpinner, Section, TreeView } from '@qovery/shared/ui'
 import { useAnnotationsGroupAssociatedItems } from '../hooks/use-annotations-group-associated-items/use-annotations-group-associated-items'
 import { useLabelsGroupAssociatedItems } from '../hooks/use-labels-group-associated-items/use-labels-group-associated-items'
@@ -77,6 +78,35 @@ export function groupByProjectEnvironmentsServices(
   return projects
 }
 
+function isClusterAssociatedItem(item: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner): boolean {
+  return item.item_type === 'CLUSTER'
+}
+
+export function getServiceAssociatedItems(
+  data: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[]
+): OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[] {
+  return data.filter((item) => !isClusterAssociatedItem(item))
+}
+
+export function filterClustersForAssociatedItemsModal(
+  data: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[],
+  searchValue?: string
+): OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[] {
+  return data.filter((item) => {
+    if (!isClusterAssociatedItem(item)) {
+      return false
+    }
+    if (searchValue === undefined || searchValue === '') {
+      return true
+    }
+    const search = searchValue.toLowerCase()
+    return (
+      (item.item_name?.toLowerCase().includes(search) ?? false) ||
+      (item.cluster_name?.toLowerCase().includes(search) ?? false)
+    )
+  })
+}
+
 export interface LabelAnnotationItemsListModalProps {
   type: 'label' | 'annotation'
   organizationId: string
@@ -105,17 +135,45 @@ export function LabelAnnotationItemsListModal({
     })
 
   const [searchValue, setSearchValue] = useState<string | undefined>()
+  const normalizedSearch = searchValue?.trim() || undefined
 
-  const data = groupByProjectEnvironmentsServices(
-    type === 'label' ? labelsGroupAssociatedItems : annotationsGroupAssociatedItems,
-    searchValue
+  const rawItems = useMemo(
+    () => (type === 'label' ? labelsGroupAssociatedItems : annotationsGroupAssociatedItems),
+    [type, labelsGroupAssociatedItems, annotationsGroupAssociatedItems]
   )
 
-  const isLoading = type === 'label' ? labelsGroupIsLoading : annotationsGroupIsLoading
+  const serviceSourceItems = getServiceAssociatedItems(rawItems)
+  const clusterSourceItems = filterClustersForAssociatedItemsModal(rawItems)
+
+  const serviceTreeData = useMemo(
+    () => groupByProjectEnvironmentsServices(serviceSourceItems, normalizedSearch),
+    [serviceSourceItems, normalizedSearch]
+  )
+  const clusterRows = useMemo(
+    () => filterClustersForAssociatedItemsModal(rawItems, normalizedSearch),
+    [rawItems, normalizedSearch]
+  )
+
+  const hasServicesInSource = useMemo(() => serviceSourceItems.length > 0, [serviceSourceItems])
+  const hasClustersInSource = useMemo(() => clusterSourceItems.length > 0, [clusterSourceItems])
+  const hasAnySource = useMemo(
+    () => hasServicesInSource || hasClustersInSource,
+    [hasServicesInSource, hasClustersInSource]
+  )
+
+  const noSearchResults = useMemo(
+    () => Boolean(normalizedSearch) && hasAnySource && serviceTreeData.length === 0 && clusterRows.length === 0,
+    [normalizedSearch, hasAnySource, serviceTreeData.length, clusterRows.length]
+  )
+
+  const isLoading = useMemo(
+    () => (type === 'label' ? labelsGroupIsLoading : annotationsGroupIsLoading),
+    [type, labelsGroupIsLoading, annotationsGroupIsLoading]
+  )
 
   return (
     <Section className="p-6">
-      <Heading className="mb-6 text-2xl text-neutral">Associated services ({associatedItemsCount})</Heading>
+      <Heading className="mb-6 text-2xl text-neutral">Associated items ({associatedItemsCount})</Heading>
       {isLoading ? (
         <div className="flex h-40 items-start justify-center p-5">
           <LoaderSpinner className="w-5" />
@@ -124,77 +182,126 @@ export function LabelAnnotationItemsListModal({
         <>
           <InputSearch
             className="mb-3"
-            placeholder="Search by project, environment, service name"
+            placeholder="Search by project, environment, service, or cluster name"
             onChange={(value) => setSearchValue(value)}
           />
-          {data.length > 0 ? (
-            <TreeView.Root
-              type="single"
-              collapsible
-              className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
-            >
-              {data.map((project) => (
-                <TreeView.Item key={project.project_id} value={project.project_name}>
-                  <TreeView.Trigger>{project.project_name}</TreeView.Trigger>
-                  <TreeView.Content>
-                    {project.environments.map((environment) => (
-                      <TreeView.Root key={environment.environment_id} type="single" collapsible>
-                        <TreeView.Item value={environment.environment_name}>
-                          <TreeView.Trigger>
-                            <Link
-                              color="brand"
-                              onClick={() => onClose()}
-                              to="/organization/$organizationId/project/$projectId/environment/$environmentId"
-                              params={{
-                                organizationId,
-                                environmentId: environment.environment_id,
-                                projectId: project.project_id,
-                              }}
-                              className="text-sm"
-                            >
-                              {environment.environment_name}
-                            </Link>
-                          </TreeView.Trigger>
-                          <TreeView.Content>
-                            <ul>
-                              {environment.services.map((service) => (
-                                <li key={service.service_id} className=" border-l border-neutral">
-                                  <Link
-                                    color="brand"
-                                    onClick={() => onClose()}
-                                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId"
-                                    params={{
-                                      organizationId,
-                                      environmentId: environment.environment_id,
-                                      serviceId: service.service_id,
-                                      projectId: project.project_id,
-                                    }}
-                                    className="flex items-center py-1.5 pl-5 text-sm"
-                                  >
-                                    <Icon
-                                      name={match(service.service_type)
-                                        .with('CRON', 'LIFECYCLE', () => `${service.service_type}_JOB`)
-                                        .otherwise(() => service.service_type)}
-                                      width={20}
-                                      className="mr-2"
-                                    />
-                                    {service.service_name}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </TreeView.Content>
-                        </TreeView.Item>
-                      </TreeView.Root>
-                    ))}
-                  </TreeView.Content>
-                </TreeView.Item>
-              ))}
-            </TreeView.Root>
-          ) : (
+          {noSearchResults ? (
             <div className="px-5 py-4 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-subtle" />
               <p className="mt-1 text-xs font-medium text-neutral-subtle">No value found</p>
+            </div>
+          ) : !hasAnySource ? (
+            <div className="px-5 py-4 text-center">
+              <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+              <p className="mt-1 text-xs font-medium text-neutral-subtle">No value found</p>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              {hasClustersInSource ? (
+                <div>
+                  <Heading level={3} className="mb-2 text-neutral">
+                    Clusters
+                  </Heading>
+                  {clusterRows.length > 0 ? (
+                    <ul className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2">
+                      {clusterRows.map((cluster) => {
+                        const clusterId = cluster.cluster_id ?? cluster.item_id
+                        const displayName = cluster.cluster_name ?? cluster.item_name
+                        return (
+                          <li key={cluster.item_id} className="border-b border-neutral last:border-b-0">
+                            <Link
+                              color="brand"
+                              onClick={() => onClose()}
+                              to="/organization/$organizationId/cluster/$clusterId/overview"
+                              params={{ organizationId, clusterId }}
+                              className="flex items-center py-2 text-sm"
+                            >
+                              <Icon name={IconEnum.KUBERNETES} width={20} className="mr-2" />
+                              {displayName}
+                            </Link>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  ) : (
+                    <p className="text-xs text-neutral-subtle">No matching clusters.</p>
+                  )}
+                </div>
+              ) : null}
+              {hasServicesInSource ? (
+                <div>
+                  <Heading level={3} className="mb-2 text-neutral">
+                    Services
+                  </Heading>
+                  {serviceTreeData.length > 0 ? (
+                    <TreeView.Root
+                      type="single"
+                      collapsible
+                      className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
+                    >
+                      {serviceTreeData.map((project) => (
+                        <TreeView.Item key={project.project_id} value={project.project_name}>
+                          <TreeView.Trigger>{project.project_name}</TreeView.Trigger>
+                          <TreeView.Content>
+                            {project.environments.map((environment) => (
+                              <TreeView.Root key={environment.environment_id} type="single" collapsible>
+                                <TreeView.Item value={environment.environment_name}>
+                                  <TreeView.Trigger>
+                                    <Link
+                                      color="brand"
+                                      onClick={() => onClose()}
+                                      to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+                                      params={{
+                                        organizationId,
+                                        environmentId: environment.environment_id,
+                                        projectId: project.project_id,
+                                      }}
+                                      className="text-sm"
+                                    >
+                                      {environment.environment_name}
+                                    </Link>
+                                  </TreeView.Trigger>
+                                  <TreeView.Content>
+                                    <ul>
+                                      {environment.services.map((service) => (
+                                        <li key={service.service_id} className=" border-l border-neutral">
+                                          <Link
+                                            color="brand"
+                                            onClick={() => onClose()}
+                                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId"
+                                            params={{
+                                              organizationId,
+                                              environmentId: environment.environment_id,
+                                              serviceId: service.service_id,
+                                              projectId: project.project_id,
+                                            }}
+                                            className="flex items-center py-1.5 pl-5 text-sm"
+                                          >
+                                            <Icon
+                                              name={match(service.service_type)
+                                                .with('CRON', 'LIFECYCLE', () => `${service.service_type}_JOB`)
+                                                .otherwise(() => service.service_type)}
+                                              width={20}
+                                              className="mr-2"
+                                            />
+                                            {service.service_name}
+                                          </Link>
+                                        </li>
+                                      ))}
+                                    </ul>
+                                  </TreeView.Content>
+                                </TreeView.Item>
+                              </TreeView.Root>
+                            ))}
+                          </TreeView.Content>
+                        </TreeView.Item>
+                      ))}
+                    </TreeView.Root>
+                  ) : (
+                    <p className="text-xs text-neutral-subtle">No matching services.</p>
+                  )}
+                </div>
+              ) : null}
             </div>
           )}
         </>

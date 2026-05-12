@@ -5,6 +5,8 @@ import * as useLabelsGroupAssociatedItems from '../hooks/use-labels-group-associ
 import {
   LabelAnnotationItemsListModal,
   type LabelAnnotationItemsListModalProps,
+  filterClustersForAssociatedItemsModal,
+  getServiceAssociatedItems,
   groupByProjectEnvironmentsServices,
 } from './label-annotation-items-list-modal'
 
@@ -56,8 +58,23 @@ const data: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[
   },
 ]
 
+const clusterOnlyData: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[] = [
+  {
+    cluster_id: null,
+    cluster_name: null,
+    project_id: null,
+    project_name: null,
+    environment_id: null,
+    environment_name: null,
+    item_id: '3f50657b-1162-4dde-b706-4d5e937f3c09',
+    item_name: 'cluster-for-obs-team',
+    item_type: 'CLUSTER',
+  },
+]
+
 describe('LabelAnnotationItemsListModal', () => {
   beforeEach(() => {
+    props.type = 'annotation'
     useAnnotationsGroupAssociatedItemsSpy.mockReturnValue({
       data,
     })
@@ -100,8 +117,7 @@ describe('LabelAnnotationItemsListModal', () => {
   })
 
   it('should match snapshots with label', async () => {
-    props.type = 'label'
-    const { baseElement, userEvent } = renderWithProviders(<LabelAnnotationItemsListModal {...props} />)
+    const { baseElement, userEvent } = renderWithProviders(<LabelAnnotationItemsListModal {...props} type="label" />)
 
     const triggers = screen.getAllByRole('button')
     screen.getByText(/project 1/i)
@@ -111,5 +127,34 @@ describe('LabelAnnotationItemsListModal', () => {
     await userEvent.click(triggerEnvironment!)
 
     expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should exclude CLUSTER rows when grouping services', () => {
+    const mixed = [...data, ...clusterOnlyData]
+    const result = groupByProjectEnvironmentsServices(getServiceAssociatedItems(mixed))
+
+    expect(result).toHaveLength(2)
+    expect(result[0].environments[0].services).toHaveLength(2)
+  })
+
+  it('should filter clusters by item_name for search', () => {
+    expect(filterClustersForAssociatedItemsModal(clusterOnlyData, 'obs')).toHaveLength(1)
+    expect(filterClustersForAssociatedItemsModal(clusterOnlyData, 'nomatch')).toHaveLength(0)
+  })
+
+  it('should render only clusters section and cluster name for CLUSTER-only payload', () => {
+    useAnnotationsGroupAssociatedItemsSpy.mockReturnValue({
+      data: clusterOnlyData,
+    })
+    useLabelsGroupAssociatedItemsSpy.mockReturnValue({
+      data: clusterOnlyData,
+    })
+
+    renderWithProviders(<LabelAnnotationItemsListModal {...props} type="annotation" associatedItemsCount={1} />)
+
+    expect(screen.getByRole('heading', { name: /associated items \(1\)/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /^clusters$/i })).toBeInTheDocument()
+    expect(screen.getByText('cluster-for-obs-team')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: /^services$/i })).not.toBeInTheDocument()
   })
 })
