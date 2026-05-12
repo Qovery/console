@@ -1,6 +1,6 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { type Cluster, KubernetesEnum } from 'qovery-typescript-axios'
-import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { ClusterGeneralSettings, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
 import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -16,21 +16,16 @@ export const Route = createFileRoute(
 const isLabelsFieldVisible = (cluster: Cluster) =>
   cluster.cloud_provider === 'AWS' && cluster.kubernetes !== KubernetesEnum.PARTIALLY_MANAGED
 
-const handleSubmit = (data: FieldValues, cluster: Cluster) => {
-  let labels_groups = cluster.labels_groups
-  if (isLabelsFieldVisible(cluster)) {
-    const labelsGroupIds = data['labels_groups']
-    labels_groups =
-      Array.isArray(labelsGroupIds) && labelsGroupIds.every((id) => typeof id === 'string')
-        ? (labelsGroupIds as string[]).map((id) => ({ id }))
-        : cluster.labels_groups
-  }
+type ClusterFormValues = Omit<Cluster, 'labels_groups'> & { labels_groups: string[] }
+
+const handleSubmit = (data: ClusterFormValues, cluster: Cluster) => {
+  const labels_groups = isLabelsFieldVisible(cluster) ? data.labels_groups.map((id) => ({ id })) : cluster.labels_groups
 
   return {
     ...cluster,
-    name: data['name'],
-    description: data['description'] || '',
-    production: data['production'],
+    name: data.name,
+    description: data.description || '',
+    production: data.production,
     keda: data.keda ?? cluster.keda,
     labels_groups,
   }
@@ -41,13 +36,13 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
   const { isQoveryAdminUser } = useUserRole()
 
-  const methods = useForm({
+  const methods = useForm<ClusterFormValues>({
     mode: 'onChange',
     defaultValues: {
       ...cluster,
       // Form + LabelSetting use string[]; API returns { id }[].
       labels_groups: cluster.labels_groups?.map((g) => g.id).filter((id): id is string => typeof id === 'string') ?? [],
-    } as FieldValues,
+    },
   })
 
   const onSubmit = methods.handleSubmit((data) => {
