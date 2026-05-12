@@ -14,12 +14,19 @@ export const Route = createFileRoute(
 })
 
 const handleSubmit = (data: FieldValues, cluster: Cluster) => {
+  const labelsGroupIds = data['labels_groups']
+  const labels_groups =
+    Array.isArray(labelsGroupIds) && labelsGroupIds.every((id) => typeof id === 'string')
+      ? (labelsGroupIds as string[]).map((id) => ({ id }))
+      : cluster.labels_groups
+
   return {
     ...cluster,
     name: data['name'],
     description: data['description'] || '',
     production: data['production'],
     keda: data.keda ?? cluster.keda,
+    labels_groups,
   }
 }
 
@@ -30,7 +37,12 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
 
   const methods = useForm({
     mode: 'onChange',
-    defaultValues: cluster,
+    defaultValues: {
+      ...cluster,
+      // Form + LabelSetting use string[]; API returns { id }[].
+      labels_groups:
+        cluster.labels_groups?.map((g) => g.id).filter((id): id is string => typeof id === 'string') ?? [],
+    } as FieldValues,
   })
 
   const onSubmit = methods.handleSubmit((data) => {
