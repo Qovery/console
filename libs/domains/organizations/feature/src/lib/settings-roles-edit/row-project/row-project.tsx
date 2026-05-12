@@ -134,7 +134,7 @@ export function RowProject(props: RowProjectProps) {
       </div>
       <div
         data-testid="project-head"
-        className="flex h-10 items-center border-b border-neutral bg-surface-neutral-subtle"
+        className="flex h-10 items-center border-b border-neutral bg-surface-neutral-component"
       >
         <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral px-4 font-medium">
           {project.project_name}

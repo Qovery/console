@@ -43,7 +43,7 @@ export function TableClusters(props: TableClustersProps) {
           <RowCluster key={cluster.cluster_id} cluster={cluster} setGlobalCheck={setGlobalCheck} />
         ))}
       </div>
-      <div className="flex h-10 items-center border-b border-neutral bg-surface-neutral-subtle">
+      <div className="flex h-10 items-center border-b border-neutral bg-surface-neutral-component">
         <div className="flex h-full w-1/4 flex-auto items-center border-r border-neutral px-4 font-medium">
           All Clusters
         </div>

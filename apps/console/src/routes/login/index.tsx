@@ -259,7 +259,11 @@ function RouteComponent() {
 
   return (
     <div data-theme="light" className="relative min-h-screen w-screen overflow-x-hidden bg-background-secondary">
-      <Link href="https://www.qovery.com" color="subtle" className="pointer-events-auto absolute left-4 top-4 z-modal">
+      <Link
+        href="https://www.qovery.com"
+        color="subtle"
+        className="pointer-events-auto absolute left-4 top-4 z-tooltip"
+      >
         <Icon iconName="arrow-left" />
         Back to website
       </Link>
