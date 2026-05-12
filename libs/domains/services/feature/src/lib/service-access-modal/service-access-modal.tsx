@@ -95,12 +95,11 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
 }
 
 export function ServiceAccessModal({ service, organizationId, projectId, onClose }: ServiceAccessModalProps) {
-  const { serviceType } = service
   const isDatabaseService = isDatabase(service)
 
   const { data: variables = [], isLoading: isLoadingVariables } = useVariables({
     parentId: isDatabaseService ? service.environment.id : service.id,
-    scope: isDatabaseService ? 'ENVIRONMENT' : serviceType,
+    scope: isDatabaseService ? 'ENVIRONMENT' : service.serviceType,
   })
 
   const ports = match(service)
