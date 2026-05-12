@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { DatabaseModeEnum } from 'qovery-typescript-axios'
 import { useEnvironment } from '@qovery/domains/environments/feature'
+import { isManagedDatabase } from '@qovery/domains/services/data-access'
 import { ServiceTerminal, useService } from '@qovery/domains/services/feature'
 import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -26,13 +26,11 @@ function RouteComponent() {
     suspense: true,
   })
 
-  const isManagedDatabase = service?.serviceType === 'DATABASE' && service.mode === DatabaseModeEnum.MANAGED
-
   if (!environment || !service) {
     return null
   }
 
-  if (isManagedDatabase) {
+  if (isManagedDatabase(service)) {
     return (
       <div className="flex min-h-page-container flex-1 flex-col bg-background p-6">
         <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral py-10 text-sm text-neutral">

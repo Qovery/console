@@ -1,6 +1,7 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
 import { P, match } from 'ts-pattern'
+import { isManagedDatabase } from '@qovery/domains/services/data-access'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 
@@ -41,7 +42,7 @@ export function useServices({ environmentId, suspense = false }: UseServicesProp
         (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace('_', ' ') ??
           'STOPPED'
       )
-      const isManagedDb = service.serviceType === 'DATABASE' && service.mode === 'MANAGED'
+      const isManagedDb = isManagedDatabase(service)
 
       const runningStatusOverride = match({ runningStatus, isManagedDb })
         .with({ runningStatus: P.any, isManagedDb: true }, () => ({

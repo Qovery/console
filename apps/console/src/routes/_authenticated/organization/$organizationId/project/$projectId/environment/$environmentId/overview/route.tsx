@@ -17,6 +17,7 @@ import {
   useDeploymentStatus,
   useEnvironment,
 } from '@qovery/domains/environments/feature'
+import { isEditableService } from '@qovery/domains/services/data-access'
 import { ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
@@ -56,12 +57,9 @@ function RouteComponent() {
   ]
   const activeTabId = tabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
   const isServicesListTab = activeTabId === 'services'
-  const qoveryServicesCount = useMemo(
-    () => services.filter((service) => service.service_type !== 'ARGOCD_APP').length,
-    [services]
-  )
+  const qoveryServicesCount = useMemo(() => services.filter(isEditableService).length, [services])
   const argoCdServicesCount = useMemo(
-    () => services.filter((service) => service.service_type === 'ARGOCD_APP').length,
+    () => services.filter((service) => !isEditableService(service)).length,
     [services]
   )
   const hasQoveryServices = qoveryServicesCount > 0

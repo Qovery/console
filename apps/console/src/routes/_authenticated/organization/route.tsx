@@ -6,7 +6,7 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type AnyService, isEditableService, isManagedDatabase } from '@qovery/domains/services/data-access'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
 import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
@@ -252,14 +252,14 @@ function createRoutePatternRegex(routeIdPattern: string): RegExp {
 }
 
 function getServiceTabs(service?: AnyService, cluster?: Cluster) {
-  const isArgoCdService = service?.service_type === 'ARGOCD_APP'
+  const isArgoCdService = service ? !isEditableService(service) : false
 
   if (isArgoCdService) {
     return SERVICE_TABS.filter((tab) => ARGOCD_SERVICE_TAB_IDS.includes(tab.id))
   }
 
   const isDatabase = service?.serviceType === 'DATABASE'
-  const isManagedDatabase = isDatabase && service.mode === 'MANAGED'
+  const isManagedDatabaseService = isManagedDatabase(service)
   const hasMonitoring = hasServiceMonitoringTab(service, cluster)
 
   // Managed databases should not have cloud shell access.
@@ -267,7 +267,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster) {
   return SERVICE_TABS.filter(
     (tab) =>
       !(isDatabase && tab.id === 'variables') &&
-      !(isManagedDatabase && tab.id === 'cloud-shell') &&
+      !(isManagedDatabaseService && tab.id === 'cloud-shell') &&
       tab.id !== 'manifest' &&
       !(tab.id === 'monitoring' && !hasMonitoring)
   )

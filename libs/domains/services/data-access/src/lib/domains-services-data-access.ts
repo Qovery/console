@@ -226,6 +226,10 @@ export function isEditableServiceType(serviceType?: ServiceType): serviceType is
   return serviceType !== undefined && serviceType !== 'ARGOCD_APP'
 }
 
+export function isManagedDatabase(service?: AnyService): service is Database {
+  return service !== undefined && isDatabase(service) && service.mode === 'MANAGED'
+}
+
 export const services = createQueryKeys('services', {
   deploymentStatus: (environmentId: string, serviceId: string) => ({
     queryKey: [environmentId, serviceId],

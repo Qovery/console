@@ -19,6 +19,7 @@ import {
   type Job,
   type Terraform,
   isEditableService,
+  isManagedDatabase,
 } from '@qovery/domains/services/data-access'
 import {
   isHelmGitSource,
@@ -193,9 +194,7 @@ function MenuManageDeployment({
       return
     }
 
-    const isDatabase = service.serviceType === 'DATABASE' && service.mode === 'MANAGED'
-
-    const warningMessage = isDatabase
+    const warningMessage = isManagedDatabase(service)
       ? "RDS instances are automatically restarted by AWS after 7 days. After 7 days, Qovery won't pause it again for you."
       : null
 
