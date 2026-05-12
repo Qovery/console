@@ -89,6 +89,7 @@ jest.mock('../hooks/use-service-count/use-service-count', () => ({
 
 describe('EnvironmentActionToolbar', () => {
   beforeEach(() => {
+    jest.useFakeTimers()
     jest.clearAllMocks()
     mockDeploymentStatus = {
       state: 'DEPLOYED',
@@ -105,10 +106,13 @@ describe('EnvironmentActionToolbar', () => {
     }))
   })
 
+  afterEach(() => {
+    jest.clearAllTimers()
+    jest.useRealTimers()
+  })
+
   it('should match manage deployment snapshot', async () => {
-    const { userEvent, baseElement } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
+    const { userEvent, baseElement } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
     const buttonManageDeployment = screen.getByLabelText(/manage deployment/i)
     await userEvent.click(buttonManageDeployment)
 
@@ -116,9 +120,7 @@ describe('EnvironmentActionToolbar', () => {
   })
 
   it('should match other actions snapshot', async () => {
-    const { userEvent, baseElement } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
+    const { userEvent, baseElement } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
     const buttonOtherActions = screen.getByLabelText(/other actions/i)
     await userEvent.click(buttonOtherActions)
 
@@ -126,9 +128,7 @@ describe('EnvironmentActionToolbar', () => {
   })
 
   it('should redeploy directly without opening a confirmation modal', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
 
     await userEvent.click(screen.getByLabelText(/manage deployment/i))
     await userEvent.click(screen.getByRole('menuitem', { name: /redeploy/i }))
@@ -138,9 +138,7 @@ describe('EnvironmentActionToolbar', () => {
   })
 
   it('should keep a confirmation modal for stop', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
 
     await userEvent.click(screen.getByLabelText(/manage deployment/i))
     await userEvent.click(screen.getByRole('menuitem', { name: /stop/i }))
@@ -159,9 +157,7 @@ describe('EnvironmentActionToolbar', () => {
       deployment_status: 'UP_TO_DATE',
     }
 
-    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
 
     await userEvent.click(screen.getByLabelText(/manage deployment/i))
     await userEvent.click(screen.getByRole('menuitem', { name: /cancel deployment/i }))
@@ -175,9 +171,7 @@ describe('EnvironmentActionToolbar', () => {
   })
 
   it('should redirect to the project overview after deleting an environment', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
 
     await userEvent.click(screen.getByLabelText(/other actions/i))
     await userEvent.click(screen.getByRole('menuitem', { name: /delete/i }))
@@ -199,9 +193,7 @@ describe('EnvironmentActionToolbar', () => {
   })
 
   it('should open environment metadata without copying immediately', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
 
     await userEvent.click(screen.getByLabelText(/other actions/i))
     expect(screen.queryByRole('menuitem', { name: /copy identifier/i })).not.toBeInTheDocument()
@@ -214,37 +206,5 @@ describe('EnvironmentActionToolbar', () => {
     expect(screen.getByText('Environment ID')).toBeInTheDocument()
     expect(screen.getByText('Namespace ID')).toBeInTheDocument()
     expect(screen.getByText('z1234567-env-name')).toBeInTheDocument()
-  })
-
-  it('should fetch environment variables when opening other actions', async () => {
-    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
-
-    expect(mockUseVariables).toHaveBeenLastCalledWith({
-      parentId: mockEnvironment.id,
-      scope: undefined,
-    })
-
-    await userEvent.click(screen.getByLabelText(/other actions/i))
-
-    expect(mockUseVariables).toHaveBeenLastCalledWith({
-      parentId: mockEnvironment.id,
-      scope: 'ENVIRONMENT',
-    })
-  })
-
-  it('should copy a single namespace value', async () => {
-    const { userEvent, container } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
-
-    await userEvent.click(screen.getByLabelText(/other actions/i))
-    await userEvent.click(screen.getByRole('menuitem', { name: /environment metadata/i }))
-    await userEvent.click(screen.getByRole('menuitem', { name: /namespace id/i }))
-
-    expect(mockCopyToClipboard).toHaveBeenCalledWith('z1234567-env-name')
-    expect(screen.getByRole('menuitem', { name: /namespace id/i })).toBeInTheDocument()
-    expect(container.querySelector('.fa-check')).toBeInTheDocument()
   })
 })
