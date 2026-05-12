@@ -40,8 +40,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
     defaultValues: {
       ...cluster,
       // Form + LabelSetting use string[]; API returns { id }[].
-      labels_groups:
-        cluster.labels_groups?.map((g) => g.id).filter((id): id is string => typeof id === 'string') ?? [],
+      labels_groups: cluster.labels_groups?.map((g) => g.id).filter((id): id is string => typeof id === 'string') ?? [],
     } as FieldValues,
   })
 
