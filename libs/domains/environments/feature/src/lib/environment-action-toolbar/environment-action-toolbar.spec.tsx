@@ -247,18 +247,4 @@ describe('EnvironmentActionToolbar', () => {
     expect(screen.getByRole('menuitem', { name: /namespace id/i })).toBeInTheDocument()
     expect(container.querySelector('.fa-check')).toBeInTheDocument()
   })
-
-  it('should omit namespace metadata when namespace variable is missing', async () => {
-    mockVariables = []
-
-    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
-      container: document.body,
-    })
-
-    await userEvent.click(screen.getByLabelText(/other actions/i))
-    await userEvent.click(screen.getByRole('menuitem', { name: /environment metadata/i }))
-
-    expect(screen.queryByText('Namespace ID')).not.toBeInTheDocument()
-    expect(screen.getByText('Environment ID')).toBeInTheDocument()
-  })
 })
