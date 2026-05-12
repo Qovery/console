@@ -13,12 +13,18 @@ export const Route = createFileRoute(
   component: RouteComponent,
 })
 
+const isLabelsFieldVisible = (cluster: Cluster) =>
+  cluster.cloud_provider === 'AWS' && cluster.kubernetes !== KubernetesEnum.PARTIALLY_MANAGED
+
 const handleSubmit = (data: FieldValues, cluster: Cluster) => {
-  const labelsGroupIds = data['labels_groups']
-  const labels_groups =
-    Array.isArray(labelsGroupIds) && labelsGroupIds.every((id) => typeof id === 'string')
-      ? (labelsGroupIds as string[]).map((id) => ({ id }))
-      : cluster.labels_groups
+  let labels_groups = cluster.labels_groups
+  if (isLabelsFieldVisible(cluster)) {
+    const labelsGroupIds = data['labels_groups']
+    labels_groups =
+      Array.isArray(labelsGroupIds) && labelsGroupIds.every((id) => typeof id === 'string')
+        ? (labelsGroupIds as string[]).map((id) => ({ id }))
+        : cluster.labels_groups
+  }
 
   return {
     ...cluster,
@@ -115,7 +121,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
               <BlockContent title="General information">
                 <ClusterGeneralSettings fromDetail />
               </BlockContent>
-              {cluster.cloud_provider === 'AWS' && cluster.kubernetes !== KubernetesEnum.PARTIALLY_MANAGED && (
+              {isLabelsFieldVisible(cluster) && (
                 <Section className="mb-10 gap-3">
                   <Heading>Extra tags</Heading>
                   <LabelSetting filterPropagateToCloudProvider={true} />
