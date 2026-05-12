@@ -14,6 +14,7 @@ import {
   type Database,
   type EditableService,
   type AdvancedSettings as _AdvancedSettings,
+  isDatabase,
   isEditableService,
 } from '@qovery/domains/services/data-access'
 import {
@@ -296,7 +297,7 @@ export function ServiceAdvancedSettings() {
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
 
   if (!service) return null
-  if (!isEditableService(service) || service.serviceType === 'DATABASE') {
+  if (!isEditableService(service) || isDatabase(service)) {
     return <p className="text-sm text-neutral-subtle">No advanced settings available for this service.</p>
   }
 

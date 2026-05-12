@@ -1,4 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
+import { isDatabase } from '@qovery/domains/services/data-access'
 import { Badge, Button, Callout, DropdownMenu, Icon, Tooltip, useModal } from '@qovery/shared/ui'
 import {
   isDeleteAvailable,
@@ -125,9 +126,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   containers: deployableServices
                     .filter(({ serviceType }) => serviceType === 'CONTAINER')
                     .map(({ id }) => ({ id })),
-                  databases: deployableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
+                  databases: deployableServices.filter(isDatabase).map(({ id }) => id),
                   jobs: deployableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => ({ id })),
                   helms: deployableServices
                     .filter(({ serviceType }) => serviceType === 'HELM')
@@ -167,9 +166,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   container_ids: restartableServices
                     .filter(({ serviceType }) => serviceType === 'CONTAINER')
                     .map(({ id }) => id),
-                  database_ids: restartableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
+                  database_ids: restartableServices.filter(isDatabase).map(({ id }) => id),
                 },
               })
               resetRowSelection()
@@ -201,9 +198,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   container_ids: stoppableServices
                     .filter(({ serviceType }) => serviceType === 'CONTAINER')
                     .map(({ id }) => id),
-                  database_ids: stoppableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
+                  database_ids: stoppableServices.filter(isDatabase).map(({ id }) => id),
                   helm_ids: stoppableServices.filter(({ serviceType }) => serviceType === 'HELM').map(({ id }) => id),
                   job_ids: stoppableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
                   terraform_ids: stoppableServices
@@ -271,9 +266,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   container_ids: uninstallableServices
                     .filter(({ serviceType }) => serviceType === 'CONTAINER')
                     .map(({ id }) => id),
-                  database_ids: uninstallableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
+                  database_ids: uninstallableServices.filter(isDatabase).map(({ id }) => id),
                   helm_ids: uninstallableServices
                     .filter(({ serviceType }) => serviceType === 'HELM')
                     .map(({ id }) => id),
@@ -325,9 +318,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                   container_ids: deletableServices
                     .filter(({ serviceType }) => serviceType === 'CONTAINER')
                     .map(({ id }) => id),
-                  database_ids: deletableServices
-                    .filter(({ serviceType }) => serviceType === 'DATABASE')
-                    .map(({ id }) => id),
+                  database_ids: deletableServices.filter(isDatabase).map(({ id }) => id),
                   helm_ids: deletableServices.filter(({ serviceType }) => serviceType === 'HELM').map(({ id }) => id),
                   job_ids: deletableServices.filter(({ serviceType }) => serviceType === 'JOB').map(({ id }) => id),
                   terraform_ids: deletableServices
