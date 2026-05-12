@@ -210,6 +210,56 @@ const DropdownMenuSeparator = forwardRef<
   )
 })
 
+interface DropdownMenuSubTriggerProps
+  extends Omit<VariantProps<typeof dropdownMenuItemVariants>, 'disabled'>,
+    Omit<ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger>, 'color'> {
+  icon?: ReactElement
+}
+
+const DropdownMenuSubTrigger = forwardRef<
+  ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,
+  DropdownMenuSubTriggerProps
+>(function DropdownMenuSubTrigger({ color, icon, children, className, disabled, ...props }, ref) {
+  return (
+    <DropdownMenuPrimitive.SubTrigger
+      {...props}
+      disabled={disabled}
+      className={twMerge(
+        dropdownMenuItemVariants({ color, disabled }),
+        'data-[state=open]:bg-surface-brand-component data-[state=open]:text-brand',
+        className
+      )}
+      ref={ref}
+    >
+      {icon && cloneElement(icon, { className: dropdownMenuItemIconVariants({ color, disabled }) })}
+      <Slottable>{children}</Slottable>
+    </DropdownMenuPrimitive.SubTrigger>
+  )
+})
+
+interface DropdownMenuSubContentProps extends ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent> {}
+
+const DropdownMenuSubContent = forwardRef<
+  ElementRef<typeof DropdownMenuPrimitive.SubContent>,
+  DropdownMenuSubContentProps
+>(function DropdownMenuSubContent({ children, sideOffset = 8, className, ...props }, ref) {
+  return (
+    <DropdownMenuPrimitive.Portal>
+      <DropdownMenuPrimitive.SubContent
+        {...props}
+        sideOffset={sideOffset}
+        className={twMerge(
+          'flex w-[258px] flex-col gap-1 rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=open]:data-[side=bottom]:animate-slidein-down-md-faded data-[state=open]:data-[side=left]:animate-slidein-right-sm-faded data-[state=open]:data-[side=right]:animate-slidein-left-md-faded data-[state=open]:data-[side=top]:animate-slidein-up-md-faded',
+          className
+        )}
+        ref={ref}
+      >
+        {children}
+      </DropdownMenuPrimitive.SubContent>
+    </DropdownMenuPrimitive.Portal>
+  )
+})
+
 const DropdownMenu = Object.assign(
   {},
   {
@@ -219,6 +269,9 @@ const DropdownMenu = Object.assign(
     Group: DropdownMenuPrimitive.Group,
     Item: DropdownMenuItem,
     Separator: DropdownMenuSeparator,
+    Sub: DropdownMenuPrimitive.Sub,
+    SubTrigger: DropdownMenuSubTrigger,
+    SubContent: DropdownMenuSubContent,
   }
 )
 
