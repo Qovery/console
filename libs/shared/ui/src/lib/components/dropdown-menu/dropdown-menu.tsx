@@ -224,7 +224,11 @@ const DropdownMenuSubTrigger = forwardRef<
     <DropdownMenuPrimitive.SubTrigger
       {...props}
       disabled={disabled}
-      className={twMerge(dropdownMenuItemVariants({ color, disabled }), 'data-[state=open]:bg-surface-brand-component data-[state=open]:text-brand', className)}
+      className={twMerge(
+        dropdownMenuItemVariants({ color, disabled }),
+        'data-[state=open]:bg-surface-brand-component data-[state=open]:text-brand',
+        className
+      )}
       ref={ref}
     >
       {icon && cloneElement(icon, { className: dropdownMenuItemIconVariants({ color, disabled }) })}
