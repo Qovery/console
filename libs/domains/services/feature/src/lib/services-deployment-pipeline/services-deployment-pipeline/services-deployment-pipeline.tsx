@@ -91,6 +91,7 @@ function getServiceIconName(service: AnyService) {
     .with({ serviceType: 'JOB', job_type: 'LIFECYCLE' }, () => IconEnum.LIFECYCLE_JOB)
     .with({ serviceType: 'JOB' }, () => IconEnum.CRON_JOB)
     .with({ serviceType: 'TERRAFORM' }, () => IconEnum.TERRAFORM)
+    .with({ serviceType: 'ARGOCD_APP' }, () => IconEnum.ARGOCD)
     .exhaustive()
 }
 

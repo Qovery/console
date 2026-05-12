@@ -1,5 +1,6 @@
+import { useNavigate } from '@tanstack/react-router'
 import { type ArgocdAppResponse, type Environment } from 'qovery-typescript-axios'
-import { useMemo } from 'react'
+import { type KeyboardEvent, type MouseEvent, useMemo } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { Badge, ExternalLink, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
@@ -27,8 +28,12 @@ const getRepositoryLabel = (service: ArgocdAppResponse) => {
 }
 
 export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
+  const navigate = useNavigate()
+  const environmentId = environment.id
+  const organizationId = environment.organization.id
+  const projectId = environment.project.id
   const { data: services = [] } = useArgoCdServices({
-    environmentId: environment.id,
+    environmentId,
     suspense: true,
   })
 
@@ -39,6 +44,17 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
 
   if (services.length === 0) {
     return null
+  }
+
+  const handleNavigateToService = (serviceId: string) => {
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      params: { organizationId, projectId, environmentId, serviceId },
+    })
+  }
+
+  const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
+    event.stopPropagation()
   }
 
   return (
@@ -81,7 +97,15 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
               const repositoryLabel = getRepositoryLabel(service)
 
               return (
-                <Table.Row key={service.id} className={`h-[60px] w-full ${tableGridLayoutClassName}`}>
+                <Table.Row
+                  key={service.id}
+                  className={`h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle ${tableGridLayoutClassName}`}
+                  tabIndex={0}
+                  onClick={() => handleNavigateToService(service.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter') handleNavigateToService(service.id)
+                  }}
+                >
                   <Table.Cell className="flex h-full items-center border-r border-neutral">
                     <div className="flex min-w-0 items-center gap-3 text-sm font-medium">
                       <Icon name={IconEnum.ARGOCD} width={20} />
@@ -119,6 +143,8 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                             size="ssm"
                             withIcon={false}
                             className="min-w-0 flex-1 overflow-hidden font-normal"
+                            onClick={stopRowNavigation}
+                            onKeyDown={stopRowNavigation}
                           >
                             <span className="min-w-0 truncate" title={repositoryLabel}>
                               {repositoryLabel}

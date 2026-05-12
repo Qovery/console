@@ -18,6 +18,8 @@ import {
   type Helm,
   type Job,
   type Terraform,
+  isEditableService,
+  isManagedDatabase,
 } from '@qovery/domains/services/data-access'
 import {
   isHelmGitSource,
@@ -115,7 +117,11 @@ function MenuManageDeployment({
   const tooltipServiceNeedUpdate =
     displayYellowColor && tooltipService('Configuration has changed and needs to be applied')
 
-  const mutationDeploy = () => deployService({ serviceId: service.id, serviceType: service.serviceType })
+  const mutationDeploy = () => {
+    if (isEditableService(service)) {
+      deployService({ serviceId: service.id, serviceType: service.serviceType })
+    }
+  }
   const mutationTerraformAction = (
     action: 'plan' | 'plan_and_apply' | 'destroy' | 'force_unlock' | 'migrate_state'
   ) => {
@@ -178,13 +184,17 @@ function MenuManageDeployment({
   }
 
   const mutationRedeploy = () => {
-    deployService({ serviceId: service.id, serviceType: service.serviceType })
+    if (isEditableService(service)) {
+      deployService({ serviceId: service.id, serviceType: service.serviceType })
+    }
   }
 
   const mutationStop = () => {
-    const isDatabase = service.serviceType === 'DATABASE' && service.mode === 'MANAGED'
+    if (!isEditableService(service)) {
+      return
+    }
 
-    const warningMessage = isDatabase
+    const warningMessage = isManagedDatabase(service)
       ? "RDS instances are automatically restarted by AWS after 7 days. After 7 days, Qovery won't pause it again for you."
       : null
 
@@ -459,14 +469,17 @@ function MenuManageDeployment({
                   Redeploy
                 </DropdownMenu.Item>
               )}
-              {runningState && service.serviceType !== 'JOB' && isRestartAvailable(runningState.state, state) && (
-                <DropdownMenu.Item
-                  icon={<Icon iconName="rotate-right" />}
-                  onSelect={() => restartService({ serviceId: service.id, serviceType: service.serviceType })}
-                >
-                  Restart Service
-                </DropdownMenu.Item>
-              )}
+              {runningState &&
+                isEditableService(service) &&
+                service.serviceType !== 'JOB' &&
+                isRestartAvailable(runningState.state, state) && (
+                  <DropdownMenu.Item
+                    icon={<Icon iconName="rotate-right" />}
+                    onSelect={() => restartService({ serviceId: service.id, serviceType: service.serviceType })}
+                  >
+                    Restart Service
+                  </DropdownMenu.Item>
+                )}
               {service.serviceType === 'JOB' &&
                 match(state)
                   .with(
@@ -636,8 +649,7 @@ function MenuManageDeployment({
               )
             }
           )
-          .with({ service: { serviceType: 'DATABASE' } }, () => null)
-          .exhaustive()}
+          .otherwise(() => null)}
         {match(service)
           .with({ serviceType: 'HELM', values_override: P.when(isHelmGitValuesOverride) }, (service) => {
             const gitRepository = service.values_override.file.git.git_repository
@@ -739,6 +751,9 @@ function MenuOtherActions({
           icon: 'box-taped',
           color: 'brand',
           callback: async ({ skipDestroy }) => {
+            if (!isEditableService(service)) {
+              return
+            }
             try {
               await uninstallService({ serviceId: service.id, serviceType: service.serviceType, skipDestroy })
             } catch (error) {
@@ -771,6 +786,9 @@ function MenuOtherActions({
           icon: 'trash-can',
           color: 'red',
           callback: async ({ skipDestroy }) => {
+            if (!isEditableService(service)) {
+              return
+            }
             try {
               await deleteService({
                 serviceId: service.id,
@@ -852,7 +870,7 @@ function MenuOtherActions({
             params={{ organizationId }}
             search={{
               targetId: service.id,
-              targetType: service.serviceType,
+              targetType: isEditableService(service) ? service.serviceType : undefined,
               projectId,
               environmentId,
             }}

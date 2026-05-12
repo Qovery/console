@@ -1,7 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
-import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
+
+type LinkServiceType = Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>
+
+function isLinkServiceType(serviceType?: ServiceType): serviceType is LinkServiceType {
+  return serviceType === 'APPLICATION' || serviceType === 'CONTAINER' || serviceType === 'HELM'
+}
 
 export interface UseLinksProps {
   serviceId: string
@@ -10,14 +15,14 @@ export interface UseLinksProps {
 }
 
 export function useLinks({ serviceId, serviceType, suspense = false }: UseLinksProps) {
+  const enabled = isLinkServiceType(serviceType)
+
   return useQuery({
     ...queries.services.listLinks({
       serviceId,
-      serviceType: serviceType as Extract<ServiceType, 'APPLICATION' | 'CONTAINER' | 'HELM'>,
+      serviceType: enabled ? serviceType : 'APPLICATION',
     }),
-    enabled: match(serviceType)
-      .with('APPLICATION', 'CONTAINER', 'HELM', () => true)
-      .otherwise(() => false),
+    enabled,
     staleTime: 0,
     suspense,
   })

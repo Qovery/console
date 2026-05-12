@@ -126,6 +126,11 @@
   --accent-6: hsla(338, 69%, 85%, 1);
   --accent-9: hsla(336, 80%, 58%, 1);
   --accent-11: hsla(336, 75%, 45%, 1);
+
+  /* ArgoCD */
+  --argocd-2: hsla(15, 80%, 96%, 1);
+  --argocd-6: hsla(15, 84%, 93%, 1);
+  --argocd-11: hsla(14, 83%, 62%, 1);
 }
 
 :root[data-theme='dark'],
@@ -255,4 +260,9 @@
   --accent-6: hsla(333, 49%, 29%, 1);
   --accent-9: hsla(336, 80%, 58%, 1);
   --accent-11: hsla(345, 100%, 79%, 1);
+
+  /* ArgoCD */
+  --argocd-2: hsla(14, 25%, 10%, 1);
+  --argocd-6: hsla(14, 29%, 17%, 1);
+  --argocd-11: hsla(14, 100%, 74%, 1);
 }

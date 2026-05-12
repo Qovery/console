@@ -12,6 +12,7 @@ import {
   EnableObservabilityVideo,
   ServiceDashboard,
 } from '@qovery/domains/observability/feature'
+import { isManagedDatabase } from '@qovery/domains/services/data-access'
 import { useDeploymentStatus, useService } from '@qovery/domains/services/feature'
 import { monitoringDashboardSearchParamsSchema } from '@qovery/shared/router'
 import { Badge, Button, EmptyState, Heading, Icon, Section, Tooltip } from '@qovery/shared/ui'
@@ -44,11 +45,9 @@ function RouteComponent() {
     clusterId: environment?.cluster_id ?? '',
     suspense: true,
   })
-  const isManagedDatabase = service?.serviceType === 'DATABASE' && service.mode === 'MANAGED'
+  const managedDatabase = isManagedDatabase(service)
   const isSupportedManagedDatabase =
-    isManagedDatabase &&
-    cluster?.cloud_provider === 'AWS' &&
-    (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
+    managedDatabase && cluster?.cloud_provider === 'AWS' && (service.type === 'POSTGRESQL' || service.type === 'MYSQL')
 
   const hasMetrics = useMemo(
     () =>

@@ -39,6 +39,7 @@ const overview: EnvironmentOverviewResponse = {
   mode: EnvironmentModeEnum.DEVELOPMENT,
   services_overview: {
     service_count: 2,
+    managed_by: 'QOVERY',
   },
   updated_at: '2026-03-18T10:00:00.000Z',
   deployment_status: {
@@ -100,5 +101,24 @@ describe('EnvironmentSection', () => {
       await screen.findByRole('tooltip', { name: 'Add at least one service to deploy this environment' })
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /delete environment/i })).toBeInTheDocument()
+  })
+
+  it('should display an ArgoCD badge when the environment is managed by ArgoCD', () => {
+    renderWithProviders(
+      <EnvironmentSection
+        type={EnvironmentModeEnum.DEVELOPMENT}
+        items={[
+          {
+            ...overview,
+            services_overview: {
+              service_count: 2,
+              managed_by: 'ARGOCD',
+            },
+          },
+        ]}
+      />
+    )
+
+    expect(screen.getByText('ArgoCD')).toBeInTheDocument()
   })
 })

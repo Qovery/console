@@ -7,7 +7,7 @@ import { useParams } from '@tanstack/react-router'
 import { type FormEventHandler, useEffect } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
+import { type Database, type EditableService, type Helm } from '@qovery/domains/services/data-access'
 import {
   ApplicationSettingsResources,
   useAdvancedSettings,
@@ -24,7 +24,7 @@ import {
   loadHpaSettingsFromAdvancedSettings,
 } from '@qovery/shared/util-services'
 
-type ServiceResourcesService = Exclude<AnyService, Database | Helm>
+type ServiceResourcesService = Exclude<EditableService, Database | Helm>
 
 interface ServiceResourcesFormData extends ApplicationResourcesData {
   storage_gib?: number

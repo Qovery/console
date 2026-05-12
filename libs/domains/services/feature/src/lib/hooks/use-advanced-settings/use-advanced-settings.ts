@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { type ServiceType } from '@qovery/domains/services/data-access'
+import { type AdvancedSettingsServiceType } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseAdvancedSettingsProps {
   serviceId: string
-  serviceType: Exclude<ServiceType, 'DATABASE'>
+  serviceType: AdvancedSettingsServiceType
   enabled?: boolean
   suspense?: boolean
 }

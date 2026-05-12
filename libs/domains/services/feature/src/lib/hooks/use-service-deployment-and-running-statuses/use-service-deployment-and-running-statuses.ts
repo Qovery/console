@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { P, match } from 'ts-pattern'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type AnyService, isManagedDatabase } from '@qovery/domains/services/data-access'
 import { type ServiceRunningStatus, type ServiceStatuses } from '@qovery/shared/interfaces'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
@@ -25,7 +25,7 @@ export function useServiceDeploymentAndRunningStatuses({ environmentId = '', ser
     (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace('_', ' ') ?? 'STOPPED'
   )
   const runningStatusLabel = upperCaseFirstLetter(runningStatus?.state.replace('_', ' ') ?? 'STOPPED')
-  const isManagedDb = service?.serviceType === 'DATABASE' && service.mode === 'MANAGED'
+  const isManagedDb = isManagedDatabase(service)
   const runningStatusOverride: ServiceRunningStatus = match({ runningStatus, isManagedDb })
     .with({ runningStatus: P.any, isManagedDb: true }, () => ({
       triggered_action: undefined,

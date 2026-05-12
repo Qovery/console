@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import { Link as RouterLink } from '@tanstack/react-router'
+import { useMemo } from 'react'
 import {
   ClusterAvatar,
   ClusterRunningStatusIndicator,
@@ -16,7 +17,8 @@ import {
   useDeploymentStatus,
   useEnvironment,
 } from '@qovery/domains/environments/feature'
-import { ArgoCdServiceList } from '@qovery/domains/services/feature'
+import { isEditableService } from '@qovery/domains/services/data-access'
+import { ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
@@ -32,6 +34,7 @@ function RouteComponent() {
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id, suspense: true })
+  const { data: services = [] } = useServices({ environmentId, suspense: true })
 
   useClusterRunningStatusSocket({
     organizationId,
@@ -53,6 +56,17 @@ function RouteComponent() {
     },
   ]
   const activeTabId = tabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
+  const isServicesListTab = activeTabId === 'services'
+  const qoveryServicesCount = useMemo(() => services.filter(isEditableService).length, [services])
+  const argoCdServicesCount = useMemo(
+    () => services.filter((service) => !isEditableService(service)).length,
+    [services]
+  )
+  const hasQoveryServices = qoveryServicesCount > 0
+  const hasArgoCdServices = argoCdServicesCount > 0
+  const shouldDisplayQoveryServicesSubtitle = isServicesListTab && hasArgoCdServices
+  const shouldDisplayArgoCdServicesAboveQovery = isServicesListTab && hasArgoCdServices && !hasQoveryServices
+  const shouldDisplayArgoCdServicesBelowQovery = isServicesListTab && hasArgoCdServices && hasQoveryServices
 
   if (!environment || !deploymentStatus) {
     return null
@@ -97,7 +111,7 @@ function RouteComponent() {
         </div>
         <div className="flex flex-col gap-8">
           <EnvironmentLastDeploymentSection />
-          <Section className="flex flex-col gap-4">
+          <Section className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <Heading level={2}>Services</Heading>
               <Link
@@ -111,26 +125,42 @@ function RouteComponent() {
                 New service
               </Link>
             </div>
-            <div>
-              <div className="overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
-                <div className="no-scrollbar overflow-x-auto pb-2">
-                  <Navbar.Root activeId={activeTabId} className="ml-3">
-                    {tabs.map((tab) => (
-                      <Navbar.Item key={tab.id} id={tab.id} to={tab.routeId}>
-                        <Icon iconName={tab.iconName} iconStyle="regular" />
-                        {tab.label}
-                      </Navbar.Item>
-                    ))}
-                  </Navbar.Root>
-                </div>
+            <div className="flex flex-col gap-6">
+              {shouldDisplayArgoCdServicesAboveQovery && <ArgoCdServiceList environment={environment} />}
+              <div className="flex flex-col gap-3">
+                {shouldDisplayQoveryServicesSubtitle && (
+                  <Heading level={3} className="font-medium text-neutral-subtle">
+                    Qovery native services
+                  </Heading>
+                )}
+                {shouldDisplayArgoCdServicesAboveQovery ? (
+                  <div className="no-scrollbar overflow-x-scroll rounded-lg border border-neutral xl:overflow-hidden">
+                    <Outlet />
+                  </div>
+                ) : (
+                  <div>
+                    <div className="overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
+                      <div className="no-scrollbar overflow-x-auto pb-2">
+                        <Navbar.Root activeId={activeTabId} className="ml-3">
+                          {tabs.map((tab) => (
+                            <Navbar.Item key={tab.id} id={tab.id} to={tab.routeId}>
+                              <Icon iconName={tab.iconName} iconStyle="regular" />
+                              {tab.label}
+                            </Navbar.Item>
+                          ))}
+                        </Navbar.Root>
+                      </div>
+                    </div>
+                    <div className="relative -top-2 rounded-lg bg-background">
+                      <div className="no-scrollbar overflow-x-scroll rounded-lg border border-neutral xl:overflow-hidden">
+                        <Outlet />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="relative -top-2 rounded-lg bg-background">
-                <div className="no-scrollbar overflow-x-scroll rounded-lg border border-neutral xl:overflow-hidden">
-                  <Outlet />
-                </div>
-              </div>
+              {shouldDisplayArgoCdServicesBelowQovery && <ArgoCdServiceList environment={environment} />}
             </div>
-            <ArgoCdServiceList environment={environment} />
           </Section>
         </div>
       </Section>

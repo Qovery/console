@@ -52,6 +52,16 @@ const services = {
     source: {},
     auto_deploy: false,
   },
+  'argocd-mock': {
+    id: 'f203fdb7-cad5-4f92-bd9f-6fd70210a9d8',
+    serviceType: 'ARGOCD_APP',
+    service_type: 'ARGOCD_APP',
+    name: 'kube-dns-prod',
+    description: '',
+    icon_uri: 'app://qovery-console/argocd',
+    source_repo_url: 'https://github.com/Qovery/kube-dns.git',
+    source_target_revision: 'main',
+  },
 }
 
 jest.mock('@tanstack/react-router', () => ({
@@ -68,7 +78,7 @@ jest.mock('@tanstack/react-router', () => ({
     params?: unknown
     [key: string]: unknown
   }) => (
-    <a href={typeof to === 'string' ? to : '#'} {...props}>
+    <a href={typeof to === 'string' ? to : '/'} {...props}>
       {children}
     </a>
   ),
@@ -274,7 +284,7 @@ describe('ServiceHeader', () => {
     mockGetDatabaseConnectionUri.mockReturnValue('postgres://copied-uri')
   })
 
-  const renderServiceHeader = (serviceId: 'application-mock' | 'database-mock' | 'job-mock') =>
+  const renderServiceHeader = (serviceId: 'application-mock' | 'database-mock' | 'job-mock' | 'argocd-mock') =>
     renderWithProviders(
       <ServiceHeader environment={environment} serviceId={serviceId} service={services[serviceId] as AnyService} />
     )
@@ -312,5 +322,14 @@ describe('ServiceHeader', () => {
 
     expect(screen.getByRole('heading', { name: 'test_lifecycle' })).toBeInTheDocument()
     expect(screen.queryByText('auto-deploy-badge')).not.toBeInTheDocument()
+  })
+
+  it('renders ArgoCD tag without Qovery service actions', () => {
+    renderServiceHeader('argocd-mock')
+
+    expect(screen.getByRole('heading', { name: 'kube-dns-prod' })).toBeInTheDocument()
+    expect(screen.getByText('ARGOCD')).toBeInTheDocument()
+    expect(screen.getByText('service-state-chip')).toBeInTheDocument()
+    expect(screen.queryByText('service-action-toolbar')).not.toBeInTheDocument()
   })
 })

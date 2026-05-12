@@ -3,7 +3,7 @@ import {
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type EditableService } from '@qovery/domains/services/data-access'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { type ServiceGeneralData } from './service-general-default-values'
@@ -24,7 +24,7 @@ export function buildServiceGeneralPayload({
   labelsGroups,
   annotationsGroups,
 }: {
-  service: AnyService
+  service: EditableService
   data: ServiceGeneralData
   labelsGroups: OrganizationLabelsGroupEnrichedResponse[]
   annotationsGroups: OrganizationAnnotationsGroupResponse[]

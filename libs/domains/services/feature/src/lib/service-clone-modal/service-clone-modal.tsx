@@ -3,6 +3,7 @@ import { type Environment } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { useProjects } from '@qovery/domains/projects/feature'
+import { isEditableService } from '@qovery/domains/services/data-access'
 import {
   Callout,
   ExternalLink,
@@ -51,7 +52,7 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
   const navigate = useNavigate()
 
   const onSubmit = methods.handleSubmit(async ({ name, environment: environmentId, project: projectId }) => {
-    if (!service) return null
+    if (!service || !isEditableService(service)) return null
 
     const cloneRequest = {
       name,
@@ -77,6 +78,10 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
   })
 
   if (!environments || !service) {
+    return null
+  }
+
+  if (!isEditableService(service)) {
     return null
   }
 

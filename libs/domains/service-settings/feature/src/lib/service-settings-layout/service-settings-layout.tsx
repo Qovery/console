@@ -2,6 +2,7 @@ import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-t
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
+import { isEditableService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { Sidebar } from '@qovery/shared/ui'
@@ -25,6 +26,8 @@ type SidebarSettingsGroupItem = {
     to: string
   }>
 }
+
+type SidebarSettingsItem = SidebarSettingsLinkItem | SidebarSettingsGroupItem
 
 const toSettingsPath = (basePath: string, suffix: string) => `${basePath}${suffix}`
 
@@ -113,58 +116,60 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
     'key'
   )
 
-  const linksSettings = match(service)
-    .with({ serviceType: 'APPLICATION' }, () => [
-      generalLink,
-      resourcesLink,
-      storageLink,
-      domainLink,
-      portLink,
-      healthchecksLink,
-      deploymentRestrictionsLink,
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
-    .with({ serviceType: 'CONTAINER' }, () => [
-      generalLink,
-      resourcesLink,
-      storageLink,
-      domainLink,
-      portLink,
-      healthchecksLink,
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
-    .with({ serviceType: 'HELM' }, (helm) => [
-      generalLink,
-      valuesOverrideLink,
-      networkingLink,
-      domainLink,
-      ...(isHelmGitSource(helm.source) ? [deploymentRestrictionsLink] : []),
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
-    .with({ serviceType: 'TERRAFORM' }, () => [
-      generalLink,
-      terraformConfigurationLink,
-      terraformVariablesLink,
-      terraformArgumentsLink,
-      resourcesLink,
-      deploymentRestrictionsLink,
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
-    .with({ serviceType: 'JOB' }, (job) => [
-      generalLink,
-      ...(job.job_type === 'LIFECYCLE' && isJobGitSource(job.source) ? [dockerfileLink] : []),
-      configureJobLink,
-      resourcesLink,
-      deploymentRestrictionsLink,
-      advancedSettingsLink,
-      dangerZoneLink,
-    ])
-    .with({ serviceType: 'DATABASE' }, () => [generalLink, resourcesLink, dangerZoneLink])
-    .exhaustive()
+  const linksSettings: SidebarSettingsItem[] = isEditableService(service)
+    ? match(service)
+        .with({ serviceType: 'APPLICATION' }, () => [
+          generalLink,
+          resourcesLink,
+          storageLink,
+          domainLink,
+          portLink,
+          healthchecksLink,
+          deploymentRestrictionsLink,
+          advancedSettingsLink,
+          dangerZoneLink,
+        ])
+        .with({ serviceType: 'CONTAINER' }, () => [
+          generalLink,
+          resourcesLink,
+          storageLink,
+          domainLink,
+          portLink,
+          healthchecksLink,
+          advancedSettingsLink,
+          dangerZoneLink,
+        ])
+        .with({ serviceType: 'HELM' }, (helm) => [
+          generalLink,
+          valuesOverrideLink,
+          networkingLink,
+          domainLink,
+          ...(isHelmGitSource(helm.source) ? [deploymentRestrictionsLink] : []),
+          advancedSettingsLink,
+          dangerZoneLink,
+        ])
+        .with({ serviceType: 'TERRAFORM' }, () => [
+          generalLink,
+          terraformConfigurationLink,
+          terraformVariablesLink,
+          terraformArgumentsLink,
+          resourcesLink,
+          deploymentRestrictionsLink,
+          advancedSettingsLink,
+          dangerZoneLink,
+        ])
+        .with({ serviceType: 'JOB' }, (job) => [
+          generalLink,
+          ...(job.job_type === 'LIFECYCLE' && isJobGitSource(job.source) ? [dockerfileLink] : []),
+          configureJobLink,
+          resourcesLink,
+          deploymentRestrictionsLink,
+          advancedSettingsLink,
+          dangerZoneLink,
+        ])
+        .with({ serviceType: 'DATABASE' }, () => [generalLink, resourcesLink, dangerZoneLink])
+        .exhaustive()
+    : []
 
   return (
     <div className="flex min-h-0 flex-1">

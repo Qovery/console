@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
-import { type ServiceType } from '@qovery/domains/services/data-access'
+import { type EditableServiceType } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseDeploymentHistoryProps {
   serviceId: string
-  serviceType?: ServiceType
+  serviceType?: EditableServiceType
   pageSize?: number
   suspense?: boolean
 }

@@ -15,6 +15,7 @@ import clsx from 'clsx'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ComponentProps, Fragment, useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
+import { isEditableService } from '@qovery/domains/services/data-access'
 import {
   Badge,
   Checkbox,
@@ -121,8 +122,10 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     return map
   }, [deploymentStages])
 
+  const serviceList = useMemo(() => services.filter(isEditableService), [services])
+
   const actualServices = useMemo(() => {
-    return services.map((service) => {
+    return serviceList.map((service) => {
       return {
         ...service,
         status: match(service)
@@ -130,7 +133,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
           .otherwise(() => service.runningStatus?.state),
       }
     })
-  }, [services])
+  }, [serviceList])
 
   const sortedServices = useMemo(() => {
     return [...actualServices].sort((a, b) => {
@@ -336,7 +339,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     )
   }, [statusFacetedUniqueValues])
 
-  if (services.length === 0) {
+  if (serviceList.length === 0) {
     return (
       <EmptyState
         title="No service found"

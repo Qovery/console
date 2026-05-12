@@ -1,6 +1,6 @@
 import { BuildModeEnum, TerraformAutoDeployConfigTerraformActionEnum } from 'qovery-typescript-axios'
 import { P, match } from 'ts-pattern'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type EditableService } from '@qovery/domains/services/data-access'
 import { isHelmGitSource, isHelmRepositorySource, isJobContainerSource, isJobGitSource } from '@qovery/shared/enums'
 import { type ApplicationGeneralData, type JobGeneralData } from '@qovery/shared/interfaces'
 import { joinArgsWithQuotes } from '@qovery/shared/util-js'
@@ -17,7 +17,7 @@ export type ServiceGeneralData =
   | TerraformGeneralData
   | DatabaseGeneralData
 
-export function getServiceGeneralDefaultValues(service: AnyService): Partial<ServiceGeneralData> {
+export function getServiceGeneralDefaultValues(service: EditableService): Partial<ServiceGeneralData> {
   const helmRepository = match(service)
     .with({ serviceType: 'HELM', source: P.when(isHelmRepositorySource) }, ({ source }) => source.repository)
     .otherwise(() => undefined)

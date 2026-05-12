@@ -40,6 +40,7 @@ function targetToScope(target: keyof typeof APIVariableScopeEnum | keyof typeof 
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
     .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => APIVariableScopeEnum.JOB)
     .with('HELM', () => APIVariableScopeEnum.HELM)
+    .with('ARGOCD_APP', () => APIVariableScopeEnum.APPLICATION)
     .with('BUILT_IN', () => APIVariableScopeEnum.BUILT_IN)
     .with('PROJECT', () => APIVariableScopeEnum.PROJECT)
     .with('ENVIRONMENT', () => APIVariableScopeEnum.ENVIRONMENT)

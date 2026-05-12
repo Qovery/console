@@ -123,7 +123,7 @@ function ServiceDomainSettingsContent({
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { data: customDomains, isLoading: isLoadingCustomDomains } = useCustomDomains({
     serviceId,
-    serviceType: service?.serviceType ?? 'APPLICATION',
+    serviceType: service?.serviceType,
   })
   const {
     data: checkedCustomDomains,
@@ -131,7 +131,7 @@ function ServiceDomainSettingsContent({
     isFetching: isFetchingCheckedCustomDomains,
   } = useCheckCustomDomains({
     serviceId,
-    serviceType: service?.serviceType ?? 'APPLICATION',
+    serviceType: service?.serviceType,
   })
   const { mutate: deleteCustomDomain } = useDeleteCustomDomain()
 

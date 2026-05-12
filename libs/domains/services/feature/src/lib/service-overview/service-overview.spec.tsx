@@ -153,6 +153,25 @@ describe('ServiceOverview', () => {
     expect(screen.getByText('scaled-object-status')).toBeInTheDocument()
   })
 
+  it('renders ArgoCD overview without Qovery runtime sections', () => {
+    mockUseService.mockReturnValue({
+      data: {
+        id: 'argocd-service-1',
+        service_type: 'ARGOCD_APP',
+        serviceType: 'ARGOCD_APP',
+        autoscaling: { mode: 'FIXED' },
+      },
+    })
+
+    renderWithProviders(<ServiceOverview environment={environment} />)
+
+    expect(screen.getByText('service-header')).toBeInTheDocument()
+    expect(screen.getByText('instance-metrics')).toBeInTheDocument()
+    expect(screen.queryByText('need-redeploy-flag')).not.toBeInTheDocument()
+    expect(screen.queryByText('service-last-deployment')).not.toBeInTheDocument()
+    expect(screen.queryByText('service-instance')).not.toBeInTheDocument()
+  })
+
   it.each(['APPLICATION', 'CONTAINER', 'HELM', 'JOB'])('renders core overview blocks for %s service', (serviceType) => {
     mockUseService.mockReturnValue({
       data: {

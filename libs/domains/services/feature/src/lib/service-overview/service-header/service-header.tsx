@@ -70,13 +70,86 @@ export interface ServiceHeaderProps {
   service: AnyService
 }
 
-function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeaderProps) {
-  const { organizationId = '', projectId = '' } = useParams({ strict: false })
-  const { data: masterCredentials } = useMasterCredentials({ serviceId, serviceType: service?.serviceType })
+interface ServiceHeaderIdentityProps {
+  environment: Environment
+  service: AnyService
+}
+
+function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityProps) {
+  const { organizationId = '', serviceId = '' } = useParams({ strict: false })
+
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
+  const isArgoCdService = match(service)
+    .with({ service_type: 'ARGOCD_APP' }, () => true)
+    .otherwise(() => false)
 
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
 
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex min-w-0 items-center gap-2">
+        <ServiceAvatar
+          size="sm"
+          radius="none"
+          serviceAvatarRadius="md"
+          service={
+            service.serviceType === 'JOB'
+              ? {
+                  icon_uri: service.icon_uri ?? '',
+                  serviceType: 'JOB' as const,
+                  job_type: service.job_type,
+                }
+              : {
+                  icon_uri: service.icon_uri ?? '',
+                  serviceType: service.serviceType,
+                }
+          }
+        />
+        <Tooltip content={service.name}>
+          <Heading className="min-w-0 max-w-full truncate">{service.name}</Heading>
+        </Tooltip>
+        <ServiceStateChip
+          className="ml-0.5 shrink-0"
+          mode="running"
+          environmentId={environment.id}
+          serviceId={serviceId}
+        />
+        {isArgoCdService && (
+          <>
+            <span className="ml-0.5 mr-2 h-4 w-px shrink-0 bg-surface-neutral-component" />
+            <span className="flex h-5 items-center rounded border border-argocd-subtle bg-surface-argocd-subtle px-0.5 text-xs font-bold uppercase text-argocd retina:border-[0.5px]">
+              ARGOCD
+            </span>
+          </>
+        )}
+        <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
+        <div className="flex shrink-0 items-center gap-1 text-ssm">
+          <ClusterAvatar cluster={cluster} size="sm" />
+          <Link
+            to="/organization/$organizationId/cluster/$clusterId/overview"
+            params={{ organizationId, clusterId: environment.cluster_id }}
+            className="hover:underline"
+          >
+            {environment.cluster_name}
+          </Link>
+          {cluster && <ClusterRunningStatusIndicator cluster={cluster} type="dot" />}
+        </div>
+      </div>
+      {!isArgoCdService && <ServiceActions environment={environment} serviceId={serviceId} variant="header" />}
+    </div>
+  )
+}
+
+interface ServiceHeaderMetadataProps {
+  service: AnyService
+}
+
+function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: masterCredentials } = useMasterCredentials({
+    serviceId,
+    serviceType: service?.service_type,
+  })
   const [, copyToClipboard] = useCopyToClipboard()
 
   const containerImage = match(service)
@@ -102,6 +175,10 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
     }))
     .otherwise(() => undefined)
 
+  const isArgoCdService = match(service)
+    .with({ service_type: 'ARGOCD_APP' }, () => true)
+    .otherwise(() => false)
+
   const handleCopyCredentials = (credentials: Credentials) => {
     if (!databaseSource) {
       return
@@ -112,191 +189,177 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
   }
 
   return (
+    <div className="mt-3 flex items-center gap-1">
+      {match(service)
+        .with(
+          { serviceType: 'APPLICATION' },
+          {
+            serviceType: 'JOB',
+            source: P.when(isJobGitSource),
+          },
+          {
+            serviceType: 'TERRAFORM',
+          },
+          {
+            serviceType: 'HELM',
+            source: P.when(isHelmGitSource),
+          },
+          (service) => {
+            const gitRepository = match(service)
+              .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+              .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
+              .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
+              .with(
+                { serviceType: 'TERRAFORM' },
+                ({ terraform_files_source }) => terraform_files_source?.git?.git_repository
+              )
+              .exhaustive()
+
+            if (!gitRepository) {
+              return null
+            }
+
+            return <GitRepository gitRepository={gitRepository} />
+          }
+        )
+        .otherwise(() => undefined)}
+      {containerImage && (
+        <>
+          {containerImage.registry && (
+            <ExternalLink
+              href={containerImage.registry.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="outline"
+              color="neutral"
+              size="xs"
+              as="button"
+              className="gap-1"
+            >
+              <Icon width={16} height={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
+              <span className="truncate">
+                <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
+              </span>
+            </ExternalLink>
+          )}
+          <Badge variant="surface" className="max-w-full whitespace-nowrap">
+            {containerImage.image_name}
+          </Badge>
+          <Badge variant="surface" className="max-w-full whitespace-nowrap">
+            <Truncate text={containerImage.tag} truncateLimit={18} />
+          </Badge>
+        </>
+      )}
+      {helmRepository && (
+        <>
+          {helmRepository.repository && (
+            <ExternalLink
+              href={helmRepository.repository.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="outline"
+              color="neutral"
+              size="xs"
+              as="button"
+              className="gap-1"
+            >
+              <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
+              <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
+            </ExternalLink>
+          )}
+          <Badge variant="surface" className="items-center gap-1 text-nowrap capitalize">
+            {helmRepository.chart_name}
+          </Badge>
+          <Badge variant="surface" className="items-center gap-1 text-nowrap capitalize">
+            {helmRepository.chart_version}
+          </Badge>
+        </>
+      )}
+      {databaseSource && (
+        <>
+          <Badge variant="surface" className="items-center gap-1">
+            <Icon name={databaseSource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
+            {databaseSource.version}
+          </Badge>
+          <Badge variant="surface">{databaseSource.mode.toLowerCase()}</Badge>
+          <Badge variant="surface">{databaseSource.accessibility?.toLowerCase()}</Badge>
+          {databaseSource.masterCredentials && (
+            <Button
+              color="neutral"
+              variant="outline"
+              size="xs"
+              className="gap-1"
+              onClick={() => {
+                if (!databaseSource.masterCredentials) {
+                  return
+                }
+                handleCopyCredentials(databaseSource.masterCredentials)
+              }}
+            >
+              <Icon iconName="key" iconStyle="regular" />
+              Connection URI
+            </Button>
+          )}
+        </>
+      )}
+      {'auto_deploy' in service &&
+        service.auto_deploy &&
+        match(service)
+          .with({ serviceType: 'APPLICATION' }, { serviceType: 'TERRAFORM' }, () => (
+            <AutoDeployBadge serviceId={service.id} />
+          ))
+          .with({ serviceType: 'JOB' }, (job) =>
+            isJobGitSource(job.source) ? <AutoDeployBadge serviceId={service.id} /> : null
+          )
+          .with({ serviceType: 'HELM' }, (helm) =>
+            isHelmGitSource(helm.source) ? <AutoDeployBadge serviceId={service.id} /> : null
+          )
+          .otherwise(() => null)}
+      {/* {argoCdSourceRepoUrl ? (
+        <ExternalLink
+          href={argoCdSourceRepoUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          variant="outline"
+          color="neutral"
+          size="xs"
+          as="button"
+          className="gap-1"
+        >
+          <Icon iconName="code-branch" iconStyle="regular" height={14} width={14} />
+          Source repository
+        </ExternalLink>
+      ) : null}
+      {argoCdSourceTargetRevision ? (
+        <Badge variant="surface" className="max-w-full whitespace-nowrap">
+          <Truncate text={argoCdSourceTargetRevision} truncateLimit={18} />
+        </Badge>
+      ) : null} */}
+      {!isArgoCdService && (
+        <ServiceLinksPopover
+          organizationId={organizationId}
+          projectId={projectId}
+          environmentId={environmentId}
+          serviceId={serviceId}
+        >
+          <Button className="gap-1" size="xs" color="neutral" variant="outline">
+            <Icon iconName="link" iconStyle="regular" />
+            Links
+            <Icon iconName="angle-down" iconStyle="regular" />
+          </Button>
+        </ServiceLinksPopover>
+      )}
+    </div>
+  )
+}
+
+function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeaderProps) {
+  return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex min-w-0 items-center gap-2">
-            <ServiceAvatar
-              size="sm"
-              radius="none"
-              serviceAvatarRadius="md"
-              service={
-                service.serviceType === 'JOB'
-                  ? {
-                      icon_uri: service.icon_uri ?? '',
-                      serviceType: 'JOB' as const,
-                      job_type: service.job_type,
-                    }
-                  : {
-                      icon_uri: service.icon_uri ?? '',
-                      serviceType: service.serviceType,
-                    }
-              }
-            />
-            <Tooltip content={service.name}>
-              <Heading className="min-w-0 max-w-full truncate">{service.name}</Heading>
-            </Tooltip>
-            <ServiceStateChip
-              className="ml-0.5 shrink-0"
-              mode="running"
-              environmentId={environment.id}
-              serviceId={serviceId}
-            />
-            <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
-            <div className="flex shrink-0 items-center gap-1 text-ssm">
-              <ClusterAvatar cluster={cluster} size="sm" />
-              <Link
-                to="/organization/$organizationId/cluster/$clusterId/overview"
-                params={{ organizationId, clusterId: environment.cluster_id }}
-                className="hover:underline"
-              >
-                {environment.cluster_name}
-              </Link>
-              {cluster && <ClusterRunningStatusIndicator cluster={cluster} type="dot" />}
-            </div>
-          </div>
-          <ServiceActions environment={environment} serviceId={serviceId} variant="header" />
-        </div>
-        {service.description && <p className="text-neutral-subtle">{service.description}</p>}
-        <div className="mt-3 flex items-center gap-1">
-          {match(service)
-            .with(
-              { serviceType: 'APPLICATION' },
-              {
-                serviceType: 'JOB',
-                source: P.when(isJobGitSource),
-              },
-              {
-                serviceType: 'TERRAFORM',
-              },
-              {
-                serviceType: 'HELM',
-                source: P.when(isHelmGitSource),
-              },
-              (service) => {
-                const gitRepository = match(service)
-                  .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
-                  .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
-                  .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
-                  .with(
-                    { serviceType: 'TERRAFORM' },
-                    ({ terraform_files_source }) => terraform_files_source?.git?.git_repository
-                  )
-                  .exhaustive()
-
-                if (!gitRepository) {
-                  return null
-                }
-
-                return <GitRepository gitRepository={gitRepository} />
-              }
-            )
-            .otherwise(() => undefined)}
-          {containerImage && (
-            <>
-              {containerImage.registry && (
-                <ExternalLink
-                  href={containerImage.registry.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="outline"
-                  color="neutral"
-                  size="xs"
-                  as="button"
-                  className="gap-1"
-                >
-                  <Icon width={16} height={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
-                  <span className="truncate">
-                    <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
-                  </span>
-                </ExternalLink>
-              )}
-              <Badge variant="surface" className="max-w-full whitespace-nowrap">
-                {containerImage.image_name}
-              </Badge>
-              <Badge variant="surface" className="max-w-full whitespace-nowrap">
-                <Truncate text={containerImage.tag} truncateLimit={18} />
-              </Badge>
-            </>
-          )}
-          {helmRepository && (
-            <>
-              {helmRepository.repository && (
-                <ExternalLink
-                  href={helmRepository.repository.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  variant="outline"
-                  color="neutral"
-                  size="xs"
-                  as="button"
-                  className="gap-1"
-                >
-                  <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
-                  <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
-                </ExternalLink>
-              )}
-              <Badge variant="surface" className="items-center gap-1 text-nowrap capitalize">
-                {helmRepository.chart_name}
-              </Badge>
-              <Badge variant="surface" className="items-center gap-1 text-nowrap capitalize">
-                {helmRepository.chart_version}
-              </Badge>
-            </>
-          )}
-          {databaseSource && (
-            <>
-              <Badge variant="surface" className="items-center gap-1">
-                <Icon name={databaseSource.type} className="max-h-[12px] max-w-[12px]" height={12} width={12} />
-                {databaseSource.version}
-              </Badge>
-              <Badge variant="surface">{databaseSource.mode.toLowerCase()}</Badge>
-              <Badge variant="surface">{databaseSource.accessibility?.toLowerCase()}</Badge>
-              {databaseSource.masterCredentials && (
-                <Button
-                  color="neutral"
-                  variant="outline"
-                  size="xs"
-                  className="gap-1"
-                  onClick={() => {
-                    if (!databaseSource.masterCredentials) {
-                      return
-                    }
-                    handleCopyCredentials(databaseSource.masterCredentials)
-                  }}
-                >
-                  <Icon iconName="key" iconStyle="regular" />
-                  Connection URI
-                </Button>
-              )}
-            </>
-          )}
-          {'auto_deploy' in service &&
-            service.auto_deploy &&
-            match(service)
-              .with({ serviceType: 'APPLICATION' }, { serviceType: 'TERRAFORM' }, () => (
-                <AutoDeployBadge serviceId={service.id} />
-              ))
-              .with({ serviceType: 'JOB' }, (job) =>
-                isJobGitSource(job.source) ? <AutoDeployBadge serviceId={service.id} /> : null
-              )
-              .with({ serviceType: 'HELM' }, (helm) =>
-                isHelmGitSource(helm.source) ? <AutoDeployBadge serviceId={service.id} /> : null
-              )
-              .otherwise(() => null)}
-          <ServiceLinksPopover
-            organizationId={organizationId}
-            projectId={projectId}
-            environmentId={service.environment.id}
-            serviceId={service.id}
-          >
-            <Button className="gap-1" size="xs" color="neutral" variant="outline">
-              <Icon iconName="link" iconStyle="regular" />
-              Links
-              <Icon iconName="angle-down" iconStyle="regular" />
-            </Button>
-          </ServiceLinksPopover>
-        </div>
+        <ServiceHeaderIdentity environment={environment} service={service} />
+        {'description' in service && <p className="text-neutral-subtle">{service.description}</p>}
+        <ServiceHeaderMetadata service={service} />
       </div>
       <hr className="border-neutral" />
     </div>

@@ -1,4 +1,5 @@
 export enum ServiceTypeEnum {
+  ARGOCD_APP = 'ARGOCD_APP',
   DATABASE = 'DATABASE',
   APPLICATION = 'APPLICATION',
   CONTAINER = 'CONTAINER',

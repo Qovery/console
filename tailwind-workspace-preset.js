@@ -302,6 +302,9 @@ module.exports = {
             solid: 'var(--accent-9)',
             component: 'var(--accent-3)',
           },
+          argocd: {
+            subtle: 'var(--argocd-2)',
+          },
         },
       },
       textColor: {
@@ -326,6 +329,7 @@ module.exports = {
         warning: { DEFAULT: 'var(--warning-11)', hover: 'var(--warning-10)' },
         warningInvert: { DEFAULT: 'var(--warning-invert-11)' },
         accent1: { DEFAULT: 'var(--accent-11)', hover: 'var(--accent1-10)' },
+        argocd: { DEFAULT: 'var(--argocd-11)' },
       },
       fill: ({ theme }) => ({
         ...theme('colors'),
@@ -388,6 +392,9 @@ module.exports = {
         accent1: {
           strong: 'var(--accent-9)',
           subtle: 'var(--accent-6)',
+        },
+        argocd: {
+          subtle: 'var(--argocd-6)',
         },
       },
       outlineColor: ({ theme }) => theme('borderColor'),

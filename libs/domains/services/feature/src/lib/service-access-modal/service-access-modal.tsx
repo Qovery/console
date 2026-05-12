@@ -1,6 +1,6 @@
 import type { Credentials, DatabaseModeEnum, DatabaseTypeEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type Application, type Container, type Database } from '@qovery/domains/services/data-access'
+import { type Application, type Container, type Database, isDatabase } from '@qovery/domains/services/data-access'
 import { useVariables } from '@qovery/domains/variables/feature'
 import {
   Accordion,
@@ -95,11 +95,11 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
 }
 
 export function ServiceAccessModal({ service, organizationId, projectId, onClose }: ServiceAccessModalProps) {
-  const { serviceType } = service
+  const isDatabaseService = isDatabase(service)
 
   const { data: variables = [], isLoading: isLoadingVariables } = useVariables({
-    parentId: serviceType === 'DATABASE' ? service.environment.id : service.id,
-    scope: serviceType === 'DATABASE' ? 'ENVIRONMENT' : serviceType,
+    parentId: isDatabaseService ? service.environment.id : service.id,
+    scope: isDatabaseService ? 'ENVIRONMENT' : service.serviceType,
   })
 
   const ports = match(service)
@@ -145,7 +145,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
         <div className="mt-6">
           <TabsContent className="flex flex-col gap-4" value="another-service">
             <Accordion.Root type="multiple" className="flex flex-col gap-4">
-              {serviceType !== 'DATABASE' && (
+              {!isDatabaseService && (
                 <div className="flex flex-col gap-1.5 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
                   <span className="font-medium">How to connect</span>
                   <p className="text-neutral-subtle">
@@ -228,11 +228,9 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 </SectionExpand>
               )}
               <SectionExpand
-                title={
-                  serviceType !== 'DATABASE' ? '2. BUILT_IN environment variables' : 'BUILT_IN environment variables'
-                }
+                title={!isDatabaseService ? '2. BUILT_IN environment variables' : 'BUILT_IN environment variables'}
                 description={
-                  serviceType !== 'DATABASE'
+                  !isDatabaseService
                     ? 'Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.'
                     : 'Qovery injects on every service of the environment a set of environment variables (called BUILT_IN) containing the connection parameters of this service. To match the variables naming convention within your code, create an alias. Below you can find the BUILT_IN env vars for this service and the aliases defined at environment level.'
                 }
@@ -299,7 +297,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
             <div className="flex flex-col gap-2 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
               <span className="font-medium">2. Connect via port-forward</span>
               <p className="text-neutral-subtle">
-                {serviceType === 'DATABASE' ? (
+                {isDatabaseService ? (
                   <>
                     Run the following command from your terminal. <br />
                     <ExternalLink href="https://www.qovery.com/docs/cli/commands/port-forward#examples">
@@ -318,7 +316,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                 <CopyButton content={connectPortForward} />
               </div>
             </div>
-            {serviceType === 'DATABASE' ? (
+            {isDatabaseService ? (
               <SectionDatabaseConnectionUri service={service} />
             ) : (
               <div className="flex flex-col gap-2 rounded border border-neutral bg-surface-neutral px-4 py-3 text-sm">
@@ -334,7 +332,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
               </div>
             )}
           </TabsContent>
-          {serviceType === 'DATABASE' && (
+          {isDatabaseService && (
             <TabsContent className="flex flex-col gap-4" value="public-access">
               <SectionDatabaseConnectionUri service={service} />
             </TabsContent>
