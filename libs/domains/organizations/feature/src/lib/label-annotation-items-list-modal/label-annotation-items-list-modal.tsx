@@ -208,7 +208,7 @@ export function LabelAnnotationItemsListModal({
                         const clusterId = cluster.cluster_id ?? cluster.item_id
                         const displayName = cluster.cluster_name ?? cluster.item_name
                         return (
-                          <li key={cluster.item_id} className="border-b border-neutral last:border-b-0">
+                          <li key={cluster.item_id}>
                             <Link
                               color="brand"
                               onClick={() => onClose()}
@@ -224,7 +224,7 @@ export function LabelAnnotationItemsListModal({
                       })}
                     </ul>
                   ) : (
-                    <p className="text-xs text-neutral-subtle">No matching clusters.</p>
+                    <p className="mb-2 text-xs text-neutral-subtle">No matching clusters.</p>
                   )}
                 </div>
               ) : null}
