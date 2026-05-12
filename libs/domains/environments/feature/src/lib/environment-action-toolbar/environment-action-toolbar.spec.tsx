@@ -10,6 +10,14 @@ const mockDeleteEnvironment = jest.fn()
 const mockNavigate = jest.fn()
 const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
+const mockCopyToClipboard = jest.fn()
+const mockUseVariables = jest.fn()
+let mockVariables = [
+  {
+    key: 'QOVERY_KUBERNETES_NAMESPACE_NAME',
+    value: 'z1234567-env-name',
+  },
+]
 
 let mockDeploymentStatus = {
   state: 'DEPLOYED',
@@ -40,6 +48,15 @@ jest.mock('@qovery/shared/ui', () => ({
   useModalConfirmation: () => ({
     openModalConfirmation: mockOpenModalConfirmation,
   }),
+}))
+
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useCopyToClipboard: () => [undefined, mockCopyToClipboard],
+}))
+
+jest.mock('@qovery/domains/variables/feature', () => ({
+  useVariables: (props: unknown) => mockUseVariables(props),
 }))
 
 jest.mock('../hooks/use-deployment-status/use-deployment-status', () => {
@@ -77,6 +94,15 @@ describe('EnvironmentActionToolbar', () => {
       state: 'DEPLOYED',
       deployment_status: 'OUT_OF_DATE',
     }
+    mockVariables = [
+      {
+        key: 'QOVERY_KUBERNETES_NAMESPACE_NAME',
+        value: 'z1234567-env-name',
+      },
+    ]
+    mockUseVariables.mockImplementation(() => ({
+      data: mockVariables,
+    }))
   })
 
   it('should match manage deployment snapshot', async () => {
@@ -170,5 +196,69 @@ describe('EnvironmentActionToolbar', () => {
     expect(mockNavigate).toHaveBeenCalledWith({
       to: `/organization/${mockEnvironment.organization.id}/project/${mockEnvironment.project.id}/overview`,
     })
+  })
+
+  it('should open environment metadata without copying immediately', async () => {
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
+      container: document.body,
+    })
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    expect(screen.queryByRole('menuitem', { name: /copy identifier/i })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('menuitem', { name: /environment metadata/i }))
+
+    expect(mockCopyToClipboard).not.toHaveBeenCalled()
+    expect(screen.getByText('Cluster ID')).toBeInTheDocument()
+    expect(screen.getByText('Organization ID')).toBeInTheDocument()
+    expect(screen.getByText('Project ID')).toBeInTheDocument()
+    expect(screen.getByText('Environment ID')).toBeInTheDocument()
+    expect(screen.getByText('Namespace ID')).toBeInTheDocument()
+    expect(screen.getByText('z1234567-env-name')).toBeInTheDocument()
+  })
+
+  it('should fetch environment variables when opening other actions', async () => {
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
+      container: document.body,
+    })
+
+    expect(mockUseVariables).toHaveBeenLastCalledWith({
+      parentId: mockEnvironment.id,
+      scope: undefined,
+    })
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+
+    expect(mockUseVariables).toHaveBeenLastCalledWith({
+      parentId: mockEnvironment.id,
+      scope: 'ENVIRONMENT',
+    })
+  })
+
+  it('should copy a single namespace value', async () => {
+    const { userEvent, container } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
+      container: document.body,
+    })
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /environment metadata/i }))
+    const copyButtons = screen.getAllByTestId('copy-container')
+    await userEvent.click(copyButtons[copyButtons.length - 1])
+
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('z1234567-env-name')
+    expect(container.querySelector('.fa-check')).toBeInTheDocument()
+  })
+
+  it('should omit namespace metadata when namespace variable is missing', async () => {
+    mockVariables = []
+
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />, {
+      container: document.body,
+    })
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /environment metadata/i }))
+
+    expect(screen.queryByText('Namespace ID')).not.toBeInTheDocument()
+    expect(screen.getByText('Environment ID')).toBeInTheDocument()
   })
 })

@@ -6,12 +6,23 @@ import {
   OrganizationEventTargetType,
   StateEnum,
 } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { match } from 'ts-pattern'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
+import { useVariables } from '@qovery/domains/variables/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, OVERVIEW_URL } from '@qovery/shared/routes'
-import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { useCopyToClipboard } from '@qovery/shared/util-hooks'
+import {
+  Button,
+  CopyToClipboardButtonIcon,
+  DropdownMenu,
+  Icon,
+  Link,
+  Skeleton,
+  Tooltip,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import {
   isCancelBuildAvailable,
   isDeleteAvailable,
@@ -31,6 +42,7 @@ import { TerraformExportModal } from '../terraform-export-modal/terraform-export
 import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'header'
+const NAMESPACE_VARIABLE_NAME = 'QOVERY_KUBERNETES_NAMESPACE_NAME'
 
 export function MenuManageDeployment({
   environment,
@@ -247,12 +259,23 @@ export function MenuOtherActions({
   environment: Environment
   variant?: ActionToolbarVariant
 }) {
+  const [isMetadataOpen, setIsMetadataOpen] = useState(false)
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
-  const [, copyToClipboard] = useCopyToClipboard()
-  const copyContent = `Cluster ID: ${environment.cluster_id}\nOrganization ID: ${environment.organization.id}\nProject ID: ${environment.project.id}\nEnvironment ID: ${environment.id}`
+  const { data: variables = [] } = useVariables({
+    parentId: environment.id,
+    scope: 'ENVIRONMENT',
+  })
+  const namespaceName = variables.find(({ key }) => key === NAMESPACE_VARIABLE_NAME)?.value
+  const metadata = [
+    { label: 'Cluster ID', value: environment.cluster_id },
+    { label: 'Organization ID', value: environment.organization.id },
+    { label: 'Project ID', value: environment.project.id },
+    { label: 'Environment ID', value: environment.id },
+    ...(namespaceName ? [{ label: 'Namespace ID', value: namespaceName }] : []),
+  ]
 
   const mutationDeleteEnvironment = () => {
     openModalConfirmation({
@@ -294,7 +317,13 @@ export function MenuOtherActions({
   }
 
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root
+      onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          setIsMetadataOpen(false)
+        }
+      }}
+    >
       <DropdownMenu.Trigger asChild>
         <Button
           aria-label="Other actions"
@@ -305,7 +334,7 @@ export function MenuOtherActions({
         >
           <Tooltip content="Other actions">
             <div className="flex h-full w-full items-center justify-center">
-              <Icon iconName="ellipsis-v" iconStyle="solid" />
+              <Icon iconName="ellipsis-v" />
             </div>
           </Tooltip>
         </Button>
@@ -327,15 +356,42 @@ export function MenuOtherActions({
             See audit logs
           </Link>
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
-          Copy identifier
-        </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="file-export" />} onSelect={openTerraformExportModal}>
           Export as Terraform
         </DropdownMenu.Item>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={openCloneModal}>
           Clone
         </DropdownMenu.Item>
+        <DropdownMenu.Item
+          icon={<Icon iconName="circle-info" />}
+          className={isMetadataOpen ? 'bg-surface-brand-component text-brand' : undefined}
+          onSelect={(event) => {
+            event.preventDefault()
+            setIsMetadataOpen((isOpen) => !isOpen)
+          }}
+        >
+          Environment metadata
+        </DropdownMenu.Item>
+        {isMetadataOpen && (
+          <div className="flex flex-col gap-2 px-3 pb-1 pt-1">
+            <div className="flex flex-col gap-1">
+              {metadata.map(({ label, value }) => (
+                <div key={label} className="grid grid-cols-[88px_minmax(0,1fr)_auto] items-center gap-2">
+                  <span className="text-xs text-neutral-subtle">{label}</span>
+                  <span className="truncate font-mono text-xs text-neutral" title={value}>
+                    {value}
+                  </span>
+                  <CopyToClipboardButtonIcon
+                    content={value}
+                    tooltipContent={`Copy ${label}`}
+                    className="flex h-6 w-6 items-center justify-center rounded text-neutral-subtle hover:bg-surface-neutral-subtle"
+                    iconClassName="text-xs"
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
