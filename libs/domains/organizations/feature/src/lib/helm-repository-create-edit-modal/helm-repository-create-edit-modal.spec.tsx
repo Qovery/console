@@ -1,6 +1,6 @@
 import selectEvent from 'react-select-event'
 import { helmRepositoriesMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useAvailableHelmRepositories from '../hooks/use-available-helm-repositories/use-available-helm-repositories'
 import * as useCreateHelmRepository from '../hooks/use-create-helm-repository/use-create-helm-repository'
 import * as useEditHelmRepository from '../hooks/use-edit-helm-repository/use-edit-helm-repository'
@@ -274,13 +274,13 @@ describe('HelmRepositoryCreateEditModal', () => {
     const selectType = screen.getByLabelText('Kind')
     await selectEvent.select(selectType, 'OCI_ECR', { container: document.body })
 
-    const selectAuthType = screen.getByLabelText('Authentication method')
+    const selectAuthType = await screen.findByLabelText('Authentication method')
     await selectEvent.select(selectAuthType, 'Assume role via STS (preferred)', { container: document.body })
 
-    const inputRegion = screen.getByTestId('input-region')
+    const inputRegion = await screen.findByTestId('input-region')
     await userEvent.type(inputRegion, 'us-east-1')
 
-    const inputRoleArn = screen.getByTestId('input-role_arn')
+    const inputRoleArn = await screen.findByTestId('input-role_arn')
     await userEvent.type(inputRoleArn, 'arn:aws:iam::123456789012:role/MyRole')
 
     const inputUrl = screen.getByTestId('input-url')
@@ -292,29 +292,31 @@ describe('HelmRepositoryCreateEditModal', () => {
 
     await userEvent.click(screen.getByTestId('submit-button'))
 
-    expect(useCreateHelmRepositoryMockSpy().mutateAsync).toHaveBeenCalledWith({
-      organizationId: '0000-0000-0000',
-      helmRepositoryRequest: {
-        name: 'my-ecr-repo-sts',
-        kind: 'OCI_ECR',
-        description: undefined,
-        url: 'oci://123456789012.dkr.ecr.us-east-1.amazonaws.com',
-        config: {
-          region: 'us-east-1',
-          role_arn: 'arn:aws:iam::123456789012:role/MyRole',
-          username: undefined,
-          password: undefined,
-          scaleway_access_key: undefined,
-          scaleway_secret_key: undefined,
+    await waitFor(() => {
+      expect(useCreateHelmRepositoryMockSpy().mutateAsync).toHaveBeenCalledWith({
+        organizationId: '0000-0000-0000',
+        helmRepositoryRequest: {
+          name: 'my-ecr-repo-sts',
+          kind: 'OCI_ECR',
+          description: undefined,
+          url: 'oci://123456789012.dkr.ecr.us-east-1.amazonaws.com',
+          config: {
+            region: 'us-east-1',
+            role_arn: 'arn:aws:iam::123456789012:role/MyRole',
+            username: undefined,
+            password: undefined,
+            scaleway_access_key: undefined,
+            scaleway_secret_key: undefined,
+          },
         },
-      },
+      })
     })
   })
 
   it('should switch between STATIC and STS authentication methods', async () => {
     props.repository = undefined
 
-    const { userEvent } = renderWithProviders(<HelmRepositoryCreateEditModal {...props} />)
+    renderWithProviders(<HelmRepositoryCreateEditModal {...props} />)
 
     const selectType = screen.getByLabelText('Kind')
     await selectEvent.select(selectType, 'OCI_ECR', { container: document.body })
