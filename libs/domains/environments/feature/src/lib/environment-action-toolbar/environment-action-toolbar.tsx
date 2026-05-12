@@ -6,7 +6,7 @@ import {
   OrganizationEventTargetType,
   StateEnum,
 } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
@@ -259,11 +259,26 @@ export function MenuOtherActions({
   environment: Environment
   variant?: ActionToolbarVariant
 }) {
-  const [isMetadataOpen, setIsMetadataOpen] = useState(false)
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
+  const [isMetadataSubOpen, setIsMetadataSubOpen] = useState(false)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  useEffect(() => () => { if (closeTimerRef.current) clearTimeout(closeTimerRef.current) }, [])
+
+  const clearCloseTimer = () => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current)
+      closeTimerRef.current = null
+    }
+  }
+
+  const scheduleClose = () => {
+    clearCloseTimer()
+    closeTimerRef.current = setTimeout(() => setIsMetadataSubOpen(false), 300)
+  }
   const { data: variables = [] } = useVariables({
     parentId: environment.id,
     scope: 'ENVIRONMENT',
@@ -317,13 +332,7 @@ export function MenuOtherActions({
   }
 
   return (
-    <DropdownMenu.Root
-      onOpenChange={(isOpen) => {
-        if (!isOpen) {
-          setIsMetadataOpen(false)
-        }
-      }}
-    >
+    <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <Button
           aria-label="Other actions"
@@ -362,36 +371,37 @@ export function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={openCloneModal}>
           Clone
         </DropdownMenu.Item>
-        <DropdownMenu.Item
-          icon={<Icon iconName="circle-info" />}
-          className={isMetadataOpen ? 'bg-surface-brand-component text-brand' : undefined}
-          onSelect={(event) => {
-            event.preventDefault()
-            setIsMetadataOpen((isOpen) => !isOpen)
-          }}
-        >
-          Environment metadata
-        </DropdownMenu.Item>
-        {isMetadataOpen && (
-          <div className="flex flex-col gap-2 px-3 pb-1 pt-1">
-            <div className="flex flex-col gap-1">
+        <DropdownMenu.Sub open={isMetadataSubOpen} onOpenChange={setIsMetadataSubOpen}>
+          <DropdownMenu.SubTrigger
+            icon={<Icon iconName="circle-info" />}
+            onMouseEnter={() => { clearCloseTimer(); setIsMetadataSubOpen(true) }}
+            onMouseLeave={scheduleClose}
+          >
+            Environment metadata
+          </DropdownMenu.SubTrigger>
+          <DropdownMenu.SubContent
+            className="w-[290px]"
+            onMouseEnter={clearCloseTimer}
+            onMouseLeave={scheduleClose}
+          >
+            <div className="flex flex-col gap-1 px-1 py-1">
               {metadata.map(({ label, value }) => (
-                <div key={label} className="grid grid-cols-[88px_minmax(0,1fr)_auto] items-center gap-2">
-                  <span className="text-xs text-neutral-subtle">{label}</span>
-                  <span className="truncate font-mono text-xs text-neutral" title={value}>
+                <div key={label} className="grid grid-cols-[110px_minmax(0,1fr)_auto] items-center gap-2 px-2">
+                  <span className="text-ssm text-neutral-subtle">{label}</span>
+                  <span className="truncate font-mono text-ssm text-neutral" title={value}>
                     {value}
                   </span>
                   <CopyToClipboardButtonIcon
                     content={value}
                     tooltipContent={`Copy ${label}`}
                     className="flex h-6 w-6 items-center justify-center rounded text-neutral-subtle hover:bg-surface-neutral-subtle"
-                    iconClassName="text-xs"
+                    iconClassName="text-ssm"
                   />
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          </DropdownMenu.SubContent>
+        </DropdownMenu.Sub>
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
