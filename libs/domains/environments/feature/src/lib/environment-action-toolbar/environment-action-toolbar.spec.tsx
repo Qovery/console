@@ -241,10 +241,10 @@ describe('EnvironmentActionToolbar', () => {
 
     await userEvent.click(screen.getByLabelText(/other actions/i))
     await userEvent.click(screen.getByRole('menuitem', { name: /environment metadata/i }))
-    const copyButtons = screen.getAllByTestId('copy-container')
-    await userEvent.click(copyButtons[copyButtons.length - 1])
+    await userEvent.click(screen.getByRole('menuitem', { name: /namespace id/i }))
 
     expect(mockCopyToClipboard).toHaveBeenCalledWith('z1234567-env-name')
+    expect(screen.getByRole('menuitem', { name: /namespace id/i })).toBeInTheDocument()
     expect(container.querySelector('.fa-check')).toBeInTheDocument()
   })
 

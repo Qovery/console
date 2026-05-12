@@ -6,23 +6,14 @@ import {
   OrganizationEventTargetType,
   StateEnum,
 } from 'qovery-typescript-axios'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { match } from 'ts-pattern'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
 import { useVariables } from '@qovery/domains/variables/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL, OVERVIEW_URL } from '@qovery/shared/routes'
-import {
-  Button,
-  CopyToClipboardButtonIcon,
-  DropdownMenu,
-  Icon,
-  Link,
-  Skeleton,
-  Tooltip,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { Button, DropdownMenu, Icon, Link, Skeleton, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import {
   isCancelBuildAvailable,
   isDeleteAvailable,
@@ -259,29 +250,16 @@ export function MenuOtherActions({
   environment: Environment
   variant?: ActionToolbarVariant
 }) {
+  const [isActionsOpen, setIsActionsOpen] = useState(false)
+  const [copiedMetadataLabel, setCopiedMetadataLabel] = useState<string>()
   const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutate: deleteEnvironment } = useDeleteEnvironment({ projectId: environment.project.id })
-  const [isMetadataSubOpen, setIsMetadataSubOpen] = useState(false)
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
-  useEffect(() => () => { if (closeTimerRef.current) clearTimeout(closeTimerRef.current) }, [])
-
-  const clearCloseTimer = () => {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current)
-      closeTimerRef.current = null
-    }
-  }
-
-  const scheduleClose = () => {
-    clearCloseTimer()
-    closeTimerRef.current = setTimeout(() => setIsMetadataSubOpen(false), 300)
-  }
+  const [, copyToClipboard] = useCopyToClipboard()
   const { data: variables = [] } = useVariables({
     parentId: environment.id,
-    scope: 'ENVIRONMENT',
+    scope: isActionsOpen ? 'ENVIRONMENT' : undefined,
   })
   const namespaceName = variables.find(({ key }) => key === NAMESPACE_VARIABLE_NAME)?.value
   const metadata = [
@@ -291,6 +269,14 @@ export function MenuOtherActions({
     { label: 'Environment ID', value: environment.id },
     ...(namespaceName ? [{ label: 'Namespace ID', value: namespaceName }] : []),
   ]
+
+  const copyMetadata = ({ label, value }: { label: string; value: string }) => {
+    copyToClipboard(value)
+    setCopiedMetadataLabel(label)
+    setTimeout(() => {
+      setCopiedMetadataLabel(undefined)
+    }, 1000)
+  }
 
   const mutationDeleteEnvironment = () => {
     openModalConfirmation({
@@ -332,7 +318,7 @@ export function MenuOtherActions({
   }
 
   return (
-    <DropdownMenu.Root>
+    <DropdownMenu.Root open={isActionsOpen} onOpenChange={setIsActionsOpen}>
       <DropdownMenu.Trigger asChild>
         <Button
           aria-label="Other actions"
@@ -371,33 +357,28 @@ export function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={openCloneModal}>
           Clone
         </DropdownMenu.Item>
-        <DropdownMenu.Sub open={isMetadataSubOpen} onOpenChange={setIsMetadataSubOpen}>
-          <DropdownMenu.SubTrigger
-            icon={<Icon iconName="circle-info" />}
-            onMouseEnter={() => { clearCloseTimer(); setIsMetadataSubOpen(true) }}
-            onMouseLeave={scheduleClose}
-          >
-            Environment metadata
-          </DropdownMenu.SubTrigger>
-          <DropdownMenu.SubContent
-            className="w-[290px]"
-            onMouseEnter={clearCloseTimer}
-            onMouseLeave={scheduleClose}
-          >
+        <DropdownMenu.Sub>
+          <DropdownMenu.SubTrigger icon={<Icon iconName="circle-info" />}>Environment metadata</DropdownMenu.SubTrigger>
+          <DropdownMenu.SubContent className="w-[290px]">
             <div className="flex flex-col gap-1 px-1 py-1">
               {metadata.map(({ label, value }) => (
-                <div key={label} className="grid grid-cols-[110px_minmax(0,1fr)_auto] items-center gap-2 px-2">
+                <DropdownMenu.Item
+                  key={label}
+                  className="grid h-auto grid-cols-[110px_minmax(0,1fr)_auto] items-center gap-2 px-2 py-1.5"
+                  onSelect={(event) => {
+                    event.preventDefault()
+                    copyMetadata({ label, value })
+                  }}
+                >
                   <span className="text-ssm text-neutral-subtle">{label}</span>
                   <span className="truncate font-mono text-ssm text-neutral" title={value}>
                     {value}
                   </span>
-                  <CopyToClipboardButtonIcon
-                    content={value}
-                    tooltipContent={`Copy ${label}`}
-                    className="flex h-6 w-6 items-center justify-center rounded text-neutral-subtle hover:bg-surface-neutral-subtle"
-                    iconClassName="text-ssm"
+                  <Icon
+                    iconName={copiedMetadataLabel === label ? 'check' : 'copy'}
+                    className="justify-self-end text-ssm text-neutral-subtle"
                   />
-                </div>
+                </DropdownMenu.Item>
               ))}
             </div>
           </DropdownMenu.SubContent>
