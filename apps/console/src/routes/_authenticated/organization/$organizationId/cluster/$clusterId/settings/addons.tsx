@@ -14,16 +14,7 @@ import {
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import {
-  Badge,
-  Button,
-  DropdownMenu,
-  Icon,
-  IconFlag,
-  Section,
-  useModal,
-  useModalConfirmation,
-} from '@qovery/shared/ui'
+import { Badge, Button, DropdownMenu, Icon, IconFlag, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { isGcpCluster } from '@qovery/shared/util-clusters'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons')(
@@ -32,16 +23,12 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   }
 )
 
-
-
 function RouteComponent() {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const { data: cluster } = useCluster({ organizationId, clusterId, suspense: true })
-
-  console.log('secret_manager_accesses', cluster?.secret_manager_accesses)
 
   const { data: cloudProviders = [] } = useCloudProviders({ suspense: true })
 
@@ -77,7 +64,10 @@ function RouteComponent() {
     () => cluster?.secret_manager_accesses ?? []
   )
 
-  const openSecretManagerModal = (option: typeof SECRET_MANAGER_OPTIONS[number], secretManager?: SecretManagerAccess) => {
+  const openSecretManagerModal = (
+    option: (typeof SECRET_MANAGER_OPTIONS)[number],
+    secretManager?: SecretManagerAccess
+  ) => {
     openModal({
       content: (
         <SecretManagerIntegrationModal
