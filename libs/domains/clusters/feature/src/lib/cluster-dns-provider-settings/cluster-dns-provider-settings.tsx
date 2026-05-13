@@ -29,10 +29,8 @@ const SECRET_HINT =
 const DNS_PROVIDER_DOCUMENTATION_URL =
   'https://www.qovery.com/docs/configuration/clusters#custom-domain-and-wildcard-tls-beta'
 
-export type DnsProvider = ClusterDnsProviderRequest['dns_provider']['provider']
-
 export interface ClusterDnsProviderFormValues {
-  provider: DnsProvider
+  provider: ClusterDnsProviderRequest['dns_provider']['provider']
   domain: string
   cloudflareEmail: string
   cloudflareApiToken: string
