@@ -1,18 +1,17 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Navigate, createFileRoute } from '@tanstack/react-router'
+import { useOrganizations } from '@qovery/domains/organizations/feature'
 
 export const Route = createFileRoute('/_authenticated/organization/')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  return (
-    <div className="h-full min-h-dvh w-full bg-background">
-      <main className="!h-full">
-        <div className="m-auto mt-6 h-full w-full max-w-7xl">
-          {/* EMPTY FOR NOW */}
-          {/* TODO: Add organization list or something */}
-        </div>
-      </main>
-    </div>
-  )
+  const { data: organizations = [] } = useOrganizations({ suspense: true })
+  const organization = organizations[0]
+
+  if (!organization) {
+    return null
+  }
+
+  return <Navigate to="/organization/$organizationId/overview" params={{ organizationId: organization.id }} replace />
 }
