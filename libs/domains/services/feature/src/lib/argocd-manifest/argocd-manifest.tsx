@@ -31,13 +31,13 @@ export function formatLiveState(liveState: string): string {
   }
 }
 
-function getResourceId(resource: ArgocdManagedResource, index: number): string {
-  return `${resource.kind ?? 'Unknown'}:${resource.name ?? 'Unnamed'}:${index}`
+function getResourceId(resource: ArgocdManagedResource): string {
+  return `${resource.kind ?? 'Unknown'}:${resource.name ?? 'Unnamed'}`
 }
 
 export function toManifestResources(resources: ArgocdManagedResource[]): ArgoCdManifestResource[] {
-  return resources.map((resource, index) => ({
-    id: getResourceId(resource, index),
+  return resources.map((resource) => ({
+    id: getResourceId(resource),
     resourceType: resource.kind ?? 'Unknown',
     displayName: resource.kind ?? 'Unknown',
     name: resource.name ?? 'Unnamed',
