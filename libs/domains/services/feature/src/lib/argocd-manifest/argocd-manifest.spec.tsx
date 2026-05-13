@@ -34,11 +34,13 @@ const manifestResponse: ArgoCdManifestResponse = {
         kind: 'Service',
         name: 'api',
         liveState: JSON.stringify({ kind: 'Service', metadata: { name: 'api' } }),
+        targetState: JSON.stringify({ kind: 'Service', metadata: { name: 'api-target' } }),
       },
       {
         kind: 'ConfigMap',
         name: 'settings',
         liveState: 'not-json',
+        targetState: 'target-not-json',
       },
     ],
   },
@@ -56,6 +58,7 @@ describe('ArgoCdManifest', () => {
         resourceType: 'Service',
         displayName: 'Service',
         name: 'api',
+        targetState: JSON.stringify({ kind: 'Service', metadata: { name: 'api-target' } }),
       }),
       expect.objectContaining({
         id: 'ConfigMap:settings:1',
@@ -93,6 +96,20 @@ describe('ArgoCdManifest', () => {
     expect(screen.getByTestId('code-editor')).toHaveTextContent('not-json')
   })
 
+  it('should switch between live and target state', async () => {
+    const { userEvent } = renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
+
+    expect(await screen.findByTestId('code-editor')).toHaveTextContent('"name": "api"')
+
+    await userEvent.click(screen.getByRole('radio', { name: /Target/ }))
+
+    expect(screen.getByTestId('code-editor')).toHaveTextContent('"name": "api-target"')
+
+    await userEvent.click(screen.getByRole('radio', { name: /Live/ }))
+
+    expect(screen.getByTestId('code-editor')).toHaveTextContent('"name": "api"')
+  })
+
   it('should display an empty state when there are no managed resources', () => {
     mockUseArgoCdManifest.mockReturnValue(
       createUseArgoCdManifestResult({
@@ -117,6 +134,7 @@ describe('ArgoCdManifest', () => {
         displayName: 'Unknown',
         name: 'Unnamed',
         liveState: '',
+        targetState: '',
       }),
     ])
   })

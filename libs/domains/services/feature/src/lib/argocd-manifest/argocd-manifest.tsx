@@ -1,11 +1,14 @@
 import { type ReactElement, useEffect, useMemo, useState } from 'react'
 import { type ArgoCdManagedResource } from '@qovery/domains/services/data-access'
 import { ResourceTreeList, type ResourceTreeResource } from '@qovery/shared/console-shared'
-import { CodeEditor, EmptyState, Heading, InputSearch, Section } from '@qovery/shared/ui'
+import { CodeEditor, EmptyState, Heading, InputSearch, Section, SegmentedControl } from '@qovery/shared/ui'
 import { useArgoCdManifest } from '../hooks/use-argocd-manifest/use-argocd-manifest'
+
+type ManifestStateMode = 'live' | 'target'
 
 interface ArgoCdManifestResource extends ResourceTreeResource {
   liveState: string
+  targetState: string
 }
 
 export interface ArgoCdManifestProps {
@@ -39,7 +42,13 @@ export function toManifestResources(resources: ArgoCdManagedResource[]): ArgoCdM
     },
     extractedAt: '',
     liveState: resource.liveState ?? '',
+    targetState: resource.targetState ?? '',
   }))
+}
+
+function getManifestState(resource: ArgoCdManifestResource | null, mode: ManifestStateMode): string {
+  if (!resource) return ''
+  return mode === 'live' ? resource.liveState : resource.targetState
 }
 
 function ArgoCdManifestState({
@@ -67,6 +76,7 @@ function ArgoCdManifestState({
 export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null)
+  const [stateMode, setStateMode] = useState<ManifestStateMode>('live')
   const { data, isError } = useArgoCdManifest({ serviceId, suspense: true })
 
   const resources = useMemo(
@@ -130,10 +140,24 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
             </div>
           </div>
 
-          <div className="min-h-0 min-w-0 flex-1">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+            <div className="flex h-12 flex-shrink-0 items-center justify-end border-b border-neutral px-3">
+              <SegmentedControl.Root
+                value={stateMode}
+                onValueChange={(value) => setStateMode(value as ManifestStateMode)}
+                className="h-8 text-sm"
+              >
+                <SegmentedControl.Item value="live" className="[&_span_span]:h-8">
+                  Live
+                </SegmentedControl.Item>
+                <SegmentedControl.Item value="target" className="[&_span_span]:h-8">
+                  Target
+                </SegmentedControl.Item>
+              </SegmentedControl.Root>
+            </div>
             <CodeEditor
               language="json"
-              value={selectedResource ? formatLiveState(selectedResource.liveState) : ''}
+              value={formatLiveState(getManifestState(selectedResource, stateMode))}
               readOnly
               height="100%"
               options={{ scrollBeyondLastLine: false, wordWrap: 'off' }}
