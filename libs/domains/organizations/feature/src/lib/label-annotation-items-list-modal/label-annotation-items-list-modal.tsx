@@ -6,6 +6,7 @@ import { useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { Heading, Icon, InputSearch, Link, LoaderSpinner, Section, TreeView } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 import { useAnnotationsGroupAssociatedItems } from '../hooks/use-annotations-group-associated-items/use-annotations-group-associated-items'
 import { useLabelsGroupAssociatedItems } from '../hooks/use-labels-group-associated-items/use-labels-group-associated-items'
 
@@ -163,7 +164,9 @@ export function LabelAnnotationItemsListModal({
 
   return (
     <Section className="p-6">
-      <Heading className="mb-6 text-2xl text-neutral">Associated items ({associatedItemsCount})</Heading>
+      <Heading className="mb-6 text-2xl text-neutral">
+        Associated {pluralize(associatedItemsCount, 'item')} ({associatedItemsCount})
+      </Heading>
       {isLoading ? (
         <div className="flex h-40 items-start justify-center p-5">
           <LoaderSpinner className="w-5" />
