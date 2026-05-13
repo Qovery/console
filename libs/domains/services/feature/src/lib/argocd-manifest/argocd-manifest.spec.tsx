@@ -28,18 +28,20 @@ const createUseArgoCdManifestResult = (
   }) as unknown as UseQueryResult<ArgoCdManifestResponse>
 
 const manifestResponse: ArgoCdManifestResponse = {
-  managed_resources: [
-    {
-      kind: 'Service',
-      name: 'api',
-      liveState: JSON.stringify({ kind: 'Service', metadata: { name: 'api' } }),
-    },
-    {
-      kind: 'ConfigMap',
-      name: 'settings',
-      liveState: 'not-json',
-    },
-  ],
+  manifest_metadata: {
+    managed_resources: [
+      {
+        kind: 'Service',
+        name: 'api',
+        liveState: JSON.stringify({ kind: 'Service', metadata: { name: 'api' } }),
+      },
+      {
+        kind: 'ConfigMap',
+        name: 'settings',
+        liveState: 'not-json',
+      },
+    ],
+  },
 }
 
 describe('ArgoCdManifest', () => {
@@ -48,7 +50,7 @@ describe('ArgoCdManifest', () => {
   })
 
   it('should adapt ArgoCD resources to tree resources with stable ids', () => {
-    expect(toManifestResources(manifestResponse.managed_resources)).toEqual([
+    expect(toManifestResources(manifestResponse.manifest_metadata.managed_resources ?? [])).toEqual([
       expect.objectContaining({
         id: 'Service:api:0',
         resourceType: 'Service',
@@ -95,7 +97,9 @@ describe('ArgoCdManifest', () => {
     mockUseArgoCdManifest.mockReturnValue(
       createUseArgoCdManifestResult({
         data: {
-          managed_resources: [],
+          manifest_metadata: {
+            managed_resources: [],
+          },
         },
       })
     )
@@ -103,6 +107,18 @@ describe('ArgoCdManifest', () => {
     renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
 
     expect(screen.getByText('No managed resources')).toBeInTheDocument()
+  })
+
+  it('should fallback optional resource fields in the UI adapter', () => {
+    expect(toManifestResources([{}])).toEqual([
+      expect.objectContaining({
+        id: 'Unknown:Unnamed:0',
+        resourceType: 'Unknown',
+        displayName: 'Unknown',
+        name: 'Unnamed',
+        liveState: '',
+      }),
+    ])
   })
 
   it('should display an error state when manifest loading fails', () => {

@@ -200,23 +200,8 @@ export type AdvancedSettings =
   | HelmAdvancedSettings
   | TerraformAdvancedSettings
 
-export type ArgoCdManagedResource = Pick<Required<_ArgoCdManagedResource>, 'kind' | 'name' | 'liveState'>
-
-export interface ArgoCdManifestResponse {
-  manifest_revision?: _ArgoCdManifestResponse['manifest_revision']
-  managed_resources: ArgoCdManagedResource[]
-}
-
-function toArgoCdManifestResponse(response: _ArgoCdManifestResponse): ArgoCdManifestResponse {
-  return {
-    manifest_revision: response.manifest_revision,
-    managed_resources: (response.manifest_metadata.managed_resources ?? []).map((resource) => ({
-      kind: resource.kind ?? '',
-      name: resource.name ?? '',
-      liveState: resource.liveState ?? '',
-    })),
-  }
-}
+export type ArgoCdManagedResource = _ArgoCdManagedResource
+export type ArgoCdManifestResponse = _ArgoCdManifestResponse
 
 export function isApplication(service: AnyService): service is Application {
   return service.service_type === 'APPLICATION'
@@ -296,9 +281,9 @@ export const services = createQueryKeys('services', {
   }),
   argocdManifest: (serviceId: string) => ({
     queryKey: [serviceId, 'argocd-manifest'],
-    async queryFn(): Promise<ArgoCdManifestResponse> {
+    async queryFn() {
       const response = await argoCdApi.getArgoCdAppManifest(serviceId)
-      return toArgoCdManifestResponse(response.data)
+      return response.data
     },
   }),
   list: (environmentId: string) => ({

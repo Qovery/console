@@ -21,24 +21,24 @@ export function formatLiveState(liveState: string): string {
 }
 
 function getResourceId(resource: ArgoCdManagedResource, index: number): string {
-  return `${resource.kind}:${resource.name}:${index}`
+  return `${resource.kind ?? 'Unknown'}:${resource.name ?? 'Unnamed'}:${index}`
 }
 
 export function toManifestResources(resources: ArgoCdManagedResource[]): ArgoCdManifestResource[] {
   return resources.map((resource, index) => ({
     id: getResourceId(resource, index),
-    resourceType: resource.kind,
-    displayName: resource.kind,
-    name: resource.name,
-    address: `${resource.kind}.${resource.name}`,
+    resourceType: resource.kind ?? 'Unknown',
+    displayName: resource.kind ?? 'Unknown',
+    name: resource.name ?? 'Unnamed',
+    address: `${resource.kind ?? 'Unknown'}.${resource.name ?? 'Unnamed'}`,
     provider: 'argocd',
     mode: 'managed',
     attributes: {
-      kind: resource.kind,
-      name: resource.name,
+      kind: resource.kind ?? '',
+      name: resource.name ?? '',
     },
     extractedAt: '',
-    liveState: resource.liveState,
+    liveState: resource.liveState ?? '',
   }))
 }
 
@@ -69,7 +69,10 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
   const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null)
   const { data, isError } = useArgoCdManifest({ serviceId, suspense: true })
 
-  const resources = useMemo(() => toManifestResources(data?.managed_resources ?? []), [data?.managed_resources])
+  const resources = useMemo(
+    () => toManifestResources(data?.manifest_metadata.managed_resources ?? []),
+    [data?.manifest_metadata.managed_resources]
+  )
 
   useEffect(() => {
     if (!selectedResourceId && resources.length > 0) {
