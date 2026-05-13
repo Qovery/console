@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import {
+  type CellContext,
   type RowSelectionState,
   type SortingState,
   createColumnHelper,
@@ -43,6 +44,24 @@ export interface ServiceListProps extends ComponentProps<typeof Table.Root> {
 
 export const tableGridLayoutClassName =
   'grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]'
+
+const BLUEPRINT_ROW_VERSION_CONTEXT = [
+  {
+    repositorySlug: 'qovery-blueprints/s3',
+    repositoryUrl: 'https://github.com/qovery-blueprints/s3',
+    hasUpdateAvailable: false,
+  },
+  {
+    repositorySlug: 'qovery-blueprints/postgres',
+    repositoryUrl: 'https://github.com/qovery-blueprints/postgres',
+    version: '16',
+    hasUpdateAvailable: true,
+  },
+] as const
+
+function getBlueprintContext(rowIndex: number) {
+  return BLUEPRINT_ROW_VERSION_CONTEXT[rowIndex]
+}
 
 export const ServiceListSkeleton = () => {
   return (
@@ -250,9 +269,14 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         header: 'Target version',
         enableColumnFilter: false,
         enableSorting: false,
-        cell: (info) => {
+        cell: (info: CellContext<(typeof actualServices)[number], unknown>) => {
           return (
-            <ServiceVersionCell service={info.row.original} organizationId={organizationId} projectId={projectId} />
+            <ServiceVersionCell
+              service={info.row.original}
+              organizationId={organizationId}
+              projectId={projectId}
+              blueprintContext={getBlueprintContext(info.row.index)}
+            />
           )
         },
       }),

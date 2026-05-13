@@ -8,7 +8,6 @@ import { type BlueprintWizardFormData, getDefaultFormData } from './types'
 
 export interface BlueprintWizardProps {
   blueprint: BlueprintEntry
-  organizationId: string
   projectId: string
   environmentId: string
   onExit: () => void
@@ -16,7 +15,7 @@ export interface BlueprintWizardProps {
 
 const STEP_TITLES = ['Configuration', 'Summary']
 
-export function BlueprintWizard({ blueprint, organizationId, projectId, environmentId, onExit }: BlueprintWizardProps) {
+export function BlueprintWizard({ blueprint, projectId, environmentId, onExit }: BlueprintWizardProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndDeploy, setIsLoadingCreateAndDeploy] = useState(false)
@@ -61,7 +60,7 @@ export function BlueprintWizard({ blueprint, organizationId, projectId, environm
     >
       <FormProvider {...methods}>
         {currentStep === 1 ? (
-          <StepConfiguration blueprint={blueprint} organizationId={organizationId} onNext={() => setCurrentStep(2)} />
+          <StepConfiguration blueprint={blueprint} onNext={() => setCurrentStep(2)} />
         ) : (
           <FunnelFlowBody customContentWidth="max-w-[44rem]">
             <StepSummary

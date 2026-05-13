@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactNode, useState } from 'react'
-import { Button, Heading, Icon, InputSearch, Link, Section, SidePanel } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSearch, Link, Section, SidePanel, Tooltip } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { BlueprintDetailModal } from './blueprint-detail-modal/blueprint-detail-modal'
@@ -12,17 +12,25 @@ import { type BlueprintEntry, MOCK_BLUEPRINTS, PROVIDER_CONFIG } from './bluepri
 interface DefaultServiceItemProps {
   icon: ReactNode
   label: string
+  tooltip?: string
   to?: string
   onClick?: () => void
   disabled?: boolean
 }
 
-function DefaultServiceItem({ icon, label, to, onClick, disabled }: DefaultServiceItemProps) {
+function DefaultServiceItem({ icon, label, tooltip, to, onClick, disabled }: DefaultServiceItemProps) {
   const inner = (
     <>
       <span className="flex h-5 w-5 shrink-0 items-center justify-center">{icon}</span>
-      <span className="flex min-w-0 flex-1">
+      <span className="flex min-w-0 flex-1 items-center">
         <span className="truncate text-sm font-medium text-neutral">{label}</span>
+        {tooltip ? (
+          <Tooltip content={tooltip}>
+            <span className="ml-[6px] flex h-4 w-4 shrink-0 items-center justify-center text-sm text-neutral-subtle">
+              <Icon iconName="circle-info" iconStyle="regular" />
+            </span>
+          </Tooltip>
+        ) : null}
       </span>
       {!disabled && (
         <Icon iconName="angle-right" iconStyle="regular" className="shrink-0 text-sm text-neutral-subtle" />
@@ -31,7 +39,7 @@ function DefaultServiceItem({ icon, label, to, onClick, disabled }: DefaultServi
   )
 
   const className = twMerge(
-    'flex items-center gap-1.5 rounded-md border border-neutral bg-surface-neutral p-4 font-normal transition',
+    'flex items-center gap-1.5 rounded-md border border-neutral bg-surface-neutral p-4 font-normal transition shadow-Cards',
     disabled ? 'cursor-default' : 'cursor-pointer hover:bg-surface-neutral-subtle'
   )
 
@@ -78,7 +86,7 @@ function BlueprintCard({
   const providerCfg = PROVIDER_CONFIG[blueprint.provider]
 
   return (
-    <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
+    <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4 shadow-Cards">
       <div className="flex flex-col gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-sm bg-surface-neutral-component">
           {providerCfg.icon ? (
@@ -136,11 +144,13 @@ export function ServiceNew({ organizationId, projectId, environmentId }: Service
     },
     {
       label: 'Lifecycle job',
+      tooltip: 'Execute any type of script coming from Git or a Container Registry.',
       icon: <Icon name="LIFECYCLE_JOB" width={20} height={20} />,
       to: getEnvServicePath(organizationId, projectId, environmentId, '/create/lifecycle-job'),
     },
     {
       label: 'Cron job',
+      tooltip: 'Execute any type of script at a regular basis.',
       icon: <Icon name="CRON_JOB" width={20} height={20} />,
       to: getEnvServicePath(organizationId, projectId, environmentId, '/create/cron-job'),
     },
@@ -194,7 +204,7 @@ export function ServiceNew({ organizationId, projectId, environmentId }: Service
 
   return (
     <>
-      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-6">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-8">
         <Section className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <Heading className="text-base">Base services</Heading>
@@ -203,7 +213,7 @@ export function ServiceNew({ organizationId, projectId, environmentId }: Service
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
             {defaultServices.map((service) => (
               <DefaultServiceItem key={service.label} {...service} />
             ))}
@@ -236,7 +246,7 @@ export function ServiceNew({ organizationId, projectId, environmentId }: Service
               </p>
             </div>
           ) : filteredBlueprints.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
               {filteredBlueprints.map((blueprint) => (
                 <BlueprintCard
                   key={blueprint.id}

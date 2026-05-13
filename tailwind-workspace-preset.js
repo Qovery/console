@@ -114,6 +114,8 @@ module.exports = {
     extend: {
       zIndex: {
         header: 'var(--header-zindex)',
+        'sidepanel-overlay': 'var(--sidepanel-overlay-zindex)',
+        sidepanel: 'var(--sidepanel-zindex)',
         dropdown: 'var(--dropdown-zindex)',
         overlay: 'var(--overlay-zindex)',
         modal: 'var(--modal-zindex)',
@@ -127,6 +129,9 @@ module.exports = {
         'right-help-sidebar': '22.5rem',
         'navbar-height': '2.75rem',
         'breadcrumb-height': '4rem',
+      },
+      boxShadow: {
+        Cards: '0 0 4px 0 rgba(0, 0, 0, 0.01), 0 2px 3px 0 rgba(0, 0, 0, 0.02)',
       },
       maxWidth: {
         'content-with-navigation-left': '44.5rem',

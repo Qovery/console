@@ -14,6 +14,8 @@
 // Z-index variables
 :root {
   --header-zindex: 10;
+  --sidepanel-overlay-zindex: 30;
+  --sidepanel-zindex: 31;
   --overlay-zindex: 40;
   --modal-zindex: 50;
   --dropdown-zindex: 60;

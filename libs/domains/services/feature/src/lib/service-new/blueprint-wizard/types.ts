@@ -6,8 +6,6 @@ export interface BlueprintWizardFormData {
   environmentId: string
   majorServiceVersion: string
   serviceName: string
-  api_token_id?: string | null
-  api_token_name?: string | null
 
   // Setup — blueprint-specific parameter values keyed by parameter id
   setupParams: Record<string, string>
@@ -29,9 +27,7 @@ export function getDefaultFormData(
     // For MVP: latest version selected. The selector exists but only one option is offered.
     majorServiceVersion: blueprint.versions[0]?.version ?? '',
     serviceName: blueprint.name,
-    api_token_id: null,
-    api_token_name: null,
-    setupParams: getDefaultSetupParams(blueprint),
+    setupParams: getSetupParameterDefaults(getSetupParameters(blueprint)),
     credentialsMode: 'cluster',
     cpuMilli: 500,
     memoryMib: 256,
@@ -45,11 +41,12 @@ export function getDefaultFormData(
 export interface SetupParameter {
   id: string
   label: string
-  type: 'text' | 'number' | 'select'
+  type: 'text' | 'number' | 'select' | 'boolean'
   required?: boolean
   defaultValue?: string
   helper?: string
   options?: Array<{ value: string; label: string }>
+  relatedFields?: SetupParameter[]
 }
 
 const SETUP_PARAMS_BY_BLUEPRINT: Record<string, SetupParameter[]> = {
@@ -64,14 +61,18 @@ const SETUP_PARAMS_BY_BLUEPRINT: Record<string, SetupParameter[]> = {
     {
       id: 'versioning',
       label: 'Versioning',
-      type: 'select',
-      defaultValue: 'enabled',
-      options: [
-        { value: 'enabled', label: 'Enabled' },
-        { value: 'disabled', label: 'Disabled' },
+      type: 'boolean',
+      defaultValue: 'false',
+      helper: 'Enable object versioning',
+      relatedFields: [
+        {
+          id: 'versioningRetentionDays',
+          label: 'Versioning retention (days)',
+          type: 'number',
+          defaultValue: '90',
+        },
       ],
     },
-    { id: 'lifecycleDays', label: 'Lifecycle expiry (days)', type: 'number', defaultValue: '90' },
   ],
   'aws-postgres': [
     { id: 'dbName', label: 'Database name', type: 'text', required: true },
@@ -142,10 +143,39 @@ export function getSetupParameters(blueprint: BlueprintEntry): SetupParameter[] 
   return SETUP_PARAMS_BY_BLUEPRINT[blueprint.id] ?? []
 }
 
-function getDefaultSetupParams(blueprint: BlueprintEntry): Record<string, string> {
-  const params = getSetupParameters(blueprint)
-  return params.reduce<Record<string, string>>((acc, p) => {
-    acc[p.id] = p.defaultValue ?? ''
+export function isSetupBooleanEnabled(value: string | undefined | null): boolean {
+  const normalizedValue = (value ?? '').trim().toLowerCase()
+  return normalizedValue === 'true' || normalizedValue === '1' || normalizedValue === 'yes' || normalizedValue === 'on'
+}
+
+export function getVisibleSetupParameters(
+  setupParameters: SetupParameter[],
+  values: Record<string, string>
+): SetupParameter[] {
+  return setupParameters.flatMap((parameter) => {
+    if (
+      parameter.type !== 'boolean' ||
+      !parameter.relatedFields?.length ||
+      !isSetupBooleanEnabled(values[parameter.id])
+    ) {
+      return [parameter]
+    }
+
+    return [parameter, ...getVisibleSetupParameters(parameter.relatedFields, values)]
+  })
+}
+
+export function getSetupParameterDefaults(setupParameters: SetupParameter[]): Record<string, string> {
+  return getAllSetupParameters(setupParameters).reduce<Record<string, string>>((acc, parameter) => {
+    acc[parameter.id] = parameter.defaultValue ?? ''
     return acc
   }, {})
+}
+
+function getAllSetupParameters(setupParameters: SetupParameter[]): SetupParameter[] {
+  return setupParameters.flatMap((parameter) => {
+    if (!parameter.relatedFields?.length) return [parameter]
+
+    return [parameter, ...getAllSetupParameters(parameter.relatedFields)]
+  })
 }

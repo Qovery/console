@@ -39,6 +39,7 @@ const SHOW_BLUEPRINT_SECTION = true
 const DEMO_BLUEPRINT = MOCK_BLUEPRINTS[0] ?? null
 const DEMO_BLUEPRINT_VERSION = '1.24'
 const DEMO_MAJOR_SERVICE_VERSION = 'PostgreSQL 15'
+const BLUEPRINT_UPDATE_TARGET_VERSION = '2.1'
 
 export interface ServiceGeneralSettingsProps {
   organization: Organization
@@ -149,16 +150,16 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
     openModal({
       content: (
         <BlueprintUpdateReviewModal
-          targetVersion="2.1"
+          targetVersion={BLUEPRINT_UPDATE_TARGET_VERSION}
           releaseNotesUrl={DEMO_BLUEPRINT.repositoryUrl}
-          changesSummary={{ added: 3, changed: 2, removed: 1 }}
+          changesSummary={{ added: 3, removed: 1 }}
           onCancel={closeModal}
           onReview={() => {
             closeModal()
             navigate({
               to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update-blueprint',
               params: { organizationId: organization.id, projectId, environmentId, serviceId },
-              search: { targetVersion: '2.1', from: 'settings' },
+              search: { targetVersion: BLUEPRINT_UPDATE_TARGET_VERSION, from: 'settings' },
             })
           }}
         />
@@ -181,7 +182,6 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
 
   const blueprintSection = DEMO_BLUEPRINT ? (
     <BlueprintGeneralSection
-      organizationId={organization.id}
       blueprint={DEMO_BLUEPRINT}
       blueprintVersion={DEMO_BLUEPRINT_VERSION}
       serviceVersion={DEMO_MAJOR_SERVICE_VERSION}
@@ -260,7 +260,13 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
         </Section>
         <SidePanel open={isBlueprintDetailsOpen} onOpenChange={setBlueprintDetailsOpen} width={940}>
           {DEMO_BLUEPRINT ? (
-            <BlueprintDetailModal blueprint={DEMO_BLUEPRINT} onClose={() => setBlueprintDetailsOpen(false)} readOnly />
+            <BlueprintDetailModal
+              blueprint={DEMO_BLUEPRINT}
+              onClose={() => setBlueprintDetailsOpen(false)}
+              readOnly
+              updateAvailable
+              onUpdateBlueprint={openBlueprintUpdateReview}
+            />
           ) : null}
         </SidePanel>
       </>

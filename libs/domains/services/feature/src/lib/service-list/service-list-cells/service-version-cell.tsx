@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router'
 import {
   type ApplicationGitRepository,
   type ContainerResponse,
@@ -19,19 +20,129 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { ExternalLink, Icon, Tooltip } from '@qovery/shared/ui'
+import { Badge, ExternalLink, Icon, Tooltip, useModal } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import LastCommit from '../../last-commit/last-commit'
 import LastVersion from '../../last-version/last-version'
+import { BlueprintUpdateReviewModal } from '../../service-new/blueprint-update-review-modal/blueprint-update-review-modal'
+
+export type BlueprintVersionCellContext = {
+  repositorySlug: string
+  repositoryUrl: string
+  version?: string
+  hasUpdateAvailable: boolean
+  targetVersion?: string
+}
 
 type ServiceVersionCellProps = {
   service: AnyService
   organizationId: string
   projectId: string
+  blueprintContext?: BlueprintVersionCellContext
 }
 
-export function ServiceVersionCell({ service, organizationId, projectId }: ServiceVersionCellProps) {
+function BlueprintStatusBadge({ hasUpdateAvailable, onClick }: { hasUpdateAvailable: boolean; onClick?: () => void }) {
+  if (hasUpdateAvailable) {
+    const badge = (
+      <Badge size="base" color="sky" variant="surface" className="gap-1 font-medium">
+        <Icon iconName="rotate-right" iconStyle="regular" className="text-current" />
+        Update available
+      </Badge>
+    )
+
+    if (onClick) {
+      return (
+        <button type="button" className="inline-flex" onClick={onClick}>
+          {badge}
+        </button>
+      )
+    }
+
+    return badge
+  }
+
+  return (
+    <Badge size="base" color="neutral" variant="surface" className="gap-1 font-medium">
+      <Icon iconName="circle-check" iconStyle="regular" className="text-neutral-subtle" />
+      Up to date
+    </Badge>
+  )
+}
+
+export function ServiceVersionCell({ service, organizationId, projectId, blueprintContext }: ServiceVersionCellProps) {
+  const navigate = useNavigate()
+  const { openModal, closeModal } = useModal()
+
+  const openBlueprintUpdateReview = () => {
+    if (!blueprintContext || !blueprintContext.hasUpdateAvailable) {
+      return
+    }
+
+    openModal({
+      content: (
+        <BlueprintUpdateReviewModal
+          targetVersion={blueprintContext.targetVersion ?? '2.1'}
+          releaseNotesUrl={blueprintContext.repositoryUrl}
+          changesSummary={{ added: 3, removed: 1 }}
+          onCancel={closeModal}
+          onReview={() => {
+            closeModal()
+            navigate({
+              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update-blueprint',
+              params: {
+                organizationId,
+                projectId,
+                environmentId: service.environment.id,
+                serviceId: service.id,
+              },
+              search: { targetVersion: blueprintContext.targetVersion ?? '2.1', from: 'overview' },
+            })
+          }}
+        />
+      ),
+      options: { width: 488, fakeModal: true },
+    })
+  }
+
+  if (blueprintContext) {
+    return (
+      <div className="flex w-full min-w-0 items-center justify-between gap-3" onClick={(e) => e.stopPropagation()}>
+        <div className="min-w-0 flex-1">
+          <div className="flex min-w-0 flex-col gap-0.5">
+            <div className="flex min-w-0 items-center gap-2 text-neutral">
+              <Icon className="h-3.5 w-3.5 shrink-0 text-inherit" iconName="github" iconStyle="brands" />
+              <ExternalLink
+                href={blueprintContext.repositoryUrl}
+                underline
+                color="neutral"
+                size="ssm"
+                withIcon={false}
+                className="min-w-0 flex-1 font-normal"
+              >
+                <span className="min-w-0 truncate" title={blueprintContext.repositorySlug}>
+                  {blueprintContext.repositorySlug}
+                </span>
+              </ExternalLink>
+            </div>
+            {blueprintContext.version && (
+              <div className="flex min-w-0 items-center gap-2 text-neutral">
+                {service.serviceType === 'DATABASE' && (
+                  <Icon name={service.type} className="h-3.5 w-3.5 shrink-0 text-inherit" />
+                )}
+                <span className="min-w-0 truncate text-sm">v.{blueprintContext.version}</span>
+              </div>
+            )}
+          </div>
+        </div>
+        <BlueprintStatusBadge
+          hasUpdateAvailable={blueprintContext.hasUpdateAvailable}
+          onClick={blueprintContext.hasUpdateAvailable ? openBlueprintUpdateReview : undefined}
+        />
+      </div>
+    )
+  }
+
   const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) =>
     gitRepository && (
       <div className="flex w-full min-w-0 items-center justify-between gap-3" onClick={(e) => e.stopPropagation()}>

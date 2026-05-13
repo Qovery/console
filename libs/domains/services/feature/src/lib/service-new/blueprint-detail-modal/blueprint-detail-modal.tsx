@@ -6,6 +6,8 @@ export interface BlueprintDetailModalProps {
   onClose: () => void
   onUse?: (blueprintId: string) => void
   readOnly?: boolean
+  updateAvailable?: boolean
+  onUpdateBlueprint?: () => void
 }
 
 function extractReadmeTitle(markdown: string): string | null {
@@ -22,7 +24,7 @@ function extractReadmeDescription(markdown: string): string | null {
   if (firstTitleIndex === -1) return null
 
   const linesAfterTitle = lines.slice(firstTitleIndex + 1)
-  let paragraphLines: string[] = []
+  const paragraphLines: string[] = []
   let started = false
 
   for (const line of linesAfterTitle) {
@@ -133,13 +135,16 @@ function extractParagraphText(sectionText: string): string[] {
 
 function renderTable(headers: string[], rows: string[][]) {
   return (
-    <TablePrimitives.Table.Root className="text-sm" containerClassName="rounded border border-neutral bg-surface-neutral">
+    <TablePrimitives.Table.Root
+      className="text-sm"
+      containerClassName="rounded border border-neutral bg-surface-neutral"
+    >
       <TablePrimitives.Table.Header className="bg-surface-neutral">
         <TablePrimitives.Table.Row>
           {headers.map((header) => (
             <TablePrimitives.Table.ColumnHeaderCell
               key={header}
-              className="h-11 border-r border-neutral bg-surface-neutral px-3 text-xs font-medium font-mono text-neutral last:border-r-0"
+              className="h-11 border-r border-neutral bg-surface-neutral px-3 font-mono text-xs font-medium text-neutral last:border-r-0"
             >
               {header}
             </TablePrimitives.Table.ColumnHeaderCell>
@@ -172,7 +177,14 @@ function renderSectionTitle(title: string) {
   )
 }
 
-export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = false }: BlueprintDetailModalProps) {
+export function BlueprintDetailModal({
+  blueprint,
+  onClose,
+  onUse,
+  readOnly = false,
+  updateAvailable = false,
+  onUpdateBlueprint,
+}: BlueprintDetailModalProps) {
   const providerCfg = PROVIDER_CONFIG[blueprint.provider]
   const readme = blueprint.readme ?? ''
   const title = extractReadmeTitle(readme) ?? blueprint.name
@@ -220,13 +232,16 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
     configuration: configurationItems.length > 0 || configurationParagraphs.length > 0,
   }
   const firstVisibleSection = sectionOrder.find((section) => visibleSections[section])
-  const getSectionSpacing = (section: (typeof sectionOrder)[number]) => (firstVisibleSection === section ? 'mt-8' : 'mt-6')
+  const getSectionSpacing = (section: (typeof sectionOrder)[number]) =>
+    firstVisibleSection === section ? 'mt-8' : 'mt-6'
 
   const repositoryLabel = blueprint.repositorySlug ?? 'Blueprint repository'
+  const showUpdateCallout = updateAvailable && Boolean(onUpdateBlueprint)
+  const showReadOnlyUpdateFooter = readOnly && showUpdateCallout
 
   return (
     <Section className="flex h-full flex-col gap-0 p-0">
-      <div className={`flex-1 overflow-auto p-6 text-sm ${readOnly ? 'pb-6' : 'pb-24'}`}>
+      <div className={`flex-1 overflow-auto p-6 text-sm ${readOnly && !showReadOnlyUpdateFooter ? 'pb-6' : 'pb-24'}`}>
         <div>
           <div className="mb-2 flex items-center gap-3">
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded bg-surface-neutral-component">
@@ -247,7 +262,9 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
               {repositoryLabel}
             </Badge>
             <Badge size="base" color="neutral" variant="outline" className="gap-1">
-              {providerCfg.icon ? <img src={providerCfg.icon} alt="" aria-hidden="true" width={12} height={12} /> : null}
+              {providerCfg.icon ? (
+                <img src={providerCfg.icon} alt="" aria-hidden="true" width={12} height={12} />
+              ) : null}
               {providerCfg.label}
             </Badge>
             <Badge size="base" color="neutral" variant="outline" className="gap-1">
@@ -260,7 +277,10 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
         {createsRows.length > 0 && (
           <div className={getSectionSpacing('creates')}>
             {renderSectionTitle('What this blueprint creates')}
-            <TablePrimitives.Table.Root className="text-sm" containerClassName="rounded border border-neutral bg-surface-neutral">
+            <TablePrimitives.Table.Root
+              className="text-sm"
+              containerClassName="rounded border border-neutral bg-surface-neutral"
+            >
               <TablePrimitives.Table.Body>
                 {createsRows.map((row, index) => (
                   <TablePrimitives.Table.Row key={`${row.name}-${index}`}>
@@ -281,7 +301,9 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
           <div className={getSectionSpacing('architecture')}>
             {renderSectionTitle('Architecture')}
             <div className="rounded border border-neutral bg-surface-neutral-subtle p-4">
-              <pre className="overflow-x-auto whitespace-pre font-mono text-sm leading-5 text-neutral">{architectureCode}</pre>
+              <pre className="overflow-x-auto whitespace-pre font-mono text-sm leading-5 text-neutral">
+                {architectureCode}
+              </pre>
             </div>
           </div>
         )}
@@ -380,6 +402,20 @@ export function BlueprintDetailModal({ blueprint, onClose, onUse, readOnly = fal
               }}
             >
               Deploy blueprint
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {showReadOnlyUpdateFooter && (
+        <div className="absolute bottom-0 left-0 right-0 border-t border-neutral bg-background px-6 py-4">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-1.5 text-sm font-medium text-info">
+              <Icon iconName="circle-info" iconStyle="regular" />
+              <p>A new update is available for this blueprint</p>
+            </div>
+            <Button type="button" size="md" color="brand" variant="solid" radius="rounded" onClick={onUpdateBlueprint}>
+              Update blueprint
             </Button>
           </div>
         </div>

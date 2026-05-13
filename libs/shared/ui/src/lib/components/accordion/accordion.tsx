@@ -17,24 +17,36 @@ const AccordionItem = forwardRef<ElementRef<typeof AccordionPrimitive.Item>, Acc
   )
 )
 
-interface AccordionTriggerProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> {}
+interface AccordionTriggerProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> {
+  chevronPosition?: 'left' | 'right'
+}
 
 const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger>, AccordionTriggerProps>(
-  ({ children, className, ...props }, forwardedRef) => (
+  ({ children, className, chevronPosition = 'left', ...props }, forwardedRef) => (
     <AccordionPrimitive.Trigger
       className={twMerge(
-        'group flex min-h-14 cursor-default items-center gap-5 bg-surface-neutral px-5 text-sm outline-none',
+        'group flex min-h-14 cursor-default items-center bg-surface-neutral px-5 text-sm outline-none',
+        chevronPosition === 'right' ? 'w-full gap-2 text-left' : 'gap-5',
         className
       )}
       {...props}
       ref={forwardedRef}
     >
-      <Icon
-        iconName="chevron-down"
-        className="text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
-        aria-hidden
-      />
-      {children}
+      {chevronPosition === 'left' ? (
+        <Icon
+          iconName="chevron-down"
+          className="text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+          aria-hidden
+        />
+      ) : null}
+      <span className={twMerge('min-w-0', chevronPosition === 'right' && 'flex-1')}>{children}</span>
+      {chevronPosition === 'right' ? (
+        <Icon
+          iconName="chevron-down"
+          className="ml-auto text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+          aria-hidden
+        />
+      ) : null}
     </AccordionPrimitive.Trigger>
   )
 )

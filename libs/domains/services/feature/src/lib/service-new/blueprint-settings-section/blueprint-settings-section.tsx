@@ -1,7 +1,13 @@
 import { useState } from 'react'
-import { Button, Heading, Icon, InputSelect, InputText, Section, Tooltip } from '@qovery/shared/ui'
+import { Button, Checkbox, Heading, Icon, InputSelect, InputText, Section, Tooltip } from '@qovery/shared/ui'
+import {
+  type SetupParameter,
+  getSetupParameterDefaults,
+  getSetupParameters,
+  getVisibleSetupParameters,
+  isSetupBooleanEnabled,
+} from '../blueprint-wizard/types'
 import { type BlueprintEntry } from '../blueprints'
-import { type SetupParameter, getSetupParameters } from '../blueprint-wizard/types'
 
 export interface BlueprintSettingsSectionProps {
   blueprint: BlueprintEntry
@@ -25,14 +31,10 @@ export function BlueprintSettingsSection({
 }: BlueprintSettingsSectionProps) {
   const [pendingVersion, setPendingVersion] = useState(currentVersion)
   const [paramValues, setParamValues] = useState<Record<string, string>>(() => {
-    const params = getSetupParameters(blueprint)
-    return params.reduce<Record<string, string>>((acc, p) => {
-      acc[p.id] = p.defaultValue ?? ''
-      return acc
-    }, {})
+    return getSetupParameterDefaults(getSetupParameters(blueprint))
   })
 
-  const setupParams = getSetupParameters(blueprint)
+  const setupParams = getVisibleSetupParameters(getSetupParameters(blueprint), paramValues)
   const versionOptions = blueprint.versions.map((v) => ({
     value: v.version,
     label:
@@ -57,13 +59,7 @@ export function BlueprintSettingsSection({
 
       {/* Identity — read-only metadata */}
       <div className="flex flex-col gap-4">
-        <InputText
-          name="blueprint-name"
-          label="Blueprint"
-          value={blueprint.name}
-          onChange={() => undefined}
-          disabled
-        />
+        <InputText name="blueprint-name" label="Blueprint" value={blueprint.name} onChange={() => undefined} disabled />
 
         <InputText
           name="major-service-version"
@@ -167,6 +163,29 @@ function ParameterField({
       />
     )
   }
+
+  if (parameter.type === 'boolean') {
+    const isEnabled = isSetupBooleanEnabled(value)
+
+    return (
+      <div className="rounded-md border border-neutral bg-surface-neutral p-3">
+        <div className="flex items-center gap-2">
+          <Checkbox
+            id={parameter.id}
+            name={parameter.id}
+            size="sm"
+            checked={isEnabled}
+            onCheckedChange={(checked) => onChange(checked === true ? 'true' : 'false')}
+          />
+          <label htmlFor={parameter.id} className="text-sm text-neutral">
+            {parameter.label}
+          </label>
+        </div>
+        {parameter.helper ? <p className="pl-4 text-ssm text-neutral-subtle">{parameter.helper}</p> : null}
+      </div>
+    )
+  }
+
   return (
     <InputText
       name={parameter.id}

@@ -11,8 +11,6 @@ const checkboxVariants = cva(
     'shrink-0',
     'items-center',
     'justify-center',
-    'h-4',
-    'w-4',
     'rounded',
     'border',
     'border-neutral',
@@ -28,6 +26,10 @@ const checkboxVariants = cva(
   ],
   {
     variants: {
+      size: {
+        sm: ['h-[14px]', 'w-[14px]'],
+        md: ['h-4', 'w-4'],
+      },
       color: {
         brand: [
           'hover:border-brand-strong',
@@ -46,13 +48,18 @@ const checkboxVariants = cva(
       },
     },
     defaultVariants: {
+      size: 'md',
       color: 'brand',
     },
   }
 )
 
-const indeterminateVariants = cva(['h-3', 'w-3', 'rounded-[2px]'], {
+const indeterminateVariants = cva(['rounded-[2px]'], {
   variants: {
+    size: {
+      sm: ['h-2.5', 'w-2.5'],
+      md: ['h-3', 'w-3'],
+    },
     color: {
       brand: [
         'bg-surface-brand-solid',
@@ -67,6 +74,7 @@ const indeterminateVariants = cva(['h-3', 'w-3', 'rounded-[2px]'], {
     },
   },
   defaultVariants: {
+    size: 'md',
     color: 'brand',
   },
 })
@@ -76,22 +84,24 @@ export interface CheckboxProps
     VariantProps<typeof checkboxVariants> {}
 
 const Checkbox = forwardRef<ElementRef<typeof CheckboxPrimitive.Root>, CheckboxProps>(function Checkbox(
-  { className, color, ...props },
+  { className, color, size, ...props },
   forwardedRef
 ) {
+  const checkIconClassName = size === 'sm' ? 'text-2xs' : 'text-xs'
+
   return (
     <CheckboxPrimitive.Root
       {...props}
       asChild={false}
       ref={forwardedRef}
-      className={twMerge(checkboxVariants({ color }), className)}
+      className={twMerge(checkboxVariants({ color, size }), className)}
     >
       <CheckboxPrimitive.Indicator asChild>
         <span className="flex h-full w-full items-center justify-center">
           {props.checked === 'indeterminate' ? (
-            <span className={indeterminateVariants({ color })} />
+            <span className={indeterminateVariants({ color, size })} />
           ) : (
-            <Icon iconName="check" className="text-xs text-neutralInvert group-disabled:text-neutral-disabled" />
+            <Icon iconName="check" className={`${checkIconClassName} text-neutralInvert group-disabled:text-neutral-disabled`} />
           )}
         </span>
       </CheckboxPrimitive.Indicator>

@@ -1,12 +1,7 @@
-import { type OrganizationApiToken } from 'qovery-typescript-axios'
-import { useEffect } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { CrudModalFeature, useApiTokens } from '@qovery/domains/organizations/feature'
 import { type BlueprintEntry } from '@qovery/domains/services/feature'
-import { Button, Callout, ExternalLink, Icon, InputSelect, InputText, useModal } from '@qovery/shared/ui'
+import { Button, Callout, ExternalLink, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 
 export interface BlueprintGeneralSectionProps {
-  organizationId: string
   blueprint: BlueprintEntry
   blueprintVersion: string
   serviceVersion: string
@@ -15,43 +10,12 @@ export interface BlueprintGeneralSectionProps {
 }
 
 export function BlueprintGeneralSection({
-  organizationId,
   blueprint,
   blueprintVersion,
   serviceVersion,
   onOpenBlueprintDetails,
   onUpdateBlueprint,
 }: BlueprintGeneralSectionProps) {
-  const { control, watch, setValue } = useFormContext<{
-    api_token_id?: string | null
-    api_token_name?: string | null
-  }>()
-  const { data: apiTokens = [] } = useApiTokens({ organizationId })
-  const { openModal, closeModal } = useModal()
-  const selectedApiTokenId = watch('api_token_id')
-
-  useEffect(() => {
-    if (selectedApiTokenId || apiTokens.length === 0) return
-    const fallbackToken = apiTokens[0]
-    setValue('api_token_id', fallbackToken.id, { shouldDirty: false })
-    setValue('api_token_name', fallbackToken.name, { shouldDirty: false })
-  }, [apiTokens, selectedApiTokenId, setValue])
-
-  const tokenOptions = apiTokens.map((token) => ({
-    value: token.id,
-    label: token.name,
-  }))
-
-  const handleTokenSelection = (tokenId: string, fieldOnChange: (value: string) => void) => {
-    const token = apiTokens.find(({ id }) => id === tokenId)
-    fieldOnChange(tokenId)
-    setValue('api_token_name', token?.name ?? null)
-  }
-
-  const handleCreateToken = () => {
-    closeModal()
-  }
-
   return (
     <div>
       <p className="text-sm text-neutral-subtle">
@@ -67,40 +31,6 @@ export function BlueprintGeneralSection({
       </p>
 
       <div className="mt-3 flex flex-col gap-3">
-        <Controller
-          name="api_token_id"
-          control={control}
-          rules={{ required: 'Please select an API token.' }}
-          render={({ field, fieldState: { error } }) => (
-            <InputSelect
-              label="API Token"
-              value={field.value ?? undefined}
-              options={tokenOptions}
-              onChange={(value) => {
-                if (typeof value === 'string') {
-                  handleTokenSelection(value, field.onChange)
-                }
-              }}
-              error={error?.message}
-              menuListButton={{
-                title: 'Select token',
-                label: 'Create API token',
-                onClick: () =>
-                  openModal({
-                    content: (
-                      <CrudModalFeature
-                        organizationId={organizationId}
-                        onClose={handleCreateToken}
-                      />
-                    ),
-                    options: { fakeModal: true },
-                  }),
-              }}
-              isSearchable
-            />
-          )}
-        />
-
         <div>
           <InputText
             label="Repository"

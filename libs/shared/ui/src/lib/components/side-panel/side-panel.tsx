@@ -20,10 +20,10 @@ export function SidePanel({
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-overlay bg-background-overlay" />
+        <Dialog.Overlay className="fixed inset-0 z-sidepanel-overlay bg-background-overlay" />
         <Dialog.Content
           style={{ width }}
-          className="fixed right-0 top-0 z-modal h-screen border-l border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)]"
+          className="fixed right-0 top-0 z-sidepanel h-screen border-l border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)]"
         >
           {showCloseButton && (
             <Dialog.Close asChild>

@@ -167,13 +167,13 @@ function ServiceHeaderContent({ environment, serviceId, service, blueprintContex
             {blueprintContext.onOpenBlueprintDetails ? (
               <button
                 type="button"
-                className="text-neutral-subtle underline decoration-neutral-component underline-offset-2 hover:text-neutral"
+                className="decoration-neutral-component text-neutral-subtle underline underline-offset-2 hover:text-neutral"
                 onClick={blueprintContext.onOpenBlueprintDetails}
               >
                 {blueprintContext.blueprintName}
               </button>
             ) : (
-              <span className="text-neutral-subtle underline decoration-neutral-component underline-offset-2">
+              <span className="decoration-neutral-component text-neutral-subtle underline underline-offset-2">
                 {blueprintContext.blueprintName}
               </span>
             )}{' '}
@@ -183,14 +183,6 @@ function ServiceHeaderContent({ environment, serviceId, service, blueprintContex
         <div className="mt-3 flex items-center gap-1">
           {showBlueprintMeta && blueprintContext ? (
             <>
-              {blueprintContext.repositoryUrl && (
-                <a href={blueprintContext.repositoryUrl} target="_blank" rel="noopener noreferrer">
-                  <Button color="neutral" variant="outline" size="xs" className="gap-1">
-                    <Icon iconName="github" iconStyle="brands" />
-                    {blueprintContext.repositorySlug ?? 'Blueprint repository'}
-                  </Button>
-                </a>
-              )}
               {resolvedServiceVersion && (
                 <Badge variant="outline" className="items-center gap-1 whitespace-nowrap">
                   {databaseSource && (
@@ -199,9 +191,21 @@ function ServiceHeaderContent({ environment, serviceId, service, blueprintContex
                   {resolvedServiceVersion}
                 </Badge>
               )}
+              {blueprintContext.repositoryUrl && (
+                <a href={blueprintContext.repositoryUrl} target="_blank" rel="noopener noreferrer">
+                  <Button color="neutral" variant="outline" size="xs" className="gap-1">
+                    <Icon iconName="github" iconStyle="brands" />
+                    {blueprintContext.repositorySlug ?? 'Blueprint repository'}
+                  </Button>
+                </a>
+              )}
               {blueprintContext.updateAvailable && (
                 <button type="button" className="inline-flex" onClick={blueprintContext.onReviewUpdate}>
-                  <Badge variant="outline" color="sky" className="items-center gap-1 whitespace-nowrap bg-surface-info-subtle">
+                  <Badge
+                    variant="outline"
+                    color="sky"
+                    className="items-center gap-1 whitespace-nowrap bg-surface-info-subtle"
+                  >
                     <Icon iconName="rotate-right" iconStyle="regular" />
                     {blueprintContext.updateAvailableLabel ?? 'Update available'}
                   </Badge>

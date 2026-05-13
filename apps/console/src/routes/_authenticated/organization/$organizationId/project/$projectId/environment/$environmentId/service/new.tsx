@@ -21,17 +21,19 @@ function ServiceNewContent() {
 
   return (
     <Section className="flex w-full flex-1 flex-col pb-10 pt-6">
-      <Link
-        color="brand"
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
-        params={{ organizationId, projectId, environmentId }}
-        className="mb-2 w-fit gap-1 text-xs"
-      >
-        <Icon iconName="arrow-left" />
-        Back to services list
-      </Link>
-      <div className="mb-6 border-b border-neutral pb-6">
-        <Heading className="text-2xl text-neutral">Create a new service</Heading>
+      <div className="mx-auto w-full max-w-[1240px]">
+        <Link
+          color="brand"
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
+          params={{ organizationId, projectId, environmentId }}
+          className="mb-2 w-fit gap-1 text-xs"
+        >
+          <Icon iconName="arrow-left" />
+          Back to services list
+        </Link>
+        <div className="mb-6 border-b border-neutral pb-6">
+          <Heading className="text-2xl text-neutral">Create a new service</Heading>
+        </div>
       </div>
       <ServiceNew
         organizationId={organizationId}

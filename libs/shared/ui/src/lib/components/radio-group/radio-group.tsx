@@ -11,8 +11,6 @@ const itemVariants = cva(
     'bg-surface-neutral',
     'border',
     'border-neutral',
-    'w-[20px]',
-    'h-[20px]',
     'rounded-full',
     'hover:border-brand-strong',
     'data-[state=checked]:bg-surface-brand-solid',
@@ -27,12 +25,17 @@ const itemVariants = cva(
   ],
   {
     variants: {
+      size: {
+        sm: ['h-3.5', 'w-3.5'],
+        md: ['h-5', 'w-5'],
+      },
       variant: {
         check: [],
         default: [],
       },
     },
     defaultVariants: {
+      size: 'md',
       variant: 'default',
     },
   }
@@ -63,9 +66,9 @@ export interface RadioGroupItemProps
     VariantProps<typeof itemVariants> {}
 
 const RadioGroupItem = forwardRef<ElementRef<typeof RadioGroupPrimitive.Item>, RadioGroupItemProps>(
-  function RadioGroupItem({ className, variant, ...props }, ref) {
+  function RadioGroupItem({ className, size, variant, ...props }, ref) {
     return (
-      <RadioGroupPrimitive.Item {...props} className={twMerge(itemVariants({ variant }), className)} ref={ref}>
+      <RadioGroupPrimitive.Item {...props} className={twMerge(itemVariants({ size, variant }), className)} ref={ref}>
         <RadioGroupPrimitive.Indicator className={indicatorVariants({ variant })}>
           {variant === 'check' && <Icon iconName="check" className="text-xs text-neutral" />}
         </RadioGroupPrimitive.Indicator>

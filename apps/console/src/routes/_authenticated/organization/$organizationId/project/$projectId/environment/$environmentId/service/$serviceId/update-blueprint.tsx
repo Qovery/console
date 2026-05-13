@@ -53,16 +53,13 @@ function RouteComponent() {
   return (
     <BlueprintUpdateReview
       blueprintName={blueprint.name}
-      currentVersion={blueprint.versions[1]?.version ?? '2.0'}
       targetVersion={targetVersion}
-      releaseNotesUrl={blueprint.repositoryUrl}
       requiredInputs={MOCK_REQUIRED_INPUTS}
       changedFields={MOCK_CHANGED_FIELDS}
       addedFields={MOCK_ADDED_FIELDS}
       removedFields={MOCK_REMOVED_FIELDS}
       onBack={goBack}
       onDeploy={goBack}
-      onDeployWithPreview={goBack}
     />
   )
 }

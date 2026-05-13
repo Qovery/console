@@ -45,7 +45,6 @@ function General() {
     return (
       <BlueprintWizard
         blueprint={blueprint}
-        organizationId={organizationId}
         projectId={projectId}
         environmentId={environmentId}
         onExit={() =>
