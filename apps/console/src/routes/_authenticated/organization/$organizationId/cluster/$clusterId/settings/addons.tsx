@@ -6,16 +6,56 @@ import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
-  SecretManagerAssociatedServicesModal,
   SecretManagerIntegrationModal,
   SecretManagerList,
   getSecretManagerOption,
   useCluster,
   useEditCluster,
+  useSecretManagerAssociatedServices,
 } from '@qovery/domains/clusters/feature'
+import { type AssociatedItem, AssociatedItemsModal } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Badge, Button, DropdownMenu, Icon, IconFlag, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 import { isGcpCluster } from '@qovery/shared/util-clusters'
+
+function SecretManagerAssociatedItemsContent({
+  secretManagerAccessId,
+  organizationId,
+  integrationName,
+  onClose,
+}: {
+  secretManagerAccessId: string
+  organizationId: string
+  integrationName: string
+  onClose: () => void
+}) {
+  const { data: associatedServices = [], isLoading } = useSecretManagerAssociatedServices({
+    secretManagerAccessId,
+  })
+
+  const items: AssociatedItem[] = associatedServices
+    .filter((s) => s.service_id && s.service_name && s.service_type)
+    .map((s) => ({
+      project_id: s.project_id,
+      project_name: s.project_name,
+      environment_id: s.environment_id,
+      environment_name: s.environment_name,
+      item_id: s.service_id!,
+      item_name: s.service_name!,
+      item_type: s.service_type!,
+    }))
+
+  return (
+    <AssociatedItemsModal
+      title={`Associated ${pluralize(items.length, 'service')}`}
+      organizationId={organizationId}
+      items={items}
+      isLoading={isLoading}
+      onClose={onClose}
+    />
+  )
+}
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons')(
   {
@@ -131,12 +171,10 @@ function RouteComponent() {
   const openSecretManagerAssociatedServicesModal = (integration: SecretManagerAccess) => {
     openModal({
       content: (
-        <SecretManagerAssociatedServicesModal
-          // associatedItems={integration.associatedItems ?? []}
-          associatedItems={[]}
+        <SecretManagerAssociatedItemsContent
+          secretManagerAccessId={integration.id}
           organizationId={organizationId}
-          title="Associated services"
-          description={`${integration.name} is referenced by the following environments and services.`}
+          integrationName={integration.name}
           onClose={closeModal}
         />
       ),

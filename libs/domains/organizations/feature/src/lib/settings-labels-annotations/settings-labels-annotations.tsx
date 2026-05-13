@@ -19,12 +19,15 @@ import {
 } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { pluralize } from '@qovery/shared/util-js'
 import { AnnotationCreateEditModal } from '../annotation-create-edit-modal/annotation-create-edit-modal'
+import { type AssociatedItem, AssociatedItemsModal } from '../associated-items-modal/associated-items-modal'
+import { useAnnotationsGroupAssociatedItems } from '../hooks/use-annotations-group-associated-items/use-annotations-group-associated-items'
 import { useAnnotationsGroups } from '../hooks/use-annotations-groups/use-annotations-groups'
 import { useDeleteAnnotationsGroup } from '../hooks/use-delete-annotations-group/use-delete-annotations-group'
 import { useDeleteLabelsGroup } from '../hooks/use-delete-labels-group/use-delete-labels-group'
+import { useLabelsGroupAssociatedItems } from '../hooks/use-labels-group-associated-items/use-labels-group-associated-items'
 import { useLabelsGroups } from '../hooks/use-labels-groups/use-labels-groups'
-import { LabelAnnotationItemsListModal } from '../label-annotation-items-list-modal/label-annotation-items-list-modal'
 import { LabelCreateEditModal } from '../label-create-edit-modal/label-create-edit-modal'
 
 const LabelsAnnotationsRowsSkeleton = () => (
@@ -44,6 +47,57 @@ const LabelsAnnotationsRowsSkeleton = () => (
     ))}
   </ul>
 )
+
+function LabelAnnotationAssociatedItemsContent({
+  type,
+  organizationId,
+  groupId,
+  associatedItemsCount,
+  onClose,
+}: {
+  type: 'label' | 'annotation'
+  organizationId: string
+  groupId: string
+  associatedItemsCount: number
+  onClose: () => void
+}) {
+  const { data: labelsGroupAssociatedItems = [], isLoading: labelsGroupIsLoading } = useLabelsGroupAssociatedItems({
+    organizationId,
+    labelsGroupId: groupId,
+    enabled: type === 'label',
+  })
+  const { data: annotationsGroupAssociatedItems = [], isLoading: annotationsGroupIsLoading } =
+    useAnnotationsGroupAssociatedItems({
+      organizationId,
+      annotationsGroupId: groupId,
+      enabled: type === 'annotation',
+    })
+
+  const rawItems = type === 'label' ? labelsGroupAssociatedItems : annotationsGroupAssociatedItems
+  const isLoading = type === 'label' ? labelsGroupIsLoading : annotationsGroupIsLoading
+
+  const items: AssociatedItem[] = rawItems.map((item) => ({
+    project_id: item.project_id,
+    project_name: item.project_name,
+    environment_id: item.environment_id,
+    environment_name: item.environment_name,
+    item_id: item.item_id,
+    item_name: item.item_name ?? '',
+    item_type: item.item_type,
+    cluster_id: item.cluster_id,
+    cluster_name: item.cluster_name,
+  }))
+
+  return (
+    <AssociatedItemsModal
+      title={`Associated ${pluralize(associatedItemsCount, 'item')} (${associatedItemsCount})`}
+      organizationId={organizationId}
+      items={items}
+      isLoading={isLoading}
+      onClose={onClose}
+    />
+  )
+}
 
 interface LabelsGroupsListProps {
   organizationId: string
@@ -290,7 +344,7 @@ export function SettingsLabelsAnnotations() {
                 onOpenItems={(labelsGroup) => {
                   openModal({
                     content: (
-                      <LabelAnnotationItemsListModal
+                      <LabelAnnotationAssociatedItemsContent
                         type="label"
                         organizationId={organizationId}
                         groupId={labelsGroup.id}
@@ -339,7 +393,7 @@ export function SettingsLabelsAnnotations() {
                 onOpenItems={(annotationsGroup) => {
                   openModal({
                     content: (
-                      <LabelAnnotationItemsListModal
+                      <LabelAnnotationAssociatedItemsContent
                         type="annotation"
                         organizationId={organizationId}
                         groupId={annotationsGroup.id}
