@@ -41,6 +41,7 @@ export function useOutdatedServices({ environmentId }: UseOutdatedServicesProps)
 
   for (let i = 0; i < queryResults.length; i++) {
     const { data: commits = [] } = queryResults[i]
+    if (commits.length === 0) continue
     const service = gitServices[i]
     const gitRepository = getGitRepository(service)
     if (gitRepository?.deployed_commit_id !== commits[0]?.git_commit_id) {
