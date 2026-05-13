@@ -73,8 +73,6 @@ import {
   TerraformsApi,
   type Application as _Application,
   type ArgocdAppResponse as _ArgoCd,
-  type ArgocdManagedResource as _ArgoCdManagedResource,
-  type ArgocdAppManifestResponse as _ArgoCdManifestResponse,
   type CloneServiceRequest as _CloneServiceRequest,
   type ContainerResponse as _Container,
   type Database as _Database,
@@ -200,9 +198,6 @@ export type AdvancedSettings =
   | HelmAdvancedSettings
   | TerraformAdvancedSettings
 
-export type ArgoCdManagedResource = _ArgoCdManagedResource
-export type ArgoCdManifestResponse = _ArgoCdManifestResponse
-
 export function isApplication(service: AnyService): service is Application {
   return service.service_type === 'APPLICATION'
 }
@@ -280,7 +275,7 @@ export const services = createQueryKeys('services', {
     },
   }),
   argocdManifest: (serviceId: string) => ({
-    queryKey: [serviceId, 'argocd-manifest'],
+    queryKey: [serviceId],
     async queryFn() {
       const response = await argoCdApi.getArgoCdAppManifest(serviceId)
       return response.data

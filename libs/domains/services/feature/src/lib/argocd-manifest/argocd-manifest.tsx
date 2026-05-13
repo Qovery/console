@@ -1,5 +1,5 @@
+import { type ArgocdManagedResource } from 'qovery-typescript-axios'
 import { type ReactElement, useEffect, useMemo, useState } from 'react'
-import { type ArgoCdManagedResource } from '@qovery/domains/services/data-access'
 import { ResourceTreeList, type ResourceTreeResource } from '@qovery/shared/console-shared'
 import { CodeEditor, EmptyState, Heading, InputSearch, Section, SegmentedControl } from '@qovery/shared/ui'
 import { useArgoCdManifest } from '../hooks/use-argocd-manifest/use-argocd-manifest'
@@ -23,11 +23,11 @@ export function formatLiveState(liveState: string): string {
   }
 }
 
-function getResourceId(resource: ArgoCdManagedResource, index: number): string {
+function getResourceId(resource: ArgocdManagedResource, index: number): string {
   return `${resource.kind ?? 'Unknown'}:${resource.name ?? 'Unnamed'}:${index}`
 }
 
-export function toManifestResources(resources: ArgoCdManagedResource[]): ArgoCdManifestResource[] {
+export function toManifestResources(resources: ArgocdManagedResource[]): ArgoCdManifestResource[] {
   return resources.map((resource, index) => ({
     id: getResourceId(resource, index),
     resourceType: resource.kind ?? 'Unknown',

@@ -1,5 +1,5 @@
 import { type UseQueryResult } from '@tanstack/react-query'
-import { type ArgoCdManifestResponse } from '@qovery/domains/services/data-access'
+import { type ArgocdAppManifestResponse } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useArgoCdManifest } from '../hooks/use-argocd-manifest/use-argocd-manifest'
 import { ArgoCdManifest, formatLiveState, toManifestResources } from './argocd-manifest'
@@ -18,16 +18,16 @@ jest.mock('@qovery/shared/ui', () => {
 const mockUseArgoCdManifest = useArgoCdManifest as jest.MockedFunction<typeof useArgoCdManifest>
 
 const createUseArgoCdManifestResult = (
-  result: Partial<UseQueryResult<ArgoCdManifestResponse>>
-): UseQueryResult<ArgoCdManifestResponse> =>
+  result: Partial<UseQueryResult<ArgocdAppManifestResponse>>
+): UseQueryResult<ArgocdAppManifestResponse> =>
   ({
     data: undefined,
     isLoading: false,
     isError: false,
     ...result,
-  }) as unknown as UseQueryResult<ArgoCdManifestResponse>
+  }) as unknown as UseQueryResult<ArgocdAppManifestResponse>
 
-const manifestResponse: ArgoCdManifestResponse = {
+const manifestResponse: ArgocdAppManifestResponse = {
   manifest_metadata: {
     managed_resources: [
       {
