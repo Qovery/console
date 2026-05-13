@@ -142,8 +142,8 @@ export function LabelAnnotationItemsListModal({
     [type, labelsGroupAssociatedItems, annotationsGroupAssociatedItems]
   )
 
-  const serviceSourceItems = getServiceAssociatedItems(rawItems)
-  const clusterSourceItems = filterClustersForAssociatedItemsModal(rawItems)
+  const serviceSourceItems = useMemo(() => getServiceAssociatedItems(rawItems), [rawItems])
+  const clusterSourceItems = useMemo(() => filterClustersForAssociatedItemsModal(rawItems), [rawItems])
 
   const serviceTreeData = useMemo(
     () => groupByProjectEnvironmentsServices(serviceSourceItems, normalizedSearch),
@@ -154,22 +154,12 @@ export function LabelAnnotationItemsListModal({
     [rawItems, normalizedSearch]
   )
 
-  const hasServicesInSource = useMemo(() => serviceSourceItems.length > 0, [serviceSourceItems])
-  const hasClustersInSource = useMemo(() => clusterSourceItems.length > 0, [clusterSourceItems])
-  const hasAnySource = useMemo(
-    () => hasServicesInSource || hasClustersInSource,
-    [hasServicesInSource, hasClustersInSource]
-  )
-
-  const noSearchResults = useMemo(
-    () => Boolean(normalizedSearch) && hasAnySource && serviceTreeData.length === 0 && clusterRows.length === 0,
-    [normalizedSearch, hasAnySource, serviceTreeData.length, clusterRows.length]
-  )
-
-  const isLoading = useMemo(
-    () => (type === 'label' ? labelsGroupIsLoading : annotationsGroupIsLoading),
-    [type, labelsGroupIsLoading, annotationsGroupIsLoading]
-  )
+  const hasServicesInSource = serviceSourceItems.length > 0
+  const hasClustersInSource = clusterSourceItems.length > 0
+  const hasAnySource = hasServicesInSource || hasClustersInSource
+  const noSearchResults =
+    Boolean(normalizedSearch) && hasAnySource && serviceTreeData.length === 0 && clusterRows.length === 0
+  const isLoading = type === 'label' ? labelsGroupIsLoading : annotationsGroupIsLoading
 
   return (
     <Section className="p-6">
