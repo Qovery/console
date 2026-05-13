@@ -9,7 +9,9 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
       <h1
         class="font-medium mb-6 text-2xl text-neutral"
       >
-        Associated services (
+        Associated 
+        items
+         (
         3
         )
       </h1>
@@ -24,131 +26,142 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
           class="w-full rounded border border-neutral bg-surface-neutral pl-10 pr-6 text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color] h-9 text-sm"
           data-testid="input-search"
           name="search"
-          placeholder="Search by project, environment, service name"
+          placeholder="Search by project, environment, service, or cluster name"
           type="text"
         />
       </div>
       <div
-        class="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
-        data-orientation="vertical"
+        class="flex flex-col gap-3"
       >
-        <div
-          class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
-          data-orientation="vertical"
-          data-state="open"
-        >
-          <div
-            class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
+        <div>
+          <h3
+            class="text-sm font-medium mb-2 text-neutral"
           >
-            <button
-              aria-controls="radix-:r7:"
-              aria-expanded="true"
-              class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
-              data-orientation="vertical"
-              data-radix-collection-item=""
-              data-state="open"
-              id="radix-:r6:"
-              type="button"
-            >
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-minus "
-              />
-            </button>
-            Project 1
-          </div>
+            Services
+          </h3>
           <div
-            aria-labelledby="radix-:r6:"
-            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
+            class="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
             data-orientation="vertical"
-            data-state="open"
-            id="radix-:r7:"
-            role="region"
-            style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
           >
             <div
+              class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
               data-orientation="vertical"
+              data-state="open"
             >
               <div
-                class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
+                class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
+              >
+                <button
+                  aria-controls="radix-:r7:"
+                  aria-expanded="true"
+                  class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
+                  data-orientation="vertical"
+                  data-radix-collection-item=""
+                  data-state="open"
+                  id="radix-:r6:"
+                  type="button"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-minus "
+                  />
+                </button>
+                Project 1
+              </div>
+              <div
+                aria-labelledby="radix-:r6:"
+                class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                 data-orientation="vertical"
-                data-state="closed"
+                data-state="open"
+                id="radix-:r7:"
+                role="region"
+                style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
               >
                 <div
-                  class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
-                >
-                  <button
-                    aria-controls="radix-:rb:"
-                    aria-expanded="false"
-                    class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
-                    data-orientation="vertical"
-                    data-radix-collection-item=""
-                    data-state="closed"
-                    id="radix-:ra:"
-                    type="button"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-plus "
-                    />
-                  </button>
-                  <a
-                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand hover:text-brand-hover text-sm"
-                    params="[object Object]"
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId"
-                  >
-                    Development
-                  </a>
-                </div>
-                <div
-                  aria-labelledby="radix-:ra:"
-                  class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                   data-orientation="vertical"
-                  data-state="closed"
-                  hidden=""
-                  id="radix-:rb:"
-                  role="region"
-                  style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
-                />
+                >
+                  <div
+                    class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
+                    data-orientation="vertical"
+                    data-state="closed"
+                  >
+                    <div
+                      class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
+                    >
+                      <button
+                        aria-controls="radix-:rb:"
+                        aria-expanded="false"
+                        class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
+                        data-orientation="vertical"
+                        data-radix-collection-item=""
+                        data-state="closed"
+                        id="radix-:ra:"
+                        type="button"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-plus "
+                        />
+                      </button>
+                      <a
+                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand hover:text-brand-hover text-sm"
+                        params="[object Object]"
+                        to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+                      >
+                        Development
+                      </a>
+                    </div>
+                    <div
+                      aria-labelledby="radix-:ra:"
+                      class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
+                      data-orientation="vertical"
+                      data-state="closed"
+                      hidden=""
+                      id="radix-:rb:"
+                      role="region"
+                      style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div
-          class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
-          data-orientation="vertical"
-          data-state="closed"
-        >
-          <div
-            class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
-          >
-            <button
-              aria-controls="radix-:r9:"
-              aria-expanded="false"
-              class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
+            <div
+              class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
               data-orientation="vertical"
-              data-radix-collection-item=""
               data-state="closed"
-              id="radix-:r8:"
-              type="button"
             >
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-plus "
+              <div
+                class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
+              >
+                <button
+                  aria-controls="radix-:r9:"
+                  aria-expanded="false"
+                  class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
+                  data-orientation="vertical"
+                  data-radix-collection-item=""
+                  data-state="closed"
+                  id="radix-:r8:"
+                  type="button"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-plus "
+                  />
+                </button>
+                Project 2
+              </div>
+              <div
+                aria-labelledby="radix-:r8:"
+                class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
+                data-orientation="vertical"
+                data-state="closed"
+                hidden=""
+                id="radix-:r9:"
+                role="region"
+                style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
               />
-            </button>
-            Project 2
+            </div>
           </div>
-          <div
-            aria-labelledby="radix-:r8:"
-            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
-            data-orientation="vertical"
-            data-state="closed"
-            hidden=""
-            id="radix-:r9:"
-            role="region"
-            style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
-          />
         </div>
       </div>
     </section>
@@ -165,7 +178,9 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
       <h1
         class="font-medium mb-6 text-2xl text-neutral"
       >
-        Associated services (
+        Associated 
+        items
+         (
         3
         )
       </h1>
@@ -180,131 +195,142 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
           class="w-full rounded border border-neutral bg-surface-neutral pl-10 pr-6 text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color] h-9 text-sm"
           data-testid="input-search"
           name="search"
-          placeholder="Search by project, environment, service name"
+          placeholder="Search by project, environment, service, or cluster name"
           type="text"
         />
       </div>
       <div
-        class="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
-        data-orientation="vertical"
+        class="flex flex-col gap-3"
       >
-        <div
-          class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
-          data-orientation="vertical"
-          data-state="open"
-        >
-          <div
-            class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
+        <div>
+          <h3
+            class="text-sm font-medium mb-2 text-neutral"
           >
-            <button
-              aria-controls="radix-:rj:"
-              aria-expanded="true"
-              class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
-              data-orientation="vertical"
-              data-radix-collection-item=""
-              data-state="open"
-              id="radix-:ri:"
-              type="button"
-            >
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-minus "
-              />
-            </button>
-            Project 1
-          </div>
+            Services
+          </h3>
           <div
-            aria-labelledby="radix-:ri:"
-            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
+            class="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"
             data-orientation="vertical"
-            data-state="open"
-            id="radix-:rj:"
-            role="region"
-            style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
           >
             <div
+              class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
               data-orientation="vertical"
+              data-state="open"
             >
               <div
-                class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
+                class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
+              >
+                <button
+                  aria-controls="radix-:rj:"
+                  aria-expanded="true"
+                  class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
+                  data-orientation="vertical"
+                  data-radix-collection-item=""
+                  data-state="open"
+                  id="radix-:ri:"
+                  type="button"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-minus "
+                  />
+                </button>
+                Project 1
+              </div>
+              <div
+                aria-labelledby="radix-:ri:"
+                class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                 data-orientation="vertical"
-                data-state="closed"
+                data-state="open"
+                id="radix-:rj:"
+                role="region"
+                style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
               >
                 <div
-                  class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
-                >
-                  <button
-                    aria-controls="radix-:rn:"
-                    aria-expanded="false"
-                    class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
-                    data-orientation="vertical"
-                    data-radix-collection-item=""
-                    data-state="closed"
-                    id="radix-:rm:"
-                    type="button"
-                  >
-                    <i
-                      aria-hidden="true"
-                      class="fa-regular fa-plus "
-                    />
-                  </button>
-                  <a
-                    class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand hover:text-brand-hover text-sm"
-                    params="[object Object]"
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId"
-                  >
-                    Development
-                  </a>
-                </div>
-                <div
-                  aria-labelledby="radix-:rm:"
-                  class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
                   data-orientation="vertical"
-                  data-state="closed"
-                  hidden=""
-                  id="radix-:rn:"
-                  role="region"
-                  style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
-                />
+                >
+                  <div
+                    class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
+                    data-orientation="vertical"
+                    data-state="closed"
+                  >
+                    <div
+                      class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
+                    >
+                      <button
+                        aria-controls="radix-:rn:"
+                        aria-expanded="false"
+                        class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
+                        data-orientation="vertical"
+                        data-radix-collection-item=""
+                        data-state="closed"
+                        id="radix-:rm:"
+                        type="button"
+                      >
+                        <i
+                          aria-hidden="true"
+                          class="fa-regular fa-plus "
+                        />
+                      </button>
+                      <a
+                        class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand hover:text-brand-hover text-sm"
+                        params="[object Object]"
+                        to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+                      >
+                        Development
+                      </a>
+                    </div>
+                    <div
+                      aria-labelledby="radix-:rm:"
+                      class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
+                      data-orientation="vertical"
+                      data-state="closed"
+                      hidden=""
+                      id="radix-:rn:"
+                      role="region"
+                      style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div
-          class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
-          data-orientation="vertical"
-          data-state="closed"
-        >
-          <div
-            class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
-          >
-            <button
-              aria-controls="radix-:rl:"
-              aria-expanded="false"
-              class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
+            <div
+              class="mt-px overflow-hidden first:mt-0 first:rounded-t last:rounded-b"
               data-orientation="vertical"
-              data-radix-collection-item=""
               data-state="closed"
-              id="radix-:rk:"
-              type="button"
             >
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-plus "
+              <div
+                class="flex w-full items-center py-2 pr-5 text-sm text-neutral outline-none"
+              >
+                <button
+                  aria-controls="radix-:rl:"
+                  aria-expanded="false"
+                  class="mr-4 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded border border-neutral text-3xs"
+                  data-orientation="vertical"
+                  data-radix-collection-item=""
+                  data-state="closed"
+                  id="radix-:rk:"
+                  type="button"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-plus "
+                  />
+                </button>
+                Project 2
+              </div>
+              <div
+                aria-labelledby="radix-:rk:"
+                class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
+                data-orientation="vertical"
+                data-state="closed"
+                hidden=""
+                id="radix-:rl:"
+                role="region"
+                style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
               />
-            </button>
-            Project 2
+            </div>
           </div>
-          <div
-            aria-labelledby="radix-:rk:"
-            class="data-[state=closed]:slidein-up-sm-faded ml-2 overflow-hidden border-l border-neutral pl-[26px] data-[state=open]:animate-slidein-down-sm-faded retina:border-l-[0.5px]"
-            data-orientation="vertical"
-            data-state="closed"
-            hidden=""
-            id="radix-:rl:"
-            role="region"
-            style="--radix-accordion-content-height: var(--radix-collapsible-content-height); --radix-accordion-content-width: var(--radix-collapsible-content-width);"
-          />
         </div>
       </div>
     </section>
