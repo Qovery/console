@@ -9,7 +9,9 @@ exports[`LabelAnnotationItemsListModal should match snapshots with annotation 1`
       <h1
         class="font-medium mb-6 text-2xl text-neutral"
       >
-        Associated items (
+        Associated 
+        items
+         (
         3
         )
       </h1>
@@ -176,7 +178,9 @@ exports[`LabelAnnotationItemsListModal should match snapshots with label 1`] = `
       <h1
         class="font-medium mb-6 text-2xl text-neutral"
       >
-        Associated items (
+        Associated 
+        items
+         (
         3
         )
       </h1>

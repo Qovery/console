@@ -152,7 +152,7 @@ describe('LabelAnnotationItemsListModal', () => {
 
     renderWithProviders(<LabelAnnotationItemsListModal {...props} type="annotation" associatedItemsCount={1} />)
 
-    expect(screen.getByRole('heading', { name: /associated items \(1\)/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /associated item \(1\)/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /^clusters$/i })).toBeInTheDocument()
     expect(screen.getByText('cluster-for-obs-team')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: /^services$/i })).not.toBeInTheDocument()
