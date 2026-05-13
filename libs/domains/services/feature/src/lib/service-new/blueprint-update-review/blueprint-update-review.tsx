@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Accordion,
   Badge,
@@ -10,6 +10,7 @@ import {
   InputText,
   Navbar,
   Section,
+  Skeleton,
   Tooltip,
 } from '@qovery/shared/ui'
 
@@ -135,6 +136,7 @@ export const MOCK_REMOVED_FIELDS: RemovedField[] = [
 type ReviewStepId = 'required' | 'optional' | 'modified' | 'removed'
 type BlueprintFlowStep = 1 | 2
 type PlanAction = 'replace' | 'destroy' | 'update' | 'create'
+type PreviewSectionStatus = 'idle' | 'loading' | 'ready'
 
 interface PlanDiffValue {
   key: string
@@ -637,6 +639,62 @@ function PlanImpactSummary({ parsedPlan }: { parsedPlan: ParsedTerraformPlan }) 
   )
 }
 
+function PlanImpactSummarySkeleton() {
+  return (
+    <div className="rounded-lg border border-neutral bg-surface-neutral p-4">
+      <div className="mb-2 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-1.5">
+          <Icon iconName="circle-info" iconStyle="regular" className="text-xs text-neutral" />
+          <p className="text-sm font-medium text-neutral">Estimated deployment impact</p>
+        </div>
+        <Skeleton height={24} width={96} className="rounded-md" />
+      </div>
+      <div className="mt-2 flex flex-col gap-2">
+        <Skeleton height={20} className="w-full" />
+        <Skeleton height={20} className="w-[92%]" />
+        <Skeleton height={20} className="w-[95%]" />
+        <Skeleton height={20} className="w-[88%]" />
+        <Skeleton height={20} className="w-[84%]" />
+      </div>
+    </div>
+  )
+}
+
+function InfrastructureDiffSkeleton() {
+  const sectionLabels = ['Replace', 'Destroy', 'Update', 'Create']
+
+  return (
+    <div className="min-h-0 flex-1 overflow-y-auto">
+      {sectionLabels.map((label) => (
+        <div key={label}>
+          <div className="flex items-center gap-1 border-b border-neutral bg-surface-neutral-subtle px-4 py-3">
+            <p className="text-sm font-medium text-neutral">{label}</p>
+            <Icon iconName="circle-info" iconStyle="regular" className="text-xs text-neutral-subtle" />
+          </div>
+          <div className="border-b border-neutral px-4 py-3">
+            <Skeleton height={20} className="w-[40%]" />
+          </div>
+          <div className="border-b border-neutral px-4 py-3">
+            <Skeleton height={20} className="w-[52%]" />
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function RawOutputSkeleton() {
+  return (
+    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3">
+      <div className="flex flex-col gap-2">
+        {Array.from({ length: 18 }).map((_, index) => (
+          <Skeleton key={`raw-output-skeleton-${index}`} height={16} className={index % 3 === 0 ? 'w-[95%]' : 'w-full'} />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── Component ───────────────────────────────────────────────────────────────
 
 export function BlueprintUpdateReview({
@@ -668,6 +726,11 @@ export function BlueprintUpdateReview({
   )
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null)
   const [previewTab, setPreviewTab] = useState<'infrastructure-diff' | 'raw-output'>('infrastructure-diff')
+  const [previewLoadAttempt, setPreviewLoadAttempt] = useState(0)
+  const [summaryStatus, setSummaryStatus] = useState<PreviewSectionStatus>('idle')
+  const [diffStatus, setDiffStatus] = useState<PreviewSectionStatus>('idle')
+  const [rawStatus, setRawStatus] = useState<PreviewSectionStatus>('idle')
+  const [showSlowPreviewNotice, setShowSlowPreviewNotice] = useState(false)
 
   const parsedTerraformPlan = useMemo(() => parseTerraformPlan(TERRAFORM_PLAN_RAW_OUTPUT), [])
 
@@ -676,6 +739,32 @@ export function BlueprintUpdateReview({
 
   const isRequiredStepComplete = requiredInputs.every((field) => Boolean(inputValues[field.id]?.trim()))
   const canOpenPreview = currentReviewStep.id === 'removed' && isRequiredStepComplete
+  const isPreviewLoading = [summaryStatus, diffStatus, rawStatus].some((status) => status === 'loading')
+  const isPreviewReady = [summaryStatus, diffStatus, rawStatus].every((status) => status === 'ready')
+
+  useEffect(() => {
+    if (flowStep !== 2) return
+
+    setSummaryStatus('loading')
+    setDiffStatus('loading')
+    setRawStatus('loading')
+    setShowSlowPreviewNotice(false)
+
+    const summaryTimer = window.setTimeout(() => setSummaryStatus('ready'), 900)
+    const diffTimer = window.setTimeout(() => setDiffStatus('ready'), 1800)
+    const rawTimer = window.setTimeout(() => {
+      setRawStatus('ready')
+      setShowSlowPreviewNotice(false)
+    }, 2600)
+    const slowNoticeTimer = window.setTimeout(() => setShowSlowPreviewNotice(true), 8000)
+
+    return () => {
+      window.clearTimeout(summaryTimer)
+      window.clearTimeout(diffTimer)
+      window.clearTimeout(rawTimer)
+      window.clearTimeout(slowNoticeTimer)
+    }
+  }, [flowStep, previewLoadAttempt])
 
   const continueToNextReviewStep = () => {
     setCurrentStepIndex((previous) => Math.min(previous + 1, REVIEW_STEPS.length - 1))
@@ -966,9 +1055,22 @@ export function BlueprintUpdateReview({
     <div className="mx-auto flex h-full min-h-0 w-full max-w-[620px] flex-col text-sm">
       <Section className="min-h-0 flex-1 overflow-hidden py-6">
         <div className="flex h-full min-h-0 flex-col gap-4 pb-6">
-          <Heading className="text-2xl">Preview changes</Heading>
+          <div className="flex flex-col gap-1">
+            <Heading className="text-2xl">Preview changes</Heading>
+            {isPreviewLoading ? (
+              <p className="text-sm text-neutral-subtle">
+                {showSlowPreviewNotice
+                  ? 'Still computing impact analysis. This can take up to 30 seconds for large plans.'
+                  : 'Analyzing Terraform plan...'}
+              </p>
+            ) : null}
+          </div>
 
-          <PlanImpactSummary parsedPlan={parsedTerraformPlan} />
+          {summaryStatus === 'ready' ? (
+            <PlanImpactSummary parsedPlan={parsedTerraformPlan} />
+          ) : (
+            <PlanImpactSummarySkeleton />
+          )}
 
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-Cards">
             <div className="border-b border-neutral">
@@ -999,26 +1101,34 @@ export function BlueprintUpdateReview({
             </div>
 
             {previewTab === 'infrastructure-diff' ? (
-              <div className="min-h-0 flex-1 overflow-y-auto">
-                <PlanActionSection label="Replace" action="replace" resources={parsedTerraformPlan.sections.replace} />
-                <PlanActionSection label="Destroy" action="destroy" resources={parsedTerraformPlan.sections.destroy} />
-                <PlanActionSection label="Update" action="update" resources={parsedTerraformPlan.sections.update} />
-                <PlanActionSection label="Create" action="create" resources={parsedTerraformPlan.sections.create} />
-              </div>
+              diffStatus === 'ready' ? (
+                <div className="min-h-0 flex-1 overflow-y-auto">
+                  <PlanActionSection label="Replace" action="replace" resources={parsedTerraformPlan.sections.replace} />
+                  <PlanActionSection label="Destroy" action="destroy" resources={parsedTerraformPlan.sections.destroy} />
+                  <PlanActionSection label="Update" action="update" resources={parsedTerraformPlan.sections.update} />
+                  <PlanActionSection label="Create" action="create" resources={parsedTerraformPlan.sections.create} />
+                </div>
+              ) : (
+                <InfrastructureDiffSkeleton />
+              )
             ) : (
-              <div className="min-h-0 flex-1">
-                <CodeEditor
-                  value={TERRAFORM_PLAN_RAW_OUTPUT}
-                  readOnly
-                  language="hcl"
-                  height="100%"
-                  options={{
-                    wordWrap: 'on',
-                    scrollBeyondLastLine: false,
-                    lineNumbersMinChars: 3,
-                  }}
-                />
-              </div>
+              rawStatus === 'ready' ? (
+                <div className="min-h-0 flex-1">
+                  <CodeEditor
+                    value={TERRAFORM_PLAN_RAW_OUTPUT}
+                    readOnly
+                    language="hcl"
+                    height="100%"
+                    options={{
+                      wordWrap: 'on',
+                      scrollBeyondLastLine: false,
+                      lineNumbersMinChars: 3,
+                    }}
+                  />
+                </div>
+              ) : (
+                <RawOutputSkeleton />
+              )
             )}
           </div>
         </div>
@@ -1027,12 +1137,24 @@ export function BlueprintUpdateReview({
         <Button size="lg" color="neutral" variant="outline" radius="rounded" onClick={() => setFlowStep(1)}>
           Back
         </Button>
+        {isPreviewLoading ? (
+          <Button
+            size="lg"
+            color="neutral"
+            variant="outline"
+            radius="rounded"
+            onClick={() => setPreviewLoadAttempt((previous) => previous + 1)}
+          >
+            Retry analysis
+          </Button>
+        ) : null}
         <Button
           size="lg"
           color="brand"
           variant="solid"
           radius="rounded"
           onClick={onDeploy}
+          disabled={!isPreviewReady}
           className="flex-1 justify-center"
         >
           Confirm & deploy update
