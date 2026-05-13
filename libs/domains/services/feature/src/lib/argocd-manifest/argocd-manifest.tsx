@@ -88,20 +88,25 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
     () => toManifestResources(data?.manifest_metadata?.managed_resources ?? []),
     [data?.manifest_metadata?.managed_resources]
   )
+  const stateResources = useMemo(
+    () => resources.filter((resource) => getManifestState(resource, stateMode)),
+    [resources, stateMode]
+  )
 
   useEffect(() => {
-    if (!selectedResourceId && resources.length > 0) {
-      setSelectedResourceId(resources[0].id)
+    if (!selectedResourceId && stateResources.length > 0) {
+      setSelectedResourceId(stateResources[0].id)
       return
     }
 
-    if (selectedResourceId && !resources.some((resource) => resource.id === selectedResourceId)) {
-      setSelectedResourceId(resources[0]?.id ?? null)
+    if (selectedResourceId && !stateResources.some((resource) => resource.id === selectedResourceId)) {
+      setSelectedResourceId(stateResources[0]?.id ?? null)
     }
-  }, [resources, selectedResourceId])
+  }, [stateResources, selectedResourceId])
 
   const selectedResource =
-    resources.find((resource) => resource.id === selectedResourceId) ?? (resources.length > 0 ? resources[0] : null)
+    stateResources.find((resource) => resource.id === selectedResourceId) ??
+    (stateResources.length > 0 ? stateResources[0] : null)
 
   if (isError) {
     return (
@@ -140,12 +145,25 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
         </div>
 
         <div className="flex min-h-0 flex-1 overflow-hidden rounded-lg border border-neutral">
-          <div className="flex w-[266px] flex-shrink-0 flex-col gap-4 overflow-y-scroll rounded-r-md border-r border-neutral bg-surface-neutral-subtle p-3">
+          <div className="flex w-[266px] flex-shrink-0 flex-col gap-2 overflow-x-hidden overflow-y-scroll rounded-r-md border-r border-neutral bg-surface-neutral-subtle p-3 pt-2">
+            <SegmentedControl.Root
+              value={stateMode}
+              onValueChange={(value) => setStateMode(value as ManifestStateMode)}
+              className="h-7 w-full text-xs"
+            >
+              <SegmentedControl.Item value="live" className="border-transparent px-2">
+                Live
+              </SegmentedControl.Item>
+              <SegmentedControl.Item value="target" className="border-transparent px-2">
+                Target
+              </SegmentedControl.Item>
+            </SegmentedControl.Root>
+            <hr className="-mx-3 border-neutral" />
             <InputSearch placeholder="Search…" className="w-full" onChange={setSearchQuery} />
 
             <div className="min-h-0 flex-1">
               <ResourceTreeList
-                resources={resources}
+                resources={stateResources}
                 selectedResourceId={selectedResource?.id ?? null}
                 onSelectResource={setSelectedResourceId}
                 searchQuery={searchQuery}
@@ -154,20 +172,6 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
           </div>
 
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-            <div className="flex h-12 flex-shrink-0 items-center justify-end border-b border-neutral px-3">
-              <SegmentedControl.Root
-                value={stateMode}
-                onValueChange={(value) => setStateMode(value as ManifestStateMode)}
-                className="h-8 text-sm"
-              >
-                <SegmentedControl.Item value="live" className="[&_span_span]:h-8">
-                  Live
-                </SegmentedControl.Item>
-                <SegmentedControl.Item value="target" className="[&_span_span]:h-8">
-                  Target
-                </SegmentedControl.Item>
-              </SegmentedControl.Root>
-            </div>
             <CodeEditor
               language="json"
               value={formatLiveState(getManifestState(selectedResource, stateMode))}

@@ -74,7 +74,7 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
   return (
     <div className="flex h-page-container flex-col gap-4">
       <div className="flex h-full">
-        <div className="flex w-[266px] flex-shrink-0 flex-col gap-4 overflow-y-scroll rounded-r-md border-r border-neutral bg-surface-neutral-subtle p-3">
+        <div className="flex w-[266px] flex-shrink-0 flex-col gap-4 overflow-x-hidden overflow-y-scroll rounded-r-md border-r border-neutral bg-surface-neutral-subtle p-3">
           <InputSearch placeholder="Search resources…" className="w-full" onChange={setSearchQuery} />
 
           <div className="min-h-0 flex-1">
