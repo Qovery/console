@@ -17,10 +17,12 @@ const AccordionItem = forwardRef<ElementRef<typeof AccordionPrimitive.Item>, Acc
   )
 )
 
-interface AccordionTriggerProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> {}
+interface AccordionTriggerProps extends ComponentPropsWithoutRef<typeof AccordionPrimitive.Trigger> {
+  iconClassName?: string
+}
 
 const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger>, AccordionTriggerProps>(
-  ({ children, className, ...props }, forwardedRef) => (
+  ({ children, className, iconClassName, ...props }, forwardedRef) => (
     <AccordionPrimitive.Trigger
       className={twMerge(
         'group flex min-h-14 cursor-default items-center gap-5 bg-surface-neutral px-5 text-sm outline-none',
@@ -31,7 +33,10 @@ const AccordionTrigger = forwardRef<ElementRef<typeof AccordionPrimitive.Trigger
     >
       <Icon
         iconName="chevron-down"
-        className="text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
+        className={twMerge(
+          'text-neutral-subtle transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180',
+          iconClassName
+        )}
         aria-hidden
       />
       {children}

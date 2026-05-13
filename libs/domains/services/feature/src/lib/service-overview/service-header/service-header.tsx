@@ -7,7 +7,7 @@ import {
   useCluster,
   useClusterRunningStatusSocket,
 } from '@qovery/domains/clusters/feature'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type AnyService, isArgoCd } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -79,9 +79,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
   const { organizationId = '', serviceId = '' } = useParams({ strict: false })
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
-  const isArgoCdService = match(service)
-    .with({ service_type: 'ARGOCD_APP' }, () => true)
-    .otherwise(() => false)
+  const isArgoCdService = isArgoCd(service)
 
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
 
@@ -175,9 +173,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
     }))
     .otherwise(() => undefined)
 
-  const isArgoCdService = match(service)
-    .with({ service_type: 'ARGOCD_APP' }, () => true)
-    .otherwise(() => false)
+  const isArgoCdService = isArgoCd(service)
 
   const handleCopyCredentials = (credentials: Credentials) => {
     if (!databaseSource) {

@@ -73,6 +73,8 @@ import {
   TerraformsApi,
   type Application as _Application,
   type ArgocdAppResponse as _ArgoCd,
+  type ArgocdManagedResource as _ArgoCdManagedResource,
+  type ArgocdAppManifestResponse as _ArgoCdManifestResponse,
   type CloneServiceRequest as _CloneServiceRequest,
   type ContainerResponse as _Container,
   type Database as _Database,
@@ -198,6 +200,24 @@ export type AdvancedSettings =
   | HelmAdvancedSettings
   | TerraformAdvancedSettings
 
+export type ArgoCdManagedResource = Pick<Required<_ArgoCdManagedResource>, 'kind' | 'name' | 'liveState'>
+
+export interface ArgoCdManifestResponse {
+  manifest_revision?: _ArgoCdManifestResponse['manifest_revision']
+  managed_resources: ArgoCdManagedResource[]
+}
+
+function toArgoCdManifestResponse(response: _ArgoCdManifestResponse): ArgoCdManifestResponse {
+  return {
+    manifest_revision: response.manifest_revision,
+    managed_resources: (response.manifest_metadata.managed_resources ?? []).map((resource) => ({
+      kind: resource.kind ?? '',
+      name: resource.name ?? '',
+      liveState: resource.liveState ?? '',
+    })),
+  }
+}
+
 export function isApplication(service: AnyService): service is Application {
   return service.service_type === 'APPLICATION'
 }
@@ -216,6 +236,10 @@ export function isJob(service: AnyService): service is Job {
 
 export function isHelm(service: AnyService): service is Helm {
   return service.service_type === 'HELM'
+}
+
+export function isArgoCd(service: AnyService): service is ArgoCd {
+  return service.service_type === 'ARGOCD_APP'
 }
 
 export function isEditableService(service: AnyService): service is EditableService {
@@ -268,6 +292,13 @@ export const services = createQueryKeys('services', {
     async queryFn() {
       const response = await environmentApi.listServicesByEnvironmentId(environmentId)
       return (response.data.results ?? []).filter((service) => service.service_type === 'ARGOCD_APP')
+    },
+  }),
+  argocdManifest: (serviceId: string) => ({
+    queryKey: [serviceId, 'argocd-manifest'],
+    async queryFn(): Promise<ArgoCdManifestResponse> {
+      const response = await argoCdApi.getArgoCdAppManifest(serviceId)
+      return toArgoCdManifestResponse(response.data)
     },
   }),
   list: (environmentId: string) => ({
