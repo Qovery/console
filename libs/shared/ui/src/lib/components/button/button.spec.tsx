@@ -26,7 +26,7 @@ describe('Button', () => {
     )
 
     expect(screen.getByRole('button')).toHaveTextContent('PrefixFoobarSuffix')
-    expect(screen.getByRole('button').className).toContain('[&_[data-align=prefix]]:mr-1')
-    expect(screen.getByRole('button').className).toContain('[&_[data-align=suffix]]:ml-1')
+    expect(screen.getByRole('button')).toHaveClass('[&_[data-align=prefix]]:mr-1')
+    expect(screen.getByRole('button')).toHaveClass('[&_[data-align=suffix]]:ml-1')
   })
 })
