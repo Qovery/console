@@ -144,12 +144,13 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
 
         <div className="flex min-h-0 flex-1 overflow-hidden rounded-lg border border-neutral">
           <div className="flex w-[266px] flex-shrink-0 flex-col gap-2 overflow-x-hidden overflow-y-scroll rounded-r-md border-r border-neutral bg-surface-neutral-subtle p-3 pt-2">
-            <div className="flex min-h-6 items-center justify-between gap-3 text-ssm font-medium text-neutral">
-              <button type="button" className="text-left" onClick={() => setShowDiff((showDiff) => !showDiff)}>
-                Compare with target
-              </button>
-              <InputToggle small value={showDiff} onChange={setShowDiff} dataTestId="argocd-manifest-diff-toggle" />
-            </div>
+            <InputToggle
+              small
+              value={showDiff}
+              onChange={setShowDiff}
+              title="Compare with target"
+              className="min-h-6 w-full flex-row-reverse justify-between text-ssm [&>div:last-child]:ml-0"
+            />
             <hr className="-mx-3 border-neutral" />
             <InputSearch placeholder="Search…" className="w-full" onChange={setSearchQuery} />
 

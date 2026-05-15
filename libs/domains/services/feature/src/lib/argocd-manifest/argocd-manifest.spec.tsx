@@ -105,9 +105,11 @@ describe('ArgoCdManifest', () => {
   it('should display a diff between target and live state when diff is enabled', async () => {
     const { userEvent } = renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
 
-    expect(await screen.findByText('Compare with target')).toBeInTheDocument()
+    const toggle = screen.getByTestId('input-toggle-button')
 
-    await userEvent.click(await screen.findByTestId('argocd-manifest-diff-toggle'))
+    expect(toggle).toBeInTheDocument()
+
+    await userEvent.click(toggle)
 
     expect(screen.getByTestId('code-diff-original')).toHaveTextContent('"name": "api-target"')
     expect(screen.getByTestId('code-diff-modified')).toHaveTextContent('"name": "api"')
@@ -117,7 +119,7 @@ describe('ArgoCdManifest', () => {
   it('should toggle diff mode when clicking the diff label', async () => {
     const { userEvent } = renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
 
-    await userEvent.click(await screen.findByRole('button', { name: 'Compare with target' }))
+    await userEvent.click(await screen.findByText('Compare with target'))
 
     expect(screen.getByTestId('code-diff-editor')).toBeInTheDocument()
   })
