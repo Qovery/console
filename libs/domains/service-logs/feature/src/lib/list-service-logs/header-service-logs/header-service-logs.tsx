@@ -89,7 +89,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             variant="surface"
             color={isLiveMode ? 'brand' : 'neutral'}
             size="md"
-            className={clsx('gap-1.5 pl-2.5', {
+            className={clsx('pl-2.5', {
               'bg-surface-brand-subtle hover:!bg-surface-brand-component focus:!bg-surface-brand-component': isLiveMode,
             })}
             onClick={() => {
@@ -107,9 +107,14 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           >
             <span className="relative block h-3.5 w-3.5">
               {isLiveMode ? (
-                <Icon iconName="loader" iconStyle="regular" className="absolute left-0 animate-spin" />
+                <Icon
+                  data-align="suffix"
+                  iconName="loader"
+                  iconStyle="regular"
+                  className="absolute left-0 animate-spin"
+                />
               ) : (
-                <Icon iconName="circle-play" iconStyle="regular" className="absolute left-0" />
+                <Icon data-align="suffix" iconName="circle-play" iconStyle="regular" className="absolute left-0" />
               )}
             </span>
             Live
@@ -136,12 +141,11 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                 type="button"
                 variant="outline"
                 color="neutral"
-                className="gap-2"
                 size="md"
                 onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
               >
                 Timeframe
-                <Icon iconName="clock" iconStyle="regular" className="relative top-[1px]" />
+                <Icon data-align="suffix" iconName="clock" iconStyle="regular" className="relative top-[1px]" />
               </Button>
             ) : (
               <Button type="button" size="md" onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}>
@@ -164,16 +168,16 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                     clearDate()
                   }}
                 >
-                  <Icon iconName="xmark" />
+                  <Icon data-align="suffix" iconName="xmark" />
                 </span>
               </Button>
             )}
           </DatePicker>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" variant="outline" color="neutral" className="gap-1.5">
+              <Button size="md" variant="outline" color="neutral">
                 {updateTimeContextValue.utc ? 'UTC' : 'Browser time'}
-                <Icon iconName="chevron-down" iconStyle="regular" />
+                <Icon data-align="suffix" iconName="chevron-down" iconStyle="regular" />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content className="z-header">

@@ -81,14 +81,14 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
         Get the connection URI and connect to the database with your favourite client.
       </p>
       <Button
-        className="max-w-max gap-2"
+        className="max-w-max"
         color="neutral"
         variant="outline"
         size="md"
         onClick={() => handleCopyCredentials(masterCredentials!)}
       >
         Copy connection URI
-        <Icon className="text-sm" iconName="key" iconStyle="regular" />
+        <Icon data-align="suffix" className="text-sm" iconName="key" iconStyle="regular" />
       </Button>
     </div>
   )

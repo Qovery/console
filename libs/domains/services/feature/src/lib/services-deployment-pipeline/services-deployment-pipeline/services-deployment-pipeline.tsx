@@ -191,7 +191,6 @@ export function ServicesDeploymentPipeline() {
             size="sm"
             variant="outline"
             color="neutral"
-            className="gap-1.5"
             onClick={() =>
               openModal({
                 content: <ServicesDeploymentStageModal environmentId={environmentId} onClose={closeModal} />,
@@ -201,7 +200,7 @@ export function ServicesDeploymentPipeline() {
               })
             }
           >
-            <Icon iconName="circle-plus" iconStyle="regular" />
+            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
             Add stage
           </Button>
         </div>

@@ -429,7 +429,7 @@ function RouteComponent() {
                           setAuth0Error(null)
                         }}
                       >
-                        <Icon iconName="lock" className="mr-1.5 text-sm text-neutral-subtle" />
+                        <Icon data-align="prefix" iconName="lock" className="text-sm text-neutral-subtle" />
                         Continue with SAML SSO
                         <LastUsedBadge visible={lastUsedLoginAtPageLoad === 'saml_sso'} />
                       </Button>

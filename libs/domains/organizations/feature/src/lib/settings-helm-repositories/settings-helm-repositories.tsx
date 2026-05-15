@@ -143,9 +143,9 @@ export function PageOrganizationHelmRepositories({
             title="Helm repositories"
             description="Define and manage the helm repository to be used within your organization to deploy applications."
           />
-          <Button size="md" className="absolute right-0 top-0 shrink-0 gap-2" onClick={() => onAddRepository()}>
+          <Button size="md" className="absolute right-0 top-0 shrink-0" onClick={() => onAddRepository()}>
             Add repository
-            <Icon iconName="circle-plus" iconStyle="regular" />
+            <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <div className="max-w-content-with-navigation-left">

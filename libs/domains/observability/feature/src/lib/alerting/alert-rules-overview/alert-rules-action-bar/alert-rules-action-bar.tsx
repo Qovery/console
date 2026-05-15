@@ -85,18 +85,18 @@ export function AlertRulesActionBar({
                 Unselect
               </button>
               <div className="flex gap-3">
-                <Button size="md" variant="outline" className="items-center gap-2" onClick={handleCloneAlertRules}>
-                  <Icon iconName="clone" />
+                <Button size="md" variant="outline" className="items-center" onClick={handleCloneAlertRules}>
+                  <Icon data-align="prefix" iconName="clone" />
                   Clone
                 </Button>
                 <Button
                   size="md"
                   variant="outline"
-                  className="items-center gap-2 text-negative"
+                  className="items-center text-negative"
                   onClick={handleDeleteAllAlertRules}
                   disabled={deletableAlertRules.length === 0}
                 >
-                  <Icon iconName="trash-can" iconStyle="regular" />
+                  <Icon data-align="prefix" iconName="trash-can" iconStyle="regular" />
                   Delete
                 </Button>
               </div>

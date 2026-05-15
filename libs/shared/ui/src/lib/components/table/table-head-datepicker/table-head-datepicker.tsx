@@ -115,7 +115,7 @@ export function TableHeadDatePickerFilter({
               type="button"
               color="neutral"
               size="sm"
-              className="gap-1.5 whitespace-nowrap"
+              className="whitespace-nowrap"
               onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
             >
               {title}
@@ -124,7 +124,7 @@ export function TableHeadDatePickerFilter({
                 className="relative flex h-6 cursor-pointer items-center font-code text-xs"
                 onClick={(event) => cleanFilter(event)}
               >
-                <Icon iconName="xmark" />
+                <Icon data-align="suffix" iconName="xmark" />
               </span>
             </Button>
           ) : (
@@ -132,13 +132,13 @@ export function TableHeadDatePickerFilter({
               type="button"
               color="neutral"
               size="sm"
-              className="items-center gap-1.5 font-code"
+              className="items-center font-code"
               onClick={() => {
                 setIsOpenTimestamp(!isOpenTimestamp)
               }}
             >
               {title}
-              <Icon iconName="angle-down" />
+              <Icon data-align="suffix" iconName="angle-down" />
             </Button>
           )}
         </div>

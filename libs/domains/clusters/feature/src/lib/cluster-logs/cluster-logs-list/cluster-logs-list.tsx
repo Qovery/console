@@ -93,7 +93,7 @@ export function ClusterLogsList({ logs, firstDate, refScrollSection }: ClusterLo
       </div>
       {isScrolledUp && (
         <Button
-          className="absolute bottom-[7px] left-1/2 flex w-72 -translate-x-1/2 items-center justify-center gap-2 text-sm"
+          className="absolute bottom-[7px] left-1/2 flex w-72 -translate-x-1/2 items-center justify-center text-sm"
           variant="solid"
           radius="full"
           size="md"
@@ -109,7 +109,7 @@ export function ClusterLogsList({ logs, firstDate, refScrollSection }: ClusterLo
               {bufferedLogsCount > 999 ? '999+' : bufferedLogsCount}
             </span>
           )}
-          <Icon iconName="arrow-down" />
+          <Icon data-align="suffix" iconName="arrow-down" />
         </Button>
       )}
     </div>

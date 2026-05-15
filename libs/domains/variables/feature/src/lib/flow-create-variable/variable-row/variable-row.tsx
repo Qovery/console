@@ -88,12 +88,12 @@ export function VariableRow(props: VariableRowProps) {
             {openEditor ? (
               <>
                 Close
-                <Icon iconName="angle-up" className="text-neutral-subtle" />
+                <Icon data-align="prefix" iconName="angle-up" className="text-neutral-subtle" />
               </>
             ) : (
               <>
                 Edit
-                <Icon iconName="edit" className="text-neutral-subtle" />
+                <Icon data-align="suffix" iconName="edit" className="text-neutral-subtle" />
               </>
             )}
           </Button>

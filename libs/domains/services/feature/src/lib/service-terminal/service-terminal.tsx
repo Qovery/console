@@ -240,9 +240,8 @@ export function ServiceTerminal({
           variant="surface"
           color="neutral"
           size="md"
-          className="gap-1.5"
         >
-          <Icon iconName="book" />
+          <Icon data-align="prefix" iconName="book" />
           CLI docs
         </ExternalLink>
       </div>

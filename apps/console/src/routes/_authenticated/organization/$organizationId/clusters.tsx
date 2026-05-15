@@ -24,10 +24,12 @@ const Clusters = () => {
           to="/organization/$organizationId/cluster/new"
           params={{ organizationId }}
           as="button"
-          className="items-center gap-2"
+          className="items-center"
+          color="neutral"
+          variant="outline"
           size="md"
         >
-          <Icon iconName="circle-plus" iconStyle="regular" />
+          <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
           Add Cluster
         </Link>
       </EmptyState>
@@ -57,14 +59,8 @@ function RouteComponent() {
         <div className="flex flex-col gap-6">
           <div className="flex justify-between">
             <Heading>Clusters</Heading>
-            <Link
-              to="/organization/$organizationId/cluster/new"
-              params={{ organizationId }}
-              as="button"
-              className="gap-2"
-              size="md"
-            >
-              <Icon iconName="circle-plus" iconStyle="regular" />
+            <Link to="/organization/$organizationId/cluster/new" params={{ organizationId }} as="button" size="md">
+              <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
               Add cluster
             </Link>
           </div>

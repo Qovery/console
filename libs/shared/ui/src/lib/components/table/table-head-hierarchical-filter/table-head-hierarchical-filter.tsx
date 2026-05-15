@@ -379,26 +379,20 @@ export function TableHeadHierarchicalFilter({
         trigger={
           <div className="flex">
             {hasFilter ? (
-              <Button type="button" color="neutral" size="sm" className="gap-1.5 whitespace-nowrap font-code">
+              <Button type="button" color="neutral" size="sm" className="whitespace-nowrap font-code">
                 {title}
                 <span
                   role="button"
                   className="relative flex h-6 cursor-pointer items-center text-xs"
                   onClick={(event) => cleanFilter(event)}
                 >
-                  <Icon iconName="xmark" />
+                  <Icon data-align="suffix" iconName="xmark" />
                 </span>
               </Button>
             ) : (
-              <Button
-                type="button"
-                variant="surface"
-                color="neutral"
-                size="sm"
-                className="items-center gap-1.5 font-code"
-              >
+              <Button type="button" variant="surface" color="neutral" size="sm" className="items-center font-code">
                 {title}
-                <Icon iconName="angle-down" />
+                <Icon data-align="suffix" iconName="angle-down" />
               </Button>
             )}
           </div>

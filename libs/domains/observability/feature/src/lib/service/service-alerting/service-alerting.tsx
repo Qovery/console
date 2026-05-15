@@ -48,11 +48,10 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
                 variant="outline"
                 color="neutral"
                 size="md"
-                className="gap-1.5"
                 onClick={createKeyAlertsModal}
                 disabled={!canCreateAlerts}
               >
-                <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
+                <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" className="text-xs" />
                 New alert
               </Button>
             </div>

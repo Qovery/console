@@ -14,10 +14,10 @@ export function NeedHelp({ className }: NeedHelpProps) {
       size="xs"
       color="brand"
       variant="surface"
-      className={twMerge('w-fit items-center gap-1', className)}
+      className={twMerge('w-fit items-center', className)}
       onClick={toggleAssistantOpen}
     >
-      <Icon iconName="circle-question" iconStyle="regular" className="p-0.5 text-xs" />
+      <Icon data-align="prefix" iconName="circle-question" iconStyle="regular" className="p-0.5 text-xs" />
       <span>Need help here?</span>
     </Button>
   )

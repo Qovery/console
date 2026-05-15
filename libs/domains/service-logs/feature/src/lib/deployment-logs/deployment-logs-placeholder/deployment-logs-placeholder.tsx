@@ -190,7 +190,6 @@ export function DeploymentLogsPlaceholder({
         <ErrorIcon />
         <span className="text-neutral">An error occurred during the precheck step.</span>
         <Link
-          className="gap-1.5"
           as="button"
           variant="surface"
           color="neutral"
@@ -203,7 +202,7 @@ export function DeploymentLogsPlaceholder({
           }}
         >
           Open precheck
-          <Icon iconName="list-check" />
+          <Icon data-align="suffix" iconName="list-check" />
         </Link>
       </div>
     )
@@ -220,7 +219,6 @@ export function DeploymentLogsPlaceholder({
         <ErrorIcon />
         <span className="text-neutral">An error occurred during deployment of another service.</span>
         <Link
-          className="gap-1.5"
           as="button"
           variant="surface"
           color="neutral"
@@ -233,7 +231,7 @@ export function DeploymentLogsPlaceholder({
           }}
         >
           Open pipeline
-          <Icon iconName="timeline" />
+          <Icon data-align="suffix" iconName="timeline" />
         </Link>
       </div>
     )

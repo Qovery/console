@@ -52,11 +52,11 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                   <Button
                     variant="plain"
                     size="xs"
-                    className="flex items-center gap-1"
+                    className="flex items-center"
                     onClick={() => setHideEvents(!hideEvents)}
                   >
                     {hideEvents ? 'Show events' : 'Hide events'}
-                    <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
+                    <Icon data-align="suffix" iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
                   </Button>
                   <SelectTimeRange />
                   <InputSelectSmall

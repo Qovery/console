@@ -411,14 +411,8 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             render={({ field: { name, onChange, value }, fieldState: { error } }) => (
               <>
                 <div className="mb-2 flex justify-end">
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    className="gap-1.5"
-                    onClick={() => setIsValueEditorOpen(true)}
-                  >
-                    <Icon iconName="arrows-maximize" iconStyle="regular" className="text-xs" />
+                  <Button type="button" size="sm" variant="outline" onClick={() => setIsValueEditorOpen(true)}>
+                    <Icon data-align="prefix" iconName="arrows-maximize" iconStyle="regular" className="text-xs" />
                     Open editor
                   </Button>
                 </div>

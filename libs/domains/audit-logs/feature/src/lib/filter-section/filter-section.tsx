@@ -183,7 +183,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
               variant="surface"
               color="neutral"
               size="xs"
-              className="pl-9.5 justify-center gap-1.5 active:scale-[1]"
+              className="pl-9.5 justify-center active:scale-[1]"
               key={badge.key}
             >
               {`${badge.displayedName}: `}
@@ -191,6 +191,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
               {badge.key !== 'timestamp' && <Truncate text={badge.value} truncateLimit={23} />}
               {badge.isDeletable && (
                 <Icon
+                  data-align="suffix"
                   iconName="xmark"
                   className="text-xs leading-4 text-neutral-subtle hover:text-neutral"
                   onClick={() => deleteFilter(badge.key, setFilter)}
@@ -225,7 +226,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                     variant="surface"
                     color="neutral"
                     size="xs"
-                    className={clsx('justify-center gap-1.5 active:scale-[1]', {
+                    className={clsx('justify-center active:scale-[1]', {
                       'rounded-l-full rounded-r-none border-r-0 pr-4': isFirst && !isLast,
                       'rounded-full': isFirst && isLast,
                       'rounded-l-none rounded-r-full border-l-0 pl-4': isLast && !isFirst,
@@ -244,7 +245,11 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                       aria-label="Delete filter"
                     >
                       {badge.isDeletable && (
-                        <Icon iconName="xmark" className="text-xs leading-4 text-neutral-subtle hover:text-neutral" />
+                        <Icon
+                          data-align="suffix"
+                          iconName="xmark"
+                          className="text-xs leading-4 text-neutral-subtle hover:text-neutral"
+                        />
                       )}
                     </button>
                   </Button>
@@ -269,9 +274,9 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
 
       {/* RIGHT: Button stays fixed at top-right */}
       {badges.filter((b) => b.isDeletable).length > 0 && (
-        <Button className="gap-2" size="xs" color="neutral" variant="surface" onClick={clearFilter}>
+        <Button size="xs" color="neutral" variant="surface" onClick={clearFilter}>
           Clear all filters
-          <Icon iconName="xmark" iconStyle="regular" />
+          <Icon data-align="suffix" iconName="xmark" iconStyle="regular" />
         </Button>
       )}
     </div>

@@ -64,7 +64,7 @@ export function ApplicationContainerPortList({
           <div className="flex items-center justify-end px-4 py-3">
             <Button data-testid="add-button" size="md" variant="solid" color="brand" type="button" onClick={onAddPort}>
               Add port
-              <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
+              <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
             </Button>
           </div>
         </BlockContent>

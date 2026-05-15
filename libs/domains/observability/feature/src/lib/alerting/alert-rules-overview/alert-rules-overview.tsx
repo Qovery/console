@@ -255,8 +255,8 @@ export function AlertRulesOverview({
       {onCreateKeyAlerts && (
         <Tooltip content="You need to deploy your service to create alerts" disabled={canCreateAlerts}>
           <div>
-            <Button size="md" className="gap-1.5" onClick={onCreateKeyAlerts} disabled={!canCreateAlerts}>
-              <Icon iconName="plus-large" className="text-xs" />
+            <Button size="md" onClick={onCreateKeyAlerts} disabled={!canCreateAlerts}>
+              <Icon data-align="prefix" iconName="plus-large" className="text-xs" />
               New alert
             </Button>
           </div>
@@ -393,7 +393,7 @@ export function AlertRulesOverview({
                       variant="surface"
                       color="neutral"
                       size="xs"
-                      className="justify-center gap-1.5 pl-0.5"
+                      className="justify-center pl-0.5"
                       to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
                       params={{
                         organizationId,
@@ -404,6 +404,7 @@ export function AlertRulesOverview({
                     >
                       <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-surface-neutral-subtle">
                         <Icon
+                          data-align="prefix"
                           name={match(alertRule.target?.target_type)
                             .with('CONTAINER', () => 'APPLICATION')
                             .otherwise((s) => s)}

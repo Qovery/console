@@ -139,7 +139,7 @@ export function SectionAICopilotConfiguration({
               {hasUnsavedChanges && (
                 <div className="flex items-center gap-3">
                   <Button size="md" color="brand" onClick={handleSaveMode} loading={isUpdating}>
-                    <Icon iconName="check" className="mr-2" />
+                    <Icon data-align="prefix" iconName="check" />
                     Save changes
                   </Button>
                   <Button size="md" color="neutral" variant="outline" onClick={handleCancelMode} disabled={isUpdating}>

@@ -201,8 +201,8 @@ const EnvironmentLastDeploymentContent = () => {
           description="Create and deploy your first service"
         >
           {serviceCount > 0 && (
-            <Button onClick={handleDeploy} color="neutral" size="md" className="gap-1.5">
-              <Icon iconName="rocket" />
+            <Button onClick={handleDeploy} color="neutral" size="md">
+              <Icon data-align="prefix" iconName="rocket" />
               Deploy environment
             </Button>
           )}

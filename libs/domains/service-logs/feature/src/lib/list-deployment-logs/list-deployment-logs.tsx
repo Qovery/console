@@ -188,14 +188,14 @@ const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
       <div className="flex items-center gap-4">
         <DropdownMenu.Root open={open} onOpenChange={setOpen}>
           <DropdownMenu.Trigger asChild>
-            <Button variant="outline" className="gap-1.5">
-              <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
+            <Button variant="outline">
+              <Icon data-align="prefix" iconName="clock-rotate-left" className="text-neutral-subtle" />
               {isLastVersion
                 ? 'Latest'
                 : selectedDeploymentDate
                   ? dateYearMonthDayHourMinuteSecond(new Date(selectedDeploymentDate))
                   : 'Not available'}
-              <Icon iconName="angle-down" />
+              <Icon data-align="suffix" iconName="angle-down" />
             </Button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
@@ -478,7 +478,6 @@ function DeploymentLogsBody({
             <Button
               color="brand"
               variant="surface"
-              className="gap-1.5"
               onClick={() => {
                 posthog.capture('ai-copilot-troubleshoot-triggered', {
                   source: 'deployment-logs',
@@ -490,7 +489,7 @@ function DeploymentLogsBody({
                 sendMessageRef?.current?.(message)
               }}
             >
-              <Icon iconName="sparkles" iconStyle="solid" />
+              <Icon data-align="prefix" iconName="sparkles" iconStyle="solid" />
               Launch diagnostic for this error
             </Button>
           )}

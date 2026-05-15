@@ -43,13 +43,12 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
               <div className="flex gap-2">
                 <Button
                   data-testid="disconnect-button"
-                  className="gap-1"
                   type="button"
                   size="md"
                   onClick={() => props.onDisconnect && props.onDisconnect(false)}
                 >
                   Disconnect
-                  <Icon iconName="circle-xmark" />
+                  <Icon data-align="suffix" iconName="circle-xmark" />
                 </Button>
                 <Button data-testid="permission-button" type="button" size="md" onClick={props.onConfigure}>
                   Manage Permissions

@@ -253,8 +253,8 @@ export function SettingsLabelsAnnotations() {
 
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" className="absolute right-0 top-0 shrink-0 gap-2">
-                <Icon iconName="circle-plus" iconStyle="regular" />
+              <Button size="md" className="absolute right-0 top-0 shrink-0">
+                <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
                 Add new
               </Button>
             </DropdownMenu.Trigger>

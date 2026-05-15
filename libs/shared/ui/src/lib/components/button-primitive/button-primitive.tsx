@@ -37,10 +37,10 @@ const _buttonVariants = cva(
         current: [''],
       },
       size: {
-        xs: ['text-xs', 'h-6', 'px-1.5'],
-        sm: ['text-xs', 'h-7', 'px-2'],
-        md: ['text-sm', 'h-8', 'px-2.5'],
-        lg: ['text-sm', 'h-10', 'px-3'],
+        xs: ['text-ssm', 'h-6', 'px-1.5', '[&_[data-align=prefix]]:mr-1', '[&_[data-align=suffix]]:ml-1'],
+        sm: ['text-ssm', 'h-7', 'px-2', '[&_[data-align=prefix]]:mr-1', '[&_[data-align=suffix]]:ml-1'],
+        md: ['text-sm', 'h-8', 'px-2.5', '[&_[data-align=prefix]]:mr-1.5', '[&_[data-align=suffix]]:ml-1.5'],
+        lg: ['text-sm', 'h-10', 'px-3', '[&_[data-align=prefix]]:mr-1.5', '[&_[data-align=suffix]]:ml-1.5'],
       },
       radius: {
         none: [],

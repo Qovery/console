@@ -33,9 +33,9 @@ export function FlowCreateVariable({
     <Section>
       <div className="flex justify-between">
         <Heading className="mb-2">Environment variables</Heading>
-        <Button className="gap-2" size="md" onClick={onAdd}>
+        <Button size="md" onClick={onAdd}>
           Add Variable
-          <Icon iconName="plus-circle" iconStyle="regular" />
+          <Icon data-align="suffix" iconName="plus-circle" iconStyle="regular" />
         </Button>
       </div>
 

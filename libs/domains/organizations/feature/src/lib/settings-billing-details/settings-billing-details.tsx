@@ -245,11 +245,10 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
                         onClick={() => handleAddCard()}
                         size="md"
                         variant="outline"
-                        className="gap-2"
                         data-testid="add-new-card-button"
                       >
                         Add new card
-                        <Icon iconName="circle-plus" iconStyle="regular" />
+                        <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
                       </Button>
                     </div>
                   </div>

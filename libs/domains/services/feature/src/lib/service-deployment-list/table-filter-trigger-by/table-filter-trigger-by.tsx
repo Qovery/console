@@ -79,7 +79,7 @@ export function TableFilterTriggerBy({
         <div className="relative inline-block">
           <Popover.Trigger>
             <Button
-              className={twMerge('gap-1 whitespace-nowrap text-xs', column.getIsFiltered() ? 'pr-6' : '')}
+              className={twMerge('whitespace-nowrap text-xs', column.getIsFiltered() ? 'pr-6' : '')}
               color={column.getIsFiltered() ? 'brand' : 'neutral'}
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
             >
@@ -92,7 +92,7 @@ export function TableFilterTriggerBy({
               ) : (
                 <>
                   {column.columnDef.header?.toString()}
-                  <Icon iconName="chevron-down" />
+                  <Icon data-align="suffix" iconName="chevron-down" />
                 </>
               )}
             </Button>

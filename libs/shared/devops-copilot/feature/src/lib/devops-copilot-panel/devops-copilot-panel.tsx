@@ -430,13 +430,13 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                             key={`${label}${link}`}
                             type="button"
                             variant="surface"
-                            className="inline-flex max-w-max gap-2 truncate"
+                            className="inline-flex max-w-max truncate"
                             onClick={() => {
                               setInputMessage(label)
                               handleSendMessage(label)
                             }}
                           >
-                            <Icon iconName="arrow-right" />
+                            <Icon data-align="prefix" iconName="arrow-right" />
                             {label}
                           </Button>
                         ))}

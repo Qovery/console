@@ -95,7 +95,7 @@ export function IssueOverview() {
                         variant="surface"
                         color="neutral"
                         size="xs"
-                        className="justify-center gap-1.5 pl-0.5"
+                        className="justify-center pl-0.5"
                         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
                         params={{
                           organizationId,
@@ -106,6 +106,7 @@ export function IssueOverview() {
                       >
                         <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white">
                           <Icon
+                            data-align="prefix"
                             name={match(alert.target.target_type)
                               .with('CONTAINER', () => 'APPLICATION')
                               .otherwise((s) => s)}

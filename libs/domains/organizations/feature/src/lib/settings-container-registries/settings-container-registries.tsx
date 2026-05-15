@@ -268,8 +268,8 @@ export function SettingsContainerRegistries() {
             description="Define and manage the container registry to be used within your organization to deploy applications."
           />
 
-          <Button className="absolute right-0 top-0 gap-2" size="md" onClick={() => onAddRegistry()}>
-            <Icon iconName="circle-plus" iconStyle="regular" />
+          <Button className="absolute right-0 top-0" size="md" onClick={() => onAddRegistry()}>
+            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
             Add registry
           </Button>
         </div>

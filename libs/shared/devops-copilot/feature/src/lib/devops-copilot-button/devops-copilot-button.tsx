@@ -33,9 +33,8 @@ export function DevopsCopilotButton() {
           trigger: 'button-click',
         })
       }}
-      className="gap-1.5"
     >
-      <Icon iconName="sparkles" iconStyle="solid" className="text-xs text-brand" />
+      <Icon data-align="prefix" iconName="sparkles" iconStyle="solid" className="text-xs text-brand" />
       AI Copilot
     </Button>
   )

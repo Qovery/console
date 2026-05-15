@@ -304,9 +304,8 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                               <Button
                                 type="button"
                                 color="neutral"
-                                variant="surface"
+                                variant="outline"
                                 size="md"
-                                className="gap-2"
                                 onClick={() => {
                                   openModal({
                                     options: {
@@ -331,7 +330,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                   })
                                 }}
                               >
-                                Edit <Icon iconName="pen" iconStyle="solid" />
+                                Edit <Icon data-align="suffix" iconName="pen" />
                               </Button>
                             </div>
                             <div className="flex flex-col gap-4 border-t border-neutral p-4">

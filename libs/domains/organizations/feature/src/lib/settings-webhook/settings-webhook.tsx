@@ -184,8 +184,8 @@ export function SettingsWebhook() {
             description="Qovery allows you to create webhooks at organization-level so that, when an event happens on an
               environment within your organization, you can get notified on external applications (for instance, Slack)."
           />
-          <Button size="md" className="absolute right-0 top-0 shrink-0 gap-2" onClick={openAddNew}>
-            <Icon iconName="circle-plus" iconStyle="regular" />
+          <Button size="md" className="absolute right-0 top-0 shrink-0" onClick={openAddNew}>
+            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
             Add new
           </Button>
         </div>

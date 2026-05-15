@@ -329,9 +329,9 @@ export function AuditLogs({
               <div className="flex h-14 items-center justify-center border-b border-neutral">
                 <p className="flex items-center gap-3 text-sm text-neutral">
                   {auditLogsRetentionInDays} days limit reached.
-                  <Button type="button" variant="outline" className="gap-1.5" onClick={() => showIntercom()}>
+                  <Button type="button" variant="outline" onClick={() => showIntercom()}>
                     <span>Upgrade plan</span>
-                    <Icon iconName="arrow-up-right-from-square" className="text-neutral" />
+                    <Icon data-align="suffix" iconName="arrow-up-right-from-square" className="text-neutral" />
                   </Button>
                 </p>
               </div>

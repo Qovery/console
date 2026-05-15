@@ -97,7 +97,7 @@ function Row({ index, remove, environmentId }: { index: number; remove: UseField
             onClick={() => setOpenEditor(!openEditor)}
           >
             {openEditor ? 'Close json' : 'Open json'}
-            <Icon iconName="angle-down" />
+            <Icon data-align="suffix" iconName="angle-down" />
           </Button>
         ) : (
           <Controller
@@ -183,7 +183,6 @@ export function ValuesOverrideArgumentsSetting({
   const addVariableButton = (
     <Button
       type="button"
-      className="gap-2"
       size={isSetting ? 'md' : 'lg'}
       onClick={() =>
         append({
@@ -194,7 +193,7 @@ export function ValuesOverrideArgumentsSetting({
       }
     >
       Add Variable
-      <Icon iconName="plus-circle" iconStyle={isSetting ? 'regular' : undefined} />
+      <Icon data-align="suffix" iconName="plus-circle" iconStyle={isSetting ? 'regular' : undefined} />
     </Button>
   )
 
@@ -247,10 +246,10 @@ export function ValuesOverrideArgumentsSetting({
         size="md"
         variant="outline"
         color="neutral"
-        className="mb-10 gap-2"
+        className="mb-10"
         onClick={() => createHelmDefaultValuesMutation()}
       >
-        See default values.yaml <Icon className="text-xs" iconName="arrow-up-right-from-square" />
+        See default values.yaml <Icon data-align="suffix" className="text-xs" iconName="arrow-up-right-from-square" />
       </Button>
       {!isSetting ? (
         <form onSubmit={onSubmit} className="w-full">

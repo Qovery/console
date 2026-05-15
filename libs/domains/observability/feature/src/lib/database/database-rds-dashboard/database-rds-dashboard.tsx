@@ -67,7 +67,7 @@ function DatabaseRdsDashboardContent() {
                 variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
                 color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
                 size="md"
-                className={clsx('gap-1.5 pl-2.5', isLiveUpdateEnabled && 'border border-transparent')}
+                className={clsx('pl-2.5', isLiveUpdateEnabled && 'border border-transparent')}
                 onClick={() => {
                   if (!isLiveUpdateEnabled) {
                     if (timeRange !== '5m' && timeRange !== '15m' && timeRange !== '30m' && timeRange !== '1h') {
@@ -77,7 +77,11 @@ function DatabaseRdsDashboardContent() {
                   setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
                 }}
               >
-                <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
+                <Icon
+                  data-align="prefix"
+                  iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'}
+                  iconStyle="regular"
+                />
                 Live
               </Button>
             </Tooltip>
@@ -95,23 +99,22 @@ function DatabaseRdsDashboardContent() {
             />
           </div>
           <div className="flex flex-wrap gap-2">
-            <Button
-              variant="plain"
-              size="xs"
-              className="flex items-center gap-1"
-              onClick={() => setHideEvents(!hideEvents)}
-            >
+            <Button variant="plain" size="xs" className="flex items-center" onClick={() => setHideEvents(!hideEvents)}>
               {hideEvents ? 'Show events' : 'Hide events'}
-              <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
+              <Icon data-align="suffix" iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
             </Button>
             <Button
               variant="plain"
               size="xs"
-              className="flex items-center gap-1"
+              className="flex items-center"
               onClick={() => setExpandCharts(!expandCharts)}
             >
               {expandCharts ? 'Collapse charts' : 'Expand charts'}
-              <Icon iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'} iconStyle="light" />
+              <Icon
+                data-align="suffix"
+                iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'}
+                iconStyle="light"
+              />
             </Button>
           </div>
         </div>

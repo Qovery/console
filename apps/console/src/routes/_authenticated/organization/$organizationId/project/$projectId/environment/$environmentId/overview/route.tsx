@@ -117,11 +117,10 @@ function RouteComponent() {
               <Link
                 as="button"
                 variant="outline"
-                className="gap-2"
                 to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
                 params={{ organizationId, projectId, environmentId }}
               >
-                <Icon iconName="circle-plus" iconStyle="regular" />
+                <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
                 New service
               </Link>
             </div>

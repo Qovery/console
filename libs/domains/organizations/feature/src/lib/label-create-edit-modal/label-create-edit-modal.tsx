@@ -164,7 +164,7 @@ export function LabelCreateEditModal({ isEdit, labelsGroup, organizationId, onCl
             }
           >
             Add label
-            <Icon iconName="plus" className="ml-2" />
+            <Icon data-align="suffix" iconName="plus" />
           </Button>
         </div>
       </ModalCrud>

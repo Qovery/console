@@ -62,15 +62,8 @@ export function StepProject(props: StepProjectProps) {
         />
         <div className="mt-10 flex justify-between border-t border-neutral pt-5">
           {onFirstStepBack ? (
-            <Button
-              type="button"
-              size="lg"
-              color="neutral"
-              variant="surface"
-              className="gap-2"
-              onClick={onFirstStepBack}
-            >
-              <Icon iconName="arrow-left" iconStyle="solid" />
+            <Button type="button" size="lg" color="neutral" variant="surface" onClick={onFirstStepBack}>
+              <Icon data-align="prefix" iconName="arrow-left" iconStyle="solid" />
               Back
             </Button>
           ) : (

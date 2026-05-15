@@ -70,14 +70,14 @@ export function EnvironmentStages({
         <div className="flex items-center gap-2">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button variant="outline" className="gap-1.5" size="md">
-                <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
+              <Button variant="outline" size="md">
+                <Icon data-align="prefix" iconName="clock-rotate-left" className="text-neutral-subtle" />
                 {isLastVersion
                   ? 'Latest'
                   : dateYearMonthDayHourMinuteSecond(
                       new Date(currentDeploymentHistory?.auditing_data.created_at ?? '')
                     )}
-                <Icon iconName="angle-down" />
+                <Icon data-align="suffix" iconName="angle-down" />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">

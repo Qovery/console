@@ -40,7 +40,6 @@ export const GpuResourcesSettings = ({ cluster, clusterRegion = '' }: GpuResourc
         color="neutral"
         variant="surface"
         size="md"
-        className="gap-2"
         onClick={() => {
           openModal({
             options: {
@@ -74,7 +73,7 @@ export const GpuResourcesSettings = ({ cluster, clusterRegion = '' }: GpuResourc
           })
         }}
       >
-        Edit <Icon iconName="pen" iconStyle="solid" />
+        Edit <Icon data-align="suffix" iconName="pen" />
       </Button>
     </div>
   )

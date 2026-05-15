@@ -172,10 +172,9 @@ function EnvironmentsTableContent() {
                 onCreateEnvClicked()
               }}
               variant="solid"
-              className="gap-1.5"
               size="md"
             >
-              <Icon iconName="circle-plus" iconStyle="regular" />
+              <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
               New Environment
             </Button>
           </div>

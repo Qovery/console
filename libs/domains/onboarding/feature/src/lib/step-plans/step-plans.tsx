@@ -167,10 +167,9 @@ export default function StepPlans(props: StepPlansProps) {
                     size="lg"
                     color="neutral"
                     variant="surface"
-                    className="gap-2"
                     onClick={() => navigate({ to: '/onboarding/personalize' })}
                   >
-                    <Icon iconName="arrow-left" iconStyle="solid" />
+                    <Icon data-align="prefix" iconName="arrow-left" iconStyle="solid" />
                     Back
                   </Button>
                 ) : (
@@ -179,7 +178,6 @@ export default function StepPlans(props: StepPlansProps) {
                     size="lg"
                     color="neutral"
                     variant="surface"
-                    className="gap-2"
                     onClick={() => {
                       if (currentOrganizationId) {
                         navigate({ to: ENVIRONMENTS_URL(currentOrganizationId, currentProjectId) })
@@ -188,7 +186,7 @@ export default function StepPlans(props: StepPlansProps) {
                       }
                     }}
                   >
-                    <Icon iconName="arrow-left" iconStyle="solid" />
+                    <Icon data-align="prefix" iconName="arrow-left" iconStyle="solid" />
                     Back
                   </Button>
                 )}

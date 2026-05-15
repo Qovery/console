@@ -197,11 +197,10 @@ export function SectionProductionHealth() {
               as="button"
               color="neutral"
               size="md"
-              className="gap-1.5"
               to="/organization/$organizationId/cluster/new"
               params={{ organizationId }}
             >
-              <Icon iconName="circle-plus" />
+              <Icon data-align="prefix" iconName="circle-plus" />
               Create cluster
             </Link>
           </EmptyState>

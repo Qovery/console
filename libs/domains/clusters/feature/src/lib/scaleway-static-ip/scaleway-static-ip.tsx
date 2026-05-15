@@ -72,7 +72,7 @@ export function ScalewayStaticIp({
                     <ExternalLink
                       as="button"
                       href={staticIpFeature.cloud_provider_feature_documentation ?? undefined}
-                      className="relative -top-1 gap-1 px-1.5"
+                      className="relative -top-1 px-1.5"
                       color="neutral"
                       variant="surface"
                       size="xs"

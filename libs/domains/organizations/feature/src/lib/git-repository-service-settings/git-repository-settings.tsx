@@ -133,7 +133,7 @@ export function GitRepositorySettings({
             type="button"
             variant="surface"
             size="md"
-            className="gap-1 pr-2"
+            className="pr-2"
             onClick={() =>
               openModal({
                 content: (
@@ -148,7 +148,7 @@ export function GitRepositorySettings({
             }
           >
             Edit
-            <Icon iconName="triangle-exclamation" className="text-sm text-warning" />
+            <Icon data-align="suffix" iconName="triangle-exclamation" className="text-sm text-warning" />
           </Button>
         </div>
       )}

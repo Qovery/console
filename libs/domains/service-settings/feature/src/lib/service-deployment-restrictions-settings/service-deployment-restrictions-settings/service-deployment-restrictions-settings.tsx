@@ -82,12 +82,11 @@ export function ServiceDeploymentRestrictionsSettings() {
             variant="solid"
             color="brand"
             type="button"
-            className="gap-2"
             onClick={() => openCrudModal()}
             disabled={!isSupportedService(service)}
           >
             New Restriction
-            <Icon iconName="circle-plus" iconStyle="regular" />
+            <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
           </Button>
         </SettingsHeading>
 

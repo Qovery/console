@@ -54,8 +54,8 @@ export function GitRepository({ gitRepository }: { gitRepository: ApplicationGit
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Button color="neutral" variant="outline" size="xs" className="gap-1">
-            <Icon iconName="code-branch" iconStyle="regular" height={14} width={14} />
+          <Button color="neutral" variant="outline" size="xs">
+            <Icon data-align="prefix" iconName="code-branch" iconStyle="regular" height={14} width={14} />
             <Truncate text={gitRepository.branch} truncateLimit={17} />
           </Button>
         </a>
@@ -234,9 +234,13 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
               color="neutral"
               size="xs"
               as="button"
-              className="gap-1"
             >
-              <Icon width={16} height={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
+              <Icon
+                data-align="prefix"
+                width={16}
+                height={16}
+                name={containerRegistryKindToIcon(containerImage.registry.kind)}
+              />
               <span className="truncate">
                 <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
               </span>
@@ -261,9 +265,8 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
               color="neutral"
               size="xs"
               as="button"
-              className="gap-1"
             >
-              <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
+              <Icon data-align="prefix" width={16} name={IconEnum.HELM_OFFICIAL} />
               <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
             </ExternalLink>
           )}
@@ -288,7 +291,6 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
               color="neutral"
               variant="outline"
               size="xs"
-              className="gap-1"
               onClick={() => {
                 if (!databaseSource.masterCredentials) {
                   return
@@ -296,7 +298,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
                 handleCopyCredentials(databaseSource.masterCredentials)
               }}
             >
-              <Icon iconName="key" iconStyle="regular" />
+              <Icon data-align="prefix" iconName="key" iconStyle="regular" />
               Connection URI
             </Button>
           )}
@@ -342,10 +344,10 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           environmentId={environmentId}
           serviceId={serviceId}
         >
-          <Button className="gap-1" size="xs" color="neutral" variant="outline">
-            <Icon iconName="link" iconStyle="regular" />
+          <Button size="xs" color="neutral" variant="outline">
+            <Icon data-align="prefix" iconName="link" iconStyle="regular" />
             Links
-            <Icon iconName="angle-down" iconStyle="regular" />
+            <Icon data-align="suffix" iconName="angle-down" iconStyle="regular" />
           </Button>
         </ServiceLinksPopover>
       )}
