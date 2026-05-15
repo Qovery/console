@@ -70,14 +70,13 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               qovery cluster kubeconfig --cluster-id 000
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-xs"
-                data-align="suffix"
               />
             </button>
           </div>
@@ -109,14 +108,13 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               export KUBECONFIG=&lt;path&gt;
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-xs"
-                data-align="suffix"
               />
             </button>
           </div>
@@ -143,14 +141,13 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               kubectl
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-xs"
-                data-align="suffix"
               />
             </button>
           </div>
@@ -166,14 +163,13 @@ exports[`ClusterAccessModal should match snapshot 1`] = `
               k9s
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-xs"
-                data-align="suffix"
               />
             </button>
           </div>
@@ -255,14 +251,13 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               qovery cluster debug-pod --cluster-id 000
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-xs"
-                data-align="suffix"
               />
             </button>
           </div>
@@ -289,14 +284,13 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               kubectl
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-xs"
-                data-align="suffix"
               />
             </button>
           </div>
@@ -312,14 +306,13 @@ exports[`ClusterAccessModal should match snapshot with SELF_MANAGED type 1`] = `
               k9s
             </div>
             <button
-              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
+              class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
               type="button"
             >
               Copy
               <i
                 aria-hidden="true"
                 class="fa-regular fa-copy text-xs"
-                data-align="suffix"
               />
             </button>
           </div>

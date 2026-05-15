@@ -202,7 +202,7 @@ export function DeploymentLogsPlaceholder({
           }}
         >
           Open precheck
-          <Icon data-align="suffix" iconName="list-check" />
+          <Icon iconName="list-check" />
         </Link>
       </div>
     )
@@ -231,7 +231,7 @@ export function DeploymentLogsPlaceholder({
           }}
         >
           Open pipeline
-          <Icon data-align="suffix" iconName="timeline" />
+          <Icon iconName="timeline" />
         </Link>
       </div>
     )

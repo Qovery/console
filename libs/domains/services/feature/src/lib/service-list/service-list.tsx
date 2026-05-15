@@ -354,7 +354,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
           to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
           params={{ organizationId, projectId, environmentId }}
         >
-          <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+          <Icon iconName="circle-plus" iconStyle="regular" />
           New service
         </Link>
       </EmptyState>

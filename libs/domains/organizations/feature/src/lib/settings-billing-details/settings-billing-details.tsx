@@ -248,7 +248,7 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
                         data-testid="add-new-card-button"
                       >
                         Add new card
-                        <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
+                        <Icon iconName="circle-plus" iconStyle="regular" />
                       </Button>
                     </div>
                   </div>

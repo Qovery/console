@@ -330,7 +330,7 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                   })
                                 }}
                               >
-                                Edit <Icon data-align="suffix" iconName="pen" />
+                                Edit <Icon iconName="pen" />
                               </Button>
                             </div>
                             <div className="flex flex-col gap-4 border-t border-neutral p-4">

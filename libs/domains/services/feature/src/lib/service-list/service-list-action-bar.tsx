@@ -366,13 +366,13 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
                 onClick={() => handleDeployAllServices()}
                 disabled={deployableServices.length === 0}
               >
-                Deploy selected <Icon data-align="suffix" iconName="play" />
+                Deploy selected <Icon iconName="play" />
               </Button>
             </Tooltip>
             <DropdownMenu.Root modal={false}>
               <DropdownMenu.Trigger asChild>
                 <Button color="neutral" size="md" variant="surface" className="items-center">
-                  More <Icon data-align="suffix" iconName="angle-down" />
+                  More <Icon iconName="angle-down" />
                 </Button>
               </DropdownMenu.Trigger>
               <DropdownMenu.Content>

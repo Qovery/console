@@ -35,7 +35,7 @@ export function FlowCreateVariable({
         <Heading className="mb-2">Environment variables</Heading>
         <Button size="md" onClick={onAdd}>
           Add Variable
-          <Icon data-align="suffix" iconName="plus-circle" iconStyle="regular" />
+          <Icon iconName="plus-circle" iconStyle="regular" />
         </Button>
       </div>
 

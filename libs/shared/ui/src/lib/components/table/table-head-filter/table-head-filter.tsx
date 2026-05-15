@@ -272,13 +272,13 @@ export function TableHeadFilter<T>({
               <Button type="button" color="neutral" size="sm" className="whitespace-nowrap font-code">
                 {title} {!hideFilterNumber ? `(${dataFilterNumber})` : ''}
                 <span role="button" className="flex" onClick={(event) => cleanFilter(event)}>
-                  <Icon data-align="suffix" iconName="xmark" />
+                  <Icon iconName="xmark" />
                 </span>
               </Button>
             ) : (
               <Button type="button" variant="surface" color="neutral" size="sm" className="items-center font-code">
                 {title}
-                <Icon data-align="suffix" iconName="angle-down" />
+                <Icon iconName="angle-down" />
               </Button>
             )}
           </div>

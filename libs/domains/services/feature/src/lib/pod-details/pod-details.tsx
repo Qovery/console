@@ -65,7 +65,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
         className="relative z-dropdown max-w-fit"
       >
         Logs
-        <Icon data-align="suffix" iconName="scroll" />
+        <Icon iconName="scroll" />
       </Link>
       {filteredContainers.length > 1 && (
         <div className="absolute left-[23.5px] top-8 h-[calc(100%-48px)] w-[1px] gap-2 bg-surface-neutral-component" />

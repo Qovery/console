@@ -28,7 +28,7 @@ export function ProjectList() {
           Your {pluralize(projects?.length ?? 0, 'project', 'projects')}
         </Heading>
         <Button type="button" color="brand" size="sm" onClick={() => createProjectModal()}>
-          <Icon data-align="prefix" iconName="circle-plus" />
+          <Icon iconName="circle-plus" />
           New project
         </Button>
       </div>
@@ -39,7 +39,7 @@ export function ProjectList() {
           icon="folder-closed"
         >
           <Button color="neutral" size="md" onClick={() => createProjectModal()}>
-            <Icon data-align="prefix" iconName="circle-plus" />
+            <Icon iconName="circle-plus" />
             Create project
           </Button>
         </EmptyState>

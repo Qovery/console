@@ -17,7 +17,7 @@ export function NeedHelp({ className }: NeedHelpProps) {
       className={twMerge('w-fit items-center', className)}
       onClick={toggleAssistantOpen}
     >
-      <Icon data-align="prefix" iconName="circle-question" iconStyle="regular" className="p-0.5 text-xs" />
+      <Icon iconName="circle-question" iconStyle="regular" className="p-0.5 text-xs" />
       <span>Need help here?</span>
     </Button>
   )

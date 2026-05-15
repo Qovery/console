@@ -145,7 +145,7 @@ export function PageOrganizationHelmRepositories({
           />
           <Button size="md" className="absolute right-0 top-0 shrink-0" onClick={() => onAddRepository()}>
             Add repository
-            <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <div className="max-w-content-with-navigation-left">

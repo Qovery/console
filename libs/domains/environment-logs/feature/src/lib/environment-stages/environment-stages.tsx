@@ -71,13 +71,13 @@ export function EnvironmentStages({
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
               <Button variant="outline" size="md">
-                <Icon data-align="prefix" iconName="clock-rotate-left" className="text-neutral-subtle" />
+                <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
                 {isLastVersion
                   ? 'Latest'
                   : dateYearMonthDayHourMinuteSecond(
                       new Date(currentDeploymentHistory?.auditing_data.created_at ?? '')
                     )}
-                <Icon data-align="suffix" iconName="angle-down" />
+                <Icon iconName="angle-down" />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">

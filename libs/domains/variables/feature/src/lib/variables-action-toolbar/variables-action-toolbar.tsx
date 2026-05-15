@@ -59,7 +59,7 @@ export function VariablesActionToolbar({
         {showImportButton ? (
           <DropdownMenu.Trigger asChild>
             <Button color="neutral" variant="outline" size="md">
-              <Icon data-align="prefix" iconName="arrow-up-from-line" iconStyle="regular" />
+              <Icon iconName="arrow-up-from-line" iconStyle="regular" />
               Import variable
             </Button>
           </DropdownMenu.Trigger>
@@ -103,7 +103,7 @@ export function VariablesActionToolbar({
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <Button color="brand" variant="solid" size="md">
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             New variable
           </Button>
         </DropdownMenu.Trigger>

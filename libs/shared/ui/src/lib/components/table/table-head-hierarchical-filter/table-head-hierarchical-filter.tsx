@@ -386,13 +386,13 @@ export function TableHeadHierarchicalFilter({
                   className="relative flex h-6 cursor-pointer items-center text-xs"
                   onClick={(event) => cleanFilter(event)}
                 >
-                  <Icon data-align="suffix" iconName="xmark" />
+                  <Icon iconName="xmark" />
                 </span>
               </Button>
             ) : (
               <Button type="button" variant="surface" color="neutral" size="sm" className="items-center font-code">
                 {title}
-                <Icon data-align="suffix" iconName="angle-down" />
+                <Icon iconName="angle-down" />
               </Button>
             )}
           </div>

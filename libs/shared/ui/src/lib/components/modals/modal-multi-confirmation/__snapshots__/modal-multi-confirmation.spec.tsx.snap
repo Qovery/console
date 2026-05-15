@@ -112,13 +112,13 @@ exports[`ModalMultiConfirmation should match delete mode without description 1`]
         class="flex justify-end gap-3"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-10 px-3 gap-x-1.5 rounded-lg text-neutral-subtle hover:bg-surface-neutral-subtle"
           type="button"
         >
           Cancel
         </button>
         <button
-          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-negative-strong text-sm h-10 px-3 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-lg bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
+          class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-negative-strong text-sm h-10 px-3 gap-x-1.5 rounded-lg bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
           disabled=""
           type="submit"
         >

@@ -51,7 +51,7 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
                 onClick={createKeyAlertsModal}
                 disabled={!canCreateAlerts}
               >
-                <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" className="text-xs" />
+                <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
                 New alert
               </Button>
             </div>

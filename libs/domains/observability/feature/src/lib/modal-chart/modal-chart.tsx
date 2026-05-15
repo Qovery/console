@@ -56,7 +56,7 @@ export function ModalChart({ children, open, onOpenChange, title, description }:
                     onClick={() => setHideEvents(!hideEvents)}
                   >
                     {hideEvents ? 'Show events' : 'Hide events'}
-                    <Icon data-align="suffix" iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
+                    <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
                   </Button>
                   <SelectTimeRange />
                   <InputSelectSmall

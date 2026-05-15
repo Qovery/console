@@ -97,7 +97,7 @@ function Row({ index, remove, environmentId }: { index: number; remove: UseField
             onClick={() => setOpenEditor(!openEditor)}
           >
             {openEditor ? 'Close json' : 'Open json'}
-            <Icon data-align="suffix" iconName="angle-down" />
+            <Icon iconName="angle-down" />
           </Button>
         ) : (
           <Controller
@@ -193,7 +193,7 @@ export function ValuesOverrideArgumentsSetting({
       }
     >
       Add Variable
-      <Icon data-align="suffix" iconName="plus-circle" iconStyle={isSetting ? 'regular' : undefined} />
+      <Icon iconName="plus-circle" iconStyle={isSetting ? 'regular' : undefined} />
     </Button>
   )
 
@@ -249,7 +249,7 @@ export function ValuesOverrideArgumentsSetting({
         className="mb-10"
         onClick={() => createHelmDefaultValuesMutation()}
       >
-        See default values.yaml <Icon data-align="suffix" className="text-xs" iconName="arrow-up-right-from-square" />
+        See default values.yaml <Icon className="text-xs" iconName="arrow-up-right-from-square" />
       </Button>
       {!isSetting ? (
         <form onSubmit={onSubmit} className="w-full">

@@ -132,7 +132,7 @@ export function SubnetsForm({ control, name, title, callout, required = false }:
         onClick={() => append({ A: '', B: '', C: '' })}
       >
         Add subnets
-        <Icon data-align="suffix" iconName="plus" />
+        <Icon iconName="plus" />
       </Button>
     </div>
   )

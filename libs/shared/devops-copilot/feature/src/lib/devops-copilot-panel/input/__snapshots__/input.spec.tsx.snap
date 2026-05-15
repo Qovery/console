@@ -14,7 +14,7 @@ exports[`Input should match snapshot when loading 1`] = `
         class="flex items-end justify-end p-2"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-subtle transition-colors hover:text-neutral"
+          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm px-2 gap-x-1 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-subtle transition-colors hover:text-neutral"
           data-state="closed"
           type="button"
         >
@@ -25,7 +25,6 @@ exports[`Input should match snapshot when loading 1`] = `
           <i
             aria-hidden="true"
             class="fa-light fa-stop absolute left-0 right-0 m-auto opacity-0 group-hover:opacity-100"
-            data-align="suffix"
           />
         </button>
       </div>
@@ -48,14 +47,13 @@ exports[`Input should match snapshot when not loading 1`] = `
         class="flex items-end justify-end p-2"
       >
         <button
-          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-subtle transition-colors hover:text-neutral"
+          class="inline-flex items-center shrink-0 font-medium active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm px-2 gap-x-1 rounded-full bg-surface-neutral-component hover:bg-surface-neutral-componentHover group relative bottom-0.5 h-7 w-7 min-w-7 justify-center text-neutral-subtle transition-colors hover:text-neutral"
           data-state="closed"
           type="button"
         >
           <i
             aria-hidden="true"
             class="fa-regular fa-arrow-up "
-            data-align="suffix"
           />
         </button>
       </div>

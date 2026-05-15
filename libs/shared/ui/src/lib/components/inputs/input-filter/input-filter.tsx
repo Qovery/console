@@ -36,7 +36,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
       {!isOpen && (
         <Button onClick={() => setIsOpen(true)} type="button" variant="surface" color="neutral">
           {name}
-          <Icon data-align="suffix" iconName="magnifying-glass" />
+          <Icon iconName="magnifying-glass" />
         </Button>
       )}
       {isOpen && (
@@ -74,7 +74,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
                       setIsOpen(false)
                     }}
                   >
-                    <Icon data-align="suffix" iconName="xmark" />
+                    <Icon iconName="xmark" />
                   </span>
                 </>
               )}

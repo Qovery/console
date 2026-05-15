@@ -30,7 +30,7 @@ export function ApplicationContainerPortSettingsList({
         >
           <Button size="md" variant="solid" color="brand" type="button" data-testid="add-button" onClick={onAddPort}>
             Add port
-            <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </SettingsHeading>
       </div>

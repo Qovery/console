@@ -191,7 +191,6 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
               {badge.key !== 'timestamp' && <Truncate text={badge.value} truncateLimit={23} />}
               {badge.isDeletable && (
                 <Icon
-                  data-align="suffix"
                   iconName="xmark"
                   className="text-xs leading-4 text-neutral-subtle hover:text-neutral"
                   onClick={() => deleteFilter(badge.key, setFilter)}
@@ -245,11 +244,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
                       aria-label="Delete filter"
                     >
                       {badge.isDeletable && (
-                        <Icon
-                          data-align="suffix"
-                          iconName="xmark"
-                          className="text-xs leading-4 text-neutral-subtle hover:text-neutral"
-                        />
+                        <Icon iconName="xmark" className="text-xs leading-4 text-neutral-subtle hover:text-neutral" />
                       )}
                     </button>
                   </Button>
@@ -276,7 +271,7 @@ export function FilterSection({ clearFilter, queryParams, targetTypeSelectedItem
       {badges.filter((b) => b.isDeletable).length > 0 && (
         <Button size="xs" color="neutral" variant="surface" onClick={clearFilter}>
           Clear all filters
-          <Icon data-align="suffix" iconName="xmark" iconStyle="regular" />
+          <Icon iconName="xmark" iconStyle="regular" />
         </Button>
       )}
     </div>

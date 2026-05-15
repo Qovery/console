@@ -148,7 +148,7 @@ export function GitRepositorySettings({
             }
           >
             Edit
-            <Icon data-align="suffix" iconName="triangle-exclamation" className="text-sm text-warning" />
+            <Icon iconName="triangle-exclamation" className="text-sm text-warning" />
           </Button>
         </div>
       )}

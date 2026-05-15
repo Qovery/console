@@ -55,7 +55,7 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
               ) : (
                 <>
                   {column.columnDef.header?.toString()}
-                  <Icon data-align="suffix" iconName="chevron-down" />
+                  <Icon iconName="chevron-down" />
                 </>
               )}
             </Button>

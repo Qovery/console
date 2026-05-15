@@ -189,7 +189,7 @@ export function EnvironmentSection({
           <>
             <span className="text-sm text-neutral-subtle">No {title.toLowerCase()} environment created yet</span>
             <Button size="md" variant="outline" onClick={onCreateEnvClicked}>
-              <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+              <Icon iconName="circle-plus" iconStyle="regular" />
               Create
             </Button>
           </>

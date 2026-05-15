@@ -107,14 +107,9 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           >
             <span className="relative block h-3.5 w-3.5">
               {isLiveMode ? (
-                <Icon
-                  data-align="suffix"
-                  iconName="loader"
-                  iconStyle="regular"
-                  className="absolute left-0 animate-spin"
-                />
+                <Icon iconName="loader" iconStyle="regular" className="absolute left-0 animate-spin" />
               ) : (
-                <Icon data-align="suffix" iconName="circle-play" iconStyle="regular" className="absolute left-0" />
+                <Icon iconName="circle-play" iconStyle="regular" className="absolute left-0" />
               )}
             </span>
             Live
@@ -145,7 +140,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                 onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
               >
                 Timeframe
-                <Icon data-align="suffix" iconName="clock" iconStyle="regular" className="relative top-[1px]" />
+                <Icon iconName="clock" iconStyle="regular" className="relative top-[1px]" />
               </Button>
             ) : (
               <Button type="button" size="md" onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}>
@@ -168,7 +163,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                     clearDate()
                   }}
                 >
-                  <Icon data-align="suffix" iconName="xmark" />
+                  <Icon iconName="xmark" />
                 </span>
               </Button>
             )}
@@ -177,7 +172,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             <DropdownMenu.Trigger asChild>
               <Button size="md" variant="outline" color="neutral">
                 {updateTimeContextValue.utc ? 'UTC' : 'Browser time'}
-                <Icon data-align="suffix" iconName="chevron-down" iconStyle="regular" />
+                <Icon iconName="chevron-down" iconStyle="regular" />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content className="z-header">

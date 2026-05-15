@@ -134,7 +134,7 @@ export function SettingsApiToken() {
               openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })
             }}
           >
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             Add new
           </Button>
         </div>

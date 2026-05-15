@@ -34,7 +34,7 @@ export function DevopsCopilotButton() {
         })
       }}
     >
-      <Icon data-align="prefix" iconName="sparkles" iconStyle="solid" className="text-xs text-brand" />
+      <Icon iconName="sparkles" iconStyle="solid" className="text-xs text-brand" />
       AI Copilot
     </Button>
   )

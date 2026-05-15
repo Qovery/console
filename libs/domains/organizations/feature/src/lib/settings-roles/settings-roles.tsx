@@ -183,7 +183,7 @@ export function SettingsRoles() {
           />
 
           <Button className="absolute right-0 top-0" size="md" onClick={onAddRole}>
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             Add new role
           </Button>
         </div>

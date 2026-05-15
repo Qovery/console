@@ -198,11 +198,7 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
                   setIsLiveUpdateEnabled(!isLiveUpdateEnabled)
                 }}
               >
-                <Icon
-                  data-align="prefix"
-                  iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'}
-                  iconStyle="regular"
-                />
+                <Icon iconName={isLiveUpdateEnabled ? 'circle-stop' : 'circle-play'} iconStyle="regular" />
                 Live
               </Button>
             </Tooltip>
@@ -222,7 +218,7 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
           <div className="flex gap-2">
             <Button variant="plain" size="xs" className="flex items-center" onClick={() => setHideEvents(!hideEvents)}>
               {hideEvents ? 'Show events' : 'Hide events'}
-              <Icon data-align="suffix" iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
+              <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
             </Button>
             <Button
               variant="plain"
@@ -231,11 +227,7 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
               onClick={() => setExpandCharts(!expandCharts)}
             >
               {expandCharts ? 'Collapse charts' : 'Expand charts'}
-              <Icon
-                data-align="suffix"
-                iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'}
-                iconStyle="light"
-              />
+              <Icon iconName={expandCharts ? 'arrows-minimize' : 'arrows-maximize'} iconStyle="light" />
             </Button>
           </div>
         </div>

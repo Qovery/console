@@ -86,7 +86,7 @@ export function SelectTimeRange() {
                 handleTimeRangeChange(lastDropdownTimeRange)
               }}
             >
-              <Icon data-align="suffix" iconName="xmark" />
+              <Icon iconName="xmark" />
             </span>
           </Button>
         )}

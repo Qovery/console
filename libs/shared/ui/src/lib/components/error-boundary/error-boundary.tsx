@@ -17,7 +17,7 @@ export function ErrorFallback({ className, error, resetErrorBoundary }: Fallback
         </div>
         <Button onClick={resetErrorBoundary} size="md" className="flex">
           Try again
-          <Icon data-align="suffix" iconName="refresh" />
+          <Icon iconName="refresh" />
         </Button>
       </div>
     </Section>

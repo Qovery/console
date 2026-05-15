@@ -117,7 +117,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
             })
           }}
         >
-          <Icon data-align="prefix" iconName="rocket" />
+          <Icon iconName="rocket" />
           Deploy now
         </Button>
       </EmptyState>
@@ -137,7 +137,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
           <Tooltip content={`Chart version: ${chart_version}`}>
             <span className="inline-flex" onClick={preventParentLinkNavigation}>
               <Button type="button" variant="surface" color="neutral" size="xs">
-                <Icon data-align="prefix" iconName="code-commit" className="w-4" />
+                <Icon iconName="code-commit" className="w-4" />
                 {chart_version.length >= 18 ? `${chart_version.slice(0, 15)}…` : chart_version}
               </Button>
             </span>
@@ -148,7 +148,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
             <span className="inline-flex" onClick={preventParentLinkNavigation}>
               <CopyToClipboard text={tag} className="inline-flex justify-center">
                 <Button type="button" variant="surface" color="neutral" size="xs">
-                  <Icon data-align="prefix" iconName="code-commit" className="w-4" />
+                  <Icon iconName="code-commit" className="w-4" />
                   {tag.length >= 8 ? `${tag.slice(0, 8)}…` : tag}
                 </Button>
               </CopyToClipboard>

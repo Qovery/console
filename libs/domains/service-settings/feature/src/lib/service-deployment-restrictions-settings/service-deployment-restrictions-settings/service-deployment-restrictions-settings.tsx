@@ -86,7 +86,7 @@ export function ServiceDeploymentRestrictionsSettings() {
             disabled={!isSupportedService(service)}
           >
             New Restriction
-            <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </SettingsHeading>
 

@@ -169,7 +169,7 @@ export default function StepPlans(props: StepPlansProps) {
                     variant="surface"
                     onClick={() => navigate({ to: '/onboarding/personalize' })}
                   >
-                    <Icon data-align="prefix" iconName="arrow-left" iconStyle="solid" />
+                    <Icon iconName="arrow-left" iconStyle="solid" />
                     Back
                   </Button>
                 ) : (
@@ -186,7 +186,7 @@ export default function StepPlans(props: StepPlansProps) {
                       }
                     }}
                   >
-                    <Icon data-align="prefix" iconName="arrow-left" iconStyle="solid" />
+                    <Icon iconName="arrow-left" iconStyle="solid" />
                     Back
                   </Button>
                 )}

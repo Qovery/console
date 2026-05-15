@@ -200,7 +200,7 @@ export function ServicesDeploymentPipeline() {
               })
             }
           >
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             Add stage
           </Button>
         </div>

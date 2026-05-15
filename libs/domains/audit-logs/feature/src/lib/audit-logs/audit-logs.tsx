@@ -331,7 +331,7 @@ export function AuditLogs({
                   {auditLogsRetentionInDays} days limit reached.
                   <Button type="button" variant="outline" onClick={() => showIntercom()}>
                     <span>Upgrade plan</span>
-                    <Icon data-align="suffix" iconName="arrow-up-right-from-square" className="text-neutral" />
+                    <Icon iconName="arrow-up-right-from-square" className="text-neutral" />
                   </Button>
                 </p>
               </div>

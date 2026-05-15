@@ -24,9 +24,9 @@ export const WithIcons = {
   args: {
     children: (
       <>
-        <Icon data-align="prefix" iconName="arrow-left" />
+        <Icon iconName="arrow-left" />
         Upload
-        <Icon data-align="suffix" iconName="arrow-right" />
+        <Icon iconName="arrow-right" />
       </>
     ),
   },

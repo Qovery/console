@@ -83,7 +83,7 @@ export function NotificationChannelOverview() {
         <div className="flex items-center justify-between">
           <Heading level={2}>Slack channels</Heading>
           <Button variant="plain" color="brand" size="md" onClick={createSlackChannelModal}>
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             Add channel
           </Button>
         </div>
@@ -95,7 +95,7 @@ export function NotificationChannelOverview() {
             <p className="font-medium">No slack channel added yet</p>
             <p className="mb-3 text-sm text-neutral-subtle">Add your first channel to start sending notifications</p>
             <Button size="md" variant="outline" color="neutral" onClick={createSlackChannelModal}>
-              <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+              <Icon iconName="circle-plus" iconStyle="regular" />
               Add channel
             </Button>
           </div>
@@ -156,7 +156,7 @@ export function NotificationChannelOverview() {
         <div className="flex items-center justify-between">
           <Heading level={2}>Email</Heading>
           <Button variant="plain" color="brand" size="md" onClick={createEmailChannelModal}>
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             New email
           </Button>
         </div>
@@ -168,7 +168,7 @@ export function NotificationChannelOverview() {
             <p className="font-medium">No email group added yet</p>
             <p className="mb-3 text-sm text-neutral-subtle">Add your first email to start sending notifications</p>
             <Button size="md" variant="outline" color="neutral" onClick={createEmailChannelModal}>
-              <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+              <Icon iconName="circle-plus" iconStyle="regular" />
               Add email group
             </Button>
           </div>

@@ -658,7 +658,7 @@ export function ClusterNew() {
                     params={{ organizationId }}
                   >
                     Add credit card
-                    <Icon data-align="suffix" iconName="arrow-right" iconStyle="regular" />
+                    <Icon iconName="arrow-right" iconStyle="regular" />
                   </ButtonLink>
                 </Callout.TextDescription>
               </Callout.Text>

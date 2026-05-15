@@ -109,7 +109,7 @@ export function ClusterLogsList({ logs, firstDate, refScrollSection }: ClusterLo
               {bufferedLogsCount > 999 ? '999+' : bufferedLogsCount}
             </span>
           )}
-          <Icon data-align="suffix" iconName="arrow-down" />
+          <Icon iconName="arrow-down" />
         </Button>
       )}
     </div>

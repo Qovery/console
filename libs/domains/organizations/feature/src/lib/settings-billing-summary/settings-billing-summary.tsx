@@ -127,7 +127,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
           <div className="absolute right-0 top-0 flex shrink-0 gap-3">
             <Button variant="surface" color="neutral" size="md" onClick={props.onShowUsageClick}>
               Show usage
-              <Icon data-align="suffix" iconName="gauge-high" iconStyle="regular" />
+              <Icon iconName="gauge-high" iconStyle="regular" />
             </Button>
             <Button variant="surface" color="neutral" size="md" onClick={props.onPromoCodeClick}>
               Promo code

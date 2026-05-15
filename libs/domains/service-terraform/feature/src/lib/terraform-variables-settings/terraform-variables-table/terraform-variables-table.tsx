@@ -407,13 +407,13 @@ export const TerraformVariablesTable = () => {
       >
         {selectedRows.length > 0 && (
           <Button size="md" variant="solid" color="red" type="button" onClick={deleteSelectedRows}>
-            <Icon data-align="prefix" iconName="trash-can" iconStyle="regular" />
+            <Icon iconName="trash-can" iconStyle="regular" />
             Delete selected
           </Button>
         )}
         <Button size="md" variant="outline" type="button" onClick={onAddVariable}>
           Add variable
-          <Icon data-align="suffix" iconName="plus" iconStyle="regular" />
+          <Icon iconName="plus" iconStyle="regular" />
         </Button>
       </div>
     </div>

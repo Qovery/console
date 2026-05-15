@@ -557,7 +557,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
                       type="button"
                     >
                       Add route
-                      <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
+                      <Icon iconName="circle-plus" iconStyle="regular" />
                     </Button>
                   </div>
                 </BlockContent>

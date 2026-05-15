@@ -164,7 +164,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
         />
         <div className="mt-10 flex justify-between border-t border-surface-neutral-subtle pt-5">
           <Button type="button" color="neutral" variant="surface" size="lg" onClick={() => authLogout()}>
-            <Icon data-align="prefix" iconName="arrow-left" />
+            <Icon iconName="arrow-left" />
             Disconnect
           </Button>
           <Button type="submit" size="lg" disabled={!formState.isValid}>

@@ -92,7 +92,7 @@ export function TableFilterTriggerBy({
               ) : (
                 <>
                   {column.columnDef.header?.toString()}
-                  <Icon data-align="suffix" iconName="chevron-down" />
+                  <Icon iconName="chevron-down" />
                 </>
               )}
             </Button>

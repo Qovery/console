@@ -189,13 +189,13 @@ const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
         <DropdownMenu.Root open={open} onOpenChange={setOpen}>
           <DropdownMenu.Trigger asChild>
             <Button variant="outline">
-              <Icon data-align="prefix" iconName="clock-rotate-left" className="text-neutral-subtle" />
+              <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
               {isLastVersion
                 ? 'Latest'
                 : selectedDeploymentDate
                   ? dateYearMonthDayHourMinuteSecond(new Date(selectedDeploymentDate))
                   : 'Not available'}
-              <Icon data-align="suffix" iconName="angle-down" />
+              <Icon iconName="angle-down" />
             </Button>
           </DropdownMenu.Trigger>
           <DropdownMenu.Content align="end" className="z-dropdown max-h-96 w-80 overflow-y-auto">
@@ -489,7 +489,7 @@ function DeploymentLogsBody({
                 sendMessageRef?.current?.(message)
               }}
             >
-              <Icon data-align="prefix" iconName="sparkles" iconStyle="solid" />
+              <Icon iconName="sparkles" iconStyle="solid" />
               Launch diagnostic for this error
             </Button>
           )}

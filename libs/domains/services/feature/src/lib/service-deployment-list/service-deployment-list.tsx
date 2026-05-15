@@ -328,10 +328,10 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                     <CopyToClipboard text={commit.git_commit_id} className="inline-flex justify-center">
                       <Button type="button" variant="surface" color="neutral" size="xs" className="group">
                         <span className="group-hover:hidden">
-                          <Icon data-align="prefix" iconName="copy" iconStyle="solid" className="w-4" />
+                          <Icon iconName="copy" iconStyle="solid" className="w-4" />
                         </span>
                         <span className="hidden group-hover:block">
-                          <Icon data-align="prefix" iconName="code-commit" iconStyle="regular" className="w-4" />
+                          <Icon iconName="code-commit" iconStyle="regular" className="w-4" />
                         </span>
                         {commit.git_commit_id.substring(0, 7)}
                       </Button>
@@ -361,10 +361,10 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                       <CopyToClipboard text={repository.chart_version} className="inline-flex justify-center">
                         <Button type="button" variant="surface" color="neutral" size="xs" className="group">
                           <span className="group-hover:hidden">
-                            <Icon data-align="prefix" iconName="copy" iconStyle="solid" className="w-4" />
+                            <Icon iconName="copy" iconStyle="solid" className="w-4" />
                           </span>
                           <span className="hidden group-hover:block">
-                            <Icon data-align="prefix" iconName="code-commit" iconStyle="regular" className="w-4" />
+                            <Icon iconName="code-commit" iconStyle="regular" className="w-4" />
                           </span>
                           {truncateText(repository.chart_version, 18)}
                         </Button>
@@ -393,10 +393,10 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                       <CopyToClipboard text={tag} className="inline-flex justify-center">
                         <Button type="button" variant="surface" color="neutral" size="xs" className="group">
                           <span className="group-hover:hidden">
-                            <Icon data-align="prefix" iconName="copy" iconStyle="solid" className="w-4" />
+                            <Icon iconName="copy" iconStyle="solid" className="w-4" />
                           </span>
                           <span className="hidden group-hover:block">
-                            <Icon data-align="prefix" iconName="code-commit" iconStyle="regular" className="w-4" />
+                            <Icon iconName="code-commit" iconStyle="regular" className="w-4" />
                           </span>
                           {tag.length >= 8 ? truncateText(tag, 8) + '...' : tag}
                         </Button>

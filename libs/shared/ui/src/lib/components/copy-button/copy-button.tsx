@@ -29,7 +29,7 @@ export function CopyButton({ content }: CopyButtonProps) {
       className="cursor-pointer font-sans font-medium"
     >
       Copy
-      <Icon data-align="suffix" iconName={icon} className="text-xs" />
+      <Icon iconName={icon} className="text-xs" />
     </Button>
   )
 }

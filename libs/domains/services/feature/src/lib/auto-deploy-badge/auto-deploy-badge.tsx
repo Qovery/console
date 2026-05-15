@@ -63,12 +63,12 @@ export function AutoDeployBadge({ serviceId }: AutoDeployBadgeProps) {
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/general"
         params={{ organizationId, projectId, environmentId, serviceId: routeServiceId }}
       >
-        <Icon data-align="prefix" className="text-neutral" iconName="arrows-rotate" />
+        <Icon className="text-neutral" iconName="arrows-rotate" />
         <span className="ml-1.5">Auto-deploy</span>
         {isLoading ? (
           <LoaderSpinner classWidth="w-3 ml-0.5" />
         ) : (
-          config && <Icon data-align="suffix" iconName={config.icon} className={`text-xs ${config.iconClassName}`} />
+          config && <Icon iconName={config.icon} className={`text-xs ${config.iconClassName}`} />
         )}
       </Link>
     </Tooltip>

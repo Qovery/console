@@ -174,7 +174,7 @@ function EnvironmentsTableContent() {
               variant="solid"
               size="md"
             >
-              <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+              <Icon iconName="circle-plus" iconStyle="regular" />
               New Environment
             </Button>
           </div>

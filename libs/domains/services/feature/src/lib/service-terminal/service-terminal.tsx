@@ -241,7 +241,7 @@ export function ServiceTerminal({
           color="neutral"
           size="md"
         >
-          <Icon data-align="prefix" iconName="book" />
+          <Icon iconName="book" />
           CLI docs
         </ExternalLink>
       </div>

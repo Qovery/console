@@ -106,9 +106,9 @@ export function HeaderLogs({
                       >
                         <Button variant="outline" color="neutral" size="sm" className="relative">
                           <div className="flex items-center">
-                            <Icon data-align="prefix" iconName="link" iconStyle="regular" />
+                            <Icon iconName="link" iconStyle="regular" />
                             {pluralize(filteredLinks.length, 'Link', 'Links')}
-                            <Icon data-align="suffix" iconName="angle-down" />
+                            <Icon iconName="angle-down" />
                           </div>
                         </Button>
                       </ServiceLinksPopover>
@@ -177,9 +177,9 @@ export function HeaderLogs({
                       >
                         <Button variant="outline" color="neutral" size="sm" className="relative">
                           <div className="flex items-center">
-                            <Icon data-align="prefix" iconName="link" iconStyle="regular" />
+                            <Icon iconName="link" iconStyle="regular" />
                             {pluralize(filteredLinks.length, 'Link', 'Links')}
-                            <Icon data-align="suffix" iconName="angle-down" />
+                            <Icon iconName="angle-down" />
                           </div>
                         </Button>
                       </ServiceLinksPopover>

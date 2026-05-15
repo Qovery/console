@@ -181,7 +181,7 @@ export function AnnotationCreateEditModal({
             }
           >
             Add annotation
-            <Icon data-align="suffix" iconName="plus" />
+            <Icon iconName="plus" />
           </Button>
         </div>
         <span className="mb-2 mt-4 block text-sm text-neutral">Select scope (Kubernetes objects)</span>

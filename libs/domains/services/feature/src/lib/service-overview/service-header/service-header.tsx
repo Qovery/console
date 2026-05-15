@@ -55,7 +55,7 @@ export function GitRepository({ gitRepository }: { gitRepository: ApplicationGit
           rel="noopener noreferrer"
         >
           <Button color="neutral" variant="outline" size="xs">
-            <Icon data-align="prefix" iconName="code-branch" iconStyle="regular" height={14} width={14} />
+            <Icon iconName="code-branch" iconStyle="regular" height={14} width={14} />
             <Truncate text={gitRepository.branch} truncateLimit={17} />
           </Button>
         </a>
@@ -235,12 +235,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
               size="xs"
               as="button"
             >
-              <Icon
-                data-align="prefix"
-                width={16}
-                height={16}
-                name={containerRegistryKindToIcon(containerImage.registry.kind)}
-              />
+              <Icon width={16} height={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
               <span className="truncate">
                 <Truncate text={containerImage.registry.name.toLowerCase()} truncateLimit={18} />
               </span>
@@ -266,7 +261,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
               size="xs"
               as="button"
             >
-              <Icon data-align="prefix" width={16} name={IconEnum.HELM_OFFICIAL} />
+              <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
               <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
             </ExternalLink>
           )}
@@ -298,7 +293,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
                 handleCopyCredentials(databaseSource.masterCredentials)
               }}
             >
-              <Icon data-align="prefix" iconName="key" iconStyle="regular" />
+              <Icon iconName="key" iconStyle="regular" />
               Connection URI
             </Button>
           )}
@@ -345,9 +340,9 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           serviceId={serviceId}
         >
           <Button size="xs" color="neutral" variant="outline">
-            <Icon data-align="prefix" iconName="link" iconStyle="regular" />
+            <Icon iconName="link" iconStyle="regular" />
             Links
-            <Icon data-align="suffix" iconName="angle-down" iconStyle="regular" />
+            <Icon iconName="angle-down" iconStyle="regular" />
           </Button>
         </ServiceLinksPopover>
       )}

@@ -185,7 +185,7 @@ export function SettingsWebhook() {
               environment within your organization, you can get notified on external applications (for instance, Slack)."
           />
           <Button size="md" className="absolute right-0 top-0 shrink-0" onClick={openAddNew}>
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             Add new
           </Button>
         </div>

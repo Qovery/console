@@ -249,12 +249,7 @@ export function RowMember(props: RowMemberProps) {
                 disabled={!canEditRole || loadingUpdateRole}
               >
                 <span className="truncate">{selectedRoleLabel}</span>
-                <Icon
-                  data-align="suffix"
-                  iconName="angle-down"
-                  iconStyle="solid"
-                  className="text-sm text-neutral-subtle"
-                />
+                <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
               </Button>
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="start">

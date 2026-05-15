@@ -144,7 +144,7 @@ export function HelmNetworkingSettings({ children }: HelmNetworkingSettingsProps
         >
           <Button size="md" variant="solid" color="brand" onClick={onAddPortClick}>
             Add Port
-            <Icon data-align="suffix" iconName="plus-circle" iconStyle="regular" />
+            <Icon iconName="plus-circle" iconStyle="regular" />
           </Button>
         </SettingsHeading>
 

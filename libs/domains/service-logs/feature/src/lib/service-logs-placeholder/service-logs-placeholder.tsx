@@ -296,7 +296,7 @@ export function ServiceLogsPlaceholder({
               }}
             >
               Go to latest deployment
-              <Icon data-align="suffix" iconName="arrow-right" />
+              <Icon iconName="arrow-right" />
             </Link>
           </>
         ) : (

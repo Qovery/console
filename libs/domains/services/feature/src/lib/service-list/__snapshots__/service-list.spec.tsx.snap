@@ -237,7 +237,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
-                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
                         data-state="closed"
                         type="button"
                       >
@@ -424,20 +424,19 @@ exports[`ServiceList should match snapshot 1`] = `
                         data-state="closed"
                       >
                         <button
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
+                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
                           type="button"
                         >
                           <i
                             aria-hidden="true"
                             class="fa-regular fa-code-commit w-4"
-                            data-align="suffix"
                           />
                           2f74448
                         </button>
                       </span>
                       <button
                         aria-label="Deploy from another version"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
                         data-state="closed"
                         type="button"
                       >
@@ -625,7 +624,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
-                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
                         data-state="closed"
                         type="button"
                       >
@@ -812,7 +811,7 @@ exports[`ServiceList should match snapshot 1`] = `
                       </span>
                       <button
                         aria-label="Deploy from another version"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
                         data-state="closed"
                         type="button"
                       >
@@ -1302,7 +1301,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
-                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
                         data-state="closed"
                         type="button"
                       >
@@ -1498,20 +1497,19 @@ exports[`ServiceList should match snapshot 1`] = `
                         data-state="closed"
                       >
                         <button
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
+                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
                           type="button"
                         >
                           <i
                             aria-hidden="true"
                             class="fa-regular fa-code-commit w-4"
-                            data-align="suffix"
                           />
                           10ad354
                         </button>
                       </span>
                       <button
                         aria-label="Deploy from another version"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
                         data-state="closed"
                         type="button"
                       >
@@ -1794,7 +1792,7 @@ exports[`ServiceList should match snapshot 1`] = `
                         aria-expanded="false"
                         aria-haspopup="dialog"
                         aria-label="Links"
-                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
+                        class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded-full justify-center px-0 w-6 bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral hidden"
                         data-state="closed"
                         type="button"
                       >
@@ -1990,20 +1988,19 @@ exports[`ServiceList should match snapshot 1`] = `
                         data-state="closed"
                       >
                         <button
-                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
+                          class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral flex min-w-[81px] justify-center pl-1 rounded-r-none border-r-0"
                           type="button"
                         >
                           <i
                             aria-hidden="true"
                             class="fa-regular fa-code-commit w-4"
-                            data-align="suffix"
                           />
                           10ad354
                         </button>
                       </span>
                       <button
                         aria-label="Deploy from another version"
-                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
+                        class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7 justify-center rounded-l-none px-1.5"
                         data-state="closed"
                         type="button"
                       >
@@ -2063,7 +2060,7 @@ exports[`ServiceList should match snapshot 1`] = `
               class="flex gap-3"
             >
               <button
-                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert items-center"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-brand-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-brand-solid hover:bg-surface-brand-solidHover border border-brand-component text-neutralInvert items-center"
                 data-state="closed"
                 disabled=""
               >
@@ -2071,13 +2068,12 @@ exports[`ServiceList should match snapshot 1`] = `
                 <i
                   aria-hidden="true"
                   class="fa-regular fa-play "
-                  data-align="suffix"
                 />
               </button>
               <button
                 aria-expanded="false"
                 aria-haspopup="menu"
-                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center"
+                class="inline-flex shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral items-center"
                 data-state="closed"
                 id="radix-:r2g:"
                 type="button"
@@ -2086,7 +2082,6 @@ exports[`ServiceList should match snapshot 1`] = `
                 <i
                   aria-hidden="true"
                   class="fa-regular fa-angle-down "
-                  data-align="suffix"
                 />
               </button>
             </div>

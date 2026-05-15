@@ -202,7 +202,7 @@ const EnvironmentLastDeploymentContent = () => {
         >
           {serviceCount > 0 && (
             <Button onClick={handleDeploy} color="neutral" size="md">
-              <Icon data-align="prefix" iconName="rocket" />
+              <Icon iconName="rocket" />
               Deploy environment
             </Button>
           )}

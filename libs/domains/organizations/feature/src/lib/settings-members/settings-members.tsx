@@ -470,7 +470,7 @@ export function SettingsMembers() {
           />
 
           <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             Add member
           </Button>
         </div>

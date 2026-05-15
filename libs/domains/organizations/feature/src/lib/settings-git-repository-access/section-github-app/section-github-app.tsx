@@ -48,7 +48,7 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
                   onClick={() => props.onDisconnect && props.onDisconnect(false)}
                 >
                   Disconnect
-                  <Icon data-align="suffix" iconName="circle-xmark" />
+                  <Icon iconName="circle-xmark" />
                 </Button>
                 <Button data-testid="permission-button" type="button" size="md" onClick={props.onConfigure}>
                   Manage Permissions

@@ -205,7 +205,7 @@ function DeploymentRulesContent({ organizationId, projectId, linkNewRule }: Depl
         }
       >
         {hasClusters ? 'Add rule' : 'Create a Cluster'}
-        <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
+        <Icon iconName="circle-plus" iconStyle="regular" />
       </Button>
     </EmptyState>
   ) : (
@@ -252,7 +252,7 @@ export function DeploymentRules() {
             <NeedHelp className="mt-2" />
           </div>
           <Button size="md" onClick={() => navigate({ to: linkNewRule })}>
-            Add rule <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
+            Add rule <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <div className="max-w-content-with-navigation-left">

@@ -97,11 +97,7 @@ export function LastCommit({
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
             >
-              {hover ? (
-                <Icon data-align="suffix" iconName="copy" className="w-4" />
-              ) : (
-                <Icon data-align="suffix" iconName="code-commit" className="w-4" />
-              )}
+              {hover ? <Icon iconName="copy" className="w-4" /> : <Icon iconName="code-commit" className="w-4" />}
               {deployedCommit.git_commit_id.substring(0, 7)}
             </Button>
           </CopyToClipboard>

@@ -57,7 +57,7 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
       {buttonLabel && (
         <Button type="button" className="ml-4" variant="solid" color={buttonColor} onClick={onClickButton}>
           {buttonLabel}
-          {buttonIconRight && <Icon data-align="suffix" iconName={buttonIconRight} />}
+          {buttonIconRight && <Icon iconName={buttonIconRight} />}
         </Button>
       )}
       {dismissible && (

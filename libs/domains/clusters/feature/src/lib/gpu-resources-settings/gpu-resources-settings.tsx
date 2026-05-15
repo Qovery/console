@@ -73,7 +73,7 @@ export const GpuResourcesSettings = ({ cluster, clusterRegion = '' }: GpuResourc
           })
         }}
       >
-        Edit <Icon data-align="suffix" iconName="pen" />
+        Edit <Icon iconName="pen" />
       </Button>
     </div>
   )

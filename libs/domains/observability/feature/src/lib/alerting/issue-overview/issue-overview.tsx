@@ -106,7 +106,6 @@ export function IssueOverview() {
                       >
                         <span className="flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full bg-white">
                           <Icon
-                            data-align="prefix"
                             name={match(alert.target.target_type)
                               .with('CONTAINER', () => 'APPLICATION')
                               .otherwise((s) => s)}

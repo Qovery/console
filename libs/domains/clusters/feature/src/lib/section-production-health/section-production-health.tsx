@@ -200,7 +200,7 @@ export function SectionProductionHealth() {
               to="/organization/$organizationId/cluster/new"
               params={{ organizationId }}
             >
-              <Icon data-align="prefix" iconName="circle-plus" />
+              <Icon iconName="circle-plus" />
               Create cluster
             </Link>
           </EmptyState>

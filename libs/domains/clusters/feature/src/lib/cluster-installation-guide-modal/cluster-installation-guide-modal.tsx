@@ -67,7 +67,7 @@ export function ClusterInstallationGuideModal({ type, onClose, ...props }: Clust
                   loading={isLoading}
                 >
                   Download configuration
-                  <Icon data-align="suffix" iconName="download" />
+                  <Icon iconName="download" />
                 </Button>
               </span>
             </li>

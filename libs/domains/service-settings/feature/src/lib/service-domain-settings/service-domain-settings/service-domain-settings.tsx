@@ -80,7 +80,7 @@ export function ServiceDomainSettings() {
             disabled={!canAddDomain}
           >
             Add Domain
-            <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </SettingsHeading>
 
@@ -287,7 +287,7 @@ function ServiceDomainSettingsContent({
               size="sm"
             >
               {noPublicLinkCta.label}
-              <Icon data-align="suffix" iconName="arrow-right" className="text-xs" />
+              <Icon iconName="arrow-right" className="text-xs" />
             </Link>
             <ExternalLink
               as="button"

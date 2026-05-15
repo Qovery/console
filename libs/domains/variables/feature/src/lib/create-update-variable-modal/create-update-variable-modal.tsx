@@ -412,7 +412,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               <>
                 <div className="mb-2 flex justify-end">
                   <Button type="button" size="sm" variant="outline" onClick={() => setIsValueEditorOpen(true)}>
-                    <Icon data-align="prefix" iconName="arrows-maximize" iconStyle="regular" className="text-xs" />
+                    <Icon iconName="arrows-maximize" iconStyle="regular" className="text-xs" />
                     Open editor
                   </Button>
                 </div>

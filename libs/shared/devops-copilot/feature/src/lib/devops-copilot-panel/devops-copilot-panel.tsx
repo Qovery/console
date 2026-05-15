@@ -436,7 +436,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                               handleSendMessage(label)
                             }}
                           >
-                            <Icon data-align="prefix" iconName="arrow-right" />
+                            <Icon iconName="arrow-right" />
                             {label}
                           </Button>
                         ))}

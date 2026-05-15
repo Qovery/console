@@ -114,7 +114,7 @@ export function SettingsGitRepositoryAccess() {
               })
             }}
           >
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             Add new token
           </Button>
         </div>

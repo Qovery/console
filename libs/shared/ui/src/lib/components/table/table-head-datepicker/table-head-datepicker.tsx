@@ -124,7 +124,7 @@ export function TableHeadDatePickerFilter({
                 className="relative flex h-6 cursor-pointer items-center font-code text-xs"
                 onClick={(event) => cleanFilter(event)}
               >
-                <Icon data-align="suffix" iconName="xmark" />
+                <Icon iconName="xmark" />
               </span>
             </Button>
           ) : (
@@ -138,7 +138,7 @@ export function TableHeadDatePickerFilter({
               }}
             >
               {title}
-              <Icon data-align="suffix" iconName="angle-down" />
+              <Icon iconName="angle-down" />
             </Button>
           )}
         </div>

@@ -13,7 +13,6 @@ Always use `<Button>`. `ButtonPrimitive` is the internal primitive it wraps — 
 - `solid` + `brand` → primary CTA
 - `outline` or `surface` + `neutral` → secondary / cancel
 - `solid` + `red` → destructive actions only
-- Icons inside buttons use `data-align="prefix"` when they appear before the label and `data-align="suffix"` when they appear after it. Do not add manual `ml-*`, `mr-*`, or `gap-*` spacing to button icons — `<Button>` / `<ButtonPrimitive>` applies the correct size-aware spacing.
 - Icon-only buttons always need `aria-label`
 
 ### "I need to show a system status"

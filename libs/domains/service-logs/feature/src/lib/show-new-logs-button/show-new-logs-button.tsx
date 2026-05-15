@@ -31,7 +31,7 @@ export function ShowNewLogsButton({ pauseLogs, setPauseLogs, bufferedLogsCount }
             {bufferedLogsCount > 999 ? '999+' : bufferedLogsCount}
           </span>
         )}
-        <Icon data-align="suffix" iconName="arrow-down" />
+        <Icon iconName="arrow-down" />
       </Button>
     )
   }

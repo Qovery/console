@@ -269,7 +269,7 @@ export function SettingsContainerRegistries() {
           />
 
           <Button className="absolute right-0 top-0" size="md" onClick={() => onAddRegistry()}>
-            <Icon data-align="prefix" iconName="circle-plus" iconStyle="regular" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
             Add registry
           </Button>
         </div>

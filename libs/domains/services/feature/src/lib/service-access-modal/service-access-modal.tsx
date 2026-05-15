@@ -88,7 +88,7 @@ function SectionDatabaseConnectionUri({ service }: { service: Database }) {
         onClick={() => handleCopyCredentials(masterCredentials!)}
       >
         Copy connection URI
-        <Icon data-align="suffix" className="text-sm" iconName="key" iconStyle="regular" />
+        <Icon className="text-sm" iconName="key" iconStyle="regular" />
       </Button>
     </div>
   )

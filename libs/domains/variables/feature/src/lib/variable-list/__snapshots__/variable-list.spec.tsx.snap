@@ -86,7 +86,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-controls="radix-:r28:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                       data-state="closed"
                       type="button"
                     >
@@ -94,7 +94,6 @@ exports[`VariableList should match snapshot 1`] = `
                       <i
                         aria-hidden="true"
                         class="fa-regular fa-chevron-down "
-                        data-align="suffix"
                       />
                     </button>
                   </div>
@@ -109,7 +108,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-controls="radix-:r2b:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                       data-state="closed"
                       type="button"
                     >
@@ -117,7 +116,6 @@ exports[`VariableList should match snapshot 1`] = `
                       <i
                         aria-hidden="true"
                         class="fa-regular fa-chevron-down "
-                        data-align="suffix"
                       />
                     </button>
                   </div>
@@ -132,7 +130,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-controls="radix-:r2e:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                       data-state="closed"
                       type="button"
                     >
@@ -140,7 +138,6 @@ exports[`VariableList should match snapshot 1`] = `
                       <i
                         aria-hidden="true"
                         class="fa-regular fa-chevron-down "
-                        data-align="suffix"
                       />
                     </button>
                   </div>
@@ -228,7 +225,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-expanded="false"
                     aria-haspopup="menu"
                     aria-label="actions"
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
                     id="radix-:r2g:"
                     type="button"
@@ -330,7 +327,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-expanded="false"
                     aria-haspopup="menu"
                     aria-label="actions"
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
                     id="radix-:r2k:"
                     type="button"
@@ -421,7 +418,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-expanded="false"
                     aria-haspopup="menu"
                     aria-label="actions"
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
                     id="radix-:r2o:"
                     type="button"
@@ -615,7 +612,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-expanded="false"
                     aria-haspopup="menu"
                     aria-label="actions"
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
                     id="radix-:r2s:"
                     type="button"
@@ -722,7 +719,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-expanded="false"
                     aria-haspopup="menu"
                     aria-label="actions"
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
                     id="radix-:r31:"
                     type="button"
@@ -972,7 +969,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-expanded="false"
                     aria-haspopup="menu"
                     aria-label="actions"
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
                     id="radix-:r37:"
                     type="button"
@@ -1181,7 +1178,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-expanded="false"
                     aria-haspopup="menu"
                     aria-label="actions"
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
                     id="radix-:r3d:"
                     type="button"
@@ -1304,7 +1301,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-expanded="false"
                     aria-haspopup="menu"
                     aria-label="actions"
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
                     id="radix-:r3i:"
                     type="button"
@@ -1412,7 +1409,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-controls="radix-:r3n:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                       data-state="closed"
                       type="button"
                     >
@@ -1420,7 +1417,6 @@ exports[`VariableList should match snapshot 1`] = `
                       <i
                         aria-hidden="true"
                         class="fa-regular fa-chevron-down "
-                        data-align="suffix"
                       />
                     </button>
                   </div>
@@ -1435,7 +1431,7 @@ exports[`VariableList should match snapshot 1`] = `
                       aria-controls="radix-:r3q:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
-                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 [&_[data-align=prefix]]:mr-1 [&_[data-align=suffix]]:ml-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
+                      class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
                       data-state="closed"
                       type="button"
                     >
@@ -1443,7 +1439,6 @@ exports[`VariableList should match snapshot 1`] = `
                       <i
                         aria-hidden="true"
                         class="fa-regular fa-chevron-down "
-                        data-align="suffix"
                       />
                     </button>
                   </div>
@@ -1499,7 +1494,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-expanded="false"
                     aria-haspopup="menu"
                     aria-label="actions"
-                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
+                    class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
                     id="radix-:r3s:"
                     type="button"
@@ -1583,7 +1578,7 @@ exports[`VariableList should match snapshot 1`] = `
             Deselect
           </button>
           <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-negative-strong text-sm h-8 px-2.5 [&_[data-align=prefix]]:mr-1.5 [&_[data-align=suffix]]:ml-1.5 rounded-md bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-negative-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
             data-testid="submit-button"
             disabled=""
             type="button"

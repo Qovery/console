@@ -195,7 +195,7 @@ export function ApplicationContainerStorageSettings() {
               disabled={disableAdd}
             >
               Add Storage
-              <Icon data-align="suffix" iconName="circle-plus" iconStyle="regular" />
+              <Icon iconName="circle-plus" iconStyle="regular" />
             </Button>
           </Tooltip>
         </SettingsHeading>

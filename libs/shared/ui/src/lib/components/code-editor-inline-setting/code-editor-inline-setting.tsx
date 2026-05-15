@@ -49,7 +49,7 @@ export function CodeEditorInlineSetting({
           <Icon iconName="wave-pulse" className="text-neutral-subtle" />
           <p className="mb-3 mt-1 text-xs font-medium text-neutral-subtle">{emptyStateText}</p>
           <Button type="button" size="md" variant="outline" onClick={onOpenModal}>
-            <Icon data-align="prefix" iconName="plus" />
+            <Icon iconName="plus" />
             {addButtonLabel}
           </Button>
         </div>

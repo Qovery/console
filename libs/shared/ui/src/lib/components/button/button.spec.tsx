@@ -16,17 +16,16 @@ describe('Button', () => {
     expect(baseElement).toMatchSnapshot()
   })
 
-  it('should support icon alignment markers', () => {
+  it('should support icon spacing', () => {
     renderWithProviders(
       <Button type="button">
-        <span data-align="prefix">Prefix</span>
+        <span>Prefix</span>
         Foobar
-        <span data-align="suffix">Suffix</span>
+        <span>Suffix</span>
       </Button>
     )
 
     expect(screen.getByRole('button')).toHaveTextContent('PrefixFoobarSuffix')
-    expect(screen.getByRole('button')).toHaveClass('[&_[data-align=prefix]]:mr-1')
-    expect(screen.getByRole('button')).toHaveClass('[&_[data-align=suffix]]:ml-1')
+    expect(screen.getByRole('button')).toHaveClass('gap-x-1')
   })
 })
