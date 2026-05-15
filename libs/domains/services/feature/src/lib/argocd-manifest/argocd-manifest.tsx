@@ -2,17 +2,16 @@ import { type ArgocdManagedResource } from 'qovery-typescript-axios'
 import { type ReactElement, useEffect, useMemo, useState } from 'react'
 import { ResourceTreeList, type ResourceTreeResource } from '@qovery/shared/console-shared'
 import {
+  CodeDiffEditor,
   CodeEditor,
   EmptyState,
   Heading,
   InputSearch,
+  InputToggle,
   LoaderSpinner,
   Section,
-  SegmentedControl,
 } from '@qovery/shared/ui'
 import { useArgoCdManifest } from '../hooks/use-argocd-manifest/use-argocd-manifest'
-
-type ManifestStateMode = 'live' | 'target'
 
 interface ArgoCdManifestResource extends ResourceTreeResource {
   liveState: string
@@ -31,13 +30,13 @@ export function formatLiveState(liveState: string): string {
   }
 }
 
-function getResourceId(resource: ArgocdManagedResource): string {
-  return `${resource.kind ?? 'Unknown'}:${resource.name ?? 'Unnamed'}`
+function getResourceId(resource: ArgocdManagedResource, index: number): string {
+  return `${resource.kind ?? 'Unknown'}:${resource.name ?? 'Unnamed'}:${index}`
 }
 
 export function toManifestResources(resources: ArgocdManagedResource[]): ArgoCdManifestResource[] {
-  return resources.map((resource) => ({
-    id: getResourceId(resource),
+  return resources.map((resource, index) => ({
+    id: getResourceId(resource, index),
     resourceType: resource.kind ?? 'Unknown',
     displayName: resource.kind ?? 'Unknown',
     name: resource.name ?? 'Unnamed',
@@ -49,11 +48,6 @@ export function toManifestResources(resources: ArgocdManagedResource[]): ArgoCdM
     liveState: resource.liveState ?? '',
     targetState: resource.targetState ?? '',
   }))
-}
-
-function getManifestState(resource: ArgoCdManifestResource | null, mode: ManifestStateMode): string {
-  if (!resource) return ''
-  return mode === 'live' ? resource.liveState : resource.targetState
 }
 
 function ArgoCdManifestState({
@@ -81,7 +75,7 @@ function ArgoCdManifestState({
 export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null)
-  const [stateMode, setStateMode] = useState<ManifestStateMode>('live')
+  const [showDiff, setShowDiff] = useState(false)
   const { data, isError, isLoading } = useArgoCdManifest({ serviceId })
 
   const resources = useMemo(
@@ -89,8 +83,12 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
     [data?.manifest_metadata?.managed_resources]
   )
   const stateResources = useMemo(
-    () => resources.filter((resource) => getManifestState(resource, stateMode)),
-    [resources, stateMode]
+    () =>
+      resources.filter((resource) => {
+        if (showDiff) return resource.liveState || resource.targetState
+        return resource.liveState
+      }),
+    [resources, showDiff]
   )
 
   useEffect(() => {
@@ -146,18 +144,12 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
 
         <div className="flex min-h-0 flex-1 overflow-hidden rounded-lg border border-neutral">
           <div className="flex w-[266px] flex-shrink-0 flex-col gap-2 overflow-x-hidden overflow-y-scroll rounded-r-md border-r border-neutral bg-surface-neutral-subtle p-3 pt-2">
-            <SegmentedControl.Root
-              value={stateMode}
-              onValueChange={(value) => setStateMode(value as ManifestStateMode)}
-              className="h-7 w-full text-xs"
-            >
-              <SegmentedControl.Item value="live" className="border-transparent px-2">
-                Live
-              </SegmentedControl.Item>
-              <SegmentedControl.Item value="target" className="border-transparent px-2">
-                Target
-              </SegmentedControl.Item>
-            </SegmentedControl.Root>
+            <div className="flex min-h-6 items-center justify-between gap-3 text-ssm font-medium text-neutral">
+              <button type="button" className="text-left" onClick={() => setShowDiff((showDiff) => !showDiff)}>
+                Compare with target
+              </button>
+              <InputToggle small value={showDiff} onChange={setShowDiff} dataTestId="argocd-manifest-diff-toggle" />
+            </div>
             <hr className="-mx-3 border-neutral" />
             <InputSearch placeholder="Search…" className="w-full" onChange={setSearchQuery} />
 
@@ -172,13 +164,22 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
           </div>
 
           <div className="flex min-h-0 min-w-0 flex-1 flex-col">
-            <CodeEditor
-              language="json"
-              value={formatLiveState(getManifestState(selectedResource, stateMode))}
-              readOnly
-              height="100%"
-              options={{ scrollBeyondLastLine: false, wordWrap: 'off' }}
-            />
+            {showDiff ? (
+              <CodeDiffEditor
+                language="json"
+                original={formatLiveState(selectedResource?.targetState ?? '')}
+                modified={formatLiveState(selectedResource?.liveState ?? '')}
+                height="100%"
+              />
+            ) : (
+              <CodeEditor
+                language="json"
+                value={formatLiveState(selectedResource?.liveState ?? '')}
+                readOnly
+                height="100%"
+                options={{ scrollBeyondLastLine: false, wordWrap: 'off' }}
+              />
+            )}
           </div>
         </div>
       </Section>

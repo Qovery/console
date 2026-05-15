@@ -34,7 +34,7 @@ const SegmentedControlRoot = forwardRef<ElementRef<typeof ToggleGroupPrimitive.R
       <ToggleGroupPrimitive.Root
         ref={forwardedRef}
         className={twMerge(
-          'relative inline-grid h-9 min-w-max auto-cols-[1fr] grid-flow-col items-stretch divide-x divide-neutral overflow-hidden rounded border border-neutral bg-surface-neutral-component align-top font-medium text-neutral-disabled',
+          'relative inline-grid h-9 min-w-max auto-cols-[1fr] grid-flow-col items-stretch rounded bg-surface-neutral-component align-top font-medium text-neutral-disabled',
           className
         )}
         onValueChange={(value) => {
@@ -64,16 +64,22 @@ const SegmentedControlItem = forwardRef<ElementRef<typeof ToggleGroupPrimitive.I
     return (
       <ToggleGroupPrimitive.Item
         ref={forwardedRef}
-        className={twMerge(
-          'box-border flex h-full min-w-0 select-none items-center justify-center border-l border-neutral px-4 font-medium text-neutral-disabled first:border-l-0',
-          'data-[state=on]:bg-surface-neutral data-[state=on]:text-neutral',
-          className
-        )}
+        className={twMerge('group box-border flex select-none items-stretch', className)}
         {...props}
         disabled={false}
         asChild={false}
       >
-        {children}
+        {/* SegmentedControlItemLabel */}
+        <span className="box-border flex grow items-center justify-center">
+          {/* SegmentedControlItemLabelActive */}
+          <span className="box-border flex h-9 grow items-center justify-center rounded border border-neutral bg-surface-neutral px-4 text-neutral opacity-0 group-data-[state=on]:opacity-100">
+            {children}
+          </span>
+          {/* SegmentedControlItemLabelInactive */}
+          <span className="absolute box-border flex grow items-center justify-center opacity-100 group-data-[state=on]:opacity-0">
+            {children}
+          </span>
+        </span>
       </ToggleGroupPrimitive.Item>
     )
   }

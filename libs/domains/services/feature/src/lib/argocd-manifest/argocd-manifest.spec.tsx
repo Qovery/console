@@ -12,6 +12,12 @@ jest.mock('@qovery/shared/ui', () => {
   return {
     ...actual,
     CodeEditor: ({ value }: { value?: string }) => <pre data-testid="code-editor">{value}</pre>,
+    CodeDiffEditor: ({ original, modified }: { original: string; modified: string }) => (
+      <div data-testid="code-diff-editor">
+        <pre data-testid="code-diff-original">{original}</pre>
+        <pre data-testid="code-diff-modified">{modified}</pre>
+      </div>
+    ),
   }
 })
 
@@ -96,18 +102,24 @@ describe('ArgoCdManifest', () => {
     expect(screen.getByTestId('code-editor')).toHaveTextContent('not-json')
   })
 
-  it('should switch between live and target state', async () => {
+  it('should display a diff between target and live state when diff is enabled', async () => {
     const { userEvent } = renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
 
-    expect(await screen.findByTestId('code-editor')).toHaveTextContent('"name": "api"')
+    expect(await screen.findByText('Compare with target')).toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('radio', { name: /Target/ }))
+    await userEvent.click(await screen.findByTestId('argocd-manifest-diff-toggle'))
 
-    expect(screen.getByTestId('code-editor')).toHaveTextContent('"name": "api-target"')
+    expect(screen.getByTestId('code-diff-original')).toHaveTextContent('"name": "api-target"')
+    expect(screen.getByTestId('code-diff-modified')).toHaveTextContent('"name": "api"')
+    expect(screen.queryByTestId('code-editor')).not.toBeInTheDocument()
+  })
 
-    await userEvent.click(screen.getByRole('radio', { name: /Live/ }))
+  it('should toggle diff mode when clicking the diff label', async () => {
+    const { userEvent } = renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
 
-    expect(screen.getByTestId('code-editor')).toHaveTextContent('"name": "api"')
+    await userEvent.click(await screen.findByRole('button', { name: 'Compare with target' }))
+
+    expect(screen.getByTestId('code-diff-editor')).toBeInTheDocument()
   })
 
   it('should display an empty state when there are no managed resources', () => {
