@@ -7,13 +7,17 @@ const STABLE_NODEPOOL_AFFINITY = {
   [KARPENTER_NODEPOOL_LABEL]: 'stable',
 }
 
-function getNodeAffinityRequired(advancedSettings?: unknown): Record<string, unknown> {
+function getNodeAffinityRequired(advancedSettings?: unknown): Record<string, string> {
   const settings = advancedSettings as Record<string, unknown> | undefined
   const nodeAffinityRequired = settings?.[NODE_AFFINITY_REQUIRED_SETTING]
 
-  return nodeAffinityRequired && typeof nodeAffinityRequired === 'object' && !Array.isArray(nodeAffinityRequired)
-    ? { ...nodeAffinityRequired }
-    : {}
+  if (!nodeAffinityRequired || typeof nodeAffinityRequired !== 'object' || Array.isArray(nodeAffinityRequired)) {
+    return {}
+  }
+
+  return Object.fromEntries(
+    Object.entries(nodeAffinityRequired).filter((entry): entry is [string, string] => typeof entry[1] === 'string')
+  )
 }
 
 export function loadStableNodepoolFromAdvancedSettings(advancedSettings?: unknown): boolean {

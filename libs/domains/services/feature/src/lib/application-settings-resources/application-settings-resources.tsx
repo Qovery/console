@@ -279,7 +279,7 @@ export function ApplicationSettingsResources({
               }}
               render={({ field, fieldState: { error } }) => (
                 <Tooltip
-                  content="GPU can't run on a stable nodepool. Deactivate it to add GPU."
+                  content="GPU workloads must run on GPU nodepools. Disable stable nodepool before adding GPU"
                   disabled={!runOnStableNodepool}
                   side="top"
                 >
@@ -300,11 +300,7 @@ export function ApplicationSettingsResources({
               )}
             />
             {displayStableNodepoolToggle && (
-              <Tooltip
-                content="You can't run this application on a stable nodepool if it uses GPU."
-                disabled={!hasGpuConfigured}
-                side="top"
-              >
+              <Tooltip content="Remove GPU before enabling stable nodepool" disabled={!hasGpuConfigured} side="top">
                 <div
                   className={clsx(
                     'flex flex-col gap-3 rounded-md border border-neutral px-3 py-4',
@@ -320,7 +316,7 @@ export function ApplicationSettingsResources({
                         onChange={field.onChange}
                         name={field.name}
                         title="Run on a stable nodepool"
-                        description="Reduce interruptions caused by node replacements and consolidation."
+                        description="Reduce interruptions from node replacements and consolidation."
                         align="top"
                         small
                         disabled={hasGpuConfigured}
@@ -334,8 +330,8 @@ export function ApplicationSettingsResources({
                         <Icon iconName="triangle-exclamation" iconStyle="regular" />
                       </Callout.Icon>
                       <Callout.Text>
-                        Use stable nodepools only for workloads that require high availability. Stable nodes are more
-                        reliable, but typically more expensive and less flexible than cost-optimized capacity.
+                        Only use stable nodepools for workloads that need high availability. Stable nodes are more
+                        reliable, but usually cost more and offer less flexibility than cost-optimized capacity.
                       </Callout.Text>
                     </Callout.Root>
                   )}

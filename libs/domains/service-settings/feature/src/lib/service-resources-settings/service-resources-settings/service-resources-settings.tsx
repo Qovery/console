@@ -263,7 +263,7 @@ export function ServiceResourcesSettings({ service }: ServiceResourcesSettingsPr
         payload: {
           serviceType: service.serviceType,
           ...advancedSettingsPayload,
-        },
+        } as Parameters<typeof editAdvancedSettings>[0]['payload'],
       })
     }
 
