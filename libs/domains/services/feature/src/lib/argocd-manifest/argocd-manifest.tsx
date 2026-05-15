@@ -1,25 +1,13 @@
+import { useParams } from '@tanstack/react-router'
 import { type ArgocdManagedResource } from 'qovery-typescript-axios'
 import { type ReactElement, useEffect, useMemo, useState } from 'react'
 import { ResourceTreeList, type ResourceTreeResource } from '@qovery/shared/console-shared'
-import {
-  CodeDiffEditor,
-  CodeEditor,
-  EmptyState,
-  Heading,
-  InputSearch,
-  InputToggle,
-  LoaderSpinner,
-  Section,
-} from '@qovery/shared/ui'
+import { CodeDiffEditor, CodeEditor, EmptyState, Heading, InputSearch, InputToggle, Section } from '@qovery/shared/ui'
 import { useArgoCdManifest } from '../hooks/use-argocd-manifest/use-argocd-manifest'
 
 interface ArgoCdManifestResource extends ResourceTreeResource {
   liveState: string
   targetState: string
-}
-
-export interface ArgoCdManifestProps {
-  serviceId: string
 }
 
 export function formatLiveState(liveState: string): string {
@@ -72,11 +60,12 @@ function ArgoCdManifestState({
   )
 }
 
-export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement {
+export function ArgoCdManifest() {
+  const { serviceId = '' } = useParams({ strict: false })
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null)
   const [showDiff, setShowDiff] = useState(false)
-  const { data, isError, isLoading } = useArgoCdManifest({ serviceId })
+  const { data, isError } = useArgoCdManifest({ serviceId, suspense: true })
 
   const resources = useMemo(
     () => toManifestResources(data?.manifest_metadata?.managed_resources ?? []),
@@ -91,6 +80,7 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
     [resources, showDiff]
   )
 
+  // Necessary to ensure the selected resource is always valid
   useEffect(() => {
     if (!selectedResourceId && stateResources.length > 0) {
       setSelectedResourceId(stateResources[0].id)
@@ -113,14 +103,6 @@ export function ArgoCdManifest({ serviceId }: ArgoCdManifestProps): ReactElement
         title="Unable to load manifest"
         description="The ArgoCD manifest could not be loaded. Please try again later."
       />
-    )
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-page-container flex-1 items-center justify-center bg-background">
-        <LoaderSpinner />
-      </div>
     )
   }
 

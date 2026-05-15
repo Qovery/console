@@ -84,7 +84,7 @@ describe('ArgoCdManifest', () => {
   })
 
   it('should display resources and select the first one by default', async () => {
-    renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
+    renderWithProviders(<ArgoCdManifest />)
 
     await waitFor(() => {
       expect(screen.getByRole('button', { name: /api/ })).toBeInTheDocument()
@@ -95,7 +95,7 @@ describe('ArgoCdManifest', () => {
   })
 
   it('should display selected resource liveState', async () => {
-    const { userEvent } = renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
+    const { userEvent } = renderWithProviders(<ArgoCdManifest />)
 
     await userEvent.click(await screen.findByRole('button', { name: /settings/ }))
 
@@ -103,7 +103,7 @@ describe('ArgoCdManifest', () => {
   })
 
   it('should display a diff between target and live state when diff is enabled', async () => {
-    const { userEvent } = renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
+    const { userEvent } = renderWithProviders(<ArgoCdManifest />)
 
     const toggle = screen.getByTestId('input-toggle-button')
 
@@ -117,7 +117,7 @@ describe('ArgoCdManifest', () => {
   })
 
   it('should toggle diff mode when clicking the diff label', async () => {
-    const { userEvent } = renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
+    const { userEvent } = renderWithProviders(<ArgoCdManifest />)
 
     await userEvent.click(await screen.findByText('Compare with target'))
 
@@ -135,7 +135,7 @@ describe('ArgoCdManifest', () => {
       })
     )
 
-    renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
+    renderWithProviders(<ArgoCdManifest />)
 
     expect(screen.getByText('No managed resources')).toBeInTheDocument()
   })
@@ -160,7 +160,7 @@ describe('ArgoCdManifest', () => {
       })
     )
 
-    renderWithProviders(<ArgoCdManifest serviceId="service-id" />)
+    renderWithProviders(<ArgoCdManifest />)
 
     expect(screen.getByText('Unable to load manifest')).toBeInTheDocument()
   })

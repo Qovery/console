@@ -2,7 +2,7 @@ import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { isArgoCd } from '@qovery/domains/services/data-access'
 import { ArgoCdManifest, useServiceSummary } from '@qovery/domains/services/feature'
-import { LoaderSpinner } from '@qovery/shared/ui'
+import { ErrorBoundary, LoaderSpinner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -40,13 +40,15 @@ function ManifestRouteContent() {
     )
   }
 
-  return <ArgoCdManifest serviceId={serviceId} />
+  return <ArgoCdManifest />
 }
 
 function RouteComponent() {
   return (
-    <Suspense fallback={<ManifestLoader />}>
-      <ManifestRouteContent />
-    </Suspense>
+    <ErrorBoundary>
+      <Suspense fallback={<ManifestLoader />}>
+        <ManifestRouteContent />
+      </Suspense>
+    </ErrorBoundary>
   )
 }
