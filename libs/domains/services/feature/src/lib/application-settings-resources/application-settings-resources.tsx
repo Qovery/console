@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
@@ -15,6 +16,7 @@ import {
   InputToggle,
   Link,
   Section,
+  Tooltip,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
 import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-services'
@@ -72,6 +74,7 @@ export function ApplicationSettingsResources({
   const autoscalingMode = watch('autoscaling_mode') || 'NONE'
   const hpaAverageUtilizationPercent = watch('hpa_cpu_average_utilization_percent') ?? 60
   const hpaMemoryAverageUtilizationPercent = watch('hpa_memory_average_utilization_percent') ?? 60
+  const hasGpuConfigured = watch('gpu') > 0
   const runOnStableNodepool = watch('run_on_stable_nodepool') ?? false
   const previousAutoscalingModeRef = useRef(autoscalingMode)
 
@@ -275,48 +278,69 @@ export function ApplicationSettingsResources({
                 },
               }}
               render={({ field, fieldState: { error } }) => (
-                <InputText
-                  dataTestId="input-gpu"
-                  type="number"
-                  name={field.name}
-                  label="GPU (units)"
-                  value={field.value}
-                  onChange={field.onChange}
-                  disabled={!canSetGPU}
-                  hint={hintGPU}
-                  error={error?.message}
-                />
+                <Tooltip
+                  content="GPU can't run on a stable nodepool. Deactivate it to add GPU."
+                  disabled={!runOnStableNodepool}
+                  side="top"
+                >
+                  <div>
+                    <InputText
+                      dataTestId="input-gpu"
+                      type="number"
+                      name={field.name}
+                      label="GPU (units)"
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={!canSetGPU || runOnStableNodepool}
+                      hint={hintGPU}
+                      error={error?.message}
+                    />
+                  </div>
+                </Tooltip>
               )}
             />
             {displayStableNodepoolToggle && (
-              <div className="flex flex-col gap-3 rounded-md border border-neutral px-3 py-4">
-                <Controller
-                  name="run_on_stable_nodepool"
-                  control={control}
-                  render={({ field }) => (
-                    <InputToggle
-                      value={field.value ?? false}
-                      onChange={field.onChange}
-                      name={field.name}
-                      title="Run on a stable nodepool"
-                      description="Reduce interruptions caused by node replacements and consolidation."
-                      align="top"
-                      small
-                    />
+              <Tooltip
+                content="You can't run this application on a stable nodepool if it uses GPU."
+                disabled={!hasGpuConfigured}
+                side="top"
+              >
+                <div
+                  className={clsx(
+                    'flex flex-col gap-3 rounded-md border border-neutral px-3 py-4',
+                    hasGpuConfigured && 'bg-surface-neutral-subtle text-neutral-subtle [&_p]:!text-neutral-subtle'
                   )}
-                />
-                {runOnStableNodepool && (
-                  <Callout.Root color="yellow" className="rounded-md px-3 py-2" data-testid="stable-nodepool-callout">
-                    <Callout.Icon>
-                      <Icon iconName="triangle-exclamation" iconStyle="regular" />
-                    </Callout.Icon>
-                    <Callout.Text>
-                      Use stable nodepools only for workloads that require high availability. Stable nodes are more
-                      reliable, but typically more expensive and less flexible than cost-optimized capacity.
-                    </Callout.Text>
-                  </Callout.Root>
-                )}
-              </div>
+                >
+                  <Controller
+                    name="run_on_stable_nodepool"
+                    control={control}
+                    render={({ field }) => (
+                      <InputToggle
+                        value={field.value ?? false}
+                        onChange={field.onChange}
+                        name={field.name}
+                        title="Run on a stable nodepool"
+                        description="Reduce interruptions caused by node replacements and consolidation."
+                        align="top"
+                        small
+                        disabled={hasGpuConfigured}
+                        className={hasGpuConfigured ? '!opacity-100' : ''}
+                      />
+                    )}
+                  />
+                  {runOnStableNodepool && (
+                    <Callout.Root color="yellow" className="rounded-md px-3 py-2" data-testid="stable-nodepool-callout">
+                      <Callout.Icon>
+                        <Icon iconName="triangle-exclamation" iconStyle="regular" />
+                      </Callout.Icon>
+                      <Callout.Text>
+                        Use stable nodepools only for workloads that require high availability. Stable nodes are more
+                        reliable, but typically more expensive and less flexible than cost-optimized capacity.
+                      </Callout.Text>
+                    </Callout.Root>
+                  )}
+                </div>
+              </Tooltip>
             )}
           </>
         )}
