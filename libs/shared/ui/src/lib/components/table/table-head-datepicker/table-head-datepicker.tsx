@@ -7,6 +7,7 @@ import Icon from '../../icon/icon'
 import { type TableFilterProps } from '../table'
 
 const ALL = 'ALL'
+const REACT_DATEPICKER_IGNORE_ON_CLICK_OUTSIDE = 'react-datepicker-ignore-onclickoutside'
 
 export interface SelectedTimestamps {
   automaticallySelected: boolean
@@ -60,7 +61,7 @@ export function TableHeadDatePickerFilter({
 
   // Called when timestamp has been defined
   const onChangeTimestamp = (startDate: Date, endDate: Date) => {
-    setIsOpenTimestamp(!isOpenTimestamp)
+    setIsOpenTimestamp(false)
     setHasFilter(true)
     setFilter((prev) => [
       ...prev.filter(
@@ -80,6 +81,7 @@ export function TableHeadDatePickerFilter({
   // Called to clear the timestamp filter
   const cleanFilter = (event: MouseEvent) => {
     event.preventDefault()
+    event.stopPropagation()
     setFilter((prev) => [
       ...prev.filter(
         (currentValue) => currentValue.key !== fromTimestampProperty && currentValue.key !== toTimestampProperty
@@ -106,17 +108,17 @@ export function TableHeadDatePickerFilter({
         defaultDates={getDefaultDates(datePickerData.timestamps)}
         showDateTimeInputs
         useLocalTime
-        onClickOutside={() => setIsOpenTimestamp(!isOpenTimestamp)}
+        onClickOutside={() => setIsOpenTimestamp(false)}
         maxRangeInDays={datePickerData.maxRangeInDays}
       >
-        <div className="flex">
+        <div className={`${REACT_DATEPICKER_IGNORE_ON_CLICK_OUTSIDE} flex`}>
           {hasFilter ? (
             <Button
               type="button"
               color="neutral"
               size="sm"
               className="gap-1.5 whitespace-nowrap"
-              onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
+              onClick={() => setIsOpenTimestamp((isOpenTimestamp) => !isOpenTimestamp)}
             >
               {title}
               <span
@@ -134,7 +136,7 @@ export function TableHeadDatePickerFilter({
               size="sm"
               className="items-center gap-1.5 font-code"
               onClick={() => {
-                setIsOpenTimestamp(!isOpenTimestamp)
+                setIsOpenTimestamp((isOpenTimestamp) => !isOpenTimestamp)
               }}
             >
               {title}
