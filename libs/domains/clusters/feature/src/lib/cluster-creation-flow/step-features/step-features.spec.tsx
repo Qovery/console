@@ -31,10 +31,12 @@ const mockContextValue: ClusterContainerCreateContextInterface = {
   creationFlowUrl: '/organization/org-123/cluster/create/aws',
 }
 
-function Wrapper({ children }: PropsWithChildren) {
-  return (
-    <ClusterContainerCreateContext.Provider value={mockContextValue}>{children}</ClusterContainerCreateContext.Provider>
-  )
+function getWrapper(contextValue: ClusterContainerCreateContextInterface = mockContextValue) {
+  return function Wrapper({ children }: PropsWithChildren) {
+    return (
+      <ClusterContainerCreateContext.Provider value={contextValue}>{children}</ClusterContainerCreateContext.Provider>
+    )
+  }
 }
 
 jest.mock('./aws-vpc-feature/aws-vpc-feature', () => ({
@@ -90,7 +92,7 @@ describe('StepFeatures', () => {
   })
 
   it('should render features form', async () => {
-    renderWithProviders(<StepFeatures {...defaultProps} />, { wrapper: Wrapper })
+    renderWithProviders(<StepFeatures {...defaultProps} />, { wrapper: getWrapper() })
 
     await waitFor(() => {
       expect(screen.getByText('Network configuration')).toBeInTheDocument()
@@ -99,10 +101,53 @@ describe('StepFeatures', () => {
   })
 
   it('should set current step on mount', async () => {
-    renderWithProviders(<StepFeatures {...defaultProps} />, { wrapper: Wrapper })
+    renderWithProviders(<StepFeatures {...defaultProps} />, { wrapper: getWrapper() })
 
     await waitFor(() => {
       expect(mockSetCurrentStep).toHaveBeenCalled()
+    })
+  })
+
+  it('should hide NAT_GATEWAY feature for GCP cluster creation', async () => {
+    useCloudProviderFeaturesMockSpy.mockReturnValue({
+      data: [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP',
+          value_object: { value: false },
+        },
+        {
+          id: 'NAT_GATEWAY',
+          title: 'NAT Gateway',
+          value_object: { value: false },
+        },
+        {
+          id: 'PRIVATE_CLUSTER',
+          title: 'Private Cluster',
+          value_object: { value: false },
+        },
+      ],
+    })
+
+    const gcpContextValue: ClusterContainerCreateContextInterface = {
+      ...mockContextValue,
+      generalData: {
+        ...mockContextValue.generalData,
+        cloud_provider: CloudProviderEnum.GCP,
+      },
+      featuresData: {
+        vpc_mode: 'DEFAULT',
+        features: {},
+      },
+      creationFlowUrl: '/organization/org-123/cluster/create/gcp',
+    }
+
+    renderWithProviders(<StepFeatures {...defaultProps} />, { wrapper: getWrapper(gcpContextValue) })
+
+    await waitFor(() => {
+      expect(screen.getByText('Private Cluster')).toBeInTheDocument()
+      expect(screen.getByText('Static IP')).toBeInTheDocument()
+      expect(screen.queryByText('NAT Gateway')).not.toBeInTheDocument()
     })
   })
 })

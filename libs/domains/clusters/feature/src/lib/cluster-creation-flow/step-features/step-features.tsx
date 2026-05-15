@@ -31,6 +31,7 @@ import AWSVpcFeature from './aws-vpc-feature/aws-vpc-feature'
 import GCPVpcFeature from './gcp-vpc-feature/gcp-vpc-feature'
 
 const Qovery = '/assets/logos/logo-icon.svg'
+const GCP_HIDDEN_FEATURE_IDS = new Set(['NAT_GATEWAY'])
 const removeEmptySubnet = (objects?: Subnets[]) =>
   objects?.filter((field) => field.A !== '' || field.B !== '' || field.C !== '')
 
@@ -213,16 +214,18 @@ function StepFeaturesForm({
               {match(watchVpcMode)
                 .with('DEFAULT', () =>
                   features && features.length > 0 ? (
-                    features.map((feature) => (
-                      <ClusterCardFeature
-                        key={feature.id}
-                        feature={feature}
-                        cloudProvider={cloudProvider}
-                        control={clusterCardFeatureFormBindings.control}
-                        watch={clusterCardFeatureFormBindings.watch}
-                        setValue={clusterCardFeatureFormBindings.setValue}
-                      />
-                    ))
+                    features
+                      .filter((feature) => !GCP_HIDDEN_FEATURE_IDS.has(feature.id ?? ''))
+                      .map((feature) => (
+                        <ClusterCardFeature
+                          key={feature.id}
+                          feature={feature}
+                          cloudProvider={cloudProvider}
+                          control={clusterCardFeatureFormBindings.control}
+                          watch={clusterCardFeatureFormBindings.watch}
+                          setValue={clusterCardFeatureFormBindings.setValue}
+                        />
+                      ))
                   ) : (
                     <div className="mt-2 flex justify-center">
                       <LoaderSpinner className="w-4" />
