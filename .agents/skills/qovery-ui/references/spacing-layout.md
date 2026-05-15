@@ -93,6 +93,7 @@ Example: a card with `rounded-2xl` (16px) and `p-2` (8px) padding → the inner 
 Geometric centering often looks off. Adjust for perceived visual weight.
 
 - **Play triangle in a circle:** nudge right — the triangle's visual center is not its geometric center.
+- **Button with icon + text:** use `<Button>`. Do not add manual icon margins or custom gaps inside buttons.
 - **Asymmetric icons** (stars, arrows, carets): best fixed in the SVG directly. Fallback: `margin-left: 1px` or similar.
 - **Heavy glyph next to a light one:** optical baseline shift.
 
