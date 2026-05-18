@@ -55,12 +55,15 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
 
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
   const { data: service } = useService({ environmentId: environment?.id, serviceId, suspense: true })
-  const serviceType =
-    service?.service_type && service.service_type !== ARGOCD_APP_SERVICE_TYPE ? service.service_type : undefined
+  const serviceType = service?.service_type
+  const deploymentHistoryServiceType =
+    serviceType && String(serviceType) !== ARGOCD_APP_SERVICE_TYPE
+      ? (serviceType as Parameters<typeof useDeploymentHistory>[0]['serviceType'])
+      : undefined
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId,
-    serviceType,
+    serviceType: deploymentHistoryServiceType,
     suspense: true,
   })
 
