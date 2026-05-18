@@ -95,18 +95,21 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
                   <Icon iconName="circle-exclamation" iconStyle="regular" />
                 </Callout.Icon>
                 <Callout.Text>
-                  <Callout.TextHeading>Qovery manages this resource for you</Callout.TextHeading>
+                  <Callout.TextHeading>Qovery manages this cluster for you</Callout.TextHeading>
                   <Callout.TextDescription>
-                    Use exclusively the Qovery console to update the resources managed by Qovery on your cloud account.
-                    <br /> Do not manually update or upgrade them on the cloud provider console, otherwise you will risk
-                    a drift in the configuration.
+                    Manage this cluster through the Qovery console instead of your cloud provider console. <br />
+                    Automatic maintenance, patching, and scheduled updates are handled for you.{' '}
+                    {cluster.production
+                      ? 'Production clusters are updated every Wednesday with no downtime during rollout.'
+                      : 'Staging clusters are updated every Monday with no downtime during rollout.'}{' '}
+                    You can opt out of scheduled maintenance at any time.
                     <br />
                     <ExternalLink
                       size="sm"
                       href="https://www.qovery.com/docs/configuration/clusters#faq"
                       className="mt-3"
                     >
-                      Click here for more details
+                      More details about cluster management
                     </ExternalLink>
                   </Callout.TextDescription>
                 </Callout.Text>
