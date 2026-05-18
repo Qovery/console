@@ -1,4 +1,4 @@
-import { type SecretManagerOption } from '../secret-manager-modals/secret-manager-integration-modal'
+import { type SecretManagerOption } from '../../secret-manager-modals/secret-manager-integration-modal'
 
 export const SECRET_MANAGER_OPTIONS: SecretManagerOption[] = [
   { value: 'AWS_SECRET_MANAGER', label: 'AWS Secret manager', icon: 'AWS', typeLabel: 'AWS Secret manager' },

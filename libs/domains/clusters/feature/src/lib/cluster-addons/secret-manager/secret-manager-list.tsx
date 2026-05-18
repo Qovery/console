@@ -5,7 +5,7 @@ import {
   getReadableSecretManagerProvider,
   getSecretManagerProvider,
 } from '@qovery/shared/util-clusters'
-import { useSecretManagerAssociatedServices } from '../hooks/use-secret-manager-associated-services/use-secret-manager-associated-services'
+import { useSecretManagerAssociatedServices } from '../../hooks/use-secret-manager-associated-services/use-secret-manager-associated-services'
 
 export interface SecretManagerListProps {
   secretManagers: SecretManagerAccess[]

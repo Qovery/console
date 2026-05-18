@@ -13,9 +13,12 @@ import {
   Section,
   useModal,
 } from '@qovery/shared/ui'
-import { AddonToggleCard } from '../../cluster-addons/addon-toggle-card'
-import { SecretManagerList } from '../../cluster-addons/secret-manager-list'
-import { SECRET_MANAGER_OPTIONS, getSecretManagerOption } from '../../cluster-addons/secret-manager-options'
+import {
+  AddonToggleCard,
+  SecretManagerList,
+  SECRET_MANAGER_OPTIONS,
+  getSecretManagerOption,
+} from '../../cluster-addons'
 import {
   SecretManagerIntegrationModal,
   type SecretManagerOption,
