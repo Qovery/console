@@ -245,7 +245,6 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
         .with(
           { mode: 'CREATE', type: 'FILE' },
           { mode: 'CREATE', type: 'BUILT_IN' },
-          { mode: 'CREATE', type: 'EXTERNAL_SECRET' },
           () => {
             return Promise.resolve()
           }
@@ -267,7 +266,9 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             },
           })
         })
-        .exhaustive()
+        .otherwise(() => {
+          return Promise.resolve()
+        })
 
       onSubmit?.(result)
 

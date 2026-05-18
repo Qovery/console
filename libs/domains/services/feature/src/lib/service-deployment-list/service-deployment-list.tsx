@@ -42,6 +42,7 @@ import { ServiceDeploymentListSkeleton } from './service-deployment-list-skeleto
 import { TableFilterTriggerBy } from './table-filter-trigger-by/table-filter-trigger-by'
 
 const { Table } = TablePrimitives
+const ARGOCD_APP_SERVICE_TYPE = 'ARGOCD_APP'
 
 export interface ServiceDeploymentListProps {
   serviceId: string
@@ -54,7 +55,8 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
 
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
   const { data: service } = useService({ environmentId: environment?.id, serviceId, suspense: true })
-  const serviceType = service?.service_type === 'ARGOCD_APP' ? undefined : service?.service_type
+  const serviceType =
+    service?.service_type && service.service_type !== ARGOCD_APP_SERVICE_TYPE ? service.service_type : undefined
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId,

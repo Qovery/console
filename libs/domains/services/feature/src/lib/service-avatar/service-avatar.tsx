@@ -36,8 +36,7 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
     .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, () => 'APPLICATION')
     .with({ serviceType: 'DATABASE' }, () => 'DATABASE')
     .with({ serviceType: 'TERRAFORM' }, () => 'TERRAFORM')
-    .with({ serviceType: 'ARGOCD_APP' }, () => 'APPLICATION')
-    .exhaustive()
+    .otherwise(() => 'APPLICATION')
 
   const serviceAvatar = ServiceIcons[service.icon_uri as IconURI]
 

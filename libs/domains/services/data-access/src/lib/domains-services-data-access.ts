@@ -270,11 +270,10 @@ export const services = createQueryKeys('services', {
             ...s,
             serviceType: 'TERRAFORM' as const,
           }))
-          .with({ service_type: 'ARGOCD_APP' }, (s) => ({
-            ...s,
-            serviceType: 'ARGOCD_APP' as const,
+          .otherwise(() => ({
+            ...service,
+            serviceType: service.service_type,
           }))
-          .exhaustive()
       ) as AnyService[]
     },
   }),
