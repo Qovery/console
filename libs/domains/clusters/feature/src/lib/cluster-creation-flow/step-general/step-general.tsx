@@ -220,11 +220,12 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
                         <div className="col-span-2 flex items-start gap-4 rounded border border-surface-info-solid bg-surface-info-subtle p-3 pl-4">
                           <Icon iconName="circle-info" iconStyle="regular" className="text-base text-info" />
 
-                          <div className="flex flex-col gap-1 text-neutral-subtle">
-                            <p className="font-semibold">Qovery manages this infrastructure for you.</p>
-                            <p>
+                          <div className="flex flex-col gap-1 text-neutral">
+                            <p className="font-medium">Qovery manages this infrastructure for you.</p>
+                            <p className="text-neutral-subtle">
                               Secure, stable, and optimized environment with continuous security patches and proactive
-                              health monitoring
+                              health monitoring. Qovery performs weekly maintenance following a staged rollout to
+                              minimize risk.
                             </p>
                           </div>
                         </div>
