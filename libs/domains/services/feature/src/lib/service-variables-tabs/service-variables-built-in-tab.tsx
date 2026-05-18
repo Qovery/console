@@ -47,19 +47,6 @@ export function BuiltInTab({
           'Redeploy'
         )
       }}
-      onDeleteVariable={(variable) => {
-        let name = variable.key
-        if (name && name.length > 30) {
-          name = name.substring(0, 30) + '...'
-        }
-        toast(
-          'success',
-          'Deletion success',
-          `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
-          toasterCallback,
-          'Redeploy'
-        )
-      }}
     />
   )
 }

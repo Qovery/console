@@ -442,7 +442,7 @@ export function ExternalSecretsTab({
   const hasSelection = selectedIds.length > 0
 
   return (
-    <div className="flex grow flex-col">
+    <div className="flex flex-col">
       {!shouldShowEmptyState && (
         <div className="flex items-center justify-between border-b border-neutral bg-surface-neutral px-4 py-2">
           <div className="flex items-center gap-1.5 text-sm font-medium text-neutral">
