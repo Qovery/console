@@ -90,7 +90,6 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   }
 
   useEffect(() => {
-    // TODO [secret manager] Not sure we need this change
     if (!generalData) {
       navigate({ to: `${creationFlowUrl}/general` })
     }
@@ -104,19 +103,12 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       credentials: { id: generalData.credentials, name: generalData.credentials_name },
       region: generalData.region,
     }
-    // TODO [secret manager] This mapping is a bit redundant with the one in the addons step, we might want to unify them (it's probably useless)
-    const secretManagerAccesses: SecretManagerAccessRequest[] = addonsData.secretManagers.map((sm) => ({
-      id: sm.id,
-      name: sm.name,
-      endpoint: sm.endpoint,
-      authentication: sm.authentication,
-    }))
 
     const addonsPayload = {
       keda: {
         enabled: generalData.cloud_provider === 'GCP' ? false : addonsData.kedaActivated,
       },
-      secret_manager_accesses: secretManagerAccesses,
+      secret_manager_accesses: addonsData.secretManagers,
     }
 
     const awsLabelsGroups =
@@ -367,7 +359,6 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       })
 
     try {
-      console.log('Cluster Request Payload:', clusterRequest)
       const cluster = await createCluster({ organizationId, clusterRequest })
       await editCloudProviderInfo({
         organizationId,
