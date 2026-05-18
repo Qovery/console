@@ -1,0 +1,51 @@
+{
+  "eval_id": 0,
+  "eval_name": "audit-service-row",
+  "prompt": "Run /qovery-ui audit on audit-input.tsx — a synthetic service row component with multiple planted design issues. Output the audit findings in the table format described by the skill.",
+  "assertions": [
+    {
+      "text": "Catches raw Tailwind palette colors used semantically (text-green-500 / text-yellow-500 / text-red-500 for status)",
+      "kind": "content"
+    },
+    {
+      "text": "Catches the hardcoded hex color #7c3aed in the inline style attribute",
+      "kind": "content"
+    },
+    {
+      "text": "Catches the deprecated <Tag> component and recommends <Badge>",
+      "kind": "content"
+    },
+    {
+      "text": "Catches <ButtonPrimitive> usage and recommends <Button>",
+      "kind": "content"
+    },
+    {
+      "text": "Catches the raw <button> element with a custom SVG and recommends shared Button + Icon",
+      "kind": "content"
+    },
+    {
+      "text": "Catches the missing aria-label on the icon-only delete button",
+      "kind": "content"
+    },
+    {
+      "text": "Catches off-grid mid-range spacing (gap-5 and/or p-5)",
+      "kind": "content"
+    },
+    {
+      "text": "Catches the suppressed focus ring (focus:outline-none)",
+      "kind": "content"
+    },
+    {
+      "text": "Catches the raw neutral scale class (border-neutral-300)",
+      "kind": "content"
+    },
+    {
+      "text": "Output uses a markdown table with severity labels ([blocking] / [important] / [nit])",
+      "kind": "format"
+    },
+    {
+      "text": "Output ends with a totals-by-severity summary",
+      "kind": "format"
+    }
+  ]
+}

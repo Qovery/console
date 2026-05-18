@@ -1,0 +1,31 @@
+{
+  "eval_id": 1,
+  "eval_name": "polish-environment-card",
+  "prompt": "Run /qovery-ui polish on polish-input.tsx — a clean component with refinement opportunities (no deprecations). Output a Before / After / Why table.",
+  "assertions": [
+    {
+      "text": "Output is a Before / After / Why markdown table",
+      "kind": "format"
+    },
+    {
+      "text": "Flags p-5 as off-grid and suggests p-4 or p-6",
+      "kind": "content"
+    },
+    {
+      "text": "Flags raw neutral scale tokens (text-neutral-700 / text-neutral-600 / text-neutral-500) and suggests semantic tokens (text-neutral / text-neutral-subtle)",
+      "kind": "content"
+    },
+    {
+      "text": "Flags missing hover state on the clickable card",
+      "kind": "content"
+    },
+    {
+      "text": "Recommends a semantic surface token instead of bg-white",
+      "kind": "content"
+    },
+    {
+      "text": "Does NOT add or recommend major functionality changes (e.g., keyboard handlers, role attributes) — polish is non-functional",
+      "kind": "scope"
+    }
+  ]
+}

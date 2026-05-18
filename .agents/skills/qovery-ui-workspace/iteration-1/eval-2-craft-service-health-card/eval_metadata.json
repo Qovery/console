@@ -1,0 +1,31 @@
+{
+  "eval_id": 2,
+  "eval_name": "craft-service-health-card",
+  "prompt": "Run /qovery-ui craft to design a compact Service Health Summary dashboard card (count + status breakdown + last incident timestamp).",
+  "assertions": [
+    {
+      "text": "Recommends <StatusChip> (or shared status component) for the running/degraded/stopped states",
+      "kind": "content"
+    },
+    {
+      "text": "Recommends semantic color tokens (positive/warning/negative or text-positive etc.) rather than raw Tailwind palette",
+      "kind": "content"
+    },
+    {
+      "text": "Suggests Roboto Mono / tabular-nums / font-mono for the numeric counts",
+      "kind": "content"
+    },
+    {
+      "text": "Treats the surface as compact (text-sm / text-xs), not a hero unit (no text-2xl/3xl/4xl)",
+      "kind": "content"
+    },
+    {
+      "text": "Output includes the five sections the skill specifies: layout skeleton, component choices, typography, color, copy",
+      "kind": "format"
+    },
+    {
+      "text": "Output does not include code blocks (the skill explicitly says no code)",
+      "kind": "format"
+    }
+  ]
+}

@@ -4,7 +4,15 @@
 
 This is a dense product UI. Whitespace serves hierarchy and legibility, not aesthetics. Don't add padding to make something "feel premium" — add it when the content needs room to breathe for readability.
 
-Spacing follows a **4px grid** — every gap, padding, and margin should be a multiple of 4px.
+Spacing follows a **4px grid as the default** — most gaps, padding, and margins should be a multiple of 4px. The grid is a guideline, not a law.
+
+**Fine-grained exceptions (2px, 6px) are allowed when they look and feel better.** Typical cases:
+
+- **6px instead of 8px** when 8px feels loose between tightly-related elements — use `gap-1.5`, `p-1.5`, `px-1.5`
+- **2px** for the smallest visual nudges — icon-to-label gaps, chip internal padding, optical alignment fixes
+- **Off-grid values like `gap-5` (20px) or `p-5` are still wrong** — the exception is only for sub-8px refinements, not arbitrary mid-range values
+
+Trust your eye. If 6px reads better than 8px, use 6px. If you can't articulate why an off-grid value is better, snap back to the grid.
 
 **Before adding spacing, ask:** does removing it break legibility or make a target too small to hit? If not, remove it.
 
@@ -133,7 +141,7 @@ At any decision point, count the distinct options, actions, or pieces of informa
 
 ## Never
 
-- Use arbitrary spacing values outside the 4px grid
+- Use arbitrary mid-range spacing values (e.g. `gap-5`, `p-5`) — 2px and 6px are the only allowed off-grid exceptions, and only for fine-tuning small elements
 - Make all spacing equal — variety creates hierarchy
 - Wrap everything in cards — not everything needs a container
 - Nest cards inside cards — use spacing and dividers for internal hierarchy

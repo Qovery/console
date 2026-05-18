@@ -1,0 +1,43 @@
+{
+  "eval_id": 1,
+  "eval_name": "polish-environment-card",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "Output is a Before / After / Why markdown table",
+      "passed": true,
+      "evidence": "Has a markdown table with columns '# | Before | After | Why' covering 13 refinements."
+    },
+    {
+      "text": "Flags p-5 as off-grid and suggests p-4 or p-6",
+      "passed": true,
+      "evidence": "Row 5: 'p-5 \u2192 p-4. 16 px padding aligns with the rest of the console's card density.'"
+    },
+    {
+      "text": "Flags raw neutral scale tokens (text-neutral-700 / text-neutral-600 / text-neutral-500) and suggests semantic tokens (text-neutral / text-neutral-subtle)",
+      "passed": false,
+      "evidence": "Row 7 keeps the raw scale (suggests text-neutral-400 / -350 / -300) and never recommends the semantic text-neutral / text-neutral-subtle tokens. Actively re-introduces raw-scale tokens by name."
+    },
+    {
+      "text": "Flags missing hover state on the clickable card",
+      "passed": true,
+      "evidence": "Row 3 adds hover:border-neutral-300 hover:bg-neutral-50 transition-colors plus focus-visible ring."
+    },
+    {
+      "text": "Recommends a semantic surface token instead of bg-white",
+      "passed": false,
+      "evidence": "Suggested final code (line 35) keeps bg-white verbatim \u2014 never flagged as an issue."
+    },
+    {
+      "text": "Does NOT add or recommend major functionality changes (e.g., keyboard handlers, role attributes) \u2014 polish is non-functional",
+      "passed": false,
+      "evidence": "Row 1 adds role=button, tabIndex=0, onKeyDown handler. Row 12 adds onClick stopPropagation. Row 8 changes pluralization logic. These are functional changes, not polish."
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.5,
+    "passed": 3,
+    "failed": 3,
+    "total": 6
+  }
+}

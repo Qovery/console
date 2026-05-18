@@ -1,0 +1,68 @@
+{
+  "eval_id": 0,
+  "eval_name": "audit-service-row",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "Catches raw Tailwind palette colors used semantically (text-green-500 / text-yellow-500 / text-red-500 for status)",
+      "passed": true,
+      "evidence": "Three separate blocking rows for text-green-500, text-yellow-500, text-red-500 at lines 6-8, each recommending text-positive/warning/negative or <StatusChip>."
+    },
+    {
+      "text": "Catches the hardcoded hex color #7c3aed in the inline style attribute",
+      "passed": true,
+      "evidence": "Line 15: blocking row flagging '#7c3aed' inline style breaks light/dark parity, recommends <Button color=brand>."
+    },
+    {
+      "text": "Catches the deprecated <Tag> component and recommends <Badge>",
+      "passed": true,
+      "evidence": "Line 11: 'Tag is deprecated. Replace with <Badge color=green>...'."
+    },
+    {
+      "text": "Catches <ButtonPrimitive> usage and recommends <Button>",
+      "passed": true,
+      "evidence": "Line 13: 'ButtonPrimitive used directly in product code (it is the internal primitive). Replace with <Button>'."
+    },
+    {
+      "text": "Catches the raw <button> element with a custom SVG and recommends shared Button + Icon",
+      "passed": true,
+      "evidence": "Line 18: 'Inline raw <svg> for a delete glyph instead of the shared icon system. Use <Icon iconStyle=regular iconName=trash>'; also lines 16-17 recommend wrapping in <Button>."
+    },
+    {
+      "text": "Catches the missing aria-label on the icon-only delete button",
+      "passed": true,
+      "evidence": "Line 16: blocking row 'Icon-only <button> has no aria-label \u2014 screen readers will announce nothing. Add aria-label=Delete service.'"
+    },
+    {
+      "text": "Catches off-grid mid-range spacing (gap-5 and/or p-5)",
+      "passed": true,
+      "evidence": "Line 19: 'gap-5 (20px) and p-5 (20px) are off the 4px grid \u2014 arbitrary mid-range values, not the allowed 2px/6px fine-tuning case.' Explicitly cites the relaxed-grid rule."
+    },
+    {
+      "text": "Catches the suppressed focus ring (focus:outline-none)",
+      "passed": true,
+      "evidence": "Line 14: blocking row 'focus:outline-none suppresses the focus ring \u2014 accessibility non-negotiable.'"
+    },
+    {
+      "text": "Catches the raw neutral scale class (border-neutral-300)",
+      "passed": true,
+      "evidence": "Line 20: 'Legacy neutral palette border-neutral-300 (deprecated 50\u2013900 scale). Use semantic border-neutral.'"
+    },
+    {
+      "text": "Output uses a markdown table with severity labels ([blocking] / [important] / [nit])",
+      "passed": true,
+      "evidence": "Header row 'Location | Severity | Issue | Fix'; severities use exact backticked labels [blocking], [important], [nit] throughout."
+    },
+    {
+      "text": "Output ends with a totals-by-severity summary",
+      "passed": true,
+      "evidence": "## Totals section at line 30: [blocking]: 13, [important]: 6, [nit]: 3, Total: 22 issues."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 11,
+    "failed": 0,
+    "total": 11
+  }
+}

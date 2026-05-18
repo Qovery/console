@@ -1,0 +1,43 @@
+{
+  "eval_id": 2,
+  "eval_name": "craft-service-health-card",
+  "configuration": "without_skill",
+  "expectations": [
+    {
+      "text": "Recommends <StatusChip> (or shared status component) for the running/degraded/stopped states",
+      "passed": false,
+      "evidence": "Component table picks <Badge> for the overall pill and a custom 'Indicator / colored div (8px circle)' for the dots. <StatusChip> is never mentioned."
+    },
+    {
+      "text": "Recommends semantic color tokens (positive/warning/negative or text-positive etc.) rather than raw Tailwind palette",
+      "passed": false,
+      "evidence": "Color section uses raw palette classes throughout: bg-green-50 / text-green-600 / bg-green-500, bg-yellow-50 / text-yellow-700, bg-red-50 / text-red-600, bg-neutral-100 / text-neutral-400. No semantic tokens (positive/warning/negative) appear."
+    },
+    {
+      "text": "Suggests Roboto Mono / tabular-nums / font-mono for the numeric counts",
+      "passed": true,
+      "evidence": "'Tabular numerals (font-variant-numeric: tabular-nums) on every numeric token. Counts changing from 9 to 10 should not cause horizontal jitter.'"
+    },
+    {
+      "text": "Treats the surface as compact (text-sm / text-xs), not a hero unit (no text-2xl/3xl/4xl)",
+      "passed": false,
+      "evidence": "Typography table specifies 'Headline number: text-3xl (30/36)' \u2014 a hero-sized typographic treatment despite the brief explicitly requesting a non-hero, compact card."
+    },
+    {
+      "text": "Output includes the five sections the skill specifies: layout skeleton, component choices, typography, color, copy",
+      "passed": true,
+      "evidence": "All five sections present (and three additional ones): Layout, Component choices, Typography, Color decisions, Copy."
+    },
+    {
+      "text": "Output does not include code blocks (the skill explicitly says no code)",
+      "passed": true,
+      "evidence": "No ```...``` code fences in the document; all output is prose + tables."
+    }
+  ],
+  "summary": {
+    "pass_rate": 0.5,
+    "passed": 3,
+    "failed": 3,
+    "total": 6
+  }
+}

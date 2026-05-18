@@ -1,0 +1,43 @@
+{
+  "eval_id": 2,
+  "eval_name": "craft-service-health-card",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "Recommends <StatusChip> (or shared status component) for the running/degraded/stopped states",
+      "passed": true,
+      "evidence": "Component table row: 'Status indicators per state \u2192 <StatusChip status=... /> in monochrome / icon-only variant. Canonical component for system state.' Also called out as the deliberate choice over <Badge>."
+    },
+    {
+      "text": "Recommends semantic color tokens (positive/warning/negative or text-positive etc.) rather than raw Tailwind palette",
+      "passed": true,
+      "evidence": "Color section uses text-positive / text-warning / text-neutral-subtle exclusively. Explicit rule: 'No brand violet. Semantic tokens only.' No raw palette classes appear."
+    },
+    {
+      "text": "Suggests Roboto Mono / tabular-nums / font-mono for the numeric counts",
+      "passed": true,
+      "evidence": "Typography section: 'Total count value: text-base font-medium font-mono \u2014 Mono so the digit aligns'; status row count uses font-mono; footer timestamp uses font-mono."
+    },
+    {
+      "text": "Treats the surface as compact (text-sm / text-xs), not a hero unit (no text-2xl/3xl/4xl)",
+      "passed": true,
+      "evidence": "Typography uses text-base / text-sm / text-xs only. 'No text-2xl hero number. No intermediate sizes.' Constraints re-checked: 'Compact, not hero: no oversized number, no gradient, no decorative iconography.'"
+    },
+    {
+      "text": "Output includes the five sections the skill specifies: layout skeleton, component choices, typography, color, copy",
+      "passed": true,
+      "evidence": "All five numbered sections present: 1. Layout Skeleton, 2. Component Choices, 3. Typography, 4. Color Decisions, 5. Copy Suggestions."
+    },
+    {
+      "text": "Output does not include code blocks (the skill explicitly says no code)",
+      "passed": true,
+      "evidence": "Document is structured prose + tables; no ```...``` code fences anywhere."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  }
+}

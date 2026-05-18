@@ -15,7 +15,7 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 
 **Colors:** Tailwind tokens only, never hardcoded. Status colors are semantic, never decorative. Brand violet on actionable controls only.
 **Typography:** `text-sm` is the default. Two weights: 400 body, 500 anchors. Roboto Mono for tabular data. Max 3 sizes per surface.
-**Spacing:** 4px grid. Variety creates hierarchy. Cards for distinct actionable content only — never nested.
+**Spacing:** 4px grid as default; 2px and 6px allowed for fine-tuning small elements when they look better than 4px/8px. Variety creates hierarchy. Cards for distinct actionable content only — never nested.
 **Components:** Shared component first, always. `<StatusChip>` for all system states. `<Button>` not `<ButtonPrimitive>`. `<Badge>` not `<Tag>`.
 **Copy:** Technical but human. Button copy 1–3 words. Modal titles name the action. Address the user as "you."
 **Motion:** Default is no motion. High-frequency actions never animate. Every animation needs a reason beyond aesthetics.
@@ -25,22 +25,21 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 
 ## Commands
 
-| Command                | When to use                                    |
-| ---------------------- | ---------------------------------------------- |
-| `/qovery-ui audit`     | Full design review of a component or page      |
-| `/qovery-ui polish`    | Targeted spacing, color, and rhythm refinement |
-| `/qovery-ui component` | Find the right component or scaffold a new one |
-| `/qovery-ui copy`      | Review or write microcopy                      |
-| `/qovery-ui motion`    | Audit or add animation                         |
-| `/qovery-ui craft`     | Design something new from scratch              |
+| Command             | When to use                                    |
+| ------------------- | ---------------------------------------------- |
+| `/qovery-ui audit`  | Full design review of a component or page      |
+| `/qovery-ui polish` | Targeted spacing, color, and rhythm refinement |
+| `/qovery-ui copy`   | Review or write microcopy                      |
+| `/qovery-ui motion` | Audit or add animation                         |
+| `/qovery-ui craft`  | Design something new from scratch              |
 
 ---
 
 ## /audit
 
-**Load:** `references/colors.md`, `references/spacing-layout.md`, `references/anti-patterns.md`, `references/accessibility.md`
+**Load:** `references/colors.md`, `references/spacing-layout.md`, `references/anti-patterns.md`, `references/accessibility.md`, `references/components.md`
 
-Four-phase review. Label every finding:
+Five-phase review. Label every finding:
 
 - `[blocking]` — ships broken, violates semantic rules, or breaks accessibility
 - `[important]` — degrades experience, likely to cause design review rejection
@@ -49,7 +48,8 @@ Four-phase review. Label every finding:
 **Phase 1 — Token hygiene:** hardcoded values, legacy tokens, raw Tailwind palette classes used semantically.
 **Phase 2 — Semantic color:** status colors used decoratively, color-only state, brand as page wash.
 **Phase 3 — Spacing & density:** off-grid values, whitespace inflation, button height overrides.
-**Phase 4 — Accessibility:** missing `aria-label`, suppressed focus ring, color-only status.
+**Phase 4 — Components:** deprecated components (`<Tag>`, `<Table>`, `<IconFa>`, `<ButtonPrimitive>`), custom builds where a shared component exists.
+**Phase 5 — Accessibility:** missing `aria-label`, suppressed focus ring, color-only status.
 
 Output format — a single markdown table, one row per issue:
 
@@ -74,16 +74,6 @@ Fix without changing functionality. Output a Before / After / Why table, one row
 | `p-5`                 | `p-4`                             | Off the 4px grid                         |
 | `text-neutral-600`    | `text-neutral-subtle`             | Legacy token                             |
 | No hover state on row | `hover:bg-surface-neutral-subtle` | Interactive elements need hover feedback |
-
----
-
-## /component
-
-**Load:** `references/components.md`
-
-1. Identify if a shared component already exists — always prefer it
-2. Return the import path and correct usage with props
-3. If nothing fits, explain why before scaffolding new
 
 ---
 

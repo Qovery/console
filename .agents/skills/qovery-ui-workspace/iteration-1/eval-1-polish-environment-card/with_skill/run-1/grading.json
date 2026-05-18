@@ -1,0 +1,43 @@
+{
+  "eval_id": 1,
+  "eval_name": "polish-environment-card",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "Output is a Before / After / Why markdown table",
+      "passed": true,
+      "evidence": "Markdown table with columns 'Before | After | Why' covering 11 refinements."
+    },
+    {
+      "text": "Flags p-5 as off-grid and suggests p-4 or p-6",
+      "passed": true,
+      "evidence": "Row 5: 'p-5 \u2192 p-4. p-5 (20px) is off the 4px grid.'"
+    },
+    {
+      "text": "Flags raw neutral scale tokens (text-neutral-700 / text-neutral-600 / text-neutral-500) and suggests semantic tokens (text-neutral / text-neutral-subtle)",
+      "passed": true,
+      "evidence": "Rows 7, 8, 9: replaces text-neutral-700 \u2192 text-neutral, text-neutral-600 \u2192 text-neutral-subtle, text-neutral-500 \u2192 text-neutral-subtle. Reason cites 'Legacy palette token'."
+    },
+    {
+      "text": "Flags missing hover state on the clickable card",
+      "passed": true,
+      "evidence": "Row 14: 'border-neutral with no hover feedback on a cursor-pointer card \u2192 add hover:border-neutral-componentHover hover:bg-surface-neutral-componentHover transition-colors. Interactive surfaces must give hover feedback \u2014 cursor-pointer alone is not a state.'"
+    },
+    {
+      "text": "Recommends a semantic surface token instead of bg-white",
+      "passed": true,
+      "evidence": "Row 6: 'bg-white \u2192 bg-surface-neutral-component. Hardcoded color breaks light/dark parity. The semantic token for a card surface is the neutral component scale.'"
+    },
+    {
+      "text": "Does NOT add or recommend major functionality changes (e.g., keyboard handlers, role attributes) \u2014 polish is non-functional",
+      "passed": true,
+      "evidence": "Closing summary explicitly states 'Eleven refinements, all non-functional'. No role/tabIndex/onKeyDown suggestions appear anywhere in the output."
+    }
+  ],
+  "summary": {
+    "pass_rate": 1.0,
+    "passed": 6,
+    "failed": 0,
+    "total": 6
+  }
+}
