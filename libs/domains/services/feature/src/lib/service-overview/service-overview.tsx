@@ -50,6 +50,8 @@ function ServiceOverviewContent({
   const activeBlueprint = SHOW_BLUEPRINT_CONTEXT ? BLUEPRINT_SOURCE : null
 
   const handleOpenBlueprintUpdateReview = () => {
+    if (!environment) return
+
     closeModal()
     navigate({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update-blueprint',

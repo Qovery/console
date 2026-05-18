@@ -2,7 +2,7 @@ import { mkdir, stat, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-export const CHANGELOG_RSS_FEED_URL = 'https://www.qovery.com/changelog/rss.xml'
+export const CHANGELOG_PAGE_URL = 'https://www.qovery.com/changelog'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 export const CHANGELOG_ASSET_FILE = resolve(__dirname, '../apps/console/public/changelog/latest.json')
 
@@ -14,6 +14,23 @@ export function decodeXmlEntities(value) {
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
+    .trim()
+}
+
+export function decodeHtmlEntities(value) {
+  return decodeXmlEntities(value)
+    .replace(/&#(\d+);/g, (_, code) => String.fromCodePoint(Number(code)))
+    .replace(/&#x([a-f0-9]+);/gi, (_, code) => String.fromCodePoint(parseInt(code, 16)))
+    .replace(/&nbsp;/g, ' ')
+    .trim()
+}
+
+export function stripHtmlTags(value) {
+  return decodeHtmlEntities(value)
+    .replace(/<script\b[\s\S]*?<\/script>/gi, ' ')
+    .replace(/<style\b[\s\S]*?<\/style>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
     .trim()
 }
 
@@ -80,6 +97,54 @@ export function parseLatestChangelogFromRssFeed(rssFeed) {
   ]
 }
 
+export function parseLatestChangelogFromHtmlPage(htmlPage) {
+  const changelogLinkRegex = /<a\b[^>]*href=["']([^"']*\/changelog\/\d{4}-\d{2}-\d{2}[^"']*)["'][^>]*>([\s\S]*?)<\/a>/gi
+  const latestLink = changelogLinkRegex.exec(htmlPage)
+
+  if (!latestLink) {
+    return []
+  }
+
+  const [, rawUrl, rawLinkContent] = latestLink
+  const url = new URL(decodeHtmlEntities(rawUrl), CHANGELOG_PAGE_URL).href
+  const firstPublishedAt = extractPublishedAtFromChangelogUrl(url)
+
+  // Extract the title from the <h2> inside the link, fallback to full link content
+  const headingMatch = rawLinkContent.match(/<h2\b[^>]*>([\s\S]*?)<\/h2>/i)
+  const name = stripHtmlTags(headingMatch ? headingMatch[1] : rawLinkContent)
+
+  if (!name || !firstPublishedAt) {
+    return []
+  }
+
+  // Extract summary from the first <p> inside the link content
+  const pMatch = rawLinkContent.match(/<p\b[^>]*>([\s\S]*?)<\/p>/i)
+  const summary = pMatch ? stripHtmlTags(pMatch[1]) : ''
+
+  return [
+    {
+      name,
+      summary,
+      url,
+      firstPublishedAt,
+    },
+  ]
+}
+
+async function fetchChangelogSource(fetchImpl, url, accept) {
+  const response = await fetchImpl(url, {
+    headers: {
+      Accept: accept,
+    },
+  })
+
+  if (!response.ok) {
+    throw new Error(`Qovery changelog fetch error for ${url}: ${response.status} ${response.statusText}`)
+  }
+
+  return response.text()
+}
+
 export async function syncChangelogFeed({
   changelogAssetFile = CHANGELOG_ASSET_FILE,
   fetchImpl = fetch,
@@ -87,18 +152,17 @@ export async function syncChangelogFeed({
   consoleWarn = console.warn,
 } = {}) {
   try {
-    const response = await fetchImpl(CHANGELOG_RSS_FEED_URL, {
-      headers: {
-        Accept: 'application/rss+xml, application/xml, text/xml',
-      },
-    })
+    let changelogs = []
 
-    if (!response.ok) {
-      throw new Error(`Qovery changelog RSS error: ${response.status} ${response.statusText}`)
+    {
+      const htmlPage = await fetchChangelogSource(fetchImpl, CHANGELOG_PAGE_URL, 'text/html')
+      changelogs = parseLatestChangelogFromHtmlPage(htmlPage)
     }
 
-    const rssFeed = await response.text()
-    const changelogs = parseLatestChangelogFromRssFeed(rssFeed)
+    if (changelogs.length === 0) {
+      throw new Error('Qovery changelog sync did not find any changelog entry')
+    }
+
     await writeChangelogAssetFile(changelogs, changelogAssetFile)
     return changelogs
   } catch (error) {

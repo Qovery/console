@@ -242,9 +242,14 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
             },
           })
         })
-        .with({ mode: 'CREATE', type: 'FILE' }, { mode: 'CREATE', type: 'BUILT_IN' }, () => {
-          return Promise.resolve()
-        })
+        .with(
+          { mode: 'CREATE', type: 'FILE' },
+          { mode: 'CREATE', type: 'BUILT_IN' },
+          { mode: 'CREATE', type: 'EXTERNAL_SECRET' },
+          () => {
+            return Promise.resolve()
+          }
+        )
         .with({ mode: 'UPDATE' }, () => {
           if (!variable) {
             throw new Error('No variable to be based on')

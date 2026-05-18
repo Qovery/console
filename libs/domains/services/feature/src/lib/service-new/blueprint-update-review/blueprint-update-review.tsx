@@ -1,3 +1,4 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useEffect, useMemo, useState } from 'react'
 import {
   Accordion,
@@ -168,7 +169,7 @@ interface ParsedTerraformPlan {
   summary: ParsedPlanSummary
 }
 
-const REVIEW_STEPS: { id: ReviewStepId; title: string; iconName: string; description?: string }[] = [
+const REVIEW_STEPS: { id: ReviewStepId; title: string; iconName: IconName; description?: string }[] = [
   {
     id: 'required',
     title: 'New required values',
