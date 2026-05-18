@@ -12,7 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { Fragment, useMemo, useState } from 'react'
+import { type ReactNode, Fragment, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ExternalServiceEnum, IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
@@ -76,6 +76,9 @@ function getVariableScopeLabel(variable: VariableResponse): string {
 
 export type VariableListProps = {
   className?: string
+  hideSectionLabel?: boolean
+  showOnly?: 'custom' | 'built-in'
+  headerActions?: ReactNode
   onCreateVariable?: (variable: VariableResponse | void) => void
   onEditVariable?: (variable: VariableResponse | void) => void
   onDeleteVariable?: (variable: VariableResponse) => void
@@ -101,6 +104,9 @@ export type VariableListProps = {
 
 export function VariableList({
   className,
+  hideSectionLabel = false,
+  showOnly,
+  headerActions,
   onCreateVariable,
   onEditVariable,
   onDeleteVariable,
@@ -123,7 +129,19 @@ export function VariableList({
   const { mutateAsync: deleteVariable } = useDeleteVariable()
   const [globalFilter, setGlobalFilter] = useState('')
   const [builtInGlobalFilter, setBuiltInGlobalFilter] = useState('')
-  const nonBuiltInVariables = useMemo(() => variables.filter((variable) => variable.scope !== 'BUILT_IN'), [variables])
+  const nonBuiltInVariables = useMemo(
+    () =>
+      variables.filter((variable) => {
+        if (variable.scope === 'BUILT_IN') {
+          return false
+        }
+        if (showOnly === 'custom' && variable.variable_type === 'EXTERNAL_SECRET') {
+          return false
+        }
+        return true
+      }),
+    [showOnly, variables]
+  )
   const builtInVariables = useMemo(() => variables.filter((variable) => variable.scope === 'BUILT_IN'), [variables])
 
   const _onCreateVariable: (
@@ -641,9 +659,41 @@ export function VariableList({
     isBuiltInTable: boolean
   ) => {
     const hideServiceLinkColumn = isServiceScope && !isBuiltInTable
+    const totalRows = tableInstance.getPreFilteredRowModel().rows.length
+    const isSearching = tableInstance.getRowCount() !== totalRows
+    const countText = isSearching
+      ? `${tableInstance.getRowCount()}/${totalRows} ${pluralize(tableInstance.getRowCount(), 'variable')}`
+      : `${totalRows} ${pluralize(totalRows, 'variable')}`
+    const countTooltipContent = isBuiltInTable
+      ? 'Qovery automatically injects built-in variables for service interconnection and system information.'
+      : 'Custom variables are values you define to configure your service behavior at build and runtime.'
+
     return (
       <div className="flex grow flex-col justify-between">
-        <Table.Root className={twMerge('w-full min-w-[1200px] text-xs', className)}>
+        {headerActions && (
+          <div className="flex items-center justify-between border-b border-neutral bg-surface-neutral px-4 py-2">
+            <div className="flex items-center gap-1.5 text-sm font-medium text-neutral">
+              <span>{countText}</span>
+              <Tooltip content={countTooltipContent}>
+                <span>
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                </span>
+              </Tooltip>
+            </div>
+            <div className="flex items-center gap-2">
+              <TableFilterSearch
+                className="h-8 w-[200px]"
+                value={filterValue ?? ''}
+                onChange={(event) => setFilterValue(event.target.value)}
+              />
+              {headerActions}
+            </div>
+          </div>
+        )}
+        <Table.Root
+          className={twMerge('w-full min-w-[1200px] text-xs', className)}
+          containerClassName={headerActions ? 'border-0 rounded-none' : undefined}
+        >
           <Table.Header>
             {tableInstance.getHeaderGroups().map((headerGroup) => (
               <Table.Row key={headerGroup.id} className={twMerge('w-full items-center text-xs', rowGridClassName)}>
@@ -724,15 +774,15 @@ export function VariableList({
 
   return (
     <div className="flex min-h-0 flex-col gap-8">
-      {nonBuiltInVariables.length > 0 && (
+      {showOnly !== 'built-in' && nonBuiltInVariables.length > 0 && (
         <Section className="flex min-h-0 flex-col gap-4">
-          <Heading level={3}>Custom variables</Heading>
+          {!hideSectionLabel && <Heading level={3}>Custom variables</Heading>}
           {renderTable(table, globalFilter, setGlobalFilter, gridLayoutClassName, false)}
         </Section>
       )}
-      {builtInVariables.length > 0 && (
+      {showOnly !== 'custom' && builtInVariables.length > 0 && (
         <Section className="flex min-h-0 flex-col gap-4">
-          <Heading level={3}>Built-in variables</Heading>
+          {!hideSectionLabel && <Heading level={3}>Built-in variables</Heading>}
           {renderTable(builtInTable, builtInGlobalFilter, setBuiltInGlobalFilter, builtInGridLayoutClassName, true)}
         </Section>
       )}

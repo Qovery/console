@@ -59,6 +59,7 @@ export type CreateUpdateVariableModalProps = {
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
   isFile?: boolean
+  hasClusterSecretManagerConfigured?: boolean
 } & (
   | {
       scope: Extract<Scope, 'PROJECT'>
@@ -78,7 +79,7 @@ export type CreateUpdateVariableModalProps = {
 )
 
 export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
-  const { scope, closeModal, onSubmit, variable, mode, type, isFile } = props
+  const { scope, closeModal, onSubmit, variable, mode, type, isFile, hasClusterSecretManagerConfigured = false } = props
   const _isFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
   const { enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
@@ -153,6 +154,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
   const watchScope = methods.watch('scope')
+  const watchIsSecret = methods.watch('isSecret')
   const watchMountPath = methods.watch('mountPath')
   const valueEditorLanguage = getValueEditorLanguage({ isFile: _isFile, mountPath: watchMountPath })
   const valueEditorServiceId = 'serviceId' in props && isValueEditorScope(watchScope) ? props.serviceId : undefined
@@ -534,6 +536,17 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
               )}
             />
           </div>
+        )}
+
+        {mode === 'CREATE' && type === 'VALUE' && watchIsSecret && hasClusterSecretManagerConfigured && (
+          <Callout.Root color="yellow" className="mb-3">
+            <Callout.Icon>
+              <Icon iconName="exclamation-triangle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              Are you sure you want to create a Qovery secret? External secrets are already configured on this cluster.
+            </Callout.Text>
+          </Callout.Root>
         )}
 
         {scope === 'APPLICATION' && watchScope !== 'APPLICATION' && (
