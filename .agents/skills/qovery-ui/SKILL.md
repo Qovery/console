@@ -16,8 +16,8 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 **Colors:** Tailwind tokens only, never hardcoded. Status colors are semantic, never decorative. Brand violet on actionable controls only.
 **Typography:** `text-sm` is the default. Two weights: 400 body, 500 anchors. Roboto Mono for tabular data. Max 3 sizes per surface.
 **Spacing:** 4px grid as default; 2px and 6px allowed for fine-tuning small elements when they look better than 4px/8px. Variety creates hierarchy. Cards for distinct actionable content only — never nested.
-**Components:** Shared component first, always. `<StatusChip>` for all system states. `<Button>` not `<ButtonPrimitive>`. `<Badge>` not `<Tag>`.
-**Copy:** Technical but human. Button copy 1–3 words. Modal titles name the action. Address the user as "you."
+**Components:** Shared component first, always. `<StatusChip>` for all system states. Use `<Modal>` via `useModal()` (focus trap), `<DropdownMenu>` from shared (keyboard nav), never wrap Radix directly. Deprecations — replace on sight: `<Tag>` → `<Badge>`, `<Table>` → `<TablePrimitives>`, `<IconFa>` → `<Icon iconStyle iconName />`, `<ButtonPrimitive>` → `<Button>`.
+**Copy:** Technical but human. Button copy 1–3 words. Modal titles name the action. Address the user as "you." No em-dashes — use commas, periods, or parentheses instead.
 **Motion:** Default is no motion. High-frequency actions never animate. Every animation needs a reason beyond aesthetics.
 **Accessibility:** No color-only state. Focus rings never suppressed. Interactive icon-only controls always have `aria-label`.
 
@@ -37,7 +37,7 @@ Design review and implementation guidance for the Qovery Console. Read `.claude/
 
 ## /audit
 
-**Load:** `references/colors.md`, `references/spacing-layout.md`, `references/anti-patterns.md`, `references/accessibility.md`, `references/components.md`
+**Load:** `references/colors.md`, `references/spacing-layout.md`, `references/anti-patterns.md`, `references/accessibility.md`
 
 Five-phase review. Label every finding:
 
@@ -101,7 +101,7 @@ Ask first: how often will users see this? If the answer is "constantly," remove 
 
 ## /craft
 
-**Load:** `references/typography.md`, `references/spacing-layout.md`, `references/colors.md`, `references/components.md`, `references/copy.md`
+**Load:** `references/typography.md`, `references/spacing-layout.md`, `references/colors.md`
 
 Generative command — use when designing something new from scratch rather than reviewing existing work.
 
@@ -126,7 +126,6 @@ Output structured prose and a table for component choices. Do not output code. F
 | `references/colors.md`         | Token system, semantic rules, contrast, tonal scale                                  |
 | `references/typography.md`     | Type scale, weights, Roboto Mono, typographic characters                             |
 | `references/spacing-layout.md` | 4px grid, visual rhythm, layout compositions, optical alignment, working memory rule |
-| `references/components.md`     | Which component to use when                                                          |
 | `references/copy.md`           | Tone, microcopy patterns, modal titles, button copy rules                            |
 | `references/motion.md`         | Animation decision framework, easing, duration guide                                 |
 | `references/anti-patterns.md`  | Match-and-refuse design bans                                                         |

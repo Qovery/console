@@ -10,7 +10,6 @@ Spacing follows a **4px grid as the default** — most gaps, padding, and margin
 
 - **6px instead of 8px** when 8px feels loose between tightly-related elements — use `gap-1.5`, `p-1.5`, `px-1.5`
 - **2px** for the smallest visual nudges — icon-to-label gaps, chip internal padding, optical alignment fixes
-- **Off-grid values like `gap-5` (20px) or `p-5` are still wrong** — the exception is only for sub-8px refinements, not arbitrary mid-range values
 
 Trust your eye. If 6px reads better than 8px, use 6px. If you can't articulate why an off-grid value is better, snap back to the grid.
 
@@ -23,21 +22,21 @@ Trust your eye. If 6px reads better than 8px, use 6px. If you can't articulate w
 Spacing is how you communicate relationships. Elements close together belong together. Space between groups signals a shift in topic.
 
 - **Tight grouping for related elements:** 8–12px between siblings
-- **Generous separation between distinct sections:** 48–96px
+- **Generous separation between distinct sections:** 24-32px
 - **Vary spacing within sections** — not every row needs the same gap
-- **Asymmetric compositions** — break the predictable centered-content pattern when it makes sense
 
 **Established conventions from real usage:**
 
-| Context                                   | Value              | Notes                                             |
-| ----------------------------------------- | ------------------ | ------------------------------------------------- |
-| Title (`text-sm`) + subtitle (`text-ssm`) | `gap-1`            | Tightest readable gap between stacked label sizes |
-| Label-to-value inline                     | `gap-2`            |                                                   |
-| Content rows within a card                | `gap-3` or `gap-4` |                                                   |
-| Small card internal padding               | `p-3` or `p-4`     |                                                   |
-| Standard card internal padding            | `p-4` or `p-6`     |                                                   |
-| Fields within a form                      | `gap-4`            |                                                   |
-| Field groups within a form                | `gap-6`            |                                                   |
+| Context                                   | Value              | Notes                                                                                     |
+| ----------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------- |
+| Title (`text-sm`) + subtitle (`text-ssm`) | `gap-0.5`          | Always. The two sizes are one step apart — `gap-0.5` (2px) keeps them reading as one unit |
+| H1 (`text-2xl`) + description (`text-sm`) | `gap-2`            | Always. The size jump is large enough that anything tighter looks crammed                 |
+| Label-to-value inline                     | `gap-2`            |                                                                                           |
+| Content rows within a card                | `gap-3` or `gap-4` |                                                                                           |
+| Small card internal padding               | `p-3` or `p-4`     |                                                                                           |
+| Standard card internal padding            | `p-4` or `p-6`     |                                                                                           |
+| Fields within a form                      | `gap-4`            |                                                                                           |
+| Field groups within a form                | `gap-6`            |                                                                                           |
 
 ---
 
@@ -47,42 +46,46 @@ Don't default to card grids for everything — spacing and alignment create visu
 
 Use cards only when content is truly distinct and actionable. **Never nest cards inside cards.** If a card needs internal sections, use dividers or spacing — not another card layer.
 
-Vary card sizes, span columns, or mix cards with non-card content to break repetition. A grid of identical cards (icon + heading + text, repeated) is the most recognizable sign of an undesigned layout.
-
 ---
 
 ## Card with Attached Section
 
-A card where a secondary section — filter row, status bar, summary strip — is visually fused to the top or bottom of the card. Both appear as one bordered unit with a single continuous outline.
+A pattern where the **primary content** sits in its own outlined card, and a secondary section — header row with title and actions, footer with status, summary strip — sits next to it inside a shared outer container. The outer container's border ties them together visually; the inner card's outline makes the primary content read as the focal element.
 
-**The technique: `overflow-hidden` on the parent card.** This clips children to the card's border radius automatically. You never manually set inner radii, and the shared border collapses into one visual line.
+**Two borders, two roles, two surfaces:**
+
+- **Outer container** — `border border-neutral rounded-lg bg-surface-neutral-subtle` with internal padding (`p-3` or `p-4`). The tinted background is what makes the attached sections recede.
+- **Inner card** — its own `border border-neutral` and a stronger surface (`bg-surface-neutral-component`, or plain white in light mode) so it pops against the tinted container. This is the primary, focused content.
+- **Attached section(s)** — header above and/or footer below the inner card, inside the same outer container, separated from it by `gap-3` / `mt-3` etc. They have no border and no background of their own — they inherit the outer container's tinted surface, which is what makes them read as "attached" rather than as additional cards.
 
 ```tsx
-// Section attached at the bottom (e.g. "3 issues affecting services")
-<div className="rounded-lg border border-neutral overflow-hidden">
-  <div className="p-4">
-    {/* main card content */}
+// Header + primary card + attached footer (matches the ArgoCD example)
+<div className="flex flex-col gap-3 rounded-lg border border-neutral bg-surface-neutral-subtle p-3">
+  {/* Header row — title + actions, inherits the tinted container surface */}
+  <div className="flex items-center justify-between">
+    <h3 className="text-sm font-medium">ArgoCD running on …</h3>
+    <div className="flex gap-2">{/* edit + delete buttons */}</div>
   </div>
-  <div className="border-t border-neutral bg-surface-negative-subtle px-4 py-3">
-    3 issues affecting services
-  </div>
-</div>
 
-// Section attached at the top (e.g. filter badges above a table)
-<div className="rounded-lg border border-neutral overflow-hidden">
-  <div className="border-b border-neutral bg-surface-neutral-subtle px-3 py-2">
-    {/* badges, filters, tabs */}
+  {/* Inner card — own border + stronger surface so it pops against the container */}
+  <div className="rounded border border-neutral bg-surface-neutral-component p-3">
+    {/* cluster name, metadata */}
   </div>
-  <div>{/* main content */}</div>
+
+  {/* Attached footer — inherits the tinted container surface, no border */}
+  <div className="flex items-center gap-2 text-xs">
+    <Badge color="green">Connected</Badge>
+    <span className="text-neutral-subtle">Last update 3 min ago</span>
+  </div>
 </div>
 ```
 
 **Rules:**
 
-- The attached section shares the same `border-neutral` color as the card — reads as one border, not two
-- `overflow-hidden` on the parent is required — without it, the child's background bleeds past the card radius
-- Don't manually add `rounded-t-*` or `rounded-b-*` to the child — `overflow-hidden` handles it
-- The attached section background can be any surface token depending on context
+- Only the **outer container** and the **inner card** carry borders. Header and footer never have their own border or background — that's what makes them read as attached rather than as additional cards.
+- The **outer container** gets the tinted surface (`bg-surface-neutral-subtle`); the **inner card** gets a stronger surface (`bg-surface-neutral-component`) so it pops. Don't flip them.
+- Use the same border token (`border-neutral`) on both layers — different shades break the visual relationship.
+- Spacing between the inner card and the header/footer is `gap-3` (or the parent flex gap of the outer container). Going tighter makes them look fused; going wider makes them feel like separate cards.
 
 ---
 

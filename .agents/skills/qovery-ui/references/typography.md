@@ -25,7 +25,9 @@ Five sizes. Don't introduce others.
 
 **Jump in size creates hierarchy.** If two labels feel like the same level of importance, they should be the same size — differentiate with weight or color instead of introducing an in-between size.
 
-**The `text-sm` + `text-ssm` pairing** is the most common two-level label pattern in the console: a `text-sm font-medium` primary label above a `text-ssm font-normal` secondary descriptor, separated by `gap-1`. Use this instead of reaching for `text-xs` when the secondary text is still meaningful content rather than pure metadata.
+**The `text-sm` + `text-ssm` pairing** is the most common two-level label pattern in the console: a `text-sm font-medium` primary label above a `text-ssm font-normal` secondary descriptor, separated by `gap-0.5`. Use this instead of reaching for `text-xs` when the secondary text is still meaningful content rather than pure metadata.
+
+**H1 (`text-2xl`) above a `text-sm` description** is the page-title pattern. Always separate with `gap-2` — the size jump is too large for anything tighter.
 
 ---
 
@@ -55,6 +57,20 @@ Don't use Roboto Mono for labels, body text, or decorative purposes — it signa
 
 ---
 
+## Logs, Code, and Other Text-Heavy Surfaces
+
+Log viewers, code blocks, terminal output, and diff views follow a different rhythm — the user is scanning dense lines, not reading prose.
+
+- **Font:** `font-mono` for the body, not just for inline values. Roboto Mono is the canonical choice; uniform character width is what makes log lines readable at speed.
+- **Size:** drop one step from `text-sm` to `text-xs` (or `text-ssm` if `text-xs` is too cramped for the viewport). Reading thousands of lines of `text-sm` mono is visually heavy.
+- **Leading:** `leading-tight` or `leading-snug`. Default `leading-normal` (1.5) wastes vertical space when every line is the same height — you want more lines on screen.
+- **Spacing:** tighter padding around the surface (`p-2`/`p-3` instead of `p-4`), and no extra gap between log lines beyond what leading provides.
+- **Color:** keep contrast high; log surfaces typically need a dedicated background token (`bg-neutral-component` or a dark variant) to separate from chrome.
+
+The goal: maximize information density without sacrificing scanability. The aesthetic is "terminal," not "prose."
+
+---
+
 ## Scale & Hierarchy
 
 Fewer distinct sizes, more contrast between them.
@@ -77,7 +93,7 @@ A card that mixes `text-2xl`, `text-base`, `text-sm`, and `text-xs` all at once 
 
 **Light-on-dark compensation:** dark mode text at `text-sm` can feel thinner. Lean on `font-medium` for critical labels on dark backgrounds rather than increasing size.
 
-**Paragraph rhythm:** `leading-normal` (1.5) for body copy in descriptions, modals, and empty state copy. `leading-tight` for stacked UI labels — `gap-1` between them is enough.
+**Paragraph rhythm:** `leading-normal` (1.5) for body copy in descriptions, modals, and empty state copy. `leading-tight` for stacked UI labels — `gap-0.5` between them is enough.
 
 ---
 

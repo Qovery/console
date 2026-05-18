@@ -18,6 +18,7 @@
 | Use sentence case for UI labels                                             | Use ALL CAPS or Title Case For Everything      |
 | Be specific about the failing entity ("Service `api-prod` failed to start") | Be generic ("An error occurred")               |
 | Write labels as nouns or noun phrases                                       | Write labels as full sentences with periods    |
+| Use commas, periods, or parentheses for asides                              | Use em-dashes (`—`) — they read as AI-authored |
 
 ---
 
