@@ -108,7 +108,7 @@ describe('StepFeatures', () => {
     })
   })
 
-  it('should hide NAT_GATEWAY feature for GCP cluster creation', async () => {
+  it('should merge STATIC_IP and NAT_GATEWAY in GCP network configuration', async () => {
     useCloudProviderFeaturesMockSpy.mockReturnValue({
       data: [
         {
@@ -119,7 +119,12 @@ describe('StepFeatures', () => {
         {
           id: 'NAT_GATEWAY',
           title: 'NAT Gateway',
-          value_object: { value: false },
+          value_object: {
+            value: {
+              static_ips_enabled: false,
+              static_ips_count: 2,
+            },
+          },
         },
         {
           id: 'PRIVATE_CLUSTER',
@@ -145,9 +150,11 @@ describe('StepFeatures', () => {
     renderWithProviders(<StepFeatures {...defaultProps} />, { wrapper: getWrapper(gcpContextValue) })
 
     await waitFor(() => {
+      expect(screen.getAllByText('Static IP / Nat Gateways').length).toBeGreaterThan(0)
+      expect(screen.getByText('Enable static egress IPs')).toBeInTheDocument()
+      expect(screen.queryByText('Static IP count')).not.toBeInTheDocument()
       expect(screen.getByText('Private Cluster')).toBeInTheDocument()
-      expect(screen.getByText('Static IP')).toBeInTheDocument()
-      expect(screen.queryByText('NAT Gateway')).not.toBeInTheDocument()
+      expect(screen.queryByText(/^NAT Gateway$/)).not.toBeInTheDocument()
     })
   })
 })

@@ -126,7 +126,7 @@ export function ScalewayStaticIp({
                         setValue(`features.${natGatewayFeature.id}.value`, true)
                       }
                     }}
-                    value={field.value}
+                    value={typeof field.value === 'string' ? field.value : undefined}
                     disabled={disabled || !staticIpEnabled}
                     portal
                   />

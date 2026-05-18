@@ -25,13 +25,13 @@ import {
 } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { ClusterCardFeature } from '../../cluster-card-feature/cluster-card-feature'
+import { GcpStaticIp } from '../../gcp-static-ip/gcp-static-ip'
 import { ScalewayStaticIp } from '../../scaleway-static-ip/scaleway-static-ip'
 import { steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 import AWSVpcFeature from './aws-vpc-feature/aws-vpc-feature'
 import GCPVpcFeature from './gcp-vpc-feature/gcp-vpc-feature'
 
 const Qovery = '/assets/logos/logo-icon.svg'
-const GCP_HIDDEN_FEATURE_IDS = new Set(['NAT_GATEWAY'])
 const removeEmptySubnet = (objects?: Subnets[]) =>
   objects?.filter((field) => field.A !== '' || field.B !== '' || field.C !== '')
 
@@ -212,11 +212,32 @@ function StepFeaturesForm({
           {cloudProvider === 'GCP' && (
             <div>
               {match(watchVpcMode)
-                .with('DEFAULT', () =>
-                  features && features.length > 0 ? (
-                    features
-                      .filter((feature) => !GCP_HIDDEN_FEATURE_IDS.has(feature.id ?? ''))
-                      .map((feature) => (
+                .with('DEFAULT', () => {
+                  if (!features || features.length === 0) {
+                    return (
+                      <div className="mt-2 flex justify-center">
+                        <LoaderSpinner className="w-4" />
+                      </div>
+                    )
+                  }
+
+                  const staticIpFeature = features.find(({ id }) => id === 'STATIC_IP')
+                  const natGatewayFeature = features.find(({ id }) => id === 'NAT_GATEWAY')
+                  const hasMergedStaticIpNatGateway = Boolean(staticIpFeature && natGatewayFeature)
+                  const remainingFeatures = hasMergedStaticIpNatGateway
+                    ? features.filter(({ id }) => id !== 'STATIC_IP' && id !== 'NAT_GATEWAY')
+                    : features
+
+                  return (
+                    <>
+                      {hasMergedStaticIpNatGateway && (
+                        <GcpStaticIp
+                          staticIpFeature={staticIpFeature}
+                          natGatewayFeature={natGatewayFeature}
+                          production={isProduction || false}
+                        />
+                      )}
+                      {remainingFeatures.map((feature) => (
                         <ClusterCardFeature
                           key={feature.id}
                           feature={feature}
@@ -225,13 +246,10 @@ function StepFeaturesForm({
                           watch={clusterCardFeatureFormBindings.watch}
                           setValue={clusterCardFeatureFormBindings.setValue}
                         />
-                      ))
-                  ) : (
-                    <div className="mt-2 flex justify-center">
-                      <LoaderSpinner className="w-4" />
-                    </div>
+                      ))}
+                    </>
                   )
-                )
+                })
                 .with('EXISTING_VPC', () => <GCPVpcFeature />)
                 .otherwise(() => null)}
             </div>

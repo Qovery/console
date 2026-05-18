@@ -65,6 +65,13 @@ export type Subnets = {
   C: string
 }
 
+export type ClusterFeatureExtendedValue =
+  | string
+  | {
+      static_ips_enabled: boolean
+      static_ips_count: number
+    }
+
 export type ClusterFeaturesData = {
   vpc_mode: 'DEFAULT' | 'EXISTING_VPC' | undefined
   aws_existing_vpc?: {
@@ -89,7 +96,7 @@ export type ClusterFeaturesData = {
       id: string
       title: string
       value: boolean
-      extendedValue?: string
+      extendedValue?: ClusterFeatureExtendedValue
     }
   }
 }

@@ -56,4 +56,58 @@ describe('ClusterCardFeature', () => {
     const toggle = screen.getByTestId('feature')
     expect(toggle).toBeInTheDocument()
   })
+
+  it('should show NAT_GATEWAY as false when gcp nested static_ips_enabled is false', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <ClusterCardFeature
+          cloudProvider={CloudProviderEnum.GCP}
+          feature={{
+            id: 'NAT_GATEWAY',
+            title: 'Static IP / Nat Gateways',
+            value_object: {
+              type: 'NAT_GATEWAY',
+              value: {
+                nat_gateway_type: {
+                  provider: 'gcp',
+                  static_ips_enabled: false,
+                  static_ips_count: 2,
+                },
+              },
+            },
+          }}
+          disabled
+        />
+      )
+    )
+
+    expect(screen.getByDisplayValue('false')).toBeInTheDocument()
+  })
+
+  it('should read NAT_GATEWAY nested nat_gateway_type static_ips_enabled', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <ClusterCardFeature
+          cloudProvider={CloudProviderEnum.GCP}
+          feature={{
+            id: 'NAT_GATEWAY',
+            title: 'Static IP / Nat Gateways',
+            value_object: {
+              type: 'NAT_GATEWAY',
+              value: {
+                nat_gateway_type: {
+                  provider: 'gcp',
+                  static_ips_enabled: true,
+                  static_ips_count: 2,
+                },
+              },
+            },
+          }}
+          disabled
+        />
+      )
+    )
+
+    expect(screen.getByDisplayValue('true')).toBeInTheDocument()
+  })
 })

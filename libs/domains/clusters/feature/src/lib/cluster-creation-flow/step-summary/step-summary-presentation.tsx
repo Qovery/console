@@ -45,6 +45,20 @@ function SubnetsList({ title, index, subnets }: { title: string; index: string; 
   )
 }
 
+function formatFeatureValue(feature: ClusterFeaturesData['features'][string]) {
+  if (typeof feature.extendedValue === 'string') {
+    return feature.extendedValue
+  }
+
+  if (feature.extendedValue && typeof feature.extendedValue === 'object') {
+    const staticIpsEnabled = feature.extendedValue.static_ips_enabled
+    const staticIpsCount = feature.extendedValue.static_ips_count
+    return `static_ips_enabled=${staticIpsEnabled}, static_ips_count=${staticIpsCount}`
+  }
+
+  return feature.value.toString()
+}
+
 export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
   const clusterBackup = props.resourcesData.infrastructure_charts_parameters?.eks_anywhere_parameters?.cluster_backup
   const showClusterBackup = Boolean(clusterBackup?.enabled)
@@ -598,7 +612,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                   return (
                     <li key={id}>
                       <strong className="font-medium">{currentFeature.title}: </strong>
-                      {currentFeature.extendedValue ? currentFeature.extendedValue : currentFeature.value.toString()}
+                      {formatFeatureValue(currentFeature)}
                     </li>
                   )
                 })}
