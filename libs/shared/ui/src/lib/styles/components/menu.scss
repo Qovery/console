@@ -24,7 +24,7 @@
   transform: translateY(8px);
 
   &.menu__container--open {
-    animation-name: menuOpenBottom;
+    animation-name: menuOpenBottomFromTop;
   }
 }
 
@@ -128,6 +128,13 @@
   from {
     opacity: 0;
     transform: translateY(12px);
+  }
+}
+
+@keyframes menuOpenBottomFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
 }
 

@@ -92,7 +92,7 @@ export function Menu(props: MenuProps) {
   } = props
 
   const ref = useRef(null)
-  const [isOpen, setOpen] = useState<boolean | undefined>(undefined)
+  const [isOpen, setOpen] = useState<boolean | undefined>(open)
   // XXX: https://github.com/szhsin/react-menu/blob/d7c4df8a4324847403990174d9298038e11ac0c2/src/hooks/useClick.js
   const [skipOpen] = useState<{ v?: boolean }>({})
 
@@ -150,7 +150,9 @@ export function Menu(props: MenuProps) {
   }
 
   useEffect(() => {
-    setOpen((previousOpen) => (previousOpen === undefined && open === false ? undefined : open))
+    if (open !== undefined) {
+      setOpen(open)
+    }
     window.addEventListener('resize', closeMenu)
     window.addEventListener('scroll', closeMenu)
     return () => {
