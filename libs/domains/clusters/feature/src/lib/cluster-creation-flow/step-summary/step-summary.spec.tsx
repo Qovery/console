@@ -143,4 +143,163 @@ describe('StepSummary', () => {
       expect(mockNavigate).toHaveBeenCalledWith({ to: '/organization/org-123/clusters' })
     })
   })
+
+  it('should send GCP NAT_GATEWAY using nat_gateway_type format on create', async () => {
+    mockContextValue.generalData = {
+      name: 'test-gcp-cluster',
+      description: 'description',
+      cloud_provider: CloudProviderEnum.GCP,
+      region: 'europe-west1',
+      installation_type: 'MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.featuresData = {
+      vpc_mode: 'DEFAULT',
+      features: {
+        STATIC_IP: {
+          id: 'STATIC_IP',
+          title: 'Static IP / Nat Gateways',
+          value: true,
+        },
+        NAT_GATEWAY: {
+          id: 'NAT_GATEWAY',
+          title: 'NAT Gateway',
+          value: true,
+          extendedValue: {
+            static_ips_enabled: false,
+            static_ips_count: 2,
+          },
+        },
+      },
+    }
+
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditCloudProviderInfo.mockResolvedValue({})
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateCluster).toHaveBeenCalledWith(
+        expect.objectContaining({
+          organizationId: 'org-123',
+          clusterRequest: expect.objectContaining({
+            cloud_provider: 'GCP',
+            features: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'NAT_GATEWAY',
+                value: {
+                  nat_gateway_type: {
+                    provider: 'gcp',
+                    static_ips_enabled: false,
+                    static_ips_count: 2,
+                  },
+                },
+              }),
+            ]),
+          }),
+        })
+      )
+    })
+  })
+
+  it('should emit default NAT_GATEWAY for GCP when only STATIC_IP is in form data', async () => {
+    mockContextValue.generalData = {
+      name: 'test-gcp-cluster',
+      description: '',
+      cloud_provider: CloudProviderEnum.GCP,
+      region: 'europe-west1',
+      installation_type: 'MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.featuresData = {
+      vpc_mode: 'DEFAULT',
+      features: {
+        STATIC_IP: { id: 'STATIC_IP', title: 'Static IP / Nat Gateways', value: true },
+        // NAT_GATEWAY intentionally absent (race / quick navigation scenario)
+      },
+    }
+
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditCloudProviderInfo.mockResolvedValue({})
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateCluster).toHaveBeenCalledWith(
+        expect.objectContaining({
+          clusterRequest: expect.objectContaining({
+            features: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'NAT_GATEWAY',
+                value: expect.objectContaining({
+                  nat_gateway_type: expect.objectContaining({ provider: 'gcp', static_ips_enabled: false }),
+                }),
+              }),
+            ]),
+          }),
+        })
+      )
+    })
+  })
+
+  it('should send SCW NAT_GATEWAY using nat_gateway_type format when extendedValue is string', async () => {
+    mockContextValue.generalData = {
+      name: 'test-scw-cluster',
+      description: '',
+      cloud_provider: CloudProviderEnum.SCW,
+      region: 'fr-par',
+      installation_type: 'MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.featuresData = {
+      vpc_mode: 'DEFAULT',
+      features: {
+        NAT_GATEWAY: {
+          id: 'NAT_GATEWAY',
+          title: 'NAT Gateway',
+          value: true,
+          extendedValue: 'sbn',
+        },
+        STATIC_IP: {
+          id: 'STATIC_IP',
+          title: 'Static IP',
+          value: true,
+        },
+      },
+    }
+
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditCloudProviderInfo.mockResolvedValue({})
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateCluster).toHaveBeenCalledWith(
+        expect.objectContaining({
+          clusterRequest: expect.objectContaining({
+            features: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'NAT_GATEWAY',
+                value: expect.objectContaining({
+                  nat_gateway_type: expect.objectContaining({ provider: 'scaleway', type: 'sbn' }),
+                }),
+              }),
+            ]),
+          }),
+        })
+      )
+    })
+  })
 })
