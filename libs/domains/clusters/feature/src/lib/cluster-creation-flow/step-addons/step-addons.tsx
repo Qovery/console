@@ -15,8 +15,8 @@ import {
 } from '@qovery/shared/ui'
 import {
   AddonToggleCard,
-  SecretManagerList,
   SECRET_MANAGER_OPTIONS,
+  SecretManagerList,
   getSecretManagerOption,
 } from '../../cluster-addons'
 import {
@@ -55,8 +55,6 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
   )
   const isGcp = generalData?.cloud_provider === 'GCP'
   const [kedaEnabled, setKedaEnabled] = useState(() => addonsData.kedaActivated)
-  // TODO [secret manager]: get rid of observabilityEnabled and use addonsData.observabilityActivated directly
-  const [observabilityEnabled, setObservabilityEnabled] = useState(() => addonsData.observabilityActivated)
   const [integrations, setIntegrations] = useState<SecretManagerAccess[]>(() => addonsData.secretManagers)
 
   const secretManagerDropdownOptions = useMemo(() => {
@@ -76,11 +74,10 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
 
   useEffect(() => {
     setAddonsData({
-      observabilityActivated: observabilityEnabled,
       kedaActivated: isGcp ? false : kedaEnabled,
       secretManagers: integrations,
     })
-  }, [observabilityEnabled, kedaEnabled, isGcp, integrations, setAddonsData])
+  }, [kedaEnabled, isGcp, integrations, setAddonsData])
 
   const clusterStub = generalData
     ? ({

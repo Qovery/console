@@ -36,8 +36,6 @@ export interface ClusterContainerCreateContextInterface {
 }
 
 export type ClusterAddonsData = {
-  // TODO [secret manager]: get rid of observabilityActivated
-  observabilityActivated: boolean
   kedaActivated: boolean
   secretManagers: SecretManagerAccess[]
 }
@@ -140,7 +138,6 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
   })
   const [kubeconfigData, setKubeconfigData] = useState<ClusterKubeconfigData | undefined>()
   const [addonsData, setAddonsData] = useState<ClusterAddonsData>({
-    observabilityActivated: false,
     kedaActivated: false,
     secretManagers: [],
   })

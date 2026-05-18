@@ -35,7 +35,7 @@ const defaultProps: StepSummaryPresentationProps = {
     instance_type: 't3.medium',
   },
   featuresData: { vpc_mode: 'DEFAULT', features: {} },
-  addonsData: { observabilityActivated: false, kedaActivated: false, secretManagers: [] },
+  addonsData: { kedaActivated: false, secretManagers: [] }
   kubeconfigData: undefined,
   detailInstanceType: {
     type: 't3.medium',
