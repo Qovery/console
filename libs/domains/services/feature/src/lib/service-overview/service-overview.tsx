@@ -6,6 +6,7 @@ import {
   type EditableService,
   type Job,
   type Terraform,
+  isArgoCd,
   isEditableService,
 } from '@qovery/domains/services/data-access'
 import { OutputVariables } from '@qovery/domains/variables/feature'
@@ -210,9 +211,7 @@ function ServiceOverviewContent({
             {!isTerraformService && isEditableService(service) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />
             )}
-            {service.serviceType === 'ARGOCD_APP' && (
-              <ServiceMetricsSection environmentId={environment.id} service={service} />
-            )}
+            {isArgoCd(service) && <ServiceMetricsSection environmentId={environment.id} service={service} />}
             {isKedaAutoscaling && scaledObject && <ServiceScaledObjectSection scaledObject={scaledObject} />}
             {service.serviceType === 'JOB' && service.job_type === 'LIFECYCLE' && (
               <ServiceLifecycleOutputVariablesSection service={service} />
