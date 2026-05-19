@@ -15,8 +15,10 @@ const toolbarButtonVariants = cva(['active:scale-100'], {
     color: {
       brand: [],
       neutral: [],
+      neutralInverted: [],
       green: [],
       red: [],
+      redInverted: [],
       yellow: [],
       current: [],
     },

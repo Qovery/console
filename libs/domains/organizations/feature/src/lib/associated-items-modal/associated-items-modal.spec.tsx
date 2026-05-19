@@ -1,34 +1,14 @@
-import { type OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import * as useAnnotationsGroupAssociatedItems from '../hooks/use-annotations-group-associated-items/use-annotations-group-associated-items'
-import * as useLabelsGroupAssociatedItems from '../hooks/use-labels-group-associated-items/use-labels-group-associated-items'
 import {
-  LabelAnnotationItemsListModal,
-  type LabelAnnotationItemsListModalProps,
+  type AssociatedItem,
+  AssociatedItemsModal,
+  type AssociatedItemsModalProps,
   filterClustersForAssociatedItemsModal,
   getServiceAssociatedItems,
   groupByProjectEnvironmentsServices,
-} from './label-annotation-items-list-modal'
+} from './associated-items-modal'
 
-const useAnnotationsGroupAssociatedItemsSpy = jest.spyOn(
-  useAnnotationsGroupAssociatedItems,
-  'useAnnotationsGroupAssociatedItems'
-) as jest.Mock
-
-const useLabelsGroupAssociatedItemsSpy = jest.spyOn(
-  useLabelsGroupAssociatedItems,
-  'useLabelsGroupAssociatedItems'
-) as jest.Mock
-
-const props: LabelAnnotationItemsListModalProps = {
-  type: 'annotation',
-  organizationId: '0000-0000-0000',
-  groupId: '0000-0000-0000',
-  onClose: jest.fn(),
-  associatedItemsCount: 3,
-}
-
-const data: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[] = [
+const data: AssociatedItem[] = [
   {
     project_id: '1',
     project_name: 'Project 1',
@@ -58,7 +38,7 @@ const data: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[
   },
 ]
 
-const clusterOnlyData: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[] = [
+const clusterOnlyData: AssociatedItem[] = [
   {
     cluster_id: null,
     cluster_name: null,
@@ -72,17 +52,15 @@ const clusterOnlyData: OrganizationAnnotationsGroupAssociatedItemsResponseListRe
   },
 ]
 
-describe('LabelAnnotationItemsListModal', () => {
-  beforeEach(() => {
-    props.type = 'annotation'
-    useAnnotationsGroupAssociatedItemsSpy.mockReturnValue({
-      data,
-    })
-    useLabelsGroupAssociatedItemsSpy.mockReturnValue({
-      data,
-    })
-  })
+const baseProps: AssociatedItemsModalProps = {
+  title: 'Associated items (3)',
+  organizationId: '0000-0000-0000',
+  items: data,
+  isLoading: false,
+  onClose: jest.fn(),
+}
 
+describe('AssociatedItemsModal', () => {
   it('should group data by projects, environments, and services correctly', () => {
     const result = groupByProjectEnvironmentsServices(data)
 
@@ -103,21 +81,8 @@ describe('LabelAnnotationItemsListModal', () => {
     expect(result[1].environments[0].services).toHaveLength(1)
   })
 
-  it('should match snapshots with annotation', async () => {
-    const { baseElement, userEvent } = renderWithProviders(<LabelAnnotationItemsListModal {...props} />)
-
-    const triggers = screen.getAllByRole('button')
-    screen.getByText(/project 1/i)
-    await userEvent.click(triggers[0])
-
-    const triggerEnvironment = screen.getByText(/development/i).parentElement
-    await userEvent.click(triggerEnvironment!)
-
-    expect(baseElement).toMatchSnapshot()
-  })
-
-  it('should match snapshots with label', async () => {
-    const { baseElement, userEvent } = renderWithProviders(<LabelAnnotationItemsListModal {...props} type="label" />)
+  it('should match snapshot with services', async () => {
+    const { baseElement, userEvent } = renderWithProviders(<AssociatedItemsModal {...baseProps} />)
 
     const triggers = screen.getAllByRole('button')
     screen.getByText(/project 1/i)
@@ -143,18 +108,22 @@ describe('LabelAnnotationItemsListModal', () => {
   })
 
   it('should render only clusters section and cluster name for CLUSTER-only payload', () => {
-    useAnnotationsGroupAssociatedItemsSpy.mockReturnValue({
-      data: clusterOnlyData,
-    })
-    useLabelsGroupAssociatedItemsSpy.mockReturnValue({
-      data: clusterOnlyData,
-    })
-
-    renderWithProviders(<LabelAnnotationItemsListModal {...props} type="annotation" associatedItemsCount={1} />)
+    renderWithProviders(<AssociatedItemsModal {...baseProps} title="Associated item (1)" items={clusterOnlyData} />)
 
     expect(screen.getByRole('heading', { name: /associated item \(1\)/i })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: /^clusters$/i })).toBeInTheDocument()
     expect(screen.getByText('cluster-for-obs-team')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: /^services$/i })).not.toBeInTheDocument()
+  })
+
+  it('should show loading spinner when isLoading is true', () => {
+    renderWithProviders(<AssociatedItemsModal {...baseProps} items={[]} isLoading={true} />)
+
+    expect(screen.queryByPlaceholderText(/search/i)).not.toBeInTheDocument()
+  })
+
+  it('should show empty state when items is empty and not loading', () => {
+    renderWithProviders(<AssociatedItemsModal {...baseProps} items={[]} isLoading={false} />)
+
+    expect(screen.getByText('No value found')).toBeInTheDocument()
   })
 })

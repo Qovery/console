@@ -1,19 +1,25 @@
-import {
-  type AnnotationsGroupAssociatedItemType,
-  type OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner,
-} from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { Heading, Icon, InputSearch, Link, LoaderSpinner, Section, TreeView } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { useAnnotationsGroupAssociatedItems } from '../hooks/use-annotations-group-associated-items/use-annotations-group-associated-items'
-import { useLabelsGroupAssociatedItems } from '../hooks/use-labels-group-associated-items/use-labels-group-associated-items'
+
+export interface AssociatedItem {
+  project_id?: string | null
+  project_name?: string | null
+  environment_id?: string | null
+  environment_name?: string | null
+  item_id: string
+  item_name: string
+  item_type: string
+  cluster_id?: string | null
+  cluster_name?: string | null
+}
 
 interface Service {
   service_id: string
   service_name: string
-  service_type: AnnotationsGroupAssociatedItemType
+  service_type: string
 }
 
 interface Environment {
@@ -28,71 +34,62 @@ interface Project {
   environments: Environment[]
 }
 
-export function groupByProjectEnvironmentsServices(
-  data: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[],
-  searchValue?: string
-) {
+export function groupByProjectEnvironmentsServices(data: AssociatedItem[], searchValue?: string) {
   const projects: Project[] = []
 
-  data.forEach(
-    ({
-      project_id = '',
-      project_name = '',
-      environment_id = '',
-      environment_name = '',
-      item_id,
-      item_name = '',
-      item_type,
-    }) => {
-      // Check if the search value is present in the project, environment or service name
-      if (
-        searchValue === undefined ||
-        project_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-        environment_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item_name.toLowerCase().includes(searchValue.toLowerCase())
-      ) {
-        let project = projects.find((proj) => proj.project_id === project_id)
-        if (!project) {
-          project = {
-            project_id,
-            project_name,
-            environments: [],
-          }
-          projects.push(project)
-        }
+  data.forEach((item) => {
+    const projectId = item.project_id ?? ''
+    const projectName = item.project_name ?? ''
+    const environmentId = item.environment_id ?? ''
+    const environmentName = item.environment_name ?? ''
+    const itemName = item.item_name ?? ''
 
-        let environment = project.environments.find((env) => env.environment_id === environment_id)
-        if (!environment) {
-          environment = {
-            environment_id,
-            environment_name,
-            services: [],
-          }
-          project.environments.push(environment)
+    if (
+      searchValue === undefined ||
+      projectName.toLowerCase().includes(searchValue.toLowerCase()) ||
+      environmentName.toLowerCase().includes(searchValue.toLowerCase()) ||
+      itemName.toLowerCase().includes(searchValue.toLowerCase())
+    ) {
+      let project = projects.find((proj) => proj.project_id === projectId)
+      if (!project) {
+        project = {
+          project_id: projectId,
+          project_name: projectName,
+          environments: [],
         }
-
-        environment.services.push({ service_id: item_id, service_name: item_name, service_type: item_type })
+        projects.push(project)
       }
+
+      let environment = project.environments.find((env) => env.environment_id === environmentId)
+      if (!environment) {
+        environment = {
+          environment_id: environmentId,
+          environment_name: environmentName,
+          services: [],
+        }
+        project.environments.push(environment)
+      }
+
+      environment.services.push({
+        service_id: item.item_id,
+        service_name: itemName,
+        service_type: item.item_type,
+      })
     }
-  )
+  })
 
   return projects
 }
 
-function isClusterAssociatedItem(item: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner): boolean {
+function isClusterAssociatedItem(item: AssociatedItem): boolean {
   return item.item_type === 'CLUSTER'
 }
 
-export function getServiceAssociatedItems(
-  data: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[]
-): OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[] {
+export function getServiceAssociatedItems(data: AssociatedItem[]): AssociatedItem[] {
   return data.filter((item) => !isClusterAssociatedItem(item))
 }
 
-export function filterClustersForAssociatedItemsModal(
-  data: OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[],
-  searchValue?: string
-): OrganizationAnnotationsGroupAssociatedItemsResponseListResultsInner[] {
+export function filterClustersForAssociatedItemsModal(data: AssociatedItem[], searchValue?: string): AssociatedItem[] {
   return data.filter((item) => {
     if (!isClusterAssociatedItem(item)) {
       return false
@@ -108,51 +105,28 @@ export function filterClustersForAssociatedItemsModal(
   })
 }
 
-export interface LabelAnnotationItemsListModalProps {
-  type: 'label' | 'annotation'
+export interface AssociatedItemsModalProps {
+  title: string
   organizationId: string
-  groupId: string
-  associatedItemsCount: number
+  items: AssociatedItem[]
+  isLoading: boolean
   onClose: () => void
 }
 
-export function LabelAnnotationItemsListModal({
-  type,
-  organizationId,
-  groupId,
-  associatedItemsCount,
-  onClose,
-}: LabelAnnotationItemsListModalProps) {
-  const { data: labelsGroupAssociatedItems = [], isLoading: labelsGroupIsLoading } = useLabelsGroupAssociatedItems({
-    organizationId,
-    labelsGroupId: groupId,
-    enabled: type === 'label',
-  })
-  const { data: annotationsGroupAssociatedItems = [], isLoading: annotationsGroupIsLoading } =
-    useAnnotationsGroupAssociatedItems({
-      organizationId,
-      annotationsGroupId: groupId,
-      enabled: type === 'annotation',
-    })
-
+export function AssociatedItemsModal({ title, organizationId, items, isLoading, onClose }: AssociatedItemsModalProps) {
   const [searchValue, setSearchValue] = useState<string | undefined>()
   const normalizedSearch = searchValue?.trim() || undefined
 
-  const rawItems = useMemo(
-    () => (type === 'label' ? labelsGroupAssociatedItems : annotationsGroupAssociatedItems),
-    [type, labelsGroupAssociatedItems, annotationsGroupAssociatedItems]
-  )
-
-  const serviceSourceItems = useMemo(() => getServiceAssociatedItems(rawItems), [rawItems])
-  const clusterSourceItems = useMemo(() => filterClustersForAssociatedItemsModal(rawItems), [rawItems])
+  const serviceSourceItems = useMemo(() => getServiceAssociatedItems(items), [items])
+  const clusterSourceItems = useMemo(() => filterClustersForAssociatedItemsModal(items), [items])
 
   const serviceTreeData = useMemo(
     () => groupByProjectEnvironmentsServices(serviceSourceItems, normalizedSearch),
     [serviceSourceItems, normalizedSearch]
   )
   const clusterRows = useMemo(
-    () => filterClustersForAssociatedItemsModal(rawItems, normalizedSearch),
-    [rawItems, normalizedSearch]
+    () => filterClustersForAssociatedItemsModal(items, normalizedSearch),
+    [items, normalizedSearch]
   )
 
   const hasServicesInSource = serviceSourceItems.length > 0
@@ -160,13 +134,10 @@ export function LabelAnnotationItemsListModal({
   const hasAnySource = hasServicesInSource || hasClustersInSource
   const noSearchResults =
     Boolean(normalizedSearch) && hasAnySource && serviceTreeData.length === 0 && clusterRows.length === 0
-  const isLoading = type === 'label' ? labelsGroupIsLoading : annotationsGroupIsLoading
 
   return (
     <Section className="p-6">
-      <Heading className="mb-6 text-2xl text-neutral">
-        Associated {pluralize(associatedItemsCount, 'item')} ({associatedItemsCount})
-      </Heading>
+      <Heading className="mb-6 text-2xl text-neutral">{title}</Heading>
       {isLoading ? (
         <div className="flex h-40 items-start justify-center p-5">
           <LoaderSpinner className="w-5" />
@@ -193,7 +164,7 @@ export function LabelAnnotationItemsListModal({
               {hasClustersInSource ? (
                 <div>
                   <Heading level={3} className="mb-2 text-neutral">
-                    Clusters
+                    {pluralize(clusterSourceItems.length, 'Cluster')}
                   </Heading>
                   {clusterRows.length > 0 ? (
                     <ul className="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2">
@@ -224,7 +195,7 @@ export function LabelAnnotationItemsListModal({
               {hasServicesInSource ? (
                 <div>
                   <Heading level={3} className="mb-2 text-neutral">
-                    Services
+                    {pluralize(serviceSourceItems.length, 'Service')}
                   </Heading>
                   {serviceTreeData.length > 0 ? (
                     <TreeView.Root
@@ -303,4 +274,4 @@ export function LabelAnnotationItemsListModal({
   )
 }
 
-export default LabelAnnotationItemsListModal
+export default AssociatedItemsModal
