@@ -9,6 +9,7 @@ import {
   type AlertRuleEditRequest,
   AlertRulesApi,
   ClustersApi,
+  type GetClusterKubernetesEvents200ResponseResultsInner,
 } from 'qovery-typescript-axios'
 
 const clusterApi = new ClustersApi()
@@ -305,6 +306,34 @@ export const observability = createQueryKeys('observability', {
         endTimestamp
       )
       return typeof response.data.response === 'string' ? JSON.parse(response.data.response) : response.data.response
+    },
+  }),
+  kubernetesEvents: ({
+    clusterId,
+    fromDateTime,
+    toDateTime,
+    nodeName,
+    podName,
+    reportingComponent,
+  }: {
+    clusterId: string
+    fromDateTime: string
+    toDateTime: string
+    nodeName?: string
+    podName?: string
+    reportingComponent?: string
+  }) => ({
+    queryKey: [clusterId, fromDateTime, toDateTime, nodeName, podName, reportingComponent],
+    async queryFn(): Promise<GetClusterKubernetesEvents200ResponseResultsInner[]> {
+      const response = await clusterApi.getClusterKubernetesEvents(
+        clusterId,
+        fromDateTime,
+        toDateTime,
+        nodeName,
+        podName,
+        reportingComponent
+      )
+      return response.data.results ?? []
     },
   }),
   alertRules: ({ organizationId }: { organizationId: string }) => ({

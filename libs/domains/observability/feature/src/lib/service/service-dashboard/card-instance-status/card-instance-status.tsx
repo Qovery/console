@@ -25,6 +25,18 @@ const query = (timeRange: string, selector: string) => `
   )
 `
 
+const queryK8sEvents = (serviceId: string, timeRange: string) => `
+  sum(
+    increase(
+      k8s_event_logger_q_k8s_events_total{
+        qovery_com_service_id="${serviceId}",
+        reason=~"Failed|OOMKilled|BackOff|Evicted|FailedScheduling|FailedMount|FailedAttachVolume|Preempted|NodeNotReady",
+        type="Warning"
+      }[${timeRange}]
+    )
+  ) or vector(0)
+`
+
 // TODO PG think to use recorder rule
 const queryAutoscalingReached = (timeRange: string, subQueryTimeRange: string, containerName: string) => `
   100 *
@@ -81,6 +93,14 @@ export function CardInstanceStatus({
     boardShortName: 'service_overview',
     metricShortName: 'card_instance_status_error_count',
   })
+  const { data: metricsK8sEvents, isLoading: isLoadingMetricsK8sEvents } = useInstantMetrics({
+    clusterId,
+    query: queryK8sEvents(serviceId, queryTimeRange),
+    startTimestamp,
+    endTimestamp,
+    boardShortName: 'service_overview',
+    metricShortName: 'card_instance_status_k8s_event_count',
+  })
   const { data: metricsAutoscalingReached, isLoading: isLoadingMetricsAutoscalingReached } = useInstantMetrics({
     clusterId,
     query: queryAutoscalingReached(queryTimeRange, subQueryTimeRange, containerName),
@@ -90,14 +110,16 @@ export function CardInstanceStatus({
     metricShortName: 'card_instance_hpa_limit_count',
   })
 
-  const instanceErrors = Math.round(Number(metricsInstanceErrors?.data?.result[0]?.value[1])) || 0
+  const instanceErrorsValue = Math.round(Number(metricsInstanceErrors?.data?.result[0]?.value[1])) || 0
+  const k8sEventsValue = Math.round(Number(metricsK8sEvents?.data?.result[0]?.value[1])) || 0
+  const instanceErrors = instanceErrorsValue + k8sEventsValue
   const autoscalingReachedRaw = metricsAutoscalingReached?.data?.result[0]?.value[1] || '0'
   const autoscalingReachedNum = parseFloat(autoscalingReachedRaw)
   const autoscalingReached = Number(autoscalingReachedNum.toFixed(1))
 
   const title = 'Instance number'
   const description = 'Number of healthy and unhealthy instances over time.'
-  const isLoading = isLoadingMetricsInstanceErrors || isLoadingMetricsAutoscalingReached
+  const isLoading = isLoadingMetricsInstanceErrors || isLoadingMetricsK8sEvents || isLoadingMetricsAutoscalingReached
 
   const isAutoscalingEnabled = match(service)
     .with({ serviceType: 'APPLICATION' }, (s) => s.max_running_instances !== s.min_running_instances)
