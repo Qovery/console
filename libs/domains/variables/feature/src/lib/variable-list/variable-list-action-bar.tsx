@@ -4,11 +4,18 @@ import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-varia
 import { type useVariables } from '../hooks/use-variables/use-variables'
 
 export interface VariableListActionBarProps {
+  className?: string
+  fixed?: boolean
   selectedRows: ReturnType<typeof useVariables>['data']
   resetRowSelection: () => void
 }
 
-export function VariableListActionBar({ selectedRows = [], resetRowSelection }: VariableListActionBarProps) {
+export function VariableListActionBar({
+  className,
+  fixed = false,
+  selectedRows = [],
+  resetRowSelection,
+}: VariableListActionBarProps) {
   const selectedCount = selectedRows.length
   const hasSelection = Boolean(selectedCount)
 
@@ -42,6 +49,8 @@ export function VariableListActionBar({ selectedRows = [], resetRowSelection }: 
 
   return (
     <StickyActionFormToaster
+      className={className}
+      fixed={fixed}
       visible={hasSelection}
       description={description}
       onReset={resetRowSelection}

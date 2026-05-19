@@ -76,7 +76,7 @@ function RouteComponent() {
       }
     >
       <div className="container mx-auto flex min-h-page-container flex-col pb-16 pt-6">
-        <Section className="min-h-0 flex-1 gap-8">
+        <Section className="gap-8">
           <div className="flex shrink-0 flex-col gap-6">
             <div className="flex justify-between">
               <Heading>Service variables</Heading>

@@ -1008,7 +1008,11 @@ export function VariableList({
         </section>
       )}
       {showOnly !== 'built-in' && (
-        <VariableListActionBar selectedRows={selectedRows} resetRowSelection={() => table.resetRowSelection()} />
+        <VariableListActionBar
+          fixed={isTabLayout}
+          selectedRows={selectedRows}
+          resetRowSelection={() => table.resetRowSelection()}
+        />
       )}
     </div>
   )

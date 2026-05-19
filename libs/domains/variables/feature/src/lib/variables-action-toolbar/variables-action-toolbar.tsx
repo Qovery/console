@@ -70,51 +70,51 @@ export function VariablesActionToolbar({
           Import from Doppler
         </Button>
       ) : (
-      <DropdownMenu.Root>
-        {showImportButton ? (
-          <DropdownMenu.Trigger asChild>
-            <Button color="neutral" variant="outline" size="md" className="gap-2">
-              <Icon iconName="arrow-up-from-line" iconStyle="regular" />
-              Import variable
-            </Button>
-          </DropdownMenu.Trigger>
-        ) : (
-          <DropdownMenu.Trigger asChild>
-            <Button color="neutral" variant="outline" size="md" className="flex w-8 justify-center">
-              <Icon iconName="ellipsis-vertical" iconStyle="regular" />
-            </Button>
-          </DropdownMenu.Trigger>
-        )}
-        <DropdownMenu.Content>
-          {showImportButton && onImportEnvFile && (
-            <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
-              Import from .env file
-            </DropdownMenu.Item>
+        <DropdownMenu.Root>
+          {showImportButton ? (
+            <DropdownMenu.Trigger asChild>
+              <Button color="neutral" variant="outline" size="md" className="gap-2">
+                <Icon iconName="arrow-up-from-line" iconStyle="regular" />
+                Import variable
+              </Button>
+            </DropdownMenu.Trigger>
+          ) : (
+            <DropdownMenu.Trigger asChild>
+              <Button color="neutral" variant="outline" size="md" className="flex w-8 justify-center">
+                <Icon iconName="ellipsis-vertical" iconStyle="regular" />
+              </Button>
+            </DropdownMenu.Trigger>
           )}
+          <DropdownMenu.Content>
+            {showImportButton && onImportEnvFile && (
+              <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
+                Import from .env file
+              </DropdownMenu.Item>
+            )}
 
-          {!showImportButton && onImportEnvFile && (
-            <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
-              Import from .env file
+            {!showImportButton && onImportEnvFile && (
+              <DropdownMenu.Item onSelect={onImportEnvFile} icon={<Icon iconName="file-import" />}>
+                Import from .env file
+              </DropdownMenu.Item>
+            )}
+
+            <DropdownMenu.Item asChild icon={<Icon iconName="circle-info" iconStyle="regular" />}>
+              <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
+                Import from Doppler
+                <Tooltip content="Documentation">
+                  <a
+                    className="ml-auto text-sm"
+                    href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                  </a>
+                </Tooltip>
+              </a>
             </DropdownMenu.Item>
-          )}
-
-          <DropdownMenu.Item asChild icon={<Icon iconName="circle-info" iconStyle="regular" />}>
-            <a href="https://dashboard.doppler.com" target="_blank" rel="noopener noreferrer">
-              Import from Doppler
-              <Tooltip content="Documentation">
-                <a
-                  className="ml-auto text-sm"
-                  href="https://www.qovery.com/docs/configuration/integrations/secret-managers/doppler#doppler"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
-                </a>
-              </Tooltip>
-            </a>
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
+          </DropdownMenu.Content>
+        </DropdownMenu.Root>
       )}
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>

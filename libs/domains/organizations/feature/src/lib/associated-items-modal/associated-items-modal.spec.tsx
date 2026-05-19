@@ -108,9 +108,7 @@ describe('AssociatedItemsModal', () => {
   })
 
   it('should render only clusters section and cluster name for CLUSTER-only payload', () => {
-    renderWithProviders(
-      <AssociatedItemsModal {...baseProps} title="Associated item (1)" items={clusterOnlyData} />
-    )
+    renderWithProviders(<AssociatedItemsModal {...baseProps} title="Associated item (1)" items={clusterOnlyData} />)
 
     expect(screen.getByRole('heading', { name: /associated item \(1\)/i })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /^clusters$/i })).toBeInTheDocument()

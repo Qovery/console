@@ -16,8 +16,8 @@ import {
 import { type AssociatedItem, AssociatedItemsModal } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Badge, Button, DropdownMenu, Icon, IconFlag, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { pluralize } from '@qovery/shared/util-js'
 import { isGcpCluster } from '@qovery/shared/util-clusters'
+import { pluralize } from '@qovery/shared/util-js'
 
 function SecretManagerAssociatedItemsContent({
   secretManagerAccessId,
