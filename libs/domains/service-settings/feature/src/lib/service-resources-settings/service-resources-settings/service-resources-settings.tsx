@@ -21,13 +21,16 @@ import {
   buildAutoscalingRequestFromForm,
   buildEditServicePayload,
   buildHpaAdvancedSettingsPayload,
+  buildStableNodepoolAdvancedSettingsPayload,
   loadHpaSettingsFromAdvancedSettings,
+  loadStableNodepoolFromAdvancedSettings,
 } from '@qovery/shared/util-services'
 
 type ServiceResourcesService = Exclude<EditableService, Database | Helm>
 
 interface ServiceResourcesFormData extends ApplicationResourcesData {
   storage_gib?: number
+  run_on_stable_nodepool?: boolean
 }
 
 export interface ServiceResourcesSettingsProps {
@@ -112,6 +115,7 @@ function getDefaultValues(
       })
       .otherwise(() => undefined),
     ...loadHpaSettingsFromAdvancedSettings(advancedSettings),
+    run_on_stable_nodepool: loadStableNodepoolFromAdvancedSettings(advancedSettings),
     ...defaultInstances,
   }
 }
@@ -147,6 +151,7 @@ function ServiceResourcesSettingsForm({
               displayWarningCpu={displayWarningCpu}
               service={service}
               advancedSettings={advancedSettings}
+              displayStableNodepoolToggle
             />
             <div className="flex justify-end">
               <Button type="submit" size="lg" loading={loading} disabled={!formState.isValid || isHpaToKedaMigration}>
@@ -195,6 +200,7 @@ export function ServiceResourcesSettings({ service }: ServiceResourcesSettingsPr
     methods.setValue('hpa_metric_type', hpaSettings.hpa_metric_type)
     methods.setValue('hpa_cpu_average_utilization_percent', hpaSettings.hpa_cpu_average_utilization_percent)
     methods.setValue('hpa_memory_average_utilization_percent', hpaSettings.hpa_memory_average_utilization_percent)
+    methods.setValue('run_on_stable_nodepool', loadStableNodepoolFromAdvancedSettings(advancedSettings))
   }, [advancedSettings, methods])
 
   const onSubmit = methods.handleSubmit(async (data) => {
@@ -238,13 +244,26 @@ export function ServiceResourcesSettings({ service }: ServiceResourcesSettingsPr
       )
       .exhaustive()
 
-    if (data.autoscaling_mode === 'HPA' && advancedSettings) {
+    const shouldUpdateStableNodepool =
+      advancedSettings &&
+      (data.run_on_stable_nodepool ?? false) !== loadStableNodepoolFromAdvancedSettings(advancedSettings)
+
+    if (advancedSettings && (data.autoscaling_mode === 'HPA' || shouldUpdateStableNodepool)) {
+      const stableNodepoolPayload = buildStableNodepoolAdvancedSettingsPayload(
+        data.run_on_stable_nodepool ?? false,
+        advancedSettings
+      )
+      const advancedSettingsPayload =
+        data.autoscaling_mode === 'HPA'
+          ? buildHpaAdvancedSettingsPayload(data as unknown as Record<string, unknown>, stableNodepoolPayload)
+          : stableNodepoolPayload
+
       await editAdvancedSettings({
         serviceId: service.id,
         payload: {
           serviceType: service.serviceType,
-          ...buildHpaAdvancedSettingsPayload(data as unknown as Record<string, unknown>, advancedSettings),
-        },
+          ...advancedSettingsPayload,
+        } as Parameters<typeof editAdvancedSettings>[0]['payload'],
       })
     }
 
