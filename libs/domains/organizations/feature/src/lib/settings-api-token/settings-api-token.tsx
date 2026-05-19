@@ -128,7 +128,7 @@ export function SettingsApiToken() {
           />
 
           <Button
-            className="absolute right-0 top-0 gap-2"
+            className="absolute right-0 top-0"
             size="md"
             onClick={() => {
               openModal({ content: <CrudModalFeature organizationId={organizationId} onClose={closeModal} /> })

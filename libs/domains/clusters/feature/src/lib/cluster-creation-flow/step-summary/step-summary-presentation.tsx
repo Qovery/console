@@ -92,7 +92,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
 
       <div className="mb-10">
         {props.generalData.installation_type === 'MANAGED' && (
-          <Callout.Root color="sky" className="mb-5">
+          <Callout.Root color="sky" className="mb-5 items-start">
             <Callout.Icon>
               <Icon iconName="circle-exclamation" iconStyle="regular" />
             </Callout.Icon>
@@ -114,7 +114,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
           </Callout.Root>
         )}
         {props.generalData.cloud_provider === 'GCP' && (
-          <Callout.Root color="yellow" className="mb-2">
+          <Callout.Root color="yellow" className="mb-2 items-start">
             <Callout.Icon>
               <Icon iconName="triangle-exclamation" iconStyle="regular" />
             </Callout.Icon>

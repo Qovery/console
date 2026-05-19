@@ -200,7 +200,7 @@ export function DockerfileSettings({
                       <Icon iconName="wave-pulse" className="text-neutral-subtle" />
                       <p className="mb-3 mt-1 text-xs font-medium text-neutral-subtle">No Dockerfile defined</p>
                       <Button type="button" size="md" onClick={() => openModalDockerfileRaw(field)}>
-                        Create Dockerfile <Icon iconName="pen" className="ml-2" />
+                        Create Dockerfile <Icon iconName="pen" />
                       </Button>
                     </div>
                   )}

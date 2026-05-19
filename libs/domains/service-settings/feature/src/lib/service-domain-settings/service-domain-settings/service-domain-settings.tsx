@@ -80,7 +80,7 @@ export function ServiceDomainSettings() {
             disabled={!canAddDomain}
           >
             Add Domain
-            <Icon iconName="circle-plus" iconStyle="regular" className="ml-2" />
+            <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </SettingsHeading>
 
@@ -281,7 +281,6 @@ function ServiceDomainSettingsContent({
             <Link
               to={noPublicLinkCta.to}
               params={{ organizationId, projectId, environmentId, serviceId }}
-              className="gap-1"
               variant="solid"
               color="brand"
               as="button"

@@ -469,7 +469,7 @@ export function SettingsMembers() {
               role to each of them. You can invite someone to join your organization via email."
           />
 
-          <Button className="absolute right-0 top-0 gap-2" size="md" onClick={onAddMember}>
+          <Button className="absolute right-0 top-0" size="md" onClick={onAddMember}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add member
           </Button>

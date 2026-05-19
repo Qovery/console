@@ -198,7 +198,6 @@ function DeploymentRulesContent({ organizationId, projectId, linkNewRule }: Depl
       }
     >
       <Button
-        className="gap-2"
         size="md"
         variant="outline"
         onClick={() =>
@@ -253,7 +252,7 @@ export function DeploymentRules() {
             <NeedHelp className="mt-2" />
           </div>
           <Button size="md" onClick={() => navigate({ to: linkNewRule })}>
-            Add rule <Icon className="ml-2" iconName="circle-plus" iconStyle="regular" />
+            Add rule <Icon iconName="circle-plus" iconStyle="regular" />
           </Button>
         </div>
         <div className="max-w-content-with-navigation-left">

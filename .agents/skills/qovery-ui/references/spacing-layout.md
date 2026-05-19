@@ -93,15 +93,7 @@ Example: a card with `rounded-2xl` (16px) and `p-2` (8px) padding → the inner 
 Geometric centering often looks off. Adjust for perceived visual weight.
 
 - **Play triangle in a circle:** nudge right — the triangle's visual center is not its geometric center.
-- **Button with icon + text:** use slightly less padding on the icon side. Rule of thumb: icon-side padding = text-side padding − 2px.
-
-```tsx
-<button className="flex items-center gap-2 pl-4 pr-3.5">
-  <span>Continue</span>
-  <ArrowRightIcon />
-</button>
-```
-
+- **Button with icon + text:** use `<Button>`. Do not add manual icon margins or custom gaps inside buttons.
 - **Asymmetric icons** (stars, arrows, carets): best fixed in the SVG directly. Fallback: `margin-left: 1px` or similar.
 - **Heavy glyph next to a light one:** optical baseline shift.
 

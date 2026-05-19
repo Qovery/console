@@ -191,7 +191,6 @@ export function ServicesDeploymentPipeline() {
             size="sm"
             variant="outline"
             color="neutral"
-            className="gap-1.5"
             onClick={() =>
               openModal({
                 content: <ServicesDeploymentStageModal environmentId={environmentId} onClose={closeModal} />,

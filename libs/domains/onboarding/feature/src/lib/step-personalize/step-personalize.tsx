@@ -163,14 +163,7 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           )}
         />
         <div className="mt-10 flex justify-between border-t border-surface-neutral-subtle pt-5">
-          <Button
-            className="gap-2"
-            type="button"
-            color="neutral"
-            variant="surface"
-            size="lg"
-            onClick={() => authLogout()}
-          >
+          <Button type="button" color="neutral" variant="surface" size="lg" onClick={() => authLogout()}>
             <Icon iconName="arrow-left" />
             Disconnect
           </Button>

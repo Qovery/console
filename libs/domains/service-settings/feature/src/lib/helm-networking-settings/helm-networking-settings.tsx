@@ -142,7 +142,7 @@ export function HelmNetworkingSettings({ children }: HelmNetworkingSettingsProps
           title="Networking"
           description="You can expose publicly over HTTP/gRPC the Kubernetes services deployed."
         >
-          <Button className="gap-2" size="md" variant="solid" color="brand" onClick={onAddPortClick}>
+          <Button size="md" variant="solid" color="brand" onClick={onAddPortClick}>
             Add Port
             <Icon iconName="plus-circle" iconStyle="regular" />
           </Button>

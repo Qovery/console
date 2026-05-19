@@ -117,8 +117,8 @@ export function TableHeadDatePickerFilter({
               type="button"
               color="neutral"
               size="sm"
-              className="gap-1.5 whitespace-nowrap"
-              onClick={() => setIsOpenTimestamp((isOpenTimestamp) => !isOpenTimestamp)}
+              className="whitespace-nowrap"
+              onClick={() => setIsOpenTimestamp(!isOpenTimestamp)}
             >
               {title}
               <span
@@ -134,7 +134,7 @@ export function TableHeadDatePickerFilter({
               type="button"
               color="neutral"
               size="sm"
-              className="items-center gap-1.5 font-code"
+              className="items-center font-code"
               onClick={() => {
                 setIsOpenTimestamp((isOpenTimestamp) => !isOpenTimestamp)
               }}

@@ -53,7 +53,7 @@ function Subnets({ title, value }: { title: string; value?: string[] | null }) {
 
 function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) {
   return (
-    <div className="mb-5 flex flex-col justify-between rounded border border-neutral bg-surface-neutral-component p-4">
+    <div className="mb-5 flex flex-col justify-between rounded border border-neutral bg-surface-neutral-subtle p-4">
       <h4 className="mb-1 text-sm font-medium text-neutral">Deploy on an existing VPC</h4>
       <p className="mb-4 text-sm text-neutral-subtle">In your VPC settings, you have to enable DNS hostnames.</p>
       <InputText name="vpc_id" label="VPC ID" value={feature.aws_vpc_eks_id} className="mb-4" disabled />
@@ -130,7 +130,7 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
 
 function GcpExistingVPC({ feature }: { feature: ClusterFeatureGcpExistingVpc }) {
   return (
-    <div className="flex flex-col justify-between gap-4 rounded border border-neutral bg-surface-neutral-component p-4">
+    <div className="flex flex-col justify-between gap-4 rounded border border-neutral bg-surface-neutral-subtle p-4">
       <div>
         <h4 className="mb-1 text-sm font-medium text-neutral">Deploy on an existing VPC</h4>
         <ExternalLink
@@ -557,7 +557,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
                       type="button"
                     >
                       Add route
-                      <Icon iconName="circle-plus" iconStyle="regular" className="ml-1" />
+                      <Icon iconName="circle-plus" iconStyle="regular" />
                     </Button>
                   </div>
                 </BlockContent>

@@ -182,7 +182,7 @@ export function SettingsRoles() {
             description="Manage the existing custom roles or create a new one."
           />
 
-          <Button className="absolute right-0 top-0 gap-2" size="md" onClick={onAddRole}>
+          <Button className="absolute right-0 top-0" size="md" onClick={onAddRole}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Add new role
           </Button>

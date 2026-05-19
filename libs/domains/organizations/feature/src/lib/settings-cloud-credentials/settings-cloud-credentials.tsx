@@ -410,7 +410,7 @@ export function SettingsCloudCredentials() {
 
           <DropdownMenu.Root open={isCreateMenuOpen} onOpenChange={setIsCreateMenuOpen}>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" className="absolute right-0 top-0 shrink-0 gap-2">
+              <Button size="md" className="absolute right-0 top-0 shrink-0">
                 <Icon iconName="circle-plus" iconStyle="regular" />
                 New credential
               </Button>

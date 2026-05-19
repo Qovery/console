@@ -125,7 +125,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
         <div className="relative">
           <SettingsHeading title="Plan details" showNeedHelp={false} />
           <div className="absolute right-0 top-0 flex shrink-0 gap-3">
-            <Button className="gap-1" variant="surface" color="neutral" size="md" onClick={props.onShowUsageClick}>
+            <Button variant="surface" color="neutral" size="md" onClick={props.onShowUsageClick}>
               Show usage
               <Icon iconName="gauge-high" iconStyle="regular" />
             </Button>

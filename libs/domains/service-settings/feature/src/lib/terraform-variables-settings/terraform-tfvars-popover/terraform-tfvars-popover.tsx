@@ -157,19 +157,13 @@ export const TfvarsFilesPopover = () => {
                 </span>
               }
             >
-              <Button
-                size="md"
-                variant="outline"
-                className="gap-1.5"
-                type="button"
-                data-testid="open-tfvars-files-button"
-              >
+              <Button size="md" variant="outline" type="button" data-testid="open-tfvars-files-button">
                 <Icon iconName="file-lines" iconStyle="regular" />
                 .tfvars files
               </Button>
             </Indicator>
           ) : (
-            <Button size="md" variant="solid" className="gap-1.5" type="button" data-testid="open-tfvars-files-button">
+            <Button size="md" variant="solid" type="button" data-testid="open-tfvars-files-button">
               <Icon iconName="file-lines" iconStyle="regular" />
               .tfvars files
             </Button>

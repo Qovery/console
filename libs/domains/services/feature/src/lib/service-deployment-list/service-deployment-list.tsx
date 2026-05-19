@@ -326,7 +326,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                 >
                   <span>
                     <CopyToClipboard text={commit.git_commit_id} className="inline-flex justify-center">
-                      <Button type="button" variant="surface" color="neutral" size="xs" className="group gap-1">
+                      <Button type="button" variant="surface" color="neutral" size="xs" className="group">
                         <span className="group-hover:hidden">
                           <Icon iconName="copy" iconStyle="solid" className="w-4" />
                         </span>
@@ -359,7 +359,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   >
                     <span>
                       <CopyToClipboard text={repository.chart_version} className="inline-flex justify-center">
-                        <Button type="button" variant="surface" color="neutral" size="xs" className="group gap-1">
+                        <Button type="button" variant="surface" color="neutral" size="xs" className="group">
                           <span className="group-hover:hidden">
                             <Icon iconName="copy" iconStyle="solid" className="w-4" />
                           </span>
@@ -391,7 +391,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                   >
                     <span>
                       <CopyToClipboard text={tag} className="inline-flex justify-center">
-                        <Button type="button" variant="surface" color="neutral" size="xs" className="group gap-1">
+                        <Button type="button" variant="surface" color="neutral" size="xs" className="group">
                           <span className="group-hover:hidden">
                             <Icon iconName="copy" iconStyle="solid" className="w-4" />
                           </span>

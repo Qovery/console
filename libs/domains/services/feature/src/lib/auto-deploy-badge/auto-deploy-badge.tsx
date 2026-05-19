@@ -68,7 +68,7 @@ export function AutoDeployBadge({ serviceId }: AutoDeployBadgeProps) {
         {isLoading ? (
           <LoaderSpinner classWidth="w-3 ml-0.5" />
         ) : (
-          config && <Icon iconName={config.icon} className={`ml-1 text-xs ${config.iconClassName}`} />
+          config && <Icon iconName={config.icon} className={`text-xs ${config.iconClassName}`} />
         )}
       </Link>
     </Tooltip>

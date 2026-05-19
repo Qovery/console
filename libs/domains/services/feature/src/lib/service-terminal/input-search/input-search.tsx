@@ -45,7 +45,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
       >
         {value}
         <span>
-          <Icon iconName="xmark" className="ml-2 text-sm" />
+          <Icon iconName="xmark" className="text-sm" />
         </span>
       </Button>
       <div className={clsx({ hidden: selectedItem }, 'relative')}>

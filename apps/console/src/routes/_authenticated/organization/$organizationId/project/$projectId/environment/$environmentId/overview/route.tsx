@@ -117,7 +117,6 @@ function RouteComponent() {
               <Link
                 as="button"
                 variant="outline"
-                className="gap-2"
                 to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
                 params={{ organizationId, projectId, environmentId }}
               >

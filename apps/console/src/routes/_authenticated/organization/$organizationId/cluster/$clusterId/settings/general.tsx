@@ -90,7 +90,7 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
           <SettingsHeading title="General settings" />
           <div className="max-w-content-with-navigation-left">
             {cluster.cloud_provider !== 'ON_PREMISE' && (
-              <Callout.Root color="sky" className="mb-4">
+              <Callout.Root color="sky" className="mb-4 items-start">
                 <Callout.Icon>
                   <Icon iconName="circle-exclamation" iconStyle="regular" />
                 </Callout.Icon>

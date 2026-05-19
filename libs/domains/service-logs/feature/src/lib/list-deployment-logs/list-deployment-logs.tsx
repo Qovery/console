@@ -188,7 +188,7 @@ const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
       <div className="flex items-center gap-4">
         <DropdownMenu.Root open={open} onOpenChange={setOpen}>
           <DropdownMenu.Trigger asChild>
-            <Button variant="outline" className="gap-1.5">
+            <Button variant="outline">
               <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
               {isLastVersion
                 ? 'Latest'
@@ -478,7 +478,6 @@ function DeploymentLogsBody({
             <Button
               color="brand"
               variant="surface"
-              className="gap-1.5"
               onClick={() => {
                 posthog.capture('ai-copilot-troubleshoot-triggered', {
                   source: 'deployment-logs',

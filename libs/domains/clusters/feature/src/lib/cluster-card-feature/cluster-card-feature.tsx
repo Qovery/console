@@ -86,7 +86,7 @@ export function ClusterCardFeature({
                 <ExternalLink
                   as="button"
                   href={feature.cloud_provider_feature_documentation ?? undefined}
-                  className="gap-1 px-1.5 text-neutralInvert"
+                  className="px-1.5 text-neutralInvert"
                   color="neutral"
                   variant="surface"
                   size="xs"
