@@ -33,7 +33,7 @@ exports[`AssociatedItemsModal should match snapshot with services 1`] = `
           <h3
             class="text-sm font-medium mb-2 text-neutral"
           >
-            services
+            Services
           </h3>
           <div
             class="rounded border border-neutral bg-surface-neutral-subtle px-4 py-2"

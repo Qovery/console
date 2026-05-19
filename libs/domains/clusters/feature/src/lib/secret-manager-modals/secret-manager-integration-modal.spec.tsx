@@ -1,8 +1,18 @@
+import {
+  hasAwsAutomaticIntegrationConfigured,
+  hasAwsManualStsIntegrationConfigured,
+} from '@qovery/shared/util-clusters'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   SecretManagerIntegrationModal,
   type SecretManagerIntegrationModalProps,
 } from './secret-manager-integration-modal'
+
+jest.mock('@qovery/shared/util-clusters', () => ({
+  ...jest.requireActual('@qovery/shared/util-clusters'),
+  hasAwsAutomaticIntegrationConfigured: jest.fn(),
+  hasAwsManualStsIntegrationConfigured: jest.fn(),
+}))
 
 const defaultProps: SecretManagerIntegrationModalProps = {
   option: {
@@ -12,7 +22,6 @@ const defaultProps: SecretManagerIntegrationModalProps = {
     typeLabel: 'AWS Secret manager',
   },
   regionOptions: [{ label: 'Paris (eu-west-3)', value: 'eu-west-3' }],
-  clusterProvider: 'AWS',
   onClose: jest.fn(),
   onSubmit: jest.fn(),
 }
@@ -26,15 +35,18 @@ const getAutomaticTab = () => {
 describe('SecretManagerIntegrationModal', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.mocked(hasAwsAutomaticIntegrationConfigured).mockReturnValue(false)
+    jest.mocked(hasAwsManualStsIntegrationConfigured).mockReturnValue(false)
   })
 
   it('should force static credentials when an automatic integration already exists', async () => {
-    const { userEvent } = renderWithProviders(
-      <SecretManagerIntegrationModal {...defaultProps} hasAwsAutomaticIntegrationConfigured />
-    )
+    jest.mocked(hasAwsAutomaticIntegrationConfigured).mockReturnValue(true)
+
+    const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} />)
 
     expect(screen.getByLabelText('Authentication type')).toBeDisabled()
-    expect(screen.getByText('Static credentials')).toBeInTheDocument()
+    expect(screen.getByText('Manual integration').closest('a')).toHaveAttribute('aria-current', 'page')
+    expect(screen.queryByText('Assume role via STS')).not.toBeInTheDocument()
 
     const automaticTab = getAutomaticTab()
     expect(automaticTab).toHaveAttribute('aria-disabled')
@@ -51,12 +63,13 @@ describe('SecretManagerIntegrationModal', () => {
   })
 
   it('should force static credentials when an STS integration already exists', async () => {
-    const { userEvent } = renderWithProviders(
-      <SecretManagerIntegrationModal {...defaultProps} hasAwsManualStsIntegrationConfigured />
-    )
+    jest.mocked(hasAwsManualStsIntegrationConfigured).mockReturnValue(true)
+
+    const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} />)
 
     expect(screen.getByLabelText('Authentication type')).toBeDisabled()
-    expect(screen.getByText('Static credentials')).toBeInTheDocument()
+    expect(screen.getByText('Manual integration').closest('a')).toHaveAttribute('aria-current', 'page')
+    expect(screen.queryByText('Assume role via STS')).not.toBeInTheDocument()
 
     const automaticTab = getAutomaticTab()
     expect(automaticTab).toHaveAttribute('aria-disabled')
