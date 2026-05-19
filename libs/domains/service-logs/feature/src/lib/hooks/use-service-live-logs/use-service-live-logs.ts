@@ -1,6 +1,7 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { useParams, useSearch } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import {
   type NormalizedServiceLog,
   buildLokiQuery,
@@ -12,13 +13,19 @@ import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 export interface UseServiceLiveLogsProps {
   clusterId?: string
   serviceId?: string
+  serviceType?: ServiceType
   enabled?: boolean
 }
 
 const DEBOUNCE_TIME = 400
 const LIMIT = 200
 
-export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: UseServiceLiveLogsProps) {
+export function useServiceLiveLogs({
+  clusterId,
+  serviceId,
+  serviceType,
+  enabled = false,
+}: UseServiceLiveLogsProps) {
   const { organizationId, projectId, environmentId } = useParams({ strict: false })
   const queryParams = useSearch({ strict: false })
 
@@ -224,11 +231,13 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      service_type: serviceType,
       cluster: clusterId,
       query: dynamicQuery,
       limit: LIMIT.toString(),
     },
-    enabled: Boolean(clusterId) && Boolean(serviceId) && Boolean(dynamicQuery) && enabled,
+    enabled:
+      Boolean(clusterId) && Boolean(serviceId) && Boolean(serviceType) && Boolean(dynamicQuery) && enabled,
     onMessage: onLogHandler,
     onClose: onCloseHandler,
     onOpen: onOpenHandler,
@@ -241,12 +250,18 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      service_type: serviceType,
       cluster: clusterId,
       query: dynamicQueryNginx,
       limit: LIMIT.toString(),
     },
     enabled:
-      Boolean(clusterId) && Boolean(serviceId) && Boolean(dynamicQueryNginx) && Boolean(queryParams.nginx) && enabled,
+      Boolean(clusterId) &&
+      Boolean(serviceId) &&
+      Boolean(serviceType) &&
+      Boolean(dynamicQueryNginx) &&
+      Boolean(queryParams.nginx) &&
+      enabled,
     onMessage: onLogHandlerNginx,
     onClose: onCloseHandler,
     onOpen: onOpenHandler,
@@ -259,12 +274,18 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      service_type: serviceType,
       cluster: clusterId,
       query: dynamicQueryEnvoy,
       limit: LIMIT.toString(),
     },
     enabled:
-      Boolean(clusterId) && Boolean(serviceId) && Boolean(dynamicQueryEnvoy) && Boolean(queryParams.envoy) && enabled,
+      Boolean(clusterId) &&
+      Boolean(serviceId) &&
+      Boolean(serviceType) &&
+      Boolean(dynamicQueryEnvoy) &&
+      Boolean(queryParams.envoy) &&
+      enabled,
     onMessage: onLogHandlerEnvoy,
     onClose: onCloseHandler,
     onOpen: onOpenHandler,

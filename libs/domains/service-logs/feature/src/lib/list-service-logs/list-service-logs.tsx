@@ -123,6 +123,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   } = useServiceLiveLogs({
     clusterId: environment.cluster_id,
     serviceId: serviceId ?? '',
+    serviceType: service?.serviceType,
     enabled: isLiveMode && serviceEnabled,
   })
 
