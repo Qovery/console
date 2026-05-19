@@ -16,6 +16,7 @@ const mockUseCluster = useCluster as jest.MockedFunction<typeof useCluster>
 const mockUseClusterRoutingTable = useClusterRoutingTable as jest.MockedFunction<typeof useClusterRoutingTable>
 const mockUseEditCluster = useEditCluster as jest.MockedFunction<typeof useEditCluster>
 const mockUseEditRoutingTable = useEditRoutingTable as jest.MockedFunction<typeof useEditRoutingTable>
+const mockEditClusterMutate = jest.fn()
 
 const mockCluster: Cluster = {
   id: 'cluster-id',
@@ -46,9 +47,11 @@ const mockClusterScaleway: Cluster = {
     {
       id: 'NAT_GATEWAY',
       value_object: {
+        type: 'NAT_GATEWAY',
         value: {
           nat_gateway_type: {
-            type: 'sbn',
+            provider: 'scaleway',
+            type: 'VPC-GW-S',
           },
         },
       },
@@ -68,7 +71,7 @@ describe('ClusterNetworkSettings', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseEditCluster.mockReturnValue({
-      mutateAsync: jest.fn(),
+      mutateAsync: mockEditClusterMutate,
       isLoading: false,
     } as unknown as ReturnType<typeof useEditCluster>)
     mockUseEditRoutingTable.mockReturnValue({
@@ -132,6 +135,74 @@ describe('ClusterNetworkSettings', () => {
     expect(screen.getByTestId('submit-button')).toBeInTheDocument()
   })
 
+  it('should read SCW NAT_GATEWAY from legacy plain-string shape', () => {
+    const legacyStringCluster: Cluster = {
+      ...mockCluster,
+      cloud_provider: 'SCW',
+      region: 'fr-par',
+      features: [
+        {
+          id: 'NAT_GATEWAY',
+          value_object: {
+            value: 'VPC-GW-S',
+          },
+        },
+      ],
+    } as Cluster
+
+    mockUseCluster.mockReturnValue({
+      data: legacyStringCluster,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useCluster>)
+    mockUseClusterRoutingTable.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useClusterRoutingTable>)
+
+    renderWithProviders(
+      wrapWithReactHookForm(<ClusterNetworkSettings organizationId="org-id" clusterId="cluster-id" />)
+    )
+
+    expect(screen.getByTestId('submit-button')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('VPC-GW-S')).toBeInTheDocument()
+  })
+
+  it('should read SCW NAT_GATEWAY from legacy nested-object shape without type discriminator', () => {
+    const legacyObjectCluster: Cluster = {
+      ...mockCluster,
+      cloud_provider: 'SCW',
+      region: 'fr-par',
+      features: [
+        {
+          id: 'NAT_GATEWAY',
+          value_object: {
+            value: {
+              nat_gateway_type: {
+                type: 'VPC-GW-M',
+              },
+            },
+          },
+        },
+      ],
+    } as Cluster
+
+    mockUseCluster.mockReturnValue({
+      data: legacyObjectCluster,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useCluster>)
+    mockUseClusterRoutingTable.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useClusterRoutingTable>)
+
+    renderWithProviders(
+      wrapWithReactHookForm(<ClusterNetworkSettings organizationId="org-id" clusterId="cluster-id" />)
+    )
+
+    expect(screen.getByTestId('submit-button')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('VPC-GW-M')).toBeInTheDocument()
+  })
+
   it('should render configured network features for non-Scaleway cluster without existing VPC', () => {
     const clusterWithFeatures: Cluster = {
       ...mockCluster,
@@ -191,5 +262,181 @@ describe('ClusterNetworkSettings', () => {
     )
 
     expect(screen.queryByText('Routes')).not.toBeInTheDocument()
+  })
+
+  it('should show STATIC_IP as true for GCP when NAT_GATEWAY feature is missing', () => {
+    const gcpClusterWithoutNatGateway: Cluster = {
+      ...mockCluster,
+      cloud_provider: 'GCP',
+      features: [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP / Nat Gateways',
+          value_object: {
+            value: true,
+          },
+        },
+      ],
+    } as Cluster
+
+    mockUseCluster.mockReturnValue({
+      data: gcpClusterWithoutNatGateway,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useCluster>)
+    mockUseClusterRoutingTable.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useClusterRoutingTable>)
+
+    renderWithProviders(
+      wrapWithReactHookForm(<ClusterNetworkSettings organizationId="org-id" clusterId="cluster-id" />)
+    )
+
+    // STATIC_IP is filtered from gcpDisplayFeatures so the "Configured network features" block is empty
+    expect(screen.queryByText('Configured network features')).not.toBeInTheDocument()
+    expect(screen.getByDisplayValue('true')).toBeInTheDocument()
+    expect(screen.getByText('Enable static egress IPs')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('false')).toBeInTheDocument()
+    expect(screen.getByText(/may trigger a downtime of a few minutes/i)).toBeInTheDocument()
+    expect(screen.queryByText('Static IP count')).not.toBeInTheDocument()
+  })
+
+  it('should keep NAT_GATEWAY visible for GCP when STATIC_IP feature is missing', () => {
+    const gcpClusterWithoutStaticIp: Cluster = {
+      ...mockCluster,
+      cloud_provider: 'GCP',
+      features: [
+        {
+          id: 'NAT_GATEWAY',
+          title: 'Static IP / Nat Gateways',
+          value_object: {
+            type: 'NAT_GATEWAY',
+            value: {
+              nat_gateway_type: {
+                provider: 'gcp',
+                static_ips_enabled: true,
+                static_ips_count: 2,
+              },
+            },
+          },
+        },
+      ],
+    } as Cluster
+
+    mockUseCluster.mockReturnValue({
+      data: gcpClusterWithoutStaticIp,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useCluster>)
+    mockUseClusterRoutingTable.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useClusterRoutingTable>)
+
+    renderWithProviders(
+      wrapWithReactHookForm(<ClusterNetworkSettings organizationId="org-id" clusterId="cluster-id" />)
+    )
+
+    expect(screen.getByText('Configured network features')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('true')).toBeInTheDocument()
+    expect(screen.queryByText('Enable static egress IPs')).not.toBeInTheDocument()
+  })
+
+  it('should include NAT_GATEWAY in submit payload when absent from cluster but configured by user', async () => {
+    const gcpClusterWithoutNatGateway: Cluster = {
+      ...mockCluster,
+      cloud_provider: 'GCP',
+      features: [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP / Nat Gateways',
+          value_object: { value: true },
+        },
+      ],
+    } as Cluster
+
+    mockUseCluster.mockReturnValue({
+      data: gcpClusterWithoutNatGateway,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useCluster>)
+    mockUseClusterRoutingTable.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useClusterRoutingTable>)
+
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<ClusterNetworkSettings organizationId="org-id" clusterId="cluster-id" />)
+    )
+
+    // toggle[0] = STATIC_IP (disabled for GCP), toggle[1] = "Enable static egress IPs"
+    await userEvent.click(screen.getAllByTestId('input-toggle-button')[1])
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(mockEditClusterMutate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        clusterRequest: expect.objectContaining({
+          features: expect.arrayContaining([
+            expect.objectContaining({ id: 'STATIC_IP' }),
+            expect.objectContaining({
+              id: 'NAT_GATEWAY',
+              value: expect.objectContaining({
+                nat_gateway_type: expect.objectContaining({ provider: 'gcp', static_ips_enabled: true }),
+              }),
+            }),
+          ]),
+        }),
+      })
+    )
+  })
+
+  it('should allow editing GCP static egress settings and save', async () => {
+    const gcpCluster: Cluster = {
+      ...mockCluster,
+      cloud_provider: 'GCP',
+      features: [
+        {
+          id: 'STATIC_IP',
+          title: 'Static IP / Nat Gateways',
+          value_object: {
+            value: true,
+          },
+        },
+        {
+          id: 'NAT_GATEWAY',
+          title: 'NAT Gateway',
+          value_object: {
+            type: 'NAT_GATEWAY',
+            value: {
+              nat_gateway_type: {
+                provider: 'gcp',
+                static_ips_enabled: true,
+                static_ips_count: 3,
+              },
+            },
+          },
+        },
+      ],
+    } as Cluster
+
+    mockUseCluster.mockReturnValue({
+      data: gcpCluster,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useCluster>)
+    mockUseClusterRoutingTable.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useClusterRoutingTable>)
+
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<ClusterNetworkSettings organizationId="org-id" clusterId="cluster-id" />)
+    )
+
+    expect(screen.getByText('Enable static egress IPs')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('3')).toBeInTheDocument()
+    expect(screen.getByTestId('submit-button')).toBeInTheDocument()
+    expect(screen.queryByText('Configured network features')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(mockEditClusterMutate).toHaveBeenCalled()
   })
 })
