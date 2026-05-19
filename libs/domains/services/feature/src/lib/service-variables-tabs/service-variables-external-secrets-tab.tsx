@@ -22,7 +22,6 @@ import {
   EmptyState,
   Icon,
   LoaderSpinner,
-  type SyncStatus,
   TableFilter,
   TableFilterSearch,
   TablePrimitives,
@@ -32,6 +31,7 @@ import {
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import {
   type ExternalSecretRow,
+  type SyncStatus,
   isExternalSecretVariable,
   mapVariableToExternalSecretRow,
 } from './service-variables-external-secrets-utils'

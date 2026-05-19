@@ -3,6 +3,7 @@ import { Suspense, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
+import { isEditableServiceType } from '@qovery/domains/services/data-access'
 import {
   BuiltInTab,
   CustomTab,
@@ -58,7 +59,7 @@ function RouteComponent() {
   })
 
   const toasterCallback = () => {
-    if (!service?.serviceType) {
+    if (!service?.serviceType || !isEditableServiceType(service.serviceType)) {
       return
     }
     deployService({

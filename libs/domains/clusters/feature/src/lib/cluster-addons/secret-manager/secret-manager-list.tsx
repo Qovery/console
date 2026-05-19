@@ -22,8 +22,8 @@ function SecretManagerItem({
 }: {
   manager: SecretManagerAccess
   onViewAssociatedServices?: SecretManagerListProps['onViewAssociatedServices']
-  onEdit?: SecretManagerListProps['onEdit']
-  onDelete?: SecretManagerListProps['onDelete']
+  onEdit: SecretManagerListProps['onEdit']
+  onDelete: SecretManagerListProps['onDelete']
 }) {
   const { data: secretManagerAssociatedServices = [] } = useSecretManagerAssociatedServices({
     secretManagerAccessId: manager.id,

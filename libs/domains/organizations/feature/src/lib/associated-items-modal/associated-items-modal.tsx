@@ -37,46 +37,46 @@ interface Project {
 export function groupByProjectEnvironmentsServices(data: AssociatedItem[], searchValue?: string) {
   const projects: Project[] = []
 
-  data.forEach(
-    ({
-      project_id = '',
-      project_name = '',
-      environment_id = '',
-      environment_name = '',
-      item_id,
-      item_name = '',
-      item_type,
-    }) => {
-      if (
-        searchValue === undefined ||
-        project_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-        environment_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-        item_name.toLowerCase().includes(searchValue.toLowerCase())
-      ) {
-        let project = projects.find((proj) => proj.project_id === project_id)
-        if (!project) {
-          project = {
-            project_id,
-            project_name,
-            environments: [],
-          }
-          projects.push(project)
-        }
+  data.forEach((item) => {
+    const projectId = item.project_id ?? ''
+    const projectName = item.project_name ?? ''
+    const environmentId = item.environment_id ?? ''
+    const environmentName = item.environment_name ?? ''
+    const itemName = item.item_name ?? ''
 
-        let environment = project.environments.find((env) => env.environment_id === environment_id)
-        if (!environment) {
-          environment = {
-            environment_id,
-            environment_name,
-            services: [],
-          }
-          project.environments.push(environment)
+    if (
+      searchValue === undefined ||
+      projectName.toLowerCase().includes(searchValue.toLowerCase()) ||
+      environmentName.toLowerCase().includes(searchValue.toLowerCase()) ||
+      itemName.toLowerCase().includes(searchValue.toLowerCase())
+    ) {
+      let project = projects.find((proj) => proj.project_id === projectId)
+      if (!project) {
+        project = {
+          project_id: projectId,
+          project_name: projectName,
+          environments: [],
         }
-
-        environment.services.push({ service_id: item_id, service_name: item_name, service_type: item_type })
+        projects.push(project)
       }
+
+      let environment = project.environments.find((env) => env.environment_id === environmentId)
+      if (!environment) {
+        environment = {
+          environment_id: environmentId,
+          environment_name: environmentName,
+          services: [],
+        }
+        project.environments.push(environment)
+      }
+
+      environment.services.push({
+        service_id: item.item_id,
+        service_name: itemName,
+        service_type: item.item_type,
+      })
     }
-  )
+  })
 
   return projects
 }
