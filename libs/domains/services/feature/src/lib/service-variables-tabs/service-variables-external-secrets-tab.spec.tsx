@@ -70,7 +70,6 @@ describe('ExternalSecretsTab', () => {
     expect(screen.getByText('prod/database/credentials')).toBeInTheDocument()
     expect(screen.getByText('Scope')).toBeInTheDocument()
     expect(screen.getByText('Actions')).toBeInTheDocument()
-    expect(screen.getAllByRole('button', { name: /check references/i }).length).toBeGreaterThan(0)
     expect(screen.getByText('Valid')).toBeInTheDocument()
     expect(screen.getByText('Prod secret manager')).toBeInTheDocument()
   })

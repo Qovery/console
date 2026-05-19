@@ -56,7 +56,6 @@ const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_124
 const STATUS_LABELS: Record<SyncStatus, string> = {
   synced: 'Valid',
   broken: 'Invalid',
-  syncing: 'Checking...',
   detached: 'Detached',
 }
 
@@ -72,12 +71,6 @@ function ExternalSecretStatusBadge({ status }: { status: SyncStatus }) {
       <span className="inline-flex h-6 items-center gap-1 rounded-[6px] border border-negative-subtle bg-surface-negative-subtle px-1.5 text-[12px] font-medium text-negative">
         <Icon iconName="circle-exclamation" className="text-[12px]" />
         <span>Invalid</span>
-      </span>
-    ))
-    .with('syncing', () => (
-      <span className="inline-flex h-6 items-center gap-1 rounded-[6px] border border-info-subtle bg-surface-info-subtle px-1.5 text-[12px] font-medium text-info">
-        <Icon iconName="spinner-third" iconStyle="regular" className="animate-spin text-[12px]" />
-        <span>Checking...</span>
       </span>
     ))
     .otherwise(() => (
@@ -108,16 +101,14 @@ export function ExternalSecretsTab({
     scope,
   })
 
-  const fetchedSecrets = useMemo(
+  const secrets = useMemo(
     () =>
       variables
         .filter(isExternalSecretVariable)
         .map((variable) => mapVariableToExternalSecretRow(variable, secretManagers)),
     [secretManagers, variables]
   )
-
   const [search, setSearch] = useState('')
-  const [secrets, setSecrets] = useState(fetchedSecrets)
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
@@ -125,37 +116,11 @@ export function ExternalSecretsTab({
   const { mutateAsync: deleteVariable } = useDeleteVariable()
 
   useEffect(() => {
-    setSecrets(fetchedSecrets)
     setSearch('')
     setSorting([])
     setColumnFilters([])
     setRowSelection({})
-  }, [fetchedSecrets])
-
-  const handleCheckReferences = useCallback(
-    (secretIds?: string[]) => {
-      const targetIds = secretIds ? new Set(secretIds) : null
-      const previousStatuses = new Map(secrets.map((secret) => [secret.id, secret.status]))
-      const shouldCheck = (secret: ExternalSecretRow) => !targetIds || targetIds.has(secret.id)
-
-      setSecrets((prev) =>
-        prev.map((secret) =>
-          shouldCheck(secret) && secret.status !== 'syncing' ? { ...secret, status: 'syncing' as const } : secret
-        )
-      )
-
-      setTimeout(() => {
-        setSecrets((prev) =>
-          prev.map((secret) =>
-            shouldCheck(secret) && secret.status === 'syncing'
-              ? { ...secret, status: previousStatuses.get(secret.id) ?? secret.status }
-              : secret
-          )
-        )
-      }, 3000)
-    },
-    [secrets]
-  )
+  }, [secrets])
 
   const handleDeleteSecrets = useCallback(
     async (secretIds: string[]) => {
@@ -365,18 +330,9 @@ export function ExternalSecretsTab({
         header: 'Actions',
         cell: (info) => {
           const secret = info.row.original
-          const isSyncing = secret.status === 'syncing'
           return (
             <div className="flex items-center justify-end gap-2">
-              <Button
-                aria-label="Edit"
-                color="neutral"
-                size="sm"
-                variant="outline"
-                iconOnly
-                type="button"
-                disabled={isSyncing}
-              >
+              <Button aria-label="Edit" color="neutral" size="sm" variant="outline" iconOnly type="button">
                 <Tooltip content="Edit">
                   <div className="flex h-full w-full items-center justify-center">
                     <Icon iconName="pen" />
@@ -390,7 +346,6 @@ export function ExternalSecretsTab({
                 variant="outline"
                 iconOnly
                 type="button"
-                disabled={isSyncing}
                 onClick={() => handleConfirmDeleteSecrets([secret.id])}
               >
                 <Tooltip content="Delete">
@@ -460,16 +415,6 @@ export function ExternalSecretsTab({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <Button
-              color="neutral"
-              variant="outline"
-              size="md"
-              className="gap-2"
-              onClick={() => handleCheckReferences()}
-            >
-              <Icon iconName="rotate" iconStyle="regular" />
-              Check references
-            </Button>
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
                 <Button color="brand" variant="solid" size="md" className="gap-2">
@@ -577,16 +522,6 @@ export function ExternalSecretsTab({
               Unselect
             </button>
             <div className="flex items-center gap-1.5">
-              <Button
-                color="neutralInverted"
-                variant="outline"
-                size="md"
-                className="gap-2"
-                onClick={() => handleCheckReferences(selectedIds)}
-              >
-                <Icon iconName="rotate" iconStyle="regular" />
-                Check references
-              </Button>
               <Button color="neutralInverted" variant="outline" size="md" className="gap-2" disabled>
                 <Icon iconName="link" iconStyle="regular" />
                 Attach

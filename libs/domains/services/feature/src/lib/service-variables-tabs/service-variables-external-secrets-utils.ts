@@ -2,7 +2,7 @@ import { type SecretManagerAccess, type VariableResponse } from 'qovery-typescri
 import { getSecretManagerProvider } from '@qovery/shared/util-clusters'
 import { generateScopeLabel } from '@qovery/shared/util-js'
 
-export type SyncStatus = 'synced' | 'broken' | 'syncing' | 'detached'
+export type SyncStatus = 'synced' | 'broken' | 'detached'
 
 export interface ExternalSecretRow {
   id: string
