@@ -1,5 +1,5 @@
-export { isGcpCluster } from './isGcpCluster'
-export { isAwsCluster } from './isAwsCluster'
+export { isGcpCluster } from './isGCPCluster'
+export { isAwsCluster } from './isAWSCluster'
 export { hasAwsAutomaticIntegrationConfigured } from './secret-manager/hasAwsAutomaticIntegrationConfigured'
 export { hasAwsManualStsIntegrationConfigured } from './secret-manager/hasAwsManualStsIntegrationConfigured'
 export { isAwsSecretManager } from './secret-manager/isAwsSecretManager'
