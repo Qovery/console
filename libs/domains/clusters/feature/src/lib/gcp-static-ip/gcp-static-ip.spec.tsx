@@ -183,7 +183,7 @@ describe('GcpStaticIp', () => {
       )
     )
 
-    // ExternalLink as="button" renders an <a> (role=link); billing badge + docs link = 2 links total
+    // ExternalLink as="button" renders an <a> (role=link); billing badge + documentation link
     expect(screen.getAllByRole('link')).toHaveLength(2)
   })
 

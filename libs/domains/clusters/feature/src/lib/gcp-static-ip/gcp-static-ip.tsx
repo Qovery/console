@@ -6,6 +6,8 @@ import { BlockContent, Callout, ExternalLink, Icon, InputText, InputToggle, Tool
 import { type GcpNatGatewaySettings, getGcpNatGatewaySettings } from '../utils/get-gcp-nat-gateway-settings'
 
 const DEFAULT_STATIC_IPS_COUNT = 2
+const GCP_NETWORK_DOCUMENTATION_URL =
+  'https://www.qovery.com/docs/configuration/integrations/kubernetes/gke/managed#network'
 
 const isGcpNatGatewaySettings = (value: unknown): value is GcpNatGatewaySettings =>
   Boolean(
@@ -106,7 +108,7 @@ export function GcpStaticIp({
   }, [isEditable, natGatewayEnabled, natGatewayFeature?.id, natGatewaySettings, setValue, staticIpEnabled])
 
   return (
-    <BlockContent title="Static IP / Nat Gateways" classNameContent="p-4">
+    <BlockContent title="Static IP / Nat Gateways" classNameContent="w-full p-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-start gap-3">
           <Controller
@@ -114,28 +116,30 @@ export function GcpStaticIp({
             control={control}
             defaultValue={staticIpValueFromFeature ?? production}
             render={({ field }) => (
-              <div className="flex gap-2">
-                <InputToggle
-                  value={field.value}
-                  onChange={(value) => {
-                    field.onChange(value)
-                    if (!natGatewayFeature?.id || !setValue) return
-                    if (!value) {
-                      setValue(`features.${natGatewayFeature.id}.value`, false)
-                      setValue(`features.${natGatewayFeature.id}.extendedValue`, undefined)
-                      return
-                    }
-                    setNatGatewaySettings({
-                      static_ips_enabled: natGatewaySettings?.static_ips_enabled ?? false,
-                      static_ips_count: natGatewaySettings?.static_ips_count ?? DEFAULT_STATIC_IPS_COUNT,
-                    })
-                  }}
-                  disabled={disabled || staticIpToggleDisabled}
-                  title="Static IP / Nat Gateways"
-                  description="Your cluster will use NAT Gateways for egress. You can configure static egress IPs below."
-                  align="top"
-                  small
-                />
+              <div className="flex w-full items-start justify-between gap-2">
+                <div className="flex-1">
+                  <InputToggle
+                    value={field.value}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      if (!natGatewayFeature?.id || !setValue) return
+                      if (!value) {
+                        setValue(`features.${natGatewayFeature.id}.value`, false)
+                        setValue(`features.${natGatewayFeature.id}.extendedValue`, undefined)
+                        return
+                      }
+                      setNatGatewaySettings({
+                        static_ips_enabled: natGatewaySettings?.static_ips_enabled ?? false,
+                        static_ips_count: natGatewaySettings?.static_ips_count ?? DEFAULT_STATIC_IPS_COUNT,
+                      })
+                    }}
+                    disabled={disabled || staticIpToggleDisabled}
+                    title="Static IP / Nat Gateways"
+                    description="Your cluster will use NAT Gateways for egress. You can configure static egress IPs below."
+                    align="top"
+                    small
+                  />
+                </div>
                 {staticIpFeature?.is_cloud_provider_paying_feature && (
                   <Tooltip content="Billed by GCP">
                     <ExternalLink
@@ -158,7 +162,7 @@ export function GcpStaticIp({
         </div>
 
         {staticIpEnabled && natGatewayFeature && (
-          <div className="ml-8 flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             <InputToggle
               value={staticIpsEnabled}
               onChange={(value) =>
@@ -173,20 +177,6 @@ export function GcpStaticIp({
               align="top"
               small
             />
-            {showDowntimeWarning && (
-              <Callout.Root color="yellow">
-                <Callout.Icon>
-                  <Icon iconName="triangle-exclamation" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text>
-                  <Callout.TextHeading>Warning</Callout.TextHeading>
-                  <Callout.TextDescription>
-                    Enabling or disabling static egress IPs may trigger a downtime of a few minutes while the NAT
-                    gateway is reconfigured.
-                  </Callout.TextDescription>
-                </Callout.Text>
-              </Callout.Root>
-            )}
             {staticIpsEnabled && (
               <InputText
                 name="static_ips_count"
@@ -203,13 +193,26 @@ export function GcpStaticIp({
                       : sanitizeStaticIpsCount(parsedValue),
                   })
                 }}
-                hint="Default value is 2."
               />
+            )}
+            {showDowntimeWarning && (
+              <Callout.Root color="yellow">
+                <Callout.Icon>
+                  <Icon iconName="triangle-exclamation" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>Changing this setting may cause downtime</Callout.TextHeading>
+                  <Callout.TextDescription>
+                    Enabling or disabling static egress IPs may trigger a downtime of a few minutes while the NAT
+                    gateway is reconfigured.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
             )}
           </div>
         )}
 
-        <ExternalLink size="xs" href="https://www.qovery.com/docs/configuration/clusters">
+        <ExternalLink size="xs" href={GCP_NETWORK_DOCUMENTATION_URL}>
           Documentation link
         </ExternalLink>
       </div>
