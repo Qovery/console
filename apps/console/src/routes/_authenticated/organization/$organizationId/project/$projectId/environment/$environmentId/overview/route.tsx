@@ -17,7 +17,7 @@ import {
   useDeploymentStatus,
   useEnvironment,
 } from '@qovery/domains/environments/feature'
-import { isEditableService } from '@qovery/domains/services/data-access'
+import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
 import { ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
@@ -58,10 +58,7 @@ function RouteComponent() {
   const activeTabId = tabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
   const isServicesListTab = activeTabId === 'services'
   const qoveryServicesCount = useMemo(() => services.filter(isEditableService).length, [services])
-  const argoCdServicesCount = useMemo(
-    () => services.filter((service) => !isEditableService(service)).length,
-    [services]
-  )
+  const argoCdServicesCount = useMemo(() => services.filter(isArgoCd).length, [services])
   const hasQoveryServices = qoveryServicesCount > 0
   const hasArgoCdServices = argoCdServicesCount > 0
   const shouldDisplayQoveryServicesSubtitle = isServicesListTab && hasArgoCdServices
@@ -129,7 +126,7 @@ function RouteComponent() {
               <div className="flex flex-col gap-3">
                 {shouldDisplayQoveryServicesSubtitle && (
                   <Heading level={3} className="font-medium text-neutral-subtle">
-                    Qovery native services
+                    Qovery services
                   </Heading>
                 )}
                 {shouldDisplayArgoCdServicesAboveQovery ? (
