@@ -1,31 +1,28 @@
+import { useParams } from '@tanstack/react-router'
 import { VariableList } from '@qovery/domains/variables/feature'
 import { toast } from '@qovery/shared/ui'
+import { useService } from '../hooks/use-service/use-service'
+import { getServiceVariableScope } from './service-variables-utils'
+import { useServiceVariablesTab } from './use-service-variables-tab'
 
-interface BuiltInTabProps {
-  scope: 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'
-  organizationId: string
-  projectId: string
-  environmentId: string
-  serviceId: string
-  toasterCallback: () => void
-}
+export function BuiltInTab() {
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const { redeployServiceAction } = useServiceVariablesTab()
+  const scope = getServiceVariableScope(service?.serviceType)
 
-export function BuiltInTab({
-  scope,
-  organizationId,
-  projectId,
-  environmentId,
-  serviceId,
-  toasterCallback,
-}: BuiltInTabProps) {
   const onCreateVariableToast = () =>
     toast(
       'success',
       'Creation success',
       'You need to redeploy your service for your changes to be applied.',
-      toasterCallback,
+      redeployServiceAction,
       'Redeploy'
     )
+
+  if (!scope) {
+    return null
+  }
 
   return (
     <VariableList
@@ -43,7 +40,7 @@ export function BuiltInTab({
           'success',
           'Edition success',
           'You need to redeploy your service for your changes to be applied.',
-          toasterCallback,
+          redeployServiceAction,
           'Redeploy'
         )
       }}

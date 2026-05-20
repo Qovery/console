@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import {
   CreateUpdateVariableModal,
   ImportEnvironmentVariableModalFeature,
@@ -6,26 +7,15 @@ import {
   useVariables,
 } from '@qovery/domains/variables/feature'
 import { Button, DropdownMenu, EmptyState, Icon, toast, useModal } from '@qovery/shared/ui'
+import { useService } from '../hooks/use-service/use-service'
+import { getServiceVariableScope } from './service-variables-utils'
+import { useServiceVariablesTab } from './use-service-variables-tab'
 
-interface CustomTabProps {
-  scope: 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'
-  organizationId: string
-  projectId: string
-  environmentId: string
-  serviceId: string
-  toasterCallback: () => void
-  hasClusterSecretManagerConfigured?: boolean
-}
-
-export function CustomTab({
-  scope,
-  organizationId,
-  projectId,
-  environmentId,
-  serviceId,
-  toasterCallback,
-  hasClusterSecretManagerConfigured = false,
-}: CustomTabProps) {
+export function CustomTab() {
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const { redeployServiceAction, hasClusterSecretManagerConfigured } = useServiceVariablesTab()
+  const scope = getServiceVariableScope(service?.serviceType)
   const { openModal, closeModal } = useModal()
   const { data: variables = [], isLoading: isVariablesLoading } = useVariables({
     parentId: serviceId,
@@ -40,9 +30,13 @@ export function CustomTab({
       'success',
       'Creation success',
       'You need to redeploy your service for your changes to be applied.',
-      toasterCallback,
+      redeployServiceAction,
       'Redeploy'
     )
+
+  if (!scope) {
+    return null
+  }
 
   const handleOpenCreateVariableModal = (isFile = false) =>
     openModal({
@@ -164,7 +158,7 @@ export function CustomTab({
           'success',
           'Edition success',
           'You need to redeploy your service for your changes to be applied.',
-          toasterCallback,
+          redeployServiceAction,
           'Redeploy'
         )
       }}
@@ -177,7 +171,7 @@ export function CustomTab({
           'success',
           'Deletion success',
           `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
-          toasterCallback,
+          redeployServiceAction,
           'Redeploy'
         )
       }}

@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import {
   type ColumnFiltersState,
   type RowSelectionState,
@@ -11,7 +12,6 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useCreateVariable, useDeleteVariable, useEditVariable, useVariables } from '@qovery/domains/variables/feature'
@@ -30,6 +30,7 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
+import { useService } from '../hooks/use-service/use-service'
 import {
   AddSecretModal,
   type SecretSourceOption,
@@ -41,6 +42,8 @@ import {
   isExternalSecretVariable,
   mapVariableToExternalSecretRow,
 } from './service-variables-external-secrets-utils'
+import { getServiceVariableScope } from './service-variables-utils'
+import { useServiceVariablesTab } from './use-service-variables-tab'
 
 const { Table } = TablePrimitives
 
@@ -89,19 +92,12 @@ function ExternalSecretStatusBadge({ status }: { status: SyncStatus }) {
 
 const columnHelper = createColumnHelper<ExternalSecretRow>()
 
-interface ExternalSecretsTabProps {
-  scope: 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'
-  serviceId: string
-  secretManagers?: SecretManagerAccess[]
-  hasClusterSecretManagerConfigured?: boolean
-}
-
-export function ExternalSecretsTab({
-  scope,
-  serviceId,
-  secretManagers = [],
-  hasClusterSecretManagerConfigured = false,
-}: ExternalSecretsTabProps) {
+export function ExternalSecretsTab() {
+  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const { secretManagers, hasClusterSecretManagerConfigured } = useServiceVariablesTab()
+  const scope = getServiceVariableScope(service?.serviceType)
+  const variableScope = getServiceVariableScope(service?.serviceType, 'APPLICATION')
   const { data: variables = [], isLoading } = useVariables({
     parentId: serviceId,
     scope,
@@ -158,14 +154,14 @@ export function ExternalSecretsTab({
           value: reference,
           mount_path: isFile ? filePath ?? null : null,
           is_secret: false,
-          variable_scope: scope,
+          variable_scope: variableScope,
           variable_parent_id: serviceId,
           description: description ?? null,
           secret_manager_access_id: secretManagerAccessId,
         },
       })
     },
-    [createVariable, scope, serviceId]
+    [createVariable, serviceId, variableScope]
   )
 
   const handleEditSecret = useCallback(
@@ -535,6 +531,10 @@ export function ExternalSecretsTab({
         <LoaderSpinner className="w-6" />
       </div>
     )
+  }
+
+  if (!scope) {
+    return null
   }
 
   const shouldShowEmptyState = secrets.length === 0 && Boolean(emptyStateConfig)
