@@ -146,8 +146,8 @@ export const mutations = {
     )
 
     if (!response.ok) {
-        let errorMessage = `Failed to send message: ${response.status}`
-        await response
+      let errorMessage = `Failed to send message: ${response.status}`
+      await response
         .json()
         .then((errorBody: { error?: string }) => {
           if (errorBody?.error) errorMessage = errorBody.error

@@ -14,6 +14,7 @@ import {
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
+
 export interface SectionAICopilotConfigurationProps {
   organization?: Organization
   isLoading?: boolean
