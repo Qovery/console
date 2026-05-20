@@ -147,11 +147,12 @@ export const mutations = {
 
     if (!response.ok) {
       let errorMessage = `Failed to send message: ${response.status}`
-      try {
-        const errorBody = await response.json()
-        if (errorBody?.error) errorMessage = errorBody.error
-        // eslint-disable-next-line no-empty
-      } catch (_) {}
+      await response
+        .json()
+        .then((errorBody: { error?: string }) => {
+          if (errorBody?.error) errorMessage = errorBody.error
+        })
+        .catch(() => undefined)
       throw new Error(errorMessage)
     }
 
