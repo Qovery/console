@@ -299,7 +299,7 @@ export function ExternalSecretsTab({
             return <span className="text-sm text-neutral-subtle">No sources detected</span>
           }
           return (
-            <span className="flex items-center gap-1.5 text-sm text-neutral">
+            <span className="flex min-w-0 items-center gap-1.5 text-sm text-neutral">
               {secret.sourceIcon && (
                 <Icon
                   name={match(secret.sourceIcon)
@@ -308,9 +308,12 @@ export function ExternalSecretsTab({
                     .otherwise(() => 'AWS' as const)}
                   width="16"
                   height="16"
+                  className="shrink-0"
                 />
               )}
-              {secret.source}
+              <Tooltip align="start" content={secret.source}>
+                <span className="truncate">{secret.source}</span>
+              </Tooltip>
             </span>
           )
         },
