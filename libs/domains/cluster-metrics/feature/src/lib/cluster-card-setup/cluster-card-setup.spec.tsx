@@ -15,6 +15,7 @@ describe('ClusterCardSetup', () => {
   const mockCluster = {
     created_at: '2024-05-01T12:00:00Z',
     cloud_provider: 'AWS',
+    kubernetes: 'MANAGED',
   }
 
   const mockDeploymentStatus = {
@@ -70,6 +71,34 @@ describe('ClusterCardSetup', () => {
 
     expect(screen.getByText('Upgrade Kubernetes')).toBeInTheDocument()
     expect(screen.getByText('v1.26.0 → v1.28.1')).toBeInTheDocument()
+  })
+
+  it('should render plain Kubernetes version for EKS Anywhere drift status', () => {
+    const mockRunningStatus = {
+      computed_status: {
+        kube_version_status: {
+          type: 'DRIFT',
+          kube_version: 'v1.34',
+          expected_kube_version: 'v1.33',
+        },
+      },
+    }
+    ;(useCluster as jest.Mock).mockReturnValue({
+      data: {
+        ...mockCluster,
+        kubernetes: 'PARTIALLY_MANAGED',
+      },
+    })
+    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+      data: mockRunningStatus,
+    })
+
+    renderWithProviders(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+
+    expect(screen.getByText('Kubernetes version')).toBeInTheDocument()
+    expect(screen.getByText('v1.34')).toBeInTheDocument()
+    expect(screen.queryByText('Upgrade Kubernetes')).not.toBeInTheDocument()
+    expect(screen.queryByText('v1.34 → v1.33')).not.toBeInTheDocument()
   })
 
   it('should render unsupported Kubernetes version status', () => {
