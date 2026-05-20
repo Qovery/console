@@ -12,15 +12,26 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: ({ enabled, readOnly, userEmail }: { enabled: boolean; readOnly: boolean; userEmail?: string }) =>
+    mutationFn: ({
+      enabled,
+      readOnly,
+      userEmail,
+      tokenMode,
+    }: {
+      enabled: boolean
+      readOnly: boolean
+      userEmail?: string
+      tokenMode?: 'jwt' | 'role'
+    }) =>
       mutations.updateOrgConfig({
         organizationId,
         enabled,
         readOnly,
         instructions: instructions || '',
         userEmail,
+        tokenMode,
       }),
-    onMutate: async ({ readOnly }) => {
+    onMutate: async ({ readOnly, tokenMode }) => {
       await queryClient.cancelQueries({
         queryKey: devopsCopilot.config({ organizationId }).queryKey,
       })
@@ -36,6 +47,7 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
                 org_config: {
                   ...old.org_config,
                   read_only: readOnly,
+                  ...(tokenMode !== undefined && { token_mode: tokenMode }),
                 },
               }
             : old
@@ -44,8 +56,14 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
       return { previousConfig }
     },
     onSuccess: (_data, variables) => {
-      const modeName = variables.readOnly ? 'Read-Only' : 'Read-Write'
-      if (variables.enabled) {
+      if (variables.tokenMode !== undefined) {
+        toast('success', 'Access source updated successfully')
+        posthog.capture('ai-copilot-token-mode-changed', {
+          organization_id: organizationId,
+          token_mode: variables.tokenMode,
+        })
+      } else if (variables.enabled) {
+        const modeName = variables.readOnly ? 'Read-Only' : 'Read-Write'
         toast('success', `AI Copilot enabled with ${modeName} mode`)
         posthog.capture('ai-copilot-enabled', {
           organization_id: organizationId,
@@ -58,11 +76,13 @@ export function useUpdateAICopilotConfig({ organizationId, instructions }: UseUp
         })
       }
     },
-    onError: (_err, _variables, context) => {
+    onError: (err, _variables, context) => {
       if (context?.previousConfig) {
         queryClient.setQueryData(devopsCopilot.config({ organizationId }).queryKey, context.previousConfig)
       }
-      toast('error', 'Failed to update AI Copilot configuration', 'Please try again later')
+      const axiosErr = err as { response?: { data?: { error?: string } } }
+      const message = axiosErr?.response?.data?.error ?? (err instanceof Error ? err.message : 'Please try again later')
+      toast('error', 'Failed to update AI Copilot configuration', message)
     },
     onSettled: () => {
       queryClient.invalidateQueries({
