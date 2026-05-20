@@ -5,7 +5,7 @@ import {
   type KubernetesEnum,
   OrganizationEventTargetType,
 } from 'qovery-typescript-axios'
-import { type ReactNode, useCallback, useEffect, useMemo } from 'react'
+import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { Button, DropdownMenu, Icon, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
@@ -15,6 +15,7 @@ import {
   isRedeployAvailable,
   isStopAvailable,
   isUpdateAvailable,
+  toShortQoveryId,
 } from '@qovery/shared/util-js'
 import { ClusterAccessModal } from '../cluster-access-modal/cluster-access-modal'
 import { ClusterDeleteModal } from '../cluster-delete-modal/cluster-delete-modal'
@@ -269,9 +270,15 @@ function MenuOtherActions({
 }) {
   const navigate = useNavigate()
   const { openModal } = useModal()
+  const [copiedMetadataLabel, setCopiedMetadataLabel] = useState<string>()
   const [, copyToClipboard] = useCopyToClipboard()
   const { mutate: downloadKubeconfig } = useDownloadKubeconfig()
   const { mutateAsync: getEksAnywhereClusterJwt } = useEksAnywhereClusterJwt()
+  const shortClusterId = toShortQoveryId(cluster.id)
+  const metadata = [
+    { label: 'Cluster ID', value: cluster.id },
+    { label: 'Short cluster ID', value: shortClusterId },
+  ]
 
   const removeCluster = (cluster: Cluster) => {
     openModal({
@@ -298,6 +305,14 @@ function MenuOtherActions({
     } catch {
       // Error is handled by mutation notifyOnError.
     }
+  }
+
+  const copyMetadata = ({ label, value }: { label: string; value: string }) => {
+    copyToClipboard(value)
+    setCopiedMetadataLabel(label)
+    setTimeout(() => {
+      setCopiedMetadataLabel(undefined)
+    }, 1000)
   }
 
   const canDelete = clusterStatus.status && isDeleteAvailable(clusterStatus.status)
@@ -340,9 +355,6 @@ function MenuOtherActions({
         >
           See audit logs
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(cluster.id)}>
-          Copy identifier
-        </DropdownMenu.Item>
         {cluster.kubernetes === 'PARTIALLY_MANAGED' && (
           <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => void copyEksAnywhereClusterJwt()}>
             Copy cluster JWT
@@ -356,6 +368,32 @@ function MenuOtherActions({
             Get Kubeconfig
           </DropdownMenu.Item>
         )}
+        <DropdownMenu.Sub>
+          <DropdownMenu.SubTrigger icon={<Icon iconName="circle-info" />}>Cluster metadata</DropdownMenu.SubTrigger>
+          <DropdownMenu.SubContent className="w-[290px]">
+            <div className="flex flex-col gap-1 px-1 py-1">
+              {metadata.map(({ label, value }) => (
+                <DropdownMenu.Item
+                  key={label}
+                  className="grid h-auto grid-cols-[110px_minmax(0,1fr)_auto] items-center gap-2 px-2 py-1.5"
+                  onSelect={(event) => {
+                    event.preventDefault()
+                    copyMetadata({ label, value })
+                  }}
+                >
+                  <span className="text-ssm text-neutral-subtle">{label}</span>
+                  <span className="truncate font-mono text-ssm text-neutral" title={value}>
+                    {value}
+                  </span>
+                  <Icon
+                    iconName={copiedMetadataLabel === label ? 'check' : 'copy'}
+                    className="justify-self-end text-ssm text-neutral-subtle"
+                  />
+                </DropdownMenu.Item>
+              ))}
+            </div>
+          </DropdownMenu.SubContent>
+        </DropdownMenu.Sub>
         {canDelete && (
           <>
             <DropdownMenu.Separator />

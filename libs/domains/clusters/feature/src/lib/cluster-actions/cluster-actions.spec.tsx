@@ -13,6 +13,7 @@ import { ClusterActions } from './cluster-actions'
 const mockCluster = clusterFactoryMock(1)[0]
 const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
+const mockCopyToClipboard = jest.fn()
 let mockClusterStatus: ClusterStatus = {
   cluster_id: mockCluster.id,
   status: ClusterStateEnum.DEPLOYED,
@@ -43,6 +44,11 @@ jest.mock('@qovery/shared/ui', () => ({
   useModalConfirmation: () => ({
     openModalConfirmation: mockOpenModalConfirmation,
   }),
+}))
+
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useCopyToClipboard: () => [undefined, mockCopyToClipboard],
 }))
 
 describe('ClusterActions', () => {
@@ -232,6 +238,27 @@ describe('ClusterActions', () => {
     await userEvent.click(screen.getByLabelText(/other actions/i))
 
     expect(screen.queryByText('Copy cluster JWT')).not.toBeInTheDocument()
+  })
+
+  it('should open cluster metadata without copying immediately', async () => {
+    const cluster = {
+      ...mockCluster,
+      id: '61d95abd-b777-4f53-b832-58c7e7f6f1bf',
+    }
+
+    const { userEvent } = renderWithProviders(<ClusterActions cluster={cluster} clusterStatus={mockClusterStatus} />, {
+      container: document.body,
+    })
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    expect(screen.queryByRole('menuitem', { name: /copy identifier/i })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('menuitem', { name: /cluster metadata/i }))
+
+    expect(mockCopyToClipboard).not.toHaveBeenCalled()
+    expect(screen.getByText('Cluster ID')).toBeInTheDocument()
+    expect(screen.getByText('Short Cluster ID')).toBeInTheDocument()
+    expect(screen.getByText('61d95abd-b777-4f53-b832-58c7e7f6f1bf')).toBeInTheDocument()
+    expect(screen.getByText('z61d95abd')).toBeInTheDocument()
   })
 
   it('should keep a confirmation modal for stop', async () => {
