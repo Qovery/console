@@ -256,7 +256,7 @@ describe('ClusterActions', () => {
 
     expect(mockCopyToClipboard).not.toHaveBeenCalled()
     expect(screen.getByText('Cluster ID')).toBeInTheDocument()
-    expect(screen.getByText('Short Cluster ID')).toBeInTheDocument()
+    expect(screen.getByText('Short cluster ID')).toBeInTheDocument()
     expect(screen.getByText('61d95abd-b777-4f53-b832-58c7e7f6f1bf')).toBeInTheDocument()
     expect(screen.getByText('z61d95abd')).toBeInTheDocument()
   })
