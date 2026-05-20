@@ -87,7 +87,7 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
           </div>
         </div>
 
-        <div className="min-w-0 flex-1 overflow-y-scroll">
+        <div className="min-w-0 flex-1 overflow-y-scroll bg-surface-neutral">
           <ResourceDetails resource={selectedResource} />
         </div>
       </div>

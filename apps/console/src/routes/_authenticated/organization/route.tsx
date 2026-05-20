@@ -252,9 +252,7 @@ function createRoutePatternRegex(routeIdPattern: string): RegExp {
 }
 
 function getServiceTabs(service?: AnyService, cluster?: Cluster) {
-  const isArgoCdService = service ? isArgoCd(service) : false
-
-  if (isArgoCdService) {
+  if (isArgoCd(service)) {
     return SERVICE_TABS.filter((tab) => ARGOCD_SERVICE_TAB_IDS.includes(tab.id))
   }
 

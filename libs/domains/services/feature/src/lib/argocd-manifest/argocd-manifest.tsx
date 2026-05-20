@@ -61,7 +61,7 @@ function ArgoCdManifestState({
 }
 
 export function ArgoCdManifest() {
-  const { serviceId = '' } = useParams({ strict: false }) ?? {}
+  const { serviceId = '' } = useParams({ strict: false })
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null)
   const [showDiff, setShowDiff] = useState(false)

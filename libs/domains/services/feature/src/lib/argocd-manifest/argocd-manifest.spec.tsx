@@ -4,6 +4,10 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useArgoCdManifest } from '../hooks/use-argocd-manifest/use-argocd-manifest'
 import { ArgoCdManifest, formatLiveState, toManifestResources } from './argocd-manifest'
 
+jest.mock('@tanstack/react-router', () => ({
+  useParams: () => ({ serviceId: 'service-id' }),
+}))
+
 jest.mock('../hooks/use-argocd-manifest/use-argocd-manifest')
 
 jest.mock('@qovery/shared/ui', () => {
