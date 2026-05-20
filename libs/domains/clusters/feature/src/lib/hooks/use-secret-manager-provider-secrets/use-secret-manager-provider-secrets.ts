@@ -7,9 +7,13 @@ interface UseClusterProps {
   suspense?: boolean
 }
 
-export function useSecretManagerSecrets({ secretManagerAccessId, enabled = true, suspense = false }: UseClusterProps) {
+export function useSecretManagerProviderSecrets({
+  secretManagerAccessId,
+  enabled = true,
+  suspense = false,
+}: UseClusterProps) {
   return useQuery({
-    ...queries.clusters.listSecretManagerSecrets({ secretManagerAccessId }),
+    ...queries.clusters.listSecretManagerSecretsFromProvider({ secretManagerAccessId }),
     enabled: Boolean(secretManagerAccessId) && enabled,
     suspense,
   })

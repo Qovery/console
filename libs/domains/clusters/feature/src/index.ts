@@ -73,7 +73,7 @@ export * from './lib/hooks/use-eks-anywhere-cluster-jwt/use-eks-anywhere-cluster
 export * from './lib/hooks/use-cluster-running-status/use-cluster-running-status'
 export * from './lib/hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 export * from './lib/hooks/use-secret-manager-associated-services/use-secret-manager-associated-services'
-export * from './lib/hooks/use-secret-manager-secrets/use-secret-manager-secrets'
+export * from './lib/hooks/use-secret-manager-provider-secrets/use-secret-manager-provider-secrets'
 export * from './lib/gpu-resources-settings/gpu-resources-settings'
 export * from './lib/utils/has-gpu-instance'
 export * from './lib/cluster-resources-settings/cluster-resources-settings'

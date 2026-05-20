@@ -14,7 +14,7 @@ import {
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useDeleteVariable, useVariables } from '@qovery/domains/variables/feature'
+import { useCreateVariable, useDeleteVariable, useEditVariable, useVariables } from '@qovery/domains/variables/feature'
 import {
   Button,
   Checkbox,
@@ -26,9 +26,15 @@ import {
   TableFilterSearch,
   TablePrimitives,
   Tooltip,
+  useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
+import {
+  AddSecretModal,
+  type SecretSourceOption,
+  mapSecretManagersToSources,
+} from './add-secret-modal/add-secret-modal'
 import {
   type ExternalSecretRow,
   type SyncStatus,
@@ -112,8 +118,134 @@ export function ExternalSecretsTab({
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
+  const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
+  const { mutateAsync: createVariable } = useCreateVariable()
+  const { mutateAsync: editVariable } = useEditVariable()
   const { mutateAsync: deleteVariable } = useDeleteVariable()
+
+  const secretSources = useMemo(() => mapSecretManagersToSources(secretManagers), [secretManagers])
+
+  const getSourceOption = useCallback(
+    (secret?: ExternalSecretRow): SecretSourceOption | undefined => {
+      if (!secret?.source) {
+        return secretSources[0]
+      }
+      return secretSources.find((option) => option.tableLabel === secret.source) ?? secretSources[0]
+    },
+    [secretSources]
+  )
+
+  const handleCreateSecret = useCallback(
+    async ({
+      name,
+      description,
+      filePath,
+      isFile,
+      reference,
+      secretManagerAccessId,
+    }: {
+      name: string
+      description?: string
+      filePath?: string
+      isFile: boolean
+      reference: string
+      secretManagerAccessId: string
+    }) => {
+      await createVariable({
+        variableRequest: {
+          key: name,
+          value: reference,
+          mount_path: isFile ? filePath ?? null : null,
+          is_secret: false,
+          variable_scope: scope,
+          variable_parent_id: serviceId,
+          description: description ?? null,
+          secret_manager_access_id: secretManagerAccessId,
+        },
+      })
+    },
+    [createVariable, scope, serviceId]
+  )
+
+  const handleEditSecret = useCallback(
+    async (
+      secretId: string,
+      {
+        name,
+        description,
+        reference,
+        secretManagerAccessId,
+      }: {
+        name: string
+        description?: string
+        reference: string
+        secretManagerAccessId: string
+      }
+    ) => {
+      await editVariable({
+        variableId: secretId,
+        variableEditRequest: {
+          key: name,
+          value: reference,
+          description: description ?? null,
+          secret_manager_access_id: secretManagerAccessId,
+        },
+      })
+    },
+    [editVariable]
+  )
+
+  const handleOpenAddSecret = useCallback(
+    (isFile: boolean) => {
+      openModal({
+        content: (
+          <AddSecretModal
+            secretSources={secretSources}
+            defaultSource={secretSources[0]}
+            isFile={isFile}
+            onClose={closeModal}
+            onSubmit={handleCreateSecret}
+          />
+        ),
+        options: {
+          width: 520,
+          fakeModal: true,
+        },
+      })
+    },
+    [closeModal, handleCreateSecret, openModal, secretSources]
+  )
+
+  const handleOpenEditSecret = useCallback(
+    (secret: ExternalSecretRow) => {
+      openModal({
+        content: (
+          <AddSecretModal
+            mode="edit"
+            secretSources={secretSources}
+            defaultSource={getSourceOption(secret)}
+            isFile={secret.isFile ?? false}
+            initialSecret={secret}
+            onClose={closeModal}
+            onSubmit={(updated) =>
+              handleEditSecret(secret.id, {
+                name: updated.name,
+                description: updated.description,
+                reference: updated.reference,
+                secretManagerAccessId: updated.secretManagerAccessId,
+              })
+            }
+          />
+        ),
+        options: {
+          width: 520,
+          fakeModal: true,
+        },
+      })
+    },
+    [closeModal, getSourceOption, handleEditSecret, openModal, secretSources]
+  )
 
   useEffect(() => {
     setSearch('')
@@ -180,13 +312,21 @@ export function ExternalSecretsTab({
       description: 'Add a secret or connect a secret manager to sync external secrets.',
       icon: 'lock-keyhole' as const,
       actions: (
-        <Button color="neutral" size="md" variant="solid" className="gap-2" type="button" disabled>
+        <Button
+          color="neutral"
+          size="md"
+          variant="solid"
+          className="gap-2"
+          type="button"
+          disabled={!hasClusterSecretManagerConfigured}
+          onClick={() => handleOpenAddSecret(false)}
+        >
           <Icon iconName="circle-plus" iconStyle="regular" />
           Add secret
         </Button>
       ),
     }
-  }, [hasClusterSecretManagerConfigured, secrets.length])
+  }, [handleOpenAddSecret, hasClusterSecretManagerConfigured, secrets.length])
 
   const columns = useMemo(
     () => [
@@ -335,7 +475,15 @@ export function ExternalSecretsTab({
           const secret = info.row.original
           return (
             <div className="flex items-center justify-end gap-2">
-              <Button aria-label="Edit" color="neutral" size="sm" variant="outline" iconOnly type="button">
+              <Button
+                aria-label="Edit"
+                color="neutral"
+                size="sm"
+                variant="outline"
+                iconOnly
+                type="button"
+                onClick={() => handleOpenEditSecret(secret)}
+              >
                 <Tooltip content="Edit">
                   <div className="flex h-full w-full items-center justify-center">
                     <Icon iconName="pen" />
@@ -362,7 +510,7 @@ export function ExternalSecretsTab({
         },
       }),
     ],
-    [handleConfirmDeleteSecrets]
+    [handleConfirmDeleteSecrets, handleOpenEditSecret]
   )
 
   const table = useReactTable({
@@ -428,7 +576,11 @@ export function ExternalSecretsTab({
               </DropdownMenu.Trigger>
               <DropdownMenu.Content className="w-[240px]">
                 {ADD_SECRET_OPTIONS.map((option) => (
-                  <DropdownMenu.Item key={option.value} icon={<Icon iconName={option.icon} />}>
+                  <DropdownMenu.Item
+                    key={option.value}
+                    icon={<Icon iconName={option.icon} />}
+                    onSelect={() => handleOpenAddSecret(option.value === 'file')}
+                  >
                     {option.label}
                   </DropdownMenu.Item>
                 ))}

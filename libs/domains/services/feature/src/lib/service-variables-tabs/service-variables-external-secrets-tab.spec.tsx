@@ -1,31 +1,47 @@
 import { type ReactNode } from 'react'
-import { useDeleteVariable, useVariables } from '@qovery/domains/variables/feature'
-import { useModalConfirmation } from '@qovery/shared/ui'
+import { useCreateVariable, useDeleteVariable, useEditVariable, useVariables } from '@qovery/domains/variables/feature'
+import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ExternalSecretsTab } from './service-variables-external-secrets-tab'
 
 jest.mock('@qovery/domains/variables/feature', () => ({
   ...jest.requireActual('@qovery/domains/variables/feature'),
   useVariables: jest.fn(),
+  useCreateVariable: jest.fn(),
+  useEditVariable: jest.fn(),
   useDeleteVariable: jest.fn(),
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
   Tooltip: ({ children }: { children: ReactNode }) => <>{children}</>,
+  useModal: jest.fn(),
   useModalConfirmation: jest.fn(),
 }))
 
 describe('ExternalSecretsTab', () => {
   const useVariablesMock = useVariables as jest.MockedFunction<typeof useVariables>
+  const useCreateVariableMock = useCreateVariable as jest.MockedFunction<typeof useCreateVariable>
+  const useEditVariableMock = useEditVariable as jest.MockedFunction<typeof useEditVariable>
   const useDeleteVariableMock = useDeleteVariable as jest.MockedFunction<typeof useDeleteVariable>
+  const useModalMock = useModal as jest.MockedFunction<typeof useModal>
   const useModalConfirmationMock = useModalConfirmation as jest.MockedFunction<typeof useModalConfirmation>
 
   beforeEach(() => {
     jest.clearAllMocks()
+    useCreateVariableMock.mockReturnValue({
+      mutateAsync: jest.fn(),
+    } as ReturnType<typeof useCreateVariable>)
+    useEditVariableMock.mockReturnValue({
+      mutateAsync: jest.fn(),
+    } as ReturnType<typeof useEditVariable>)
     useDeleteVariableMock.mockReturnValue({
       mutateAsync: jest.fn(),
     } as ReturnType<typeof useDeleteVariable>)
+    useModalMock.mockReturnValue({
+      openModal: jest.fn(),
+      closeModal: jest.fn(),
+    })
     useModalConfirmationMock.mockReturnValue({
       openModalConfirmation: jest.fn(),
     })

@@ -104,7 +104,7 @@ export const clusters = createQueryKeys('clusters', {
       return response.data
     },
   }),
-  listSecretManagerSecrets: ({ secretManagerAccessId }: { secretManagerAccessId: string }) => ({
+  listSecretManagerSecretsFromProvider: ({ secretManagerAccessId }: { secretManagerAccessId: string }) => ({
     queryKey: [secretManagerAccessId],
     async queryFn() {
       const response = await secretManagerApi.listUpstreamSecretsFromSecretProvider(secretManagerAccessId)
