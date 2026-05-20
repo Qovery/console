@@ -4,7 +4,7 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
 <body>
   <div>
     <div
-      class="flex flex-row gap-x-4 p-4 border rounded-md text-sm items-center border-info-component bg-surface-info-subtle text-info"
+      class="flex flex-row gap-x-3 p-4 border rounded-md text-sm border-info-component bg-surface-info-subtle text-info items-start"
       data-accent-color="sky"
     >
       <div
@@ -16,7 +16,7 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
         />
       </div>
       <div
-        class="-order-1 mr-auto gap-x-4 text-neutral"
+        class="-order-1 mr-auto gap-x-3 text-neutral"
       >
         <p>
           This guide walks you through the process of installing Qovery on your existing Kubernetes cluster, where you will have full control over the infrastructure. You will be responsible for managing updates and upgrades. Please note that advanced Kubernetes knowledge is required.
@@ -78,7 +78,7 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
             qovery cluster install
           </span>
           <button
-            class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-xs h-7 px-2 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer gap-2 font-sans font-medium"
+            class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
             type="button"
           >
             Copy

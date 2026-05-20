@@ -125,9 +125,11 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
       <Tooltip content="Deploy from another version">
         <Button
           type="button"
+          aria-label="Deploy from another version"
           variant="outline"
           size="xs"
-          className="w-7 justify-center gap-1 rounded-l-none px-1.5"
+          iconOnly
+          className="w-7 justify-center rounded-l-none px-1.5"
           onClick={(e) => deployVersion(e)}
         >
           <span className="flex h-full items-center justify-center">

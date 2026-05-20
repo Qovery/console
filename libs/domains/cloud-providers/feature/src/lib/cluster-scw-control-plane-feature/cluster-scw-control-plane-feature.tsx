@@ -71,6 +71,7 @@ export function ClusterSCWControlPlaneFeature({ production }: ClusterSCWControlP
               <ExternalLink
                 size="xs"
                 href="https://www.scaleway.com/en/docs/kubernetes/reference-content/kubernetes-control-plane-offers/"
+                className="text-infoInvert"
               >
                 Scaleway documentation
               </ExternalLink>

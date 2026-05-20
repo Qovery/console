@@ -193,7 +193,6 @@ export function ApplicationContainerStorageSettings() {
               type="button"
               onClick={() => openStorageModal()}
               disabled={disableAdd}
-              className="gap-2"
             >
               Add Storage
               <Icon iconName="circle-plus" iconStyle="regular" />

@@ -100,7 +100,7 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
           <div className="flex items-center gap-4">
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <Button variant="outline" className="gap-1.5">
+                <Button variant="outline">
                   <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
                   {isLastVersion
                     ? 'Latest'

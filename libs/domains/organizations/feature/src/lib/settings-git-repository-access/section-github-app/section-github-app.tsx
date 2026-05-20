@@ -43,7 +43,6 @@ export function SectionGithubApp(props: SectionGithubAppProps) {
               <div className="flex gap-2">
                 <Button
                   data-testid="disconnect-button"
-                  className="gap-1"
                   type="button"
                   size="md"
                   onClick={() => props.onDisconnect && props.onDisconnect(false)}

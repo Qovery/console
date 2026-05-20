@@ -183,7 +183,6 @@ export function ValuesOverrideArgumentsSetting({
   const addVariableButton = (
     <Button
       type="button"
-      className="gap-2"
       size={isSetting ? 'md' : 'lg'}
       onClick={() =>
         append({
@@ -247,7 +246,7 @@ export function ValuesOverrideArgumentsSetting({
         size="md"
         variant="outline"
         color="neutral"
-        className="mb-10 gap-2"
+        className="mb-10"
         onClick={() => createHelmDefaultValuesMutation()}
       >
         See default values.yaml <Icon className="text-xs" iconName="arrow-up-right-from-square" />

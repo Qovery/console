@@ -34,7 +34,7 @@ export function InputFilter({ name, nameKey, options, onChange, defaultValue, is
   return (
     <div>
       {!isOpen && (
-        <Button onClick={() => setIsOpen(true)} type="button" variant="surface" color="neutral" className="gap-2">
+        <Button onClick={() => setIsOpen(true)} type="button" variant="surface" color="neutral">
           {name}
           <Icon iconName="magnifying-glass" />
         </Button>

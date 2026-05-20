@@ -351,7 +351,6 @@ export function ServiceList({ className, containerClassName, environment, ...pro
           as="button"
           size="md"
           color="neutral"
-          className="gap-1.5"
           to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
           params={{ organizationId, projectId, environmentId }}
         >

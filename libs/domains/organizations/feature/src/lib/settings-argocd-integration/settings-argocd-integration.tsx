@@ -308,7 +308,7 @@ function SettingsArgoCdIntegrationCreateButton() {
   }
 
   return (
-    <Button className="gap-1.5" size="md" onClick={openCreateModal}>
+    <Button size="md" onClick={openCreateModal}>
       <Icon iconName="circle-plus" iconStyle="regular" />
       Add ArgoCD
     </Button>
@@ -420,7 +420,7 @@ function SettingsArgoCdIntegrationContent() {
         icon="link"
         className="h-auto min-h-[146px] w-full max-w-[648px] p-8"
       >
-        <Button variant="outline" color="neutral" size="md" className="gap-2" onClick={openCreateModal}>
+        <Button variant="outline" color="neutral" size="md" onClick={openCreateModal}>
           <Icon iconName="circle-plus" iconStyle="regular" />
           Add ArgoCD
         </Button>

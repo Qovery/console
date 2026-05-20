@@ -101,7 +101,6 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
         description={`Deploy the ${service?.serviceType.toLowerCase() ?? 'service'} first`}
       >
         <Button
-          className="gap-1"
           color="neutral"
           variant="outline"
           size="md"
@@ -137,7 +136,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
         .with({ repository: P.select({ chart_name: P.string, chart_version: P.string }) }, ({ chart_version }) => (
           <Tooltip content={`Chart version: ${chart_version}`}>
             <span className="inline-flex" onClick={preventParentLinkNavigation}>
-              <Button type="button" variant="surface" color="neutral" size="xs" className="gap-1">
+              <Button type="button" variant="surface" color="neutral" size="xs">
                 <Icon iconName="code-commit" className="w-4" />
                 {chart_version.length >= 18 ? `${chart_version.slice(0, 15)}…` : chart_version}
               </Button>
@@ -148,7 +147,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
           <Tooltip content={`Image tag: ${tag}`}>
             <span className="inline-flex" onClick={preventParentLinkNavigation}>
               <CopyToClipboard text={tag} className="inline-flex justify-center">
-                <Button type="button" variant="surface" color="neutral" size="xs" className="gap-1">
+                <Button type="button" variant="surface" color="neutral" size="xs">
                   <Icon iconName="code-commit" className="w-4" />
                   {tag.length >= 8 ? `${tag.slice(0, 8)}…` : tag}
                 </Button>

@@ -65,7 +65,6 @@ export function ClusterInstallationGuideModal({ type, onClose, ...props }: Clust
                   color="brand"
                   onClick={downloadInstallationValues}
                   loading={isLoading}
-                  className="gap-1"
                 >
                   Download configuration
                   <Icon iconName="download" />

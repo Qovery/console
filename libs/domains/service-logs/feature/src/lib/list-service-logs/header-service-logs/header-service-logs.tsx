@@ -89,7 +89,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
             variant="surface"
             color={isLiveMode ? 'brand' : 'neutral'}
             size="md"
-            className={clsx('gap-1.5 pl-2.5', {
+            className={clsx('pl-2.5', {
               'bg-surface-brand-subtle hover:!bg-surface-brand-component focus:!bg-surface-brand-component': isLiveMode,
             })}
             onClick={() => {
@@ -136,7 +136,6 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
                 type="button"
                 variant="outline"
                 color="neutral"
-                className="gap-2"
                 size="md"
                 onClick={() => setIsOpenDatePicker(!isOpenDatePicker)}
               >
@@ -171,7 +170,7 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           </DatePicker>
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button size="md" variant="outline" color="neutral" className="gap-1.5">
+              <Button size="md" variant="outline" color="neutral">
                 {updateTimeContextValue.utc ? 'UTC' : 'Browser time'}
                 <Icon iconName="chevron-down" iconStyle="regular" />
               </Button>

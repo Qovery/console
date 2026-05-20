@@ -21,7 +21,7 @@ export function EnableCopilotScreen({ organizationId, onClose }: EnableCopilotSc
       className="h-full w-full rounded-none border-none"
     >
       <Link to="/organization/$organizationId/settings/ai-copilot" params={{ organizationId }} onClick={onClose}>
-        <Button className="flex gap-2" size="md">
+        <Button className="flex" size="md">
           <Icon iconName="sparkles" />
           Enable AI Copilot
         </Button>

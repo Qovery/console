@@ -241,7 +241,7 @@ function MenuManageDeployment({
           iconOnly={!hasTextActionButton}
         >
           <Tooltip content="Manage Deployment">
-            <div className="flex h-full w-full items-center justify-center gap-1.5">
+            <div className="flex h-full w-full items-center justify-center">
               <Icon iconName="rocket" />
               {hasTextActionButton && (
                 <>

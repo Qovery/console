@@ -70,7 +70,7 @@ export function EnvironmentStages({
         <div className="flex items-center gap-2">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button variant="outline" className="gap-1.5" size="md">
+              <Button variant="outline" size="md">
                 <Icon iconName="clock-rotate-left" className="text-neutral-subtle" />
                 {isLastVersion
                   ? 'Latest'

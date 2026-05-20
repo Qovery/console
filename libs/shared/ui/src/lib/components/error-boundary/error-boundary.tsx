@@ -15,7 +15,7 @@ export function ErrorFallback({ className, error, resetErrorBoundary }: Fallback
           <Heading className="font-medium text-neutral">Something went wrong</Heading>
           <p className="text-sm text-neutral-subtle">{error.message}</p>
         </div>
-        <Button onClick={resetErrorBoundary} size="md" className="flex gap-2">
+        <Button onClick={resetErrorBoundary} size="md" className="flex">
           Try again
           <Icon iconName="refresh" />
         </Button>

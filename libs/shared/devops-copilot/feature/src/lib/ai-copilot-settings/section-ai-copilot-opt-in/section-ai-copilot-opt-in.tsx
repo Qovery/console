@@ -489,7 +489,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                   />
 
                   <Button type="submit" size="md" color="brand" disabled={!isValid} className="mt-4">
-                    <Icon iconName="circle-check" className="mr-2" />
+                    <Icon iconName="circle-check" />
                     Enable AI Copilot
                   </Button>
                 </div>
