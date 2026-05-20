@@ -21,6 +21,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
   })
 
   const kubeVersion = runningStatus?.computed_status?.kube_version_status
+  const isEksAnywhereCluster = cluster?.kubernetes === 'PARTIALLY_MANAGED'
 
   const isLoading =
     !deploymentStatus?.is_deployed || !deploymentStatus?.last_deployment_date || !cluster?.created_at || !kubeVersion
@@ -49,11 +50,25 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                   ))
                   .with({ type: 'DRIFT' }, (status) => (
                     <>
-                      <StatusChip status="WARNING" />
-                      Upgrade Kubernetes
-                      <Badge color="yellow" size="sm" variant="surface">
-                        {status.kube_version} → {status.expected_kube_version}
-                      </Badge>
+                      {isEksAnywhereCluster ? (
+                        <>
+                          <StatusChip status="RUNNING" />
+                          Kubernetes version
+                          <Badge variant="surface" size="sm">
+                            {status.kube_version}
+                          </Badge>
+                        </>
+                      ) : (
+                        <>
+                          <StatusChip status="WARNING" />
+                          Upgrade Kubernetes
+                          <Badge color="yellow" size="sm" variant="surface">
+                            {!status.expected_kube_version
+                              ? status.kube_version
+                              : `${status.kube_version} → ${status.expected_kube_version}`}
+                          </Badge>
+                        </>
+                      )}
                     </>
                   ))
                   .with({ type: 'UNKNOWN' }, () => (
