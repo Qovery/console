@@ -268,7 +268,7 @@ describe('StepSummary', () => {
           id: 'NAT_GATEWAY',
           title: 'NAT Gateway',
           value: true,
-          extendedValue: 'sbn',
+          extendedValue: 'VPC-GW-S',
         },
         STATIC_IP: {
           id: 'STATIC_IP',
@@ -293,7 +293,7 @@ describe('StepSummary', () => {
               expect.objectContaining({
                 id: 'NAT_GATEWAY',
                 value: expect.objectContaining({
-                  nat_gateway_type: expect.objectContaining({ provider: 'scaleway', type: 'sbn' }),
+                  nat_gateway_type: expect.objectContaining({ provider: 'scaleway', type: 'VPC-GW-S' }),
                 }),
               }),
             ]),
