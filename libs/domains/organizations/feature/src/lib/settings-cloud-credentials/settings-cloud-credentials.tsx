@@ -321,7 +321,7 @@ const Loader = () => (
 )
 
 export function SettingsCloudCredentials() {
-  useDocumentTitle('Cloud Crendentials - Organization settings')
+  useDocumentTitle('Cloud Credentials - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const isEksAnywhereEnabled = Boolean(useFeatureFlagEnabled('eks-anywhere'))
