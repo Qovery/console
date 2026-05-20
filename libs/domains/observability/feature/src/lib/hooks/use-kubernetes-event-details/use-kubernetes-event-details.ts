@@ -48,6 +48,10 @@ function hasServiceHint(event: KubernetesEventApiResponse, serviceId: string): b
   return Boolean(shortServiceId && (name.includes(shortServiceId) || name.includes(`z${shortServiceId}`)))
 }
 
+function matchesPod(event: KubernetesEventApiResponse, podName?: string): boolean {
+  return Boolean(podName && event.name === podName)
+}
+
 function findNearestKubernetesEvent(
   events: KubernetesEventApiResponse[] | undefined,
   event: ReferenceLineEvent,
@@ -60,6 +64,20 @@ function findNearestKubernetesEvent(
     const isPodEvent = !kubernetesEvent.kind || kubernetesEvent.kind === 'Pod'
     return hasMatchingReason && isPodEvent && getEventTimestamp(kubernetesEvent)
   })
+
+  const podCandidates = candidates.filter((kubernetesEvent) => matchesPod(kubernetesEvent, event.pod))
+  if (podCandidates.length > 0) {
+    return podCandidates
+      .map((kubernetesEvent) => {
+        const timestamp = getEventTimestamp(kubernetesEvent) ?? event.timestamp
+        return {
+          ...kubernetesEvent,
+          distance: Math.abs(timestamp - event.timestamp),
+          timestamp,
+        }
+      })
+      .sort((a, b) => a.distance - b.distance)[0]
+  }
 
   const serviceCandidates = candidates.filter((kubernetesEvent) => hasServiceHint(kubernetesEvent, serviceId))
   const pool = serviceCandidates.length > 0 ? serviceCandidates : candidates
@@ -79,7 +97,7 @@ function findNearestKubernetesEvent(
 export function useKubernetesEventDetails({ clusterId, serviceId, event }: UseKubernetesEventDetailsProps) {
   const fromDateTime = new Date(event.timestamp - WINDOW_MS).toISOString()
   const toDateTime = new Date(event.timestamp + WINDOW_MS).toISOString()
-  const podName = getShortServiceId(serviceId)
+  const podName = event.pod ?? getShortServiceId(serviceId)
 
   const { data } = useQuery({
     ...observability.kubernetesEvents({

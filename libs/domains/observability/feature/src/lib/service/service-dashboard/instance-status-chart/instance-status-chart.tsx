@@ -32,7 +32,7 @@ const queryRestartWithReason = (selector: string, timeRange: string) => `
  `
 
 const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
-  sum by (pod,reason,message,uid)(
+  sum by (pod,reason,uid)(
   (
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
@@ -48,11 +48,6 @@ const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
   ) > 0
 )
 `
-
-const normalizeK8sEventMessage = (message?: string): string | undefined => {
-  const normalized = message?.trim()
-  return normalized ? normalized : undefined
-}
 
 const queryMinReplicas = (containerName: string) => `
   max by(label_qovery_com_service_id)(kube_horizontalpodautoscaler_spec_min_replicas{horizontalpodautoscaler="${containerName}"})
@@ -339,20 +334,16 @@ export function InstanceStatusChart({
     // Add k8s event as reference lines
     if (metricsK8sEvent?.data?.result) {
       metricsK8sEvent.data.result.forEach(
-        (series: {
-          metric: { reason: string; pod: string; uid?: string; message?: string }
-          values: [number, string][]
-        }) => {
+        (series: { metric: { reason: string; pod: string; uid?: string }; values: [number, string][] }) => {
           series.values.forEach(([timestamp, value]: [number, string]) => {
             const numValue = parseFloat(value)
             if (numValue > 0) {
               const key = `${series.metric.reason}-${series.metric.pod}-${series.metric.uid ?? 'unknown'}-${timestamp}`
-              const k8sEventMessage = normalizeK8sEventMessage(series.metric.message)
               referenceLines.push({
                 type: 'k8s-event',
                 timestamp: timestamp * 1000,
                 reason: series.metric.reason,
-                description: k8sEventMessage ?? getDescriptionFromK8sEvent(series.metric.reason),
+                description: getDescriptionFromK8sEvent(series.metric.reason),
                 icon: 'xmark',
                 color: 'var(--negative-11)',
                 pod: series.metric.pod,
