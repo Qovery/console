@@ -217,7 +217,7 @@ const SERVICE_TABS: NavigationTab[] = [
   },
 ]
 
-const ARGOCD_SERVICE_TAB_IDS = ['overview', 'cloud-shell', 'manifest']
+const ARGOCD_SERVICE_TAB_IDS = ['overview', 'service-logs', 'cloud-shell', 'manifest']
 
 function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
   if (!service) return false

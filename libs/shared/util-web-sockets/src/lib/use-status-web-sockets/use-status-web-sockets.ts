@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { type EnvironmentStatus, type EnvironmentStatusesWithStages } from 'qovery-typescript-axios'
 import {
   type ApplicationStatusDto,
+  type ArgoCdAppStatusDto,
   type DatabaseStatusDto,
   type ServiceStatusDto,
   type TerraformStatusDto,
@@ -114,12 +115,13 @@ export function useStatusWebSockets({
         // // You can have information about an service (eg. if it's stopping)
         // TODO [To update once rust-backed will be deployed]: Remove reset cache strategy
         queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
-        const services: (ApplicationStatusDto | DatabaseStatusDto | TerraformStatusDto)[] = [
+        const services: (ApplicationStatusDto | ArgoCdAppStatusDto | DatabaseStatusDto | TerraformStatusDto)[] = [
           ...env.applications,
           ...env.containers,
           ...env.databases,
           ...env.jobs,
           ...env.helms,
+          ...env.argocd_apps,
           ...env.terraform,
         ]
         for (const serviceRunningStatus of services) {
