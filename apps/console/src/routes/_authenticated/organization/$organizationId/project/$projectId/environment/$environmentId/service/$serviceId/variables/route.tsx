@@ -35,7 +35,7 @@ const tabs = [
 ]
 
 const OutletLoader = () => (
-  <div className="flex min-h-page-container items-center justify-center">
+  <div className="flex h-64 items-center justify-center">
     <LoaderSpinner className="w-6" />
   </div>
 )

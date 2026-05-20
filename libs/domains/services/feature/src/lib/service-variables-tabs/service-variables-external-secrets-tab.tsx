@@ -21,7 +21,6 @@ import {
   DropdownMenu,
   EmptyState,
   Icon,
-  LoaderSpinner,
   TableFilter,
   TableFilterSearch,
   TablePrimitives,
@@ -98,9 +97,10 @@ export function ExternalSecretsTab() {
   const { secretManagers, hasClusterSecretManagerConfigured } = useServiceVariablesTab()
   const scope = getServiceVariableScope(service?.serviceType)
   const variableScope = getServiceVariableScope(service?.serviceType, 'APPLICATION')
-  const { data: variables = [], isLoading } = useVariables({
+  const { data: variables = [] } = useVariables({
     parentId: serviceId,
     scope,
+    suspense: true,
   })
 
   const secrets = useMemo(
@@ -524,14 +524,6 @@ export function ExternalSecretsTab() {
     getFacetedUniqueValues: getFacetedUniqueValues(),
     getRowId: (row) => row.id,
   })
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-16">
-        <LoaderSpinner className="w-6" />
-      </div>
-    )
-  }
 
   if (!scope) {
     return null
