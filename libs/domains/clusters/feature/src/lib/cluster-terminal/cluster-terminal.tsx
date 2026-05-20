@@ -3,9 +3,11 @@ import { AttachAddon } from '@xterm/addon-attach'
 import { FitAddon } from '@xterm/addon-fit'
 import { type ITerminalAddon } from '@xterm/xterm'
 import Color from 'color'
+import { type CloudVendorEnum } from 'qovery-typescript-axios'
 import { DebugFlavor } from 'qovery-ws-typescript-axios'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { XTerm } from 'react-xtermjs'
+import { match } from 'ts-pattern'
 import { LoaderSpinner, toast } from '@qovery/shared/ui'
 import { useTerminalReadiness } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
@@ -16,14 +18,18 @@ const MemoizedXTerm = memo(XTerm)
 export interface ClusterTerminalProps {
   organizationId: string
   clusterId: string
+  cloudProvider?: CloudVendorEnum
 }
 
-export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalProps) {
+export function ClusterTerminal({ organizationId, clusterId, cloudProvider }: ClusterTerminalProps) {
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
   const isTerminalLoading = addons.length < 2
   const { attachWebSocket, detachWebSocket, isTerminalReady } = useTerminalReadiness()
   const showDelayedLoader = !isTerminalReady
   const fitAddon = addons[0] as FitAddon | undefined
+  const debugFlavor = match(cloudProvider)
+    .with('GCP', () => DebugFlavor.REGULAR_PRIVILEGE)
+    .otherwise(() => DebugFlavor.FULL_PRIVILEGE)
 
   const getCssVariableHex = (variableName: string): string => {
     const styles = getComputedStyle(document.documentElement)
@@ -82,7 +88,7 @@ export function ClusterTerminal({ organizationId, clusterId }: ClusterTerminalPr
     urlSearchParams: {
       organization: organizationId,
       cluster: clusterId,
-      flavor: DebugFlavor.FULL_PRIVILEGE,
+      flavor: debugFlavor,
       tty_height: rows.toString(),
       tty_width: cols.toString(),
     },
