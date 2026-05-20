@@ -1,6 +1,6 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { organizationFactoryMock } from '@qovery/shared/factories'
-import { render, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { SectionAICopilotConfiguration } from './section-ai-copilot-configuration'
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -37,19 +37,19 @@ describe('SectionAICopilotConfiguration', () => {
   })
 
   it('should show loader when loading', () => {
-    const { container } = render(<SectionAICopilotConfiguration {...defaultProps} isLoading={true} />)
+    const { container } = renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} isLoading={true} />)
 
     expect(container.querySelector('.w-5')).toBeInTheDocument()
   })
 
   it('should display organization name', () => {
-    render(<SectionAICopilotConfiguration {...defaultProps} />)
+    renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} />)
 
     expect(screen.getByText(`AI Copilot for ${mockOrganization.name}`)).toBeInTheDocument()
   })
 
   it('should display current mode', () => {
-    render(<SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />)
+    renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} currentMode="read-only" />)
 
     expect(screen.getByText('Read-Only Mode')).toBeInTheDocument()
     expect(
@@ -58,7 +58,7 @@ describe('SectionAICopilotConfiguration', () => {
   })
 
   it('should display read-write mode description', () => {
-    render(<SectionAICopilotConfiguration {...defaultProps} currentMode="read-write" />)
+    renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} currentMode="read-write" />)
 
     expect(screen.getByText('Read-Write Mode')).toBeInTheDocument()
     expect(screen.getByText(/AI Copilot can view and modify your infrastructure configuration/)).toBeInTheDocument()
@@ -112,28 +112,28 @@ describe('SectionAICopilotConfiguration', () => {
   })
 
   it('should disable inputs when updating', () => {
-    render(<SectionAICopilotConfiguration {...defaultProps} isUpdating={true} />)
+    renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} isUpdating={true} />)
 
     const select = screen.getByLabelText('Right access')
     expect(select).toBeDisabled()
   })
 
   it('should show loading state on buttons when updating', () => {
-    render(<SectionAICopilotConfiguration {...defaultProps} isUpdating={true} />)
+    renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} isUpdating={true} />)
 
     const disableButton = screen.getByRole('button', { name: /disable/i })
     expect(disableButton).toBeInTheDocument()
   })
 
   it('should render disable button', () => {
-    render(<SectionAICopilotConfiguration {...defaultProps} />)
+    renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} />)
 
     const disableButton = screen.getByRole('button', { name: /disable/i })
     expect(disableButton).toBeInTheDocument()
   })
 
   it('should have mode select with correct options', () => {
-    render(<SectionAICopilotConfiguration {...defaultProps} />)
+    renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} />)
 
     const select = screen.getByLabelText('Right access')
     expect(select).toBeInTheDocument()
