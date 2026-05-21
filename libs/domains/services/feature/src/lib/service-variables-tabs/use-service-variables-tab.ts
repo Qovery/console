@@ -45,5 +45,6 @@ export function useServiceVariablesTab() {
     secretManagers,
     hasClusterSecretManagerConfigured,
     redeployServiceAction,
+    clusterId: environment?.cluster_id ?? '',
   }
 }

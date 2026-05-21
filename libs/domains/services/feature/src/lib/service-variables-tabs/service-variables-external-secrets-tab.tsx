@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import {
   type ColumnFiltersState,
   type RowSelectionState,
@@ -92,9 +92,9 @@ function ExternalSecretStatusBadge({ status }: { status: SyncStatus }) {
 const columnHelper = createColumnHelper<ExternalSecretRow>()
 
 export function ExternalSecretsTab() {
-  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { secretManagers, hasClusterSecretManagerConfigured } = useServiceVariablesTab()
+  const { secretManagers, hasClusterSecretManagerConfigured, clusterId } = useServiceVariablesTab()
   const scope = getServiceVariableScope(service?.serviceType)
   const variableScope = getServiceVariableScope(service?.serviceType, 'APPLICATION')
   const { data: variables = [] } = useVariables({
@@ -295,10 +295,15 @@ export function ExternalSecretsTab() {
         description: 'Secret add-on has been activated on your cluster but no secret manager are linked to it.',
         icon: 'lock-keyhole' as const,
         actions: (
-          <Button color="neutral" size="md" variant="solid" type="button" disabled>
-            Cluster settings
-            <Icon iconName="chevron-right" />
-          </Button>
+          <Link
+            to="/organization/$organizationId/cluster/$clusterId/settings/addons"
+            params={{ organizationId, clusterId }}
+          >
+            <Button color="neutral" size="md" variant="solid" type="button">
+              Cluster settings
+              <Icon iconName="chevron-right" />
+            </Button>
+          </Link>
         ),
       }
     }
@@ -312,7 +317,6 @@ export function ExternalSecretsTab() {
           color="neutral"
           size="md"
           variant="solid"
-          className="gap-2"
           type="button"
           disabled={!hasClusterSecretManagerConfigured}
           onClick={() => handleOpenAddSecret(false)}
@@ -322,7 +326,7 @@ export function ExternalSecretsTab() {
         </Button>
       ),
     }
-  }, [handleOpenAddSecret, hasClusterSecretManagerConfigured, secrets.length])
+  }, [clusterId, handleOpenAddSecret, hasClusterSecretManagerConfigured, organizationId, secrets.length])
 
   const columns = useMemo(
     () => [
@@ -560,7 +564,7 @@ export function ExternalSecretsTab() {
             />
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
-                <Button color="brand" variant="solid" size="md" className="gap-2">
+                <Button color="brand" variant="solid" size="md">
                   <Icon iconName="circle-plus" iconStyle="regular" />
                   Add secret
                   <Icon iconName="chevron-down" className="text-[10px]" />
@@ -669,7 +673,7 @@ export function ExternalSecretsTab() {
               Unselect
             </button>
             <div className="flex items-center gap-1.5">
-              <Button color="neutralInverted" variant="outline" size="md" className="gap-2" disabled>
+              <Button color="neutralInverted" variant="outline" size="md" disabled>
                 <Icon iconName="link" iconStyle="regular" />
                 Attach
               </Button>

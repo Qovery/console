@@ -25,6 +25,20 @@ jest.mock('@qovery/shared/ui', () => ({
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(),
+  Link: ({
+    to,
+    params,
+    children,
+  }: {
+    to: string
+    params?: { organizationId?: string; clusterId?: string }
+    children: ReactNode
+  }) => {
+    const href = to
+      .replace('$organizationId', params?.organizationId ?? '')
+      .replace('$clusterId', params?.clusterId ?? '')
+    return <a href={href}>{children}</a>
+  },
 }))
 
 jest.mock('../hooks/use-service/use-service', () => ({
@@ -49,6 +63,7 @@ describe('ExternalSecretsTab', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     useParamsMock.mockReturnValue({
+      organizationId: 'organization-id',
       environmentId: 'environment-id',
       serviceId: 'service-id',
     })
@@ -59,6 +74,7 @@ describe('ExternalSecretsTab', () => {
       secretManagers: [],
       hasClusterSecretManagerConfigured: false,
       redeployServiceAction: jest.fn(),
+      clusterId: 'cluster-id',
     })
     useCreateVariableMock.mockReturnValue({
       mutateAsync: jest.fn(),
@@ -106,6 +122,7 @@ describe('ExternalSecretsTab', () => {
       ],
       hasClusterSecretManagerConfigured: true,
       redeployServiceAction: jest.fn(),
+      clusterId: 'cluster-id',
     })
 
     renderWithProviders(<ExternalSecretsTab />)
@@ -128,5 +145,11 @@ describe('ExternalSecretsTab', () => {
     renderWithProviders(<ExternalSecretsTab />)
 
     expect(screen.getByText('No secret manager linked on your cluster')).toBeInTheDocument()
+
+    const clusterSettingsLink = screen.getByRole('link', { name: /cluster settings/i })
+    expect(clusterSettingsLink).toHaveAttribute(
+      'href',
+      '/organization/organization-id/cluster/cluster-id/settings/addons'
+    )
   })
 })
