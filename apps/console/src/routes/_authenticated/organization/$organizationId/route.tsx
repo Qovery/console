@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { Outlet, createFileRoute, useMatches } from '@tanstack/react-router'
 import { ClusterStateEnum as ClusterState, type ClusterStateEnum } from 'qovery-typescript-axios'
-import { Suspense, useMemo } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 import { memo } from 'react'
 import { ClusterDeploymentProgressCard, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
@@ -112,6 +112,12 @@ function RouteComponent() {
       ),
     [matches]
   )
+
+  useEffect(() => {
+    if (organizationId) {
+      localStorage.setItem('currentOrganizationId', organizationId)
+    }
+  }, [organizationId])
 
   return (
     <>

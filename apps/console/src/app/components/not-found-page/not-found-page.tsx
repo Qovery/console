@@ -1,9 +1,7 @@
 import { type NotFoundRouteProps } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { Heading, Link, LogoIcon, Section } from '@qovery/shared/ui'
 import { type SerializedError } from '@qovery/shared/utils'
-import { useAuth0Context } from '../../../auth/auth0'
 
 type NotFoundPageProps = Partial<NotFoundRouteProps> & {
   action?: ReactNode
@@ -21,12 +19,6 @@ function isNotFoundPageData(data: unknown): data is NotFoundPageData {
 
 export function NotFoundPage({ action, data, error }: NotFoundPageProps) {
   const errorTyped = error as SerializedError | undefined
-  const { isAuthenticated } = useAuth0Context()
-  const { data: organizations = [] } = useOrganizations({ enabled: isAuthenticated })
-
-  const currentOrganizationId = localStorage.getItem('currentOrganizationId') ?? ''
-  const selectedOrganization =
-    organizations.find((organization) => organization.id === currentOrganizationId) ?? organizations[0]
 
   const pageData = isNotFoundPageData(data) ? data : undefined
   const title = pageData?.title ?? errorTyped?.name ?? errorTyped?.code ?? 'Page not found'
@@ -34,23 +26,9 @@ export function NotFoundPage({ action, data, error }: NotFoundPageProps) {
     pageData?.message ??
     errorTyped?.message ??
     "The page you're looking for doesn't exist anymore, or the URL is incorrect."
-  const defaultAction = selectedOrganization ? (
-    <Link
-      as="button"
-      to="/organization/$organizationId/overview"
-      params={{ organizationId: selectedOrganization.id }}
-      size="md"
-      className="mt-6 gap-2"
-    >
-      Go to organization
-    </Link>
-  ) : isAuthenticated ? (
+  const defaultAction = (
     <Link as="button" to="/" size="md" className="mt-6 gap-2">
-      Go to home
-    </Link>
-  ) : (
-    <Link as="button" to="/login" search={{ redirect: '/' }} size="md" className="mt-6 gap-2">
-      Go to login
+      Go to organization
     </Link>
   )
 
