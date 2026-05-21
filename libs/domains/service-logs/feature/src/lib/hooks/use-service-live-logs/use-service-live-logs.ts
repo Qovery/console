@@ -6,19 +6,21 @@ import {
   buildLokiQuery,
   normalizeWebSocketLog,
 } from '@qovery/domains/service-logs/data-access'
+import { type ServiceType } from '@qovery/domains/services/data-access'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 
 export interface UseServiceLiveLogsProps {
   clusterId?: string
   serviceId?: string
+  serviceType?: ServiceType
   enabled?: boolean
 }
 
 const DEBOUNCE_TIME = 400
 const LIMIT = 200
 
-export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: UseServiceLiveLogsProps) {
+export function useServiceLiveLogs({ clusterId, serviceId, serviceType, enabled = false }: UseServiceLiveLogsProps) {
   const { organizationId, projectId, environmentId } = useParams({ strict: false })
   const queryParams = useSearch({ strict: false })
 
@@ -224,6 +226,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      service_type: serviceType,
       cluster: clusterId,
       query: dynamicQuery,
       limit: LIMIT.toString(),
@@ -241,6 +244,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      service_type: serviceType,
       cluster: clusterId,
       query: dynamicQueryNginx,
       limit: LIMIT.toString(),
@@ -259,6 +263,7 @@ export function useServiceLiveLogs({ clusterId, serviceId, enabled = false }: Us
       project: projectId,
       environment: environmentId,
       service: serviceId,
+      service_type: serviceType,
       cluster: clusterId,
       query: dynamicQueryEnvoy,
       limit: LIMIT.toString(),

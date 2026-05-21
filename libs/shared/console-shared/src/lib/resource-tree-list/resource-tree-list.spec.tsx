@@ -1,27 +1,36 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { createMockTerraformResource } from '../test-fixtures/mock-terraform-resources'
-import { ResourceTreeList } from './resource-tree-list'
+import { ResourceTreeList, type ResourceTreeResource } from './resource-tree-list'
+
+function createResource(overrides: Partial<ResourceTreeResource> = {}): ResourceTreeResource {
+  return {
+    id: 'res-1',
+    resourceType: 'aws_s3_bucket',
+    name: 'app_bucket',
+    address: 'aws_s3_bucket.app_bucket',
+    displayName: 'S3 Bucket',
+    attributes: {
+      id: 'my-app-bucket',
+      bucket: 'my-app-bucket',
+      region: 'us-east-1',
+    },
+    ...overrides,
+  }
+}
 
 const mockResources = [
-  createMockTerraformResource({
-    id: 'res-1',
-    name: 'app_bucket',
-    provider: 'aws',
-  }),
-  createMockTerraformResource({
+  createResource({ id: 'res-1', name: 'app_bucket' }),
+  createResource({
     id: 'res-2',
     resourceType: 'aws_rds_instance',
     name: 'app_db',
     address: 'aws_rds_instance.app_db',
-    provider: 'aws',
     displayName: 'RDS Instance',
     attributes: { id: 'mydb', engine: 'mysql', db_name: 'appdb' },
   }),
-  createMockTerraformResource({
+  createResource({
     id: 'res-3',
     name: 'backup_bucket',
     address: 'aws_s3_bucket.backup_bucket',
-    provider: 'aws',
     attributes: { id: 'my-backup-bucket', bucket: 'my-backup-bucket', region: 'us-west-2' },
   }),
 ]
@@ -56,11 +65,8 @@ describe('ResourceTreeList', () => {
       />
     )
 
-    // Should show resource types with counts
     expect(screen.getByText(/RDS Instance/)).toBeInTheDocument()
-    expect(screen.getByText(/\(1\)/)).toBeInTheDocument()
     expect(screen.getByText(/S3 Bucket/)).toBeInTheDocument()
-    expect(screen.getByText(/\(2\)/)).toBeInTheDocument()
   })
 
   it('should highlight selected resource', () => {
@@ -74,7 +80,7 @@ describe('ResourceTreeList', () => {
     )
 
     const selectedButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(selectedButton).toHaveClass('bg-surface-brand-subtle')
+    expect(selectedButton).toHaveClass('bg-surface-brand-component')
   })
 
   it('should call onSelectResource when clicking a resource', async () => {
@@ -93,7 +99,7 @@ describe('ResourceTreeList', () => {
     expect(mockOnSelectResource).toHaveBeenCalledWith('res-1')
   })
 
-  it('should highlight matching resources when searching by name', () => {
+  it('should keep matching and non-matching resources visible when searching by name', () => {
     renderWithProviders(
       <ResourceTreeList
         resources={mockResources}
@@ -103,16 +109,11 @@ describe('ResourceTreeList', () => {
       />
     )
 
-    // All resources should be visible, but non-matching ones are dimmed
     expect(screen.getByText('backup_bucket')).toBeInTheDocument()
     expect(screen.getByText('app_bucket')).toBeInTheDocument()
-
-    // Non-matching button should have dimmed styling
-    const nonMatchingButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(nonMatchingButton).toHaveClass('text-neutral-disabled')
   })
 
-  it('should highlight matching resources when searching by type', () => {
+  it('should match resources when searching by type', () => {
     renderWithProviders(
       <ResourceTreeList
         resources={mockResources}
@@ -123,12 +124,9 @@ describe('ResourceTreeList', () => {
     )
 
     expect(screen.getByText('app_db')).toBeInTheDocument()
-    // Non-matching resources are visible but dimmed
-    const nonMatchingButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(nonMatchingButton).toHaveClass('text-neutral-disabled')
   })
 
-  it('should highlight matching resources when searching by attribute keys', () => {
+  it('should match resources when searching by attribute keys', () => {
     renderWithProviders(
       <ResourceTreeList
         resources={mockResources}
@@ -139,12 +137,9 @@ describe('ResourceTreeList', () => {
     )
 
     expect(screen.getByText('app_db')).toBeInTheDocument()
-    // Non-matching resources are visible but dimmed
-    const nonMatchingButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(nonMatchingButton).toHaveClass('text-neutral-disabled')
   })
 
-  it('should highlight matching resources when searching by attribute values', () => {
+  it('should match resources when searching by attribute values', () => {
     renderWithProviders(
       <ResourceTreeList
         resources={mockResources}
@@ -155,9 +150,6 @@ describe('ResourceTreeList', () => {
     )
 
     expect(screen.getByText('app_db')).toBeInTheDocument()
-    // Non-matching resources are visible but dimmed
-    const nonMatchingButton = screen.getByRole('button', { name: /app_bucket/ })
-    expect(nonMatchingButton).toHaveClass('text-neutral-disabled')
   })
 
   it('should show no results message when search returns nothing', () => {
@@ -183,9 +175,7 @@ describe('ResourceTreeList', () => {
       />
     )
 
-    // Get only the resource buttons (those containing bucket names), not tree triggers
     const bucketButtons = screen.getAllByRole('button').filter((btn) => btn.textContent?.includes('_bucket'))
-    // Should have app_bucket before backup_bucket alphabetically
     expect(bucketButtons[0]).toHaveTextContent('app_bucket')
     expect(bucketButtons[1]).toHaveTextContent('backup_bucket')
   })

@@ -107,7 +107,7 @@ export function SettingsGitRepositoryAccess() {
 
           <Button
             size="md"
-            className="absolute right-0 top-0 shrink-0 gap-2"
+            className="absolute right-0 top-0 shrink-0"
             onClick={() => {
               openModal({
                 content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,

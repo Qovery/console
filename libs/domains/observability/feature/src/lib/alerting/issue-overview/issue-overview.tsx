@@ -95,7 +95,7 @@ export function IssueOverview() {
                         variant="surface"
                         color="neutral"
                         size="xs"
-                        className="justify-center gap-1.5 pl-0.5"
+                        className="justify-center pl-0.5"
                         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
                         params={{
                           organizationId,

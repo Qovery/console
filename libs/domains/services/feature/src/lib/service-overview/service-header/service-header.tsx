@@ -7,7 +7,7 @@ import {
   useCluster,
   useClusterRunningStatusSocket,
 } from '@qovery/domains/clusters/feature'
-import { type AnyService } from '@qovery/domains/services/data-access'
+import { type AnyService, isArgoCd } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -54,7 +54,7 @@ export function GitRepository({ gitRepository }: { gitRepository: ApplicationGit
           target="_blank"
           rel="noopener noreferrer"
         >
-          <Button color="neutral" variant="outline" size="xs" className="gap-1">
+          <Button color="neutral" variant="outline" size="xs">
             <Icon iconName="code-branch" iconStyle="regular" height={14} width={14} />
             <Truncate text={gitRepository.branch} truncateLimit={17} />
           </Button>
@@ -79,9 +79,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
   const { organizationId = '', serviceId = '' } = useParams({ strict: false })
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
-  const isArgoCdService = match(service)
-    .with({ service_type: 'ARGOCD_APP' }, () => true)
-    .otherwise(() => false)
+  const isArgoCdService = isArgoCd(service)
 
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
 
@@ -175,9 +173,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
     }))
     .otherwise(() => undefined)
 
-  const isArgoCdService = match(service)
-    .with({ service_type: 'ARGOCD_APP' }, () => true)
-    .otherwise(() => false)
+  const isArgoCdService = isArgoCd(service)
 
   const handleCopyCredentials = (credentials: Credentials) => {
     if (!databaseSource) {
@@ -234,7 +230,6 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
               color="neutral"
               size="xs"
               as="button"
-              className="gap-1"
             >
               <Icon width={16} height={16} name={containerRegistryKindToIcon(containerImage.registry.kind)} />
               <span className="truncate">
@@ -261,7 +256,6 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
               color="neutral"
               size="xs"
               as="button"
-              className="gap-1"
             >
               <Icon width={16} name={IconEnum.HELM_OFFICIAL} />
               <Truncate text={helmRepository.repository.name ?? ''} truncateLimit={18} />
@@ -288,7 +282,6 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
               color="neutral"
               variant="outline"
               size="xs"
-              className="gap-1"
               onClick={() => {
                 if (!databaseSource.masterCredentials) {
                   return
@@ -342,7 +335,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           environmentId={environmentId}
           serviceId={serviceId}
         >
-          <Button className="gap-1" size="xs" color="neutral" variant="outline">
+          <Button size="xs" color="neutral" variant="outline">
             <Icon iconName="link" iconStyle="regular" />
             Links
             <Icon iconName="angle-down" iconStyle="regular" />

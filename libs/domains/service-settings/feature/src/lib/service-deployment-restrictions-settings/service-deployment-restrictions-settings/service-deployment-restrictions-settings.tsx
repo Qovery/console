@@ -82,7 +82,6 @@ export function ServiceDeploymentRestrictionsSettings() {
             variant="solid"
             color="brand"
             type="button"
-            className="gap-2"
             onClick={() => openCrudModal()}
             disabled={!isSupportedService(service)}
           >

@@ -48,7 +48,6 @@ export function ServiceAlerting({ children }: PropsWithChildren) {
                 variant="outline"
                 color="neutral"
                 size="md"
-                className="gap-1.5"
                 onClick={createKeyAlertsModal}
                 disabled={!canCreateAlerts}
               >

@@ -55,7 +55,7 @@ export const Banner = forwardRef<HTMLDivElement, PropsWithChildren<BannerProps>>
     <div className={twMerge(bannerVariants({ color }), 'relative', className)} ref={forwardedRef} {...props}>
       {children}
       {buttonLabel && (
-        <Button type="button" className="ml-4 gap-1" variant="solid" color={buttonColor} onClick={onClickButton}>
+        <Button type="button" className="ml-4" variant="solid" color={buttonColor} onClick={onClickButton}>
           {buttonLabel}
           {buttonIconRight && <Icon iconName={buttonIconRight} />}
         </Button>

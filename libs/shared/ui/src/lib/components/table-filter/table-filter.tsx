@@ -39,7 +39,7 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
         <div className="relative inline-block">
           <Popover.Trigger>
             <Button
-              className={twMerge('gap-1 whitespace-nowrap text-xs', column.getIsFiltered() ? 'pr-6' : '')}
+              className={twMerge('whitespace-nowrap text-xs', column.getIsFiltered() ? 'pr-6' : '')}
               color={column.getIsFiltered() ? 'brand' : 'neutral'}
               variant={column.getIsFiltered() ? 'solid' : 'surface'}
             >

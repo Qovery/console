@@ -245,7 +245,6 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
                         onClick={() => handleAddCard()}
                         size="md"
                         variant="outline"
-                        className="gap-2"
                         data-testid="add-new-card-button"
                       >
                         Add new card

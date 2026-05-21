@@ -62,7 +62,7 @@ export function PodDetails({ pod, serviceId, serviceType }: PodDetailsProps) {
         size="sm"
         color="neutral"
         variant="outline"
-        className="relative z-dropdown max-w-fit gap-0.5"
+        className="relative z-dropdown max-w-fit"
       >
         Logs
         <Icon iconName="scroll" />

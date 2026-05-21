@@ -28,7 +28,7 @@ function VoteButtons({ messageId }: { messageId: string }) {
       <Button
         type="button"
         variant="surface"
-        className={clsx('flex items-center gap-1 px-2 py-1', {
+        className={clsx('flex items-center px-2 py-1', {
           'text-brand-500': response === 'up',
         })}
         onClick={() => respond('up')}
@@ -38,7 +38,7 @@ function VoteButtons({ messageId }: { messageId: string }) {
       <Button
         type="button"
         variant="surface"
-        className={clsx('flex items-center gap-1 px-2 py-1', {
+        className={clsx('flex items-center px-2 py-1', {
           'text-brand-500': response === 'down',
         })}
         onClick={() => respond('down')}
@@ -64,7 +64,7 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans }: Ass
           onClick={() => setShowPlans((prev) => ({ ...prev, [message.id]: !prev[message.id] }))}
         >
           <div className="w-fit text-ssm font-medium italic text-neutral-subtle">Plan steps</div>
-          <div className="">
+          <div>
             <Icon
               iconName={isPlanVisible ? 'chevron-circle-up' : 'chevron-circle-down'}
               iconStyle="regular"

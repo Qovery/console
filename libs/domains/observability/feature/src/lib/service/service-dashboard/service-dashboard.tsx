@@ -187,7 +187,7 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
                 variant={isLiveUpdateEnabled ? 'solid' : 'surface'}
                 color={isLiveUpdateEnabled ? 'brand' : 'neutral'}
                 size="md"
-                className={clsx('gap-1.5 pl-2.5', isLiveUpdateEnabled && 'border border-transparent')}
+                className={clsx('pl-2.5', isLiveUpdateEnabled && 'border border-transparent')}
                 onClick={() => {
                   // If timeRange is '30m' or greater, set to '15m' when enabling live update
                   if (!isLiveUpdateEnabled) {
@@ -216,19 +216,14 @@ function ServiceDashboardContent({ environmentId, serviceId }: { environmentId: 
             />
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="plain"
-              size="xs"
-              className="flex items-center gap-1"
-              onClick={() => setHideEvents(!hideEvents)}
-            >
+            <Button variant="plain" size="xs" className="flex items-center" onClick={() => setHideEvents(!hideEvents)}>
               {hideEvents ? 'Show events' : 'Hide events'}
               <Icon iconName={hideEvents ? 'eye' : 'eye-slash'} iconStyle="regular" />
             </Button>
             <Button
               variant="plain"
               size="xs"
-              className="flex items-center gap-1"
+              className="flex items-center"
               onClick={() => setExpandCharts(!expandCharts)}
             >
               {expandCharts ? 'Collapse charts' : 'Expand charts'}

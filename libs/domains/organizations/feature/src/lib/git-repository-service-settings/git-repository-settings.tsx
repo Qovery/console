@@ -133,7 +133,7 @@ export function GitRepositorySettings({
             type="button"
             variant="surface"
             size="md"
-            className="gap-1 pr-2"
+            className="pr-2"
             onClick={() =>
               openModal({
                 content: (

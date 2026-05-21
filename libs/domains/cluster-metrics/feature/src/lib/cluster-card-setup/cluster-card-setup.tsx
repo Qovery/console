@@ -21,6 +21,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
   })
 
   const kubeVersion = runningStatus?.computed_status?.kube_version_status
+  const isEksAnywhereCluster = cluster?.kubernetes === 'PARTIALLY_MANAGED'
 
   const isLoading =
     !deploymentStatus?.is_deployed || !deploymentStatus?.last_deployment_date || !cluster?.created_at || !kubeVersion
@@ -49,11 +50,25 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                   ))
                   .with({ type: 'DRIFT' }, (status) => (
                     <>
-                      <StatusChip status="WARNING" />
-                      Upgrade Kubernetes
-                      <Badge color="yellow" size="sm" variant="surface">
-                        {status.kube_version} → {status.expected_kube_version}
-                      </Badge>
+                      {isEksAnywhereCluster ? (
+                        <>
+                          <StatusChip status="RUNNING" />
+                          Kubernetes version
+                          <Badge variant="surface" size="sm">
+                            {status.kube_version}
+                          </Badge>
+                        </>
+                      ) : (
+                        <>
+                          <StatusChip status="WARNING" />
+                          Upgrade Kubernetes
+                          <Badge color="yellow" size="sm" variant="surface">
+                            {!status.expected_kube_version
+                              ? status.kube_version
+                              : `${status.kube_version} → ${status.expected_kube_version}`}
+                          </Badge>
+                        </>
+                      )}
                     </>
                   ))
                   .with({ type: 'UNKNOWN' }, () => (
@@ -72,7 +87,11 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
         {cluster?.cloud_provider !== 'ON_PREMISE' && deploymentStatus?.is_deployed && (
           <Skeleton width="65%" height={20} show={isLoading} className="truncate">
             <Link
-              title={deploymentStatus?.last_deployment_date && dateUTCString(deploymentStatus.last_deployment_date)}
+              title={
+                deploymentStatus?.last_deployment_date
+                  ? dateUTCString(deploymentStatus.last_deployment_date)
+                  : undefined
+              }
               to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
               params={{ organizationId, clusterId }}
               className="flex h-8 w-full items-center gap-2.5 rounded p-1.5 transition-colors hover:bg-surface-neutral-componentHover"
@@ -101,7 +120,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
         )}
         <Skeleton width="65%" height={20} show={isLoading}>
           <div
-            title={cluster?.created_at && dateUTCString(cluster.created_at)}
+            title={cluster?.created_at ? dateUTCString(cluster.created_at) : undefined}
             className="flex h-8 items-center gap-2.5 p-1.5 pl-0.5"
           >
             <Icon className="text-base text-neutral-subtle" iconName="calendar-day" iconStyle="regular" />

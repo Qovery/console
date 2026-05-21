@@ -1,8 +1,8 @@
 import { type ReactElement, useEffect, useMemo, useState } from 'react'
+import { ResourceTreeList } from '@qovery/shared/console-shared'
 import { EmptyState, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
 import { useTerraformResources } from '../hooks/use-terraform-resources/use-terraform-resources'
 import { ResourceDetails } from '../resource-details/resource-details'
-import { ResourceTreeList } from '../resource-tree-list/resource-tree-list'
 import { matchesSearch } from '../utils/matches-search'
 
 export interface TerraformResourcesSectionProps {
@@ -73,17 +73,11 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
 
   return (
     <div className="flex h-page-container flex-col gap-4">
-      {/* Split panel: Tree list (with search) and Details */}
       <div className="flex h-full">
-        {/* Left panel: Search + Resource tree list */}
-        <div className="flex w-1/4 flex-shrink-0 flex-col overflow-y-scroll border-r border-neutral">
-          {/* Search bar */}
-          <div className="flex-shrink-0 p-4 pb-0">
-            <InputSearch placeholder="Search resources…" className="w-full" onChange={setSearchQuery} />
-          </div>
+        <div className="flex w-[266px] flex-shrink-0 flex-col gap-4 overflow-x-hidden overflow-y-scroll rounded-r-md border-r border-neutral bg-surface-neutral-subtle p-3">
+          <InputSearch placeholder="Search resources…" className="w-full" onChange={setSearchQuery} />
 
-          {/* Tree list */}
-          <div className="flex-1 p-4">
+          <div className="min-h-0 flex-1">
             <ResourceTreeList
               resources={data}
               selectedResourceId={selectedResourceId}
@@ -93,8 +87,7 @@ export function TerraformResourcesSection({ terraformId }: TerraformResourcesSec
           </div>
         </div>
 
-        {/* Right panel: Resource details */}
-        <div className="w-3/4 flex-1 overflow-y-scroll">
+        <div className="min-w-0 flex-1 overflow-y-scroll bg-surface-neutral">
           <ResourceDetails resource={selectedResource} />
         </div>
       </div>

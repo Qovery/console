@@ -190,7 +190,6 @@ export function DeploymentLogsPlaceholder({
         <ErrorIcon />
         <span className="text-neutral">An error occurred during the precheck step.</span>
         <Link
-          className="gap-1.5"
           as="button"
           variant="surface"
           color="neutral"
@@ -220,7 +219,6 @@ export function DeploymentLogsPlaceholder({
         <ErrorIcon />
         <span className="text-neutral">An error occurred during deployment of another service.</span>
         <Link
-          className="gap-1.5"
           as="button"
           variant="surface"
           color="neutral"

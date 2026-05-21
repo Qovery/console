@@ -91,7 +91,7 @@ export function LastCommit({
               variant="outline"
               color="neutral"
               size="xs"
-              className={clsx('gap-1 pl-1', {
+              className={clsx('pl-1', {
                 'rounded-r-none border-r-0': showDeployFromAnotherVersionButton,
               })}
               onMouseEnter={() => setHover(true)}
@@ -111,7 +111,8 @@ export function LastCommit({
             variant={delta > 0 ? 'solid' : 'outline'}
             color={delta > 0 ? 'brand' : 'neutral'}
             size="xs"
-            className="w-7 justify-center gap-1 rounded-l-none px-1.5"
+            iconOnly
+            className="w-7 justify-center rounded-l-none px-1.5"
             onClick={deployCommitVersion}
           >
             <span className="flex h-full items-center justify-center">

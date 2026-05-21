@@ -255,7 +255,7 @@ export function AlertRulesOverview({
       {onCreateKeyAlerts && (
         <Tooltip content="You need to deploy your service to create alerts" disabled={canCreateAlerts}>
           <div>
-            <Button size="md" className="gap-1.5" onClick={onCreateKeyAlerts} disabled={!canCreateAlerts}>
+            <Button size="md" onClick={onCreateKeyAlerts} disabled={!canCreateAlerts}>
               <Icon iconName="plus-large" className="text-xs" />
               New alert
             </Button>
@@ -393,7 +393,7 @@ export function AlertRulesOverview({
                       variant="surface"
                       color="neutral"
                       size="xs"
-                      className="justify-center gap-1.5 pl-0.5"
+                      className="justify-center pl-0.5"
                       to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
                       params={{
                         organizationId,

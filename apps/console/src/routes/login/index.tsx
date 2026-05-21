@@ -381,14 +381,14 @@ function RouteComponent() {
                         variant="outline"
                         color="neutral"
                         size="lg"
-                        className="relative w-full justify-center"
+                        className="relative w-full justify-center gap-x-2"
                         onClick={() => onClickAuthLogin(AuthEnum.GOOGLE_SSO)}
                         loading={loading?.provider === AuthEnum.GOOGLE_SSO ? loading.active : false}
                       >
                         <Icon
                           width="16"
                           className={clsx(
-                            'mr-2 text-neutral-subtle',
+                            'text-neutral-subtle',
                             loading?.provider === AuthEnum.GOOGLE_SSO && 'opacity-0'
                           )}
                           name={IconEnum.GOOGLE}
@@ -401,16 +401,13 @@ function RouteComponent() {
                         variant="solid"
                         color="neutral"
                         size="lg"
-                        className="relative w-full justify-center"
+                        className="relative w-full justify-center gap-x-2"
                         onClick={() => onClickAuthLogin(AuthEnum.GITHUB)}
                         loading={loading?.provider === AuthEnum.GITHUB ? loading.active : false}
                       >
                         <Icon
                           width="16"
-                          className={clsx(
-                            'mr-2 text-neutralInvert',
-                            loading?.provider === AuthEnum.GITHUB && 'opacity-0'
-                          )}
+                          className={clsx('text-neutralInvert', loading?.provider === AuthEnum.GITHUB && 'opacity-0')}
                           fill="currentColor"
                           name={IconEnum.GITHUB_WHITE}
                         />
@@ -429,7 +426,7 @@ function RouteComponent() {
                           setAuth0Error(null)
                         }}
                       >
-                        <Icon iconName="lock" className="mr-1.5 text-sm text-neutral-subtle" />
+                        <Icon iconName="lock" className="text-sm text-neutral-subtle" />
                         Continue with SAML SSO
                         <LastUsedBadge visible={lastUsedLoginAtPageLoad === 'saml_sso'} />
                       </Button>

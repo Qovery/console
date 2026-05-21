@@ -23,7 +23,11 @@ function RouteComponent() {
   return (
     <div className="flex h-page-container min-h-0 flex-col overflow-hidden bg-background">
       <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden">
-        <ClusterTerminal organizationId={cluster.organization.id} clusterId={cluster.id} />
+        <ClusterTerminal
+          organizationId={cluster.organization.id}
+          clusterId={cluster.id}
+          cloudProvider={cluster.cloud_provider}
+        />
       </div>
     </div>
   )

@@ -218,8 +218,12 @@ export function isHelm(service: AnyService): service is Helm {
   return service.service_type === 'HELM'
 }
 
+export function isArgoCd(service?: AnyService): service is ArgoCd {
+  return service?.service_type === 'ARGOCD_APP'
+}
+
 export function isEditableService(service: AnyService): service is EditableService {
-  return service.service_type !== 'ARGOCD_APP'
+  return !isArgoCd(service)
 }
 
 export function isEditableServiceType(serviceType?: ServiceType): serviceType is EditableServiceType {
@@ -268,6 +272,13 @@ export const services = createQueryKeys('services', {
     async queryFn() {
       const response = await environmentApi.listServicesByEnvironmentId(environmentId)
       return (response.data.results ?? []).filter((service) => service.service_type === 'ARGOCD_APP')
+    },
+  }),
+  argocdManifest: (serviceId: string) => ({
+    queryKey: [serviceId],
+    async queryFn() {
+      const response = await argoCdApi.getArgoCdAppManifest(serviceId)
+      return response.data
     },
   }),
   list: (environmentId: string) => ({

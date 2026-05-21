@@ -32,7 +32,7 @@ const queryRestartWithReason = (selector: string, timeRange: string) => `
  `
 
 const queryK8sEvent = (serviceId: string, dynamicRange: string) => `
-  sum by (pod,reason)(
+  sum by (pod,reason,uid)(
   (
     k8s_event_logger_q_k8s_events_total{
       qovery_com_service_id="${serviceId}",
@@ -121,76 +121,6 @@ const getDescriptionFromK8sEvent = (reason: string): string => {
       return 'The node hosting the pod became NotReady.'
     default:
       return 'Unknown'
-  }
-}
-
-// TODO: keep it for now, but we should improve it
-const getExitCodeInfo = (exitCode: string): { name: string; description: string } => {
-  const code = parseInt(exitCode, 10)
-
-  switch (code) {
-    case 0:
-      return {
-        name: exitCode + ': Purposely stopped',
-        description: 'Used by developers to indicate that the container was automatically stopped.',
-      }
-    case 1:
-      return {
-        name: exitCode + ': Application error',
-        description:
-          'Container was stopped due to application error or incorrect reference in the image specification.',
-      }
-    case 125:
-      return {
-        name: exitCode + ': Container failed to run error',
-        description: 'The docker run command did not execute successfully.',
-      }
-    case 126:
-      return {
-        name: exitCode + ': Command invoke error',
-        description: 'A command specified in the image specification could not be invoked.',
-      }
-    case 127:
-      return {
-        name: exitCode + ': File or directory not found',
-        description: 'File or directory specified in the image specification was not found.',
-      }
-    case 128:
-      return {
-        name: exitCode + ': Invalid argument used on exit',
-        description: 'Exit was triggered with an invalid exit code (valid codes are integers between 0-255).',
-      }
-    case 134:
-      return {
-        name: exitCode + ': Abnormal termination (SIGABRT)',
-        description: 'The container aborted itself using the abort() function.',
-      }
-    case 137:
-      return {
-        name: exitCode + ': Immediate termination (SIGKILL)',
-        description: 'Container was immediately terminated by the operating system via SIGKILL signal.',
-      }
-    case 139:
-      return {
-        name: exitCode + ': Segmentation fault (SIGSEGV)',
-        description: 'Container attempted to access memory that was not assigned to it and was terminated.',
-      }
-    case 143:
-      return {
-        name: exitCode + ': Graceful termination (SIGTERM)',
-        description: 'Container received warning that it was about to be terminated, then terminated.',
-      }
-    case 255:
-      return {
-        name: exitCode + ': Exit Status Out Of Range',
-        description:
-          'Container exited, returning an exit code outside the acceptable range, meaning the cause of the error is not known.',
-      }
-    default:
-      return {
-        name: `Exit Code ${exitCode}`,
-        description: 'Unknown exit code.',
-      }
   }
 }
 
@@ -404,11 +334,11 @@ export function InstanceStatusChart({
     // Add k8s event as reference lines
     if (metricsK8sEvent?.data?.result) {
       metricsK8sEvent.data.result.forEach(
-        (series: { metric: { reason: string; pod: string }; values: [number, string][] }) => {
+        (series: { metric: { reason: string; pod: string; uid?: string }; values: [number, string][] }) => {
           series.values.forEach(([timestamp, value]: [number, string]) => {
             const numValue = parseFloat(value)
             if (numValue > 0) {
-              const key = `${series.metric.reason}-${timestamp}`
+              const key = `${series.metric.reason}-${series.metric.pod}-${series.metric.uid ?? 'unknown'}-${timestamp}`
               referenceLines.push({
                 type: 'k8s-event',
                 timestamp: timestamp * 1000,
@@ -454,7 +384,7 @@ export function InstanceStatusChart({
     referenceLines.sort((a, b) => b.timestamp - a.timestamp)
 
     return referenceLines
-  }, [metricsK8sEvent, metricsHpaMaxLimitReached, metricsRestartsWithReason])
+  }, [metricsK8sEvent, metricsHpaMaxLimitReached, metricsRestartsWithReason, metricsRestartsWithReasonStepInSec])
 
   const isLoading = useMemo(
     () =>
@@ -482,6 +412,7 @@ export function InstanceStatusChart({
       tooltipLabel="Instance issues"
       unit="instance"
       serviceId={serviceId}
+      clusterId={clusterId}
       yDomain={[0, 'dataMax + 1']}
       referenceLineData={referenceLineData}
       isFullscreen={isFullscreen}

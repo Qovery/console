@@ -105,7 +105,7 @@ export function HeaderLogs({
                         align="start"
                       >
                         <Button variant="outline" color="neutral" size="sm" className="relative">
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center">
                             <Icon iconName="link" iconStyle="regular" />
                             {pluralize(filteredLinks.length, 'Link', 'Links')}
                             <Icon iconName="angle-down" />
@@ -176,7 +176,7 @@ export function HeaderLogs({
                         align="start"
                       >
                         <Button variant="outline" color="neutral" size="sm" className="relative">
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center">
                             <Icon iconName="link" iconStyle="regular" />
                             {pluralize(filteredLinks.length, 'Link', 'Links')}
                             <Icon iconName="angle-down" />

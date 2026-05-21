@@ -362,7 +362,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
               <Button
                 color="brand"
                 size="md"
-                className="items-center gap-2"
+                className="items-center"
                 onClick={() => handleDeployAllServices()}
                 disabled={deployableServices.length === 0}
               >
@@ -371,7 +371,7 @@ export function ServiceListActionBar({ environment, selectedRows, resetRowSelect
             </Tooltip>
             <DropdownMenu.Root modal={false}>
               <DropdownMenu.Trigger asChild>
-                <Button color="neutral" size="md" variant="surface" className="items-center gap-2">
+                <Button color="neutral" size="md" variant="surface" className="items-center">
                   More <Icon iconName="angle-down" />
                 </Button>
               </DropdownMenu.Trigger>

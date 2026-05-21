@@ -197,7 +197,6 @@ export function SectionProductionHealth() {
               as="button"
               color="neutral"
               size="md"
-              className="gap-1.5"
               to="/organization/$organizationId/cluster/new"
               params={{ organizationId }}
             >

@@ -23,6 +23,7 @@ import {
   Section,
   SegmentedControl,
 } from '@qovery/shared/ui'
+import { toShortQoveryId } from '@qovery/shared/util-js'
 import { GeneralSetting } from '../../../general-setting/general-setting'
 import {
   type DatabaseCreateGeneralData,
@@ -185,7 +186,7 @@ export function DatabaseStepGeneral({
               />
             </BlockContent>
 
-            {watchMode === DatabaseModeEnum.MANAGED && clusterVpc ? (
+            {watchMode === DatabaseModeEnum.MANAGED && cluster && clusterVpc ? (
               <Callout.Root color="yellow">
                 <Callout.Icon>
                   <Icon iconName="circle-info" iconStyle="regular" />
@@ -193,7 +194,7 @@ export function DatabaseStepGeneral({
                 <Callout.Text>
                   <Callout.TextHeading>Action needed</Callout.TextHeading>
                   Add the following tag on your VPC ({clusterVpc.aws_vpc_eks_id}) in AWS: <br />
-                  Key: <strong>ClusterId</strong> Value: <strong>z{cluster?.id.split('-')[0]}</strong>
+                  Key: <strong>ClusterId</strong> Value: <strong>{toShortQoveryId(cluster.id)}</strong>
                 </Callout.Text>
               </Callout.Root>
             ) : null}

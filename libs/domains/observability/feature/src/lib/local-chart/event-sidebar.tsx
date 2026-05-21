@@ -1,19 +1,158 @@
+import { Suspense, useState } from 'react'
 import type { AnyService } from '@qovery/domains/services/data-access'
-import { Badge, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Badge, Button, DescriptionList, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
-import { pluralize } from '@qovery/shared/util-js'
+import { pluralize, twMerge } from '@qovery/shared/util-js'
+import { useKubernetesEventDetails } from '../hooks/use-kubernetes-event-details/use-kubernetes-event-details'
 import { formatTimestamp } from '../util-chart/format-timestamp'
 import { useDashboardContext } from '../util-filter/dashboard-context'
 import type { ReferenceLineEvent } from './local-chart'
 
 export interface EventSidebarProps {
   events: ReferenceLineEvent[]
+  clusterId?: string
+  serviceId: string
   service?: AnyService
   isLoading?: boolean
 }
 
-export function EventSidebar({ events, service, isLoading = false }: EventSidebarProps) {
+function KubernetesEventDetailsUnavailable() {
+  return (
+    <div className="mt-2 border-l border-neutral pl-3">
+      <span className="text-neutral-subtle">Kubernetes event details are not available.</span>
+    </div>
+  )
+}
+
+function KubernetesEventDetailsButton({
+  isExpanded,
+  isLoading = false,
+  onClick,
+}: {
+  isExpanded: boolean
+  isLoading?: boolean
+  onClick: () => void
+}) {
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      color="neutral"
+      size="xs"
+      className={twMerge('mt-1 w-fit shrink-0 gap-1.5', isLoading && 'pointer-events-auto')}
+      onClick={(event) => {
+        event.stopPropagation()
+        if (isLoading) return
+        onClick()
+      }}
+      aria-expanded={isExpanded}
+      aria-label={isExpanded ? 'Hide Kubernetes event details' : 'Show Kubernetes event details'}
+      loading={isLoading}
+    >
+      {isExpanded ? 'Hide details' : 'See details'}
+    </Button>
+  )
+}
+
+function KubernetesEventDetails({
+  clusterId,
+  serviceId,
+  event,
+}: {
+  clusterId: string
+  serviceId: string
+  event: ReferenceLineEvent
+}) {
   const { useLocalTime } = useDashboardContext()
+  const { detail, firstOccurrence, reportingComponent } = useKubernetesEventDetails({ clusterId, serviceId, event })
+
+  if (!detail) {
+    return (
+      <div className="mt-2 border-l border-neutral pl-3">
+        <span className="text-neutral-subtle">No matching Kubernetes event found.</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-2 flex flex-col gap-2 border-l border-neutral pl-3">
+      {detail.message && <p className="font-medium leading-5 text-neutral">{detail.message}</p>}
+      <DescriptionList.Root className="grid-cols-[max-content_minmax(0,_1fr)] gap-x-3 gap-y-1 text-xs">
+        {firstOccurrence && (
+          <>
+            <DescriptionList.Term className="whitespace-nowrap">Kubernetes time</DescriptionList.Term>
+            <DescriptionList.Details className="min-w-0 break-words font-code font-normal text-neutral">
+              {formatTimestamp(new Date(firstOccurrence).getTime(), useLocalTime).fullTimeString}
+            </DescriptionList.Details>
+          </>
+        )}
+        <DescriptionList.Term className="whitespace-nowrap">Monitoring marker</DescriptionList.Term>
+        <DescriptionList.Details className="min-w-0 break-words font-code font-normal text-neutral">
+          {formatTimestamp(event.timestamp, useLocalTime).fullTimeString}
+        </DescriptionList.Details>
+        <DescriptionList.Term className="whitespace-nowrap">Matched event time</DescriptionList.Term>
+        <DescriptionList.Details className="min-w-0 break-words font-code font-normal text-neutral">
+          {formatTimestamp(detail.timestamp, useLocalTime).fullTimeString}
+        </DescriptionList.Details>
+        {detail.name && (
+          <>
+            <DescriptionList.Term className="whitespace-nowrap">Pod</DescriptionList.Term>
+            <DescriptionList.Details className="min-w-0 break-words font-code font-normal text-neutral">
+              {detail.name}
+            </DescriptionList.Details>
+          </>
+        )}
+        {detail.namespace && (
+          <>
+            <DescriptionList.Term className="whitespace-nowrap">Namespace</DescriptionList.Term>
+            <DescriptionList.Details className="min-w-0 break-words font-code font-normal text-neutral">
+              {detail.namespace}
+            </DescriptionList.Details>
+          </>
+        )}
+        {reportingComponent && (
+          <>
+            <DescriptionList.Term className="whitespace-nowrap">Component</DescriptionList.Term>
+            <DescriptionList.Details className="min-w-0 break-words font-code font-normal text-neutral">
+              {reportingComponent}
+            </DescriptionList.Details>
+          </>
+        )}
+        {detail.count !== undefined && (
+          <>
+            <DescriptionList.Term className="whitespace-nowrap">Count</DescriptionList.Term>
+            <DescriptionList.Details className="font-code font-normal text-neutral">
+              {detail.count}
+            </DescriptionList.Details>
+          </>
+        )}
+      </DescriptionList.Root>
+    </div>
+  )
+}
+
+function KubernetesEventDetailsExpanded({
+  clusterId,
+  serviceId,
+  event,
+  onToggle,
+}: {
+  clusterId: string
+  serviceId: string
+  event: ReferenceLineEvent
+  onToggle: () => void
+}) {
+  return (
+    <>
+      <KubernetesEventDetailsButton isExpanded onClick={onToggle} />
+      <KubernetesEventDetails clusterId={clusterId} serviceId={serviceId} event={event} />
+    </>
+  )
+}
+
+export function EventSidebar({ events, clusterId, serviceId, service, isLoading = false }: EventSidebarProps) {
+  const { useLocalTime } = useDashboardContext()
+  const [expandedEventKey, setExpandedEventKey] = useState<string>()
 
   return (
     <div className="flex h-[87vh] w-full min-w-[420px] max-w-[420px] flex-col border-l border-neutral">
@@ -40,6 +179,12 @@ export function EventSidebar({ events, service, isLoading = false }: EventSideba
             {events.map((event) => {
               const timestamp = formatTimestamp(event.timestamp, useLocalTime)
               const key = event.key
+              const isExpandable = event.type === 'k8s-event'
+              const isExpanded = expandedEventKey === key
+              const toggleEventDetails = () => {
+                setExpandedEventKey((current) => (current === key ? undefined : key))
+              }
+
               return (
                 <div
                   key={key}
@@ -102,6 +247,27 @@ export function EventSidebar({ events, service, isLoading = false }: EventSideba
                           </Badge>
                         </Tooltip>
                       </div>
+                    )}
+                    {isExpandable && (
+                      <>
+                        {isExpanded && clusterId ? (
+                          <Suspense
+                            fallback={
+                              <KubernetesEventDetailsButton isExpanded isLoading onClick={toggleEventDetails} />
+                            }
+                          >
+                            <KubernetesEventDetailsExpanded
+                              clusterId={clusterId}
+                              serviceId={serviceId}
+                              event={event}
+                              onToggle={toggleEventDetails}
+                            />
+                          </Suspense>
+                        ) : (
+                          <KubernetesEventDetailsButton isExpanded={isExpanded} onClick={toggleEventDetails} />
+                        )}
+                        {isExpanded && !clusterId && <KubernetesEventDetailsUnavailable />}
+                      </>
                     )}
                   </div>
                 </div>

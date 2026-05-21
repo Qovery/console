@@ -1,4 +1,4 @@
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { Button } from './button'
 
 describe('Button', () => {
@@ -14,5 +14,18 @@ describe('Button', () => {
       </Button>
     )
     expect(baseElement).toMatchSnapshot()
+  })
+
+  it('should support icon spacing', () => {
+    renderWithProviders(
+      <Button type="button">
+        <span>Prefix</span>
+        Foobar
+        <span>Suffix</span>
+      </Button>
+    )
+
+    expect(screen.getByRole('button')).toHaveTextContent('PrefixFoobarSuffix')
+    expect(screen.getByRole('button')).toHaveClass('gap-x-1')
   })
 })
