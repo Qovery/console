@@ -73,7 +73,7 @@ function SecretManagerItem({
             </Button>
           </Indicator>
         )}
-        {manager.authentication.mode !== 'AUTOMATICALLY_CONFIGURED' && (
+        {manager.authentication?.mode !== 'AUTOMATICALLY_CONFIGURED' && (
           <Button type="button" variant="outline" color="neutral" size="md" iconOnly onClick={() => onEdit(manager)}>
             <Icon iconName="pen" iconStyle="regular" className="text-xs" />
           </Button>
@@ -98,7 +98,7 @@ export function SecretManagerList({
     <div className="w-full rounded-md border border-neutral bg-surface-neutral-subtle">
       {secretManagers.map((manager, index) => (
         <SecretManagerItem
-          key={manager.id}
+          key={manager.id + index}
           manager={manager}
           onViewAssociatedServices={onViewAssociatedServices}
           onEdit={onEdit}

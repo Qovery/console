@@ -146,7 +146,17 @@ export function SecretManagerIntegrationModal({
   ])
 
   const handleSubmit = methods.handleSubmit((data) => {
-    onSubmit({ ...data })
+    const isAutomaticIntegration =
+      !isManualOnlyGcpIntegration && !isManualOnlyAwsIntegration && activeTab === 'automatic'
+
+    onSubmit(
+      isAutomaticIntegration
+        ? {
+            ...data,
+            authentication: { mode: 'AUTOMATICALLY_CONFIGURED' },
+          }
+        : data
+    )
     onClose()
   })
 

@@ -62,6 +62,21 @@ describe('SecretManagerIntegrationModal', () => {
     ).toBeGreaterThan(0)
   })
 
+  it('should include authentication in the payload for automatic integration', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} onSubmit={onSubmit} />)
+
+    await userEvent.type(screen.getByLabelText('Secret manager name'), 'Prod secrets')
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
+
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({
+        name: 'Prod secrets',
+        authentication: { mode: 'AUTOMATICALLY_CONFIGURED' },
+      })
+    )
+  })
+
   it('should force static credentials when an STS integration already exists', async () => {
     jest.mocked(hasAwsManualStsIntegrationConfigured).mockReturnValue(true)
 
