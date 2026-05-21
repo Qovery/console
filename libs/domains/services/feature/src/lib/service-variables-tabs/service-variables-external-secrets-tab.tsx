@@ -37,7 +37,6 @@ import {
 } from './add-secret-modal/add-secret-modal'
 import {
   type ExternalSecretRow,
-  type SyncStatus,
   isExternalSecretVariable,
   mapVariableToExternalSecretRow,
 } from './service-variables-external-secrets-utils'
@@ -59,35 +58,7 @@ const ADD_SECRET_OPTIONS = [
   },
 ]
 
-const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_124px_220px_140px_104px]'
-
-const STATUS_LABELS: Record<SyncStatus, string> = {
-  synced: 'Valid',
-  broken: 'Invalid',
-  detached: 'Detached',
-}
-
-function ExternalSecretStatusBadge({ status }: { status: SyncStatus }) {
-  return match(status)
-    .with('synced', () => (
-      <span className="inline-flex h-6 items-center gap-1 rounded-[6px] border border-positive-subtle bg-surface-positive-subtle px-1.5 text-[12px] font-medium text-positive">
-        <Icon iconName="circle-check" iconStyle="regular" className="text-[12px]" />
-        <span>Valid</span>
-      </span>
-    ))
-    .with('broken', () => (
-      <span className="inline-flex h-6 items-center gap-1 rounded-[6px] border border-negative-subtle bg-surface-negative-subtle px-1.5 text-[12px] font-medium text-negative">
-        <Icon iconName="circle-exclamation" className="text-[12px]" />
-        <span>Invalid</span>
-      </span>
-    ))
-    .otherwise(() => (
-      <span className="inline-flex h-6 items-center gap-1 rounded-[6px] border border-neutral-component bg-surface-neutral-component px-1.5 text-[12px] font-medium text-neutral-subtle">
-        <Icon iconName="link-broken" className="text-[12px]" />
-        <span>Detached</span>
-      </span>
-    ))
-}
+const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220px_140px_104px]'
 
 const columnHelper = createColumnHelper<ExternalSecretRow>()
 
@@ -398,32 +369,6 @@ export function ExternalSecretsTab() {
         enableSorting: true,
         cell: (info) => <span className="truncate text-sm text-neutral">{info.getValue()}</span>,
       }),
-      columnHelper.accessor('status', {
-        header: 'Status',
-        enableSorting: false,
-        enableColumnFilter: true,
-        meta: {
-          customFacetEntry: ({ value, count }) => {
-            const status = value as SyncStatus
-            return (
-              <>
-                <span className="text-sm font-medium">{STATUS_LABELS[status] ?? value}</span>
-                <span className="text-xs text-neutral-subtle">{count}</span>
-              </>
-            )
-          },
-          customFilterValue: ({ filterValue }) => (
-            <span className="flex items-center gap-1">
-              {filterValue.map((value) => STATUS_LABELS[value as SyncStatus] ?? value).join(', ')}
-            </span>
-          ),
-        },
-        filterFn: (row, columnId, filterValue) => {
-          if (!Array.isArray(filterValue) || filterValue.length === 0) return true
-          return filterValue.includes(row.getValue(columnId))
-        },
-        cell: (info) => <ExternalSecretStatusBadge status={info.getValue()} />,
-      }),
       columnHelper.accessor((row) => row.source ?? 'No sources detected', {
         id: 'source',
         header: 'Source',
@@ -611,7 +556,7 @@ export function ExternalSecretsTab() {
                       header.column.id === 'name' && 'border-r border-neutral'
                     )}
                   >
-                    {['status', 'source', 'scope'].includes(header.column.id) ? (
+                    {['source', 'scope'].includes(header.column.id) ? (
                       <TableFilter column={header.column} />
                     ) : header.column.getCanSort() ? (
                       <button

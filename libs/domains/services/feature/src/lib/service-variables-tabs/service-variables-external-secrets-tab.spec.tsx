@@ -132,8 +132,8 @@ describe('ExternalSecretsTab', () => {
     expect(screen.getByText('prod/database/credentials')).toBeInTheDocument()
     expect(screen.getByText('Scope')).toBeInTheDocument()
     expect(screen.getByText('Actions')).toBeInTheDocument()
-    expect(screen.getByText('Valid')).toBeInTheDocument()
     expect(screen.getByText('Prod secret manager')).toBeInTheDocument()
+    expect(screen.queryByText('Status')).not.toBeInTheDocument()
   })
 
   it('should render empty state when no secret manager is configured', () => {
