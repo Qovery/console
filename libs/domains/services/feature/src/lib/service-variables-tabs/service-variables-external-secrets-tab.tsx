@@ -36,9 +36,10 @@ import {
   type SecretSourceOption,
   mapSecretManagersToSources,
 } from './add-secret-modal/add-secret-modal'
+import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { type ExternalSecretRow, mapVariableToExternalSecretRow } from './service-variables-external-secrets-utils'
-import { getServiceVariableScope } from './service-variables-utils'
-import { useServiceVariablesTab } from './use-service-variables-tab'
+import { getServiceVariableScope, type ServiceVariableScope } from './service-variables-utils'
+import { useVariablesSecretManagers } from './use-variables-secret-managers'
 
 const { Table } = TablePrimitives
 
@@ -59,14 +60,27 @@ const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220
 
 const columnHelper = createColumnHelper<ExternalSecretRow>()
 
-export function ExternalSecretsTab() {
-  const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
-  const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { secretManagers, hasClusterSecretManagerConfigured, clusterId } = useServiceVariablesTab()
-  const scope = getServiceVariableScope(service?.serviceType)
-  const variableScope = getServiceVariableScope(service?.serviceType, 'APPLICATION')
+export type ExternalSecretsTabProps =
+  | {
+      scope: 'ENVIRONMENT'
+      parentId: string
+    }
+  | {
+      scope?: ServiceVariableScope
+      parentId?: string
+    }
+
+type ExternalSecretsTabContentProps = {
+  scope: VariableScope
+  parentId: string
+}
+
+function ExternalSecretsTabContent({ scope, parentId }: ExternalSecretsTabContentProps) {
+  const { organizationId = '' } = useParams({ strict: false })
+  const { secretManagers, hasClusterSecretManagerConfigured, clusterId } = useVariablesSecretManagers()
+
   const { data: variables = [] } = useVariables({
-    parentId: serviceId,
+    parentId,
     scope,
     suspense: true,
   })
@@ -122,14 +136,14 @@ export function ExternalSecretsTab() {
           value: reference,
           mount_path: isFile ? filePath ?? null : null,
           is_secret: false,
-          variable_scope: variableScope,
-          variable_parent_id: serviceId,
+          variable_scope: scope,
+          variable_parent_id: parentId,
           description: description ?? null,
           secret_manager_access_id: secretManagerAccessId,
         },
       })
     },
-    [createVariable, serviceId, variableScope]
+    [createVariable, parentId, scope]
   )
 
   const handleEditSecret = useCallback(
@@ -471,10 +485,6 @@ export function ExternalSecretsTab() {
     getRowId: (row) => row.id,
   })
 
-  if (!scope) {
-    return null
-  }
-
   const shouldShowEmptyState = secrets.length === 0 && Boolean(emptyStateConfig)
   const totalRows = table.getPreFilteredRowModel().rows.length
   const isSearching = table.getRowCount() !== totalRows
@@ -635,4 +645,25 @@ export function ExternalSecretsTab() {
       </div>
     </div>
   )
+}
+
+export function ExternalSecretsTab(props?: ExternalSecretsTabProps) {
+  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const isEnvironmentScope = props?.scope === 'ENVIRONMENT'
+  const { data: service } = useService({
+    environmentId,
+    serviceId: isEnvironmentScope ? undefined : serviceId,
+    suspense: !isEnvironmentScope,
+  })
+  const scope = isEnvironmentScope
+    ? 'ENVIRONMENT'
+    : (props?.scope ?? getServiceVariableScope(service?.serviceType))
+
+  if (!scope) {
+    return null
+  }
+
+  const parentId = isEnvironmentScope ? props.parentId : (props?.parentId ?? serviceId)
+
+  return <ExternalSecretsTabContent scope={scope} parentId={parentId} />
 }

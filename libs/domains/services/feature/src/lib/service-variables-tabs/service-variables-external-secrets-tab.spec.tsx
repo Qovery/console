@@ -5,7 +5,7 @@ import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useService } from '../hooks/use-service/use-service'
 import { ExternalSecretsTab } from './service-variables-external-secrets-tab'
-import { useServiceVariablesTab } from './use-service-variables-tab'
+import { useVariablesSecretManagers } from './use-variables-secret-managers'
 
 jest.mock('@qovery/domains/variables/feature', () => ({
   ...jest.requireActual('@qovery/domains/variables/feature'),
@@ -45,8 +45,8 @@ jest.mock('../hooks/use-service/use-service', () => ({
   useService: jest.fn(),
 }))
 
-jest.mock('./use-service-variables-tab', () => ({
-  useServiceVariablesTab: jest.fn(),
+jest.mock('./use-variables-secret-managers', () => ({
+  useVariablesSecretManagers: jest.fn(),
 }))
 
 describe('ExternalSecretsTab', () => {
@@ -56,7 +56,9 @@ describe('ExternalSecretsTab', () => {
   const useDeleteVariableMock = useDeleteVariable as jest.MockedFunction<typeof useDeleteVariable>
   const useModalMock = useModal as jest.MockedFunction<typeof useModal>
   const useModalConfirmationMock = useModalConfirmation as jest.MockedFunction<typeof useModalConfirmation>
-  const useServiceVariablesTabMock = useServiceVariablesTab as jest.MockedFunction<typeof useServiceVariablesTab>
+  const useVariablesSecretManagersMock = useVariablesSecretManagers as jest.MockedFunction<
+    typeof useVariablesSecretManagers
+  >
   const useParamsMock = useParams as jest.MockedFunction<typeof useParams>
   const useServiceMock = useService as jest.MockedFunction<typeof useService>
 
@@ -70,10 +72,9 @@ describe('ExternalSecretsTab', () => {
     useServiceMock.mockReturnValue({
       data: { serviceType: 'APPLICATION' },
     } as ReturnType<typeof useService>)
-    useServiceVariablesTabMock.mockReturnValue({
+    useVariablesSecretManagersMock.mockReturnValue({
       secretManagers: [],
       hasClusterSecretManagerConfigured: false,
-      redeployServiceAction: jest.fn(),
       clusterId: 'cluster-id',
     })
     useCreateVariableMock.mockReturnValue({
@@ -109,7 +110,7 @@ describe('ExternalSecretsTab', () => {
       ],
       isLoading: false,
     } as ReturnType<typeof useVariables>)
-    useServiceVariablesTabMock.mockReturnValue({
+    useVariablesSecretManagersMock.mockReturnValue({
       secretManagers: [
         {
           id: 'sm-1',
@@ -121,7 +122,6 @@ describe('ExternalSecretsTab', () => {
         },
       ],
       hasClusterSecretManagerConfigured: true,
-      redeployServiceAction: jest.fn(),
       clusterId: 'cluster-id',
     })
 
@@ -152,7 +152,7 @@ describe('ExternalSecretsTab', () => {
       ],
       isLoading: false,
     } as ReturnType<typeof useVariables>)
-    useServiceVariablesTabMock.mockReturnValue({
+    useVariablesSecretManagersMock.mockReturnValue({
       secretManagers: [
         {
           id: 'sm-1',
@@ -164,7 +164,6 @@ describe('ExternalSecretsTab', () => {
         },
       ],
       hasClusterSecretManagerConfigured: true,
-      redeployServiceAction: jest.fn(),
       clusterId: 'cluster-id',
     })
 
@@ -172,6 +171,53 @@ describe('ExternalSecretsTab', () => {
 
     expect(screen.getByText('MY_FILE_EXTERNAL_SECRET')).toBeInTheDocument()
     expect(screen.getByText('prod/database/credentials-file')).toBeInTheDocument()
+  })
+
+  it('should fetch environment-scoped external secrets when scope is ENVIRONMENT', () => {
+    useVariablesMock.mockReturnValue({
+      data: [
+        {
+          id: 'env-secret-1',
+          key: 'ENV_EXTERNAL_SECRET',
+          value: 'staging/shared/credentials',
+          scope: 'ENVIRONMENT',
+          variable_type: 'EXTERNAL_SECRET',
+          secret_manager_access_id: 'sm-1',
+          created_at: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+      isLoading: false,
+    } as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [
+        {
+          id: 'sm-1',
+          name: 'Prod secret manager',
+          created_at: '2026-01-01T00:00:00.000Z',
+          updated_at: '2026-01-01T00:00:00.000Z',
+          endpoint: { mode: 'AWS_SECRETS_MANAGER' },
+          authentication: { mode: 'STS' },
+        },
+      ],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+
+    renderWithProviders(<ExternalSecretsTab scope="ENVIRONMENT" parentId="environment-id" />)
+
+    expect(useVariablesMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        parentId: 'environment-id',
+        scope: 'ENVIRONMENT',
+      })
+    )
+    expect(screen.getByText('ENV_EXTERNAL_SECRET')).toBeInTheDocument()
+    expect(useServiceMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        serviceId: undefined,
+        suspense: false,
+      })
+    )
   })
 
   it('should render empty state when no secret manager is configured', () => {

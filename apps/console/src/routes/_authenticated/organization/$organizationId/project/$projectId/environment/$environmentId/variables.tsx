@@ -1,12 +1,13 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense, useState } from 'react'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
+import { ExternalSecretsTab } from '@qovery/domains/services/feature'
 import { VariableList, VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Heading, Icon, LoaderSpinner, Navbar, Section, toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
-type VariableTab = 'custom' | 'built-in'
+type VariableTab = 'custom' | 'external-secrets' | 'built-in'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
@@ -82,6 +83,10 @@ function RouteComponent() {
                     <Icon iconName="sliders" iconStyle="regular" />
                     Custom
                   </Navbar.Item>
+                  <Navbar.Item id="external-secrets" onClick={() => setActiveTab('external-secrets')}>
+                    <Icon iconName="lock-keyhole" iconStyle="regular" />
+                    External secrets
+                  </Navbar.Item>
                   <Navbar.Item id="built-in" onClick={() => setActiveTab('built-in')}>
                     <Icon iconName="cube" iconStyle="regular" />
                     Built-in
@@ -113,6 +118,9 @@ function RouteComponent() {
                     onEditVariable={onEditVariableToast}
                     onDeleteVariable={onDeleteVariableToast}
                   />
+                )}
+                {activeTab === 'external-secrets' && (
+                  <ExternalSecretsTab scope="ENVIRONMENT" parentId={environmentId} />
                 )}
                 {activeTab === 'built-in' && (
                   <VariableList
