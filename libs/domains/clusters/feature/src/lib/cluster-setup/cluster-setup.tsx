@@ -1,6 +1,16 @@
 import { Callout, CopyButton, ExternalLink, Icon } from '@qovery/shared/ui'
+import { type OS, useOS } from '@qovery/shared/util-hooks'
+
+const INSTALL_COMMANDS: Record<OS, string> = {
+  macos: 'brew install Qovery/qovery-cli/qovery-cli',
+  linux: 'curl -s https://get.qovery.com | bash',
+  windows: 'scoop bucket add qovery https://github.com/Qovery/scoop-qovery-cli.git\nscoop install qovery-cli',
+}
 
 export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) {
+  const os = useOS()
+  const installCommand = INSTALL_COMMANDS[os]
+
   return (
     <>
       {type === 'SELF_MANAGED' && (
@@ -23,8 +33,15 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
           <p className="mb-2 font-normal text-neutral-subtle">
             Download and install the Qovery CLI (or update its version to the latest version).
           </p>
-          <ExternalLink href="https://www.qovery.com/docs/cli/overview#installation">
-            https://www.qovery.com/docs/cli/overview#installation
+          <pre className="flex items-start justify-between gap-2 whitespace-pre-wrap break-all rounded-sm bg-surface-neutral-subtle p-3 font-mono text-neutral">
+            <span>
+              <span className="select-none">$ </span>
+              {installCommand}
+            </span>
+            <CopyButton content={installCommand} />
+          </pre>
+          <ExternalLink className="mt-2" href="https://www.qovery.com/docs/cli/overview#installation">
+            See all install options
           </ExternalLink>
         </li>
         <li className="rounded border border-neutral p-3">

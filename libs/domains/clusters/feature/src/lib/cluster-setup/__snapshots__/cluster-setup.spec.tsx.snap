@@ -39,13 +39,36 @@ exports[`ClusterSetup should match manage deployment snapshot 1`] = `
         >
           Download and install the Qovery CLI (or update its version to the latest version).
         </p>
+        <pre
+          class="flex items-start justify-between gap-2 whitespace-pre-wrap break-all rounded-sm bg-surface-neutral-subtle p-3 font-mono text-neutral"
+        >
+          <span>
+            <span
+              class="select-none"
+            >
+              $ 
+            </span>
+            scoop bucket add qovery https://github.com/Qovery/scoop-qovery-cli.git
+scoop install qovery-cli
+          </span>
+          <button
+            class="inline-flex items-center shrink-0 transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-7 px-2 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral cursor-pointer font-sans font-medium"
+            type="button"
+          >
+            Copy
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-copy text-xs"
+            />
+          </button>
+        </pre>
         <a
-          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm"
+          class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-info hover:text-info-hover text-sm mt-2"
           href="https://www.qovery.com/docs/cli/overview#installation"
           rel="noopener noreferrer"
           target="_blank"
         >
-          https://www.qovery.com/docs/cli/overview#installation
+          See all install options
           <i
             aria-hidden="true"
             class="fa-regular fa-arrow-up-right-from-square text-xs leading-5"
