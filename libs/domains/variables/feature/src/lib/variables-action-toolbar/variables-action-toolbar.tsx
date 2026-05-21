@@ -59,7 +59,7 @@ export function VariablesActionToolbar({
     })
 
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-2">
       <DropdownMenu.Root>
         {showImportButton ? (
           <DropdownMenu.Trigger asChild>
