@@ -52,17 +52,17 @@ describe('EventSidebar', () => {
   ]
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<EventSidebar events={[]} />)
+    const { baseElement } = renderWithProviders(<EventSidebar serviceId="service-1" events={[]} />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should render with no events', () => {
-    renderWithProviders(<EventSidebar events={[]} />)
+    renderWithProviders(<EventSidebar serviceId="service-1" events={[]} />)
     expect(screen.getByText('No events associated')).toBeInTheDocument()
   })
 
   it('should render events list when events are provided', () => {
-    renderWithProviders(<EventSidebar events={mockEvents} />)
+    renderWithProviders(<EventSidebar serviceId="service-1" events={mockEvents} />)
 
     expect(screen.getByText('Events associated')).toBeInTheDocument()
     expect(screen.getByText('Deployed')).toBeInTheDocument()
@@ -71,12 +71,12 @@ describe('EventSidebar', () => {
   })
 
   it('should display singular Event when only one event', () => {
-    renderWithProviders(<EventSidebar events={[mockEvents[0]]} />)
+    renderWithProviders(<EventSidebar serviceId="service-1" events={[mockEvents[0]]} />)
     expect(screen.getByText('Event associated')).toBeInTheDocument()
   })
 
   it('should display plural Events when multiple events', () => {
-    renderWithProviders(<EventSidebar events={mockEvents} />)
+    renderWithProviders(<EventSidebar serviceId="service-1" events={mockEvents} />)
     expect(screen.getByText('Events associated')).toBeInTheDocument()
   })
 })

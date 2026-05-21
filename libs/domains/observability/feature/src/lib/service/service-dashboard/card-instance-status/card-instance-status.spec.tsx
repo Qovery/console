@@ -75,17 +75,40 @@ describe('CardInstanceStatus', () => {
   })
 
   it('should render with instance issues (RED status) and show modal link', () => {
-    useInstantMetrics.mockReturnValue(
-      createMockUseInstantMetricsReturn({
-        data: {
-          result: [
-            {
-              value: [1234567890, '2'],
-            },
-          ],
-        },
-      })
-    )
+    useInstantMetrics
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '2'],
+              },
+            ],
+          },
+        })
+      )
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
+              },
+            ],
+          },
+        })
+      )
+      .mockReturnValueOnce(
+        createMockUseInstantMetricsReturn({
+          data: {
+            result: [
+              {
+                value: [1234567890, '0'],
+              },
+            ],
+          },
+        })
+      )
 
     renderWithProviders(
       <DashboardProvider>
@@ -175,7 +198,7 @@ describe('CardInstanceStatus', () => {
       </DashboardProvider>
     )
 
-    expect(useInstantMetrics).toHaveBeenCalledTimes(2)
+    expect(useInstantMetrics).toHaveBeenCalledTimes(3)
     expect(useInstantMetrics).toHaveBeenCalledWith({
       clusterId: 'test-cluster-id',
       query: expect.stringContaining('kube_pod_container_status_restarts_total'),
@@ -183,6 +206,14 @@ describe('CardInstanceStatus', () => {
       endTimestamp: expect.any(String),
       boardShortName: 'service_overview',
       metricShortName: 'card_instance_status_error_count',
+    })
+    expect(useInstantMetrics).toHaveBeenCalledWith({
+      clusterId: 'test-cluster-id',
+      query: expect.stringContaining('k8s_event_logger_q_k8s_events_total'),
+      startTimestamp: expect.any(String),
+      endTimestamp: expect.any(String),
+      boardShortName: 'service_overview',
+      metricShortName: 'card_instance_status_k8s_event_count',
     })
 
     const call = useInstantMetrics.mock.calls[0][0].query

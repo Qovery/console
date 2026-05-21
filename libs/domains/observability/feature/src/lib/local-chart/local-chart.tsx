@@ -223,6 +223,7 @@ export interface LocalChartProps extends PropsWithChildren {
   isEmpty: boolean
   isLoading: boolean
   serviceId: string
+  clusterId?: string
   label?: string
   description?: ReactNode
   descriptionRight?: ReactNode
@@ -248,6 +249,7 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
     className,
     children,
     serviceId,
+    clusterId,
     yDomain,
     xDomain,
     referenceLineData,
@@ -327,7 +329,13 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
             {children}
           </ChartContent>
           {isFullscreen && events && !hideEvents && (
-            <EventSidebar events={events} service={service} isLoading={isLoading || eventsLoading} />
+            <EventSidebar
+              events={events}
+              clusterId={clusterId}
+              serviceId={serviceId}
+              service={service}
+              isLoading={isLoading || eventsLoading}
+            />
           )}
         </div>
       </Section>
@@ -349,7 +357,13 @@ export const LocalChart = forwardRef<ElementRef<'section'>, LocalChartProps>(fun
               {children}
             </ChartContent>
             {events && !hideEvents && (
-              <EventSidebar events={events} service={service} isLoading={isLoading || eventsLoading} />
+              <EventSidebar
+                events={events}
+                clusterId={clusterId}
+                serviceId={serviceId}
+                service={service}
+                isLoading={isLoading || eventsLoading}
+              />
             )}
           </div>
         </ModalChart>
