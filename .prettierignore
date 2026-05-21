@@ -11,6 +11,7 @@
 # Symlinked skill directories (cause EISDIR errors in prettier)
 .cursor/skills
 .claude/skills
+.claude/worktrees
 
 # Auto-generated TanStack Router file
 apps/console/src/routeTree.gen.ts
