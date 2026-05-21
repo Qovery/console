@@ -1,7 +1,9 @@
-import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterRegion, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
+import { type Value } from '@qovery/shared/interfaces'
 import {
   Button,
   Callout,
@@ -9,6 +11,7 @@ import {
   Dropzone,
   ExternalLink,
   Icon,
+  IconFlag,
   InputSelect,
   InputText,
   Navbar,
@@ -90,6 +93,17 @@ export function SecretManagerIntegrationModal({
       },
     },
   })
+  const { data: cloudProviders = [] } = useCloudProviders()
+  const gcpRegions: Value[] = useMemo(() => {
+    const gcpProvider = cloudProviders.find((p) => p.short_name === 'GCP')
+    return (
+      gcpProvider?.regions?.map((region: ClusterRegion) => ({
+        label: `${region.city} (${region.name})`,
+        value: region.name,
+        icon: <IconFlag code={region.country_code} />,
+      })) ?? []
+    )
+  }, [cloudProviders])
 
   const authenticationOptions: { label: string; value: SecretManagerAccess['authentication']['mode'] }[] = useMemo(
     () =>
@@ -110,9 +124,27 @@ export function SecretManagerIntegrationModal({
   const isManualOnlyAwsIntegration = isAwsSecretManagerOnGcp
   const isGcpManualTabOnGcpSecretManager =
     option.value === 'GCP_SECRET_MANAGER' && isGcpCluster(cluster) && activeTab === 'manual'
+  const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    multiple: false,
-    accept: { 'application/json': ['.json'] },
+    maxFiles: 1,
+    onDrop: (acceptedFiles) => {
+      const file = acceptedFiles?.[0]
+      if (!file || file.type !== 'application/json') return
+
+      setFileDetails({
+        name: file.name,
+        size: file.size / 1000,
+      })
+
+      const reader = new FileReader()
+      reader.readAsText(file)
+      reader.onload = async () => {
+        const binaryStr = reader.result
+        methods.setValue('authentication.mode', 'GCP_JSON_CREDENTIALS', { shouldValidate: true })
+        const credentials = binaryStr ? btoa(binaryStr.toString()) : undefined
+        methods.setValue('authentication.json_credentials', credentials, { shouldValidate: true })
+      }
+    },
   })
 
   useEffect(() => {
@@ -148,6 +180,7 @@ export function SecretManagerIntegrationModal({
   const handleSubmit = methods.handleSubmit((data) => {
     const isAutomaticIntegration =
       !isManualOnlyGcpIntegration && !isManualOnlyAwsIntegration && activeTab === 'automatic'
+    const isGcpManualIntegration = isManualOnlyGcpIntegration || isGcpManualTabOnGcpSecretManager
 
     onSubmit(
       isAutomaticIntegration
@@ -155,14 +188,18 @@ export function SecretManagerIntegrationModal({
             ...data,
             authentication: { mode: 'AUTOMATICALLY_CONFIGURED' },
           }
-        : data
+        : isGcpManualIntegration
+          ? {
+              ...data,
+              authentication: {
+                mode: 'GCP_JSON_CREDENTIALS',
+                json_credentials: data.authentication?.json_credentials,
+              },
+            }
+          : data
     )
     onClose()
   })
-
-  useEffect(() => {
-    methods.trigger().then()
-  }, [methods])
 
   const renderGcpManualIntegrationSections = () => (
     <>
@@ -193,10 +230,66 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
         <h3 className="text-sm font-medium text-neutral">
           3. Download the key.json generated and drag and drop it here
         </h3>
-        <div {...getRootProps()}>
-          <input className="hidden" {...getInputProps()} />
-          <Dropzone typeFile=".json" isDragActive={isDragActive} />
-        </div>
+        <Controller
+          name="authentication.json_credentials"
+          control={methods.control}
+          rules={{
+            required: 'Please enter your credentials JSON',
+          }}
+          render={({ field }) => (
+            <div>
+              {!field.value ? (
+                <div {...getRootProps()}>
+                  <input data-testid="input-credentials-json" className="hidden" {...getInputProps()} />
+                  <Dropzone typeFile=".json" isDragActive={isDragActive} />
+                </div>
+              ) : fileDetails ? (
+                <div className="flex items-center justify-between rounded border border-neutral p-4">
+                  <div className="flex items-center pl-2 text-neutral">
+                    <Icon iconName="file-arrow-down" className="mr-4" />
+                    <p className="flex flex-col gap-1">
+                      <span className="text-xs font-medium">{fileDetails.name}</span>
+                      <span className="text-xs text-neutral-subtle">{fileDetails.size} Ko</span>
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    color="neutral"
+                    size="md"
+                    className="h-7 w-7 justify-center"
+                    onClick={() => {
+                      field.onChange(undefined)
+                      setFileDetails(undefined)
+                    }}
+                  >
+                    <Icon iconName="trash" />
+                  </Button>
+                </div>
+              ) : (
+                <div />
+              )}
+            </div>
+          )}
+        />
+        <Controller
+          name="endpoint.region"
+          control={methods.control}
+          rules={{
+            required: 'Please select a region.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputSelect
+              label="Region"
+              value={field.value}
+              placeholder="Select a region"
+              onChange={(value) => field.onChange(value as string)}
+              options={gcpRegions}
+              error={error?.message}
+              isSearchable
+              portal
+            />
+          )}
+        />
         <Controller
           name="name"
           control={methods.control}
@@ -567,13 +660,21 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                 <Controller
                   name="endpoint.region"
                   control={methods.control}
-                  render={({ field }) => (
+                  rules={
+                    option.icon === 'GCP'
+                      ? {
+                          required: 'Please select a region.',
+                        }
+                      : undefined
+                  }
+                  render={({ field, fieldState: { error } }) => (
                     <InputSelect
                       label="Region"
                       value={field.value}
                       placeholder="Select a region"
                       onChange={(value) => field.onChange(value as string)}
-                      options={regionOptions}
+                      options={option.icon === 'GCP' ? gcpRegions : regionOptions}
+                      error={error?.message}
                       isSearchable
                       portal
                     />
