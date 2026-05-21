@@ -75,7 +75,6 @@ export function AddSecretModal({
   const { enableAlertClickOutside } = useModal()
   const [referenceInput, setReferenceInput] = useState('')
   const isDirty = methods.formState.isDirty
-  const trigger = methods.trigger
 
   const secretNameValue = methods.watch('secretName')
   const selectedSourceId = methods.watch('source')
@@ -143,10 +142,6 @@ export function AddSecretModal({
   useEffect(() => {
     enableAlertClickOutside(isDirty)
   }, [enableAlertClickOutside, isDirty])
-
-  useEffect(() => {
-    trigger().then()
-  }, [trigger])
 
   return (
     <FormProvider {...methods}>
