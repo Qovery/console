@@ -1,11 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useParams } from '@tanstack/react-router'
-import { Suspense } from 'react'
+import { createFileRoute, useParams } from '@tanstack/react-router'
+import { Suspense, useState } from 'react'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { VariableList, VariablesActionToolbar } from '@qovery/domains/variables/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
-import { Heading, LoaderSpinner, Section, toast } from '@qovery/shared/ui'
+import { Heading, Icon, LoaderSpinner, Navbar, Section, toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+
+type VariableTab = 'custom' | 'built-in'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
@@ -15,6 +16,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const [activeTab, setActiveTab] = useState<VariableTab>('custom')
 
   useDocumentTitle('Services - Variables')
 
@@ -25,6 +27,34 @@ function RouteComponent() {
 
   const toasterCallback = () => {
     deployEnvironment({ environmentId })
+  }
+
+  const onCreateVariableToast = () =>
+    toast(
+      'success',
+      'Creation success',
+      'You need to redeploy your environment for your changes to be applied.',
+      toasterCallback,
+      'Redeploy'
+    )
+
+  const onEditVariableToast = () =>
+    toast(
+      'success',
+      'Edition success',
+      'You need to redeploy your environment for your changes to be applied.',
+      toasterCallback,
+      'Redeploy'
+    )
+
+  const onDeleteVariableToast = () => {
+    toast(
+      'success',
+      'Deletion success',
+      'Your variable has been deleted. You need to redeploy your environment for your changes to be applied.',
+      toasterCallback,
+      'Redeploy'
+    )
   }
 
   return (
@@ -40,61 +70,66 @@ function RouteComponent() {
           <div className="flex shrink-0 flex-col gap-6">
             <div className="flex justify-between">
               <Heading>Environment variables</Heading>
-              <VariablesActionToolbar
-                scope="ENVIRONMENT"
-                projectId={projectId}
-                environmentId={environmentId}
-                onCreateVariable={() =>
-                  toast(
-                    'success',
-                    'Creation success',
-                    'You need to redeploy your environment for your changes to be applied.',
-                    toasterCallback,
-                    'Redeploy'
-                  )
-                }
-              />
             </div>
             <hr className="w-full border-neutral" />
           </div>
-          <div className="flex min-h-0 flex-1 flex-col gap-8">
-            <VariableList
-              scope="ENVIRONMENT"
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              onCreateVariable={() => {
-                toast(
-                  'success',
-                  'Creation success',
-                  'You need to redeploy your environment for your changes to be applied.',
-                  toasterCallback,
-                  'Redeploy'
-                )
-              }}
-              onEditVariable={() => {
-                toast(
-                  'success',
-                  'Edition success',
-                  'You need to redeploy your environment for your changes to be applied.',
-                  toasterCallback,
-                  'Redeploy'
-                )
-              }}
-              onDeleteVariable={(variable) => {
-                let name = variable.key
-                if (name && name.length > 30) {
-                  name = name.substring(0, 30) + '...'
-                }
-                toast(
-                  'success',
-                  'Deletion success',
-                  `${name} has been deleted. You need to redeploy your environment for your changes to be applied.`,
-                  toasterCallback,
-                  'Redeploy'
-                )
-              }}
-            />
+
+          <div className="flex flex-col">
+            <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
+              <div className="bg-surface-neutral-subtle px-4 pb-2">
+                <Navbar.Root activeId={activeTab} className="relative">
+                  <Navbar.Item id="custom" onClick={() => setActiveTab('custom')}>
+                    <Icon iconName="sliders" iconStyle="regular" />
+                    Custom
+                  </Navbar.Item>
+                  <Navbar.Item id="built-in" onClick={() => setActiveTab('built-in')}>
+                    <Icon iconName="cube" iconStyle="regular" />
+                    Built-in
+                  </Navbar.Item>
+                </Navbar.Root>
+              </div>
+            </div>
+
+            <div className="relative -mt-2 rounded-lg">
+              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+                {activeTab === 'custom' && (
+                  <VariableList
+                    showOnly="custom"
+                    hideSectionLabel
+                    headerActions={
+                      <VariablesActionToolbar
+                        showDopplerButton
+                        scope="ENVIRONMENT"
+                        projectId={projectId}
+                        environmentId={environmentId}
+                        onCreateVariable={onCreateVariableToast}
+                      />
+                    }
+                    scope="ENVIRONMENT"
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
+                    onCreateVariable={onCreateVariableToast}
+                    onEditVariable={onEditVariableToast}
+                    onDeleteVariable={onDeleteVariableToast}
+                  />
+                )}
+                {activeTab === 'built-in' && (
+                  <VariableList
+                    showOnly="built-in"
+                    hideSectionLabel
+                    headerActions={<div className="hidden" />}
+                    scope="ENVIRONMENT"
+                    organizationId={organizationId}
+                    projectId={projectId}
+                    environmentId={environmentId}
+                    onCreateVariable={onCreateVariableToast}
+                    onEditVariable={onEditVariableToast}
+                    onDeleteVariable={onDeleteVariableToast}
+                  />
+                )}
+              </div>
+            </div>
           </div>
         </Section>
       </div>
