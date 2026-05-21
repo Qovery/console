@@ -2,7 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { isEditableServiceType } from '@qovery/domains/services/data-access'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useService } from '../hooks/use-service/use-service'
-import { useVariablesSecretManagers } from './use-variables-secret-managers'
+import { useVariablesSecretManagers } from '@qovery/domains/variables/feature'
 
 export function useServiceVariablesTab() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })

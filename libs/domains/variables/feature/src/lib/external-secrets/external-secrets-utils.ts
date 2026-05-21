@@ -37,4 +37,3 @@ export function mapVariableToExternalSecretRow(
     scope: generateScopeLabel(variable.scope),
   }
 }
-

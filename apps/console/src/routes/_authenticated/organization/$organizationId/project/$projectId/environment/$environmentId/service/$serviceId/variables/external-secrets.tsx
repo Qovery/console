@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { ExternalSecretsTab } from '@qovery/domains/services/feature'
+import { getServiceVariableScope, useService } from '@qovery/domains/services/feature'
+import { ExternalSecretsTab } from '@qovery/domains/variables/feature'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables/external-secrets'
@@ -8,5 +9,13 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  return <ExternalSecretsTab />
+  const { environmentId, serviceId } = Route.useParams()
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const scope = getServiceVariableScope(service?.serviceType)
+
+  if (!scope) {
+    return null
+  }
+
+  return <ExternalSecretsTab scope={scope} parentId={serviceId} />
 }

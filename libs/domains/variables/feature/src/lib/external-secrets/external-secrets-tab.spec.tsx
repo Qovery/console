@@ -1,17 +1,27 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { useCreateVariable, useDeleteVariable, useEditVariable, useVariables } from '@qovery/domains/variables/feature'
-import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useService } from '../hooks/use-service/use-service'
-import { ExternalSecretsTab } from './service-variables-external-secrets-tab'
+import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
+import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
+import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
+import { useVariables } from '../hooks/use-variables/use-variables'
+import { ExternalSecretsTab } from './external-secrets-tab'
 import { useVariablesSecretManagers } from './use-variables-secret-managers'
 
-jest.mock('@qovery/domains/variables/feature', () => ({
-  ...jest.requireActual('@qovery/domains/variables/feature'),
+jest.mock('../hooks/use-variables/use-variables', () => ({
   useVariables: jest.fn(),
+}))
+
+jest.mock('../hooks/use-create-variable/use-create-variable', () => ({
   useCreateVariable: jest.fn(),
+}))
+
+jest.mock('../hooks/use-edit-variable/use-edit-variable', () => ({
   useEditVariable: jest.fn(),
+}))
+
+jest.mock('../hooks/use-delete-variable/use-delete-variable', () => ({
   useDeleteVariable: jest.fn(),
 }))
 
@@ -41,10 +51,6 @@ jest.mock('@tanstack/react-router', () => ({
   },
 }))
 
-jest.mock('../hooks/use-service/use-service', () => ({
-  useService: jest.fn(),
-}))
-
 jest.mock('./use-variables-secret-managers', () => ({
   useVariablesSecretManagers: jest.fn(),
 }))
@@ -60,7 +66,6 @@ describe('ExternalSecretsTab', () => {
     typeof useVariablesSecretManagers
   >
   const useParamsMock = useParams as jest.MockedFunction<typeof useParams>
-  const useServiceMock = useService as jest.MockedFunction<typeof useService>
 
   beforeEach(() => {
     jest.clearAllMocks()
@@ -69,9 +74,6 @@ describe('ExternalSecretsTab', () => {
       environmentId: 'environment-id',
       serviceId: 'service-id',
     })
-    useServiceMock.mockReturnValue({
-      data: { serviceType: 'APPLICATION' },
-    } as ReturnType<typeof useService>)
     useVariablesSecretManagersMock.mockReturnValue({
       secretManagers: [],
       hasClusterSecretManagerConfigured: false,
@@ -125,7 +127,7 @@ describe('ExternalSecretsTab', () => {
       clusterId: 'cluster-id',
     })
 
-    renderWithProviders(<ExternalSecretsTab />)
+    renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
 
     expect(screen.getByText('1 external secret')).toBeInTheDocument()
     expect(screen.getByText('MY_EXTERNAL_SECRET')).toBeInTheDocument()
@@ -167,7 +169,7 @@ describe('ExternalSecretsTab', () => {
       clusterId: 'cluster-id',
     })
 
-    renderWithProviders(<ExternalSecretsTab />)
+    renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
 
     expect(screen.getByText('MY_FILE_EXTERNAL_SECRET')).toBeInTheDocument()
     expect(screen.getByText('prod/database/credentials-file')).toBeInTheDocument()
@@ -212,12 +214,6 @@ describe('ExternalSecretsTab', () => {
       })
     )
     expect(screen.getByText('ENV_EXTERNAL_SECRET')).toBeInTheDocument()
-    expect(useServiceMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        serviceId: undefined,
-        suspense: false,
-      })
-    )
   })
 
   it('should render empty state when no secret manager is configured', () => {
@@ -226,7 +222,7 @@ describe('ExternalSecretsTab', () => {
       isLoading: false,
     } as ReturnType<typeof useVariables>)
 
-    renderWithProviders(<ExternalSecretsTab />)
+    renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
 
     expect(screen.getByText('No secret manager linked on your cluster')).toBeInTheDocument()
 

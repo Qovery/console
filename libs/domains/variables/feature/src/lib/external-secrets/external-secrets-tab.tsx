@@ -14,7 +14,7 @@ import {
 } from '@tanstack/react-table'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useCreateVariable, useDeleteVariable, useEditVariable, useVariables } from '@qovery/domains/variables/feature'
+import { type VariableScope } from '@qovery/domains/variables/data-access'
 import { isExternalSecretVariable } from '@qovery/domains/variables/util'
 import {
   Button,
@@ -30,15 +30,16 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { useService } from '../hooks/use-service/use-service'
+import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
+import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
+import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
+import { useVariables } from '../hooks/use-variables/use-variables'
 import {
   AddSecretModal,
   type SecretSourceOption,
   mapSecretManagersToSources,
 } from './add-secret-modal/add-secret-modal'
-import { type VariableScope } from '@qovery/domains/variables/data-access'
-import { type ExternalSecretRow, mapVariableToExternalSecretRow } from './service-variables-external-secrets-utils'
-import { getServiceVariableScope, type ServiceVariableScope } from './service-variables-utils'
+import { type ExternalSecretRow, mapVariableToExternalSecretRow } from './external-secrets-utils'
 import { useVariablesSecretManagers } from './use-variables-secret-managers'
 
 const { Table } = TablePrimitives
@@ -60,22 +61,12 @@ const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220
 
 const columnHelper = createColumnHelper<ExternalSecretRow>()
 
-export type ExternalSecretsTabProps =
-  | {
-      scope: 'ENVIRONMENT'
-      parentId: string
-    }
-  | {
-      scope?: ServiceVariableScope
-      parentId?: string
-    }
-
-type ExternalSecretsTabContentProps = {
+export type ExternalSecretsTabProps = {
   scope: VariableScope
   parentId: string
 }
 
-function ExternalSecretsTabContent({ scope, parentId }: ExternalSecretsTabContentProps) {
+export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const { secretManagers, hasClusterSecretManagerConfigured, clusterId } = useVariablesSecretManagers()
 
@@ -645,25 +636,4 @@ function ExternalSecretsTabContent({ scope, parentId }: ExternalSecretsTabConten
       </div>
     </div>
   )
-}
-
-export function ExternalSecretsTab(props?: ExternalSecretsTabProps) {
-  const { environmentId = '', serviceId = '' } = useParams({ strict: false })
-  const isEnvironmentScope = props?.scope === 'ENVIRONMENT'
-  const { data: service } = useService({
-    environmentId,
-    serviceId: isEnvironmentScope ? undefined : serviceId,
-    suspense: !isEnvironmentScope,
-  })
-  const scope = isEnvironmentScope
-    ? 'ENVIRONMENT'
-    : (props?.scope ?? getServiceVariableScope(service?.serviceType))
-
-  if (!scope) {
-    return null
-  }
-
-  const parentId = isEnvironmentScope ? props.parentId : (props?.parentId ?? serviceId)
-
-  return <ExternalSecretsTabContent scope={scope} parentId={parentId} />
 }

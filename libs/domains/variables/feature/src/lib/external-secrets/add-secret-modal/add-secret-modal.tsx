@@ -5,7 +5,7 @@ import { match } from 'ts-pattern'
 import { useSecretManagerProviderSecrets } from '@qovery/domains/clusters/feature'
 import { Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { getSecretManagerProvider } from '@qovery/shared/util-clusters'
-import { type ExternalSecretRow } from '../service-variables-external-secrets-utils'
+import { type ExternalSecretRow } from '../external-secrets-utils'
 
 export type SecretSourceOption = {
   value: string
