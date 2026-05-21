@@ -1,11 +1,12 @@
 import { useQuery } from '@tanstack/react-query'
 import { Outlet, createFileRoute, useMatches } from '@tanstack/react-router'
 import { ClusterStateEnum as ClusterState, type ClusterStateEnum } from 'qovery-typescript-axios'
-import { Suspense, useMemo } from 'react'
+import { Suspense, useEffect, useMemo } from 'react'
 import { memo } from 'react'
 import { ClusterDeploymentProgressCard, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { queries } from '@qovery/state/util-queries'
 import { type FileRouteTypes } from '../../../../routeTree.gen'
@@ -67,6 +68,7 @@ function RouteComponent() {
   const projectId = mergedParams.projectId ?? ''
   const environmentId = mergedParams.environmentId ?? ''
   const versionId = mergedParams.versionId ?? ''
+  const [, setCurrentOrganizationId] = useLocalStorage<string>('currentOrganizationId', '')
 
   const { data: clusters } = useClusters({ organizationId })
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
@@ -112,6 +114,12 @@ function RouteComponent() {
       ),
     [matches]
   )
+
+  useEffect(() => {
+    if (organizationId) {
+      setCurrentOrganizationId(organizationId)
+    }
+  }, [organizationId, setCurrentOrganizationId])
 
   return (
     <>
