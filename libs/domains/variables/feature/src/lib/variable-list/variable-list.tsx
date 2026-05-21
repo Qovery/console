@@ -41,6 +41,7 @@ import {
   upperCaseFirstLetter,
 } from '@qovery/shared/util-js'
 import { CreateUpdateVariableModal } from '../create-update-variable-modal/create-update-variable-modal'
+import { isExternalSecretVariable } from '@qovery/domains/variables/util'
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useVariables } from '../hooks/use-variables/use-variables'
 import { VariableListActionBar } from './variable-list-action-bar'
@@ -133,7 +134,7 @@ export function VariableList({
         if (variable.scope === 'BUILT_IN') {
           return false
         }
-        if (showOnly === 'custom' && variable.variable_type === 'EXTERNAL_SECRET') {
+        if (showOnly === 'custom' && isExternalSecretVariable(variable)) {
           return false
         }
         return true

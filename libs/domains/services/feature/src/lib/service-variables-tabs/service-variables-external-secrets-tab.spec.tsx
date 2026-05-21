@@ -136,6 +136,44 @@ describe('ExternalSecretsTab', () => {
     expect(screen.queryByText('Status')).not.toBeInTheDocument()
   })
 
+  it('should render FILE_EXTERNAL_SECRET variables in the external secrets table', () => {
+    useVariablesMock.mockReturnValue({
+      data: [
+        {
+          id: 'secret-file-1',
+          key: 'MY_FILE_EXTERNAL_SECRET',
+          value: 'prod/database/credentials-file',
+          scope: 'APPLICATION',
+          variable_type: 'FILE_EXTERNAL_SECRET',
+          mount_path: '/vault/secrets/credentials',
+          secret_manager_access_id: 'sm-1',
+          created_at: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+      isLoading: false,
+    } as ReturnType<typeof useVariables>)
+    useServiceVariablesTabMock.mockReturnValue({
+      secretManagers: [
+        {
+          id: 'sm-1',
+          name: 'Prod secret manager',
+          created_at: '2026-01-01T00:00:00.000Z',
+          updated_at: '2026-01-01T00:00:00.000Z',
+          endpoint: { mode: 'AWS_SECRETS_MANAGER' },
+          authentication: { mode: 'STS' },
+        },
+      ],
+      hasClusterSecretManagerConfigured: true,
+      redeployServiceAction: jest.fn(),
+      clusterId: 'cluster-id',
+    })
+
+    renderWithProviders(<ExternalSecretsTab />)
+
+    expect(screen.getByText('MY_FILE_EXTERNAL_SECRET')).toBeInTheDocument()
+    expect(screen.getByText('prod/database/credentials-file')).toBeInTheDocument()
+  })
+
   it('should render empty state when no secret manager is configured', () => {
     useVariablesMock.mockReturnValue({
       data: [],

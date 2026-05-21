@@ -38,6 +38,3 @@ export function mapVariableToExternalSecretRow(
   }
 }
 
-export function isExternalSecretVariable(variable: VariableResponse) {
-  return variable.variable_type === 'EXTERNAL_SECRET'
-}

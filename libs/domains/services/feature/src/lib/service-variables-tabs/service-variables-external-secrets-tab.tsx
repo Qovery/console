@@ -15,6 +15,7 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useCreateVariable, useDeleteVariable, useEditVariable, useVariables } from '@qovery/domains/variables/feature'
+import { isExternalSecretVariable } from '@qovery/domains/variables/util'
 import {
   Button,
   Checkbox,
@@ -35,11 +36,7 @@ import {
   type SecretSourceOption,
   mapSecretManagersToSources,
 } from './add-secret-modal/add-secret-modal'
-import {
-  type ExternalSecretRow,
-  isExternalSecretVariable,
-  mapVariableToExternalSecretRow,
-} from './service-variables-external-secrets-utils'
+import { type ExternalSecretRow, mapVariableToExternalSecretRow } from './service-variables-external-secrets-utils'
 import { getServiceVariableScope } from './service-variables-utils'
 import { useServiceVariablesTab } from './use-service-variables-tab'
 

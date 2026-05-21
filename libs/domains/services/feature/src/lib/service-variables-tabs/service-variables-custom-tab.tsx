@@ -6,6 +6,7 @@ import {
   VariablesActionToolbar,
   useVariables,
 } from '@qovery/domains/variables/feature'
+import { isExternalSecretVariable } from '@qovery/domains/variables/util'
 import { Button, DropdownMenu, EmptyState, Icon, toast, useModal } from '@qovery/shared/ui'
 import { useService } from '../hooks/use-service/use-service'
 import { getServiceVariableScope } from './service-variables-utils'
@@ -22,7 +23,7 @@ export function CustomTab() {
     scope,
   })
   const customVariables = variables.filter(
-    (variable) => variable.scope !== 'BUILT_IN' && variable.variable_type !== 'EXTERNAL_SECRET'
+    (variable) => variable.scope !== 'BUILT_IN' && !isExternalSecretVariable(variable)
   )
 
   const onCreateVariableToast = () =>
