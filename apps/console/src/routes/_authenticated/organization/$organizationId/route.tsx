@@ -6,6 +6,7 @@ import { memo } from 'react'
 import { ClusterDeploymentProgressCard, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { queries } from '@qovery/state/util-queries'
 import { type FileRouteTypes } from '../../../../routeTree.gen'
@@ -67,6 +68,7 @@ function RouteComponent() {
   const projectId = mergedParams.projectId ?? ''
   const environmentId = mergedParams.environmentId ?? ''
   const versionId = mergedParams.versionId ?? ''
+  const [, setCurrentOrganizationId] = useLocalStorage<string>('currentOrganizationId', '')
 
   const { data: clusters } = useClusters({ organizationId })
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
@@ -115,9 +117,9 @@ function RouteComponent() {
 
   useEffect(() => {
     if (organizationId) {
-      localStorage.setItem('currentOrganizationId', organizationId)
+      setCurrentOrganizationId(organizationId)
     }
-  }, [organizationId])
+  }, [organizationId, setCurrentOrganizationId])
 
   return (
     <>
