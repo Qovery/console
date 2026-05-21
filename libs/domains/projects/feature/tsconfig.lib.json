@@ -4,6 +4,7 @@
     "outDir": "../../../../dist/out-tsc",
     "types": ["node", "@nx/react/typings/cssmodule.d.ts", "@nx/react/typings/image.d.ts"]
   },
+  "files": ["../../../../apps/console/src/router-types.d.ts"],
   "exclude": [
     "jest.config.ts",
     "src/**/*.spec.ts",
