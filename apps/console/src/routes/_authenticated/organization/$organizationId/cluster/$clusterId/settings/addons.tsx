@@ -1,8 +1,7 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { type CloudProvider, type ClusterRegion, type SecretManagerAccess } from 'qovery-typescript-axios'
+import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
-import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
@@ -15,7 +14,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { type AssociatedItem, AssociatedItemsModal } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Badge, Button, DropdownMenu, Icon, IconFlag, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Badge, Button, DropdownMenu, Icon, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { isGcpCluster } from '@qovery/shared/util-clusters'
 import { pluralize } from '@qovery/shared/util-js'
 
@@ -70,8 +69,6 @@ function RouteComponent() {
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const { data: cluster } = useCluster({ organizationId, clusterId, suspense: true })
 
-  const { data: cloudProviders = [] } = useCloudProviders({ suspense: true })
-
   const [kedaEnabled, setKedaEnabled] = useState(cluster?.keda?.enabled ?? false)
 
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
@@ -86,20 +83,6 @@ function RouteComponent() {
     return gcpOption ? [gcpOption, ...awsOptions] : SECRET_MANAGER_OPTIONS
   }, [cluster])
 
-  const currentProvider = useMemo(
-    () => cloudProviders.find((cloud) => cloud.short_name === cluster?.cloud_provider),
-    [cloudProviders, cluster?.cloud_provider]
-  )
-  const regionOptions = useMemo(
-    () =>
-      (currentProvider as CloudProvider | undefined)?.regions?.map((region: ClusterRegion) => ({
-        label: `${region.city} (${region.name})`,
-        value: region.name,
-        icon: <IconFlag code={region.country_code} />,
-      })) || [],
-    [currentProvider]
-  )
-
   const [secretManagers, setSecretManagers] = useState<SecretManagerAccess[]>(
     () => cluster?.secret_manager_accesses ?? []
   )
@@ -112,7 +95,6 @@ function RouteComponent() {
       content: (
         <SecretManagerIntegrationModal
           option={option}
-          regionOptions={regionOptions}
           cluster={cluster}
           mode={secretManager ? 'edit' : 'create'}
           initialValues={secretManager}

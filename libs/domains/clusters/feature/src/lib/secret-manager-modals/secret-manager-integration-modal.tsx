@@ -38,7 +38,6 @@ const AUTOMATIC_INTEGRATION_DISABLED_TOOLTIP =
 
 export interface SecretManagerIntegrationModalProps {
   option: SecretManagerOption
-  regionOptions: Array<{ label: string; value: string; icon?: JSX.Element }>
   cluster?: Cluster
   mode?: 'create' | 'edit'
   initialValues?: SecretManagerAccess
@@ -48,7 +47,6 @@ export interface SecretManagerIntegrationModalProps {
 
 export function SecretManagerIntegrationModal({
   option,
-  regionOptions,
   cluster,
   mode = 'create',
   initialValues,
@@ -94,6 +92,16 @@ export function SecretManagerIntegrationModal({
     },
   })
   const { data: cloudProviders = [] } = useCloudProviders()
+  const awsRegions: Value[] = useMemo(() => {
+    const awsProvider = cloudProviders.find((p) => p.short_name === 'AWS')
+    return (
+      awsProvider?.regions?.map((region: ClusterRegion) => ({
+        label: `${region.city} (${region.name})`,
+        value: region.name,
+        icon: <IconFlag code={region.country_code} />,
+      })) ?? []
+    )
+  }, [cloudProviders])
   const gcpRegions: Value[] = useMemo(() => {
     const gcpProvider = cloudProviders.find((p) => p.short_name === 'GCP')
     return (
@@ -104,6 +112,7 @@ export function SecretManagerIntegrationModal({
       })) ?? []
     )
   }, [cloudProviders])
+  const regions = option.value === 'GCP_SECRET_MANAGER' ? gcpRegions : awsRegions
 
   const authenticationOptions: { label: string; value: SecretManagerAccess['authentication']['mode'] }[] = useMemo(
     () =>
@@ -332,7 +341,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   value={field.value}
                   placeholder="Select a region"
                   onChange={(value) => field.onChange(value as string)}
-                  options={regionOptions}
+                  options={awsRegions}
                   isSearchable
                   portal
                 />
@@ -433,7 +442,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                         field.onChange(value as string)
                         methods.setValue('authentication.region', value as string)
                       }}
-                      options={regionOptions}
+                      options={awsRegions}
                       isSearchable
                       portal
                     />
@@ -507,7 +516,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                       value={field.value}
                       placeholder="Select a region"
                       onChange={(value) => field.onChange(value as string)}
-                      options={regionOptions}
+                      options={awsRegions}
                       isSearchable
                       portal
                     />
@@ -673,7 +682,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                       value={field.value}
                       placeholder="Select a region"
                       onChange={(value) => field.onChange(value as string)}
-                      options={option.icon === 'GCP' ? gcpRegions : regionOptions}
+                      options={regions}
                       error={error?.message}
                       isSearchable
                       portal

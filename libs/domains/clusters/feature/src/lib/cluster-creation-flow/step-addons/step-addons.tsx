@@ -1,6 +1,5 @@
-import { type CloudProvider, type Cluster, type ClusterRegion, type SecretManagerAccess } from 'qovery-typescript-axios'
+import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
-import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import {
   Badge,
   Button,
@@ -8,7 +7,6 @@ import {
   FunnelFlowBody,
   Heading,
   Icon,
-  IconFlag,
   Link,
   Section,
   useModal,
@@ -39,20 +37,6 @@ interface StepAddonsFormProps {
 function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProps) {
   const { openModal, closeModal } = useModal()
   const { generalData, addonsData, setAddonsData } = useClusterContainerCreateContext()
-  const { data: cloudProviders = [] } = useCloudProviders()
-  const currentProvider = useMemo(
-    () => cloudProviders.find((cloud) => cloud.short_name === generalData?.cloud_provider),
-    [cloudProviders, generalData?.cloud_provider]
-  )
-  const regionOptions = useMemo(
-    () =>
-      (currentProvider as CloudProvider | undefined)?.regions?.map((region: ClusterRegion) => ({
-        label: `${region.city} (${region.name})`,
-        value: region.name,
-        icon: <IconFlag code={region.country_code} />,
-      })) || [],
-    [currentProvider]
-  )
   const isGcp = generalData?.cloud_provider === 'GCP'
   const [kedaEnabled, setKedaEnabled] = useState(() => addonsData.kedaActivated)
   const [integrations, setIntegrations] = useState<SecretManagerAccess[]>(() => addonsData.secretManagers)
@@ -91,7 +75,6 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
       content: (
         <SecretManagerIntegrationModal
           option={option}
-          regionOptions={regionOptions}
           cluster={clusterStub}
           mode={integration ? 'edit' : 'create'}
           initialValues={integration}

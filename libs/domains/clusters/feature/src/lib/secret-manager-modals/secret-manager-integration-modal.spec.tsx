@@ -21,7 +21,6 @@ const defaultProps: SecretManagerIntegrationModalProps = {
     icon: 'AWS',
     typeLabel: 'AWS Secret manager',
   },
-  regionOptions: [{ label: 'Paris (eu-west-3)', value: 'eu-west-3' }],
   onClose: jest.fn(),
   onSubmit: jest.fn(),
 }
