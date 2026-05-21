@@ -1,5 +1,5 @@
 import { Badge, Button, Heading, Icon, Section, TablePrimitives } from '@qovery/shared/ui'
-import { type BlueprintEntry, PROVIDER_CONFIG, SERVICE_KIND_LABELS } from '../blueprints'
+import { type BlueprintEntry, PROVIDER_CONFIG } from '../blueprints'
 
 export interface BlueprintDetailModalProps {
   blueprint: BlueprintEntry
@@ -266,10 +266,6 @@ export function BlueprintDetailModal({
                 <img src={providerCfg.icon} alt="" aria-hidden="true" width={12} height={12} />
               ) : null}
               {providerCfg.label}
-            </Badge>
-            <Badge size="base" color="neutral" variant="outline" className="gap-1">
-              <Icon iconName="puzzle-piece" />
-              {SERVICE_KIND_LABELS[blueprint.serviceKind]}
             </Badge>
           </div>
         </div>

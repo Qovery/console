@@ -2,14 +2,13 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import { OutputVariables } from '@qovery/domains/variables/feature'
-import { Button, Heading, Icon, Link, Navbar, Section, SidePanel, useModal } from '@qovery/shared/ui'
+import { Heading, Icon, Link, Navbar, Section, SidePanel, useModal } from '@qovery/shared/ui'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
 import { NeedRedeployFlag } from '../need-redeploy-flag/need-redeploy-flag'
 import { BlueprintDetailModal } from '../service-new/blueprint-detail-modal/blueprint-detail-modal'
 import { BlueprintUpdateReviewModal } from '../service-new/blueprint-update-review-modal/blueprint-update-review-modal'
-import { BlueprintUpdatesReviewModal } from '../service-new/blueprint-updates-review-modal/blueprint-updates-review-modal'
 import { MOCK_BLUEPRINTS } from '../service-new/blueprints'
 import { ServiceHeader } from './service-header/service-header'
 import { ServiceInstance } from './service-instance/service-instance'
@@ -21,8 +20,6 @@ import { ServiceOverviewSkeleton } from './service-overview-skeleton'
 const SHOW_BLUEPRINT_CONTEXT = true
 const BLUEPRINT_SOURCE = MOCK_BLUEPRINTS[0] ?? null
 const BLUEPRINT_UPDATE_TARGET_VERSION = '2.1'
-
-type BlueprintUpdateModalVariant = 'single' | 'double'
 
 export interface ServiceOverviewProps {
   environment?: Environment
@@ -44,7 +41,6 @@ function ServiceOverviewContent({
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('variables')
   const [isBlueprintDetailsOpen, setBlueprintDetailsOpen] = useState(false)
-  const [updateModalVariant, setUpdateModalVariant] = useState<BlueprintUpdateModalVariant>('single')
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
   const { openModal, closeModal } = useModal()
   const activeBlueprint = SHOW_BLUEPRINT_CONTEXT ? BLUEPRINT_SOURCE : null
@@ -68,8 +64,8 @@ function ServiceOverviewContent({
   const openUpdateReview = () => {
     if (!activeBlueprint || !environment) return
 
-    const modalContent =
-      updateModalVariant === 'single' ? (
+    openModal({
+      content: (
         <BlueprintUpdateReviewModal
           targetVersion={BLUEPRINT_UPDATE_TARGET_VERSION}
           releaseNotesUrl={activeBlueprint.repositoryUrl}
@@ -77,37 +73,7 @@ function ServiceOverviewContent({
           onCancel={closeModal}
           onReview={handleOpenBlueprintUpdateReview}
         />
-      ) : (
-        <BlueprintUpdatesReviewModal
-          title="Two updates available"
-          description="Both your blueprint and service have received an update. Choose which one you want to pursue."
-          updates={[
-            {
-              id: 'blueprint-version-2-1',
-              title: 'Blueprint version 2.1',
-              description:
-                'This update improves bucket performance for large object transfers and hardens IAM permission scoping.',
-              added: 3,
-              removed: 1,
-              changelogUrl: activeBlueprint.repositoryUrl,
-              onReview: handleOpenBlueprintUpdateReview,
-            },
-            {
-              id: 'postgres-update-16-17',
-              title: 'Postgres update from 16 to 17',
-              description:
-                'Major version upgrade with breaking changes. Brings vacuum overhaul, WAL improvements, and new SQL/JSON features',
-              added: 12,
-              removed: 3,
-              changelogUrl: activeBlueprint.repositoryUrl,
-              onReview: closeModal,
-            },
-          ]}
-        />
-      )
-
-    openModal({
-      content: modalContent,
+      ),
       options: { width: 488, fakeModal: true },
     })
   }
@@ -167,30 +133,6 @@ function ServiceOverviewContent({
                   : undefined
               }
             />
-            {activeBlueprint ? (
-              <div className="-mt-6 flex items-center gap-1">
-                <Button
-                  size="xs"
-                  color="neutral"
-                  variant="outline"
-                  radius="rounded"
-                  onClick={() => setUpdateModalVariant('single')}
-                  className={updateModalVariant === 'single' ? 'bg-surface-neutral-component' : undefined}
-                >
-                  1 update
-                </Button>
-                <Button
-                  size="xs"
-                  color="neutral"
-                  variant="outline"
-                  radius="rounded"
-                  onClick={() => setUpdateModalVariant('double')}
-                  className={updateModalVariant === 'double' ? 'bg-surface-neutral-component' : undefined}
-                >
-                  2 updates
-                </Button>
-              </div>
-            ) : null}
             {hasNoMetrics && observabilityCallout}
             <Section className="gap-3">
               <div className="flex items-center justify-between gap-2">

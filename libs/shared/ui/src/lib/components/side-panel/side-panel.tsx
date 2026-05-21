@@ -10,20 +10,14 @@ export interface SidePanelProps {
   showCloseButton?: boolean
 }
 
-export function SidePanel({
-  open,
-  onOpenChange,
-  children,
-  width = 560,
-  showCloseButton = true,
-}: SidePanelProps) {
+export function SidePanel({ open, onOpenChange, children, width = 560, showCloseButton = true }: SidePanelProps) {
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-sidepanel-overlay bg-background-overlay" />
+        <Dialog.Overlay className="fixed inset-0 z-sidepanel-overlay bg-background-overlay data-[state=closed]:animate-sidepanel-overlay-exit data-[state=open]:animate-sidepanel-overlay-enter" />
         <Dialog.Content
           style={{ width }}
-          className="fixed right-0 top-0 z-sidepanel h-screen border-l border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)]"
+          className="fixed right-0 top-0 z-sidepanel h-screen border-l border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)] data-[state=closed]:animate-sidepanel-exit data-[state=open]:animate-sidepanel-enter motion-reduce:data-[state=closed]:animate-sidepanel-overlay-exit motion-reduce:data-[state=open]:animate-sidepanel-overlay-enter"
         >
           {showCloseButton && (
             <Dialog.Close asChild>

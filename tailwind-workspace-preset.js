@@ -448,6 +448,10 @@ module.exports = {
 
         fadein: `0.35s ${easingFunctions['ease-in-quad']} 0s fadein both`,
         fadeout: `0.2s ${easingFunctions['ease-out-quad']} 0s fadeout both`,
+        'sidepanel-overlay-enter': `180ms ${easingFunctions['ease-out-quad']} 0s sidepanelOverlayEnter both`,
+        'sidepanel-overlay-exit': `140ms ${easingFunctions['ease-out-quad']} 0s sidepanelOverlayExit both`,
+        'sidepanel-enter': `240ms ${easingFunctions['ease-out-quart']} 0s sidepanelEnter both`,
+        'sidepanel-exit': `160ms ${easingFunctions['ease-out-quad']} 0s sidepanelExit both`,
 
         'ping-small': 'pingSmall 1s linear infinite',
         'loader-dots': 'loaderDots 2s linear infinite',
@@ -543,6 +547,42 @@ module.exports = {
           to: {
             opacity: 1,
             transform: 'scale(1)',
+          },
+        },
+        sidepanelOverlayEnter: {
+          from: {
+            opacity: 0,
+          },
+          to: {
+            opacity: 1,
+          },
+        },
+        sidepanelOverlayExit: {
+          from: {
+            opacity: 1,
+          },
+          to: {
+            opacity: 0,
+          },
+        },
+        sidepanelEnter: {
+          from: {
+            opacity: 0,
+            transform: 'translateX(80px)',
+          },
+          to: {
+            opacity: 1,
+            transform: 'translateX(0)',
+          },
+        },
+        sidepanelExit: {
+          from: {
+            opacity: 1,
+            transform: 'translateX(0)',
+          },
+          to: {
+            opacity: 0,
+            transform: 'translateX(80px)',
           },
         },
         ...slideEntrances(),

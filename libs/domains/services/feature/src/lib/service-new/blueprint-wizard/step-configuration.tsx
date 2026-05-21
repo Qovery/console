@@ -1,6 +1,18 @@
 import { type ReactNode, useRef, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Badge, Button, Checkbox, Heading, Icon, InputSelect, InputText, RadioGroup, Section } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Checkbox,
+  Heading,
+  Icon,
+  InputSelect,
+  InputText,
+  RadioGroup,
+  Section,
+  SidePanel,
+} from '@qovery/shared/ui'
+import { BlueprintDetailModal } from '../blueprint-detail-modal/blueprint-detail-modal'
 import { type BlueprintEntry } from '../blueprints'
 import {
   type BlueprintWizardFormData,
@@ -49,6 +61,7 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
   const [openOverrideSection, setOpenOverrideSection] = useState<OverrideSection | null>(null)
   const [isTerraformOverridden, setIsTerraformOverridden] = useState(false)
   const [isResourcesOverridden, setIsResourcesOverridden] = useState(false)
+  const [isBlueprintDetailsOpen, setBlueprintDetailsOpen] = useState(false)
   const [terraformOverrides, setTerraformOverrides] = useState<TerraformOverrideSettings>(
     DEFAULT_TERRAFORM_OVERRIDE_SETTINGS
   )
@@ -201,7 +214,17 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
         <Section className="min-h-0 flex-1 overflow-y-auto overscroll-contain py-6">
           <div className="flex flex-col gap-2">
             <Heading className="text-2xl">{blueprint.name} configuration</Heading>
-            <p className="text-base text-neutral-subtle">Configure your service for a successful deployment.</p>
+            <p className="text-neutral-subtle">
+              Provisioned from{' '}
+              <button
+                type="button"
+                className="decoration-neutral-component text-neutral-subtle underline underline-offset-2 hover:text-neutral"
+                onClick={() => setBlueprintDetailsOpen(true)}
+              >
+                {blueprint.name}
+              </button>{' '}
+              blueprint
+            </p>
           </div>
 
           <div className="mt-6 flex flex-col gap-3">
@@ -419,7 +442,10 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
                             <RadioGroup.Root
                               value={terraformOverrides.backend}
                               onValueChange={(value) =>
-                                setTerraformOverrides((current) => ({ ...current, backend: value as TerraformBackend }))
+                                setTerraformOverrides((current) => ({
+                                  ...current,
+                                  backend: value as TerraformBackend,
+                                }))
                               }
                               className="flex flex-col gap-2"
                             >
@@ -722,6 +748,10 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
           </Button>
         </WizardStickyFooter>
       </form>
+
+      <SidePanel open={isBlueprintDetailsOpen} onOpenChange={setBlueprintDetailsOpen} width={940}>
+        <BlueprintDetailModal blueprint={blueprint} onClose={() => setBlueprintDetailsOpen(false)} readOnly />
+      </SidePanel>
     </div>
   )
 }

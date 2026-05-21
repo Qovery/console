@@ -103,7 +103,6 @@ export * from './lib/service-new/blueprint-service-context-card/blueprint-servic
 export * from './lib/service-new/blueprint-settings-section/blueprint-settings-section'
 export * from './lib/service-new/blueprint-wizard'
 export * from './lib/service-new/blueprint-update-review-modal/blueprint-update-review-modal'
-export * from './lib/service-new/blueprint-updates-review-modal/blueprint-updates-review-modal'
 export * from './lib/service-new/blueprint-update-review/blueprint-update-review'
 export * from './lib/service-general-settings/service-general-default-values'
 export * from './lib/service-general-settings/service-general-payload'

@@ -14,6 +14,7 @@ import {
   Skeleton,
   Tooltip,
 } from '@qovery/shared/ui'
+import { PreviewChangesLoadingCard } from './preview-changes-loading'
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -709,6 +710,7 @@ export function BlueprintUpdateReview({
   onDeploy,
 }: BlueprintUpdateReviewProps) {
   const [flowStep, setFlowStep] = useState<BlueprintFlowStep>(1)
+  const [previewPhase, setPreviewPhase] = useState<'loading' | 'ready'>('loading')
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [inputValues, setInputValues] = useState<Record<string, string>>({})
   const [additionValues, setAdditionValues] = useState<Record<string, string>>(
@@ -1042,7 +1044,10 @@ export function BlueprintUpdateReview({
           variant="solid"
           radius="rounded"
           disabled={!canOpenPreview}
-          onClick={() => setFlowStep(2)}
+          onClick={() => {
+            setPreviewPhase('loading')
+            setFlowStep(2)
+          }}
           className="w-full justify-center"
         >
           Preview changes
@@ -1165,6 +1170,18 @@ export function BlueprintUpdateReview({
     </div>
   )
 
+  const renderPreviewLoading = () => (
+    <div className="flex h-full w-full items-center justify-center">
+      <PreviewChangesLoadingCard onComplete={() => setPreviewPhase('ready')} />
+    </div>
+  )
+
+  const renderBody = () => {
+    if (flowStep === 1) return renderReviewStep()
+    if (previewPhase === 'loading') return renderPreviewLoading()
+    return renderPreviewStep()
+  }
+
   return (
     <FunnelFlow
       onExit={onBack}
@@ -1172,7 +1189,7 @@ export function BlueprintUpdateReview({
       currentStep={flowStep}
       currentTitle={flowStep === 1 ? 'Review update' : 'Preview changes'}
     >
-      {flowStep === 1 ? renderReviewStep() : renderPreviewStep()}
+      {renderBody()}
     </FunnelFlow>
   )
 }
