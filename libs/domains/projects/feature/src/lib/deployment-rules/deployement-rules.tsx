@@ -201,7 +201,9 @@ function DeploymentRulesContent({ organizationId, projectId, linkNewRule }: Depl
         size="md"
         variant="outline"
         onClick={() =>
-          hasClusters ? navigate({ to: linkNewRule }) : navigate({ to: `/organization/${organizationId}/clusters/new` })
+          hasClusters
+            ? navigate({ to: linkNewRule })
+            : navigate({ to: '/organization/$organizationId/cluster/new', params: { organizationId } })
         }
       >
         {hasClusters ? 'Add rule' : 'Create a Cluster'}
