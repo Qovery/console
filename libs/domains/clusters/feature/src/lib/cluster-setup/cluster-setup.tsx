@@ -4,12 +4,13 @@ import { type OS, useOS } from '@qovery/shared/util-hooks'
 const INSTALL_COMMANDS: Record<OS, string> = {
   macos: 'brew install Qovery/qovery-cli/qovery-cli',
   linux: 'curl -s https://get.qovery.com | bash',
-  windows: 'scoop bucket add qovery https://github.com/Qovery/scoop-qovery-cli.git\nscoop install qovery-cli',
+  windows: 'scoop bucket add qovery https://github.com/Qovery/scoop-qovery-cli.git && scoop install qovery-cli',
 }
 
 export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) {
   const os = useOS()
-  const installCommand = INSTALL_COMMANDS[os]
+  const clusterCommand = type === 'LOCAL_DEMO' ? 'qovery demo up' : 'qovery cluster install'
+  const fullCommand = `${INSTALL_COMMANDS[os]} && ${clusterCommand}`
 
   return (
     <>
@@ -29,48 +30,25 @@ export function ClusterSetup({ type }: { type: 'LOCAL_DEMO' | 'SELF_MANAGED' }) 
       )}
       <ul className="flex flex-col gap-4 text-sm font-medium text-neutral">
         <li className="rounded border border-neutral p-3">
-          <h5 className="mb-1 text-sm font-medium">1. Download/Update Qovery CLI</h5>
+          <h5 className="mb-1 text-sm font-medium">
+            1. {type === 'LOCAL_DEMO' ? 'Install Qovery CLI and your cluster' : 'Install Qovery CLI and your cluster'}
+          </h5>
           <p className="mb-2 font-normal text-neutral-subtle">
-            Download and install the Qovery CLI (or update its version to the latest version).
+            Run the following command from your terminal to install the Qovery CLI and start the installation.
           </p>
           <pre className="flex items-start justify-between gap-2 whitespace-pre-wrap break-all rounded-sm bg-surface-neutral-subtle p-3 font-mono text-neutral">
             <span>
               <span className="select-none">$ </span>
-              {installCommand}
+              {fullCommand}
             </span>
-            <CopyButton content={installCommand} />
+            <CopyButton content={fullCommand} />
           </pre>
           <ExternalLink className="mt-2" href="https://www.qovery.com/docs/cli/overview#installation">
             See all install options
           </ExternalLink>
         </li>
         <li className="rounded border border-neutral p-3">
-          <h5 className="mb-1 text-sm font-medium">
-            2. {type === 'LOCAL_DEMO' ? 'Install your cluster' : 'Install Qovery on your cluster'}
-          </h5>
-          <p className="mb-2 font-normal text-neutral-subtle">
-            Run the following command from your terminal and follow the instructions.
-          </p>
-          <pre className="flex items-center justify-between rounded-sm bg-surface-neutral-subtle p-3 font-mono text-neutral">
-            {type === 'LOCAL_DEMO' ? (
-              <>
-                <span>
-                  <span className="select-none">$ </span>qovery demo up
-                </span>
-                <CopyButton content="qovery demo up" />
-              </>
-            ) : (
-              <>
-                <span>
-                  <span className="select-none">$ </span>qovery cluster install
-                </span>
-                <CopyButton content="qovery cluster install" />
-              </>
-            )}
-          </pre>
-        </li>
-        <li className="rounded border border-neutral p-3">
-          <h5 className="mb-1 text-sm font-medium">3. Deploy your first environment!</h5>
+          <h5 className="mb-1 text-sm font-medium">2. Deploy your first environment!</h5>
           <p className="font-normal text-neutral-subtle">
             Once the installation is completed, get back to the Qovery console and deploy your first environment on your
             brand new cluster.
