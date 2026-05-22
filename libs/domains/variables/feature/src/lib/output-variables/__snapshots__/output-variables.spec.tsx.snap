@@ -173,7 +173,7 @@ exports[`OutputVariables when serviceType is TERRAFORM should match snapshot 1`]
                   class="group flex h-5 w-full items-center gap-2 text-sm"
                 >
                   <span
-                    class="truncate text-neutral"
+                    class="text-neutral"
                     data-testid="visible_value"
                   >
                     admin2

@@ -1,8 +1,9 @@
-import { type ChangeEventHandler, type ComponentPropsWithoutRef, useState } from 'react'
+import { type ChangeEventHandler, type ComponentPropsWithoutRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import { CopyToClipboardButtonIcon } from '../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
 import { Icon } from '../icon/icon'
 import { Tooltip } from '../tooltip/tooltip'
+import { Truncate } from '../truncate/truncate'
 
 export interface PasswordShowHideProps extends ComponentPropsWithoutRef<'input'> {
   value: string
@@ -44,8 +45,8 @@ export function PasswordShowHide({
           className="h-full w-full bg-transparent text-neutral outline-none"
         />
       ) : (
-        <span className="truncate text-neutral" data-testid="visible_value">
-          {value}
+        <span className="text-neutral" data-testid="visible_value">
+          <Truncate text={value ?? ''} truncateLimit={50} />
         </span>
       )}
       {canCopy && Boolean(value) && (
