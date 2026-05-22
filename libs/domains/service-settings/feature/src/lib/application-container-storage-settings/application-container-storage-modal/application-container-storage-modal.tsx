@@ -118,7 +118,7 @@ export function ApplicationContainerStorageModal({
           rules={{
             required: 'Please enter a value.',
             pattern: {
-              message: 'Use /data format; / alone is not allowed',
+              message: 'Use a path like /data; / alone is not allowed',
               value: /^\/.?\w+.*/,
             },
           }}
