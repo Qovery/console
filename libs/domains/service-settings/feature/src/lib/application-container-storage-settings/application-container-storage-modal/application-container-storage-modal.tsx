@@ -118,7 +118,7 @@ export function ApplicationContainerStorageModal({
           rules={{
             required: 'Please enter a value.',
             pattern: {
-              message: 'The mount point must start with a slash followed by a directory name, for example /data',
+              message: 'Use /data format; / alone is not allowed',
               value: /^\/.?\w+.*/,
             },
           }}
