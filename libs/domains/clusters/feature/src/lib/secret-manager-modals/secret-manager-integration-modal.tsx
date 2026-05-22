@@ -1,5 +1,5 @@
 import { type Cluster, type ClusterRegion, type SecretManagerAccess } from 'qovery-typescript-axios'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
@@ -17,24 +17,15 @@ import {
   Navbar,
   Tooltip,
 } from '@qovery/shared/ui'
+import { isGcpCluster } from '@qovery/shared/util-clusters'
 import {
-  hasAwsAutomaticIntegrationConfigured,
-  hasAwsManualStsIntegrationConfigured,
-  isAwsCluster,
-  isGcpCluster,
-} from '@qovery/shared/util-clusters'
+  getActiveProviderConstraints,
+  getSecretManagerIntegrationConstraints,
+  type IntegrationTab,
+} from './secret-manager-integration-constraints'
+import { type SecretManagerOption } from './secret-manager-integration.types'
 
-export type SecretManagerOption = {
-  value: 'AWS_SECRET_MANAGER' | 'AWS_PARAMETER_STORE' | 'GCP_SECRET_MANAGER'
-  label: string
-  icon: 'AWS' | 'GCP'
-  typeLabel: string
-}
-
-type IntegrationTab = 'automatic' | 'manual'
-
-const AUTOMATIC_INTEGRATION_DISABLED_TOOLTIP =
-  'Automatic integration is unavailable because an STS manual integration is already configured.'
+export type { SecretManagerOption } from './secret-manager-integration.types'
 
 export interface SecretManagerIntegrationModalProps {
   option: SecretManagerOption
@@ -53,34 +44,19 @@ export function SecretManagerIntegrationModal({
   onClose,
   onSubmit,
 }: SecretManagerIntegrationModalProps) {
-  // const isAwsIntegration = option.icon === 'AWS'
-  const hasConfiguredAwsAutomaticIntegration = hasAwsAutomaticIntegrationConfigured(
-    cluster?.secret_manager_accesses ?? []
+  const constraints = useMemo(
+    () => getSecretManagerIntegrationConstraints({ option, cluster, mode, initialValues }),
+    [option, cluster, mode, initialValues]
   )
-  const hasConfiguredAwsManualStsIntegration = hasAwsManualStsIntegrationConfigured(
-    cluster?.secret_manager_accesses ?? []
-  )
-  const blockedAwsIntegrationLabel = hasConfiguredAwsAutomaticIntegration
-    ? 'Automatic'
-    : hasConfiguredAwsManualStsIntegration
-      ? 'Assume role'
-      : undefined
-  const isEditingAwsManualStsIntegration = mode === 'edit' && initialValues?.authentication.mode === 'AWS_ROLE_ARN'
-  // const isEditingAwsManualStsIntegration =
-  //   mode === 'edit' && initialValues?.authentication.mode === 'Manual' && initialValues?.authType === 'sts'
-  const shouldForceStaticCredentials = Boolean(blockedAwsIntegrationLabel) && !isEditingAwsManualStsIntegration
-  const shouldForceStsCredentials = isEditingAwsManualStsIntegration
-  const showAutomaticTabFirst = !blockedAwsIntegrationLabel
-  const disabledIntegrationTooltip =
-    shouldForceStaticCredentials && blockedAwsIntegrationLabel
-      ? `Static credentials are the only available option while ${blockedAwsIntegrationLabel} integration is configured`
-      : AUTOMATIC_INTEGRATION_DISABLED_TOOLTIP
 
-  const [activeTab, setActiveTab] = useState<IntegrationTab>(() =>
-    initialValues?.authentication.mode === 'AWS_ROLE_ARN' || Boolean(blockedAwsIntegrationLabel)
-      ? 'manual'
-      : 'automatic'
-  )
+  const { navigation, layout, aws, defaultAuthenticationMode } = constraints
+  const { isManualOnlyGcpIntegration, isManualOnlyAwsIntegration } = layout
+  const providerTabs = getActiveProviderConstraints(constraints)
+  const automaticTab = providerTabs?.automatic
+  const awsManualAuthenticationTypeSelect = aws?.manual.authenticationTypeSelect
+
+  const [activeTab, setActiveTab] = useState<IntegrationTab>(() => navigation.defaultTab)
+
   const methods = useForm<SecretManagerAccess>({
     mode: 'onChange',
     defaultValues: {
@@ -89,8 +65,23 @@ export function SecretManagerIntegrationModal({
         ...initialValues?.endpoint,
         mode: initialValues?.endpoint.mode ?? option.value,
       },
+      authentication: {
+        ...initialValues?.authentication,
+        mode: initialValues?.authentication?.mode ?? defaultAuthenticationMode,
+      },
     },
   })
+
+  const setActiveTabWithDefaultAuthentication = useCallback(
+    (tab: IntegrationTab) => {
+      setActiveTab(tab)
+
+      if (tab === 'manual' && !methods.getValues('authentication.mode') && defaultAuthenticationMode) {
+        methods.setValue('authentication.mode', defaultAuthenticationMode, { shouldDirty: false })
+      }
+    },
+    [defaultAuthenticationMode, methods]
+  )
   const { data: cloudProviders = [] } = useCloudProviders()
   const awsRegions: Value[] = useMemo(() => {
     const awsProvider = cloudProviders.find((p) => p.short_name === 'AWS')
@@ -114,23 +105,6 @@ export function SecretManagerIntegrationModal({
   }, [cloudProviders])
   const regions = option.value === 'GCP_SECRET_MANAGER' ? gcpRegions : awsRegions
 
-  const authenticationOptions: { label: string; value: SecretManagerAccess['authentication']['mode'] }[] = useMemo(
-    () =>
-      shouldForceStaticCredentials
-        ? [{ label: 'Static credentials', value: 'AWS_STATIC_CREDENTIALS' }]
-        : [
-            { label: 'Assume role via STS', value: 'AWS_ROLE_ARN' },
-            { label: 'Static credentials', value: 'AWS_STATIC_CREDENTIALS' },
-          ],
-    [shouldForceStaticCredentials]
-  )
-
-  // const authenticationType = methods.watch('authenticationType')
-  // const isStaticCredentials = authenticationType === 'static'
-  const isGcpSecretManagerOnAws = option.value === 'GCP_SECRET_MANAGER' && isAwsCluster(cluster)
-  const isAwsSecretManagerOnGcp = option.icon === 'AWS' && isGcpCluster(cluster)
-  const isManualOnlyGcpIntegration = isGcpSecretManagerOnAws
-  const isManualOnlyAwsIntegration = isAwsSecretManagerOnGcp
   const isGcpManualTabOnGcpSecretManager =
     option.value === 'GCP_SECRET_MANAGER' && isGcpCluster(cluster) && activeTab === 'manual'
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
@@ -155,36 +129,6 @@ export function SecretManagerIntegrationModal({
       }
     },
   })
-
-  useEffect(() => {
-    // TODO [secret-manager] Double check these conditions and simplify if possible, they should be mutually exclusive but it's not very clear
-    //
-    //
-    // if (shouldForceStaticCredentials) {
-    //   methods.setValue('authenticationType', 'static', { shouldDirty: false })
-    //   return
-    // }
-    // if (shouldForceStsCredentials) {
-    //   methods.setValue('authenticationType', 'sts', { shouldDirty: false })
-    //   return
-    // }
-    // if (
-    //   (activeTab === 'manual' || isManualOnlyAwsIntegration) &&
-    //   !authenticationType &&
-    //   !(isGcpCluster(cluster) && option.value === 'gcp-secret')
-    // ) {
-    //   methods.setValue('authenticationType', isManualOnlyAwsIntegration ? 'static' : 'sts', { shouldDirty: false })
-    // }
-  }, [
-    activeTab,
-    // authenticationType,
-    cluster,
-    isManualOnlyAwsIntegration,
-    methods,
-    option.value,
-    shouldForceStsCredentials,
-    shouldForceStaticCredentials,
-  ])
 
   const handleSubmit = methods.handleSubmit((data) => {
     const isAutomaticIntegration =
@@ -393,15 +337,15 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   value={field.value}
                   placeholder="Select an authentication type"
                   onChange={(value) => field.onChange(value as string)}
-                  options={authenticationOptions}
-                  disabled={shouldForceStaticCredentials}
+                  options={awsManualAuthenticationTypeSelect?.options ?? []}
+                  disabled={awsManualAuthenticationTypeSelect?.disabled}
                   portal
                 />
               )
 
-              if (shouldForceStaticCredentials) {
+              if (awsManualAuthenticationTypeSelect?.disabled) {
                 return (
-                  <Tooltip content={disabledIntegrationTooltip}>
+                  <Tooltip content={awsManualAuthenticationTypeSelect.disabledTooltip}>
                     <div className="w-full">{authenticationTypeSelect}</div>
                   </Tooltip>
                 )
@@ -608,24 +552,24 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
           </p>
           <div className="-mx-5 mt-4 border-b border-neutral px-5">
             <Navbar.Root activeId={activeTab}>
-              {showAutomaticTabFirst ? (
+              {navigation.showAutomaticTabFirst ? (
                 <>
                   <Navbar.Item id="automatic" onClick={() => setActiveTab('automatic')}>
                     <Icon iconName="link" iconStyle="regular" />
                     Automatic integration
                   </Navbar.Item>
-                  <Navbar.Item id="manual" onClick={() => setActiveTab('manual')}>
+                  <Navbar.Item id="manual" onClick={() => setActiveTabWithDefaultAuthentication('manual')}>
                     <Icon iconName="hammer" iconStyle="regular" />
                     Manual integration
                   </Navbar.Item>
                 </>
               ) : (
                 <>
-                  <Navbar.Item id="manual" onClick={() => setActiveTab('manual')}>
+                  <Navbar.Item id="manual" onClick={() => setActiveTabWithDefaultAuthentication('manual')}>
                     <Icon iconName="hammer" iconStyle="regular" />
                     Manual integration
                   </Navbar.Item>
-                  <Tooltip content={disabledIntegrationTooltip}>
+                  <Tooltip content={automaticTab?.disabledTooltip}>
                     <Navbar.Item
                       id="automatic"
                       aria-disabled
