@@ -17,6 +17,7 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
   } = useServiceDeploymentAndRunningStatuses({ environmentId: environment.id, service })
   const subAction = deploymentStatus?.status_details?.sub_action
   const triggerAction = subAction !== 'NONE' ? subAction : deploymentStatus?.status_details?.action
+  const hasDeploymentError = deploymentStatus?.status_details?.status === 'ERROR'
 
   const WrappingLink = useCallback(
     ({ children }: PropsWithChildren) => {
@@ -49,7 +50,11 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
     <div className="flex w-full items-center justify-between gap-4">
       <WrappingLink>
         <div className="group flex items-center gap-2">
-          <DeploymentAction status={triggerAction} textClassName="group-hover:underline" />
+          <DeploymentAction
+            status={triggerAction}
+            iconClassName={hasDeploymentError ? 'text-negative' : 'text-neutral-subtle'}
+            textClassName="group-hover:underline"
+          />
           {deploymentStatus?.last_deployment_date && (
             <span className="font-normal text-neutral-subtle group-hover:text-neutral-subtle group-hover:underline">
               {timeAgo(new Date(deploymentStatus.last_deployment_date))} ago
@@ -59,7 +64,7 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
       </WrappingLink>
       <div>
         <div className="flex items-center gap-2">
-          {deploymentStatus?.status_details?.status === 'ERROR' && (
+          {hasDeploymentError && (
             <div onClick={(e) => e.stopPropagation()} onKeyDown={(e) => e.stopPropagation()}>
               <DevopsCopilotTroubleshootTrigger
                 source="service-deployment-list"
@@ -73,7 +78,10 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
             </div>
           )}
           <WrappingLink>
-            <StatusChip status={deploymentStatus?.status_details?.status} variant="monochrome" />
+            <StatusChip
+              status={deploymentStatus?.status_details?.status}
+              variant={hasDeploymentError ? 'default' : 'monochrome'}
+            />
           </WrappingLink>
         </div>
       </div>
