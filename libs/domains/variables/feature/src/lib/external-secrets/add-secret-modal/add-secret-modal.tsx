@@ -5,6 +5,7 @@ import { match } from 'ts-pattern'
 import { useSecretManagerProviderSecrets } from '@qovery/domains/clusters/feature'
 import { Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { getSecretManagerProvider } from '@qovery/shared/util-clusters'
+import { useDebounce } from '@qovery/shared/util-hooks'
 import { type ExternalSecretRow } from '../external-secrets-utils'
 
 export type SecretSourceOption = {
@@ -74,13 +75,15 @@ export function AddSecretModal({
   })
   const { enableAlertClickOutside } = useModal()
   const [referenceInput, setReferenceInput] = useState('')
+  const debouncedReferenceInput = useDebounce(referenceInput, 300)
   const isDirty = methods.formState.isDirty
 
   const secretNameValue = methods.watch('secretName')
   const selectedSourceId = methods.watch('source')
 
-  const { data: providerSecrets } = useSecretManagerProviderSecrets({
+  const { data: providerSecrets, isFetching: isFetchingProviderSecrets } = useSecretManagerProviderSecrets({
     secretManagerAccessId: selectedSourceId,
+    namePrefix: debouncedReferenceInput,
     enabled: Boolean(selectedSourceId),
   })
 
@@ -210,6 +213,7 @@ export function AddSecretModal({
                 onInputChange={(value) => setReferenceInput(value)}
                 isSearchable
                 isCreatable
+                isLoading={isFetchingProviderSecrets || referenceInput !== debouncedReferenceInput}
                 placeholder="Reference"
                 error={error?.message}
               />
