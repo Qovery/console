@@ -1,18 +1,23 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import clsx from 'clsx'
-import { type Cluster, type Project } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterStatus, type Project } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { AnimatedGradientText, Icon, Link } from '@qovery/shared/ui'
+import { AnimatedGradientText, Icon, Link, LogoIcon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useDeploymentProgress } from './use-deployment-progress'
 
 export interface ClusterDeploymentProgressCardProps {
   organizationId: string
   clusters: Cluster[]
+  clusterStatuses: ClusterStatus[]
 }
 
-export function ClusterDeploymentProgressCard({ organizationId, clusters }: ClusterDeploymentProgressCardProps) {
+export function ClusterDeploymentProgressCard({
+  organizationId,
+  clusters,
+  clusterStatuses,
+}: ClusterDeploymentProgressCardProps) {
   const { data: projects = [] } = useProjects({ organizationId })
 
   if (!clusters.length) return null
@@ -20,15 +25,25 @@ export function ClusterDeploymentProgressCard({ organizationId, clusters }: Clus
   return (
     <div className="fixed bottom-5 right-4 w-96 max-w-full overflow-hidden rounded-xl border border-neutral bg-surface-neutral shadow-md">
       <AccordionPrimitive.Root type="multiple" className="w-full">
-        {clusters.map((cluster) => (
-          <Item key={cluster.id} cluster={cluster} project={projects[0]} />
-        ))}
+        {clusters.map((cluster) => {
+          const clusterStatus = clusterStatuses.find(({ cluster_id }) => cluster_id === cluster.id)
+
+          return <Item key={cluster.id} cluster={cluster} clusterStatus={clusterStatus} project={projects[0]} />
+        })}
       </AccordionPrimitive.Root>
     </div>
   )
 }
 
-function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
+function Item({
+  cluster,
+  clusterStatus,
+  project,
+}: {
+  cluster: Cluster
+  clusterStatus?: ClusterStatus
+  project: Project
+}) {
   const { steps, progressValue, currentStepLabel, state } = useDeploymentProgress({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
@@ -40,11 +55,53 @@ function Item({ cluster, project }: { cluster: Cluster; project: Project }) {
   const isFailed = state === 'failed'
   const isSucceeded = state === 'succeeded'
   const isDone = isFailed || isSucceeded
+  const isMaintenance = clusterStatus?.status === 'DEPLOYING' && clusterStatus.reason === 'MAINTENANCE'
 
   const statusText = match(state)
     .with('failed', () => 'creation failed')
     .with('succeeded', () => 'created')
     .otherwise(() => '')
+
+  if (isMaintenance) {
+    return (
+      <div className="[&:not(:last-child)]:border-b [&:not(:last-child)]:border-neutral">
+        <div className="relative flex w-full items-center justify-between gap-4 overflow-hidden bg-surface-neutral-component p-4 text-sm shadow-sm [&:only-child]:rounded-xl">
+          <div className="flex min-w-0 shrink-0 items-center gap-2 text-neutral">
+            <span aria-hidden="true" className="inline-flex h-[14px] w-[14px] items-center justify-center">
+              <svg className="-rotate-90" width="14" height="14" viewBox="0 0 14 14" role="presentation">
+                <circle
+                  cx="7"
+                  cy="7"
+                  r={6.25}
+                  stroke="var(--neutral-6)"
+                  strokeWidth={1.5}
+                  fill="none"
+                  strokeLinecap="round"
+                />
+                <circle
+                  cx="7"
+                  cy="7"
+                  r={6.25}
+                  stroke="var(--brand-9)"
+                  strokeWidth={1.5}
+                  fill="none"
+                  strokeLinecap="round"
+                  strokeDasharray={2 * Math.PI * 6.25}
+                  strokeDashoffset={2 * Math.PI * 6.25 * (1 - progressValue)}
+                  className="transition-[stroke-dashoffset] duration-300 ease-out"
+                />
+              </svg>
+            </span>
+            <span className="truncate">{cluster.name}</span>
+          </div>
+          <span className="flex min-w-0 items-center gap-1.5 text-neutral-subtle">
+            <LogoIcon className="h-4 w-4 text-neutral-subtle" />
+            <span className="truncate">Qovery maintenance ongoing</span>
+          </span>
+        </div>
+      </div>
+    )
+  }
 
   if (isInstalling && !isDone) {
     return (

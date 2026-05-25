@@ -23,7 +23,18 @@ import {
   useDeployCluster,
 } from '@qovery/domains/clusters/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, ErrorBoundary, Heading, Icon, Section, Skeleton, Tooltip } from '@qovery/shared/ui'
+import {
+  Badge,
+  Callout,
+  ErrorBoundary,
+  ExternalLink,
+  Heading,
+  Icon,
+  Section,
+  Skeleton,
+  Tooltip,
+} from '@qovery/shared/ui'
+import { QOVERY_DOCS_URL } from '@qovery/shared/util-const'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/overview')({
@@ -212,6 +223,21 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           </div>
         ) : (
           <>
+            {clusterStatus?.status === 'DEPLOYING' && clusterStatus.reason === 'MAINTENANCE' && (
+              <Callout.Root color="sky">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text className="text-info">
+                  <Callout.TextHeading>
+                    Qovery maintenance is in progress, your applications availability will not be affected.
+                  </Callout.TextHeading>
+                </Callout.Text>
+                <ExternalLink href={`${QOVERY_DOCS_URL}/getting-started/configuration/maintenance#update-strategy`}>
+                  Maintenance strategy
+                </ExternalLink>
+              </Callout.Root>
+            )}
             <div className="grid gap-6 lg:grid-cols-3">
               <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
               <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />

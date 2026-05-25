@@ -147,7 +147,11 @@ function RouteComponent() {
         )
       }
       {!shouldHideProgressCard && deployingClusters && deployingClusters.length > 0 && (
-        <ClusterDeploymentProgressCard organizationId={organizationId} clusters={deployingClusters} />
+        <ClusterDeploymentProgressCard
+          organizationId={organizationId}
+          clusters={deployingClusters}
+          clusterStatuses={clusterStatuses ?? []}
+        />
       )}
     </>
   )
