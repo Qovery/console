@@ -34,7 +34,7 @@ jest.mock('../hooks/use-variables/use-variables', () => ({
         aliased_variable: {
           id: 'ade79b9c-8515-47f2-8069-83c1e8c35c4d',
           key: 'QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME',
-          value: 'admin2',
+          value: '||QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME||',
           scope: 'BUILT_IN',
           variable_type: 'BUILT_IN',
           mount_path: null,
@@ -200,7 +200,14 @@ const variableListProps: VariableListProps = {
   onDeleteVariable: jest.fn(),
 }
 
+const scrollIntoView = jest.fn()
+
 describe('VariableList', () => {
+  beforeEach(() => {
+    scrollIntoView.mockClear()
+    Element.prototype.scrollIntoView = scrollIntoView
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(<VariableList {...variableListProps} />)
     expect(baseElement).toBeTruthy()
@@ -222,6 +229,25 @@ describe('VariableList', () => {
     expect(within(customSection as HTMLElement).getAllByRole('row')).toHaveLength(9)
     expect(within(builtInSection as HTMLElement).getAllByRole('row')).toHaveLength(2)
     expect(screen.getAllByTestId('doppler-tag')).toHaveLength(1)
+  })
+  it('should display alias values from the base variable', () => {
+    renderWithProviders(<VariableList {...variableListProps} />)
+    const row = screen.getByText('DB_USERNAME').closest('tr')
+    expect(row).toBeTruthy()
+    expect(within(row as HTMLElement).getByText('admin2')).toBeInTheDocument()
+  })
+  it('should scroll to the base variable when clicking an alias reference', async () => {
+    const { userEvent } = renderWithProviders(<VariableList {...variableListProps} />)
+    const row = screen.getByText('DB_USERNAME').closest('tr')
+    expect(row).toBeTruthy()
+
+    await userEvent.click(
+      within(row as HTMLElement).getByRole('button', {
+        name: /scroll to QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME variable/i,
+      })
+    )
+
+    expect(scrollIntoView).toHaveBeenCalledWith({ behavior: 'smooth', block: 'center' })
   })
   it('should display Service for service-backed scope values', () => {
     renderWithProviders(<VariableList {...variableListProps} />)

@@ -12,7 +12,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { Fragment, useMemo, useState } from 'react'
+import { Fragment, useCallback, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ExternalServiceEnum, IconEnum, ServiceTypeEnum } from '@qovery/shared/enums'
 import { APPLICATION_GENERAL_URL, APPLICATION_URL, DATABASE_GENERAL_URL, DATABASE_URL } from '@qovery/shared/routes'
@@ -51,6 +51,10 @@ import { VariableListSkeleton } from './variable-list-skeleton'
 const { Table } = TablePrimitives
 
 type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
+
+function getVariableRowId(variableId: string): string {
+  return `variable-row-${variableId}`
+}
 
 function isServiceScopeServiceType(serviceType: VariableResponse['service_type']): boolean {
   return match(serviceType)
@@ -125,6 +129,10 @@ export function VariableList({
   const [builtInGlobalFilter, setBuiltInGlobalFilter] = useState('')
   const nonBuiltInVariables = useMemo(() => variables.filter((variable) => variable.scope !== 'BUILT_IN'), [variables])
   const builtInVariables = useMemo(() => variables.filter((variable) => variable.scope === 'BUILT_IN'), [variables])
+  const variablesById = useMemo(() => new Map(variables.map((variable) => [variable.id, variable])), [variables])
+  const scrollToVariable = useCallback((variableId: string) => {
+    document.getElementById(getVariableRowId(variableId))?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  }, [])
 
   const _onCreateVariable: (
     variable: VariableResponse,
@@ -176,6 +184,7 @@ export function VariableList({
       },
     })
   }
+
   const isServiceScope = match(props)
     .with(
       { scope: 'APPLICATION' },
@@ -253,6 +262,8 @@ export function VariableList({
         size: showServiceLinkColumn ? 40 : 45,
         cell: (info) => {
           const variable = info.row.original
+          const aliasedVariable = variable.aliased_variable
+          const overriddenVariable = variable.overridden_variable
 
           return (
             <div className="flex flex-col justify-center gap-1">
@@ -266,12 +277,12 @@ export function VariableList({
                       {variable.owned_by}
                     </span>
                   )}
-                  {variable.aliased_variable && (
+                  {aliasedVariable && (
                     <span className="mr-2 inline-flex h-4 items-center rounded bg-surface-info-component px-1 text-2xs font-bold text-info">
                       ALIAS
                     </span>
                   )}
-                  {variable.overridden_variable && (
+                  {overriddenVariable && (
                     <span className="mr-2 inline-flex h-4 items-center rounded bg-surface-brand-component px-1 text-2xs font-bold text-brand">
                       OVERRIDE
                     </span>
@@ -300,11 +311,20 @@ export function VariableList({
                   </Tooltip>
                 )}
               </div>
-              {(variable.aliased_variable || variable.overridden_variable) && (
-                <div className="flex flex-row gap-1 text-2xs text-neutral-subtle">
+              {(aliasedVariable || overriddenVariable) && (
+                <div className="flex min-w-0 flex-row gap-1 text-2xs text-neutral-subtle">
                   <Icon iconName="arrow-turn-down-right" iconStyle="regular" className="text-2xs text-neutral-subtle" />
-                  {variable.aliased_variable && <span>{variable.aliased_variable.key}</span>}
-                  {variable.overridden_variable && <span>{variable.overridden_variable.key}</span>}
+                  {aliasedVariable && (
+                    <button
+                      type="button"
+                      aria-label={`Scroll to ${aliasedVariable.key} variable`}
+                      className="max-w-full truncate rounded-sm text-left hover:underline focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text"
+                      onClick={() => scrollToVariable(aliasedVariable.id)}
+                    >
+                      {aliasedVariable.key}
+                    </button>
+                  )}
+                  {overriddenVariable && <span>{overriddenVariable.key}</span>}
                 </div>
               )}
             </div>
@@ -411,7 +431,13 @@ export function VariableList({
             )
           }
           if (variable.variable_type === 'ALIAS') {
-            return null
+            const baseVariable = variable.aliased_variable ? variablesById.get(variable.aliased_variable.id) : undefined
+            const aliasValue = baseVariable?.value ?? variable.aliased_variable?.value
+
+            if (aliasValue !== null && aliasValue !== undefined) {
+              return <PasswordShowHide value={aliasValue} isSecret={baseVariable?.is_secret ?? variable.is_secret} />
+            }
+            return <PasswordShowHide value="" isSecret={true} />
           }
           if (variable.value !== null) {
             return <PasswordShowHide value={variable.value} isSecret={variable.is_secret} />
@@ -506,7 +532,9 @@ export function VariableList({
         },
       }),
     ],
-    [variables.length, _onCreateVariable, _onEditVariable, props.scope]
+    // Keep the pre-existing modal handlers local so this alias change does not rewrite modal behavior.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [variables, variablesById, props, scrollToVariable, showServiceLinkColumn]
   )
   const nonBuiltInColumns = useMemo(() => {
     if (!isEnvironmentScope && props.scope !== 'PROJECT') {
@@ -698,7 +726,10 @@ export function VariableList({
           <Table.Body>
             {tableInstance.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
-                <Table.Row className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', rowGridClassName)}>
+                <Table.Row
+                  id={getVariableRowId(row.original.id)}
+                  className={twMerge('h-16 items-center hover:bg-surface-neutral-subtle', rowGridClassName)}
+                >
                   {row.getVisibleCells().map((cell) => (
                     // Keep this cell hidden (not removed) in service scope (custom vars only) to preserve visual column alignment
                     <Table.Cell

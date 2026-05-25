@@ -83,7 +83,7 @@ exports[`VariableList should match snapshot 1`] = `
                     class="relative inline-block"
                   >
                     <button
-                      aria-controls="radix-:r28:"
+                      aria-controls="radix-:r2b:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
@@ -105,7 +105,7 @@ exports[`VariableList should match snapshot 1`] = `
                     class="relative inline-block"
                   >
                     <button
-                      aria-controls="radix-:r2b:"
+                      aria-controls="radix-:r2e:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
@@ -127,7 +127,7 @@ exports[`VariableList should match snapshot 1`] = `
                     class="relative inline-block"
                   >
                     <button
-                      aria-controls="radix-:r2e:"
+                      aria-controls="radix-:r2h:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
@@ -163,6 +163,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <tr
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                id="variable-row-810e3ca6-6e42-40b1-952a-4cfcef3c9fd1"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -206,15 +207,19 @@ exports[`VariableList should match snapshot 1`] = `
                       </div>
                     </div>
                     <div
-                      class="flex flex-row gap-1 text-2xs text-neutral-subtle"
+                      class="flex min-w-0 flex-row gap-1 text-2xs text-neutral-subtle"
                     >
                       <i
                         aria-hidden="true"
                         class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-subtle"
                       />
-                      <span>
+                      <button
+                        aria-label="Scroll to QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME variable"
+                        class="max-w-full truncate rounded-sm text-left hover:underline focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text"
+                        type="button"
+                      >
                         QOVERY_OUTPUT_JOB_Z33962E52_DB_USERNAME
-                      </span>
+                      </button>
                     </div>
                   </div>
                 </td>
@@ -227,7 +232,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-label="actions"
                     class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
-                    id="radix-:r2g:"
+                    id="radix-:r2j:"
                     type="button"
                   >
                     <i
@@ -238,7 +243,28 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
-                />
+                >
+                  <span
+                    class="group flex h-5 w-full items-center gap-2 text-sm"
+                  >
+                    <span
+                      class="truncate text-neutral"
+                      data-testid="visible_value"
+                    >
+                      admin2
+                    </span>
+                    <span
+                      class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-['']"
+                      data-state="closed"
+                      data-testid="copy-container"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                      />
+                    </span>
+                  </span>
+                </td>
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative opacity-0"
                 />
@@ -265,6 +291,7 @@ exports[`VariableList should match snapshot 1`] = `
               </tr>
               <tr
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                id="variable-row-fcdbdda7-3133-4bba-9a72-36f8a0519848"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -308,15 +335,19 @@ exports[`VariableList should match snapshot 1`] = `
                       </div>
                     </div>
                     <div
-                      class="flex flex-row gap-1 text-2xs text-neutral-subtle"
+                      class="flex min-w-0 flex-row gap-1 text-2xs text-neutral-subtle"
                     >
                       <i
                         aria-hidden="true"
                         class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-subtle"
                       />
-                      <span>
+                      <button
+                        aria-label="Scroll to QOVERY_OUTPUT_JOB_ZEDE360F7_DB_HOST variable"
+                        class="max-w-full truncate rounded-sm text-left hover:underline focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text"
+                        type="button"
+                      >
                         QOVERY_OUTPUT_JOB_ZEDE360F7_DB_HOST
-                      </span>
+                      </button>
                     </div>
                   </div>
                 </td>
@@ -329,7 +360,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-label="actions"
                     class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
-                    id="radix-:r2k:"
+                    id="radix-:r2o:"
                     type="button"
                   >
                     <i
@@ -340,7 +371,28 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
-                />
+                >
+                  <span
+                    class="group flex h-5 w-full items-center gap-2 text-sm"
+                  >
+                    <span
+                      class="truncate text-neutral"
+                      data-testid="visible_value"
+                    >
+                      mydbhostname
+                    </span>
+                    <span
+                      class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-['']"
+                      data-state="closed"
+                      data-testid="copy-container"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                      />
+                    </span>
+                  </span>
+                </td>
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative opacity-0"
                 />
@@ -367,6 +419,7 @@ exports[`VariableList should match snapshot 1`] = `
               </tr>
               <tr
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                id="variable-row-fb121e5a-ff31-4835-a328-8ed561133174"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -420,7 +473,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-label="actions"
                     class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
-                    id="radix-:r2o:"
+                    id="radix-:r2t:"
                     type="button"
                   >
                     <i
@@ -566,6 +619,7 @@ exports[`VariableList should match snapshot 1`] = `
               </tr>
               <tr
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                id="variable-row-57658166-0318-430c-8d8a-610a34d98910"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -614,7 +668,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-label="actions"
                     class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
-                    id="radix-:r2s:"
+                    id="radix-:r31:"
                     type="button"
                   >
                     <i
@@ -673,6 +727,7 @@ exports[`VariableList should match snapshot 1`] = `
               </tr>
               <tr
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                id="variable-row-acac4cee-5627-437b-9fd3-d0947d92da4b"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -721,7 +776,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-label="actions"
                     class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
-                    id="radix-:r31:"
+                    id="radix-:r36:"
                     type="button"
                   >
                     <i
@@ -873,6 +928,7 @@ exports[`VariableList should match snapshot 1`] = `
               </tr>
               <tr
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                id="variable-row-831751ab-ebfb-4036-97f7-31689e3d8ed9"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -971,7 +1027,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-label="actions"
                     class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
-                    id="radix-:r37:"
+                    id="radix-:r3c:"
                     type="button"
                   >
                     <i
@@ -1123,6 +1179,7 @@ exports[`VariableList should match snapshot 1`] = `
               </tr>
               <tr
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                id="variable-row-3486e37c-5cdc-4e50-bcf7-75b1c818eb5f"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -1180,7 +1237,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-label="actions"
                     class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
-                    id="radix-:r3d:"
+                    id="radix-:r3i:"
                     type="button"
                   >
                     <i
@@ -1239,6 +1296,7 @@ exports[`VariableList should match snapshot 1`] = `
               </tr>
               <tr
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[32px_minmax(0,40%)_50px_minmax(0,20%)_minmax(0,15%)_minmax(0,10%)_minmax(0,12%)]"
+                id="variable-row-7d1b18cf-9ea1-4b00-b82a-4b5d152aa6eb"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -1282,15 +1340,19 @@ exports[`VariableList should match snapshot 1`] = `
                       </div>
                     </div>
                     <div
-                      class="flex flex-row gap-1 text-2xs text-neutral-subtle"
+                      class="flex min-w-0 flex-row gap-1 text-2xs text-neutral-subtle"
                     >
                       <i
                         aria-hidden="true"
                         class="fa-regular fa-arrow-turn-down-right text-2xs text-neutral-subtle"
                       />
-                      <span>
+                      <button
+                        aria-label="Scroll to FOO variable"
+                        class="max-w-full truncate rounded-sm text-left hover:underline focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-text"
+                        type="button"
+                      >
                         FOO
-                      </span>
+                      </button>
                     </div>
                   </div>
                 </td>
@@ -1303,7 +1365,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-label="actions"
                     class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
-                    id="radix-:r3i:"
+                    id="radix-:r3n:"
                     type="button"
                   >
                     <i
@@ -1314,7 +1376,28 @@ exports[`VariableList should match snapshot 1`] = `
                 </td>
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
-                />
+                >
+                  <span
+                    class="group flex h-5 w-full items-center gap-2 text-sm"
+                  >
+                    <span
+                      class="truncate text-neutral"
+                      data-testid="visible_value"
+                    >
+                      fdgsdfg
+                    </span>
+                    <span
+                      class="relative cursor-pointer transition after:absolute after:inset-[-4px] after:block after:content-['']"
+                      data-state="closed"
+                      data-testid="copy-container"
+                    >
+                      <i
+                        aria-hidden="true"
+                        class="fa-regular fa-copy text-neutral-subtle opacity-0 hover:text-neutral group-hover:opacity-100"
+                      />
+                    </span>
+                  </span>
+                </td>
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative opacity-0"
                 />
@@ -1406,7 +1489,7 @@ exports[`VariableList should match snapshot 1`] = `
                     class="relative inline-block"
                   >
                     <button
-                      aria-controls="radix-:r3n:"
+                      aria-controls="radix-:r3t:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
@@ -1428,7 +1511,7 @@ exports[`VariableList should match snapshot 1`] = `
                     class="relative inline-block"
                   >
                     <button
-                      aria-controls="radix-:r3q:"
+                      aria-controls="radix-:r40:"
                       aria-expanded="false"
                       aria-haspopup="dialog"
                       class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong h-7 px-2 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral whitespace-nowrap text-xs"
@@ -1464,6 +1547,7 @@ exports[`VariableList should match snapshot 1`] = `
             >
               <tr
                 class="h-16 items-center hover:bg-surface-neutral-subtle grid w-full grid-cols-[minmax(0,calc(40%_+_32px))_50px_minmax(0,30%)_minmax(0,15%)_minmax(0,12%)]"
+                id="variable-row-ade79b9c-8515-47f2-8069-83c1e8c35c4d"
               >
                 <td
                   class="border-neutral px-4 py-0 flex h-full items-center first:relative"
@@ -1496,7 +1580,7 @@ exports[`VariableList should match snapshot 1`] = `
                     aria-label="actions"
                     class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-8 justify-center"
                     data-state="closed"
-                    id="radix-:r3s:"
+                    id="radix-:r42:"
                     type="button"
                   >
                     <i

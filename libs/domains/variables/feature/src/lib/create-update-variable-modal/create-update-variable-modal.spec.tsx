@@ -88,6 +88,15 @@ describe('CreateUpdateVariableModal', () => {
     expect(screen.getByRole('button', { name: /open editor/i })).toBeInTheDocument()
   })
 
+  it('should render the description field as a single-line input', () => {
+    renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="VALUE" />)
+
+    const descriptionField = screen.getByLabelText('Description (optional)')
+
+    expect(descriptionField).toBeInstanceOf(HTMLInputElement)
+    expect(descriptionField).not.toBeInstanceOf(HTMLTextAreaElement)
+  })
+
   it('should not render the open editor button for aliases', () => {
     renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="ALIAS" variable={baseVariable} />)
 
