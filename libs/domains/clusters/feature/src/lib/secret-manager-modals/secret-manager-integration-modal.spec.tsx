@@ -1,3 +1,4 @@
+import selectEvent from 'react-select-event'
 import {
   hasAwsAutomaticIntegrationConfigured,
   hasAwsManualStsIntegrationConfigured,
@@ -23,6 +24,16 @@ const defaultProps: SecretManagerIntegrationModalProps = {
     icon: 'AWS',
     typeLabel: 'AWS Secret manager',
   },
+  cluster: {
+    cloud_provider: 'AWS',
+    infrastructure_outputs: {
+      kind: 'EKS',
+      cluster_name: 'my-cluster',
+      cluster_arn: 'arn:aws:eks:eu-west-3:123456789012:cluster/my-cluster',
+      cluster_oidc_issuer: 'https://oidc.eks.eu-west-3.amazonaws.com/id/1234567890',
+      vpc_id: 'vpc-1234567890',
+    },
+  } as SecretManagerIntegrationModalProps['cluster'],
   onClose: jest.fn(),
   onSubmit: jest.fn(),
 }
@@ -116,6 +127,31 @@ describe('SecretManagerIntegrationModal', () => {
 
     expect(screen.getByLabelText('Authentication type')).toBeEnabled()
     expect(screen.getByText('Select an authentication type to see the required information.')).toBeInTheDocument()
+  })
+
+  it('should disable assume role when the cluster has not been successfully deployed yet', async () => {
+    const { userEvent } = renderWithProviders(
+      <SecretManagerIntegrationModal
+        {...defaultProps}
+        cluster={{ cloud_provider: 'AWS' } as SecretManagerIntegrationModalProps['cluster']}
+      />
+    )
+
+    await userEvent.click(screen.getByText('Manual integration'))
+
+    expect(screen.getByLabelText('Authentication type')).toBeEnabled()
+    expect(screen.queryByText('Select an authentication type to see the required information.')).not.toBeInTheDocument()
+
+    selectEvent.openMenu(screen.getByLabelText('Authentication type'))
+
+    const assumeRoleOption = screen.getByText('Assume role via STS')
+    await userEvent.hover(assumeRoleOption)
+
+    expect(
+      await screen.findByRole('tooltip', {
+        name: 'The cluster must be successfully deployed before setting up a Secret Manager with Assume role via STS.',
+      })
+    ).toBeInTheDocument()
   })
 
   it('should disable automatic tab when a GCP automatic integration already exists', async () => {

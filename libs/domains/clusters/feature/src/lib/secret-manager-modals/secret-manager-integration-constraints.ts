@@ -11,6 +11,7 @@ import { type SecretManagerOption } from './secret-manager-integration.types'
 
 export type IntegrationTab = 'automatic' | 'manual'
 export type SecretManagerProvider = 'aws' | 'gcp'
+type AwsAuthenticationMode = SecretManagerAccess['authentication']['mode']
 
 type IntegrationMode = 'create' | 'edit'
 
@@ -43,11 +44,13 @@ const TOOLTIP = {
     'Static credentials are the only available option while an automatic integration is configured.',
   staticCredentialsOnlyBecauseAssumeRole:
     'Static credentials are the only available option while an assume role integration is configured.',
+  assumeRoleUnavailableBecauseClusterNotInstalled:
+    'The cluster must be successfully deployed before setting up a Secret Manager with Assume role via STS.',
 } as const
 
 export type AwsManualAuthenticationTypeSelect = IntegrationTabConstraints & {
-  options: { label: string; value: SecretManagerAccess['authentication']['mode'] }[]
-  defaultValue?: SecretManagerAccess['authentication']['mode']
+  options: { label: string; value: AwsAuthenticationMode; isDisabled?: boolean; disabledTooltip?: string }[]
+  defaultValue?: AwsAuthenticationMode
 }
 
 export type AwsIntegrationConstraints = {
@@ -123,24 +126,42 @@ const getAwsAutomaticTab = (
 
 const getDefaultAwsAuthenticationMode = (
   options: AwsManualAuthenticationTypeSelect['options']
-): SecretManagerAccess['authentication']['mode'] | undefined =>
-  options.length === 1 ? options[0].value : undefined
+): AwsAuthenticationMode | undefined => {
+  const enabledOptions = options.filter((option) => !option.isDisabled)
+
+  return enabledOptions.length === 1 ? enabledOptions[0].value : undefined
+}
+
+const hasClusterOidcIssuer = (cluster?: Cluster) => {
+  const infrastructureOutputs = cluster?.infrastructure_outputs
+
+  return Boolean(
+    infrastructureOutputs && 'cluster_oidc_issuer' in infrastructureOutputs && infrastructureOutputs.cluster_oidc_issuer
+  )
+}
 
 const getAwsManualAuthenticationTypeSelect = (
   existing: ExistingIntegrations,
+  cluster: Cluster | undefined,
   isEditingAssumeRole: boolean,
-  editingAuthenticationMode: SecretManagerAccess['authentication']['mode'] | undefined
+  editingAuthenticationMode: AwsAuthenticationMode | undefined
 ): AwsIntegrationConstraints['manual']['authenticationTypeSelect'] => {
   const isExclusiveAuthAlreadyUsed = existing.awsAutomatic || existing.awsAssumeRole
   const canAddAssumeRole = !isExclusiveAuthAlreadyUsed
+  const canUseAssumeRole = hasClusterOidcIssuer(cluster) || isEditingAssumeRole
   const mustUseStaticCredentials = isExclusiveAuthAlreadyUsed && !isEditingAssumeRole
 
-  const options: { label: string; value: SecretManagerAccess['authentication']['mode'] }[] = [
+  const options: AwsManualAuthenticationTypeSelect['options'] = [
     { label: 'Static credentials', value: 'AWS_STATIC_CREDENTIALS' },
   ]
 
   if (canAddAssumeRole) {
-    options.unshift({ label: 'Assume role via STS', value: 'AWS_ROLE_ARN' })
+    options.unshift({
+      label: 'Assume role via STS',
+      value: 'AWS_ROLE_ARN',
+      isDisabled: !canUseAssumeRole,
+      disabledTooltip: !canUseAssumeRole ? TOOLTIP.assumeRoleUnavailableBecauseClusterNotInstalled : undefined,
+    })
   }
 
   return {
@@ -155,10 +176,7 @@ const getAwsManualAuthenticationTypeSelect = (
   }
 }
 
-const getGcpAutomaticTab = (
-  existing: ExistingIntegrations,
-  isEditingAutomatic: boolean
-): IntegrationTabConstraints => {
+const getGcpAutomaticTab = (existing: ExistingIntegrations, isEditingAutomatic: boolean): IntegrationTabConstraints => {
   if (isEditingAutomatic || !existing.gcpAutomatic) {
     return ENABLED_TAB
   }
@@ -189,14 +207,16 @@ const getDefaultTab = ({
 
 const buildAwsConstraints = (
   existing: ExistingIntegrations,
+  cluster: Cluster | undefined,
   isEditingAutomatic: boolean,
   isEditingAssumeRole: boolean,
-  editingAuthenticationMode: SecretManagerAccess['authentication']['mode'] | undefined
+  editingAuthenticationMode: AwsAuthenticationMode | undefined
 ): AwsIntegrationConstraints => {
   const manual = {
     ...ENABLED_TAB,
     authenticationTypeSelect: getAwsManualAuthenticationTypeSelect(
       existing,
+      cluster,
       isEditingAssumeRole,
       editingAuthenticationMode
     ),
@@ -208,7 +228,10 @@ const buildAwsConstraints = (
   }
 }
 
-const buildGcpConstraints = (existing: ExistingIntegrations, isEditingAutomatic: boolean): GcpIntegrationConstraints => ({
+const buildGcpConstraints = (
+  existing: ExistingIntegrations,
+  isEditingAutomatic: boolean
+): GcpIntegrationConstraints => ({
   automatic: getGcpAutomaticTab(existing, isEditingAutomatic),
   manual: ENABLED_TAB,
 })
@@ -239,7 +262,13 @@ export function getSecretManagerIntegrationConstraints({
 
   const aws =
     isAwsIntegration && !isAwsSecretManagerOnGcpCluster
-      ? buildAwsConstraints(otherIntegrations, isEditingAutomatic, isEditingAssumeRole, editingAuthenticationMode)
+      ? buildAwsConstraints(
+          otherIntegrations,
+          cluster,
+          isEditingAutomatic,
+          isEditingAssumeRole,
+          editingAuthenticationMode
+        )
       : null
 
   const gcp = isGcpSecretManagerOnGcpCluster ? buildGcpConstraints(otherIntegrations, isEditingAutomatic) : null

@@ -17,6 +17,16 @@ const gcpOption: SecretManagerOption = {
 }
 
 const awsCluster = { cloud_provider: CloudVendorEnum.AWS } as Cluster
+const installedAwsCluster: Cluster = {
+  ...awsCluster,
+  infrastructure_outputs: {
+    kind: 'EKS',
+    cluster_name: 'my-cluster',
+    cluster_arn: 'arn:aws:eks:eu-west-3:123456789012:cluster/my-cluster',
+    cluster_oidc_issuer: 'https://oidc.eks.eu-west-3.amazonaws.com/id/1234567890',
+    vpc_id: 'vpc-1234567890',
+  },
+}
 const gcpCluster = { cloud_provider: CloudVendorEnum.GCP } as Cluster
 
 const awsStaticIntegration = {
@@ -47,7 +57,7 @@ describe('getSecretManagerIntegrationConstraints', () => {
   it('should allow all AWS options when no integration exists yet', () => {
     const constraints = getSecretManagerIntegrationConstraints({
       option: awsOption,
-      cluster: { ...awsCluster, secret_manager_accesses: [] },
+      cluster: { ...installedAwsCluster, secret_manager_accesses: [] },
     })
 
     expect(constraints.activeProvider).toBe('aws')
@@ -61,6 +71,49 @@ describe('getSecretManagerIntegrationConstraints', () => {
     expect(constraints.aws?.manual.authenticationTypeSelect.disabled).toBe(false)
     expect(constraints.aws?.manual.authenticationTypeSelect.defaultValue).toBeUndefined()
     expect(constraints.defaultAuthenticationMode).toBeUndefined()
+  })
+
+  it('should disable assume role when the cluster has not been successfully deployed yet', () => {
+    const constraints = getSecretManagerIntegrationConstraints({
+      option: awsOption,
+      cluster: { ...awsCluster, secret_manager_accesses: [] },
+    })
+
+    expect(constraints.aws?.manual.authenticationTypeSelect.options).toEqual([
+      {
+        label: 'Assume role via STS',
+        value: 'AWS_ROLE_ARN',
+        isDisabled: true,
+        disabledTooltip:
+          'The cluster must be successfully deployed before setting up a Secret Manager with Assume role via STS.',
+      },
+      { label: 'Static credentials', value: 'AWS_STATIC_CREDENTIALS' },
+    ])
+    expect(constraints.aws?.manual.authenticationTypeSelect.defaultValue).toBe('AWS_STATIC_CREDENTIALS')
+    expect(constraints.defaultAuthenticationMode).toBe('AWS_STATIC_CREDENTIALS')
+  })
+
+  it('should disable assume role when infrastructure outputs do not include a cluster OIDC issuer', () => {
+    const constraints = getSecretManagerIntegrationConstraints({
+      option: awsOption,
+      cluster: {
+        ...installedAwsCluster,
+        infrastructure_outputs: {
+          ...installedAwsCluster.infrastructure_outputs,
+          cluster_oidc_issuer: '',
+        },
+        secret_manager_accesses: [],
+      },
+    })
+
+    expect(constraints.aws?.manual.authenticationTypeSelect.options[0]).toEqual({
+      label: 'Assume role via STS',
+      value: 'AWS_ROLE_ARN',
+      isDisabled: true,
+      disabledTooltip:
+        'The cluster must be successfully deployed before setting up a Secret Manager with Assume role via STS.',
+    })
+    expect(constraints.aws?.manual.authenticationTypeSelect.defaultValue).toBe('AWS_STATIC_CREDENTIALS')
   })
 
   it('should only allow static credentials when an automatic AWS integration already exists', () => {
