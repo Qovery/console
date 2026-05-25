@@ -135,6 +135,7 @@ describe('StepGeneral', () => {
 
     await selectEvent.select(screen.getByLabelText('Cloud provider'), 'Gcp', { container: document.body })
     const regionSelect = await screen.findByLabelText('Region')
+
     selectEvent.openMenu(regionSelect)
 
     expect(await screen.findAllByText('ARM')).toHaveLength(1)

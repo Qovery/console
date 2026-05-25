@@ -3,6 +3,7 @@ import posthog from 'posthog-js'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import {
@@ -23,9 +24,21 @@ import { KedaSettings } from '../keda/components/keda-settings'
 import { FixedInstancesMode } from './fixed-instances-mode'
 import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 
+const CPU_ARCHITECTURE_OPTIONS = [
+  { label: 'Default', value: 'DEFAULT' },
+  { label: 'ARM64', value: 'ARM64' },
+  { label: 'AMD64', value: 'AMD64' },
+]
+
+type ClusterRegionWithArmSupport = {
+  name: string
+  arm_supported?: boolean
+}
+
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
   displayInstanceLimits?: boolean
+  displayCpuArchitecture?: boolean
   service?: Exclude<AnyService, Helm | Database>
   minInstances?: number
   maxInstances?: number
@@ -35,6 +48,7 @@ export interface ApplicationSettingsResourcesProps {
 export function ApplicationSettingsResources({
   displayWarningCpu,
   displayInstanceLimits = true,
+  displayCpuArchitecture = false,
   service,
   minInstances = 1,
   maxInstances = 1000,
@@ -45,6 +59,7 @@ export function ApplicationSettingsResources({
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId, suspense: true })
+  const { data: cloudProviders = [] } = useCloudProviders()
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
   const isKedaCluster = Boolean(cluster?.keda?.enabled)
@@ -54,6 +69,12 @@ export function ApplicationSettingsResources({
   const environmentMode = environment?.mode
 
   const cloudProvider = environment?.cloud_provider.provider
+  const gcpProvider = cloudProviders.find((provider) => provider.short_name === 'GCP')
+  const clusterRegion = gcpProvider?.regions?.find((region) => region.name === cluster?.region) as
+    | ClusterRegionWithArmSupport
+    | undefined
+  const canChooseCpuArchitecture =
+    displayCpuArchitecture && cluster?.cloud_provider === 'GCP' && clusterRegion?.arm_supported === true
 
   const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 
@@ -259,6 +280,21 @@ export function ApplicationSettingsResources({
             />
           )}
         />
+        {canChooseCpuArchitecture && (
+          <Controller
+            name="cpu_architecture"
+            control={control}
+            render={({ field }) => (
+              <InputSelect
+                label="CPU architecture"
+                options={CPU_ARCHITECTURE_OPTIONS}
+                hint="Select which node CPU architecture this workload can run on"
+                onChange={field.onChange}
+                value={field.value || 'DEFAULT'}
+              />
+            )}
+          />
+        )}
         {isKarpenterCluster && (
           <Controller
             name="gpu"

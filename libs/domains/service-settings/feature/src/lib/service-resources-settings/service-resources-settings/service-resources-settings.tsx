@@ -22,12 +22,17 @@ import {
   buildEditServicePayload,
   buildHpaAdvancedSettingsPayload,
   loadHpaSettingsFromAdvancedSettings,
+  toCpuArchitectureRequest,
 } from '@qovery/shared/util-services'
 
 type ServiceResourcesService = Exclude<EditableService, Database | Helm>
 
 interface ServiceResourcesFormData extends ApplicationResourcesData {
   storage_gib?: number
+}
+
+type ServiceWithCpuArchitecture = {
+  cpu_architecture?: Exclude<ApplicationResourcesData['cpu_architecture'], 'DEFAULT' | undefined> | null
 }
 
 export interface ServiceResourcesSettingsProps {
@@ -75,6 +80,7 @@ function getDefaultValues(
     gpu: match(service)
       .with({ serviceType: 'TERRAFORM' }, (terraform) => terraform.job_resources.gpu)
       .otherwise((resourceService) => resourceService.gpu || 0),
+    cpu_architecture: (service as ServiceWithCpuArchitecture).cpu_architecture ?? undefined,
     autoscaling_mode: autoscalingMode,
     scalers: match(service)
       .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (resourceService) => {
@@ -145,6 +151,7 @@ function ServiceResourcesSettingsForm({
           <form className="space-y-10" onSubmit={onSubmit}>
             <ApplicationSettingsResources
               displayWarningCpu={displayWarningCpu}
+              displayCpuArchitecture={service.serviceType !== 'TERRAFORM'}
               service={service}
               advancedSettings={advancedSettings}
             />
@@ -202,6 +209,7 @@ export function ServiceResourcesSettings({ service }: ServiceResourcesSettingsPr
       memory: Number(data.memory),
       cpu: Number(data.cpu),
       gpu: Number(data.gpu),
+      cpu_architecture: toCpuArchitectureRequest(data.cpu_architecture),
     }
 
     const requestWithInstances =

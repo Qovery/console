@@ -1,5 +1,6 @@
 export * from './lib/get-service-state-colors'
 export * from './lib/build-edit-service-payload'
+export * from './lib/cpu-architecture/cpu-architecture'
 export * from './lib/keda/autoscaling-payload/autoscaling-payload'
 export * from './lib/keda/hpa-advanced-settings/hpa-advanced-settings'
 export * from './lib/service-templates'
