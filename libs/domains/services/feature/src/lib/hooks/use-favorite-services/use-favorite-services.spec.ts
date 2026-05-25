@@ -3,7 +3,8 @@ import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { act, renderHook } from '@qovery/shared/util-tests'
 import useFavoriteServices from './use-favorite-services'
 
-jest.mock('@uidotdev/usehooks', () => ({
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
   useLocalStorage: jest.fn(),
 }))
 
