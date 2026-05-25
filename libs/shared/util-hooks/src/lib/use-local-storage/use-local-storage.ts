@@ -51,7 +51,7 @@ export function useLocalStorage<T>(key: string, initialValue?: T): [T, Dispatch<
   const setState = useCallback(
     (value: SetStateAction<T>) => {
       try {
-        const currentValue = parseLocalStorageValue(store, initialValue as T)
+        const currentValue = parseLocalStorageValue(getLocalStorageItem(key), initialValue as T)
         const nextState = typeof value === 'function' ? (value as (previousValue: T) => T)(currentValue) : value
 
         if (nextState === undefined || nextState === null) {
@@ -63,7 +63,7 @@ export function useLocalStorage<T>(key: string, initialValue?: T): [T, Dispatch<
         console.warn(error)
       }
     },
-    [initialValue, key, store]
+    [initialValue, key]
   )
 
   useEffect(() => {

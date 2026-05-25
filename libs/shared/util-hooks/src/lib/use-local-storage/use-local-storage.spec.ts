@@ -9,7 +9,7 @@ describe('useLocalStorage', () => {
   it('should read JSON values from localStorage', () => {
     localStorage.setItem('key', JSON.stringify('github'))
 
-    const { result } = renderHook(() => useLocalStorage('key', undefined))
+    const { result } = renderHook(() => useLocalStorage<string | undefined>('key', undefined))
 
     expect(result.current[0]).toBe('github')
   })
