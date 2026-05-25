@@ -1,36 +1,76 @@
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
-import { useLocalStorage as useLocalStorageBase } from '@uidotdev/usehooks'
+import { type Dispatch, type SetStateAction, useCallback, useEffect, useSyncExternalStore } from 'react'
 
-function safelyParseLocalStorageValue(value: string) {
+function dispatchStorageEvent(key: string, newValue: string | null) {
+  window.dispatchEvent(new StorageEvent('storage', { key, newValue }))
+}
+
+function setLocalStorageItem<T>(key: string, value: T) {
+  const localStorageValue = typeof value === 'string' ? value : JSON.stringify(value)
+  window.localStorage.setItem(key, localStorageValue)
+  dispatchStorageEvent(key, localStorageValue)
+}
+
+function removeLocalStorageItem(key: string) {
+  window.localStorage.removeItem(key)
+  dispatchStorageEvent(key, null)
+}
+
+function getLocalStorageItem(key: string) {
+  return window.localStorage.getItem(key)
+}
+
+function subscribeToLocalStorage(callback: () => void) {
+  window.addEventListener('storage', callback)
+  return () => window.removeEventListener('storage', callback)
+}
+
+function getLocalStorageServerSnapshot(): never {
+  throw Error('useLocalStorage is a client-only hook')
+}
+
+function parseLocalStorageValue<T>(storedValue: string | null, initialValue: T) {
+  if (storedValue === null) {
+    return initialValue
+  }
+
   try {
-    JSON.parse(value)
-    return true
+    return JSON.parse(storedValue) as T
   } catch {
-    return false
+    if (typeof initialValue === 'string' || initialValue === undefined || initialValue === null) {
+      return storedValue as T
+    }
+
+    return initialValue
   }
 }
 
-// This function ensures that the value in localStorage is a JSON object.
-// If the value is not a JSON object, it will be converted to a JSON object.
-// If the value is a string, it will be stored as a string.
-// If the value is undefined or null, it will be removed from localStorage.
-function ensureJsonLocalStorageValue<T>(key: string, initialValue?: T) {
-  const value = window.localStorage.getItem(key)
+export function useLocalStorage<T>(key: string, initialValue?: T): [T, Dispatch<SetStateAction<T>>] {
+  const getSnapshot = () => getLocalStorageItem(key)
+  const store = useSyncExternalStore(subscribeToLocalStorage, getSnapshot, getLocalStorageServerSnapshot)
 
-  if (value === null || safelyParseLocalStorageValue(value)) {
-    return
-  }
+  const setState = useCallback(
+    (value: SetStateAction<T>) => {
+      try {
+        const currentValue = parseLocalStorageValue(store, initialValue as T)
+        const nextState = typeof value === 'function' ? (value as (previousValue: T) => T)(currentValue) : value
 
-  if (typeof initialValue === 'string' || initialValue === undefined || initialValue === null) {
-    window.localStorage.setItem(key, JSON.stringify(value))
-    return
-  }
+        if (nextState === undefined || nextState === null) {
+          removeLocalStorageItem(key)
+        } else {
+          setLocalStorageItem(key, nextState)
+        }
+      } catch (error) {
+        console.warn(error)
+      }
+    },
+    [initialValue, key, store]
+  )
 
-  window.localStorage.setItem(key, JSON.stringify(initialValue))
-}
+  useEffect(() => {
+    if (getLocalStorageItem(key) === null && typeof initialValue !== 'undefined') {
+      setLocalStorageItem(key, initialValue)
+    }
+  }, [initialValue, key])
 
-export function useLocalStorage<T>(key: string, initialValue?: T) {
-  ensureJsonLocalStorageValue(key, initialValue)
-
-  return useLocalStorageBase<T>(key, initialValue)
+  return [parseLocalStorageValue(store, initialValue as T), setState]
 }

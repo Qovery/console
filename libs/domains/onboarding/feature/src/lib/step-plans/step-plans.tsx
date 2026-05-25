@@ -6,6 +6,7 @@ import clsx from 'clsx'
 import { type FormEvent, type MutableRefObject, useMemo } from 'react'
 import { ENVIRONMENTS_URL } from '@qovery/shared/routes'
 import { Button, ExternalLink, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { fieldCardStyles } from '@qovery/shared/util-payment'
 import { Background } from './background'
@@ -43,8 +44,8 @@ export default function StepPlans(props: StepPlansProps) {
     isSubmitting,
   } = props
   const navigate = useNavigate()
-  const currentOrganizationId = localStorage.getItem('currentOrganizationId') || ''
-  const currentProjectId = localStorage.getItem('currentProjectId') || ''
+  const [currentOrganizationId = ''] = useLocalStorage<string>('currentOrganizationId', '')
+  const [currentProjectId = ''] = useLocalStorage<string>('currentProjectId', '')
 
   const dateFormatter = useMemo(
     () =>
