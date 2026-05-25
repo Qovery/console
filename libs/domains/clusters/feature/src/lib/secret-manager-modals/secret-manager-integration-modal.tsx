@@ -19,9 +19,9 @@ import {
 } from '@qovery/shared/ui'
 import { isGcpCluster } from '@qovery/shared/util-clusters'
 import {
+  type IntegrationTab,
   getActiveProviderConstraints,
   getSecretManagerIntegrationConstraints,
-  type IntegrationTab,
 } from './secret-manager-integration-constraints'
 import { type SecretManagerOption } from './secret-manager-integration.types'
 
@@ -173,10 +173,7 @@ export function SecretManagerIntegrationModal({
             curl https://setup.qovery.com/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role
             qovery-service-account{' '}
           </div>
-          <CopyButton
-            content=" curl https://setup.qovery.com/create_credentials_gcp.sh | \
-bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
-          />
+          <CopyButton content="curl https://setup.qovery.com/create_secret_manager_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_secrets_manager_role qovery-secrets-manager-sa" />
         </div>
       </div>
       <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
