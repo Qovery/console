@@ -230,7 +230,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
                 </Callout.Icon>
                 <Callout.Text className="text-info">
                   <Callout.TextHeading>
-                    Qovery maintenance is in progress, your applications availability will not be affected.
+                    Qovery maintenance is in progress with no impact on your applications availability.
                   </Callout.TextHeading>
                 </Callout.Text>
                 <ExternalLink href={`${QOVERY_DOCS_URL}/getting-started/configuration/maintenance#update-strategy`}>

@@ -57,8 +57,8 @@ function RouteComponent() {
             />
           </div>
           {clusterStatus.status === 'DEPLOYING' && clusterStatus.reason === 'MAINTENANCE' && (
-            <Banner color="brand" className="shrink-0 gap-2">
-              <span>Qovery maintenance is in progress, your applications availability will not be affected.</span>
+            <Banner color="brand" className="shrink-0 gap-3">
+              Qovery maintenance is in progress with no impact on your applications availability.
               <ExternalLink
                 href={`${QOVERY_DOCS_URL}/getting-started/configuration/maintenance#update-strategy`}
                 color="brand"
