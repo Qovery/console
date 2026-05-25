@@ -501,7 +501,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
           <div className="px-5 pt-5">
             <h2 className="text-lg font-medium text-neutral">{`${option.label} integration`}</h2>
             <p className="mt-1 text-sm text-neutral-subtle">
-              {`Link your ${option.icon === 'GCP' ? 'GCP' : 'AWS'} secret manager to use external secrets on all service running on your cluster`}
+              {`Link your ${option.icon === 'GCP' ? 'GCP' : 'AWS'} secret manager to use external secrets on all services running on your cluster`}
             </p>
           </div>
           <div className="flex flex-col gap-3 px-5 pb-6 pt-4">{renderGcpManualIntegrationSections()}</div>
@@ -525,7 +525,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
           <div className="px-5 pt-5">
             <h2 className="text-lg font-medium text-neutral">{`${option.label} integration`}</h2>
             <p className="mt-1 text-sm text-neutral-subtle">
-              {`Link your ${option.icon === 'GCP' ? 'GCP' : 'AWS'} secret manager to use external secrets on all service running on your cluster`}
+              {`Link your ${option.icon === 'GCP' ? 'GCP' : 'AWS'} secret manager to use external secrets on all services running on your cluster`}
             </p>
           </div>
           <div className="flex flex-col gap-4 px-5 pb-6 pt-4">{renderAwsManualIntegrationSections()}</div>
@@ -548,7 +548,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
         <div className="bg-surface-neutral-subtle px-5 pt-5">
           <h2 className="text-lg font-medium text-neutral">{`${option.label} integration`}</h2>
           <p className="mt-1 text-sm text-neutral-subtle">
-            {`Link your ${option.icon === 'GCP' ? 'GCP' : 'AWS'} secret manager to use external secrets on all service running on your cluster`}
+            {`Link your ${option.icon === 'GCP' ? 'GCP' : 'AWS'} secret manager to use external secrets on all services running on your cluster`}
           </p>
           <div className="-mx-5 mt-4 border-b border-neutral px-5">
             <Navbar.Root activeId={activeTab}>
