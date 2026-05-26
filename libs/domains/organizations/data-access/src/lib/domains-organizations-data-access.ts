@@ -434,6 +434,23 @@ export const mutations = {
     )
     return response.data
   },
+  async unlinkArgoCdDestinationClusterMapping({
+    organizationId,
+    agentClusterId,
+    argocdClusterUrl,
+  }: {
+    organizationId: string
+    agentClusterId: string
+    argocdClusterUrl: string
+  }) {
+    const response = await argoCdApi.deleteArgoCdDestinationClusterMapping(
+      organizationId,
+      agentClusterId,
+      argocdClusterUrl,
+      { headers: { 'Content-Type': 'application/json' } }
+    )
+    return response.data
+  },
   async listTfVarsFilesFromGitRepo({
     organizationId,
     repository,
