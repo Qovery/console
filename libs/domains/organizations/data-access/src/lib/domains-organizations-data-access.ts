@@ -436,16 +436,18 @@ export const mutations = {
   },
   async unlinkArgoCdDestinationClusterMapping({
     organizationId,
-    argoCdDestinationClusterMappingRequest,
+    agentClusterId,
+    argocdClusterUrl,
   }: {
     organizationId: string
-    argoCdDestinationClusterMappingRequest: Omit<ArgoCdDestinationClusterMappingRequest, 'cluster_id'> & {
-      cluster_id: null
-    }
+    agentClusterId: string
+    argocdClusterUrl: string
   }) {
-    const response = await argoCdApi.saveArgoCdDestinationClusterMapping(
+    const response = await argoCdApi.deleteArgoCdDestinationClusterMapping(
       organizationId,
-      argoCdDestinationClusterMappingRequest as unknown as ArgoCdDestinationClusterMappingRequest
+      agentClusterId,
+      argocdClusterUrl,
+      { headers: { 'Content-Type': 'application/json' } }
     )
     return response.data
   },

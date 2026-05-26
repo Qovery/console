@@ -9,7 +9,7 @@ import {
 import { type ReactNode, Suspense, useEffect, useMemo, useState } from 'react'
 import { useDeleteArgoCdCredentials } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Badge, Button, EmptyState, Icon, Link, ModalConfirmation, Section, useModal } from '@qovery/shared/ui'
+import { Badge, Button, EmptyState, Icon, Link, ModalConfirmation, Section, Tooltip, useModal } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useOrganizationArgoCdIntegrations } from '../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations'
@@ -224,16 +224,18 @@ function ArgoCdIntegrationCard({
                       </span>
                     </div>
                   </div>
-                  <Button
-                    size="md"
-                    variant="outline"
-                    color="neutral"
-                    iconOnly
-                    onClick={() => onUnlinkCluster(integration.credentials_id, cluster)}
-                    data-testid={`unlink-linked-cluster-${cluster.argocd_cluster_url}`}
-                  >
-                    <Icon iconName="link-broken" iconStyle="regular" />
-                  </Button>
+                  <Tooltip content="Unlink cluster">
+                    <Button
+                      size="md"
+                      variant="outline"
+                      color="neutral"
+                      iconOnly
+                      onClick={() => onUnlinkCluster(integration.credentials_id, cluster)}
+                      data-testid={`unlink-linked-cluster-${cluster.argocd_cluster_url}`}
+                    >
+                      <Icon iconName="link-broken" iconStyle="regular" />
+                    </Button>
+                  </Tooltip>
                 </div>
               ))}
             </div>
@@ -445,11 +447,8 @@ function SettingsArgoCdIntegrationContent() {
 
     await unlinkArgoCdDestinationClusterMapping({
       organizationId,
-      argoCdDestinationClusterMappingRequest: {
-        agent_cluster_id: integration.agent_cluster_id,
-        argocd_cluster_url: cluster.argocd_cluster_url,
-        cluster_id: null,
-      },
+      agentClusterId: integration.agent_cluster_id,
+      argocdClusterUrl: cluster.argocd_cluster_url,
     })
   }
 

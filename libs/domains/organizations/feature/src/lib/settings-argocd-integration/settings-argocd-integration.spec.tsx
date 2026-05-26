@@ -145,11 +145,8 @@ describe('SettingsArgoCdIntegration', () => {
 
     expect(mockUnlinkArgoCdDestinationClusterMapping).toHaveBeenCalledWith({
       organizationId: 'org-1',
-      argoCdDestinationClusterMappingRequest: {
-        agent_cluster_id: 'cluster-1',
-        argocd_cluster_url: 'https://kubernetes.default.svc',
-        cluster_id: null,
-      },
+      agentClusterId: 'cluster-1',
+      argocdClusterUrl: 'https://kubernetes.default.svc',
     })
   })
 
