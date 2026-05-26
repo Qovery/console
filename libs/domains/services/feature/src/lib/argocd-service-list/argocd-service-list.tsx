@@ -138,7 +138,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
 
                   <Table.Cell className="flex h-full items-center border-r border-neutral">
                     <div className="flex min-w-0 flex-col gap-0.5 text-ssm">
-                      {gitRepository ? (
+                      {gitRepository && (
                         <div className="flex min-w-0 items-center gap-2 text-neutral">
                           <Icon className="h-3 w-3 shrink-0 text-inherit" name={gitRepository.provider} />
                           <ExternalLink
@@ -156,7 +156,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                             </span>
                           </ExternalLink>
                         </div>
-                      ) : null}
+                      )}
                       {gitRepository?.branch && gitRepository.url ? (
                         <div className="flex min-w-0 items-center gap-2 text-neutral-subtle">
                           <Icon className="h-3 w-3 shrink-0 text-inherit" iconName="code-branch" iconStyle="regular" />
@@ -177,7 +177,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                         </div>
                       ) : null}
                     </div>
-                    {manifestRevision ? (
+                    {manifestRevision && (
                       <CopyToClipboard text={manifestRevision} className="ml-3 shrink-0">
                         <Button
                           type="button"
@@ -192,7 +192,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                           {manifestRevision.substring(0, 7)}
                         </Button>
                       </CopyToClipboard>
-                    ) : null}
+                    )}
                   </Table.Cell>
 
                   <Table.Cell className="flex h-full items-center justify-center">
