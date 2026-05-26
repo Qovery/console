@@ -27,7 +27,13 @@ export function ProjectList() {
         <Heading className="flex items-center gap-2">
           Your {pluralize(projects?.length ?? 0, 'project', 'projects')}
         </Heading>
-        <Button type="button" color="brand" size="sm" data-action="org-overview__new-project" onClick={() => createProjectModal()}>
+        <Button
+          type="button"
+          color="brand"
+          size="sm"
+          data-action="org-overview__new-project"
+          onClick={() => createProjectModal()}
+        >
           <Icon iconName="circle-plus" />
           New project
         </Button>
@@ -38,7 +44,12 @@ export function ProjectList() {
           description="Create your first project and environments to start deploying apps"
           icon="folder-closed"
         >
-          <Button color="neutral" size="md" data-action="org-overview__create-project" onClick={() => createProjectModal()}>
+          <Button
+            color="neutral"
+            size="md"
+            data-action="org-overview__create-project"
+            onClick={() => createProjectModal()}
+          >
             <Icon iconName="circle-plus" />
             Create project
           </Button>
