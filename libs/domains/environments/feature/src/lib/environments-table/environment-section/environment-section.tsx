@@ -35,7 +35,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
-  const isArgoCdEnvironment = overview.services_overview.managed_by === 'ARGOCD'
+  const isArgoCdEnvironment = overview.services_overview.managed_by !== 'QOVERY'
   const cellClassName = 'h-auto border-l border-neutral py-2'
   const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
     event.stopPropagation()

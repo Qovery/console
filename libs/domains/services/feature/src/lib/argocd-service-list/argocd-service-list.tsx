@@ -114,11 +114,24 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                   <Table.Cell className="flex h-full items-center border-r border-neutral">
                     <div className="flex min-w-0 items-center gap-3 text-sm font-medium">
                       <Icon name={IconEnum.ARGOCD} width={20} />
-                      <div className="flex min-w-0 flex-col">
+                      <Link
+                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                        params={{
+                          organizationId,
+                          projectId,
+                          environmentId,
+                          serviceId: service.id,
+                        }}
+                        onClick={stopRowNavigation}
+                        onKeyDown={stopRowNavigation}
+                        className="group min-w-0"
+                      >
                         <Tooltip content={service.name}>
-                          <span className="truncate">{service.name}</span>
+                          <span className="block min-w-0 truncate text-neutral group-hover:underline">
+                            {service.name}
+                          </span>
                         </Tooltip>
-                      </div>
+                      </Link>
                     </div>
                   </Table.Cell>
 

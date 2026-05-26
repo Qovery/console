@@ -17,6 +17,7 @@ import {
   useDeploymentStatus,
   useEnvironment,
 } from '@qovery/domains/environments/feature'
+import { useEnvironmentsOverview } from '@qovery/domains/projects/feature'
 import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
 import { ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
@@ -32,9 +33,12 @@ function RouteComponent() {
   const matchRoute = useMatchRoute()
 
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: environmentOverview } = useEnvironmentsOverview({ projectId, environmentId, suspense: true })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id, suspense: true })
   const { data: services = [] } = useServices({ environmentId, suspense: true })
+
+  console.log('environmentOverview', environmentOverview)
 
   useClusterRunningStatusSocket({
     organizationId,
@@ -64,8 +68,9 @@ function RouteComponent() {
   const shouldDisplayQoveryServicesSubtitle = isServicesListTab && hasArgoCdServices
   const shouldDisplayArgoCdServicesAboveQovery = isServicesListTab && hasArgoCdServices && !hasQoveryServices
   const shouldDisplayArgoCdServicesBelowQovery = isServicesListTab && hasArgoCdServices && hasQoveryServices
+  const isArgoCdEnvironment = environmentOverview?.[0]?.services_overview.managed_by !== 'QOVERY'
 
-  if (!environment || !deploymentStatus) {
+  if (!environment || !deploymentStatus || !environmentOverview) {
     return null
   }
 
@@ -80,6 +85,14 @@ function RouteComponent() {
                 <Heading className="min-w-0 max-w-full truncate">{environment.name}</Heading>
               </Tooltip>
               <EnvironmentStateChip className="ml-0.5 shrink-0" mode="running" environmentId={environment.id} />
+              {isArgoCdEnvironment && (
+                <>
+                  <span className="ml-0.5 mr-2 h-4 w-px shrink-0 bg-surface-neutral-component" />
+                  <span className="flex h-5 items-center rounded border border-argocd-subtle bg-surface-argocd-subtle px-0.5 text-xs font-bold uppercase text-argocd retina:border-[0.5px]">
+                    ARGOCD
+                  </span>
+                </>
+              )}
               <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
               <div className="flex shrink-0 items-center gap-1 text-ssm">
                 <ClusterAvatar cluster={cluster} size="sm" />
