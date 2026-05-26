@@ -6,6 +6,7 @@ import { SettingsArgoCdIntegration } from './settings-argocd-integration'
 
 const mockOpenModal = jest.fn()
 const mockCloseModal = jest.fn()
+const mockOpenModalConfirmation = jest.fn()
 const mockUnlinkArgoCdDestinationClusterMapping = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
@@ -30,6 +31,9 @@ jest.mock('@qovery/shared/ui', () => ({
     openModal: mockOpenModal,
     closeModal: mockCloseModal,
   }),
+  useModalConfirmation: () => ({
+    openModalConfirmation: mockOpenModalConfirmation,
+  }),
 }))
 
 describe('SettingsArgoCdIntegration', () => {
@@ -42,6 +46,7 @@ describe('SettingsArgoCdIntegration', () => {
     useParamsMock.mockReturnValue({ organizationId: 'org-1' } as never)
     mockOpenModal.mockReset()
     mockCloseModal.mockReset()
+    mockOpenModalConfirmation.mockReset()
     mockUnlinkArgoCdDestinationClusterMapping.mockReset()
   })
 
@@ -110,7 +115,7 @@ describe('SettingsArgoCdIntegration', () => {
     expect(screen.getByText('Connected')).toBeInTheDocument()
   })
 
-  it('should unlink a linked cluster mapping', async () => {
+  it('should open a confirmation modal before unlinking a linked cluster mapping', async () => {
     mockUnlinkArgoCdDestinationClusterMapping.mockResolvedValue({})
     useOrganizationArgoCdIntegrationsMock.mockReturnValue({
       data: [
@@ -142,6 +147,18 @@ describe('SettingsArgoCdIntegration', () => {
     const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration />)
 
     await userEvent.click(screen.getByTestId('unlink-linked-cluster-https://kubernetes.default.svc'))
+
+    expect(mockUnlinkArgoCdDestinationClusterMapping).not.toHaveBeenCalled()
+    expect(mockOpenModalConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Unlink ArgoCD cluster',
+        confirmationMethod: 'action',
+        confirmationAction: 'unlink',
+        placeholder: 'Enter "unlink"',
+      })
+    )
+
+    await mockOpenModalConfirmation.mock.calls[0][0].action()
 
     expect(mockUnlinkArgoCdDestinationClusterMapping).toHaveBeenCalledWith({
       organizationId: 'org-1',
