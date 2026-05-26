@@ -2,6 +2,7 @@ import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import { useParams } from '@tanstack/react-router'
 import {
   type ArgoCdInstanceMappingResponse,
+  type ArgoCdLinkedClusterDetails,
   type ArgoCdUnlinkedClusterDetails,
   type KubernetesEnum,
 } from 'qovery-typescript-axios'
@@ -13,6 +14,7 @@ import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useOrganizationArgoCdIntegrations } from '../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations'
 import { useSaveArgoCdDestinationClusterMapping } from '../hooks/use-save-argocd-destination-cluster-mapping/use-save-argocd-destination-cluster-mapping'
+import { useUnlinkArgoCdDestinationClusterMapping } from '../hooks/use-unlink-argocd-destination-cluster-mapping/use-unlink-argocd-destination-cluster-mapping'
 import { ArgoCdIntegrationCardSkeleton } from './argocd-integration-skeleton'
 import { ConnectArgoCdModal } from './connect-argocd-modal/connect-argocd-modal'
 import { LinkClusterModal, type LinkClusterModalResponse } from './link-cluster-modal/link-cluster-modal'
@@ -92,9 +94,16 @@ interface ArgoCdIntegrationCardProps {
     cluster: ArgoCdUnlinkedClusterDetails,
     response: LinkClusterModalResponse
   ) => void
+  onUnlinkCluster: (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => void
 }
 
-function ArgoCdIntegrationCard({ integration, onEdit, onDelete, onLinkCluster }: ArgoCdIntegrationCardProps) {
+function ArgoCdIntegrationCard({
+  integration,
+  onEdit,
+  onDelete,
+  onLinkCluster,
+  onUnlinkCluster,
+}: ArgoCdIntegrationCardProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const [isLinkedSectionOpen, setIsLinkedSectionOpen] = useState(true)
@@ -215,6 +224,16 @@ function ArgoCdIntegrationCard({ integration, onEdit, onDelete, onLinkCluster }:
                       </span>
                     </div>
                   </div>
+                  <Button
+                    size="md"
+                    variant="outline"
+                    color="neutral"
+                    iconOnly
+                    onClick={() => onUnlinkCluster(integration.credentials_id, cluster)}
+                    data-testid={`unlink-linked-cluster-${cluster.argocd_cluster_url}`}
+                  >
+                    <Icon iconName="link-broken" iconStyle="regular" />
+                  </Button>
                 </div>
               ))}
             </div>
@@ -230,6 +249,10 @@ function ArgoCdIntegrationCard({ integration, onEdit, onDelete, onLinkCluster }:
             onOpenChange={setIsUnlinkedSectionOpen}
             hasBottomBorder={false}
           >
+            <p className="mb-3 text-sm text-neutral-subtle">
+              Unlinked clusters are clusters detected by ArgoCD that are not yet associated with a cluster in Qovery.
+              Add the cluster to Qovery, then link it here to display the applications running on it.
+            </p>
             <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral-subtle">
               {integration.unlinked_clusters.map((cluster) => (
                 <div
@@ -324,6 +347,7 @@ function SettingsArgoCdIntegrationContent() {
   const { openModal, closeModal } = useModal()
   const { mutateAsync: deleteArgoCdCredentials } = useDeleteArgoCdCredentials({ organizationId })
   const { mutateAsync: saveArgoCdDestinationClusterMapping } = useSaveArgoCdDestinationClusterMapping()
+  const { mutateAsync: unlinkArgoCdDestinationClusterMapping } = useUnlinkArgoCdDestinationClusterMapping()
   const [integrationsState, setIntegrationsState] = useState<ArgoCdInstanceMappingResponse[]>([])
 
   useEffect(() => {
@@ -412,6 +436,23 @@ function SettingsArgoCdIntegrationContent() {
     })
   }
 
+  const unlinkCluster = async (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => {
+    const integration = integrationsState.find(({ credentials_id }) => credentials_id === integrationId)
+
+    if (!integration) {
+      return
+    }
+
+    await unlinkArgoCdDestinationClusterMapping({
+      organizationId,
+      argoCdDestinationClusterMappingRequest: {
+        agent_cluster_id: integration.agent_cluster_id,
+        argocd_cluster_url: cluster.argocd_cluster_url,
+        cluster_id: null,
+      },
+    })
+  }
+
   if (integrationsState.length === 0) {
     return (
       <EmptyState
@@ -437,6 +478,7 @@ function SettingsArgoCdIntegrationContent() {
           onEdit={openEditModal}
           onDelete={openDeleteModal}
           onLinkCluster={linkCluster}
+          onUnlinkCluster={unlinkCluster}
         />
       ))}
     </div>

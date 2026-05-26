@@ -16,9 +16,9 @@ const { Table } = TablePrimitives
 const gridLayoutClassName =
   'grid w-full grid-cols-[minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
 
-function DisabledManageDeploymentButton() {
+function DisabledManageDeploymentButton({ tooltip }: { tooltip: string }) {
   return (
-    <Tooltip content="Add at least one service to deploy this environment">
+    <Tooltip content={tooltip}>
       <div>
         <Button aria-label="Manage Deployment" color="neutral" variant="outline" size="sm" iconOnly disabled>
           <div className="flex h-full w-full items-center justify-center gap-1.5">
@@ -142,11 +142,12 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
               {overview.services_overview.service_count > 0 && overview.deployment_status ? (
                 <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
               ) : (
-                <DisabledManageDeploymentButton />
+                <DisabledManageDeploymentButton tooltip="Add at least one service to deploy this environment" />
               )}
               <MenuOtherActions
                 environment={environment}
                 state={overview.deployment_status?.last_deployment_state ?? StateEnum.READY}
+                isArgoCdEnvironment={isArgoCdEnvironment}
               />
             </>
           )}

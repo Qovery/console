@@ -8,6 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { match } from 'ts-pattern'
+import { isArgoCd } from '@qovery/domains/services/data-access'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
 import { useVariables } from '@qovery/domains/variables/feature'
@@ -76,6 +77,24 @@ export function MenuManageDeployment({
   // XXX: Required to display a warning for managed Database
   // https://qovery.atlassian.net/jira/software/projects/FRT/boards/23?selectedIssue=FRT-1416
   const { data: services = [] } = useServices({ environmentId: environment.id })
+  const hasArgoCdServices = services.some(isArgoCd)
+
+  const argoCdDeploymentTooltipContent = (
+    <span className="flex flex-col gap-1">
+      {displayYellowColor ? <span>Environment has changed and needs to be applied</span> : null}
+      <span>Redeploy will only target Qovery created services and not ArgoCD imported ones.</span>
+    </span>
+  )
+
+  const tooltipDeployWithArgoCdServices = hasArgoCdServices ? (
+    <Tooltip side="bottom" content={argoCdDeploymentTooltipContent}>
+      <span aria-label="ArgoCD deployment information" className="flex">
+        <Icon iconName={displayYellowColor ? 'circle-exclamation' : 'circle-info'} iconStyle="regular" />
+      </span>
+    </Tooltip>
+  ) : (
+    tooltipEnvironmentNeedUpdate
+  )
 
   const mutationDeploy = () =>
     deployEnvironment({
@@ -182,7 +201,7 @@ export function MenuManageDeployment({
           >
             <div className="flex w-full items-center justify-between">
               Deploy
-              {tooltipEnvironmentNeedUpdate}
+              {tooltipDeployWithArgoCdServices}
             </div>
           </DropdownMenu.Item>
         )}
@@ -194,7 +213,7 @@ export function MenuManageDeployment({
           >
             <div className="flex w-full items-center justify-between">
               Redeploy
-              {tooltipEnvironmentNeedUpdate}
+              {tooltipDeployWithArgoCdServices}
             </div>
           </DropdownMenu.Item>
         )}
@@ -244,10 +263,12 @@ export function MenuManageDeployment({
 export function MenuOtherActions({
   state,
   environment,
+  isArgoCdEnvironment = false,
   variant = 'default',
 }: {
   state: StateEnum
   environment: Environment
+  isArgoCdEnvironment?: boolean
   variant?: ActionToolbarVariant
 }) {
   const [isActionsOpen, setIsActionsOpen] = useState(false)
@@ -386,9 +407,17 @@ export function MenuOtherActions({
         {isDeleteAvailable(state) && (
           <>
             <DropdownMenu.Separator />
-            <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={mutationDeleteEnvironment}>
-              Delete environment
-            </DropdownMenu.Item>
+            {isArgoCdEnvironment ? (
+              <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} disabled>
+                <Tooltip content="ArgoCD environment can only be deleted by revoking the integration">
+                  <span>Delete environment</span>
+                </Tooltip>
+              </DropdownMenu.Item>
+            ) : (
+              <DropdownMenu.Item color="red" icon={<Icon iconName="trash" />} onSelect={mutationDeleteEnvironment}>
+                Delete environment
+              </DropdownMenu.Item>
+            )}
           </>
         )}
       </DropdownMenu.Content>
@@ -398,10 +427,15 @@ export function MenuOtherActions({
 
 export interface EnvironmentActionToolbarProps {
   environment: Environment
+  isArgoCdEnvironment?: boolean
   variant?: ActionToolbarVariant
 }
 
-export function EnvironmentActionToolbar({ environment, variant = 'default' }: EnvironmentActionToolbarProps) {
+export function EnvironmentActionToolbar({
+  environment,
+  isArgoCdEnvironment = false,
+  variant = 'default',
+}: EnvironmentActionToolbarProps) {
   const { data: countServices, isFetched: isFetchedServices } = useServiceCount({ environmentId: environment.id })
 
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
@@ -434,7 +468,11 @@ export function EnvironmentActionToolbar({ environment, variant = 'default' }: E
               <Icon iconName="timeline" />
             </Link>
           </Tooltip>
-          <MenuOtherActions environment={environment} state={deploymentStatus.state} />
+          <MenuOtherActions
+            environment={environment}
+            state={deploymentStatus.state}
+            isArgoCdEnvironment={isArgoCdEnvironment}
+          />
         </>
       )}
     </div>

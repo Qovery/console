@@ -54,7 +54,13 @@ const overview: EnvironmentOverviewResponse = {
 
 describe('EnvironmentSection', () => {
   beforeEach(() => {
+    jest.useFakeTimers()
     jest.clearAllMocks()
+  })
+
+  afterEach(() => {
+    jest.clearAllTimers()
+    jest.useRealTimers()
   })
 
   it('should navigate to the environment when clicking the row', async () => {
@@ -120,5 +126,7 @@ describe('EnvironmentSection', () => {
     )
 
     expect(screen.getByText('ArgoCD')).toBeInTheDocument()
+    const manageDeploymentButton = screen.getByRole('button', { name: /manage deployment/i })
+    expect(manageDeploymentButton).toBeEnabled()
   })
 })

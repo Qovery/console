@@ -434,6 +434,21 @@ export const mutations = {
     )
     return response.data
   },
+  async unlinkArgoCdDestinationClusterMapping({
+    organizationId,
+    argoCdDestinationClusterMappingRequest,
+  }: {
+    organizationId: string
+    argoCdDestinationClusterMappingRequest: Omit<ArgoCdDestinationClusterMappingRequest, 'cluster_id'> & {
+      cluster_id: null
+    }
+  }) {
+    const response = await argoCdApi.saveArgoCdDestinationClusterMapping(
+      organizationId,
+      argoCdDestinationClusterMappingRequest as unknown as ArgoCdDestinationClusterMappingRequest
+    )
+    return response.data
+  },
   async listTfVarsFilesFromGitRepo({
     organizationId,
     repository,

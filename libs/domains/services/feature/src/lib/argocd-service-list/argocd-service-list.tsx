@@ -1,30 +1,31 @@
 import { useNavigate } from '@tanstack/react-router'
-import { type ArgocdAppResponse, type Environment } from 'qovery-typescript-axios'
+import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useMemo } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, ExternalLink, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  CopyToClipboard,
+  DropdownMenu,
+  ExternalLink,
+  Heading,
+  Icon,
+  Link,
+  Section,
+  TablePrimitives,
+  Tooltip,
+} from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
+import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useArgoCdServices } from '../hooks/use-argocd-services/use-argocd-services'
 
 const { Table } = TablePrimitives
 
-const tableGridLayoutClassName = 'grid w-full grid-cols-[minmax(280px,1.7fr)_minmax(220px,1fr)_minmax(280px,1.1fr)]'
+const tableGridLayoutClassName =
+  'grid w-full grid-cols-[minmax(280px,1.7fr)_minmax(220px,1fr)_minmax(280px,1.1fr)_minmax(112px,112px)]'
 
 export interface ArgoCdServiceListProps {
   environment: Environment
-}
-
-const getRepositoryLabel = (service: ArgocdAppResponse) => {
-  if (!service.source_repo_url) {
-    return null
-  }
-
-  try {
-    const url = new URL(service.source_repo_url)
-    return `${url.hostname}${url.pathname}`
-  } catch {
-    return service.source_repo_url
-  }
 }
 
 export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
@@ -86,15 +87,19 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Last operation
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
+              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Target version
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="flex h-full items-center justify-center text-neutral-subtle">
+                Actions
               </Table.ColumnHeaderCell>
             </Table.Row>
           </Table.Header>
 
           <Table.Body>
             {services.map((service) => {
-              const repositoryLabel = getRepositoryLabel(service)
+              const gitRepository = service.git_repository
+              const manifestRevision = service.manifest_revision
 
               return (
                 <Table.Row
@@ -131,13 +136,13 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                     </div>
                   </Table.Cell>
 
-                  <Table.Cell className="flex h-full items-center">
+                  <Table.Cell className="flex h-full items-center border-r border-neutral">
                     <div className="flex min-w-0 flex-col gap-0.5 text-ssm">
-                      {repositoryLabel ? (
+                      {gitRepository ? (
                         <div className="flex min-w-0 items-center gap-2 text-neutral">
-                          <Icon className="h-3 w-3 shrink-0 text-inherit" iconName="code-branch" iconStyle="regular" />
+                          <Icon className="h-3 w-3 shrink-0 text-inherit" name={gitRepository.provider} />
                           <ExternalLink
-                            href={service.source_repo_url ?? '#'}
+                            href={gitRepository.url}
                             underline
                             color="neutral"
                             size="ssm"
@@ -146,12 +151,107 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                             onClick={stopRowNavigation}
                             onKeyDown={stopRowNavigation}
                           >
-                            <span className="min-w-0 truncate" title={repositoryLabel}>
-                              {repositoryLabel}
+                            <span className="min-w-0 truncate" title={gitRepository.name}>
+                              {gitRepository.name}
                             </span>
                           </ExternalLink>
                         </div>
                       ) : null}
+                      {gitRepository?.branch && gitRepository.url ? (
+                        <div className="flex min-w-0 items-center gap-2 text-neutral-subtle">
+                          <Icon className="h-3 w-3 shrink-0 text-inherit" iconName="code-branch" iconStyle="regular" />
+                          <ExternalLink
+                            href={buildGitProviderUrl(gitRepository.url, gitRepository.branch)}
+                            underline
+                            color="neutral"
+                            size="ssm"
+                            withIcon={false}
+                            className="min-w-0 flex-1 overflow-hidden font-normal"
+                            onClick={stopRowNavigation}
+                            onKeyDown={stopRowNavigation}
+                          >
+                            <span className="min-w-0 truncate" title={gitRepository.branch}>
+                              {gitRepository.branch}
+                            </span>
+                          </ExternalLink>
+                        </div>
+                      ) : null}
+                    </div>
+                    {manifestRevision ? (
+                      <CopyToClipboard text={manifestRevision} className="ml-3 shrink-0">
+                        <Button
+                          type="button"
+                          variant="outline"
+                          color="neutral"
+                          size="xs"
+                          className="pl-1"
+                          onClick={stopRowNavigation}
+                          onKeyDown={stopRowNavigation}
+                        >
+                          <Icon iconName="code-commit" className="w-4" />
+                          {manifestRevision.substring(0, 7)}
+                        </Button>
+                      </CopyToClipboard>
+                    ) : null}
+                  </Table.Cell>
+
+                  <Table.Cell className="flex h-full items-center justify-center">
+                    <div className="flex items-center gap-1.5" onClick={stopRowNavigation}>
+                      <Tooltip content="Logs">
+                        <Link
+                          as="button"
+                          aria-label={`Service logs for ${service.name}`}
+                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                          params={{
+                            organizationId,
+                            projectId,
+                            environmentId,
+                            serviceId: service.id,
+                          }}
+                          color="neutral"
+                          variant="outline"
+                          size="sm"
+                          iconOnly
+                          onClick={stopRowNavigation}
+                          onKeyDown={stopRowNavigation}
+                        >
+                          <Icon iconName="scroll" />
+                        </Link>
+                      </Tooltip>
+
+                      <DropdownMenu.Root>
+                        <DropdownMenu.Trigger asChild>
+                          <Button
+                            aria-label={`Other actions for ${service.name}`}
+                            variant="outline"
+                            size="sm"
+                            iconOnly
+                            onKeyDown={stopRowNavigation}
+                          >
+                            <Tooltip content="Other actions">
+                              <div className="flex h-full w-full items-center justify-center">
+                                <Icon iconName="ellipsis-v" />
+                              </div>
+                            </Tooltip>
+                          </Button>
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Content>
+                          <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
+                            <Link
+                              className="gap-0"
+                              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest"
+                              params={{
+                                organizationId,
+                                projectId,
+                                environmentId,
+                                serviceId: service.id,
+                              }}
+                            >
+                              See manifest
+                            </Link>
+                          </DropdownMenu.Item>
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
                     </div>
                   </Table.Cell>
                 </Table.Row>
