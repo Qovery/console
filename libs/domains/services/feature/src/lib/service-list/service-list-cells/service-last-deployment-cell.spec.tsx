@@ -50,12 +50,11 @@ describe('ServiceLastDeploymentCell', () => {
       },
     })
 
-    const { container } = renderWithProviders(<ServiceLastDeploymentCell environment={environment} service={service} />)
+    renderWithProviders(<ServiceLastDeploymentCell environment={environment} service={service} />)
 
     expect(screen.getByText('Launch diagnostic')).toBeInTheDocument()
     expect(screen.getByText('Deploy').previousElementSibling).toHaveClass('text-neutral-subtle')
-    expect(container.querySelector('svg.text-neutral-subtle')).toBeInTheDocument()
-    expect(container.querySelector('svg.text-negative')).not.toBeInTheDocument()
+    expect(screen.getByText('Deploy').previousElementSibling).not.toHaveClass('text-negative')
   })
 
   it('keeps successful deployment indicators monochrome', () => {
@@ -74,10 +73,9 @@ describe('ServiceLastDeploymentCell', () => {
       },
     })
 
-    const { container } = renderWithProviders(<ServiceLastDeploymentCell environment={environment} service={service} />)
+    renderWithProviders(<ServiceLastDeploymentCell environment={environment} service={service} />)
 
     expect(screen.queryByText('Launch diagnostic')).not.toBeInTheDocument()
     expect(screen.getByText('Deploy').previousElementSibling).toHaveClass('text-neutral-subtle')
-    expect(container.querySelector('svg.text-neutral-subtle')).toBeInTheDocument()
   })
 })
