@@ -29,6 +29,7 @@ export function useDeploymentStatus({ environmentId, serviceId, suspense = false
     ...(environmentStatus?.containers ?? []),
     ...(environmentStatus?.databases ?? []),
     ...(environmentStatus?.jobs ?? []),
+    ...(environmentStatus?.helms ?? []),
     ...(environmentStatus?.terraforms ?? []),
   ]
   return webSocketResult.data

@@ -101,6 +101,24 @@ describe('ServiceLastDeployment', () => {
     expect(screen.getByRole('button', { name: /deploy now/i })).toBeInTheDocument()
   })
 
+  it('renders service type name in description when service has service_type', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
+
+    renderWithProviders(
+      <ServiceLastDeployment
+        serviceId="service-123"
+        serviceType="HELM"
+        service={{ id: 'service-123', name: 'my-helm', service_type: 'HELM' } as never}
+      />
+    )
+
+    expect(screen.getByText('Helm has never been deployed')).toBeInTheDocument()
+    expect(screen.getByText('Deploy the helm first')).toBeInTheDocument()
+  })
+
   it('renders the image tag version pill when deployment details contains an image tag', () => {
     mockUseDeploymentHistory.mockReturnValue({
       data: [baseDeployment],
