@@ -19,6 +19,7 @@ type ClusterOption = {
   description: string
   icon: IconName | ReactNode
   compatibleWith?: IconEnum[]
+  dataAction: string
 } & (
   | {
       action: 'create-cluster'
@@ -40,6 +41,7 @@ const CLUSTERS_OPTIONS: ClusterOption[] = [
     icon: <LogoIcon width="14" height="14" />,
     compatibleWith: [IconEnum.AWS, IconEnum.GCP, IconEnum.AZURE, IconEnum.SCW_GRAY],
     action: 'create-cluster',
+    dataAction: 'org-overview__cluster-option-managed',
   },
   {
     highlight: false,
@@ -62,6 +64,7 @@ const CLUSTERS_OPTIONS: ClusterOption[] = [
     ],
     action: 'installation-guide',
     requiresCreditCardOnFreeTrial: true,
+    dataAction: 'org-overview__cluster-option-byoc',
   },
   {
     highlight: false,
@@ -72,6 +75,7 @@ const CLUSTERS_OPTIONS: ClusterOption[] = [
       'Deploy a local Kubernetes cluster on your laptop using Docker. No cloud account or credit card required!',
     action: 'installation-guide',
     isDemo: true,
+    dataAction: 'org-overview__cluster-option-demo',
   },
 ]
 
@@ -180,6 +184,7 @@ export function SectionProductionHealth() {
           params={{ organizationId }}
           color="neutral"
           size="ssm"
+          data-action="org-overview__all-clusters"
           className="gap-0.5 text-neutral-subtle hover:text-neutral"
         >
           All clusters
@@ -197,6 +202,7 @@ export function SectionProductionHealth() {
               as="button"
               color="neutral"
               size="md"
+              data-action="org-overview__create-cluster"
               to="/organization/$organizationId/cluster/new"
               params={{ organizationId }}
             >
@@ -221,6 +227,7 @@ export function SectionProductionHealth() {
                     key={option.title}
                     to="/organization/$organizationId/cluster/new"
                     params={{ organizationId }}
+                    data-action={option.dataAction}
                     className={getOptionCardClassName(option.highlight)}
                   >
                     {renderOptionCardContent(option)}
@@ -229,6 +236,7 @@ export function SectionProductionHealth() {
                   <button
                     key={option.title}
                     type="button"
+                    data-action={option.dataAction}
                     onClick={() =>
                       option.requiresCreditCardOnFreeTrial && isNoCreditCardRestriction
                         ? openCreditCardModal()
@@ -251,6 +259,7 @@ export function SectionProductionHealth() {
                     title={doc.title}
                     target="_blank"
                     rel="noreferrer"
+                    data-action="org-overview__cluster-doc"
                     className="group flex h-12 w-full items-center justify-between border-b border-neutral p-4 text-ssm text-neutral transition-colors last:border-b-0 hover:bg-surface-neutral-subtle focus:outline-none focus-visible:bg-surface-neutral-subtle"
                   >
                     {doc.title}
