@@ -52,7 +52,7 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
         <div className="group flex items-center gap-2">
           <DeploymentAction
             status={triggerAction}
-            iconClassName={hasDeploymentError ? 'text-negative' : 'text-neutral-subtle'}
+            iconClassName="text-neutral-subtle"
             textClassName="group-hover:underline"
           />
           {deploymentStatus?.last_deployment_date && (
