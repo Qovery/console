@@ -421,6 +421,7 @@ function SettingsArgoCdIntegrationContent() {
           confirmationMethod="action"
           confirmationAction="delete"
           placeholder={`Enter "delete"`}
+          warning="Related ArgoCD services will no longer be displayed in Qovery. Environments containing only these services will be removed."
         />
       ),
       options: {

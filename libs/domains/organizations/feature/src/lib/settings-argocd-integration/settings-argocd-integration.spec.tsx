@@ -167,6 +167,51 @@ describe('SettingsArgoCdIntegration', () => {
     })
   })
 
+  it('should display a warning callout when deleting an ArgoCD integration', async () => {
+    useOrganizationArgoCdIntegrationsMock.mockReturnValue({
+      data: [
+        {
+          agent_cluster_id: 'cluster-1',
+          agent_cluster_name: 'undeletable_cluster',
+          agent_cluster_cloud_provider: 'AWS',
+          credentials_id: 'integration-1',
+          argocd_url: 'https://argocd.example.com',
+          status: 'connected',
+          last_checked_at: '2026-04-28T12:20:00.000Z',
+          linked_clusters: [
+            {
+              argocd_cluster_url: 'https://kubernetes.default.svc',
+              argocd_cluster_name: 'kube-system',
+              qovery_cluster_id: 'cluster-1',
+              qovery_cluster_name: 'AWS EKS Demo',
+              qovery_cluster_cloud_provider: 'AWS',
+              qovery_cluster_type: 'MANAGED',
+              applications_count: 4,
+            },
+          ],
+          unlinked_clusters: [],
+        },
+      ],
+      isLoading: false,
+    } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
+
+    const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration />)
+
+    await userEvent.click(screen.getByTestId('delete-argocd-integration'))
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          props: expect.objectContaining({
+            title: 'Remove ArgoCD integration',
+            warning:
+              'Related ArgoCD services will no longer be displayed in Qovery. Environments containing only these services will be removed.',
+          }),
+        }),
+      })
+    )
+  })
+
   it('should render an importing state when the integration has no cluster mapping yet', () => {
     useOrganizationArgoCdIntegrationsMock.mockReturnValue({
       data: [
