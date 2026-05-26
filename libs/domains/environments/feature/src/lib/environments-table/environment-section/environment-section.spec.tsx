@@ -109,6 +109,23 @@ describe('EnvironmentSection', () => {
     expect(screen.getByRole('button', { name: /delete environment/i })).toBeInTheDocument()
   })
 
+  it('should display no operation detected when services exist without deployment status', () => {
+    renderWithProviders(
+      <EnvironmentSection
+        type={EnvironmentModeEnum.DEVELOPMENT}
+        items={[
+          {
+            ...overview,
+            deployment_status: undefined,
+          },
+        ]}
+      />
+    )
+
+    expect(screen.getByText('No operation detected')).toBeInTheDocument()
+    expect(screen.queryByText(/0 seconds ago/i)).not.toBeInTheDocument()
+  })
+
   it('should display an ArgoCD badge when the environment is managed by ArgoCD', () => {
     renderWithProviders(
       <EnvironmentSection

@@ -36,6 +36,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
   const isArgoCdEnvironment = overview.services_overview.managed_by !== 'QOVERY'
+  const lastOperationDate = overview.deployment_status?.last_deployment_date
   const cellClassName = 'h-auto border-l border-neutral py-2'
   const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
     event.stopPropagation()
@@ -96,15 +97,15 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       <Table.Cell className={cellClassName}>
         <div className="flex h-full items-center justify-between">
           <div className="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
-            {overview.services_overview.service_count > 0 ? (
+            {overview.services_overview.service_count === 0 ? (
+              <span className="text-sm text-neutral-subtle">No services yet</span>
+            ) : lastOperationDate ? (
               <>
                 <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
-                <span className="text-neutral-subtle">
-                  {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
-                </span>
+                <span className="text-neutral-subtle">{timeAgo(new Date(lastOperationDate))} ago</span>
               </>
             ) : (
-              <span className="text-sm text-neutral-subtle">No services yet</span>
+              <span className="text-sm text-neutral-subtle">No operation detected</span>
             )}
           </div>
           <EnvironmentStateChip mode="last-deployment" environmentId={overview.id} variant="monochrome" />
