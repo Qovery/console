@@ -48,6 +48,7 @@ export function SectionChangelog() {
             title={changelog.name}
             target="_blank"
             rel="noreferrer"
+            data-action="org-overview__changelog"
             onClick={() => {
               if (isLatest && showNewBadge) {
                 setSeenChangelogDate(changelog.firstPublishedAt)

@@ -75,6 +75,7 @@ export function SectionLinks() {
               key={link.title}
               type="button"
               title={link.title}
+              data-action="org-overview__support"
               onClick={showChat}
               className="group flex justify-between gap-2 rounded-lg border border-neutral p-4 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
             >
@@ -89,6 +90,7 @@ export function SectionLinks() {
               key={link.title}
               type="button"
               title={link.title}
+              data-action="org-overview__give-feedback"
               onClick={handleGiveFeedbackClick}
               className="group flex justify-between gap-2 rounded-lg border border-neutral p-4 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
             >
@@ -104,6 +106,7 @@ export function SectionLinks() {
             title={link.title}
             target="_blank"
             rel="noreferrer"
+            data-action="org-overview__documentation"
             className="group flex justify-between gap-2 rounded-lg border border-neutral p-4 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle"
           >
             {content}
