@@ -7,7 +7,8 @@ import {
   useClusterLogs,
   useClusterStatus,
 } from '@qovery/domains/clusters/feature'
-import { EmptyState, LoaderDots } from '@qovery/shared/ui'
+import { Banner, EmptyState, ExternalLink, LoaderDots } from '@qovery/shared/ui'
+import { QOVERY_DOCS_URL } from '@qovery/shared/util-const'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs')({
   component: RouteComponent,
@@ -55,6 +56,18 @@ function RouteComponent() {
               refScrollSection={refScrollSection}
             />
           </div>
+          {clusterStatus.status === 'DEPLOYING' && clusterStatus.reason === 'MAINTENANCE' && (
+            <Banner color="brand" className="shrink-0 gap-3">
+              Qovery maintenance is in progress with no impact on your applications availability.
+              <ExternalLink
+                href={`${QOVERY_DOCS_URL}/getting-started/configuration/maintenance#update-strategy`}
+                color="brand"
+                underline
+              >
+                Maintenance strategy
+              </ExternalLink>
+            </Banner>
+          )}
           <ClusterLogsList logs={logs} firstDate={firstDate} refScrollSection={refScrollSection} />
         </>
       ) : (
