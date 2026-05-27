@@ -11,21 +11,21 @@ export interface SecretManagerListProps {
   secretManagers: SecretManagerAccess[]
   onEdit: (manager: SecretManagerAccess) => void
   onDelete: (manager: SecretManagerAccess) => void
-  onViewAssociatedServices?: (manager: SecretManagerAccess) => void
+  onViewAssociatedExternalSecrets?: (manager: SecretManagerAccess) => void
 }
 
 function SecretManagerItem({
   manager,
-  onViewAssociatedServices,
+  onViewAssociatedExternalSecrets,
   onEdit,
   onDelete,
 }: {
   manager: SecretManagerAccess
-  onViewAssociatedServices?: SecretManagerListProps['onViewAssociatedServices']
+  onViewAssociatedExternalSecrets?: SecretManagerListProps['onViewAssociatedExternalSecrets']
   onEdit: SecretManagerListProps['onEdit']
   onDelete: SecretManagerListProps['onDelete']
 }) {
-  const { data: secretManagerAssociatedServices = [] } = useSecretManagerAssociatedServices({
+  const { data: secretManagerAssociatedExternalSecrets = [] } = useSecretManagerAssociatedServices({
     secretManagerAccessId: manager.id,
     suspense: true,
   })
@@ -51,11 +51,11 @@ function SecretManagerItem({
         </div>
       </div>
       <div className="flex items-center gap-2">
-        {onViewAssociatedServices && (
+        {onViewAssociatedExternalSecrets && (
           <Indicator
             content={
               <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
-                {secretManagerAssociatedServices.length ?? 0}
+                {secretManagerAssociatedExternalSecrets.length ?? 0}
               </span>
             }
           >
@@ -66,8 +66,8 @@ function SecretManagerItem({
               size="md"
               iconOnly
               className="relative"
-              disabled={secretManagerAssociatedServices.length === 0}
-              onClick={() => onViewAssociatedServices(manager)}
+              disabled={secretManagerAssociatedExternalSecrets.length === 0}
+              onClick={() => onViewAssociatedExternalSecrets(manager)}
             >
               <Icon iconName="layer-group" iconStyle="regular" />
             </Button>
@@ -90,7 +90,7 @@ export function SecretManagerList({
   secretManagers,
   onEdit,
   onDelete,
-  onViewAssociatedServices,
+  onViewAssociatedExternalSecrets,
 }: SecretManagerListProps) {
   if (secretManagers.length === 0) return null
 
@@ -100,7 +100,7 @@ export function SecretManagerList({
         <SecretManagerItem
           key={manager.id + index}
           manager={manager}
-          onViewAssociatedServices={onViewAssociatedServices}
+          onViewAssociatedExternalSecrets={onViewAssociatedExternalSecrets}
           onEdit={onEdit}
           onDelete={onDelete}
         />

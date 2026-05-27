@@ -5,58 +5,16 @@ import { useMemo, useState } from 'react'
 import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
+  SecretManagerAssociatedExternalSecretsModal,
   SecretManagerIntegrationModal,
   SecretManagerList,
   getSecretManagerOption,
   useCluster,
   useEditCluster,
-  useSecretManagerAssociatedServices,
 } from '@qovery/domains/clusters/feature'
-import { type AssociatedItem, AssociatedItemsModal } from '@qovery/domains/organizations/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Badge, Button, DropdownMenu, Icon, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { isGcpCluster } from '@qovery/shared/util-clusters'
-import { pluralize } from '@qovery/shared/util-js'
-
-function SecretManagerAssociatedItemsContent({
-  secretManagerAccessId,
-  organizationId,
-  onClose,
-}: {
-  secretManagerAccessId: string
-  organizationId: string
-  onClose: () => void
-}) {
-  const { data: associatedServices = [], isLoading } = useSecretManagerAssociatedServices({
-    secretManagerAccessId,
-  })
-
-  const items: AssociatedItem[] = associatedServices
-    .filter((s) => s.service_id && s.service_type && s.variable_name)
-    .map((s) => ({
-      project_id: s.project_id,
-      project_name: s.project_name,
-      environment_id: s.environment_id,
-      environment_name: s.environment_name,
-      item_id: [s.service_id, s.variable_name, s.external_secret_name].filter(Boolean).join('-'),
-      item_name: s.variable_name,
-      item_type: s.service_type!,
-      item_link_id: s.service_id,
-      item_subtitle: s.external_secret_name,
-    }))
-
-  return (
-    <AssociatedItemsModal
-      title={`Associated ${pluralize(items.length, 'external secret')}`}
-      organizationId={organizationId}
-      items={items}
-      isLoading={isLoading}
-      onClose={onClose}
-      itemLabel="External secret"
-      searchPlaceholder="Search by project, environment, or external secret name"
-    />
-  )
-}
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons')(
   {
@@ -152,10 +110,10 @@ function RouteComponent() {
     })
   }
 
-  const openSecretManagerAssociatedServicesModal = (integration: SecretManagerAccess) => {
+  const openSecretManagerAssociatedExternalSecretsModal = (integration: SecretManagerAccess) => {
     openModal({
       content: (
-        <SecretManagerAssociatedItemsContent
+        <SecretManagerAssociatedExternalSecretsModal
           secretManagerAccessId={integration.id}
           organizationId={organizationId}
           onClose={closeModal}
@@ -251,7 +209,7 @@ function RouteComponent() {
                         openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)
                       }
                       onDelete={handleDeleteSecretManager}
-                      onViewAssociatedServices={openSecretManagerAssociatedServicesModal}
+                      onViewAssociatedExternalSecrets={openSecretManagerAssociatedExternalSecretsModal}
                     />
                   </div>
                 </div>

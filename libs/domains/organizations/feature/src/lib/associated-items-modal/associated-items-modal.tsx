@@ -160,11 +160,7 @@ export function AssociatedItemsModal({
         </div>
       ) : (
         <>
-          <InputSearch
-            className="mb-3"
-            placeholder={searchPlaceholder}
-            onChange={(value) => setSearchValue(value)}
-          />
+          <InputSearch className="mb-3" placeholder={searchPlaceholder} onChange={(value) => setSearchValue(value)} />
           {noSearchResults ? (
             <div className="px-5 py-4 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-subtle" />
@@ -177,7 +173,7 @@ export function AssociatedItemsModal({
             </div>
           ) : (
             <div className="flex flex-col gap-3">
-              {hasClustersInSource ? (
+              {hasClustersInSource && (
                 <div>
                   <Heading level={3} className="mb-2 text-neutral">
                     {pluralize(clusterSourceItems.length, 'Cluster')}
@@ -207,8 +203,8 @@ export function AssociatedItemsModal({
                     <p className="mb-2 text-xs text-neutral-subtle">No matching clusters.</p>
                   )}
                 </div>
-              ) : null}
-              {hasServicesInSource ? (
+              )}
+              {hasServicesInSource && (
                 <div>
                   <Heading level={3} className="mb-2 text-neutral">
                     {pluralize(serviceSourceItems.length, itemLabel)}
@@ -244,7 +240,7 @@ export function AssociatedItemsModal({
                                   <TreeView.Content>
                                     <ul>
                                       {environment.services.map((service) => (
-                                        <li key={service.service_id} className=" border-l border-neutral">
+                                        <li key={service.service_id} className="border-l border-neutral">
                                           <Link
                                             color="brand"
                                             onClick={() => onClose()}
@@ -290,7 +286,7 @@ export function AssociatedItemsModal({
                     </p>
                   )}
                 </div>
-              ) : null}
+              )}
             </div>
           )}
         </>
