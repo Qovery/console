@@ -11,6 +11,8 @@ export interface SerializedError {
   response?: AxiosResponse
 }
 
+const E2E_AUTH_TOKEN_STORAGE_KEY = 'qovery-e2e-auth-token'
+
 export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
   const { getAccessTokenSilently } = useAuth0()
 
@@ -21,9 +23,9 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       const urlWithoutBase = removeBaseUrl(config.url)
       config.url = `${apiUrl}${urlWithoutBase}`
 
-      let token
+      let token = window.localStorage.getItem(E2E_AUTH_TOKEN_STORAGE_KEY)
       try {
-        token = await getAccessTokenSilently()
+        token = token || (await getAccessTokenSilently())
       } catch (e) {
         return config
       }

@@ -27,12 +27,9 @@ jobs:
       cloudflare-token: ${{ secrets.CLOUDFLARE_TOKEN }}
       nx-cloud-access-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       codecov-token: ${{ secrets.CODECOV_TOKEN }}
-      e2e-user-email: ${{ secrets.E2E_USER_EMAIL }}
-      e2e-user-password: ${{ secrets.E2E_USER_PASSWORD }}
-      e2e-auth0-connection: ${{ secrets.E2E_AUTH0_CONNECTION }}
-      e2e-project-name: ${{ secrets.E2E_PROJECT_NAME }}
-      e2e-environment-name: ${{ secrets.E2E_ENVIRONMENT_NAME }}
-      e2e-service-name: ${{ secrets.E2E_SERVICE_NAME }}
+      e2e-auth-token: ${{ secrets.E2E_AUTH_TOKEN }}
+      e2e-project-id: ${{ secrets.E2E_PROJECT_ID }}
+      e2e-environment-id: ${{ secrets.E2E_ENVIRONMENT_ID }}
       slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       # Qovery secrets

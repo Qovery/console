@@ -10,7 +10,7 @@
       "executor": "nx:run-commands",
       "cache": false,
       "options": {
-        "command": "playwright test --config apps/console-e2e/playwright.config.ts",
+        "command": "yarn playwright test --config apps/console-e2e/playwright.config.ts",
         "cwd": "."
       }
     }

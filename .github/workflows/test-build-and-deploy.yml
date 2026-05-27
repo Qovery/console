@@ -43,17 +43,11 @@ on:
         required: true
       codecov-token:
         required: true
-      e2e-user-email:
+      e2e-auth-token:
         required: false
-      e2e-user-password:
+      e2e-project-id:
         required: false
-      e2e-auth0-connection:
-        required: false
-      e2e-project-name:
-        required: false
-      e2e-environment-name:
-        required: false
-      e2e-service-name:
+      e2e-environment-id:
         required: false
       slack-webhook-url:
         required: false
@@ -203,16 +197,11 @@ jobs:
       - name: Run staging smoke test
         env:
           E2E_BASE_URL: https://console-staging.qovery.com
-          E2E_USER_EMAIL: ${{ secrets.e2e-user-email }}
-          E2E_USER_PASSWORD: ${{ secrets.e2e-user-password }}
-          # E2E_LOGIN_METHOD defaults to "password" in the Playwright test.
-          # It can be set to "github", "google", or "saml" if we explicitly need to exercise a provider flow.
-          # E2E_AUTH0_CONNECTION can force a dedicated Auth0 database connection for password login.
-          # E2E_SSO_DOMAIN is only required if we explicitly switch the smoke test to SAML login.
-          E2E_AUTH0_CONNECTION: ${{ secrets.e2e-auth0-connection }}
-          E2E_PROJECT_NAME: ${{ secrets.e2e-project-name }}
-          E2E_ENVIRONMENT_NAME: ${{ secrets.e2e-environment-name }}
-          E2E_SERVICE_NAME: ${{ secrets.e2e-service-name }}
+          # E2E_AUTH_TOKEN is a long-lived JWT scoped to the staging test organization.
+          # This smoke test intentionally skips Auth0/social login and only checks key Console pages.
+          E2E_AUTH_TOKEN: ${{ secrets.e2e-auth-token }}
+          E2E_PROJECT_ID: ${{ secrets.e2e-project-id }}
+          E2E_ENVIRONMENT_ID: ${{ secrets.e2e-environment-id }}
         run: yarn e2e:staging
       - name: Upload Playwright report
         if: always()

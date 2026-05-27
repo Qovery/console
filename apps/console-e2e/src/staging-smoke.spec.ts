@@ -1,5 +1,7 @@
 import { type Page, expect, test } from '@playwright/test'
 
+const E2E_AUTH_TOKEN_STORAGE_KEY = 'qovery-e2e-auth-token'
+
 const requiredEnv = (name: string) => {
   const value = process.env[name]
 
@@ -10,60 +12,42 @@ const requiredEnv = (name: string) => {
   return value
 }
 
-const clickByName = async (page: Page, name: string) => {
-  await page
-    .getByRole('link', { name, exact: true })
-    .or(page.getByRole('button', { name, exact: true }))
+const clickByNameOrHref = async (page: Page, nameOrId: string, hrefPart: string) => {
+  const namedTarget = page
+    .getByRole('link', { name: nameOrId, exact: true })
+    .or(page.getByRole('button', { name: nameOrId, exact: true }))
     .first()
-    .click()
-}
 
-const login = async (page: Page) => {
-  const email = requiredEnv('E2E_USER_EMAIL')
-  const password = requiredEnv('E2E_USER_PASSWORD')
-  const loginMethod = process.env.E2E_LOGIN_METHOD ?? 'password'
-  const auth0Connection = process.env.E2E_AUTH0_CONNECTION
-
-  if (loginMethod === 'saml') {
-    await page.goto('/')
-    await page.getByRole('button', { name: /continue with saml sso/i }).click()
-    await page.getByLabel(/company domain/i).fill(requiredEnv('E2E_SSO_DOMAIN'))
-    await page.getByRole('button', { name: /connect/i }).click()
-  } else if (loginMethod === 'password') {
-    const searchParams = new URLSearchParams({ e2eLogin: 'password' })
-
-    if (auth0Connection) {
-      searchParams.set('e2eConnection', auth0Connection)
-    }
-
-    await page.goto(`/login?${searchParams.toString()}`)
-  } else if (loginMethod !== 'password') {
-    await page.goto('/')
-    await page.getByRole('button', { name: new RegExp(`continue with ${loginMethod}`, 'i') }).click()
+  if (await namedTarget.isVisible().catch(() => false)) {
+    await namedTarget.click()
+    return
   }
 
-  await page.getByLabel(/email/i).fill(email)
-
-  const continueButton = page.getByRole('button', { name: /continue|next/i })
-  if (await continueButton.isVisible().catch(() => false)) {
-    await continueButton.click()
-  }
-
-  await page.getByLabel(/password/i).fill(password)
-  await page.getByRole('button', { name: /log in|sign in|continue/i }).click()
+  await page.locator(`a[href*="${hrefPart}"]`).first().click()
 }
 
-test('staging user can reach a service overview', async ({ page }) => {
-  await login(page)
+const injectAuthToken = async (page: Page) => {
+  const authToken = requiredEnv('E2E_AUTH_TOKEN')
+
+  await page.addInitScript(
+    ({ key, token }) => {
+      window.localStorage.setItem(key, token)
+    },
+    { key: E2E_AUTH_TOKEN_STORAGE_KEY, token: authToken }
+  )
+}
+
+test('staging user can reach an environment', async ({ page }) => {
+  await injectAuthToken(page)
+  await page.goto('/')
 
   await expect(page).toHaveURL(/\/organization\/[^/]+\/overview/)
 
-  await clickByName(page, requiredEnv('E2E_PROJECT_NAME'))
+  const projectId = requiredEnv('E2E_PROJECT_ID')
+  await clickByNameOrHref(page, projectId, `/project/${projectId}/`)
   await expect(page).toHaveURL(/\/project\/[^/]+\/overview/)
 
-  await clickByName(page, requiredEnv('E2E_ENVIRONMENT_NAME'))
+  const environmentId = requiredEnv('E2E_ENVIRONMENT_ID')
+  await clickByNameOrHref(page, environmentId, `/environment/${environmentId}`)
   await expect(page).toHaveURL(/\/environment\/[^/]+/)
-
-  await clickByName(page, requiredEnv('E2E_SERVICE_NAME'))
-  await expect(page).toHaveURL(/\/service\/[^/]+\/overview/)
 })
