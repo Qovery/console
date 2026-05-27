@@ -53,7 +53,7 @@ Run unit tests with Jest
 
     nx affected:test
 
-Run end-to-end tests with Cypress
+Run end-to-end tests with Playwright
 
     nx affected:e2e
 
@@ -86,7 +86,7 @@ At Qovery, we believe that the Cloud must be simpler than what it is today. Our 
 - It supports mono-repo architecture, allowing us to divide our application into multiple reusable entities/libraries.
 - It offers tools to generate components, libraries, applications, and to check the health of our applications (e.g., circular dependencies).
 - By using [Nx Cloud](https://cloud.nx.app/orgs/62aaef82e814d400050ea393/workspaces/635932a66ecea758758f0563/overview), we can cache deployments, run tests, and build only the modified parts of the application.
-- It provides a framework for unit tests with [Jest](https://jestjs.io/) and end-to-end tests with [Cypress](https://www.cypress.io/).
+- It provides a framework for unit tests with [Jest](https://jestjs.io/) and end-to-end tests with [Playwright](https://playwright.dev/).
 
 ### How is the project structured?
 
