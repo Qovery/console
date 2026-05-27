@@ -131,25 +131,30 @@ export function SecretManagerIntegrationModal({
     },
   })
 
-  const getSubmitPayload = (data: SecretManagerAccess) => {
+  const getSubmitPayload = (data: SecretManagerAccess): SecretManagerAccess => {
     const isAutomaticIntegration =
       !isManualOnlyGcpIntegration && !isManualOnlyAwsIntegration && activeTab === 'automatic'
     const isGcpManualIntegration = isManualOnlyGcpIntegration || isGcpManualTabOnGcpSecretManager
 
     if (isAutomaticIntegration) {
+      const authentication: SecretManagerAccess['authentication'] = { mode: 'AUTOMATICALLY_CONFIGURED' }
+
       return {
         ...data,
-        authentication: { mode: 'AUTOMATICALLY_CONFIGURED' },
+        authentication,
       }
     }
 
     if (isGcpManualIntegration) {
+      const authentication: SecretManagerAccess['authentication'] = {
+        mode: 'GCP_JSON_CREDENTIALS',
+        json_credentials:
+          data.authentication.mode === 'GCP_JSON_CREDENTIALS' ? data.authentication.json_credentials : undefined,
+      }
+
       return {
         ...data,
-        authentication: {
-          mode: 'GCP_JSON_CREDENTIALS',
-          json_credentials: data.authentication?.json_credentials,
-        },
+        authentication,
       }
     }
 
