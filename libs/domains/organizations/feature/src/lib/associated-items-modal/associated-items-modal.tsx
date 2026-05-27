@@ -12,6 +12,8 @@ export interface AssociatedItem {
   item_id: string
   item_name: string
   item_type: string
+  item_link_id?: string | null
+  item_subtitle?: string | null
   cluster_id?: string | null
   cluster_name?: string | null
 }
@@ -20,6 +22,8 @@ interface Service {
   service_id: string
   service_name: string
   service_type: string
+  service_link_id?: string | null
+  service_subtitle?: string | null
 }
 
 interface Environment {
@@ -74,6 +78,8 @@ export function groupByProjectEnvironmentsServices(data: AssociatedItem[], searc
         service_id: item.item_id,
         service_name: itemName,
         service_type: item.item_type,
+        service_link_id: item.item_link_id,
+        service_subtitle: item.item_subtitle,
       })
     }
   })
@@ -111,9 +117,19 @@ export interface AssociatedItemsModalProps {
   items: AssociatedItem[]
   isLoading: boolean
   onClose: () => void
+  searchPlaceholder?: string
+  itemLabel?: string
 }
 
-export function AssociatedItemsModal({ title, organizationId, items, isLoading, onClose }: AssociatedItemsModalProps) {
+export function AssociatedItemsModal({
+  title,
+  organizationId,
+  items,
+  isLoading,
+  onClose,
+  searchPlaceholder = 'Search by project, environment, service, or cluster name',
+  itemLabel = 'Service',
+}: AssociatedItemsModalProps) {
   const [searchValue, setSearchValue] = useState<string | undefined>()
   const normalizedSearch = searchValue?.trim() || undefined
 
@@ -146,7 +162,7 @@ export function AssociatedItemsModal({ title, organizationId, items, isLoading, 
         <>
           <InputSearch
             className="mb-3"
-            placeholder="Search by project, environment, service, or cluster name"
+            placeholder={searchPlaceholder}
             onChange={(value) => setSearchValue(value)}
           />
           {noSearchResults ? (
@@ -195,7 +211,7 @@ export function AssociatedItemsModal({ title, organizationId, items, isLoading, 
               {hasServicesInSource ? (
                 <div>
                   <Heading level={3} className="mb-2 text-neutral">
-                    {pluralize(serviceSourceItems.length, 'Service')}
+                    {pluralize(serviceSourceItems.length, itemLabel)}
                   </Heading>
                   {serviceTreeData.length > 0 ? (
                     <TreeView.Root
@@ -236,7 +252,7 @@ export function AssociatedItemsModal({ title, organizationId, items, isLoading, 
                                             params={{
                                               organizationId,
                                               environmentId: environment.environment_id,
-                                              serviceId: service.service_id,
+                                              serviceId: service.service_link_id ?? service.service_id,
                                               projectId: project.project_id,
                                             }}
                                             className="flex items-center py-1.5 pl-5 text-sm"
@@ -248,7 +264,14 @@ export function AssociatedItemsModal({ title, organizationId, items, isLoading, 
                                               width={20}
                                               className="mr-2"
                                             />
-                                            {service.service_name}
+                                            <span className="flex min-w-0 flex-col">
+                                              <span className="truncate">{service.service_name}</span>
+                                              {service.service_subtitle && (
+                                                <span className="truncate text-xs text-neutral-subtle">
+                                                  {service.service_subtitle}
+                                                </span>
+                                              )}
+                                            </span>
                                           </Link>
                                         </li>
                                       ))}
@@ -262,7 +285,9 @@ export function AssociatedItemsModal({ title, organizationId, items, isLoading, 
                       ))}
                     </TreeView.Root>
                   ) : (
-                    <p className="text-xs text-neutral-subtle">No matching services.</p>
+                    <p className="text-xs text-neutral-subtle">
+                      No matching {pluralize(serviceSourceItems.length, itemLabel.toLowerCase())}.
+                    </p>
                   )}
                 </div>
               ) : null}

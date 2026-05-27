@@ -21,12 +21,10 @@ import { pluralize } from '@qovery/shared/util-js'
 function SecretManagerAssociatedItemsContent({
   secretManagerAccessId,
   organizationId,
-  integrationName,
   onClose,
 }: {
   secretManagerAccessId: string
   organizationId: string
-  integrationName: string
   onClose: () => void
 }) {
   const { data: associatedServices = [], isLoading } = useSecretManagerAssociatedServices({
@@ -34,24 +32,28 @@ function SecretManagerAssociatedItemsContent({
   })
 
   const items: AssociatedItem[] = associatedServices
-    .filter((s) => s.service_id && s.service_name && s.service_type)
+    .filter((s) => s.service_id && s.service_type && s.variable_name)
     .map((s) => ({
       project_id: s.project_id,
       project_name: s.project_name,
       environment_id: s.environment_id,
       environment_name: s.environment_name,
-      item_id: s.service_id!,
-      item_name: s.service_name!,
+      item_id: [s.service_id, s.variable_name, s.external_secret_name].filter(Boolean).join('-'),
+      item_name: s.variable_name,
       item_type: s.service_type!,
+      item_link_id: s.service_id,
+      item_subtitle: s.external_secret_name,
     }))
 
   return (
     <AssociatedItemsModal
-      title={`Associated ${pluralize(items.length, 'service')}`}
+      title={`Associated ${pluralize(items.length, 'external secret')}`}
       organizationId={organizationId}
       items={items}
       isLoading={isLoading}
       onClose={onClose}
+      itemLabel="External secret"
+      searchPlaceholder="Search by project, environment, or external secret name"
     />
   )
 }
@@ -156,7 +158,6 @@ function RouteComponent() {
         <SecretManagerAssociatedItemsContent
           secretManagerAccessId={integration.id}
           organizationId={organizationId}
-          integrationName={integration.name}
           onClose={closeModal}
         />
       ),

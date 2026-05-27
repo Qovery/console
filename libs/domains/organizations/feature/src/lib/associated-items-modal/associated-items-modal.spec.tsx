@@ -52,6 +52,20 @@ const clusterOnlyData: AssociatedItem[] = [
   },
 ]
 
+const externalSecretData: AssociatedItem[] = [
+  {
+    project_id: '1',
+    project_name: 'Project 1',
+    environment_id: '1',
+    environment_name: 'Development',
+    item_id: 'service-1-API_TOKEN-prod/api-token',
+    item_name: 'API_TOKEN',
+    item_type: 'APPLICATION',
+    item_link_id: 'service-1',
+    item_subtitle: 'prod/api-token',
+  },
+]
+
 const baseProps: AssociatedItemsModalProps = {
   title: 'Associated items (3)',
   organizationId: '0000-0000-0000',
@@ -100,6 +114,38 @@ describe('AssociatedItemsModal', () => {
 
     expect(result).toHaveLength(2)
     expect(result[0].environments[0].services).toHaveLength(2)
+  })
+
+  it('should preserve service links and subtitles when grouping custom items', () => {
+    const result = groupByProjectEnvironmentsServices(externalSecretData)
+
+    expect(result[0].environments[0].services[0]).toMatchObject({
+      service_id: 'service-1-API_TOKEN-prod/api-token',
+      service_name: 'API_TOKEN',
+      service_link_id: 'service-1',
+      service_subtitle: 'prod/api-token',
+    })
+  })
+
+  it('should render custom item label, placeholder, and subtitle', async () => {
+    const { userEvent } = renderWithProviders(
+      <AssociatedItemsModal
+        {...baseProps}
+        title="Associated external secret (1)"
+        items={externalSecretData}
+        itemLabel="External secret"
+        searchPlaceholder="Search by project, environment, or external secret name"
+      />
+    )
+
+    expect(screen.getByPlaceholderText('Search by project, environment, or external secret name')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'External secret' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getAllByRole('button')[0])
+    await userEvent.click(screen.getAllByRole('button')[1])
+
+    expect(screen.getByText('API_TOKEN')).toBeInTheDocument()
+    expect(screen.getByText('prod/api-token')).toBeInTheDocument()
   })
 
   it('should filter clusters by item_name for search', () => {
