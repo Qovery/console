@@ -21,15 +21,24 @@ const clickByName = async (page: Page, name: string) => {
 const login = async (page: Page) => {
   const email = requiredEnv('E2E_USER_EMAIL')
   const password = requiredEnv('E2E_USER_PASSWORD')
-  const loginMethod = process.env.E2E_LOGIN_METHOD ?? 'github'
-
-  await page.goto('/')
+  const loginMethod = process.env.E2E_LOGIN_METHOD ?? 'password'
+  const auth0Connection = process.env.E2E_AUTH0_CONNECTION
 
   if (loginMethod === 'saml') {
+    await page.goto('/')
     await page.getByRole('button', { name: /continue with saml sso/i }).click()
     await page.getByLabel(/company domain/i).fill(requiredEnv('E2E_SSO_DOMAIN'))
     await page.getByRole('button', { name: /connect/i }).click()
-  } else {
+  } else if (loginMethod === 'password') {
+    const searchParams = new URLSearchParams({ e2eLogin: 'password' })
+
+    if (auth0Connection) {
+      searchParams.set('e2eConnection', auth0Connection)
+    }
+
+    await page.goto(`/login?${searchParams.toString()}`)
+  } else if (loginMethod !== 'password') {
+    await page.goto('/')
     await page.getByRole('button', { name: new RegExp(`continue with ${loginMethod}`, 'i') }).click()
   }
 

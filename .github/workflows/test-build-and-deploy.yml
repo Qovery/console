@@ -47,9 +47,7 @@ on:
         required: false
       e2e-user-password:
         required: false
-      e2e-login-method:
-        required: false
-      e2e-sso-domain:
+      e2e-auth0-connection:
         required: false
       e2e-project-name:
         required: false
@@ -207,8 +205,11 @@ jobs:
           E2E_BASE_URL: https://console-staging.qovery.com
           E2E_USER_EMAIL: ${{ secrets.e2e-user-email }}
           E2E_USER_PASSWORD: ${{ secrets.e2e-user-password }}
-          E2E_LOGIN_METHOD: ${{ secrets.e2e-login-method }}
-          E2E_SSO_DOMAIN: ${{ secrets.e2e-sso-domain }}
+          # E2E_LOGIN_METHOD defaults to "password" in the Playwright test.
+          # It can be set to "github", "google", or "saml" if we explicitly need to exercise a provider flow.
+          # E2E_AUTH0_CONNECTION can force a dedicated Auth0 database connection for password login.
+          # E2E_SSO_DOMAIN is only required if we explicitly switch the smoke test to SAML login.
+          E2E_AUTH0_CONNECTION: ${{ secrets.e2e-auth0-connection }}
           E2E_PROJECT_NAME: ${{ secrets.e2e-project-name }}
           E2E_ENVIRONMENT_NAME: ${{ secrets.e2e-environment-name }}
           E2E_SERVICE_NAME: ${{ secrets.e2e-service-name }}

@@ -120,6 +120,8 @@ const TESTIMONIALS = [
 
 const loginSearchParamsSchema = z.object({
   redirect: z.string().optional(),
+  e2eLogin: z.string().optional(),
+  e2eConnection: z.string().optional(),
 })
 
 function getSafeRedirect(redirectPath?: string) {
@@ -195,6 +197,7 @@ function RouteComponent() {
   const [loading, setLoading] = useState<{ provider: string; active: boolean } | undefined>()
   const [lastUsedLogin, setLastUsedLogin] = useLocalStorage<string | undefined>(LAST_USED_LOGIN_STORAGE_KEY, undefined)
   const [lastUsedLoginAtPageLoad] = useState(lastUsedLogin)
+  const [e2eLoginStarted, setE2eLoginStarted] = useState(false)
 
   const [testimonialIndex, setTestimonialIndex] = useState(0)
   const [isTestimonialExiting, setIsTestimonialExiting] = useState(true)
@@ -250,6 +253,15 @@ function RouteComponent() {
       console.error(error)
     }
   }
+
+  useEffect(() => {
+    if (search.e2eLogin !== 'password' || e2eLoginStarted) {
+      return
+    }
+
+    setE2eLoginStarted(true)
+    authLogin(search.e2eConnection, getSafeRedirect(search.redirect)).catch(console.error)
+  }, [authLogin, e2eLoginStarted, search.e2eConnection, search.e2eLogin, search.redirect])
 
   const validateAndConnect = () => {
     const trimmed = methods.getValues('ssoDomain').trim()

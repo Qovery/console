@@ -29,8 +29,7 @@ jobs:
       codecov-token: ${{ secrets.CODECOV_TOKEN }}
       e2e-user-email: ${{ secrets.E2E_USER_EMAIL }}
       e2e-user-password: ${{ secrets.E2E_USER_PASSWORD }}
-      e2e-login-method: ${{ secrets.E2E_LOGIN_METHOD }}
-      e2e-sso-domain: ${{ secrets.E2E_SSO_DOMAIN }}
+      e2e-auth0-connection: ${{ secrets.E2E_AUTH0_CONNECTION }}
       e2e-project-name: ${{ secrets.E2E_PROJECT_NAME }}
       e2e-environment-name: ${{ secrets.E2E_ENVIRONMENT_NAME }}
       e2e-service-name: ${{ secrets.E2E_SERVICE_NAME }}
