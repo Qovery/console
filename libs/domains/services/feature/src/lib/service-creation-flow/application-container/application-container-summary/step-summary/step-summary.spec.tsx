@@ -1,9 +1,11 @@
+import { type ExternalSecretData } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ApplicationContainerStepSummary } from './step-summary'
 
 const mockNavigate = jest.fn()
 const mockSetCurrentStep = jest.fn()
 const mockCreateService = jest.fn()
+const mockCreateVariable = jest.fn()
 const mockImportVariables = jest.fn()
 const mockDeployService = jest.fn()
 const mockEditAdvancedSettings = jest.fn()
@@ -30,6 +32,7 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
+  useCreateVariable: () => ({ mutateAsync: mockCreateVariable }),
   useImportVariables: () => ({ mutateAsync: mockImportVariables }),
 }))
 
@@ -53,13 +56,16 @@ jest.mock('../../application-container-creation-flow', () => ({
 jest.mock('../application-container-summary-view/application-container-summary-view', () => ({
   ApplicationContainerSummaryView: ({
     generalData,
+    externalSecretsData,
     onSubmit,
   }: {
     generalData: { serviceType: 'APPLICATION' | 'CONTAINER' }
+    externalSecretsData: unknown[]
     onSubmit: (withDeploy: boolean) => void
   }) => (
     <div>
       <h1>Ready to create your {generalData.serviceType === 'APPLICATION' ? 'Application' : 'Container'}</h1>
+      <div data-testid="external-secrets-count">{externalSecretsData.length}</div>
       <button data-testid="button-create" type="button" onClick={() => onSubmit(false)}>
         Create
       </button>
@@ -102,7 +108,24 @@ const variablesData = [
   },
 ]
 
-function renderComponent({ autoscalingMode = 'NONE' }: { autoscalingMode?: 'NONE' | 'HPA' } = {}) {
+const externalSecretsData: ExternalSecretData[] = [
+  {
+    name: 'DB_PASSWORD',
+    reference: 'my-app/prod/db-password',
+    scope: 'APPLICATION' as const,
+    isFile: false,
+    description: 'Database password',
+    secretManagerAccessId: 'sm-1',
+  },
+]
+
+function renderComponent({
+  autoscalingMode = 'NONE',
+  externalSecrets = externalSecretsData,
+}: {
+  autoscalingMode?: 'NONE' | 'HPA'
+  externalSecrets?: ExternalSecretData[]
+} = {}) {
   mockUseApplicationContainerCreateContext.mockReturnValue({
     creationFlowUrl: '/organization/org-1/project/proj-1/environment/env-1/service/create/application',
     setCurrentStep: mockSetCurrentStep,
@@ -120,7 +143,7 @@ function renderComponent({ autoscalingMode = 'NONE' }: { autoscalingMode?: 'NONE
       }),
     },
     portForm: { getValues: () => portData },
-    variablesForm: { getValues: () => ({ variables: variablesData }) },
+    variablesForm: { getValues: () => ({ variables: variablesData, externalSecrets }) },
   })
 
   return renderWithProviders(
@@ -132,6 +155,7 @@ describe('ApplicationContainerStepSummary', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockCreateService.mockResolvedValue({ id: 'service-1' })
+    mockCreateVariable.mockResolvedValue(undefined)
     mockImportVariables.mockResolvedValue(undefined)
     mockDeployService.mockResolvedValue(undefined)
     mockEditAdvancedSettings.mockResolvedValue(undefined)
@@ -141,6 +165,7 @@ describe('ApplicationContainerStepSummary', () => {
     const { userEvent } = renderComponent()
 
     expect(screen.getByRole('heading', { name: 'Ready to create your Application' })).toBeInTheDocument()
+    expect(screen.getByTestId('external-secrets-count')).toHaveTextContent('1')
     expect(mockSetCurrentStep).toHaveBeenCalledWith(6)
 
     await userEvent.click(screen.getByTestId('button-create'))
@@ -168,6 +193,18 @@ describe('ApplicationContainerStepSummary', () => {
             is_secret: false,
           },
         ],
+      },
+    })
+    expect(mockCreateVariable).toHaveBeenCalledWith({
+      variableRequest: {
+        key: 'DB_PASSWORD',
+        value: 'my-app/prod/db-password',
+        variable_scope: 'APPLICATION',
+        variable_parent_id: 'service-1',
+        is_secret: false,
+        mount_path: null,
+        description: 'Database password',
+        secret_manager_access_id: 'sm-1',
       },
     })
     expect(mockNavigate).toHaveBeenCalledWith({
@@ -202,5 +239,54 @@ describe('ApplicationContainerStepSummary', () => {
         serviceType: 'APPLICATION',
       }),
     })
+  })
+
+  it('continues service creation when external secret creation fails', async () => {
+    mockCreateVariable.mockRejectedValueOnce(new Error('External secret creation failed'))
+    const { userEvent } = renderComponent()
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        params: {
+          organizationId: 'org-1',
+          projectId: 'proj-1',
+          environmentId: 'env-1',
+        },
+      })
+    })
+
+    expect(mockCapture).toHaveBeenCalledWith('create-service', {
+      selectedServiceType: 'application',
+      selectedServiceSubType: 'current',
+    })
+  })
+
+  it('continues service creation when an external secret has an unsupported scope', async () => {
+    const { userEvent } = renderComponent({
+      externalSecrets: [
+        {
+          ...externalSecretsData[0],
+          scope: 'PROJECT',
+        },
+      ],
+    })
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        params: {
+          organizationId: 'org-1',
+          projectId: 'proj-1',
+          environmentId: 'env-1',
+        },
+      })
+    })
+
+    expect(mockCreateVariable).not.toHaveBeenCalled()
   })
 })

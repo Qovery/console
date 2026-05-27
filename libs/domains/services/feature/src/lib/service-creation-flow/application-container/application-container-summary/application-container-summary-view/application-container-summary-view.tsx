@@ -7,6 +7,7 @@ import { match } from 'ts-pattern'
 import {
   type ApplicationGeneralData,
   type ApplicationResourcesData,
+  type ExternalSecretData,
   type FlowPortData,
   type VariableData,
 } from '@qovery/shared/interfaces'
@@ -18,6 +19,7 @@ export interface ApplicationContainerSummaryViewProps {
   resourcesData: ApplicationResourcesData
   portsData: FlowPortData
   variablesData: VariableData[]
+  externalSecretsData: ExternalSecretData[]
   selectedRegistryName?: string
   annotationsGroup: OrganizationAnnotationsGroupResponse[]
   labelsGroup: OrganizationLabelsGroupEnrichedResponse[]
@@ -54,6 +56,7 @@ export function ApplicationContainerSummaryView({
   resourcesData,
   portsData,
   variablesData,
+  externalSecretsData,
   selectedRegistryName,
   annotationsGroup,
   labelsGroup,
@@ -325,19 +328,33 @@ export function ApplicationContainerSummaryView({
             />
           </div>
           <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
-            {variablesData.length ? (
-              variablesData.map((variable, index) => (
-                <li className="grid grid-cols-1 gap-2 md:grid-cols-3" key={`${variable.variable}-${index}`}>
-                  <strong className="truncate font-medium text-neutral">
-                    {variable.variable} = {variable.isSecret ? '********' : variable.value}
-                  </strong>
-                  <span>
-                    <strong className="font-medium text-neutral">Scope:</strong>{' '}
-                    {variable.scope ? generateScopeLabel(variable.scope) : '-'}
-                  </span>
-                  <span>{variable.isSecret ? 'Secret' : 'Public'}</span>
-                </li>
-              ))
+            {variablesData.length || externalSecretsData.length ? (
+              <>
+                {variablesData.map((variable, index) => (
+                  <li className="grid grid-cols-1 gap-2 md:grid-cols-3" key={`${variable.variable}-${index}`}>
+                    <strong className="truncate font-medium text-neutral">
+                      {variable.variable} = {variable.isSecret ? '********' : variable.value}
+                    </strong>
+                    <span>
+                      <strong className="font-medium text-neutral">Scope:</strong>{' '}
+                      {variable.scope ? generateScopeLabel(variable.scope) : '-'}
+                    </span>
+                    <span>{variable.isSecret ? 'Secret' : 'Public'}</span>
+                  </li>
+                ))}
+                {externalSecretsData.map((secret, index) => (
+                  <li className="grid grid-cols-1 gap-2 md:grid-cols-3" key={`${secret.name}-${index}`}>
+                    <strong className="truncate font-medium text-neutral">
+                      {secret.name} = {secret.reference}
+                    </strong>
+                    <span>
+                      <strong className="font-medium text-neutral">Scope:</strong>{' '}
+                      {secret.scope ? generateScopeLabel(secret.scope) : '-'}
+                    </span>
+                    <span>{secret.isFile ? 'External secret file' : 'External secret'}</span>
+                  </li>
+                ))}
+              </>
             ) : (
               <li>No variable declared</li>
             )}

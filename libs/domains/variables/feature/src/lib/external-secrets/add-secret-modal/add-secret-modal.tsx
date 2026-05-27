@@ -27,6 +27,15 @@ export function mapSecretManagersToSources(secretManagers: SecretManagerAccess[]
   })
 }
 
+export type AddSecretModalSubmitData = {
+  name: string
+  description?: string
+  filePath?: string
+  isFile: boolean
+  reference: string
+  secretManagerAccessId: string
+}
+
 interface AddSecretModalProps {
   secretSources: SecretSourceOption[]
   defaultSource?: SecretSourceOption
@@ -34,14 +43,7 @@ interface AddSecretModalProps {
   mode?: 'create' | 'edit'
   initialSecret?: ExternalSecretRow
   onClose: () => void
-  onSubmit: (secret: {
-    name: string
-    description?: string
-    filePath?: string
-    isFile: boolean
-    reference: string
-    secretManagerAccessId: string
-  }) => void | Promise<void>
+  onSubmit: (secret: AddSecretModalSubmitData) => void | Promise<void>
 }
 
 type AddSecretFormValues = {

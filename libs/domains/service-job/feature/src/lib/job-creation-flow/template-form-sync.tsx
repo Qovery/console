@@ -103,6 +103,7 @@ export function TemplateFormSync({
       // Variables
       setVariableData((variableData) => ({
         ...(variableData ?? {}),
+        externalSecrets: variableData?.externalSecrets ?? [],
         variables: template.variables.map((v) => ({
           variable: v.name,
           isSecret: v.is_secret,
