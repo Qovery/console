@@ -27,7 +27,8 @@ function SecretManagerItem({
 }) {
   const { data: secretManagerAssociatedExternalSecrets = [] } = useSecretManagerAssociatedServices({
     secretManagerAccessId: manager.id,
-    suspense: true,
+    enabled: Boolean(onViewAssociatedExternalSecrets),
+    suspense: Boolean(onViewAssociatedExternalSecrets),
   })
 
   return (
@@ -67,18 +68,33 @@ function SecretManagerItem({
               iconOnly
               className="relative"
               disabled={secretManagerAssociatedExternalSecrets.length === 0}
+              aria-label="View associated external secrets"
               onClick={() => onViewAssociatedExternalSecrets(manager)}
             >
               <Icon iconName="layer-group" iconStyle="regular" />
             </Button>
           </Indicator>
         )}
-        {manager.authentication?.mode !== 'AUTOMATICALLY_CONFIGURED' && (
-          <Button type="button" variant="outline" color="neutral" size="md" iconOnly onClick={() => onEdit(manager)}>
-            <Icon iconName="pen" iconStyle="regular" className="text-xs" />
-          </Button>
-        )}
-        <Button type="button" variant="outline" color="neutral" size="md" iconOnly onClick={() => onDelete(manager)}>
+        <Button
+          type="button"
+          variant="outline"
+          color="neutral"
+          size="md"
+          iconOnly
+          aria-label="Edit secret manager"
+          onClick={() => onEdit(manager)}
+        >
+          <Icon iconName="pen" iconStyle="regular" className="text-xs" />
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          color="neutral"
+          size="md"
+          iconOnly
+          aria-label="Delete secret manager"
+          onClick={() => onDelete(manager)}
+        >
           <Icon iconName="trash" iconStyle="regular" className="text-xs" />
         </Button>
       </div>
