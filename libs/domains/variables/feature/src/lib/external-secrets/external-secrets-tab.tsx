@@ -615,22 +615,16 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
             <button type="button" className="text-ssm font-medium underline" onClick={() => setRowSelection({})}>
               Unselect
             </button>
-            <div className="flex items-center gap-1.5">
-              <Button color="neutralInverted" variant="outline" size="md" disabled>
-                <Icon iconName="link" iconStyle="regular" />
-                Attach
-              </Button>
-              <Button
-                aria-label="Delete selected"
-                color="redInverted"
-                variant="outline"
-                size="md"
-                iconOnly
-                onClick={() => handleConfirmDeleteSecrets(selectedIds)}
-              >
-                <Icon iconName="trash" iconStyle="regular" />
-              </Button>
-            </div>
+            <Button
+              aria-label="Delete selected"
+              color="redInverted"
+              variant="outline"
+              size="md"
+              iconOnly
+              onClick={() => handleConfirmDeleteSecrets(selectedIds)}
+            >
+              <Icon iconName="trash" iconStyle="regular" />
+            </Button>
           </div>
         </div>
       </div>
