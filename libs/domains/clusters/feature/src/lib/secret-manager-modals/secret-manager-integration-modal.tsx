@@ -238,7 +238,7 @@ export function SecretManagerIntegrationModal({
           }}
         />
         <Controller
-          name="endpoint.projectId"
+          name="endpoint.project_id"
           control={methods.control}
           rules={{
             required: 'Please enter your GCP Project ID.',
@@ -587,7 +587,7 @@ export function SecretManagerIntegrationModal({
               <div className="flex flex-col gap-4">
                 {option.icon === 'GCP' && (
                   <Controller
-                    name="endpoint.projectId"
+                    name="endpoint.project_id"
                     control={methods.control}
                     render={({ field }) => (
                       <InputText
