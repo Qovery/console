@@ -375,9 +375,17 @@ export function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="file-export" />} onSelect={openTerraformExportModal}>
           Export as Terraform
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={openCloneModal}>
-          Clone
-        </DropdownMenu.Item>
+        {isArgoCdEnvironment ? (
+          <DropdownMenu.Item icon={<Icon iconName="copy" />} disabled>
+            <Tooltip content="ArgoCD environments cannot be cloned">
+              <span>Clone</span>
+            </Tooltip>
+          </DropdownMenu.Item>
+        ) : (
+          <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={openCloneModal}>
+            Clone
+          </DropdownMenu.Item>
+        )}
         <DropdownMenu.Sub>
           <DropdownMenu.SubTrigger icon={<Icon iconName="circle-info" />}>Environment metadata</DropdownMenu.SubTrigger>
           <DropdownMenu.SubContent className="w-[290px]">

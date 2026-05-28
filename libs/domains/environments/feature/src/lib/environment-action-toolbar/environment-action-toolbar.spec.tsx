@@ -286,4 +286,26 @@ describe('EnvironmentActionToolbar', () => {
       })
     ).toBeInTheDocument()
   })
+
+  it('should disable ArgoCD environment clone', async () => {
+    const { userEvent } = renderWithProviders(
+      <EnvironmentActionToolbar environment={mockEnvironment} isArgoCdEnvironment />
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+
+    const cloneEnvironmentItem = screen.getByRole('menuitem', { name: /^clone$/i })
+    expect(cloneEnvironmentItem).toHaveAttribute('aria-disabled', 'true')
+
+    await userEvent.click(cloneEnvironmentItem)
+    expect(mockOpenModal).not.toHaveBeenCalled()
+
+    await userEvent.hover(screen.getByText('Clone'))
+
+    expect(
+      await screen.findByRole('tooltip', {
+        name: 'ArgoCD environments cannot be cloned',
+      })
+    ).toBeInTheDocument()
+  })
 })
