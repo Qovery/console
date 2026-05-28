@@ -182,10 +182,10 @@ export function SecretManagerIntegrationModal({
         <div className="flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
           <div>
             <span className="select-none">$ </span>
-            curl https://setup.qovery.com/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role
-            qovery-service-account{' '}
+            curl https://setup.qovery.com/create_secret_manager_credentials_gcp.sh | bash -s -- $GOOGLE_CLOUD_PROJECT
+            qovery_secrets_manager_role qovery-secrets-manager-sa{' '}
           </div>
-          <CopyButton content="curl https://setup.qovery.com/create_secret_manager_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_secrets_manager_role qovery-secrets-manager-sa" />
+          <CopyButton content="curl https://setup.qovery.com/create_secret_manager_credentials_gcp.sh | bash -s -- $GOOGLE_CLOUD_PROJECT qovery_secrets_manager_role qovery-secrets-manager-sa" />
         </div>
       </div>
       <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
