@@ -1,5 +1,5 @@
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
-import { Button, Icon, Indicator } from '@qovery/shared/ui'
+import { Button, Icon, Indicator, Tooltip } from '@qovery/shared/ui'
 import {
   getReadableSecretManagerAuth,
   getReadableSecretManagerProvider,
@@ -30,6 +30,7 @@ function SecretManagerItem({
     enabled: Boolean(onViewAssociatedExternalSecrets),
     suspense: Boolean(onViewAssociatedExternalSecrets),
   })
+  const hasAssociatedExternalSecrets = secretManagerAssociatedExternalSecrets.length > 0
 
   return (
     <div key={manager.id} className={`flex items-center justify-between gap-3 p-3 `}>
@@ -63,7 +64,7 @@ function SecretManagerItem({
               size="md"
               iconOnly
               className="relative"
-              disabled={secretManagerAssociatedExternalSecrets.length === 0}
+              disabled={!hasAssociatedExternalSecrets}
               aria-label="View associated external secrets"
               onClick={() => onViewAssociatedExternalSecrets(manager)}
             >
@@ -82,17 +83,25 @@ function SecretManagerItem({
         >
           <Icon iconName="pen" iconStyle="regular" className="text-xs" />
         </Button>
-        <Button
-          type="button"
-          variant="outline"
-          color="neutral"
-          size="md"
-          iconOnly
-          aria-label="Delete secret manager"
-          onClick={() => onDelete(manager)}
+        <Tooltip
+          content="This secret manager is used by external secrets. Remove the associated external secrets before deleting it."
+          disabled={!hasAssociatedExternalSecrets}
         >
-          <Icon iconName="trash" iconStyle="regular" className="text-xs" />
-        </Button>
+          <span>
+            <Button
+              type="button"
+              variant="outline"
+              color="neutral"
+              size="md"
+              iconOnly
+              aria-label="Delete secret manager"
+              disabled={hasAssociatedExternalSecrets}
+              onClick={() => onDelete(manager)}
+            >
+              <Icon iconName="trash" iconStyle="regular" className="text-xs" />
+            </Button>
+          </span>
+        </Tooltip>
       </div>
     </div>
   )
