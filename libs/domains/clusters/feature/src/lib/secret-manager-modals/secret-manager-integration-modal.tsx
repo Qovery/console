@@ -210,11 +210,11 @@ export function SecretManagerIntegrationModal({
 
             if (fileDetails) {
               return (
-                <div className="flex items-center justify-between rounded border border-neutral p-4">
+                <div className="flex items-center justify-between rounded-md border border-neutral p-4">
                   <div className="flex items-center pl-2 text-neutral">
                     <Icon iconName="file-arrow-down" className="mr-4" />
                     <p className="flex flex-col gap-1">
-                      <span className="text-xs font-medium">{fileDetails.name}</span>
+                      <span className="text-sm font-medium">{fileDetails.name}</span>
                       <span className="text-xs text-neutral-subtle">{fileDetails.size} Ko</span>
                     </p>
                   </div>
@@ -236,6 +236,22 @@ export function SecretManagerIntegrationModal({
 
             return <div />
           }}
+        />
+        <Controller
+          name="endpoint.projectId"
+          control={methods.control}
+          rules={{
+            required: 'Please enter your GCP Project ID.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              name={field.name}
+              label="GCP Project ID"
+              value={field.value}
+              onChange={field.onChange}
+              error={error?.message}
+            />
+          )}
         />
         <Controller
           name="endpoint.region"
@@ -266,22 +282,6 @@ export function SecretManagerIntegrationModal({
               value={field.value}
               onChange={field.onChange}
               hint="Display name in Qovery"
-            />
-          )}
-        />
-        <Controller
-          name="endpoint.projectId"
-          control={methods.control}
-          rules={{
-            required: 'Please enter your GCP Project ID.',
-          }}
-          render={({ field, fieldState: { error } }) => (
-            <InputText
-              name={field.name}
-              label="GCP Project ID"
-              value={field.value}
-              onChange={field.onChange}
-              error={error?.message}
             />
           )}
         />
