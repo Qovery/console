@@ -269,6 +269,22 @@ export function SecretManagerIntegrationModal({
             />
           )}
         />
+        <Controller
+          name="endpoint.projectId"
+          control={methods.control}
+          rules={{
+            required: 'Please enter your GCP Project ID.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              name={field.name}
+              label="GCP Project ID"
+              value={field.value}
+              onChange={field.onChange}
+              error={error?.message}
+            />
+          )}
+        />
       </div>
     </>
   )
