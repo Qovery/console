@@ -35,7 +35,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
-  const isArgoCdEnvironment = overview.services_overview.managed_by !== 'QOVERY'
+  const isArgoCdEnvironment = overview.services_overview.managed_by === 'ARGOCD'
   const lastOperationDate = overview.deployment_status?.last_deployment_date
   const cellClassName = 'h-auto border-l border-neutral py-2'
   const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
@@ -140,7 +140,9 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
         >
           {environment && (
             <>
-              {overview.services_overview.service_count > 0 && overview.deployment_status ? (
+              {isArgoCdEnvironment ? (
+                <DisabledManageDeploymentButton tooltip="ArgoCD environments can only be deployed from ArgoCD" />
+              ) : overview.services_overview.service_count > 0 && overview.deployment_status ? (
                 <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
               ) : (
                 <DisabledManageDeploymentButton tooltip="Add at least one service to deploy this environment" />
