@@ -1,4 +1,4 @@
-import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
+import { createFileRoute, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
@@ -46,16 +46,6 @@ function RouteComponent() {
   const [secretManagers, setSecretManagers] = useState<SecretManagerAccess[]>(
     () => cluster?.secret_manager_accesses ?? []
   )
-
-  if (isGcp && !secretManagerEnabled) {
-    return (
-      <Navigate
-        to="/organization/$organizationId/cluster/$clusterId/settings/general"
-        params={{ organizationId, clusterId }}
-        replace
-      />
-    )
-  }
 
   const openSecretManagerModal = (
     option: (typeof SECRET_MANAGER_OPTIONS)[number],
@@ -142,7 +132,7 @@ function RouteComponent() {
       ...cluster,
       secret_manager_accesses: secretManagerEnabled ? secretManagers : cluster.secret_manager_accesses,
       keda: {
-        enabled: isGcp ? false : kedaEnabled,
+        enabled: kedaEnabled,
       },
     }
 
@@ -166,17 +156,15 @@ function RouteComponent() {
         />
         <div className="max-w-content-with-navigation-left">
           <div className="divide-y divide-neutral overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0_0_4px_0_rgba(0,0,0,0.01),0_2px_3px_0_rgba(0,0,0,0.02)]">
-            {!isGcp && (
-              <div className="p-4">
-                <AddonToggleCard
-                  title="KEDA autoscaler"
-                  description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this cluster."
-                  badge={{ label: 'Free', color: 'green' }}
-                  activated={kedaEnabled}
-                  onToggle={() => setKedaEnabled((prev) => !prev)}
-                />
-              </div>
-            )}
+            <div className="p-4">
+              <AddonToggleCard
+                title="KEDA autoscaler"
+                description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this cluster."
+                badge={{ label: 'Free', color: 'green' }}
+                activated={kedaEnabled}
+                onToggle={() => setKedaEnabled((prev) => !prev)}
+              />
+            </div>
 
             {secretManagerEnabled && (
               <div className="p-4">

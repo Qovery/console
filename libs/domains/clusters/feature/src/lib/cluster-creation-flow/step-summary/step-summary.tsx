@@ -5,7 +5,6 @@ import {
   type ClusterRequest,
   type ClusterRequestFeaturesInner,
   type KubernetesEnum,
-  type SecretManagerAccessRequest,
 } from 'qovery-typescript-axios'
 import { useCallback, useEffect } from 'react'
 import { match } from 'ts-pattern'
@@ -79,8 +78,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
     }
     if (generalData?.installation_type === 'MANAGED') {
       return match(generalData?.cloud_provider)
-        .with('AWS', () => goToAddons())
-        .with('GCP', () => (secretManagerEnabled ? goToAddons() : goToFeatures()))
+        .with('AWS', 'GCP', () => goToAddons())
         .with('SCW', () => goToFeatures())
         .otherwise(() => goToResources())
     }
@@ -108,7 +106,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
 
     const addonsPayload = {
       keda: {
-        enabled: generalData.cloud_provider === 'GCP' ? false : addonsData.kedaActivated,
+        enabled: addonsData.kedaActivated,
       },
       secret_manager_accesses: secretManagerEnabled ? addonsData.secretManagers : [],
     }
@@ -377,9 +375,9 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   }
 
   useEffect(() => {
-    const stepIndex = steps(generalData, { secretManagerEnabled }).findIndex((step) => step.key === 'summary') + 1
+    const stepIndex = steps(generalData).findIndex((step) => step.key === 'summary') + 1
     setCurrentStep(stepIndex)
-  }, [setCurrentStep, generalData, secretManagerEnabled])
+  }, [setCurrentStep, generalData])
 
   return (
     <FunnelFlowBody>

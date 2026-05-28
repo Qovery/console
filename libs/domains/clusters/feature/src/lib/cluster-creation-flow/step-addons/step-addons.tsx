@@ -50,10 +50,10 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
 
   useEffect(() => {
     setAddonsData({
-      kedaActivated: isGcp ? false : kedaEnabled,
+      kedaActivated: kedaEnabled,
       secretManagers: secretManagerEnabled ? integrations : [],
     })
-  }, [kedaEnabled, isGcp, integrations, secretManagerEnabled, setAddonsData])
+  }, [kedaEnabled, integrations, secretManagerEnabled, setAddonsData])
 
   const clusterStub = generalData
     ? ({
@@ -100,18 +100,15 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
 
       <form onSubmit={handleFormSubmit}>
         <div className="divide-y divide-neutral overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0_0_4px_0_rgba(0,0,0,0.01),0_2px_3px_0_rgba(0,0,0,0.02)]">
-          {!isGcp && (
-            <div className="p-4">
-              {/* TODO [secret manager] This page needs to be refactored using reusable UI components */}
-              <AddonToggleCard
-                title="KEDA autoscaler"
-                description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all your services running on this cluster."
-                badge={{ label: 'Free', color: 'green' }}
-                activated={kedaEnabled}
-                onToggle={() => setKedaEnabled((prev) => !prev)}
-              />
-            </div>
-          )}
+          <div className="p-4">
+            <AddonToggleCard
+              title="KEDA autoscaler"
+              description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all your services running on this cluster."
+              badge={{ label: 'Free', color: 'green' }}
+              activated={kedaEnabled}
+              onToggle={() => setKedaEnabled((prev) => !prev)}
+            />
+          </div>
 
           {secretManagerEnabled && (
             <div className="p-4">
@@ -184,12 +181,11 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
 
 export function StepAddons({ organizationId, onSubmit }: StepAddonsProps) {
   const { setCurrentStep, generalData } = useClusterContainerCreateContext()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
 
   useEffect(() => {
-    const stepIndex = steps(generalData, { secretManagerEnabled }).findIndex((step) => step.key === 'addons') + 1
+    const stepIndex = steps(generalData).findIndex((step) => step.key === 'addons') + 1
     setCurrentStep(stepIndex)
-  }, [setCurrentStep, generalData, secretManagerEnabled])
+  }, [setCurrentStep, generalData])
 
   const backTo = '/organization/$organizationId/cluster/create/$slug/features' as const
 

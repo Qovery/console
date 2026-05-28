@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useEffect } from 'react'
 import { StepAddons, useMaybeClusterContainerCreateContext } from '@qovery/domains/clusters/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -14,12 +13,10 @@ function Addons() {
   const navigate = useNavigate()
   const createContext = useMaybeClusterContainerCreateContext()
   const generalData = createContext?.generalData
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
-
   const creationFlowUrl = `/organization/${organizationId}/cluster/create/${slug}`
   const isAllowed =
     generalData?.installation_type === 'MANAGED' &&
-    (generalData.cloud_provider === 'AWS' || (generalData.cloud_provider === 'GCP' && secretManagerEnabled))
+    (generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'GCP')
   const shouldRedirect = Boolean(generalData) && !isAllowed
 
   useEffect(() => {

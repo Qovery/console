@@ -89,7 +89,7 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
     .with('AWS', 'GCP', () => checkIfFeaturesAvailable())
     .with('SCW', () => checkIfScwNetworkFeaturesAvailable())
     .otherwise(() => false)
-  const showKedaSummary = props.generalData.cloud_provider !== 'GCP'
+  const showKedaSummary = props.generalData.cloud_provider === 'AWS' || props.generalData.cloud_provider === 'GCP'
   const showSecretManagerSummary = props.secretManagerEnabled === true
   const showAddonsSection =
     props.generalData.installation_type === 'MANAGED' &&

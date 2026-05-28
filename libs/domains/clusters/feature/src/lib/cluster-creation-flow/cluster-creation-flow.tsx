@@ -1,5 +1,4 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum, type SecretManagerAccess } from 'qovery-typescript-axios'
 import {
   type Dispatch,
@@ -41,10 +40,6 @@ export type ClusterAddonsData = {
   secretManagers: SecretManagerAccess[]
 }
 
-export type StepsOptions = {
-  secretManagerEnabled?: boolean
-}
-
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
   undefined
 )
@@ -59,7 +54,7 @@ export const useClusterContainerCreateContext = () => {
 
 export const useMaybeClusterContainerCreateContext = () => useContext(ClusterContainerCreateContext)
 
-export const steps = (clusterGeneralData?: ClusterGeneralData, { secretManagerEnabled = false }: StepsOptions = {}) => {
+export const steps = (clusterGeneralData?: ClusterGeneralData) => {
   return match(clusterGeneralData)
     .with({ installation_type: 'PARTIALLY_MANAGED' }, () => [
       { title: 'Create new cluster', key: 'general' },
@@ -81,7 +76,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData, { secretManagerEn
     .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Set features', key: 'features' },
-      ...(secretManagerEnabled ? [{ title: 'Add-ons', key: 'addons' }] : []),
+      { title: 'Add-ons', key: 'addons' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'AZURE' }, () => [
@@ -132,8 +127,6 @@ export const defaultResourcesData: ClusterResourcesData = {
 
 export function ClusterCreationFlow({ children }: PropsWithChildren) {
   const { organizationId = '', slug } = useParams({ strict: false })
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
-
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
@@ -153,7 +146,7 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
   useDocumentTitle('Creation - Cluster')
 
   const creationFlowUrl = `/organization/${organizationId}/cluster/create/${slug}`
-  const currentSteps = steps(generalData, { secretManagerEnabled })
+  const currentSteps = steps(generalData)
 
   useEffect(() => {
     if (slug) {
