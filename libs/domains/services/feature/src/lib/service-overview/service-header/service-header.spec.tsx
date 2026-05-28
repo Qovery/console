@@ -66,6 +66,7 @@ const services = {
       name: 'Qovery/kube-dns',
       branch: 'main',
     },
+    manifest_revision: '313a525a4ad53b37f0b33f81282c52fef5f8e7d8',
   },
 }
 
@@ -337,5 +338,9 @@ describe('ServiceHeader', () => {
     expect(screen.getByRole('heading', { name: 'kube-dns-prod' })).toBeInTheDocument()
     expect(screen.getByText('ARGOCD')).toBeInTheDocument()
     expect(screen.getByText('service-state-chip')).toBeInTheDocument()
+    expect(screen.getByText('GitHub')).toBeInTheDocument()
+    expect(screen.getByText('Qovery/kube-dns')).toBeInTheDocument()
+    expect(screen.getByText('main')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /313a525/i })).toBeInTheDocument()
   })
 })

@@ -16,7 +16,17 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { Badge, Button, ExternalLink, Heading, Icon, Tooltip, Truncate, toast } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  CopyToClipboard,
+  ExternalLink,
+  Heading,
+  Icon,
+  Tooltip,
+  Truncate,
+  toast,
+} from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -211,6 +221,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
             serviceType: 'HELM',
             source: P.when(isHelmGitSource),
           },
+          { serviceType: 'ARGOCD_APP' },
           (service) => {
             const gitRepository = match(service)
               .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
@@ -220,6 +231,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
                 { serviceType: 'TERRAFORM' },
                 ({ terraform_files_source }) => terraform_files_source?.git?.git_repository
               )
+              .with({ serviceType: 'ARGOCD_APP' }, ({ git_repository }) => git_repository)
               .exhaustive()
 
             if (!gitRepository) {
@@ -230,6 +242,14 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           }
         )
         .otherwise(() => undefined)}
+      {isArgoCdService && 'manifest_revision' in service && service.manifest_revision && (
+        <CopyToClipboard text={service.manifest_revision}>
+          <Button type="button" variant="outline" color="neutral" size="xs" className="pl-1">
+            <Icon iconName="code-commit" className="w-4" />
+            {service.manifest_revision.substring(0, 7)}
+          </Button>
+        </CopyToClipboard>
+      )}
       {containerImage && (
         <>
           {containerImage.registry && (
