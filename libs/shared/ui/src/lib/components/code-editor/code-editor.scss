@@ -36,6 +36,15 @@
   color: var(--accent-11);
 }
 
+:root[data-theme='dark'] .monaco-editor .mtk20,
+:root[data-theme='dark'] .monaco-editor .mtk22,
+:root.dark .monaco-editor .mtk20,
+:root.dark .monaco-editor .mtk22,
+[data-theme='dark'] .monaco-editor .mtk20,
+[data-theme='dark'] .monaco-editor .mtk22 {
+  color: var(--negative-11);
+}
+
 .monaco-editor .mtk8 {
   color: var(--positive-11);
 }
