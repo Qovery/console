@@ -11,6 +11,7 @@ export interface Auth0ContextType {
 }
 
 export const Auth0Context = createContext<Auth0ContextType | undefined>(undefined)
+const E2E_AUTH_TOKEN_STORAGE_KEY = 'qovery-e2e-auth-token'
 
 // Holds the returnTo path from Auth0's appState between onRedirectCallback and the callback component
 let _pendingReturnTo: string | undefined
@@ -45,13 +46,15 @@ export function Auth0Wrapper({ children }: { children: React.ReactNode }) {
 
 function Auth0ContextProvider({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, user, loginWithRedirect, logout, isLoading } = useAuth0()
+  const e2eAuthToken =
+    typeof window !== 'undefined' ? window.localStorage.getItem(E2E_AUTH_TOKEN_STORAGE_KEY) : undefined
 
   const contextValue = {
-    isAuthenticated,
+    isAuthenticated: isAuthenticated || Boolean(e2eAuthToken),
     user,
     login: (returnTo?: string) => loginWithRedirect({ appState: { returnTo } }),
     logout: () => logout({ logoutParams: { returnTo: window.location.origin } }),
-    isLoading,
+    isLoading: e2eAuthToken ? false : isLoading,
   }
 
   return <Auth0Context.Provider value={contextValue}>{children}</Auth0Context.Provider>

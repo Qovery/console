@@ -1,4 +1,4 @@
-import { type Cluster, type Project } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterStatus, type Project } from 'qovery-typescript-axios'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import ClusterDeploymentProgressCard, {
@@ -36,6 +36,14 @@ describe('ClusterDeploymentProgressCard', () => {
   const props: ClusterDeploymentProgressCardProps = {
     organizationId: 'org-1',
     clusters: [mockCluster],
+    clusterStatuses: [
+      {
+        cluster_id: 'cluster-1',
+        status: 'DEPLOYING',
+        is_deployed: false,
+        reason: 'UNSPECIFIED',
+      } as ClusterStatus,
+    ],
   }
 
   beforeEach(() => {
@@ -76,6 +84,44 @@ describe('ClusterDeploymentProgressCard', () => {
   it('should render current step label when installing', () => {
     renderWithProviders(<ClusterDeploymentProgressCard {...props} />)
     expect(screen.getByText('Providing infrastructure (on provider side)')).toBeInTheDocument()
+  })
+
+  it('should render maintenance state without deployment details', () => {
+    renderWithProviders(
+      <ClusterDeploymentProgressCard
+        {...props}
+        clusterStatuses={[
+          {
+            cluster_id: 'cluster-1',
+            status: 'DEPLOYING',
+            is_deployed: false,
+            reason: 'MAINTENANCE',
+          } as ClusterStatus,
+        ]}
+      />
+    )
+
+    expect(screen.getByText('Qovery maintenance ongoing')).toBeInTheDocument()
+    expect(screen.queryByText('Providing infrastructure (on provider side)')).not.toBeInTheDocument()
+  })
+
+  it('should render deployment details when maintenance reason is set outside deploying status', () => {
+    renderWithProviders(
+      <ClusterDeploymentProgressCard
+        {...props}
+        clusterStatuses={[
+          {
+            cluster_id: 'cluster-1',
+            status: 'DEPLOYED',
+            is_deployed: true,
+            reason: 'MAINTENANCE',
+          } as ClusterStatus,
+        ]}
+      />
+    )
+
+    expect(screen.getByText('Providing infrastructure (on provider side)')).toBeInTheDocument()
+    expect(screen.queryByText('Qovery maintenance ongoing')).not.toBeInTheDocument()
   })
 
   it('should render success state', () => {

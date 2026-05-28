@@ -1,13 +1,17 @@
 import {
   type ClusterFeatureAwsExistingVpc,
   type ClusterFeatureGcpExistingVpc,
-  type ClusterRequestFeaturesInner,
+  type ClusterFeatureNatGatewayParameters,
+  type ClusterFeatureNatGatewayTypeGcp,
+  type ClusterFeatureNatGatewayTypeScalewayTypeEnum,
+  type ClusterFeatureResponse,
   type ClusterRoutingTableResultsInner,
 } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { Controller, type FieldValues, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
+import { type ClusterFeatureExtendedValue, type ClusterFeaturesData } from '@qovery/shared/interfaces'
 import {
   BlockContent,
   Button,
@@ -23,16 +27,44 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { ClusterCardFeature } from '../cluster-card-feature/cluster-card-feature'
+import { GcpStaticIp } from '../gcp-static-ip/gcp-static-ip'
 import { useClusterRoutingTable } from '../hooks/use-cluster-routing-table/use-cluster-routing-table'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { useEditCluster } from '../hooks/use-edit-cluster/use-edit-cluster'
 import { useEditRoutingTable } from '../hooks/use-edit-routing-table/use-edit-routing-table'
 import ScalewayStaticIp from '../scaleway-static-ip/scaleway-static-ip'
+import { getGcpNatGatewaySettings } from '../utils/get-gcp-nat-gateway-settings'
 
 export interface ClusterNetworkSettingsProps {
   organizationId: string
   clusterId: string
 }
+
+// Fallback used when the cluster has STATIC_IP but no NAT_GATEWAY feature yet,
+// so GcpStaticIp can render sub-options in a default state.
+const GCP_NAT_GATEWAY_FEATURE_FALLBACK: ClusterFeatureResponse = {
+  id: 'NAT_GATEWAY',
+  value_object: {
+    type: 'NAT_GATEWAY',
+    value: {
+      nat_gateway_type: {
+        provider: 'gcp',
+        static_ips_enabled: false,
+        static_ips_count: 2,
+      } as ClusterFeatureNatGatewayTypeGcp,
+    },
+  },
+}
+
+const buildGcpNatGatewayValue = (settings: {
+  static_ips_enabled: boolean
+  static_ips_count: number
+}): ClusterFeatureNatGatewayParameters => ({
+  nat_gateway_type: {
+    provider: 'gcp',
+    ...settings,
+  } as ClusterFeatureNatGatewayTypeGcp,
+})
 
 const deleteRoutes = (routes: ClusterRoutingTableResultsInner[], destination?: string) => {
   return [...routes]?.filter((port) => port.destination !== destination)
@@ -337,24 +369,43 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
   const { openModalConfirmation } = useModalConfirmation()
 
   const isScalewayCluster = cluster?.cloud_provider === 'SCW'
+  const isGcpCluster = cluster?.cloud_provider === 'GCP'
 
-  const methods = useForm({
+  const methods = useForm<ClusterFeaturesData>({
     mode: 'onChange',
   })
 
   useEffect(() => {
-    if (cluster?.features && isScalewayCluster) {
-      const featuresData: Record<string, { value: boolean; extendedValue?: string }> = {}
+    if (cluster?.features && (isScalewayCluster || isGcpCluster)) {
+      const featuresData: Record<string, { value: boolean; extendedValue?: ClusterFeatureExtendedValue }> = {}
       cluster.features.forEach((feature) => {
         if (feature.id) {
-          if (feature.id === 'NAT_GATEWAY' && feature.value_object?.value) {
-            const natGatewayValue = feature.value_object.value as unknown as { nat_gateway_type: { type: string } }
-            const natGatewayType =
-              natGatewayValue?.nat_gateway_type?.type ||
-              (typeof natGatewayValue === 'string' ? natGatewayValue : undefined)
+          if (feature.id === 'NAT_GATEWAY' && isScalewayCluster) {
+            const valueObj = feature.value_object
+            let scwType: string | undefined
+            if (valueObj?.type === 'NAT_GATEWAY') {
+              // New discriminated shape
+              const natGatewayType = valueObj.value?.nat_gateway_type
+              scwType = natGatewayType && natGatewayType.provider === 'scaleway' ? natGatewayType.type : undefined
+            } else if (valueObj?.value) {
+              // Legacy shapes: plain string or object without type discriminator
+              const raw = valueObj.value as unknown
+              if (typeof raw === 'string') {
+                scwType = raw
+              } else if (raw && typeof raw === 'object' && 'nat_gateway_type' in raw) {
+                const legacy = raw as { nat_gateway_type?: { type?: string } }
+                scwType = legacy.nat_gateway_type?.type
+              }
+            }
             featuresData[feature.id] = {
-              value: Boolean(natGatewayType),
-              extendedValue: natGatewayType,
+              value: Boolean(scwType),
+              extendedValue: scwType,
+            }
+          } else if (feature.id === 'NAT_GATEWAY' && isGcpCluster) {
+            const gcpNatGatewaySettings = getGcpNatGatewaySettings(feature)
+            featuresData[feature.id] = {
+              value: Boolean(gcpNatGatewaySettings),
+              extendedValue: gcpNatGatewaySettings,
             }
           } else {
             featuresData[feature.id] = {
@@ -366,23 +417,23 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
       })
       methods.reset({ features: featuresData })
     }
-  }, [cluster, isScalewayCluster, methods])
+  }, [cluster, isScalewayCluster, isGcpCluster, methods])
 
   const onSubmit = methods.handleSubmit(async (data) => {
     if (!cluster) return
 
-    const staticIpFeature = data['features']?.['STATIC_IP']
+    const staticIpFeature = data.features?.STATIC_IP
     const staticIpEnabled = staticIpFeature?.value === true
 
     const features = cluster.features
       ?.filter((feature) => {
-        if (feature.id === 'NAT_GATEWAY' && isScalewayCluster && !staticIpEnabled) {
+        if (feature.id === 'NAT_GATEWAY' && (isScalewayCluster || isGcpCluster) && !staticIpEnabled) {
           return false
         }
         return true
       })
       .map((feature) => {
-        const formFeature = data['features']?.[feature.id || '']
+        const formFeature = data.features?.[feature.id || '']
 
         if (feature.id === 'STATIC_IP' && formFeature) {
           return {
@@ -395,16 +446,14 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
         }
 
         if (feature.id === 'NAT_GATEWAY' && formFeature && isScalewayCluster) {
-          if (formFeature.extendedValue) {
-            return {
-              ...feature,
-              value: {
-                nat_gateway_type: {
-                  provider: 'scaleway',
-                  type: formFeature.extendedValue,
-                },
-              } as unknown as ClusterRequestFeaturesInner['value'],
+          if (formFeature.extendedValue && typeof formFeature.extendedValue === 'string') {
+            const natGatewayValue: ClusterFeatureNatGatewayParameters = {
+              nat_gateway_type: {
+                provider: 'scaleway',
+                type: formFeature.extendedValue as ClusterFeatureNatGatewayTypeScalewayTypeEnum,
+              },
             }
+            return { ...feature, value: natGatewayValue }
           }
           return {
             ...feature,
@@ -412,8 +461,30 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
           }
         }
 
+        if (feature.id === 'NAT_GATEWAY' && isGcpCluster) {
+          if (formFeature?.value && formFeature.extendedValue && typeof formFeature.extendedValue === 'object') {
+            return { ...feature, value: buildGcpNatGatewayValue(formFeature.extendedValue) }
+          }
+          return { ...feature, value: null }
+        }
+
         return feature
       })
+
+    // GCP: NAT_GATEWAY may be absent from existing cluster features (clusters created before
+    // this feature was introduced). If the user has configured it in the form, append it to
+    // the payload so the changes are not silently dropped.
+    const gcpNatGatewayMissing =
+      isGcpCluster && staticIpEnabled && !cluster.features?.some((f) => f.id === 'NAT_GATEWAY')
+    if (gcpNatGatewayMissing && features) {
+      const natFormFeature = data.features?.NAT_GATEWAY
+      if (natFormFeature?.extendedValue && typeof natFormFeature.extendedValue === 'object') {
+        features.push({
+          id: 'NAT_GATEWAY',
+          value: buildGcpNatGatewayValue(natFormFeature.extendedValue),
+        })
+      }
+    }
 
     try {
       await editCluster({
@@ -430,10 +501,20 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
   })
 
   const featureExistingVpc = cluster?.features?.find(({ id }) => id === 'EXISTING_VPC')
+  const gcpStaticIpFeature = cluster?.features?.find(({ id }) => id === 'STATIC_IP')
+  const gcpNatGatewayFeature = cluster?.features?.find(({ id }) => id === 'NAT_GATEWAY')
   const featureExistingVpcValue = featureExistingVpc?.value_object
   const canEditRoutes =
     cluster?.cloud_provider === 'AWS' && cluster?.kubernetes === 'MANAGED' && !featureExistingVpcValue
-  const canEditFeatures = isScalewayCluster
+  const canEditFeatures = isScalewayCluster || isGcpCluster
+  const configuredFeatures = cluster?.features?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER') ?? []
+  const hasGcpStaticIpFeature = isGcpCluster && Boolean(gcpStaticIpFeature)
+  const gcpDisplayFeatures = configuredFeatures.filter(({ id }) => {
+    if (id === 'STATIC_IP') return false
+    if (id === 'NAT_GATEWAY' && hasGcpStaticIpFeature) return false
+    return true
+  })
+  const displayConfiguredFeatures = isGcpCluster ? gcpDisplayFeatures : configuredFeatures
 
   const featureExistingVpcContent = match(featureExistingVpcValue)
     .with({ type: 'AWS_USER_PROVIDED_NETWORK' }, (f) => (
@@ -582,18 +663,37 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
                   )}
                 </>
               ) : (
-                <BlockContent title="Configured network features" classNameContent="p-0">
-                  {cluster?.features
-                    ?.filter(({ id }) => id !== 'EXISTING_VPC' && id !== 'KARPENTER')
-                    .map((feature) => (
-                      <ClusterCardFeature
-                        key={feature.id}
-                        feature={feature}
-                        cloudProvider={cluster?.cloud_provider}
-                        disabled
-                      />
-                    ))}
-                </BlockContent>
+                <>
+                  {hasGcpStaticIpFeature && (
+                    <GcpStaticIp
+                      staticIpFeature={gcpStaticIpFeature}
+                      natGatewayFeature={gcpNatGatewayFeature ?? GCP_NAT_GATEWAY_FEATURE_FALLBACK}
+                      production={cluster?.production || false}
+                      disabled={!canEditFeatures}
+                      staticIpToggleDisabled={isGcpCluster}
+                      showDowntimeWarning={canEditFeatures}
+                    />
+                  )}
+                  {displayConfiguredFeatures.length > 0 && (
+                    <BlockContent title="Configured network features" classNameContent="p-0">
+                      {displayConfiguredFeatures.map((feature) => (
+                        <ClusterCardFeature
+                          key={feature.id}
+                          feature={feature}
+                          cloudProvider={cluster?.cloud_provider}
+                          disabled
+                        />
+                      ))}
+                    </BlockContent>
+                  )}
+                  {canEditFeatures && hasGcpStaticIpFeature && (
+                    <div className="flex justify-end">
+                      <Button data-testid="submit-button" type="submit" size="lg" loading={isEditClusterLoading}>
+                        Save
+                      </Button>
+                    </div>
+                  )}
+                </>
               )}
             </>
           )}

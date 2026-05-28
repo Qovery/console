@@ -2,6 +2,9 @@ import { useNavigate } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type ClusterCloudProviderInfoRequest,
+  type ClusterFeatureNatGatewayParameters,
+  type ClusterFeatureNatGatewayTypeGcp,
+  type ClusterFeatureNatGatewayTypeScalewayTypeEnum,
   type ClusterRequest,
   type ClusterRequestFeaturesInner,
   type KubernetesEnum,
@@ -199,13 +202,51 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
     if (generalData.cloud_provider === 'AWS' || generalData.cloud_provider === 'GCP') {
       if (featuresData && featuresData.vpc_mode === 'DEFAULT') {
         formatFeatures = Object.keys(featuresData.features)
-          .map(
-            (id: string) =>
-              featuresData.features[id]?.value && {
-                id,
-                value: featuresData.features[id].extendedValue || featuresData.features[id].value,
+          .map((id: string) => {
+            const feature = featuresData.features[id]
+
+            if (!feature?.value) return null
+
+            if (generalData.cloud_provider === 'GCP' && id === 'STATIC_IP') {
+              // NAT_GATEWAY is the canonical GCP egress feature. If it is already present
+              // in the form it will be serialised by its own branch below; skip STATIC_IP.
+              // If it is absent (race / quick navigation), emit a safe default here so the
+              // payload is never silently empty.
+              if ('NAT_GATEWAY' in featuresData.features) return null
+              return {
+                id: 'NAT_GATEWAY',
+                value: {
+                  nat_gateway_type: {
+                    provider: 'gcp',
+                    static_ips_enabled: false,
+                    static_ips_count: 2,
+                  } as ClusterFeatureNatGatewayTypeGcp,
+                } as ClusterFeatureNatGatewayParameters,
               }
-          )
+            }
+
+            if (generalData.cloud_provider === 'GCP' && id === 'NAT_GATEWAY') {
+              const gcpNatGatewayType =
+                feature.extendedValue && typeof feature.extendedValue === 'object'
+                  ? feature.extendedValue
+                  : { static_ips_enabled: false, static_ips_count: 2 }
+
+              return {
+                id,
+                value: {
+                  nat_gateway_type: {
+                    provider: 'gcp',
+                    ...gcpNatGatewayType,
+                  } as ClusterFeatureNatGatewayTypeGcp,
+                } as ClusterFeatureNatGatewayParameters,
+              }
+            }
+
+            return {
+              id,
+              value: feature.extendedValue || feature.value,
+            }
+          })
           .filter(Boolean) as ClusterRequestFeaturesInner[]
       } else if (generalData.cloud_provider === 'AWS') {
         formatFeatures = [
@@ -294,15 +335,20 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           Object.keys(featuresData.features).forEach((featureId) => {
             if (featureId === SCW_CONTROL_PLANE_FEATURE_ID) return
             const featureData = featuresData.features[featureId]
-            if (featureId === 'NAT_GATEWAY' && featureData.extendedValue) {
+            if (featureId === 'NAT_GATEWAY' && typeof featureData.extendedValue === 'string') {
               scwFeatures.push({
                 id: featureId,
                 value: {
-                  nat_gateway_type: { provider: 'scaleway', type: featureData.extendedValue },
-                } as unknown as ClusterRequestFeaturesInner['value'],
+                  nat_gateway_type: {
+                    provider: 'scaleway',
+                    type: featureData.extendedValue as ClusterFeatureNatGatewayTypeScalewayTypeEnum,
+                  },
+                } as ClusterFeatureNatGatewayParameters,
               })
             } else if (featureData.value) {
-              scwFeatures.push({ id: featureId, value: featureData.extendedValue || featureData.value })
+              const scwFeatureValue =
+                typeof featureData.extendedValue === 'string' ? featureData.extendedValue : featureData.value
+              scwFeatures.push({ id: featureId, value: scwFeatureValue })
             }
           })
         }

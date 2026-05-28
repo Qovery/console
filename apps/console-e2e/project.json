@@ -1,0 +1,18 @@
+{
+  "name": "console-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/console-e2e/src",
+  "projectType": "application",
+  "tags": [],
+  "implicitDependencies": ["console"],
+  "targets": {
+    "e2e": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "command": "yarn playwright test --config apps/console-e2e/playwright.config.ts",
+        "cwd": "."
+      }
+    }
+  }
+}

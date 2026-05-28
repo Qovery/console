@@ -41,7 +41,7 @@ export function ScalewayStaticIp({
   }, [staticIpEnabled, isEditable, natGatewayFeature?.id, setValue])
 
   return (
-    <BlockContent title="Static IP / Nat Gateways" classNameContent="p-4">
+    <BlockContent title="Static IP / Nat Gateways" classNameContent="w-full p-4">
       <div className="flex flex-col gap-4">
         <div className="flex items-start gap-3">
           <Controller
@@ -49,24 +49,26 @@ export function ScalewayStaticIp({
             control={control}
             defaultValue={production}
             render={({ field }) => (
-              <div className="flex gap-2">
-                <InputToggle
-                  value={field.value}
-                  onChange={(value) => {
-                    field.onChange(value)
-                    // When enabling Static IP, set default NAT Gateway type if not already set
-                    if (value && natGatewayFeature?.id && !natGatewayType && setValue) {
-                      const defaultType = SCALEWAY_NAT_GATEWAY_TYPES[0].value
-                      setValue(`features.${natGatewayFeature.id}.extendedValue`, defaultType)
-                      setValue(`features.${natGatewayFeature.id}.value`, true)
-                    }
-                  }}
-                  disabled={disabled}
-                  title="Static IP / Nat Gateways"
-                  description="Your cluster will only be visible from a fixed number of public IP. On Scaleway, Nat Gateways and Elastic IPs will be setup."
-                  align="top"
-                  small
-                />
+              <div className="flex w-full items-start justify-between gap-2">
+                <div className="flex-1">
+                  <InputToggle
+                    value={field.value}
+                    onChange={(value) => {
+                      field.onChange(value)
+                      // When enabling Static IP, set default NAT Gateway type if not already set
+                      if (value && natGatewayFeature?.id && !natGatewayType && setValue) {
+                        const defaultType = SCALEWAY_NAT_GATEWAY_TYPES[0].value
+                        setValue(`features.${natGatewayFeature.id}.extendedValue`, defaultType)
+                        setValue(`features.${natGatewayFeature.id}.value`, true)
+                      }
+                    }}
+                    disabled={disabled}
+                    title="Static IP / Nat Gateways"
+                    description="Your cluster will only be visible from a fixed number of public IP. On Scaleway, Nat Gateways and Elastic IPs will be setup."
+                    align="top"
+                    small
+                  />
+                </div>
                 {staticIpFeature?.is_cloud_provider_paying_feature && (
                   <Tooltip content="Billed by Scaleway">
                     <ExternalLink
@@ -89,7 +91,7 @@ export function ScalewayStaticIp({
         </div>
 
         {natGatewayFeature && (
-          <div className="ml-8">
+          <div>
             {isEditable ? (
               <Controller
                 name={`features.${natGatewayFeature.id}.extendedValue`}
@@ -126,7 +128,7 @@ export function ScalewayStaticIp({
                         setValue(`features.${natGatewayFeature.id}.value`, true)
                       }
                     }}
-                    value={field.value}
+                    value={typeof field.value === 'string' ? field.value : undefined}
                     disabled={disabled || !staticIpEnabled}
                     portal
                   />

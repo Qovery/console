@@ -485,7 +485,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <InputTextArea
+            <InputText
               className="mb-3"
               name={field.name}
               onChange={field.onChange}

@@ -59,8 +59,13 @@ const services = {
     name: 'kube-dns-prod',
     description: '',
     icon_uri: 'app://qovery-console/argocd',
-    source_repo_url: 'https://github.com/Qovery/kube-dns.git',
-    source_target_revision: 'main',
+    git_repository: {
+      provider: 'GITHUB',
+      owner: 'Qovery',
+      url: 'https://github.com/Qovery/kube-dns.git',
+      name: 'Qovery/kube-dns',
+      branch: 'main',
+    },
   },
 }
 

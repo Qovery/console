@@ -27,6 +27,10 @@ jobs:
       cloudflare-token: ${{ secrets.CLOUDFLARE_TOKEN }}
       nx-cloud-access-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       codecov-token: ${{ secrets.CODECOV_TOKEN }}
+      e2e-auth-token: ${{ secrets.E2E_AUTH_TOKEN }}
+      e2e-project-id: ${{ secrets.E2E_PROJECT_ID }}
+      e2e-environment-id: ${{ secrets.E2E_ENVIRONMENT_ID }}
+      slack-webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
 
       # Qovery secrets
       organization-id: ${{ secrets.QOVERY_ORGANIZATION_ID }}

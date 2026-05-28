@@ -98,7 +98,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
         icon="play"
         iconStyle="solid"
         title={`${upperCaseFirstLetter(service?.service_type ?? 'Service')} has never been deployed`}
-        description={`Deploy the ${service?.serviceType.toLowerCase() ?? 'service'} first`}
+        description={`Deploy the ${service?.service_type?.toLowerCase() ?? 'service'} first`}
       >
         <Button
           color="neutral"

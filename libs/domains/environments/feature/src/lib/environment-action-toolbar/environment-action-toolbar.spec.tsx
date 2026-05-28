@@ -1,10 +1,10 @@
-import type { ReactNode } from 'react'
+import type { ForwardedRef, ReactNode } from 'react'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { EnvironmentActionToolbar } from './environment-action-toolbar'
 
 const mockEnvironment = environmentFactoryMock(1)[0]
-const mockServices = applicationFactoryMock(3)
+let mockServices: unknown[] = applicationFactoryMock(3)
 const mockDeployEnvironment = jest.fn()
 const mockDeleteEnvironment = jest.fn()
 const mockNavigate = jest.fn()
@@ -36,7 +36,18 @@ jest.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
   useLocation: () => ({ pathname: '/', search: '' }),
   useRouter: () => ({ buildLocation: () => ({ href: '/' }) }),
-  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+  Link: jest
+    .requireActual('react')
+    .forwardRef(
+      (
+        { children, ...props }: { children?: ReactNode; [key: string]: unknown },
+        ref: ForwardedRef<HTMLAnchorElement>
+      ) => (
+        <a {...props} ref={ref}>
+          {children}
+        </a>
+      )
+    ),
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -95,6 +106,7 @@ describe('EnvironmentActionToolbar', () => {
       state: 'DEPLOYED',
       deployment_status: 'OUT_OF_DATE',
     }
+    mockServices = applicationFactoryMock(3)
     mockVariables = [
       {
         key: 'QOVERY_KUBERNETES_NAMESPACE_NAME',
@@ -135,6 +147,54 @@ describe('EnvironmentActionToolbar', () => {
 
     expect(mockDeployEnvironment).toHaveBeenCalledWith({ environmentId: mockEnvironment.id })
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+  })
+
+  it('should display an ArgoCD warning on redeploy when the environment contains ArgoCD services', async () => {
+    mockServices = [
+      applicationFactoryMock(1)[0],
+      {
+        id: 'argocd-service-1',
+        name: 'ArgoCD service',
+        service_type: 'ARGOCD_APP',
+        serviceType: 'ARGOCD_APP',
+      },
+    ]
+
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.hover(screen.getByLabelText(/argocd deployment information/i))
+
+    expect(await screen.findAllByText('Environment has changed and needs to be applied')).toHaveLength(2)
+    expect(
+      await screen.findAllByText('Redeploy will only target Qovery created services and not ArgoCD imported ones.')
+    ).toHaveLength(2)
+  })
+
+  it('should display an ArgoCD warning on deploy when the environment contains ArgoCD services', async () => {
+    mockDeploymentStatus = {
+      state: 'READY',
+      deployment_status: 'OUT_OF_DATE',
+    }
+    mockServices = [
+      applicationFactoryMock(1)[0],
+      {
+        id: 'argocd-service-1',
+        name: 'ArgoCD service',
+        service_type: 'ARGOCD_APP',
+        serviceType: 'ARGOCD_APP',
+      },
+    ]
+
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.hover(screen.getByLabelText(/argocd deployment information/i))
+
+    expect(await screen.findAllByText('Environment has changed and needs to be applied')).toHaveLength(2)
+    expect(
+      await screen.findAllByText('Redeploy will only target Qovery created services and not ArgoCD imported ones.')
+    ).toHaveLength(2)
   })
 
   it('should keep a confirmation modal for stop', async () => {
@@ -206,5 +266,24 @@ describe('EnvironmentActionToolbar', () => {
     expect(screen.getByText('Environment ID')).toBeInTheDocument()
     expect(screen.getByText('Namespace ID')).toBeInTheDocument()
     expect(screen.getByText('z1234567-env-name')).toBeInTheDocument()
+  })
+
+  it('should disable ArgoCD environment deletion', async () => {
+    const { userEvent } = renderWithProviders(
+      <EnvironmentActionToolbar environment={mockEnvironment} isArgoCdEnvironment />
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+
+    const deleteEnvironmentItem = screen.getByRole('menuitem', { name: /delete environment/i })
+    expect(deleteEnvironmentItem).toHaveAttribute('aria-disabled', 'true')
+
+    await userEvent.hover(screen.getByText('Delete environment'))
+
+    expect(
+      await screen.findByRole('tooltip', {
+        name: 'ArgoCD environment can only be deleted by revoking the integration',
+      })
+    ).toBeInTheDocument()
   })
 })

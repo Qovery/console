@@ -2,6 +2,7 @@ import { type CloudVendorEnum, type ClusterFeatureResponse } from 'qovery-typesc
 import { type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
 import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputToggle, Tooltip } from '@qovery/shared/ui'
+import { getGcpNatGatewaySettings } from '../utils/get-gcp-nat-gateway-settings'
 
 export interface ClusterCardFeatureProps extends PropsWithChildren {
   feature: ClusterFeatureResponse
@@ -27,11 +28,21 @@ export function ClusterCardFeature({
 
   const name = watch && watch(`features.${feature.id}.value`)
 
-  const getValue = (value: boolean | string) => {
+  const getFeatureToggleValue = (feature: ClusterFeatureResponse) => {
+    const value = feature.value_object?.value
+
+    if (feature.id === 'NAT_GATEWAY' && cloudProvider === 'GCP') {
+      const gcpNatGatewaySettings = getGcpNatGatewaySettings(feature)
+      if (gcpNatGatewaySettings) {
+        return gcpNatGatewaySettings.static_ips_enabled
+      }
+    }
+
     if (typeof value === 'string') {
       return true
     }
-    return value
+
+    return Boolean(value)
   }
 
   useEffect(() => {
@@ -69,12 +80,7 @@ export function ClusterCardFeature({
         ) : (
           <Tooltip content={tooltip} disabled={!tooltip}>
             <span>
-              <InputToggle
-                disabled
-                small
-                className="relative top-[2px]"
-                value={getValue(Boolean(feature?.value_object?.value) || false)}
-              />
+              <InputToggle disabled small className="relative top-[2px]" value={getFeatureToggleValue(feature)} />
             </span>
           </Tooltip>
         )}
