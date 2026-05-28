@@ -32,11 +32,7 @@ function SecretManagerItem({
   })
 
   return (
-    <div
-      key={manager.id}
-      // ${index < secretManagers.length - 1 ? 'border-b border-neutral' : ''}
-      className={`flex items-center justify-between gap-3 p-3 `}
-    >
+    <div key={manager.id} className={`flex items-center justify-between gap-3 p-3 `}>
       <div className="flex min-w-0 flex-1 items-center gap-3">
         <Icon name={getSecretManagerProvider(manager)} width={24} height={24} />
         <div className="flex min-w-0 flex-1 flex-col gap-1 text-[13px] leading-4">

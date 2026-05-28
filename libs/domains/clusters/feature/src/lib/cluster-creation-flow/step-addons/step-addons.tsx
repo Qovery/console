@@ -2,6 +2,7 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
 import { Badge, Button, DropdownMenu, FunnelFlowBody, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
+import { isSameSecretManagerAccess } from '@qovery/shared/util-clusters'
 import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
@@ -74,7 +75,9 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
           onSubmit={(payload) => {
             setIntegrations((prev) => {
               if (integration) {
-                return prev.map((item) => (item.id === integration.id ? { ...payload } : item))
+                return prev.map((item) =>
+                  isSameSecretManagerAccess(item, integration) ? { ...item, ...payload } : item
+                )
               }
               return [...prev, payload]
             })
@@ -150,7 +153,9 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                   <SecretManagerList
                     secretManagers={integrations}
                     onEdit={(manager) => openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)}
-                    onDelete={(manager) => setIntegrations((prev) => prev.filter((item) => item.id !== manager.id))}
+                    onDelete={(manager) =>
+                      setIntegrations((prev) => prev.filter((item) => !isSameSecretManagerAccess(item, manager)))
+                    }
                   />
                 </div>
               </div>

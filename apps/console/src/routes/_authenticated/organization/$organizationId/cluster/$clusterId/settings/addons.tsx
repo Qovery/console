@@ -14,7 +14,7 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Badge, Button, DropdownMenu, Icon, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { isGcpCluster } from '@qovery/shared/util-clusters'
+import { isGcpCluster, isSameSecretManagerAccess } from '@qovery/shared/util-clusters'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons')(
   {
@@ -59,15 +59,14 @@ function RouteComponent() {
           mode={secretManager ? 'edit' : 'create'}
           initialValues={secretManager}
           onClose={closeModal}
-          onSubmit={(payload) => {
+          onSubmit={(newEntityPayload) => {
             setSecretManagers((prev) => {
               if (secretManager) {
                 return prev.map((item) =>
-                  item.id === secretManager.id
+                  isSameSecretManagerAccess(item, secretManager)
                     ? {
-                        ...payload,
-                        // usedByServices: integration.usedByServices ?? 0,
-                        // associatedItems: integration.associatedItems,
+                        ...item,
+                        ...newEntityPayload,
                       }
                     : item
                 )
@@ -75,8 +74,7 @@ function RouteComponent() {
               return [
                 ...prev,
                 {
-                  ...payload,
-                  // usedByServices: 0
+                  ...newEntityPayload,
                 },
               ]
             })
@@ -105,7 +103,7 @@ function RouteComponent() {
         // } else {
         // }
 
-        setSecretManagers((prev) => prev.filter((item) => item.id !== integration.id))
+        setSecretManagers((prev) => prev.filter((item) => !isSameSecretManagerAccess(item, integration)))
       },
     })
   }
