@@ -6,7 +6,6 @@ import {
   Badge,
   Button,
   CopyToClipboard,
-  DropdownMenu,
   ExternalLink,
   Heading,
   Icon,
@@ -17,6 +16,7 @@ import {
 } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
+import { ArgoCdServiceActions } from '../argocd-service-actions/argocd-service-actions'
 import { useArgoCdServices } from '../hooks/use-argocd-services/use-argocd-services'
 
 const { Table } = TablePrimitives
@@ -209,63 +209,12 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                   </Table.Cell>
 
                   <Table.Cell className="flex h-full items-center justify-center">
-                    <div className="flex items-center gap-1.5" onClick={stopRowNavigation}>
-                      <Tooltip content="Logs">
-                        <Link
-                          as="button"
-                          aria-label={`Service logs for ${service.name}`}
-                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-                          params={{
-                            organizationId,
-                            projectId,
-                            environmentId,
-                            serviceId: service.id,
-                          }}
-                          color="neutral"
-                          variant="outline"
-                          size="sm"
-                          iconOnly
-                          onClick={stopRowNavigation}
-                          onKeyDown={stopRowNavigation}
-                        >
-                          <Icon iconName="scroll" />
-                        </Link>
-                      </Tooltip>
-
-                      <DropdownMenu.Root>
-                        <DropdownMenu.Trigger asChild>
-                          <Button
-                            aria-label={`Other actions for ${service.name}`}
-                            variant="outline"
-                            size="sm"
-                            iconOnly
-                            onKeyDown={stopRowNavigation}
-                          >
-                            <Tooltip content="Other actions">
-                              <div className="flex h-full w-full items-center justify-center">
-                                <Icon iconName="ellipsis-v" />
-                              </div>
-                            </Tooltip>
-                          </Button>
-                        </DropdownMenu.Trigger>
-                        <DropdownMenu.Content>
-                          <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
-                            <Link
-                              className="gap-0"
-                              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest"
-                              params={{
-                                organizationId,
-                                projectId,
-                                environmentId,
-                                serviceId: service.id,
-                              }}
-                            >
-                              See manifest
-                            </Link>
-                          </DropdownMenu.Item>
-                        </DropdownMenu.Content>
-                      </DropdownMenu.Root>
-                    </div>
+                    <ArgoCdServiceActions
+                      environment={environment}
+                      serviceId={service.id}
+                      serviceName={service.name}
+                      onAction={stopRowNavigation}
+                    />
                   </Table.Cell>
                 </Table.Row>
               )

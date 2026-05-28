@@ -20,6 +20,7 @@ import { Badge, Button, ExternalLink, Heading, Icon, Tooltip, Truncate, toast } 
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-service-actions'
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
@@ -73,10 +74,11 @@ export interface ServiceHeaderProps {
 interface ServiceHeaderIdentityProps {
   environment: Environment
   service: AnyService
+  serviceId: string
 }
 
-function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityProps) {
-  const { organizationId = '', serviceId = '' } = useParams({ strict: false })
+function ServiceHeaderIdentity({ environment, service, serviceId }: ServiceHeaderIdentityProps) {
+  const { organizationId = '' } = useParams({ strict: false })
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
   const isArgoCdService = isArgoCd(service)
@@ -133,7 +135,16 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
           {cluster && <ClusterRunningStatusIndicator cluster={cluster} type="dot" />}
         </div>
       </div>
-      {!isArgoCdService && <ServiceActions environment={environment} serviceId={serviceId} variant="header" />}
+      {isArgoCdService ? (
+        <ArgoCdServiceActions
+          variant="header"
+          environment={environment}
+          serviceId={serviceId}
+          serviceName={service.name}
+        />
+      ) : (
+        <ServiceActions environment={environment} serviceId={serviceId} variant="header" />
+      )}
     </div>
   )
 }
@@ -350,7 +361,7 @@ function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeader
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <ServiceHeaderIdentity environment={environment} service={service} />
+        <ServiceHeaderIdentity environment={environment} service={service} serviceId={serviceId} />
         {'description' in service && <p className="text-neutral-subtle">{service.description}</p>}
         <ServiceHeaderMetadata service={service} />
       </div>

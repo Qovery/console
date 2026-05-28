@@ -279,6 +279,8 @@ jest.mock('../../service-links-popover/service-links-popover', () => ({
 describe('ServiceHeader', () => {
   const environment = {
     id: 'environment-id',
+    organization: { id: 'organization-id' },
+    project: { id: 'project-id' },
     cluster_id: 'cluster-id',
     cluster_name: 'my-cluster',
     cloud_provider: { provider: 'AWS' },
@@ -329,12 +331,11 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText('auto-deploy-badge')).not.toBeInTheDocument()
   })
 
-  it('renders ArgoCD tag without Qovery service actions', () => {
+  it('renders ArgoCD tag', () => {
     renderServiceHeader('argocd-mock')
 
     expect(screen.getByRole('heading', { name: 'kube-dns-prod' })).toBeInTheDocument()
     expect(screen.getByText('ARGOCD')).toBeInTheDocument()
     expect(screen.getByText('service-state-chip')).toBeInTheDocument()
-    expect(screen.queryByText('service-action-toolbar')).not.toBeInTheDocument()
   })
 })
