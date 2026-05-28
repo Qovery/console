@@ -191,7 +191,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                       ) : null}
                     </div>
                     {manifestRevision && (
-                      <CopyToClipboard text={manifestRevision} className="ml-3 shrink-0">
+                      <CopyToClipboard text={manifestRevision} className="ml-auto shrink-0">
                         <Button
                           type="button"
                           variant="outline"
