@@ -29,6 +29,7 @@ export interface StepSummaryPresentationProps {
   resourcesData: ClusterResourcesData
   featuresData?: ClusterFeaturesData
   addonsData: ClusterAddonsData
+  secretManagerEnabled?: boolean
   goToFeatures: () => void
   goToResources: () => void
   goToKubeconfig: () => void
@@ -88,10 +89,12 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
     .with('AWS', 'GCP', () => checkIfFeaturesAvailable())
     .with('SCW', () => checkIfScwNetworkFeaturesAvailable())
     .otherwise(() => false)
-  // TODO [secret manager] double check this condition
+  const showKedaSummary = props.generalData.cloud_provider !== 'GCP'
+  const showSecretManagerSummary = props.secretManagerEnabled === true
   const showAddonsSection =
     props.generalData.installation_type === 'MANAGED' &&
-    (props.generalData.cloud_provider === 'AWS' || props.generalData.cloud_provider === 'GCP')
+    (props.generalData.cloud_provider === 'AWS' || props.generalData.cloud_provider === 'GCP') &&
+    (showKedaSummary || showSecretManagerSummary)
 
   return (
     <Section>
@@ -630,17 +633,21 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
             <div className="mr-2 flex-grow">
               <Heading className="mb-3">Add-ons</Heading>
               <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-                <li>
-                  <strong className="font-medium">KEDA autoscaler: </strong>
-                  {props.addonsData.kedaActivated ? 'activated' : 'not activated'}
-                </li>
-                <li>
-                  <strong className="font-medium">Secret manager: </strong>
-                  {props.addonsData.secretManagers.length > 0 ? 'activated' : 'not activated'}
-                </li>
+                {showKedaSummary && (
+                  <li>
+                    <strong className="font-medium">KEDA autoscaler: </strong>
+                    {props.addonsData.kedaActivated ? 'activated' : 'not activated'}
+                  </li>
+                )}
+                {showSecretManagerSummary && (
+                  <li>
+                    <strong className="font-medium">Secret manager: </strong>
+                    {props.addonsData.secretManagers.length > 0 ? 'activated' : 'not activated'}
+                  </li>
+                )}
               </ul>
 
-              {props.addonsData.secretManagers.length > 0 && (
+              {showSecretManagerSummary && props.addonsData.secretManagers.length > 0 && (
                 <div className="mt-3 space-y-3 border-t border-neutral pt-3 text-sm text-neutral-subtle">
                   {props.addonsData.secretManagers.map((manager, index) => (
                     <div key={manager.id} className="space-y-3">

@@ -1,16 +1,7 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
-import {
-  Badge,
-  Button,
-  DropdownMenu,
-  FunnelFlowBody,
-  Heading,
-  Icon,
-  Link,
-  Section,
-  useModal,
-} from '@qovery/shared/ui'
+import { Badge, Button, DropdownMenu, FunnelFlowBody, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
 import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
@@ -37,6 +28,7 @@ interface StepAddonsFormProps {
 function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProps) {
   const { openModal, closeModal } = useModal()
   const { generalData, addonsData, setAddonsData } = useClusterContainerCreateContext()
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
   const isGcp = generalData?.cloud_provider === 'GCP'
   const [kedaEnabled, setKedaEnabled] = useState(() => addonsData.kedaActivated)
   const [integrations, setIntegrations] = useState<SecretManagerAccess[]>(() => addonsData.secretManagers)
@@ -59,9 +51,9 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
   useEffect(() => {
     setAddonsData({
       kedaActivated: isGcp ? false : kedaEnabled,
-      secretManagers: integrations,
+      secretManagers: secretManagerEnabled ? integrations : [],
     })
-  }, [kedaEnabled, isGcp, integrations, setAddonsData])
+  }, [kedaEnabled, isGcp, integrations, secretManagerEnabled, setAddonsData])
 
   const clusterStub = generalData
     ? ({
@@ -121,50 +113,52 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
             </div>
           )}
 
-          <div className="p-4">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                  <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
-                    Free
-                  </Badge>
+          {secretManagerEnabled && (
+            <div className="p-4">
+              <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-neutral">Secret manager integration</span>
+                    <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
+                      Free
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-neutral-subtle">
+                    Link any secret manager on your cluster to add external secrets variables to all the services
+                    running on your cluster.
+                  </p>
                 </div>
-                <p className="text-sm text-neutral-subtle">
-                  Link any secret manager on your cluster to add external secrets variables to all the services running
-                  on your cluster.
-                </p>
-              </div>
-              <div className="flex flex-col items-start gap-3">
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger asChild>
-                    <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
-                      <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
-                      Add secret manager
-                      <Icon iconName="chevron-down" className="text-[10px]" />
-                    </Button>
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content align="start">
-                    {secretManagerDropdownOptions.map((option) => (
-                      <DropdownMenu.Item
-                        key={option.value}
-                        color="neutral"
-                        icon={<Icon name={option.icon} width={16} height={16} />}
-                        onSelect={() => openSecretManagerModal(option)}
-                      >
-                        {option.label}
-                      </DropdownMenu.Item>
-                    ))}
-                  </DropdownMenu.Content>
-                </DropdownMenu.Root>
-                <SecretManagerList
-                  secretManagers={integrations}
-                  onEdit={(manager) => openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)}
-                  onDelete={(manager) => setIntegrations((prev) => prev.filter((item) => item.id !== manager.id))}
-                />
+                <div className="flex flex-col items-start gap-3">
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                      <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
+                        <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
+                        Add secret manager
+                        <Icon iconName="chevron-down" className="text-[10px]" />
+                      </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content align="start">
+                      {secretManagerDropdownOptions.map((option) => (
+                        <DropdownMenu.Item
+                          key={option.value}
+                          color="neutral"
+                          icon={<Icon name={option.icon} width={16} height={16} />}
+                          onSelect={() => openSecretManagerModal(option)}
+                        >
+                          {option.label}
+                        </DropdownMenu.Item>
+                      ))}
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+                  <SecretManagerList
+                    secretManagers={integrations}
+                    onEdit={(manager) => openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)}
+                    onDelete={(manager) => setIntegrations((prev) => prev.filter((item) => item.id !== manager.id))}
+                  />
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         <div className="mt-6 flex justify-between">
@@ -190,11 +184,12 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
 
 export function StepAddons({ organizationId, onSubmit }: StepAddonsProps) {
   const { setCurrentStep, generalData } = useClusterContainerCreateContext()
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
 
   useEffect(() => {
-    const stepIndex = steps(generalData).findIndex((step) => step.key === 'addons') + 1
+    const stepIndex = steps(generalData, { secretManagerEnabled }).findIndex((step) => step.key === 'addons') + 1
     setCurrentStep(stepIndex)
-  }, [setCurrentStep, generalData])
+  }, [setCurrentStep, generalData, secretManagerEnabled])
 
   const backTo = '/organization/$organizationId/cluster/create/$slug/features' as const
 

@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense, useState } from 'react'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { ExternalSecretsTab, VariableList, VariablesActionToolbar } from '@qovery/domains/variables/feature'
@@ -16,7 +17,9 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
   const [activeTab, setActiveTab] = useState<VariableTab>('custom')
+  const visibleActiveTab = secretManagerEnabled || activeTab !== 'external-secrets' ? activeTab : 'custom'
 
   useDocumentTitle('Services - Variables')
 
@@ -77,15 +80,17 @@ function RouteComponent() {
           <div className="flex flex-col">
             <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
               <div className="bg-surface-neutral-subtle px-4 pb-2">
-                <Navbar.Root activeId={activeTab} className="relative">
+                <Navbar.Root activeId={visibleActiveTab} className="relative">
                   <Navbar.Item id="custom" onClick={() => setActiveTab('custom')}>
                     <Icon iconName="sliders" iconStyle="regular" />
                     Custom
                   </Navbar.Item>
-                  <Navbar.Item id="external-secrets" onClick={() => setActiveTab('external-secrets')}>
-                    <Icon iconName="lock-keyhole" iconStyle="regular" />
-                    External secrets
-                  </Navbar.Item>
+                  {secretManagerEnabled && (
+                    <Navbar.Item id="external-secrets" onClick={() => setActiveTab('external-secrets')}>
+                      <Icon iconName="lock-keyhole" iconStyle="regular" />
+                      External secrets
+                    </Navbar.Item>
+                  )}
                   <Navbar.Item id="built-in" onClick={() => setActiveTab('built-in')}>
                     <Icon iconName="cube" iconStyle="regular" />
                     Built-in
@@ -96,7 +101,7 @@ function RouteComponent() {
 
             <div className="relative -mt-2 rounded-lg">
               <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-                {activeTab === 'custom' && (
+                {visibleActiveTab === 'custom' && (
                   <VariableList
                     showOnly="custom"
                     hideSectionLabel
@@ -118,10 +123,10 @@ function RouteComponent() {
                     onDeleteVariable={onDeleteVariableToast}
                   />
                 )}
-                {activeTab === 'external-secrets' && (
+                {secretManagerEnabled && visibleActiveTab === 'external-secrets' && (
                   <ExternalSecretsTab scope="ENVIRONMENT" parentId={environmentId} />
                 )}
-                {activeTab === 'built-in' && (
+                {visibleActiveTab === 'built-in' && (
                   <VariableList
                     showOnly="built-in"
                     hideSectionLabel

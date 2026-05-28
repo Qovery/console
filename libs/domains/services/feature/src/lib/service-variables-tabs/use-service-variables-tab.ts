@@ -1,13 +1,17 @@
 import { useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { isEditableServiceType } from '@qovery/domains/services/data-access'
+import { useVariablesSecretManagers } from '@qovery/domains/variables/feature'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import { useService } from '../hooks/use-service/use-service'
-import { useVariablesSecretManagers } from '@qovery/domains/variables/feature'
 
 export function useServiceVariablesTab() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
 
-  const { secretManagers, hasClusterSecretManagerConfigured, clusterId } = useVariablesSecretManagers()
+  const { secretManagers, hasClusterSecretManagerConfigured, clusterId } = useVariablesSecretManagers({
+    enabled: secretManagerEnabled,
+  })
   const { data: service } = useService({
     environmentId,
     serviceId,
@@ -33,7 +37,7 @@ export function useServiceVariablesTab() {
 
   return {
     secretManagers,
-    hasClusterSecretManagerConfigured,
+    hasClusterSecretManagerConfigured: secretManagerEnabled && hasClusterSecretManagerConfigured,
     redeployServiceAction,
     clusterId,
   }

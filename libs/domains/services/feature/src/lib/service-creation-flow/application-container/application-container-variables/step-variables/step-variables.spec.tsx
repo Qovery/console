@@ -11,6 +11,10 @@ jest.mock('@qovery/shared/assistant/feature', () => ({
   AssistantTrigger: () => null,
 }))
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
+}))
+
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({

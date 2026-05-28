@@ -1,4 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type ClusterCloudProviderInfoRequest,
   type ClusterRequest,
@@ -24,6 +25,7 @@ export interface StepSummaryProps {
 
 export function StepSummary({ organizationId }: StepSummaryProps) {
   const navigate = useNavigate()
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
   const { generalData, kubeconfigData, resourcesData, featuresData, addonsData, setCurrentStep, creationFlowUrl } =
     useClusterContainerCreateContext()
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
@@ -78,7 +80,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
     if (generalData?.installation_type === 'MANAGED') {
       return match(generalData?.cloud_provider)
         .with('AWS', () => goToAddons())
-        .with('GCP', () => goToAddons())
+        .with('GCP', () => (secretManagerEnabled ? goToAddons() : goToFeatures()))
         .with('SCW', () => goToFeatures())
         .otherwise(() => goToResources())
     }
@@ -108,7 +110,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       keda: {
         enabled: generalData.cloud_provider === 'GCP' ? false : addonsData.kedaActivated,
       },
-      secret_manager_accesses: addonsData.secretManagers,
+      secret_manager_accesses: secretManagerEnabled ? addonsData.secretManagers : [],
     }
 
     const awsLabelsGroups =
@@ -375,9 +377,9 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   }
 
   useEffect(() => {
-    const stepIndex = steps(generalData).findIndex((step) => step.key === 'summary') + 1
+    const stepIndex = steps(generalData, { secretManagerEnabled }).findIndex((step) => step.key === 'summary') + 1
     setCurrentStep(stepIndex)
-  }, [setCurrentStep, generalData])
+  }, [setCurrentStep, generalData, secretManagerEnabled])
 
   return (
     <FunnelFlowBody>
@@ -392,6 +394,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           resourcesData={resourcesData}
           featuresData={featuresData}
           addonsData={addonsData}
+          secretManagerEnabled={secretManagerEnabled}
           detailInstanceType={detailInstanceType}
           goToResources={goToResources}
           goToGeneral={goToGeneral}

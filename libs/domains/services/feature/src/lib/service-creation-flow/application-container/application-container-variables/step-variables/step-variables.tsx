@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
 import { useFieldArray } from 'react-hook-form'
@@ -162,10 +163,14 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
   const { setCurrentStep, variablesForm, generalForm } = useApplicationContainerCreateContext()
   const { projectId = '', environmentId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
-  const { secretManagers } = useVariablesSecretManagers()
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
+  const { secretManagers } = useVariablesSecretManagers({ enabled: secretManagerEnabled })
 
   const serviceScope = generalForm.getValues('serviceType') === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER'
-  const secretSources = useMemo(() => mapSecretManagersToSources(secretManagers), [secretManagers])
+  const secretSources = useMemo(
+    () => (secretManagerEnabled ? mapSecretManagersToSources(secretManagers) : []),
+    [secretManagerEnabled, secretManagers]
+  )
   const sourceById = useMemo(() => new Map(secretSources.map((source) => [source.value, source])), [secretSources])
 
   const {
@@ -383,101 +388,103 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
             </div>
           </section>
 
-          <section>
-            <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
-              <div className="flex min-h-[52px] items-center justify-between px-4 pb-5 pt-3">
-                <p className="text-sm font-medium text-neutral">External secrets</p>
-                {externalSecrets.length > 0 &&
-                  cardHeaderActions({
-                    onAddDefault: () => openSecretModal({ isFile: false }),
-                    onAddAsFile: () => openSecretModal({ isFile: true }),
-                    defaultLabel: 'Add secret',
-                    asFileLabel: 'Add secret as file',
-                  })}
+          {secretManagerEnabled && (
+            <section>
+              <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
+                <div className="flex min-h-[52px] items-center justify-between px-4 pb-5 pt-3">
+                  <p className="text-sm font-medium text-neutral">External secrets</p>
+                  {externalSecrets.length > 0 &&
+                    cardHeaderActions({
+                      onAddDefault: () => openSecretModal({ isFile: false }),
+                      onAddAsFile: () => openSecretModal({ isFile: true }),
+                      defaultLabel: 'Add secret',
+                      asFileLabel: 'Add secret as file',
+                    })}
+                </div>
               </div>
-            </div>
 
-            <div className="relative -mt-2 rounded-lg">
-              <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-                {externalSecrets.length === 0 ? (
-                  emptyState({
-                    title: 'No external secrets added yet',
-                    onAddDefault: () => openSecretModal({ isFile: false }),
-                    onAddAsFile: () => openSecretModal({ isFile: true }),
-                    defaultLabel: 'Add secret',
-                    asFileLabel: 'Add secret as file',
-                  })
-                ) : (
-                  <>
-                    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_88px] border-b border-neutral text-xs">
-                      <div className="flex h-11 items-center px-4 font-code font-normal text-neutral">Name</div>
-                      <div className="flex h-11 items-center border-l border-neutral px-4 font-code font-normal text-neutral">
-                        Reference
+              <div className="relative -mt-2 rounded-lg">
+                <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
+                  {externalSecrets.length === 0 ? (
+                    emptyState({
+                      title: 'No external secrets added yet',
+                      onAddDefault: () => openSecretModal({ isFile: false }),
+                      onAddAsFile: () => openSecretModal({ isFile: true }),
+                      defaultLabel: 'Add secret',
+                      asFileLabel: 'Add secret as file',
+                    })
+                  ) : (
+                    <>
+                      <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_88px] border-b border-neutral text-xs">
+                        <div className="flex h-11 items-center px-4 font-code font-normal text-neutral">Name</div>
+                        <div className="flex h-11 items-center border-l border-neutral px-4 font-code font-normal text-neutral">
+                          Reference
+                        </div>
+                        <div className="flex h-11 items-center justify-start border-l border-neutral px-4 font-code font-normal text-neutral">
+                          Actions
+                        </div>
                       </div>
-                      <div className="flex h-11 items-center justify-start border-l border-neutral px-4 font-code font-normal text-neutral">
-                        Actions
-                      </div>
-                    </div>
 
-                    {externalSecrets.map((secret, index) => (
-                      <div
-                        key={secret.id}
-                        className="grid min-h-[60px] grid-cols-[minmax(0,1fr)_minmax(0,1fr)_88px] border-b border-neutral last:border-b-0"
-                      >
-                        <div className="flex min-w-0 flex-col justify-center gap-1 px-4 py-2">
-                          <div className="flex min-w-0 items-center gap-1.5">
-                            <span className="truncate text-sm font-medium text-neutral">{secret.name}</span>
-                            {secret.description && (
-                              <Tooltip content={secret.description}>
-                                <span>
-                                  <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
-                                </span>
-                              </Tooltip>
+                      {externalSecrets.map((secret, index) => (
+                        <div
+                          key={secret.id}
+                          className="grid min-h-[60px] grid-cols-[minmax(0,1fr)_minmax(0,1fr)_88px] border-b border-neutral last:border-b-0"
+                        >
+                          <div className="flex min-w-0 flex-col justify-center gap-1 px-4 py-2">
+                            <div className="flex min-w-0 items-center gap-1.5">
+                              <span className="truncate text-sm font-medium text-neutral">{secret.name}</span>
+                              {secret.description && (
+                                <Tooltip content={secret.description}>
+                                  <span>
+                                    <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+                                  </span>
+                                </Tooltip>
+                              )}
+                            </div>
+                            {secret.filePath && (
+                              <div className="flex items-center gap-1 text-xs text-neutral-subtle">
+                                <Icon iconName="file-lock" iconStyle="regular" className="text-xs" />
+                                <span className="truncate">{secret.filePath}</span>
+                              </div>
                             )}
                           </div>
-                          {secret.filePath && (
-                            <div className="flex items-center gap-1 text-xs text-neutral-subtle">
-                              <Icon iconName="file-lock" iconStyle="regular" className="text-xs" />
-                              <span className="truncate">{secret.filePath}</span>
-                            </div>
-                          )}
-                        </div>
 
-                        <div className="flex min-w-0 items-center border-l border-neutral px-4 py-2 text-sm text-neutral">
-                          <span className="truncate">{secret.reference || '-'}</span>
-                        </div>
+                          <div className="flex min-w-0 items-center border-l border-neutral px-4 py-2 text-sm text-neutral">
+                            <span className="truncate">{secret.reference || '-'}</span>
+                          </div>
 
-                        <div className="flex items-center justify-end gap-2 border-l border-neutral px-4 py-2">
-                          <Button
-                            aria-label="Edit secret"
-                            type="button"
-                            color="neutral"
-                            variant="outline"
-                            size="xs"
-                            iconOnly
-                            onClick={() => openSecretModal({ isFile: !!secret.isFile, index })}
-                          >
-                            <Icon iconName="pen" />
-                          </Button>
-                          <Button
-                            aria-label="Delete secret"
-                            type="button"
-                            color="neutral"
-                            variant="outline"
-                            size="xs"
-                            iconOnly
-                            onClick={() => removeExternalSecret(index)}
-                          >
-                            <Icon iconName="trash" />
-                          </Button>
+                          <div className="flex items-center justify-end gap-2 border-l border-neutral px-4 py-2">
+                            <Button
+                              aria-label="Edit secret"
+                              type="button"
+                              color="neutral"
+                              variant="outline"
+                              size="xs"
+                              iconOnly
+                              onClick={() => openSecretModal({ isFile: !!secret.isFile, index })}
+                            >
+                              <Icon iconName="pen" />
+                            </Button>
+                            <Button
+                              aria-label="Delete secret"
+                              type="button"
+                              color="neutral"
+                              variant="outline"
+                              size="xs"
+                              iconOnly
+                              onClick={() => removeExternalSecret(index)}
+                            >
+                              <Icon iconName="trash" />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                  </>
-                )}
+                      ))}
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           <div className="flex items-center justify-between border-t border-neutral pt-4">
             <Button onClick={onBack} type="button" size="lg" variant="outline" color="neutral" className="gap-2">

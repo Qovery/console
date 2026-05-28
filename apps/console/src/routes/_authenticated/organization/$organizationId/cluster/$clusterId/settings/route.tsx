@@ -14,6 +14,7 @@ function RouteComponent() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
 
   const pathSettings = `/organization/${organizationId}/cluster/${clusterId}/settings`
 
@@ -121,7 +122,7 @@ function RouteComponent() {
       imageRegistryLink,
       networkLink,
       dnsProviderLink,
-      addonsLink,
+      ...(secretManagerEnabled ? [addonsLink] : []),
       advancedSettingsLink,
       dangerZoneLink,
     ])

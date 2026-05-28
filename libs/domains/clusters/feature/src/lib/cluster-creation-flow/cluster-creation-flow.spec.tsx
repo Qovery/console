@@ -12,6 +12,10 @@ jest.mock('@qovery/shared/assistant/feature', () => ({
   AssistantTrigger: () => null,
 }))
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => false),
+}))
+
 jest.mock('@tanstack/react-router', () => {
   const React = jest.requireActual('react')
   return {
@@ -58,13 +62,25 @@ describe('steps', () => {
     expect(result.map((s) => s.key)).toEqual(['general', 'resources', 'features', 'addons', 'summary'])
   })
 
-  it('should return GCP managed steps', () => {
+  it('should return GCP managed steps without add-ons when secret manager is disabled', () => {
     const data: ClusterGeneralData = {
       installation_type: 'MANAGED',
       cloud_provider: CloudProviderEnum.GCP,
     } as ClusterGeneralData
 
     const result = steps(data)
+
+    expect(result).toHaveLength(3)
+    expect(result.map((s) => s.key)).toEqual(['general', 'features', 'summary'])
+  })
+
+  it('should return GCP managed steps with add-ons when secret manager is enabled', () => {
+    const data: ClusterGeneralData = {
+      installation_type: 'MANAGED',
+      cloud_provider: CloudProviderEnum.GCP,
+    } as ClusterGeneralData
+
+    const result = steps(data, { secretManagerEnabled: true })
 
     expect(result).toHaveLength(4)
     expect(result.map((s) => s.key)).toEqual(['general', 'features', 'addons', 'summary'])

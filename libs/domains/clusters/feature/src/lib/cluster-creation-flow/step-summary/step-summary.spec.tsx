@@ -16,6 +16,10 @@ const mockEditCloudProviderInfo = jest.fn()
 const mockEditClusterKubeconfig = jest.fn()
 const mockDeployCluster = jest.fn()
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
+}))
+
 const mockContextValue: ClusterContainerCreateContextInterface = {
   currentStep: 4,
   setCurrentStep: mockSetCurrentStep,

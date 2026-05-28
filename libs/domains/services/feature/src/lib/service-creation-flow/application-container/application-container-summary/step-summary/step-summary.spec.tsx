@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ExternalSecretData } from '@qovery/shared/interfaces'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ApplicationContainerStepSummary } from './step-summary'
@@ -14,6 +15,10 @@ const mockUseApplicationContainerCreateContext = jest.fn()
 
 jest.mock('posthog-js', () => ({
   capture: (...args: unknown[]) => mockCapture(...args),
+}))
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
 }))
 
 jest.mock('@tanstack/react-router', () => ({
@@ -152,8 +157,11 @@ function renderComponent({
 }
 
 describe('ApplicationContainerStepSummary', () => {
+  const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
+
   beforeEach(() => {
     jest.clearAllMocks()
+    useFeatureFlagEnabledMock.mockReturnValue(true)
     mockCreateService.mockResolvedValue({ id: 'service-1' })
     mockCreateVariable.mockResolvedValue(undefined)
     mockImportVariables.mockResolvedValue(undefined)

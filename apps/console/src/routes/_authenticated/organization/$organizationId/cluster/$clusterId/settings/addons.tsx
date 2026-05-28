@@ -1,4 +1,4 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
@@ -26,26 +26,36 @@ function RouteComponent() {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
   const { data: cluster } = useCluster({ organizationId, clusterId, suspense: true })
+  const isGcp = isGcpCluster(cluster)
 
   const [kedaEnabled, setKedaEnabled] = useState(cluster?.keda?.enabled ?? false)
 
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
-
   const secretManagerDropdownOptions = useMemo(() => {
-    if (!isGcpCluster(cluster)) {
+    if (!isGcp) {
       return SECRET_MANAGER_OPTIONS
     }
 
     const gcpOption = SECRET_MANAGER_OPTIONS.find((option) => option.value === 'GCP_SECRET_MANAGER')
     const awsOptions = SECRET_MANAGER_OPTIONS.filter((option) => option.value !== 'GCP_SECRET_MANAGER')
     return gcpOption ? [gcpOption, ...awsOptions] : SECRET_MANAGER_OPTIONS
-  }, [cluster])
+  }, [isGcp])
 
   const [secretManagers, setSecretManagers] = useState<SecretManagerAccess[]>(
     () => cluster?.secret_manager_accesses ?? []
   )
+
+  if (isGcp && !secretManagerEnabled) {
+    return (
+      <Navigate
+        to="/organization/$organizationId/cluster/$clusterId/settings/general"
+        params={{ organizationId, clusterId }}
+        replace
+      />
+    )
+  }
 
   const openSecretManagerModal = (
     option: (typeof SECRET_MANAGER_OPTIONS)[number],
@@ -130,9 +140,9 @@ function RouteComponent() {
 
     const updatedCluster = {
       ...cluster,
-      secret_manager_accesses: secretManagers,
+      secret_manager_accesses: secretManagerEnabled ? secretManagers : cluster.secret_manager_accesses,
       keda: {
-        enabled: isGcpCluster(cluster) ? false : kedaEnabled,
+        enabled: isGcp ? false : kedaEnabled,
       },
     }
 
@@ -156,15 +166,17 @@ function RouteComponent() {
         />
         <div className="max-w-content-with-navigation-left">
           <div className="divide-y divide-neutral overflow-hidden rounded-lg border border-neutral bg-surface-neutral shadow-[0_0_4px_0_rgba(0,0,0,0.01),0_2px_3px_0_rgba(0,0,0,0.02)]">
-            <div className="p-4">
-              <AddonToggleCard
-                title="KEDA autoscaler"
-                description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this cluster."
-                badge={{ label: 'Free', color: 'green' }}
-                activated={kedaEnabled}
-                onToggle={() => setKedaEnabled((prev) => !prev)}
-              />
-            </div>
+            {!isGcp && (
+              <div className="p-4">
+                <AddonToggleCard
+                  title="KEDA autoscaler"
+                  description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this cluster."
+                  badge={{ label: 'Free', color: 'green' }}
+                  activated={kedaEnabled}
+                  onToggle={() => setKedaEnabled((prev) => !prev)}
+                />
+              </div>
+            )}
 
             {secretManagerEnabled && (
               <div className="p-4">
