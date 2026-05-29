@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
 import { useEffect, useMemo } from 'react'
@@ -144,10 +144,12 @@ function mapSecretForForm(
 
 export function ApplicationContainerStepVariables({ onBack, onSubmit }: ApplicationContainerStepVariablesProps) {
   const { setCurrentStep, variablesForm, generalForm } = useApplicationContainerCreateContext()
-  const { projectId = '', environmentId = '' } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
-  const { secretManagers } = useVariablesSecretManagers({ enabled: secretManagerEnabled })
+  const { secretManagers, hasClusterSecretManagerConfigured, clusterId } = useVariablesSecretManagers({
+    enabled: secretManagerEnabled,
+  })
 
   const serviceScope = generalForm.getValues('serviceType') === 'APPLICATION' ? 'APPLICATION' : 'CONTAINER'
   const secretSources = useMemo(
@@ -376,7 +378,8 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
               <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
                 <div className="flex min-h-[52px] items-center justify-between px-4 pb-5 pt-3">
                   <p className="text-sm font-medium text-neutral">External secrets</p>
-                  {externalSecrets.length > 0 &&
+                  {hasClusterSecretManagerConfigured &&
+                    externalSecrets.length > 0 &&
                     cardHeaderActions({
                       onAddDefault: () => openSecretModal({ isFile: false }),
                       onAddAsFile: () => openSecretModal({ isFile: true }),
@@ -388,7 +391,26 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
 
               <div className="relative -mt-2 rounded-lg">
                 <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-                  {externalSecrets.length === 0 ? (
+                  {!hasClusterSecretManagerConfigured ? (
+                    <EmptyState
+                      title="No secret manager linked on your cluster"
+                      description="Set up your secret manager in your cluster settings."
+                      icon="lock-keyhole"
+                      className="h-auto rounded-none border-0 bg-transparent px-8 py-8"
+                    >
+                      {clusterId && (
+                        <Link
+                          to="/organization/$organizationId/cluster/$clusterId/settings/addons"
+                          params={{ organizationId, clusterId }}
+                        >
+                          <Button color="neutral" size="md" variant="solid" type="button">
+                            Cluster settings
+                            <Icon iconName="chevron-right" />
+                          </Button>
+                        </Link>
+                      )}
+                    </EmptyState>
+                  ) : externalSecrets.length === 0 ? (
                     emptyState({
                       title: 'No external secrets added yet',
                       onAddDefault: () => openSecretModal({ isFile: false }),
