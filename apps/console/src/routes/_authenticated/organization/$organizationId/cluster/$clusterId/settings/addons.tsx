@@ -46,6 +46,16 @@ function RouteComponent() {
   const [secretManagers, setSecretManagers] = useState<SecretManagerAccess[]>(
     () => cluster?.secret_manager_accesses ?? []
   )
+  const clusterWithPendingSecretManagers = useMemo(
+    () =>
+      cluster
+        ? {
+            ...cluster,
+            secret_manager_accesses: secretManagers,
+          }
+        : undefined,
+    [cluster, secretManagers]
+  )
 
   const openSecretManagerModal = (
     option: (typeof SECRET_MANAGER_OPTIONS)[number],
@@ -55,7 +65,7 @@ function RouteComponent() {
       content: (
         <SecretManagerIntegrationModal
           option={option}
-          cluster={cluster}
+          cluster={clusterWithPendingSecretManagers}
           mode={secretManager ? 'edit' : 'create'}
           initialValues={secretManager}
           onClose={closeModal}
