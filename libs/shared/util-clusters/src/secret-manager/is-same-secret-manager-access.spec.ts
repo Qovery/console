@@ -1,5 +1,5 @@
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
-import { isSameSecretManagerAccess } from './isSameSecretManagerAccess'
+import { isSameSecretManagerAccess } from './is-same-secret-manager-access'
 
 describe('isSameSecretManagerAccess', () => {
   it('should match persisted secret managers by id', () => {

@@ -1,7 +1,7 @@
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
-import { hasAwsAutomaticIntegrationConfigured } from './hasAwsAutomaticIntegrationConfigured'
-import { hasAwsManualStsIntegrationConfigured } from './hasAwsManualStsIntegrationConfigured'
-import { hasGcpAutomaticIntegrationConfigured } from './hasGcpAutomaticIntegrationConfigured'
+import { hasAwsAutomaticIntegrationConfigured } from './has-aws-automatic-integration-configured'
+import { hasAwsManualStsIntegrationConfigured } from './has-aws-manual-sts-integration-configured'
+import { hasGcpAutomaticIntegrationConfigured } from './has-gcp-automatic-integration-configured'
 
 const awsStaticIntegration = {
   id: 'sm-static',

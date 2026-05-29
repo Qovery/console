@@ -1,5 +1,5 @@
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
-import { isAwsSecretManager } from './isAwsSecretManager'
+import { isAwsSecretManager } from './is-aws-secret-manager'
 
 export const hasAwsAutomaticIntegrationConfigured = (secretManagers: SecretManagerAccess[]) =>
   secretManagers.some(

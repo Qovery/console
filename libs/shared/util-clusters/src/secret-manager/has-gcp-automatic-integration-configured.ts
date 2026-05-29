@@ -1,5 +1,5 @@
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
-import { isGcpSecretManager } from './isGcpSecretManager'
+import { isGcpSecretManager } from './is-gcp-secret-manager'
 
 export const hasGcpAutomaticIntegrationConfigured = (secretManagers: SecretManagerAccess[]) =>
   secretManagers.some(
