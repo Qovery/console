@@ -22,7 +22,7 @@ import { useArgoCdServices } from '../hooks/use-argocd-services/use-argocd-servi
 const { Table } = TablePrimitives
 
 const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(280px,1.7fr)_minmax(220px,1fr)_minmax(280px,1.1fr)_minmax(112px,112px)]'
+  'grid w-full grid-cols-[minmax(350px,502px)_minmax(200px,275px)_minmax(280px,340px)_minmax(10px,50px)]'
 
 export interface ArgoCdServiceListProps {
   environment: Environment
@@ -90,7 +90,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Target version
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-full items-center justify-center text-neutral-subtle">
+              <Table.ColumnHeaderCell className="flex h-full items-center justify-start text-neutral-subtle">
                 Actions
               </Table.ColumnHeaderCell>
             </Table.Row>
@@ -208,7 +208,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                     )}
                   </Table.Cell>
 
-                  <Table.Cell className="flex h-full items-center justify-center">
+                  <Table.Cell className="flex h-full items-center justify-start">
                     <ArgoCdServiceActions
                       environment={environment}
                       serviceId={service.id}
