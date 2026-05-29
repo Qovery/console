@@ -16,10 +16,7 @@ describe('isExternalSecretVariable', () => {
     }
   )
 
-  it.each(['VALUE', 'FILE', 'ALIAS', 'OVERRIDE'] as const)(
-    'should return false for %s variables',
-    (variable_type) => {
-      expect(isExternalSecretVariable({ ...baseVariable, variable_type })).toBe(false)
-    }
-  )
+  it.each(['VALUE', 'FILE', 'ALIAS', 'OVERRIDE'] as const)('should return false for %s variables', (variable_type) => {
+    expect(isExternalSecretVariable({ ...baseVariable, variable_type })).toBe(false)
+  })
 })

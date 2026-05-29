@@ -71,14 +71,17 @@ export function TableFilter({ column }: { column: Column<any, unknown> }) {
           ) : null}
         </div>
         <DropdownMenu.Content asChild>
-          <Popover.Content className="max-h-80 w-60 overflow-x-hidden overflow-y-auto p-2">
+          <Popover.Content className="max-h-80 w-60 overflow-y-auto overflow-x-hidden p-2">
             {sortedUniqueValues.map(
               ([value, count]) =>
                 value != null && (
                   <Fragment key={value}>
                     <Popover.Close>
                       <DropdownMenu.Item
-                        className={twMerge(dropdownMenuItemVariants({ color: 'brand' }), 'min-w-0 justify-between gap-2')}
+                        className={twMerge(
+                          dropdownMenuItemVariants({ color: 'brand' }),
+                          'min-w-0 justify-between gap-2'
+                        )}
                         onSelect={() => column.setFilterValue((arr: [] = []) => [...new Set([...arr, value])])}
                       >
                         {column.columnDef.meta?.customFacetEntry ? (

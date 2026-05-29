@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
