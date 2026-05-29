@@ -6,7 +6,6 @@ import { useSecretManagerProviderSecrets } from '@qovery/domains/clusters/featur
 import { Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { getSecretManagerProvider } from '@qovery/shared/util-clusters'
 import { useDebounce } from '@qovery/shared/util-hooks'
-import { type ExternalSecretRow } from '../external-secrets-utils'
 
 export type SecretSourceOption = {
   value: string
@@ -36,12 +35,19 @@ export type AddSecretModalSubmitData = {
   secretManagerAccessId: string
 }
 
+export type AddSecretModalInitialSecret = {
+  name: string
+  reference: string
+  description?: string
+  filePath?: string
+}
+
 interface AddSecretModalProps {
   secretSources: SecretSourceOption[]
   defaultSource?: SecretSourceOption
   isFile?: boolean
   mode?: 'create' | 'edit'
-  initialSecret?: ExternalSecretRow
+  initialSecret?: AddSecretModalInitialSecret
   onClose: () => void
   onSubmit: (secret: AddSecretModalSubmitData) => void | Promise<void>
 }

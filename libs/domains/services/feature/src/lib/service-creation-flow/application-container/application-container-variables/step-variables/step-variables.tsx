@@ -7,14 +7,12 @@ import {
   AddSecretModal,
   type AddSecretModalSubmitData,
   type CreateUpdateVariableModalSubmitData,
-  type ExternalSecretRow,
   VariableFormModal,
   mapSecretManagersToSources,
   useVariablesSecretManagers,
 } from '@qovery/domains/variables/feature'
 import { type ExternalSecretData, type VariableData } from '@qovery/shared/interfaces'
 import { Button, EmptyState, FunnelFlowBody, Heading, Icon, Section, Tooltip, useModal } from '@qovery/shared/ui'
-import { generateScopeLabel } from '@qovery/shared/util-js'
 import { useApplicationContainerCreateContext } from '../../application-container-creation-flow'
 
 export interface ApplicationContainerStepVariablesProps {
@@ -144,21 +142,6 @@ function mapSecretForForm(
   }
 }
 
-function mapSecretForModal(secret: ExternalSecretData, index: number): ExternalSecretRow {
-  return {
-    id: `local-secret-${index}`,
-    name: secret.name,
-    description: secret.description,
-    filePath: secret.filePath,
-    isFile: secret.isFile,
-    reference: secret.reference,
-    status: secret.secretManagerAccessId ? 'synced' : 'detached',
-    source: secret.source ?? null,
-    sourceIcon: secret.sourceIcon,
-    scope: secret.scope ? generateScopeLabel(secret.scope) : 'Application',
-  }
-}
-
 export function ApplicationContainerStepVariables({ onBack, onSubmit }: ApplicationContainerStepVariablesProps) {
   const { setCurrentStep, variablesForm, generalForm } = useApplicationContainerCreateContext()
   const { projectId = '', environmentId = '' } = useParams({ strict: false })
@@ -233,7 +216,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
   }
 
   const openSecretModal = ({ isFile, index }: { isFile: boolean; index?: number }) => {
-    const currentSecret = typeof index === 'number' ? mapSecretForModal(externalSecrets[index], index) : undefined
+    const currentSecret = typeof index === 'number' ? externalSecrets[index] : undefined
     const defaultSource = currentSecret?.source
       ? secretSources.find((source) => source.tableLabel === currentSecret.source) ?? secretSources[0]
       : secretSources[0]

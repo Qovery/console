@@ -387,17 +387,7 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
           }
           return (
             <span className="flex min-w-0 items-center gap-1.5 text-sm text-neutral">
-              {secret.sourceIcon && (
-                <Icon
-                  name={match(secret.sourceIcon)
-                    .with('aws', () => 'AWS' as const)
-                    .with('gcp', () => 'GCP' as const)
-                    .otherwise(() => 'AWS' as const)}
-                  width="16"
-                  height="16"
-                  className="shrink-0"
-                />
-              )}
+              {secret.sourceIcon && <Icon name={secret.sourceIcon} width="16" height="16" className="shrink-0" />}
               <Tooltip align="start" content={secret.source}>
                 <span className="truncate">{secret.source}</span>
               </Tooltip>

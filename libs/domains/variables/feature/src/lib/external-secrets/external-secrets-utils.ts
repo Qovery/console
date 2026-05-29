@@ -13,7 +13,7 @@ export interface ExternalSecretRow {
   reference: string
   status: SyncStatus
   source: string | null
-  sourceIcon?: 'aws' | 'gcp'
+  sourceIcon?: 'AWS' | 'GCP'
   scope: string
 }
 
@@ -22,7 +22,6 @@ export function mapVariableToExternalSecretRow(
   secretManagers: SecretManagerAccess[]
 ): ExternalSecretRow {
   const secretManager = secretManagers.find((manager) => manager.id === variable.secret_manager_access_id)
-  const provider = secretManager ? getSecretManagerProvider(secretManager) : undefined
 
   return {
     id: variable.id,
@@ -33,7 +32,7 @@ export function mapVariableToExternalSecretRow(
     reference: variable.value ?? '',
     status: variable.secret_manager_access_id ? 'synced' : 'detached',
     source: secretManager?.name ?? null,
-    sourceIcon: provider === 'AWS' ? 'aws' : provider === 'GCP' ? 'gcp' : undefined,
+    sourceIcon: getSecretManagerProvider(secretManager),
     scope: generateScopeLabel(variable.scope),
   }
 }
