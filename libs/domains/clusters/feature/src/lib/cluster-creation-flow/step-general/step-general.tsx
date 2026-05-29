@@ -45,7 +45,6 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
     }
   }, [generalData, methods])
 
-  // TODO [secret manager]: double check if we really need that
   useEffect(() => {
     const stepIndex = steps(generalData).findIndex((step) => step.key === 'general') + 1
     if (stepIndex > 0) {

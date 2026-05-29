@@ -95,14 +95,6 @@ function RouteComponent() {
       confirmationMethod: 'action',
       confirmationAction: 'delete',
       action: () => {
-        // TODO [secret-manager] Double check if secret manager is used by any service
-
-        // const hasSecrets = (integration.usedByServices ?? 0) > 0
-        // if (hasSecrets) {
-        //   openDeletionHelper(integration)
-        // } else {
-        // }
-
         setSecretManagers((prev) => prev.filter((item) => !isSameSecretManagerAccess(item, integration)))
       },
     })
