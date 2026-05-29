@@ -1,11 +1,11 @@
 import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
+import { type ArgoCd } from '@qovery/domains/services/data-access'
 import { Button, DropdownMenu, Icon, Link, Tooltip } from '@qovery/shared/ui'
 
 export interface ArgoCdServiceActionsProps {
   environment: Environment
-  serviceId: string
-  serviceName: string
+  service: ArgoCd
   onAction?: (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
   variant?: 'default' | 'header'
 }
@@ -13,8 +13,7 @@ export interface ArgoCdServiceActionsProps {
 export function ArgoCdServiceActions({
   variant = 'default',
   environment,
-  serviceId,
-  serviceName,
+  service,
   onAction,
 }: ArgoCdServiceActionsProps) {
   const organizationId = environment.organization.id
@@ -26,14 +25,14 @@ export function ArgoCdServiceActions({
       {variant === 'default' && (
         <Tooltip content="Logs">
           <Link
-            aria-label={`Service logs for ${serviceName}`}
+            aria-label={`Service logs for ${service.name}`}
             as="button"
             to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
             params={{
               organizationId,
               projectId,
               environmentId,
-              serviceId,
+              serviceId: service.id,
             }}
             color="neutral"
             variant="outline"
@@ -50,7 +49,7 @@ export function ArgoCdServiceActions({
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <Button
-            aria-label={`Other actions for ${serviceName}`}
+            aria-label={`Other actions for ${service.name}`}
             variant="outline"
             size="sm"
             iconOnly
@@ -72,7 +71,7 @@ export function ArgoCdServiceActions({
                 organizationId,
                 projectId,
                 environmentId,
-                serviceId,
+                serviceId: service.id,
               }}
             >
               See manifest

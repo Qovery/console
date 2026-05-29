@@ -144,12 +144,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
         </div>
       </div>
       {isArgoCdService ? (
-        <ArgoCdServiceActions
-          variant="header"
-          environment={environment}
-          serviceId={service.id}
-          serviceName={service.name}
-        />
+        <ArgoCdServiceActions variant="header" environment={environment} service={service} />
       ) : (
         <ServiceActions environment={environment} serviceId={service.id} variant="header" />
       )}

@@ -209,12 +209,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                   </Table.Cell>
 
                   <Table.Cell className="flex h-full items-center justify-start">
-                    <ArgoCdServiceActions
-                      environment={environment}
-                      serviceId={service.id}
-                      serviceName={service.name}
-                      onAction={stopRowNavigation}
-                    />
+                    <ArgoCdServiceActions environment={environment} service={service} onAction={stopRowNavigation} />
                   </Table.Cell>
                 </Table.Row>
               )

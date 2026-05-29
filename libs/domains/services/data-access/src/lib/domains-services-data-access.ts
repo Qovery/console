@@ -271,7 +271,15 @@ export const services = createQueryKeys('services', {
     queryKey: [environmentId],
     async queryFn() {
       const response = await environmentApi.listServicesByEnvironmentId(environmentId)
-      return (response.data.results ?? []).filter((service) => service.service_type === 'ARGOCD_APP')
+      return (response.data.results ?? [])
+        .filter((service) => service.service_type === 'ARGOCD_APP')
+        .map(
+          (service) =>
+            ({
+              ...service,
+              serviceType: service.service_type,
+            }) as ArgoCd
+        )
     },
   }),
   argocdManifest: (serviceId: string) => ({
