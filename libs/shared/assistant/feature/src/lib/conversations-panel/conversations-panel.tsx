@@ -31,11 +31,6 @@ interface Message {
   is_private: boolean
 }
 
-// Derive a stable UUID from distinct_id so each authenticated user gets their
-// own widget session — prevents cross-user ticket leakage on shared devices.
-// The SDK caches widget_session_id in memory after first load so we can't
-// override it; direct HTTP calls with explicit distinct_id are the only
-// reliable way to filter tickets per user.
 function distinctIdToUUID(id: string): string {
   let h1 = 5381,
     h2 = 52711
@@ -56,15 +51,12 @@ function distinctIdToUUID(id: string): string {
   return `${raw.slice(0, 8)}-${raw.slice(8, 12)}-${ver}-${variant}-${raw.slice(20, 32)}`
 }
 
-// sub comes from Auth0's user.sub — always synchronous and up-to-date,
-// unlike posthog.get_distinct_id() which may lag behind posthog.identify().
 function getApiConfig(sub: string) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const ph = posthog as any
+  const ph = posthog as unknown as { config?: { api_host?: string; token?: string } }
   const apiHost = (ph.config?.api_host ?? 'https://us.posthog.com').replace(/\/$/, '')
   const phcToken = ph.config?.token ?? ''
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const conversationsToken = (window as any)._POSTHOG_REMOTE_CONFIG?.[phcToken]?.config?.conversations?.token ?? ''
+  const remoteConfig = (window as unknown as { _POSTHOG_REMOTE_CONFIG?: Record<string, { config?: { conversations?: { token?: string } } }> })._POSTHOG_REMOTE_CONFIG
+  const conversationsToken = remoteConfig?.[phcToken]?.config?.conversations?.token ?? ''
   const widgetSessionId = distinctIdToUUID(sub)
   return { apiHost, conversationsToken, distinctId: sub, widgetSessionId }
 }
@@ -192,7 +184,6 @@ export function ConversationsPanel({ onClose }: ConversationsPanelProps) {
     return () => document.removeEventListener('keydown', down)
   }, [onClose])
 
-  // Reload tickets whenever the authenticated user changes.
   useEffect(() => {
     if (!user?.sub) return
     const sub = user.sub
@@ -231,7 +222,6 @@ export function ConversationsPanel({ onClose }: ConversationsPanelProps) {
     })
   }, [user?.sub])
 
-  // Poll for new messages every 5s while a thread is open.
   useEffect(() => {
     if (view !== 'thread' || !selectedTicket || !user?.sub) return
     const sub = user.sub
@@ -286,7 +276,6 @@ export function ConversationsPanel({ onClose }: ConversationsPanelProps) {
     if (!message.trim() || !selectedTicket || !user?.sub) return
     const sub = user.sub
 
-    // Optimistic update so the message appears instantly in the UI.
     const optimistic: Message = {
       id: `optimistic-${Date.now()}`,
       content: message.trim(),

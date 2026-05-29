@@ -181,9 +181,6 @@ function App() {
   useEffect(() => {
     if (!auth.user?.sub) {
       Sentry.setUser(null)
-      // Reset PostHog identity on logout so the next user gets a clean
-      // anonymous ID — prevents PostHog from merging two users' person profiles
-      // when they share the same device.
       posthog.reset()
       return
     }

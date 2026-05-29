@@ -8,10 +8,8 @@ type ConversationsActionsContextValue = {
 
 const ConversationsOpenContext = createContext(false)
 const ConversationsActionsContext = createContext<ConversationsActionsContextValue>({
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  setConversationsOpen: () => {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  toggleConversationsOpen: () => {},
+  setConversationsOpen: (_open: boolean) => undefined,
+  toggleConversationsOpen: () => undefined,
 })
 const ConversationsUnreadContext = createContext(0)
 
@@ -24,15 +22,13 @@ export function ConversationsProvider({ children }: PropsWithChildren) {
 
     const poll = () => {
       try {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const api = (posthog as any).conversations
+        type TicketLike = { unread?: boolean; is_unread?: boolean; unread_count?: number; has_unread_messages?: boolean }
+        type ConversationsApi = { getTickets?: () => Promise<{ results?: TicketLike[] }> }
+        const api = (posthog as unknown as { conversations?: ConversationsApi }).conversations
         if (typeof api?.getTickets !== 'function') return
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        api.getTickets().then((response: any) => {
-          const tickets: any[] = Array.isArray(response?.results) ? response.results : []
-          // PostHog may use different field names for unread state
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const count = tickets.filter((t: any) =>
+        api.getTickets().then((response) => {
+          const tickets: TicketLike[] = Array.isArray(response?.results) ? response.results : []
+          const count = tickets.filter((t) =>
             t.unread === true ||
             t.is_unread === true ||
             (typeof t.unread_count === 'number' && t.unread_count > 0) ||
@@ -41,7 +37,7 @@ export function ConversationsProvider({ children }: PropsWithChildren) {
           setUnreadCount(count)
         }).catch(() => undefined)
       } catch {
-        // posthog not ready yet
+        return
       }
     }
 
