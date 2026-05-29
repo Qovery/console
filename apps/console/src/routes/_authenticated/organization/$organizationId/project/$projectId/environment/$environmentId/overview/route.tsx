@@ -15,6 +15,7 @@ import {
   EnvironmentStateChip,
   MenuManageDeployment,
   MenuOtherActions,
+  isArgoCdEnvironment,
   useDeploymentStatus,
   useEnvironment,
 } from '@qovery/domains/environments/feature'
@@ -67,7 +68,7 @@ function RouteComponent() {
   const shouldDisplayQoveryServicesSubtitle = isServicesListTab && hasArgoCdServices
   const shouldDisplayArgoCdServicesAboveQovery = isServicesListTab && hasArgoCdServices && !hasQoveryServices
   const shouldDisplayArgoCdServicesBelowQovery = isServicesListTab && hasArgoCdServices && hasQoveryServices
-  const isArgoCdEnvironment = environmentOverview?.[0]?.services_overview.managed_by === 'ARGOCD'
+  const isEnvironmentManagedByArgoCd = isArgoCdEnvironment(environmentOverview?.[0])
   const manageDeploymentDisabledTooltip = hasArgoCdServices
     ? 'ArgoCD environments can only be deployed from ArgoCD'
     : 'Add at least one service to deploy this environment'
@@ -87,7 +88,7 @@ function RouteComponent() {
                 <Heading className="min-w-0 max-w-full truncate">{environment.name}</Heading>
               </Tooltip>
               <EnvironmentStateChip className="ml-0.5 shrink-0" mode="running" environmentId={environment.id} />
-              {isArgoCdEnvironment && (
+              {isEnvironmentManagedByArgoCd && (
                 <>
                   <span className="ml-0.5 mr-2 h-4 w-px shrink-0 bg-surface-neutral-component" />
                   <span className="flex h-5 items-center rounded border border-argocd-subtle bg-surface-argocd-subtle px-0.5 text-xs font-bold uppercase text-argocd retina:border-[0.5px]">
@@ -115,6 +116,7 @@ function RouteComponent() {
                 environment={environment}
                 state={deploymentStatus.last_deployment_state}
                 variant="header"
+                isArgoCdEnvironment={isEnvironmentManagedByArgoCd}
               />
               {hasQoveryServices ? (
                 <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant="header" />
