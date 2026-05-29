@@ -19,26 +19,6 @@ export interface Message {
   is_private: boolean
 }
 
-function distinctIdToUUID(id: string): string {
-  let h1 = 5381,
-    h2 = 52711
-  for (let i = 0; i < id.length; i++) {
-    const c = id.charCodeAt(i)
-    h1 = (Math.imul(h1, 33) + c) >>> 0
-    h2 = (Math.imul(h2, 33) ^ c) >>> 0
-  }
-  let h3 = Math.imul(h1 ^ (h1 >>> 16), 0x45d9f3b) >>> 0
-  let h4 = Math.imul(h2 ^ (h2 >>> 16), 0x45d9f3b) >>> 0
-  h3 = Math.imul(h3 ^ (h3 >>> 16), 0x45d9f3b) >>> 0
-  h4 = Math.imul(h4 ^ (h4 >>> 16), 0x45d9f3b) >>> 0
-  const p = (n: number) => n.toString(16).padStart(8, '0')
-  const raw = p(h1) + p(h2) + p(h3) + p(h4)
-  const ver = '4' + raw.slice(13, 16)
-  const variant =
-    ((parseInt(raw.slice(16, 18), 16) & 0x3f) | 0x80).toString(16).padStart(2, '0') + raw.slice(18, 20)
-  return `${raw.slice(0, 8)}-${raw.slice(8, 12)}-${ver}-${variant}-${raw.slice(20, 32)}`
-}
-
 export function getApiConfig(sub: string) {
   const ph = posthog as unknown as { config?: { api_host?: string; token?: string } }
   const apiHost = (ph.config?.api_host ?? 'https://us.posthog.com').replace(/\/$/, '')
@@ -49,7 +29,7 @@ export function getApiConfig(sub: string) {
     }
   )._POSTHOG_REMOTE_CONFIG
   const conversationsToken = remoteConfig?.[phcToken]?.config?.conversations?.token ?? ''
-  const widgetSessionId = posthog.get_session_id() || distinctIdToUUID(sub)
+  const widgetSessionId = posthog.get_session_id()
   return { apiHost, conversationsToken, distinctId: sub, widgetSessionId }
 }
 
