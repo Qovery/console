@@ -3,11 +3,16 @@ import { type EnvironmentDeploymentRule } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { type AnyService, type EditableService, isEditableService } from '@qovery/domains/services/data-access'
+import {
+  type AnyService,
+  type EditableService,
+  isArgoCd,
+  isEditableService,
+} from '@qovery/domains/services/data-access'
 import { useEditService, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { BlockContent, Button, Icon, InputToggle, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, Callout, Icon, InputToggle, Section } from '@qovery/shared/ui'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-rule'
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
@@ -23,6 +28,9 @@ interface PageSettingsPreviewEnvironmentsProps {
 export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnvironmentsProps) {
   const { onSubmit, services, loading, toggleAll, toggleEnablePreview } = props
   const { control, formState } = useFormContext()
+  const hasArgoCdServices = services?.some(isArgoCd)
+  const hasQoveryServices = services?.some(isEditableService)
+  const shouldDisplayArgoCdPreviewWarning = hasArgoCdServices && hasQoveryServices
 
   const getIconName = (service: AnyService) =>
     match(service)
@@ -36,6 +44,14 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
       <Section className="px-8 pb-8 pt-6">
         <SettingsHeading title="Preview environments" />
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
+          {shouldDisplayArgoCdPreviewWarning && (
+            <Callout.Root className="mb-6" color="yellow">
+              <Callout.Icon>
+                <Icon iconName="triangle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>ArgoCD linked services won't be copied in your preview environments.</Callout.Text>
+            </Callout.Root>
+          )}
           <BlockContent title="Global settings">
             <Controller
               name="auto_preview"

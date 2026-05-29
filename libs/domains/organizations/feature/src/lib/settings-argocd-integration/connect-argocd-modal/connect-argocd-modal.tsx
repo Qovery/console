@@ -2,7 +2,7 @@ import { type ArgoCdInstanceMappingResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { useCheckArgoCdConnection, useClusters, useSaveArgoCdCredentials } from '@qovery/domains/clusters/feature'
-import { CopyButton, ExternalLink, Heading, InputSelect, InputText, ModalCrud, Section } from '@qovery/shared/ui'
+import { ExternalLink, Heading, InputSelect, InputText, ModalCrud, Section } from '@qovery/shared/ui'
 
 interface ConnectArgoCdFormValues {
   targetCluster: string
@@ -17,9 +17,7 @@ export interface ConnectArgoCdModalProps {
   integration?: ArgoCdInstanceMappingResponse
 }
 
-const ARGOCD_TOKEN_COMMAND = 'argocd account generate-token'
-const ARGOCD_API_ENDPOINT_GUIDE_URL =
-  'https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/#ui-and-api-content-path'
+const ARGOCD_INTEGRATION_DOC_URL = 'https://www.qovery.com/docs/configuration/integrations/argocd'
 
 const getConnectionErrorMessage = (reason?: string) => {
   switch (reason) {
@@ -136,8 +134,8 @@ export function ConnectArgoCdModal({
               <li>the ArgoCD API URL reachable from that cluster</li>
               <li>a token generated from the `argocd` CLI or UI</li>
             </ul>
-            <ExternalLink className="mt-2" href={ARGOCD_API_ENDPOINT_GUIDE_URL}>
-              ArgoCD API endpoint documentation
+            <ExternalLink className="mt-2" href={ARGOCD_INTEGRATION_DOC_URL}>
+              ArgoCD integration documentation
             </ExternalLink>
           </>
         }
@@ -169,9 +167,11 @@ export function ConnectArgoCdModal({
 
           <Section className="rounded-md border border-neutral bg-surface-neutral p-4">
             <Heading className="text-sm">2. ArgoCD API endpoint</Heading>
-            <p className="mt-1 text-sm text-neutral-subtle">Enter the URL used to reach the ArgoCD API server.</p>
-            <ExternalLink href={ARGOCD_API_ENDPOINT_GUIDE_URL} className="mt-1">
-              How to find the ArgoCD API endpoint
+            <p className="mt-1 text-sm text-neutral-subtle">
+              Enter the ArgoCD API URL reachable from the selected cluster.
+            </p>
+            <ExternalLink href={ARGOCD_INTEGRATION_DOC_URL} className="mt-1">
+              How to configure the ArgoCD integration
             </ExternalLink>
             <div className="mt-4">
               <Controller
@@ -203,13 +203,9 @@ export function ConnectArgoCdModal({
                 ? 'For security reasons, Qovery cannot show the saved token. Paste a new one to update the connection.'
                 : 'Generate an API token from your ArgoCD instance and paste it below.'}
             </p>
-            <div className="mt-2 flex items-center justify-between rounded-md border border-neutral bg-surface-neutral-subtle p-3">
-              <span className="text-sm text-neutral">
-                <span className="select-none">$ </span>
-                {ARGOCD_TOKEN_COMMAND}
-              </span>
-              <CopyButton content={ARGOCD_TOKEN_COMMAND} />
-            </div>
+            <ExternalLink href={ARGOCD_INTEGRATION_DOC_URL} className="mt-1">
+              How to generate an ArgoCD token
+            </ExternalLink>
             <div className="mt-2">
               <Controller
                 name="accessToken"

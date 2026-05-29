@@ -9,7 +9,18 @@ import {
 import { type ReactNode, Suspense, useEffect, useMemo, useState } from 'react'
 import { useDeleteArgoCdCredentials } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Badge, Button, EmptyState, Icon, Link, ModalConfirmation, Section, Tooltip, useModal } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  EmptyState,
+  Icon,
+  Link,
+  ModalConfirmation,
+  Section,
+  Tooltip,
+  useModal,
+  useModalConfirmation,
+} from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { useOrganizationArgoCdIntegrations } from '../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations'
@@ -290,13 +301,13 @@ function ArgoCdIntegrationCard({
       </div>
 
       {!isImporting ? (
-        <div className="-mt-[7px] flex items-center gap-2 rounded-b-lg border border-t-0 border-neutral bg-surface-neutral-subtle px-4 pb-3 pt-[calc(0.75rem+7px)]">
+        <div className="-mt-3 flex items-center gap-2 rounded-b-lg border border-t-0 border-neutral bg-surface-neutral-subtle px-4 pb-3 pt-6">
           <Badge size="base" color="green" variant="surface" className="gap-1 font-medium">
             <Icon iconName="circle-check" iconStyle="regular" className="text-xs text-positive" />
             {integration.status === 'connected' ? 'Connected' : 'Unknown'}
           </Badge>
           <p className="text-ssm text-neutral-subtle">
-            Last update <span className="text-neutral">{timeAgo(new Date(integration.last_checked_at))}</span>
+            Last update <span className="text-neutral">{timeAgo(new Date(integration.last_checked_at))} ago</span>
           </p>
         </div>
       ) : null}
@@ -342,11 +353,12 @@ function SettingsArgoCdIntegrationCreateButton() {
 
 function SettingsArgoCdIntegrationContent() {
   const { organizationId = '' } = useParams({ strict: false })
-  const { data: integrations = [] } = useOrganizationArgoCdIntegrations({
+  const { data: integrations = [], refetch } = useOrganizationArgoCdIntegrations({
     organizationId,
     suspense: true,
   })
   const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteArgoCdCredentials } = useDeleteArgoCdCredentials({ organizationId })
   const { mutateAsync: saveArgoCdDestinationClusterMapping } = useSaveArgoCdDestinationClusterMapping()
   const { mutateAsync: unlinkArgoCdDestinationClusterMapping } = useUnlinkArgoCdDestinationClusterMapping()
@@ -355,6 +367,28 @@ function SettingsArgoCdIntegrationContent() {
   useEffect(() => {
     setIntegrationsState(integrations)
   }, [integrations])
+
+  const hasImportingIntegration = integrationsState.some(
+    (integration) =>
+      integration.status === 'connected' &&
+      integration.linked_clusters.length === 0 &&
+      integration.unlinked_clusters.length === 0
+  )
+
+  // ArgoCD cluster discovery runs asynchronously after credentials are saved, so keep polling until mappings appear
+  useEffect(() => {
+    if (!hasImportingIntegration) {
+      return
+    }
+
+    const intervalId = setInterval(() => {
+      refetch()
+    }, 3000)
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [hasImportingIntegration, refetch])
 
   const configuredClusterIds = useMemo(
     () => integrationsState.map(({ agent_cluster_id }) => agent_cluster_id),
@@ -409,6 +443,7 @@ function SettingsArgoCdIntegrationContent() {
           confirmationMethod="action"
           confirmationAction="delete"
           placeholder={`Enter "delete"`}
+          warning="Related ArgoCD services will no longer be displayed in Qovery. Environments containing only these services will be removed."
         />
       ),
       options: {
@@ -438,17 +473,25 @@ function SettingsArgoCdIntegrationContent() {
     })
   }
 
-  const unlinkCluster = async (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => {
+  const unlinkCluster = (integrationId: string, cluster: ArgoCdLinkedClusterDetails) => {
     const integration = integrationsState.find(({ credentials_id }) => credentials_id === integrationId)
 
     if (!integration) {
       return
     }
 
-    await unlinkArgoCdDestinationClusterMapping({
-      organizationId,
-      agentClusterId: integration.agent_cluster_id,
-      argocdClusterUrl: cluster.argocd_cluster_url,
+    openModalConfirmation({
+      title: 'Unlink ArgoCD cluster',
+      description: `To confirm the unlink action, please type "unlink"`,
+      action: () =>
+        unlinkArgoCdDestinationClusterMapping({
+          organizationId,
+          agentClusterId: integration.agent_cluster_id,
+          argocdClusterUrl: cluster.argocd_cluster_url,
+        }),
+      confirmationMethod: 'action',
+      confirmationAction: 'unlink',
+      placeholder: `Enter "unlink"`,
     })
   }
 
@@ -495,10 +538,11 @@ export function SettingsArgoCdIntegration() {
             title="ArgoCD integration"
             description="Connect your ArgoCD instances to discover and monitor its applications directly in Qovery."
             showNeedHelp={false}
-          />
-          <Suspense fallback={null}>
-            <SettingsArgoCdIntegrationCreateButton />
-          </Suspense>
+          >
+            <Suspense fallback={null}>
+              <SettingsArgoCdIntegrationCreateButton />
+            </Suspense>
+          </SettingsHeading>
         </div>
 
         <div className="max-w-content-with-navigation-left">

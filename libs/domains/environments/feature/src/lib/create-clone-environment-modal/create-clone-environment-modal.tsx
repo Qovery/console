@@ -10,7 +10,9 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { P, match } from 'ts-pattern'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
+import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
+import { useServices } from '@qovery/domains/services/feature'
+import { Callout, ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 import { EnvironmentMode } from '../environment-mode/environment-mode'
 import { useCloneEnvironment } from '../hooks/use-clone-environment/use-clone-environment'
 import { useCreateEnvironment } from '../hooks/use-create-environment/use-create-environment'
@@ -34,6 +36,10 @@ export function CreateCloneEnvironmentModal({
   const { enableAlertClickOutside } = useModal()
   const { data: clusters = [] } = useClusters({ organizationId })
   const { data: projects = [] } = useProjects({ organizationId })
+  const { data: services = [] } = useServices({ environmentId: environmentToClone?.id })
+  const hasArgoCdServices = services.some(isArgoCd)
+  const hasQoveryServices = services.some(isEditableService)
+  const shouldDisplayArgoCdCloneWarning = Boolean(environmentToClone) && hasArgoCdServices && hasQoveryServices
 
   const { mutateAsync: createEnvironment, isLoading: isCreateEnvironmentLoading } = useCreateEnvironment()
   const { mutateAsync: cloneEnvironment, isLoading: isCloneEnvironmentLoading } = useCloneEnvironment()
@@ -271,6 +277,14 @@ export function CreateCloneEnvironmentModal({
             />
           )}
         />
+        {shouldDisplayArgoCdCloneWarning && (
+          <Callout.Root className="mb-3" color="yellow">
+            <Callout.Icon>
+              <Icon iconName="triangle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>ArgoCD imported services will not be cloned.</Callout.Text>
+          </Callout.Root>
+        )}
       </ModalCrud>
     </FormProvider>
   )

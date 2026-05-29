@@ -10,6 +10,7 @@ import { MenuManageDeployment, MenuOtherActions } from '../../environment-action
 import EnvironmentMode from '../../environment-mode/environment-mode'
 import EnvironmentStateChip from '../../environment-state-chip/environment-state-chip'
 import useEnvironments from '../../hooks/use-environments/use-environments'
+import { isArgoCdEnvironment } from '../../utils/argocd'
 
 const { Table } = TablePrimitives
 
@@ -35,7 +36,8 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
-  const isArgoCdEnvironment = overview.services_overview.managed_by === 'ARGOCD'
+  const isEnvironmentManagedByArgoCd = isArgoCdEnvironment(overview)
+  const lastOperationDate = overview.deployment_status?.last_deployment_date
   const cellClassName = 'h-auto border-l border-neutral py-2'
   const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
     event.stopPropagation()
@@ -78,7 +80,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
                 </span>
               </Tooltip>
             </Link>
-            {isArgoCdEnvironment ? (
+            {isEnvironmentManagedByArgoCd ? (
               <span className="flex h-4 items-center rounded-sm border border-argocd-subtle bg-surface-argocd-subtle px-0.5 text-2xs font-bold uppercase text-argocd retina:border-[0.5px]">
                 ArgoCD
               </span>
@@ -96,15 +98,15 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       <Table.Cell className={cellClassName}>
         <div className="flex h-full items-center justify-between">
           <div className="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
-            {overview.services_overview.service_count > 0 ? (
+            {overview.services_overview.service_count === 0 ? (
+              <span className="text-sm text-neutral-subtle">No services yet</span>
+            ) : lastOperationDate ? (
               <>
                 <DeploymentAction status={overview.deployment_status?.last_deployment_state} />
-                <span className="text-neutral-subtle">
-                  {timeAgo(new Date(overview.deployment_status?.last_deployment_date ?? Date.now()))} ago
-                </span>
+                <span className="text-neutral-subtle">{timeAgo(new Date(lastOperationDate))} ago</span>
               </>
             ) : (
-              <span className="text-sm text-neutral-subtle">No services yet</span>
+              <span className="text-sm text-neutral-subtle">No operation detected</span>
             )}
           </div>
           <EnvironmentStateChip mode="last-deployment" environmentId={overview.id} variant="monochrome" />
@@ -139,7 +141,9 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
         >
           {environment && (
             <>
-              {overview.services_overview.service_count > 0 && overview.deployment_status ? (
+              {isEnvironmentManagedByArgoCd ? (
+                <DisabledManageDeploymentButton tooltip="ArgoCD environments can only be deployed from ArgoCD" />
+              ) : overview.services_overview.service_count > 0 && overview.deployment_status ? (
                 <MenuManageDeployment environment={environment} deploymentStatus={overview.deployment_status} />
               ) : (
                 <DisabledManageDeploymentButton tooltip="Add at least one service to deploy this environment" />
@@ -147,7 +151,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
               <MenuOtherActions
                 environment={environment}
                 state={overview.deployment_status?.last_deployment_state ?? StateEnum.READY}
-                isArgoCdEnvironment={isArgoCdEnvironment}
+                isArgoCdEnvironment={isEnvironmentManagedByArgoCd}
               />
             </>
           )}

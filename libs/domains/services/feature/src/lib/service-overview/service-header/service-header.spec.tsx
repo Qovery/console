@@ -66,6 +66,7 @@ const services = {
       name: 'Qovery/kube-dns',
       branch: 'main',
     },
+    manifest_revision: '313a525a4ad53b37f0b33f81282c52fef5f8e7d8',
   },
 }
 
@@ -279,6 +280,8 @@ jest.mock('../../service-links-popover/service-links-popover', () => ({
 describe('ServiceHeader', () => {
   const environment = {
     id: 'environment-id',
+    organization: { id: 'organization-id' },
+    project: { id: 'project-id' },
     cluster_id: 'cluster-id',
     cluster_name: 'my-cluster',
     cloud_provider: { provider: 'AWS' },
@@ -290,9 +293,7 @@ describe('ServiceHeader', () => {
   })
 
   const renderServiceHeader = (serviceId: 'application-mock' | 'database-mock' | 'job-mock' | 'argocd-mock') =>
-    renderWithProviders(
-      <ServiceHeader environment={environment} serviceId={serviceId} service={services[serviceId] as AnyService} />
-    )
+    renderWithProviders(<ServiceHeader environment={environment} service={services[serviceId] as AnyService} />)
 
   it('renders application details and git metadata', () => {
     renderServiceHeader('application-mock')
@@ -329,12 +330,15 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText('auto-deploy-badge')).not.toBeInTheDocument()
   })
 
-  it('renders ArgoCD tag without Qovery service actions', () => {
+  it('renders ArgoCD tag', () => {
     renderServiceHeader('argocd-mock')
 
     expect(screen.getByRole('heading', { name: 'kube-dns-prod' })).toBeInTheDocument()
     expect(screen.getByText('ARGOCD')).toBeInTheDocument()
     expect(screen.getByText('service-state-chip')).toBeInTheDocument()
-    expect(screen.queryByText('service-action-toolbar')).not.toBeInTheDocument()
+    expect(screen.getByText('GitHub')).toBeInTheDocument()
+    expect(screen.getByText('Qovery/kube-dns')).toBeInTheDocument()
+    expect(screen.getByText('main')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /313a525/i })).toBeInTheDocument()
   })
 })

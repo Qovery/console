@@ -9,14 +9,17 @@ import {
   useClusterRunningStatusSocket,
 } from '@qovery/domains/clusters/feature'
 import {
+  DisabledManageDeploymentButton,
   EnvironmentLastDeploymentSection,
   EnvironmentMode,
   EnvironmentStateChip,
   MenuManageDeployment,
   MenuOtherActions,
+  isArgoCdEnvironment,
   useDeploymentStatus,
   useEnvironment,
 } from '@qovery/domains/environments/feature'
+import { useEnvironmentsOverview } from '@qovery/domains/projects/feature'
 import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
 import { ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
@@ -32,6 +35,11 @@ function RouteComponent() {
   const matchRoute = useMatchRoute()
 
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: environmentOverview } = useEnvironmentsOverview({
+    projectId,
+    filterEnvironmentId: environmentId,
+    suspense: true,
+  })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id, suspense: true })
   const { data: services = [] } = useServices({ environmentId, suspense: true })
@@ -64,8 +72,12 @@ function RouteComponent() {
   const shouldDisplayQoveryServicesSubtitle = isServicesListTab && hasArgoCdServices
   const shouldDisplayArgoCdServicesAboveQovery = isServicesListTab && hasArgoCdServices && !hasQoveryServices
   const shouldDisplayArgoCdServicesBelowQovery = isServicesListTab && hasArgoCdServices && hasQoveryServices
+  const isEnvironmentManagedByArgoCd = isArgoCdEnvironment(environmentOverview?.[0])
+  const manageDeploymentDisabledTooltip = hasArgoCdServices
+    ? 'ArgoCD environments can only be deployed from ArgoCD'
+    : 'Add at least one service to deploy this environment'
 
-  if (!environment || !deploymentStatus) {
+  if (!environment || !deploymentStatus || !environmentOverview) {
     return null
   }
 
@@ -80,6 +92,14 @@ function RouteComponent() {
                 <Heading className="min-w-0 max-w-full truncate">{environment.name}</Heading>
               </Tooltip>
               <EnvironmentStateChip className="ml-0.5 shrink-0" mode="running" environmentId={environment.id} />
+              {isEnvironmentManagedByArgoCd && (
+                <>
+                  <span className="ml-0.5 mr-2 h-4 w-px shrink-0 bg-surface-neutral-component" />
+                  <span className="flex h-5 items-center rounded border border-argocd-subtle bg-surface-argocd-subtle px-0.5 text-xs font-bold uppercase text-argocd retina:border-[0.5px]">
+                    ARGOCD
+                  </span>
+                </>
+              )}
               <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
               <div className="flex shrink-0 items-center gap-1 text-ssm">
                 <ClusterAvatar cluster={cluster} size="sm" />
@@ -100,14 +120,19 @@ function RouteComponent() {
                 environment={environment}
                 state={deploymentStatus.last_deployment_state}
                 variant="header"
+                isArgoCdEnvironment={isEnvironmentManagedByArgoCd}
               />
-              <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant="header" />
+              {hasQoveryServices ? (
+                <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant="header" />
+              ) : (
+                <DisabledManageDeploymentButton tooltip={manageDeploymentDisabledTooltip} variant="header" />
+              )}
             </div>
           </div>
           <hr className="w-full border-neutral" />
         </div>
         <div className="flex flex-col gap-8">
-          <EnvironmentLastDeploymentSection />
+          {hasQoveryServices && <EnvironmentLastDeploymentSection />}
           <Section className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <Heading level={2}>Services</Heading>

@@ -91,10 +91,10 @@ jest.mock('../hooks/use-delete-environment/use-delete-environment', () => ({
   }),
 }))
 
-jest.mock('../hooks/use-service-count/use-service-count', () => ({
-  useServiceCount: () => ({
+jest.mock('../hooks/use-environment-services/use-environment-services', () => ({
+  useEnvironmentServices: () => ({
     data: mockServices,
-    isFetched: true,
+    isLoading: false,
   }),
 }))
 
@@ -147,6 +147,43 @@ describe('EnvironmentActionToolbar', () => {
 
     expect(mockDeployEnvironment).toHaveBeenCalledWith({ environmentId: mockEnvironment.id })
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+  })
+
+  it('should disable manage deployment when the environment has no services', async () => {
+    mockServices = []
+
+    const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
+
+    const manageDeploymentButton = screen.getByRole('button', { name: /manage deployment/i })
+    expect(manageDeploymentButton).toBeDisabled()
+
+    await userEvent.hover(manageDeploymentButton.parentElement as HTMLElement)
+    expect(
+      await screen.findByRole('tooltip', { name: 'Add at least one service to deploy this environment' })
+    ).toBeInTheDocument()
+  })
+
+  it('should disable manage deployment when the environment only has ArgoCD services', async () => {
+    mockServices = [
+      {
+        id: 'argocd-service-1',
+        name: 'ArgoCD service',
+        service_type: 'ARGOCD_APP',
+        serviceType: 'ARGOCD_APP',
+      },
+    ]
+
+    const { userEvent } = renderWithProviders(
+      <EnvironmentActionToolbar environment={mockEnvironment} variant="header" />
+    )
+
+    const manageDeploymentButton = screen.getByRole('button', { name: /manage deployment/i })
+    expect(manageDeploymentButton).toBeDisabled()
+
+    await userEvent.hover(manageDeploymentButton.parentElement as HTMLElement)
+    expect(
+      await screen.findByRole('tooltip', { name: 'ArgoCD environments can only be deployed from ArgoCD' })
+    ).toBeInTheDocument()
   })
 
   it('should display an ArgoCD warning on redeploy when the environment contains ArgoCD services', async () => {
@@ -283,6 +320,28 @@ describe('EnvironmentActionToolbar', () => {
     expect(
       await screen.findByRole('tooltip', {
         name: 'ArgoCD environment can only be deleted by revoking the integration',
+      })
+    ).toBeInTheDocument()
+  })
+
+  it('should disable ArgoCD environment clone', async () => {
+    const { userEvent } = renderWithProviders(
+      <EnvironmentActionToolbar environment={mockEnvironment} isArgoCdEnvironment />
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+
+    const cloneEnvironmentItem = screen.getByRole('menuitem', { name: /^clone$/i })
+    expect(cloneEnvironmentItem).toHaveAttribute('aria-disabled', 'true')
+
+    await userEvent.click(cloneEnvironmentItem)
+    expect(mockOpenModal).not.toHaveBeenCalled()
+
+    await userEvent.hover(screen.getByText('Clone'))
+
+    expect(
+      await screen.findByRole('tooltip', {
+        name: 'ArgoCD environments cannot be cloned',
       })
     ).toBeInTheDocument()
   })

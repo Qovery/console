@@ -6,7 +6,9 @@ import { SettingsArgoCdIntegration } from './settings-argocd-integration'
 
 const mockOpenModal = jest.fn()
 const mockCloseModal = jest.fn()
+const mockOpenModalConfirmation = jest.fn()
 const mockUnlinkArgoCdDestinationClusterMapping = jest.fn()
+const mockRefetchArgoCdIntegrations = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -30,6 +32,9 @@ jest.mock('@qovery/shared/ui', () => ({
     openModal: mockOpenModal,
     closeModal: mockCloseModal,
   }),
+  useModalConfirmation: () => ({
+    openModalConfirmation: mockOpenModalConfirmation,
+  }),
 }))
 
 describe('SettingsArgoCdIntegration', () => {
@@ -42,13 +47,16 @@ describe('SettingsArgoCdIntegration', () => {
     useParamsMock.mockReturnValue({ organizationId: 'org-1' } as never)
     mockOpenModal.mockReset()
     mockCloseModal.mockReset()
+    mockOpenModalConfirmation.mockReset()
     mockUnlinkArgoCdDestinationClusterMapping.mockReset()
+    mockRefetchArgoCdIntegrations.mockReset()
   })
 
   it('should render an empty state when no integration is configured', () => {
     useOrganizationArgoCdIntegrationsMock.mockReturnValue({
       data: [],
       isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
     } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
 
     renderWithProviders(<SettingsArgoCdIntegration />)
@@ -89,6 +97,7 @@ describe('SettingsArgoCdIntegration', () => {
         },
       ],
       isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
     } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
 
     const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration />)
@@ -110,7 +119,7 @@ describe('SettingsArgoCdIntegration', () => {
     expect(screen.getByText('Connected')).toBeInTheDocument()
   })
 
-  it('should unlink a linked cluster mapping', async () => {
+  it('should open a confirmation modal before unlinking a linked cluster mapping', async () => {
     mockUnlinkArgoCdDestinationClusterMapping.mockResolvedValue({})
     useOrganizationArgoCdIntegrationsMock.mockReturnValue({
       data: [
@@ -137,11 +146,24 @@ describe('SettingsArgoCdIntegration', () => {
         },
       ],
       isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
     } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
 
     const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration />)
 
     await userEvent.click(screen.getByTestId('unlink-linked-cluster-https://kubernetes.default.svc'))
+
+    expect(mockUnlinkArgoCdDestinationClusterMapping).not.toHaveBeenCalled()
+    expect(mockOpenModalConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Unlink ArgoCD cluster',
+        confirmationMethod: 'action',
+        confirmationAction: 'unlink',
+        placeholder: 'Enter "unlink"',
+      })
+    )
+
+    await mockOpenModalConfirmation.mock.calls[0][0].action()
 
     expect(mockUnlinkArgoCdDestinationClusterMapping).toHaveBeenCalledWith({
       organizationId: 'org-1',
@@ -150,7 +172,54 @@ describe('SettingsArgoCdIntegration', () => {
     })
   })
 
-  it('should render an importing state when the integration has no cluster mapping yet', () => {
+  it('should display a warning callout when deleting an ArgoCD integration', async () => {
+    useOrganizationArgoCdIntegrationsMock.mockReturnValue({
+      data: [
+        {
+          agent_cluster_id: 'cluster-1',
+          agent_cluster_name: 'undeletable_cluster',
+          agent_cluster_cloud_provider: 'AWS',
+          credentials_id: 'integration-1',
+          argocd_url: 'https://argocd.example.com',
+          status: 'connected',
+          last_checked_at: '2026-04-28T12:20:00.000Z',
+          linked_clusters: [
+            {
+              argocd_cluster_url: 'https://kubernetes.default.svc',
+              argocd_cluster_name: 'kube-system',
+              qovery_cluster_id: 'cluster-1',
+              qovery_cluster_name: 'AWS EKS Demo',
+              qovery_cluster_cloud_provider: 'AWS',
+              qovery_cluster_type: 'MANAGED',
+              applications_count: 4,
+            },
+          ],
+          unlinked_clusters: [],
+        },
+      ],
+      isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
+    } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
+
+    const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration />)
+
+    await userEvent.click(screen.getByTestId('delete-argocd-integration'))
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          props: expect.objectContaining({
+            title: 'Remove ArgoCD integration',
+            warning:
+              'Related ArgoCD services will no longer be displayed in Qovery. Environments containing only these services will be removed.',
+          }),
+        }),
+      })
+    )
+  })
+
+  it('should refetch integrations while importing an integration with no cluster mapping yet', () => {
+    jest.useFakeTimers()
     useOrganizationArgoCdIntegrationsMock.mockReturnValue({
       data: [
         {
@@ -166,6 +235,7 @@ describe('SettingsArgoCdIntegration', () => {
         },
       ],
       isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
     } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
 
     renderWithProviders(<SettingsArgoCdIntegration />)
@@ -174,5 +244,10 @@ describe('SettingsArgoCdIntegration', () => {
     expect(screen.queryByText('Connected')).not.toBeInTheDocument()
     expect(screen.getByTestId('edit-argocd-integration')).toBeDisabled()
     expect(screen.getByTestId('delete-argocd-integration')).toBeDisabled()
+
+    expect(mockRefetchArgoCdIntegrations).not.toHaveBeenCalled()
+    jest.advanceTimersByTime(3000)
+    expect(mockRefetchArgoCdIntegrations).toHaveBeenCalled()
+    jest.useRealTimers()
   })
 })

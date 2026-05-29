@@ -51,6 +51,10 @@
     color: #0d74ce !important;
   }
 
+  .mtk22 {
+    color: var(--accent-11);
+  }
+
   span.mtk1.bracket-highlighting-0,
   span.mtk1.bracket-highlighting-1,
   span.mtk1.bracket-highlighting-2,
@@ -59,4 +63,13 @@
   span.mtk1.bracket-highlighting-5 {
     color: #ab6400 !important;
   }
+}
+
+:root[data-theme='dark'] .monaco-diff-editor .mtk20,
+:root[data-theme='dark'] .monaco-diff-editor .mtk22,
+:root.dark .monaco-diff-editor .mtk20,
+:root.dark .monaco-diff-editor .mtk22,
+[data-theme='dark'] .monaco-diff-editor .mtk20,
+[data-theme='dark'] .monaco-diff-editor .mtk22 {
+  color: var(--negative-11);
 }

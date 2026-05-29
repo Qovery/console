@@ -6,7 +6,6 @@ import {
   Badge,
   Button,
   CopyToClipboard,
-  DropdownMenu,
   ExternalLink,
   Heading,
   Icon,
@@ -17,12 +16,13 @@ import {
 } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
+import { ArgoCdServiceActions } from '../argocd-service-actions/argocd-service-actions'
 import { useArgoCdServices } from '../hooks/use-argocd-services/use-argocd-services'
 
 const { Table } = TablePrimitives
 
 const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(280px,1.7fr)_minmax(220px,1fr)_minmax(280px,1.1fr)_minmax(112px,112px)]'
+  'grid w-full grid-cols-[minmax(350px,502px)_minmax(200px,275px)_minmax(280px,340px)_minmax(10px,50px)]'
 
 export interface ArgoCdServiceListProps {
   environment: Environment
@@ -90,7 +90,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Target version
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-full items-center justify-center text-neutral-subtle">
+              <Table.ColumnHeaderCell className="flex h-full items-center justify-start text-neutral-subtle">
                 Actions
               </Table.ColumnHeaderCell>
             </Table.Row>
@@ -114,11 +114,24 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                   <Table.Cell className="flex h-full items-center border-r border-neutral">
                     <div className="flex min-w-0 items-center gap-3 text-sm font-medium">
                       <Icon name={IconEnum.ARGOCD} width={20} />
-                      <div className="flex min-w-0 flex-col">
+                      <Link
+                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                        params={{
+                          organizationId,
+                          projectId,
+                          environmentId,
+                          serviceId: service.id,
+                        }}
+                        onClick={stopRowNavigation}
+                        onKeyDown={stopRowNavigation}
+                        className="group min-w-0"
+                      >
                         <Tooltip content={service.name}>
-                          <span className="truncate">{service.name}</span>
+                          <span className="block min-w-0 truncate text-neutral group-hover:underline">
+                            {service.name}
+                          </span>
                         </Tooltip>
-                      </div>
+                      </Link>
                     </div>
                   </Table.Cell>
 
@@ -178,7 +191,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                       ) : null}
                     </div>
                     {manifestRevision && (
-                      <CopyToClipboard text={manifestRevision} className="ml-3 shrink-0">
+                      <CopyToClipboard text={manifestRevision} className="ml-auto shrink-0">
                         <Button
                           type="button"
                           variant="outline"
@@ -195,64 +208,8 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                     )}
                   </Table.Cell>
 
-                  <Table.Cell className="flex h-full items-center justify-center">
-                    <div className="flex items-center gap-1.5" onClick={stopRowNavigation}>
-                      <Tooltip content="Logs">
-                        <Link
-                          as="button"
-                          aria-label={`Service logs for ${service.name}`}
-                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-                          params={{
-                            organizationId,
-                            projectId,
-                            environmentId,
-                            serviceId: service.id,
-                          }}
-                          color="neutral"
-                          variant="outline"
-                          size="sm"
-                          iconOnly
-                          onClick={stopRowNavigation}
-                          onKeyDown={stopRowNavigation}
-                        >
-                          <Icon iconName="scroll" />
-                        </Link>
-                      </Tooltip>
-
-                      <DropdownMenu.Root>
-                        <DropdownMenu.Trigger asChild>
-                          <Button
-                            aria-label={`Other actions for ${service.name}`}
-                            variant="outline"
-                            size="sm"
-                            iconOnly
-                            onKeyDown={stopRowNavigation}
-                          >
-                            <Tooltip content="Other actions">
-                              <div className="flex h-full w-full items-center justify-center">
-                                <Icon iconName="ellipsis-v" />
-                              </div>
-                            </Tooltip>
-                          </Button>
-                        </DropdownMenu.Trigger>
-                        <DropdownMenu.Content>
-                          <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
-                            <Link
-                              className="gap-0"
-                              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest"
-                              params={{
-                                organizationId,
-                                projectId,
-                                environmentId,
-                                serviceId: service.id,
-                              }}
-                            >
-                              See manifest
-                            </Link>
-                          </DropdownMenu.Item>
-                        </DropdownMenu.Content>
-                      </DropdownMenu.Root>
-                    </div>
+                  <Table.Cell className="flex h-full items-center justify-start">
+                    <ArgoCdServiceActions environment={environment} service={service} onAction={stopRowNavigation} />
                   </Table.Cell>
                 </Table.Row>
               )

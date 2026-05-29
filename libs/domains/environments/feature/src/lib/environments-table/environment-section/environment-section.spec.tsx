@@ -29,7 +29,7 @@ jest.mock('../../hooks/use-environments/use-environments', () => ({
 }))
 
 jest.mock('../../environment-action-toolbar/environment-action-toolbar', () => ({
-  MenuManageDeployment: () => <button type="button">Manage deployment</button>,
+  MenuManageDeployment: () => <button type="button">Manage deployment menu</button>,
   MenuOtherActions: () => <button type="button">Delete environment</button>,
 }))
 
@@ -109,8 +109,25 @@ describe('EnvironmentSection', () => {
     expect(screen.getByRole('button', { name: /delete environment/i })).toBeInTheDocument()
   })
 
-  it('should display an ArgoCD badge when the environment is managed by ArgoCD', () => {
+  it('should display no operation detected when services exist without deployment status', () => {
     renderWithProviders(
+      <EnvironmentSection
+        type={EnvironmentModeEnum.DEVELOPMENT}
+        items={[
+          {
+            ...overview,
+            deployment_status: undefined,
+          },
+        ]}
+      />
+    )
+
+    expect(screen.getByText('No operation detected')).toBeInTheDocument()
+    expect(screen.queryByText(/0 seconds ago/i)).not.toBeInTheDocument()
+  })
+
+  it('should disable the deploy button when the environment is managed by ArgoCD', async () => {
+    const { userEvent } = renderWithProviders(
       <EnvironmentSection
         type={EnvironmentModeEnum.DEVELOPMENT}
         items={[
@@ -127,6 +144,12 @@ describe('EnvironmentSection', () => {
 
     expect(screen.getByText('ArgoCD')).toBeInTheDocument()
     const manageDeploymentButton = screen.getByRole('button', { name: /manage deployment/i })
-    expect(manageDeploymentButton).toBeEnabled()
+    expect(manageDeploymentButton).toBeDisabled()
+    expect(screen.queryByRole('button', { name: /manage deployment menu/i })).not.toBeInTheDocument()
+
+    await userEvent.hover(manageDeploymentButton.parentElement as HTMLElement)
+    expect(
+      await screen.findByRole('tooltip', { name: 'ArgoCD environments can only be deployed from ArgoCD' })
+    ).toBeInTheDocument()
   })
 })
