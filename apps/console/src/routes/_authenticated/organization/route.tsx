@@ -8,7 +8,12 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { type AnyService, isArgoCd, isEditableService, isManagedDatabase } from '@qovery/domains/services/data-access'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
-import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
+import {
+  AssistantPanelOutlet,
+  AssistantProvider,
+  ConversationsPanelOutlet,
+  ConversationsProvider,
+} from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
 import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
@@ -647,20 +652,22 @@ function OrganizationRoute() {
           sendMessageRef,
         }}
       >
-        <AssistantProvider>
-          {isServiceNotFound ? (
-            <NotFoundPage
-              action={serviceNotFoundAction}
-              data={{
-                title: 'Service not found',
-                message: "This service doesn't exist anymore, or the URL is incorrect.",
-              }}
-            />
-          ) : (
-            <Outlet />
-          )}
-          <DevopsCopilotTrigger />
-        </AssistantProvider>
+        <ConversationsProvider>
+          <AssistantProvider>
+            {isServiceNotFound ? (
+              <NotFoundPage
+                action={serviceNotFoundAction}
+                data={{
+                  title: 'Service not found',
+                  message: "This service doesn't exist anymore, or the URL is incorrect.",
+                }}
+              />
+            ) : (
+              <Outlet />
+            )}
+            <DevopsCopilotTrigger />
+          </AssistantProvider>
+        </ConversationsProvider>
       </DevopsCopilotContext.Provider>
     )
   }
@@ -673,6 +680,7 @@ function OrganizationRoute() {
         sendMessageRef,
       }}
     >
+      <ConversationsProvider>
       <AssistantProvider>
         <div className="flex h-dvh w-full flex-col bg-background">
           {/* TODO: Conflicts with body main:not(.h-screen, .layout-onboarding) */}
@@ -704,6 +712,7 @@ function OrganizationRoute() {
                       }}
                     >
                       <AssistantPanelOutlet />
+                      <ConversationsPanelOutlet />
                     </div>
                   </div>
 
@@ -727,6 +736,7 @@ function OrganizationRoute() {
         </div>
         <DevopsCopilotTrigger />
       </AssistantProvider>
+      </ConversationsProvider>
     </DevopsCopilotContext.Provider>
   )
 }

@@ -1,8 +1,9 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import clsx from 'clsx'
 import { type MutableRefObject } from 'react'
+import { useSetConversationsOpen } from '@qovery/shared/assistant/feature'
 import { Badge, Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
-import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL } from '@qovery/shared/util-const'
+import { QOVERY_FORUM_URL } from '@qovery/shared/util-const'
 import type { Message, PlanStep } from '../devops-copilot-panel'
 
 interface HeaderProps {
@@ -40,6 +41,8 @@ export function Header({
   setIsLoading,
   setPlan,
 }: HeaderProps) {
+  const setConversationsOpen = useSetConversationsOpen()
+
   return (
     <div className="flex animate-[fadein_0.22s_ease-in-out_forwards] justify-between overflow-hidden border-b border-neutral py-2 pl-4 pr-2 opacity-0">
       <div className="flex min-w-0 items-center gap-2">
@@ -125,10 +128,11 @@ export function Header({
                 Community forum
               </a>
             </DropdownMenu.Item>
-            <DropdownMenu.Item asChild icon={<Icon iconName="comment-lines" />}>
-              <a href={QOVERY_FEEDBACK_URL} target="_blank" rel="noopener noreferrer">
-                Feedback
-              </a>
+            <DropdownMenu.Item
+              onClick={() => setConversationsOpen(true)}
+              icon={<Icon iconName="comment-lines" />}
+            >
+              Feedback
             </DropdownMenu.Item>
           </DropdownMenu.Content>
         </DropdownMenu.Root>
