@@ -1,4 +1,5 @@
 import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import {
   excludeSecretManagerAccess,
   hasAwsAutomaticIntegrationConfigured,
@@ -194,15 +195,10 @@ const getDefaultTab = ({
   initialAuthenticationMode: SecretManagerAccess['authentication']['mode'] | undefined
   automaticTab: IntegrationTabConstraints
 }): IntegrationTab => {
-  if (initialAuthenticationMode === 'AUTOMATICALLY_CONFIGURED') {
-    return 'automatic'
-  }
-
-  if (initialAuthenticationMode === 'AWS_ROLE_ARN' || initialAuthenticationMode === 'GCP_JSON_CREDENTIALS') {
-    return 'manual'
-  }
-
-  return automaticTab.disabled ? 'manual' : 'automatic'
+  return match(initialAuthenticationMode)
+    .with('AUTOMATICALLY_CONFIGURED', () => 'automatic' as const)
+    .with('AWS_ROLE_ARN', 'AWS_STATIC_CREDENTIALS', 'GCP_JSON_CREDENTIALS', () => 'manual' as const)
+    .otherwise(() => (automaticTab.disabled ? 'manual' : 'automatic'))
 }
 
 const buildAwsConstraints = (

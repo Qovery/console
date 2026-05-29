@@ -180,6 +180,19 @@ describe('getSecretManagerIntegrationConstraints', () => {
     expect(constraints.aws?.manual.authenticationTypeSelect.disabled).toBe(false)
   })
 
+  it('should open the manual tab when editing an existing static credentials integration', () => {
+    const constraints = getSecretManagerIntegrationConstraints({
+      option: awsOption,
+      cluster: { ...awsCluster, secret_manager_accesses: [awsStaticIntegration] },
+      mode: 'edit',
+      initialValues: awsStaticIntegration,
+    })
+
+    expect(constraints.aws?.automatic.disabled).toBe(false)
+    expect(constraints.navigation.defaultTab).toBe('manual')
+    expect(constraints.defaultAuthenticationMode).toBe('AWS_STATIC_CREDENTIALS')
+  })
+
   it('should keep automatic tab available when editing the existing automatic integration', () => {
     const constraints = getSecretManagerIntegrationConstraints({
       option: awsOption,
