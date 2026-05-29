@@ -273,5 +273,3 @@ export function AddSecretModal({
     </FormProvider>
   )
 }
-
-export default AddSecretModal
