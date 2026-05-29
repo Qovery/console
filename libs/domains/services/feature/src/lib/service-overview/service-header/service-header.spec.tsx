@@ -293,9 +293,7 @@ describe('ServiceHeader', () => {
   })
 
   const renderServiceHeader = (serviceId: 'application-mock' | 'database-mock' | 'job-mock' | 'argocd-mock') =>
-    renderWithProviders(
-      <ServiceHeader environment={environment} serviceId={serviceId} service={services[serviceId] as AnyService} />
-    )
+    renderWithProviders(<ServiceHeader environment={environment} service={services[serviceId] as AnyService} />)
 
   it('renders application details and git metadata', () => {
     renderServiceHeader('application-mock')

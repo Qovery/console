@@ -77,17 +77,15 @@ export function GitRepository({ gitRepository }: { gitRepository: ApplicationGit
 
 export interface ServiceHeaderProps {
   environment: Environment
-  serviceId: string
   service: AnyService
 }
 
 interface ServiceHeaderIdentityProps {
   environment: Environment
   service: AnyService
-  serviceId: string
 }
 
-function ServiceHeaderIdentity({ environment, service, serviceId }: ServiceHeaderIdentityProps) {
+function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityProps) {
   const { organizationId = '' } = useParams({ strict: false })
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
@@ -122,7 +120,7 @@ function ServiceHeaderIdentity({ environment, service, serviceId }: ServiceHeade
           className="ml-0.5 shrink-0"
           mode="running"
           environmentId={environment.id}
-          serviceId={serviceId}
+          serviceId={service.id}
         />
         {isArgoCdService && (
           <>
@@ -149,11 +147,11 @@ function ServiceHeaderIdentity({ environment, service, serviceId }: ServiceHeade
         <ArgoCdServiceActions
           variant="header"
           environment={environment}
-          serviceId={serviceId}
+          serviceId={service.id}
           serviceName={service.name}
         />
       ) : (
-        <ServiceActions environment={environment} serviceId={serviceId} variant="header" />
+        <ServiceActions environment={environment} serviceId={service.id} variant="header" />
       )}
     </div>
   )
@@ -377,11 +375,11 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
   )
 }
 
-function ServiceHeaderContent({ environment, serviceId, service }: ServiceHeaderProps) {
+function ServiceHeaderContent({ environment, service }: ServiceHeaderProps) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <ServiceHeaderIdentity environment={environment} service={service} serviceId={serviceId} />
+        <ServiceHeaderIdentity environment={environment} service={service} />
         {'description' in service && <p className="text-neutral-subtle">{service.description}</p>}
         <ServiceHeaderMetadata service={service} />
       </div>
