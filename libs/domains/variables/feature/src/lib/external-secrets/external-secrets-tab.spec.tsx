@@ -1,7 +1,8 @@
 import { useParams } from '@tanstack/react-router'
-import { type ReactNode } from 'react'
+import { type ReactElement, type ReactNode } from 'react'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { type AddSecretModalSubmitData } from './add-secret-modal/add-secret-modal'
 import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
@@ -27,7 +28,7 @@ jest.mock('../hooks/use-delete-variable/use-delete-variable', () => ({
 
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
-  Tooltip: ({ children }: { children: ReactNode }) => <>{children}</>,
+  Tooltip: ({ children }: { children: ReactNode }) => children,
   useModal: jest.fn(),
   useModalConfirmation: jest.fn(),
 }))
@@ -173,6 +174,79 @@ describe('ExternalSecretsTab', () => {
 
     expect(screen.getByText('MY_EXTERNAL_SECRET_FILE')).toBeInTheDocument()
     expect(screen.getByText('prod/database/credentials-file')).toBeInTheDocument()
+  })
+
+  it('should keep mount path when editing an external secret file', async () => {
+    const editVariable = jest.fn()
+    const openModal = jest.fn()
+    useEditVariableMock.mockReturnValue({
+      mutateAsync: editVariable,
+    } as unknown as ReturnType<typeof useEditVariable>)
+    useModalMock.mockReturnValue({
+      openModal,
+      closeModal: jest.fn(),
+    })
+    useVariablesMock.mockReturnValue({
+      data: [
+        {
+          id: 'secret-file-1',
+          key: 'MY_EXTERNAL_SECRET_FILE',
+          value: 'prod/database/credentials-file',
+          scope: 'APPLICATION',
+          variable_type: 'EXTERNAL_SECRET',
+          mount_path: '/vault/secrets/credentials',
+          secret_manager_access_id: 'sm-1',
+          created_at: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+      isLoading: false,
+    } as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [
+        {
+          id: 'sm-1',
+          name: 'Prod secret manager',
+          created_at: '2026-01-01T00:00:00.000Z',
+          updated_at: '2026-01-01T00:00:00.000Z',
+          endpoint: { mode: 'AWS_SECRET_MANAGER' },
+          authentication: { mode: 'STS' },
+        },
+      ],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+
+    const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
+
+    const modalContent = openModal.mock.calls[0][0].content as ReactElement<{
+      initialSecret: { filePath?: string }
+      isFile?: boolean
+      onSubmit: (secret: AddSecretModalSubmitData) => Promise<void>
+    }>
+
+    expect(modalContent.props.isFile).toBe(true)
+    expect(modalContent.props.initialSecret.filePath).toBe('/vault/secrets/credentials')
+
+    await modalContent.props.onSubmit({
+      name: 'MY_EXTERNAL_SECRET_FILE',
+      reference: 'prod/database/credentials-file',
+      filePath: '/vault/secrets/updated-credentials',
+      isFile: true,
+      secretManagerAccessId: 'sm-1',
+    })
+
+    expect(editVariable).toHaveBeenCalledWith({
+      variableId: 'secret-file-1',
+      variableEditRequest: {
+        key: 'MY_EXTERNAL_SECRET_FILE',
+        value: 'prod/database/credentials-file',
+        mount_path: '/vault/secrets/updated-credentials',
+        description: null,
+        secret_manager_access_id: 'sm-1',
+      },
+    })
   })
 
   it('should fetch environment-scoped external secrets when scope is ENVIRONMENT', () => {

@@ -29,17 +29,18 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { pluralize, twMerge } from '@qovery/shared/util-js'
+import { getSecretManagerProvider } from '@qovery/shared/util-clusters'
+import { generateScopeLabel, pluralize, twMerge } from '@qovery/shared/util-js'
 import { useCreateVariable } from '../hooks/use-create-variable/use-create-variable'
 import { useDeleteVariable } from '../hooks/use-delete-variable/use-delete-variable'
 import { useEditVariable } from '../hooks/use-edit-variable/use-edit-variable'
 import { useVariables } from '../hooks/use-variables/use-variables'
 import {
   AddSecretModal,
+  type AddSecretModalSubmitData,
   type SecretSourceOption,
   mapSecretManagersToSources,
 } from './add-secret-modal/add-secret-modal'
-import { type ExternalSecretRow, mapVariableToExternalSecretRow } from './external-secrets-utils'
 import { useVariablesSecretManagers } from './use-variables-secret-managers'
 
 const { Table } = TablePrimitives
@@ -58,6 +59,18 @@ const ADD_SECRET_OPTIONS = [
 ]
 
 const gridLayoutClassName = 'grid w-full grid-cols-[32px_minmax(0,1fr)_240px_220px_140px_104px]'
+
+type ExternalSecretRow = {
+  id: string
+  name: string
+  description?: string
+  filePath?: string
+  isFile?: boolean
+  reference: string
+  source: string | null
+  sourceIcon?: 'AWS' | 'GCP'
+  scope: string
+}
 
 const columnHelper = createColumnHelper<ExternalSecretRow>()
 
@@ -78,9 +91,21 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
 
   const secrets = useMemo(
     () =>
-      variables
-        .filter(isExternalSecretVariable)
-        .map((variable) => mapVariableToExternalSecretRow(variable, secretManagers)),
+      variables.filter(isExternalSecretVariable).map((variable) => {
+        const secretManager = secretManagers.find((manager) => manager.id === variable.secret_manager_access_id)
+
+        return {
+          id: variable.id,
+          name: variable.key,
+          description: variable.description,
+          filePath: variable.mount_path ?? undefined,
+          isFile: Boolean(variable.mount_path),
+          reference: variable.value ?? '',
+          source: secretManager?.name ?? null,
+          sourceIcon: getSecretManagerProvider(secretManager),
+          scope: generateScopeLabel(variable.scope),
+        }
+      }),
     [secretManagers, variables]
   )
   const [search, setSearch] = useState('')
@@ -140,26 +165,19 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
   const handleEditSecret = useCallback(
     async (
       secretId: string,
-      {
-        name,
-        description,
-        reference,
-        secretManagerAccessId,
-      }: {
-        name: string
-        description?: string
-        reference: string
-        secretManagerAccessId: string
-      }
+      { name, description, filePath, isFile, reference, secretManagerAccessId }: AddSecretModalSubmitData
     ) => {
+      const variableEditRequest = {
+        key: name,
+        value: reference,
+        mount_path: isFile ? filePath ?? null : null,
+        description: description ?? null,
+        secret_manager_access_id: secretManagerAccessId,
+      }
+
       await editVariable({
         variableId: secretId,
-        variableEditRequest: {
-          key: name,
-          value: reference,
-          description: description ?? null,
-          secret_manager_access_id: secretManagerAccessId,
-        },
+        variableEditRequest,
       })
     },
     [editVariable]
@@ -198,12 +216,7 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
             initialSecret={secret}
             onClose={closeModal}
             onSubmit={(updated) =>
-              handleEditSecret(secret.id, {
-                name: updated.name,
-                description: updated.description,
-                reference: updated.reference,
-                secretManagerAccessId: updated.secretManagerAccessId,
-              })
+              handleEditSecret(secret.id, updated)
             }
           />
         ),
