@@ -119,7 +119,7 @@ describe('ExternalSecretsTab', () => {
           name: 'Prod secret manager',
           created_at: '2026-01-01T00:00:00.000Z',
           updated_at: '2026-01-01T00:00:00.000Z',
-          endpoint: { mode: 'AWS_SECRETS_MANAGER' },
+          endpoint: { mode: 'AWS_SECRET_MANAGER' },
           authentication: { mode: 'STS' },
         },
       ],
@@ -138,15 +138,15 @@ describe('ExternalSecretsTab', () => {
     expect(screen.queryByText('Status')).not.toBeInTheDocument()
   })
 
-  it('should render FILE_EXTERNAL_SECRET variables in the external secrets table', () => {
+  it('should render file external secrets in the external secrets table', () => {
     useVariablesMock.mockReturnValue({
       data: [
         {
           id: 'secret-file-1',
-          key: 'MY_FILE_EXTERNAL_SECRET',
+          key: 'MY_EXTERNAL_SECRET_FILE',
           value: 'prod/database/credentials-file',
           scope: 'APPLICATION',
-          variable_type: 'FILE_EXTERNAL_SECRET',
+          variable_type: 'EXTERNAL_SECRET',
           mount_path: '/vault/secrets/credentials',
           secret_manager_access_id: 'sm-1',
           created_at: '2026-01-01T00:00:00.000Z',
@@ -161,7 +161,7 @@ describe('ExternalSecretsTab', () => {
           name: 'Prod secret manager',
           created_at: '2026-01-01T00:00:00.000Z',
           updated_at: '2026-01-01T00:00:00.000Z',
-          endpoint: { mode: 'AWS_SECRETS_MANAGER' },
+          endpoint: { mode: 'AWS_SECRET_MANAGER' },
           authentication: { mode: 'STS' },
         },
       ],
@@ -171,7 +171,7 @@ describe('ExternalSecretsTab', () => {
 
     renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
 
-    expect(screen.getByText('MY_FILE_EXTERNAL_SECRET')).toBeInTheDocument()
+    expect(screen.getByText('MY_EXTERNAL_SECRET_FILE')).toBeInTheDocument()
     expect(screen.getByText('prod/database/credentials-file')).toBeInTheDocument()
   })
 
@@ -197,7 +197,7 @@ describe('ExternalSecretsTab', () => {
           name: 'Prod secret manager',
           created_at: '2026-01-01T00:00:00.000Z',
           updated_at: '2026-01-01T00:00:00.000Z',
-          endpoint: { mode: 'AWS_SECRETS_MANAGER' },
+          endpoint: { mode: 'AWS_SECRET_MANAGER' },
           authentication: { mode: 'STS' },
         },
       ],

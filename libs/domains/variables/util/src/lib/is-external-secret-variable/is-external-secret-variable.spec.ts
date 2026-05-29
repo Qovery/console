@@ -9,12 +9,19 @@ const baseVariable = {
 } as VariableResponse
 
 describe('isExternalSecretVariable', () => {
-  it.each(['EXTERNAL_SECRET', 'FILE_EXTERNAL_SECRET'] as const)(
-    'should return true for %s variables',
-    (variable_type) => {
-      expect(isExternalSecretVariable({ ...baseVariable, variable_type })).toBe(true)
-    }
-  )
+  it('should return true for EXTERNAL_SECRET variables', () => {
+    expect(isExternalSecretVariable({ ...baseVariable, variable_type: 'EXTERNAL_SECRET' })).toBe(true)
+  })
+
+  it('should return true for EXTERNAL_SECRET variables mounted as files', () => {
+    expect(
+      isExternalSecretVariable({
+        ...baseVariable,
+        variable_type: 'EXTERNAL_SECRET',
+        mount_path: '/vault/secrets/credentials',
+      })
+    ).toBe(true)
+  })
 
   it.each(['VALUE', 'FILE', 'ALIAS', 'OVERRIDE'] as const)('should return false for %s variables', (variable_type) => {
     expect(isExternalSecretVariable({ ...baseVariable, variable_type })).toBe(false)
