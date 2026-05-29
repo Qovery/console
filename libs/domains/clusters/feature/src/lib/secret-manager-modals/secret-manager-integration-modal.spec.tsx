@@ -10,6 +10,21 @@ import {
   type SecretManagerIntegrationModalProps,
 } from './secret-manager-integration-modal'
 
+jest.mock('@qovery/domains/cloud-providers/feature', () => ({
+  useCloudProviders: () => ({
+    data: [
+      {
+        short_name: 'AWS',
+        regions: [{ city: 'Paris', name: 'eu-west-3', country_code: 'FR' }],
+      },
+      {
+        short_name: 'GCP',
+        regions: [{ city: 'Paris', name: 'europe-west9', country_code: 'FR' }],
+      },
+    ],
+  }),
+}))
+
 jest.mock('@qovery/shared/util-clusters', () => ({
   ...jest.requireActual('@qovery/shared/util-clusters'),
   hasAwsAutomaticIntegrationConfigured: jest.fn(),
@@ -87,6 +102,7 @@ describe('SecretManagerIntegrationModal', () => {
     const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} onSubmit={onSubmit} />)
 
     await userEvent.type(screen.getByLabelText('Secret manager name'), 'Prod secrets')
+    await selectEvent.select(screen.getByLabelText('Region'), 'Paris (eu-west-3)', { container: document.body })
     await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
 
     expect(onSubmit).toHaveBeenCalledWith(
@@ -95,6 +111,21 @@ describe('SecretManagerIntegrationModal', () => {
         authentication: { mode: 'AUTOMATICALLY_CONFIGURED' },
       })
     )
+  })
+
+  it('should require AWS static credential fields before submitting', async () => {
+    jest.mocked(hasAwsAutomaticIntegrationConfigured).mockReturnValue(true)
+
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} onSubmit={onSubmit} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
+
+    expect(onSubmit).not.toHaveBeenCalled()
+    expect(screen.getByText('Please enter a secret manager name.')).toBeInTheDocument()
+    expect(await screen.findByText('Please select a region.')).toBeInTheDocument()
+    expect(screen.getByText('Please enter your access key.')).toBeInTheDocument()
+    expect(screen.getByText('Please enter your secret access key.')).toBeInTheDocument()
   })
 
   it('should force static credentials when an STS integration already exists', async () => {
@@ -154,6 +185,22 @@ describe('SecretManagerIntegrationModal', () => {
     ).toBeInTheDocument()
   })
 
+  it('should require AWS assume role fields before submitting', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...defaultProps} onSubmit={onSubmit} />)
+
+    await userEvent.click(screen.getByText('Manual integration'))
+    await selectEvent.select(screen.getByLabelText('Authentication type'), 'Assume role via STS', {
+      container: document.body,
+    })
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
+
+    expect(onSubmit).not.toHaveBeenCalled()
+    expect(screen.getByText('Please enter a secret manager name.')).toBeInTheDocument()
+    expect(await screen.findByText('Please select a region.')).toBeInTheDocument()
+    expect(screen.getByText('Please enter your role ARN.')).toBeInTheDocument()
+  })
+
   it('should disable automatic tab when a GCP automatic integration already exists', async () => {
     jest.mocked(hasGcpAutomaticIntegrationConfigured).mockReturnValue(true)
 
@@ -191,5 +238,31 @@ describe('SecretManagerIntegrationModal', () => {
         name: 'Automatic integration is unavailable because an automatic integration is already configured.',
       })
     ).toBeInTheDocument()
+  })
+
+  it('should require GCP automatic project and region before submitting', async () => {
+    const onSubmit = jest.fn()
+    const gcpProps: SecretManagerIntegrationModalProps = {
+      ...defaultProps,
+      option: {
+        value: 'GCP_SECRET_MANAGER',
+        label: 'GCP Secret manager',
+        icon: 'GCP',
+        typeLabel: 'GCP Secret manager',
+      },
+      cluster: {
+        cloud_provider: 'GCP',
+      } as SecretManagerIntegrationModalProps['cluster'],
+      onSubmit,
+    }
+
+    const { userEvent } = renderWithProviders(<SecretManagerIntegrationModal {...gcpProps} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret manager' }))
+
+    expect(onSubmit).not.toHaveBeenCalled()
+    expect(screen.getByText('Please enter a secret manager name.')).toBeInTheDocument()
+    expect(await screen.findByText('Please enter your GCP Project ID.')).toBeInTheDocument()
+    expect(screen.getByText('Please select a region.')).toBeInTheDocument()
   })
 })

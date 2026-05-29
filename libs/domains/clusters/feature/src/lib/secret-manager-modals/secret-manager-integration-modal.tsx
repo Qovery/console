@@ -275,13 +275,17 @@ export function SecretManagerIntegrationModal({
         <Controller
           name="name"
           control={methods.control}
-          render={({ field }) => (
+          rules={{
+            required: 'Please enter a secret manager name.',
+          }}
+          render={({ field, fieldState: { error } }) => (
             <InputText
               name={field.name}
               label="Secret manager name"
               value={field.value}
               onChange={field.onChange}
               hint="Display name in Qovery"
+              error={error?.message}
             />
           )}
         />
@@ -303,7 +307,10 @@ export function SecretManagerIntegrationModal({
     <Controller
       name="endpoint.region"
       control={methods.control}
-      render={({ field }) => (
+      rules={{
+        required: 'Please select a region.',
+      }}
+      render={({ field, fieldState: { error } }) => (
         <InputSelect
           label="Region"
           value={field.value}
@@ -316,6 +323,7 @@ export function SecretManagerIntegrationModal({
             }
           }}
           options={awsRegions}
+          error={error?.message}
           isSearchable
           portal
         />
@@ -327,13 +335,17 @@ export function SecretManagerIntegrationModal({
     <Controller
       name="name"
       control={methods.control}
-      render={({ field }) => (
+      rules={{
+        required: 'Please enter a secret manager name.',
+      }}
+      render={({ field, fieldState: { error } }) => (
         <InputText
           name={field.name}
           label="Secret manager name"
           value={field.value}
           onChange={field.onChange}
           hint="Display name in Qovery"
+          error={error?.message}
         />
       )}
     />
@@ -348,19 +360,32 @@ export function SecretManagerIntegrationModal({
         <Controller
           name="authentication.access_key"
           control={methods.control}
-          render={({ field }) => (
-            <InputText name={field.name} label="Access key" value={field.value} onChange={field.onChange} />
+          rules={{
+            required: 'Please enter your access key.',
+          }}
+          render={({ field, fieldState: { error } }) => (
+            <InputText
+              name={field.name}
+              label="Access key"
+              value={field.value}
+              onChange={field.onChange}
+              error={error?.message}
+            />
           )}
         />
         <Controller
           name="authentication.secret_key"
           control={methods.control}
-          render={({ field }) => (
+          rules={{
+            required: 'Please enter your secret access key.',
+          }}
+          render={({ field, fieldState: { error } }) => (
             <InputText
               name={field.name}
               label="Secret access key"
               value={field.value ?? ''}
               onChange={field.onChange}
+              error={error?.message}
             />
           )}
         />
@@ -436,8 +461,17 @@ export function SecretManagerIntegrationModal({
           <Controller
             name="authentication.role_arn"
             control={methods.control}
-            render={({ field }) => (
-              <InputText name={field.name} label="Role ARN" value={field.value} onChange={field.onChange} />
+            rules={{
+              required: 'Please enter your role ARN.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                name={field.name}
+                label="Role ARN"
+                value={field.value}
+                onChange={field.onChange}
+                error={error?.message}
+              />
             )}
           />
           {renderAwsNameField()}
@@ -589,12 +623,16 @@ export function SecretManagerIntegrationModal({
                   <Controller
                     name="endpoint.project_id"
                     control={methods.control}
-                    render={({ field }) => (
+                    rules={{
+                      required: 'Please enter your GCP Project ID.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
                       <InputText
                         name={field.name}
                         label="GCP Project ID"
                         value={field.value}
                         onChange={field.onChange}
+                        error={error?.message}
                       />
                     )}
                   />
@@ -602,13 +640,9 @@ export function SecretManagerIntegrationModal({
                 <Controller
                   name="endpoint.region"
                   control={methods.control}
-                  rules={
-                    option.icon === 'GCP'
-                      ? {
-                          required: 'Please select a region.',
-                        }
-                      : undefined
-                  }
+                  rules={{
+                    required: 'Please select a region.',
+                  }}
                   render={({ field, fieldState: { error } }) => (
                     <InputSelect
                       label="Region"
@@ -625,13 +659,17 @@ export function SecretManagerIntegrationModal({
                 <Controller
                   name="name"
                   control={methods.control}
-                  render={({ field }) => (
+                  rules={{
+                    required: 'Please enter a secret manager name.',
+                  }}
+                  render={({ field, fieldState: { error } }) => (
                     <InputText
                       name={field.name}
                       label="Secret manager name"
                       value={field.value}
                       onChange={field.onChange}
                       hint="Display name in Qovery"
+                      error={error?.message}
                     />
                   )}
                 />
