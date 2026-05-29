@@ -19,6 +19,7 @@ describe('FlowCreateVariable', () => {
       wrapWithReactHookForm<FlowVariableData>(<FlowCreateVariable {...props} />, {
         defaultValues: {
           variables: [],
+          externalSecrets: [],
         },
       })
     )
