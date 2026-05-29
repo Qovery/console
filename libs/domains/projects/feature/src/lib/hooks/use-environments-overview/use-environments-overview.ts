@@ -3,22 +3,22 @@ import { queries } from '@qovery/state/util-queries'
 
 interface UseEnvironmentsOverviewProps {
   projectId: string
-  environmentId?: string
+  filterEnvironmentId?: string
   enabled?: boolean
   suspense?: boolean
 }
 
 export function useEnvironmentsOverview({
   projectId,
-  environmentId,
+  filterEnvironmentId,
   enabled,
   suspense = false,
 }: UseEnvironmentsOverviewProps) {
   return useQuery({
     ...queries.projects.environmentsOverview({ projectId }),
     select: (overview) => {
-      if (environmentId) {
-        return (overview ?? []).filter((o) => o.id === environmentId)
+      if (filterEnvironmentId) {
+        return (overview ?? []).filter((o) => o.id === filterEnvironmentId)
       }
       return overview
     },

@@ -35,7 +35,11 @@ function RouteComponent() {
   const matchRoute = useMatchRoute()
 
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
-  const { data: environmentOverview } = useEnvironmentsOverview({ projectId, environmentId, suspense: true })
+  const { data: environmentOverview } = useEnvironmentsOverview({
+    projectId,
+    filterEnvironmentId: environmentId,
+    suspense: true,
+  })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id, suspense: true })
   const { data: services = [] } = useServices({ environmentId, suspense: true })
