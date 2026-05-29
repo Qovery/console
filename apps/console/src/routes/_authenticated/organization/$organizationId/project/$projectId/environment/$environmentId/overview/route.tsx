@@ -9,6 +9,7 @@ import {
   useClusterRunningStatusSocket,
 } from '@qovery/domains/clusters/feature'
 import {
+  DisabledManageDeploymentButton,
   EnvironmentLastDeploymentSection,
   EnvironmentMode,
   EnvironmentStateChip,
@@ -38,8 +39,6 @@ function RouteComponent() {
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id, suspense: true })
   const { data: services = [] } = useServices({ environmentId, suspense: true })
 
-  console.log('environmentOverview', environmentOverview)
-
   useClusterRunningStatusSocket({
     organizationId,
     clusterId: environment?.cluster_id ?? '',
@@ -68,7 +67,10 @@ function RouteComponent() {
   const shouldDisplayQoveryServicesSubtitle = isServicesListTab && hasArgoCdServices
   const shouldDisplayArgoCdServicesAboveQovery = isServicesListTab && hasArgoCdServices && !hasQoveryServices
   const shouldDisplayArgoCdServicesBelowQovery = isServicesListTab && hasArgoCdServices && hasQoveryServices
-  const isArgoCdEnvironment = environmentOverview?.[0]?.services_overview.managed_by !== 'QOVERY'
+  const isArgoCdEnvironment = environmentOverview?.[0]?.services_overview.managed_by === 'ARGOCD'
+  const manageDeploymentDisabledTooltip = hasArgoCdServices
+    ? 'ArgoCD environments can only be deployed from ArgoCD'
+    : 'Add at least one service to deploy this environment'
 
   if (!environment || !deploymentStatus || !environmentOverview) {
     return null
@@ -114,13 +116,17 @@ function RouteComponent() {
                 state={deploymentStatus.last_deployment_state}
                 variant="header"
               />
-              <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant="header" />
+              {hasQoveryServices ? (
+                <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant="header" />
+              ) : (
+                <DisabledManageDeploymentButton tooltip={manageDeploymentDisabledTooltip} variant="header" />
+              )}
             </div>
           </div>
           <hr className="w-full border-neutral" />
         </div>
         <div className="flex flex-col gap-8">
-          <EnvironmentLastDeploymentSection />
+          {hasQoveryServices && <EnvironmentLastDeploymentSection />}
           <Section className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <Heading level={2}>Services</Heading>

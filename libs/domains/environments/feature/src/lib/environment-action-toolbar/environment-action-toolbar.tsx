@@ -8,7 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { match } from 'ts-pattern'
-import { isArgoCd } from '@qovery/domains/services/data-access'
+import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { useServices } from '@qovery/domains/services/feature'
 import { useVariables } from '@qovery/domains/variables/feature'
@@ -27,7 +27,7 @@ import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-e
 import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
-import { useServiceCount } from '../hooks/use-service-count/use-service-count'
+import { useEnvironmentServices } from '../hooks/use-environment-services/use-environment-services'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 import useUninstallEnvironment from '../hooks/use-uninstall-environment/use-uninstall-environment'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
@@ -35,6 +35,39 @@ import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'header'
 const NAMESPACE_VARIABLE_NAME = 'QOVERY_KUBERNETES_NAMESPACE_NAME'
+
+export function DisabledManageDeploymentButton({
+  tooltip,
+  variant = 'default',
+}: {
+  tooltip: string
+  variant?: ActionToolbarVariant
+}) {
+  return (
+    <Tooltip content={tooltip}>
+      <div>
+        <Button
+          aria-label="Manage Deployment"
+          color={variant === 'header' ? 'brand' : 'neutral'}
+          variant={variant === 'header' ? 'solid' : 'outline'}
+          size={variant === 'header' ? 'md' : 'sm'}
+          iconOnly={variant === 'default'}
+          disabled
+        >
+          <div className="flex h-full w-full items-center justify-center gap-1.5">
+            <Icon iconName="rocket" />
+            {variant === 'header' && (
+              <>
+                Deploy
+                <Icon iconName="chevron-down" />
+              </>
+            )}
+          </div>
+        </Button>
+      </div>
+    </Tooltip>
+  )
+}
 
 export function MenuManageDeployment({
   environment,
@@ -444,18 +477,25 @@ export function EnvironmentActionToolbar({
   isArgoCdEnvironment = false,
   variant = 'default',
 }: EnvironmentActionToolbarProps) {
-  const { data: countServices, isFetched: isFetchedServices } = useServiceCount({ environmentId: environment.id })
-
+  const { data: services = [], isLoading: isServicesLoading } = useEnvironmentServices({
+    environmentId: environment.id,
+  })
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id })
-  const hasServices = Boolean(countServices)
+  const hasDeployableServices = services.some(isEditableService)
+  const hasArgoCdServices = services.some(isArgoCd)
+  const disabledManageDeploymentTooltip = hasArgoCdServices
+    ? 'ArgoCD environments can only be deployed from ArgoCD'
+    : 'Add at least one service to deploy this environment'
 
-  if (!deploymentStatus || !isFetchedServices)
+  if (!deploymentStatus || isServicesLoading)
     return <Skeleton height={variant === 'default' ? 36 : 28} width={variant === 'default' ? 144 : 67} />
 
   return (
     <div className="flex items-center gap-2">
-      {hasServices && (
+      {hasDeployableServices ? (
         <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant={variant} />
+      ) : (
+        <DisabledManageDeploymentButton tooltip={disabledManageDeploymentTooltip} variant={variant} />
       )}
       {variant === 'default' && (
         <>
