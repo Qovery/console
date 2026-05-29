@@ -33,7 +33,7 @@ export function ConversationsProvider({ children }: PropsWithChildren) {
     }
 
     const timeout = setTimeout(poll, 2_000)
-    const interval = setInterval(poll, 15_000)
+    const interval = setInterval(poll, 30_000)
     return () => {
       clearTimeout(timeout)
       clearInterval(interval)
