@@ -215,9 +215,7 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
             isFile={secret.isFile ?? false}
             initialSecret={secret}
             onClose={closeModal}
-            onSubmit={(updated) =>
-              handleEditSecret(secret.id, updated)
-            }
+            onSubmit={(updated) => handleEditSecret(secret.id, updated)}
           />
         ),
         options: {
