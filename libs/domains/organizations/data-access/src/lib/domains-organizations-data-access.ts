@@ -202,6 +202,13 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  argoCdAssociatedServices: ({ clusterId }: { clusterId: string }) => ({
+    queryKey: [clusterId],
+    async queryFn() {
+      const response = await argoCdApi.getArgoCdAssociatedServices(clusterId)
+      return response.data.results
+    },
+  }),
   authProviders: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {

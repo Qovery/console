@@ -14,6 +14,7 @@ import {
   Button,
   EmptyState,
   Icon,
+  Indicator,
   Link,
   ModalConfirmation,
   Section,
@@ -23,6 +24,7 @@ import {
 } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { ArgoCdAssociatedServicesListModal } from '../argocd-associated-services-list-modal/argocd-associated-services-list-modal'
 import { useOrganizationArgoCdIntegrations } from '../hooks/use-organization-argocd-integrations/use-organization-argocd-integrations'
 import { useSaveArgoCdDestinationClusterMapping } from '../hooks/use-save-argocd-destination-cluster-mapping/use-save-argocd-destination-cluster-mapping'
 import { useUnlinkArgoCdDestinationClusterMapping } from '../hooks/use-unlink-argocd-destination-cluster-mapping/use-unlink-argocd-destination-cluster-mapping'
@@ -145,6 +147,22 @@ function ArgoCdIntegrationCard({
     })
   }
 
+  const openAssociatedServicesModal = (cluster: ArgoCdLinkedClusterDetails) => {
+    openModal({
+      content: (
+        <ArgoCdAssociatedServicesListModal
+          organizationId={organizationId}
+          clusterId={cluster.qovery_cluster_id}
+          associatedServicesCount={cluster.applications_count}
+          onClose={closeModal}
+        />
+      ),
+      options: {
+        width: 680,
+      },
+    })
+  }
+
   return (
     <div
       className="overflow-hidden rounded-lg bg-surface-neutral-subtle"
@@ -235,18 +253,41 @@ function ArgoCdIntegrationCard({
                       </span>
                     </div>
                   </div>
-                  <Tooltip content="Unlink cluster">
-                    <Button
-                      size="md"
-                      variant="outline"
-                      color="neutral"
-                      iconOnly
-                      onClick={() => onUnlinkCluster(integration.credentials_id, cluster)}
-                      data-testid={`unlink-linked-cluster-${cluster.argocd_cluster_url}`}
-                    >
-                      <Icon iconName="link-broken" iconStyle="regular" />
-                    </Button>
-                  </Tooltip>
+                  <div className="flex items-center gap-2">
+                    {cluster.applications_count > 0 && (
+                      <Indicator
+                        content={
+                          <span className="relative right-1 top-1 flex h-3 w-3 items-center justify-center rounded-full bg-surface-brand-solid text-3xs font-bold leading-[0] text-neutralInvert">
+                            {cluster.applications_count}
+                          </span>
+                        }
+                      >
+                        <Button
+                          size="md"
+                          variant="outline"
+                          color="neutral"
+                          iconOnly
+                          className="relative"
+                          onClick={() => openAssociatedServicesModal(cluster)}
+                          data-testid={`argocd-associated-services-${cluster.qovery_cluster_id}`}
+                        >
+                          <Icon iconName="layer-group" iconStyle="regular" />
+                        </Button>
+                      </Indicator>
+                    )}
+                    <Tooltip content="Unlink cluster">
+                      <Button
+                        size="md"
+                        variant="outline"
+                        color="neutral"
+                        iconOnly
+                        onClick={() => onUnlinkCluster(integration.credentials_id, cluster)}
+                        data-testid={`unlink-linked-cluster-${cluster.argocd_cluster_url}`}
+                      >
+                        <Icon iconName="link-broken" iconStyle="regular" />
+                      </Button>
+                    </Tooltip>
+                  </div>
                 </div>
               ))}
             </div>

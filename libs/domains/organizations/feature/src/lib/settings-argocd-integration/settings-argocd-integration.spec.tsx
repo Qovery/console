@@ -107,6 +107,23 @@ describe('SettingsArgoCdIntegration', () => {
     expect(screen.getByText('Unlinked clusters (1)')).toBeInTheDocument()
     expect(screen.getByText('AWS EKS Demo')).toBeInTheDocument()
 
+    await userEvent.click(screen.getByTestId('argocd-associated-services-cluster-1'))
+
+    expect(mockOpenModal).toHaveBeenCalledWith(
+      expect.objectContaining({
+        content: expect.objectContaining({
+          props: expect.objectContaining({
+            organizationId: 'org-1',
+            clusterId: 'cluster-1',
+            associatedServicesCount: 4,
+          }),
+        }),
+        options: {
+          width: 680,
+        },
+      })
+    )
+
     await userEvent.click(screen.getByText('Unlinked clusters (1)'))
 
     expect(
