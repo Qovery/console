@@ -301,7 +301,7 @@ function ArgoCdIntegrationCard({
       </div>
 
       {!isImporting ? (
-        <div className="-mt-[7px] flex items-center gap-2 rounded-b-lg border border-t-0 border-neutral bg-surface-neutral-subtle px-4 pb-3 pt-[calc(0.75rem+7px)]">
+        <div className="-mt-3 flex items-center gap-2 rounded-b-lg border border-t-0 border-neutral bg-surface-neutral-subtle px-4 pb-3 pt-6">
           <Badge size="base" color="green" variant="surface" className="gap-1 font-medium">
             <Icon iconName="circle-check" iconStyle="regular" className="text-xs text-positive" />
             {integration.status === 'connected' ? 'Connected' : 'Unknown'}
@@ -353,7 +353,7 @@ function SettingsArgoCdIntegrationCreateButton() {
 
 function SettingsArgoCdIntegrationContent() {
   const { organizationId = '' } = useParams({ strict: false })
-  const { data: integrations = [] } = useOrganizationArgoCdIntegrations({
+  const { data: integrations = [], refetch } = useOrganizationArgoCdIntegrations({
     organizationId,
     suspense: true,
   })
@@ -367,6 +367,28 @@ function SettingsArgoCdIntegrationContent() {
   useEffect(() => {
     setIntegrationsState(integrations)
   }, [integrations])
+
+  const hasImportingIntegration = integrationsState.some(
+    (integration) =>
+      integration.status === 'connected' &&
+      integration.linked_clusters.length === 0 &&
+      integration.unlinked_clusters.length === 0
+  )
+
+  // ArgoCD cluster discovery runs asynchronously after credentials are saved, so keep polling until mappings appear
+  useEffect(() => {
+    if (!hasImportingIntegration) {
+      return
+    }
+
+    const intervalId = setInterval(() => {
+      refetch()
+    }, 3000)
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [hasImportingIntegration, refetch])
 
   const configuredClusterIds = useMemo(
     () => integrationsState.map(({ agent_cluster_id }) => agent_cluster_id),

@@ -8,6 +8,7 @@ const mockOpenModal = jest.fn()
 const mockCloseModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockUnlinkArgoCdDestinationClusterMapping = jest.fn()
+const mockRefetchArgoCdIntegrations = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -48,12 +49,14 @@ describe('SettingsArgoCdIntegration', () => {
     mockCloseModal.mockReset()
     mockOpenModalConfirmation.mockReset()
     mockUnlinkArgoCdDestinationClusterMapping.mockReset()
+    mockRefetchArgoCdIntegrations.mockReset()
   })
 
   it('should render an empty state when no integration is configured', () => {
     useOrganizationArgoCdIntegrationsMock.mockReturnValue({
       data: [],
       isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
     } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
 
     renderWithProviders(<SettingsArgoCdIntegration />)
@@ -94,6 +97,7 @@ describe('SettingsArgoCdIntegration', () => {
         },
       ],
       isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
     } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
 
     const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration />)
@@ -142,6 +146,7 @@ describe('SettingsArgoCdIntegration', () => {
         },
       ],
       isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
     } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
 
     const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration />)
@@ -193,6 +198,7 @@ describe('SettingsArgoCdIntegration', () => {
         },
       ],
       isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
     } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
 
     const { userEvent } = renderWithProviders(<SettingsArgoCdIntegration />)
@@ -212,7 +218,8 @@ describe('SettingsArgoCdIntegration', () => {
     )
   })
 
-  it('should render an importing state when the integration has no cluster mapping yet', () => {
+  it('should refetch integrations while importing an integration with no cluster mapping yet', () => {
+    jest.useFakeTimers()
     useOrganizationArgoCdIntegrationsMock.mockReturnValue({
       data: [
         {
@@ -228,6 +235,7 @@ describe('SettingsArgoCdIntegration', () => {
         },
       ],
       isLoading: false,
+      refetch: mockRefetchArgoCdIntegrations,
     } as ReturnType<typeof useOrganizationArgoCdIntegrations>)
 
     renderWithProviders(<SettingsArgoCdIntegration />)
@@ -236,5 +244,10 @@ describe('SettingsArgoCdIntegration', () => {
     expect(screen.queryByText('Connected')).not.toBeInTheDocument()
     expect(screen.getByTestId('edit-argocd-integration')).toBeDisabled()
     expect(screen.getByTestId('delete-argocd-integration')).toBeDisabled()
+
+    expect(mockRefetchArgoCdIntegrations).not.toHaveBeenCalled()
+    jest.advanceTimersByTime(3000)
+    expect(mockRefetchArgoCdIntegrations).toHaveBeenCalled()
+    jest.useRealTimers()
   })
 })
