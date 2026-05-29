@@ -1,5 +1,6 @@
-import posthog from 'posthog-js'
+import { useAuth0 } from '@auth0/auth0-react'
 import { type PropsWithChildren, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import { apiGetTickets } from '../conversations-api'
 
 type ConversationsActionsContextValue = {
   setConversationsOpen: (open: boolean) => void
@@ -14,31 +15,21 @@ const ConversationsActionsContext = createContext<ConversationsActionsContextVal
 const ConversationsUnreadContext = createContext(0)
 
 export function ConversationsProvider({ children }: PropsWithChildren) {
+  const { user } = useAuth0()
   const [conversationsOpen, setConversationsOpenRaw] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
-    if (conversationsOpen) return
+    if (conversationsOpen || !user?.sub) return
+    const sub = user.sub
 
     const poll = () => {
-      try {
-        type TicketLike = { unread?: boolean; is_unread?: boolean; unread_count?: number; has_unread_messages?: boolean }
-        type ConversationsApi = { getTickets?: () => Promise<{ results?: TicketLike[] }> }
-        const api = (posthog as unknown as { conversations?: ConversationsApi }).conversations
-        if (typeof api?.getTickets !== 'function') return
-        api.getTickets().then((response) => {
-          const tickets: TicketLike[] = Array.isArray(response?.results) ? response.results : []
-          const count = tickets.filter((t) =>
-            t.unread === true ||
-            t.is_unread === true ||
-            (typeof t.unread_count === 'number' && t.unread_count > 0) ||
-            t.has_unread_messages === true
-          ).length
+      apiGetTickets(sub)
+        .then((tickets) => {
+          const count = tickets.filter((t) => typeof t.unread_count === 'number' && t.unread_count > 0).length
           setUnreadCount(count)
-        }).catch(() => undefined)
-      } catch {
-        return
-      }
+        })
+        .catch(() => undefined)
     }
 
     const timeout = setTimeout(poll, 2_000)
@@ -47,7 +38,7 @@ export function ConversationsProvider({ children }: PropsWithChildren) {
       clearTimeout(timeout)
       clearInterval(interval)
     }
-  }, [conversationsOpen])
+  }, [conversationsOpen, user?.sub])
 
   const setConversationsOpen = useCallback((open: boolean) => {
     if (open) setUnreadCount(0)
