@@ -90,6 +90,7 @@ export async function apiSendMessage(
       distinct_id: distinctId,
       message,
       ticket_id: ticketId,
+      ...(ticketId === null && { session_id: posthog.get_session_id() }),
     }),
   })
   if (!res.ok) throw new Error(`sendMessage failed: ${res.status}`)
