@@ -10,7 +10,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { P, match } from 'ts-pattern'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { isArgoCd } from '@qovery/domains/services/data-access'
+import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
 import { useServices } from '@qovery/domains/services/feature'
 import { Callout, ExternalLink, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 import { EnvironmentMode } from '../environment-mode/environment-mode'
@@ -38,7 +38,8 @@ export function CreateCloneEnvironmentModal({
   const { data: projects = [] } = useProjects({ organizationId })
   const { data: services = [] } = useServices({ environmentId: environmentToClone?.id })
   const hasArgoCdServices = services.some(isArgoCd)
-  const shouldDisplayArgoCdCloneWarning = Boolean(environmentToClone) && hasArgoCdServices
+  const hasQoveryServices = services.some(isEditableService)
+  const shouldDisplayArgoCdCloneWarning = Boolean(environmentToClone) && hasArgoCdServices && hasQoveryServices
 
   const { mutateAsync: createEnvironment, isLoading: isCreateEnvironmentLoading } = useCreateEnvironment()
   const { mutateAsync: cloneEnvironment, isLoading: isCloneEnvironmentLoading } = useCloneEnvironment()
