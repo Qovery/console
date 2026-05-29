@@ -49,7 +49,7 @@ export function getApiConfig(sub: string) {
     }
   )._POSTHOG_REMOTE_CONFIG
   const conversationsToken = remoteConfig?.[phcToken]?.config?.conversations?.token ?? ''
-  const widgetSessionId = distinctIdToUUID(sub)
+  const widgetSessionId = posthog.get_session_id() || distinctIdToUUID(sub)
   return { apiHost, conversationsToken, distinctId: sub, widgetSessionId }
 }
 
