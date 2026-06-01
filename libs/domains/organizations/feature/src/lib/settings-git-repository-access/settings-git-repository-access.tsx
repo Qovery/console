@@ -111,6 +111,9 @@ export function SettingsGitRepositoryAccess() {
             onClick={() => {
               openModal({
                 content: <GitTokenCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+                options: {
+                  fakeModal: true,
+                },
               })
             }}
           >

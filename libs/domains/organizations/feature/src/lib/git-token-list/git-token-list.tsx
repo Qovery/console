@@ -112,6 +112,9 @@ export function GitTokenList() {
                           onClose={closeModal}
                         />
                       ),
+                      options: {
+                        fakeModal: true,
+                      },
                     })
                   }}
                 >
