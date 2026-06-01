@@ -161,6 +161,58 @@ describe('ClusterCredentialsModal', () => {
     })
   })
 
+  it('should render GCP WIF as default authentication type', () => {
+    props.cloudProvider = CloudProviderEnum.GCP
+
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
+
+    expect(screen.getByText('Authentication type')).toBeInTheDocument()
+    expect(screen.getByText('Workload Identity Federation (preferred)')).toBeInTheDocument()
+    expect(screen.getByTestId('input-gcp-service-account-email')).toBeInTheDocument()
+  })
+
+  it('should format GCP WIF credentials correctly with handleSubmit', () => {
+    const data = {
+      name: 'gcp-wif-cred',
+      type: 'WIF',
+      service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+      workload_identity_provider_resource:
+        'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+    }
+
+    const result = handleSubmit(data, CloudProviderEnum.GCP)
+
+    expect(result).toEqual({
+      cloudProvider: 'GCP',
+      payload: {
+        name: 'gcp-wif-cred',
+        credential_type: 'WIF',
+        service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+        workload_identity_provider_resource:
+          'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+      },
+    })
+  })
+
+  it('should format GCP static credentials correctly with handleSubmit', () => {
+    const data = {
+      name: 'gcp-static-cred',
+      type: 'STATIC',
+      gcp_credentials: 'base64-json',
+    }
+
+    const result = handleSubmit(data, CloudProviderEnum.GCP)
+
+    expect(result).toEqual({
+      cloudProvider: 'GCP',
+      payload: {
+        name: 'gcp-static-cred',
+        credential_type: 'SERVICE_ACCOUNT_KEY',
+        gcp_credentials: 'base64-json',
+      },
+    })
+  })
+
   describe('Edit mode', () => {
     beforeEach(() => {
       props.credential = {

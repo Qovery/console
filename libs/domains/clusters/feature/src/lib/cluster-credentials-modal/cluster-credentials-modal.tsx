@@ -25,7 +25,7 @@ import { CopyButton } from '@qovery/shared/ui'
 import { useClusterCloudProviderInfo } from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 
 type ClusterCredentialsFormValues = {
-  type: 'STS' | 'STATIC' | 'EKS_ANYWHERE_VSPHERE_ROLE' | 'EKS_ANYWHERE_VSPHERE_STATIC'
+  type: 'STS' | 'STATIC' | 'WIF' | 'EKS_ANYWHERE_VSPHERE_ROLE' | 'EKS_ANYWHERE_VSPHERE_STATIC'
   name: string
   access_key_id?: string
   secret_access_key?: string
@@ -36,6 +36,8 @@ type ClusterCredentialsFormValues = {
   scaleway_access_key?: string
   scaleway_secret_key?: string
   gcp_credentials?: string
+  service_account_email?: string
+  workload_identity_provider_resource?: string
   role_arn?: string
   azure_subscription_id?: string
   azure_tenant_id?: string
@@ -47,10 +49,18 @@ type ClusterCredentialsFormValues = {
 type ClusterCredentialAuthType = ClusterCredentialsFormValues['type']
 export type ClusterCredentialsModalCloudProvider = CloudProviderEnum | 'AWS_EKS_ANYWHERE'
 const AWS_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['STS', 'STATIC']
+const GCP_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = ['WIF', 'STATIC']
 const EKS_ANYWHERE_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = [
   'EKS_ANYWHERE_VSPHERE_ROLE',
   'EKS_ANYWHERE_VSPHERE_STATIC',
 ]
+
+const getWifProviderResource = (credential?: ClusterCredentials): string | undefined =>
+  match(credential)
+    .with({ object_type: 'GCP_WORKLOAD_IDENTITY_FEDERATION' }, (currentCredential) => {
+      return `projects/${currentCredential.workload_identity_project_number}/locations/global/workloadIdentityPools/${currentCredential.workload_identity_pool_id}/providers/${currentCredential.workload_identity_provider_id}`
+    })
+    .otherwise(() => undefined)
 
 export interface ClusterCredentialsModalProps {
   organizationId: string
@@ -126,13 +136,34 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
         scaleway_organization_id: data['scaleway_organization_id'],
       },
     }))
-    .with('GCP', (cp) => ({
-      cloudProvider: cp,
-      payload: {
-        ...currentData,
-        gcp_credentials: data['gcp_credentials'],
-      },
-    }))
+    .with('GCP', (cp) => {
+      return match(data['type'])
+        .with('WIF', () => ({
+          cloudProvider: cp,
+          payload: {
+            ...currentData,
+            credential_type: 'WIF' as const,
+            service_account_email: data['service_account_email'],
+            workload_identity_provider_resource: data['workload_identity_provider_resource'],
+          },
+        }))
+        .with('STATIC', () => ({
+          cloudProvider: cp,
+          payload: {
+            ...currentData,
+            credential_type: 'SERVICE_ACCOUNT_KEY' as const,
+            gcp_credentials: data['gcp_credentials'],
+          },
+        }))
+        .otherwise(() => ({
+          cloudProvider: cp,
+          payload: {
+            ...currentData,
+            credential_type: 'SERVICE_ACCOUNT_KEY' as const,
+            gcp_credentials: data['gcp_credentials'],
+          },
+        }))
+    })
     .with('AZURE', (cp) => ({
       cloudProvider: cp,
       payload: {
@@ -201,6 +232,7 @@ export function ClusterCredentialsModal({
 
   const cloudProviderLocal = cloudProviderInfo?.cloud_provider ?? cloudProvider ?? 'AWS'
   const isAwsMode = cloudProviderLocal === 'AWS' || cloudProviderLocal === 'AWS_EKS_ANYWHERE'
+  const isGcpMode = cloudProviderLocal === 'GCP'
   const apiCloudProvider: CloudProviderEnum = cloudProviderLocal === 'AWS_EKS_ANYWHERE' ? 'AWS' : cloudProviderLocal
 
   const { mutateAsync: createCloudProviderCredential, isLoading: isLoadingCreate } = useCreateCloudProviderCredential()
@@ -236,20 +268,23 @@ export function ClusterCredentialsModal({
       match(credential?.object_type)
         .with('EKS_ANYWHERE_VSPHERE', () => EKS_ANYWHERE_CREDENTIAL_TYPES)
         .with('AWS', 'AWS_ROLE', () => AWS_CREDENTIAL_TYPES)
+        .with('GCP', 'GCP_WORKLOAD_IDENTITY_FEDERATION', () => GCP_CREDENTIAL_TYPES)
         .otherwise(() => AWS_CREDENTIAL_TYPES),
     [credential?.object_type]
   )
-  const awsAuthTypeOptions = useMemo(
+  const authTypeOptions = useMemo(
     () =>
-      (isEdit
-        ? inferredCredentialTypes
-        : cloudProviderLocal === 'AWS_EKS_ANYWHERE'
-          ? EKS_ANYWHERE_CREDENTIAL_TYPES
-          : AWS_CREDENTIAL_TYPES
+      (isGcpMode
+        ? GCP_CREDENTIAL_TYPES
+        : isEdit
+          ? inferredCredentialTypes
+          : cloudProviderLocal === 'AWS_EKS_ANYWHERE'
+            ? EKS_ANYWHERE_CREDENTIAL_TYPES
+            : AWS_CREDENTIAL_TYPES
       ).filter((type) =>
         type === 'EKS_ANYWHERE_VSPHERE_ROLE' || type === 'EKS_ANYWHERE_VSPHERE_STATIC' ? isEksAnywhereEnabled : true
       ),
-    [cloudProviderLocal, inferredCredentialTypes, isEdit, isEksAnywhereEnabled]
+    [cloudProviderLocal, inferredCredentialTypes, isEdit, isEksAnywhereEnabled, isGcpMode]
   )
 
   const defaultType: ClusterCredentialsFormValues['type'] =
@@ -257,10 +292,18 @@ export function ClusterCredentialsModal({
       ? credential.role_arn
         ? 'EKS_ANYWHERE_VSPHERE_ROLE'
         : 'EKS_ANYWHERE_VSPHERE_STATIC'
-      : credential?.object_type === 'AWS_ROLE' || (!isEdit && isAwsMode)
-        ? 'STS'
-        : 'STATIC'
-  const initialType = awsAuthTypeOptions.includes(defaultType) ? defaultType : awsAuthTypeOptions[0] ?? 'STS'
+      : credential?.object_type === 'GCP_WORKLOAD_IDENTITY_FEDERATION'
+        ? 'WIF'
+        : credential?.object_type === 'GCP'
+          ? 'STATIC'
+          : credential?.object_type === 'AWS_ROLE' || (!isEdit && isAwsMode)
+            ? 'STS'
+            : !isEdit && isGcpMode
+              ? 'WIF'
+              : 'STATIC'
+  const initialType = authTypeOptions.includes(defaultType)
+    ? defaultType
+    : authTypeOptions[0] ?? (isGcpMode ? 'WIF' : 'STS')
 
   const methods = useForm<ClusterCredentialsFormValues>({
     mode: 'onChange',
@@ -289,6 +332,10 @@ export function ClusterCredentialsModal({
         .otherwise(() => undefined),
       scaleway_secret_key: undefined,
       gcp_credentials: undefined,
+      service_account_email: match(credential)
+        .with({ object_type: 'GCP_WORKLOAD_IDENTITY_FEDERATION' }, (c) => c.service_account_email)
+        .otherwise(() => undefined),
+      workload_identity_provider_resource: getWifProviderResource(credential),
       azure_tenant_id: match(credential)
         .with({ azure_tenant_id: P.string }, (c) => c.azure_tenant_id)
         .otherwise(() => undefined),
@@ -397,7 +444,9 @@ export function ClusterCredentialsModal({
   const watchAzureApplicationId = methods.watch('azure_application_id')
   const watchAzureSubscriptionId = methods.watch('azure_subscription_id')
   const isAwsStsCredential = watchType === 'STS'
-  const isAwsStaticCredential = watchType === 'STATIC'
+  const isAwsStaticCredential = watchType === 'STATIC' && isAwsMode
+  const isGcpStaticCredential = watchType === 'STATIC' && isGcpMode
+  const isGcpWifCredential = watchType === 'WIF' && isGcpMode
   const isEksAnywhereRoleCredential = watchType === 'EKS_ANYWHERE_VSPHERE_ROLE'
   const isEksAnywhereStaticCredential = watchType === 'EKS_ANYWHERE_VSPHERE_STATIC'
 
@@ -452,7 +501,7 @@ export function ClusterCredentialsModal({
         customLoader="Processing..."
       >
         <div className="flex flex-col gap-y-4">
-          {isAwsMode && (
+          {(isAwsMode || isGcpMode) && (
             <Controller
               name="type"
               control={methods.control}
@@ -465,10 +514,14 @@ export function ClusterCredentialsModal({
                   value={field.value}
                   label="Authentication type"
                   error={error?.message}
-                  options={awsAuthTypeOptions.map((type) =>
+                  options={authTypeOptions.map((type) =>
                     match(type)
                       .with('STS', () => ({ label: 'Assume role via STS (preferred)', value: 'STS' }))
                       .with('STATIC', () => ({ label: 'Static credentials', value: 'STATIC' }))
+                      .with('WIF', () => ({
+                        label: 'Workload Identity Federation (preferred)',
+                        value: 'WIF',
+                      }))
                       .with('EKS_ANYWHERE_VSPHERE_ROLE', () => ({
                         label: 'EKS Anywhere on vSphere role (preferred)',
                         value: 'EKS_ANYWHERE_VSPHERE_ROLE',
@@ -483,7 +536,7 @@ export function ClusterCredentialsModal({
               )}
             />
           )}
-          {(isAwsStaticCredential || isEksAnywhereStaticCredential) && (
+          {(isAwsStaticCredential || isGcpStaticCredential || isEksAnywhereStaticCredential) && (
             <>
               {isAwsMode && (
                 <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
@@ -652,11 +705,13 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
           ) : (
             <div className="flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4">
               <h2 className="text-sm font-medium text-neutral">
-                {cloudProviderLocal === 'GCP'
+                {isGcpStaticCredential
                   ? '3. Download the key.json generated and drag and drop it here'
-                  : cloudProvider === 'AZURE'
+                  : isGcpWifCredential
                     ? '1. Fill these information'
-                    : '2. Fill these information'}
+                    : cloudProvider === 'AZURE'
+                      ? '1. Fill these information'
+                      : '2. Fill these information'}
               </h2>
               <Controller
                 name="name"
@@ -850,7 +905,7 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                   />
                 </>
               )}
-              {cloudProviderLocal === 'GCP' && (
+              {isGcpStaticCredential && (
                 <Controller
                   name="gcp_credentials"
                   control={methods.control}
@@ -889,6 +944,45 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                     </div>
                   )}
                 />
+              )}
+              {isGcpWifCredential && (
+                <>
+                  <Controller
+                    name="service_account_email"
+                    control={methods.control}
+                    rules={{
+                      required: 'Please enter your GCP service account email.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-gcp-service-account-email"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Service account email"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                  <Controller
+                    name="workload_identity_provider_resource"
+                    control={methods.control}
+                    rules={{
+                      required: 'Please enter your workload identity provider resource.',
+                    }}
+                    render={({ field, fieldState: { error } }) => (
+                      <InputText
+                        dataTestId="input-gcp-workload-identity-provider-resource"
+                        name={field.name}
+                        onChange={field.onChange}
+                        value={field.value}
+                        label="Workload identity provider resource"
+                        hint="projects/<project-number>/locations/global/workloadIdentityPools/<pool-id>/providers/<provider-id>"
+                        error={error?.message}
+                      />
+                    )}
+                  />
+                </>
               )}
               {cloudProviderLocal === 'AZURE' && (
                 <>
