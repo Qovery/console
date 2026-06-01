@@ -211,18 +211,22 @@ export function DatePickerCalendar({
 
     let didUpdateRange = false
 
-    if (!startDateError && !startTimeError) {
-      setStartDate(getCombinedDateTime(nextStartDateText, nextStartTimeText, useLocalTime))
-      didUpdateRange = true
-    }
+    try {
+      if (!startDateError && !startTimeError) {
+        setStartDate(getCombinedDateTime(nextStartDateText, nextStartTimeText, useLocalTime))
+        didUpdateRange = true
+      }
 
-    if (!endDateError && !endTimeError) {
-      setEndDate(getCombinedDateTime(nextEndDateText, nextEndTimeText, useLocalTime))
-      didUpdateRange = true
-    }
+      if (!endDateError && !endTimeError) {
+        setEndDate(getCombinedDateTime(nextEndDateText, nextEndTimeText, useLocalTime))
+        didUpdateRange = true
+      }
 
-    if (didUpdateRange) {
-      onRangeSelection?.()
+      if (didUpdateRange) {
+        onRangeSelection?.()
+      }
+    } catch {
+      // Invalid date/time input - ignore until user corrects it
     }
   }
 

@@ -85,27 +85,31 @@ export const getDateTimeInputErrors = ({
     return ''
   }
 
-  if (!startDateError && !startTimeError) {
-    const startDateTime = getCombinedDateTime(startDateText, startTimeText, useLocalTime)
-    startDateError = getBoundsError(startDateTime)
-  }
+  try {
+    if (!startDateError && !startTimeError) {
+      const startDateTime = getCombinedDateTime(startDateText, startTimeText, useLocalTime)
+      startDateError = getBoundsError(startDateTime)
+    }
 
-  if (!endDateError && !endTimeError) {
-    const endDateTime = getCombinedDateTime(endDateText, endTimeText, useLocalTime)
-    endDateError = getBoundsError(endDateTime)
-  }
+    if (!endDateError && !endTimeError) {
+      const endDateTime = getCombinedDateTime(endDateText, endTimeText, useLocalTime)
+      endDateError = getBoundsError(endDateTime)
+    }
 
-  if (!startDateError && !startTimeError && !endDateError && !endTimeError) {
-    const startDateTime = getCombinedDateTime(startDateText, startTimeText, useLocalTime)
-    const endDateTime = getCombinedDateTime(endDateText, endTimeText, useLocalTime)
+    if (!startDateError && !startTimeError && !endDateError && !endTimeError) {
+      const startDateTime = getCombinedDateTime(startDateText, startTimeText, useLocalTime)
+      const endDateTime = getCombinedDateTime(endDateText, endTimeText, useLocalTime)
 
-    if (startDateTime > endDateTime) {
-      if (activeField === 'end') {
-        endDateError = 'Cannot precede start date'
-      } else {
-        startDateError = 'Cannot exceed end date'
+      if (startDateTime > endDateTime) {
+        if (activeField === 'end') {
+          endDateError = 'Cannot precede start date'
+        } else {
+          startDateError = 'Cannot exceed end date'
+        }
       }
     }
+  } catch {
+    // If date parsing fails unexpectedly, keep the format errors
   }
 
   return {
