@@ -12,6 +12,10 @@ jest.mock('@qovery/shared/assistant/feature', () => ({
   AssistantTrigger: () => null,
 }))
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => false),
+}))
+
 jest.mock('@tanstack/react-router', () => {
   const React = jest.requireActual('react')
   return {
@@ -54,11 +58,11 @@ describe('steps', () => {
 
     const result = steps(data)
 
-    expect(result).toHaveLength(4)
-    expect(result.map((s) => s.key)).toEqual(['general', 'resources', 'features', 'summary'])
+    expect(result).toHaveLength(5)
+    expect(result.map((s) => s.key)).toEqual(['general', 'resources', 'features', 'addons', 'summary'])
   })
 
-  it('should return GCP managed steps', () => {
+  it('should return GCP managed steps with add-ons', () => {
     const data: ClusterGeneralData = {
       installation_type: 'MANAGED',
       cloud_provider: CloudProviderEnum.GCP,
@@ -66,8 +70,8 @@ describe('steps', () => {
 
     const result = steps(data)
 
-    expect(result).toHaveLength(3)
-    expect(result.map((s) => s.key)).toEqual(['general', 'features', 'summary'])
+    expect(result).toHaveLength(4)
+    expect(result.map((s) => s.key)).toEqual(['general', 'features', 'addons', 'summary'])
   })
 
   it('should return self-managed steps', () => {

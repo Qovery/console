@@ -1,4 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type ClusterCloudProviderInfoRequest,
   type ClusterFeatureNatGatewayParameters,
@@ -26,7 +27,8 @@ export interface StepSummaryProps {
 
 export function StepSummary({ organizationId }: StepSummaryProps) {
   const navigate = useNavigate()
-  const { generalData, kubeconfigData, resourcesData, featuresData, setCurrentStep, creationFlowUrl } =
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
+  const { generalData, kubeconfigData, resourcesData, featuresData, addonsData, setCurrentStep, creationFlowUrl } =
     useClusterContainerCreateContext()
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
@@ -63,6 +65,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
     [navigate, creationFlowUrl]
   )
   const goToFeatures = useCallback(() => navigate({ to: `${creationFlowUrl}/features` }), [navigate, creationFlowUrl])
+  const goToAddons = useCallback(() => navigate({ to: `${creationFlowUrl}/addons` }), [navigate, creationFlowUrl])
   const goToGeneral = () => navigate({ to: `${creationFlowUrl}/general` })
   const goToResources = () => navigate({ to: `${creationFlowUrl}/resources` })
   const goToEksConfig = () => navigate({ to: `${creationFlowUrl}/eks` })
@@ -75,6 +78,12 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
     if (generalData?.installation_type === 'PARTIALLY_MANAGED') {
       goToEksConfig()
       return
+    }
+    if (generalData?.installation_type === 'MANAGED') {
+      return match(generalData?.cloud_provider)
+        .with('AWS', 'GCP', () => goToAddons())
+        .with('SCW', () => goToFeatures())
+        .otherwise(() => goToResources())
     }
     return match(generalData?.cloud_provider)
       .with('AWS', () => goToFeatures())
@@ -90,13 +99,21 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   }, [creationFlowUrl, generalData, navigate])
 
   const onSubmit = async (withDeploy: boolean) => {
-    if (!generalData) throw new Error('Invalid generalData')
+    if (!generalData?.name) throw new Error('Invalid generalData')
 
     const cloudProviderCredentials: ClusterCloudProviderInfoRequest = {
       cloud_provider: generalData.cloud_provider,
       credentials: { id: generalData.credentials, name: generalData.credentials_name },
       region: generalData.region,
     }
+
+    const addonsPayload = {
+      keda: {
+        enabled: addonsData.kedaActivated,
+      },
+      secret_manager_accesses: secretManagerEnabled ? addonsData.secretManagers : [],
+    }
+
     const awsLabelsGroups =
       generalData.cloud_provider === 'AWS' &&
       !generalData.production &&
@@ -122,6 +139,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             production: generalData.production,
             features: [],
             cloud_provider_credentials: cloudProviderCredentials,
+            ...addonsPayload,
             ...awsLabelsGroups,
           },
         })
@@ -155,6 +173,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             features: [],
             cloud_provider_credentials: cloudProviderCredentials,
             infrastructure_charts_parameters: resourcesData?.infrastructure_charts_parameters,
+            ...addonsPayload,
             ...awsLabelsGroups,
           },
         })
@@ -306,6 +325,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
         features: formatFeatures,
         region: generalData.region,
         cloud_provider_credentials: cloudProviderCredentials,
+        ...addonsPayload,
       }))
       .with('SCW', () => {
         const scwFeatures: ClusterRequestFeaturesInner[] = [
@@ -345,6 +365,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
           cloud_provider_credentials: cloudProviderCredentials,
           features: scwFeatures,
+          ...addonsPayload,
         }
       })
       .otherwise(() => {
@@ -358,6 +379,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             kubernetes: resourcesData.cluster_type as KubernetesEnum,
             features: formatFeatures,
             cloud_provider_credentials: cloudProviderCredentials,
+            ...addonsPayload,
             ...awsLabelsGroups,
           }
         }
@@ -377,6 +399,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           kubernetes: resourcesData.cluster_type as KubernetesEnum,
           features: formatFeatures,
           cloud_provider_credentials: cloudProviderCredentials,
+          ...addonsPayload,
           ...awsLabelsGroups,
         }
       })
@@ -414,10 +437,13 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           kubeconfigData={kubeconfigData}
           resourcesData={resourcesData}
           featuresData={featuresData}
+          addonsData={addonsData}
+          secretManagerEnabled={secretManagerEnabled}
           detailInstanceType={detailInstanceType}
           goToResources={goToResources}
           goToGeneral={goToGeneral}
           goToFeatures={goToFeatures}
+          goToAddons={goToAddons}
           goToKubeconfig={goToKubeconfig}
           goToEksConfig={goToEksConfig}
         />

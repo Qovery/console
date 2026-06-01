@@ -16,6 +16,10 @@ const mockEditCloudProviderInfo = jest.fn()
 const mockEditClusterKubeconfig = jest.fn()
 const mockDeployCluster = jest.fn()
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
+}))
+
 const mockContextValue: ClusterContainerCreateContextInterface = {
   currentStep: 4,
   setCurrentStep: mockSetCurrentStep,
@@ -33,6 +37,8 @@ const mockContextValue: ClusterContainerCreateContextInterface = {
   setFeaturesData: jest.fn(),
   kubeconfigData: undefined,
   setKubeconfigData: jest.fn(),
+  addonsData: { kedaActivated: false, secretManagers: [] },
+  setAddonsData: jest.fn(),
   creationFlowUrl: '/organization/org-123/cluster/create/aws',
 }
 

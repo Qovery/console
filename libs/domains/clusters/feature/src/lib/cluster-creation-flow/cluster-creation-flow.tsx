@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type SecretManagerAccess } from 'qovery-typescript-axios'
 import {
   type Dispatch,
   type PropsWithChildren,
@@ -30,7 +30,14 @@ export interface ClusterContainerCreateContextInterface {
   setFeaturesData: Dispatch<SetStateAction<ClusterFeaturesData | undefined>>
   kubeconfigData: ClusterKubeconfigData | undefined
   setKubeconfigData: Dispatch<SetStateAction<ClusterKubeconfigData | undefined>>
+  addonsData: ClusterAddonsData
+  setAddonsData: Dispatch<SetStateAction<ClusterAddonsData>>
   creationFlowUrl: string
+}
+
+export type ClusterAddonsData = {
+  kedaActivated: boolean
+  secretManagers: SecretManagerAccess[]
 }
 
 export const ClusterContainerCreateContext = createContext<ClusterContainerCreateContextInterface | undefined>(
@@ -44,6 +51,8 @@ export const useClusterContainerCreateContext = () => {
     throw new Error('useClusterContainerCreateContext must be used within a ClusterContainerCreateContext')
   return clusterContainerCreateContext
 }
+
+export const useMaybeClusterContainerCreateContext = () => useContext(ClusterContainerCreateContext)
 
 export const steps = (clusterGeneralData?: ClusterGeneralData) => {
   return match(clusterGeneralData)
@@ -67,6 +76,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
     .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Set features', key: 'features' },
+      { title: 'Add-ons', key: 'addons' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .with({ installation_type: 'MANAGED', cloud_provider: 'AZURE' }, () => [
@@ -78,6 +88,7 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
       { title: 'Create new cluster', key: 'general' },
       { title: 'Resources', key: 'resources' },
       { title: 'Network', key: 'features' },
+      { title: 'Add-ons', key: 'addons' },
       { title: 'Ready to install', key: 'summary' },
     ])
     .otherwise(() => [])
@@ -116,7 +127,6 @@ export const defaultResourcesData: ClusterResourcesData = {
 
 export function ClusterCreationFlow({ children }: PropsWithChildren) {
   const { organizationId = '', slug } = useParams({ strict: false })
-
   // values and setters for context initialization
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [generalData, setGeneralData] = useState<ClusterGeneralData | undefined>()
@@ -126,12 +136,17 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
     features: {},
   })
   const [kubeconfigData, setKubeconfigData] = useState<ClusterKubeconfigData | undefined>()
+  const [addonsData, setAddonsData] = useState<ClusterAddonsData>({
+    kedaActivated: false,
+    secretManagers: [],
+  })
 
   const navigate = useNavigate()
 
   useDocumentTitle('Creation - Cluster')
 
   const creationFlowUrl = `/organization/${organizationId}/cluster/create/${slug}`
+  const currentSteps = steps(generalData)
 
   useEffect(() => {
     if (slug) {
@@ -179,6 +194,8 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
         setFeaturesData,
         kubeconfigData,
         setKubeconfigData,
+        addonsData,
+        setAddonsData,
         creationFlowUrl,
       }}
     >
@@ -191,9 +208,9 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
             })
           }
         }}
-        totalSteps={steps(generalData).length}
+        totalSteps={currentSteps.length}
         currentStep={currentStep}
-        currentTitle={steps(generalData)[currentStep - 1]?.title}
+        currentTitle={currentSteps[currentStep - 1]?.title}
       >
         {children}
       </FunnelFlow>
