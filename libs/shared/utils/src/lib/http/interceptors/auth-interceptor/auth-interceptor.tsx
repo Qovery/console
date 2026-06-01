@@ -13,6 +13,19 @@ export interface SerializedError {
 
 const E2E_AUTH_TOKEN_STORAGE_KEY = 'qovery-e2e-auth-token'
 
+export function buildLoginRedirectUrl(pathname: string, search: string, hash: string) {
+  const redirect = `${pathname}${search}${hash}`
+  const searchParams = new URLSearchParams({ redirect })
+
+  return `/login?${searchParams.toString()}`
+}
+
+function redirectToLogin() {
+  if (window.location.pathname.startsWith('/login')) return
+
+  window.location.assign(buildLoginRedirectUrl(window.location.pathname, window.location.search, window.location.hash))
+}
+
 export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
   const { getAccessTokenSilently } = useAuth0()
 
@@ -27,7 +40,8 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       try {
         token = token || (await getAccessTokenSilently())
       } catch (e) {
-        return config
+        redirectToLogin()
+        return Promise.reject(e)
       }
 
       if (token) {
@@ -46,6 +60,10 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
             error.response?.data?.error || error.code || 'Error',
             error.response?.data?.detail || error.detail
           )
+        }
+
+        if (error.response?.status === 401) {
+          redirectToLogin()
         }
 
         // we reformat the error output to improve the dev experience
