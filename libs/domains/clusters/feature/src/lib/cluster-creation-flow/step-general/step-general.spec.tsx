@@ -135,6 +135,6 @@ describe('StepGeneral', () => {
     const regionSelect = await screen.findByLabelText('Region')
     selectEvent.openMenu(regionSelect)
 
-    expect(screen.getByText('No ARM')).toBeInTheDocument()
+    expect(await screen.findAllByText('No ARM')).toHaveLength(1)
   })
 })
