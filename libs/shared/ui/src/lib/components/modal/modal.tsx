@@ -133,7 +133,7 @@ export const Modal = (props: ModalProps) => {
               ? { width: 'calc(100vw - 48px)', height: 'calc(100vh  - 48px)', top: 24 }
               : { width: `${width}px` }
           }
-          className={`modal__content fixed left-1/2 top-[84px] z-modal rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
+          className={`modal__content fixed left-1/2 top-[84px] z-modal overflow-hidden rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
           <div className={`overflow-auto ${fullScreen ? 'h-full' : 'max-h-[80vh]'}`}>
             {cloneElement(children, {
