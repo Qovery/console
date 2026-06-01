@@ -55,6 +55,7 @@ export function DatePickerCalendar({
 
   const lastInteractionRef = useRef<'calendar' | 'input' | 'default'>('default')
   const previousUseLocalTimeRef = useRef(useLocalTime)
+  const appliedDefaultDatesRef = useRef<[number, number] | null>(null)
 
   useEffect(() => {
     if (!startDate || !endDate) return
@@ -128,9 +129,16 @@ export function DatePickerCalendar({
 
   useEffect(() => {
     if (defaultDates) {
-      lastInteractionRef.current = 'default'
-      setStartDate(defaultDates[0])
-      setEndDate(defaultDates[1])
+      const [newStart, newEnd] = defaultDates
+      const newTimestamps: [number, number] = [newStart.getTime(), newEnd.getTime()]
+      const applied = appliedDefaultDatesRef.current
+
+      if (!applied || applied[0] !== newTimestamps[0] || applied[1] !== newTimestamps[1]) {
+        appliedDefaultDatesRef.current = newTimestamps
+        lastInteractionRef.current = 'default'
+        setStartDate(newStart)
+        setEndDate(newEnd)
+      }
     }
   }, [defaultDates])
 
