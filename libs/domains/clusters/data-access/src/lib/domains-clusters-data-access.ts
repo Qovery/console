@@ -10,11 +10,13 @@ import {
   type ClusterRoutingTableRequest,
   ClustersApi,
   OrganizationMainCallsApi,
+  SecretManagerAccessApi,
 } from 'qovery-typescript-axios'
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 const clusterApi = new ClustersApi()
 const argoCdApi = new ArgoCDApi()
+const secretManagerApi = new SecretManagerAccessApi()
 const organizationApi = new OrganizationMainCallsApi()
 
 export const clusters = createQueryKeys('clusters', {
@@ -100,6 +102,27 @@ export const clusters = createQueryKeys('clusters', {
     async queryFn() {
       const response = await argoCdApi.getArgoCdCredentials(clusterId)
       return response.data
+    },
+  }),
+
+  listSecretManagerSecretsFromProvider: ({
+    secretManagerAccessId,
+    namePrefix,
+  }: {
+    secretManagerAccessId: string
+    namePrefix?: string
+  }) => ({
+    queryKey: [secretManagerAccessId, namePrefix],
+    async queryFn() {
+      const response = await secretManagerApi.listUpstreamSecretsFromSecretProvider(secretManagerAccessId, namePrefix)
+      return response.data
+    },
+  }),
+  listSecretManagerAssociatedServices: ({ secretManagerAccessId }: { secretManagerAccessId: string }) => ({
+    queryKey: [secretManagerAccessId],
+    async queryFn() {
+      const response = await secretManagerApi.listSecretManagerAccessExternalSecrets(secretManagerAccessId)
+      return response.data.results
     },
   }),
   listServices: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({

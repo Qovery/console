@@ -19,6 +19,7 @@ import { type Value } from '@qovery/shared/interfaces'
 import { twMerge } from '@qovery/shared/util-js'
 import { Icon } from '../../icon/icon'
 import { LoaderSpinner } from '../../loader-spinner/loader-spinner'
+import { Tooltip } from '../../tooltip/tooltip'
 
 export interface InputSelectProps {
   className?: string
@@ -158,25 +159,35 @@ export function InputSelect({
 
   const Option = (props: OptionProps<Value, true, GroupBase<Value>>) => {
     const id = useId()
+    const optionContent = (
+      <components.Option {...props}>
+        {isMulti ? (
+          <span className="input-select__checkbox">
+            {props.isSelected && <Icon iconName="check" className="text-xs" />}
+          </span>
+        ) : props.isSelected ? (
+          <Icon iconName="check" className="w-4 text-brand" />
+        ) : props.data.icon ? (
+          <div className="flex h-full w-4 items-center justify-center">{props.data.icon}</div>
+        ) : (
+          <Icon iconName="check" className="w-4 opacity-0" />
+        )}
+        <label id={id} className="ml-1 flex flex-col gap-0.5 truncate text-sm">
+          {props.label}
+          {props.data.description && <span className="font-normal">{props.data.description}</span>}
+        </label>
+      </components.Option>
+    )
+
     return (
-      <div role="option" aria-labelledby={id}>
-        <components.Option {...props}>
-          {isMulti ? (
-            <span className="input-select__checkbox">
-              {props.isSelected && <Icon iconName="check" className="text-xs" />}
-            </span>
-          ) : props.isSelected ? (
-            <Icon iconName="check" className="w-4 text-brand" />
-          ) : props.data.icon ? (
-            <div className="flex h-full w-4 items-center justify-center">{props.data.icon}</div>
-          ) : (
-            <Icon iconName="check" className="w-4 opacity-0" />
-          )}
-          <label id={id} className="ml-1 flex flex-col gap-0.5 truncate text-sm">
-            {props.label}
-            {props.data.description && <span className="font-normal">{props.data.description}</span>}
-          </label>
-        </components.Option>
+      <div role="option" aria-labelledby={id} aria-selected={props.isSelected} aria-disabled={props.data.isDisabled}>
+        {props.data.isDisabled && props.data.disabledTooltip ? (
+          <Tooltip content={props.data.disabledTooltip} classNameTrigger="block">
+            <div>{optionContent}</div>
+          </Tooltip>
+        ) : (
+          optionContent
+        )}
       </div>
     )
   }
