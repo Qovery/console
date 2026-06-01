@@ -19,7 +19,6 @@ describe('UseAuthInterceptor', () => {
 
   afterEach(() => {
     jest.clearAllMocks()
-    window.history.pushState({}, '', '/')
   })
 
   it('should render successfully', () => {
@@ -47,16 +46,17 @@ describe('UseAuthInterceptor', () => {
     const requestUse = jest.fn().mockReturnValue(1)
     const responseUse = jest.fn().mockReturnValue(2)
     const axiosInstance = createAxiosInstanceMock(requestUse, responseUse)
+    const navigateToLogin = jest.fn()
     mockGetAccessTokenSilently.mockRejectedValue(authError)
-    window.history.pushState({}, '', '/login')
 
-    renderHook(() => useAuthInterceptor(axiosInstance, 'https://api.qovery.com'))
+    renderHook(() => useAuthInterceptor(axiosInstance, 'https://api.qovery.com', navigateToLogin))
 
     const requestHandler = requestUse.mock.calls[0][0]
 
     await expect(requestHandler({ url: '/organizations', headers: new AxiosHeaders() })).rejects.toThrow(
       'login_required'
     )
+    expect(navigateToLogin).toHaveBeenCalledTimes(1)
   })
 
   it('should redirect to login when the API returns unauthorized', async () => {
@@ -64,9 +64,9 @@ describe('UseAuthInterceptor', () => {
     const responseUse = jest.fn().mockReturnValue(2)
     const axiosInstance = createAxiosInstanceMock(requestUse, responseUse)
     const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
-    window.history.pushState({}, '', '/login')
+    const navigateToLogin = jest.fn()
 
-    renderHook(() => useAuthInterceptor(axiosInstance, 'https://api.qovery.com'))
+    renderHook(() => useAuthInterceptor(axiosInstance, 'https://api.qovery.com', navigateToLogin))
 
     const responseErrorHandler = responseUse.mock.calls[0][1]
 
@@ -74,6 +74,7 @@ describe('UseAuthInterceptor', () => {
       code: '401',
     })
     expect(consoleErrorSpy).toHaveBeenCalledWith('Error', undefined)
+    expect(navigateToLogin).toHaveBeenCalledTimes(1)
   })
 
   it('should build the login redirect url from the current location', () => {

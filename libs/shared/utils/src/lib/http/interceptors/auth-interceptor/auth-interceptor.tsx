@@ -26,7 +26,11 @@ function redirectToLogin() {
   window.location.assign(buildLoginRedirectUrl(window.location.pathname, window.location.search, window.location.hash))
 }
 
-export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
+export function useAuthInterceptor(
+  axiosInstance: AxiosInstance,
+  apiUrl: string,
+  navigateToLogin: () => void = redirectToLogin
+) {
   const { getAccessTokenSilently } = useAuth0()
 
   useEffect(() => {
@@ -40,7 +44,7 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       try {
         token = token || (await getAccessTokenSilently())
       } catch (e) {
-        redirectToLogin()
+        navigateToLogin()
         return Promise.reject(e)
       }
 
@@ -63,7 +67,7 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
         }
 
         if (error.response?.status === 401) {
-          redirectToLogin()
+          navigateToLogin()
         }
 
         // we reformat the error output to improve the dev experience
@@ -83,7 +87,13 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       axiosInstance.interceptors.request.eject(requestInterceptor)
       axiosInstance.interceptors.response.eject(responseInterceptor)
     }
-  }, [axiosInstance.interceptors.request, axiosInstance.interceptors.response, apiUrl, getAccessTokenSilently])
+  }, [
+    axiosInstance.interceptors.request,
+    axiosInstance.interceptors.response,
+    apiUrl,
+    getAccessTokenSilently,
+    navigateToLogin,
+  ])
 
   const removeBaseUrl = (url = '') => {
     if (!url) return ''
