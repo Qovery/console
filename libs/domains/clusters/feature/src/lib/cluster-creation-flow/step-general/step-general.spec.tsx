@@ -1,5 +1,6 @@
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
+import selectEvent from 'react-select-event'
 import * as cloudProvidersDomain from '@qovery/domains/cloud-providers/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
@@ -74,6 +75,7 @@ const useCloudProviderCredentialsMockSpy = jest.spyOn(cloudProvidersDomain, 'use
 const defaultProps: StepGeneralProps = {
   organizationId: 'org-123',
   onSubmit: mockOnSubmit,
+  labelsSetting: null,
 }
 
 describe('StepGeneral', () => {
@@ -111,5 +113,28 @@ describe('StepGeneral', () => {
     renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
 
     expect(screen.getByTestId('button-submit')).toBeDisabled()
+  })
+
+  it('should display an ARM not supported badge for GCP regions without ARM support', async () => {
+    useCloudProvidersMockSpy.mockReturnValue({
+      data: [
+        {
+          name: 'GCP',
+          short_name: CloudProviderEnum.GCP,
+          regions: [
+            { name: 'us-east1', city: 'South Carolina', country_code: 'US', arm_supported: true },
+            { name: 'europe-west9', city: 'Paris', country_code: 'FR', arm_supported: false },
+          ],
+        },
+      ],
+    })
+
+    renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
+
+    await selectEvent.select(screen.getByLabelText('Cloud provider'), 'Gcp', { container: document.body })
+    const regionSelect = await screen.findByLabelText('Region')
+    selectEvent.openMenu(regionSelect)
+
+    expect(screen.getByText('No ARM')).toBeInTheDocument()
   })
 })

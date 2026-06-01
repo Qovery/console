@@ -5,6 +5,7 @@ import { match } from 'ts-pattern'
 import { useCloudProviderCredentials, useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { type ClusterGeneralData, type Value } from '@qovery/shared/interfaces'
 import {
+  Badge,
   Button,
   Callout,
   FunnelFlowBody,
@@ -69,13 +70,36 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
 
   const buildRegions: Value[] = useMemo(
     () =>
-      currentProvider?.regions?.map((region: ClusterRegion) => ({
-        label: `${region.city} (${region.name})`,
-        value: region.name,
-        icon: <IconFlag code={region.country_code} />,
-      })) || [],
+      currentProvider?.regions?.map((region: ClusterRegion) => {
+        const label = `${region.city} (${region.name})`
+        const showArmUnsupportedBadge =
+          currentProvider.short_name === CloudProviderEnum.GCP && region.arm_supported === false
+
+        return {
+          label: (
+            <span className="flex items-center gap-2">
+              <span className="truncate">{label}</span>
+              {showArmUnsupportedBadge && (
+                <Badge color="yellow" variant="surface" size="sm" className="gap-1">
+                  No ARM
+                </Badge>
+              )}
+            </span>
+          ),
+          value: region.name,
+          icon: <IconFlag code={region.country_code} />,
+          searchText: label,
+        }
+      }) || [],
     [currentProvider?.regions]
   )
+
+  const filterRegionOption = (option: any, inputValue: string) => {
+    if (!inputValue) return true
+
+    const searchString = option.data.searchText || (typeof option.data.label === 'string' ? option.data.label : '')
+    return searchString.toLowerCase().includes(inputValue.toLowerCase())
+  }
 
   const watchCloudProvider = watch('cloud_provider')
   const watchInstallationType = watch('installation_type')
@@ -175,6 +199,7 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
                             value={field.value}
                             error={error?.message}
                             isSearchable
+                            filterOption={filterRegionOption}
                             portal
                           />
                         )}

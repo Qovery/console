@@ -28,6 +28,7 @@ const convertToCloudProviderEnum = (cloudProvider: ClusterCredentials['object_ty
     .with('SCW', () => CloudProviderEnum.SCW)
     .with('OTHER', () => CloudProviderEnum.ON_PREMISE)
     .with('GCP', () => CloudProviderEnum.GCP)
+    .with('GCP_WORKLOAD_IDENTITY_FEDERATION', () => CloudProviderEnum.GCP)
     .exhaustive()
 }
 
