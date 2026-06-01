@@ -78,6 +78,9 @@ export function GitRepositoryServiceSettings({
                     }}
                   />
                 ),
+                options: {
+                  fakeModal: true,
+                },
               })
             }}
           >
