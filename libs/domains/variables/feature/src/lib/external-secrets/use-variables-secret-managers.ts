@@ -1,0 +1,33 @@
+import { useQuery } from '@tanstack/react-query'
+import { useParams } from '@tanstack/react-router'
+import { useMemo } from 'react'
+import { queries } from '@qovery/state/util-queries'
+
+export function useVariablesSecretManagers({ enabled = true }: { enabled?: boolean } = {}) {
+  const { organizationId = '', environmentId = '' } = useParams({ strict: false })
+
+  const { data: environment } = useQuery({
+    ...queries.environments.details({ environmentId }),
+    enabled: enabled && Boolean(environmentId),
+    suspense: enabled,
+  })
+
+  const { data: clusters } = useQuery({
+    ...queries.clusters.list({ organizationId }),
+    enabled: enabled && Boolean(organizationId),
+    suspense: enabled,
+  })
+
+  const cluster = useMemo(
+    () => clusters?.find(({ id }) => id === environment?.cluster_id),
+    [clusters, environment?.cluster_id]
+  )
+
+  const secretManagers = useMemo(() => cluster?.secret_manager_accesses ?? [], [cluster?.secret_manager_accesses])
+
+  return {
+    secretManagers,
+    hasClusterSecretManagerConfigured: secretManagers.length > 0,
+    clusterId: environment?.cluster_id ?? '',
+  }
+}

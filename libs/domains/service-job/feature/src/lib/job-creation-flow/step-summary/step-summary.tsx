@@ -20,7 +20,7 @@ import {
   type JobResourcesData,
   type VariableData,
 } from '@qovery/shared/interfaces'
-import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, Tooltip, truncateText } from '@qovery/shared/ui'
 import { generateScopeLabel, prepareVariableImportRequest, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type DockerfileSettingsData } from '../../dockerfile-settings/dockerfile-settings'
 import { useJobCreateContext } from '../job-creation-flow'
@@ -387,10 +387,15 @@ function StepSummaryContent(props: StepSummaryProps) {
             <ul className="flex list-none flex-col gap-2 text-sm text-neutral-subtle">
               {props.variableData.variables && props.variableData.variables.length > 0 ? (
                 props.variableData.variables?.map((variable, index) => (
-                  <li className="grid grid-cols-3" key={index}>
-                    <strong className="truncate font-medium">
-                      {variable.variable} = {variable.isSecret ? '********' : variable.value}
-                    </strong>
+                  <li className="grid grid-cols-[2fr_1fr_1fr]" key={index}>
+                    <Tooltip
+                      content={`${variable.variable} = ${variable.isSecret ? '********' : variable.value}`}
+                      align="start"
+                    >
+                      <strong className="truncate font-medium">
+                        {variable.variable} = {variable.isSecret ? '********' : variable.value}
+                      </strong>
+                    </Tooltip>
                     <span>
                       <strong className="font-medium">Scope:</strong>{' '}
                       {variable.scope ? generateScopeLabel(variable.scope) : '-'}

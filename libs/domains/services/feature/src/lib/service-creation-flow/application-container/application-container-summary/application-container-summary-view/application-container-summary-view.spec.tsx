@@ -63,6 +63,17 @@ const defaultProps = {
       isSecret: false,
     },
   ],
+  externalSecretsData: [
+    {
+      name: 'DB_PASSWORD',
+      reference: 'my-app/prod/db-password',
+      scope: 'APPLICATION' as const,
+      isFile: false,
+      secretManagerAccessId: 'sm-1',
+      source: 'Prod secret manager',
+      sourceIcon: 'aws' as const,
+    },
+  ],
   selectedRegistryName: 'Docker Hub',
   annotationsGroup: [],
   labelsGroup: [],
@@ -90,6 +101,8 @@ describe('ApplicationContainerSummaryView', () => {
     expect(screen.getByRole('heading', { name: 'Ports' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Health checks' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Environment variables' })).toBeInTheDocument()
+    expect(screen.getByText('DB_PASSWORD = my-app/prod/db-password')).toBeInTheDocument()
+    expect(screen.getByText('External secret')).toBeInTheDocument()
   })
 
   it('calls edit and submit actions', async () => {
@@ -112,6 +125,7 @@ describe('ApplicationContainerSummaryView', () => {
         {...defaultProps}
         portsData={{ ports: [], healthchecks: undefined }}
         variablesData={[]}
+        externalSecretsData={[]}
       />
     )
 

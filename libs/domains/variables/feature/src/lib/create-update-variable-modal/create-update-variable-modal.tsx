@@ -52,14 +52,18 @@ function getValueEditorLanguage({ isFile, mountPath }: { isFile: boolean; mountP
   return 'plaintext'
 }
 
-export type CreateUpdateVariableModalProps = {
-  closeModal: () => void
-  onSubmit?: (variable?: VariableResponse | void) => void
-  variable?: VariableResponse
-  mode: 'CREATE' | 'UPDATE'
-  type: keyof typeof APIVariableTypeEnum
-  isFile?: boolean
-} & (
+export type CreateUpdateVariableModalSubmitData = {
+  key: string
+  value?: string | null
+  description?: string
+  scope: Scope
+  isSecret: boolean
+  enable_interpolation_in_file?: boolean
+  mountPath?: string
+  isFile: boolean
+}
+
+type CreateUpdateVariableModalScopeProps =
   | {
       scope: Extract<Scope, 'PROJECT'>
       projectId: string
@@ -75,19 +79,37 @@ export type CreateUpdateVariableModalProps = {
       environmentId: string
       serviceId: string
     }
-)
 
-export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
-  const { scope, closeModal, onSubmit, variable, mode, type, isFile } = props
+export type VariableFormModalProps = {
+  closeModal: () => void
+  onSubmit: (data: CreateUpdateVariableModalSubmitData) => void | Promise<void>
+  loading?: boolean
+  variable?: VariableResponse
+  mode: 'CREATE' | 'UPDATE'
+  type: keyof typeof APIVariableTypeEnum
+  isFile?: boolean
+  hasClusterSecretManagerConfigured?: boolean
+  scope: Scope
+  projectId?: string
+  environmentId?: string
+  serviceId?: string
+}
+
+export function VariableFormModal(props: VariableFormModalProps) {
+  const {
+    scope,
+    closeModal,
+    onSubmit,
+    loading = false,
+    variable,
+    mode,
+    type,
+    isFile,
+    hasClusterSecretManagerConfigured = false,
+  } = props
   const _isFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
   const { enableAlertClickOutside } = useModal()
-  const [loading, setLoading] = useState(false)
   const [isValueEditorOpen, setIsValueEditorOpen] = useState(false)
-
-  const { mutateAsync: createVariable } = useCreateVariable()
-  const { mutateAsync: createVariableAlias } = useCreateVariableAlias()
-  const { mutateAsync: createVariableOverride } = useCreateVariableOverride()
-  const { mutateAsync: editVariable } = useEditVariable()
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -153,9 +175,10 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
   const watchScope = methods.watch('scope')
+  const watchIsSecret = methods.watch('isSecret')
   const watchMountPath = methods.watch('mountPath')
   const valueEditorLanguage = getValueEditorLanguage({ isFile: _isFile, mountPath: watchMountPath })
-  const valueEditorServiceId = 'serviceId' in props && isValueEditorScope(watchScope) ? props.serviceId : undefined
+  const valueEditorServiceId = isValueEditorScope(watchScope) ? props.serviceId : undefined
   const valueEditorScope = isValueEditorScope(watchScope) ? watchScope : undefined
 
   const _onSubmit = methods.handleSubmit(async (data) => {
@@ -169,113 +192,13 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
     }
 
     try {
-      setLoading(true)
-
-      const parentId = match(data)
-        .with({ scope: 'PROJECT' }, () => props.projectId)
-        .with({ scope: 'ENVIRONMENT' }, () => {
-          if ('environmentId' in props) {
-            return props.environmentId
-          }
-          throw new Error('Scope mismatch')
-        })
-        .with(
-          { scope: 'APPLICATION' },
-          { scope: 'CONTAINER' },
-          { scope: 'JOB' },
-          { scope: 'HELM' },
-          { scope: 'TERRAFORM' },
-          () => {
-            if ('serviceId' in props) {
-              return props.serviceId
-            }
-            throw new Error('Scope mismatch')
-          }
-        )
-        .with({ scope: undefined }, () => {
-          throw new Error('scope undefined')
-        })
-        .exhaustive()
-
-      const result = await match(props)
-        .with({ mode: 'CREATE', type: 'VALUE' }, () =>
-          createVariable({
-            variableRequest: {
-              is_secret: data.isSecret,
-              key: data.key,
-              value: data.value || '',
-              description: data.description,
-              mount_path: data.mountPath || null,
-              variable_parent_id: parentId,
-              variable_scope: data.scope,
-              enable_interpolation_in_file: data.enable_interpolation_in_file,
-            },
-          })
-        )
-        .with({ mode: 'CREATE', type: 'ALIAS' }, () => {
-          if (!variable) {
-            throw new Error('No variable to be based on')
-          }
-          return createVariableAlias({
-            variableId: variable.id,
-            variableAliasRequest: {
-              alias_scope: data.scope,
-              alias_parent_id: parentId,
-              key: data.key,
-              description: data.description,
-              enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,
-            },
-          })
-        })
-        .with({ mode: 'CREATE', type: 'OVERRIDE' }, () => {
-          if (!variable) {
-            throw new Error('No variable to be based on')
-          }
-          return createVariableOverride({
-            variableId: variable.id,
-            variableOverrideRequest: {
-              override_scope: data.scope,
-              override_parent_id: parentId,
-              value: data.value || '',
-              description: data.description,
-              enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,
-            },
-          })
-        })
-        .with(
-          { mode: 'CREATE', type: 'FILE' },
-          { mode: 'CREATE', type: 'BUILT_IN' },
-          { mode: 'CREATE', type: 'EXTERNAL_SECRET' },
-          () => {
-            return Promise.resolve()
-          }
-        )
-        .with({ mode: 'UPDATE' }, () => {
-          if (!variable) {
-            throw new Error('No variable to be based on')
-          }
-
-          // Allowing a null value for the variable when updating permits retaining the current value.
-          // For newly created variables, a value is required and an empty string will be set if not provided.
-          return editVariable({
-            variableId: variable.id,
-            variableEditRequest: {
-              key: data.key,
-              value: variable.aliased_variable?.key || data.value,
-              description: data.description,
-              enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,
-            },
-          })
-        })
-        .exhaustive()
-
-      onSubmit?.(result)
-
+      await onSubmit({
+        ...cloneData,
+        isFile: _isFile,
+      })
       closeModal()
     } catch (e) {
       console.error(e)
-    } finally {
-      setLoading(false)
     }
   })
 
@@ -426,7 +349,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                     label="Value"
                     error={error?.message}
                   />
-                  {'environmentId' in props && (
+                  {props.environmentId && (
                     <DropdownVariable
                       environmentId={props.environmentId}
                       onChange={(variableKey) => handleInsertVariable({ variableKey, value: value || '', onChange })}
@@ -451,7 +374,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
                   title="Value editor"
                   description="Edit the value in a larger editor."
                   language={valueEditorLanguage}
-                  environmentId={'environmentId' in props ? props.environmentId : undefined}
+                  environmentId={props.environmentId}
                   serviceId={valueEditorServiceId}
                   scope={valueEditorScope}
                 />
@@ -530,6 +453,17 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
           </div>
         )}
 
+        {mode === 'CREATE' && type === 'VALUE' && watchIsSecret && hasClusterSecretManagerConfigured && (
+          <Callout.Root color="yellow" className="mb-3">
+            <Callout.Icon>
+              <Icon iconName="exclamation-triangle" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              Are you sure you want to create a Qovery secret? External secrets are already configured on this cluster.
+            </Callout.Text>
+          </Callout.Root>
+        )}
+
         {scope === 'APPLICATION' && watchScope !== 'APPLICATION' && (
           <Callout.Root color="yellow" className="mb-3">
             <Callout.Icon>
@@ -564,6 +498,138 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
       </ModalCrud>
     </FormProvider>
   )
+}
+
+export type CreateUpdateVariableModalProps = {
+  closeModal: () => void
+  onSubmit?: (variable?: VariableResponse | void) => void
+  variable?: VariableResponse
+  mode: 'CREATE' | 'UPDATE'
+  type: keyof typeof APIVariableTypeEnum
+  isFile?: boolean
+  hasClusterSecretManagerConfigured?: boolean
+} & CreateUpdateVariableModalScopeProps
+
+// API-backed wrapper around VariableFormModal. Use VariableFormModal directly when a flow needs to collect variable data
+// without persisting it immediately, for example before a service has been created.
+export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps) {
+  const { onSubmit, variable } = props
+  const [loading, setLoading] = useState(false)
+
+  const { mutateAsync: createVariable } = useCreateVariable()
+  const { mutateAsync: createVariableAlias } = useCreateVariableAlias()
+  const { mutateAsync: createVariableOverride } = useCreateVariableOverride()
+  const { mutateAsync: editVariable } = useEditVariable()
+
+  const handleSubmit = async (data: CreateUpdateVariableModalSubmitData) => {
+    setLoading(true)
+
+    try {
+      const parentId = match(data)
+        .with({ scope: 'PROJECT' }, () => props.projectId)
+        .with({ scope: 'ENVIRONMENT' }, () => {
+          if ('environmentId' in props) {
+            return props.environmentId
+          }
+          throw new Error('Scope mismatch')
+        })
+        .with(
+          { scope: 'APPLICATION' },
+          { scope: 'CONTAINER' },
+          { scope: 'JOB' },
+          { scope: 'HELM' },
+          { scope: 'TERRAFORM' },
+          () => {
+            if ('serviceId' in props) {
+              return props.serviceId
+            }
+            throw new Error('Scope mismatch')
+          }
+        )
+        .with({ scope: undefined }, () => {
+          throw new Error('scope undefined')
+        })
+        .exhaustive()
+
+      const result = await match(props)
+        .with({ mode: 'CREATE', type: 'VALUE' }, () =>
+          createVariable({
+            variableRequest: {
+              is_secret: data.isSecret,
+              key: data.key,
+              value: data.value || '',
+              description: data.description,
+              mount_path: data.mountPath || null,
+              variable_parent_id: parentId,
+              variable_scope: data.scope,
+              enable_interpolation_in_file: data.enable_interpolation_in_file,
+            },
+          })
+        )
+        .with({ mode: 'CREATE', type: 'ALIAS' }, () => {
+          if (!variable) {
+            throw new Error('No variable to be based on')
+          }
+          return createVariableAlias({
+            variableId: variable.id,
+            variableAliasRequest: {
+              alias_scope: data.scope,
+              alias_parent_id: parentId,
+              key: data.key,
+              description: data.description,
+              enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,
+            },
+          })
+        })
+        .with({ mode: 'CREATE', type: 'OVERRIDE' }, () => {
+          if (!variable) {
+            throw new Error('No variable to be based on')
+          }
+          return createVariableOverride({
+            variableId: variable.id,
+            variableOverrideRequest: {
+              override_scope: data.scope,
+              override_parent_id: parentId,
+              value: data.value || '',
+              description: data.description,
+              enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,
+            },
+          })
+        })
+        .with(
+          { mode: 'CREATE', type: 'FILE' },
+          { mode: 'CREATE', type: 'BUILT_IN' },
+          { mode: 'CREATE', type: 'EXTERNAL_SECRET' },
+          () => {
+            return Promise.resolve()
+          }
+        )
+        .with({ mode: 'UPDATE' }, () => {
+          if (!variable) {
+            throw new Error('No variable to be based on')
+          }
+
+          // Allowing a null value for the variable when updating permits retaining the current value.
+          // For newly created variables, a value is required and an empty string will be set if not provided.
+          return editVariable({
+            variableId: variable.id,
+            variableEditRequest: {
+              key: data.key,
+              value: variable.aliased_variable?.key || data.value,
+              description: data.description,
+              enable_interpolation_in_file: data.enable_interpolation_in_file ?? false,
+            },
+          })
+        })
+        .exhaustive()
+
+      onSubmit?.(result)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return <VariableFormModal {...props} loading={loading} onSubmit={handleSubmit} />
 }
 
 export default CreateUpdateVariableModal

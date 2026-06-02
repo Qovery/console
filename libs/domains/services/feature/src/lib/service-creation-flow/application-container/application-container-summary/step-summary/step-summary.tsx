@@ -1,12 +1,13 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import posthog from 'posthog-js'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
 } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useImportVariables } from '@qovery/domains/variables/feature'
+import { useCreateVariable, useImportVariables } from '@qovery/domains/variables/feature'
 import { FunnelFlowBody } from '@qovery/shared/ui'
 import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { buildHpaAdvancedSettingsPayload } from '@qovery/shared/util-services'
@@ -31,6 +32,7 @@ export function ApplicationContainerStepSummary({
   const { organizationId = '', projectId = '', environmentId = '', slug = '' } = useParams({ strict: false })
   const search = useSearch({ strict: false })
   const navigate = useNavigate()
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
   const { creationFlowUrl, generalForm, resourcesForm, portForm, variablesForm, setCurrentStep } =
     useApplicationContainerCreateContext()
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)
@@ -38,9 +40,12 @@ export function ApplicationContainerStepSummary({
   const generalData = generalForm.getValues()
   const resourcesData = resourcesForm.getValues()
   const portData = portForm.getValues()
-  const variablesData = variablesForm.getValues().variables
+  const variableData = variablesForm.getValues()
+  const variablesData = variableData.variables
+  const externalSecretsData = secretManagerEnabled ? variableData.externalSecrets ?? [] : []
 
   const { mutateAsync: createService } = useCreateService({ organizationId })
+  const { mutateAsync: createVariable } = useCreateVariable()
   const { mutateAsync: importVariables } = useImportVariables()
   const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const { mutateAsync: editAdvancedSettings } = useEditAdvancedSettings({
@@ -109,6 +114,31 @@ export function ApplicationContainerStepSummary({
         })
       }
 
+      // External secret creation errors are surfaced by the mutation notifications but should not block the service creation flow.
+      await Promise.allSettled(
+        externalSecretsData.map(async (externalSecret) => {
+          const scope = externalSecret.scope ?? createPayload.serviceType
+          return createVariable({
+            variableRequest: {
+              key: externalSecret.name,
+              value: externalSecret.reference,
+              variable_scope: scope,
+              variable_parent_id: match(scope)
+                .with('ENVIRONMENT', () => environmentId)
+                .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', 'TERRAFORM', () => service.id)
+                .with('PROJECT', 'BUILT_IN', () => {
+                  throw new Error('Unsupported external secret scope for service creation')
+                })
+                .exhaustive(),
+              is_secret: false,
+              mount_path: externalSecret.isFile ? externalSecret.filePath ?? null : null,
+              description: externalSecret.description ?? null,
+              secret_manager_access_id: externalSecret.secretManagerAccessId ?? null,
+            },
+          })
+        })
+      )
+
       if (resourcesData.autoscaling_mode === 'HPA') {
         await editAdvancedSettings({
           serviceId: service.id,
@@ -153,6 +183,7 @@ export function ApplicationContainerStepSummary({
         resourcesData={resourcesData}
         portsData={portData}
         variablesData={variablesData}
+        externalSecretsData={externalSecretsData}
         selectedRegistryName={selectedRegistryName}
         annotationsGroup={annotationsGroup}
         labelsGroup={labelsGroup}
