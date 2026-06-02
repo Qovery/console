@@ -222,7 +222,6 @@ export function AddSecretModal({
                 isSearchable
                 isCreatable
                 isLoading={isFetchingProviderSecrets || referenceInput !== debouncedReferenceInput}
-                placeholder="Reference"
                 error={error?.message}
               />
             )}
