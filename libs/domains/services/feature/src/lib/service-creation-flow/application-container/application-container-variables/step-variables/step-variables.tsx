@@ -255,7 +255,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
   return (
     <FunnelFlowBody>
       <Section className="mx-auto w-full max-w-[648px]">
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="flex flex-col gap-6" onSubmit={handleSubmit}>
           <div className="space-y-2">
             <Heading className="mb-0">Service variables</Heading>
             <p className="text-sm text-neutral-subtle">Define here the variables required by your service.</p>
@@ -492,14 +492,12 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
             </section>
           )}
 
-          <div className="flex items-center justify-between border-t border-neutral pt-4">
-            <Button onClick={onBack} type="button" size="lg" variant="outline" color="neutral" className="gap-2">
-              <Icon iconName="arrow-left" iconStyle="regular" />
+          <div className="mt-4 flex items-center justify-between">
+            <Button onClick={onBack} type="button" size="lg" variant="plain" color="neutral">
               Back
             </Button>
-            <Button data-testid="button-submit" type="submit" size="lg" className="gap-2">
+            <Button data-testid="button-submit" type="submit" size="lg">
               Continue
-              <Icon iconName="arrow-right" iconStyle="regular" />
             </Button>
           </div>
         </form>
