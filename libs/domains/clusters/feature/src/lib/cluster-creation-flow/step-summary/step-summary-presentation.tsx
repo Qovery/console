@@ -1,10 +1,15 @@
-import { type ClusterInstanceTypeResponseListResultsInner } from 'qovery-typescript-axios'
+import { type ClusterInstanceTypeResponseListResultsInner, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import {
   CONTROL_PLANE_LABELS,
   KarpenterInstanceTypePreview,
   SCW_CONTROL_PLANE_FEATURE_ID,
 } from '@qovery/domains/cloud-providers/feature'
+import {
+  getReadableSecretManagerAuth,
+  getReadableSecretManagerProvider,
+  getSecretManagerProvider,
+} from '@qovery/domains/clusters/data-access'
 import {
   type ClusterFeaturesData,
   type ClusterGeneralData,
@@ -13,6 +18,7 @@ import {
   type Subnets,
 } from '@qovery/shared/interfaces'
 import { Button, Callout, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
+import { type ClusterAddonsData } from '../cluster-creation-flow'
 import { getValueByKey } from './get-value-by-key'
 
 export interface StepSummaryPresentationProps {
@@ -22,11 +28,14 @@ export interface StepSummaryPresentationProps {
   kubeconfigData?: ClusterKubeconfigData
   resourcesData: ClusterResourcesData
   featuresData?: ClusterFeaturesData
+  addonsData: ClusterAddonsData
+  secretManagerEnabled?: boolean
   goToFeatures: () => void
   goToResources: () => void
   goToKubeconfig: () => void
   goToEksConfig: () => void
   goToGeneral: () => void
+  goToAddons: () => void
   isLoadingCreate: boolean
   isLoadingCreateAndDeploy: boolean
   detailInstanceType?: ClusterInstanceTypeResponseListResultsInner
@@ -57,6 +66,12 @@ function formatFeatureValue(feature: ClusterFeaturesData['features'][string]) {
   }
 
   return feature.value.toString()
+}
+
+function getSecretManagerSummaryKey(manager: SecretManagerAccess, index: number) {
+  return (
+    manager.id ?? [manager.endpoint.mode, manager.authentication.mode, manager.name, index].filter(Boolean).join('-')
+  )
 }
 
 export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
@@ -94,6 +109,12 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
     .with('AWS', 'GCP', () => checkIfFeaturesAvailable())
     .with('SCW', () => checkIfScwNetworkFeaturesAvailable())
     .otherwise(() => false)
+  const showKedaSummary = props.generalData.cloud_provider === 'AWS' || props.generalData.cloud_provider === 'GCP'
+  const showSecretManagerSummary = props.secretManagerEnabled === true
+  const showAddonsSection =
+    props.generalData.installation_type === 'MANAGED' &&
+    (props.generalData.cloud_provider === 'AWS' || props.generalData.cloud_provider === 'GCP') &&
+    (showKedaSummary || showSecretManagerSummary)
 
   return (
     <Section>
@@ -619,6 +640,61 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
               </ul>
             </div>
             <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToFeatures}>
+              <Icon className="text-base" iconName="gear-complex" />
+            </Button>
+          </Section>
+        )}
+
+        {showAddonsSection && (
+          <Section
+            data-testid="summary-addons"
+            className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4"
+          >
+            <div className="mr-2 flex-grow">
+              <Heading className="mb-3">Add-ons</Heading>
+              <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                {showKedaSummary && (
+                  <li>
+                    <strong className="font-medium">KEDA autoscaler: </strong>
+                    {props.addonsData.kedaActivated ? 'activated' : 'not activated'}
+                  </li>
+                )}
+                {showSecretManagerSummary && (
+                  <li>
+                    <strong className="font-medium">Secret manager: </strong>
+                    {props.addonsData.secretManagers.length > 0 ? 'activated' : 'not activated'}
+                  </li>
+                )}
+              </ul>
+
+              {showSecretManagerSummary && props.addonsData.secretManagers.length > 0 && (
+                <div className="mt-3 space-y-3 border-t border-neutral pt-3 text-sm text-neutral-subtle">
+                  {props.addonsData.secretManagers.map((manager, index) => (
+                    <div key={getSecretManagerSummaryKey(manager, index)} className="space-y-3">
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:gap-8">
+                        <span className="text-sm font-medium text-neutral sm:flex-1">{manager.name}</span>
+                        <div className="flex flex-col gap-2 sm:flex-1">
+                          <div className="flex items-center gap-1 text-neutral">
+                            <span className="font-medium">Type:</span>
+                            <span>{getReadableSecretManagerProvider(manager)}</span>
+                            <Icon className="w-4" name={getSecretManagerProvider(manager)} />
+                          </div>
+                          <div className="flex items-center gap-1 text-neutral">
+                            <span className="font-medium">Authentication:</span>
+                            <span>{getReadableSecretManagerAuth(manager)}</span>
+                          </div>
+                        </div>
+                      </div>
+                      {index < props.addonsData.secretManagers.length - 1 && (
+                        <div className="border-t border-neutral" />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToAddons}>
               <Icon className="text-base" iconName="gear-complex" />
             </Button>
           </Section>
