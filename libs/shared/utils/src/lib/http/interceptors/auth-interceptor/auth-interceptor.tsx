@@ -13,7 +13,24 @@ export interface SerializedError {
 
 const E2E_AUTH_TOKEN_STORAGE_KEY = 'qovery-e2e-auth-token'
 
-export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string) {
+export function buildLoginRedirectUrl(pathname: string, search: string, hash: string) {
+  const redirect = `${pathname}${search}${hash}`
+  const searchParams = new URLSearchParams({ redirect })
+
+  return `/login?${searchParams.toString()}`
+}
+
+function redirectToLogin() {
+  if (window.location.pathname.startsWith('/login')) return
+
+  window.location.assign(buildLoginRedirectUrl(window.location.pathname, window.location.search, window.location.hash))
+}
+
+export function useAuthInterceptor(
+  axiosInstance: AxiosInstance,
+  apiUrl: string,
+  navigateToLogin: () => void = redirectToLogin
+) {
   const { getAccessTokenSilently } = useAuth0()
 
   useEffect(() => {
@@ -27,7 +44,8 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       try {
         token = token || (await getAccessTokenSilently())
       } catch (e) {
-        return config
+        navigateToLogin()
+        return Promise.reject(e)
       }
 
       if (token) {
@@ -48,6 +66,10 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
           )
         }
 
+        if (error.response?.status === 401) {
+          navigateToLogin()
+        }
+
         // we reformat the error output to improve the dev experience
         // without this we should add a catch in every asyncThunk api call
         // see: https://stackoverflow.com/questions/63439021/handling-errors-with-redux-toolkit
@@ -65,7 +87,13 @@ export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string)
       axiosInstance.interceptors.request.eject(requestInterceptor)
       axiosInstance.interceptors.response.eject(responseInterceptor)
     }
-  }, [axiosInstance.interceptors.request, axiosInstance.interceptors.response, apiUrl, getAccessTokenSilently])
+  }, [
+    axiosInstance.interceptors.request,
+    axiosInstance.interceptors.response,
+    apiUrl,
+    getAccessTokenSilently,
+    navigateToLogin,
+  ])
 
   const removeBaseUrl = (url = '') => {
     if (!url) return ''
