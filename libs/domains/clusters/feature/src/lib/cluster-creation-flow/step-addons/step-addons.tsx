@@ -1,6 +1,6 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
-import { type FormEventHandler, useEffect, useMemo, useState } from 'react'
+import { type FormEventHandler, useEffect, useMemo } from 'react'
 import { isSameSecretManagerAccess } from '@qovery/domains/clusters/data-access'
 import { Badge, Button, DropdownMenu, FunnelFlowBody, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
 import {
@@ -31,8 +31,6 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
   const { generalData, addonsData, setAddonsData } = useClusterContainerCreateContext()
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const isGcp = generalData?.cloud_provider === 'GCP'
-  const [kedaEnabled, setKedaEnabled] = useState(() => addonsData.kedaActivated)
-  const [integrations, setIntegrations] = useState<SecretManagerAccess[]>(() => addonsData.secretManagers)
 
   const secretManagerDropdownOptions = useMemo(() => {
     if (!isGcp) {
@@ -49,19 +47,19 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
     onSubmit()
   }
 
-  useEffect(() => {
-    setAddonsData({
-      kedaActivated: kedaEnabled,
-      secretManagers: secretManagerEnabled ? integrations : [],
-    })
-  }, [kedaEnabled, integrations, secretManagerEnabled, setAddonsData])
-
   const clusterStub = generalData
     ? ({
         cloud_provider: generalData.cloud_provider,
-        secret_manager_accesses: integrations,
+        secret_manager_accesses: addonsData.secretManagers,
       } as unknown as Cluster)
     : undefined
+
+  const updateSecretManagers = (secretManagers: SecretManagerAccess[]) => {
+    setAddonsData((addonsData) => ({
+      ...addonsData,
+      secretManagers,
+    }))
+  }
 
   const openSecretManagerModal = (option: SecretManagerOption, integration?: SecretManagerAccess) => {
     openModal({
@@ -73,14 +71,16 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
           initialValues={integration}
           onClose={closeModal}
           onSubmit={(payload) => {
-            setIntegrations((prev) => {
-              if (integration) {
-                return prev.map((item) =>
+            if (integration) {
+              updateSecretManagers(
+                addonsData.secretManagers.map((item) =>
                   isSameSecretManagerAccess(item, integration) ? { ...item, ...payload } : item
                 )
-              }
-              return [...prev, payload]
-            })
+              )
+              return
+            }
+
+            updateSecretManagers([...addonsData.secretManagers, payload])
           }}
         />
       ),
@@ -108,8 +108,10 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
               title="KEDA autoscaler"
               description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all your services running on this cluster."
               badge={{ label: 'Free', color: 'green' }}
-              activated={kedaEnabled}
-              onToggle={() => setKedaEnabled((prev) => !prev)}
+              activated={addonsData.kedaActivated}
+              onToggle={() =>
+                setAddonsData((addonsData) => ({ ...addonsData, kedaActivated: !addonsData.kedaActivated }))
+              }
             />
           </div>
 
@@ -151,10 +153,12 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                     </DropdownMenu.Content>
                   </DropdownMenu.Root>
                   <SecretManagerList
-                    secretManagers={integrations}
+                    secretManagers={addonsData.secretManagers}
                     onEdit={(manager) => openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)}
                     onDelete={(manager) =>
-                      setIntegrations((prev) => prev.filter((item) => !isSameSecretManagerAccess(item, manager)))
+                      updateSecretManagers(
+                        addonsData.secretManagers.filter((item) => !isSameSecretManagerAccess(item, manager))
+                      )
                     }
                   />
                 </div>

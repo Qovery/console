@@ -142,10 +142,12 @@ describe('StepAddons', () => {
     await userEvent.click(screen.getByRole('button', { name: /activate/i }))
 
     await waitFor(() => {
-      expect(mockSetAddonsData).toHaveBeenLastCalledWith({
-        kedaActivated: true,
-        secretManagers: [],
-      })
+      expect(mockSetAddonsData).toHaveBeenLastCalledWith(expect.any(Function))
+    })
+
+    expect(mockSetAddonsData.mock.lastCall[0](mockContextValue.addonsData)).toEqual({
+      kedaActivated: true,
+      secretManagers: [],
     })
   })
 
@@ -156,10 +158,12 @@ describe('StepAddons', () => {
     await userEvent.click(screen.getByRole('menuitem', { name: /aws parameter store/i }))
 
     await waitFor(() => {
-      expect(mockSetAddonsData).toHaveBeenLastCalledWith({
-        kedaActivated: false,
-        secretManagers: [awsParameterStore],
-      })
+      expect(mockSetAddonsData).toHaveBeenLastCalledWith(expect.any(Function))
+    })
+
+    expect(mockSetAddonsData.mock.lastCall[0](mockContextValue.addonsData)).toEqual({
+      kedaActivated: false,
+      secretManagers: [awsParameterStore],
     })
   })
 
@@ -174,10 +178,12 @@ describe('StepAddons', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Delete secret manager' }))
 
     await waitFor(() => {
-      expect(mockSetAddonsData).toHaveBeenLastCalledWith({
-        kedaActivated: true,
-        secretManagers: [],
-      })
+      expect(mockSetAddonsData).toHaveBeenLastCalledWith(expect.any(Function))
+    })
+
+    expect(mockSetAddonsData.mock.lastCall[0](contextValue.addonsData)).toEqual({
+      kedaActivated: true,
+      secretManagers: [],
     })
   })
 })
