@@ -1,7 +1,8 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import { Link as RouterLink } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import posthog from 'posthog-js'
+import { useEffect, useMemo } from 'react'
 import {
   ClusterAvatar,
   ClusterRunningStatusIndicator,
@@ -73,6 +74,17 @@ function RouteComponent() {
   const shouldDisplayArgoCdServicesAboveQovery = isServicesListTab && hasArgoCdServices && !hasQoveryServices
   const shouldDisplayArgoCdServicesBelowQovery = isServicesListTab && hasArgoCdServices && hasQoveryServices
   const isEnvironmentManagedByArgoCd = isArgoCdEnvironment(environmentOverview?.[0])
+
+  useEffect(() => {
+    if (isEnvironmentManagedByArgoCd) {
+      posthog.capture('argocd-environment-accessed', {
+        organization_id: organizationId,
+        project_id: projectId,
+        environment_id: environmentId,
+      })
+    }
+  }, [isEnvironmentManagedByArgoCd, organizationId, projectId, environmentId])
+
   const manageDeploymentDisabledTooltip = hasArgoCdServices
     ? 'ArgoCD environments can only be deployed from ArgoCD'
     : 'Add at least one service to deploy this environment'
