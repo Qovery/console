@@ -1,8 +1,9 @@
+import { useCheckArgoCdConnection, useClusters, useSaveArgoCdCredentials } from '@qovery/domains/clusters/feature'
+import { ExternalLink, Heading, InputSelect, InputText, ModalCrud, Section } from '@qovery/shared/ui'
+import posthog from 'posthog-js'
 import { type ArgoCdInstanceMappingResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { useCheckArgoCdConnection, useClusters, useSaveArgoCdCredentials } from '@qovery/domains/clusters/feature'
-import { ExternalLink, Heading, InputSelect, InputText, ModalCrud, Section } from '@qovery/shared/ui'
 
 interface ConnectArgoCdFormValues {
   targetCluster: string
@@ -101,12 +102,25 @@ export function ConnectArgoCdModal({
       methods.setError(errorField, {
         message: errorMessage,
       })
+
+      posthog.capture('argocd-connect-form-error', {
+        organization_id: organizationId,
+        cluster_id: targetCluster,
+        is_edit: isEdit,
+        reason: checkResponse.reason,
+      })
       return
     }
 
     await saveArgoCdCredentials({
       clusterId: targetCluster,
       argoCdCredentialsRequest,
+    })
+
+    posthog.capture('argocd-connect-form-success', {
+      organization_id: organizationId,
+      cluster_id: targetCluster,
+      is_edit: isEdit,
     })
 
     onClose()
