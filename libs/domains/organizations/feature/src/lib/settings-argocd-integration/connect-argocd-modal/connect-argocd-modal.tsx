@@ -1,9 +1,9 @@
-import { useCheckArgoCdConnection, useClusters, useSaveArgoCdCredentials } from '@qovery/domains/clusters/feature'
-import { ExternalLink, Heading, InputSelect, InputText, ModalCrud, Section } from '@qovery/shared/ui'
 import posthog from 'posthog-js'
 import { type ArgoCdInstanceMappingResponse } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useCheckArgoCdConnection, useClusters, useSaveArgoCdCredentials } from '@qovery/domains/clusters/feature'
+import { ExternalLink, Heading, InputSelect, InputText, ModalCrud, Section } from '@qovery/shared/ui'
 
 interface ConnectArgoCdFormValues {
   targetCluster: string
