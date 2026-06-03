@@ -12,7 +12,7 @@ import { useService } from '../hooks/use-service/use-service'
 import { getServiceVariableScope } from './service-variables-utils'
 import { useServiceVariablesTab } from './use-service-variables-tab'
 
-export function CustomTab() {
+export function ServiceVariablesCustomTab() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { redeployServiceAction, hasClusterSecretManagerConfigured } = useServiceVariablesTab()

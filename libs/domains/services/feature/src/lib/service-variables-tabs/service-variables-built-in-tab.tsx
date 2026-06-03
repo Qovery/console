@@ -5,7 +5,7 @@ import { useService } from '../hooks/use-service/use-service'
 import { getServiceVariableScope } from './service-variables-utils'
 import { useServiceVariablesTab } from './use-service-variables-tab'
 
-export function BuiltInTab() {
+export function ServiceVariablesBuiltInTab() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { redeployServiceAction } = useServiceVariablesTab()

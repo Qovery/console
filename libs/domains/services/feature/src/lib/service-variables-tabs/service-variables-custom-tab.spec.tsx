@@ -4,7 +4,7 @@ import { VariableList, useVariables } from '@qovery/domains/variables/feature'
 import { useModal } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useService } from '../hooks/use-service/use-service'
-import { CustomTab } from './service-variables-custom-tab'
+import { ServiceVariablesCustomTab } from './service-variables-custom-tab'
 import { useServiceVariablesTab } from './use-service-variables-tab'
 
 jest.mock('@qovery/domains/variables/feature', () => ({
@@ -34,7 +34,7 @@ jest.mock('./use-service-variables-tab', () => ({
   useServiceVariablesTab: jest.fn(),
 }))
 
-describe('CustomTab', () => {
+describe('ServiceVariablesCustomTab', () => {
   const useVariablesMock = useVariables as jest.MockedFunction<typeof useVariables>
   const useModalMock = useModal as jest.MockedFunction<typeof useModal>
   const variableListMock = VariableList as jest.MockedFunction<typeof VariableList>
@@ -70,7 +70,7 @@ describe('CustomTab', () => {
       isLoading: false,
     } as ReturnType<typeof useVariables>)
 
-    renderWithProviders(<CustomTab />)
+    renderWithProviders(<ServiceVariablesCustomTab />)
 
     expect(screen.getByText('No custom variables added yet')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /add variable/i })).toBeInTheDocument()
@@ -84,7 +84,7 @@ describe('CustomTab', () => {
       isLoading: false,
     } as ReturnType<typeof useVariables>)
 
-    renderWithProviders(<CustomTab />)
+    renderWithProviders(<ServiceVariablesCustomTab />)
 
     expect(variableListMock).toHaveBeenCalled()
     expect(screen.queryByText('No custom variables added yet')).not.toBeInTheDocument()
@@ -96,7 +96,7 @@ describe('CustomTab', () => {
       isLoading: false,
     } as ReturnType<typeof useVariables>)
 
-    renderWithProviders(<CustomTab />)
+    renderWithProviders(<ServiceVariablesCustomTab />)
 
     const headerActions = variableListMock.mock.calls[0][0].headerActions
 

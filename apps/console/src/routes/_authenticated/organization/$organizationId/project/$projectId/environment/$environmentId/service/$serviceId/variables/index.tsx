@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { CustomTab } from '@qovery/domains/services/feature'
+import { ServiceVariablesCustomTab } from '@qovery/domains/services/feature'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables/'
@@ -8,5 +8,5 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  return <CustomTab />
+  return <ServiceVariablesCustomTab />
 }
