@@ -70,8 +70,9 @@ jest.mock('posthog-js/react', () => ({
 }))
 
 jest.mock(
-  '@qovery/shared/util-clusters',
+  '@qovery/domains/clusters/data-access',
   () => ({
+    ...jest.requireActual('@qovery/domains/clusters/data-access'),
     isSameSecretManagerAccess: (secretManager: SecretManagerAccess, targetSecretManager: SecretManagerAccess) => {
       if (secretManager.id && targetSecretManager.id) {
         return secretManager.id === targetSecretManager.id

@@ -21,6 +21,7 @@ const navbarItemVariants = cva(
     'relative',
     'inline-block',
     'select-none',
+    'cursor-pointer',
     'px-3',
     'py-3',
     'text-sm',

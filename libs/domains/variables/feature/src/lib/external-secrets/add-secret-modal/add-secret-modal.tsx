@@ -178,6 +178,7 @@ export function AddSecretModal({
         onSubmit={handleSubmit}
         onClose={onClose}
         submitLabel={mode === 'edit' ? 'Edit secret' : 'Add secret'}
+        loading={methods.formState.isSubmitting}
       >
         <>
           <Controller

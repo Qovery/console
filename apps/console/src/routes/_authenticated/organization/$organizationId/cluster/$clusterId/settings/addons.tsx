@@ -6,6 +6,7 @@ import { isGcpCluster, isSameSecretManagerAccess } from '@qovery/domains/cluster
 import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
+  SecretManagerAssociatedExternalSecretsModal,
   SecretManagerIntegrationModal,
   SecretManagerList,
   getSecretManagerOption,
@@ -114,6 +115,21 @@ function RouteComponent() {
     })
   }
 
+  const openSecretManagerAssociatedExternalSecretsModal = (integration: SecretManagerAccess) => {
+    openModal({
+      content: (
+        <SecretManagerAssociatedExternalSecretsModal
+          secretManagerAccessId={integration.id}
+          organizationId={organizationId}
+          onClose={closeModal}
+        />
+      ),
+      options: {
+        fakeModal: true,
+      },
+    })
+  }
+
   const handleToggleKeda = async () => {
     if (!cluster) return
 
@@ -194,6 +210,7 @@ function RouteComponent() {
                         openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)
                       }
                       onDelete={handleDeleteSecretManager}
+                      onViewAssociatedExternalSecrets={openSecretManagerAssociatedExternalSecretsModal}
                     />
                   </div>
                 </div>

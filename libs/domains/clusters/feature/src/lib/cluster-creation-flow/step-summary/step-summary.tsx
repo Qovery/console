@@ -27,7 +27,7 @@ export interface StepSummaryProps {
 
 export function StepSummary({ organizationId }: StepSummaryProps) {
   const navigate = useNavigate()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const { generalData, kubeconfigData, resourcesData, featuresData, addonsData, setCurrentStep, creationFlowUrl } =
     useClusterContainerCreateContext()
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()

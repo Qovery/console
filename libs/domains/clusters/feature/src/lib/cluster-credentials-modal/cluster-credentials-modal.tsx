@@ -9,7 +9,6 @@ import {
   useDeleteCloudProviderCredential,
   useEditCloudProviderCredential,
 } from '@qovery/domains/cloud-providers/feature'
-import { CLUSTER_SETTINGS_IMAGE_REGISTRY_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import {
   Button,
   Callout,
@@ -172,7 +171,7 @@ function CalloutEdit({
           {clusterId && (
             <ExternalLink
               className="items-center"
-              href={CLUSTER_URL(organizationId, clusterId) + CLUSTER_SETTINGS_URL + CLUSTER_SETTINGS_IMAGE_REGISTRY_URL}
+              href={`/organization/${organizationId}/cluster/${clusterId}/settings/image-registry`}
             >
               Go to mirroring registry section
             </ExternalLink>

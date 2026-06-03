@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent, Suspense, useContext } from 'react'
 import { P, match } from 'ts-pattern'
-import { type AnyService, type EditableServiceType } from '@qovery/domains/services/data-access'
+import { type AnyService, getDeployableServiceType } from '@qovery/domains/services/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import {
@@ -25,8 +25,6 @@ import { useDeploymentHistory } from '../../hooks/use-deployment-history/use-dep
 import { LastCommitAuthor, type LastCommitAuthorProps } from '../../last-commit-author/last-commit-author'
 import { LastCommit, type LastCommitProps } from '../../last-commit/last-commit'
 import { isDeploymentHistory } from '../../service-deployment-list/service-deployment-list'
-
-type DeployServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB'>
 
 const DotSeparator = () => (
   <svg
@@ -105,15 +103,15 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
           variant="outline"
           size="md"
           onClick={() => {
-            if (serviceType === undefined) {
+            const deployableServiceType = getDeployableServiceType(serviceType)
+
+            if (!deployableServiceType) {
               return
             }
+
             deployService({
               serviceId,
-              serviceType: match(serviceType)
-                .with('APPLICATION', 'CONTAINER', 'DATABASE', 'JOB', 'HELM', 'TERRAFORM', (st): DeployServiceType => st)
-                .with('CRON_JOB', 'LIFECYCLE_JOB', (): DeployServiceType => 'JOB')
-                .exhaustive(),
+              serviceType: deployableServiceType,
             })
           }}
         >
