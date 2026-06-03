@@ -54,10 +54,10 @@ describe('ClusterCredentialsModal', () => {
       isLoading: false,
     })
 
-    jest.spyOn(useClusterCloudProviderInfoHook, 'useClusterCloudProviderInfo').mockReturnValue({
-      data: { cloud_provider: 'AWS' },
+    jest.spyOn(useClusterCloudProviderInfoHook, 'useClusterCloudProviderInfo').mockImplementation(() => ({
+      data: { cloud_provider: props.cloudProvider },
       isLoading: false,
-    })
+    }))
   })
 
   afterEach(() => {

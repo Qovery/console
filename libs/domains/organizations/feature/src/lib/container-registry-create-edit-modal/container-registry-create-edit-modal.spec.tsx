@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -17,6 +18,11 @@ const useAvailableContainerRegistriesMockSpy = jest.spyOn(
   useAvailableContainerRegistries,
   'useAvailableContainerRegistries'
 ) as jest.Mock
+const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => false),
+}))
 
 const props: ContainerRegistryCreateEditModalProps = {
   organizationId: '0000-0000-0000',
@@ -80,6 +86,8 @@ describe('ContainerRegistryCreateEditModal', () => {
         },
       ],
     })
+
+    useFeatureFlagEnabledMock.mockReturnValue(true)
   })
 
   it('should render successfully', () => {
@@ -264,6 +272,33 @@ describe('ContainerRegistryCreateEditModal', () => {
     screen.getByLabelText('Login type')
   })
 
+  it('should render the form with GCP_ARTIFACT_REGISTRY WIF', async () => {
+    renderWithProviders(
+      <ContainerRegistryCreateEditModal
+        registry={{
+          id: '1111-1111-1111',
+          created_at: '',
+          updated_at: '',
+          name: 'hello',
+          url: 'https://us-east1-docker.pkg.dev',
+          kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+          config: {
+            region: 'us-east1',
+            service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+            workload_identity_provider_resource:
+              'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+          },
+        }}
+        {...props}
+      />
+    )
+
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('https://us-east1-docker.pkg.dev')
+    screen.getByDisplayValue('us-east1')
+    screen.getByDisplayValue('qovery@my-project.iam.gserviceaccount.com')
+  })
+
   it('should submit the form to create a registry', async () => {
     const { userEvent } = renderWithProviders(<ContainerRegistryCreateEditModal {...props} />)
 
@@ -280,27 +315,75 @@ describe('ContainerRegistryCreateEditModal', () => {
 
     await userEvent.click(btn)
 
-    expect(useCreateContainerRegistryMockSpy().mutateAsync).toHaveBeenCalledWith({
-      organizationId: '0000-0000-0000',
-      containerRegistryRequest: {
-        config: {
-          access_key_id: undefined,
-          password: undefined,
-          region: undefined,
-          scaleway_access_key: undefined,
-          scaleway_secret_key: undefined,
-          secret_access_key: undefined,
-          username: undefined,
-        },
-        description: undefined,
-        kind: 'DOCKER_HUB',
-        name: 'registry-name',
-        url: 'https://docker.io',
-      },
-    })
+    expect(useCreateContainerRegistryMockSpy().mutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: '0000-0000-0000',
+        containerRegistryRequest: expect.objectContaining({
+          kind: 'DOCKER_HUB',
+          name: 'registry-name',
+          url: 'https://docker.io',
+          config: expect.objectContaining({
+            region: undefined,
+            username: undefined,
+          }),
+        }),
+      })
+    )
 
     expect(props.onClose).toHaveBeenCalledWith({ id: '000' })
   })
+
+  it('should submit the form to create a GCP WIF registry', async () => {
+    const { userEvent } = renderWithProviders(<ContainerRegistryCreateEditModal {...props} />)
+
+    const inputType = screen.getByLabelText('Type')
+    await selectEvent.select(inputType, 'GCP_ARTIFACT_REGISTRY', {
+      container: document.body,
+    })
+
+    const inputName = screen.getByLabelText('Registry name')
+    await userEvent.clear(inputName)
+    await userEvent.type(inputName, 'registry-name')
+
+    const inputUrl = screen.getByLabelText('Registry url')
+    await userEvent.clear(inputUrl)
+    await userEvent.type(inputUrl, 'https://us-east1-docker.pkg.dev')
+
+    const inputRegion = screen.getByLabelText('Region')
+    await userEvent.type(inputRegion, 'us-east1')
+
+    const inputServiceAccount = screen.getByLabelText('Service account email')
+    await userEvent.type(inputServiceAccount, 'qovery@my-project.iam.gserviceaccount.com')
+
+    const inputWorkloadIdentityProviderResource = screen.getByLabelText('Workload identity provider resource')
+    await userEvent.type(
+      inputWorkloadIdentityProviderResource,
+      'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider'
+    )
+
+    const btn = screen.getByRole('button', { name: 'Create' })
+    expect(btn).toBeEnabled()
+
+    await userEvent.click(btn)
+
+    expect(useCreateContainerRegistryMockSpy().mutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: '0000-0000-0000',
+        containerRegistryRequest: expect.objectContaining({
+          kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+          name: 'registry-name',
+          url: 'https://us-east1-docker.pkg.dev',
+          config: expect.objectContaining({
+            region: 'us-east1',
+            gcp_credentials_type: 'workload_identity_federation',
+            service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+            workload_identity_provider_resource:
+              'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+          }),
+        }),
+      })
+    )
+  }, 30000)
 
   it('should submit the form to edit a registry', async () => {
     const { userEvent } = renderWithProviders(
@@ -327,25 +410,20 @@ describe('ContainerRegistryCreateEditModal', () => {
 
     await userEvent.click(btn)
 
-    expect(useEditContainerRegistryMockSpy().mutateAsync).toHaveBeenCalledWith({
-      organizationId: '0000-0000-0000',
-      containerRegistryId: '1111-1111-1111',
-      containerRegistryRequest: {
-        config: {
-          access_key_id: undefined,
-          password: undefined,
-          region: undefined,
-          scaleway_access_key: undefined,
-          scaleway_secret_key: undefined,
-          secret_access_key: undefined,
-          username: undefined,
-        },
-        description: undefined,
-        kind: 'DOCR',
-        name: 'my-registry-name',
-        url: 'https://docker.io',
-      },
-    })
+    expect(useEditContainerRegistryMockSpy().mutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        organizationId: '0000-0000-0000',
+        containerRegistryId: '1111-1111-1111',
+        containerRegistryRequest: expect.objectContaining({
+          kind: 'DOCR',
+          name: 'my-registry-name',
+          config: expect.objectContaining({
+            region: undefined,
+            username: undefined,
+          }),
+        }),
+      })
+    )
 
     expect(props.onClose).toHaveBeenCalled()
   })

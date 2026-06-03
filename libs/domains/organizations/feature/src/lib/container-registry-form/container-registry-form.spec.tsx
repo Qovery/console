@@ -1,4 +1,5 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useAvailableContainerRegistries from '../hooks/use-available-container-registries/use-available-container-registries'
@@ -7,10 +8,15 @@ import ContainerRegistryForm, {
   getOptionsContainerRegistry,
 } from './container-registry-form'
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => false),
+}))
+
 const useAvailableContainerRegistriesMockSpy = jest.spyOn(
   useAvailableContainerRegistries,
   'useAvailableContainerRegistries'
 ) as jest.Mock
+const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
 
 const props: ContainerRegistryFormProps = {
   disabledFieldsExceptConfig: false,
@@ -67,6 +73,8 @@ describe('ContainerRegistryForm', () => {
         },
       ],
     })
+
+    useFeatureFlagEnabledMock.mockReturnValue(true)
   })
 
   it('should render successfully', () => {
@@ -144,6 +152,45 @@ describe('ContainerRegistryForm', () => {
 
     screen.getByDisplayValue('hello')
     screen.getByDisplayValue('https://qovery.com')
+  })
+
+  it('should render the form with GCP_ARTIFACT_REGISTRY WIF', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<ContainerRegistryForm {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+          type: 'WIF',
+        },
+      })
+    )
+
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('https://qovery.com')
+    screen.getByLabelText('Region')
+    screen.getByLabelText('Authentication type')
+    screen.getByLabelText('Service account email')
+    screen.getByLabelText('Workload identity provider resource')
+  })
+
+  it('should render the form with GCP_ARTIFACT_REGISTRY STATIC', async () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<ContainerRegistryForm {...props} />, {
+        defaultValues: {
+          name: 'hello',
+          url: 'https://qovery.com',
+          kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+          type: 'STATIC',
+        },
+      })
+    )
+
+    screen.getByDisplayValue('hello')
+    screen.getByDisplayValue('https://qovery.com')
+    screen.getByLabelText('Region')
+    screen.getByLabelText('Authentication type')
+    expect(screen.getByTestId('input-credentials-json')).toBeInTheDocument()
   })
 
   it('should render the form with SCALEWAY_CR', async () => {

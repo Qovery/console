@@ -12,6 +12,7 @@ import {
 import {
   Button,
   Callout,
+  CopyButton,
   Dropzone,
   ExternalLink,
   Icon,
@@ -21,7 +22,10 @@ import {
   useModal,
   useModalConfirmation,
 } from '@qovery/shared/ui'
-import { CopyButton } from '@qovery/shared/ui'
+import {
+  WORKLOAD_IDENTITY_PROVIDER_RESOURCE_FORMAT_ERROR,
+  WORKLOAD_IDENTITY_PROVIDER_RESOURCE_REGEXP,
+} from '@qovery/shared/util-js'
 import { useClusterCloudProviderInfo } from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
 
 type ClusterCredentialsFormValues = {
@@ -54,13 +58,6 @@ const EKS_ANYWHERE_CREDENTIAL_TYPES: ClusterCredentialAuthType[] = [
   'EKS_ANYWHERE_VSPHERE_ROLE',
   'EKS_ANYWHERE_VSPHERE_STATIC',
 ]
-
-const getWifProviderResource = (credential?: ClusterCredentials): string | undefined =>
-  match(credential)
-    .with({ object_type: 'GCP_WORKLOAD_IDENTITY_FEDERATION' }, (currentCredential) => {
-      return `projects/${currentCredential.workload_identity_project_number}/locations/global/workloadIdentityPools/${currentCredential.workload_identity_pool_id}/providers/${currentCredential.workload_identity_provider_id}`
-    })
-    .otherwise(() => undefined)
 
 export interface ClusterCredentialsModalProps {
   organizationId: string
@@ -137,7 +134,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
       },
     }))
     .with('GCP', (cp) => {
-      return match(data['type'])
+      return match(data['type'] as 'WIF' | 'STATIC')
         .with('WIF', () => ({
           cloudProvider: cp,
           payload: {
@@ -155,14 +152,7 @@ export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum
             gcp_credentials: data['gcp_credentials'],
           },
         }))
-        .otherwise(() => ({
-          cloudProvider: cp,
-          payload: {
-            ...currentData,
-            credential_type: 'SERVICE_ACCOUNT_KEY' as const,
-            gcp_credentials: data['gcp_credentials'],
-          },
-        }))
+        .exhaustive()
     })
     .with('AZURE', (cp) => ({
       cloudProvider: cp,
@@ -221,6 +211,7 @@ export function ClusterCredentialsModal({
   cloudProvider = 'AWS',
 }: ClusterCredentialsModalProps) {
   const isEksAnywhereEnabled = Boolean(useFeatureFlagEnabled('eks-anywhere'))
+  const isGcpWifEnabled = Boolean(useFeatureFlagEnabled('gcp-wif'))
   const { enableAlertClickOutside } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -282,25 +273,34 @@ export function ClusterCredentialsModal({
             ? EKS_ANYWHERE_CREDENTIAL_TYPES
             : AWS_CREDENTIAL_TYPES
       ).filter((type) =>
-        type === 'EKS_ANYWHERE_VSPHERE_ROLE' || type === 'EKS_ANYWHERE_VSPHERE_STATIC' ? isEksAnywhereEnabled : true
+        type === 'EKS_ANYWHERE_VSPHERE_ROLE' || type === 'EKS_ANYWHERE_VSPHERE_STATIC'
+          ? isEksAnywhereEnabled
+          : type === 'WIF'
+            ? isGcpWifEnabled || credential?.object_type === 'GCP_WORKLOAD_IDENTITY_FEDERATION'
+            : true
       ),
-    [cloudProviderLocal, inferredCredentialTypes, isEdit, isEksAnywhereEnabled, isGcpMode]
+    [
+      cloudProviderLocal,
+      credential?.object_type,
+      inferredCredentialTypes,
+      isEdit,
+      isEksAnywhereEnabled,
+      isGcpMode,
+      isGcpWifEnabled,
+    ]
   )
 
-  const defaultType: ClusterCredentialsFormValues['type'] =
-    credential?.object_type === 'EKS_ANYWHERE_VSPHERE'
-      ? credential.role_arn
-        ? 'EKS_ANYWHERE_VSPHERE_ROLE'
-        : 'EKS_ANYWHERE_VSPHERE_STATIC'
-      : credential?.object_type === 'GCP_WORKLOAD_IDENTITY_FEDERATION'
-        ? 'WIF'
-        : credential?.object_type === 'GCP'
-          ? 'STATIC'
-          : credential?.object_type === 'AWS_ROLE' || (!isEdit && isAwsMode)
-            ? 'STS'
-            : !isEdit && isGcpMode
-              ? 'WIF'
-              : 'STATIC'
+  const defaultType: ClusterCredentialsFormValues['type'] = (() => {
+    if (credential?.object_type === 'EKS_ANYWHERE_VSPHERE') {
+      return credential.role_arn ? 'EKS_ANYWHERE_VSPHERE_ROLE' : 'EKS_ANYWHERE_VSPHERE_STATIC'
+    }
+    if (credential?.object_type === 'GCP_WORKLOAD_IDENTITY_FEDERATION') return 'WIF'
+    if (credential?.object_type === 'GCP') return 'STATIC'
+    if (credential?.object_type === 'AWS_ROLE') return 'STS'
+    if (!isEdit && isAwsMode) return 'STS'
+    if (!isEdit && isGcpMode) return isGcpWifEnabled ? 'WIF' : 'STATIC'
+    return 'STATIC'
+  })()
   const initialType = authTypeOptions.includes(defaultType)
     ? defaultType
     : authTypeOptions[0] ?? (isGcpMode ? 'WIF' : 'STS')
@@ -335,7 +335,9 @@ export function ClusterCredentialsModal({
       service_account_email: match(credential)
         .with({ object_type: 'GCP_WORKLOAD_IDENTITY_FEDERATION' }, (c) => c.service_account_email)
         .otherwise(() => undefined),
-      workload_identity_provider_resource: getWifProviderResource(credential),
+      workload_identity_provider_resource: match(credential)
+        .with({ object_type: 'GCP_WORKLOAD_IDENTITY_FEDERATION' }, (c) => c.workload_identity_provider_resource)
+        .otherwise(() => undefined),
       azure_tenant_id: match(credential)
         .with({ azure_tenant_id: P.string }, (c) => c.azure_tenant_id)
         .otherwise(() => undefined),
@@ -707,11 +709,9 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               <h2 className="text-sm font-medium text-neutral">
                 {isGcpStaticCredential
                   ? '3. Download the key.json generated and drag and drop it here'
-                  : isGcpWifCredential
+                  : isGcpWifCredential || cloudProvider === 'AZURE'
                     ? '1. Fill these information'
-                    : cloudProvider === 'AZURE'
-                      ? '1. Fill these information'
-                      : '2. Fill these information'}
+                    : '2. Fill these information'}
               </h2>
               <Controller
                 name="name"
@@ -969,6 +969,10 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
                     control={methods.control}
                     rules={{
                       required: 'Please enter your workload identity provider resource.',
+                      validate: (value) =>
+                        WORKLOAD_IDENTITY_PROVIDER_RESOURCE_REGEXP.test(value ?? '')
+                          ? true
+                          : WORKLOAD_IDENTITY_PROVIDER_RESOURCE_FORMAT_ERROR,
                     }}
                     render={({ field, fieldState: { error } }) => (
                       <InputText
