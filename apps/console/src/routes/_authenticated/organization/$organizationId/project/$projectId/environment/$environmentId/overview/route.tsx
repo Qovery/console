@@ -103,8 +103,8 @@ function RouteComponent() {
               <Tooltip content={environment.name}>
                 <Heading className="min-w-0 max-w-full truncate">{environment.name}</Heading>
               </Tooltip>
-              <div className="flex h-4 w-4 items-center">
-                <EnvironmentStateChip className="ml-0.5 shrink-0" mode="running" environmentId={environment.id} />
+              <div className="ml-0.5 flex h-4 w-4 items-center">
+                <EnvironmentStateChip className="shrink-0" mode="running" environmentId={environment.id} />
               </div>
               {isEnvironmentManagedByArgoCd && (
                 <>
