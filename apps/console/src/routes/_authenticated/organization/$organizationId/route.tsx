@@ -7,7 +7,7 @@ import { ClusterDeploymentProgressCard, useClusterStatuses, useClusters } from '
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
-import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
+import { DeploymentStatusWebSocketListener, RunningStatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { queries } from '@qovery/state/util-queries'
 import { type FileRouteTypes } from '../../../../routeTree.gen'
 
@@ -36,7 +36,8 @@ const Loader = () => {
   )
 }
 
-const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
+const DeploymentStatusWebSocketListenerMemo = memo(DeploymentStatusWebSocketListener)
+const RunningStatusWebSocketListenerMemo = memo(RunningStatusWebSocketListener)
 
 const isDeployingStatus = (status?: ClusterStateEnum): boolean =>
   status === ClusterState.DEPLOYMENT_QUEUED || status === ClusterState.DEPLOYING
@@ -143,29 +144,35 @@ function RouteComponent() {
         clustersForStatusWebSockets.map(
           ({ id }) =>
             organizationId && (
-              <StatusWebSocketListenerMemo
-                key={id}
+              <DeploymentStatusWebSocketListenerMemo
+                key={`deployment-${id}`}
                 organizationId={organizationId}
                 clusterId={id}
                 projectId={projectId}
                 environmentId={environmentId}
                 versionId={versionId}
-                runningStatusEnabled={Boolean(environmentId)}
               />
             )
         )
       }
+      {environmentId && organizationId && environment && (
+        <RunningStatusWebSocketListenerMemo
+          key={`running-${environment.id}`}
+          organizationId={organizationId}
+          clusterId={environment.cluster_id}
+          projectId={projectId}
+          environmentId={environment.id}
+        />
+      )}
       {environmentsForStatusWebSockets.map(
         (environment) =>
           organizationId && (
-            <StatusWebSocketListenerMemo
-              key={`environment-${environment.id}`}
+            <RunningStatusWebSocketListenerMemo
+              key={`running-${environment.id}`}
               organizationId={organizationId}
               clusterId={environment.cluster_id}
               projectId={projectId}
               environmentId={environment.id}
-              versionId={versionId}
-              deploymentStatusEnabled={false}
             />
           )
       )}

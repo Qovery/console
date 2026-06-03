@@ -44,6 +44,19 @@ export interface EnvironmentRunningStatusQueryParams {
   projectId?: string
 }
 
+function getEnvironmentRunningStatusQueryKey({
+  environmentId,
+  scope = 'environment',
+  clusterId,
+  projectId,
+}: EnvironmentRunningStatusQueryParams) {
+  if (scope === 'project') {
+    return [environmentId, scope, clusterId, projectId] as const
+  }
+
+  return [environmentId, scope] as const
+}
+
 export const environments = createQueryKeys('environments', {
   // NOTE: Value is set by WebSocket
   deploymentStatus: (environmentId: string) => ({
@@ -62,13 +75,8 @@ export const environments = createQueryKeys('environments', {
     },
   }),
   // NOTE: Value is set by WebSocket
-  runningStatus: ({
-    environmentId,
-    scope = 'environment',
-    clusterId = '',
-    projectId = '',
-  }: EnvironmentRunningStatusQueryParams) => ({
-    queryKey: [environmentId, scope, clusterId, projectId],
+  runningStatus: (params: EnvironmentRunningStatusQueryParams) => ({
+    queryKey: getEnvironmentRunningStatusQueryKey(params),
     queryFn() {
       return new Promise<{ state: RunningState; triggered_action: ServiceActionDetailsDto | undefined } | null>(
         // eslint-disable-next-line @typescript-eslint/no-empty-function

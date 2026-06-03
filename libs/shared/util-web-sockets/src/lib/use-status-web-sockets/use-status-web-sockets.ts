@@ -18,41 +18,24 @@ interface WSDeploymentStatus extends EnvironmentStatusesWithStages {
   results?: EnvironmentStatus[]
 }
 
-export interface UseStatusWebSocketsProps {
+export interface UseDeploymentStatusWebSocketProps {
   organizationId: string
   clusterId: string
   projectId?: string
   environmentId?: string
   versionId?: string
-  deploymentStatusEnabled?: boolean
-  runningStatusEnabled?: boolean
 }
 
-export function useStatusWebSockets({
+export type UseRunningStatusWebSocketProps = Omit<UseDeploymentStatusWebSocketProps, 'versionId'>
+
+export function useDeploymentStatusWebSocket({
   organizationId,
   clusterId,
   projectId,
   environmentId,
   versionId,
-  deploymentStatusEnabled = true,
-  runningStatusEnabled = true,
-}: UseStatusWebSocketsProps) {
-  const [externalRequestId] = useState(() => uuidv7())
-  const queryClient = useQueryClient()
+}: UseDeploymentStatusWebSocketProps) {
   const wsEnabled = Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId)
-
-  // NOTE: remove running status cache when the environment is changed to avoid stale data
-  // @see https://qovery.atlassian.net/browse/QOV-1886
-  useEffect(() => {
-    return () => {
-      if (environmentId) {
-        queryClient.removeQueries({
-          queryKey: queries.environments.runningStatus({ environmentId, scope: 'environment' }).queryKey,
-          exact: true,
-        })
-      }
-    }
-  }, [environmentId, queryClient])
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
@@ -63,7 +46,7 @@ export function useStatusWebSockets({
       project: projectId,
       version: versionId,
     },
-    enabled: wsEnabled && deploymentStatusEnabled,
+    enabled: wsEnabled,
     shouldReconnect: true,
     onMessage(queryClient, message: WSDeploymentStatus) {
       if (environmentId) {
@@ -97,6 +80,30 @@ export function useStatusWebSockets({
       }
     },
   })
+}
+
+export function useRunningStatusWebSocket({
+  organizationId,
+  clusterId,
+  projectId,
+  environmentId,
+}: UseRunningStatusWebSocketProps) {
+  const [externalRequestId] = useState(() => uuidv7())
+  const queryClient = useQueryClient()
+  const wsEnabled = Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId)
+
+  // NOTE: remove running status cache when the environment is changed to avoid stale data
+  // @see https://qovery.atlassian.net/browse/QOV-1886
+  useEffect(() => {
+    return () => {
+      if (environmentId) {
+        queryClient.removeQueries({
+          queryKey: queries.environments.runningStatus({ environmentId, scope: 'environment' }).queryKey,
+          exact: true,
+        })
+      }
+    }
+  }, [environmentId, queryClient])
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/service/status',
@@ -108,16 +115,21 @@ export function useStatusWebSockets({
       external_request_id: externalRequestId,
     },
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
-    enabled: wsEnabled && runningStatusEnabled,
+    enabled: wsEnabled,
     onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
-        const scope = environmentId ? 'environment' : 'project'
         queryClient.setQueryData(
-          queries.environments.runningStatus({
-            environmentId: env.id,
-            scope,
-            ...(scope === 'project' ? { clusterId, projectId } : {}),
-          }).queryKey,
+          environmentId
+            ? queries.environments.runningStatus({
+                environmentId: env.id,
+                scope: 'environment',
+              }).queryKey
+            : queries.environments.runningStatus({
+                environmentId: env.id,
+                scope: 'project',
+                clusterId,
+                projectId,
+              }).queryKey,
           () => ({
             state: env.state,
           })
@@ -144,5 +156,3 @@ export function useStatusWebSockets({
     },
   })
 }
-
-export default useStatusWebSockets
