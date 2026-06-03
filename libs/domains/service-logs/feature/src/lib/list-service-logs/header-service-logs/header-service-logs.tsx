@@ -73,6 +73,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
     () => (startDate && endDate ? ([startDate, endDate] as [Date, Date]) : undefined),
     [startDate, endDate]
   )
+  const maxDate = useMemo(() => new Date(), [isOpenDatePicker])
+  const minDate = useMemo(() => subDays(maxDate, 84), [maxDate])
 
   return (
     <>
@@ -124,8 +126,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
               setIsOpenDatePicker(false)
             }}
             isOpen={isOpenDatePicker}
-            maxDate={new Date()}
-            minDate={subDays(new Date(), 84)}
+            maxDate={maxDate}
+            minDate={minDate}
             defaultDates={defaultDates}
             showDateTimeInputs
             useLocalTime

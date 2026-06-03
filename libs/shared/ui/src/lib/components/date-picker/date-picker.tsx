@@ -5,6 +5,8 @@ import DatePickerPeriodList from './date-picker-period-list/date-picker-period-l
 import { type DatePickerProps } from './date-picker.types'
 import { getPeriodDates } from './date-picker.utils'
 
+const getDateRangeKey = (dates?: [Date, Date]) => dates?.map((date) => date.getTime()).join('-') ?? ''
+
 export function DatePicker({
   isOpen,
   children,
@@ -24,12 +26,13 @@ export function DatePicker({
   const shouldShowCalendar = showCalendar !== false
   const hasPanels = shouldShowCalendar || shouldShowPeriodList
   const [periodDates, setPeriodDates] = useState<[Date, Date] | undefined>()
+  const defaultDatesKey = getDateRangeKey(defaultDates)
 
   useEffect(() => {
-    if (defaultDates) {
+    if (defaultDatesKey) {
       setPeriodDates(undefined)
     }
-  }, [defaultDates])
+  }, [defaultDatesKey])
 
   useEffect(() => {
     if (!isOpen || shouldShowCalendar || !onClickOutside) return

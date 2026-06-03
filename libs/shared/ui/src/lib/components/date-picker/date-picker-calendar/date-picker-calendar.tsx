@@ -15,6 +15,13 @@ import {
   validateTime,
 } from '../date-picker.utils'
 
+const areSameDates = (firstDate: Date | null, secondDate: Date | null) => {
+  if (!firstDate || !secondDate) return firstDate === secondDate
+  return firstDate.getTime() === secondDate.getTime()
+}
+
+const getDateRangeKey = (dates?: [Date, Date]) => dates?.map((date) => date.getTime()).join('-') ?? ''
+
 export function DatePickerCalendar({
   onChange,
   minDate,
@@ -53,6 +60,8 @@ export function DatePickerCalendar({
   const selectedTimezoneLabel =
     timezoneOptions.find((option) => option.value === (useLocalTime ? 'local' : 'utc'))?.label ?? ''
 
+  const defaultDatesKey = getDateRangeKey(defaultDates)
+  const previousDefaultDatesKeyRef = useRef(defaultDatesKey)
   const lastInteractionRef = useRef<'calendar' | 'input' | 'default'>('default')
   const previousUseLocalTimeRef = useRef(useLocalTime)
 
@@ -80,14 +89,35 @@ export function DatePickerCalendar({
 
   const handleChange = (dates: [Date | null, Date | null] | null) => {
     if (!dates) {
-      setStartDate(null)
-      setEndDate(null)
+      if (startDate) {
+        setStartDate(null)
+      }
+      if (endDate) {
+        setEndDate(null)
+      }
       return
     }
 
     const [start, end] = dates
+    const updateRange = (nextStartDate: Date | null, nextEndDate: Date | null) => {
+      const hasStartDateChanged = !areSameDates(startDate, nextStartDate)
+      const hasEndDateChanged = !areSameDates(endDate, nextEndDate)
+
+      if (!hasStartDateChanged && !hasEndDateChanged) return false
+
+      lastInteractionRef.current = 'calendar'
+
+      if (hasStartDateChanged) {
+        setStartDate(nextStartDate)
+      }
+      if (hasEndDateChanged) {
+        setEndDate(nextEndDate)
+      }
+
+      return true
+    }
+
     lastInteractionRef.current = 'calendar'
-    onRangeSelection?.()
 
     if (maxRangeInDays && start && end) {
       const adjustedEndDateOnly = clampEndDateForMaxRange({ startDate: start, endDate: end, maxRangeInDays })
@@ -100,18 +130,19 @@ export function DatePickerCalendar({
           end.getMinutes(),
           end.getSeconds()
         )
-        setStartDate(start)
-        setEndDate(adjustedEndDate)
+        const didUpdateRange = updateRange(start, adjustedEndDate)
         setStartDateText(formatDateInput(start, useLocalTime))
         setEndDateText(formatDateInput(adjustedEndDate, useLocalTime))
         setStartDateError('')
         setEndDateError('')
+        if (didUpdateRange) {
+          onRangeSelection?.()
+        }
         return
       }
     }
 
-    setStartDate(start)
-    setEndDate(end)
+    const didUpdateRange = updateRange(start, end)
 
     if (start) {
       setStartDateText(formatDateInput(start, useLocalTime))
@@ -124,15 +155,23 @@ export function DatePickerCalendar({
       setEndDateText('')
       setEndDateError('')
     }
+
+    if (didUpdateRange) {
+      onRangeSelection?.()
+    }
   }
 
   useEffect(() => {
-    if (defaultDates) {
-      lastInteractionRef.current = 'default'
-      setStartDate(defaultDates[0])
-      setEndDate(defaultDates[1])
-    }
-  }, [defaultDates])
+    if (previousDefaultDatesKeyRef.current === defaultDatesKey) return
+
+    previousDefaultDatesKeyRef.current = defaultDatesKey
+    if (!defaultDates) return
+
+    const [nextStartDate, nextEndDate] = defaultDates
+    lastInteractionRef.current = 'default'
+    setStartDate(nextStartDate)
+    setEndDate(nextEndDate)
+  }, [defaultDates, defaultDatesKey])
 
   const handleClickOutside = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement
@@ -209,19 +248,24 @@ export function DatePickerCalendar({
     setEndDateError(endDateError)
     setEndTimeError(endTimeError)
 
-    let didUpdateRange = false
+    if (type === 'startTime' || type === 'endTime') return
 
-    if (!startDateError && !startTimeError) {
-      setStartDate(getCombinedDateTime(nextStartDateText, nextStartTimeText, useLocalTime))
-      didUpdateRange = true
+    if (type === 'startDate') {
+      if (startDateError || startTimeError) return
+
+      const nextStartDate = getCombinedDateTime(nextStartDateText, nextStartTimeText, useLocalTime)
+      if (startDate?.getTime() !== nextStartDate.getTime()) {
+        setStartDate(nextStartDate)
+        onRangeSelection?.()
+      }
+      return
     }
 
-    if (!endDateError && !endTimeError) {
-      setEndDate(getCombinedDateTime(nextEndDateText, nextEndTimeText, useLocalTime))
-      didUpdateRange = true
-    }
+    if (endDateError || endTimeError) return
 
-    if (didUpdateRange) {
+    const nextEndDate = getCombinedDateTime(nextEndDateText, nextEndTimeText, useLocalTime)
+    if (endDate?.getTime() !== nextEndDate.getTime()) {
+      setEndDate(nextEndDate)
       onRangeSelection?.()
     }
   }
