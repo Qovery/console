@@ -15,7 +15,9 @@ import {
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Badge, Button, DropdownMenu, Icon, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
+
+const SECRET_MANAGER_EARLY_ACCESS_FORM_SLUG = 'request-access-secret-manager'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons')(
   {
@@ -28,6 +30,7 @@ function RouteComponent() {
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
+  const { showPylonForm } = useSupportChat()
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const { data: cluster } = useCluster({ organizationId, clusterId, suspense: true })
@@ -130,6 +133,10 @@ function RouteComponent() {
     })
   }
 
+  const handleAskSecretManagerAccess = () => {
+    showPylonForm(SECRET_MANAGER_EARLY_ACCESS_FORM_SLUG)
+  }
+
   const handleToggleKeda = async () => {
     if (!cluster) return
 
@@ -176,6 +183,9 @@ function RouteComponent() {
                       <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
                         Free
                       </Badge>
+                      <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
+                        Beta
+                      </Badge>
                     </div>
                     <p className="text-sm text-neutral-subtle">
                       Link any secret manager on your cluster to add external secrets variables to all the services
@@ -213,6 +223,38 @@ function RouteComponent() {
                       onViewAssociatedExternalSecrets={openSecretManagerAssociatedExternalSecretsModal}
                     />
                   </div>
+                </div>
+              </div>
+            )}
+
+            {!secretManagerEnabled && (
+              <div className="p-4">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-neutral">Secret manager integration</span>
+                      <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
+                        Free
+                      </Badge>
+                      <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
+                        Beta
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-neutral-subtle">
+                      Connect your external secret manager to Qovery and expose secrets as variables across the services
+                      running on your cluster.
+                    </p>
+                  </div>
+                  <Button
+                    color="neutral"
+                    variant="solid"
+                    size="md"
+                    className="w-fit gap-2"
+                    type="button"
+                    onClick={handleAskSecretManagerAccess}
+                  >
+                    Ask for early access
+                  </Button>
                 </div>
               </div>
             )}
