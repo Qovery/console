@@ -31,8 +31,10 @@ const _buttonVariants = cva(
       color: {
         brand: ['outline-brand-strong'],
         neutral: ['outline-neutral-strong'],
+        neutralInverted: ['outline-neutral-strong'],
         green: ['outline-positive-strong'],
         red: ['outline-negative-strong'],
+        redInverted: ['outline-negative-strong'],
         yellow: ['outline-warning-strong'],
         current: [''],
       },
@@ -160,6 +162,19 @@ const _buttonVariants = cva(
       },
       {
         variant: ['outline'],
+        color: 'neutralInverted',
+        className: [
+          'bg-surface-neutralInvert',
+          'border',
+          'border-neutralInvert',
+          'hover:border-neutralInvert',
+          'hover:bg-surface-neutralInvert-component',
+          'data-[state=open]:bg-surface-neutralInvert-component',
+          'text-neutralInvert',
+        ],
+      },
+      {
+        variant: ['outline'],
         color: 'red',
         className: [
           'border',
@@ -168,6 +183,19 @@ const _buttonVariants = cva(
           'hover:border-negative-component',
           'hover:bg-surface-negative-subtle',
           'data-[state=open]:bg-surface-negative-subtle',
+        ],
+      },
+      {
+        variant: ['outline'],
+        color: 'redInverted',
+        className: [
+          'border',
+          'border-negativeInvert-subtle',
+          'bg-surface-negativeInvert-component',
+          'text-negativeInvert',
+          'hover:border-negativeInvert-subtle',
+          'hover:bg-surface-negativeInvert-component',
+          'data-[state=open]:bg-surface-negativeInvert-component',
         ],
       },
       {

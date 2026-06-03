@@ -146,7 +146,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
   const { setCurrentStep, variablesForm, generalForm } = useApplicationContainerCreateContext()
   const { projectId = '', environmentId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const { secretManagers, hasClusterSecretManagerConfigured } = useVariablesSecretManagers({
     enabled: secretManagerEnabled,
   })

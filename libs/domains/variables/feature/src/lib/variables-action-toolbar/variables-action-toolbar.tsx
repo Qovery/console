@@ -8,6 +8,8 @@ export type VariablesActionToolbarProps = {
   onCreateVariable?: (variable: VariableResponse | void) => void
   onImportEnvFile?: () => void
   importEnvFileAccess?: 'button' | 'dropdown'
+  showDopplerButton?: boolean
+  hasClusterSecretManagerConfigured?: boolean
 } & (
   | {
       scope: Extract<Scope, 'PROJECT'>
@@ -30,6 +32,8 @@ export function VariablesActionToolbar({
   onCreateVariable,
   onImportEnvFile,
   importEnvFileAccess = 'button',
+  showDopplerButton = false,
+  hasClusterSecretManagerConfigured = false,
   ...props
 }: VariablesActionToolbarProps) {
   const { openModal, closeModal } = useModal()
@@ -45,6 +49,7 @@ export function VariablesActionToolbar({
           mode="CREATE"
           onSubmit={onCreateVariable}
           isFile={isFile}
+          hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
           {...props}
         />
       ),
@@ -54,7 +59,7 @@ export function VariablesActionToolbar({
     })
 
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-2">
       <DropdownMenu.Root>
         {showImportButton ? (
           <DropdownMenu.Trigger asChild>
@@ -100,6 +105,7 @@ export function VariablesActionToolbar({
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Root>
+
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <Button color="brand" variant="solid" size="md">

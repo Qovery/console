@@ -32,7 +32,7 @@ export function ApplicationContainerStepSummary({
   const { organizationId = '', projectId = '', environmentId = '', slug = '' } = useParams({ strict: false })
   const search = useSearch({ strict: false })
   const navigate = useNavigate()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager') === true
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const { creationFlowUrl, generalForm, resourcesForm, portForm, variablesForm, setCurrentStep } =
     useApplicationContainerCreateContext()
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)

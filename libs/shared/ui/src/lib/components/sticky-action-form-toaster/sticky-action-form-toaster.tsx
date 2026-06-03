@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
 import Button, { type ButtonProps } from '../button/button'
 
 export interface StickyActionFormToasterProps {
@@ -12,6 +13,7 @@ export interface StickyActionFormToasterProps {
   className?: string
   disabledValidation?: boolean
   loading?: boolean
+  fixed?: boolean
 }
 
 export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
@@ -24,6 +26,7 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     className = '',
     visible = false,
     submitButtonColor,
+    fixed = false,
   } = props
 
   const [visibleState, setVisibleState] = useState(visible)
@@ -42,7 +45,13 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
   const submitButtonColorValue = submitButtonColor ?? 'green'
 
   return (
-    <div className={`sticky bottom-4 flex justify-center ${className} ${!visibleState ? 'mb-[52px]' : ''}`}>
+    <div
+      className={twMerge(
+        'flex justify-center',
+        fixed ? twMerge('fixed inset-x-0 bottom-14 z-30', !visibleState && 'hidden') : 'sticky bottom-4',
+        className
+      )}
+    >
       <div
         data-testid="sticky-action-form-toaster"
         className={`inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl ${

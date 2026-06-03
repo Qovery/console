@@ -3,7 +3,6 @@ import { type ClusterCredentials } from 'qovery-typescript-axios'
 import { useCallback } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useCloudProviderCredentials } from '@qovery/domains/cloud-providers/feature'
-import { CLUSTER_SETTINGS_IMAGE_REGISTRY_URL, CLUSTER_SETTINGS_URL, CLUSTER_URL } from '@qovery/shared/routes'
 import { Callout, ExternalLink, Icon, InputSelect, Link, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import {
   ClusterCredentialsModal,
@@ -127,11 +126,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting }: Cluster
                   the credentials properly in this cluster's mirroring registry section.
                   <ExternalLink
                     className="items-center"
-                    href={
-                      CLUSTER_URL(organizationId, clusterId) +
-                      CLUSTER_SETTINGS_URL +
-                      CLUSTER_SETTINGS_IMAGE_REGISTRY_URL
-                    }
+                    href={`/organization/${organizationId}/cluster/${clusterId}/settings/image-registry`}
                   >
                     Go to mirroring registry section
                   </ExternalLink>

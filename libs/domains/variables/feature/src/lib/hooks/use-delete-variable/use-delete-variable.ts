@@ -9,6 +9,9 @@ export function useDeleteVariable() {
       queryClient.invalidateQueries({
         queryKey: queries.variables.list._def,
       })
+      queryClient.invalidateQueries({
+        queryKey: queries.clusters.listSecretManagerAssociatedServices._def,
+      })
     },
     meta: {
       notifyOnError: true,
