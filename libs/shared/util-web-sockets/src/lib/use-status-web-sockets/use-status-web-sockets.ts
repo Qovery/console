@@ -43,7 +43,7 @@ export function useStatusWebSockets({
     return () => {
       if (environmentId) {
         queryClient.removeQueries({
-          queryKey: queries.environments.runningStatus(environmentId).queryKey,
+          queryKey: queries.environments.runningStatus({ environmentId, scope: 'environment' }).queryKey,
           exact: true,
         })
       }
@@ -107,10 +107,18 @@ export function useStatusWebSockets({
     enabled: wsEnabled,
     onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
+        const scope = environmentId ? 'environment' : 'project'
         // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
-        queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
-          state: env.state,
-        }))
+        queryClient.setQueryData(
+          queries.environments.runningStatus({
+            environmentId: env.id,
+            scope,
+            ...(scope === 'project' ? { clusterId, projectId } : {}),
+          }).queryKey,
+          () => ({
+            state: env.state,
+          })
+        )
         // // NOTE: we have to force this reset change because of the way the socket works.
         // // You can have information about an service (eg. if it's stopping)
         // TODO [To update once rust-backed will be deployed]: Remove reset cache strategy

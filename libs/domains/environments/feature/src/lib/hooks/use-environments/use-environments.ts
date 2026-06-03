@@ -27,7 +27,7 @@ export function useEnvironments({ projectId, suspense = false }: UseEnvironments
 
   const runningStatusResults = useQueries({
     queries: (environments ?? []).map(({ id }) => ({
-      ...queries.environments.runningStatus(id),
+      ...queries.environments.runningStatus({ environmentId: id, scope: 'environment' }),
     })),
   })
 

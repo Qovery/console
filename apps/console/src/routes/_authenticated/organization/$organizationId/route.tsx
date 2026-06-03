@@ -97,6 +97,14 @@ function RouteComponent() {
     return clusters ?? []
   }, [environmentId, environment, clusters, projectId, projectEnvironments])
 
+  const environmentsForStatusWebSockets = useMemo(() => {
+    if (environmentId || !projectId || !projectEnvironments?.length) {
+      return []
+    }
+
+    return projectEnvironments.filter((environment) => Boolean(environment.cluster_id))
+  }, [environmentId, projectId, projectEnvironments])
+
   const deployingClusters = useMemo(() => {
     if (!clusters || !clusterStatuses) return []
     return clusters.filter((cluster) => {
@@ -146,6 +154,19 @@ function RouteComponent() {
             )
         )
       }
+      {environmentsForStatusWebSockets.map(
+        (environment) =>
+          organizationId && (
+            <StatusWebSocketListenerMemo
+              key={`environment-${environment.id}`}
+              organizationId={organizationId}
+              clusterId={environment.cluster_id}
+              projectId={projectId}
+              environmentId={environment.id}
+              versionId={versionId}
+            />
+          )
+      )}
       {!shouldHideProgressCard && deployingClusters && deployingClusters.length > 0 && (
         <ClusterDeploymentProgressCard
           organizationId={organizationId}

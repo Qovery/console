@@ -35,6 +35,15 @@ const deploymentStageMainCallApi = new DeploymentStageMainCallsApi()
 const lifecycleTemplateMainCallsApi = new LifecycleTemplateMainCallsApi()
 const deploymentQueueActionsApi = new DeploymentQueueActionsApi()
 
+export type EnvironmentRunningStatusScope = 'environment' | 'project'
+
+export interface EnvironmentRunningStatusQueryParams {
+  environmentId: string
+  scope?: EnvironmentRunningStatusScope
+  clusterId?: string
+  projectId?: string
+}
+
 export const environments = createQueryKeys('environments', {
   // NOTE: Value is set by WebSocket
   deploymentStatus: (environmentId: string) => ({
@@ -53,8 +62,13 @@ export const environments = createQueryKeys('environments', {
     },
   }),
   // NOTE: Value is set by WebSocket
-  runningStatus: (environmentId: string) => ({
-    queryKey: [environmentId],
+  runningStatus: ({
+    environmentId,
+    scope = 'environment',
+    clusterId = '',
+    projectId = '',
+  }: EnvironmentRunningStatusQueryParams) => ({
+    queryKey: [environmentId, scope, clusterId, projectId],
     queryFn() {
       return new Promise<{ state: RunningState; triggered_action: ServiceActionDetailsDto | undefined } | null>(
         // eslint-disable-next-line @typescript-eslint/no-empty-function
