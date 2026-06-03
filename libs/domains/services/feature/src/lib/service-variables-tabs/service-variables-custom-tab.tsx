@@ -9,7 +9,7 @@ import {
   useVariablesSecretManagers,
 } from '@qovery/domains/variables/feature'
 import { isExternalSecretVariable } from '@qovery/domains/variables/util'
-import { Button, DropdownMenu, EmptyState, Icon, toast, useModal } from '@qovery/shared/ui'
+import { Button, DropdownMenu, EmptyState, Icon, toast, truncateText, useModal } from '@qovery/shared/ui'
 import { useRedeployServiceAction } from '../hooks/use-redeploy-service-action/use-redeploy-service-action'
 import { useService } from '../hooks/use-service/use-service'
 import { getServiceVariableScope } from './service-variables-utils'
@@ -172,10 +172,7 @@ export function ServiceVariablesCustomTab() {
         )
       }}
       onDeleteVariable={(variable) => {
-        let name = variable.key
-        if (name && name.length > 30) {
-          name = name.substring(0, 30) + '...'
-        }
+        const name = `${truncateText(variable.key, 30)}${variable.key.length > 30 ? '...' : ''}`
         toast(
           'success',
           'Deletion success',
