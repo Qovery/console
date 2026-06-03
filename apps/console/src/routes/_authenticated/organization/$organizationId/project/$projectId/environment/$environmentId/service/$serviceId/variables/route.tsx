@@ -3,7 +3,6 @@ import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense } from 'react'
 import { Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables'
@@ -45,7 +44,6 @@ function RouteComponent() {
   const matchRoute = useMatchRoute()
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const visibleTabs = secretManagerEnabled ? tabs : tabs.filter((tab) => tab.id !== 'external-secrets')
-  useDocumentTitle('Service - Variables')
 
   const activeTabId = visibleTabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
 

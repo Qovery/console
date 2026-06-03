@@ -3,6 +3,7 @@ import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { VariableList } from '@qovery/domains/variables/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables/built-in'
@@ -12,6 +13,7 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { organizationId, projectId, environmentId } = Route.useParams()
+  useDocumentTitle('Built-in variables - Environment')
 
   const { mutate: deployEnvironment } = useDeployEnvironment({
     projectId,
