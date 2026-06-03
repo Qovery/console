@@ -24,6 +24,8 @@ export interface UseStatusWebSocketsProps {
   projectId?: string
   environmentId?: string
   versionId?: string
+  deploymentStatusEnabled?: boolean
+  runningStatusEnabled?: boolean
 }
 
 export function useStatusWebSockets({
@@ -32,6 +34,8 @@ export function useStatusWebSockets({
   projectId,
   environmentId,
   versionId,
+  deploymentStatusEnabled = true,
+  runningStatusEnabled = true,
 }: UseStatusWebSocketsProps) {
   const [externalRequestId] = useState(() => uuidv7())
   const queryClient = useQueryClient()
@@ -59,7 +63,7 @@ export function useStatusWebSockets({
       project: projectId,
       version: versionId,
     },
-    enabled: wsEnabled,
+    enabled: wsEnabled && deploymentStatusEnabled,
     shouldReconnect: true,
     onMessage(queryClient, message: WSDeploymentStatus) {
       if (environmentId) {
@@ -104,11 +108,10 @@ export function useStatusWebSockets({
       external_request_id: externalRequestId,
     },
     // NOTE: projectId is not required by the API but it limits WS messages when cluster handles my environments / services
-    enabled: wsEnabled,
+    enabled: wsEnabled && runningStatusEnabled,
     onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
         const scope = environmentId ? 'environment' : 'project'
-        // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
         queryClient.setQueryData(
           queries.environments.runningStatus({
             environmentId: env.id,
@@ -119,9 +122,8 @@ export function useStatusWebSockets({
             state: env.state,
           })
         )
-        // // NOTE: we have to force this reset change because of the way the socket works.
-        // // You can have information about an service (eg. if it's stopping)
-        // TODO [To update once rust-backed will be deployed]: Remove reset cache strategy
+        // NOTE: we have to force this reset change because of the way the socket works.
+        // You can have information about an service (eg. if it's stopping)
         queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
         const services: (ApplicationStatusDto | ArgoCdAppStatusDto | DatabaseStatusDto | TerraformStatusDto)[] = [
           ...env.applications,
@@ -133,7 +135,6 @@ export function useStatusWebSockets({
           ...env.terraform,
         ]
         for (const serviceRunningStatus of services) {
-          // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
           queryClient.setQueryData(
             queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
             () => serviceRunningStatus

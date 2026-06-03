@@ -6,6 +6,8 @@ export interface StatusWebSocketListenerProps {
   projectId?: string
   environmentId?: string
   versionId?: string
+  deploymentStatusEnabled?: boolean
+  runningStatusEnabled?: boolean
 }
 
 export function StatusWebSocketListener({
@@ -14,6 +16,8 @@ export function StatusWebSocketListener({
   projectId,
   environmentId,
   versionId,
+  deploymentStatusEnabled,
+  runningStatusEnabled,
 }: StatusWebSocketListenerProps) {
   useStatusWebSockets({
     organizationId,
@@ -21,6 +25,8 @@ export function StatusWebSocketListener({
     projectId,
     environmentId,
     versionId,
+    deploymentStatusEnabled,
+    runningStatusEnabled,
   })
 
   return null

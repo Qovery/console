@@ -150,6 +150,7 @@ function RouteComponent() {
                 projectId={projectId}
                 environmentId={environmentId}
                 versionId={versionId}
+                runningStatusEnabled={Boolean(environmentId)}
               />
             )
         )
@@ -164,6 +165,7 @@ function RouteComponent() {
               projectId={projectId}
               environmentId={environment.id}
               versionId={versionId}
+              deploymentStatusEnabled={false}
             />
           )
       )}

@@ -31,7 +31,7 @@ function DeploymentStateChip({ environmentId, mode, ...props }: DeploymentStateC
 
   if (mode === 'last-deployment') {
     return (
-      <Skeleton width={16} height={16} show={!deploymentStatus?.last_deployment_state} rounded>
+      <Skeleton width={14} height={14} show={!deploymentStatus?.last_deployment_state} rounded>
         <StatusChip status={deploymentStatus?.last_deployment_state} {...props} />
       </Skeleton>
     )
@@ -46,7 +46,7 @@ function RunningStateChip({ environmentId, ...props }: RunningStateChipProps) {
   const { data: runningStatus } = useRunningStatus({ environmentId })
 
   return (
-    <Skeleton width={16} height={16} show={!runningStatus?.state} rounded>
+    <Skeleton width={14} height={14} show={!runningStatus?.state} rounded>
       <StatusChip status={runningStatus?.state} {...props} />
     </Skeleton>
   )
