@@ -1,6 +1,9 @@
-import useStatusWebSockets from '../use-status-web-sockets/use-status-web-sockets'
+import {
+  useDeploymentStatusWebSocket,
+  useRunningStatusWebSocket,
+} from '../use-status-web-sockets/use-status-web-sockets'
 
-export interface StatusWebSocketListenerProps {
+export interface DeploymentStatusWebSocketListenerProps {
   clusterId: string
   organizationId: string
   projectId?: string
@@ -8,22 +11,16 @@ export interface StatusWebSocketListenerProps {
   versionId?: string
 }
 
-export function StatusWebSocketListener({
-  clusterId,
-  organizationId,
-  projectId,
-  environmentId,
-  versionId,
-}: StatusWebSocketListenerProps) {
-  useStatusWebSockets({
-    organizationId,
-    clusterId,
-    projectId,
-    environmentId,
-    versionId,
-  })
+export function DeploymentStatusWebSocketListener(props: DeploymentStatusWebSocketListenerProps) {
+  useDeploymentStatusWebSocket(props)
 
   return null
 }
 
-export default StatusWebSocketListener
+export type RunningStatusWebSocketListenerProps = Omit<DeploymentStatusWebSocketListenerProps, 'versionId'>
+
+export function RunningStatusWebSocketListener(props: RunningStatusWebSocketListenerProps) {
+  useRunningStatusWebSocket(props)
+
+  return null
+}

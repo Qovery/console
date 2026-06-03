@@ -18,7 +18,7 @@ interface WSDeploymentStatus extends EnvironmentStatusesWithStages {
   results?: EnvironmentStatus[]
 }
 
-export interface UseStatusWebSocketsProps {
+export interface UseDeploymentStatusWebSocketProps {
   organizationId: string
   clusterId: string
   projectId?: string
@@ -26,29 +26,16 @@ export interface UseStatusWebSocketsProps {
   versionId?: string
 }
 
-export function useStatusWebSockets({
+export type UseRunningStatusWebSocketProps = Omit<UseDeploymentStatusWebSocketProps, 'versionId'>
+
+export function useDeploymentStatusWebSocket({
   organizationId,
   clusterId,
   projectId,
   environmentId,
   versionId,
-}: UseStatusWebSocketsProps) {
-  const [externalRequestId] = useState(() => uuidv7())
-  const queryClient = useQueryClient()
+}: UseDeploymentStatusWebSocketProps) {
   const wsEnabled = Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId)
-
-  // NOTE: remove running status cache when the environment is changed to avoid stale data
-  // @see https://qovery.atlassian.net/browse/QOV-1886
-  useEffect(() => {
-    return () => {
-      if (environmentId) {
-        queryClient.removeQueries({
-          queryKey: queries.environments.runningStatus(environmentId).queryKey,
-          exact: true,
-        })
-      }
-    }
-  }, [environmentId, queryClient])
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/deployment/status',
@@ -93,6 +80,30 @@ export function useStatusWebSockets({
       }
     },
   })
+}
+
+export function useRunningStatusWebSocket({
+  organizationId,
+  clusterId,
+  projectId,
+  environmentId,
+}: UseRunningStatusWebSocketProps) {
+  const [externalRequestId] = useState(() => uuidv7())
+  const queryClient = useQueryClient()
+  const wsEnabled = Boolean(organizationId) && Boolean(clusterId) && Boolean(projectId)
+
+  // NOTE: remove running status cache when the environment is changed to avoid stale data
+  // @see https://qovery.atlassian.net/browse/QOV-1886
+  useEffect(() => {
+    return () => {
+      if (environmentId) {
+        queryClient.removeQueries({
+          queryKey: queries.environments.runningStatus({ environmentId, scope: 'environment' }).queryKey,
+          exact: true,
+        })
+      }
+    }
+  }, [environmentId, queryClient])
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/service/status',
@@ -107,13 +118,24 @@ export function useStatusWebSockets({
     enabled: wsEnabled,
     onMessage(queryClient, message: ServiceStatusDto) {
       for (const env of message.environments) {
-        // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
-        queryClient.setQueryData(queries.environments.runningStatus(env.id).queryKey, () => ({
-          state: env.state,
-        }))
-        // // NOTE: we have to force this reset change because of the way the socket works.
-        // // You can have information about an service (eg. if it's stopping)
-        // TODO [To update once rust-backed will be deployed]: Remove reset cache strategy
+        queryClient.setQueryData(
+          environmentId
+            ? queries.environments.runningStatus({
+                environmentId: env.id,
+                scope: 'environment',
+              }).queryKey
+            : queries.environments.runningStatus({
+                environmentId: env.id,
+                scope: 'project',
+                clusterId,
+                projectId,
+              }).queryKey,
+          () => ({
+            state: env.state,
+          })
+        )
+        // NOTE: we have to force this reset change because of the way the socket works.
+        // You can have information about an service (eg. if it's stopping)
         queryClient.resetQueries([...queries.services.runningStatus._def, env.id])
         const services: (ApplicationStatusDto | ArgoCdAppStatusDto | DatabaseStatusDto | TerraformStatusDto)[] = [
           ...env.applications,
@@ -125,7 +147,6 @@ export function useStatusWebSockets({
           ...env.terraform,
         ]
         for (const serviceRunningStatus of services) {
-          // TODO [To update once rust-backed will be deployed]: check against current value and update it only if it has changed (to avoid too many re-render)
           queryClient.setQueryData(
             queries.services.runningStatus(env.id, serviceRunningStatus.id).queryKey,
             () => serviceRunningStatus
@@ -135,5 +156,3 @@ export function useStatusWebSockets({
     },
   })
 }
-
-export default useStatusWebSockets

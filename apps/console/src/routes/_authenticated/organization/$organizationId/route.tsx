@@ -7,7 +7,7 @@ import { ClusterDeploymentProgressCard, useClusterStatuses, useClusters } from '
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
-import { StatusWebSocketListener } from '@qovery/shared/util-web-sockets'
+import { DeploymentStatusWebSocketListener, RunningStatusWebSocketListener } from '@qovery/shared/util-web-sockets'
 import { queries } from '@qovery/state/util-queries'
 import { type FileRouteTypes } from '../../../../routeTree.gen'
 
@@ -36,7 +36,8 @@ const Loader = () => {
   )
 }
 
-const StatusWebSocketListenerMemo = memo(StatusWebSocketListener)
+const DeploymentStatusWebSocketListenerMemo = memo(DeploymentStatusWebSocketListener)
+const RunningStatusWebSocketListenerMemo = memo(RunningStatusWebSocketListener)
 
 const isDeployingStatus = (status?: ClusterStateEnum): boolean =>
   status === ClusterState.DEPLOYMENT_QUEUED || status === ClusterState.DEPLOYING
@@ -97,6 +98,14 @@ function RouteComponent() {
     return clusters ?? []
   }, [environmentId, environment, clusters, projectId, projectEnvironments])
 
+  const environmentsForStatusWebSockets = useMemo(() => {
+    if (environmentId || !projectId || !projectEnvironments?.length) {
+      return []
+    }
+
+    return projectEnvironments.filter((environment) => Boolean(environment.cluster_id))
+  }, [environmentId, projectId, projectEnvironments])
+
   const deployingClusters = useMemo(() => {
     if (!clusters || !clusterStatuses) return []
     return clusters.filter((cluster) => {
@@ -135,8 +144,8 @@ function RouteComponent() {
         clustersForStatusWebSockets.map(
           ({ id }) =>
             organizationId && (
-              <StatusWebSocketListenerMemo
-                key={id}
+              <DeploymentStatusWebSocketListenerMemo
+                key={`deployment-${id}`}
                 organizationId={organizationId}
                 clusterId={id}
                 projectId={projectId}
@@ -146,6 +155,27 @@ function RouteComponent() {
             )
         )
       }
+      {environmentId && organizationId && environment && (
+        <RunningStatusWebSocketListenerMemo
+          key={`running-${environment.id}`}
+          organizationId={organizationId}
+          clusterId={environment.cluster_id}
+          projectId={projectId}
+          environmentId={environment.id}
+        />
+      )}
+      {environmentsForStatusWebSockets.map(
+        (environment) =>
+          organizationId && (
+            <RunningStatusWebSocketListenerMemo
+              key={`running-${environment.id}`}
+              organizationId={organizationId}
+              clusterId={environment.cluster_id}
+              projectId={projectId}
+              environmentId={environment.id}
+            />
+          )
+      )}
       {!shouldHideProgressCard && deployingClusters && deployingClusters.length > 0 && (
         <ClusterDeploymentProgressCard
           organizationId={organizationId}

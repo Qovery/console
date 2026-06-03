@@ -76,7 +76,13 @@ export function ClusterRunningStatusIndicator({
   }
 
   if (isLoading && !runningStatus && !isTimeout) {
-    return <Skeleton width={type === 'dot' ? 20 : 80} height={type === 'dot' ? 20 : 24} rounded={type === 'dot'} />
+    return type === 'dot' ? (
+      <span className="flex h-5 w-5 items-center justify-center">
+        <Skeleton width={9} height={9} rounded />
+      </span>
+    ) : (
+      <Skeleton width={80} height={24} />
+    )
   }
 
   if (isTimeout && !runningStatus) {
