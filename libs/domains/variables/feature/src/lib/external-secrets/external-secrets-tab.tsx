@@ -77,9 +77,18 @@ const columnHelper = createColumnHelper<ExternalSecretRow>()
 export type ExternalSecretsTabProps = {
   scope: VariableScope
   parentId: string
+  onCreateSecret?: () => void
+  onEditSecret?: () => void
+  onDeleteSecret?: () => void
 }
 
-export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps) {
+export function ExternalSecretsTab({
+  scope,
+  parentId,
+  onCreateSecret,
+  onEditSecret,
+  onDeleteSecret,
+}: ExternalSecretsTabProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const { secretManagers, hasClusterSecretManagerConfigured, clusterId } = useVariablesSecretManagers()
 
@@ -158,8 +167,9 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
           secret_manager_access_id: secretManagerAccessId,
         },
       })
+      onCreateSecret?.()
     },
-    [createVariable, parentId, scope]
+    [createVariable, onCreateSecret, parentId, scope]
   )
 
   const handleEditSecret = useCallback(
@@ -179,8 +189,9 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
         variableId: secretId,
         variableEditRequest,
       })
+      onEditSecret?.()
     },
-    [editVariable]
+    [editVariable, onEditSecret]
   )
 
   const handleOpenAddSecret = useCallback(
@@ -238,6 +249,7 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
     async (secretIds: string[]) => {
       const idsToDelete = new Set(secretIds)
       await Promise.all([...idsToDelete].map((variableId) => deleteVariable({ variableId })))
+      onDeleteSecret?.()
       setRowSelection((prev) => {
         const next = { ...prev }
         for (const secretId of secretIds) {
@@ -246,7 +258,7 @@ export function ExternalSecretsTab({ scope, parentId }: ExternalSecretsTabProps)
         return next
       })
     },
-    [deleteVariable]
+    [deleteVariable, onDeleteSecret]
   )
 
   const handleConfirmDeleteSecrets = useCallback(

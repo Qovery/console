@@ -179,6 +179,7 @@ describe('ExternalSecretsTab', () => {
   it('should keep mount path when editing an external secret file', async () => {
     const editVariable = jest.fn()
     const openModal = jest.fn()
+    const onEditSecret = jest.fn()
     useEditVariableMock.mockReturnValue({
       mutateAsync: editVariable,
     } as unknown as ReturnType<typeof useEditVariable>)
@@ -216,7 +217,9 @@ describe('ExternalSecretsTab', () => {
       clusterId: 'cluster-id',
     })
 
-    const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
+    const { userEvent } = renderWithProviders(
+      <ExternalSecretsTab scope="APPLICATION" parentId="service-id" onEditSecret={onEditSecret} />
+    )
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
 
@@ -247,6 +250,119 @@ describe('ExternalSecretsTab', () => {
         secret_manager_access_id: 'sm-1',
       },
     })
+    expect(onEditSecret).toHaveBeenCalled()
+  })
+
+  it('should call create callback after creating an external secret', async () => {
+    const createVariable = jest.fn()
+    const openModal = jest.fn()
+    const onCreateSecret = jest.fn()
+    useCreateVariableMock.mockReturnValue({
+      mutateAsync: createVariable,
+    } as unknown as ReturnType<typeof useCreateVariable>)
+    useModalMock.mockReturnValue({
+      openModal,
+      closeModal: jest.fn(),
+    })
+    useVariablesMock.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [
+        {
+          id: 'sm-1',
+          name: 'Prod secret manager',
+          created_at: '2026-01-01T00:00:00.000Z',
+          updated_at: '2026-01-01T00:00:00.000Z',
+          endpoint: { mode: 'AWS_SECRET_MANAGER' },
+          authentication: { mode: 'STS' },
+        },
+      ],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+
+    const { userEvent } = renderWithProviders(
+      <ExternalSecretsTab scope="APPLICATION" parentId="service-id" onCreateSecret={onCreateSecret} />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /add secret/i }))
+
+    const modalContent = openModal.mock.calls[0][0].content as ReactElement<{
+      onSubmit: (secret: AddSecretModalSubmitData) => Promise<void>
+    }>
+
+    await modalContent.props.onSubmit({
+      name: 'MY_EXTERNAL_SECRET',
+      reference: 'prod/database/credentials',
+      isFile: false,
+      secretManagerAccessId: 'sm-1',
+    })
+
+    expect(createVariable).toHaveBeenCalledWith({
+      variableRequest: {
+        key: 'MY_EXTERNAL_SECRET',
+        value: 'prod/database/credentials',
+        mount_path: null,
+        is_secret: false,
+        variable_scope: 'APPLICATION',
+        variable_parent_id: 'service-id',
+        description: null,
+        secret_manager_access_id: 'sm-1',
+      },
+    })
+    expect(onCreateSecret).toHaveBeenCalled()
+  })
+
+  it('should call delete callback after deleting an external secret', async () => {
+    const deleteVariable = jest.fn()
+    const openModalConfirmation = jest.fn()
+    const onDeleteSecret = jest.fn()
+    useDeleteVariableMock.mockReturnValue({
+      mutateAsync: deleteVariable,
+    } as unknown as ReturnType<typeof useDeleteVariable>)
+    useModalConfirmationMock.mockReturnValue({
+      openModalConfirmation,
+    })
+    useVariablesMock.mockReturnValue({
+      data: [
+        {
+          id: 'secret-1',
+          key: 'MY_EXTERNAL_SECRET',
+          value: 'prod/database/credentials',
+          scope: 'APPLICATION',
+          variable_type: 'EXTERNAL_SECRET',
+          secret_manager_access_id: 'sm-1',
+          created_at: '2026-01-01T00:00:00.000Z',
+        },
+      ],
+      isLoading: false,
+    } as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [
+        {
+          id: 'sm-1',
+          name: 'Prod secret manager',
+          created_at: '2026-01-01T00:00:00.000Z',
+          updated_at: '2026-01-01T00:00:00.000Z',
+          endpoint: { mode: 'AWS_SECRET_MANAGER' },
+          authentication: { mode: 'STS' },
+        },
+      ],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+
+    const { userEvent } = renderWithProviders(
+      <ExternalSecretsTab scope="APPLICATION" parentId="service-id" onDeleteSecret={onDeleteSecret} />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete' }))
+    await openModalConfirmation.mock.calls[0][0].action()
+
+    expect(deleteVariable).toHaveBeenCalledWith({ variableId: 'secret-1' })
+    expect(onDeleteSecret).toHaveBeenCalled()
   })
 
   it('should fetch environment-scoped external secrets when scope is ENVIRONMENT', () => {

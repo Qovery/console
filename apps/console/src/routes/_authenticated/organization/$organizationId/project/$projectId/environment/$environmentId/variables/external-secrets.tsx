@@ -1,6 +1,9 @@
 import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { ExternalSecretsTab } from '@qovery/domains/variables/feature'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
+import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -14,6 +17,42 @@ function RouteComponent() {
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   useDocumentTitle('External secrets - Environment')
 
+  const { mutate: deployEnvironment } = useDeployEnvironment({
+    projectId,
+    logsLink: ENVIRONMENT_LOGS_URL(organizationId, projectId, environmentId) + ENVIRONMENT_STAGES_URL(),
+  })
+
+  const redeployEnvironmentAction = () => {
+    deployEnvironment({ environmentId })
+  }
+
+  const onCreateSecret = () =>
+    toast(
+      'success',
+      'Creation success',
+      'You need to redeploy your environment for your changes to be applied.',
+      redeployEnvironmentAction,
+      'Redeploy'
+    )
+
+  const onEditSecret = () =>
+    toast(
+      'success',
+      'Edition success',
+      'You need to redeploy your environment for your changes to be applied.',
+      redeployEnvironmentAction,
+      'Redeploy'
+    )
+
+  const onDeleteSecret = () =>
+    toast(
+      'success',
+      'Deletion success',
+      'You need to redeploy your environment for your changes to be applied.',
+      redeployEnvironmentAction,
+      'Redeploy'
+    )
+
   if (!secretManagerEnabled) {
     return (
       <Navigate
@@ -24,5 +63,13 @@ function RouteComponent() {
     )
   }
 
-  return <ExternalSecretsTab scope="ENVIRONMENT" parentId={environmentId} />
+  return (
+    <ExternalSecretsTab
+      scope="ENVIRONMENT"
+      parentId={environmentId}
+      onCreateSecret={onCreateSecret}
+      onEditSecret={onEditSecret}
+      onDeleteSecret={onDeleteSecret}
+    />
+  )
 }
