@@ -1,21 +1,27 @@
 import { useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   CreateUpdateVariableModal,
   ImportEnvironmentVariableModalFeature,
   VariableList,
   VariablesActionToolbar,
   useVariables,
+  useVariablesSecretManagers,
 } from '@qovery/domains/variables/feature'
 import { isExternalSecretVariable } from '@qovery/domains/variables/util'
 import { Button, DropdownMenu, EmptyState, Icon, toast, useModal } from '@qovery/shared/ui'
+import { useRedeployServiceAction } from '../hooks/use-redeploy-service-action/use-redeploy-service-action'
 import { useService } from '../hooks/use-service/use-service'
 import { getServiceVariableScope } from './service-variables-utils'
-import { useServiceVariablesTab } from './use-service-variables-tab'
 
 export function ServiceVariablesCustomTab() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { redeployServiceAction, hasClusterSecretManagerConfigured } = useServiceVariablesTab()
+  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
+  const { hasClusterSecretManagerConfigured } = useVariablesSecretManagers({
+    enabled: secretManagerEnabled,
+  })
+  const redeployServiceAction = useRedeployServiceAction(service?.serviceType)
   const scope = getServiceVariableScope(service?.serviceType)
   const { openModal, closeModal } = useModal()
   const { data: variables = [], isLoading: isVariablesLoading } = useVariables({
@@ -48,7 +54,7 @@ export function ServiceVariablesCustomTab() {
           mode="CREATE"
           onSubmit={onCreateVariableToast}
           isFile={isFile}
-          hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
+          hasClusterSecretManagerConfigured={secretManagerEnabled && hasClusterSecretManagerConfigured}
           scope={scope}
           projectId={projectId}
           environmentId={environmentId}
@@ -147,7 +153,7 @@ export function ServiceVariablesCustomTab() {
           onCreateVariable={onCreateVariableToast}
           onImportEnvFile={handleOpenImportVariablesModal}
           importEnvFileAccess="dropdown"
-          hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
+          hasClusterSecretManagerConfigured={secretManagerEnabled && hasClusterSecretManagerConfigured}
         />
       }
       scope={scope}

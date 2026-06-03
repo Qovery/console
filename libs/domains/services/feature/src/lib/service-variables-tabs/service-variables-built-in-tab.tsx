@@ -1,14 +1,14 @@
 import { useParams } from '@tanstack/react-router'
 import { VariableList } from '@qovery/domains/variables/feature'
 import { toast } from '@qovery/shared/ui'
+import { useRedeployServiceAction } from '../hooks/use-redeploy-service-action/use-redeploy-service-action'
 import { useService } from '../hooks/use-service/use-service'
 import { getServiceVariableScope } from './service-variables-utils'
-import { useServiceVariablesTab } from './use-service-variables-tab'
 
 export function ServiceVariablesBuiltInTab() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { redeployServiceAction } = useServiceVariablesTab()
+  const redeployServiceAction = useRedeployServiceAction(service?.serviceType)
   const scope = getServiceVariableScope(service?.serviceType)
 
   const onCreateVariableToast = () =>

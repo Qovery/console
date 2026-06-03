@@ -1,15 +1,17 @@
 import { useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type ReactNode } from 'react'
-import { VariableList, useVariables } from '@qovery/domains/variables/feature'
+import { VariableList, useVariables, useVariablesSecretManagers } from '@qovery/domains/variables/feature'
 import { useModal } from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useRedeployServiceAction } from '../hooks/use-redeploy-service-action/use-redeploy-service-action'
 import { useService } from '../hooks/use-service/use-service'
 import { ServiceVariablesCustomTab } from './service-variables-custom-tab'
-import { useServiceVariablesTab } from './use-service-variables-tab'
 
 jest.mock('@qovery/domains/variables/feature', () => ({
   ...jest.requireActual('@qovery/domains/variables/feature'),
   useVariables: jest.fn(),
+  useVariablesSecretManagers: jest.fn(),
   VariableList: jest.fn(() => <div data-testid="variable-list" />),
   CreateUpdateVariableModal: () => <div />,
   ImportEnvironmentVariableModalFeature: () => <div />,
@@ -17,7 +19,7 @@ jest.mock('@qovery/domains/variables/feature', () => ({
 
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
-  Tooltip: ({ children }: { children: ReactNode }) => <>{children}</>,
+  Tooltip: ({ children }: { children: ReactNode }) => children,
   useModal: jest.fn(),
 }))
 
@@ -26,19 +28,27 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: jest.fn(),
 }))
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(),
+}))
+
 jest.mock('../hooks/use-service/use-service', () => ({
   useService: jest.fn(),
 }))
 
-jest.mock('./use-service-variables-tab', () => ({
-  useServiceVariablesTab: jest.fn(),
+jest.mock('../hooks/use-redeploy-service-action/use-redeploy-service-action', () => ({
+  useRedeployServiceAction: jest.fn(),
 }))
 
 describe('ServiceVariablesCustomTab', () => {
   const useVariablesMock = useVariables as jest.MockedFunction<typeof useVariables>
+  const useVariablesSecretManagersMock = useVariablesSecretManagers as jest.MockedFunction<
+    typeof useVariablesSecretManagers
+  >
   const useModalMock = useModal as jest.MockedFunction<typeof useModal>
   const variableListMock = VariableList as jest.MockedFunction<typeof VariableList>
-  const useServiceVariablesTabMock = useServiceVariablesTab as jest.MockedFunction<typeof useServiceVariablesTab>
+  const useRedeployServiceActionMock = useRedeployServiceAction as jest.MockedFunction<typeof useRedeployServiceAction>
+  const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.MockedFunction<typeof useFeatureFlagEnabled>
   const useParamsMock = useParams as jest.MockedFunction<typeof useParams>
   const useServiceMock = useService as jest.MockedFunction<typeof useService>
 
@@ -53,11 +63,13 @@ describe('ServiceVariablesCustomTab', () => {
     useServiceMock.mockReturnValue({
       data: { serviceType: 'APPLICATION' },
     } as ReturnType<typeof useService>)
-    useServiceVariablesTabMock.mockReturnValue({
+    useFeatureFlagEnabledMock.mockReturnValue(false)
+    useVariablesSecretManagersMock.mockReturnValue({
       secretManagers: [],
       hasClusterSecretManagerConfigured: false,
-      redeployServiceAction: jest.fn(),
-    })
+      clusterId: '',
+    } as ReturnType<typeof useVariablesSecretManagers>)
+    useRedeployServiceActionMock.mockReturnValue(jest.fn())
     useModalMock.mockReturnValue({
       openModal: jest.fn(),
       closeModal: jest.fn(),
