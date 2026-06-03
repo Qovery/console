@@ -189,6 +189,7 @@ export type AnyService = Application | Database | Container | Job | Helm | Terra
 export type ReadOnlyService = ArgoCd
 export type EditableService = Exclude<AnyService, ReadOnlyService>
 export type EditableServiceType = Exclude<ServiceType, ArgoCdType>
+export type DeployableServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB'>
 export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType>
 
 export type AdvancedSettings =
@@ -228,6 +229,13 @@ export function isEditableService(service: AnyService): service is EditableServi
 
 export function isEditableServiceType(serviceType?: ServiceType): serviceType is EditableServiceType {
   return serviceType !== undefined && serviceType !== 'ARGOCD_APP'
+}
+
+export function getDeployableServiceType(serviceType?: ServiceType): DeployableServiceType | undefined {
+  return match(serviceType)
+    .with('APPLICATION', 'CONTAINER', 'DATABASE', 'JOB', 'HELM', 'TERRAFORM', (st): DeployableServiceType => st)
+    .with('CRON_JOB', 'LIFECYCLE_JOB', (): DeployableServiceType => 'JOB')
+    .otherwise(() => undefined)
 }
 
 export function isManagedDatabase(service?: AnyService): service is Database {

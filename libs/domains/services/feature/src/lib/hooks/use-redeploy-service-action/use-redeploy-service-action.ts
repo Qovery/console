@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { type ServiceType, isEditableServiceType } from '@qovery/domains/services/data-access'
+import { type ServiceType, getDeployableServiceType } from '@qovery/domains/services/data-access'
 import { useDeployService } from '../use-deploy-service/use-deploy-service'
 
 export function useRedeployServiceAction(serviceType?: ServiceType) {
@@ -12,13 +12,15 @@ export function useRedeployServiceAction(serviceType?: ServiceType) {
   })
 
   return () => {
-    if (!isEditableServiceType(serviceType)) {
+    const deployableServiceType = getDeployableServiceType(serviceType)
+
+    if (!deployableServiceType) {
       return
     }
 
     deployService({
       serviceId,
-      serviceType,
+      serviceType: deployableServiceType,
     })
   }
 }
