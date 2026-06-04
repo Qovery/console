@@ -2,8 +2,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import DatePickerLib, { type ReactDatePickerCustomHeaderProps } from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import Button from '../../button/button'
-import Icon from '../../icon/icon'
-import InputTextSmall from '../../inputs/input-text-small/input-text-small'
 import DatePickerHeader from '../date-picker-header/date-picker-header'
 import { type DatePickerCalendarProps } from '../date-picker.types'
 import {
@@ -14,13 +12,9 @@ import {
   validateDate,
   validateTime,
 } from '../date-picker.utils'
-
-const areSameDates = (firstDate: Date | null, secondDate: Date | null) => {
-  if (!firstDate || !secondDate) return firstDate === secondDate
-  return firstDate.getTime() === secondDate.getTime()
-}
-
-const getDateRangeKey = (dates?: [Date, Date]) => dates?.map((date) => date.getTime()).join('-') ?? ''
+import { areSameDates, getDateRangeKey, getTimeInputValue, mergeDateWithTimeText } from './date-picker-calendar.utils'
+import DatePickerDateTimeInputs, { type DateTimeInputType } from './date-picker-date-time-inputs'
+import DatePickerTimezoneSelect from './date-picker-timezone-select'
 
 export function DatePickerCalendar({
   onChange,
@@ -78,13 +72,8 @@ export function DatePickerCalendar({
     setStartDateText(formatDateInput(startDate, useLocalTime))
     setEndDateText(formatDateInput(endDate, useLocalTime))
 
-    if (useLocalTime) {
-      setStartTimeText(startDate.toTimeString().substring(0, 5))
-      setEndTimeText(endDate.toTimeString().substring(0, 5))
-    } else {
-      setStartTimeText(startDate.toISOString().substring(11, 16))
-      setEndTimeText(endDate.toISOString().substring(11, 16))
-    }
+    setStartTimeText(getTimeInputValue(startDate, useLocalTime))
+    setEndTimeText(getTimeInputValue(endDate, useLocalTime))
   }, [endDate, startDate, useLocalTime])
 
   const handleChange = (dates: [Date | null, Date | null] | null) => {
@@ -98,7 +87,17 @@ export function DatePickerCalendar({
       return
     }
 
-    const [start, end] = dates
+    const [selectedStart, selectedEnd] = dates
+    const start = mergeDateWithTimeText({
+      date: selectedStart,
+      timeText: startTimeText,
+      useLocalTime,
+    })
+    const end = mergeDateWithTimeText({
+      date: selectedEnd,
+      timeText: endTimeText,
+      useLocalTime,
+    })
     const updateRange = (nextStartDate: Date | null, nextEndDate: Date | null) => {
       const hasStartDateChanged = !areSameDates(startDate, nextStartDate)
       const hasEndDateChanged = !areSameDates(endDate, nextEndDate)
@@ -210,7 +209,7 @@ export function DatePickerCalendar({
     return ''
   }
 
-  const handleInputChange = (type: 'startDate' | 'startTime' | 'endDate' | 'endTime', value: string) => {
+  const handleInputChange = (type: DateTimeInputType, value: string) => {
     lastInteractionRef.current = 'input'
     const nextStartDateText = type === 'startDate' ? value : startDateText
     const nextStartTimeText = type === 'startTime' ? value : startTimeText
@@ -352,60 +351,17 @@ export function DatePickerCalendar({
       />
       <div className="border-t border-neutral px-4 py-3">
         {showDateTimeInputs && (
-          <div className="space-y-3">
-            <div>
-              <div className="mb-1 flex items-center justify-between">
-                <p className="text-sm text-neutral">Start</p>
-                {(startDateError || startTimeError) && (
-                  <span className="text-xs text-negative">{startDateError || startTimeError}</span>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <InputTextSmall
-                  label="Date"
-                  name="start-date"
-                  type="text"
-                  className="flex-1"
-                  value={startDateText}
-                  onChange={(e) => handleInputChange('startDate', e.target.value)}
-                />
-                <InputTextSmall
-                  label="Time"
-                  name="start-time"
-                  type="text"
-                  className="w-20"
-                  value={startTimeText}
-                  onChange={(e) => handleInputChange('startTime', e.target.value)}
-                />
-              </div>
-            </div>
-            <div>
-              <div className="mb-1 flex items-center justify-between">
-                <p className="text-sm text-neutral">End</p>
-                {(endDateError || endTimeError) && (
-                  <span className="text-xs text-negative">{endDateError || endTimeError}</span>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <InputTextSmall
-                  label="Date"
-                  name="end-date"
-                  type="text"
-                  className="flex-1"
-                  value={endDateText}
-                  onChange={(e) => handleInputChange('endDate', e.target.value)}
-                />
-                <InputTextSmall
-                  label="Time"
-                  name="end-time"
-                  type="text"
-                  className="w-20"
-                  value={endTimeText}
-                  onChange={(e) => handleInputChange('endTime', e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
+          <DatePickerDateTimeInputs
+            startDateText={startDateText}
+            startTimeText={startTimeText}
+            endDateText={endDateText}
+            endTimeText={endTimeText}
+            startDateError={startDateError}
+            startTimeError={startTimeError}
+            endDateError={endDateError}
+            endTimeError={endTimeError}
+            onInputChange={handleInputChange}
+          />
         )}
         <Button
           type="button"
@@ -416,24 +372,12 @@ export function DatePickerCalendar({
           Apply
         </Button>
         {showTimezoneSelect && (
-          <div className="relative my-1 flex w-full items-center justify-center gap-1 text-xs font-medium  text-neutral-subtle transition-colors hover:text-neutral">
-            <span>{selectedTimezoneLabel}</span>
-            <Icon iconName="chevron-down" iconStyle="regular" className="pointer-events-none text-xs" />
-            <select
-              name="timezone"
-              value={useLocalTime ? 'local' : 'utc'}
-              className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0"
-              onChange={(event) => {
-                onTimezoneChange?.(event.target.value === 'local')
-              }}
-            >
-              {timezoneOptions.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <DatePickerTimezoneSelect
+            selectedTimezoneLabel={selectedTimezoneLabel}
+            timezoneValue={useLocalTime ? 'local' : 'utc'}
+            timezoneOptions={timezoneOptions}
+            onTimezoneChange={onTimezoneChange}
+          />
         )}
       </div>
     </div>
