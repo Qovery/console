@@ -17,7 +17,7 @@ import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Badge, Button, DropdownMenu, Icon, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 
-const SECRET_MANAGER_EARLY_ACCESS_FORM_SLUG = 'request-access-secret-manager'
+const SECRET_MANAGER_EARLY_ACCESS_FORM_SLUG = 'request-access-secrets-manager'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/settings/addons')(
   {
