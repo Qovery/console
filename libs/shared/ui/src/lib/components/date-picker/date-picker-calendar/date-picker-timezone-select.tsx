@@ -3,8 +3,9 @@ import Icon from '../../icon/icon'
 interface DatePickerTimezoneSelectProps {
   selectedTimezoneLabel: string
   timezoneValue: 'local' | 'utc'
-  timezoneOptions: Array<{ label: string; value: string }>
+  timezoneOptions: Array<{ label: string; value: 'local' | 'utc' }>
   onTimezoneChange?: (useLocalTime: boolean) => void
+}
 }
 
 export function DatePickerTimezoneSelect({
