@@ -6,7 +6,6 @@ interface DatePickerTimezoneSelectProps {
   timezoneOptions: Array<{ label: string; value: 'local' | 'utc' }>
   onTimezoneChange?: (useLocalTime: boolean) => void
 }
-}
 
 export function DatePickerTimezoneSelect({
   selectedTimezoneLabel,
@@ -19,6 +18,7 @@ export function DatePickerTimezoneSelect({
       <span>{selectedTimezoneLabel}</span>
       <Icon iconName="chevron-down" iconStyle="regular" className="pointer-events-none text-xs" />
       <select
+        aria-label="Timezone"
         name="timezone"
         value={timezoneValue}
         className="absolute inset-0 h-full w-full cursor-pointer appearance-none opacity-0"

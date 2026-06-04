@@ -1,11 +1,10 @@
 import { type PropsWithChildren, useEffect, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import DatePickerCalendar from './date-picker-calendar/date-picker-calendar'
+import { getDateRangeKey } from './date-picker-calendar/date-picker-calendar.utils'
 import DatePickerPeriodList from './date-picker-period-list/date-picker-period-list'
 import { type DatePickerProps } from './date-picker.types'
 import { getPeriodDates } from './date-picker.utils'
-
-const getDateRangeKey = (dates?: [Date, Date]) => dates?.map((date) => date.getTime()).join('-') ?? ''
 
 export function DatePicker({
   isOpen,
