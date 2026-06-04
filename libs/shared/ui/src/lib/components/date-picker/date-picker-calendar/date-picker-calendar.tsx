@@ -16,6 +16,8 @@ import { areSameDates, getDateRangeKey, getTimeInputValue, mergeDateWithTimeText
 import DatePickerDateTimeInputs, { type DateTimeInputType } from './date-picker-date-time-inputs'
 import DatePickerTimezoneSelect from './date-picker-timezone-select'
 
+type TimezoneOption = { label: string; value: 'local' | 'utc' }
+
 export function DatePickerCalendar({
   onChange,
   minDate,
@@ -47,7 +49,7 @@ export function DatePickerCalendar({
       return 'Local'
     }
   }, [])
-  const timezoneOptions = [
+  const timezoneOptions: TimezoneOption[] = [
     { label: localTimeZone ? `Browser time (${localTimeZone})` : 'Browser time', value: 'local' },
     { label: 'UTC', value: 'utc' },
   ]
