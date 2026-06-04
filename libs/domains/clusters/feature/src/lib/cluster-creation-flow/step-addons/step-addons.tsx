@@ -124,6 +124,9 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                     <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
                       Free
                     </Badge>
+                    <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
+                      Beta
+                    </Badge>
                   </div>
                   <p className="text-sm text-neutral-subtle">
                     Link any secret manager on your cluster to add external secrets variables to all the services
