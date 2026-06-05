@@ -254,6 +254,7 @@ export function ServiceTerminal({
         <div className="relative min-h-0 flex-1">
           {terminalLaunchError ? (
             <EmptyState icon="terminal" title="Unable to launch CLI" description={terminalUnavailableDescription}>
+              <p className="text-xs text-neutral-subtle">Request ID: {requestId}</p>
               <Button size="md" color="neutral" onClick={onRetryCliLaunch}>
                 Relaunch
               </Button>
