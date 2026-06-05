@@ -120,7 +120,7 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
 
   return (
     <span className="flex">
-      <CopyToClipboard text={version} className="flex min-w-[81px] justify-center">
+      <CopyToClipboard text={version} className="flex min-w-fit justify-center">
         <Button
           type="button"
           variant="outline"
