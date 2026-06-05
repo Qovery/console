@@ -1013,7 +1013,7 @@ export function VariableList({
                     <Table.Cell
                       key={cell.id}
                       className={twMerge(
-                        'flex h-full items-center first:relative',
+                        'flex h-full min-w-0 items-center first:relative',
                         cell.column.id === 'actions' && 'justify-end',
                         !isServiceScope && cell.column.id === 'actions' && 'border-r border-neutral pl-0',
                         isServiceScope && cell.column.id === 'key' && 'border-r border-neutral'
