@@ -1,9 +1,10 @@
+import clsx from 'clsx'
 import { type ContainerSource, type HelmSourceRepositoryResponse } from 'qovery-typescript-axios'
-import { type MouseEvent } from 'react'
+import { type MouseEvent, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { type Container, type Helm, type Job } from '@qovery/domains/services/data-access'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
-import { Badge, Button, Icon, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
+import { Badge, Button, CopyToClipboard, Icon, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
 import { useDeployService } from '../hooks/use-deploy-service/use-deploy-service'
 import SelectVersionModal from '../select-version-modal/select-version-modal'
 
@@ -15,6 +16,8 @@ export interface LastVersionProps {
 }
 
 export function LastVersion({ organizationId, projectId, service, version }: LastVersionProps) {
+  const [hover, setHover] = useState(false)
+
   const { mutate: deployService } = useDeployService({
     organizationId,
     projectId,
@@ -117,11 +120,22 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
 
   return (
     <span className="flex">
-      <Badge variant="outline" className="min-w-7 max-w-[81px] rounded-r-none border-r-0 bg-surface-neutral">
-        <span className="flex h-full w-full items-center justify-center truncate">
+      <CopyToClipboard text={version} className="flex min-w-fit justify-center">
+        <Button
+          type="button"
+          variant="outline"
+          color="neutral"
+          size="xs"
+          className={clsx('pl-1', {
+            'rounded-r-none border-r-0': true,
+          })}
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        >
+          {hover ? <Icon iconName="copy" className="w-4" /> : <Icon iconName="tag" className="w-4" />}
           <Truncate text={version} truncateLimit={8} />
-        </span>
-      </Badge>
+        </Button>
+      </CopyToClipboard>
       <Tooltip content="Deploy from another version">
         <Button
           type="button"
@@ -133,7 +147,7 @@ export function LastVersion({ organizationId, projectId, service, version }: Las
           onClick={(e) => deployVersion(e)}
         >
           <span className="flex h-full items-center justify-center">
-            <Icon iconName="clock-rotate-left" iconStyle="regular" />
+            <Icon iconName="clock-rotate-left" />
           </span>
         </Button>
       </Tooltip>
