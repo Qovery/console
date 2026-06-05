@@ -288,10 +288,14 @@ describe('ExternalSecretsTab', () => {
     )
 
     await userEvent.click(screen.getByRole('button', { name: /add secret/i }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as variable' }))
 
     const modalContent = openModal.mock.calls[0][0].content as ReactElement<{
       onSubmit: (secret: AddSecretModalSubmitData) => Promise<void>
+      isFile?: boolean
     }>
+
+    expect(modalContent.props.isFile).toBe(false)
 
     await modalContent.props.onSubmit({
       name: 'MY_EXTERNAL_SECRET',
@@ -313,6 +317,43 @@ describe('ExternalSecretsTab', () => {
       },
     })
     expect(onCreateSecret).toHaveBeenCalled()
+  })
+
+  it('should open the file secret creation modal from the empty state dropdown', async () => {
+    const openModal = jest.fn()
+    useModalMock.mockReturnValue({
+      openModal,
+      closeModal: jest.fn(),
+    })
+    useVariablesMock.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [
+        {
+          id: 'sm-1',
+          name: 'Prod secret manager',
+          created_at: '2026-01-01T00:00:00.000Z',
+          updated_at: '2026-01-01T00:00:00.000Z',
+          endpoint: { mode: 'AWS_SECRET_MANAGER' },
+          authentication: { mode: 'STS' },
+        },
+      ],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+
+    const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="APPLICATION" parentId="service-id" />)
+
+    await userEvent.click(screen.getByRole('button', { name: /add secret/i }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Add secret as file' }))
+
+    const modalContent = openModal.mock.calls[0][0].content as ReactElement<{
+      isFile?: boolean
+    }>
+
+    expect(modalContent.props.isFile).toBe(true)
   })
 
   it('should call delete callback after deleting an external secret', async () => {
