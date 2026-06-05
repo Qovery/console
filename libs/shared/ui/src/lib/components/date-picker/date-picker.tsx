@@ -1,6 +1,7 @@
 import { type PropsWithChildren, useEffect, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import DatePickerCalendar from './date-picker-calendar/date-picker-calendar'
+import { getDateRangeKey } from './date-picker-calendar/date-picker-calendar.utils'
 import DatePickerPeriodList from './date-picker-period-list/date-picker-period-list'
 import { type DatePickerProps } from './date-picker.types'
 import { getPeriodDates } from './date-picker.utils'
@@ -24,12 +25,13 @@ export function DatePicker({
   const shouldShowCalendar = showCalendar !== false
   const hasPanels = shouldShowCalendar || shouldShowPeriodList
   const [periodDates, setPeriodDates] = useState<[Date, Date] | undefined>()
+  const defaultDatesKey = getDateRangeKey(defaultDates)
 
   useEffect(() => {
-    if (defaultDates) {
+    if (defaultDatesKey) {
       setPeriodDates(undefined)
     }
-  }, [defaultDates])
+  }, [defaultDatesKey])
 
   useEffect(() => {
     if (!isOpen || shouldShowCalendar || !onClickOutside) return

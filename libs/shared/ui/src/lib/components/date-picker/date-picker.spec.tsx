@@ -152,16 +152,19 @@ describe('DatePicker', () => {
   })
 
   it('updates start and end dates when selecting a date range on calendar with max range days defined', async () => {
-    const { userEvent } = renderWithProviders(<DatePicker onChange={mockOnChange} isOpen maxRangeInDays={6} />)
-
-    // Click on two different days to select a range
-    const days = screen.getAllByRole('option')
-    const availableDays = days.filter((day) => !day.classList.contains('react-datepicker__day--outside-month'))
+    const { userEvent } = renderWithProviders(
+      <DatePicker
+        onChange={mockOnChange}
+        isOpen
+        maxRangeInDays={6}
+        defaultDates={[new Date('2024-01-01T00:00:00.000Z'), new Date('2024-01-02T00:00:00.000Z')]}
+      />
+    )
 
     // Select first day (start date)
-    await userEvent.click(availableDays[0])
+    await userEvent.click(screen.getByLabelText('Choose Wednesday, January 3rd, 2024'))
     // Select another day (end date)
-    await userEvent.click(availableDays[5])
+    await userEvent.click(screen.getByLabelText('Choose Monday, January 8th, 2024'))
 
     // Click Apply and verify onChange was called with both dates
     await userEvent.click(screen.getByText('Apply'))
@@ -186,6 +189,122 @@ describe('DatePicker', () => {
     await userEvent.click(availableDays[0])
 
     expect(mockOnPeriodChange).toHaveBeenCalledWith('')
+  })
+
+  it('does not clear the period selection while typing an invalid partial time', async () => {
+    const mockOnPeriodChange = jest.fn()
+    const startDate = new Date('2024-01-01T00:00:00.000Z')
+    const endDate = new Date('2024-01-01T23:59:00.000Z')
+    const { userEvent } = renderWithProviders(
+      <DatePicker
+        onChange={mockOnChange}
+        isOpen
+        showDateTimeInputs
+        showPeriodSelect
+        periodOptions={[{ label: 'Last 15 minutes', value: '15m' }]}
+        periodValue="15m"
+        onPeriodChange={mockOnPeriodChange}
+        defaultDates={[startDate, endDate]}
+      />
+    )
+
+    const inputs = screen.getAllByTestId('input-value')
+    await userEvent.clear(inputs[1])
+    await userEvent.type(inputs[1], '0')
+
+    expect(mockOnPeriodChange).not.toHaveBeenCalled()
+  })
+
+  it('keeps time input edits as draft values until Apply', async () => {
+    const startDate = new Date('2024-01-01T00:00:00.000Z')
+    const endDate = new Date('2024-01-01T23:59:00.000Z')
+    const { userEvent } = renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs defaultDates={[startDate, endDate]} />
+    )
+
+    const inputs = screen.getAllByTestId('input-value')
+    await userEvent.clear(inputs[1])
+    await userEvent.type(inputs[1], '01:30')
+
+    expect(mockOnChange).not.toHaveBeenCalled()
+
+    await userEvent.click(screen.getByText('Apply'))
+
+    expect(mockOnChange).toHaveBeenCalledWith(expect.any(Date), endDate)
+    expect(mockOnChange.mock.calls[0][0]).toEqual(new Date('2024-01-01T01:30:00.000Z'))
+  })
+
+  it('keeps the selected range stable when rerendered with equivalent default dates', () => {
+    const defaultDates = [new Date('2024-01-01T10:30:00.000Z'), new Date('2024-01-01T11:45:00.000Z')] as [Date, Date]
+    const { rerender } = renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs defaultDates={defaultDates} />
+    )
+
+    rerender(
+      <DatePicker
+        onChange={mockOnChange}
+        isOpen
+        showDateTimeInputs
+        defaultDates={[new Date(defaultDates[0]), new Date(defaultDates[1])]}
+      />
+    )
+
+    const inputs = screen.getAllByTestId('input-value')
+    expect(inputs[1]).toHaveValue('10:30')
+    expect(inputs[3]).toHaveValue('11:45')
+  })
+
+  it('updates the date input when selecting a different calendar day with default dates', async () => {
+    const startDate = new Date('2024-01-10T10:30:00.000Z')
+    const endDate = new Date('2024-01-12T11:45:00.000Z')
+    const { userEvent } = renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs defaultDates={[startDate, endDate]} />
+    )
+
+    const selectedDay = screen.getByLabelText('Choose Wednesday, January 17th, 2024')
+    await userEvent.click(selectedDay)
+
+    expect(screen.getAllByTestId('input-value')[0]).toHaveValue('2024-01-17')
+  })
+
+  it('applies the selected calendar day with the current time inputs', async () => {
+    const startDate = new Date('2024-01-10T10:30:00.000Z')
+    const endDate = new Date('2024-01-12T11:45:00.000Z')
+    const { userEvent } = renderWithProviders(
+      <DatePicker onChange={mockOnChange} isOpen showDateTimeInputs defaultDates={[startDate, endDate]} />
+    )
+
+    await userEvent.click(screen.getByLabelText('Choose Thursday, January 11th, 2024'))
+    await userEvent.click(screen.getByLabelText('Choose Friday, January 12th, 2024'))
+    await userEvent.click(screen.getByText('Apply'))
+
+    expect(mockOnChange).toHaveBeenCalledWith(new Date('2024-01-11T10:30:00.000Z'), endDate)
+  })
+
+  it('syncs inputs when default dates change to a different range', () => {
+    const { rerender } = renderWithProviders(
+      <DatePicker
+        onChange={mockOnChange}
+        isOpen
+        showDateTimeInputs
+        defaultDates={[new Date('2024-01-10T10:30:00.000Z'), new Date('2024-01-12T11:45:00.000Z')]}
+      />
+    )
+
+    rerender(
+      <DatePicker
+        onChange={mockOnChange}
+        isOpen
+        showDateTimeInputs
+        defaultDates={[new Date('2024-02-01T08:15:00.000Z'), new Date('2024-02-02T09:45:00.000Z')]}
+      />
+    )
+
+    const inputs = screen.getAllByTestId('input-value')
+    expect(inputs[0]).toHaveValue('2024-02-01')
+    expect(inputs[1]).toHaveValue('08:15')
+    expect(inputs[2]).toHaveValue('2024-02-02')
+    expect(inputs[3]).toHaveValue('09:45')
   })
 })
 

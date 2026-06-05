@@ -1,8 +1,8 @@
 [
   {
-    "name": "Remote Dev Environments Alpha, New UI is default, Kubernetes 1.35 available",
-    "summary": "Hey Team, Two platform-wide changes ship in this release: the new UI is now the default for all organizations, and Kubernetes 1.35 is available for self-service upgrade. We are also sharing an early look at Remote Dev Environments, something we have been co-building with a handful of customers. -...",
-    "url": "https://www.qovery.com/changelog/2026-05-20",
-    "firstPublishedAt": "2026-05-20T00:00:00.000Z"
+    "name": "ArgoCD Integration, Remote Dev Environments Improvements, Restrict Copilot Access",
+    "summary": "Hey Team, This release brings three things worth your attention: ArgoCD is now a first-class integration in Qovery, the AI Copilot gets proper access controls, and Remote Dev Environments ship a round of improvements shaped directly by feedback from early customers. --- 🔗 ArgoCD Integration ...",
+    "url": "https://www.qovery.com/changelog/2026-06-03",
+    "firstPublishedAt": "2026-06-03T00:00:00.000Z"
   }
 ]
