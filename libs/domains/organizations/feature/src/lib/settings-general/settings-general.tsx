@@ -2,7 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { type Organization } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { type FormEventHandler } from 'react'
-import { type FieldValues, FormProvider, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { BlockContent, Button, InputFile, InputTags, InputText, InputTextArea, Section } from '@qovery/shared/ui'
@@ -17,9 +17,17 @@ export interface PageOrganizationGeneralProps {
   created_at: string
 }
 
+interface OrganizationGeneralFormValues {
+  logo_url: string
+  name: string
+  description: string
+  website_url: string
+  admin_emails: string[]
+}
+
 export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
   const { onSubmit, loading, created_at } = props
-  const { control, formState, watch } = useFormContext()
+  const { control, formState, watch } = useFormContext<OrganizationGeneralFormValues>()
 
   return (
     <div className="flex w-full flex-col justify-between">
@@ -124,14 +132,14 @@ export function PageOrganizationGeneral(props: PageOrganizationGeneralProps) {
   )
 }
 
-export const handleSubmit = (data: FieldValues, organization: Organization) => {
+export const handleSubmit = (data: OrganizationGeneralFormValues, organization: Organization) => {
   return {
     ...organization,
-    logo_url: data['logo_url'],
-    name: data['name'],
-    description: data['description'],
-    website_url: data['website_url'] === '' ? undefined : data['website_url'],
-    admin_emails: data['admin_emails'],
+    logo_url: data.logo_url,
+    name: data.name,
+    description: data.description,
+    website_url: data.website_url === '' ? undefined : data.website_url,
+    admin_emails: data.admin_emails,
   }
 }
 
@@ -142,8 +150,15 @@ export function SettingsGeneral() {
   const { data: organization } = useOrganization({ organizationId })
   const { mutateAsync: editOrganization, isLoading: isLoadingEditOrganization } = useEditOrganization()
 
-  const methods = useForm({
+  const methods = useForm<OrganizationGeneralFormValues>({
     mode: 'onChange',
+    defaultValues: {
+      logo_url: '',
+      name: '',
+      description: '',
+      website_url: '',
+      admin_emails: [],
+    },
   })
 
   useEffect(() => {
@@ -152,7 +167,7 @@ export function SettingsGeneral() {
       logo_url: organization?.logo_url || '',
       description: organization?.description || '',
       website_url: organization?.website_url || '',
-      admin_emails: organization?.admin_emails || '',
+      admin_emails: organization?.admin_emails ?? [],
     })
   }, [
     methods,
