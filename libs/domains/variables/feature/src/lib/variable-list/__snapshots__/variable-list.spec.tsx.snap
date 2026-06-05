@@ -146,7 +146,7 @@ exports[`VariableList should match snapshot 1`] = `
                 id="variable-row-810e3ca6-6e42-40b1-952a-4cfcef3c9fd1"
               >
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -162,7 +162,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative border-r border-neutral"
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -204,13 +204,13 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
-                    class="group flex h-5 w-full items-center gap-2 text-sm"
+                    class="group flex h-5 w-full min-w-0 items-center gap-2 text-sm"
                   >
                     <span
-                      class="text-neutral"
+                      class="min-w-0 truncate text-neutral"
                       data-testid="visible_value"
                     >
                       admin2
@@ -228,7 +228,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -237,7 +237,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -248,7 +248,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative justify-end"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
                 >
                   <div
                     class="flex items-center justify-end gap-2"
@@ -295,7 +295,7 @@ exports[`VariableList should match snapshot 1`] = `
                 id="variable-row-fcdbdda7-3133-4bba-9a72-36f8a0519848"
               >
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -311,7 +311,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative border-r border-neutral"
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -353,13 +353,13 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
-                    class="group flex h-5 w-full items-center gap-2 text-sm"
+                    class="group flex h-5 w-full min-w-0 items-center gap-2 text-sm"
                   >
                     <span
-                      class="text-neutral"
+                      class="min-w-0 truncate text-neutral"
                       data-testid="visible_value"
                     >
                       mydbhostname
@@ -377,7 +377,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -386,7 +386,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -397,7 +397,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative justify-end"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
                 >
                   <div
                     class="flex items-center justify-end gap-2"
@@ -444,7 +444,7 @@ exports[`VariableList should match snapshot 1`] = `
                 id="variable-row-fb121e5a-ff31-4835-a328-8ed561133174"
               >
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -460,7 +460,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative border-r border-neutral"
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -487,7 +487,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <div
                     class="flex w-full items-center gap-2 text-sm"
@@ -504,7 +504,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -513,7 +513,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -524,7 +524,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative justify-end"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
                 >
                   <div
                     class="flex items-center justify-end gap-2"
@@ -571,7 +571,7 @@ exports[`VariableList should match snapshot 1`] = `
                 id="variable-row-57658166-0318-430c-8d8a-610a34d98910"
               >
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -587,7 +587,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative border-r border-neutral"
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -609,13 +609,13 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
-                    class="group flex h-5 w-full items-center gap-2 text-sm"
+                    class="group flex h-5 w-full min-w-0 items-center gap-2 text-sm"
                   >
                     <span
-                      class="text-neutral"
+                      class="min-w-0 truncate text-neutral"
                       data-testid="visible_value"
                     >
                       abc
@@ -633,7 +633,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -642,7 +642,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -653,7 +653,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative justify-end"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
                 >
                   <div
                     class="flex items-center justify-end gap-2"
@@ -700,7 +700,7 @@ exports[`VariableList should match snapshot 1`] = `
                 id="variable-row-acac4cee-5627-437b-9fd3-d0947d92da4b"
               >
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -716,7 +716,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative border-r border-neutral"
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -738,7 +738,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="flex h-5 items-center gap-2 text-sm text-neutral-disabled"
@@ -761,7 +761,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -770,7 +770,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -781,7 +781,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative justify-end"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
                 >
                   <div
                     class="flex items-center justify-end gap-2"
@@ -828,7 +828,7 @@ exports[`VariableList should match snapshot 1`] = `
                 id="variable-row-831751ab-ebfb-4036-97f7-31689e3d8ed9"
               >
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -844,7 +844,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative border-r border-neutral"
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -916,7 +916,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="flex h-5 items-center gap-2 text-sm text-neutral-disabled"
@@ -939,7 +939,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -948,7 +948,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -959,7 +959,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative justify-end"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
                 >
                   <div
                     class="flex items-center justify-end gap-2"
@@ -1006,7 +1006,7 @@ exports[`VariableList should match snapshot 1`] = `
                 id="variable-row-3486e37c-5cdc-4e50-bcf7-75b1c818eb5f"
               >
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -1022,7 +1022,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative border-r border-neutral"
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -1053,13 +1053,13 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
-                    class="group flex h-5 w-full items-center gap-2 text-sm"
+                    class="group flex h-5 w-full min-w-0 items-center gap-2 text-sm"
                   >
                     <span
-                      class="text-neutral"
+                      class="min-w-0 truncate text-neutral"
                       data-testid="visible_value"
                     >
                       fdgsdfg
@@ -1077,7 +1077,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -1086,7 +1086,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1097,7 +1097,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative justify-end"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
                 >
                   <div
                     class="flex items-center justify-end gap-2"
@@ -1144,7 +1144,7 @@ exports[`VariableList should match snapshot 1`] = `
                 id="variable-row-7d1b18cf-9ea1-4b00-b82a-4b5d152aa6eb"
               >
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <label
                     class="absolute inset-y-0 left-0 flex items-center p-4"
@@ -1160,7 +1160,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </label>
                 </td>
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative border-r border-neutral"
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -1202,13 +1202,13 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
-                    class="group flex h-5 w-full items-center gap-2 text-sm"
+                    class="group flex h-5 w-full min-w-0 items-center gap-2 text-sm"
                   >
                     <span
-                      class="text-neutral"
+                      class="min-w-0 truncate text-neutral"
                       data-testid="visible_value"
                     >
                       fdgsdfg
@@ -1226,7 +1226,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm font-medium capitalize"
@@ -1235,7 +1235,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1246,7 +1246,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative justify-end"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
                 >
                   <div
                     class="flex items-center justify-end gap-2"
@@ -1410,7 +1410,7 @@ exports[`VariableList should match snapshot 1`] = `
                 id="variable-row-ade79b9c-8515-47f2-8069-83c1e8c35c4d"
               >
                 <td
-                  class="px-4 py-0 flex h-full items-center first:relative border-r border-neutral"
+                  class="px-4 py-0 flex h-full min-w-0 items-center first:relative border-r border-neutral"
                 >
                   <div
                     class="flex flex-col justify-center gap-1"
@@ -1432,13 +1432,13 @@ exports[`VariableList should match snapshot 1`] = `
                   </div>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
-                    class="group flex h-5 w-full items-center gap-2 text-sm"
+                    class="group flex h-5 w-full min-w-0 items-center gap-2 text-sm"
                   >
                     <span
-                      class="text-neutral"
+                      class="min-w-0 truncate text-neutral"
                       data-testid="visible_value"
                     >
                       admin2
@@ -1456,7 +1456,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <a
                     class="flex items-center gap-2 text-sm font-medium"
@@ -1466,7 +1466,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </a>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative"
                 >
                   <span
                     class="text-sm text-neutral-subtle"
@@ -1477,7 +1477,7 @@ exports[`VariableList should match snapshot 1`] = `
                   </span>
                 </td>
                 <td
-                  class="border-neutral px-4 py-0 flex h-full items-center first:relative justify-end"
+                  class="border-neutral px-4 py-0 flex h-full min-w-0 items-center first:relative justify-end"
                 >
                   <div
                     class="flex items-center justify-end gap-2"

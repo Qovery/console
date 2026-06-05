@@ -34,7 +34,7 @@ export function PasswordShowHide({
       </span>
     </span>
   ) : (
-    <span className={twMerge('group flex h-5 w-full items-center gap-2 text-sm', className)} {...props}>
+    <span className={twMerge('group flex h-5 w-full min-w-0 items-center gap-2 text-sm', className)} {...props}>
       {canEdit ? (
         <input
           name="value"
@@ -45,7 +45,7 @@ export function PasswordShowHide({
           className="h-full w-full bg-transparent text-neutral outline-none"
         />
       ) : (
-        <span className="text-neutral" data-testid="visible_value">
+        <span className="min-w-0 truncate text-neutral" data-testid="visible_value">
           <Truncate text={value ?? ''} truncateLimit={50} />
         </span>
       )}
