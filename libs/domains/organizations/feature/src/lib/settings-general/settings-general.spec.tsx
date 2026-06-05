@@ -42,6 +42,19 @@ describe('SettingsGeneral', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should render successfully when organization admin emails are missing', async () => {
+    useOrganizationMock.mockReturnValue({
+      data: {
+        ...mockOrganization,
+        admin_emails: undefined,
+      },
+    } as unknown as ReturnType<typeof useOrganization>)
+
+    renderWithProviders(<SettingsGeneral />)
+
+    expect(await screen.findByTestId('input-emails')).toBeInTheDocument()
+  })
+
   it('should dispatch editOrganization if form is submitted', async () => {
     const { userEvent } = renderWithProviders(<SettingsGeneral />)
 
