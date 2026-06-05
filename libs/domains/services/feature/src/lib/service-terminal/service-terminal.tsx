@@ -6,6 +6,7 @@ import Color from 'color'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { XTerm } from 'react-xtermjs'
 import { match } from 'ts-pattern'
+import { v7 as uuidv7 } from 'uuid'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 import { Button, EmptyState, ExternalLink, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
 import { useTerminalReadiness } from '@qovery/shared/util-hooks'
@@ -39,6 +40,7 @@ export function ServiceTerminal({
 }: ServiceTerminalProps) {
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const hasWrittenShellBannerRef = useRef(false)
+  const [requestId, setRequestId] = useState(() => uuidv7())
 
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
   const [terminalLaunchError, setTerminalLaunchError] = useState<string | null>(null)
@@ -122,11 +124,12 @@ export function ServiceTerminal({
           terminalBannerColors,
           getPortForwardCommand,
           getShellCommand,
-          shouldWriteShellBanner
+          shouldWriteShellBanner,
+          requestId
         ),
       ])
     },
-    [attachWebSocket, getPortForwardCommand, getShellCommand, setAddons, terminalBannerColors]
+    [attachWebSocket, getPortForwardCommand, getShellCommand, requestId, setAddons, terminalBannerColors]
   )
 
   const onCloseHandler = useCallback(
@@ -147,6 +150,7 @@ export function ServiceTerminal({
     hasWrittenShellBannerRef.current = false
     setAddons([])
     setTerminalLaunchError(null)
+    setRequestId(uuidv7())
     resetTerminalReadiness()
   }, [detachWebSocket, resetTerminalReadiness])
   const terminalUnavailableDescription = useMemo(
@@ -177,6 +181,7 @@ export function ServiceTerminal({
       container_name: selectedContainer,
       tty_height: rows.toString(),
       tty_width: cols.toString(),
+      external_request_id: requestId,
     },
     onOpen: onOpenHandler,
     onClose: onCloseHandler,

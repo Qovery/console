@@ -37,7 +37,8 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
     private readonly colors: TerminalBannerColors,
     private readonly getPortForwardCommand: () => string,
     private readonly getShellCommand: () => string,
-    private readonly shouldWriteBanner: boolean
+    private readonly shouldWriteBanner: boolean,
+    private readonly requestId: string
   ) {}
 
   private toAnsiColor(color: string): string {
@@ -182,6 +183,8 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
       secondCommandLine,
       [{ color: this.colors.subtle, text: 'Forward a pod port to localhost' }],
       [{ text: TerminalShellActionsAddon.COPY_COMMAND_LABEL }],
+      [{ text: '' }],
+      [{ color: this.colors.subtle, text: `Request ID: ${this.requestId}` }],
     ]
 
     const maxBannerLineLength = Math.max(
