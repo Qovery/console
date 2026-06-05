@@ -121,10 +121,10 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                    <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
+                    <Badge size="sm" radius="full" variant="surface" color="green" className="text-ssm">
                       Free
                     </Badge>
-                    <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
+                    <Badge size="sm" radius="full" variant="surface" color="purple" className="text-ssm">
                       Beta
                     </Badge>
                   </div>
