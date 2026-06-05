@@ -19,6 +19,7 @@ interface UseCurrentThreadResult {
 type RawMessage = {
   id: number
   media_content: string
+  media_type: string
   owner: 'user' | 'assistant'
   created_at: string
   vote_type?: 'upvote' | 'downvote'
@@ -55,13 +56,32 @@ export function useThreadState({
       try {
         const messages = data.results || []
 
-        const formattedMessages: Thread = messages.map((msg: RawMessage) => ({
-          id: msg.id,
-          text: msg.media_content,
-          owner: msg.owner,
-          timestamp: new Date(msg.created_at).getTime(),
-          vote: msg.vote_type,
-        }))
+        const formattedMessages: Thread = messages.map((msg: RawMessage) => {
+          if (msg.media_type === 'pending_confirmation') {
+            try {
+              const parsed = JSON.parse(msg.media_content)
+              return {
+                id: String(msg.id),
+                text: parsed.text ?? msg.media_content,
+                owner: msg.owner,
+                timestamp: new Date(msg.created_at).getTime(),
+                vote: msg.vote_type,
+                mediaType: msg.media_type,
+                planData: parsed.plan,
+              }
+            } catch (e) {
+              console.error('Failed to parse pending_confirmation content:', e)
+            }
+          }
+          return {
+            id: String(msg.id),
+            text: msg.media_content,
+            owner: msg.owner,
+            timestamp: new Date(msg.created_at).getTime(),
+            vote: msg.vote_type,
+            mediaType: msg.media_type,
+          }
+        })
 
         setThread(formattedMessages)
       } catch (error) {

@@ -8,7 +8,7 @@ const CHUNK_PREFIXES = {
 } as const
 
 export type ParsedChunkType = {
-  type: 'start' | 'plan' | 'step' | 'step_plan' | 'step_plan_reset' | 'content'
+  type: 'start' | 'plan' | 'step' | 'step_plan' | 'step_plan_reset' | 'content' | 'pending_confirmation'
   data?: {
     threadId?: string
     plan?: PlanStep[]
@@ -24,6 +24,10 @@ export function parseStreamChunk(chunk: string, currentContent: string): ParsedC
 
     if (parsed.type === 'start' && parsed.content?.thread_id) {
       return { type: 'start', data: { threadId: parsed.content.thread_id } }
+    }
+
+    if (parsed.type === 'pending_confirmation') {
+      return { type: 'pending_confirmation' }
     }
 
     if (parsed.type === 'chunk' && parsed.content) {
