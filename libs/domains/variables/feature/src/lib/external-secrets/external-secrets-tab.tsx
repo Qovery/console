@@ -74,6 +74,36 @@ type ExternalSecretRow = {
 
 const columnHelper = createColumnHelper<ExternalSecretRow>()
 
+type AddSecretDropdownProps = {
+  color?: 'brand' | 'neutral'
+  onSelect: (isFile: boolean) => void
+}
+
+function AddSecretDropdown({ color = 'brand', onSelect }: AddSecretDropdownProps) {
+  return (
+    <DropdownMenu.Root>
+      <DropdownMenu.Trigger asChild>
+        <Button color={color} variant="solid" size="md" type="button">
+          <Icon iconName="circle-plus" iconStyle="regular" />
+          Add secret
+          <Icon iconName="angle-down" />
+        </Button>
+      </DropdownMenu.Trigger>
+      <DropdownMenu.Content className="w-[240px]">
+        {ADD_SECRET_OPTIONS.map((option) => (
+          <DropdownMenu.Item
+            key={option.value}
+            icon={<Icon iconName={option.icon} />}
+            onSelect={() => onSelect(option.value === 'file')}
+          >
+            {option.label}
+          </DropdownMenu.Item>
+        ))}
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  )
+}
+
 export type ExternalSecretsTabProps = {
   scope: VariableScope
   parentId: string
@@ -308,19 +338,7 @@ export function ExternalSecretsTab({
       title: 'No external secrets yet',
       description: 'Add a secret or connect a secret manager to sync external secrets.',
       icon: 'lock-keyhole' as const,
-      actions: (
-        <Button
-          color="neutral"
-          size="md"
-          variant="solid"
-          type="button"
-          disabled={!hasClusterSecretManagerConfigured}
-          onClick={() => handleOpenAddSecret(false)}
-        >
-          <Icon iconName="circle-plus" iconStyle="regular" />
-          Add secret
-        </Button>
-      ),
+      actions: <AddSecretDropdown color="neutral" onSelect={handleOpenAddSecret} />,
     }
   }, [clusterId, handleOpenAddSecret, hasClusterSecretManagerConfigured, organizationId, secrets.length])
 
@@ -518,26 +536,7 @@ export function ExternalSecretsTab({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <Button color="brand" variant="solid" size="md">
-                  <Icon iconName="circle-plus" iconStyle="regular" />
-                  Add secret
-                  <Icon iconName="chevron-down" className="text-[10px]" />
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content className="w-[240px]">
-                {ADD_SECRET_OPTIONS.map((option) => (
-                  <DropdownMenu.Item
-                    key={option.value}
-                    icon={<Icon iconName={option.icon} />}
-                    onSelect={() => handleOpenAddSecret(option.value === 'file')}
-                  >
-                    {option.label}
-                  </DropdownMenu.Item>
-                ))}
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+            <AddSecretDropdown onSelect={handleOpenAddSecret} />
           </div>
         </div>
       )}
