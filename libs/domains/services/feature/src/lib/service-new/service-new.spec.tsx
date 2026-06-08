@@ -1,6 +1,15 @@
+import { within } from '@testing-library/react'
+import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceNew } from './service-new'
+
+const mockUseFeatureFlagEnabled = jest.fn(() => false)
+const mockUseBlueprintCatalog = jest.fn(() => ({ data: undefined }))
+const blueprintReadmeResponse = {
+  content: '# AWS S3 Bucket\n\nBlueprint documentation',
+  repository_url: 'https://github.com/qovery-blueprints/s3',
+}
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -11,7 +20,7 @@ jest.mock('posthog-js', () => ({
 }))
 
 jest.mock('posthog-js/react', () => ({
-  useFeatureFlagEnabled: jest.fn(() => false),
+  useFeatureFlagEnabled: (flag: string) => mockUseFeatureFlagEnabled(flag),
 }))
 
 jest.mock('@qovery/shared/ui', () => {
@@ -34,7 +43,54 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   useSupportChat: () => ({ showPylonForm: jest.fn() }),
 }))
 
+const mockUseBlueprintCatalogServiceReadme = jest.fn(() => ({
+  data: blueprintReadmeResponse,
+  isLoading: false,
+  isError: false,
+}))
+
+jest.mock('../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
+  useBlueprintCatalogServiceReadme: (props: unknown) => mockUseBlueprintCatalogServiceReadme(props),
+}))
+
+jest.mock('../hooks/use-blueprint-catalog/use-blueprint-catalog', () => ({
+  useBlueprintCatalog: (props: unknown) => mockUseBlueprintCatalog(props),
+}))
+
+const blueprints: BlueprintItem[] = [
+  {
+    name: 'AWS S3 Bucket',
+    kind: 'ServiceBlueprint',
+    description: 'Object storage with server-side encryption, versioning, and configurable lifecycle policies.',
+    icon: 'https://cdn.qovery.com/icons/s3.svg',
+    categories: ['storage'],
+    provider: 'aws',
+    serviceFamily: 's3',
+    majorVersions: [{ serviceVersion: '1', latestTag: 'aws/s3/1/1.0.0' }],
+  },
+  {
+    name: 'Redis',
+    kind: 'ServiceBlueprint',
+    description: 'In-memory key-value store deployed via the Bitnami Helm chart with configurable replicas.',
+    icon: 'https://cdn.qovery.com/icons/redis.svg',
+    categories: ['cache'],
+    provider: 'aws',
+    serviceFamily: 'redis',
+    majorVersions: [{ serviceVersion: '7', latestTag: 'aws/redis/7/1.0.0' }],
+  },
+]
+
 describe('ServiceNew', () => {
+  beforeEach(() => {
+    mockUseFeatureFlagEnabled.mockReturnValue(false)
+    mockUseBlueprintCatalog.mockReturnValue({ data: undefined })
+    mockUseBlueprintCatalogServiceReadme.mockReturnValue({
+      data: blueprintReadmeResponse,
+      isLoading: false,
+      isError: false,
+    })
+  })
+
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
@@ -72,6 +128,93 @@ describe('ServiceNew', () => {
     expect(screen.getByRole('heading', { name: 'Front-end' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'IAC' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'More template' })).toBeInTheDocument()
+  })
+
+  it('should render blueprint cards from the catalog', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    const blueprintsSection = screen.getByRole('heading', { name: 'Blueprints' }).closest('section')
+    expect(blueprintsSection).toBeInTheDocument()
+
+    const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
+    expect(blueprintsSectionScreen.getByText('AWS S3 Bucket')).toBeInTheDocument()
+    expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
+    expect(blueprintsSectionScreen.getAllByRole('button', { name: 'Deploy' })).toHaveLength(2)
+
+    await userEvent.type(screen.getByPlaceholderText('Search blueprints...'), 'redis')
+
+    expect(blueprintsSectionScreen.queryByText('AWS S3 Bucket')).not.toBeInTheDocument()
+    expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
+  })
+
+  it('should open blueprint details from a blueprint card', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    const blueprintsSection = screen.getByRole('heading', { name: 'Blueprints' }).closest('section')
+    const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
+
+    await userEvent.click(blueprintsSectionScreen.getAllByRole('button', { name: 'View details' })[0])
+
+    const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
+    expect(mockUseBlueprintCatalogServiceReadme).toHaveBeenCalledWith({
+      organizationId: 'org-1',
+      provider: 'aws',
+      serviceFamily: 's3',
+      serviceVersion: '1',
+      enabled: true,
+      suspense: true,
+    })
+    const repositoryLinks = within(dialog).getAllByRole('link', { name: /qovery-blueprints\/s3/i })
+    expect(repositoryLinks).toHaveLength(1)
+    expect(repositoryLinks[0]).toHaveAttribute('href', 'https://github.com/qovery-blueprints/s3')
+    expect(within(dialog).getByRole('heading', { name: 'AWS S3 Bucket' })).toBeInTheDocument()
+    expect(within(dialog).getByText('AWS')).toBeInTheDocument()
+    expect(within(dialog).getByText('v1')).toBeInTheDocument()
+
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }))
+
+    expect(screen.queryByRole('dialog', { name: 'AWS S3 Bucket' })).not.toBeInTheDocument()
+  })
+
+  it('should hide the blueprint version badge when version is default', async () => {
+    const defaultVersionBlueprints: BlueprintItem[] = [
+      {
+        ...blueprints[0],
+        majorVersions: [{ serviceVersion: 'default', latestTag: 'aws/s3/default/1.0.0' }],
+      },
+    ]
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints: defaultVersionBlueprints } })
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    const blueprintsSection = screen.getByRole('heading', { name: 'Blueprints' }).closest('section')
+    const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
+
+    await userEvent.click(blueprintsSectionScreen.getByRole('button', { name: 'View details' }))
+
+    const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
+    expect(mockUseBlueprintCatalogServiceReadme).toHaveBeenCalledWith({
+      organizationId: 'org-1',
+      provider: 'aws',
+      serviceFamily: 's3',
+      serviceVersion: 'default',
+      enabled: true,
+      suspense: true,
+    })
+    expect(within(dialog).queryByText('vdefault')).not.toBeInTheDocument()
   })
 
   it('should link database entries to the database create flow', async () => {
