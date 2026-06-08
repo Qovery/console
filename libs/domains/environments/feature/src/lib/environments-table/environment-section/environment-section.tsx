@@ -3,7 +3,7 @@ import { EnvironmentModeEnum, type EnvironmentOverviewResponse, StateEnum } from
 import { type KeyboardEvent, type MouseEvent } from 'react'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
-import { Button, DeploymentAction, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Button, Checkbox, DeploymentAction, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { MenuManageDeployment, MenuOtherActions } from '../../environment-action-toolbar/environment-action-toolbar'
@@ -14,8 +14,12 @@ import { isArgoCdEnvironment } from '../../utils/argocd'
 
 const { Table } = TablePrimitives
 
-const gridLayoutClassName =
-  'grid w-full grid-cols-[minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
+export const environmentTableGridLayoutClassName =
+  'grid w-full grid-cols-[44px_minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px]'
+export const environmentSelectionCellClassName = 'flex h-full items-center pl-4'
+export const environmentNameCellContentClassName =
+  'flex h-full min-w-0 flex-col justify-center gap-1 py-2 pl-0 pr-4 xl:flex-row xl:items-center xl:justify-between xl:gap-2'
+export const environmentTableCellClassName = 'h-auto border-l border-neutral py-2'
 
 function DisabledManageDeploymentButton({ tooltip }: { tooltip: string }) {
   return (
@@ -31,14 +35,21 @@ function DisabledManageDeploymentButton({ tooltip }: { tooltip: string }) {
   )
 }
 
-function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
+function EnvRow({
+  overview,
+  checked,
+  onCheckedChange,
+}: {
+  overview: EnvironmentOverviewResponse
+  checked: boolean
+  onCheckedChange: (checked: boolean) => void
+}) {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const environment = environments.find((env) => env.id === overview.id)
   const isEnvironmentManagedByArgoCd = isArgoCdEnvironment(overview)
   const lastOperationDate = overview.deployment_status?.last_deployment_date
-  const cellClassName = 'h-auto border-l border-neutral py-2'
   const stopRowNavigation = (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => {
     event.stopPropagation()
   }
@@ -57,15 +68,29 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
       role="link"
       className={twMerge(
         'w-full hover:cursor-pointer hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle',
-        gridLayoutClassName
+        environmentTableGridLayoutClassName
       )}
       onClick={handleNavigate}
       onKeyDown={(e) => {
         if (e.key === 'Enter') handleNavigate()
       }}
     >
-      <Table.Cell className={twMerge(cellClassName, 'border-none p-0')}>
-        <div className="flex h-full min-w-0 flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
+      <Table.Cell className="h-auto border-none p-0">
+        <label className={environmentSelectionCellClassName} onClick={stopRowNavigation} onKeyDown={stopRowNavigation}>
+          <Checkbox
+            checked={checked}
+            onClick={(e) => e.stopPropagation()}
+            onCheckedChange={(checked) => {
+              if (checked === 'indeterminate') {
+                return
+              }
+              onCheckedChange(checked)
+            }}
+          />
+        </label>
+      </Table.Cell>
+      <Table.Cell className={twMerge(environmentTableCellClassName, 'border-none p-0')}>
+        <div className={environmentNameCellContentClassName}>
           <div className="flex min-w-0 items-center gap-1.5">
             <Link
               to="/organization/$organizationId/project/$projectId/environment/$environmentId"
@@ -95,7 +120,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           </div>
         </div>
       </Table.Cell>
-      <Table.Cell className={cellClassName}>
+      <Table.Cell className={environmentTableCellClassName}>
         <div className="flex h-full items-center justify-between">
           <div className="flex flex-col gap-1 xl:flex-row xl:items-center xl:gap-2">
             {overview.services_overview.service_count === 0 ? (
@@ -112,7 +137,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           <EnvironmentStateChip mode="last-deployment" environmentId={overview.id} variant="monochrome" />
         </div>
       </Table.Cell>
-      <Table.Cell className={cellClassName}>
+      <Table.Cell className={environmentTableCellClassName}>
         <div className="flex h-full items-center justify-between">
           {overview.cluster && (
             <Link
@@ -130,10 +155,10 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
           )}
         </div>
       </Table.Cell>
-      <Table.Cell className={cellClassName}>
+      <Table.Cell className={environmentTableCellClassName}>
         <div className="flex h-full items-center">{timeAgo(new Date(overview.updated_at ?? Date.now()))} ago</div>
       </Table.Cell>
-      <Table.Cell className={cellClassName}>
+      <Table.Cell className={environmentTableCellClassName}>
         <div
           className="flex h-full items-center justify-end gap-1.5"
           onClick={stopRowNavigation}
@@ -165,10 +190,16 @@ export function EnvironmentSection({
   type,
   items,
   onCreateEnvClicked,
+  selectedEnvironmentIds = [],
+  onEnvironmentSelectionChange,
+  onSectionSelectionChange,
 }: {
   type: EnvironmentModeEnum
   items: EnvironmentOverviewResponse[]
   onCreateEnvClicked?: () => void
+  selectedEnvironmentIds?: string[]
+  onEnvironmentSelectionChange?: (environmentId: string, checked: boolean) => void
+  onSectionSelectionChange?: (environmentIds: string[], checked: boolean) => void
 }) {
   const title = match(type)
     .with('PRODUCTION', () => 'Production')
@@ -201,6 +232,11 @@ export function EnvironmentSection({
         )
       })
 
+  const selectedEnvironmentIdsSet = new Set(selectedEnvironmentIds)
+  const selectedItemsCount = items.filter(({ id }) => selectedEnvironmentIdsSet.has(id)).length
+  const isAllRowsSelected = selectedItemsCount === items.length && items.length > 0
+  const sectionChecked = selectedItemsCount > 0 && !isAllRowsSelected ? 'indeterminate' : isAllRowsSelected
+
   return (
     <Section className="flex flex-col gap-3.5">
       <div className="flex items-center gap-2">
@@ -215,8 +251,30 @@ export function EnvironmentSection({
       ) : (
         <Table.Root className="w-full min-w-[1080px]" containerClassName="no-scrollbar overflow-x-auto">
           <Table.Header>
-            <Table.Row className={twMerge('w-full items-center text-xs', gridLayoutClassName)}>
-              <Table.ColumnHeaderCell className="flex h-9 items-center text-neutral-subtle">
+            <Table.Row className={twMerge('w-full items-center text-xs', environmentTableGridLayoutClassName)}>
+              <Table.ColumnHeaderCell className="h-9 p-0 text-neutral-subtle">
+                <label
+                  className={environmentSelectionCellClassName}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                  }}
+                >
+                  <Checkbox
+                    checked={sectionChecked}
+                    onClick={(e) => e.stopPropagation()}
+                    onCheckedChange={(checked) => {
+                      if (checked === 'indeterminate') {
+                        return
+                      }
+                      onSectionSelectionChange?.(
+                        items.map(({ id }) => id),
+                        checked
+                      )
+                    }}
+                  />
+                </label>
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="flex h-9 items-center py-0 pl-0 pr-4 text-neutral-subtle">
                 Environment
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
@@ -236,7 +294,12 @@ export function EnvironmentSection({
 
           <Table.Body className="divide-y divide-neutral">
             {items.map((environmentOverview) => (
-              <EnvRow key={environmentOverview.id} overview={environmentOverview} />
+              <EnvRow
+                key={environmentOverview.id}
+                overview={environmentOverview}
+                checked={selectedEnvironmentIdsSet.has(environmentOverview.id)}
+                onCheckedChange={(checked) => onEnvironmentSelectionChange?.(environmentOverview.id, checked)}
+              />
             ))}
           </Table.Body>
         </Table.Root>
