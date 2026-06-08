@@ -508,9 +508,10 @@ export function ClusterCredentialsModal({
               <ExternalLink
                 href={match(apiCloudProvider)
                   .with('AWS', () => 'https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster')
-                  .with(
-                    'GCP',
-                    () => 'https://www.qovery.com/docs/getting-started/installation/gcp#generate-installation-command'
+                  .with('GCP', () =>
+                    isGcpWifCredential
+                      ? 'https://www.qovery.com/docs/getting-started/installation/gcp#generate-the-workload-identity-federation-setup-command'
+                      : 'https://www.qovery.com/docs/getting-started/installation/gcp#generate-installation-command'
                   )
                   .otherwise(() => 'https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster')}
                 size="sm"
@@ -564,7 +565,7 @@ export function ClusterCredentialsModal({
               )}
             />
           )}
-          {(isAwsStaticCredential || isGcpStaticCredential || isEksAnywhereStaticCredential) && (
+          {(isAwsStaticCredential || isGcpStaticCredential || isGcpWifCredential || isEksAnywhereStaticCredential) && (
             <>
               {isAwsMode && (
                 <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
@@ -591,19 +592,40 @@ export function ClusterCredentialsModal({
                   </div>
                   <div className="flex flex-col gap-2 rounded-md border border-neutral bg-surface-neutral p-4">
                     <h2 className="text-sm font-medium text-neutral">
-                      2. Open the embedded Google shell and run the following command
+                      {isGcpWifCredential
+                        ? '2. Generate and run the Workload Identity Federation setup command'
+                        : '2. Open the embedded Google shell and run the following command'}
                     </h2>
-                    <div className="flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
-                      <div>
-                        <span className="select-none">$ </span>
-                        curl https://setup.qovery.com/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT
-                        qovery_role qovery-service-account{' '}
-                      </div>
-                      <CopyButton
-                        content=" curl https://setup.qovery.com/create_credentials_gcp.sh | \
+                    {isGcpWifCredential ? (
+                      <>
+                        <p className="text-sm text-neutral-subtle">
+                          Run this command in Google Cloud Shell to configure Workload Identity Federation.
+                        </p>
+                        <div className="flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
+                          <div>
+                            <span className="select-none">$ </span>
+                            curl https://setup.qovery.com/create_credentials_gcp_wif.sh | \ bash -s --
+                            $GOOGLE_CLOUD_PROJECT qovery-service-account{' '}
+                          </div>
+                          <CopyButton
+                            content=" curl https://setup.qovery.com/create_credentials_gcp_wif.sh | \
+bash -s -- $GOOGLE_CLOUD_PROJECT qovery-service-account"
+                          />
+                        </div>
+                      </>
+                    ) : (
+                      <div className="flex gap-6 rounded border border-neutral bg-surface-neutral-subtle p-3 text-neutral retina:border-[0.5px]">
+                        <div>
+                          <span className="select-none">$ </span>
+                          curl https://setup.qovery.com/create_credentials_gcp.sh | \ bash -s -- $GOOGLE_CLOUD_PROJECT
+                          qovery_role qovery-service-account{' '}
+                        </div>
+                        <CopyButton
+                          content=" curl https://setup.qovery.com/create_credentials_gcp.sh | \
 bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
-                      />
-                    </div>
+                        />
+                      </div>
+                    )}
                   </div>
                 </>
               )}
@@ -735,9 +757,11 @@ bash -s -- $GOOGLE_CLOUD_PROJECT qovery_role qovery-service-account"
               <h2 className="text-sm font-medium text-neutral">
                 {isGcpStaticCredential
                   ? '3. Download the key.json generated and drag and drop it here'
-                  : isGcpWifCredential || cloudProvider === 'AZURE'
-                    ? '1. Fill these information'
-                    : '2. Fill these information'}
+                  : isGcpWifCredential
+                    ? '3. Copy the generated parameters here'
+                    : cloudProvider === 'AZURE'
+                      ? '1. Fill these information'
+                      : '2. Fill these information'}
               </h2>
               <Controller
                 name="name"
