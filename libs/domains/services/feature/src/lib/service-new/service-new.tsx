@@ -504,21 +504,23 @@ type ServiceBlock = {
 
 function BlueprintCard({ blueprint }: { blueprint: BlueprintItem }) {
   return (
-    <article className="flex min-h-44 flex-col justify-between rounded border border-neutral bg-surface-neutral px-4 py-4">
-      <div>
-        <img className="mb-4 h-9 w-9 rounded-sm" src={blueprint.icon} alt="" aria-hidden="true" />
-        <h3 className="mb-2 text-ssm font-medium text-neutral">{blueprint.name}</h3>
-        <p className="text-xs text-neutral-subtle">{blueprint.description}</p>
+    <section className="flex h-full flex-col gap-4 rounded-lg border border-neutral bg-surface-neutral p-4 [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)]">
+      <div className="flex flex-1 flex-col gap-3">
+        <img className="h-9 w-9 rounded" src={blueprint.icon} alt="" aria-hidden="true" />
+        <div className="flex flex-col gap-1">
+          <h3 className="text-sm font-medium leading-5 text-neutral">{blueprint.name}</h3>
+          <p className="text-sm leading-5 text-neutral-subtle">{blueprint.description}</p>
+        </div>
       </div>
-      <div className="mt-4 flex items-center gap-1.5">
-        <Button type="button" variant="outline" color="neutral" size="xs">
+      <div className="mt-auto flex items-center gap-1">
+        <Button type="button" variant="outline" color="neutral" size="sm">
           Deploy
         </Button>
-        <Button type="button" variant="plain" color="neutral" size="xs">
+        <Button type="button" variant="plain" color="neutral" size="sm">
           View details
         </Button>
       </div>
-    </article>
+    </section>
   )
 }
 
