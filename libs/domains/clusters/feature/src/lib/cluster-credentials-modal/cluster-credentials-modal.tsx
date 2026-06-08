@@ -510,7 +510,8 @@ export function ClusterCredentialsModal({
                   .with('AWS', () => 'https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster')
                   .with(
                     'GCP',
-                    () => 'https://www.qovery.com/docs/getting-started/installation/gcp#generate-installation-command'
+                    () =>
+                      'https://www.qovery.com/docs/getting-started/installation/gcp#generate-the-workload-identity-federation-setup-command'
                   )
                   .otherwise(() => 'https://www.qovery.com/docs/getting-started/installation/aws#create-your-cluster')}
                 size="sm"
