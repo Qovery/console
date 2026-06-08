@@ -44,12 +44,14 @@ interface UseMessageSubmissionParams {
 export function useMessageSubmission({ refs, state, actions }: UseMessageSubmissionParams) {
   const lastSubmitResult = useRef<{ id: string; messageId: string } | null>(null)
   const fullContentRef = useRef('')
+  const pendingConfirmationRef = useRef(false)
 
   const handleSendMessage = useCallback(
     async (messageOverride?: string, newThread = false) => {
       refs.controller.current = new AbortController()
       lastSubmitResult.current = null
       fullContentRef.current = ''
+      pendingConfirmationRef.current = false
 
       const node = refs.scrollArea.current
       if (node) {
@@ -152,6 +154,10 @@ export function useMessageSubmission({ refs, state, actions }: UseMessageSubmiss
                   actions.setStreamingMessage(parsedChunk.data.content)
                 }
                 break
+
+              case 'pending_confirmation':
+                pendingConfirmationRef.current = true
+                break
             }
           },
           refs.controller.current.signal
@@ -188,5 +194,5 @@ export function useMessageSubmission({ refs, state, actions }: UseMessageSubmiss
     ]
   )
 
-  return { handleSendMessage, lastSubmitResult }
+  return { handleSendMessage, lastSubmitResult, pendingConfirmationRef }
 }

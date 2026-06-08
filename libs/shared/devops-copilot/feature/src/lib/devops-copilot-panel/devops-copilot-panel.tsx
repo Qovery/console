@@ -27,12 +27,21 @@ import { MessageList } from './message-list/message-list'
 import { StatusFooter } from './status-footer/status-footer'
 import { renderStreamingMessageWithMermaid } from './streaming-mermaid-renderer/streaming-mermaid-renderer'
 
+export type PlanStep = {
+  messageId: string
+  description: string
+  toolName: string
+  status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error'
+}
+
 export type Message = {
   id: string
   text: string
   owner: 'user' | 'assistant'
   timestamp: number
   vote?: 'upvote' | 'downvote'
+  mediaType?: string
+  planData?: PlanStep[]
 }
 
 export type Thread = Message[]
@@ -41,13 +50,6 @@ export interface DevopsCopilotPanelProps {
   onClose: () => void
   smaller?: boolean
   style?: CSSProperties
-}
-
-export type PlanStep = {
-  messageId: string
-  description: string
-  toolName: string
-  status: 'not_started' | 'in_progress' | 'completed' | 'waiting' | 'error'
 }
 
 export type CopilotContextData = {
@@ -124,7 +126,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
     enabled: isPanelActive,
   })
 
-  const { handleSendMessage, lastSubmitResult } = useMessageSubmission({
+  const { handleSendMessage, lastSubmitResult, pendingConfirmationRef } = useMessageSubmission({
     refs: {
       controller: controllerRef,
       scrollArea: scrollAreaRef,
@@ -157,6 +159,13 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
   })
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
+
+  const lastMsg = thread[thread.length - 1]
+  const pendingConfirmation = !isLoading && lastMsg?.mediaType === 'pending_confirmation'
+  const effectivePlan =
+    pendingConfirmation && plan.length === 0 && lastMsg?.planData?.length
+      ? lastMsg.planData.map((step) => ({ ...step, messageId: String(lastMsg.id) }))
+      : plan
 
   const handleOnClose = useCallback(() => {
     onClose()
@@ -257,6 +266,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
             text: streamingMessage,
             owner: 'assistant',
             timestamp: Date.now(),
+            mediaType: pendingConfirmationRef.current ? 'pending_confirmation' : undefined,
           },
         ])
 
@@ -271,6 +281,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
             text: streamingMessage,
             owner: 'assistant',
             timestamp: Date.now(),
+            mediaType: pendingConfirmationRef.current ? 'pending_confirmation' : undefined,
           },
         ])
       }
@@ -406,7 +417,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   streamingMessage={streamingMessage}
                   displayedStreamingMessage={displayedStreamingMessage}
                   loadingText={loadingText}
-                  plan={plan}
+                  plan={effectivePlan}
                   showPlans={showPlans}
                   setShowPlans={setShowPlans}
                   threadId={threadId}
@@ -446,16 +457,34 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                   <div
                     className={twMerge(
                       clsx('relative animate-[fadein_0.22s_ease-in-out_forwards_0.15s] pt-3 opacity-0', {
-                        'pt-[42px]': withContext,
+                        'pt-[42px]': withContext && !(pendingConfirmation && !isLoading),
+                        'pt-[52px]': pendingConfirmation && !isLoading,
                       })
                     )}
                   >
-                    {withContext && (
-                      <ContextBanner
-                        currentType={String(current?.type)}
-                        currentName={String(current?.name ?? 'No context')}
-                        onClose={() => setWithContext(false)}
-                      />
+                    {pendingConfirmation && !isLoading ? (
+                      <div className="absolute top-2.5 flex w-full items-center rounded-t-xl border border-neutral bg-surface-neutral-subtle pb-4 pl-2 pr-2 pt-2 text-xs text-neutral-subtle">
+                        <span className="flex items-center gap-2">
+                          <Icon iconName="circle-exclamation" iconStyle="regular" />
+                          <span className="font-medium text-neutral">Action confirmation</span>
+                        </span>
+                        <div className="ml-auto flex gap-1">
+                          <Button type="button" size="xs" variant="surface" onClick={() => handleSendMessage('no')}>
+                            Cancel
+                          </Button>
+                          <Button type="button" size="xs" variant="solid" onClick={() => handleSendMessage('yes')}>
+                            Confirm
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      withContext && (
+                        <ContextBanner
+                          currentType={String(current?.type)}
+                          currentName={String(current?.name ?? 'No context')}
+                          onClose={() => setWithContext(false)}
+                        />
+                      )
                     )}
                     <Input
                       disabled={!isCopilotEnabled}
