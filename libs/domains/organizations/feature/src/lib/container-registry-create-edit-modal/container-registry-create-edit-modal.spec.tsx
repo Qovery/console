@@ -12,6 +12,7 @@ import * as useEditContainerRegistry from '../hooks/use-edit-container-registry/
 import ContainerRegistryCreateEditModal, {
   type ContainerRegistryCreateEditModalProps,
   getDefaultType,
+  getGcpProjectIdFromServiceAccountEmail,
   getPayloadConfig,
 } from './container-registry-create-edit-modal'
 
@@ -382,6 +383,7 @@ describe('ContainerRegistryCreateEditModal', () => {
           config: expect.objectContaining({
             region: 'us-east1',
             gcp_credentials_type: 'workload_identity_federation',
+            project_id: 'my-project',
             service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
             workload_identity_provider_resource:
               'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
@@ -465,6 +467,7 @@ describe('ContainerRegistryCreateEditModal', () => {
       })
     ).toEqual({
       gcp_credentials_type: 'workload_identity_federation',
+      project_id: 'my-project',
       region: 'europe-west1',
       service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
       workload_identity_provider_resource:
@@ -485,6 +488,11 @@ describe('ContainerRegistryCreateEditModal', () => {
       username: 'john.doe',
       region: 'eu-west-1',
     })
+  })
+
+  it('should get GCP project ID from service account email', () => {
+    expect(getGcpProjectIdFromServiceAccountEmail('qovery@my-project.iam.gserviceaccount.com')).toBe('my-project')
+    expect(getGcpProjectIdFromServiceAccountEmail('invalid')).toBeUndefined()
   })
 
   it('should submit the form to edit a registry', async () => {

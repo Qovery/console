@@ -29,6 +29,9 @@ type ContainerRegistryCreateEditFormValues = ContainerRegistryRequest & {
 }
 type ContainerRegistryCreateEditFormConfig = ContainerRegistryCreateEditFormValues['config']
 
+export const getGcpProjectIdFromServiceAccountEmail = (serviceAccountEmail?: string): string | undefined =>
+  serviceAccountEmail?.match(/^[^@]+@([^.]+)\.iam\.gserviceaccount\.com$/)?.[1]
+
 export const getDefaultType = (registry: ContainerRegistryResponse | undefined): 'STATIC' | 'STS' | 'WIF' => {
   if (!registry) return 'STS'
   if (registry.kind !== ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
@@ -69,6 +72,7 @@ export const getPayloadConfig = ({
   if (type === 'WIF' && kind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
     return {
       gcp_credentials_type: 'workload_identity_federation' as const,
+      project_id: getGcpProjectIdFromServiceAccountEmail(config?.service_account_email),
       region: config?.region,
       service_account_email: config?.service_account_email,
       workload_identity_provider_resource: config?.workload_identity_provider_resource,
