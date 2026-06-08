@@ -36,6 +36,16 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   useSupportChat: () => ({ showPylonForm: jest.fn() }),
 }))
 
+const mockUseBlueprintCatalogServiceReadme = jest.fn((props: unknown) => ({
+  data: '# AWS S3 Bucket\n\n[Open repository](https://github.com/qovery-blueprints/s3)',
+  isLoading: false,
+  isError: false,
+}))
+
+jest.mock('../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
+  useBlueprintCatalogServiceReadme: (props: unknown) => mockUseBlueprintCatalogServiceReadme(props),
+}))
+
 const blueprints: BlueprintItem[] = [
   {
     name: 'AWS S3 Bucket',
@@ -122,6 +132,47 @@ describe('ServiceNew', () => {
 
     expect(blueprintsSectionScreen.queryByText('AWS S3 Bucket')).not.toBeInTheDocument()
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
+  })
+
+  it('should open blueprint details from a blueprint card', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceNew
+        organizationId="org-1"
+        projectId="project-1"
+        environmentId="env-1"
+        availableTemplates={[]}
+        blueprints={blueprints}
+      />
+    )
+
+    const blueprintsSection = screen.getByRole('heading', { name: 'Blueprints' }).closest('section')
+    const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
+
+    await userEvent.click(blueprintsSectionScreen.getAllByRole('button', { name: 'View details' })[0])
+
+    const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
+    expect(mockUseBlueprintCatalogServiceReadme).toHaveBeenCalledWith({
+      organizationId: 'org-1',
+      provider: 'aws',
+      serviceFamily: 's3',
+      serviceVersion: '1',
+      enabled: true,
+    })
+    expect(within(dialog).getByRole('link', { name: 'Open qovery-blueprints/s3 repository' })).toHaveAttribute(
+      'href',
+      'https://github.com/qovery-blueprints/s3'
+    )
+    expect(within(dialog).getByRole('heading', { name: 'AWS S3 Bucket' })).toBeInTheDocument()
+    expect(within(dialog).getByRole('link', { name: 'Open repository' })).toHaveAttribute(
+      'href',
+      'https://github.com/qovery-blueprints/s3'
+    )
+    expect(within(dialog).getByText('AWS')).toBeInTheDocument()
+    expect(within(dialog).getByText('v1')).toBeInTheDocument()
+
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }))
+
+    expect(screen.queryByRole('dialog', { name: 'AWS S3 Bucket' })).not.toBeInTheDocument()
   })
 
   it('should link database entries to the database create flow', async () => {
