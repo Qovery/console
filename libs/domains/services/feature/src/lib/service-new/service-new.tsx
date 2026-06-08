@@ -503,6 +503,8 @@ type ServiceBlock = {
 }
 
 function BlueprintCard({ blueprint }: { blueprint: BlueprintItem }) {
+  console.log('blueprint', blueprint)
+
   return (
     <section className="flex h-full flex-col gap-4 rounded-lg border border-neutral bg-surface-neutral p-4 [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)]">
       <div className="flex flex-1 flex-col gap-3">
@@ -621,8 +623,8 @@ export function ServiceNew({
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
 
   const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
-  const filterBlueprint = ({ name, description }: BlueprintItem) =>
-    `${name} ${description}`.toLowerCase().includes(blueprintSearchInput.toLowerCase())
+  const filterBlueprint = ({ name, description, categories }: BlueprintItem) =>
+    `${name} ${description} ${categories?.join(' ')}`.toLowerCase().includes(blueprintSearchInput.toLowerCase())
   const filteredBlueprints = blueprints.filter(filterBlueprint)
 
   const handleSearchInputChange = (value: string) => {
