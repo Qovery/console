@@ -269,7 +269,35 @@ describe('ClusterCredentialsModal', () => {
 
     expect(screen.getByText('Authentication type')).toBeInTheDocument()
     expect(screen.getByText('Workload Identity Federation (preferred)')).toBeInTheDocument()
+    expect(screen.getByText('1. Connect to your GCP Console and create/open a project')).toBeInTheDocument()
+    expect(screen.getByText('2. Generate and run the Workload Identity Federation setup command')).toBeInTheDocument()
+    expect(screen.getByText('3. Copy the generated parameters here')).toBeInTheDocument()
     expect(screen.getByTestId('input-gcp-service-account-email')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Learn more' })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/getting-started/installation/gcp#generate-the-workload-identity-federation-setup-command'
+    )
+    expect(
+      screen.getByText(
+        /curl https:\/\/setup\.qovery\.com\/create_credentials_gcp_wif\.sh \| \\ bash -s -- \$GOOGLE_CLOUD_PROJECT qovery-service-account/
+      )
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Copy' })).toBeInTheDocument()
+    expect(screen.queryByRole('link', { name: 'How to generate setup command' })).not.toBeInTheDocument()
+  })
+
+  it('should keep legacy GCP documentation link for static credentials', () => {
+    props.cloudProvider = CloudProviderEnum.GCP
+    mockUseFeatureFlagEnabled.mockReturnValue(false)
+
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
+
+    expect(screen.getByText('Authentication type')).toBeInTheDocument()
+    expect(screen.getByTestId('input-credentials-json')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'Learn more' })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/getting-started/installation/gcp#generate-installation-command'
+    )
   })
 
   it('should format GCP WIF credentials correctly with handleSubmit', () => {
