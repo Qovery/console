@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense } from 'react'
 import { useEnvironment, useLifecycleTemplates } from '@qovery/domains/environments/feature'
 import { ServiceNew, useBlueprintCatalog } from '@qovery/domains/services/feature'
@@ -15,7 +16,8 @@ function ServiceNewContent() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId })
-  const { data: blueprintCatalog } = useBlueprintCatalog({ organizationId })
+  const isServiceCatalogEnabled = Boolean(useFeatureFlagEnabled('service-catalog'))
+  const { data: blueprintCatalog } = useBlueprintCatalog({ organizationId, enabled: isServiceCatalogEnabled })
   const cloudProvider = environment?.cloud_provider?.provider
 
   useDocumentTitle('Create new service - Qovery')
@@ -43,7 +45,7 @@ function ServiceNewContent() {
         environmentId={environmentId}
         cloudProvider={cloudProvider}
         availableTemplates={availableTemplates}
-        blueprints={blueprintCatalog?.blueprints}
+        blueprints={isServiceCatalogEnabled ? blueprintCatalog?.blueprints : undefined}
       />
     </Section>
   )
