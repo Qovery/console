@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type AvailableContainerRegistryResponse,
   type Cluster,
@@ -19,7 +20,11 @@ import {
   InputText,
   InputTextArea,
 } from '@qovery/shared/ui'
-import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
+import {
+  WORKLOAD_IDENTITY_PROVIDER_RESOURCE_FORMAT_ERROR,
+  WORKLOAD_IDENTITY_PROVIDER_RESOURCE_REGEXP,
+  containerRegistryKindToIcon,
+} from '@qovery/shared/util-js'
 import { useAvailableContainerRegistries } from '../hooks/use-available-container-registries/use-available-container-registries'
 
 export interface ContainerRegistryFormProps {
@@ -51,6 +56,7 @@ export function ContainerRegistryForm({
   registry,
 }: ContainerRegistryFormProps) {
   const methods = useFormContext()
+  const isGcpWifEnabled = Boolean(useFeatureFlagEnabled('gcp-wif'))
 
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -168,6 +174,13 @@ export function ContainerRegistryForm({
               // GitHub Enterprise doesn't support anonymous login, so we set the login type to ACCOUNT
               if (value === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR) {
                 methods.setValue('config.login_type', 'ACCOUNT')
+              }
+              if (value === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
+                methods.setValue('type', isGcpWifEnabled ? 'WIF' : 'STATIC')
+              } else if (value === ContainerRegistryKindEnum.ECR) {
+                methods.setValue('type', 'STS')
+              } else {
+                methods.setValue('type', 'STATIC')
               }
             }}
             value={field.value}
@@ -433,7 +446,9 @@ export function ContainerRegistryForm({
 
       <hr className="border-neutral" />
 
-      {(cluster?.cloud_provider === 'AWS' || watchKind === ContainerRegistryKindEnum.ECR) && (
+      {(cluster?.cloud_provider === 'AWS' ||
+        watchKind === ContainerRegistryKindEnum.ECR ||
+        watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) && (
         <Controller
           name="type"
           control={methods.control}
@@ -446,10 +461,17 @@ export function ContainerRegistryForm({
               value={field.value}
               label="Authentication type"
               error={error?.message}
-              options={[
-                { label: 'Assume role via STS (preferred)', value: 'STS' },
-                { label: 'Static credentials', value: 'STATIC' },
-              ]}
+              options={
+                watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY
+                  ? [
+                      ...(isGcpWifEnabled ? [{ label: 'Workload Identity Federation (preferred)', value: 'WIF' }] : []),
+                      { label: 'Static credentials', value: 'STATIC' },
+                    ]
+                  : [
+                      { label: 'Assume role via STS (preferred)', value: 'STS' },
+                      { label: 'Static credentials', value: 'STATIC' },
+                    ]
+              }
             />
           )}
         />
@@ -580,7 +602,50 @@ export function ContainerRegistryForm({
           )}
         </>
       )}
-      {watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY && (
+      {watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY && watchType === 'WIF' && isGcpWifEnabled && (
+        <>
+          <Controller
+            name="config.service_account_email"
+            control={methods.control}
+            rules={{
+              required: 'Please enter your GCP service account email.',
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-gcp-service-account-email"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Service account email"
+                error={error?.message}
+              />
+            )}
+          />
+          <Controller
+            name="config.workload_identity_provider_resource"
+            control={methods.control}
+            rules={{
+              required: 'Please enter your workload identity provider resource.',
+              validate: (value) =>
+                WORKLOAD_IDENTITY_PROVIDER_RESOURCE_REGEXP.test(value ?? '')
+                  ? true
+                  : WORKLOAD_IDENTITY_PROVIDER_RESOURCE_FORMAT_ERROR,
+            }}
+            render={({ field, fieldState: { error } }) => (
+              <InputText
+                dataTestId="input-gcp-workload-identity-provider-resource"
+                name={field.name}
+                onChange={field.onChange}
+                value={field.value}
+                label="Workload identity provider resource"
+                hint="projects/<project-number>/locations/global/workloadIdentityPools/<pool-id>/providers/<provider-id>"
+                error={error?.message}
+              />
+            )}
+          />
+        </>
+      )}
+      {watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY && watchType === 'STATIC' && (
         <Controller
           name="config.json_credentials"
           control={methods.control}

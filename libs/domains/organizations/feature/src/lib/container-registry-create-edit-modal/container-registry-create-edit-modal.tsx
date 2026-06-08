@@ -17,6 +17,73 @@ export interface ContainerRegistryCreateEditModalProps {
   isEdit?: boolean
   registry?: ContainerRegistryResponse
 }
+
+type ContainerRegistryCreateEditFormValues = ContainerRegistryRequest & {
+  type: 'STATIC' | 'STS' | 'WIF'
+  config: ContainerRegistryRequest['config'] & {
+    login_type?: 'ACCOUNT' | 'ANONYMOUS'
+    service_account_email?: string
+    workload_identity_provider_resource?: string
+    azure_application_id?: string
+  }
+}
+type ContainerRegistryCreateEditFormConfig = ContainerRegistryCreateEditFormValues['config']
+
+export const getDefaultType = (registry: ContainerRegistryResponse | undefined): 'STATIC' | 'STS' | 'WIF' => {
+  if (!registry) return 'STS'
+  if (registry.kind !== ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
+    return registry.config?.role_arn ? 'STS' : 'STATIC'
+  }
+  const config = registry.config as typeof registry.config & {
+    gcp_credentials_type?: string
+    service_account_email?: string
+  }
+  return config?.gcp_credentials_type === 'workload_identity_federation' || config?.service_account_email
+    ? 'WIF'
+    : 'STATIC'
+}
+
+export const getPayloadConfig = ({
+  type,
+  kind,
+  config,
+}: {
+  type: ContainerRegistryCreateEditFormValues['type']
+  kind: ContainerRegistryKindEnum
+  config: Omit<ContainerRegistryCreateEditFormConfig, 'login_type'>
+}) => {
+  const normalizedConfig = config?.username
+    ? {
+        ...config,
+        username: config.username.toLowerCase(),
+      }
+    : config
+
+  if (type === 'STS' && kind === ContainerRegistryKindEnum.ECR) {
+    return {
+      role_arn: config?.role_arn,
+      region: config?.region,
+    }
+  }
+
+  if (type === 'WIF' && kind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
+    return {
+      gcp_credentials_type: 'workload_identity_federation' as const,
+      region: config?.region,
+      service_account_email: config?.service_account_email,
+      workload_identity_provider_resource: config?.workload_identity_provider_resource,
+    }
+  }
+
+  return {
+    ...normalizedConfig,
+    role_arn: undefined,
+    gcp_credentials_type: undefined,
+    service_account_email: undefined,
+    workload_identity_provider_resource: undefined,
+  }
+}
+
 export function ContainerRegistryCreateEditModal({
   isEdit,
   registry,
@@ -24,19 +91,18 @@ export function ContainerRegistryCreateEditModal({
   onClose,
 }: ContainerRegistryCreateEditModalProps) {
   const { enableAlertClickOutside } = useModal()
-  const methods = useForm<
-    ContainerRegistryRequest & {
-      type: 'STATIC' | 'STS'
-      config: { login_type: 'ACCOUNT' | 'ANONYMOUS'; azure_application_id?: string }
-    }
-  >({
+  const gcpConfig = registry?.config as ContainerRegistryResponse['config'] & {
+    service_account_email?: string
+    workload_identity_provider_resource?: string
+  }
+  const methods = useForm<ContainerRegistryCreateEditFormValues>({
     mode: 'onChange',
     defaultValues: {
       name: registry?.name,
       description: registry?.description,
       url: registry?.url,
       kind: registry?.kind,
-      type: registry ? (registry.config?.role_arn ? 'STS' : 'STATIC') : 'STS',
+      type: getDefaultType(registry),
       config: {
         username: registry?.config?.username,
         password: undefined,
@@ -51,6 +117,8 @@ export function ContainerRegistryCreateEditModal({
         azure_tenant_id: registry?.config?.azure_tenant_id,
         azure_subscription_id: registry?.config?.azure_subscription_id,
         azure_application_id: registry?.config?.azure_application_id,
+        service_account_email: gcpConfig?.service_account_email,
+        workload_identity_provider_resource: gcpConfig?.workload_identity_provider_resource,
         login_type:
           registry?.config?.username || registry?.kind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
             ? 'ACCOUNT'
@@ -88,24 +156,16 @@ export function ContainerRegistryCreateEditModal({
       ...rest
     } = containerRegistryRequest
     try {
-      // Normalize username to lowercase - Docker registry names must be lowercase
-      const normalizedConfig = config?.username ? { ...config, username: config.username.toLowerCase() } : config
-
       const commonPayload = {
         organizationId: organizationId,
         containerRegistryRequest: {
           ...rest,
           kind,
-          config:
-            type === 'STS' && kind === 'ECR'
-              ? {
-                  role_arn: config?.role_arn,
-                  region: config?.region,
-                }
-              : {
-                  role_arn: undefined,
-                  ...normalizedConfig,
-                },
+          config: getPayloadConfig({
+            type,
+            kind,
+            config,
+          }),
         },
       }
 

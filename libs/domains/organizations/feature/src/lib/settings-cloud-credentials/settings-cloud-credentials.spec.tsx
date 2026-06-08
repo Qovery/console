@@ -77,7 +77,12 @@ describe('SettingsCloudCredentials', () => {
         credential: {
           id: '2',
           name: 'Credential 2',
-          object_type: 'GCP',
+          object_type: 'GCP_WORKLOAD_IDENTITY_FEDERATION',
+          project_id: 'my-gcp-project',
+          service_account_email: 'qovery@my-gcp-project.iam.gserviceaccount.com',
+          workload_identity_provider_resource:
+            'projects/123456789/locations/global/workloadIdentityPools/qovery-pool/providers/qovery-provider',
+          token_lifetime_seconds: 3600,
         },
         clusters: [],
       },

@@ -1,12 +1,16 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
 import * as useCreateCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import * as useDeleteCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import * as useEditCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import { getByText, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useClusterCloudProviderInfoHook from '../hooks/use-cluster-cloud-provider-info/use-cluster-cloud-provider-info'
-import ClusterCredentialsModal, { type ClusterCredentialsModalProps, handleSubmit } from './cluster-credentials-modal'
+import ClusterCredentialsModal, {
+  type ClusterCredentialsModalProps,
+  getDefaultClusterCredentialType,
+  handleSubmit,
+} from './cluster-credentials-modal'
 
 jest.mock('@qovery/domains/cloud-providers/feature', () => ({
   useCreateCloudProviderCredential: jest.fn(),
@@ -54,10 +58,10 @@ describe('ClusterCredentialsModal', () => {
       isLoading: false,
     })
 
-    jest.spyOn(useClusterCloudProviderInfoHook, 'useClusterCloudProviderInfo').mockReturnValue({
-      data: { cloud_provider: 'AWS' },
+    jest.spyOn(useClusterCloudProviderInfoHook, 'useClusterCloudProviderInfo').mockImplementation(() => ({
+      data: { cloud_provider: props.cloudProvider },
       isLoading: false,
-    })
+    }))
   })
 
   afterEach(() => {
@@ -75,6 +79,103 @@ describe('ClusterCredentialsModal', () => {
     expect(screen.getByText('Authentication type')).toBeInTheDocument()
     expect(screen.getByText('3. Insert here the role ARN')).toBeInTheDocument()
     expect(screen.getByLabelText('Name')).toBeInTheDocument()
+  })
+
+  it('should get default credential type by object type', () => {
+    expect(
+      getDefaultClusterCredentialType({
+        credential: {
+          object_type: 'EKS_ANYWHERE_VSPHERE',
+          role_arn: 'arn:aws:eks::123456789012:role/test-role',
+        } as ClusterCredentials,
+        isEdit: true,
+        isAwsMode: true,
+        isGcpMode: false,
+        isGcpWifEnabled: false,
+      })
+    ).toBe('EKS_ANYWHERE_VSPHERE_ROLE')
+
+    expect(
+      getDefaultClusterCredentialType({
+        credential: { object_type: 'EKS_ANYWHERE_VSPHERE' } as ClusterCredentials,
+        isEdit: true,
+        isAwsMode: true,
+        isGcpMode: false,
+        isGcpWifEnabled: false,
+      })
+    ).toBe('EKS_ANYWHERE_VSPHERE_STATIC')
+
+    expect(
+      getDefaultClusterCredentialType({
+        credential: { object_type: 'GCP_WORKLOAD_IDENTITY_FEDERATION' } as ClusterCredentials,
+        isEdit: true,
+        isAwsMode: false,
+        isGcpMode: true,
+        isGcpWifEnabled: true,
+      })
+    ).toBe('WIF')
+
+    expect(
+      getDefaultClusterCredentialType({
+        credential: { object_type: 'GCP' } as ClusterCredentials,
+        isEdit: true,
+        isAwsMode: false,
+        isGcpMode: true,
+        isGcpWifEnabled: true,
+      })
+    ).toBe('STATIC')
+
+    expect(
+      getDefaultClusterCredentialType({
+        credential: { object_type: 'AWS_ROLE' } as ClusterCredentials,
+        isEdit: true,
+        isAwsMode: true,
+        isGcpMode: false,
+        isGcpWifEnabled: true,
+      })
+    ).toBe('STS')
+  })
+
+  it('should get default credential type for create mode', () => {
+    expect(
+      getDefaultClusterCredentialType({
+        credential: undefined,
+        isEdit: false,
+        isAwsMode: true,
+        isGcpMode: false,
+        isGcpWifEnabled: false,
+      })
+    ).toBe('STS')
+
+    expect(
+      getDefaultClusterCredentialType({
+        credential: undefined,
+        isEdit: false,
+        isAwsMode: false,
+        isGcpMode: true,
+        isGcpWifEnabled: true,
+      })
+    ).toBe('WIF')
+
+    expect(
+      getDefaultClusterCredentialType({
+        credential: undefined,
+        isEdit: false,
+        isAwsMode: false,
+        isGcpMode: true,
+        isGcpWifEnabled: false,
+      })
+    ).toBe('STATIC')
+
+    expect(
+      getDefaultClusterCredentialType({
+        credential: undefined,
+        isEdit: true,
+        isAwsMode: true,
+        isGcpMode: false,
+        isGcpWifEnabled: false,
+      })
+    ).toBe('STATIC')
   })
 
   it('should handle STS form submission', async () => {
@@ -157,6 +258,58 @@ describe('ClusterCredentialsModal', () => {
         secret_access_key: 'secret',
         vsphere_user: 'administrator@vsphere.local',
         vsphere_password: 'super-secret',
+      },
+    })
+  })
+
+  it('should render GCP WIF as default authentication type', () => {
+    props.cloudProvider = CloudProviderEnum.GCP
+
+    renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
+
+    expect(screen.getByText('Authentication type')).toBeInTheDocument()
+    expect(screen.getByText('Workload Identity Federation (preferred)')).toBeInTheDocument()
+    expect(screen.getByTestId('input-gcp-service-account-email')).toBeInTheDocument()
+  })
+
+  it('should format GCP WIF credentials correctly with handleSubmit', () => {
+    const data = {
+      name: 'gcp-wif-cred',
+      type: 'WIF',
+      service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+      workload_identity_provider_resource:
+        'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+    }
+
+    const result = handleSubmit(data, CloudProviderEnum.GCP)
+
+    expect(result).toEqual({
+      cloudProvider: 'GCP',
+      payload: {
+        name: 'gcp-wif-cred',
+        credential_type: 'WIF',
+        service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+        workload_identity_provider_resource:
+          'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+      },
+    })
+  })
+
+  it('should format GCP static credentials correctly with handleSubmit', () => {
+    const data = {
+      name: 'gcp-static-cred',
+      type: 'STATIC',
+      gcp_credentials: 'base64-json',
+    }
+
+    const result = handleSubmit(data, CloudProviderEnum.GCP)
+
+    expect(result).toEqual({
+      cloudProvider: 'GCP',
+      payload: {
+        name: 'gcp-static-cred',
+        credential_type: 'SERVICE_ACCOUNT_KEY',
+        gcp_credentials: 'base64-json',
       },
     })
   })
