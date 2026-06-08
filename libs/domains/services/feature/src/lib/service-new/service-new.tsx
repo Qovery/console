@@ -1,7 +1,11 @@
 import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
+import {
+  type BlueprintItem,
+  type CloudProviderEnum,
+  type LifecycleTemplateListResponseResultsInner,
+} from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
@@ -498,6 +502,26 @@ type ServiceBlock = {
   badge?: string
 }
 
+function BlueprintCard({ blueprint }: { blueprint: BlueprintItem }) {
+  return (
+    <article className="flex min-h-44 flex-col justify-between rounded border border-neutral bg-surface-neutral px-4 py-4">
+      <div>
+        <img className="mb-4 h-9 w-9 rounded-sm" src={blueprint.icon} alt="" aria-hidden="true" />
+        <h3 className="mb-2 text-ssm font-medium text-neutral">{blueprint.name}</h3>
+        <p className="text-xs text-neutral-subtle">{blueprint.description}</p>
+      </div>
+      <div className="mt-4 flex items-center gap-1.5">
+        <Button type="button" variant="outline" color="neutral" size="xs">
+          Deploy
+        </Button>
+        <Button type="button" variant="plain" color="neutral" size="xs">
+          View details
+        </Button>
+      </div>
+    </article>
+  )
+}
+
 export interface ServiceNewProps {
   organizationId: string
   projectId: string
@@ -505,6 +529,7 @@ export interface ServiceNewProps {
   /** From environment.cloud_provider.provider (may be string from API) */
   cloudProvider?: CloudProviderEnum | string
   availableTemplates?: LifecycleTemplateListResponseResultsInner[]
+  blueprints?: BlueprintItem[]
 }
 
 export function ServiceNew({
@@ -513,6 +538,7 @@ export function ServiceNew({
   environmentId,
   cloudProvider,
   availableTemplates = [],
+  blueprints = [],
 }: ServiceNewProps) {
   const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
   const { showPylonForm } = useSupportChat()
@@ -590,8 +616,12 @@ export function ServiceNew({
   )
 
   const [searchInput, setSearchInput] = useState('')
+  const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
 
   const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
+  const filterBlueprint = ({ name, description }: BlueprintItem) =>
+    `${name} ${description}`.toLowerCase().includes(blueprintSearchInput.toLowerCase())
+  const filteredBlueprints = blueprints.filter(filterBlueprint)
 
   const handleSearchInputChange = (value: string) => {
     if ([...serviceEmpty, ...serviceTemplates].filter(filterService).length === 0) {
@@ -669,6 +699,36 @@ export function ServiceNew({
                 ))}
               </div>
             </Section>
+            {blueprints.length > 0 && (
+              <Section>
+                <div className="mb-5 flex items-start justify-between gap-4">
+                  <div>
+                    <Heading className="mb-1">Blueprints</Heading>
+                    <p className="text-xs text-neutral-subtle">
+                      Qovery managed blueprints that you can deploy in a few clicks.
+                    </p>
+                  </div>
+                  <InputSearch
+                    placeholder="Search blueprints..."
+                    className="w-60"
+                    customSize="h-9 text-xs"
+                    onChange={setBlueprintSearchInput}
+                  />
+                </div>
+                {filteredBlueprints.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-4">
+                    {filteredBlueprints.map((blueprint) => (
+                      <BlueprintCard key={`${blueprint.provider}-${blueprint.serviceFamily}`} blueprint={blueprint} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="rounded border border-neutral bg-surface-neutral px-3 py-6 text-center">
+                    <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+                    <p className="mt-1 text-xs font-medium text-neutral-subtle">No blueprint found</p>
+                  </div>
+                )}
+              </Section>
+            )}
             <SectionByTag
               title="Data & Storage"
               description="Find your perfect data and storage template with presets."

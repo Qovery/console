@@ -1,3 +1,5 @@
+import { within } from '@testing-library/react'
+import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceNew } from './service-new'
@@ -33,6 +35,29 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
   useSupportChat: () => ({ showPylonForm: jest.fn() }),
 }))
+
+const blueprints: BlueprintItem[] = [
+  {
+    name: 'AWS S3 Bucket',
+    kind: 'ServiceBlueprint',
+    description: 'Object storage with server-side encryption, versioning, and configurable lifecycle policies.',
+    icon: 'https://cdn.qovery.com/icons/s3.svg',
+    categories: ['storage'],
+    provider: 'aws',
+    serviceFamily: 's3',
+    majorVersions: [{ serviceVersion: '1', latestTag: 'aws/s3/1/1.0.0' }],
+  },
+  {
+    name: 'Redis',
+    kind: 'ServiceBlueprint',
+    description: 'In-memory key-value store deployed via the Bitnami Helm chart with configurable replicas.',
+    icon: 'https://cdn.qovery.com/icons/redis.svg',
+    categories: ['cache'],
+    provider: 'aws',
+    serviceFamily: 'redis',
+    majorVersions: [{ serviceVersion: '7', latestTag: 'aws/redis/7/1.0.0' }],
+  },
+]
 
 describe('ServiceNew', () => {
   it('should render successfully', () => {
@@ -72,6 +97,31 @@ describe('ServiceNew', () => {
     expect(screen.getByRole('heading', { name: 'Front-end' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'IAC' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'More template' })).toBeInTheDocument()
+  })
+
+  it('should render blueprint cards from the catalog', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceNew
+        organizationId="org-1"
+        projectId="project-1"
+        environmentId="env-1"
+        availableTemplates={[]}
+        blueprints={blueprints}
+      />
+    )
+
+    const blueprintsSection = screen.getByRole('heading', { name: 'Blueprints' }).closest('section')
+    expect(blueprintsSection).toBeInTheDocument()
+
+    const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
+    expect(blueprintsSectionScreen.getByText('AWS S3 Bucket')).toBeInTheDocument()
+    expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
+    expect(blueprintsSectionScreen.getAllByRole('button', { name: 'Deploy' })).toHaveLength(2)
+
+    await userEvent.type(screen.getByPlaceholderText('Search blueprints...'), 'redis')
+
+    expect(blueprintsSectionScreen.queryByText('AWS S3 Bucket')).not.toBeInTheDocument()
+    expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
   })
 
   it('should link database entries to the database create flow', async () => {

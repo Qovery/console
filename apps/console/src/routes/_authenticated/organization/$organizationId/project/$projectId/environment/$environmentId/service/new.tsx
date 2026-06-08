@@ -1,7 +1,7 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { useEnvironment, useLifecycleTemplates } from '@qovery/domains/environments/feature'
-import { ServiceNew } from '@qovery/domains/services/feature'
+import { ServiceNew, useBlueprintCatalog } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -15,6 +15,7 @@ function ServiceNewContent() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: availableTemplates = [] } = useLifecycleTemplates({ environmentId })
+  const { data: blueprintCatalog } = useBlueprintCatalog({ organizationId })
   const cloudProvider = environment?.cloud_provider?.provider
 
   useDocumentTitle('Create new service - Qovery')
@@ -42,6 +43,7 @@ function ServiceNewContent() {
         environmentId={environmentId}
         cloudProvider={cloudProvider}
         availableTemplates={availableTemplates}
+        blueprints={blueprintCatalog?.blueprints}
       />
     </Section>
   )

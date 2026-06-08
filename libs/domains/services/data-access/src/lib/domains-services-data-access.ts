@@ -13,6 +13,7 @@ import {
   type ApplicationRequest,
   ApplicationsApi,
   ArgoCDApi,
+  BlueprintMainCallsApi,
   type CleanFailedJobsRequest,
   ContainerActionsApi,
   type ContainerAdvancedSettings,
@@ -98,6 +99,7 @@ const databasesApi = new DatabasesApi()
 const jobsApi = new JobsApi()
 const helmsApi = new HelmsApi()
 const terraformsApi = new TerraformsApi()
+const blueprintApi = new BlueprintMainCallsApi()
 
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
@@ -243,6 +245,13 @@ export function isManagedDatabase(service?: AnyService): service is Database {
 }
 
 export const services = createQueryKeys('services', {
+  blueprintCatalog: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await blueprintApi.getBlueprintCatalog(organizationId)
+      return response.data
+    },
+  }),
   deploymentStatus: (environmentId: string, serviceId: string) => ({
     queryKey: [environmentId, serviceId],
     // NOTE: Value is set by WebSocket
