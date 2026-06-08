@@ -76,8 +76,9 @@ function EnvRow({
       }}
     >
       <Table.Cell className="h-auto border-none p-0">
-        <label className={environmentSelectionCellClassName} onClick={stopRowNavigation} onKeyDown={stopRowNavigation}>
+        <div className={environmentSelectionCellClassName} onClick={stopRowNavigation} onKeyDown={stopRowNavigation}>
           <Checkbox
+            aria-label={`Select ${overview.name}`}
             checked={checked}
             onClick={(e) => e.stopPropagation()}
             onCheckedChange={(checked) => {
@@ -87,7 +88,7 @@ function EnvRow({
               onCheckedChange(checked)
             }}
           />
-        </label>
+        </div>
       </Table.Cell>
       <Table.Cell className={twMerge(environmentTableCellClassName, 'border-none p-0')}>
         <div className={environmentNameCellContentClassName}>
@@ -253,13 +254,14 @@ export function EnvironmentSection({
           <Table.Header>
             <Table.Row className={twMerge('w-full items-center text-xs', environmentTableGridLayoutClassName)}>
               <Table.ColumnHeaderCell className="h-9 p-0 text-neutral-subtle">
-                <label
+                <div
                   className={environmentSelectionCellClassName}
                   onClick={(e) => {
                     e.stopPropagation()
                   }}
                 >
                   <Checkbox
+                    aria-label={`Select all ${title.toLowerCase()} environments`}
                     checked={sectionChecked}
                     onClick={(e) => e.stopPropagation()}
                     onCheckedChange={(checked) => {
@@ -272,7 +274,7 @@ export function EnvironmentSection({
                       )
                     }}
                   />
-                </label>
+                </div>
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-9 items-center py-0 pl-0 pr-4 text-neutral-subtle">
                 Environment
