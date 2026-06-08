@@ -1,5 +1,9 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
-import { ContainerRegistryKindEnum } from 'qovery-typescript-axios'
+import {
+  ContainerRegistryKindEnum,
+  type ContainerRegistryRequest,
+  type ContainerRegistryResponse,
+} from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useAvailableContainerRegistries from '../hooks/use-available-container-registries/use-available-container-registries'
@@ -7,6 +11,8 @@ import * as useCreateContainerRegistry from '../hooks/use-create-container-regis
 import * as useEditContainerRegistry from '../hooks/use-edit-container-registry/use-edit-container-registry'
 import ContainerRegistryCreateEditModal, {
   type ContainerRegistryCreateEditModalProps,
+  getDefaultType,
+  getPayloadConfig,
 } from './container-registry-create-edit-modal'
 
 const useCreateContainerRegistryMockSpy = jest.spyOn(
@@ -384,6 +390,102 @@ describe('ContainerRegistryCreateEditModal', () => {
       })
     )
   }, 30000)
+
+  it('should set default registry type based on existing registry config', () => {
+    expect(getDefaultType(undefined)).toBe('STS')
+
+    const awsStaticRegistry = {
+      id: '1111',
+      created_at: '',
+      updated_at: '',
+      name: 'my-registry',
+      url: 'https://registry.aws.com',
+      kind: ContainerRegistryKindEnum.DOCKER_HUB,
+      config: {
+        region: 'eu-west-1',
+      },
+    } as ContainerRegistryResponse
+    expect(getDefaultType(awsStaticRegistry)).toBe('STATIC')
+
+    const awsStsRegistry = {
+      id: '2222',
+      created_at: '',
+      updated_at: '',
+      name: 'my-registry',
+      url: 'https://registry.aws.com',
+      kind: ContainerRegistryKindEnum.ECR,
+      config: {
+        region: 'us-east-1',
+        role_arn: 'arn:aws:iam::123456789012:role/MyRole',
+      },
+    } as ContainerRegistryResponse
+    expect(getDefaultType(awsStsRegistry)).toBe('STS')
+
+    const gcpStaticRegistry = {
+      id: '3333',
+      created_at: '',
+      updated_at: '',
+      name: 'my-registry',
+      url: 'https://us-east1-docker.pkg.dev',
+      kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+      config: {
+        region: 'us-east1',
+        service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+      },
+    } as ContainerRegistryResponse
+    expect(getDefaultType(gcpStaticRegistry)).toBe('WIF')
+  })
+
+  it('should build payload for registry based on type and kind', () => {
+    expect(
+      getPayloadConfig({
+        type: 'STS',
+        kind: ContainerRegistryKindEnum.ECR,
+        config: {
+          region: 'us-east-1',
+          role_arn: 'arn:aws:iam::123456789012:role/my-role',
+          secret_access_key: 'ignored',
+        } as unknown as Omit<ContainerRegistryRequest['config'], 'login_type'>,
+      })
+    ).toEqual({
+      role_arn: 'arn:aws:iam::123456789012:role/my-role',
+      region: 'us-east-1',
+    })
+
+    expect(
+      getPayloadConfig({
+        type: 'WIF',
+        kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+        config: {
+          region: 'europe-west1',
+          service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+          workload_identity_provider_resource:
+            'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+        } as unknown as Omit<ContainerRegistryRequest['config'], 'login_type'>,
+      })
+    ).toEqual({
+      gcp_credentials_type: 'workload_identity_federation',
+      region: 'europe-west1',
+      service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+      workload_identity_provider_resource:
+        'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+    })
+
+    expect(
+      getPayloadConfig({
+        type: 'STATIC',
+        kind: ContainerRegistryKindEnum.DOCKER_HUB,
+        config: {
+          username: 'John.Doe',
+          region: 'eu-west-1',
+        } as unknown as Omit<ContainerRegistryRequest['config'], 'login_type'>,
+      })
+    ).toEqual({
+      role_arn: undefined,
+      username: 'john.doe',
+      region: 'eu-west-1',
+    })
+  })
 
   it('should submit the form to edit a registry', async () => {
     const { userEvent } = renderWithProviders(

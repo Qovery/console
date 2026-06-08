@@ -29,7 +29,7 @@ type ContainerRegistryCreateEditFormValues = ContainerRegistryRequest & {
 }
 type ContainerRegistryCreateEditFormConfig = ContainerRegistryCreateEditFormValues['config']
 
-const getDefaultType = (registry: ContainerRegistryResponse | undefined): 'STATIC' | 'STS' | 'WIF' => {
+export const getDefaultType = (registry: ContainerRegistryResponse | undefined): 'STATIC' | 'STS' | 'WIF' => {
   if (!registry) return 'STS'
   if (registry.kind !== ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
     return registry.config?.role_arn ? 'STS' : 'STATIC'
@@ -43,7 +43,7 @@ const getDefaultType = (registry: ContainerRegistryResponse | undefined): 'STATI
     : 'STATIC'
 }
 
-const getPayloadConfig = ({
+export const getPayloadConfig = ({
   type,
   kind,
   config,
@@ -76,8 +76,11 @@ const getPayloadConfig = ({
   }
 
   return {
-    role_arn: undefined,
     ...normalizedConfig,
+    role_arn: undefined,
+    gcp_credentials_type: undefined,
+    service_account_email: undefined,
+    workload_identity_provider_resource: undefined,
   }
 }
 

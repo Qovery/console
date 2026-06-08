@@ -67,6 +67,36 @@ export interface ClusterCredentialsModalProps {
   cloudProvider?: ClusterCredentialsModalCloudProvider
 }
 
+export const getDefaultClusterCredentialType = ({
+  credential,
+  isEdit,
+  isAwsMode,
+  isGcpMode,
+  isGcpWifEnabled,
+}: {
+  credential?: ClusterCredentials
+  isEdit: boolean
+  isAwsMode: boolean
+  isGcpMode: boolean
+  isGcpWifEnabled: boolean
+}): ClusterCredentialsFormValues['type'] =>
+  match<ClusterCredentials | undefined, ClusterCredentialsFormValues['type']>(credential)
+    .with({ object_type: 'EKS_ANYWHERE_VSPHERE' }, ({ role_arn }) =>
+      role_arn ? 'EKS_ANYWHERE_VSPHERE_ROLE' : 'EKS_ANYWHERE_VSPHERE_STATIC'
+    )
+    .with({ object_type: 'GCP_WORKLOAD_IDENTITY_FEDERATION' }, () => 'WIF')
+    .with({ object_type: 'GCP' }, () => 'STATIC')
+    .with({ object_type: 'AWS_ROLE' }, () => 'STS')
+    .with(
+      P.when(() => !isEdit && isAwsMode),
+      () => 'STS'
+    )
+    .with(
+      P.when(() => !isEdit && isGcpMode),
+      () => (isGcpWifEnabled ? 'WIF' : 'STATIC')
+    )
+    .otherwise(() => 'STATIC')
+
 export const handleSubmit = (data: FieldValues, cloudProvider: CloudProviderEnum) => {
   const currentData = {
     name: data['name'],
@@ -290,17 +320,13 @@ export function ClusterCredentialsModal({
     ]
   )
 
-  const defaultType: ClusterCredentialsFormValues['type'] = (() => {
-    if (credential?.object_type === 'EKS_ANYWHERE_VSPHERE') {
-      return credential.role_arn ? 'EKS_ANYWHERE_VSPHERE_ROLE' : 'EKS_ANYWHERE_VSPHERE_STATIC'
-    }
-    if (credential?.object_type === 'GCP_WORKLOAD_IDENTITY_FEDERATION') return 'WIF'
-    if (credential?.object_type === 'GCP') return 'STATIC'
-    if (credential?.object_type === 'AWS_ROLE') return 'STS'
-    if (!isEdit && isAwsMode) return 'STS'
-    if (!isEdit && isGcpMode) return isGcpWifEnabled ? 'WIF' : 'STATIC'
-    return 'STATIC'
-  })()
+  const defaultType: ClusterCredentialsFormValues['type'] = getDefaultClusterCredentialType({
+    credential,
+    isEdit,
+    isAwsMode,
+    isGcpMode,
+    isGcpWifEnabled,
+  })
   const initialType = authTypeOptions.includes(defaultType)
     ? defaultType
     : authTypeOptions[0] ?? (isGcpMode ? 'WIF' : 'STS')
