@@ -25,6 +25,25 @@ export interface StepSummaryProps {
   organizationId: string
 }
 
+type GcpNatGatewaySettings = Pick<ClusterFeatureNatGatewayTypeGcp, 'static_ips_enabled' | 'static_ips_count'>
+
+const DEFAULT_GCP_NAT_GATEWAY_SETTINGS = {
+  static_ips_enabled: false,
+  static_ips_count: 2,
+} satisfies GcpNatGatewaySettings
+
+const buildGcpNatGatewayFeature = (
+  natGatewaySettings: GcpNatGatewaySettings = DEFAULT_GCP_NAT_GATEWAY_SETTINGS
+): ClusterRequestFeaturesInner => ({
+  id: 'NAT_GATEWAY',
+  value: {
+    nat_gateway_type: {
+      provider: 'gcp',
+      ...natGatewaySettings,
+    } as ClusterFeatureNatGatewayTypeGcp,
+  } as ClusterFeatureNatGatewayParameters,
+})
+
 export function StepSummary({ organizationId }: StepSummaryProps) {
   const navigate = useNavigate()
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
@@ -205,41 +224,24 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           .map((id: string) => {
             const feature = featuresData.features[id]
 
-            if (!feature?.value) return null
-
             if (generalData.cloud_provider === 'GCP' && id === 'STATIC_IP') {
-              // NAT_GATEWAY is the canonical GCP egress feature. If it is already present
-              // in the form it will be serialised by its own branch below; skip STATIC_IP.
-              // If it is absent (race / quick navigation), emit a safe default here so the
-              // payload is never silently empty.
-              if ('NAT_GATEWAY' in featuresData.features) return null
+              if (!feature?.value) return null
+
               return {
-                id: 'NAT_GATEWAY',
-                value: {
-                  nat_gateway_type: {
-                    provider: 'gcp',
-                    static_ips_enabled: false,
-                    static_ips_count: 2,
-                  } as ClusterFeatureNatGatewayTypeGcp,
-                } as ClusterFeatureNatGatewayParameters,
+                id,
+                value: true,
               }
             }
+
+            if (!feature?.value) return null
 
             if (generalData.cloud_provider === 'GCP' && id === 'NAT_GATEWAY') {
               const gcpNatGatewayType =
                 feature.extendedValue && typeof feature.extendedValue === 'object'
                   ? feature.extendedValue
-                  : { static_ips_enabled: false, static_ips_count: 2 }
+                  : DEFAULT_GCP_NAT_GATEWAY_SETTINGS
 
-              return {
-                id,
-                value: {
-                  nat_gateway_type: {
-                    provider: 'gcp',
-                    ...gcpNatGatewayType,
-                  } as ClusterFeatureNatGatewayTypeGcp,
-                } as ClusterFeatureNatGatewayParameters,
-              }
+              return buildGcpNatGatewayFeature(gcpNatGatewayType)
             }
 
             return {
@@ -248,6 +250,14 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             }
           })
           .filter(Boolean) as ClusterRequestFeaturesInner[]
+
+        if (
+          generalData.cloud_provider === 'GCP' &&
+          featuresData.features.STATIC_IP?.value &&
+          !formatFeatures.some(({ id }) => id === 'NAT_GATEWAY')
+        ) {
+          formatFeatures.push(buildGcpNatGatewayFeature())
+        }
       } else if (generalData.cloud_provider === 'AWS') {
         formatFeatures = [
           {

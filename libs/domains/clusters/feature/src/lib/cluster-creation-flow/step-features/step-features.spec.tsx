@@ -149,7 +149,9 @@ describe('StepFeatures', () => {
       creationFlowUrl: '/organization/org-123/cluster/create/gcp',
     }
 
-    renderWithProviders(<StepFeatures {...defaultProps} />, { wrapper: getWrapper(gcpContextValue) })
+    const { userEvent } = renderWithProviders(<StepFeatures {...defaultProps} />, {
+      wrapper: getWrapper(gcpContextValue),
+    })
 
     await waitFor(() => {
       expect(screen.getAllByText('Static IP / Nat Gateways').length).toBeGreaterThan(0)
@@ -157,6 +159,23 @@ describe('StepFeatures', () => {
       expect(screen.queryByText('Static IP count')).not.toBeInTheDocument()
       expect(screen.getByText('Private Cluster')).toBeInTheDocument()
       expect(screen.queryByText(/^NAT Gateway$/)).not.toBeInTheDocument()
+    })
+
+    await userEvent.click(screen.getByTestId('button-submit'))
+
+    await waitFor(() => {
+      expect(gcpContextValue.setFeaturesData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          vpc_mode: 'DEFAULT',
+          features: expect.objectContaining({
+            STATIC_IP: expect.objectContaining({ value: true }),
+            NAT_GATEWAY: expect.objectContaining({
+              value: true,
+              extendedValue: { static_ips_enabled: false, static_ips_count: 2 },
+            }),
+          }),
+        })
+      )
     })
   })
 })
