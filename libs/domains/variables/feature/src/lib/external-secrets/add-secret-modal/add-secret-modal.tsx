@@ -4,7 +4,8 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import { getSecretManagerProvider } from '@qovery/domains/clusters/data-access'
 import { useSecretManagerProviderSecrets } from '@qovery/domains/clusters/feature'
-import { Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
+import { type VariableScope } from '@qovery/domains/variables/data-access'
+import { Checkbox, Icon, InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 
 export type SecretSourceOption = {
@@ -48,6 +49,7 @@ interface AddSecretModalProps {
   isFile?: boolean
   mode?: 'create' | 'edit'
   initialSecret?: AddSecretModalInitialSecret
+  scope?: VariableScope
   onClose: () => void
   onSubmit: (secret: AddSecretModalSubmitData) => void | Promise<void>
 }
@@ -58,6 +60,7 @@ type AddSecretFormValues = {
   path: string
   secretName: string
   description: string
+  acknowledgeEnvironmentSecretCost: boolean
 }
 
 export function AddSecretModal({
@@ -66,6 +69,7 @@ export function AddSecretModal({
   isFile = false,
   mode = 'create',
   initialSecret,
+  scope,
   onClose,
   onSubmit,
 }: AddSecretModalProps) {
@@ -78,6 +82,7 @@ export function AddSecretModal({
       path: initialSecret?.filePath ?? '',
       secretName: initialSecret?.name ?? '',
       description: initialSecret?.description ?? '',
+      acknowledgeEnvironmentSecretCost: false,
     },
     mode: 'onChange',
   })
@@ -85,14 +90,20 @@ export function AddSecretModal({
   const [referenceInput, setReferenceInput] = useState('')
   const debouncedReferenceInput = useDebounce(referenceInput, 300)
   const isDirty = methods.formState.isDirty
+  const shouldDisplayEnvironmentAcknowledgement = scope === 'ENVIRONMENT' && mode === 'create'
 
   const secretNameValue = methods.watch('secretName')
   const selectedSourceId = methods.watch('source')
 
-  const { data: providerSecrets, isFetching: isFetchingProviderSecrets } = useSecretManagerProviderSecrets({
+  const {
+    data: providerSecrets,
+    isError: isProviderSecretsError,
+    isFetching: isFetchingProviderSecrets,
+  } = useSecretManagerProviderSecrets({
     secretManagerAccessId: selectedSourceId,
     namePrefix: debouncedReferenceInput,
     enabled: Boolean(selectedSourceId),
+    retry: false,
   })
 
   const sourceOptions = useMemo(
@@ -204,27 +215,43 @@ export function AddSecretModal({
             control={methods.control}
             rules={{ required: 'Please enter a reference.' }}
             render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                className="mb-3 w-full"
-                label="Reference"
-                options={referenceOptions}
-                value={field.value}
-                onChange={(value) => {
-                  const selected = value as string
-                  field.onChange(selected)
-                  if (!secretNameValue) {
-                    const inferredName = selected.split('/').pop()?.toUpperCase()
-                    if (inferredName) {
-                      methods.setValue('secretName', inferredName, { shouldValidate: true })
-                    }
-                  }
-                }}
-                onInputChange={(value) => setReferenceInput(value)}
-                isSearchable
-                isCreatable
-                isLoading={isFetchingProviderSecrets || referenceInput !== debouncedReferenceInput}
-                error={error?.message}
-              />
+              <>
+                {isProviderSecretsError ? (
+                  <InputText
+                    className="mb-3 w-full"
+                    name={field.name}
+                    label="Reference"
+                    value={field.value || referenceInput}
+                    onChange={(event) => {
+                      field.onChange(event.target.value)
+                      setReferenceInput(event.target.value)
+                    }}
+                    error={error?.message}
+                  />
+                ) : (
+                  <InputSelect
+                    className="mb-3 w-full"
+                    label="Reference"
+                    options={referenceOptions}
+                    value={field.value}
+                    onChange={(value) => {
+                      const selected = value as string
+                      field.onChange(selected)
+                      if (!secretNameValue) {
+                        const inferredName = selected.split('/').pop()?.toUpperCase()
+                        if (inferredName) {
+                          methods.setValue('secretName', inferredName, { shouldValidate: true })
+                        }
+                      }
+                    }}
+                    onInputChange={(value) => setReferenceInput(value)}
+                    isSearchable
+                    isCreatable
+                    isLoading={isFetchingProviderSecrets || referenceInput !== debouncedReferenceInput}
+                    error={error?.message}
+                  />
+                )}
+              </>
             )}
           />
 
@@ -274,6 +301,47 @@ export function AddSecretModal({
               />
             )}
           />
+
+          {shouldDisplayEnvironmentAcknowledgement && (
+            <div className="mb-3 rounded border border-warning-subtle bg-surface-warning-subtle p-4 text-sm text-neutral">
+              <div className="mb-3 flex flex-row gap-3">
+                <Icon iconName="triangle-exclamation" iconStyle="regular" className="mt-1 text-warning" />
+                <div>
+                  <p className="font-medium">Be careful when defining an external secret at environment level:</p>
+                  <ul className="list-disc pl-3">
+                    <li>The secret value will be fetched individually for each service running in the environment.</li>
+                    <li>
+                      With many services, this multiplies the number of secret fetches and can significantly increase
+                      your cloud costs.
+                    </li>
+                  </ul>
+                  <p className="mt-3">
+                    Prefer service-level secrets when only a subset of services need access to the value.
+                  </p>
+                </div>
+              </div>
+
+              <Controller
+                name="acknowledgeEnvironmentSecretCost"
+                control={methods.control}
+                rules={{ validate: (value) => value || 'Please acknowledge the environment-level secret impact.' }}
+                render={({ field }) => (
+                  <div className="flex flex-row gap-3">
+                    <Checkbox
+                      name={field.name}
+                      id="acknowledge_environment_secret_cost"
+                      className="mt-0.5 shrink-0"
+                      checked={field.value}
+                      onCheckedChange={(checked) => field.onChange(checked === true)}
+                    />
+                    <label htmlFor="acknowledge_environment_secret_cost" className="font-medium">
+                      I understand the secret can be fetched once per service and may increase cloud costs
+                    </label>
+                  </div>
+                )}
+              />
+            </div>
+          )}
         </>
       </ModalCrud>
     </FormProvider>

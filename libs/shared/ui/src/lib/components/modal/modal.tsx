@@ -2,6 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { type ReactElement, type ReactNode, cloneElement, useContext, useEffect, useState } from 'react'
 import { Icon } from '../icon/icon'
 import useModalAlert from '../modal-alert/use-modal-alert/use-modal-alert'
+import { isToastInteraction } from '../toast/toast'
 import { ModalContext } from './modal-root'
 
 export interface ModalProps {
@@ -81,6 +82,12 @@ export const Modal = (props: ModalProps) => {
   ])
 
   const handleOutsideClick = (event: React.MouseEvent) => {
+    if (isToastInteraction(event)) {
+      event.preventDefault()
+      event.stopPropagation()
+      return
+    }
+
     if (alertClickOutside) {
       event.preventDefault()
       setModalAlertOpen(true)
@@ -127,6 +134,15 @@ export const Modal = (props: ModalProps) => {
         <Dialog.Content
           onPointerDownOutside={(event) => {
             event.preventDefault()
+            if (isToastInteraction(event.detail.originalEvent)) {
+              event.stopPropagation()
+            }
+          }}
+          onInteractOutside={(event) => {
+            if (isToastInteraction(event.detail.originalEvent)) {
+              event.preventDefault()
+              event.stopPropagation()
+            }
           }}
           style={
             fullScreen
