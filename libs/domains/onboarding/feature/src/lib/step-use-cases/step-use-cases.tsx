@@ -11,7 +11,7 @@ const USE_CASES: Array<{
 }> = [
   {
     value: 'automate-deployments',
-    label: 'Automate deployments without manual steps.',
+    label: 'Automate deployments without manual steps',
     iconName: 'rocket',
   },
   {
@@ -31,7 +31,7 @@ const USE_CASES: Array<{
   },
   {
     value: 'ai-workflows',
-    label: 'Build workflows where AI can take actions on my systems with full auditability.',
+    label: 'Build workflows where AI can take actions on my systems with full auditability',
     iconName: 'microchip-ai',
     aiPowered: true,
   },
