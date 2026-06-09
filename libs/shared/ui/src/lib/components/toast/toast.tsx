@@ -75,7 +75,7 @@ export function CustomToast({ id, status, title, description, action }: CustomTo
 }
 
 export function ToastBehavior() {
-  return <Toaster position="top-right" className="!font-sans" gap={8} />
+  return <Toaster position="top-right" className="!font-sans z-toast" gap={8} />
 }
 
 export default ToastBehavior
