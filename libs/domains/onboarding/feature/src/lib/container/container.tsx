@@ -8,6 +8,7 @@ interface DefaultContextProps {
   project_name: string
   admin_email: string
   selectedPlan: PlanEnum
+  phone?: string
   cardToken?: string | null
   cardLast4?: string | null
   cardExpiryMonth?: number | null
@@ -20,6 +21,7 @@ const defaultContext: DefaultContextProps = {
   project_name: '',
   admin_email: '',
   selectedPlan: PlanEnum.TEAM_2025,
+  phone: undefined,
   cardToken: null,
   cardLast4: null,
   cardExpiryMonth: null,

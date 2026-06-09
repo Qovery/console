@@ -2,8 +2,9 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { Navigate, createFileRoute, useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
+import { useContext } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Container, StepPersonalize } from '@qovery/domains/onboarding/feature'
+import { Container, ContextOnboarding, StepPersonalize } from '@qovery/domains/onboarding/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -18,6 +19,7 @@ function Personalize() {
   const navigate = useNavigate()
   const { user } = useAuth0()
   const { authLogout } = useAuth()
+  const { setContextValue } = useContext(ContextOnboarding)
   const { data: userSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
@@ -56,7 +58,7 @@ function Personalize() {
         current_step: userSignUp?.current_step ?? 'personalize',
       })
 
-      if (data.phone) sessionStorage.setItem('onboarding_phone', data.phone)
+      if (data.phone) setContextValue?.({ phone: data.phone })
 
       posthog.capture('onboarding-tailor-experience-completed', {
         first_name: data.first_name,

@@ -21,7 +21,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const { user, getAccessTokenSilently } = useAuth()
   const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [] } = useOrganizations()
-  const { organization_name, project_name, admin_email, selectedPlan } = useContext(ContextOnboarding)
+  const { organization_name, project_name, admin_email, selectedPlan, phone } = useContext(ContextOnboarding)
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject({ silently: true })
   const { mutateAsync: editBillingInfo } = useEditBillingInfo({ silently: true })
@@ -121,10 +121,9 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         first_name: userSignUp?.first_name,
         last_name: userSignUp?.last_name,
         company_name: userSignUp?.company_name,
-        phone: sessionStorage.getItem('onboarding_phone'),
+        phone,
         use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
       })
-      sessionStorage.removeItem('onboarding_phone')
       await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
       toast('success', 'Your organization and project have been created')

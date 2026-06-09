@@ -1,7 +1,8 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { Navigate, createFileRoute, useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { Container, StepUseCases } from '@qovery/domains/onboarding/feature'
+import { useContext } from 'react'
+import { Container, ContextOnboarding, StepUseCases } from '@qovery/domains/onboarding/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -13,6 +14,7 @@ function UseCases() {
   useDocumentTitle('Onboarding Use Cases - Qovery')
   const { isAuthenticated } = useAuth0()
   const navigate = useNavigate()
+  const { phone } = useContext(ContextOnboarding)
   const { data: userSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
@@ -34,7 +36,7 @@ function UseCases() {
         first_name: userSignUp?.first_name,
         last_name: userSignUp?.last_name,
         company_name: userSignUp?.company_name,
-        phone: sessionStorage.getItem('onboarding_phone'),
+        phone,
         use_cases: useCases,
       })
 
