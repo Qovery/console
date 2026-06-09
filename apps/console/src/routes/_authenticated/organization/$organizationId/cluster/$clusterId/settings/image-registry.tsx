@@ -5,8 +5,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   ContainerRegistryForm,
-  getDefaultType,
-  getPayloadConfig,
+  getContainerRegistryDefaultType,
+  getContainerRegistryPayloadConfig,
   useContainerRegistries,
   useEditContainerRegistry,
 } from '@qovery/domains/organizations/feature'
@@ -56,7 +56,7 @@ function ImageRegistrySettings() {
   const methods = useForm<ContainerRegistryRequest & { type: 'STATIC' | 'STS' | 'WIF' }>({
     mode: 'onChange',
     defaultValues: {
-      type: getDefaultType(containerRegistry),
+      type: getContainerRegistryDefaultType(containerRegistry),
       ...containerRegistry,
     },
   })
@@ -72,7 +72,7 @@ function ImageRegistrySettings() {
       containerRegistryId: containerRegistry.id,
       containerRegistryRequest: {
         ...rest,
-        config: getPayloadConfig({
+        config: getContainerRegistryPayloadConfig({
           type,
           kind: rest.kind,
           config: containerRegistryRequest.config,

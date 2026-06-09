@@ -32,7 +32,9 @@ type ContainerRegistryCreateEditFormConfig = ContainerRegistryCreateEditFormValu
 export const getGcpProjectIdFromServiceAccountEmail = (serviceAccountEmail?: string): string | undefined =>
   serviceAccountEmail?.match(/^[^@]+@([^.]+)\.iam\.gserviceaccount\.com$/)?.[1]
 
-export const getDefaultType = (registry: ContainerRegistryResponse | undefined): 'STATIC' | 'STS' | 'WIF' => {
+export const getContainerRegistryDefaultType = (
+  registry: ContainerRegistryResponse | undefined
+): 'STATIC' | 'STS' | 'WIF' => {
   if (!registry) return 'STS'
   if (registry.kind !== ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
     return registry.config?.role_arn ? 'STS' : 'STATIC'
@@ -50,7 +52,7 @@ export const getDefaultType = (registry: ContainerRegistryResponse | undefined):
     : 'STATIC'
 }
 
-export const getPayloadConfig = ({
+export const getContainerRegistryPayloadConfig = ({
   type,
   kind,
   config,
@@ -113,7 +115,7 @@ export function ContainerRegistryCreateEditModal({
       description: registry?.description,
       url: registry?.url,
       kind: registry?.kind,
-      type: getDefaultType(registry),
+      type: getContainerRegistryDefaultType(registry),
       config: {
         username: registry?.config?.username,
         password: undefined,
@@ -173,7 +175,7 @@ export function ContainerRegistryCreateEditModal({
         containerRegistryRequest: {
           ...rest,
           kind,
-          config: getPayloadConfig({
+          config: getContainerRegistryPayloadConfig({
             type,
             kind,
             config,
