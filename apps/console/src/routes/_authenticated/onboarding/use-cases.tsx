@@ -18,11 +18,15 @@ function UseCases() {
 
   const onSubmit = async (useCases: string[]) => {
     try {
-      if (useCases.length > 0) {
+      if (useCases.length > 0 && userSignUp?.first_name && userSignUp?.last_name && userSignUp?.user_email) {
         await createUserSignUp({
           ...userSignUp,
+          first_name: userSignUp.first_name,
+          last_name: userSignUp.last_name,
+          user_email: userSignUp.user_email,
+          type_of_use: userSignUp.type_of_use,
+          qovery_usage: userSignUp.qovery_usage ?? '',
           user_questions: useCases.join(','),
-          qovery_usage: userSignUp?.qovery_usage ?? '',
         })
       }
 
