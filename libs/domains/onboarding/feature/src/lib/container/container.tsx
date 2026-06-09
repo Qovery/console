@@ -48,12 +48,16 @@ export function Container(props: PropsWithChildren) {
       title: 'Just a few questions',
     },
     {
+      path: '/use-cases',
+      title: 'What are you looking to do?',
+    },
+    {
       path: '/project',
       title: 'Organization and Project Creation',
     },
   ]
   const currentTitle = titlesPerRoute.find((route) => route.path === currentPath)?.title ?? 'Onboarding'
-  const totalSteps = 2
+  const totalSteps = 3
   const currentStep = currentStepPosition(titlesPerRoute)
 
   return (

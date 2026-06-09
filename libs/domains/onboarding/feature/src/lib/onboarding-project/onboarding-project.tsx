@@ -51,9 +51,8 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
     })
   }
 
-  const createCargoSignup = async () => {
-    const hasRequiredSignUpFields =
-      !!userSignUp?.first_name && !!userSignUp?.last_name && !!userSignUp?.user_email && !!userSignUp?.qovery_usage
+  const updateSignUpStep = async () => {
+    const hasRequiredSignUpFields = !!userSignUp?.first_name && !!userSignUp?.last_name && !!userSignUp?.user_email
 
     if (hasRequiredSignUpFields) {
       const signUpPayload: SignUpRequest = {
@@ -61,14 +60,12 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         last_name: userSignUp.last_name,
         user_email: userSignUp.user_email,
         type_of_use: userSignUp.type_of_use,
-        qovery_usage: userSignUp.qovery_usage,
+        qovery_usage: userSignUp.qovery_usage ?? '',
         company_name: userSignUp.company_name ?? undefined,
         company_size: userSignUp.company_size ?? undefined,
         user_role: userSignUp.user_role ?? undefined,
-        qovery_usage_other: userSignUp.qovery_usage_other ?? undefined,
         user_questions: userSignUp.user_questions ?? undefined,
         current_step: 'project',
-        infrastructure_hosting: userSignUp.infrastructure_hosting ?? undefined,
       }
 
       await createUserSignUp(signUpPayload)
@@ -86,7 +83,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
       return
     }
 
-    navigate({ to: '/onboarding/personalize' })
+    navigate({ to: '/onboarding/use-cases' })
   }
 
   const onSubmit = methods.handleSubmit(async (data) => {
@@ -117,11 +114,17 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         },
       })
 
-      await createCargoSignup()
+      await updateSignUpStep()
 
       posthog.capture('onboarding-organization-created', {
         plan: selectedPlan,
+        first_name: userSignUp?.first_name,
+        last_name: userSignUp?.last_name,
+        company_name: userSignUp?.company_name,
+        phone: sessionStorage.getItem('onboarding_phone'),
+        use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
       })
+      sessionStorage.removeItem('onboarding_phone')
       await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
       toast('success', 'Your organization and project have been created')

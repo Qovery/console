@@ -6,80 +6,11 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { Container, StepPersonalize } from '@qovery/domains/onboarding/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { IconEnum } from '@qovery/shared/enums'
-import { Icon } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute('/_authenticated/onboarding/personalize')({
   component: Personalize,
 })
-
-const dataCloudProviders = [
-  {
-    label: 'Amazon Web Service (AWS)',
-    value: 'AWS',
-    icon: <Icon width={16} height={16} name={IconEnum.AWS} />,
-  },
-  {
-    label: 'Google Cloud Patform (GCP)',
-    value: 'GCP',
-    icon: <Icon width={16} height={16} name={IconEnum.GCP} />,
-  },
-  {
-    label: 'Scaleway',
-    value: 'SCW',
-    icon: <Icon width={16} height={16} name={IconEnum.SCW} />,
-  },
-  {
-    label: 'Azure',
-    value: 'AZURE',
-    icon: <Icon width={16} height={16} name={IconEnum.AZURE} />,
-  },
-  {
-    label: 'Other',
-    value: 'OTHER',
-    icon: <Icon className="text-xs text-neutral" iconName="cloud" iconStyle="regular" />,
-  },
-]
-
-const dataQoveryUsage = [
-  {
-    label: 'Spin up testing/dev/QA environments',
-    value: 'i-want-to-easily-spin-up-testing-dev-qa-environments',
-  },
-  {
-    label: 'Simplify my deployment pipeline',
-    value: 'i-want-to-simplify-my-deployment-pipeline',
-  },
-  {
-    label: 'Automate my deployment pipeline',
-    value: 'i-want-to-automate-my-deployment-pipeline',
-  },
-  {
-    label: 'Deploy my new project',
-    value: 'i-want-to-easily-deploy-my-new-project',
-  },
-  {
-    label: 'Migrate my apps from Heroku',
-    value: 'i-want-to-easily-migrate-my-apps-from-heroku',
-  },
-  {
-    label: 'Find a better alternative to Heroku',
-    value: 'i-want-to-find-a-better-alternative-to-heroku',
-  },
-  {
-    label: 'Spin up and manage my Kubernetes cluster',
-    value: 'i-want-to-easily-spin-up-and-manage-my-kubernetes-cluster',
-  },
-  {
-    label: 'Deploy my apps on my Kubernetes cluster',
-    value: 'i-want-to-easily-deploy-my-apps-on-my-kubernetes-cluster',
-  },
-  {
-    label: 'Other',
-    value: 'other',
-  },
-]
 
 function Personalize() {
   useDocumentTitle('Onboarding Personalize - Qovery')
@@ -95,10 +26,7 @@ function Personalize() {
     last_name: string
     user_email: string
     company_name?: string
-    qovery_usage: string
-    qovery_usage_other?: string
     type_of_use: TypeOfUseEnum
-    infrastructure_hosting: string
     phone: string
   }>({
     mode: 'onChange',
@@ -107,10 +35,7 @@ function Personalize() {
       last_name: userSignUp?.last_name ? userSignUp.last_name : user?.name?.split(' ')[1],
       user_email: userSignUp?.user_email ? userSignUp.user_email : user?.email,
       company_name: userSignUp?.company_name ?? '',
-      qovery_usage: userSignUp?.qovery_usage ?? undefined,
-      qovery_usage_other: userSignUp?.qovery_usage_other ?? undefined,
       type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
-      infrastructure_hosting: userSignUp?.infrastructure_hosting ?? 'AWS',
       phone: '',
     },
   })
@@ -118,25 +43,29 @@ function Personalize() {
   const onSubmit = methods.handleSubmit(async (data) => {
     if (!data) return
 
-    const normalizedData = { ...data }
-
-    if (normalizedData.qovery_usage !== 'other') {
-      delete normalizedData.qovery_usage_other
-    }
-
     try {
       await createUserSignUp({
         ...userSignUp,
-        ...normalizedData,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        user_email: data.user_email,
+        company_name: data.company_name,
+        type_of_use: data.type_of_use,
+        phone: data.phone,
+        qovery_usage: userSignUp?.qovery_usage ?? '',
         current_step: userSignUp?.current_step ?? 'personalize',
       })
 
+      if (data.phone) sessionStorage.setItem('onboarding_phone', data.phone)
+
       posthog.capture('onboarding-tailor-experience-completed', {
-        qovery_usage: normalizedData.qovery_usage,
-        infrastructure_hosting: normalizedData.infrastructure_hosting,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        company_name: data.company_name,
+        phone: data.phone,
       })
 
-      navigate({ to: `/onboarding/project` })
+      navigate({ to: '/onboarding/use-cases' })
     } catch (error) {
       console.error(error)
     }
@@ -149,12 +78,7 @@ function Personalize() {
   return (
     <Container>
       <FormProvider {...methods}>
-        <StepPersonalize
-          dataCloudProviders={dataCloudProviders}
-          dataQoveryUsage={dataQoveryUsage}
-          onSubmit={onSubmit}
-          authLogout={authLogout}
-        />
+        <StepPersonalize onSubmit={onSubmit} authLogout={authLogout} />
       </FormProvider>
     </Container>
   )

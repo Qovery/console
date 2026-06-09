@@ -1,18 +1,13 @@
 import { Controller, useFormContext } from 'react-hook-form'
-import { type Value } from '@qovery/shared/interfaces'
-import { Button, Icon, InputSelect, InputText, InputTextArea } from '@qovery/shared/ui'
+import { Button, Icon, InputText } from '@qovery/shared/ui'
 
 export interface StepPersonalizeProps {
-  dataCloudProviders: Array<Value>
-  dataQoveryUsage: Array<Value>
   onSubmit: () => void
   authLogout: () => void
 }
 
-export function StepPersonalize(props: StepPersonalizeProps) {
-  const { onSubmit, authLogout, dataCloudProviders, dataQoveryUsage } = props
-  const { control, formState, setValue, watch } = useFormContext()
-  const isQoveryUsageOther = watch('qovery_usage') === 'other'
+export function StepPersonalize({ onSubmit, authLogout }: StepPersonalizeProps) {
+  const { control, formState } = useFormContext()
 
   return (
     <div className="mx-auto max-w-content-with-navigation-left pb-10">
@@ -100,62 +95,8 @@ export function StepPersonalize(props: StepPersonalizeProps) {
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
-              className="mb-3"
               label="Phone (recommended)"
               name={field.name}
-              onChange={field.onChange}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        <Controller
-          name="qovery_usage"
-          control={control}
-          rules={{ required: 'Please enter this field.' }}
-          render={({ field, fieldState: { error } }) => (
-            <InputSelect
-              className="mb-3"
-              label="Why do you want to use Qovery? I want to..."
-              options={dataQoveryUsage}
-              onChange={(value) => {
-                field.onChange(value)
-                if (value !== 'other') {
-                  setValue('qovery_usage_other', undefined, {
-                    shouldDirty: false,
-                    shouldValidate: true,
-                  })
-                }
-              }}
-              value={field.value}
-              error={error?.message}
-            />
-          )}
-        />
-        {isQoveryUsageOther && (
-          <Controller
-            name="qovery_usage_other"
-            control={control}
-            rules={{ required: false }}
-            render={({ field }) => (
-              <InputTextArea
-                className="mb-3"
-                label="Precise us why you want to use Qovery"
-                name={field.name}
-                onChange={field.onChange}
-                value={field.value}
-              />
-            )}
-          />
-        )}
-        <Controller
-          name="infrastructure_hosting"
-          control={control}
-          rules={{ required: 'Please enter your infrastructure hosting.' }}
-          render={({ field, fieldState: { error } }) => (
-            <InputSelect
-              label="Current infrastructure hosting"
-              options={dataCloudProviders}
               onChange={field.onChange}
               value={field.value}
               error={error?.message}
