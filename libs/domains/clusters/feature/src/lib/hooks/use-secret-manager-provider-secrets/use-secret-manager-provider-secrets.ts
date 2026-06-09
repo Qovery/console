@@ -6,6 +6,7 @@ interface UseClusterProps {
   namePrefix?: string
   enabled?: boolean
   suspense?: boolean
+  retry?: boolean | number
 }
 
 export function useSecretManagerProviderSecrets({
@@ -13,10 +14,12 @@ export function useSecretManagerProviderSecrets({
   namePrefix,
   enabled = true,
   suspense = false,
+  retry,
 }: UseClusterProps) {
   return useQuery({
     ...queries.clusters.listSecretManagerSecretsFromProvider({ secretManagerAccessId, namePrefix }),
     enabled: Boolean(secretManagerAccessId) && enabled,
     suspense,
+    retry,
   })
 }

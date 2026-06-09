@@ -89,10 +89,15 @@ export function AddSecretModal({
   const secretNameValue = methods.watch('secretName')
   const selectedSourceId = methods.watch('source')
 
-  const { data: providerSecrets, isFetching: isFetchingProviderSecrets } = useSecretManagerProviderSecrets({
+  const {
+    data: providerSecrets,
+    isError: isProviderSecretsError,
+    isFetching: isFetchingProviderSecrets,
+  } = useSecretManagerProviderSecrets({
     secretManagerAccessId: selectedSourceId,
     namePrefix: debouncedReferenceInput,
     enabled: Boolean(selectedSourceId),
+    retry: false,
   })
 
   const sourceOptions = useMemo(
@@ -204,27 +209,40 @@ export function AddSecretModal({
             control={methods.control}
             rules={{ required: 'Please enter a reference.' }}
             render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                className="mb-3 w-full"
-                label="Reference"
-                options={referenceOptions}
-                value={field.value}
-                onChange={(value) => {
-                  const selected = value as string
-                  field.onChange(selected)
-                  if (!secretNameValue) {
-                    const inferredName = selected.split('/').pop()?.toUpperCase()
-                    if (inferredName) {
-                      methods.setValue('secretName', inferredName, { shouldValidate: true })
-                    }
-                  }
-                }}
-                onInputChange={(value) => setReferenceInput(value)}
-                isSearchable
-                isCreatable
-                isLoading={isFetchingProviderSecrets || referenceInput !== debouncedReferenceInput}
-                error={error?.message}
-              />
+              <>
+                {isProviderSecretsError ? (
+                  <InputText
+                    className="mb-3 w-full"
+                    name={field.name}
+                    label="Reference"
+                    value={field.value}
+                    onChange={(event) => field.onChange(event.target.value)}
+                    error={error?.message}
+                  />
+                ) : (
+                  <InputSelect
+                    className="mb-3 w-full"
+                    label="Reference"
+                    options={referenceOptions}
+                    value={field.value}
+                    onChange={(value) => {
+                      const selected = value as string
+                      field.onChange(selected)
+                      if (!secretNameValue) {
+                        const inferredName = selected.split('/').pop()?.toUpperCase()
+                        if (inferredName) {
+                          methods.setValue('secretName', inferredName, { shouldValidate: true })
+                        }
+                      }
+                    }}
+                    onInputChange={(value) => setReferenceInput(value)}
+                    isSearchable
+                    isCreatable
+                    isLoading={isFetchingProviderSecrets || referenceInput !== debouncedReferenceInput}
+                    error={error?.message}
+                  />
+                )}
+              </>
             )}
           />
 
