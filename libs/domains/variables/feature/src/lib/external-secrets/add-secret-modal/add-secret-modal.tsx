@@ -221,8 +221,11 @@ export function AddSecretModal({
                     className="mb-3 w-full"
                     name={field.name}
                     label="Reference"
-                    value={field.value}
-                    onChange={(event) => field.onChange(event.target.value)}
+                    value={field.value || referenceInput}
+                    onChange={(event) => {
+                      field.onChange(event.target.value)
+                      setReferenceInput(event.target.value)
+                    }}
                     error={error?.message}
                   />
                 ) : (
