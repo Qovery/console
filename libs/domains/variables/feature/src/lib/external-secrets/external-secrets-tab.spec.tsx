@@ -290,8 +290,11 @@ describe('ExternalSecretsTab', () => {
     await userEvent.click(screen.getByRole('button', { name: /add secret/i }))
 
     const modalContent = openModal.mock.calls[0][0].content as ReactElement<{
+      scope?: string
       onSubmit: (secret: AddSecretModalSubmitData) => Promise<void>
     }>
+
+    expect(modalContent.props.scope).toBe('APPLICATION')
 
     await modalContent.props.onSubmit({
       name: 'MY_EXTERNAL_SECRET',
@@ -313,6 +316,42 @@ describe('ExternalSecretsTab', () => {
       },
     })
     expect(onCreateSecret).toHaveBeenCalled()
+  })
+
+  it('should pass the scope when creating an environment-scoped external secret', async () => {
+    const openModal = jest.fn()
+    useModalMock.mockReturnValue({
+      openModal,
+      closeModal: jest.fn(),
+    })
+    useVariablesMock.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as ReturnType<typeof useVariables>)
+    useVariablesSecretManagersMock.mockReturnValue({
+      secretManagers: [
+        {
+          id: 'sm-1',
+          name: 'Prod secret manager',
+          created_at: '2026-01-01T00:00:00.000Z',
+          updated_at: '2026-01-01T00:00:00.000Z',
+          endpoint: { mode: 'AWS_SECRET_MANAGER' },
+          authentication: { mode: 'STS' },
+        },
+      ],
+      hasClusterSecretManagerConfigured: true,
+      clusterId: 'cluster-id',
+    })
+
+    const { userEvent } = renderWithProviders(<ExternalSecretsTab scope="ENVIRONMENT" parentId="environment-id" />)
+
+    await userEvent.click(screen.getByRole('button', { name: /add secret/i }))
+
+    const modalContent = openModal.mock.calls[0][0].content as ReactElement<{
+      scope?: string
+    }>
+
+    expect(modalContent.props.scope).toBe('ENVIRONMENT')
   })
 
   it('should call delete callback after deleting an external secret', async () => {

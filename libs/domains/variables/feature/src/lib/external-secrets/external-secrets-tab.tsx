@@ -202,6 +202,7 @@ export function ExternalSecretsTab({
             secretSources={secretSources}
             defaultSource={secretSources[0]}
             isFile={isFile}
+            scope={scope}
             onClose={closeModal}
             onSubmit={handleCreateSecret}
           />
@@ -212,7 +213,7 @@ export function ExternalSecretsTab({
         },
       })
     },
-    [closeModal, handleCreateSecret, openModal, secretSources]
+    [closeModal, handleCreateSecret, openModal, scope, secretSources]
   )
 
   const handleOpenEditSecret = useCallback(

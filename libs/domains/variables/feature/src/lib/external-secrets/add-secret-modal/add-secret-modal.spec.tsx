@@ -31,9 +31,7 @@ describe('AddSecretModal', () => {
   })
 
   it('should not retry provider secret requests', () => {
-    renderWithProviders(
-      <AddSecretModal secretSources={secretSources} onClose={jest.fn()} onSubmit={jest.fn()} />
-    )
+    renderWithProviders(<AddSecretModal secretSources={secretSources} onClose={jest.fn()} onSubmit={jest.fn()} />)
 
     expect(useSecretManagerProviderSecretsMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -61,6 +59,33 @@ describe('AddSecretModal', () => {
         reference: 'custom/path/db-password',
         secretManagerAccessId: 'secret-manager-access-id',
       })
+    })
+  })
+
+  it('should require acknowledgement before creating an environment-level external secret', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AddSecretModal secretSources={secretSources} scope="ENVIRONMENT" onClose={jest.fn()} onSubmit={onSubmit} />
+    )
+
+    expect(screen.getByText('Be careful when defining an external secret at environment level:')).toBeInTheDocument()
+
+    await userEvent.type(screen.getByLabelText('Reference'), 'custom/path/db-password')
+    await userEvent.type(screen.getByLabelText('Secret name'), 'DATABASE_PASSWORD')
+
+    expect(screen.getByRole('button', { name: 'Add secret' })).toBeDisabled()
+
+    await userEvent.click(screen.getByRole('checkbox', { name: /I understand the secret can be fetched/i }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add secret' }))
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          name: 'DATABASE_PASSWORD',
+          reference: 'custom/path/db-password',
+          secretManagerAccessId: 'secret-manager-access-id',
+        })
+      )
     })
   })
 })
