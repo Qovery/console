@@ -436,6 +436,21 @@ describe('ContainerRegistryCreateEditModal', () => {
       },
     } as ContainerRegistryResponse
     expect(getDefaultType(gcpStaticRegistry)).toBe('WIF')
+
+    const gcpWifRegistryWithoutEmail = {
+      id: '4444',
+      created_at: '',
+      updated_at: '',
+      name: 'my-registry',
+      url: 'https://us-east1-docker.pkg.dev',
+      kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+      config: {
+        region: 'us-east1',
+        workload_identity_provider_resource:
+          'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+      },
+    } as ContainerRegistryResponse
+    expect(getDefaultType(gcpWifRegistryWithoutEmail)).toBe('WIF')
   })
 
   it('should build payload for registry based on type and kind', () => {
@@ -470,6 +485,26 @@ describe('ContainerRegistryCreateEditModal', () => {
       project_id: 'my-project',
       region: 'europe-west1',
       service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
+      workload_identity_provider_resource:
+        'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+    })
+
+    expect(
+      getPayloadConfig({
+        type: 'WIF',
+        kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+        config: {
+          region: 'europe-west1',
+          workload_identity_provider_resource:
+            'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+          project_id: 'my-project',
+        } as unknown as Omit<ContainerRegistryRequest['config'], 'login_type'>,
+      })
+    ).toEqual({
+      gcp_credentials_type: 'workload_identity_federation',
+      project_id: 'my-project',
+      region: 'europe-west1',
+      service_account_email: undefined,
       workload_identity_provider_resource:
         'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
     })

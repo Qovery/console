@@ -5,6 +5,8 @@ import { FormProvider, useForm } from 'react-hook-form'
 import { useCluster } from '@qovery/domains/clusters/feature'
 import {
   ContainerRegistryForm,
+  getDefaultType,
+  getPayloadConfig,
   useContainerRegistries,
   useEditContainerRegistry,
 } from '@qovery/domains/organizations/feature'
@@ -51,10 +53,10 @@ function ImageRegistrySettings() {
   const { mutate: editContainerRegistry, isLoading: isLoadingEditContainerRegistry } = useEditContainerRegistry()
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
-  const methods = useForm<ContainerRegistryRequest & { type: 'STATIC' | 'STS' }>({
+  const methods = useForm<ContainerRegistryRequest & { type: 'STATIC' | 'STS' | 'WIF' }>({
     mode: 'onChange',
     defaultValues: {
-      type: containerRegistry?.config?.role_arn ? 'STS' : 'STATIC',
+      type: getDefaultType(containerRegistry),
       ...containerRegistry,
     },
   })
@@ -70,16 +72,11 @@ function ImageRegistrySettings() {
       containerRegistryId: containerRegistry.id,
       containerRegistryRequest: {
         ...rest,
-        config:
-          type === 'STS'
-            ? {
-                role_arn: containerRegistryRequest.config?.role_arn,
-                region: containerRegistryRequest.config?.region,
-              }
-            : {
-                role_arn: undefined,
-                ...containerRegistryRequest.config,
-              },
+        config: getPayloadConfig({
+          type,
+          kind: rest.kind,
+          config: containerRegistryRequest.config,
+        }),
       },
     })
   })
