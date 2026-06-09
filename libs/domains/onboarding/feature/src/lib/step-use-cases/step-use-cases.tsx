@@ -1,14 +1,19 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useState } from 'react'
-import { Badge, Button, Icon } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
-const USE_CASES: Array<{
-  value: string
-  label: string
-  iconName: IconName
-  aiPowered?: boolean
-}> = [
+const USE_CASES: Array<{ value: string; label: string; iconName: IconName }> = [
+  {
+    value: 'ai-workflows',
+    label: 'Build workflows where AI can take actions on my systems with full auditability',
+    iconName: 'microchip-ai',
+  },
+  {
+    value: 'rde',
+    label: 'Enable my non-tech team to ship apps',
+    iconName: 'users',
+  },
   {
     value: 'automate-deployments',
     label: 'Automate deployments without manual steps',
@@ -24,30 +29,18 @@ const USE_CASES: Array<{
     label: 'Manage Kubernetes without the overhead',
     iconName: 'dharmachakra',
   },
-  {
-    value: 'rde',
-    label: 'Enable my non-tech team to ship apps while keeping governance and control',
-    iconName: 'users',
-  },
-  {
-    value: 'ai-workflows',
-    label: 'Build workflows where AI can take actions on my systems with full auditability',
-    iconName: 'microchip-ai',
-    aiPowered: true,
-  },
 ]
 
 interface UseCaseCardProps {
   value: string
   label: string
   iconName: IconName
-  aiPowered?: boolean
   colSpan: string
   selected: boolean
   onToggle: (value: string) => void
 }
 
-function UseCaseCard({ value, label, iconName, aiPowered, colSpan, selected, onToggle }: UseCaseCardProps) {
+function UseCaseCard({ value, label, iconName, colSpan, selected, onToggle }: UseCaseCardProps) {
   return (
     <div
       role="checkbox"
@@ -69,15 +62,7 @@ function UseCaseCard({ value, label, iconName, aiPowered, colSpan, selected, onT
       )}
     >
       <Icon iconName={iconName} iconStyle="regular" className="shrink-0 text-base text-neutral" />
-      <div className="flex min-w-0 flex-col gap-2">
-        <span className="text-sm font-medium text-neutral">{label}</span>
-        {aiPowered && (
-          <Badge color="brand" variant="surface" size="sm" className="gap-1 self-start">
-            <Icon iconName="sparkles" iconStyle="solid" className="text-xs" />
-            Powered by AI
-          </Badge>
-        )}
-      </div>
+      <span className="text-sm font-medium text-neutral">{label}</span>
     </div>
   )
 }
@@ -105,8 +90,7 @@ export function StepUseCases({ onSubmit, onBack }: StepUseCasesProps) {
             value={useCase.value}
             label={useCase.label}
             iconName={useCase.iconName}
-            aiPowered={useCase.aiPowered}
-            colSpan={index < 3 ? 'col-span-2' : 'col-span-3'}
+            colSpan={index < 2 ? 'col-span-3' : 'col-span-2'}
             selected={selected.includes(useCase.value)}
             onToggle={toggle}
           />
