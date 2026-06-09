@@ -2,6 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { type ReactElement, type ReactNode, cloneElement, useContext, useEffect, useState } from 'react'
 import { Icon } from '../icon/icon'
 import useModalAlert from '../modal-alert/use-modal-alert/use-modal-alert'
+import { isToastInteraction } from '../toast/toast'
 import { ModalContext } from './modal-root'
 
 export interface ModalProps {
@@ -30,12 +31,6 @@ export interface ModalProps {
 
 export interface ModalContentProps {
   setOpen?: (open: boolean) => void
-}
-
-const isToastInteraction = (event: Event | React.MouseEvent) => {
-  const target = event.target
-
-  return target instanceof HTMLElement && Boolean(target.closest('[data-sonner-toaster], .z-toast'))
 }
 
 export const Modal = (props: ModalProps) => {

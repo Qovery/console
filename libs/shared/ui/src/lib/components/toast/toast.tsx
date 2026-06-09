@@ -1,3 +1,4 @@
+import { type MouseEvent } from 'react'
 import { Toaster, toast as sonnerToast } from 'sonner'
 import { twMerge } from '@qovery/shared/util-js'
 import { type ToastStatus } from '../../utils/toast'
@@ -25,6 +26,14 @@ export interface CustomToastProps {
   action?: ToastActionProps
 }
 
+const toastInteractionClassName = 'toast-interaction-root'
+
+export const isToastInteraction = (event: Event | MouseEvent) => {
+  const target = event.target
+
+  return target instanceof HTMLElement && Boolean(target.closest(`.${toastInteractionClassName}`))
+}
+
 const statusIcon: Record<
   ToastStatus,
   { iconName: 'circle-check' | 'circle-xmark' | 'triangle-exclamation'; className: string }
@@ -41,7 +50,12 @@ export function CustomToast({ id, status, title, description, action }: CustomTo
   }
 
   return (
-    <div className="relative w-full rounded-lg border border-neutral bg-surface-neutral p-3 font-sans shadow-sm">
+    <div
+      className={twMerge(
+        toastInteractionClassName,
+        'relative w-full rounded-lg border border-neutral bg-surface-neutral p-3 font-sans shadow-sm'
+      )}
+    >
       <Button
         type="button"
         size="xs"

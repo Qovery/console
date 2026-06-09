@@ -20,6 +20,15 @@ describe('Toast', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should expose the toast interaction root class', async () => {
+    const { baseElement } = renderWithProviders(<ToastBehavior />)
+
+    toast('success', 'my-title')
+
+    await screen.findByText('my-title')
+    expect(baseElement.querySelector('.toast-interaction-root')).toBeInTheDocument()
+  })
+
   it('should render a title and a description', async () => {
     renderWithProviders(<ToastBehavior />)
 
