@@ -124,4 +124,54 @@ describe('StepSummaryPresentation', () => {
     expect(eksAnywhereSection).toHaveTextContent('Branch: main')
     expect(eksAnywhereSection).toHaveTextContent('YAML file path: clusters/prod/cluster.yaml')
   })
+
+  it('should hide static IP count when GCP static egress IPs are disabled', () => {
+    renderWithProviders(
+      <StepSummaryPresentation
+        {...defaultProps}
+        featuresData={{
+          vpc_mode: 'DEFAULT',
+          features: {
+            NAT_GATEWAY: {
+              id: 'NAT_GATEWAY',
+              title: 'Nat Gateways',
+              value: true,
+              extendedValue: {
+                static_ips_enabled: false,
+                static_ips_count: 2,
+              },
+            },
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('Nat Gateways:')).toBeInTheDocument()
+    expect(screen.getByText('static_ips_enabled=false')).toBeInTheDocument()
+    expect(screen.queryByText(/static_ips_count/)).not.toBeInTheDocument()
+  })
+
+  it('should show static IP count when GCP static egress IPs are enabled', () => {
+    renderWithProviders(
+      <StepSummaryPresentation
+        {...defaultProps}
+        featuresData={{
+          vpc_mode: 'DEFAULT',
+          features: {
+            NAT_GATEWAY: {
+              id: 'NAT_GATEWAY',
+              title: 'Nat Gateways',
+              value: true,
+              extendedValue: {
+                static_ips_enabled: true,
+                static_ips_count: 2,
+              },
+            },
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('static_ips_enabled=true, static_ips_count=2')).toBeInTheDocument()
+  })
 })

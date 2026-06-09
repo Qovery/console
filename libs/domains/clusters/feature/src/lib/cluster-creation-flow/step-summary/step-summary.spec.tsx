@@ -196,6 +196,10 @@ describe('StepSummary', () => {
             cloud_provider: 'GCP',
             features: expect.arrayContaining([
               expect.objectContaining({
+                id: 'STATIC_IP',
+                value: true,
+              }),
+              expect.objectContaining({
                 id: 'NAT_GATEWAY',
                 value: {
                   nat_gateway_type: {
@@ -210,6 +214,66 @@ describe('StepSummary', () => {
         })
       )
     })
+
+    const createdClusterRequest = mockCreateCluster.mock.calls[0][0].clusterRequest
+    expect(createdClusterRequest.features).toEqual(
+      expect.arrayContaining([expect.objectContaining({ id: 'STATIC_IP', value: true })])
+    )
+  })
+
+  it('should not derive GCP STATIC_IP from NAT_GATEWAY', async () => {
+    mockContextValue.generalData = {
+      name: 'test-gcp-cluster',
+      description: 'description',
+      cloud_provider: CloudProviderEnum.GCP,
+      region: 'europe-west1',
+      installation_type: 'MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.featuresData = {
+      vpc_mode: 'DEFAULT',
+      features: {
+        STATIC_IP: {
+          id: 'STATIC_IP',
+          title: 'Static IP / Nat Gateways',
+          value: false,
+        },
+        NAT_GATEWAY: {
+          id: 'NAT_GATEWAY',
+          title: 'NAT Gateway',
+          value: true,
+          extendedValue: {
+            static_ips_enabled: false,
+            static_ips_count: 2,
+          },
+        },
+      },
+    }
+
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditCloudProviderInfo.mockResolvedValue({})
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => expect(mockCreateCluster).toHaveBeenCalled())
+
+    const createdClusterRequest = mockCreateCluster.mock.calls[0][0].clusterRequest
+    expect(createdClusterRequest.features).toEqual([
+      {
+        id: 'NAT_GATEWAY',
+        value: {
+          nat_gateway_type: {
+            provider: 'gcp',
+            static_ips_enabled: false,
+            static_ips_count: 2,
+          },
+        },
+      },
+    ])
   })
 
   it('should emit default NAT_GATEWAY for GCP when only STATIC_IP is in form data', async () => {

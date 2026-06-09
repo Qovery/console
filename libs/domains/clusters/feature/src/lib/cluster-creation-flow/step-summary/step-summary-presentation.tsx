@@ -62,6 +62,8 @@ function formatFeatureValue(feature: ClusterFeaturesData['features'][string]) {
   if (feature.extendedValue && typeof feature.extendedValue === 'object') {
     const staticIpsEnabled = feature.extendedValue.static_ips_enabled
     const staticIpsCount = feature.extendedValue.static_ips_count
+    if (!staticIpsEnabled) return `static_ips_enabled=${staticIpsEnabled}`
+
     return `static_ips_enabled=${staticIpsEnabled}, static_ips_count=${staticIpsCount}`
   }
 
