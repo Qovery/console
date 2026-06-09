@@ -11,9 +11,9 @@ import * as useCreateContainerRegistry from '../hooks/use-create-container-regis
 import * as useEditContainerRegistry from '../hooks/use-edit-container-registry/use-edit-container-registry'
 import ContainerRegistryCreateEditModal, {
   type ContainerRegistryCreateEditModalProps,
-  getDefaultType,
+  getContainerRegistryDefaultType,
+  getContainerRegistryPayloadConfig,
   getGcpProjectIdFromServiceAccountEmail,
-  getPayloadConfig,
 } from './container-registry-create-edit-modal'
 
 const useCreateContainerRegistryMockSpy = jest.spyOn(
@@ -394,7 +394,7 @@ describe('ContainerRegistryCreateEditModal', () => {
   }, 30000)
 
   it('should set default registry type based on existing registry config', () => {
-    expect(getDefaultType(undefined)).toBe('STS')
+    expect(getContainerRegistryDefaultType(undefined)).toBe('STS')
 
     const awsStaticRegistry = {
       id: '1111',
@@ -407,7 +407,7 @@ describe('ContainerRegistryCreateEditModal', () => {
         region: 'eu-west-1',
       },
     } as ContainerRegistryResponse
-    expect(getDefaultType(awsStaticRegistry)).toBe('STATIC')
+    expect(getContainerRegistryDefaultType(awsStaticRegistry)).toBe('STATIC')
 
     const awsStsRegistry = {
       id: '2222',
@@ -421,7 +421,7 @@ describe('ContainerRegistryCreateEditModal', () => {
         role_arn: 'arn:aws:iam::123456789012:role/MyRole',
       },
     } as ContainerRegistryResponse
-    expect(getDefaultType(awsStsRegistry)).toBe('STS')
+    expect(getContainerRegistryDefaultType(awsStsRegistry)).toBe('STS')
 
     const gcpStaticRegistry = {
       id: '3333',
@@ -435,12 +435,27 @@ describe('ContainerRegistryCreateEditModal', () => {
         service_account_email: 'qovery@my-project.iam.gserviceaccount.com',
       },
     } as ContainerRegistryResponse
-    expect(getDefaultType(gcpStaticRegistry)).toBe('WIF')
+    expect(getContainerRegistryDefaultType(gcpStaticRegistry)).toBe('WIF')
+
+    const gcpWifRegistryWithoutEmail = {
+      id: '4444',
+      created_at: '',
+      updated_at: '',
+      name: 'my-registry',
+      url: 'https://us-east1-docker.pkg.dev',
+      kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+      config: {
+        region: 'us-east1',
+        workload_identity_provider_resource:
+          'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+      },
+    } as ContainerRegistryResponse
+    expect(getContainerRegistryDefaultType(gcpWifRegistryWithoutEmail)).toBe('WIF')
   })
 
   it('should build payload for registry based on type and kind', () => {
     expect(
-      getPayloadConfig({
+      getContainerRegistryPayloadConfig({
         type: 'STS',
         kind: ContainerRegistryKindEnum.ECR,
         config: {
@@ -455,7 +470,7 @@ describe('ContainerRegistryCreateEditModal', () => {
     })
 
     expect(
-      getPayloadConfig({
+      getContainerRegistryPayloadConfig({
         type: 'WIF',
         kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
         config: {
@@ -475,7 +490,27 @@ describe('ContainerRegistryCreateEditModal', () => {
     })
 
     expect(
-      getPayloadConfig({
+      getContainerRegistryPayloadConfig({
+        type: 'WIF',
+        kind: ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY,
+        config: {
+          region: 'europe-west1',
+          workload_identity_provider_resource:
+            'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+          project_id: 'my-project',
+        } as unknown as Omit<ContainerRegistryRequest['config'], 'login_type'>,
+      })
+    ).toEqual({
+      gcp_credentials_type: 'workload_identity_federation',
+      project_id: 'my-project',
+      region: 'europe-west1',
+      service_account_email: undefined,
+      workload_identity_provider_resource:
+        'projects/123456789/locations/global/workloadIdentityPools/qovery/providers/qovery-provider',
+    })
+
+    expect(
+      getContainerRegistryPayloadConfig({
         type: 'STATIC',
         kind: ContainerRegistryKindEnum.DOCKER_HUB,
         config: {

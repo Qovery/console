@@ -32,7 +32,9 @@ type ContainerRegistryCreateEditFormConfig = ContainerRegistryCreateEditFormValu
 export const getGcpProjectIdFromServiceAccountEmail = (serviceAccountEmail?: string): string | undefined =>
   serviceAccountEmail?.match(/^[^@]+@([^.]+)\.iam\.gserviceaccount\.com$/)?.[1]
 
-export const getDefaultType = (registry: ContainerRegistryResponse | undefined): 'STATIC' | 'STS' | 'WIF' => {
+export const getContainerRegistryDefaultType = (
+  registry: ContainerRegistryResponse | undefined
+): 'STATIC' | 'STS' | 'WIF' => {
   if (!registry) return 'STS'
   if (registry.kind !== ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
     return registry.config?.role_arn ? 'STS' : 'STATIC'
@@ -40,13 +42,17 @@ export const getDefaultType = (registry: ContainerRegistryResponse | undefined):
   const config = registry.config as typeof registry.config & {
     gcp_credentials_type?: string
     service_account_email?: string
+    project_id?: string
+    workload_identity_provider_resource?: string
   }
-  return config?.gcp_credentials_type === 'workload_identity_federation' || config?.service_account_email
+  return config?.gcp_credentials_type === 'workload_identity_federation' ||
+    config?.service_account_email ||
+    config?.workload_identity_provider_resource
     ? 'WIF'
     : 'STATIC'
 }
 
-export const getPayloadConfig = ({
+export const getContainerRegistryPayloadConfig = ({
   type,
   kind,
   config,
@@ -70,9 +76,11 @@ export const getPayloadConfig = ({
   }
 
   if (type === 'WIF' && kind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
+    const projectIdFromServiceAccount = getGcpProjectIdFromServiceAccountEmail(config?.service_account_email)
+
     return {
       gcp_credentials_type: 'workload_identity_federation' as const,
-      project_id: getGcpProjectIdFromServiceAccountEmail(config?.service_account_email),
+      project_id: projectIdFromServiceAccount ?? config?.project_id,
       region: config?.region,
       service_account_email: config?.service_account_email,
       workload_identity_provider_resource: config?.workload_identity_provider_resource,
@@ -97,6 +105,7 @@ export function ContainerRegistryCreateEditModal({
   const { enableAlertClickOutside } = useModal()
   const gcpConfig = registry?.config as ContainerRegistryResponse['config'] & {
     service_account_email?: string
+    project_id?: string
     workload_identity_provider_resource?: string
   }
   const methods = useForm<ContainerRegistryCreateEditFormValues>({
@@ -106,7 +115,7 @@ export function ContainerRegistryCreateEditModal({
       description: registry?.description,
       url: registry?.url,
       kind: registry?.kind,
-      type: getDefaultType(registry),
+      type: getContainerRegistryDefaultType(registry),
       config: {
         username: registry?.config?.username,
         password: undefined,
@@ -122,6 +131,7 @@ export function ContainerRegistryCreateEditModal({
         azure_subscription_id: registry?.config?.azure_subscription_id,
         azure_application_id: registry?.config?.azure_application_id,
         service_account_email: gcpConfig?.service_account_email,
+        project_id: gcpConfig?.project_id,
         workload_identity_provider_resource: gcpConfig?.workload_identity_provider_resource,
         login_type:
           registry?.config?.username || registry?.kind === ContainerRegistryKindEnum.GITHUB_ENTERPRISE_CR
@@ -165,7 +175,7 @@ export function ContainerRegistryCreateEditModal({
         containerRegistryRequest: {
           ...rest,
           kind,
-          config: getPayloadConfig({
+          config: getContainerRegistryPayloadConfig({
             type,
             kind,
             config,
