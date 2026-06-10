@@ -1,5 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog'
+import { QueryErrorResetBoundary } from '@tanstack/react-query'
 import { type BlueprintItem } from 'qovery-typescript-axios'
+import { type ReactNode, Suspense } from 'react'
+import { ErrorBoundary } from 'react-error-boundary'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Badge, Button, ExternalLink, Icon } from '@qovery/shared/ui'
@@ -58,32 +61,54 @@ function BlueprintReadmeContent({ children }: { children: string }) {
   )
 }
 
-function BlueprintReadmeState({
-  readme,
-  isLoading,
-  isError,
+function SuspenseQueryFallback({ title }: { title: string }) {
+  return (
+    <div className="flex min-h-[240px] items-center justify-center gap-2 text-sm text-neutral-subtle">
+      <Icon iconName="loader" className="animate-spin" />
+      Loading {title}...
+    </div>
+  )
+}
+
+function SuspenseQueryErrorFallback({ resetErrorBoundary, title }: { resetErrorBoundary: () => void; title: string }) {
+  return (
+    <div className="flex min-h-[240px] flex-col items-center justify-center gap-3 text-sm text-neutral-subtle">
+      <span>Unable to load {title}.</span>
+      <Button type="button" variant="plain" color="neutral" size="md" onClick={resetErrorBoundary}>
+        <Icon iconName="rotate-right" className="text-xs" />
+        Retry
+      </Button>
+    </div>
+  )
+}
+
+function SuspenseQueryBoundary({
+  children,
+  resetKeys,
+  title,
 }: {
-  readme?: string
-  isLoading: boolean
-  isError: boolean
+  children: ReactNode
+  resetKeys: unknown[]
+  title: string
 }) {
-  if (isLoading) {
-    return (
-      <div className="flex min-h-[240px] items-center justify-center gap-2 text-sm text-neutral-subtle">
-        <Icon iconName="loader" className="animate-spin" />
-        Loading blueprint details...
-      </div>
-    )
-  }
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => (
+        <ErrorBoundary
+          fallbackRender={({ resetErrorBoundary }) => (
+            <SuspenseQueryErrorFallback resetErrorBoundary={resetErrorBoundary} title={title} />
+          )}
+          onReset={reset}
+          resetKeys={resetKeys}
+        >
+          <Suspense fallback={<SuspenseQueryFallback title={title} />}>{children}</Suspense>
+        </ErrorBoundary>
+      )}
+    </QueryErrorResetBoundary>
+  )
+}
 
-  if (isError) {
-    return (
-      <div className="flex min-h-[240px] items-center justify-center text-sm text-neutral-subtle">
-        Unable to load blueprint details.
-      </div>
-    )
-  }
-
+function BlueprintReadmeState({ readme }: { readme?: string }) {
   if (!readme) {
     return (
       <div className="flex min-h-[240px] items-center justify-center text-sm text-neutral-subtle">
@@ -93,6 +118,27 @@ function BlueprintReadmeState({
   }
 
   return <BlueprintReadmeContent>{readme}</BlueprintReadmeContent>
+}
+
+function BlueprintReadme({
+  blueprint,
+  organizationId,
+  serviceVersion,
+}: {
+  blueprint: BlueprintItem
+  organizationId: string
+  serviceVersion: string
+}) {
+  const { data: readme } = useBlueprintCatalogServiceReadme({
+    organizationId,
+    provider: blueprint.provider,
+    serviceFamily: blueprint.serviceFamily ?? '',
+    serviceVersion,
+    enabled: Boolean(serviceVersion),
+    suspense: true,
+  })
+
+  return <BlueprintReadmeState readme={readme} />
 }
 
 export function BlueprintDetailsPanel({
@@ -107,16 +153,6 @@ export function BlueprintDetailsPanel({
   onOpenChange: (open: boolean) => void
 }) {
   const serviceVersion = blueprint?.majorVersions[0]?.serviceVersion ?? ''
-  const readmeQuery = useBlueprintCatalogServiceReadme({
-    organizationId,
-    provider: blueprint?.provider ?? '',
-    serviceFamily: blueprint?.serviceFamily ?? '',
-    serviceVersion,
-    enabled: open && Boolean(blueprint),
-  })
-  const readme = readmeQuery?.data
-  const isLoading = Boolean(readmeQuery?.isLoading)
-  const isError = Boolean(readmeQuery?.isError)
 
   if (!blueprint) return null
 
@@ -165,7 +201,16 @@ export function BlueprintDetailsPanel({
             </div>
 
             <div className="rounded border border-neutral bg-surface-neutral p-5">
-              <BlueprintReadmeState readme={readme} isLoading={isLoading} isError={isError} />
+              <SuspenseQueryBoundary
+                resetKeys={[organizationId, blueprint.provider, blueprint.serviceFamily, serviceVersion]}
+                title="blueprint details"
+              >
+                <BlueprintReadme
+                  blueprint={blueprint}
+                  organizationId={organizationId}
+                  serviceVersion={serviceVersion}
+                />
+              </SuspenseQueryBoundary>
             </div>
           </div>
 

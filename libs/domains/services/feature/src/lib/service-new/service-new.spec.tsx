@@ -157,6 +157,7 @@ describe('ServiceNew', () => {
       serviceFamily: 's3',
       serviceVersion: '1',
       enabled: true,
+      suspense: true,
     })
     expect(within(dialog).getByRole('link', { name: 'Open qovery-blueprints/s3 repository' })).toHaveAttribute(
       'href',

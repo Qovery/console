@@ -273,7 +273,6 @@ export const services = createQueryKeys('services', {
         serviceFamily,
         serviceVersion
       )
-      console.log('response', response.data)
       return response.data
     },
   }),
