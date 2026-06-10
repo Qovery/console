@@ -600,6 +600,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
           { mode: 'CREATE', type: 'FILE' },
           { mode: 'CREATE', type: 'BUILT_IN' },
           { mode: 'CREATE', type: 'EXTERNAL_SECRET' },
+          { mode: 'CREATE', type: 'FILE_EXTERNAL_SECRET' },
           () => {
             return Promise.resolve()
           }
