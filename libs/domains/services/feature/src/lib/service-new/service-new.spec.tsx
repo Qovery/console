@@ -108,4 +108,23 @@ describe('ServiceNew', () => {
       ).toBeInTheDocument()
     })
   })
+
+  it('should keep default service links valid when rendered from search results', async () => {
+    const { container, userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    await userEvent.type(screen.getByPlaceholderText('Search…'), 'application')
+
+    expect(
+      container.querySelector(
+        'a[href="/organization/org-1/project/project-1/environment/env-1/service/create/application"]'
+      )
+    ).toBeInTheDocument()
+    expect(
+      container.querySelector(
+        'a[href="/organization/org-1/project/project-1/environment/env-1/organization/org-1/project/project-1/environment/env-1/service/create/application"]'
+      )
+    ).not.toBeInTheDocument()
+  })
 })
