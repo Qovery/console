@@ -1,6 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense } from 'react'
 import { Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
 
@@ -42,10 +41,8 @@ const OutletLoader = () => (
 
 function RouteComponent() {
   const matchRoute = useMatchRoute()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
-  const visibleTabs = secretManagerEnabled ? tabs : tabs.filter((tab) => tab.id !== 'external-secrets')
 
-  const activeTabId = visibleTabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
+  const activeTabId = tabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
 
   return (
     <div className="container mx-auto flex min-h-page-container flex-col pb-16 pt-6">
@@ -61,7 +58,7 @@ function RouteComponent() {
           <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
             <div className="bg-surface-neutral-subtle px-4 pb-2">
               <Navbar.Root activeId={activeTabId} className="relative">
-                {visibleTabs.map((tab) => (
+                {tabs.map((tab) => (
                   <Navbar.Item key={tab.id} id={tab.id} to={tab.routeId}>
                     <Icon iconName={tab.iconName} iconStyle="regular" />
                     {tab.label}

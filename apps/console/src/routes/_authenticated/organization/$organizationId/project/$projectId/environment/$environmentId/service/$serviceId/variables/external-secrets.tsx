@@ -1,7 +1,7 @@
-import { Navigate, createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { getServiceVariableScope, useRedeployServiceAction, useService } from '@qovery/domains/services/feature'
-import { ExternalSecretsTab } from '@qovery/domains/variables/feature'
+import { ExternalSecretsTab, SecretManagerFeatureFlagEntryPoint } from '@qovery/domains/variables/feature'
 import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
@@ -12,18 +12,12 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
+  const { environmentId, serviceId } = Route.useParams()
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   useDocumentTitle('External secrets - Service')
 
   if (!secretManagerEnabled) {
-    return (
-      <Navigate
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables"
-        params={{ organizationId, projectId, environmentId, serviceId }}
-        replace
-      />
-    )
+    return <SecretManagerFeatureFlagEntryPoint />
   }
 
   return <ExternalSecretsRouteContent environmentId={environmentId} serviceId={serviceId} />
