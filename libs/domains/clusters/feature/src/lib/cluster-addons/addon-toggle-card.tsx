@@ -3,7 +3,7 @@ import { Badge, Button, Icon } from '@qovery/shared/ui'
 export interface AddonToggleCardProps {
   title: string
   description: string
-  badge: { label: string; color: 'yellow' | 'green' }
+  badge?: { label: string; color: 'yellow' | 'green' }
   activated: boolean
   onToggle: () => void
   activateLabel?: string
@@ -24,9 +24,11 @@ export function AddonToggleCard({
       <div className="flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-neutral">{title}</span>
-          <Badge size="sm" radius="full" variant="surface" color={badge.color} className="text-[13px]">
-            {badge.label}
-          </Badge>
+          {badge && (
+            <Badge size="sm" radius="full" variant="surface" color={badge.color} className="text-[13px]">
+              {badge.label}
+            </Badge>
+          )}
         </div>
         <p className="text-sm text-neutral-subtle">{description}</p>
       </div>

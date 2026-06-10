@@ -1,3 +1,4 @@
+import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
@@ -59,7 +60,9 @@ const mockContextValue: ClusterContainerCreateContextInterface = {
 function getWrapper(contextValue: ClusterContainerCreateContextInterface = mockContextValue) {
   return function Wrapper({ children }: PropsWithChildren) {
     return (
-      <ClusterContainerCreateContext.Provider value={contextValue}>{children}</ClusterContainerCreateContext.Provider>
+      <TooltipProvider>
+        <ClusterContainerCreateContext.Provider value={contextValue}>{children}</ClusterContainerCreateContext.Provider>
+      </TooltipProvider>
     )
   }
 }
