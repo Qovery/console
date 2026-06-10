@@ -2,7 +2,18 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo } from 'react'
 import { isSameSecretManagerAccess } from '@qovery/domains/clusters/data-access'
-import { Badge, Button, DropdownMenu, FunnelFlowBody, Heading, Icon, Link, Section, useModal } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  DropdownMenu,
+  FunnelFlowBody,
+  Heading,
+  Icon,
+  Link,
+  Section,
+  Tooltip,
+  useModal,
+} from '@qovery/shared/ui'
 import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
@@ -107,7 +118,6 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
             <AddonToggleCard
               title="KEDA autoscaler"
               description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all your services running on this cluster."
-              badge={{ label: 'Free', color: 'green' }}
               activated={addonsData.kedaActivated}
               onToggle={() =>
                 setAddonsData((addonsData) => ({ ...addonsData, kedaActivated: !addonsData.kedaActivated }))
@@ -121,12 +131,11 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                    <Badge size="sm" radius="full" variant="surface" color="green" className="text-ssm">
-                      Free
-                    </Badge>
-                    <Badge size="sm" radius="full" variant="surface" color="purple" className="text-ssm">
-                      Beta
-                    </Badge>
+                    <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
+                      <Badge size="sm" radius="full" variant="surface" color="purple" className="text-ssm">
+                        Beta
+                      </Badge>
+                    </Tooltip>
                   </div>
                   <p className="text-sm text-neutral-subtle">
                     Link any secret manager on your cluster to add external secrets variables to all the services

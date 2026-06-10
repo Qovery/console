@@ -14,7 +14,7 @@ import {
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Badge, Button, DropdownMenu, Icon, Section, useModal, useModalConfirmation } from '@qovery/shared/ui'
+import { Badge, Button, DropdownMenu, Icon, Section, Tooltip, useModal, useModalConfirmation } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 
 const SECRET_MANAGER_EARLY_ACCESS_FORM_SLUG = 'request-access-secrets-manager'
@@ -167,7 +167,6 @@ function RouteComponent() {
               <AddonToggleCard
                 title="KEDA autoscaler"
                 description="Qovery KEDA autoscaler allows you to add event-based autoscaling on all the services running on this cluster."
-                badge={{ label: 'Free', color: 'green' }}
                 activated={cluster?.keda?.enabled ?? false}
                 onToggle={handleToggleKeda}
                 loading={isKedaUpdating}
@@ -180,12 +179,11 @@ function RouteComponent() {
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                      <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
-                        Free
-                      </Badge>
-                      <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
-                        Beta
-                      </Badge>
+                      <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
+                        <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
+                          Beta
+                        </Badge>
+                      </Tooltip>
                     </div>
                     <p className="text-sm text-neutral-subtle">
                       Link any secret manager on your cluster to add external secrets variables to all the services
@@ -233,12 +231,11 @@ function RouteComponent() {
                   <div className="flex flex-col gap-1">
                     <div className="flex items-center gap-2">
                       <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                      <Badge size="sm" radius="full" variant="surface" color="green" className="text-[13px]">
-                        Free
-                      </Badge>
-                      <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
-                        Beta
-                      </Badge>
+                      <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
+                        <Badge size="sm" radius="full" variant="surface" color="purple" className="text-[13px]">
+                          Beta
+                        </Badge>
+                      </Tooltip>
                     </div>
                     <p className="text-sm text-neutral-subtle">
                       Connect your external secret manager to Qovery and expose secrets as variables across the services
