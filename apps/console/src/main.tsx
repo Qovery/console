@@ -178,10 +178,10 @@ function App() {
     initSentry()
   }, [])
 
-  // Keep PostHog's identified user in sync once Auth0 resolves the session
   useEffect(() => {
     if (!auth.user?.sub) {
       Sentry.setUser(null)
+      posthog.reset()
       return
     }
 

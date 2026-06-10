@@ -1,5 +1,4 @@
 import { motion, useReducedMotion } from 'framer-motion'
-import posthog from 'posthog-js'
 import { useEffect, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { ExternalLink, Icon, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
@@ -11,6 +10,7 @@ import { useContextualDocLinks } from '../hooks/use-contextual-doc-links/use-con
 import { useSearchDocumentation } from '../hooks/use-mintlify-search/use-mintlify-search'
 import { useQoveryStatus } from '../hooks/use-qovery-status/use-qovery-status'
 import { MintlifyHit } from '../mintlify-hit/mintlify-hit'
+import { useSetConversationsOpen } from '../conversations-context/conversations-context'
 
 export interface AssistantPanelProps {
   onClose: () => void
@@ -19,6 +19,7 @@ export interface AssistantPanelProps {
 export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const { data } = useQoveryStatus()
   const { showChat } = useSupportChat()
+  const setConversationsOpen = useSetConversationsOpen()
   const docLinks = useContextualDocLinks()
   const [searchValue, setSearchValue] = useState('')
   const shouldReduceMotion = useReducedMotion()
@@ -134,7 +135,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
           className="flex h-11 items-center justify-center gap-1.5 px-5 font-medium text-neutral transition hover:bg-surface-neutral-subtle"
           type="button"
           onClick={() => {
-            posthog.capture('feedback_button_clicked_new_navigation')
+            setConversationsOpen(true)
             onClose()
           }}
         >

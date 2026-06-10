@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
-import posthog from 'posthog-js'
 import { useCallback } from 'react'
+import { useSetConversationsOpen } from '@qovery/shared/assistant/feature'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
@@ -34,10 +34,11 @@ const LINKS: {
 
 export function SectionLinks() {
   const { showChat } = useSupportChat()
+  const setConversationsOpen = useSetConversationsOpen()
 
   const handleGiveFeedbackClick = useCallback(() => {
-    posthog.capture('feedback_button_clicked_new_navigation')
-  }, [])
+    setConversationsOpen(true)
+  }, [setConversationsOpen])
 
   return (
     <Section className="flex flex-col gap-3">

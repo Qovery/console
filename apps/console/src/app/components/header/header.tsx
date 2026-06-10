@@ -1,8 +1,7 @@
 import { Link, useParams } from '@tanstack/react-router'
-import posthog from 'posthog-js'
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { Suspense, useCallback } from 'react'
-import { AssistantTrigger } from '@qovery/shared/assistant/feature'
+import { AssistantTrigger, useConversationsUnreadCount, useSetConversationsOpen } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton } from '@qovery/shared/devops-copilot/feature'
 import { SpotlightTrigger } from '@qovery/shared/spotlight/feature'
 import { Button, LogoIcon } from '@qovery/shared/ui'
@@ -25,9 +24,11 @@ export function Separator() {
 export function Header() {
   const { organizationId = '' } = useParams({ strict: false })
   const isDevopsCopilotEnabled = useFeatureFlagVariantKey('devops-copilot')
+  const setConversationsOpen = useSetConversationsOpen()
+  const unreadCount = useConversationsUnreadCount()
   const handleFeedbackClick = useCallback(() => {
-    posthog.capture('feedback_button_clicked_new_navigation')
-  }, [])
+    setConversationsOpen(true)
+  }, [setConversationsOpen])
 
   return (
     <header className="relative z-header w-full bg-background-secondary py-4 pl-3 pr-4">
@@ -47,9 +48,16 @@ export function Header() {
               <div className="hidden md:block">
                 <SpotlightTrigger />
               </div>
-              <Button onClick={handleFeedbackClick} variant="outline">
-                Feedback
-              </Button>
+              <div className="relative">
+                <Button onClick={handleFeedbackClick} variant="outline">
+                  Feedback
+                </Button>
+                {unreadCount > 0 && (
+                  <span className="pointer-events-none absolute -top-1.5 -right-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-surface-brand-solid px-1 text-[10px] font-medium text-neutralInvert">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </div>
               <AssistantTrigger />
               {isDevopsCopilotEnabled && <DevopsCopilotButton />}
               <UserMenu />
