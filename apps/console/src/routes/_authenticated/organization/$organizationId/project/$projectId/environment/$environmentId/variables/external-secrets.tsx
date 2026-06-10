@@ -1,7 +1,7 @@
-import { Navigate, createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
-import { ExternalSecretsTab } from '@qovery/domains/variables/feature'
+import { ExternalSecretsTab, SecretManagerFeatureFlagEntryPoint } from '@qovery/domains/variables/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { toast } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -54,13 +54,7 @@ function RouteComponent() {
     )
 
   if (!secretManagerEnabled) {
-    return (
-      <Navigate
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/variables"
-        params={{ organizationId, projectId, environmentId }}
-        replace
-      />
-    )
+    return <SecretManagerFeatureFlagEntryPoint />
   }
 
   return (

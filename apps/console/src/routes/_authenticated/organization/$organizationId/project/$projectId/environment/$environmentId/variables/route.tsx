@@ -1,8 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense } from 'react'
-import { Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
+import { Badge, Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
@@ -37,12 +36,23 @@ const OutletLoader = () => (
   </div>
 )
 
+function TabLabel({ label, isNew }: { label: string; isNew?: boolean }) {
+  return (
+    <>
+      {label}
+      {isNew && (
+        <Badge size="sm" radius="full" variant="surface" color="sky">
+          New
+        </Badge>
+      )}
+    </>
+  )
+}
+
 function RouteComponent() {
   const matchRoute = useMatchRoute()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
-  const visibleTabs = secretManagerEnabled ? tabs : tabs.filter((tab) => tab.id !== 'external-secrets')
 
-  const activeTabId = visibleTabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
+  const activeTabId = tabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
 
   return (
     <div className="container mx-auto flex min-h-page-container flex-col pt-6">
@@ -58,10 +68,10 @@ function RouteComponent() {
           <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
             <div className="bg-surface-neutral-subtle px-4 pb-2">
               <Navbar.Root activeId={activeTabId} className="relative">
-                {visibleTabs.map((tab) => (
+                {tabs.map((tab) => (
                   <Navbar.Item key={tab.id} id={tab.id} to={tab.routeId}>
                     <Icon iconName={tab.iconName} iconStyle="regular" />
-                    {tab.label}
+                    <TabLabel label={tab.label} isNew={tab.id === 'external-secrets'} />
                   </Navbar.Item>
                 ))}
               </Navbar.Root>
