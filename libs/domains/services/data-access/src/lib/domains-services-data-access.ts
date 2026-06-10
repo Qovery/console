@@ -276,6 +276,28 @@ export const services = createQueryKeys('services', {
       return response.data
     },
   }),
+  blueprintCatalogServiceManifest: ({
+    organizationId,
+    provider,
+    serviceFamily,
+    serviceVersion,
+  }: {
+    organizationId: string
+    provider: string
+    serviceFamily: string
+    serviceVersion: string
+  }) => ({
+    queryKey: [organizationId, provider, serviceFamily, serviceVersion],
+    async queryFn() {
+      const response = await blueprintCatalogApi.getBlueprintCatalogServiceManifest(
+        organizationId,
+        provider,
+        serviceFamily,
+        serviceVersion
+      )
+      return response.data
+    },
+  }),
   deploymentStatus: (environmentId: string, serviceId: string) => ({
     queryKey: [environmentId, serviceId],
     // NOTE: Value is set by WebSocket

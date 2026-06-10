@@ -340,7 +340,9 @@ export function ServiceNew({
       </div>
       <BlueprintDetailsPanel
         blueprint={selectedBlueprint}
+        environmentId={environmentId}
         organizationId={organizationId}
+        projectId={projectId}
         open={Boolean(selectedBlueprint)}
         onOpenChange={(open) => {
           if (!open) setSelectedBlueprint(null)

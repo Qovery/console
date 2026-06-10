@@ -159,10 +159,8 @@ describe('ServiceNew', () => {
       enabled: true,
       suspense: true,
     })
-    expect(within(dialog).getByRole('link', { name: 'Open qovery-blueprints/s3 repository' })).toHaveAttribute(
-      'href',
-      'https://github.com/Qovery/service-catalog/tree/main/qovery-blueprints/s3'
-    )
+    expect(within(dialog).getByText('qovery-blueprints/s3')).toBeInTheDocument()
+    expect(within(dialog).queryByRole('link', { name: 'Open qovery-blueprints/s3 repository' })).not.toBeInTheDocument()
     expect(within(dialog).getByRole('heading', { name: 'AWS S3 Bucket' })).toBeInTheDocument()
     expect(within(dialog).getByText('AWS')).toBeInTheDocument()
     expect(within(dialog).getByText('v1')).toBeInTheDocument()

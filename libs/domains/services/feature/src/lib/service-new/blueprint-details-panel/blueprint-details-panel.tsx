@@ -1,20 +1,17 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { QueryErrorResetBoundary } from '@tanstack/react-query'
+import { useNavigate } from '@tanstack/react-router'
 import { type BlueprintItem } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Badge, Button, ExternalLink, Icon } from '@qovery/shared/ui'
+import { Badge, Button, Icon } from '@qovery/shared/ui'
 import { formatCloudProvider, twMerge } from '@qovery/shared/util-js'
 import { useBlueprintCatalogServiceReadme } from '../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 
 function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) {
   return `qovery-blueprints/${serviceFamily || provider}`
-}
-
-function getBlueprintRepositoryUrl(repositoryName: string) {
-  return `https://github.com/Qovery/service-catalog/tree/main/${repositoryName}`
 }
 
 function BlueprintReadmeContent({ children }: { children: string }) {
@@ -143,15 +140,20 @@ function BlueprintReadme({
 
 export function BlueprintDetailsPanel({
   blueprint,
+  environmentId,
   organizationId,
+  projectId,
   open,
   onOpenChange,
 }: {
   blueprint: BlueprintItem | null
+  environmentId: string
   organizationId: string
+  projectId: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const navigate = useNavigate()
   const serviceVersion = blueprint?.majorVersions[0]?.serviceVersion ?? ''
 
   if (!blueprint) return null
@@ -182,13 +184,7 @@ export function BlueprintDetailsPanel({
                 </Dialog.Description>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <ExternalLink
-                  href={getBlueprintRepositoryUrl(repositoryName)}
-                  withIcon={false}
-                  aria-label={`Open ${repositoryName} repository`}
-                >
-                  {repositoryBadge}
-                </ExternalLink>
+                {repositoryBadge}
                 <Badge size="sm" color="neutral" variant="outline" className="gap-1">
                   {provider}
                 </Badge>
@@ -228,7 +224,23 @@ export function BlueprintDetailsPanel({
             <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="button" color="brand" size="lg">
+            <Button
+              type="button"
+              color="brand"
+              size="lg"
+              onClick={() => {
+                navigate({
+                  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily',
+                  params: {
+                    environmentId,
+                    organizationId,
+                    projectId,
+                    provider: blueprint.provider,
+                    serviceFamily: blueprint.serviceFamily ?? blueprint.provider,
+                  },
+                })
+              }}
+            >
               Deploy blueprint
             </Button>
           </div>
