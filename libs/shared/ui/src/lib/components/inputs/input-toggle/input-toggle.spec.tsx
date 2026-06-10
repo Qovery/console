@@ -1,4 +1,4 @@
-import { act, render, screen } from '@qovery/shared/util-tests'
+import { act, fireEvent, render, screen } from '@qovery/shared/util-tests'
 import { InputToggle, type InputToggleProps } from './input-toggle'
 
 describe('InputToggle', () => {
@@ -72,6 +72,53 @@ describe('InputToggle', () => {
     })
 
     expect(onChange).toHaveBeenCalledWith(true)
+  })
+
+  it('should be keyboard focusable and expose a switch role', () => {
+    render(<InputToggle {...props} value={false} />)
+
+    const toggleBtn = screen.getByRole('switch')
+
+    expect(toggleBtn).toHaveAttribute('tabindex', '0')
+    expect(toggleBtn).toHaveAttribute('aria-checked', 'false')
+  })
+
+  it('should call onChange when activated with the keyboard', () => {
+    const onChange = jest.fn()
+    render(<InputToggle {...props} onChange={onChange} />)
+
+    const toggleBtn = screen.getByRole('switch')
+
+    act(() => {
+      fireEvent.keyDown(toggleBtn, { key: ' ' })
+    })
+    expect(onChange).toHaveBeenCalledWith(true)
+
+    act(() => {
+      fireEvent.keyDown(toggleBtn, { key: 'Enter' })
+    })
+    expect(onChange).toHaveBeenCalledTimes(2)
+  })
+
+  it('should not be keyboard focusable when disabled', () => {
+    render(<InputToggle {...props} disabled={true} />)
+
+    const toggleBtn = screen.getByRole('switch')
+    expect(toggleBtn).toHaveAttribute('tabindex', '-1')
+    expect(toggleBtn).toHaveAttribute('aria-disabled', 'true')
+  })
+
+  it('should not call onChange via keyboard when disabled', () => {
+    const onChange = jest.fn()
+    render(<InputToggle {...props} disabled={true} onChange={onChange} />)
+
+    const toggleBtn = screen.getByRole('switch')
+
+    act(() => {
+      fireEvent.keyDown(toggleBtn, { key: ' ' })
+    })
+
+    expect(onChange).not.toHaveBeenCalled()
   })
 
   it('should respect the value prop when provided', () => {

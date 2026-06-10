@@ -51,8 +51,21 @@ export function InputToggle(props: InputToggleProps) {
       <div
         data-testid={props.dataTestId || 'input-toggle-button'}
         aria-label="toggle-btn"
-        className={`inline-flex items-center justify-between ${!disabled ? 'cursor-pointer' : ''}`}
+        role="switch"
+        aria-checked={Boolean(toggleActive)}
+        aria-disabled={disabled}
+        tabIndex={disabled ? -1 : 0}
+        className={clsx(
+          'inline-flex items-center justify-between rounded-full outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-11',
+          { 'cursor-pointer': !disabled }
+        )}
         onClick={changeToggle}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault()
+            changeToggle()
+          }
+        }}
       >
         <input
           type="checkbox"
