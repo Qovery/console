@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import { Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
+import { Badge, Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
@@ -36,6 +36,19 @@ const OutletLoader = () => (
   </div>
 )
 
+function TabLabel({ label, isNew }: { label: string; isNew?: boolean }) {
+  return (
+    <>
+      {label}
+      {isNew && (
+        <Badge size="sm" radius="full" variant="surface" color="sky">
+          New
+        </Badge>
+      )}
+    </>
+  )
+}
+
 function RouteComponent() {
   const matchRoute = useMatchRoute()
 
@@ -58,7 +71,7 @@ function RouteComponent() {
                 {tabs.map((tab) => (
                   <Navbar.Item key={tab.id} id={tab.id} to={tab.routeId}>
                     <Icon iconName={tab.iconName} iconStyle="regular" />
-                    {tab.label}
+                    <TabLabel label={tab.label} isNew={tab.id === 'external-secrets'} />
                   </Navbar.Item>
                 ))}
               </Navbar.Root>
