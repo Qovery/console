@@ -403,8 +403,8 @@ function CardService({
     )
   }
 
-  const pathSuffix = link ?? (type && slug ? servicePathSuffix(type, slug, 'current') : undefined)
-  const to = pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined
+  const pathSuffix = type && slug ? servicePathSuffix(type, slug, 'current') : undefined
+  const to = link ?? (pathSuffix ? getServicesPath(organizationId, projectId, environmentId, pathSuffix) : undefined)
 
   if (!to) return null
 
