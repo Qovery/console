@@ -7,8 +7,11 @@ export interface BlueprintWizardFormData {
   majorServiceVersion: string
   serviceName: string
 
-  // Setup — blueprint-specific parameter values keyed by parameter id
+  // Required — must be filled before proceeding
   setupParams: Record<string, string>
+
+  // Optional — blueprint variables with defaults, customizable in Overrides
+  optionalParams: Record<string, string>
 
   // Advanced
   credentialsMode: 'cluster' | 'environment'
@@ -28,6 +31,7 @@ export function getDefaultFormData(
     majorServiceVersion: blueprint.versions[0]?.version ?? '',
     serviceName: blueprint.name,
     setupParams: getSetupParameterDefaults(getSetupParameters(blueprint)),
+    optionalParams: getSetupParameterDefaults(getOptionalParameters(blueprint)),
     credentialsMode: 'cluster',
     cpuMilli: 500,
     memoryMib: 256,
@@ -43,6 +47,7 @@ export interface SetupParameter {
   label: string
   type: 'text' | 'number' | 'select' | 'boolean'
   required?: boolean
+  sensitive?: boolean
   defaultValue?: string
   helper?: string
   options?: Array<{ value: string; label: string }>
@@ -75,20 +80,28 @@ const SETUP_PARAMS_BY_BLUEPRINT: Record<string, SetupParameter[]> = {
     },
   ],
   'aws-postgres': [
-    { id: 'dbName', label: 'Database name', type: 'text', required: true },
-    { id: 'username', label: 'Master username', type: 'text', required: true, defaultValue: 'qovery' },
     {
-      id: 'instanceClass',
-      label: 'Instance class',
-      type: 'select',
-      defaultValue: 'db.t3.medium',
-      options: [
-        { value: 'db.t3.small', label: 'db.t3.small' },
-        { value: 'db.t3.medium', label: 'db.t3.medium' },
-        { value: 'db.r6g.large', label: 'db.r6g.large' },
-      ],
+      id: 'db_name',
+      label: 'Database name',
+      type: 'text',
+      required: true,
+      helper: 'Letters, digits, underscores only. Must start with a letter. Max 63 chars.',
     },
-    { id: 'allocatedStorageGb', label: 'Allocated storage (GB)', type: 'number', defaultValue: '20' },
+    {
+      id: 'db_username',
+      label: 'Master username',
+      type: 'text',
+      required: true,
+      helper: 'Letters, digits, underscores. Must start with a letter. Max 63 chars.',
+    },
+    {
+      id: 'db_password',
+      label: 'Master password',
+      type: 'text',
+      required: true,
+      sensitive: true,
+      helper: '8–128 chars. Must not contain /, @, ", or spaces.',
+    },
   ],
   'helm-redis': [
     { id: 'replicaCount', label: 'Replica count', type: 'number', defaultValue: '1' },
@@ -141,6 +154,48 @@ const SETUP_PARAMS_BY_BLUEPRINT: Record<string, SetupParameter[]> = {
 
 export function getSetupParameters(blueprint: BlueprintEntry): SetupParameter[] {
   return SETUP_PARAMS_BY_BLUEPRINT[blueprint.id] ?? []
+}
+
+const OPTIONAL_PARAMS_BY_BLUEPRINT: Record<string, SetupParameter[]> = {
+  'aws-postgres': [
+    {
+      id: 'instance_class',
+      label: 'Instance class',
+      type: 'select',
+      defaultValue: 'db.t3.micro',
+      helper: 'RDS instance class controlling compute and memory.',
+      options: [
+        { value: 'db.t3.micro', label: 'db.t3.micro' },
+        { value: 'db.t3.small', label: 'db.t3.small' },
+        { value: 'db.t3.medium', label: 'db.t3.medium' },
+        { value: 'db.t3.large', label: 'db.t3.large' },
+        { value: 'db.m5.large', label: 'db.m5.large' },
+        { value: 'db.m5.xlarge', label: 'db.m5.xlarge' },
+        { value: 'db.m5.2xlarge', label: 'db.m5.2xlarge' },
+        { value: 'db.m5.4xlarge', label: 'db.m5.4xlarge' },
+        { value: 'db.r5.large', label: 'db.r5.large' },
+        { value: 'db.r5.xlarge', label: 'db.r5.xlarge' },
+      ],
+    },
+    {
+      id: 'allocated_storage',
+      label: 'Allocated storage (GiB)',
+      type: 'number',
+      defaultValue: '20',
+      helper: 'Min 20, max 65 536 for gp3.',
+    },
+    {
+      id: 'multi_az',
+      label: 'Multi-AZ deployment',
+      type: 'boolean',
+      defaultValue: 'false',
+      helper: 'Enables a standby replica in a separate availability zone.',
+    },
+  ],
+}
+
+export function getOptionalParameters(blueprint: BlueprintEntry): SetupParameter[] {
+  return OPTIONAL_PARAMS_BY_BLUEPRINT[blueprint.id] ?? []
 }
 
 export function isSetupBooleanEnabled(value: string | undefined | null): boolean {

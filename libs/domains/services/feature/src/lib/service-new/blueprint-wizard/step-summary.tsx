@@ -1,7 +1,12 @@
 import { useFormContext } from 'react-hook-form'
-import { Button, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
+import { Badge, Button, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
 import { type BlueprintEntry, ENGINE_LABELS, PROVIDER_CONFIG } from '../blueprints'
-import { type BlueprintWizardFormData, getSetupParameters, getVisibleSetupParameters } from './types'
+import {
+  type BlueprintWizardFormData,
+  getOptionalParameters,
+  getSetupParameters,
+  getVisibleSetupParameters,
+} from './types'
 
 export interface StepSummaryProps {
   blueprint: BlueprintEntry
@@ -23,7 +28,13 @@ export function StepSummary({
   const methods = useFormContext<BlueprintWizardFormData>()
   const values = methods.getValues()
   const params = getVisibleSetupParameters(getSetupParameters(blueprint), values.setupParams)
+  const optionalParams = getOptionalParameters(blueprint)
   const providerCfg = PROVIDER_CONFIG[blueprint.provider]
+
+  const customizedOptionalParams = optionalParams.filter(
+    (p) => (values.optionalParams?.[p.id] ?? p.defaultValue ?? '') !== (p.defaultValue ?? '')
+  )
+  const isOptionalVarsCustomized = customizedOptionalParams.length > 0
 
   return (
     <Section>
@@ -91,6 +102,42 @@ export function StepSummary({
             </div>
             <Button
               aria-label="Edit setup"
+              type="button"
+              variant="outline"
+              color="neutral"
+              size="md"
+              onClick={onBack}
+              iconOnly
+            >
+              <Icon className="text-base" iconName="gear-complex" />
+            </Button>
+          </Section>
+        )}
+
+        {/* Blueprint variables section */}
+        {optionalParams.length > 0 && (
+          <Section className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral p-4 shadow-Cards">
+            <div className="mr-2 flex-grow">
+              <div className="mb-3 flex items-center gap-2">
+                <Heading>Blueprint variables</Heading>
+                {isOptionalVarsCustomized && (
+                  <Badge size="sm" color="sky" variant="surface" className="px-1 font-medium">
+                    Customized
+                  </Badge>
+                )}
+              </div>
+              <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                {optionalParams.map((parameter) => (
+                  <SummaryValue
+                    key={parameter.id}
+                    label={parameter.label}
+                    value={formatSetupValue(values.optionalParams?.[parameter.id] ?? parameter.defaultValue)}
+                  />
+                ))}
+              </ul>
+            </div>
+            <Button
+              aria-label="Edit blueprint variables"
               type="button"
               variant="outline"
               color="neutral"

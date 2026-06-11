@@ -17,6 +17,7 @@ import { type BlueprintEntry } from '../blueprints'
 import {
   type BlueprintWizardFormData,
   type SetupParameter,
+  getOptionalParameters,
   getSetupParameters,
   getVisibleSetupParameters,
   isSetupBooleanEnabled,
@@ -28,7 +29,7 @@ export interface StepConfigurationProps {
 }
 
 type ConfigStage = 'service' | 'setup' | 'overrides'
-type OverrideSection = 'terraform' | 'bucket' | 'resources' | 'network' | 'authentication'
+type OverrideSection = 'service-config'
 type TerraformBackend = 'kubernetes' | 'user_provided'
 type TerraformCredentials = 'cluster' | 'environment'
 
@@ -55,12 +56,14 @@ function WizardStickyFooter({ children }: { children: ReactNode }) {
 export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps) {
   const methods = useFormContext<BlueprintWizardFormData>()
   const setupParams = getSetupParameters(blueprint)
+  const optionalParamsForBlueprint = getOptionalParameters(blueprint)
   const [activeStage, setActiveStage] = useState<ConfigStage>('service')
   const [isServiceCompleted, setIsServiceCompleted] = useState(false)
   const [isSetupCompleted, setIsSetupCompleted] = useState(false)
   const [openOverrideSection, setOpenOverrideSection] = useState<OverrideSection | null>(null)
   const [isTerraformOverridden, setIsTerraformOverridden] = useState(false)
   const [isResourcesOverridden, setIsResourcesOverridden] = useState(false)
+  const [isOptionalVarsOverridden, setIsOptionalVarsOverridden] = useState(false)
   const [isBlueprintDetailsOpen, setBlueprintDetailsOpen] = useState(false)
   const [terraformOverrides, setTerraformOverrides] = useState<TerraformOverrideSettings>(
     DEFAULT_TERRAFORM_OVERRIDE_SETTINGS
@@ -73,15 +76,15 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
   })
   const savedResourcesRef = useRef({ ...defaultResourcesRef.current })
   const savedTerraformOverridesRef = useRef<TerraformOverrideSettings>({ ...DEFAULT_TERRAFORM_OVERRIDE_SETTINGS })
+  const defaultOptionalParamsRef = useRef<Record<string, string>>(
+    Object.fromEntries(optionalParamsForBlueprint.map((p) => [p.id, p.defaultValue ?? '']))
+  )
+  const savedOptionalParamsRef = useRef<Record<string, string>>({ ...defaultOptionalParamsRef.current })
 
   const cpuMilli = methods.watch('cpuMilli')
   const memoryMib = methods.watch('memoryMib')
   const timeoutSec = methods.watch('timeoutSec')
-
-  const hasResourceOverrides =
-    cpuMilli !== defaultResourcesRef.current.cpuMilli ||
-    memoryMib !== defaultResourcesRef.current.memoryMib ||
-    timeoutSec !== defaultResourcesRef.current.timeoutSec
+  const watchedOptionalParams = methods.watch('optionalParams') ?? {}
 
   const isResourceDirty =
     cpuMilli !== savedResourcesRef.current.cpuMilli ||
@@ -92,6 +95,12 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
     terraformOverrides.backend !== savedTerraformOverridesRef.current.backend ||
     terraformOverrides.credentials !== savedTerraformOverridesRef.current.credentials ||
     terraformOverrides.timeout !== savedTerraformOverridesRef.current.timeout
+
+  const isServiceConfigDirty = isTerraformDirty || isResourceDirty
+  const isServiceConfigOverridden = isTerraformOverridden || isResourcesOverridden
+  const isOptionalVarsDirty = optionalParamsForBlueprint.some(
+    (p) => watchedOptionalParams[p.id] !== savedOptionalParamsRef.current[p.id]
+  )
 
   const versionOptions = blueprint.versions.map((version, index) => ({
     label: index === 0 ? `${version.version} (latest)` : version.version,
@@ -115,10 +124,13 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
     setActiveStage('overrides')
   }
 
-  const renderSetupParameter = (param: SetupParameter) => (
+  const renderSetupParameter = (
+    param: SetupParameter,
+    fieldPrefix: 'setupParams' | 'optionalParams' = 'setupParams'
+  ) => (
     <Controller
       key={param.id}
-      name={`setupParams.${param.id}`}
+      name={`${fieldPrefix}.${param.id}`}
       control={methods.control}
       rules={param.required ? { required: `${param.label} is required.` } : undefined}
       render={({ field, fieldState: { error } }) => {
@@ -159,7 +171,7 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
                 <div className="flex flex-col gap-1.5 p-3">
                   <p className="font-mono text-2xs font-semibold uppercase text-neutral-subtle">Related fields</p>
                   <div className="flex flex-col gap-2">
-                    {param.relatedFields.map((relatedField) => renderSetupParameter(relatedField))}
+                    {param.relatedFields.map((relatedField) => renderSetupParameter(relatedField, fieldPrefix))}
                   </div>
                 </div>
               ) : null}
@@ -173,7 +185,8 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
             value={field.value}
             onChange={field.onChange}
             label={param.label}
-            type={param.type === 'number' ? 'number' : 'text'}
+            type={param.type === 'number' ? 'number' : param.sensitive ? 'password' : 'text'}
+            hint={param.helper}
             error={error?.message}
           />
         )
@@ -181,23 +194,13 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
     />
   )
 
-  const saveResourceOverrides = () => {
+  const saveServiceConfig = () => {
     savedResourcesRef.current = { cpuMilli, memoryMib, timeoutSec }
     setIsResourcesOverridden(
       cpuMilli !== defaultResourcesRef.current.cpuMilli ||
         memoryMib !== defaultResourcesRef.current.memoryMib ||
         timeoutSec !== defaultResourcesRef.current.timeoutSec
     )
-    setOpenOverrideSection(null)
-  }
-
-  const resetResourceOverrides = () => {
-    methods.setValue('cpuMilli', defaultResourcesRef.current.cpuMilli, { shouldDirty: true, shouldTouch: true })
-    methods.setValue('memoryMib', defaultResourcesRef.current.memoryMib, { shouldDirty: true, shouldTouch: true })
-    methods.setValue('timeoutSec', defaultResourcesRef.current.timeoutSec, { shouldDirty: true, shouldTouch: true })
-  }
-
-  const saveTerraformOverrides = () => {
     savedTerraformOverridesRef.current = { ...terraformOverrides }
     setIsTerraformOverridden(
       terraformOverrides.version !== DEFAULT_TERRAFORM_OVERRIDE_SETTINGS.version ||
@@ -206,6 +209,29 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
         terraformOverrides.timeout !== DEFAULT_TERRAFORM_OVERRIDE_SETTINGS.timeout
     )
     setOpenOverrideSection(null)
+  }
+
+  const resetServiceConfig = () => {
+    methods.setValue('cpuMilli', defaultResourcesRef.current.cpuMilli, { shouldDirty: true, shouldTouch: true })
+    methods.setValue('memoryMib', defaultResourcesRef.current.memoryMib, { shouldDirty: true, shouldTouch: true })
+    methods.setValue('timeoutSec', defaultResourcesRef.current.timeoutSec, { shouldDirty: true, shouldTouch: true })
+    setTerraformOverrides({ ...DEFAULT_TERRAFORM_OVERRIDE_SETTINGS })
+  }
+
+  const saveOptionalVars = () => {
+    savedOptionalParamsRef.current = { ...watchedOptionalParams }
+    setIsOptionalVarsOverridden(
+      optionalParamsForBlueprint.some(
+        (p) => watchedOptionalParams[p.id] !== defaultOptionalParamsRef.current[p.id]
+      )
+    )
+    setOpenOverrideSection(null)
+  }
+
+  const resetOptionalVars = () => {
+    optionalParamsForBlueprint.forEach((p) => {
+      methods.setValue(`optionalParams.${p.id}` as never, defaultOptionalParamsRef.current[p.id] ?? '')
+    })
   }
 
   return (
@@ -377,43 +403,47 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
                   </div>
 
                   <div className="border-t border-neutral">
-                    <div className="border-b border-neutral">
+                    {/* ─── Service configuration ─── */}
+                    <div className={optionalParamsForBlueprint.length > 0 ? 'border-b border-neutral' : ''}>
                       <button
                         type="button"
                         className="group flex h-12 w-full items-center justify-between px-4 transition-colors"
-                        onClick={() => setOpenOverrideSection((value) => (value === 'terraform' ? null : 'terraform'))}
+                        onClick={() =>
+                          setOpenOverrideSection((value) => (value === 'service-config' ? null : 'service-config'))
+                        }
                       >
                         <div className="flex items-center gap-2">
                           <span
                             className={`text-sm font-medium transition-colors ${
-                              openOverrideSection === 'terraform'
+                              openOverrideSection === 'service-config'
                                 ? 'text-neutral'
                                 : 'text-neutral-subtle group-hover:text-neutral'
                             }`}
                           >
-                            Terraform configuration
+                            Service configuration
                           </span>
-                          {isTerraformOverridden ? (
+                          {isServiceConfigOverridden ? (
                             <Badge size="sm" color="sky" variant="surface" className="px-1 font-medium">
                               Overridden
                             </Badge>
                           ) : null}
                         </div>
                         <Icon
-                          iconName={openOverrideSection === 'terraform' ? 'angle-up' : 'angle-down'}
+                          iconName={openOverrideSection === 'service-config' ? 'angle-up' : 'angle-down'}
                           className={`text-sm transition-colors ${
-                            openOverrideSection === 'terraform'
+                            openOverrideSection === 'service-config'
                               ? 'text-neutral'
                               : 'text-neutral-subtle group-hover:text-neutral'
                           }`}
                         />
                       </button>
 
-                      {openOverrideSection === 'terraform' ? (
+                      {openOverrideSection === 'service-config' ? (
                         <div className="flex flex-col gap-5 px-4 pb-4">
+                          {/* Terraform configuration */}
                           <div className="flex flex-col gap-2">
                             <div className="flex flex-col gap-0.5">
-                              <p className="text-sm text-neutral">Core configuration</p>
+                              <p className="text-sm text-neutral">Terraform configuration</p>
                               <p className="text-sm text-neutral-subtle">
                                 Basic Terraform setup and state management settings.
                               </p>
@@ -499,8 +529,7 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
                                 <div className="flex flex-col gap-0.5">
                                   <span className="text-sm text-neutral">Environment variables</span>
                                   <span className="text-sm text-neutral-subtle">
-                                    Use custom credentials injected as environment variables. To be used if cluster
-                                    credential permissions are not enough.
+                                    Use custom credentials injected as environment variables.
                                   </span>
                                 </div>
                               </label>
@@ -519,122 +548,62 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
                             />
                           </div>
 
-                          <div>
-                            <Button
-                              type="button"
-                              size="md"
-                              color="neutral"
-                              variant="solid"
-                              radius="rounded"
-                              disabled={!isTerraformDirty}
-                              onClick={saveTerraformOverrides}
-                            >
-                              <span className="inline-flex items-center gap-2">
-                                <Icon iconName="floppy-disk" className="text-sm" />
-                                Save
-                              </span>
-                            </Button>
-                          </div>
-                        </div>
-                      ) : null}
-                    </div>
-
-                    <button
-                      type="button"
-                      className="group flex h-12 w-full items-center justify-between px-4"
-                      onClick={() => setOpenOverrideSection((value) => (value === 'bucket' ? null : 'bucket'))}
-                    >
-                      <span className="font-medium text-neutral-subtle transition-colors group-hover:text-neutral">
-                        Bucket
-                      </span>
-                      <Icon
-                        iconName={openOverrideSection === 'bucket' ? 'angle-up' : 'angle-down'}
-                        className="text-sm text-neutral-subtle transition-colors group-hover:text-neutral"
-                      />
-                    </button>
-
-                    <div className="border-t border-neutral">
-                      <button
-                        type="button"
-                        className="group flex h-12 w-full items-center justify-between px-4"
-                        onClick={() => setOpenOverrideSection((value) => (value === 'resources' ? null : 'resources'))}
-                      >
-                        <div className="flex items-center gap-2">
-                          <span
-                            className={`font-medium transition-colors ${
-                              openOverrideSection === 'resources'
-                                ? 'text-neutral'
-                                : 'text-neutral-subtle group-hover:text-neutral'
-                            }`}
-                          >
-                            Resources
-                          </span>
-                          {isResourcesOverridden ? (
-                            <Badge size="sm" color="sky" variant="surface" className="px-1 font-medium">
-                              Overridden
-                            </Badge>
-                          ) : null}
-                        </div>
-                        <Icon
-                          iconName={openOverrideSection === 'resources' ? 'angle-up' : 'angle-down'}
-                          className={`text-sm transition-colors ${
-                            openOverrideSection === 'resources'
-                              ? 'text-neutral'
-                              : 'text-neutral-subtle group-hover:text-neutral'
-                          }`}
-                        />
-                      </button>
-
-                      {openOverrideSection === 'resources' ? (
-                        <div className="flex flex-col gap-3 px-4 pb-4">
-                          <div className="grid grid-cols-2 gap-3">
-                            <Controller
-                              name="cpuMilli"
-                              control={methods.control}
-                              rules={{ required: true, min: 100 }}
-                              render={({ field, fieldState: { error } }) => (
-                                <InputText
-                                  name={field.name}
-                                  value={String(field.value)}
-                                  onChange={(event) => field.onChange(Number(event.target.value))}
-                                  label="vCPU (milli)"
-                                  type="number"
-                                  error={error?.message}
-                                />
-                              )}
-                            />
-                            <Controller
-                              name="memoryMib"
-                              control={methods.control}
-                              rules={{ required: true, min: 64 }}
-                              render={({ field, fieldState: { error } }) => (
-                                <InputText
-                                  name={field.name}
-                                  value={String(field.value)}
-                                  onChange={(event) => field.onChange(Number(event.target.value))}
-                                  label="Memory (MiB)"
-                                  type="number"
-                                  error={error?.message}
-                                />
-                              )}
-                            />
-                          </div>
-
-                          <Controller
-                            name="timeoutSec"
-                            control={methods.control}
-                            rules={{ required: true, min: 60 }}
-                            render={({ field, fieldState: { error } }) => (
-                              <InputText
-                                name={field.name}
-                                value={String(field.value)}
-                                onChange={(event) => field.onChange(Number(event.target.value))}
-                                label="Timeout (ms)"
-                                type="number"
-                                error={error?.message}
+                          {/* Resources */}
+                          <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-0.5">
+                              <p className="text-sm text-neutral">Resources</p>
+                              <p className="text-sm text-neutral-subtle">
+                                CPU and memory allocated to run this service.
+                              </p>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <Controller
+                                name="cpuMilli"
+                                control={methods.control}
+                                rules={{ required: true, min: 100 }}
+                                render={({ field, fieldState: { error } }) => (
+                                  <InputText
+                                    name={field.name}
+                                    value={String(field.value)}
+                                    onChange={(event) => field.onChange(Number(event.target.value))}
+                                    label="vCPU (milli)"
+                                    type="number"
+                                    error={error?.message}
+                                  />
+                                )}
                               />
-                            )}
-                          />
+                              <Controller
+                                name="memoryMib"
+                                control={methods.control}
+                                rules={{ required: true, min: 64 }}
+                                render={({ field, fieldState: { error } }) => (
+                                  <InputText
+                                    name={field.name}
+                                    value={String(field.value)}
+                                    onChange={(event) => field.onChange(Number(event.target.value))}
+                                    label="Memory (MiB)"
+                                    type="number"
+                                    error={error?.message}
+                                  />
+                                )}
+                              />
+                            </div>
+                            <Controller
+                              name="timeoutSec"
+                              control={methods.control}
+                              rules={{ required: true, min: 60 }}
+                              render={({ field, fieldState: { error } }) => (
+                                <InputText
+                                  name={field.name}
+                                  value={String(field.value)}
+                                  onChange={(event) => field.onChange(Number(event.target.value))}
+                                  label="Timeout (s)"
+                                  type="number"
+                                  error={error?.message}
+                                />
+                              )}
+                            />
+                          </div>
 
                           <div className="flex items-center gap-2">
                             <Button
@@ -643,22 +612,22 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
                               color="neutral"
                               variant="solid"
                               radius="rounded"
-                              disabled={!isResourceDirty}
-                              onClick={saveResourceOverrides}
+                              disabled={!isServiceConfigDirty}
+                              onClick={saveServiceConfig}
                             >
                               <span className="inline-flex items-center gap-2">
                                 <Icon iconName="floppy-disk" className="text-sm" />
                                 Save
                               </span>
                             </Button>
-                            {hasResourceOverrides ? (
+                            {isServiceConfigOverridden ? (
                               <Button
                                 type="button"
                                 size="md"
                                 color="neutral"
                                 variant="outline"
                                 radius="rounded"
-                                onClick={resetResourceOverrides}
+                                onClick={resetServiceConfig}
                               >
                                 <span className="inline-flex items-center gap-2">
                                   <Icon iconName="rotate-left" className="text-sm" />
@@ -671,39 +640,62 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
                       ) : null}
                     </div>
 
-                    <div className="border-t border-neutral">
-                      <button
-                        type="button"
-                        className="group flex h-12 w-full items-center justify-between px-4"
-                        onClick={() => setOpenOverrideSection((value) => (value === 'network' ? null : 'network'))}
-                      >
-                        <span className="font-medium text-neutral-subtle transition-colors group-hover:text-neutral">
-                          Network
-                        </span>
-                        <Icon
-                          iconName={openOverrideSection === 'network' ? 'angle-up' : 'angle-down'}
-                          className="text-sm text-neutral-subtle transition-colors group-hover:text-neutral"
-                        />
-                      </button>
-                    </div>
-
-                    <div className="border-t border-neutral">
-                      <button
-                        type="button"
-                        className="group flex h-12 w-full items-center justify-between px-4"
-                        onClick={() =>
-                          setOpenOverrideSection((value) => (value === 'authentication' ? null : 'authentication'))
-                        }
-                      >
-                        <span className="font-medium text-neutral-subtle transition-colors group-hover:text-neutral">
-                          Authentication
-                        </span>
-                        <Icon
-                          iconName={openOverrideSection === 'authentication' ? 'angle-up' : 'angle-down'}
-                          className="text-sm text-neutral-subtle transition-colors group-hover:text-neutral"
-                        />
-                      </button>
-                    </div>
+                    {/* ─── Optional variables ─── */}
+                    {optionalParamsForBlueprint.length > 0 && (
+                      <div className="px-4 py-4">
+                        <div className="mb-3 flex items-start justify-between">
+                          <div className="flex flex-col gap-0.5">
+                            <div className="flex items-center gap-2">
+                              <p className="text-sm font-medium text-neutral">Blueprint variables</p>
+                              {isOptionalVarsOverridden ? (
+                                <Badge size="sm" color="sky" variant="surface" className="px-1 font-medium">
+                                  Customized
+                                </Badge>
+                              ) : null}
+                            </div>
+                            <p className="text-sm text-neutral-subtle">
+                              Optional variables exposed by this blueprint. Defaults are set by the blueprint author.
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex flex-col gap-3">
+                          <div className="flex flex-col gap-2">
+                            {optionalParamsForBlueprint.map((param) => renderSetupParameter(param, 'optionalParams'))}
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Button
+                              type="button"
+                              size="md"
+                              color="neutral"
+                              variant="solid"
+                              radius="rounded"
+                              disabled={!isOptionalVarsDirty}
+                              onClick={saveOptionalVars}
+                            >
+                              <span className="inline-flex items-center gap-2">
+                                <Icon iconName="floppy-disk" className="text-sm" />
+                                Save
+                              </span>
+                            </Button>
+                            {isOptionalVarsOverridden ? (
+                              <Button
+                                type="button"
+                                size="md"
+                                color="neutral"
+                                variant="outline"
+                                radius="rounded"
+                                onClick={resetOptionalVars}
+                              >
+                                <span className="inline-flex items-center gap-2">
+                                  <Icon iconName="rotate-left" className="text-sm" />
+                                  Reset to default
+                                </span>
+                              </Button>
+                            ) : null}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </>
               ) : (
