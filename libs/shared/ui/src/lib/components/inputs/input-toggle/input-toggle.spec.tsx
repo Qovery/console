@@ -1,13 +1,19 @@
-import { act, fireEvent, render, screen } from '@qovery/shared/util-tests'
+import { act, render, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { InputToggle, type InputToggleProps } from './input-toggle'
 
 describe('InputToggle', () => {
   let props: InputToggleProps
 
   beforeEach(() => {
+    jest.useFakeTimers()
+
     props = {
       small: false,
     }
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
   })
 
   it('should render successfully', () => {
@@ -18,7 +24,7 @@ describe('InputToggle', () => {
   it('should apply the accurate class given the size', () => {
     const { rerender } = render(<InputToggle {...props} />)
 
-    let bg = screen.getByLabelText('bg')
+    let bg = screen.getByRole('switch')
     let circle = screen.getByLabelText('circle')
 
     expect(bg).toHaveClass('w-12 h-6')
@@ -28,7 +34,7 @@ describe('InputToggle', () => {
 
     rerender(<InputToggle {...props} />)
 
-    bg = screen.getByLabelText('bg')
+    bg = screen.getByRole('switch')
     circle = screen.getByLabelText('circle')
 
     expect(bg).toHaveClass('w-8 h-4.5')
@@ -38,13 +44,13 @@ describe('InputToggle', () => {
   it('should apply the accurate classes when toggling', () => {
     const { rerender } = render(<InputToggle {...props} />)
 
-    const toggleBtn = screen.getByLabelText('toggle-btn')
+    const toggleBtn = screen.getByRole('switch')
 
     act(() => {
       toggleBtn.click()
     })
 
-    let bg = screen.getByLabelText('bg')
+    let bg = screen.getByRole('switch')
     let circle = screen.getByLabelText('circle')
 
     expect(bg).toHaveClass('bg-surface-brand-solid')
@@ -54,7 +60,7 @@ describe('InputToggle', () => {
 
     rerender(<InputToggle {...props} />)
 
-    bg = screen.getByLabelText('bg')
+    bg = screen.getByRole('switch')
     circle = screen.getByLabelText('circle')
 
     expect(bg).toHaveClass('bg-surface-brand-solid')
@@ -65,7 +71,7 @@ describe('InputToggle', () => {
     const onChange = jest.fn()
     render(<InputToggle {...props} onChange={onChange} />)
 
-    const toggleBtn = screen.getByLabelText('toggle-btn')
+    const toggleBtn = screen.getByRole('switch')
 
     act(() => {
       toggleBtn.click()
@@ -74,96 +80,65 @@ describe('InputToggle', () => {
     expect(onChange).toHaveBeenCalledWith(true)
   })
 
-  it('should be keyboard focusable and expose a switch role', () => {
-    render(<InputToggle {...props} value={false} />)
-
-    const toggleBtn = screen.getByRole('switch')
-
-    expect(toggleBtn).toHaveAttribute('tabindex', '0')
-    expect(toggleBtn).toHaveAttribute('aria-checked', 'false')
-  })
-
-  it('should call onChange when activated with the keyboard', () => {
-    const onChange = jest.fn()
-    render(<InputToggle {...props} onChange={onChange} />)
-
-    const toggleBtn = screen.getByRole('switch')
-
-    act(() => {
-      fireEvent.keyDown(toggleBtn, { key: ' ' })
-    })
-    expect(onChange).toHaveBeenCalledWith(true)
-
-    act(() => {
-      fireEvent.keyDown(toggleBtn, { key: 'Enter' })
-    })
-    expect(onChange).toHaveBeenCalledTimes(2)
-  })
-
-  it('should not be keyboard focusable when disabled', () => {
-    render(<InputToggle {...props} disabled={true} />)
-
-    const toggleBtn = screen.getByRole('switch')
-    expect(toggleBtn).toHaveAttribute('tabindex', '-1')
-    expect(toggleBtn).toHaveAttribute('aria-disabled', 'true')
-  })
-
-  it('should not call onChange via keyboard when disabled', () => {
-    const onChange = jest.fn()
-    render(<InputToggle {...props} disabled={true} onChange={onChange} />)
-
-    const toggleBtn = screen.getByRole('switch')
-
-    act(() => {
-      fireEvent.keyDown(toggleBtn, { key: ' ' })
-    })
-
-    expect(onChange).not.toHaveBeenCalled()
-  })
-
   it('should respect the value prop when provided', () => {
     const { rerender } = render(<InputToggle {...props} value={true} />)
 
-    let bg = screen.getByLabelText('bg')
+    let bg = screen.getByRole('switch')
     expect(bg).toHaveClass('bg-surface-brand-solid')
 
     rerender(<InputToggle {...props} value={false} />)
 
-    bg = screen.getByLabelText('bg')
+    bg = screen.getByRole('switch')
     expect(bg).toHaveClass('bg-surface-neutral-componentActive')
+  })
+
+  it('should be keyboard focusable and activate with space', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = renderWithProviders(<InputToggle {...props} onChange={onChange} value={false} />)
+
+    const toggleBtn = screen.getByRole('switch')
+
+    await userEvent.tab()
+    expect(toggleBtn).toHaveFocus()
+
+    await userEvent.keyboard(' ')
+    expect(onChange).toHaveBeenCalledWith(true)
   })
 
   it('should be disabled when disabled prop is true', () => {
     render(<InputToggle {...props} disabled={true} />)
 
     const container = screen.getByTestId('input-toggle')
-    const toggleBtn = screen.getByLabelText('toggle-btn')
+    const toggleBtn = screen.getByRole('switch')
 
     expect(container).toHaveClass('opacity-50')
     expect(toggleBtn).not.toHaveClass('cursor-pointer')
 
-    const input = screen.getByRole('checkbox')
-    expect(input).toBeDisabled()
+    expect(toggleBtn).toBeDisabled()
   })
 
-  it('should not call onChange when disabled', () => {
+  it('should not call onChange when disabled', async () => {
     const onChange = jest.fn()
-    render(<InputToggle {...props} disabled={true} onChange={onChange} />)
+    const { userEvent } = renderWithProviders(<InputToggle {...props} disabled={true} onChange={onChange} />)
 
-    const toggleBtn = screen.getByLabelText('toggle-btn')
+    const toggleBtn = screen.getByRole('switch')
 
-    act(() => {
-      toggleBtn.click()
-    })
+    await userEvent.click(toggleBtn)
 
     expect(onChange).not.toHaveBeenCalled()
   })
 
-  it('should display title and description when provided', () => {
-    render(<InputToggle {...props} title="Test Title" description="Test Description" align="center" />)
+  it('should display title and description and toggle from the label', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <InputToggle {...props} title="Test Title" description="Test Description" align="center" onChange={onChange} />
+    )
 
     expect(screen.getByText('Test Title')).toBeInTheDocument()
     expect(screen.getByText('Test Description')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('Test Title'))
+    expect(onChange).toHaveBeenCalledWith(true)
   })
 
   it('should apply custom className', () => {

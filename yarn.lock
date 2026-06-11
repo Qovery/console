@@ -6247,6 +6247,7 @@ __metadata:
     "@radix-ui/react-radio-group": 1.2.0
     "@radix-ui/react-scroll-area": 1.2.3
     "@radix-ui/react-slider": 1.2.0
+    "@radix-ui/react-switch": 1.1.1
     "@radix-ui/react-tabs": 1.1.0
     "@radix-ui/react-toggle-group": 1.1.0
     "@radix-ui/react-toolbar": 1.1.0
@@ -7179,6 +7180,31 @@ __metadata:
     "@types/react":
       optional: true
   checksum: f341cd66b284061a5147a67f6d7b8a7337a4c076b97ce087bcb1358fa36e9714ef988cc7ea2c2ed3b6ec3f17adafd2460851b31ed8f4dd73ea22b0b11e22ab97
+  languageName: node
+  linkType: hard
+
+"@radix-ui/react-switch@npm:1.1.1":
+  version: 1.1.1
+  resolution: "@radix-ui/react-switch@npm:1.1.1"
+  dependencies:
+    "@radix-ui/primitive": 1.1.0
+    "@radix-ui/react-compose-refs": 1.1.0
+    "@radix-ui/react-context": 1.1.1
+    "@radix-ui/react-primitive": 2.0.0
+    "@radix-ui/react-use-controllable-state": 1.1.0
+    "@radix-ui/react-use-previous": 1.1.0
+    "@radix-ui/react-use-size": 1.1.0
+  peerDependencies:
+    "@types/react": "*"
+    "@types/react-dom": "*"
+    react: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+    react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: cf73981d0be568bc3c9d6abf1510f01a3dfd020937570d52de310ad2a05d6462a36ab8b1f32d9a410106f54141f311c1f06cec6ff75c19f9407c530a8ac77bba
   languageName: node
   linkType: hard
 
