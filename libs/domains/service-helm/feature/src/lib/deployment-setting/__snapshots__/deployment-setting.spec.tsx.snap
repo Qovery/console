@@ -113,6 +113,14 @@ exports[`DeploymentSetting should match snapshot 1`] = `
             data-state="unchecked"
           />
         </button>
+        <input
+          aria-hidden="true"
+          class="hidden"
+          readonly=""
+          tabindex="-1"
+          type="checkbox"
+          value="false"
+        />
         <label
           class="relative -top-0.5 ml-3 cursor-pointer flex flex-col gap-1"
           for=":r6:"

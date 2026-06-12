@@ -92,6 +92,12 @@ describe('InputToggle', () => {
     expect(bg).toHaveClass('bg-surface-neutral-componentActive')
   })
 
+  it('should preserve the legacy display value for unnamed toggles', () => {
+    render(<InputToggle {...props} value={true} />)
+
+    expect(screen.getByDisplayValue('true')).toBeInTheDocument()
+  })
+
   it('should be keyboard focusable and activate with space', async () => {
     const onChange = jest.fn()
     const { userEvent } = renderWithProviders(<InputToggle {...props} onChange={onChange} value={false} />)
