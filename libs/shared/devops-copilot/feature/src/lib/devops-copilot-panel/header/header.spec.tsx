@@ -60,10 +60,7 @@ describe('Header', () => {
     threadId: undefined,
     threads: [],
     currentThreadHistoryTitle: 'New conversation',
-    userAccess: undefined,
-    isReadOnly: true,
     setIsReadOnly: mockSetIsReadOnly,
-    threadLength: 0,
     expand: false,
     setExpand: mockSetExpand,
     handleOnClose: mockHandleOnClose,
@@ -98,24 +95,6 @@ describe('Header', () => {
     })
 
     expect(screen.getByText('My Custom Thread')).toBeInTheDocument()
-  })
-
-  it('shows and toggles read-only mode when allowed', async () => {
-    const { userEvent } = renderHeader({ userAccess: { read_only: false }, isReadOnly: true })
-
-    expect(screen.getByText('Read-only')).toBeInTheDocument()
-
-    const buttons = screen.getAllByRole('button')
-    await userEvent.click(buttons[0])
-
-    expect(mockSetIsReadOnly).toHaveBeenCalledWith(false)
-  })
-
-  it('hides the read-only toggle once the thread has messages', () => {
-    renderHeader({ userAccess: { read_only: false }, threadLength: 2 })
-
-    expect(screen.queryByText('Read-only')).not.toBeInTheDocument()
-    expect(screen.queryByText('Read-write')).not.toBeInTheDocument()
   })
 
   it('resets the conversation when clicking new chat', async () => {

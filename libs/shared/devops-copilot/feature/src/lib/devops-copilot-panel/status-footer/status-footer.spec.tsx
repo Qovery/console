@@ -41,6 +41,53 @@ describe('StatusFooter', () => {
       const tooltipButton = screen.getByRole('button')
       expect(tooltipButton).toBeInTheDocument()
     })
+
+    it('should render toggle switch when user can toggle and thread is empty', () => {
+      const setIsReadOnly = jest.fn()
+      render(
+        <StatusFooter
+          {...defaultProps}
+          setIsReadOnly={setIsReadOnly}
+          userAccess={{ read_only: false }}
+          threadLength={0}
+        />
+      )
+
+      const buttons = screen.getAllByRole('button')
+      expect(buttons.length).toBeGreaterThan(0)
+    })
+
+    it('should not render toggle switch when thread has messages', () => {
+      const setIsReadOnly = jest.fn()
+      render(
+        <StatusFooter
+          {...defaultProps}
+          setIsReadOnly={setIsReadOnly}
+          userAccess={{ read_only: false }}
+          threadLength={2}
+        />
+      )
+
+      expect(screen.getByTestId('icon-circle-info')).toBeInTheDocument()
+    })
+
+    it('should call setIsReadOnly when toggle is clicked', async () => {
+      const mockSetIsReadOnly = jest.fn()
+      const { userEvent } = render(
+        <StatusFooter
+          {...defaultProps}
+          isReadOnly={true}
+          setIsReadOnly={mockSetIsReadOnly}
+          userAccess={{ read_only: false }}
+          threadLength={0}
+        />
+      )
+
+      const buttons = screen.getAllByRole('button')
+      await userEvent.click(buttons[0])
+
+      expect(mockSetIsReadOnly).toHaveBeenCalledWith(false)
+    })
   })
 
   describe('app status', () => {
