@@ -26,7 +26,7 @@ describe('ClusterCardFeature', () => {
   })
 
   it('should render the form with fields', () => {
-    const { getByDisplayValue, getAllByDisplayValue } = renderWithProviders(
+    const { getAllByDisplayValue } = renderWithProviders(
       wrapWithReactHookForm(<ClusterCardFeature {...props} />, {
         defaultValues: {
           [STATIC_IP]: {
@@ -37,7 +37,7 @@ describe('ClusterCardFeature', () => {
       })
     )
 
-    expect(getByDisplayValue('true')).toBeInTheDocument()
+    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
     expect(getAllByDisplayValue('my-value').length).toBeGreaterThan(0)
   })
 
@@ -81,7 +81,7 @@ describe('ClusterCardFeature', () => {
       )
     )
 
-    expect(screen.getByDisplayValue('false')).toBeInTheDocument()
+    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'false')
   })
 
   it('should read NAT_GATEWAY nested nat_gateway_type static_ips_enabled', () => {
@@ -108,6 +108,6 @@ describe('ClusterCardFeature', () => {
       )
     )
 
-    expect(screen.getByDisplayValue('true')).toBeInTheDocument()
+    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
   })
 })

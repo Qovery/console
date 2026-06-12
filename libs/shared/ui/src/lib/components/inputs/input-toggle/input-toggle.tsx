@@ -1,6 +1,6 @@
 import * as SwitchPrimitive from '@radix-ui/react-switch'
 import clsx from 'clsx'
-import { type ReactNode, useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useId, useState } from 'react'
 
 export interface InputToggleProps {
   small?: boolean
@@ -31,10 +31,8 @@ export function InputToggle(props: InputToggleProps) {
   } = props
 
   const switchId = useId()
-  const switchRef = useRef<HTMLButtonElement>(null)
   const [toggleActive, setToggleActive] = useState(Boolean(value))
   const [animateEnabled, setAnimateEnabled] = useState(false)
-  const [isInsideForm, setIsInsideForm] = useState(false)
 
   useEffect(() => {
     if (value !== undefined) {
@@ -49,10 +47,6 @@ export function InputToggle(props: InputToggleProps) {
 
     return () => clearTimeout(timerId)
   }, [value])
-
-  useLayoutEffect(() => {
-    setIsInsideForm(Boolean(switchRef.current?.closest('form')))
-  }, [])
 
   const toggleSizeBg = small ? 'w-8 h-4.5' : 'w-12 h-6'
   const toggleSizeCircle = small ? 'w-3.5 h-3.5' : 'w-5 h-5'
@@ -75,7 +69,6 @@ export function InputToggle(props: InputToggleProps) {
       className={clsx('flex text-sm', alignmentClass, className, { 'opacity-50': disabled })}
     >
       <SwitchPrimitive.Root
-        ref={switchRef}
         id={switchId}
         type="button"
         data-testid={props.dataTestId || 'input-toggle-button'}
@@ -103,18 +96,6 @@ export function InputToggle(props: InputToggleProps) {
           } ${isChecked ? `${small ? 'translate-x-3.5' : 'translate-x-6'}` : ''}`}
         />
       </SwitchPrimitive.Root>
-      {!name && !isInsideForm && (
-        <input
-          type="checkbox"
-          checked={isChecked}
-          value={String(isChecked)}
-          className="hidden"
-          disabled={disabled}
-          readOnly
-          tabIndex={-1}
-          aria-hidden="true"
-        />
-      )}
       {title && (
         <label
           htmlFor={switchId}
