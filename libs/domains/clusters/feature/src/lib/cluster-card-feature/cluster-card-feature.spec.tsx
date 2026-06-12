@@ -1,5 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { useFormContext } from 'react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterCardFeature, type ClusterCardFeatureProps } from './cluster-card-feature'
 
@@ -19,6 +20,12 @@ const props: ClusterCardFeatureProps = {
   },
 }
 
+function ControlledClusterCardFeature(props: ClusterCardFeatureProps) {
+  const { control, setValue, watch } = useFormContext()
+
+  return <ClusterCardFeature {...props} control={control} setValue={setValue} watch={watch} />
+}
+
 describe('ClusterCardFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(wrapWithReactHookForm(<ClusterCardFeature {...props} />))
@@ -27,11 +34,13 @@ describe('ClusterCardFeature', () => {
 
   it('should render the form with fields', () => {
     const { getAllByDisplayValue } = renderWithProviders(
-      wrapWithReactHookForm(<ClusterCardFeature {...props} />, {
+      wrapWithReactHookForm(<ControlledClusterCardFeature {...props} />, {
         defaultValues: {
-          [STATIC_IP]: {
-            value: true,
-            extendedValue: 'my-value',
+          features: {
+            [STATIC_IP]: {
+              value: true,
+              extendedValue: 'my-value',
+            },
           },
         },
       })
@@ -39,6 +48,31 @@ describe('ClusterCardFeature', () => {
 
     expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
     expect(getAllByDisplayValue('my-value').length).toBeGreaterThan(0)
+  })
+
+  it('should toggle the feature switch on and off', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<ControlledClusterCardFeature {...props} />, {
+        defaultValues: {
+          features: {
+            [STATIC_IP]: {
+              value: false,
+              extendedValue: 'my-value',
+            },
+          },
+        },
+      })
+    )
+
+    const toggle = screen.getByRole('switch')
+
+    expect(toggle).toHaveAttribute('aria-checked', 'false')
+
+    await userEvent.click(toggle)
+    expect(toggle).toHaveAttribute('aria-checked', 'true')
+
+    await userEvent.click(toggle)
+    expect(toggle).toHaveAttribute('aria-checked', 'false')
   })
 
   it('should render feature title and description', () => {

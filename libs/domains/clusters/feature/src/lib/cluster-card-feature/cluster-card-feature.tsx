@@ -47,7 +47,7 @@ export function ClusterCardFeature({
 
   useEffect(() => {
     if (feature.id) {
-      if (name) setCurrentDisabled(true)
+      setCurrentDisabled(Boolean(name))
     }
   }, [feature.id, name])
 
@@ -67,12 +67,18 @@ export function ClusterCardFeature({
       <div className="flex w-full gap-3">
         {control ? (
           <Tooltip content={tooltip} disabled={!tooltip}>
-            <span>
+            <span onClick={(event) => event.stopPropagation()}>
               <Controller
                 name={`features.${feature.id}.value`}
                 control={control}
                 render={({ field }) => (
-                  <InputToggle disabled={disabled} small className="relative top-[2px]" value={field.value} />
+                  <InputToggle
+                    disabled={disabled}
+                    small
+                    className="relative top-[2px]"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 )}
               />
             </span>
