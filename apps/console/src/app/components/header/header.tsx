@@ -1,6 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { Suspense, useCallback } from 'react'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton } from '@qovery/shared/devops-copilot/feature'
@@ -24,7 +23,6 @@ export function Separator() {
 
 export function Header() {
   const { organizationId = '' } = useParams({ strict: false })
-  const isDevopsCopilotEnabled = useFeatureFlagVariantKey('devops-copilot')
   const handleFeedbackClick = useCallback(() => {
     posthog.capture('feedback_button_clicked_new_navigation')
   }, [])
@@ -51,7 +49,7 @@ export function Header() {
                 Feedback
               </Button>
               <AssistantTrigger />
-              {isDevopsCopilotEnabled && <DevopsCopilotButton />}
+              <DevopsCopilotButton />
               <UserMenu />
             </div>
           </div>
