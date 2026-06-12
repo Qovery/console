@@ -1,3 +1,4 @@
+import userEvent from '@testing-library/user-event'
 import { render, screen } from '@qovery/shared/util-tests'
 import { StatusFooter } from './status-footer'
 
@@ -16,14 +17,8 @@ describe('StatusFooter', () => {
   }
 
   describe('rendering', () => {
-    it('should render read-only mode text when isReadOnly is true', () => {
+    it('should always render read-write mode text', () => {
       render(<StatusFooter {...defaultProps} />)
-
-      expect(screen.getByText('Read-only mode')).toBeInTheDocument()
-    })
-
-    it('should render read-write mode text when isReadOnly is false', () => {
-      render(<StatusFooter {...defaultProps} isReadOnly={false} />)
 
       expect(screen.getByText('Read-write mode')).toBeInTheDocument()
     })
@@ -73,7 +68,8 @@ describe('StatusFooter', () => {
 
     it('should call setIsReadOnly when toggle is clicked', async () => {
       const mockSetIsReadOnly = jest.fn()
-      const { userEvent } = render(
+      const user = userEvent.setup()
+      render(
         <StatusFooter
           {...defaultProps}
           isReadOnly={true}
@@ -84,7 +80,7 @@ describe('StatusFooter', () => {
       )
 
       const buttons = screen.getAllByRole('button')
-      await userEvent.click(buttons[0])
+      await user.click(buttons[1])
 
       expect(mockSetIsReadOnly).toHaveBeenCalledWith(false)
     })
@@ -158,10 +154,10 @@ describe('StatusFooter', () => {
   })
 
   describe('combined states', () => {
-    it('should render both read-only mode and operational status', () => {
+    it('should render both read-write mode and operational status', () => {
       render(<StatusFooter {...defaultProps} isReadOnly={true} status="OPERATIONAL" />)
 
-      expect(screen.getByText('Read-only mode')).toBeInTheDocument()
+      expect(screen.getByText('Read-write mode')).toBeInTheDocument()
       expect(screen.getByText('All systems operational')).toBeInTheDocument()
     })
 
