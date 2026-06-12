@@ -30,6 +30,7 @@ export interface StepConfigurationProps {
 
 type ConfigStage = 'service' | 'setup' | 'overrides'
 type OverrideSection = 'service-config'
+type OptionalParamFieldName = `optionalParams.${string}`
 type TerraformBackend = 'kubernetes' | 'user_provided'
 type TerraformCredentials = 'cluster' | 'environment'
 
@@ -221,16 +222,14 @@ export function StepConfiguration({ blueprint, onNext }: StepConfigurationProps)
   const saveOptionalVars = () => {
     savedOptionalParamsRef.current = { ...watchedOptionalParams }
     setIsOptionalVarsOverridden(
-      optionalParamsForBlueprint.some(
-        (p) => watchedOptionalParams[p.id] !== defaultOptionalParamsRef.current[p.id]
-      )
+      optionalParamsForBlueprint.some((p) => watchedOptionalParams[p.id] !== defaultOptionalParamsRef.current[p.id])
     )
     setOpenOverrideSection(null)
   }
 
   const resetOptionalVars = () => {
     optionalParamsForBlueprint.forEach((p) => {
-      methods.setValue(`optionalParams.${p.id}` as never, defaultOptionalParamsRef.current[p.id] ?? '')
+      methods.setValue(`optionalParams.${p.id}` as OptionalParamFieldName, defaultOptionalParamsRef.current[p.id] ?? '')
     })
   }
 
