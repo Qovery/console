@@ -75,6 +75,32 @@ describe('ClusterCardFeature', () => {
     expect(toggle).toHaveAttribute('aria-checked', 'false')
   })
 
+  it('should toggle the feature when clicking the card body', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<ControlledClusterCardFeature {...props} />, {
+        defaultValues: {
+          features: {
+            [STATIC_IP]: {
+              value: true,
+              extendedValue: 'my-value',
+            },
+          },
+        },
+      })
+    )
+
+    const card = screen.getByTestId('feature')
+    const toggle = screen.getByRole('switch')
+
+    expect(toggle).toHaveAttribute('aria-checked', 'true')
+
+    await userEvent.click(card)
+    expect(toggle).toHaveAttribute('aria-checked', 'false')
+
+    await userEvent.click(card)
+    expect(toggle).toHaveAttribute('aria-checked', 'true')
+  })
+
   it('should render feature title and description', () => {
     renderWithProviders(wrapWithReactHookForm(<ClusterCardFeature {...props} />))
 
