@@ -1,5 +1,4 @@
-import userEvent from '@testing-library/user-event'
-import { render, screen } from '@qovery/shared/util-tests'
+import { fireEvent, render, screen } from '@qovery/shared/util-tests'
 import { StatusFooter } from './status-footer'
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -66,9 +65,8 @@ describe('StatusFooter', () => {
       expect(screen.getByTestId('icon-circle-info')).toBeInTheDocument()
     })
 
-    it('should call setIsReadOnly when toggle is clicked', async () => {
+    it('should call setIsReadOnly when toggle is clicked', () => {
       const mockSetIsReadOnly = jest.fn()
-      const user = userEvent.setup()
       render(
         <StatusFooter
           {...defaultProps}
@@ -80,7 +78,7 @@ describe('StatusFooter', () => {
       )
 
       const buttons = screen.getAllByRole('button')
-      await user.click(buttons[1])
+      fireEvent.click(buttons[1])
 
       expect(mockSetIsReadOnly).toHaveBeenCalledWith(false)
     })

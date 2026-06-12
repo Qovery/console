@@ -31,7 +31,7 @@ export function StatusFooter({ isReadOnly, status, setIsReadOnly, userAccess, th
         .exhaustive()
     : null
 
-  const canToggle = userAccess?.read_only === false && threadLength === 0 && setIsReadOnly
+  const canToggle = userAccess?.read_only === false && threadLength === 0 && !!setIsReadOnly
 
   return (
     <div className="flex w-full items-center justify-between pt-1">
@@ -49,7 +49,7 @@ export function StatusFooter({ isReadOnly, status, setIsReadOnly, userAccess, th
           <Tooltip content={isReadOnly ? 'Enable read-write mode' : 'Disable read-write mode'} delayDuration={400}>
             <button
               type="button"
-              onClick={() => setIsReadOnly!(!isReadOnly)}
+              onClick={() => setIsReadOnly?.(!isReadOnly)}
               className={clsx(
                 'relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
                 {
