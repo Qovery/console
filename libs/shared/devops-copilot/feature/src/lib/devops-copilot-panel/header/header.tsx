@@ -1,5 +1,4 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import clsx from 'clsx'
 import { type MutableRefObject } from 'react'
 import { Badge, Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL } from '@qovery/shared/util-const'
@@ -9,10 +8,7 @@ interface HeaderProps {
   threadId?: string
   threads: Array<{ id: string; title: string }>
   currentThreadHistoryTitle: string
-  userAccess?: { read_only?: boolean }
-  isReadOnly: boolean
   setIsReadOnly: (value: boolean) => void
-  threadLength: number
   expand: boolean
   setExpand: (value: boolean) => void
   handleOnClose: () => void
@@ -27,10 +23,7 @@ export function Header({
   threadId,
   threads,
   currentThreadHistoryTitle,
-  userAccess,
-  isReadOnly,
   setIsReadOnly,
-  threadLength,
   expand,
   setExpand,
   handleOnClose,
@@ -58,37 +51,6 @@ export function Header({
             Beta
           </Badge>
         </Tooltip>
-        {userAccess?.read_only === false && threadLength === 0 && (
-          <>
-            <div className="mx-1 h-5 w-[1px] bg-surface-neutral-component"></div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-neutral-subtle">{isReadOnly ? 'Read-only' : 'Read-write'}</span>
-              <Tooltip content={isReadOnly ? 'Enable read-write mode' : 'Disable read-write mode'} delayDuration={400}>
-                <button
-                  type="button"
-                  onClick={() => setIsReadOnly(!isReadOnly)}
-                  className={clsx(
-                    'relative inline-flex h-5 w-9 flex-shrink-0 items-center rounded-full transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand',
-                    {
-                      'bg-surface-warning-solid': !isReadOnly,
-                      'bg-surface-neutral-componentActive': isReadOnly,
-                    }
-                  )}
-                >
-                  <span
-                    className={clsx(
-                      'inline-block h-3.5 w-3.5 transform rounded-full bg-surface-neutralInvert transition-transform',
-                      {
-                        'translate-x-[18px]': !isReadOnly,
-                        'translate-x-0.5': isReadOnly,
-                      }
-                    )}
-                  />
-                </button>
-              </Tooltip>
-            </div>
-          </>
-        )}
       </div>
       <div className="flex items-center gap-1">
         <DropdownMenu.Root>

@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import {
@@ -65,15 +64,11 @@ export function SectionAICopilotConfiguration({
 }: SectionAICopilotConfigurationProps) {
   const { openModal, closeModal } = useModal()
   const [selectedMode, setSelectedMode] = useState<'read-only' | 'read-write' | null>(null)
-  const hasReadWriteAccess = useFeatureFlagVariantKey('copilot-read-write-access')
   const mode = selectedMode ?? currentMode
   const hasUnsavedChanges = selectedMode !== null && selectedMode !== currentMode
 
   const handleSaveMode = () => {
     if (selectedMode) {
-      if (selectedMode === 'read-write' && !hasReadWriteAccess) {
-        return
-      }
       onModeChange(selectedMode)
       setSelectedMode(null)
     }
@@ -170,24 +165,20 @@ export function SectionAICopilotConfiguration({
             </div>
 
             <div className="space-y-4">
-              {hasReadWriteAccess && (
-                <>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-neutral">Access Mode</label>
-                    <p className="text-xs text-neutral-subtle">
-                      Choose the level of access the AI Copilot will have on your organization
-                    </p>
-                  </div>
-                  <InputSelect
-                    value={mode}
-                    onChange={(value) => setSelectedMode(value as 'read-write' | 'read-only')}
-                    options={modeOptions}
-                    portal
-                    label="Right access"
-                    disabled={isUpdating}
-                  />
-                </>
-              )}
+              <div className="space-y-1">
+                <label className="text-sm font-medium text-neutral">Access Mode</label>
+                <p className="text-xs text-neutral-subtle">
+                  Choose the level of access the AI Copilot will have on your organization
+                </p>
+              </div>
+              <InputSelect
+                value={mode}
+                onChange={(value) => setSelectedMode(value as 'read-write' | 'read-only')}
+                options={modeOptions}
+                portal
+                label="Right access"
+                disabled={isUpdating}
+              />
 
               {hasUnsavedChanges && (
                 <div className="flex items-center gap-3">

@@ -1,4 +1,4 @@
-import { render, screen } from '@qovery/shared/util-tests'
+import { fireEvent, render, screen } from '@qovery/shared/util-tests'
 import { StatusFooter } from './status-footer'
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -16,14 +16,8 @@ describe('StatusFooter', () => {
   }
 
   describe('rendering', () => {
-    it('should render read-only mode text when isReadOnly is true', () => {
+    it('should always render read-write mode text', () => {
       render(<StatusFooter {...defaultProps} />)
-
-      expect(screen.getByText('Read-only mode')).toBeInTheDocument()
-    })
-
-    it('should render read-write mode text when isReadOnly is false', () => {
-      render(<StatusFooter {...defaultProps} isReadOnly={false} />)
 
       expect(screen.getByText('Read-write mode')).toBeInTheDocument()
     })
@@ -40,6 +34,53 @@ describe('StatusFooter', () => {
 
       const tooltipButton = screen.getByRole('button')
       expect(tooltipButton).toBeInTheDocument()
+    })
+
+    it('should render toggle switch when user can toggle and thread is empty', () => {
+      const setIsReadOnly = jest.fn()
+      render(
+        <StatusFooter
+          {...defaultProps}
+          setIsReadOnly={setIsReadOnly}
+          userAccess={{ read_only: false }}
+          threadLength={0}
+        />
+      )
+
+      const buttons = screen.getAllByRole('button')
+      expect(buttons.length).toBeGreaterThan(0)
+    })
+
+    it('should not render toggle switch when thread has messages', () => {
+      const setIsReadOnly = jest.fn()
+      render(
+        <StatusFooter
+          {...defaultProps}
+          setIsReadOnly={setIsReadOnly}
+          userAccess={{ read_only: false }}
+          threadLength={2}
+        />
+      )
+
+      expect(screen.getByTestId('icon-circle-info')).toBeInTheDocument()
+    })
+
+    it('should call setIsReadOnly when toggle is clicked', () => {
+      const mockSetIsReadOnly = jest.fn()
+      render(
+        <StatusFooter
+          {...defaultProps}
+          isReadOnly={true}
+          setIsReadOnly={mockSetIsReadOnly}
+          userAccess={{ read_only: false }}
+          threadLength={0}
+        />
+      )
+
+      const buttons = screen.getAllByRole('button')
+      fireEvent.click(buttons[1])
+
+      expect(mockSetIsReadOnly).toHaveBeenCalledWith(false)
     })
   })
 
@@ -111,10 +152,10 @@ describe('StatusFooter', () => {
   })
 
   describe('combined states', () => {
-    it('should render both read-only mode and operational status', () => {
+    it('should render both read-write mode and operational status', () => {
       render(<StatusFooter {...defaultProps} isReadOnly={true} status="OPERATIONAL" />)
 
-      expect(screen.getByText('Read-only mode')).toBeInTheDocument()
+      expect(screen.getByText('Read-write mode')).toBeInTheDocument()
       expect(screen.getByText('All systems operational')).toBeInTheDocument()
     })
 

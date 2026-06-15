@@ -367,10 +367,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               threadId={threadId}
               threads={threads}
               currentThreadHistoryTitle={currentThreadHistoryTitle}
-              userAccess={readOnlyData?.user_access}
-              isReadOnly={isReadOnly}
               setIsReadOnly={setIsReadOnly}
-              threadLength={thread.length}
               expand={expand}
               setExpand={setExpand}
               handleOnClose={handleOnClose}
@@ -509,7 +506,13 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
                       }}
                     />
                   </div>
-                  <StatusFooter isReadOnly={isReadOnly} status={appStatus?.status} />
+                  <StatusFooter
+                    isReadOnly={isReadOnly}
+                    status={appStatus?.status}
+                    setIsReadOnly={setIsReadOnly}
+                    userAccess={readOnlyData?.user_access}
+                    threadLength={thread.length}
+                  />
                 </div>
               </div>
             ) : (
