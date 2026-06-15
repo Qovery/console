@@ -594,6 +594,10 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                       <strong className="font-medium">VPC name: </strong>
                       {props.featuresData.gcp_existing_vpc.vpc_name}
                     </li>
+                    <li>
+                      <strong className="font-medium">Private nodes: </strong>
+                      {props.featuresData.gcp_existing_vpc.private_nodes ? 'true' : 'false'}
+                    </li>
                     {props.featuresData.gcp_existing_vpc.vpc_project_id && (
                       <li>
                         <strong className="font-medium">VPC Project ID: </strong>

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Button, ExternalLink, InputText } from '@qovery/shared/ui'
+import { Button, ExternalLink, InputText, InputToggle } from '@qovery/shared/ui'
 
 export function GCPVpcFeature() {
   const { control } = useFormContext()
@@ -53,6 +53,21 @@ export function GCPVpcFeature() {
               By default: the project id used is the one specified in the credentials file
             </p>
           </>
+        )}
+      />
+      <Controller
+        name="gcp_existing_vpc.private_nodes"
+        control={control}
+        render={({ field }) => (
+          <InputToggle
+            title="Private nodes"
+            description="Make nodes private (no public IP), traffic will go through gateway."
+            className="mb-4 ml-4 mt-1"
+            value={field.value ?? false}
+            onChange={field.onChange}
+            align="top"
+            small
+          />
         )}
       />
       {!openOptions && (

@@ -354,6 +354,7 @@ export function StepFeatures({ organizationId, onSubmit }: StepFeaturesProps) {
             gcp_existing_vpc: existingVpcData?.vpc_name
               ? {
                   vpc_name: existingVpcData?.vpc_name ?? '',
+                  private_nodes: existingVpcData?.private_nodes ?? false,
                   vpc_project_id: existingVpcData?.vpc_project_id,
                   subnetwork_name: existingVpcData?.subnetwork_name,
                   ip_range_services_name: existingVpcData?.ip_range_services_name,

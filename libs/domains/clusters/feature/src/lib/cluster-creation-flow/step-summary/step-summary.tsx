@@ -299,6 +299,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             id: 'EXISTING_VPC',
             value: {
               vpc_name: featuresData?.gcp_existing_vpc?.vpc_name ?? '',
+              private_nodes: featuresData?.gcp_existing_vpc?.private_nodes ?? false,
               vpc_project_id: featuresData?.gcp_existing_vpc?.vpc_project_id,
               ip_range_services_name: featuresData?.gcp_existing_vpc?.ip_range_services_name,
               ip_range_pods_name: featuresData?.gcp_existing_vpc?.ip_range_pods_name,

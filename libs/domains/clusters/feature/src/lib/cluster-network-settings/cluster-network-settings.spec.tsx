@@ -301,6 +301,42 @@ describe('ClusterNetworkSettings', () => {
     expect(screen.queryByText('Static IP count')).not.toBeInTheDocument()
   })
 
+  it('should render GCP existing VPC private nodes', () => {
+    const gcpClusterWithExistingVpc: Cluster = {
+      ...mockCluster,
+      cloud_provider: 'GCP',
+      features: [
+        {
+          id: 'EXISTING_VPC',
+          value_object: {
+            type: 'GCP_USER_PROVIDED_NETWORK',
+            value: {
+              vpc_name: 'test-vpc',
+              private_nodes: true,
+            },
+          },
+        },
+      ],
+    } as Cluster
+
+    mockUseCluster.mockReturnValue({
+      data: gcpClusterWithExistingVpc,
+      isLoading: false,
+    } as unknown as ReturnType<typeof useCluster>)
+    mockUseClusterRoutingTable.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as unknown as ReturnType<typeof useClusterRoutingTable>)
+
+    renderWithProviders(
+      wrapWithReactHookForm(<ClusterNetworkSettings organizationId="org-id" clusterId="cluster-id" />)
+    )
+
+    expect(screen.getByText('Private nodes')).toBeInTheDocument()
+    expect(screen.getByText('Make nodes private (no public IP), traffic will go through gateway.')).toBeInTheDocument()
+    expect(screen.getByDisplayValue('true')).toBeInTheDocument()
+  })
+
   it('should keep NAT_GATEWAY visible for GCP when STATIC_IP feature is missing', () => {
     const gcpClusterWithoutStaticIp: Cluster = {
       ...mockCluster,
