@@ -22,7 +22,8 @@ const PROMPTS: Record<McpSuggestionActionType, (name: string) => string> = {
   service: (name) => `Deploy my application "${name}" on Qovery and check its health`,
   environment: (name) => `Deploy my services to the "${name}" environment on Qovery`,
   cluster: (name) => `I just provisioned the "${name}" cluster on Qovery, help me deploy my first application`,
-  project: (name) => `I just created project "${name}" on Qovery, help me structure my environments and deploy my services`,
+  project: (name) =>
+    `I just created project "${name}" on Qovery, help me structure my environments and deploy my services`,
 }
 
 interface McpSuggestionEvent extends McpSuggestionAction {
@@ -34,7 +35,6 @@ interface McpSuggestionPanelProps {
   onClose: () => void
 }
 
-// Total cycle = 4 AIs × 2.8s = 11.2s. Each slot is 25% of the cycle.
 const CAROUSEL_SLOT_S = 2.8
 const CAROUSEL_TOTAL_S = CAROUSEL_SLOT_S * AI_TOOL_NAMES.length
 
