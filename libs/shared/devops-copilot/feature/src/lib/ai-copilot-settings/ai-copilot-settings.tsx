@@ -1,4 +1,3 @@
-import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Organization } from 'qovery-typescript-axios'
 import { useAuth } from '@qovery/shared/auth'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -19,7 +18,6 @@ export interface AICopilotSettingsProps {
 
 export function AICopilotSettings(props: AICopilotSettingsProps) {
   const { organization } = props
-  const isDevopsCopilotPanelFeatureFlag = useFeatureFlagVariantKey('devops-copilot')
 
   const { data: userAccount } = useUserAccount()
   const { user: authUser } = useAuth()
@@ -48,10 +46,6 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
 
   const handleToggleCopilot = (enabled: boolean) => {
     updateConfigMutation.mutate({ enabled, readOnly: true, userEmail })
-  }
-
-  if (!isDevopsCopilotPanelFeatureFlag) {
-    return null
   }
 
   return (

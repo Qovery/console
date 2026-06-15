@@ -1,5 +1,4 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
@@ -13,7 +12,6 @@ function RouteComponent() {
     location: { pathname },
   } = useRouterState()
   const { roles } = useUserRole()
-  const isArgoCdEnabled = useFeatureFlagEnabled('argocd')
 
   const isOrganizationAdmin = roles.some((role) => role.includes(`organization:${organizationId}:admin`))
 
@@ -115,7 +113,7 @@ function RouteComponent() {
     teamLink,
     billingPlansLink,
     labelsAnnotationsLink,
-    ...(isArgoCdEnabled ? [argoCdIntegrationLink] : []),
+    argoCdIntegrationLink,
     containerRegistriesLink,
     helmRepositoriesLink,
     cloudCredentialsLink,
