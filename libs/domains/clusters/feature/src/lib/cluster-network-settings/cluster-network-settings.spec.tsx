@@ -294,9 +294,9 @@ describe('ClusterNetworkSettings', () => {
 
     // STATIC_IP is filtered from gcpDisplayFeatures so the "Configured network features" block is empty
     expect(screen.queryByText('Configured network features')).not.toBeInTheDocument()
-    expect(screen.getByRole('switch', { name: 'Static IP / Nat Gateways' })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('switch', { name: 'Static IP / Nat Gateways' })).toBeChecked()
     expect(screen.getByText('Enable static egress IPs')).toBeInTheDocument()
-    expect(screen.getByRole('switch', { name: 'Enable static egress IPs' })).toHaveAttribute('aria-checked', 'false')
+    expect(screen.getByRole('switch', { name: 'Enable static egress IPs' })).not.toBeChecked()
     expect(screen.getByText(/may trigger a downtime of a few minutes/i)).toBeInTheDocument()
     expect(screen.queryByText('Static IP count')).not.toBeInTheDocument()
   })
@@ -337,7 +337,7 @@ describe('ClusterNetworkSettings', () => {
     )
 
     expect(screen.getByText('Configured network features')).toBeInTheDocument()
-    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('switch')).toBeChecked()
     expect(screen.queryByText('Enable static egress IPs')).not.toBeInTheDocument()
   })
 

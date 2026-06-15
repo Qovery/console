@@ -46,7 +46,7 @@ describe('ClusterCardFeature', () => {
       })
     )
 
-    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('switch')).toBeChecked()
     expect(getAllByDisplayValue('my-value').length).toBeGreaterThan(0)
   })
 
@@ -66,13 +66,13 @@ describe('ClusterCardFeature', () => {
 
     const toggle = screen.getByRole('switch')
 
-    expect(toggle).toHaveAttribute('aria-checked', 'false')
+    expect(toggle).not.toBeChecked()
 
     await userEvent.click(toggle)
-    expect(toggle).toHaveAttribute('aria-checked', 'true')
+    expect(toggle).toBeChecked()
 
     await userEvent.click(toggle)
-    expect(toggle).toHaveAttribute('aria-checked', 'false')
+    expect(toggle).not.toBeChecked()
   })
 
   it('should toggle the feature when clicking the card body', async () => {
@@ -92,13 +92,13 @@ describe('ClusterCardFeature', () => {
     const card = screen.getByTestId('feature')
     const toggle = screen.getByRole('switch')
 
-    expect(toggle).toHaveAttribute('aria-checked', 'true')
+    expect(toggle).toBeChecked()
 
     await userEvent.click(card)
-    expect(toggle).toHaveAttribute('aria-checked', 'false')
+    expect(toggle).not.toBeChecked()
 
     await userEvent.click(card)
-    expect(toggle).toHaveAttribute('aria-checked', 'true')
+    expect(toggle).toBeChecked()
   })
 
   it('should render feature title and description', () => {
@@ -141,7 +141,7 @@ describe('ClusterCardFeature', () => {
       )
     )
 
-    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'false')
+    expect(screen.getByRole('switch')).not.toBeChecked()
   })
 
   it('should read NAT_GATEWAY nested nat_gateway_type static_ips_enabled', () => {
@@ -168,6 +168,6 @@ describe('ClusterCardFeature', () => {
       )
     )
 
-    expect(screen.getByRole('switch')).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('switch')).toBeChecked()
   })
 })
