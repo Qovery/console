@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/services/data-access'
+import { showMcpSuggestionToast } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
 export function useCreateService({ organizationId }: { organizationId: string }) {
@@ -10,6 +11,8 @@ export function useCreateService({ organizationId }: { organizationId: string })
       queryClient.invalidateQueries({
         queryKey: queries.services.list(response.environment.id).queryKey,
       })
+      showMcpSuggestionToast({ type: 'service', name: response.name })
+
 
       // gitTokens requests
       queryClient.invalidateQueries({

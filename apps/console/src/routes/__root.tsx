@@ -1,6 +1,6 @@
 import { type QueryClient } from '@tanstack/react-query'
 import { Outlet, createRootRouteWithContext } from '@tanstack/react-router'
-import { ModalProvider, ToastBehavior } from '@qovery/shared/ui'
+import { McpSuggestionPortal, ModalProvider, ToastBehavior } from '@qovery/shared/ui'
 import { type Auth0ContextType } from '../auth/auth0'
 
 interface RouterContext {
@@ -13,6 +13,7 @@ const RootLayout = () => {
     <ModalProvider>
       <Outlet />
       <ToastBehavior />
+      <McpSuggestionPortal />
     </ModalProvider>
   )
 }

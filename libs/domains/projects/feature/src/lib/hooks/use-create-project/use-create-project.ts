@@ -1,15 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/projects/data-access'
+import { showMcpSuggestionToast } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 
 export function useCreateProject({ silently = false } = {}) {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.createProject, {
-    onSuccess(_, { organizationId }) {
+    onSuccess(data, { organizationId }) {
       queryClient.invalidateQueries({
         queryKey: queries.projects.list({ organizationId }).queryKey,
       })
+      if (!silently) {
+        showMcpSuggestionToast({ type: 'project', name: data.name })
+      }
     },
     meta: {
       ...(silently
