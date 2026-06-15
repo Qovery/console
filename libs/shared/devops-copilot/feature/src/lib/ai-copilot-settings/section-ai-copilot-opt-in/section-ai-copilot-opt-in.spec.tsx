@@ -24,7 +24,7 @@ describe('SectionAICopilotOptIn', () => {
       await userEvent.click(checkbox)
 
       await waitFor(() => {
-        const submitButton = screen.getByRole('button', { name: /enable ai copilot/i })
+        const submitButton = screen.getByRole('button', { name: /enable copilot/i })
         expect(submitButton).toBeEnabled()
       })
     })
@@ -37,7 +37,7 @@ describe('SectionAICopilotOptIn', () => {
       await userEvent.click(checkbox)
 
       await waitFor(() => {
-        const submitButton = screen.getByRole('button', { name: /enable ai copilot/i })
+        const submitButton = screen.getByRole('button', { name: /enable copilot/i })
         expect(submitButton).toBeDisabled()
       })
     })
@@ -50,7 +50,7 @@ describe('SectionAICopilotOptIn', () => {
       const checkbox = screen.getByRole('checkbox')
       await userEvent.click(checkbox)
 
-      const submitButton = screen.getByRole('button', { name: /enable ai copilot/i })
+      const submitButton = screen.getByRole('button', { name: /enable copilot/i })
       await userEvent.click(submitButton)
 
       await waitFor(() => {
@@ -61,7 +61,7 @@ describe('SectionAICopilotOptIn', () => {
     it('should not call onEnable when checkbox is not checked', async () => {
       const { userEvent } = renderWithProviders(<SectionAICopilotOptIn {...defaultProps} />)
 
-      const submitButton = screen.getByRole('button', { name: /enable ai copilot/i })
+      const submitButton = screen.getByRole('button', { name: /enable copilot/i })
       await userEvent.click(submitButton)
 
       expect(mockOnEnable).not.toHaveBeenCalled()

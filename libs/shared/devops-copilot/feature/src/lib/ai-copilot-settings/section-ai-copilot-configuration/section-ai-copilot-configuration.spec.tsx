@@ -45,7 +45,7 @@ describe('SectionAICopilotConfiguration', () => {
   it('should display organization name', () => {
     renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} />)
 
-    expect(screen.getByText(`AI Copilot for ${mockOrganization.name}`)).toBeInTheDocument()
+    expect(screen.getByText(`Copilot for ${mockOrganization.name}`)).toBeInTheDocument()
   })
 
   it('should display current mode', () => {
@@ -53,7 +53,7 @@ describe('SectionAICopilotConfiguration', () => {
 
     expect(screen.getByText('Read-Only Mode')).toBeInTheDocument()
     expect(
-      screen.getByText(/AI Copilot can view your infrastructure configuration but cannot make changes/)
+      screen.getByText(/Copilot can view your infrastructure configuration but cannot make changes/)
     ).toBeInTheDocument()
   })
 
@@ -61,7 +61,7 @@ describe('SectionAICopilotConfiguration', () => {
     renderWithProviders(<SectionAICopilotConfiguration {...defaultProps} currentMode="read-write" />)
 
     expect(screen.getByText('Read-Write Mode')).toBeInTheDocument()
-    expect(screen.getByText(/AI Copilot can view and modify your infrastructure configuration/)).toBeInTheDocument()
+    expect(screen.getByText(/Copilot can view and modify your infrastructure configuration/)).toBeInTheDocument()
   })
 
   it('should show save buttons when mode is changed', async () => {

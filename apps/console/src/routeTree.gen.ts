@@ -33,6 +33,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsIndexRouteImpor
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport } from './routes/_authenticated/organization/$organizationId/settings/webhook'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsSkillsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/skills'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport } from './routes/_authenticated/organization/$organizationId/settings/members'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMcpServerRouteImport } from './routes/_authenticated/organization/$organizationId/settings/mcp-server'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/labels-annotations'
@@ -324,6 +325,13 @@ const AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute =
   AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport.update({
     id: '/webhook',
     path: '/webhook',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsSkillsRouteImport.update({
+    id: '/skills',
+    path: '/skills',
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
   } as any)
@@ -1666,6 +1674,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  '/organization/$organizationId/settings/skills': typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/organization/$organizationId/alerts/': typeof AuthenticatedOrganizationOrganizationIdAlertsIndexRoute
@@ -1838,6 +1847,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  '/organization/$organizationId/settings/skills': typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/organization/$organizationId/alerts': typeof AuthenticatedOrganizationOrganizationIdAlertsIndexRoute
@@ -2001,6 +2011,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/_authenticated/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/_authenticated/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  '/_authenticated/organization/$organizationId/settings/skills': typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
   '/_authenticated/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/_authenticated/organization/$organizationId/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
   '/_authenticated/organization/$organizationId/alerts/': typeof AuthenticatedOrganizationOrganizationIdAlertsIndexRoute
@@ -2179,6 +2190,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
+    | '/organization/$organizationId/settings/skills'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
     | '/organization/$organizationId/alerts/'
@@ -2351,6 +2363,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
+    | '/organization/$organizationId/settings/skills'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
     | '/organization/$organizationId/alerts'
@@ -2513,6 +2526,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/labels-annotations'
     | '/_authenticated/organization/$organizationId/settings/mcp-server'
     | '/_authenticated/organization/$organizationId/settings/members'
+    | '/_authenticated/organization/$organizationId/settings/skills'
     | '/_authenticated/organization/$organizationId/settings/webhook'
     | '/_authenticated/organization/$organizationId/$clusterId/'
     | '/_authenticated/organization/$organizationId/alerts/'
@@ -2827,6 +2841,13 @@ declare module '@tanstack/react-router' {
       path: '/webhook'
       fullPath: '/organization/$organizationId/settings/webhook'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/skills': {
+      id: '/_authenticated/organization/$organizationId/settings/skills'
+      path: '/skills'
+      fullPath: '/organization/$organizationId/settings/skills'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/members': {
@@ -3928,6 +3949,7 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   AuthenticatedOrganizationOrganizationIdSettingsMembersRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
   AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   AuthenticatedOrganizationOrganizationIdSettingsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRoute
   AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRolesIndexRoute
@@ -3964,6 +3986,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute,
     AuthenticatedOrganizationOrganizationIdSettingsMembersRoute:
       AuthenticatedOrganizationOrganizationIdSettingsMembersRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute:
       AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute,
     AuthenticatedOrganizationOrganizationIdSettingsIndexRoute:

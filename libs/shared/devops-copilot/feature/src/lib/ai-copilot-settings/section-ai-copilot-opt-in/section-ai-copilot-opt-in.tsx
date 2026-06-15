@@ -1,6 +1,6 @@
 import { type Organization } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import { BlockContent, Button, Callout, Checkbox, Heading, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { BlockContent, Button, Checkbox, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 
 export interface SectionAICopilotOptInProps {
   organization?: Organization
@@ -33,7 +33,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
   return (
     <FormProvider {...methods}>
       <Section>
-        <BlockContent title="Opt-in to AI Copilot" classNameContent="p-0">
+        <BlockContent title="Opt-in to Copilot" classNameContent="p-0">
           {isLoading ? (
             <div className="flex justify-center p-4">
               <LoaderSpinner className="w-5" />
@@ -45,10 +45,10 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                   <div>
                     <div className="mb-2 flex items-center">
                       <Icon iconName="robot" className="mr-2 text-brand" />
-                      <p className="text-sm font-medium text-neutral">Opt-in to AI Copilot</p>
+                      <p className="text-sm font-medium text-neutral">Opt-in to Copilot</p>
                     </div>
                     <p className="text-xs text-neutral-subtle">
-                      Please review and accept the following terms to enable AI Copilot for your organization.
+                      Please review and accept the following terms to enable Copilot for your organization.
                     </p>
                   </div>
 
@@ -482,7 +482,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
                           className="mt-0.5 flex-shrink-0"
                         />
                         <span className="text-sm text-neutral">
-                          I have read and accept the AI Copilot Terms of Service
+                          I have read and accept the Copilot Terms of Service
                         </span>
                       </label>
                     )}
@@ -490,7 +490,7 @@ export function SectionAICopilotOptIn({ organization, isLoading, onEnable }: Sec
 
                   <Button type="submit" size="md" color="brand" disabled={!isValid} className="mt-4">
                     <Icon iconName="circle-check" />
-                    Enable AI Copilot
+                    Enable Copilot
                   </Button>
                 </div>
               </div>

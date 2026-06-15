@@ -97,7 +97,8 @@ function RouteComponent() {
     title: 'AI settings',
     icon: 'sparkles' as const,
     children: [
-      { title: 'AI Copilot', to: `${pathSettings}/ai-copilot` },
+      { title: 'Copilot', to: `${pathSettings}/ai-copilot` },
+      { title: 'Skills', to: `${pathSettings}/skills` },
       { title: 'MCP server', to: `${pathSettings}/mcp-server` },
     ],
   }
