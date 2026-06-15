@@ -1,8 +1,7 @@
-import { motion, useReducedMotion } from 'framer-motion'
 import posthog from 'posthog-js'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { match } from 'ts-pattern'
-import { ExternalLink, Icon, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
+import { AnimatedSidePanel, ExternalLink, Icon, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
 import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { useDebounce, useSupportChat } from '@qovery/shared/util-hooks'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
@@ -21,55 +20,22 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const { showChat } = useSupportChat()
   const docLinks = useContextualDocLinks()
   const [searchValue, setSearchValue] = useState('')
-  const shouldReduceMotion = useReducedMotion()
   const debouncedSearchValue = useDebounce(searchValue, 300)
   const { data: results = [], isLoading } = useSearchDocumentation(debouncedSearchValue)
   const searchContainerRef = useRef<HTMLDivElement>(null)
 
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
-  useEffect(() => {
-    const down = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        onClose()
-      }
-    }
-
-    document.addEventListener('keydown', down)
-    return () => document.removeEventListener('keydown', down)
-  }, [onClose])
-
-  const transition = shouldReduceMotion
-    ? { duration: 0 }
-    : {
-        x: {
-          type: 'spring' as const,
-          stiffness: 900,
-          // Critically damped (2 * sqrt(stiffness * mass) = ~42.4) to avoid visible overshoot/jitter.
-          damping: 45,
-          mass: 0.5,
-        },
-        opacity: {
-          duration: 0.12,
-        },
-      }
-
   return (
-    <motion.div
-      initial={shouldReduceMotion ? false : { x: 32, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={shouldReduceMotion ? { opacity: 0 } : { x: 32, opacity: 0 }}
-      transition={transition}
+    <AnimatedSidePanel
+      onClose={onClose}
       // Focus the search input only after the entry animation finishes. Focusing during the
       // slide-in triggers the browser's auto-scroll-into-view behavior, which causes a visible
       // horizontal jolt on the background content.
-      onAnimationComplete={() => {
+      onEntered={() => {
         searchContainerRef.current?.querySelector<HTMLInputElement>('input')?.focus({ preventScroll: true })
       }}
-      // backfaceVisibility hint forces a dedicated compositor layer so the sliding panel
-      // doesn't trigger repaints on the sticky navbar behind it.
-      style={{ backfaceVisibility: 'hidden' }}
-      className="flex h-full w-[368px] flex-col overflow-hidden border-l border-neutral bg-background shadow-sm will-change-transform"
+      className="w-[368px]"
     >
       <div className="flex justify-between px-5 pt-5">
         <div className="flex gap-3 font-bold">
@@ -169,7 +135,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
           <div className="h-10"></div>
         )}
       </div>
-    </motion.div>
+    </AnimatedSidePanel>
   )
 }
 

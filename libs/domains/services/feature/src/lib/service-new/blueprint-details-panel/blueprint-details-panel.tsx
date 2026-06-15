@@ -2,7 +2,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { type BlueprintItem, type BlueprintReadmeResponse } from 'qovery-typescript-axios'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Badge, Button, ExternalLink, Icon, SuspenseQueryBoundary } from '@qovery/shared/ui'
+import { AnimatedSidePanel, Badge, Button, ExternalLink, Icon, SuspenseQueryBoundary } from '@qovery/shared/ui'
 import { formatCloudProvider, twMerge } from '@qovery/shared/util-js'
 import { useBlueprintCatalogServiceReadme } from '../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 
@@ -163,67 +163,69 @@ function BlueprintDetailsPanelContent({
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-overlay bg-background-overlay" />
-        <Dialog.Content className="fixed bottom-0 right-0 top-0 z-modal flex w-[940px] max-w-[calc(100vw-32px)] flex-col overflow-hidden border-l border-neutral bg-background focus:outline-none">
-          <div className="flex-1 overflow-auto px-6 pb-24 pt-6">
-            <div className="mb-8 flex flex-col gap-5">
-              <div className="flex flex-col gap-2">
-                <Dialog.Title className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral">
-                  <img className="h-8 w-8 rounded" src={blueprint.icon} alt="" aria-hidden="true" />
-                  <span>{blueprint.name}</span>
-                </Dialog.Title>
-                <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
-                  {blueprint.description}
-                </Dialog.Description>
-              </div>
-              <div className="flex flex-wrap items-center gap-2">
-                <BlueprintRepositoryBadge
-                  blueprint={blueprint}
-                  organizationId={organizationId}
-                  serviceVersion={serviceVersion}
-                />
-                <Badge size="sm" color="neutral" variant="outline" className="gap-1">
-                  {provider}
-                </Badge>
-                {shouldDisplayServiceVersion && (
+        <Dialog.Content asChild>
+          <AnimatedSidePanel className="fixed bottom-0 right-0 top-0 z-modal w-[940px] max-w-[calc(100vw-32px)] focus:outline-none">
+            <div className="flex-1 overflow-auto px-6 pb-24 pt-6">
+              <div className="mb-8 flex flex-col gap-5">
+                <div className="flex flex-col gap-2">
+                  <Dialog.Title className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral">
+                    <img className="h-8 w-8 rounded" src={blueprint.icon} alt="" aria-hidden="true" />
+                    <span>{blueprint.name}</span>
+                  </Dialog.Title>
+                  <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
+                    {blueprint.description}
+                  </Dialog.Description>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <BlueprintRepositoryBadge
+                    blueprint={blueprint}
+                    organizationId={organizationId}
+                    serviceVersion={serviceVersion}
+                  />
                   <Badge size="sm" color="neutral" variant="outline" className="gap-1">
-                    v{serviceVersion}
+                    {provider}
                   </Badge>
-                )}
+                  {shouldDisplayServiceVersion && (
+                    <Badge size="sm" color="neutral" variant="outline" className="gap-1">
+                      v{serviceVersion}
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
+              <div className="rounded border border-neutral bg-surface-neutral p-5">
+                <SuspenseQueryBoundary
+                  resetKeys={[organizationId, blueprint.provider, blueprint.serviceFamily, serviceVersion]}
+                  title="blueprint details"
+                >
+                  <BlueprintReadme
+                    blueprint={blueprint}
+                    organizationId={organizationId}
+                    serviceVersion={serviceVersion}
+                  />
+                </SuspenseQueryBoundary>
               </div>
             </div>
 
-            <div className="rounded border border-neutral bg-surface-neutral p-5">
-              <SuspenseQueryBoundary
-                resetKeys={[organizationId, blueprint.provider, blueprint.serviceFamily, serviceVersion]}
-                title="blueprint details"
+            <Dialog.Close asChild>
+              <button
+                type="button"
+                className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded text-neutral-subtle hover:bg-surface-neutral-subtle hover:text-neutral"
+                aria-label="Close blueprint details"
               >
-                <BlueprintReadme
-                  blueprint={blueprint}
-                  organizationId={organizationId}
-                  serviceVersion={serviceVersion}
-                />
-              </SuspenseQueryBoundary>
+                <Icon iconName="xmark" />
+              </button>
+            </Dialog.Close>
+
+            <div className="absolute bottom-0 left-0 right-0 flex items-center justify-end gap-2 border-t border-neutral bg-background px-6 py-4">
+              <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
+                Cancel
+              </Button>
+              <Button type="button" color="brand" size="lg">
+                Deploy blueprint
+              </Button>
             </div>
-          </div>
-
-          <Dialog.Close asChild>
-            <button
-              type="button"
-              className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded text-neutral-subtle hover:bg-surface-neutral-subtle hover:text-neutral"
-              aria-label="Close blueprint details"
-            >
-              <Icon iconName="xmark" />
-            </button>
-          </Dialog.Close>
-
-          <div className="absolute bottom-0 left-0 right-0 flex items-center justify-end gap-2 border-t border-neutral bg-background px-6 py-4">
-            <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
-              Cancel
-            </Button>
-            <Button type="button" color="brand" size="lg">
-              Deploy blueprint
-            </Button>
-          </div>
+          </AnimatedSidePanel>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
