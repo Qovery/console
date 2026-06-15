@@ -28,9 +28,9 @@ export interface SectionAICopilotConfigurationProps {
 function getDisableConfirmationModal(closeModal: () => void, onDisable: () => void) {
   return (
     <div className="p-6">
-      <h2 className="mb-2 text-base font-medium text-neutral">Disable AI Copilot</h2>
+      <h2 className="mb-2 text-base font-medium text-neutral">Disable Copilot</h2>
       <p className="mb-6 text-sm text-neutral-subtle">
-        Are you sure you want to disable AI Copilot? This will stop all AI-powered assistance for your organization.
+        Are you sure you want to disable Copilot? This will stop Copilot assistance for your organization.
       </p>
       <div className="flex justify-end gap-3">
         <Button type="button" color="neutral" variant="plain" size="lg" onClick={() => closeModal()}>
@@ -97,9 +97,9 @@ export function SectionAICopilotConfiguration({
                 <div className="flex-1">
                   <div className="mb-2 flex items-center">
                     <Icon iconName="robot" className="mr-2 text-brand" />
-                    <p className="text-sm font-medium text-neutral">AI Copilot for {organization?.name}</p>
+                    <p className="text-sm font-medium text-neutral">Copilot for {organization?.name}</p>
                   </div>
-                  <p className="text-xs text-neutral-subtle">AI-powered assistance is currently active</p>
+                  <p className="text-xs text-neutral-subtle">Copilot assistance is currently active</p>
                 </div>
                 <Button
                   size="md"
@@ -119,7 +119,7 @@ export function SectionAICopilotConfiguration({
             <div className="-mx-6 border-b border-neutral px-6 pb-6">
               <div className="mb-3 flex items-center gap-1">
                 <p className="text-sm font-medium text-neutral">Access source</p>
-                <Tooltip content="Choose which identity the AI Copilot uses to access your infrastructure.">
+                <Tooltip content="Choose which identity Copilot uses to access your infrastructure.">
                   <span className="relative top-[1px] text-sm text-neutral-subtle">
                     <Icon iconName="circle-question" iconStyle="regular" />
                   </span>
@@ -168,7 +168,7 @@ export function SectionAICopilotConfiguration({
               <div className="space-y-1">
                 <label className="text-sm font-medium text-neutral">Access Mode</label>
                 <p className="text-xs text-neutral-subtle">
-                  Choose the level of access the AI Copilot will have on your organization
+                  Choose the level of access Copilot will have on your organization
                 </p>
               </div>
               <InputSelect
@@ -202,8 +202,8 @@ export function SectionAICopilotConfiguration({
                   </Callout.TextHeading>
                   <Callout.TextDescription>
                     {mode === 'read-only'
-                      ? 'AI Copilot can view your infrastructure configuration but cannot make changes. Perfect for analysis and recommendations.'
-                      : 'AI Copilot can view and modify your infrastructure configuration. Use with caution as it has full access to your resources.'}
+                      ? 'Copilot can view your infrastructure configuration but cannot make changes. Perfect for analysis and recommendations.'
+                      : 'Copilot can view and modify your infrastructure configuration. Use with caution as it has full access to your resources.'}
                   </Callout.TextDescription>
                 </Callout.Text>
               </Callout.Root>

@@ -51,7 +51,7 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
   return (
     <div className="w-full justify-between">
       <Section className="px-8 pb-8 pt-6">
-        <SettingsHeading title="AI Copilot Configuration" description="Configure your Copilot" showNeedHelp={false} />
+        <SettingsHeading title="Copilot configuration" description="Configure Copilot" showNeedHelp={false} />
         <div className="max-w-content-with-navigation-left">
           <Callout.Root color="sky" className="mb-4">
             <Callout.Icon>
@@ -60,8 +60,8 @@ export function AICopilotSettings(props: AICopilotSettingsProps) {
             <Callout.Text>
               <Callout.TextHeading>Beta Feature</Callout.TextHeading>
               <Callout.TextDescription>
-                The AI Copilot is currently in beta. This is an experimental feature and functionality may change.
-                Billing terms are not final and will be communicated before any charges apply.
+                Copilot is currently in beta. This is an experimental feature and functionality may change. Billing
+                terms are not final and will be communicated before any charges apply.
               </Callout.TextDescription>
             </Callout.Text>
           </Callout.Root>

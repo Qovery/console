@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function RouteComponent() {
   const { organizationId = '' } = useParams({ strict: false })
-  useDocumentTitle('AI Copilot - Organization settings')
+  useDocumentTitle('Copilot - Organization settings')
   const { data: organization } = useOrganization({ organizationId })
 
   if (!organization) {
