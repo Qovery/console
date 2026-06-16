@@ -147,7 +147,7 @@ exports[`ClusterCard should match snapshot 1`] = `
               type="button"
             >
               <div
-                class="flex h-full w-full items-center justify-center"
+                class="flex h-full w-full items-center justify-center gap-x-1.5"
                 data-state="closed"
               >
                 <i
