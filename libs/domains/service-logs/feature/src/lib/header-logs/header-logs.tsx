@@ -105,11 +105,9 @@ export function HeaderLogs({
                         align="start"
                       >
                         <Button variant="outline" color="neutral" size="sm" className="relative">
-                          <div className="flex items-center">
-                            <Icon iconName="link" iconStyle="regular" />
-                            {pluralize(filteredLinks.length, 'Link', 'Links')}
-                            <Icon iconName="angle-down" />
-                          </div>
+                          <Icon iconName="link" iconStyle="regular" />
+                          {pluralize(filteredLinks.length, 'Link', 'Links')}
+                          <Icon iconName="angle-down" />
                         </Button>
                       </ServiceLinksPopover>
                     )}
@@ -132,14 +130,6 @@ export function HeaderLogs({
                       <Icon iconName="code" iconStyle="regular" className="text-sm text-neutral-subtle" />
                       <span className="flex items-center gap-0.5 truncate">
                         <span className="font-normal text-neutral">{trimId(executionId ?? '')}</span>
-                        {executionId && (
-                          <CopyToClipboardButtonIcon
-                            content={executionId}
-                            tooltipContent="Copy execution id"
-                            className="opacity-0 transition-opacity group-hover:opacity-100"
-                            iconClassName="text-xs"
-                          />
-                        )}
                       </span>
                     </span>
                   </Tooltip>
@@ -155,14 +145,6 @@ export function HeaderLogs({
                 <Tooltip side="bottom" content={<span>Execution id: {environmentStatus?.last_deployment_id}</span>}>
                   <span className="group flex items-center gap-1">
                     <Icon className="text-base text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
-                    {environmentStatus?.last_deployment_id && (
-                      <CopyToClipboardButtonIcon
-                        content={environmentStatus.last_deployment_id}
-                        tooltipContent="Copy execution id"
-                        className="ml-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-                        iconClassName="text-xs"
-                      />
-                    )}
                   </span>
                 </Tooltip>
                 {!isNotDeployedOrStopped && !isManagedDatabase && filteredLinks.length > 0 && (
@@ -176,11 +158,9 @@ export function HeaderLogs({
                         align="start"
                       >
                         <Button variant="outline" color="neutral" size="sm" className="relative">
-                          <div className="flex items-center">
-                            <Icon iconName="link" iconStyle="regular" />
-                            {pluralize(filteredLinks.length, 'Link', 'Links')}
-                            <Icon iconName="angle-down" />
-                          </div>
+                          <Icon iconName="link" iconStyle="regular" />
+                          {pluralize(filteredLinks.length, 'Link', 'Links')}
+                          <Icon iconName="angle-down" />
                         </Button>
                       </ServiceLinksPopover>
                     )}
