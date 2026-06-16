@@ -173,7 +173,10 @@ jobs:
           AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://${{ secrets.s3-bucket-name }}/  --recursive --exclude "index.html"
       - name: Copy index.html to S3 last
         run: |
-          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://${{ secrets.s3-bucket-name }}/
+          # index.html must never be cached: it references content-hashed assets by name,
+          # and a stale version after a new deployment causes "Importing a module script failed"
+          # in Safari (which applies heuristic caching when Cache-Control is absent).
+          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://${{ secrets.s3-bucket-name }}/ --cache-control "no-store"
 
   staging-smoke-test:
     name: Staging smoke test
