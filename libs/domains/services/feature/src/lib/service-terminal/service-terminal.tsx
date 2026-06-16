@@ -40,6 +40,7 @@ export function ServiceTerminal({
 }: ServiceTerminalProps) {
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const hasWrittenShellBannerRef = useRef(false)
+  const activeWebSocketRef = useRef<WebSocket | null>(null)
   const [requestId, setRequestId] = useState(() => uuidv7())
 
   const [addons, setAddons] = useState<Array<ITerminalAddon>>([])
@@ -113,6 +114,7 @@ export function ServiceTerminal({
       const shouldWriteShellBanner = !hasWrittenShellBannerRef.current
 
       // As WS are open twice in dev mode / strict mode it doesn't happens in production
+      activeWebSocketRef.current = websocket
       attachWebSocket(websocket)
       setTerminalLaunchError(null)
       hasWrittenShellBannerRef.current = true
@@ -134,6 +136,11 @@ export function ServiceTerminal({
 
   const onCloseHandler = useCallback(
     (_: QueryClient, event: CloseEvent) => {
+      if (event.target !== activeWebSocketRef.current) {
+        return
+      }
+
+      activeWebSocketRef.current = null
       detachWebSocket()
       setAddons([])
 
@@ -145,7 +152,8 @@ export function ServiceTerminal({
     [detachWebSocket]
   )
 
-  const onRetryCliLaunch = useCallback(() => {
+  const resetTerminalSession = useCallback(() => {
+    activeWebSocketRef.current = null
     detachWebSocket()
     hasWrittenShellBannerRef.current = false
     setAddons([])
@@ -153,6 +161,27 @@ export function ServiceTerminal({
     setRequestId(uuidv7())
     resetTerminalReadiness()
   }, [detachWebSocket, resetTerminalReadiness])
+
+  const onRetryCliLaunch = useCallback(() => {
+    resetTerminalSession()
+  }, [resetTerminalSession])
+
+  const onSelectedPodChange = useCallback(
+    (pod?: string) => {
+      resetTerminalSession()
+      setSelectedPod(pod)
+      setSelectedContainer(undefined)
+    },
+    [resetTerminalSession]
+  )
+
+  const onSelectedContainerChange = useCallback(
+    (container?: string) => {
+      resetTerminalSession()
+      setSelectedContainer(container)
+    },
+    [resetTerminalSession]
+  )
   const terminalUnavailableDescription = useMemo(
     () =>
       match(runningStatuses?.state)
@@ -189,13 +218,8 @@ export function ServiceTerminal({
   })
 
   useEffect(() => {
-    hasWrittenShellBannerRef.current = false
-    resetTerminalReadiness()
-  }, [resetTerminalReadiness, selectedContainer, selectedPod])
-
-  useEffect(() => {
     if (fitAddon) {
-      setTimeout(() => fitAddon.fit(), 0)
+      setTimeout(() => fitAddon.fit?.(), 0)
     }
   }, [fitAddon])
 
@@ -207,7 +231,7 @@ export function ServiceTerminal({
             <div className="relative">
               <InputSearch
                 value={selectedPod}
-                onChange={setSelectedPod}
+                onChange={onSelectedPodChange}
                 data={runningStatuses.pods.map((pod) => pod.name)}
                 placeholder="Select a pod to connect to"
                 trimLabel
@@ -223,7 +247,7 @@ export function ServiceTerminal({
             <div className="relative">
               <InputSearch
                 value={selectedContainer}
-                onChange={setSelectedContainer}
+                onChange={onSelectedContainerChange}
                 data={
                   runningStatuses.pods
                     .find((pod) => selectedPod === pod?.name)

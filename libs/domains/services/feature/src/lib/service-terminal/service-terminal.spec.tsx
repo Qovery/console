@@ -12,6 +12,27 @@ jest.mock('color', () => ({
   }),
 }))
 
+jest.mock('@xterm/addon-attach', () => ({
+  __esModule: true,
+  AttachAddon: jest.fn().mockImplementation(() => ({
+    activate: jest.fn(),
+    dispose: jest.fn(),
+  })),
+}))
+
+jest.mock('@xterm/addon-fit', () => ({
+  __esModule: true,
+  FitAddon: jest.fn().mockImplementation(() => ({
+    activate: jest.fn(),
+    dispose: jest.fn(),
+    fit: jest.fn(),
+  })),
+}))
+
+jest.mock('react-xtermjs', () => ({
+  XTerm: () => <div data-testid="xterm" />,
+}))
+
 jest.mock('@qovery/state/util-queries', () => ({
   useReactQueryWsSubscription: jest.fn(),
 }))
@@ -41,6 +62,36 @@ const getLatestWsSubscriptionConfig = (): Parameters<typeof useReactQueryWsSubsc
   return latestCall[0]
 }
 
+const getLatestWsSubscriptionSearchParams = (): Record<string, string | undefined> => {
+  const { urlSearchParams } = getLatestWsSubscriptionConfig()
+
+  if (!urlSearchParams || typeof urlSearchParams !== 'object' || urlSearchParams instanceof URLSearchParams) {
+    throw new Error('Expected websocket search params to be an object.')
+  }
+
+  return urlSearchParams as Record<string, string | undefined>
+}
+
+const createWebSocketEvent = (type: string, websocket: WebSocket): Event => {
+  const event = new Event(type)
+  Object.defineProperty(event, 'target', { value: websocket })
+  return event
+}
+
+const createWebSocketCloseEvent = (websocket: WebSocket, eventInit: CloseEventInit): CloseEvent => {
+  const event = new CloseEvent('close', eventInit)
+  Object.defineProperty(event, 'target', { value: websocket })
+  return event
+}
+
+const createMockWebSocket = (): WebSocket =>
+  ({
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    send: jest.fn(),
+    readyState: WebSocket.OPEN,
+  }) as unknown as WebSocket
+
 describe('ServiceTerminal', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -63,11 +114,16 @@ describe('ServiceTerminal', () => {
 
   it('should show a retry empty state and disable subscription on terminal launch error', () => {
     renderWithProviders(<ServiceTerminal {...props} />)
+    const websocket = createMockWebSocket()
+
+    act(() => {
+      getLatestWsSubscriptionConfig().onOpen?.({} as QueryClient, createWebSocketEvent('open', websocket))
+    })
 
     act(() => {
       getLatestWsSubscriptionConfig().onClose?.(
         {} as QueryClient,
-        new CloseEvent('close', { code: 1000, reason: 'No pod exists for this application.' })
+        createWebSocketCloseEvent(websocket, { code: 1000, reason: 'No pod exists for this application.' })
       )
     })
 
@@ -90,11 +146,16 @@ describe('ServiceTerminal', () => {
     })
 
     renderWithProviders(<ServiceTerminal {...props} />)
+    const websocket = createMockWebSocket()
+
+    act(() => {
+      getLatestWsSubscriptionConfig().onOpen?.({} as QueryClient, createWebSocketEvent('open', websocket))
+    })
 
     act(() => {
       getLatestWsSubscriptionConfig().onClose?.(
         {} as QueryClient,
-        new CloseEvent('close', { code: 1000, reason: 'No pod exists for this application.' })
+        createWebSocketCloseEvent(websocket, { code: 1000, reason: 'No pod exists for this application.' })
       )
     })
 
@@ -103,11 +164,16 @@ describe('ServiceTerminal', () => {
 
   it('should restart terminal launch flow when retrying from empty state', async () => {
     const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
+    const websocket = createMockWebSocket()
+
+    act(() => {
+      getLatestWsSubscriptionConfig().onOpen?.({} as QueryClient, createWebSocketEvent('open', websocket))
+    })
 
     act(() => {
       getLatestWsSubscriptionConfig().onClose?.(
         {} as QueryClient,
-        new CloseEvent('close', { code: 1000, reason: 'No pod exists for this application.' })
+        createWebSocketCloseEvent(websocket, { code: 1000, reason: 'No pod exists for this application.' })
       )
     })
 
@@ -129,5 +195,47 @@ describe('ServiceTerminal', () => {
     await userEvent.click(firstPodOption)
 
     expect(screen.getByPlaceholderText('Select a container to connect to')).toBeInTheDocument()
+  })
+
+  it('should start a fresh terminal session when selecting a pod', async () => {
+    const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
+    const initialRequestId = getLatestWsSubscriptionSearchParams()['external_request_id']
+
+    await userEvent.click(screen.getByPlaceholderText('Select a pod to connect to'))
+    const [firstPodOption] = screen.getAllByRole('option')
+    await userEvent.click(firstPodOption)
+
+    await waitFor(() => {
+      expect(getLatestWsSubscriptionSearchParams()).toEqual(
+        expect.objectContaining({
+          pod_name: 'pod-1',
+          container_name: undefined,
+        })
+      )
+      expect(getLatestWsSubscriptionSearchParams()['external_request_id']).not.toBe(initialRequestId)
+    })
+  })
+
+  it('should ignore a stale websocket close after selecting a pod', async () => {
+    const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
+    const initialWebsocket = createMockWebSocket()
+
+    act(() => {
+      getLatestWsSubscriptionConfig().onOpen?.({} as QueryClient, createWebSocketEvent('open', initialWebsocket))
+    })
+
+    await userEvent.click(screen.getByPlaceholderText('Select a pod to connect to'))
+    const [firstPodOption] = screen.getAllByRole('option')
+    await userEvent.click(firstPodOption)
+
+    act(() => {
+      getLatestWsSubscriptionConfig().onClose?.(
+        {} as QueryClient,
+        createWebSocketCloseEvent(initialWebsocket, { code: 1000, reason: 'Stale close from previous websocket.' })
+      )
+    })
+
+    expect(screen.queryByText('Unable to launch CLI')).not.toBeInTheDocument()
+    expect(useReactQueryWsSubscriptionMock).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: true }))
   })
 })
