@@ -13,7 +13,6 @@ export function useCreateService({ organizationId }: { organizationId: string })
       })
       showMcpSuggestionToast({ type: 'service', name: response.name })
 
-
       // gitTokens requests
       queryClient.invalidateQueries({
         queryKey: queries.organizations.gitTokens({ organizationId }).queryKey,
