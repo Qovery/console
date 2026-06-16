@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
@@ -12,8 +13,10 @@ import {
   Icon,
   InputSelect,
   InputText,
+  InputToggle,
   Link,
   Section,
+  Tooltip,
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
 import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-services'
@@ -30,6 +33,7 @@ export interface ApplicationSettingsResourcesProps {
   minInstances?: number
   maxInstances?: number
   advancedSettings?: unknown
+  displayStableNodepoolToggle?: boolean
 }
 
 export function ApplicationSettingsResources({
@@ -39,6 +43,7 @@ export function ApplicationSettingsResources({
   minInstances = 1,
   maxInstances = 1000,
   advancedSettings,
+  displayStableNodepoolToggle = false,
 }: ApplicationSettingsResourcesProps) {
   const { control, watch, setValue } = useFormContext()
   const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
@@ -69,6 +74,8 @@ export function ApplicationSettingsResources({
   const autoscalingMode = watch('autoscaling_mode') || 'NONE'
   const hpaAverageUtilizationPercent = watch('hpa_cpu_average_utilization_percent') ?? 60
   const hpaMemoryAverageUtilizationPercent = watch('hpa_memory_average_utilization_percent') ?? 60
+  const hasGpuConfigured = watch('gpu') > 0
+  const runOnStableNodepool = watch('run_on_stable_nodepool') ?? false
   const previousAutoscalingModeRef = useRef(autoscalingMode)
 
   useEffect(() => {
@@ -260,29 +267,78 @@ export function ApplicationSettingsResources({
           )}
         />
         {isKarpenterCluster && (
-          <Controller
-            name="gpu"
-            control={control}
-            rules={{
-              pattern: {
-                value: /^[0-9]+$/,
-                message: 'Please enter a number.',
-              },
-            }}
-            render={({ field, fieldState: { error } }) => (
-              <InputText
-                dataTestId="input-gpu"
-                type="number"
-                name={field.name}
-                label="GPU (units)"
-                value={field.value}
-                onChange={field.onChange}
-                disabled={!canSetGPU}
-                hint={hintGPU}
-                error={error?.message}
-              />
+          <>
+            <Controller
+              name="gpu"
+              control={control}
+              rules={{
+                pattern: {
+                  value: /^[0-9]+$/,
+                  message: 'Please enter a number.',
+                },
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <Tooltip
+                  content="GPU workloads must run on GPU nodepools. Disable stable nodepool before adding GPU"
+                  disabled={!runOnStableNodepool}
+                  side="top"
+                >
+                  <div>
+                    <InputText
+                      dataTestId="input-gpu"
+                      type="number"
+                      name={field.name}
+                      label="GPU (units)"
+                      value={field.value}
+                      onChange={field.onChange}
+                      disabled={!canSetGPU || runOnStableNodepool}
+                      hint={hintGPU}
+                      error={error?.message}
+                    />
+                  </div>
+                </Tooltip>
+              )}
+            />
+            {displayStableNodepoolToggle && (
+              <Tooltip content="Remove GPU before enabling stable nodepool" disabled={!hasGpuConfigured} side="top">
+                <div
+                  className={clsx(
+                    'flex flex-col gap-3 rounded-md border border-neutral px-3 py-4',
+                    hasGpuConfigured && 'bg-surface-neutral-subtle text-neutral-subtle [&_p]:!text-neutral-subtle'
+                  )}
+                >
+                  <Controller
+                    name="run_on_stable_nodepool"
+                    control={control}
+                    render={({ field }) => (
+                      <InputToggle
+                        value={field.value ?? false}
+                        onChange={field.onChange}
+                        name={field.name}
+                        title="Run on a stable nodepool"
+                        description="Reduce interruptions from node replacements and consolidation."
+                        align="top"
+                        small
+                        disabled={hasGpuConfigured}
+                        className={hasGpuConfigured ? '!opacity-100' : ''}
+                      />
+                    )}
+                  />
+                  {runOnStableNodepool && (
+                    <Callout.Root color="yellow" className="rounded-md px-3 py-2" data-testid="stable-nodepool-callout">
+                      <Callout.Icon>
+                        <Icon iconName="triangle-exclamation" iconStyle="regular" />
+                      </Callout.Icon>
+                      <Callout.Text>
+                        Only use stable nodepools for workloads that need high availability. Stable nodes are more
+                        reliable, but usually cost more and offer less flexibility than cost-optimized capacity.
+                      </Callout.Text>
+                    </Callout.Root>
+                  )}
+                </div>
+              </Tooltip>
             )}
-          />
+          </>
         )}
 
         {service?.serviceType === 'TERRAFORM' && (
