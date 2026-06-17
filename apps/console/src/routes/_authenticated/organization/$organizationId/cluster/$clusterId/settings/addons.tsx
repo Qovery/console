@@ -198,6 +198,7 @@ function RouteComponent() {
                           posthog.capture('cluster-secret-manager-add-clicked', {
                             cluster_id: clusterId,
                             organization_id: organizationId,
+                            source: 'settings',
                           })
                         }
                       }}

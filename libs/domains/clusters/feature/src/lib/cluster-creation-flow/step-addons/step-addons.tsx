@@ -149,6 +149,7 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                       if (open) {
                         posthog.capture('cluster-secret-manager-add-clicked', {
                           organization_id: organizationId,
+                          source: 'creation-flow',
                         })
                       }
                     }}
