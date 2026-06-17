@@ -144,7 +144,15 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                   </p>
                 </div>
                 <div className="flex flex-col items-start gap-3">
-                  <DropdownMenu.Root>
+                  <DropdownMenu.Root
+                    onOpenChange={(open) => {
+                      if (open) {
+                        posthog.capture('cluster-secret-manager-add-clicked', {
+                          organization_id: organizationId,
+                        })
+                      }
+                    }}
+                  >
                     <DropdownMenu.Trigger asChild>
                       <Button
                         color="neutral"
@@ -152,11 +160,6 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                         size="md"
                         className="gap-2"
                         type="button"
-                        onClick={() =>
-                          posthog.capture('cluster-secret-manager-add-clicked', {
-                            organization_id: organizationId,
-                          })
-                        }
                       >
                         <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
                         Add secret manager

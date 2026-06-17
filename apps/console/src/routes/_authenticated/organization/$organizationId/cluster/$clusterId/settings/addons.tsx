@@ -192,7 +192,16 @@ function RouteComponent() {
                     </p>
                   </div>
                   <div className="flex flex-col items-start gap-3">
-                    <DropdownMenu.Root>
+                    <DropdownMenu.Root
+                      onOpenChange={(open) => {
+                        if (open) {
+                          posthog.capture('cluster-secret-manager-add-clicked', {
+                            cluster_id: clusterId,
+                            organization_id: organizationId,
+                          })
+                        }
+                      }}
+                    >
                       <DropdownMenu.Trigger asChild>
                         <Button
                           color="neutral"
@@ -200,12 +209,6 @@ function RouteComponent() {
                           size="md"
                           className="gap-2"
                           type="button"
-                          onClick={() =>
-                            posthog.capture('cluster-secret-manager-add-clicked', {
-                              cluster_id: clusterId,
-                              organization_id: organizationId,
-                            })
-                          }
                         >
                           <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
                           Add secret manager
