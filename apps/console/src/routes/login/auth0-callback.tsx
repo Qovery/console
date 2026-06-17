@@ -66,7 +66,7 @@ function useRedirectIfLogged(connection?: string) {
       // User has at least 1 organization attached
       if (organizations.length > 0) {
         if (returnTo) {
-          navigate({ href: returnTo })
+          navigate({ to: returnTo })
         } else {
           navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
         }
