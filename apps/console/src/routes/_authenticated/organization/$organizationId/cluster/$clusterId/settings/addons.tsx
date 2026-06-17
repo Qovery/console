@@ -1,4 +1,5 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
@@ -193,7 +194,19 @@ function RouteComponent() {
                   <div className="flex flex-col items-start gap-3">
                     <DropdownMenu.Root>
                       <DropdownMenu.Trigger asChild>
-                        <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
+                        <Button
+                          color="neutral"
+                          variant="solid"
+                          size="md"
+                          className="gap-2"
+                          type="button"
+                          onClick={() =>
+                            posthog.capture('cluster-secret-manager-add-clicked', {
+                              cluster_id: clusterId,
+                              organization_id: organizationId,
+                            })
+                          }
+                        >
                           <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
                           Add secret manager
                           <Icon iconName="chevron-down" className="text-[10px]" />
@@ -205,7 +218,14 @@ function RouteComponent() {
                             key={option.value}
                             color="neutral"
                             icon={<Icon name={option.icon} width={16} height={16} />}
-                            onSelect={() => openSecretManagerModal(option)}
+                            onSelect={() => {
+                              posthog.capture('cluster-secret-manager-type-selected', {
+                                cluster_id: clusterId,
+                                organization_id: organizationId,
+                                secret_manager_type: option.value,
+                              })
+                              openSecretManagerModal(option)
+                            }}
                           >
                             {option.label}
                           </DropdownMenu.Item>
