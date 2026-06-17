@@ -7,35 +7,33 @@ exports[`AutoDeploySetting should match snapshot 1`] = `
       class="flex text-sm items-center"
       data-testid="input-toggle"
     >
-      <div
-        aria-label="toggle-btn"
-        class="inline-flex items-center justify-between cursor-pointer"
+      <button
+        aria-checked="false"
+        aria-label="Auto-deploy on new commits"
+        class="w-8 h-4.5 outline-brand-11 inline-flex shrink-0 items-center rounded-full border-0 p-0.5 outline-0 disabled:pointer-events-none focus-visible:[&:active]:outline-0 focus-visible:[&:not(:active)]:outline-2 focus-visible:[&:not(:active)]:outline-offset-2 cursor-pointer bg-surface-neutral-componentActive"
+        data-state="unchecked"
         data-testid="input-toggle-button"
+        id=":r6:"
+        role="switch"
+        type="button"
+        value="false"
       >
-        <input
-          class="hidden"
-          type="checkbox"
-          value=""
+        <span
+          aria-label="circle"
+          class="w-3.5 h-3.5 block transform rounded-full bg-surface-neutral shadow-lg  "
+          data-state="unchecked"
         />
-        <div
-          aria-label="bg"
-          class="w-8 h-4.5 flex items-center rounded-full p-0.5 bg-surface-neutral-componentActive"
-        >
-          <div
-            aria-label="circle"
-            class="w-3.5 h-3.5 transform rounded-full bg-surface-neutral shadow-lg  "
-          />
-        </div>
-      </div>
-      <div
+      </button>
+      <label
         class=" ml-3 cursor-pointer flex flex-col gap-1"
+        for=":r6:"
       >
         <p
           class="font-medium text-neutral"
         >
           Auto-deploy on new commits
         </p>
-      </div>
+      </label>
     </div>
   </div>
 </body>

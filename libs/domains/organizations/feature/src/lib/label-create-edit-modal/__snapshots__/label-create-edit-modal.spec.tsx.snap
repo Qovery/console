@@ -144,26 +144,30 @@ exports[`LabelCreateEditModal should match with snatpshot 1`] = `
                   class="flex text-sm items-center"
                   data-testid="input-toggle"
                 >
-                  <div
+                  <button
+                    aria-checked="false"
                     aria-label="toggle-btn"
-                    class="inline-flex items-center justify-between cursor-pointer"
+                    class="w-8 h-4.5 outline-brand-11 inline-flex shrink-0 items-center rounded-full border-0 p-0.5 outline-0 disabled:pointer-events-none focus-visible:[&:active]:outline-0 focus-visible:[&:not(:active)]:outline-2 focus-visible:[&:not(:active)]:outline-offset-2 cursor-pointer bg-surface-neutral-componentActive"
+                    data-state="unchecked"
                     data-testid="input-toggle-button"
+                    id=":r7:"
+                    role="switch"
+                    type="button"
+                    value="false"
                   >
-                    <input
-                      class="hidden"
-                      type="checkbox"
-                      value="false"
+                    <span
+                      aria-label="circle"
+                      class="w-3.5 h-3.5 block transform rounded-full bg-surface-neutral shadow-lg  "
+                      data-state="unchecked"
                     />
-                    <div
-                      aria-label="bg"
-                      class="w-8 h-4.5 flex items-center rounded-full p-0.5 bg-surface-neutral-componentActive"
-                    >
-                      <div
-                        aria-label="circle"
-                        class="w-3.5 h-3.5 transform rounded-full bg-surface-neutral shadow-lg  "
-                      />
-                    </div>
-                  </div>
+                  </button>
+                  <input
+                    aria-hidden="true"
+                    style="transform: translateX(-100%); position: absolute; pointer-events: none; opacity: 0; margin: 0px; width: 0px; height: 0px;"
+                    tabindex="-1"
+                    type="checkbox"
+                    value="false"
+                  />
                 </div>
                 <button
                   class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md text-neutral-subtle hover:bg-surface-neutral-subtle"

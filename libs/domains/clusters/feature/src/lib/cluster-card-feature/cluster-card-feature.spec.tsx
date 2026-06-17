@@ -1,5 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
+import { useFormContext } from 'react-hook-form'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterCardFeature, type ClusterCardFeatureProps } from './cluster-card-feature'
 
@@ -19,6 +20,12 @@ const props: ClusterCardFeatureProps = {
   },
 }
 
+function ControlledClusterCardFeature(props: ClusterCardFeatureProps) {
+  const { control, setValue, watch } = useFormContext()
+
+  return <ClusterCardFeature {...props} control={control} setValue={setValue} watch={watch} />
+}
+
 describe('ClusterCardFeature', () => {
   it('should render successfully', () => {
     const { baseElement } = renderWithProviders(wrapWithReactHookForm(<ClusterCardFeature {...props} />))
@@ -26,19 +33,72 @@ describe('ClusterCardFeature', () => {
   })
 
   it('should render the form with fields', () => {
-    const { getByDisplayValue, getAllByDisplayValue } = renderWithProviders(
-      wrapWithReactHookForm(<ClusterCardFeature {...props} />, {
+    const { getAllByDisplayValue } = renderWithProviders(
+      wrapWithReactHookForm(<ControlledClusterCardFeature {...props} />, {
         defaultValues: {
-          [STATIC_IP]: {
-            value: true,
-            extendedValue: 'my-value',
+          features: {
+            [STATIC_IP]: {
+              value: true,
+              extendedValue: 'my-value',
+            },
           },
         },
       })
     )
 
-    expect(getByDisplayValue('true')).toBeInTheDocument()
+    expect(screen.getByRole('switch')).toBeChecked()
     expect(getAllByDisplayValue('my-value').length).toBeGreaterThan(0)
+  })
+
+  it('should toggle the feature switch on and off', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<ControlledClusterCardFeature {...props} />, {
+        defaultValues: {
+          features: {
+            [STATIC_IP]: {
+              value: false,
+              extendedValue: 'my-value',
+            },
+          },
+        },
+      })
+    )
+
+    const toggle = screen.getByRole('switch')
+
+    expect(toggle).not.toBeChecked()
+
+    await userEvent.click(toggle)
+    expect(toggle).toBeChecked()
+
+    await userEvent.click(toggle)
+    expect(toggle).not.toBeChecked()
+  })
+
+  it('should toggle the feature when clicking the card body', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<ControlledClusterCardFeature {...props} />, {
+        defaultValues: {
+          features: {
+            [STATIC_IP]: {
+              value: true,
+              extendedValue: 'my-value',
+            },
+          },
+        },
+      })
+    )
+
+    const card = screen.getByTestId('feature')
+    const toggle = screen.getByRole('switch')
+
+    expect(toggle).toBeChecked()
+
+    await userEvent.click(card)
+    expect(toggle).not.toBeChecked()
+
+    await userEvent.click(card)
+    expect(toggle).toBeChecked()
   })
 
   it('should render feature title and description', () => {
@@ -81,7 +141,7 @@ describe('ClusterCardFeature', () => {
       )
     )
 
-    expect(screen.getByDisplayValue('false')).toBeInTheDocument()
+    expect(screen.getByRole('switch')).not.toBeChecked()
   })
 
   it('should read NAT_GATEWAY nested nat_gateway_type static_ips_enabled', () => {
@@ -108,6 +168,6 @@ describe('ClusterCardFeature', () => {
       )
     )
 
-    expect(screen.getByDisplayValue('true')).toBeInTheDocument()
+    expect(screen.getByRole('switch')).toBeChecked()
   })
 })

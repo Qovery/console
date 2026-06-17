@@ -50,6 +50,9 @@ export function ApplicationContainerStepPort({ onBack, onSubmit, loading = false
           hidePortName
         />
       ),
+      options: {
+        fakeModal: true,
+      },
     })
   }
 

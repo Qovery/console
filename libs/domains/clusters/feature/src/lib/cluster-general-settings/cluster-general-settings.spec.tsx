@@ -39,6 +39,6 @@ describe('ClusterGeneralSettings', () => {
 
     expect((name as HTMLInputElement).value).toBe('test')
     expect((description.querySelector('textarea') as HTMLTextAreaElement).value).toBe('test')
-    expect((toggle.querySelector('input') as HTMLInputElement).value).toBe('false')
+    expect(toggle).not.toBeChecked()
   })
 })

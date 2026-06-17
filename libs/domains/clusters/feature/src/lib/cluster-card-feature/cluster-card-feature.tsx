@@ -1,5 +1,5 @@
 import { type CloudVendorEnum, type ClusterFeatureResponse } from 'qovery-typescript-axios'
-import { type PropsWithChildren, type ReactNode, useEffect, useState } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 import { type Control, Controller, type FieldValues, type UseFormSetValue, type UseFormWatch } from 'react-hook-form'
 import { ExternalLink, Icon, InputSelect, InputToggle, Tooltip } from '@qovery/shared/ui'
 import { getGcpNatGatewaySettings } from '../utils/get-gcp-nat-gateway-settings'
@@ -24,9 +24,8 @@ export function ClusterCardFeature({
   children,
   tooltip,
 }: ClusterCardFeatureProps) {
-  const [currentDisabled, setCurrentDisabled] = useState<boolean>(disabled)
-
   const name = watch && watch(`features.${feature.id}.value`)
+  const isFeatureEnabled = Boolean(name)
 
   const getFeatureToggleValue = (feature: ClusterFeatureResponse) => {
     const value = feature.value_object?.value
@@ -45,12 +44,6 @@ export function ClusterCardFeature({
     return Boolean(value)
   }
 
-  useEffect(() => {
-    if (feature.id) {
-      if (name) setCurrentDisabled(true)
-    }
-  }, [feature.id, name])
-
   return (
     <div
       data-testid="feature"
@@ -59,20 +52,25 @@ export function ClusterCardFeature({
       } mb-4 border-neutral last:mb-0`}
       onClick={() => {
         if (feature.id && !disabled && setValue) {
-          setValue(`features.${feature.id}.value`, !name)
-          setCurrentDisabled(!name)
+          setValue(`features.${feature.id}.value`, !isFeatureEnabled)
         }
       }}
     >
       <div className="flex w-full gap-3">
         {control ? (
           <Tooltip content={tooltip} disabled={!tooltip}>
-            <span>
+            <span onClick={(event) => event.stopPropagation()}>
               <Controller
                 name={`features.${feature.id}.value`}
                 control={control}
                 render={({ field }) => (
-                  <InputToggle disabled={disabled} small className="relative top-[2px]" value={field.value} />
+                  <InputToggle
+                    disabled={disabled}
+                    small
+                    className="relative top-[2px]"
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 )}
               />
             </span>
@@ -125,7 +123,7 @@ export function ClusterCardFeature({
                       value={field.value}
                       label={feature.id === 'EXISTING_VPC' ? 'VPC Subnet address' : feature.title}
                       isSearchable
-                      disabled={!currentDisabled}
+                      disabled={!isFeatureEnabled}
                       portal
                     />
                   )}

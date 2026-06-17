@@ -127,6 +127,7 @@ function ApplicationContainerPortSettingsContent() {
           ),
           options: {
             width: 488,
+            fakeModal: true,
           },
         })
       }

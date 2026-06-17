@@ -114,7 +114,7 @@ describe('AdvancedSettings', () => {
         defaultAdvancedSettings={defaultAdvancedSettings}
       />
     )
-    await userEvent.click(screen.getByRole('checkbox'))
+    await userEvent.click(screen.getByRole('switch', { name: 'Show only overridden settings' }))
     const hiddenRows = screen.getAllByRole('row').filter((row) => row.classList.contains('hidden'))
     expect(hiddenRows).toHaveLength(2)
   })
