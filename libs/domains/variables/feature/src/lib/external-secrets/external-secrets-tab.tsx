@@ -1,5 +1,4 @@
 import { Link, useParams } from '@tanstack/react-router'
-import posthog from 'posthog-js'
 import {
   type ColumnFiltersState,
   type RowSelectionState,
@@ -13,6 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import posthog from 'posthog-js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { getSecretManagerProvider } from '@qovery/domains/clusters/data-access'

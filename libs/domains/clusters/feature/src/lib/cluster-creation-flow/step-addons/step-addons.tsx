@@ -155,13 +155,7 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                     }}
                   >
                     <DropdownMenu.Trigger asChild>
-                      <Button
-                        color="neutral"
-                        variant="solid"
-                        size="md"
-                        className="gap-2"
-                        type="button"
-                      >
+                      <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
                         <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
                         Add secret manager
                         <Icon iconName="chevron-down" className="text-[10px]" />
