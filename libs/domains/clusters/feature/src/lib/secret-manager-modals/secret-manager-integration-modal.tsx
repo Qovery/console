@@ -103,12 +103,25 @@ export function SecretManagerIntegrationModal({
   }
 
   const handleSubmit = methods.handleSubmit(async (data) => {
-    await onSubmit(getSubmitPayload(data))
-    posthog.capture('cluster-secret-manager-form-submitted', {
-      is_edit: mode === 'edit',
-      secret_manager_type: option.value,
-    })
-    onClose()
+    const integration_mode = isManualOnlyGcpIntegration || isManualOnlyAwsIntegration ? 'manual' : activeTab
+    try {
+      await onSubmit(getSubmitPayload(data))
+      posthog.capture('cluster-secret-manager-form-submitted', {
+        is_edit: mode === 'edit',
+        secret_manager_type: option.value,
+        integration_mode,
+        success: true,
+      })
+      onClose()
+    } catch (error) {
+      posthog.capture('cluster-secret-manager-form-submitted', {
+        is_edit: mode === 'edit',
+        secret_manager_type: option.value,
+        integration_mode,
+        success: false,
+      })
+      throw error
+    }
   })
 
   const manualSections = isGcpManualTabOnGcpSecretManager ? (
