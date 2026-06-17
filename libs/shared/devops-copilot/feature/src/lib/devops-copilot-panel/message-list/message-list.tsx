@@ -82,6 +82,7 @@ export function MessageList({
               plan={plan}
               showPlans={showPlans}
               setShowPlans={setShowPlans}
+              threadId={threadId}
             />
           ))
           .exhaustive()
