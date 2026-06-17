@@ -1,4 +1,5 @@
 import { Link, useParams } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import {
   type ColumnFiltersState,
   type RowSelectionState,
@@ -196,6 +197,10 @@ export function ExternalSecretsTab({
 
   const handleOpenAddSecret = useCallback(
     (isFile: boolean) => {
+      posthog.capture('external-secret-add-clicked', {
+        scope,
+        is_file: isFile,
+      })
       openModal({
         content: (
           <AddSecretModal

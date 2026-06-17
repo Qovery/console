@@ -156,17 +156,19 @@ export function AddSecretModal({
         reference: finalReference,
         secretManagerAccessId: selectedSource.value,
       })
-      posthog.capture('external-secret-form-success', {
+      posthog.capture('external-secret-form-submitted', {
         mode,
         scope,
         is_file: isFile,
+        success: true,
       })
       onClose()
     } catch (error) {
-      posthog.capture('external-secret-form-error', {
+      posthog.capture('external-secret-form-submitted', {
         mode,
         scope,
         is_file: isFile,
+        success: false,
       })
       console.error(error)
     }
