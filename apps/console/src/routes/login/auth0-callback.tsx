@@ -17,6 +17,11 @@ type Auth0CallbackSearch = {
   error_description?: string
 }
 
+function isAcceptInvitationReturnTo(returnTo: string) {
+  const pathname = returnTo.split(/[?#]/)[0]?.replace(/\/$/, '')
+  return pathname === '/accept-invitation'
+}
+
 export const Route = createFileRoute('/login/auth0-callback')({
   component: RouteComponent,
   validateSearch: (search: Record<string, unknown>): Auth0CallbackSearch => ({
@@ -52,11 +57,16 @@ function useRedirectIfLogged(connection?: string) {
         return
       }
 
+      const returnTo = consumePendingReturnTo()
+      if (returnTo && isAcceptInvitationReturnTo(returnTo)) {
+        navigate({ href: returnTo })
+        return
+      }
+
       // User has at least 1 organization attached
       if (organizations.length > 0) {
-        const returnTo = consumePendingReturnTo()
         if (returnTo) {
-          navigate({ to: returnTo })
+          navigate({ href: returnTo })
         } else {
           navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
         }
