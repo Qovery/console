@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import { type SecretManagerAccess } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
@@ -155,8 +156,18 @@ export function AddSecretModal({
         reference: finalReference,
         secretManagerAccessId: selectedSource.value,
       })
+      posthog.capture('external-secret-form-success', {
+        mode,
+        scope,
+        is_file: isFile,
+      })
       onClose()
     } catch (error) {
+      posthog.capture('external-secret-form-error', {
+        mode,
+        scope,
+        is_file: isFile,
+      })
       console.error(error)
     }
   })
