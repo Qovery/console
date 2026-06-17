@@ -12,6 +12,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import posthog from 'posthog-js'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { getSecretManagerProvider } from '@qovery/domains/clusters/data-access'
@@ -196,6 +197,10 @@ export function ExternalSecretsTab({
 
   const handleOpenAddSecret = useCallback(
     (isFile: boolean) => {
+      posthog.capture('external-secret-add-clicked', {
+        scope,
+        is_file: isFile,
+      })
       openModal({
         content: (
           <AddSecretModal

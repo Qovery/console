@@ -1,5 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { useEffect } from 'react'
 import { useDeployEnvironment } from '@qovery/domains/environments/feature'
 import { ExternalSecretsTab, SecretManagerFeatureFlagEntryPoint } from '@qovery/domains/variables/feature'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
@@ -16,6 +18,15 @@ function RouteComponent() {
   const { organizationId, projectId, environmentId } = Route.useParams()
   const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   useDocumentTitle('External secrets - Environment')
+
+  useEffect(() => {
+    posthog.capture('external-secrets-tab-accessed', {
+      scope: 'environment',
+      organization_id: organizationId,
+      project_id: projectId,
+      environment_id: environmentId,
+    })
+  }, [organizationId, projectId, environmentId])
 
   const { mutate: deployEnvironment } = useDeployEnvironment({
     projectId,
