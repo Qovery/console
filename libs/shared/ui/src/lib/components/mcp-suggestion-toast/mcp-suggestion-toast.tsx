@@ -192,7 +192,7 @@ export function McpSuggestionPortal() {
               variant="setup"
               title={`Next time, try ${titleAction} with`}
               description={`"${prompt}"`}
-              className="shadow-lg"
+              className="rounded-xl shadow-lg"
               onClose={handleClose}
             />
           </motion.div>
