@@ -1,7 +1,7 @@
 import posthog from 'posthog-js'
 import { useRef, useState } from 'react'
 import { match } from 'ts-pattern'
-import { AnimatedSidePanel, ExternalLink, Icon, InputSearch, LoaderSpinner } from '@qovery/shared/ui'
+import { ExternalLink, Icon, InputSearch, LoaderSpinner, Sheet } from '@qovery/shared/ui'
 import { QOVERY_STATUS_URL } from '@qovery/shared/util-const'
 import { useDebounce, useSupportChat } from '@qovery/shared/util-hooks'
 import { INSTATUS_APP_ID } from '@qovery/shared/util-node-env'
@@ -27,7 +27,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
   const appStatus = data?.find(({ id }) => id === INSTATUS_APP_ID)
 
   return (
-    <AnimatedSidePanel
+    <Sheet
       onClose={onClose}
       // Focus the search input only after the entry animation finishes. Focusing during the
       // slide-in triggers the browser's auto-scroll-into-view behavior, which causes a visible
@@ -135,7 +135,7 @@ export function AssistantPanel({ onClose }: AssistantPanelProps) {
           <div className="h-10"></div>
         )}
       </div>
-    </AnimatedSidePanel>
+    </Sheet>
   )
 }
 

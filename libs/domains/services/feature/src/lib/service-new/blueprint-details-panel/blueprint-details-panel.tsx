@@ -3,7 +3,7 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { type BlueprintItem, type BlueprintReadmeResponse } from 'qovery-typescript-axios'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { AnimatedSidePanel, Badge, Button, ExternalLink, Icon, SuspenseQueryBoundary } from '@qovery/shared/ui'
+import { Badge, Button, ExternalLink, Icon, Sheet, SuspenseQueryBoundary } from '@qovery/shared/ui'
 import { formatCloudProvider, twMerge } from '@qovery/shared/util-js'
 import { useBlueprintCatalogServiceReadme } from '../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 
@@ -168,7 +168,7 @@ function BlueprintDetailsPanelContent({
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 z-overlay bg-background-overlay" />
         <Dialog.Content asChild>
-          <AnimatedSidePanel className="fixed bottom-0 right-0 top-0 z-modal w-[940px] max-w-[calc(100vw-32px)] focus:outline-none">
+          <Sheet className="fixed bottom-0 right-0 top-0 z-modal w-[940px] max-w-[calc(100vw-32px)] focus:outline-none">
             <div className="flex-1 overflow-auto px-6 pb-24 pt-6">
               <div className="mb-8 flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
@@ -229,7 +229,7 @@ function BlueprintDetailsPanelContent({
                 Deploy blueprint
               </Button>
             </div>
-          </AnimatedSidePanel>
+          </Sheet>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

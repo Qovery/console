@@ -2,12 +2,12 @@ import { type HTMLMotionProps, motion, useReducedMotion } from 'framer-motion'
 import { type ForwardedRef, forwardRef, useEffect } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
-export interface AnimatedSidePanelProps extends HTMLMotionProps<'div'> {
+export interface SheetProps extends HTMLMotionProps<'div'> {
   onClose?: () => void
   onEntered?: () => void
 }
 
-export const AnimatedSidePanel = forwardRef<HTMLDivElement, AnimatedSidePanelProps>(function AnimatedSidePanel(
+export const Sheet = forwardRef<HTMLDivElement, SheetProps>(function Sheet(
   { children, className, onAnimationComplete, onClose, onEntered, style, ...props },
   forwardedRef: ForwardedRef<HTMLDivElement>
 ) {
@@ -55,7 +55,7 @@ export const AnimatedSidePanel = forwardRef<HTMLDivElement, AnimatedSidePanelPro
           onEntered?.()
         }
       }}
-      // backfaceVisibility hint forces a dedicated compositor layer so sliding panels
+      // backfaceVisibility hint forces a dedicated compositor layer so sheets
       // do not trigger repaints on sticky content behind them.
       style={{ ...style, backfaceVisibility: 'hidden' }}
       className={twMerge(
@@ -69,4 +69,4 @@ export const AnimatedSidePanel = forwardRef<HTMLDivElement, AnimatedSidePanelPro
   )
 })
 
-export default AnimatedSidePanel
+export default Sheet
