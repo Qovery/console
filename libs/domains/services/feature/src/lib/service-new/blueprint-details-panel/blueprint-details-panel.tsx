@@ -10,7 +10,11 @@ function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) 
   return `qovery-blueprints/${serviceFamily || provider}`
 }
 
-function BlueprintReadmeContent({ children }: { children: string }) {
+interface BlueprintReadmeContentProps {
+  content: string
+}
+
+function BlueprintReadmeContent({ content }: BlueprintReadmeContentProps) {
   return (
     <Markdown
       remarkPlugins={[remarkGfm]}
@@ -61,7 +65,7 @@ function BlueprintReadmeContent({ children }: { children: string }) {
         td: ({ node, ...props }) => <td className="border-b border-r border-neutral px-3 py-2" {...props} />,
       }}
     >
-      {children}
+      {content}
     </Markdown>
   )
 }
@@ -75,7 +79,7 @@ function BlueprintReadmeState({ readme }: { readme?: BlueprintReadmeResponse }) 
     )
   }
 
-  return <BlueprintReadmeContent>{readme.content}</BlueprintReadmeContent>
+  return <BlueprintReadmeContent content={readme.content} />
 }
 
 function BlueprintReadme({
