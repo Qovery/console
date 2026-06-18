@@ -43,13 +43,13 @@ export function SuspenseQueryBoundary({
     <QueryErrorResetBoundary>
       {({ reset }) => (
         <ErrorBoundary
-          fallbackRender={({ resetErrorBoundary }) => (
+          fallbackRender={({ resetErrorBoundary }) =>
             errorFallback ? (
               errorFallback({ resetErrorBoundary, title })
             ) : (
               <SuspenseQueryErrorFallback resetErrorBoundary={resetErrorBoundary} title={title} />
             )
-          )}
+          }
           onReset={reset}
           resetKeys={resetKeys}
         >

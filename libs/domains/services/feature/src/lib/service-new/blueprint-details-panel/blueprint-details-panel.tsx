@@ -1,5 +1,5 @@
-import { useParams } from '@tanstack/react-router'
 import * as Dialog from '@radix-ui/react-dialog'
+import { useParams } from '@tanstack/react-router'
 import { type BlueprintItem, type BlueprintReadmeResponse } from 'qovery-typescript-axios'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -248,11 +248,5 @@ export function BlueprintDetailsPanel({
 }) {
   if (!blueprint) return null
 
-  return (
-    <BlueprintDetailsPanelContent
-      blueprint={blueprint}
-      open={open}
-      onOpenChange={onOpenChange}
-    />
-  )
+  return <BlueprintDetailsPanelContent blueprint={blueprint} open={open} onOpenChange={onOpenChange} />
 }
