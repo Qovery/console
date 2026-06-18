@@ -237,6 +237,12 @@ export function ServiceNew({
   const [searchInput, setSearchInput] = useState('')
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
   const [selectedBlueprint, setSelectedBlueprint] = useState<BlueprintItem | null>(null)
+  const [isBlueprintDetailsOpen, setIsBlueprintDetailsOpen] = useState(false)
+
+  const openBlueprintDetails = (blueprint: BlueprintItem) => {
+    setSelectedBlueprint(blueprint)
+    setIsBlueprintDetailsOpen(true)
+  }
 
   const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
 
@@ -327,7 +333,7 @@ export function ServiceNew({
                   organizationId={organizationId}
                   blueprintSearchInput={blueprintSearchInput}
                   onBlueprintSearchInputChange={setBlueprintSearchInput}
-                  onViewDetails={setSelectedBlueprint}
+                  onViewDetails={openBlueprintDetails}
                 />
               </SuspenseQueryBoundary>
             )}
@@ -443,10 +449,9 @@ export function ServiceNew({
       </div>
       <BlueprintDetailsPanel
         blueprint={selectedBlueprint}
-        open={Boolean(selectedBlueprint)}
-        onOpenChange={(open) => {
-          if (!open) setSelectedBlueprint(null)
-        }}
+        open={isBlueprintDetailsOpen}
+        onOpenChange={setIsBlueprintDetailsOpen}
+        onExitComplete={() => setSelectedBlueprint(null)}
       />
     </>
   )

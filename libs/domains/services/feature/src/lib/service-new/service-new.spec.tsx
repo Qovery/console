@@ -1,7 +1,7 @@
 import { within } from '@testing-library/react'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved } from '@qovery/shared/util-tests'
 import { ServiceNew } from './service-new'
 
 const mockUseFeatureFlagEnabled = jest.fn(() => false)
@@ -184,7 +184,7 @@ describe('ServiceNew', () => {
 
     await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }))
 
-    expect(screen.queryByRole('dialog', { name: 'AWS S3 Bucket' })).not.toBeInTheDocument()
+    await waitForElementToBeRemoved(() => screen.queryByRole('dialog', { name: 'AWS S3 Bucket' }))
   })
 
   it('should hide the blueprint version badge when version is default', async () => {

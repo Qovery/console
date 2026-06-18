@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
+import { type BlueprintItem } from 'qovery-typescript-axios'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseBlueprintCatalogServiceReadmeProps {
   organizationId: string
   provider: string
-  serviceFamily: string
+  serviceFamily: BlueprintItem['serviceFamily']
   serviceVersion: string
   enabled?: boolean
   suspense?: boolean

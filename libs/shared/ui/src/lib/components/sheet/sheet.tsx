@@ -5,13 +5,16 @@ import { twMerge } from '@qovery/shared/util-js'
 export interface SheetProps extends HTMLMotionProps<'div'> {
   onClose?: () => void
   onEntered?: () => void
+  onExited?: () => void
+  open?: boolean
 }
 
 export const Sheet = forwardRef<HTMLDivElement, SheetProps>(function Sheet(
-  { children, className, onAnimationComplete, onClose, onEntered, style, ...props },
+  { children, className, onAnimationComplete, onClose, onEntered, onExited, open, style, ...props },
   forwardedRef: ForwardedRef<HTMLDivElement>
 ) {
   const shouldReduceMotion = useReducedMotion()
+  const closedAnimation = shouldReduceMotion ? { opacity: 0 } : { x: 32, opacity: 0 }
 
   useEffect(() => {
     if (!onClose) return
@@ -45,14 +48,18 @@ export const Sheet = forwardRef<HTMLDivElement, SheetProps>(function Sheet(
     <motion.div
       ref={forwardedRef}
       initial={shouldReduceMotion ? false : { x: 32, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
-      exit={shouldReduceMotion ? { opacity: 0 } : { x: 32, opacity: 0 }}
+      animate={open === undefined || open ? { x: 0, opacity: 1 } : closedAnimation}
+      exit={closedAnimation}
       transition={transition}
       onAnimationComplete={(definition) => {
         onAnimationComplete?.(definition)
 
         if (typeof definition === 'object' && !Array.isArray(definition) && definition.opacity === 1) {
           onEntered?.()
+        }
+
+        if (typeof definition === 'object' && !Array.isArray(definition) && definition.opacity === 0) {
+          onExited?.()
         }
       }}
       // backfaceVisibility hint forces a dedicated compositor layer so sheets

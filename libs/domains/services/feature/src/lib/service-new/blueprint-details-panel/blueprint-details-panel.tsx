@@ -152,10 +152,12 @@ function BlueprintRepositoryBadge({
 function BlueprintDetailsPanelContent({
   blueprint,
   open,
+  onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem
   open: boolean
+  onExitComplete: () => void
   onOpenChange: (open: boolean) => void
 }) {
   const { organizationId = '' } = useParams({ strict: false })
@@ -166,10 +168,14 @@ function BlueprintDetailsPanelContent({
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
-      <Dialog.Portal>
-        <Dialog.Overlay className="fixed inset-0 z-overlay bg-background-overlay" />
-        <Dialog.Content asChild>
-          <Sheet className="fixed bottom-0 right-0 top-0 z-modal w-[940px] max-w-[calc(100vw-32px)] focus:outline-none">
+      <Dialog.Portal forceMount>
+        <Dialog.Overlay forceMount className="fixed inset-0 z-overlay bg-background-overlay" />
+        <Dialog.Content forceMount asChild>
+          <Sheet
+            open={open}
+            onExited={onExitComplete}
+            className="fixed bottom-0 right-0 top-0 z-modal w-[940px] max-w-[calc(100vw-32px)] focus:outline-none"
+          >
             <div className="flex-1 overflow-auto px-6 pb-24 pt-6">
               <div className="mb-8 flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
@@ -240,13 +246,22 @@ function BlueprintDetailsPanelContent({
 export function BlueprintDetailsPanel({
   blueprint,
   open,
+  onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem | null
   open: boolean
+  onExitComplete: () => void
   onOpenChange: (open: boolean) => void
 }) {
   if (!blueprint) return null
 
-  return <BlueprintDetailsPanelContent blueprint={blueprint} open={open} onOpenChange={onOpenChange} />
+  return (
+    <BlueprintDetailsPanelContent
+      blueprint={blueprint}
+      open={open}
+      onExitComplete={onExitComplete}
+      onOpenChange={onOpenChange}
+    />
+  )
 }

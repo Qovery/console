@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { within } from '@testing-library/react'
 import type { BlueprintItem } from 'qovery-typescript-axios'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { BlueprintDetailsPanel } from './blueprint-details-panel'
 
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
@@ -41,13 +41,17 @@ describe('BlueprintDetailsPanel', () => {
   })
 
   it('should not render when no blueprint is selected', () => {
-    renderWithProviders(<BlueprintDetailsPanel blueprint={null} open onOpenChange={jest.fn()} />)
+    renderWithProviders(
+      <BlueprintDetailsPanel blueprint={null} open onOpenChange={jest.fn()} onExitComplete={jest.fn()} />
+    )
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
   it('should render blueprint metadata, repository link and readme content', () => {
-    renderWithProviders(<BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={jest.fn()} />)
+    renderWithProviders(
+      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={jest.fn()} onExitComplete={jest.fn()} />
+    )
 
     const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
 
@@ -80,7 +84,9 @@ describe('BlueprintDetailsPanel', () => {
   it('should render an empty readme state and repository badge when details are unavailable', () => {
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({ data: undefined })
 
-    renderWithProviders(<BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={jest.fn()} />)
+    renderWithProviders(
+      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={jest.fn()} onExitComplete={jest.fn()} />
+    )
 
     const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
 
@@ -95,6 +101,7 @@ describe('BlueprintDetailsPanel', () => {
         blueprint={{ ...blueprint, majorVersions: [{ serviceVersion: 'default', latestTag: 'aws/s3/default/1.0.0' }] }}
         open
         onOpenChange={jest.fn()}
+        onExitComplete={jest.fn()}
       />
     )
 
@@ -107,12 +114,33 @@ describe('BlueprintDetailsPanel', () => {
     const onOpenChange = jest.fn()
 
     const { userEvent } = renderWithProviders(
-      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={onOpenChange} />
+      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={onOpenChange} onExitComplete={jest.fn()} />
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
     expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  it('should call onExitComplete after the close animation', async () => {
+    const onExitComplete = jest.fn()
+    const onOpenChange = jest.fn()
+    const { rerender } = renderWithProviders(
+      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={onOpenChange} onExitComplete={onExitComplete} />
+    )
+
+    rerender(
+      <BlueprintDetailsPanel
+        blueprint={blueprint}
+        open={false}
+        onOpenChange={onOpenChange}
+        onExitComplete={onExitComplete}
+      />
+    )
+
+    await waitFor(() => {
+      expect(onExitComplete).toHaveBeenCalled()
+    })
   })
 
   afterEach(() => {
