@@ -1,11 +1,11 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { GcpKmsKey } from './gcp-kms-key'
+import { GkeKmsKey } from './gke-kms-key'
 
-describe('GcpKmsKey', () => {
+describe('GkeKmsKey', () => {
   describe('fromDetail mode', () => {
     it('renders disabled toggle when kmsKeyValue is not provided', () => {
-      renderWithProviders(wrapWithReactHookForm(<GcpKmsKey fromDetail />))
+      renderWithProviders(wrapWithReactHookForm(<GkeKmsKey fromDetail />))
 
       expect(screen.getByTestId('input-toggle')).toHaveClass('opacity-50')
     })
@@ -13,9 +13,9 @@ describe('GcpKmsKey', () => {
     it('renders enabled toggle when kmsKeyValue is provided', () => {
       renderWithProviders(
         wrapWithReactHookForm(
-          <GcpKmsKey
+          <GkeKmsKey
             fromDetail
-            kmsKeyValue="projects/my-project/locations/us-central1/keyRings/my-ring/cryptoKeys/my-key"
+            gkeKmsKeyValue="projects/my-project/locations/us-central1/keyRings/my-ring/cryptoKeys/my-key"
           />
         )
       )
@@ -30,7 +30,7 @@ describe('GcpKmsKey', () => {
 
     it('does not show KMS key input when toggle is disabled', () => {
       renderWithProviders(
-        wrapWithReactHookForm(<GcpKmsKey />, {
+        wrapWithReactHookForm(<GkeKmsKey />, {
           defaultValues: { gke_kms_key: { enabled: false } },
         })
       )
@@ -40,7 +40,7 @@ describe('GcpKmsKey', () => {
 
     it('shows KMS key input when toggle is enabled', () => {
       renderWithProviders(
-        wrapWithReactHookForm(<GcpKmsKey />, {
+        wrapWithReactHookForm(<GkeKmsKey />, {
           defaultValues: { gke_kms_key: { enabled: true } },
         })
       )
@@ -49,14 +49,14 @@ describe('GcpKmsKey', () => {
     })
 
     it('always shows documentation link', () => {
-      renderWithProviders(wrapWithReactHookForm(<GcpKmsKey />))
+      renderWithProviders(wrapWithReactHookForm(<GkeKmsKey />))
 
       expect(screen.getByText('Documentation link')).toBeInTheDocument()
     })
 
     it('shows required validation error when key input is blurred empty', async () => {
       const { userEvent } = renderWithProviders(
-        wrapWithReactHookForm(<GcpKmsKey />, {
+        wrapWithReactHookForm(<GkeKmsKey />, {
           defaultValues: { gke_kms_key: { enabled: true } },
         })
       )
@@ -70,7 +70,7 @@ describe('GcpKmsKey', () => {
 
     it('shows pattern validation error for invalid KMS key format', async () => {
       const { userEvent } = renderWithProviders(
-        wrapWithReactHookForm(<GcpKmsKey />, {
+        wrapWithReactHookForm(<GkeKmsKey />, {
           defaultValues: { gke_kms_key: { enabled: true } },
         })
       )
@@ -90,7 +90,7 @@ describe('GcpKmsKey', () => {
 
     it('hides KMS key input after toggling off', async () => {
       const { userEvent } = renderWithProviders(
-        wrapWithReactHookForm(<GcpKmsKey />, {
+        wrapWithReactHookForm(<GkeKmsKey />, {
           defaultValues: { gke_kms_key: { enabled: true } },
         })
       )

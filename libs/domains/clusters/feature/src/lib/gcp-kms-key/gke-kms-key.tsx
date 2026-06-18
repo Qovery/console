@@ -2,14 +2,14 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { ExternalLink, Icon, InputText, InputToggle, Tooltip } from '@qovery/shared/ui'
 
-export interface GcpKmsKeyProps {
+export interface GkeKmsKeyProps {
   fromDetail?: boolean
-  kmsKeyValue?: string | null
 }
 
-export function GcpKmsKey({ fromDetail, kmsKeyValue = null }: GcpKmsKeyProps) {
+export function GkeKmsKey({ fromDetail }: GkeKmsKeyProps) {
   const { control, clearErrors, watch } = useFormContext<ClusterGeneralData>()
   const watchGkeKmsKeyEnabled = watch('gke_kms_key.enabled')
+  const watchGkeKmsKeyValue = watch('gke_kms_key.value')
 
   if (fromDetail) {
     return (
@@ -17,12 +17,12 @@ export function GcpKmsKey({ fromDetail, kmsKeyValue = null }: GcpKmsKeyProps) {
         <InputToggle
           small
           align="top"
-          value={!!kmsKeyValue}
+          value={!!watchGkeKmsKeyValue}
           title={
             <span className="flex items-center gap-1">
-              GCP KMS key
-              {kmsKeyValue && (
-                <Tooltip content={`Your configured KMS key: ${kmsKeyValue}`}>
+              GKE KMS key
+              {watchGkeKmsKeyValue && (
+                <Tooltip content={`Your configured KMS key: ${watchGkeKmsKeyValue}`}>
                   <button
                     type="button"
                     aria-label="More information"
@@ -41,7 +41,7 @@ export function GcpKmsKey({ fromDetail, kmsKeyValue = null }: GcpKmsKeyProps) {
             </span>
           }
           description="Encrypt node boot disks, etcd data, storage buckets and persistent volumes"
-          disabled={!kmsKeyValue}
+          disabled={!watchGkeKmsKeyValue}
         />
       </div>
     )
@@ -63,7 +63,7 @@ export function GcpKmsKey({ fromDetail, kmsKeyValue = null }: GcpKmsKeyProps) {
                 clearErrors('gke_kms_key.value')
               }
             }}
-            title="GCP KMS key"
+            title="GKE KMS key"
             description="Encrypt node boot disks, etcd data, storage buckets and persistent volumes"
           />
         )}
@@ -100,4 +100,4 @@ export function GcpKmsKey({ fromDetail, kmsKeyValue = null }: GcpKmsKeyProps) {
   )
 }
 
-export default GcpKmsKey
+export default GkeKmsKey

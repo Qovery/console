@@ -1,5 +1,6 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { type Cluster, KubernetesEnum } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterFeatureStringResponse, KubernetesEnum } from 'qovery-typescript-axios'
+import { useMemo } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { ClusterGeneralSettings, useCluster, useEditCluster } from '@qovery/domains/clusters/feature'
 import { LabelSetting } from '@qovery/domains/organizations/feature'
@@ -16,7 +17,10 @@ export const Route = createFileRoute(
 const isLabelsFieldVisible = (cluster: Cluster) =>
   cluster.cloud_provider === 'AWS' && cluster.kubernetes !== KubernetesEnum.PARTIALLY_MANAGED
 
-type ClusterFormValues = Omit<Cluster, 'labels_groups'> & { labels_groups: string[] }
+type ClusterFormValues = Omit<Cluster, 'labels_groups'> & {
+  labels_groups: string[]
+  gke_kms_key?: { enabled: boolean; value?: string }
+}
 
 const handleSubmit = (data: ClusterFormValues, cluster: Cluster) => {
   const labels_groups = isLabelsFieldVisible(cluster) ? data.labels_groups.map((id) => ({ id })) : cluster.labels_groups
@@ -36,13 +40,19 @@ function ClusterGeneralSettingsForm({ cluster }: { cluster: Cluster }) {
   const { mutateAsync: editCluster, isLoading: isEditClusterLoading } = useEditCluster()
   const { isQoveryAdminUser } = useUserRole()
 
+  const defaultValues = useMemo<ClusterFormValues>(() => {
+    const kmsKeyValue = (
+      cluster.features?.find((f) => f.id === 'GKE_KMS_KEY')?.value_object as ClusterFeatureStringResponse | undefined
+    )?.value
+    return {
+      ...cluster,
+      labels_groups: cluster.labels_groups?.map((g) => g.id).filter((id): id is string => typeof id === 'string') ?? [],
+      gke_kms_key: kmsKeyValue ? { enabled: true, value: kmsKeyValue } : undefined,
+    }
+  }, [cluster])
   const methods = useForm<ClusterFormValues>({
     mode: 'onChange',
-    defaultValues: {
-      ...cluster,
-      // Form + LabelSetting use string[]; API returns { id }[].
-      labels_groups: cluster.labels_groups?.map((g) => g.id).filter((id): id is string => typeof id === 'string') ?? [],
-    },
+    defaultValues,
   })
 
   const onSubmit = methods.handleSubmit((data) => {

@@ -258,6 +258,13 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
         ) {
           formatFeatures.push(buildGcpNatGatewayFeature())
         }
+
+        if (generalData.cloud_provider === 'GCP' && generalData.gke_kms_key?.enabled) {
+          const kmsValue = generalData.gke_kms_key.value?.trim()
+          if (kmsValue) {
+            formatFeatures.push({ id: 'GKE_KMS_KEY', value: kmsValue })
+          }
+        }
       } else if (generalData.cloud_provider === 'AWS') {
         formatFeatures = [
           {

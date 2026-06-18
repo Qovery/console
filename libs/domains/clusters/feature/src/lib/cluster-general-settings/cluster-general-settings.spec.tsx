@@ -6,7 +6,7 @@ import ClusterGeneralSettings, { type ClusterGeneralSettingsProps } from './clus
 jest.mock('@qovery/shared/iam/feature', () => ({
   ...jest.requireActual('@qovery/shared/iam/feature'),
   useUserRole: () => ({
-    isQoveryAdminUser: false,
+    isQoveryAdminUser: true,
     isQoveryUser: false,
     loading: false,
     roles: [],
@@ -40,5 +40,25 @@ describe('ClusterGeneralSettings', () => {
     expect((name as HTMLInputElement).value).toBe('test')
     expect((description.querySelector('textarea') as HTMLTextAreaElement).value).toBe('test')
     expect(toggle).not.toBeChecked()
+  })
+
+  describe('GKE KMS key component', () => {
+    it('should display for GCP clusters', () => {
+      renderWithProviders(
+        wrapWithReactHookForm<ClusterGeneralData>(<ClusterGeneralSettings {...props} />, {
+          defaultValues: { cloud_provider: 'GCP' },
+        })
+      )
+      expect(screen.getByText('GKE KMS key')).toBeInTheDocument()
+    })
+
+    it('should not display for non-GCP clusters', () => {
+      renderWithProviders(
+        wrapWithReactHookForm<ClusterGeneralData>(<ClusterGeneralSettings {...props} />, {
+          defaultValues: { cloud_provider: 'AWS' },
+        })
+      )
+      expect(screen.queryByText('GKE KMS key')).not.toBeInTheDocument()
+    })
   })
 })
