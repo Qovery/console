@@ -55,6 +55,17 @@ describe('ShowUsageModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should render the AI skills suggestion and info callout', () => {
+    renderWithProviders(wrapWithReactHookForm(<ShowUsageModal {...modalProps} />))
+
+    expect(screen.getByText('Try optimizing your costs with')).toBeInTheDocument()
+    expect(
+      screen.getByText('Install our AI skills and ask your agent to optimize your Qovery costs')
+    ).toBeInTheDocument()
+    expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
+    expect(screen.getByText('The report generation can take a few seconds.')).toBeInTheDocument()
+  })
+
   it('should call onSubmit', async () => {
     const onSubmit = jest.fn((event) => event.preventDefault())
     const reportPeriods = getReportPeriods({ organization: mockOrganization, orgRenewalAt: modalProps.renewalAt })

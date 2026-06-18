@@ -1,88 +1,153 @@
-import { useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
-import { useCopyToClipboard } from '@qovery/shared/util-hooks'
-import AnimatedGradientText from '../animated-gradient-text/animated-gradient-text'
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
+import { type ReactNode, useEffect, useState } from 'react'
+import { twMerge } from '@qovery/shared/util-js'
+import { dismissMcpSuggestionToast, isMcpSuggestionToastDismissed } from '../../utils/mcp-suggestion-toast-storage'
+import { AiToolBadge, DEFAULT_AI_TOOL_NAME } from '../ai-tool-badge/ai-tool-badge'
 import Button from '../button/button'
+import { CopyToClipboardButtonIcon } from '../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
+import { FloatingStackPortal } from '../floating-stack-portal/floating-stack-portal'
 import { Icon } from '../icon/icon'
 
 export const SKILL_INSTALL_COMMAND = 'curl -fsSL https://skill.qovery.com/install.sh | bash'
-
-const DISMISSED_KEY = 'qovery_skill_suggestion_dismissed'
 
 export type McpSuggestionActionType = 'service' | 'environment' | 'cluster' | 'project'
 
 export interface McpSuggestionAction {
   type: McpSuggestionActionType
   name: string
+  serviceType?: string
+  clusterType?: string
+  environmentType?: string
 }
 
-export const AI_TOOL_NAMES = ['Claude', 'Gemini', 'Cursor', 'OpenCode'] as const
+const MCP_SUGGESTION_AUTO_HIDE_MS = 30_000
+const EASE_OUT_QUAD = [0.25, 0.46, 0.45, 0.94] as const
+const EASE_OUT_QUART = [0.165, 0.84, 0.44, 1] as const
+const MCP_SUGGESTION_ENTER_DURATION_SECONDS = 0.34
+const MCP_SUGGESTION_EXIT_DURATION_SECONDS = 0.2
+const MCP_SUGGESTION_SLIDE_OFFSET = 12
 
-const PROMPTS: Record<McpSuggestionActionType, (name: string) => string> = {
-  service: (name) => `Deploy my application "${name}" on Qovery and check its health`,
-  environment: (name) => `Deploy my services to the "${name}" environment on Qovery`,
-  cluster: (name) => `I just provisioned the "${name}" cluster on Qovery, help me deploy my first application`,
-  project: (name) =>
-    `I just created project "${name}" on Qovery, help me structure my environments and deploy my services`,
+function toastMotion(reducedMotion: boolean) {
+  return {
+    initial: reducedMotion ? { opacity: 0 } : { opacity: 0, y: MCP_SUGGESTION_SLIDE_OFFSET },
+    animate: reducedMotion
+      ? { opacity: 1, transition: { duration: MCP_SUGGESTION_ENTER_DURATION_SECONDS, ease: EASE_OUT_QUAD } }
+      : { opacity: 1, y: 0, transition: { duration: MCP_SUGGESTION_ENTER_DURATION_SECONDS, ease: EASE_OUT_QUART } },
+    exit: reducedMotion
+      ? { opacity: 0, transition: { duration: MCP_SUGGESTION_EXIT_DURATION_SECONDS, ease: EASE_OUT_QUAD } }
+      : {
+          opacity: 0,
+          y: MCP_SUGGESTION_SLIDE_OFFSET,
+          transition: { duration: MCP_SUGGESTION_EXIT_DURATION_SECONDS, ease: EASE_OUT_QUAD },
+        },
+  }
 }
 
-interface McpSuggestionEvent extends McpSuggestionAction {
-  aiName: string
+function McpInstallCommand() {
+  return (
+    <div className="flex items-center justify-between gap-1.5 rounded-md bg-surface-neutral-component py-0.5 pl-2 pr-1">
+      <code className="min-w-0 overflow-x-auto whitespace-nowrap font-mono text-[11px] leading-4 text-neutral">
+        {SKILL_INSTALL_COMMAND}
+      </code>
+      <CopyToClipboardButtonIcon
+        content={SKILL_INSTALL_COMMAND}
+        tooltipContent="Copy install command"
+        className="shrink-0 p-1 text-sm text-neutral-subtle hover:text-neutral"
+      />
+    </div>
+  )
+}
+
+export interface McpSuggestionCardProps {
+  title?: ReactNode
+  description?: ReactNode
+  aiName?: string
+  animatedBadge?: boolean
+  variant?: 'compact' | 'setup'
+  className?: string
+}
+
+export function McpSuggestionCard({
+  title = 'Try deploying with',
+  description,
+  aiName = DEFAULT_AI_TOOL_NAME,
+  animatedBadge = true,
+  variant = 'compact',
+  className,
+}: McpSuggestionCardProps) {
+  return (
+    <div
+      className={twMerge(
+        'flex w-full flex-col gap-3 rounded-md border border-neutral bg-surface-neutral p-3 font-sans',
+        variant === 'setup' && 'p-4',
+        className
+      )}
+    >
+      <div className="flex min-w-0 flex-col gap-0.5">
+        <p className="flex flex-wrap items-center gap-1 text-ssm font-medium text-neutral">
+          <span>{title}</span>
+          <AiToolBadge key={aiName} initialName={aiName} animated={animatedBadge} />
+        </p>
+        {description && <p className="text-ssm text-neutral-subtle">{description}</p>}
+      </div>
+      <McpInstallCommand />
+    </div>
+  )
+}
+
+function formatServiceType(serviceType?: string): string {
+  return serviceType?.toLowerCase().replaceAll('_', ' ') ?? 'service'
+}
+
+function formatClusterType(clusterType?: string): string {
+  return clusterType?.replaceAll('_', ' ') ?? 'Kubernetes'
+}
+
+function formatEnvironmentType(environmentType?: string): string {
+  return environmentType?.toLowerCase().replaceAll('_', ' ') ?? 'environment'
+}
+
+function getIndefiniteArticle(value: string): string {
+  return /^[aeiou]/i.test(value) ? 'an' : 'a'
+}
+
+const PROMPTS: Record<McpSuggestionActionType, (action: McpSuggestionAction) => string> = {
+  service: ({ name, serviceType }) => `Deploy my ${formatServiceType(serviceType)} ${name} on Qovery`,
+  environment: ({ name, environmentType }) => {
+    const formattedEnvironmentType = formatEnvironmentType(environmentType)
+    return `Create ${getIndefiniteArticle(formattedEnvironmentType)} ${formattedEnvironmentType} environment called ${name}`
+  },
+  cluster: ({ clusterType }) => `Deploy my ${formatClusterType(clusterType)} cluster on Qovery`,
+  project: ({ name }) => `Create a project named ${name} in Qovery`,
+}
+
+const TITLE_ACTIONS: Record<McpSuggestionActionType, string> = {
+  service: 'deploying it',
+  environment: 'creating this environment',
+  cluster: 'creating this cluster',
+  project: 'creating this project',
 }
 
 interface McpSuggestionPanelProps {
-  event: McpSuggestionEvent
+  event: McpSuggestionAction
   onClose: () => void
 }
 
-const CAROUSEL_SLOT_S = 2.8
-const CAROUSEL_TOTAL_S = CAROUSEL_SLOT_S * AI_TOOL_NAMES.length
-
 function McpSuggestionPanel({ event, onClose }: McpSuggestionPanelProps) {
-  const [, copyToClipboard] = useCopyToClipboard()
-  const [promptCopied, setPromptCopied] = useState(false)
-  const [cmdCopied, setCmdCopied] = useState(false)
-
-  const prompt = PROMPTS[event.type](event.name)
-
-  const handleCopyPrompt = () => {
-    copyToClipboard(prompt)
-    setPromptCopied(true)
-    setTimeout(() => setPromptCopied(false), 1500)
-  }
-
-  const handleCopyCmd = () => {
-    copyToClipboard(SKILL_INSTALL_COMMAND)
-    setCmdCopied(true)
-    setTimeout(() => setCmdCopied(false), 1500)
-  }
-
-  const initialIndex = Math.max(0, AI_TOOL_NAMES.indexOf(event.aiName as (typeof AI_TOOL_NAMES)[number]))
+  const prompt = PROMPTS[event.type](event)
+  const titleAction = TITLE_ACTIONS[event.type]
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-[500px] rounded-xl border border-neutral-component bg-surface-neutral font-sans shadow-lg">
-      <div className="p-4">
+    <div className="w-full overflow-hidden rounded-lg border border-neutral-component bg-surface-neutral font-sans shadow-lg">
+      <div className="flex flex-col gap-3 p-4">
         <div className="flex items-start justify-between gap-3">
-          <p className="flex flex-wrap items-center gap-1 text-sm font-semibold text-neutral">
-            <Icon iconName="sparkles" iconStyle="regular" className="text-brand" />
-            <span>Next time, ask</span>
-            <span className="inline-grid grid-cols-[max-content] justify-items-center align-middle">
-              {AI_TOOL_NAMES.map((name, i) => {
-                const slot = (i - initialIndex + AI_TOOL_NAMES.length) % AI_TOOL_NAMES.length
-                const delay = slot === 0 ? 0 : -(CAROUSEL_TOTAL_S - slot * CAROUSEL_SLOT_S)
-                return (
-                  <span
-                    key={name}
-                    className="col-start-1 row-start-1 animate-[aiCarousel_11.2s_ease_infinite] opacity-0"
-                    style={{ animationDelay: `${delay}s` }}
-                  >
-                    <AnimatedGradientText className="whitespace-nowrap font-bold">{name}</AnimatedGradientText>
-                  </span>
-                )
-              })}
-            </span>
-            <span>to do it for you:</span>
-          </p>
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <p className="flex flex-wrap items-center gap-1 text-ssm font-medium text-neutral">
+              <span>Next time, try {titleAction} with</span>
+              <AiToolBadge />
+            </p>
+            <p className="break-words text-ssm text-neutral-subtle">"{prompt}"</p>
+          </div>
           <Button
             type="button"
             size="xs"
@@ -97,43 +162,7 @@ function McpSuggestionPanel({ event, onClose }: McpSuggestionPanelProps) {
           </Button>
         </div>
 
-        <div className="mt-3">
-          <p className="mb-1 text-xs text-neutral-subtle">Example prompt</p>
-          <div className="flex items-start gap-2 rounded-lg bg-surface-neutral-component px-3 py-2">
-            <p className="flex-1 text-ssm italic text-neutral">"{prompt}"</p>
-            <Button
-              type="button"
-              size="xs"
-              variant="plain"
-              color="neutral"
-              iconOnly
-              aria-label="Copy prompt"
-              className="mt-0.5 shrink-0 text-neutral-subtle hover:bg-transparent hover:text-neutral"
-              onClick={handleCopyPrompt}
-            >
-              <Icon iconName={promptCopied ? 'check' : 'copy'} iconStyle="regular" />
-            </Button>
-          </div>
-        </div>
-
-        <div className="mt-2">
-          <p className="mb-1 text-xs text-neutral-subtle">Install Qovery skills</p>
-          <div className="flex items-center gap-2 rounded-lg bg-surface-neutral-component px-3 py-1.5">
-            <code className="flex-1 truncate font-mono text-xs text-neutral">{SKILL_INSTALL_COMMAND}</code>
-            <Button
-              type="button"
-              size="xs"
-              variant="plain"
-              color="neutral"
-              iconOnly
-              aria-label="Copy install command"
-              className="shrink-0 text-neutral-subtle hover:bg-transparent hover:text-neutral"
-              onClick={handleCopyCmd}
-            >
-              <Icon iconName={cmdCopied ? 'check' : 'copy'} iconStyle="regular" />
-            </Button>
-          </div>
-        </div>
+        <McpInstallCommand />
       </div>
     </div>
   )
@@ -141,31 +170,54 @@ function McpSuggestionPanel({ event, onClose }: McpSuggestionPanelProps) {
 
 interface PortalState {
   visible: boolean
-  event: McpSuggestionEvent
+  event: McpSuggestionAction
 }
 
 export function McpSuggestionPortal() {
+  const reducedMotion = useReducedMotion()
+  const [isPortalMounted, setIsPortalMounted] = useState(false)
   const [state, setState] = useState<PortalState>({
     visible: false,
-    event: { type: 'service', name: '', aiName: 'Claude' },
+    event: { type: 'service', name: '' },
   })
 
   useEffect(() => {
     const handler = (e: Event) => {
-      const ev = e as CustomEvent<McpSuggestionEvent>
-      if (localStorage.getItem(DISMISSED_KEY)) return
+      const ev = e as CustomEvent<McpSuggestionAction>
+      if (isMcpSuggestionToastDismissed()) return
+      setIsPortalMounted(true)
       setState({ visible: true, event: ev.detail })
     }
     window.addEventListener('qovery:skill-suggestion', handler)
     return () => window.removeEventListener('qovery:skill-suggestion', handler)
   }, [])
 
+  useEffect(() => {
+    if (!state.visible) return
+
+    const timeout = window.setTimeout(() => {
+      setState((s) => ({ ...s, visible: false }))
+    }, MCP_SUGGESTION_AUTO_HIDE_MS)
+
+    return () => window.clearTimeout(timeout)
+  }, [state.event, state.visible])
+
   const handleClose = () => {
-    localStorage.setItem(DISMISSED_KEY, '1')
+    dismissMcpSuggestionToast()
     setState((s) => ({ ...s, visible: false }))
   }
 
-  if (!state.visible) return null
+  if (!isPortalMounted) return null
 
-  return createPortal(<McpSuggestionPanel event={state.event} onClose={handleClose} />, document.body)
+  return (
+    <FloatingStackPortal position="bottom">
+      <AnimatePresence onExitComplete={() => setIsPortalMounted(false)}>
+        {state.visible && (
+          <motion.div key="mcp-suggestion-toast" className="w-full" {...toastMotion(!!reducedMotion)}>
+            <McpSuggestionPanel event={state.event} onClose={handleClose} />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </FloatingStackPortal>
+  )
 }

@@ -17,23 +17,23 @@ export default Story
 export const HighlightDetails = {
   render: () => (
     <DescriptionList.Root>
-        <DescriptionList.Term>Name:</DescriptionList.Term>
-        <DescriptionList.Details>Foobar</DescriptionList.Details>
+      <DescriptionList.Term>Name:</DescriptionList.Term>
+      <DescriptionList.Details>Foobar</DescriptionList.Details>
 
-        <DescriptionList.Term>Version:</DescriptionList.Term>
-        <DescriptionList.Details>1.2.3</DescriptionList.Details>
-      </DescriptionList.Root>
+      <DescriptionList.Term>Version:</DescriptionList.Term>
+      <DescriptionList.Details>1.2.3</DescriptionList.Details>
+    </DescriptionList.Root>
   ),
 }
 
 export const HighlightTerm = {
   render: () => (
     <DescriptionList.Root hightlight="term">
-        <DescriptionList.Term>Name:</DescriptionList.Term>
-        <DescriptionList.Details>Foobar</DescriptionList.Details>
+      <DescriptionList.Term>Name:</DescriptionList.Term>
+      <DescriptionList.Details>Foobar</DescriptionList.Details>
 
-        <DescriptionList.Term>Version:</DescriptionList.Term>
-        <DescriptionList.Details>1.2.3</DescriptionList.Details>
-      </DescriptionList.Root>
+      <DescriptionList.Term>Version:</DescriptionList.Term>
+      <DescriptionList.Details>1.2.3</DescriptionList.Details>
+    </DescriptionList.Root>
   ),
 }

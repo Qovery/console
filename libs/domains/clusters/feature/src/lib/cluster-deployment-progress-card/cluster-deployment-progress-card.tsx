@@ -3,7 +3,7 @@ import clsx from 'clsx'
 import { type Cluster, type ClusterStatus, type Project } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { useProjects } from '@qovery/domains/projects/feature'
-import { AnimatedGradientText, Icon, Link, LogoIcon } from '@qovery/shared/ui'
+import { AnimatedGradientText, FloatingStackPortal, Icon, Link, LogoIcon } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useDeploymentProgress } from './use-deployment-progress'
 
@@ -23,15 +23,17 @@ export function ClusterDeploymentProgressCard({
   if (!clusters.length) return null
 
   return (
-    <div className="fixed bottom-5 right-4 w-96 max-w-full overflow-hidden rounded-xl border border-neutral bg-surface-neutral shadow-md">
-      <AccordionPrimitive.Root type="multiple" className="w-full">
-        {clusters.map((cluster) => {
-          const clusterStatus = clusterStatuses.find(({ cluster_id }) => cluster_id === cluster.id)
+    <FloatingStackPortal position="top">
+      <div className="w-96 max-w-full overflow-hidden rounded-xl border border-neutral bg-surface-neutral shadow-md">
+        <AccordionPrimitive.Root type="multiple" className="w-full">
+          {clusters.map((cluster) => {
+            const clusterStatus = clusterStatuses.find(({ cluster_id }) => cluster_id === cluster.id)
 
-          return <Item key={cluster.id} cluster={cluster} clusterStatus={clusterStatus} project={projects[0]} />
-        })}
-      </AccordionPrimitive.Root>
-    </div>
+            return <Item key={cluster.id} cluster={cluster} clusterStatus={clusterStatus} project={projects[0]} />
+          })}
+        </AccordionPrimitive.Root>
+      </div>
+    </FloatingStackPortal>
   )
 }
 

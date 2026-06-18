@@ -14,7 +14,7 @@ export function useCreateEnvironment() {
       queryClient.invalidateQueries({
         queryKey: queries.projects.environmentsOverview({ projectId }).queryKey,
       })
-      showMcpSuggestionToast({ type: 'environment', name: data.name })
+      showMcpSuggestionToast({ type: 'environment', name: data.name, environmentType: data.mode })
     },
     meta: {
       notifyOnSuccess: {
