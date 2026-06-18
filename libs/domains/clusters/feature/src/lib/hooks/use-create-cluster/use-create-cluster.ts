@@ -7,11 +7,11 @@ export function useCreateCluster() {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.createCluster, {
-    onSuccess(data, { organizationId, clusterRequest }) {
+    onSuccess(data, { organizationId }) {
       queryClient.invalidateQueries({
         queryKey: queries.clusters.list({ organizationId }).queryKey,
       })
-      showMcpSuggestionToast({ type: 'cluster', name: data.name, clusterType: clusterRequest.cloud_provider })
+      showMcpSuggestionToast({ type: 'cluster', name: data.name, clusterType: data.cloud_provider })
     },
     meta: {
       notifyOnSuccess: {
