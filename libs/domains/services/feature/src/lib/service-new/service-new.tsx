@@ -443,7 +443,6 @@ export function ServiceNew({
       </div>
       <BlueprintDetailsPanel
         blueprint={selectedBlueprint}
-        organizationId={organizationId}
         open={Boolean(selectedBlueprint)}
         onOpenChange={(open) => {
           if (!open) setSelectedBlueprint(null)

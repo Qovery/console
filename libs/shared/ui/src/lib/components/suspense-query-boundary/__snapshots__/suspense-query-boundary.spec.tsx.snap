@@ -53,7 +53,7 @@ exports[`SuspenseQueryBoundary should render the default suspense fallback 1`] =
     />
     Loading 
     catalog
-    ...
+    …
   </div>
 </div>
 `;

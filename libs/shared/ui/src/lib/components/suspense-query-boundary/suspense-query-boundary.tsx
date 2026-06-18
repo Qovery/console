@@ -1,5 +1,5 @@
 import { QueryErrorResetBoundary } from '@tanstack/react-query'
-import { type ReactNode, Suspense } from 'react'
+import { type PropsWithChildren, type ReactNode, Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { Button } from '../button/button'
 import { Icon } from '../icon/icon'
@@ -8,7 +8,7 @@ function SuspenseQueryFallback({ title }: { title: string }) {
   return (
     <div className="flex min-h-[240px] items-center justify-center gap-2 text-sm text-neutral-subtle">
       <Icon iconName="loader" className="animate-spin" />
-      Loading {title}...
+      Loading {title}…
     </div>
   )
 }
@@ -25,8 +25,7 @@ function SuspenseQueryErrorFallback({ resetErrorBoundary, title }: { resetErrorB
   )
 }
 
-export interface SuspenseQueryBoundaryProps {
-  children: ReactNode
+export interface SuspenseQueryBoundaryProps extends PropsWithChildren {
   fallback?: ReactNode
   errorFallback?: (props: { resetErrorBoundary: () => void; title: string }) => ReactNode
   resetKeys: unknown[]
@@ -45,13 +44,11 @@ export function SuspenseQueryBoundary({
       {({ reset }) => (
         <ErrorBoundary
           fallbackRender={({ resetErrorBoundary }) => (
-            <>
-              {errorFallback ? (
-                errorFallback({ resetErrorBoundary, title })
-              ) : (
-                <SuspenseQueryErrorFallback resetErrorBoundary={resetErrorBoundary} title={title} />
-              )}
-            </>
+            errorFallback ? (
+              errorFallback({ resetErrorBoundary, title })
+            ) : (
+              <SuspenseQueryErrorFallback resetErrorBoundary={resetErrorBoundary} title={title} />
+            )
           )}
           onReset={reset}
           resetKeys={resetKeys}

@@ -13,6 +13,7 @@ const blueprintReadmeResponse = {
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: 'org-1' }),
 }))
 
 jest.mock('posthog-js', () => ({

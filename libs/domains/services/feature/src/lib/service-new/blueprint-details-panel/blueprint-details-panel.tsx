@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import * as Dialog from '@radix-ui/react-dialog'
 import { type BlueprintItem, type BlueprintReadmeResponse } from 'qovery-typescript-axios'
 import Markdown from 'react-markdown'
@@ -149,15 +150,14 @@ function BlueprintRepositoryBadge({
 
 function BlueprintDetailsPanelContent({
   blueprint,
-  organizationId,
   open,
   onOpenChange,
 }: {
   blueprint: BlueprintItem
-  organizationId: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
+  const { organizationId = '' } = useParams({ strict: false })
   const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? ''
   const shouldDisplayServiceVersion = serviceVersion && serviceVersion !== 'default'
 
@@ -173,7 +173,7 @@ function BlueprintDetailsPanelContent({
               <div className="mb-8 flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
                   <Dialog.Title className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral">
-                    <img className="h-8 w-8 rounded" src={blueprint.icon} alt="" aria-hidden="true" />
+                    <img className="h-8 w-8 rounded" src={blueprint.icon} alt={blueprint.name} aria-hidden="true" />
                     <span>{blueprint.name}</span>
                   </Dialog.Title>
                   <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
@@ -238,12 +238,10 @@ function BlueprintDetailsPanelContent({
 
 export function BlueprintDetailsPanel({
   blueprint,
-  organizationId,
   open,
   onOpenChange,
 }: {
   blueprint: BlueprintItem | null
-  organizationId: string
   open: boolean
   onOpenChange: (open: boolean) => void
 }) {
@@ -252,7 +250,6 @@ export function BlueprintDetailsPanel({
   return (
     <BlueprintDetailsPanelContent
       blueprint={blueprint}
-      organizationId={organizationId}
       open={open}
       onOpenChange={onOpenChange}
     />

@@ -37,7 +37,7 @@ describe('SuspenseQueryBoundary', () => {
       </SuspenseQueryBoundary>
     )
 
-    expect(screen.getByText('Loading catalog...')).toBeInTheDocument()
+    expect(screen.getByText('Loading catalog…')).toBeInTheDocument()
     expect(container).toMatchSnapshot()
   })
 
