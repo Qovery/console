@@ -4,9 +4,10 @@ import { type BlueprintItem, type BlueprintReadmeResponse } from 'qovery-typescr
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { formatCloudProvider } from '@qovery/domains/clusters/data-access'
-import { Badge, Button, ExternalLink, Icon, Sheet, SuspenseQueryBoundary } from '@qovery/shared/ui'
+import { Badge, Button, ExternalLink, Icon, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useBlueprintCatalogServiceReadme } from '../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
+import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 
 function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) {
   return `qovery-blueprints/${serviceFamily || provider}`
@@ -205,7 +206,7 @@ function BlueprintDetailsPanelContent({
               </div>
 
               <div className="rounded border border-neutral bg-surface-neutral p-5">
-                <SuspenseQueryBoundary
+                <BlueprintQueryBoundary
                   resetKeys={[organizationId, blueprint.provider, blueprint.serviceFamily, serviceVersion]}
                   title="blueprint details"
                 >
@@ -214,7 +215,7 @@ function BlueprintDetailsPanelContent({
                     organizationId={organizationId}
                     serviceVersion={serviceVersion}
                   />
-                </SuspenseQueryBoundary>
+                </BlueprintQueryBoundary>
               </div>
             </div>
 

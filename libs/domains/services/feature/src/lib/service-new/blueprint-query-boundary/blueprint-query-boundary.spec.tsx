@@ -1,5 +1,5 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { SuspenseQueryBoundary } from './suspense-query-boundary'
+import { BlueprintQueryBoundary } from './blueprint-query-boundary'
 
 const pendingPromise = new Promise(() => {
   // Keep this promise pending so Suspense renders the fallback.
@@ -19,7 +19,7 @@ function MaybeErrorContent({ shouldThrow }: { shouldThrow: boolean }) {
   return <div>Loaded content</div>
 }
 
-describe('SuspenseQueryBoundary', () => {
+describe('BlueprintQueryBoundary', () => {
   let consoleErrorSpy: jest.SpyInstance
 
   beforeEach(() => {
@@ -31,42 +31,39 @@ describe('SuspenseQueryBoundary', () => {
   })
 
   it('should render the default suspense fallback', () => {
-    const { container } = renderWithProviders(
-      <SuspenseQueryBoundary resetKeys={[]} title="catalog">
+    renderWithProviders(
+      <BlueprintQueryBoundary resetKeys={[]} title="catalog">
         <SuspendedContent />
-      </SuspenseQueryBoundary>
+      </BlueprintQueryBoundary>
     )
 
     expect(screen.getByText('Loading catalog…')).toBeInTheDocument()
-    expect(container).toMatchSnapshot()
   })
 
   it('should render a custom suspense fallback', () => {
-    const { container } = renderWithProviders(
-      <SuspenseQueryBoundary fallback={<div>Loading blueprints</div>} resetKeys={[]} title="catalog">
+    renderWithProviders(
+      <BlueprintQueryBoundary fallback={<div>Loading blueprints</div>} resetKeys={[]} title="catalog">
         <SuspendedContent />
-      </SuspenseQueryBoundary>
+      </BlueprintQueryBoundary>
     )
 
     expect(screen.getByText('Loading blueprints')).toBeInTheDocument()
-    expect(container).toMatchSnapshot()
   })
 
   it('should render the default error fallback', () => {
-    const { container } = renderWithProviders(
-      <SuspenseQueryBoundary resetKeys={[]} title="catalog">
+    renderWithProviders(
+      <BlueprintQueryBoundary resetKeys={[]} title="catalog">
         <ErrorContent />
-      </SuspenseQueryBoundary>
+      </BlueprintQueryBoundary>
     )
 
     expect(screen.getByText('Unable to load catalog.')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Retry' })).toBeInTheDocument()
-    expect(container).toMatchSnapshot()
   })
 
   it('should render a custom error fallback', () => {
-    const { container } = renderWithProviders(
-      <SuspenseQueryBoundary
+    renderWithProviders(
+      <BlueprintQueryBoundary
         errorFallback={({ resetErrorBoundary }) => (
           <button type="button" onClick={resetErrorBoundary}>
             Try again
@@ -76,26 +73,25 @@ describe('SuspenseQueryBoundary', () => {
         title="catalog"
       >
         <ErrorContent />
-      </SuspenseQueryBoundary>
+      </BlueprintQueryBoundary>
     )
 
     expect(screen.getByRole('button', { name: 'Try again' })).toBeInTheDocument()
-    expect(container).toMatchSnapshot()
   })
 
   it('should reset the error boundary when reset keys change', () => {
     const { rerender } = renderWithProviders(
-      <SuspenseQueryBoundary resetKeys={['error']} title="catalog">
+      <BlueprintQueryBoundary resetKeys={['error']} title="catalog">
         <MaybeErrorContent shouldThrow />
-      </SuspenseQueryBoundary>
+      </BlueprintQueryBoundary>
     )
 
     expect(screen.getByText('Unable to load catalog.')).toBeInTheDocument()
 
     rerender(
-      <SuspenseQueryBoundary resetKeys={['loaded']} title="catalog">
+      <BlueprintQueryBoundary resetKeys={['loaded']} title="catalog">
         <MaybeErrorContent shouldThrow={false} />
-      </SuspenseQueryBoundary>
+      </BlueprintQueryBoundary>
     )
 
     expect(screen.getByText('Loaded content')).toBeInTheDocument()

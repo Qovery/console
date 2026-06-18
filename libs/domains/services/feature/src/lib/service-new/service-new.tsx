@@ -6,20 +6,12 @@ import {
   type LifecycleTemplateListResponseResultsInner,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
-import {
-  Button,
-  ExternalLink,
-  Heading,
-  Icon,
-  InputSearch,
-  Section,
-  Skeleton,
-  SuspenseQueryBoundary,
-} from '@qovery/shared/ui'
+import { Button, ExternalLink, Heading, Icon, InputSearch, Section, Skeleton } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { BlueprintDetailsPanel } from './blueprint-details-panel/blueprint-details-panel'
+import { BlueprintQueryBoundary } from './blueprint-query-boundary/blueprint-query-boundary'
 import { Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
 import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
 import { serviceTemplates } from './service-templates'
@@ -323,7 +315,7 @@ export function ServiceNew({
               </div>
             </Section>
             {isServiceCatalogEnabled && (
-              <SuspenseQueryBoundary
+              <BlueprintQueryBoundary
                 errorFallback={BlueprintSectionErrorFallback}
                 fallback={<BlueprintSectionFallback />}
                 resetKeys={[organizationId, isServiceCatalogEnabled]}
@@ -335,7 +327,7 @@ export function ServiceNew({
                   onBlueprintSearchInputChange={setBlueprintSearchInput}
                   onViewDetails={openBlueprintDetails}
                 />
-              </SuspenseQueryBoundary>
+              </BlueprintQueryBoundary>
             )}
             <SectionByTag
               title="Data & Storage"

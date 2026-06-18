@@ -1,10 +1,9 @@
 import { QueryErrorResetBoundary } from '@tanstack/react-query'
 import { type PropsWithChildren, type ReactNode, Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { Button } from '../button/button'
-import { Icon } from '../icon/icon'
+import { Button, Icon } from '@qovery/shared/ui'
 
-function SuspenseQueryFallback({ title }: { title: string }) {
+function BlueprintQueryFallback({ title }: { title: string }) {
   return (
     <div className="flex min-h-[240px] items-center justify-center gap-2 text-sm text-neutral-subtle">
       <Icon iconName="loader" className="animate-spin" />
@@ -13,7 +12,7 @@ function SuspenseQueryFallback({ title }: { title: string }) {
   )
 }
 
-function SuspenseQueryErrorFallback({ resetErrorBoundary, title }: { resetErrorBoundary: () => void; title: string }) {
+function BlueprintQueryErrorFallback({ resetErrorBoundary, title }: { resetErrorBoundary: () => void; title: string }) {
   return (
     <div className="flex min-h-[240px] flex-col items-center justify-center gap-3 text-sm text-neutral-subtle">
       <span>Unable to load {title}.</span>
@@ -25,20 +24,20 @@ function SuspenseQueryErrorFallback({ resetErrorBoundary, title }: { resetErrorB
   )
 }
 
-export interface SuspenseQueryBoundaryProps extends PropsWithChildren {
+export interface BlueprintQueryBoundaryProps extends PropsWithChildren {
   fallback?: ReactNode
   errorFallback?: (props: { resetErrorBoundary: () => void; title: string }) => ReactNode
   resetKeys: unknown[]
   title: string
 }
 
-export function SuspenseQueryBoundary({
+export function BlueprintQueryBoundary({
   children,
   fallback,
   errorFallback,
   resetKeys,
   title,
-}: SuspenseQueryBoundaryProps) {
+}: BlueprintQueryBoundaryProps) {
   return (
     <QueryErrorResetBoundary>
       {({ reset }) => (
@@ -47,17 +46,15 @@ export function SuspenseQueryBoundary({
             errorFallback ? (
               errorFallback({ resetErrorBoundary, title })
             ) : (
-              <SuspenseQueryErrorFallback resetErrorBoundary={resetErrorBoundary} title={title} />
+              <BlueprintQueryErrorFallback resetErrorBoundary={resetErrorBoundary} title={title} />
             )
           }
           onReset={reset}
           resetKeys={resetKeys}
         >
-          <Suspense fallback={fallback ?? <SuspenseQueryFallback title={title} />}>{children}</Suspense>
+          <Suspense fallback={fallback ?? <BlueprintQueryFallback title={title} />}>{children}</Suspense>
         </ErrorBoundary>
       )}
     </QueryErrorResetBoundary>
   )
 }
-
-export default SuspenseQueryBoundary
