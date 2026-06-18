@@ -225,8 +225,8 @@ function StepFeaturesForm({
                   const natGatewayFeature = features.find(({ id }) => id === 'NAT_GATEWAY')
                   const hasMergedStaticIpNatGateway = Boolean(staticIpFeature && natGatewayFeature)
                   const remainingFeatures = hasMergedStaticIpNatGateway
-                    ? features.filter(({ id }) => id !== 'STATIC_IP' && id !== 'NAT_GATEWAY')
-                    : features
+                    ? features.filter(({ id }) => id !== 'STATIC_IP' && id !== 'NAT_GATEWAY' && id !== 'GKE_KMS_KEY')
+                    : features.filter(({ id }) => id !== 'GKE_KMS_KEY')
 
                   return (
                     <>

@@ -512,6 +512,7 @@ export function ClusterNetworkSettings({ organizationId, clusterId }: ClusterNet
   const gcpDisplayFeatures = configuredFeatures.filter(({ id }) => {
     if (id === 'STATIC_IP') return false
     if (id === 'NAT_GATEWAY' && hasGcpStaticIpFeature) return false
+    if (id === 'GKE_KMS_KEY') return false
     return true
   })
   const displayConfiguredFeatures = isGcpCluster ? gcpDisplayFeatures : configuredFeatures
