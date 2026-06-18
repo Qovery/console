@@ -96,15 +96,15 @@ export function McpSuggestionCard({
 }
 
 function formatServiceType(serviceType?: string): string {
-  return serviceType?.toLowerCase().replaceAll('_', ' ') ?? 'service'
+  return serviceType?.toLowerCase().replace(/_/g, ' ') ?? 'service'
 }
 
 function formatClusterType(clusterType?: string): string {
-  return clusterType?.replaceAll('_', ' ') ?? 'Kubernetes'
+  return clusterType?.replace(/_/g, ' ') ?? 'Kubernetes'
 }
 
 function formatEnvironmentType(environmentType?: string): string {
-  return environmentType?.toLowerCase().replaceAll('_', ' ') ?? 'environment'
+  return environmentType?.toLowerCase().replace(/_/g, ' ') ?? 'environment'
 }
 
 function getIndefiniteArticle(value: string): string {
