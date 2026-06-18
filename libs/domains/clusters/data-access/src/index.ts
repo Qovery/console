@@ -11,3 +11,4 @@ export { getSecretManagerProvider } from './lib/secret-manager/get-secret-manage
 export { getReadableSecretManagerProvider } from './lib/secret-manager/get-readable-secret-manager-provider'
 export { getReadableSecretManagerAuth } from './lib/secret-manager/get-readable-secret-manager-auth'
 export { isSameSecretManagerAccess } from './lib/secret-manager/is-same-secret-manager-access'
+export { formatCloudProvider } from './lib/format-cloud-provider/format-cloud-provider'

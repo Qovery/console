@@ -3,8 +3,9 @@ import * as Dialog from '@radix-ui/react-dialog'
 import { type BlueprintItem, type BlueprintReadmeResponse } from 'qovery-typescript-axios'
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
+import { formatCloudProvider } from '@qovery/domains/clusters/data-access'
 import { Badge, Button, ExternalLink, Icon, Sheet, SuspenseQueryBoundary } from '@qovery/shared/ui'
-import { formatCloudProvider, twMerge } from '@qovery/shared/util-js'
+import { twMerge } from '@qovery/shared/util-js'
 import { useBlueprintCatalogServiceReadme } from '../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 
 function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) {
