@@ -12,12 +12,13 @@ describe('GkeKmsKey', () => {
 
     it('renders enabled toggle when kmsKeyValue is provided', () => {
       renderWithProviders(
-        wrapWithReactHookForm(
-          <GkeKmsKey
-            fromDetail
-            gkeKmsKeyValue="projects/my-project/locations/us-central1/keyRings/my-ring/cryptoKeys/my-key"
-          />
-        )
+        wrapWithReactHookForm(<GkeKmsKey fromDetail />, {
+          defaultValues: {
+            gke_kms_key: {
+              value: 'projects/my-project/locations/us-east1/keyRings/my-ring/cryptoKeys/my-key',
+            },
+          },
+        })
       )
 
       expect(screen.getByTestId('input-toggle')).not.toHaveClass('opacity-50')
