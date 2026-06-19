@@ -13,7 +13,12 @@ import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { BlueprintDetailsPanel } from './blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from './blueprint-query-boundary/blueprint-query-boundary'
 import { Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
-import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
+import {
+  buildCreateFlowPathForType,
+  getBlueprintCreateFlowPath,
+  getCreateFlowPath,
+  getServicesPath,
+} from './service-new-utils/service-new-utils'
 import { serviceTemplates } from './service-templates'
 
 const CloudFormationIcon = '/assets/devicon/cloudformation.svg'
@@ -90,12 +95,16 @@ function BlueprintSectionErrorFallback({
 }
 
 function BlueprintSection({
+  environmentId,
   organizationId,
+  projectId,
   blueprintSearchInput,
   onBlueprintSearchInputChange,
   onViewDetails,
 }: {
+  environmentId: string
   organizationId: string
+  projectId: string
   blueprintSearchInput: string
   onBlueprintSearchInputChange: (value: string) => void
   onViewDetails: (blueprint: BlueprintItem) => void
@@ -129,6 +138,12 @@ function BlueprintSection({
             <BlueprintCard
               key={`${blueprint.provider}-${blueprint.serviceFamily}`}
               blueprint={blueprint}
+              deployPath={getServicesPath(
+                organizationId,
+                projectId,
+                environmentId,
+                getBlueprintCreateFlowPath(blueprint.provider, blueprint.serviceFamily ?? blueprint.provider)
+              )}
               onViewDetails={onViewDetails}
             />
           ))}
@@ -322,7 +337,9 @@ export function ServiceNew({
                 title="blueprint catalog"
               >
                 <BlueprintSection
+                  environmentId={environmentId}
                   organizationId={organizationId}
+                  projectId={projectId}
                   blueprintSearchInput={blueprintSearchInput}
                   onBlueprintSearchInputChange={setBlueprintSearchInput}
                   onViewDetails={openBlueprintDetails}
@@ -441,6 +458,19 @@ export function ServiceNew({
       </div>
       <BlueprintDetailsPanel
         blueprint={selectedBlueprint}
+        deployPath={
+          selectedBlueprint
+            ? getServicesPath(
+                organizationId,
+                projectId,
+                environmentId,
+                getBlueprintCreateFlowPath(
+                  selectedBlueprint.provider,
+                  selectedBlueprint.serviceFamily ?? selectedBlueprint.provider
+                )
+              )
+            : ''
+        }
         open={isBlueprintDetailsOpen}
         onOpenChange={setIsBlueprintDetailsOpen}
         onExitComplete={() => setSelectedBlueprint(null)}

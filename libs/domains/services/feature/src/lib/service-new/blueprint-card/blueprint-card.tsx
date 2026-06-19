@@ -1,11 +1,13 @@
 import { type BlueprintItem } from 'qovery-typescript-axios'
-import { Button } from '@qovery/shared/ui'
+import { Button, Link } from '@qovery/shared/ui'
 
 export function BlueprintCard({
   blueprint,
+  deployPath,
   onViewDetails,
 }: {
   blueprint: BlueprintItem
+  deployPath: string
   onViewDetails: (blueprint: BlueprintItem) => void
 }) {
   return (
@@ -18,9 +20,16 @@ export function BlueprintCard({
         </div>
       </div>
       <div className="mt-auto flex items-center gap-1">
-        <Button type="button" variant="outline" color="neutral" size="sm">
+        <Link
+          // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+          to={deployPath}
+          as="button"
+          variant="outline"
+          color="neutral"
+          size="sm"
+        >
           Deploy
-        </Button>
+        </Link>
         <Button type="button" variant="plain" color="neutral" size="sm" onClick={() => onViewDetails(blueprint)}>
           View details
         </Button>

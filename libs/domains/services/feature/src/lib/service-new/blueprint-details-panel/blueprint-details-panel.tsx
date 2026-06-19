@@ -4,7 +4,7 @@ import { type BlueprintItem, type BlueprintReadmeResponse } from 'qovery-typescr
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { formatCloudProvider } from '@qovery/domains/clusters/data-access'
-import { Badge, Button, ExternalLink, Icon, Sheet } from '@qovery/shared/ui'
+import { Badge, Button, ExternalLink, Icon, Link, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { useBlueprintCatalogServiceReadme } from '../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
@@ -153,11 +153,13 @@ function BlueprintRepositoryBadge({
 
 function BlueprintDetailsPanelContent({
   blueprint,
+  deployPath,
   open,
   onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem
+  deployPath: string
   open: boolean
   onExitComplete: () => void
   onOpenChange: (open: boolean) => void
@@ -234,9 +236,15 @@ function BlueprintDetailsPanelContent({
               <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
                 Cancel
               </Button>
-              <Button type="button" color="brand" size="lg">
+              <Link
+                // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+                to={deployPath}
+                as="button"
+                color="brand"
+                size="lg"
+              >
                 Deploy blueprint
-              </Button>
+              </Link>
             </div>
           </Sheet>
         </Dialog.Content>
@@ -247,11 +255,13 @@ function BlueprintDetailsPanelContent({
 
 export function BlueprintDetailsPanel({
   blueprint,
+  deployPath,
   open,
   onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem | null
+  deployPath: string
   open: boolean
   onExitComplete: () => void
   onOpenChange: (open: boolean) => void
@@ -261,6 +271,7 @@ export function BlueprintDetailsPanel({
   return (
     <BlueprintDetailsPanelContent
       blueprint={blueprint}
+      deployPath={deployPath}
       open={open}
       onExitComplete={onExitComplete}
       onOpenChange={onOpenChange}

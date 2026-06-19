@@ -145,7 +145,12 @@ describe('ServiceNew', () => {
     const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
     expect(blueprintsSectionScreen.getByText('AWS S3 Bucket')).toBeInTheDocument()
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
-    expect(blueprintsSectionScreen.getAllByRole('button', { name: 'Deploy' })).toHaveLength(2)
+    const deployLinks = blueprintsSectionScreen.getAllByRole('link', { name: 'Deploy' })
+    expect(deployLinks).toHaveLength(2)
+    expect(deployLinks[0]).toHaveAttribute(
+      'href',
+      '/organization/org-1/project/project-1/environment/env-1/service/create/blueprint/aws/s3'
+    )
 
     await userEvent.type(screen.getByPlaceholderText('Search blueprints...'), 'redis')
 
@@ -181,6 +186,10 @@ describe('ServiceNew', () => {
     expect(within(dialog).getByRole('heading', { name: 'AWS S3 Bucket' })).toBeInTheDocument()
     expect(within(dialog).getByText('AWS')).toBeInTheDocument()
     expect(within(dialog).getByText('v1')).toBeInTheDocument()
+    expect(within(dialog).getByRole('link', { name: 'Deploy blueprint' })).toHaveAttribute(
+      'href',
+      '/organization/org-1/project/project-1/environment/env-1/service/create/blueprint/aws/s3'
+    )
 
     await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }))
 
