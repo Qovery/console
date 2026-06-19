@@ -15,6 +15,7 @@ export interface ClusterGeneralData {
   credentials_name: string
   installation_type: 'MANAGED' | 'SELF_MANAGED' | 'LOCAL_DEMO' | 'PARTIALLY_MANAGED'
   labels_groups?: string[]
+  gke_kms_key?: { enabled: boolean; value?: string }
   metrics_parameters?: {
     enabled?: boolean
     configuration?: {

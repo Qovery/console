@@ -2,6 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { GkeKmsKey } from '../gcp-kms-key/gke-kms-key'
 
 export interface ClusterGeneralSettingsProps {
   fromDetail?: boolean
@@ -77,6 +78,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
           </div>
         )}
       />
+      {isQoveryAdminUser && cloudProvider === 'GCP' && <GkeKmsKey fromDetail={fromDetail} />}
       {fromDetail && isQoveryAdminUser && (
         <>
           <Controller
