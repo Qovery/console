@@ -85,7 +85,7 @@ const RELATED_DOCUMENTATION: { title: string; url: string }[] = [
     url: 'https://www.qovery.com/docs/configuration/clusters/#what-is-a-cluster',
   },
   {
-    title: 'What does the qovery managed cluster offers me?',
+    title: 'What does the qovery managed cluster offer me?',
     url: 'https://www.qovery.com/docs/configuration/clusters/#creating-a-cluster',
   },
   {
