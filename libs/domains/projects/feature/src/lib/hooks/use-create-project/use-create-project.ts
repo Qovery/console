@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/projects/data-access'
-import { showMcpSuggestionToast } from '@qovery/shared/ui'
+import { showMcpSuggestionToast } from '@qovery/shared/mcp-suggestion/feature'
 import { queries } from '@qovery/state/util-queries'
 
 export function useCreateProject({ silently = false } = {}) {

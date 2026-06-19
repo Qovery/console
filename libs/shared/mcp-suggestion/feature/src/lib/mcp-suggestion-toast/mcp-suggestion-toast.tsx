@@ -1,13 +1,12 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { type ReactNode, useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
+import { Button, CopyToClipboardButtonIcon, FloatingStackPortal, Icon } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { dismissMcpSuggestionToast, isMcpSuggestionToastDismissed } from '../../utils/mcp-suggestion-toast-storage'
 import { AiToolBadge } from '../ai-tool-badge/ai-tool-badge'
-import Button from '../button/button'
-import { CopyToClipboardButtonIcon } from '../copy-to-clipboard-button-icon/copy-to-clipboard-button-icon'
-import { FloatingStackPortal } from '../floating-stack-portal/floating-stack-portal'
-import { Icon } from '../icon/icon'
+
+const MCP_SUGGESTION_DISMISSED_KEY = 'qovery_skill_suggestion_dismissed'
 
 export type McpSuggestionAction =
   | { type: 'service'; name: string; serviceType?: string }
@@ -130,6 +129,7 @@ interface PortalState {
 
 export function McpSuggestionPortal() {
   const reducedMotion = useReducedMotion()
+  const [dismissed, setDismissed] = useLocalStorage(MCP_SUGGESTION_DISMISSED_KEY, false)
   const [isPortalMounted, setIsPortalMounted] = useState(false)
   const [state, setState] = useState<PortalState>({
     visible: false,
@@ -139,13 +139,13 @@ export function McpSuggestionPortal() {
   useEffect(() => {
     const handler = (e: Event) => {
       const ev = e as CustomEvent<McpSuggestionAction>
-      if (isMcpSuggestionToastDismissed()) return
+      if (dismissed) return
       setIsPortalMounted(true)
       setState({ visible: true, event: ev.detail })
     }
     window.addEventListener('qovery:skill-suggestion', handler)
     return () => window.removeEventListener('qovery:skill-suggestion', handler)
-  }, [])
+  }, [dismissed])
 
   useEffect(() => {
     if (!state.visible) return
@@ -158,7 +158,7 @@ export function McpSuggestionPortal() {
   }, [state.event, state.visible])
 
   const handleClose = () => {
-    dismissMcpSuggestionToast()
+    setDismissed(true)
     setState((s) => ({ ...s, visible: false }))
   }
 
