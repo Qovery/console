@@ -1,7 +1,8 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useNavigate } from '@tanstack/react-router'
-import { type ServiceLightResponse } from 'qovery-typescript-axios'
+import { type Project, type ServiceLightResponse } from 'qovery-typescript-axios'
 import { useCallback, useMemo, useRef, useState } from 'react'
+import { useProjects, useRecentProjects } from '@qovery/domains/projects/feature'
 import { ServiceAvatar, useFavoriteServices, useRecentServices } from '@qovery/domains/services/feature'
 import { useSetAssistantOpen } from '@qovery/shared/assistant/feature'
 import { IconEnum } from '@qovery/shared/enums'
@@ -74,6 +75,16 @@ const ServiceItem = ({
   )
 }
 
+const ProjectItem = ({ project, onSelect }: { project: Project; onSelect: () => void }) => {
+  const { name } = project
+
+  return (
+    <Command.Item onSelect={onSelect} value={`project-${name}-#${project.id}`} className="w-full">
+      <span className="min-w-0 truncate">{name}</span>
+    </Command.Item>
+  )
+}
+
 export interface SpotlightProps extends Pick<CommandDialogProps, 'open' | 'onOpenChange'> {
   organizationId: string
 }
@@ -84,7 +95,9 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const { openModal } = useModal()
   const setAssistantOpen = useSetAssistantOpen()
   const { data: services = [], isLoading: isLoadingServices } = useServicesSearch({ organizationId })
+  const { data: projects = [], isLoading: isLoadingProjects } = useProjects({ organizationId })
   const [searchInput, setSearchInput] = useState('')
+  const { getRecentProjects, addToRecentProjects } = useRecentProjects({ organizationId })
   const { getRecentServices, addToRecentServices } = useRecentServices({ organizationId })
   const { getFavoriteServices } = useFavoriteServices({ organizationId })
   const [selectedService, setSelectedService] = useState<ServiceLightResponse | undefined>(undefined)
@@ -95,6 +108,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const listRef = useRef<HTMLDivElement | null>(null)
 
   const recentServices = useMemo(() => getRecentServices(), [getRecentServices])
+  const recentProjects = useMemo(() => getRecentProjects(), [getRecentProjects])
   const favoriteServices = useMemo(() => getFavoriteServices(), [getFavoriteServices])
 
   const iconClassName = 'text-brand text-sm text-center w-6'
@@ -149,6 +163,24 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       closeSpotlight()
     },
     [addToRecentServices, closeSpotlight, navigate, organizationId]
+  )
+
+  const navigateToProject = useCallback(
+    (project: Project) => {
+      addToRecentProjects(project)
+      setSelectedService(undefined)
+      setSearchInput('')
+
+      navigate({
+        to: SPOTLIGHT_ROUTES.project,
+        params: {
+          organizationId,
+          projectId: project.id,
+        },
+      })
+      closeSpotlight()
+    },
+    [addToRecentProjects, closeSpotlight, navigate, organizationId]
   )
 
   const settingsItems: Item[] = useMemo(
@@ -227,6 +259,17 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
       .slice(0, 20)
   }, [searchInput, services])
 
+  const filteredProjects = useMemo(() => {
+    if (searchInput === '') return []
+
+    return projects
+      .filter((project) => {
+        if (!project.name) return false
+        return project.name.toLowerCase().includes(searchInput.toLowerCase())
+      })
+      .slice(0, 20)
+  }, [projects, searchInput])
+
   const resetState = useCallback(() => {
     setSelectedService(undefined)
     setSearchInput('')
@@ -286,7 +329,7 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
           />
         </div>
         <Command.List ref={listRef} className="focus:outline-none">
-          {isLoadingServices && <Command.Loading />}
+          {(isLoadingServices || isLoadingProjects) && <Command.Loading />}
           <Command.Empty>
             <div className="px-3 pb-8 pt-6 text-center">
               <Icon iconName="wave-pulse" className="text-neutral-subtle" />
@@ -326,6 +369,21 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
             </>
           )}
 
+          {searchInput.length === 0 && recentProjects.length > 0 && (
+            <>
+              <Command.Group heading="Last project opened">
+                {recentProjects.map((project) => (
+                  <ProjectItem
+                    key={'recent-project-' + project.id}
+                    project={project}
+                    onSelect={() => navigateToProject(project)}
+                  />
+                ))}
+              </Command.Group>
+              <Command.Separator />
+            </>
+          )}
+
           {filteredServices.length > 0 && (
             <>
               <Command.Group heading="Services">
@@ -335,6 +393,21 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
                     service={service}
                     onSelect={() => navigateToService(service)}
                     isFavorite={!!favoriteServices?.find((s) => s.id === service.id)}
+                  />
+                ))}
+              </Command.Group>
+              <Command.Separator />
+            </>
+          )}
+
+          {filteredProjects.length > 0 && (
+            <>
+              <Command.Group heading="Projects">
+                {filteredProjects.map((project) => (
+                  <ProjectItem
+                    key={'project-' + project.id}
+                    project={project}
+                    onSelect={() => navigateToProject(project)}
                   />
                 ))}
               </Command.Group>
