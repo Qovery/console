@@ -13,13 +13,15 @@ interface AssistantMessageProps {
   plan: PlanStep[]
   showPlans: Record<string, boolean>
   setShowPlans: (fn: (prev: Record<string, boolean>) => Record<string, boolean>) => void
+  threadId?: string
 }
 
-function VoteButtons({ messageId }: { messageId: string }) {
+function VoteButtons({ messageId, threadId }: { messageId: string; threadId?: string }) {
   const { respond, response, triggerRef } = useThumbSurvey({
     surveyId: POSTHOG_SURVEY_ID,
     properties: {
-      $ai_trace_id: messageId,
+      $ai_trace_id: threadId ?? messageId,
+      $ai_message_id: messageId,
     },
   })
 
@@ -49,7 +51,7 @@ function VoteButtons({ messageId }: { messageId: string }) {
   )
 }
 
-export function AssistantMessage({ message, plan, showPlans, setShowPlans }: AssistantMessageProps) {
+export function AssistantMessage({ message, plan, showPlans, setShowPlans, threadId }: AssistantMessageProps) {
   const messagePlans = plan.filter((p) => p.messageId === message.id)
   const hasPlan = messagePlans.length > 0
   const isPlanVisible = showPlans[message.id]
@@ -87,7 +89,7 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans }: Ass
         </div>
       )}
       {renderedMarkdown}
-      <VoteButtons messageId={message.id} />
+      <VoteButtons messageId={message.id} threadId={threadId} />
     </div>
   )
 }
