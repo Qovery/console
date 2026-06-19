@@ -3,7 +3,7 @@ import { type OrganizationCurrentCost } from 'qovery-typescript-axios'
 import { type Organization } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
-import { Callout, Icon, InputSelect, InputText, McpSuggestionCard, ModalCrud, useModal } from '@qovery/shared/ui'
+import { Callout, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 import { setDayOfTheMonth } from '@qovery/shared/util-dates'
 import { useGenerateBillingUsageReport } from '../../hooks/use-generate-billing-usage-report/use-generate-billing-usage-report'
 import { useOrganization } from '../../hooks/use-organization/use-organization'
@@ -112,13 +112,6 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
       onClose={onClose}
       loading={loading}
     >
-      <McpSuggestionCard
-        className="mb-5"
-        title="Try optimizing your costs with"
-        description="Install our AI skills and ask your agent to optimize your Qovery costs"
-        aiName="Claude"
-      />
-      <p className="mb-2 text-ssm font-medium text-neutral-subtle">Or create a report</p>
       <Controller
         name="report_period"
         control={control}

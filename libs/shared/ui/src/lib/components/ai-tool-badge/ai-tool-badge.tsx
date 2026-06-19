@@ -1,11 +1,9 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { type CSSProperties, useEffect, useState } from 'react'
 
-export const AI_TOOL_NAMES = ['Claude', 'Cursor', 'Codex', 'Opencode', 'Gemini'] as const
+const AI_TOOL_NAMES = ['Claude', 'Cursor', 'Codex', 'Opencode', 'Gemini'] as const
 
-export type AiToolName = (typeof AI_TOOL_NAMES)[number]
-
-const DEFAULT_AI_TOOL_NAME: AiToolName = AI_TOOL_NAMES[0]
+type AiToolName = (typeof AI_TOOL_NAMES)[number]
 
 interface AiToolBadgeConfig {
   name: AiToolName
@@ -68,16 +66,9 @@ const AI_TOOL_BADGES: Record<AiToolName, AiToolBadgeConfig> = {
   },
 }
 
-export interface AiToolBadgeProps {
-  initialName?: string
-}
-
-export function AiToolBadge({ initialName = DEFAULT_AI_TOOL_NAME }: AiToolBadgeProps) {
+export function AiToolBadge() {
   const reducedMotion = useReducedMotion()
-  const initialToolName = AI_TOOL_NAMES.includes(initialName as AiToolName)
-    ? (initialName as AiToolName)
-    : DEFAULT_AI_TOOL_NAME
-  const [toolIndex, setToolIndex] = useState(() => AI_TOOL_NAMES.indexOf(initialToolName))
+  const [toolIndex, setToolIndex] = useState(0)
   const tool = AI_TOOL_BADGES[AI_TOOL_NAMES[toolIndex]]
   const gradientStyle =
     tool.name === 'Codex'

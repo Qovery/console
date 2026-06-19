@@ -55,14 +55,12 @@ describe('ShowUsageModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render the AI skills suggestion and info callout', () => {
+  it('should render the report form and info callout', () => {
     renderWithProviders(wrapWithReactHookForm(<ShowUsageModal {...modalProps} />))
 
-    expect(screen.getByText('Try optimizing your costs with')).toBeInTheDocument()
-    expect(
-      screen.getByText('Install our AI skills and ask your agent to optimize your Qovery costs')
-    ).toBeInTheDocument()
-    expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
+    expect(screen.queryByText('Try optimizing your costs with')).not.toBeInTheDocument()
+    expect(screen.queryByText('Or create a report')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Report period')).toBeInTheDocument()
     expect(screen.getByText('The report generation can take a few seconds.')).toBeInTheDocument()
   })
 

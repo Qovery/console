@@ -37,7 +37,6 @@ function McpInstallCommand() {
 export interface McpSuggestionCardProps {
   title?: ReactNode
   description?: ReactNode
-  aiName?: string
   variant?: 'compact' | 'setup'
   className?: string
   onClose?: () => void
@@ -46,7 +45,6 @@ export interface McpSuggestionCardProps {
 export function McpSuggestionCard({
   title = 'Try deploying with',
   description,
-  aiName = 'Claude',
   variant = 'compact',
   className,
   onClose,
@@ -63,7 +61,7 @@ export function McpSuggestionCard({
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <p className="flex flex-wrap items-center gap-1 text-ssm font-medium text-neutral">
             <span>{title}</span>
-            <AiToolBadge key={aiName} initialName={aiName} />
+            <AiToolBadge />
           </p>
           {description && <p className="break-words text-ssm text-neutral-subtle">{description}</p>}
         </div>
