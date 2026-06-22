@@ -4,7 +4,12 @@ import { memo } from 'react'
 import { LogsType } from '@qovery/shared/enums'
 import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
 import { dateDifference, dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
-import { twMerge } from '@qovery/shared/util-js'
+import {
+  LOG_COPY_EXCLUDE_DATA_ATTRIBUTE,
+  LOG_MESSAGE_DATA_ATTRIBUTE,
+  copySelectedLogMessages,
+  twMerge,
+} from '@qovery/shared/util-js'
 
 export interface ClusterLogRowProps {
   data: ClusterLogs
@@ -60,9 +65,10 @@ function ClusterLogRowRoot({ index, data, firstDate }: ClusterLogRowProps) {
 
   return (
     <div
+      onCopy={copySelectedLogMessages}
       className={twMerge(
         clsx(
-          'group flex min-h-6 select-none justify-between font-code text-xs [contain-intrinsic-size:0_24px] [content-visibility:auto] hover:bg-surface-neutral-subtle',
+          'group flex min-h-6 justify-between font-code text-xs [contain-intrinsic-size:0_24px] [content-visibility:auto] hover:bg-surface-neutral-subtle',
           {
             'bg-surface-positive-subtle text-positive': success,
             'bg-surface-negative-component text-neutralInvert': realError,
@@ -72,23 +78,35 @@ function ClusterLogRowRoot({ index, data, firstDate }: ClusterLogRowProps) {
     >
       <div className="flex">
         <div data-testid="index" className={indexClassName}>
-          <div className="h-6 w-10 min-w-[40px] px-2 py-1 text-right">{index + 1}</div>
+          <div className="h-6 w-10 min-w-[40px] select-none px-2 py-1 text-right">{index + 1}</div>
         </div>
-        <div data-testid="cell-date" className={twMerge('px-2 py-1', colorsCellClassName)}>
-          {firstDate && dateDifference(new Date(data.timestamp as string), firstDate)}
+        <div
+          data-testid="cell-date"
+          className={twMerge('px-2 py-1 selection:bg-transparent selection:text-neutral-subtle', colorsCellClassName)}
+        >
+          <span {...{ [LOG_COPY_EXCLUDE_DATA_ATTRIBUTE]: 'true' }}>
+            {firstDate && dateDifference(new Date(data.timestamp as string), firstDate)}
+          </span>
         </div>
-        <div data-testid="cell-msg" className={twMerge('w-11/12 select-text py-1', colorsCellClassName)}>
+        <div data-testid="cell-msg" className={twMerge('w-11/12 py-1', colorsCellClassName)}>
           <span className="font-bold">{data.step} - </span>
-          <span className="whitespace-pre-wrap">{message}</span>
+          <span className="whitespace-pre-wrap" {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}>
+            {message}
+          </span>
         </div>
       </div>
-      <div className={twMerge('flex whitespace-nowrap px-2 py-1', colorsCellClassName)}>
+      <div
+        className={twMerge(
+          'flex whitespace-nowrap px-2 py-1 selection:bg-transparent selection:text-neutral-subtle',
+          colorsCellClassName
+        )}
+      >
         <CopyToClipboardButtonIcon
-          className="mr-4 text-neutral opacity-0 group-hover:opacity-100"
+          className="mr-4 select-none text-neutral opacity-0 group-hover:opacity-100"
           content={message as string}
         />
         {data.timestamp && (
-          <span title={dateUTCString(data.timestamp)}>
+          <span title={dateUTCString(data.timestamp)} {...{ [LOG_COPY_EXCLUDE_DATA_ATTRIBUTE]: 'true' }}>
             {dateFullFormat(data.timestamp, undefined, 'dd MMM, HH:mm:ss.SS')}
           </span>
         )}

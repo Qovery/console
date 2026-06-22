@@ -7,7 +7,12 @@ import { LogsType } from '@qovery/shared/enums'
 import { Ansi, Icon, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
+import {
+  LOG_COPY_EXCLUDE_DATA_ATTRIBUTE,
+  LOG_MESSAGE_DATA_ATTRIBUTE,
+  copySelectedLogMessages,
+  twMerge,
+} from '@qovery/shared/util-js'
 import { type EnvironmentLogIds } from '../../hooks/use-deployment-logs/use-deployment-logs'
 
 const { Table } = TablePrimitives
@@ -40,14 +45,15 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
   return (
     <Table.Row
       id={rowId}
+      onCopy={copySelectedLogMessages}
       className={twMerge(
-        clsx('group mb-0.5 flex min-h-6 select-none text-xs', {
+        clsx('group mb-0.5 flex min-h-6 text-xs', {
           'hover:bg-surface-neutral-subtle': !isHighlighted,
           'bg-surface-neutral-componentHover': isHighlighted,
         })
       )}
     >
-      <Table.Cell className="h-6 min-w-10 py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-subtle group-hover:bg-surface-neutral-subtle group-hover:delay-1000">
+      <Table.Cell className="h-6 min-w-10 select-none py-1 pl-2 pr-1 text-left font-code font-bold text-neutral-subtle group-hover:bg-surface-neutral-subtle group-hover:delay-1000">
         <Tooltip content="Copy row URL">
           <span className="relative block">
             <span className={`group-hover:opacity-0 ${isHighlighted ? 'opacity-0' : ''}`}>{original.id}</span>
@@ -68,19 +74,19 @@ export function RowDeploymentLogs({ original }: RowDeploymentLogsProps) {
           </span>
         </Tooltip>
       </Table.Cell>
-      <Table.Cell className="h-fit shrink-0 py-1 pl-2 pr-3 font-code font-bold text-neutral-subtle">
-        <span title={dateUTCString(original.timestamp)}>
+      <Table.Cell className="h-fit shrink-0 py-1 pl-2 pr-3 font-code font-bold text-neutral-subtle selection:bg-transparent selection:text-neutral-subtle">
+        <span title={dateUTCString(original.timestamp)} {...{ [LOG_COPY_EXCLUDE_DATA_ATTRIBUTE]: 'true' }}>
           {dateFullFormat(original.timestamp, 'UTC', 'dd MMM, HH:mm:ss.SS')}
         </span>
       </Table.Cell>
       <Table.Cell
-        className={clsx('relative h-fit w-full select-text overflow-hidden py-1 pl-3 pr-6 font-code font-bold', {
+        className={clsx('relative h-fit w-full overflow-hidden py-1 pl-3 pr-6 font-code font-bold', {
           'text-negative': error,
           'text-positive': success,
           'text-neutral': !error && !success,
         })}
       >
-        <span className="truncate whitespace-pre-wrap break-all">
+        <span className="truncate whitespace-pre-wrap break-all" {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}>
           {type === LogsType.ERROR ? (
             <Ansi>{original.error?.user_log_message}</Ansi>
           ) : (

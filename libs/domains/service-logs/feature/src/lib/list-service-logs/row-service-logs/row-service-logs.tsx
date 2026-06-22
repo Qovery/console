@@ -17,7 +17,12 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { usePodColor } from '@qovery/shared/util-hooks'
-import { twMerge } from '@qovery/shared/util-js'
+import {
+  LOG_COPY_EXCLUDE_DATA_ATTRIBUTE,
+  LOG_MESSAGE_DATA_ATTRIBUTE,
+  copySelectedLogMessages,
+  twMerge,
+} from '@qovery/shared/util-js'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 import './style.scss'
 
@@ -65,17 +70,30 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
     [navigate, organizationId, projectId, environmentId, serviceId]
   )
 
+  const toggleExpanded = () => {
+    if (window.getSelection()?.type === 'Range') return
+    if (!isNginx && !isEnvoy) setIsExpanded(!isExpanded)
+  }
+
   const renderHighlightedMessage = (message: string, searchTerm: string | null | undefined) => {
     if (!searchTerm || !message.includes(searchTerm)) {
       return (
-        <Ansi className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral">{message}</Ansi>
+        <span
+          className="relative w-full whitespace-pre-wrap break-all pr-6 text-neutral"
+          {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}
+        >
+          <Ansi>{message}</Ansi>
+        </span>
       )
     }
 
     const parts = message.split(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'))
 
     return (
-      <span className="relative w-full select-text whitespace-pre-wrap break-all pr-6 text-neutral">
+      <span
+        className="relative w-full whitespace-pre-wrap break-all pr-6 text-neutral"
+        {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}
+      >
         {parts.map((part, index) => {
           if (part.toLowerCase() === searchTerm.toLowerCase()) {
             return (
@@ -102,7 +120,8 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
   return (
     <>
       <Table.Row
-        onClick={() => !isNginx && !isEnvoy && setIsExpanded(!isExpanded)}
+        onClick={toggleExpanded}
+        onCopy={copySelectedLogMessages}
         className={twMerge(
           clsx('sl-row sl-row-appear group relative mt-0.5 cursor-pointer text-xs hover:bg-surface-neutral-subtle', {
             'bg-surface-negative-component': isErrorOrCritical,
@@ -158,8 +177,12 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             </Tooltip>
           )}
         </Table.Cell>
-        <Table.Cell className="h-min min-h-7 select-none whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-subtle">
-          <span title={dateUTCString(timestamp)} className="inline-block whitespace-nowrap">
+        <Table.Cell className="h-min min-h-7 whitespace-nowrap px-1.5 align-baseline font-code font-bold text-neutral-subtle selection:bg-transparent selection:text-neutral-subtle">
+          <span
+            title={dateUTCString(timestamp)}
+            className="inline-block whitespace-nowrap"
+            {...{ [LOG_COPY_EXCLUDE_DATA_ATTRIBUTE]: 'true' }}
+          >
             {dateFullFormat(timestamp, utc ? 'UTC' : timeZone, 'dd MMM, HH:mm:ss.SS')}
           </span>
         </Table.Cell>

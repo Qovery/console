@@ -75,6 +75,32 @@ describe('RowServiceLogs', () => {
     expect(screen.getByText('Container')).toBeInTheDocument()
   })
 
+  it('does not toggle expanded state while text is selected', async () => {
+    const getSelectionSpy = jest.spyOn(window, 'getSelection').mockReturnValue({ type: 'Range' } as Selection)
+    const { userEvent } = renderRowServiceLogs()
+
+    try {
+      await userEvent.click(screen.getByText('Test log message'))
+
+      expect(screen.queryByText('Instance')).not.toBeInTheDocument()
+      expect(screen.queryByText('Container')).not.toBeInTheDocument()
+    } finally {
+      getSelectionSpy.mockRestore()
+    }
+  })
+
+  it('keeps controls non-selectable while date selection is visually neutral', () => {
+    renderRowServiceLogs()
+
+    expect(screen.getByText('12345').closest('td')).toHaveClass('select-none')
+    expect(screen.getByTitle('Sat, 01 Apr 2023 12:00:00 GMT').closest('td')).toHaveClass(
+      'selection:bg-transparent',
+      'selection:text-neutral-subtle'
+    )
+    expect(screen.getByTitle('Sat, 01 Apr 2023 12:00:00 GMT')).toHaveAttribute('data-log-copy-exclude', 'true')
+    expect(screen.getByText('Test log message').closest('[data-log-message="true"]')).toBeInTheDocument()
+  })
+
   it('renders cell has more than two container', () => {
     renderRowServiceLogs(mockLog, true)
 
