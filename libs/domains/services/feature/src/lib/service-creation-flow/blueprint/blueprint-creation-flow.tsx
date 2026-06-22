@@ -324,7 +324,7 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
               </p>
             </header>
 
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 pb-24">
               <BlueprintSection
                 active={currentSection === 'service-information'}
                 completed={currentSection !== 'service-information'}
