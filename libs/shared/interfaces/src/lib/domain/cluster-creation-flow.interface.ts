@@ -86,6 +86,7 @@ export type ClusterFeaturesData = {
   }
   gcp_existing_vpc?: {
     vpc_name: string
+    private_nodes: boolean
     vpc_project_id?: string
     ip_range_services_name?: string
     ip_range_pods_name?: string

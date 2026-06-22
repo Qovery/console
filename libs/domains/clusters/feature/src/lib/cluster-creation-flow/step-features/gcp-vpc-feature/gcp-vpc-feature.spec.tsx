@@ -8,6 +8,8 @@ describe('GCPVpcFeature', () => {
 
     expect(screen.getByText('Deploy on an existing VPC')).toBeInTheDocument()
     expect(screen.getByLabelText('VPC Name')).toBeInTheDocument()
+    expect(screen.getByText('Private nodes')).toBeInTheDocument()
+    expect(screen.getByText('Make nodes private (no public IP), traffic will go through gateway.')).toBeInTheDocument()
     expect(screen.getByText('Set additional ranges')).toBeInTheDocument()
   })
 

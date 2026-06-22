@@ -161,6 +161,8 @@ function AWSExistingVPC({ feature }: { feature: ClusterFeatureAwsExistingVpc }) 
 }
 
 function GcpExistingVPC({ feature }: { feature: ClusterFeatureGcpExistingVpc }) {
+  const gcpFeature = feature as ClusterFeatureGcpExistingVpc & { private_nodes?: boolean | null }
+
   return (
     <div className="flex flex-col justify-between gap-4 rounded border border-neutral bg-surface-neutral-subtle p-4">
       <div>
@@ -173,6 +175,14 @@ function GcpExistingVPC({ feature }: { feature: ClusterFeatureGcpExistingVpc }) 
         </ExternalLink>
       </div>
       <InputText name="vpc_id" label="VPC Name" value={feature.vpc_name} disabled />
+      <InputToggle
+        title="Private nodes"
+        description="Make nodes private (no public IP), traffic will go through gateway."
+        value={gcpFeature.private_nodes ?? false}
+        align="top"
+        small
+        disabled
+      />
       {feature.vpc_project_id && (
         <InputText name="vpc_project_id" label="External project id" value={feature.vpc_project_id} disabled />
       )}

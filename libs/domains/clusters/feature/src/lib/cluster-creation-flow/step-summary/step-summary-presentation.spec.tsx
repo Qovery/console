@@ -174,4 +174,27 @@ describe('StepSummaryPresentation', () => {
 
     expect(screen.getByText('static_ips_enabled=true, static_ips_count=2')).toBeInTheDocument()
   })
+
+  it('should render GCP existing VPC private nodes in summary', () => {
+    renderWithProviders(
+      <StepSummaryPresentation
+        {...defaultProps}
+        generalData={{
+          ...defaultProps.generalData,
+          cloud_provider: CloudProviderEnum.GCP,
+        }}
+        featuresData={{
+          vpc_mode: 'EXISTING_VPC',
+          gcp_existing_vpc: {
+            vpc_name: 'test-vpc',
+            private_nodes: true,
+          },
+          features: {},
+        }}
+      />
+    )
+
+    expect(screen.getByText('Private nodes:')).toBeInTheDocument()
+    expect(screen.getByText('true')).toBeInTheDocument()
+  })
 })

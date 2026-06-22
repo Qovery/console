@@ -276,6 +276,59 @@ describe('StepSummary', () => {
     ])
   })
 
+  it('should send GCP private nodes in existing VPC payload on create', async () => {
+    mockContextValue.generalData = {
+      name: 'test-gcp-cluster',
+      description: 'description',
+      cloud_provider: CloudProviderEnum.GCP,
+      region: 'europe-west1',
+      installation_type: 'MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.featuresData = {
+      vpc_mode: 'EXISTING_VPC',
+      gcp_existing_vpc: {
+        vpc_name: 'test-vpc',
+        private_nodes: true,
+        vpc_project_id: 'test-project',
+        ip_range_services_name: 'services-range',
+        ip_range_pods_name: 'pods-range',
+        additional_ip_range_pods_names: 'pods-range-2,pods-range-3',
+        subnetwork_name: 'subnet-a',
+      },
+      features: {},
+    }
+
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditCloudProviderInfo.mockResolvedValue({})
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateCluster).toHaveBeenCalledWith(
+        expect.objectContaining({
+          organizationId: 'org-123',
+          clusterRequest: expect.objectContaining({
+            cloud_provider: 'GCP',
+            features: expect.arrayContaining([
+              expect.objectContaining({
+                id: 'EXISTING_VPC',
+                value: expect.objectContaining({
+                  vpc_name: 'test-vpc',
+                  private_nodes: true,
+                }),
+              }),
+            ]),
+          }),
+        })
+      )
+    })
+  })
+
   it('should emit default NAT_GATEWAY for GCP when only STATIC_IP is in form data', async () => {
     mockContextValue.generalData = {
       name: 'test-gcp-cluster',
