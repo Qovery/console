@@ -108,7 +108,6 @@ function BlueprintReadme({
 
 function BlueprintRepositoryBadge({
   blueprint,
-  environmentId,
   organizationId,
   serviceVersion,
 }: {
