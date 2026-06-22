@@ -52,6 +52,46 @@ function isFieldValueFulfilled(value: BlueprintFieldValue | undefined) {
   return Boolean(value?.trim())
 }
 
+function isFieldValueMatchingPattern(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
+  if (typeof value !== 'string' || !value || !field.type.pattern) return true
+
+  try {
+    return new RegExp(field.type.pattern).test(value)
+  } catch {
+    return true
+  }
+}
+
+function getFieldLengthValidationError(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
+  if (typeof value !== 'string' || !value) return undefined
+
+  const { min_length: minLength, max_length: maxLength } = field.type
+  const hasMinLength = typeof minLength === 'number'
+  const hasMaxLength = typeof maxLength === 'number'
+
+  if (hasMinLength && hasMaxLength && (value.length < minLength || value.length > maxLength)) {
+    return `Value must be between ${minLength} and ${maxLength} characters.`
+  }
+
+  if (hasMinLength && value.length < minLength) return `Value must be at least ${minLength} characters.`
+  if (hasMaxLength && value.length > maxLength) return `Value must be at most ${maxLength} characters.`
+
+  return undefined
+}
+
+function getFieldValidationError(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
+  const lengthValidationError = getFieldLengthValidationError(field, value)
+  if (lengthValidationError) return lengthValidationError
+
+  if (!isFieldValueMatchingPattern(field, value)) return 'Value does not match the expected format.'
+  return undefined
+}
+
+function isFieldValid(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
+  if (field.required && !isFieldValueFulfilled(value)) return false
+  return !getFieldValidationError(field, value)
+}
+
 function isVariableField(field: BlueprintManifestResponseResultsInner): field is BlueprintManifestVariableField {
   return field.kind === 'variable'
 }
@@ -170,10 +210,12 @@ function CheckboxField({
 
 // TODO: needs to be refactored. Make sure everything is super type-safe, using ts-pattern's `exhaustive` function
 function BlueprintManifestVariableInput({
+  error,
   field,
   onChange,
   value,
 }: {
+  error?: string
   field: BlueprintManifestVariableField
   onChange: (value: BlueprintFieldValue) => void
   value: BlueprintFieldValue | undefined
@@ -212,6 +254,7 @@ function BlueprintManifestVariableInput({
       label={label}
       type={field.type.type === 'number' ? 'number' : field.is_secret ? 'password' : 'text'}
       value={getStringFieldValue(value)}
+      error={error}
       hint={field.description ?? undefined}
       onChange={(event) => onChange(event.currentTarget.value)}
     />
@@ -280,7 +323,7 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
   )
   const hasOverrideFields = optionalBlueprintFields.length > 0 || overridableContextBlueprintFields.length > 0
   const isBlueprintSetupValid = requiredBlueprintFields.every((field) =>
-    isFieldValueFulfilled(blueprintFieldValues[field.name])
+    isFieldValid(field, blueprintFieldValues[field.name])
   )
 
   useEffect(() => {
@@ -376,6 +419,7 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
                     {requiredBlueprintFields.map((field) => (
                       <BlueprintManifestVariableInput
                         key={field.name}
+                        error={getFieldValidationError(field, blueprintFieldValues[field.name])}
                         field={field}
                         value={blueprintFieldValues[field.name]}
                         onChange={(value) =>
@@ -406,6 +450,7 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
                     {optionalBlueprintFields.map((field) => (
                       <BlueprintManifestVariableInput
                         key={field.name}
+                        error={getFieldValidationError(field, blueprintFieldValues[field.name])}
                         field={field}
                         value={blueprintFieldValues[field.name]}
                         onChange={(value) =>
