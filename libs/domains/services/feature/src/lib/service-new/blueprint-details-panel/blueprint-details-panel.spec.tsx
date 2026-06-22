@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { within } from '@testing-library/react'
 import type { BlueprintItem } from 'qovery-typescript-axios'
+import type { ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { BlueprintDetailsPanel } from './blueprint-details-panel'
 
@@ -10,6 +11,21 @@ jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(),
 }))
+
+jest.mock('@qovery/shared/ui', () => {
+  const actual = jest.requireActual('@qovery/shared/ui')
+  return {
+    ...actual,
+    Link: ({ children, to, ...props }: { children: ReactNode; to?: string; [key: string]: unknown }) =>
+      typeof to === 'string' ? (
+        <a href={to} {...props}>
+          {children}
+        </a>
+      ) : (
+        <span {...props}>{children}</span>
+      ),
+  }
+})
 
 jest.mock('../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
   useBlueprintCatalogServiceReadme: (props: unknown) => mockUseBlueprintCatalogServiceReadme(props),
@@ -25,6 +41,8 @@ const blueprint: BlueprintItem = {
   serviceFamily: 's3',
   majorVersions: [{ serviceVersion: '1', latestTag: 'aws/s3/1/1.0.0' }],
 }
+
+const deployPath = '/organization/org-1/project/project-1/environment/env-1/service/create/blueprint/aws/s3'
 
 describe('BlueprintDetailsPanel', () => {
   const useParamsMock = useParams as jest.MockedFunction<typeof useParams>
@@ -42,7 +60,13 @@ describe('BlueprintDetailsPanel', () => {
 
   it('should not render when no blueprint is selected', () => {
     renderWithProviders(
-      <BlueprintDetailsPanel blueprint={null} open onOpenChange={jest.fn()} onExitComplete={jest.fn()} />
+      <BlueprintDetailsPanel
+        blueprint={null}
+        deployPath={deployPath}
+        open
+        onOpenChange={jest.fn()}
+        onExitComplete={jest.fn()}
+      />
     )
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -50,7 +74,13 @@ describe('BlueprintDetailsPanel', () => {
 
   it('should render blueprint metadata, repository link and readme content', () => {
     renderWithProviders(
-      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={jest.fn()} onExitComplete={jest.fn()} />
+      <BlueprintDetailsPanel
+        blueprint={blueprint}
+        deployPath={deployPath}
+        open
+        onOpenChange={jest.fn()}
+        onExitComplete={jest.fn()}
+      />
     )
 
     const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
@@ -85,7 +115,13 @@ describe('BlueprintDetailsPanel', () => {
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({ data: undefined })
 
     renderWithProviders(
-      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={jest.fn()} onExitComplete={jest.fn()} />
+      <BlueprintDetailsPanel
+        blueprint={blueprint}
+        deployPath={deployPath}
+        open
+        onOpenChange={jest.fn()}
+        onExitComplete={jest.fn()}
+      />
     )
 
     const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
@@ -99,6 +135,7 @@ describe('BlueprintDetailsPanel', () => {
     renderWithProviders(
       <BlueprintDetailsPanel
         blueprint={{ ...blueprint, majorVersions: [{ serviceVersion: 'default', latestTag: 'aws/s3/default/1.0.0' }] }}
+        deployPath={deployPath}
         open
         onOpenChange={jest.fn()}
         onExitComplete={jest.fn()}
@@ -114,7 +151,13 @@ describe('BlueprintDetailsPanel', () => {
     const onOpenChange = jest.fn()
 
     const { userEvent } = renderWithProviders(
-      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={onOpenChange} onExitComplete={jest.fn()} />
+      <BlueprintDetailsPanel
+        blueprint={blueprint}
+        deployPath={deployPath}
+        open
+        onOpenChange={onOpenChange}
+        onExitComplete={jest.fn()}
+      />
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
@@ -126,12 +169,19 @@ describe('BlueprintDetailsPanel', () => {
     const onExitComplete = jest.fn()
     const onOpenChange = jest.fn()
     const { rerender } = renderWithProviders(
-      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={onOpenChange} onExitComplete={onExitComplete} />
+      <BlueprintDetailsPanel
+        blueprint={blueprint}
+        deployPath={deployPath}
+        open
+        onOpenChange={onOpenChange}
+        onExitComplete={onExitComplete}
+      />
     )
 
     rerender(
       <BlueprintDetailsPanel
         blueprint={blueprint}
+        deployPath={deployPath}
         open={false}
         onOpenChange={onOpenChange}
         onExitComplete={onExitComplete}
