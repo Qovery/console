@@ -91,6 +91,23 @@ describe('ClusterLogRow', () => {
     expect(screen.getByTitle('Fri, 13 Feb 2026 16:16:19 GMT')).toBeInTheDocument()
   })
 
+  it('keeps index and copy controls non-selectable while date selection is visually neutral', () => {
+    const data = {
+      ...baseData,
+      step: ClusterLogsStepEnum.CREATED,
+      message: { safe_message: 'hello world' },
+    }
+
+    renderWithProviders(<ClusterLogRow data={data} index={1} firstDate={firstDate} />)
+
+    expect(screen.getByText('2')).toHaveClass('select-none')
+    expect(screen.getByTestId('cell-date')).toHaveClass('selection:bg-transparent', 'selection:text-neutral-subtle')
+    expect(screen.getByTestId('cell-date').querySelector('[data-log-copy-exclude="true"]')).toBeInTheDocument()
+    expect(screen.getByTitle('Fri, 13 Feb 2026 16:16:19 GMT')).toHaveAttribute('data-log-copy-exclude', 'true')
+    expect(screen.getByText('hello world').closest('[data-log-message="true"]')).toBeInTheDocument()
+    expect(screen.getByTestId('copy-container')).toHaveClass('select-none')
+  })
+
   it('should display cell error message', () => {
     const data = {
       ...baseData,
