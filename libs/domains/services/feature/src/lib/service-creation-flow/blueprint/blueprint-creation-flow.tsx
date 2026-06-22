@@ -117,6 +117,7 @@ function isOverridableContextVariableField(
 function BlueprintSection({
   active = false,
   completed = false,
+  disabled = false,
   iconName,
   onClick,
   title,
@@ -125,6 +126,7 @@ function BlueprintSection({
 }: {
   active?: boolean
   completed?: boolean
+  disabled?: boolean
   iconName: IconName
   onClick?: () => void
   title: string
@@ -132,6 +134,7 @@ function BlueprintSection({
   children?: ReactNode
 }) {
   const isClickable = Boolean(onClick && !active)
+  const isDisabled = disabled && isClickable
   const headerContent = (
     <>
       <div className="flex items-center gap-2">
@@ -159,6 +162,7 @@ function BlueprintSection({
           type="button"
           className="flex w-full items-center justify-between gap-3 rounded-t-xl px-4 py-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
           aria-expanded={active}
+          disabled={isDisabled}
           onClick={onClick}
         >
           {headerContent}
@@ -264,14 +268,24 @@ function BlueprintManifestVariableInput({
 function OverridesSection({
   active,
   children,
+  disabled = false,
   onClick,
 }: {
   active: boolean
   children?: ReactNode
+  disabled?: boolean
   onClick: () => void
 }) {
   if (!active) {
-    return <BlueprintSection iconName="code" title="Overrides" description="For advanced users" onClick={onClick} />
+    return (
+      <BlueprintSection
+        disabled={disabled}
+        iconName="code"
+        title="Overrides"
+        description="For advanced users"
+        onClick={onClick}
+      />
+    )
   }
 
   return (
@@ -322,6 +336,7 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
     [blueprintManifestFields]
   )
   const hasOverrideFields = optionalBlueprintFields.length > 0 || overridableContextBlueprintFields.length > 0
+  const isServiceInformationValid = Boolean(serviceName.trim())
   const isBlueprintSetupValid = requiredBlueprintFields.every((field) =>
     isFieldValid(field, blueprintFieldValues[field.name])
   )
@@ -398,6 +413,7 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
                       size="md"
                       color="neutral"
                       className="w-fit"
+                      disabled={!isServiceInformationValid}
                       onClick={() => setCurrentSection('blueprint-setup')}
                     >
                       Continue
@@ -410,6 +426,7 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
               <BlueprintSection
                 active={currentSection === 'blueprint-setup'}
                 completed={currentSection === 'overrides'}
+                disabled={!isServiceInformationValid}
                 iconName="chart-bullet"
                 title="Blueprint setup"
                 onClick={() => setCurrentSection('blueprint-setup')}
@@ -444,7 +461,11 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
                   </>
                 )}
               </BlueprintSection>
-              <OverridesSection active={currentSection === 'overrides'} onClick={() => setCurrentSection('overrides')}>
+              <OverridesSection
+                active={currentSection === 'overrides'}
+                disabled={!isBlueprintSetupValid}
+                onClick={() => setCurrentSection('overrides')}
+              >
                 {hasOverrideFields && (
                   <>
                     {optionalBlueprintFields.map((field) => (
