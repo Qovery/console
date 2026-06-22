@@ -281,19 +281,22 @@ export const services = createQueryKeys('services', {
     provider,
     serviceFamily,
     serviceVersion,
+    environmentId,
   }: {
     organizationId: string
     provider: string
     serviceFamily: string
     serviceVersion: string
+    environmentId: string
   }) => ({
-    queryKey: [organizationId, provider, serviceFamily, serviceVersion],
+    queryKey: [organizationId, provider, serviceFamily, serviceVersion, environmentId],
     async queryFn() {
       const response = await blueprintCatalogApi.getBlueprintCatalogServiceManifest(
         organizationId,
         provider,
         serviceFamily,
-        serviceVersion
+        serviceVersion,
+        environmentId
       )
       return response.data
     },

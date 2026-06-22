@@ -1,8 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import {
-  type GetBlueprintCatalogServiceManifest200Response,
-  type GetBlueprintCatalogServiceManifest200ResponseResultsInner,
-} from 'qovery-typescript-axios'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseBlueprintCatalogServiceManifestProps {
@@ -10,6 +6,7 @@ export interface UseBlueprintCatalogServiceManifestProps {
   provider: string
   serviceFamily: string
   serviceVersion: string
+  environmentId?: string
   enabled?: boolean
   suspense?: boolean
 }
@@ -19,18 +16,26 @@ export function useBlueprintCatalogServiceManifest({
   provider,
   serviceFamily,
   serviceVersion,
+  environmentId = '',
   enabled = true,
   suspense = false,
 }: UseBlueprintCatalogServiceManifestProps) {
   return useQuery({
-    ...queries.services.blueprintCatalogServiceManifest({ organizationId, provider, serviceFamily, serviceVersion }),
-    select: (
-      manifest:
-        | GetBlueprintCatalogServiceManifest200Response
-        | GetBlueprintCatalogServiceManifest200ResponseResultsInner[]
-    ) => (Array.isArray(manifest) ? manifest : manifest.results ?? []),
+    ...queries.services.blueprintCatalogServiceManifest({
+      organizationId,
+      provider,
+      serviceFamily,
+      serviceVersion,
+      environmentId,
+    }),
+    select: (data) => (Array.isArray(data) ? data : data.results ?? []),
     enabled:
-      enabled && Boolean(organizationId) && Boolean(provider) && Boolean(serviceFamily) && Boolean(serviceVersion),
+      enabled &&
+      Boolean(organizationId) &&
+      Boolean(provider) &&
+      Boolean(serviceFamily) &&
+      Boolean(serviceVersion) &&
+      Boolean(environmentId),
     suspense,
   })
 }

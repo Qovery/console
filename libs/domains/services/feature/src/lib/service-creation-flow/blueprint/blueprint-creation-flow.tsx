@@ -1,4 +1,5 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import { useParams } from '@tanstack/react-router'
 import { type BlueprintItem, type BlueprintManifestVariableField } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox, FunnelFlow, Icon, InputSelect, InputText } from '@qovery/shared/ui'
@@ -223,13 +224,16 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
   const [currentSection, setCurrentSection] = useState<BlueprintConfigurationSection>('service-information')
   const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? 'latest'
   const serviceFamily = blueprint.serviceFamily ?? ''
+  const { environmentId = '' } = useParams({ strict: false })
   const { data: blueprintManifestFields = [] } = useBlueprintCatalogServiceManifest({
     organizationId,
     provider: blueprint.provider,
     serviceFamily,
     serviceVersion,
-    enabled: Boolean(serviceVersion) && Boolean(serviceFamily),
+    environmentId,
+    enabled: Boolean(serviceVersion) && Boolean(serviceFamily) && Boolean(environmentId),
   })
+
   const editableBlueprintFields = useMemo(
     () => blueprintManifestFields.filter((field) => field.kind === 'variable'),
     [blueprintManifestFields]
