@@ -47,6 +47,11 @@ function getBooleanFieldValue(value: BlueprintFieldValue | undefined) {
   return typeof value === 'boolean' ? value : false
 }
 
+function isFieldValueFulfilled(value: BlueprintFieldValue | undefined) {
+  if (typeof value === 'boolean') return true
+  return Boolean(value?.trim())
+}
+
 function isVariableField(field: BlueprintManifestResponseResultsInner): field is BlueprintManifestVariableField {
   return field.kind === 'variable'
 }
@@ -274,6 +279,9 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
     [blueprintManifestFields]
   )
   const hasOverrideFields = optionalBlueprintFields.length > 0 || overridableContextBlueprintFields.length > 0
+  const isBlueprintSetupValid = requiredBlueprintFields.every((field) =>
+    isFieldValueFulfilled(blueprintFieldValues[field.name])
+  )
 
   useEffect(() => {
     if (blueprintManifestFields.length) {
@@ -383,6 +391,7 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
                       size="md"
                       color="neutral"
                       className="w-fit"
+                      disabled={!isBlueprintSetupValid}
                       onClick={() => setCurrentSection('overrides')}
                     >
                       Continue
