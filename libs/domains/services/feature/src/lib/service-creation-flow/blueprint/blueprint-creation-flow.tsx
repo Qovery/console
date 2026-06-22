@@ -1,6 +1,11 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useParams } from '@tanstack/react-router'
-import { type BlueprintItem, type BlueprintManifestVariableField } from 'qovery-typescript-axios'
+import {
+  type BlueprintItem,
+  type BlueprintManifestContextVariableField,
+  type BlueprintManifestResponseResultsInner,
+  type BlueprintManifestVariableField,
+} from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useMemo, useState } from 'react'
 import { Button, Checkbox, FunnelFlow, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { useBlueprintCatalogServiceManifest } from '../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
@@ -12,11 +17,13 @@ export interface BlueprintCreationFlowProps {
 }
 
 const steps = ['Configuration', 'Preview changes']
-const overrideSections = ['Terraform configuration', 'Bucket', 'Resources', 'Network', 'Authentication']
 
 type BlueprintConfigurationSection = 'service-information' | 'blueprint-setup' | 'overrides'
 type BlueprintFieldValue = string | boolean
 type BlueprintFieldValues = Record<string, BlueprintFieldValue>
+type OverridableBlueprintManifestContextVariableField = BlueprintManifestContextVariableField & {
+  overridable?: boolean
+}
 
 function formatFieldLabel(name: string) {
   const label = name.replace(/_/g, ' ')
@@ -28,12 +35,38 @@ function getDefaultFieldValue(field: BlueprintManifestVariableField): BlueprintF
   return field.default_value ?? ''
 }
 
+function getDefaultContextFieldValue(field: BlueprintManifestContextVariableField): BlueprintFieldValue {
+  return field.value ?? ''
+}
+
 function getStringFieldValue(value: BlueprintFieldValue | undefined) {
   return typeof value === 'string' ? value : ''
 }
 
 function getBooleanFieldValue(value: BlueprintFieldValue | undefined) {
   return typeof value === 'boolean' ? value : false
+}
+
+function isVariableField(field: BlueprintManifestResponseResultsInner): field is BlueprintManifestVariableField {
+  return field.kind === 'variable'
+}
+
+function isRequiredVariableField(
+  field: BlueprintManifestResponseResultsInner
+): field is BlueprintManifestVariableField {
+  return isVariableField(field) && field.required
+}
+
+function isOptionalVariableField(
+  field: BlueprintManifestResponseResultsInner
+): field is BlueprintManifestVariableField {
+  return isVariableField(field) && !field.required
+}
+
+function isOverridableContextVariableField(
+  field: BlueprintManifestResponseResultsInner
+): field is OverridableBlueprintManifestContextVariableField {
+  return field.kind === 'contextVariable' && 'overridable' in field && field.overridable === true
 }
 
 function BlueprintSection({
@@ -180,7 +213,15 @@ function BlueprintManifestVariableInput({
   )
 }
 
-function OverridesSection({ active, onClick }: { active: boolean; onClick: () => void }) {
+function OverridesSection({
+  active,
+  children,
+  onClick,
+}: {
+  active: boolean
+  children?: ReactNode
+  onClick: () => void
+}) {
   if (!active) {
     return <BlueprintSection iconName="code" title="Overrides" description="For advanced users" onClick={onClick} />
   }
@@ -199,21 +240,7 @@ function OverridesSection({ active, onClick }: { active: boolean; onClick: () =>
         </p>
       </div>
 
-      <div>
-        {overrideSections.map((section, index) => (
-          <button
-            key={section}
-            type="button"
-            className={`flex w-full items-center justify-between px-4 py-4 text-left text-sm font-medium leading-5 text-neutral-subtle focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong ${
-              index < overrideSections.length - 1 ? 'border-b border-neutral' : ''
-            }`}
-            aria-expanded={false}
-          >
-            {section}
-            <Icon iconName="angle-down" className="text-sm text-neutral-subtle" />
-          </button>
-        ))}
-      </div>
+      {children && <div className="flex flex-col gap-3 px-4 pb-4">{children}</div>}
     </section>
   )
 }
@@ -234,14 +261,19 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
     enabled: Boolean(serviceVersion) && Boolean(serviceFamily) && Boolean(environmentId),
   })
 
-  const editableBlueprintFields = useMemo(
-    () => blueprintManifestFields.filter((field) => field.kind === 'variable'),
+  const requiredBlueprintFields = useMemo(
+    () => blueprintManifestFields.filter(isRequiredVariableField),
     [blueprintManifestFields]
   )
-  const contextBlueprintFields = useMemo(
-    () => blueprintManifestFields.filter((field) => field.kind === 'contextVariable'),
+  const optionalBlueprintFields = useMemo(
+    () => blueprintManifestFields.filter(isOptionalVariableField),
     [blueprintManifestFields]
   )
+  const overridableContextBlueprintFields = useMemo(
+    () => blueprintManifestFields.filter(isOverridableContextVariableField),
+    [blueprintManifestFields]
+  )
+  const hasOverrideFields = optionalBlueprintFields.length > 0 || overridableContextBlueprintFields.length > 0
 
   useEffect(() => {
     if (blueprintManifestFields.length) {
@@ -251,27 +283,35 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
 
   // TODO: refactor this. That does not look good. Should use react-hook-form
   useEffect(() => {
-    if (!editableBlueprintFields.length) return
+    const fieldsWithDefaultValue = [...requiredBlueprintFields, ...optionalBlueprintFields]
+    if (!fieldsWithDefaultValue.length && !overridableContextBlueprintFields.length) return
 
     setBlueprintFieldValues((currentValues) => {
       let hasNewDefaultValue = false
       const nextValues = { ...currentValues }
 
-      editableBlueprintFields.forEach((field) => {
+      fieldsWithDefaultValue.forEach((field) => {
         if (nextValues[field.name] !== undefined) return
 
         nextValues[field.name] = getDefaultFieldValue(field)
         hasNewDefaultValue = true
       })
 
+      overridableContextBlueprintFields.forEach((field) => {
+        if (nextValues[field.name] !== undefined) return
+
+        nextValues[field.name] = getDefaultContextFieldValue(field)
+        hasNewDefaultValue = true
+      })
+
       return hasNewDefaultValue ? nextValues : currentValues
     })
-  }, [editableBlueprintFields])
+  }, [optionalBlueprintFields, overridableContextBlueprintFields, requiredBlueprintFields])
 
   return (
     <FunnelFlow totalSteps={steps.length} currentStep={1} currentTitle={steps[0]} onExit={onExit}>
-      <div className="flex w-full overflow-auto bg-background">
-        <main className="mx-auto flex min-h-full w-full max-w-[620px] flex-col justify-between px-4 pb-6 pt-6">
+      <div className="flex w-full items-start overflow-auto bg-background">
+        <main className="mx-auto flex w-full max-w-[620px] flex-col justify-between px-4 pt-6">
           <div>
             <header className="mb-5">
               <h1 className="text-2xl font-medium leading-8 text-neutral">{blueprint.name} configuration</h1>
@@ -325,7 +365,7 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
               >
                 {currentSection === 'blueprint-setup' && (
                   <>
-                    {editableBlueprintFields.map((field) => (
+                    {requiredBlueprintFields.map((field) => (
                       <BlueprintManifestVariableInput
                         key={field.name}
                         field={field}
@@ -336,16 +376,6 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
                             [field.name]: value,
                           }))
                         }
-                      />
-                    ))}
-                    {contextBlueprintFields.map((field) => (
-                      <InputText
-                        key={field.name}
-                        name={field.name}
-                        label={formatFieldLabel(field.name)}
-                        value={field.source ?? ''}
-                        disabled
-                        hint="Automatically sourced by Qovery"
                       />
                     ))}
                     <Button
@@ -361,14 +391,44 @@ export function BlueprintCreationFlow({ blueprint, organizationId, onExit }: Blu
                   </>
                 )}
               </BlueprintSection>
-              <OverridesSection
-                active={currentSection === 'overrides'}
-                onClick={() => setCurrentSection('overrides')}
-              />
+              <OverridesSection active={currentSection === 'overrides'} onClick={() => setCurrentSection('overrides')}>
+                {hasOverrideFields && (
+                  <>
+                    {optionalBlueprintFields.map((field) => (
+                      <BlueprintManifestVariableInput
+                        key={field.name}
+                        field={field}
+                        value={blueprintFieldValues[field.name]}
+                        onChange={(value) =>
+                          setBlueprintFieldValues((currentValues) => ({
+                            ...currentValues,
+                            [field.name]: value,
+                          }))
+                        }
+                      />
+                    ))}
+                    {overridableContextBlueprintFields.map((field) => (
+                      <InputText
+                        key={field.name}
+                        name={field.name}
+                        label={formatFieldLabel(field.name)}
+                        value={getStringFieldValue(blueprintFieldValues[field.name])}
+                        hint={field.source ? `Automatically sourced from ${field.source}` : undefined}
+                        onChange={(event) =>
+                          setBlueprintFieldValues((currentValues) => ({
+                            ...currentValues,
+                            [field.name]: event.currentTarget.value,
+                          }))
+                        }
+                      />
+                    ))}
+                  </>
+                )}
+              </OverridesSection>
             </div>
           </div>
 
-          <footer className="mt-12 border-t border-neutral pt-4">
+          <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
             <Button type="button" size="lg" className="w-full" disabled={currentSection !== 'overrides'}>
               Confirm blueprint configuration
               <Icon iconName="arrow-right" />
