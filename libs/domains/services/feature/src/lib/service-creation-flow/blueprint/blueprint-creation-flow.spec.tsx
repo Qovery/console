@@ -2,7 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { within } from '@testing-library/react'
 import type { BlueprintItem, BlueprintManifestResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useState } from 'react'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   BlueprintConfigurationView,
   BlueprintCreationFlow,
@@ -237,6 +237,16 @@ describe('BlueprintCreationFlow', () => {
     expect(screen.getByText(/production/)).toBeInTheDocument()
     expect(screen.getByText(/^postgres$/)).toBeInTheDocument()
     expect(screen.getByText(/••••••••/)).toBeInTheDocument()
+  })
+
+  it('should redirect to configuration when summary is opened without required blueprint values', async () => {
+    renderBlueprintFlow(<BlueprintStepSummary />)
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith({
+        to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres',
+      })
+    })
   })
 
   it('should send blueprint setup fields in the create payload', async () => {

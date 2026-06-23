@@ -8,6 +8,7 @@ import {
   buildBlueprintVariables,
   formatFieldLabel,
   getSummaryFieldValue,
+  isFieldValid,
 } from '../blueprint-creation-utils/blueprint-creation-utils'
 
 export function BlueprintStepSummary() {
@@ -29,16 +30,18 @@ export function BlueprintStepSummary() {
   const variableFields = [...requiredBlueprintFields, ...optionalBlueprintFields]
   const overrideFields = [...optionalBlueprintFields, ...overridableContextBlueprintFields]
   const blueprintFields = [...variableFields, ...overridableContextBlueprintFields]
+  const isBlueprintSetupValid = requiredBlueprintFields.every((field) => isFieldValid(field, fields[field.name]))
 
   useEffect(() => {
     setCurrentStep(2)
   }, [setCurrentStep])
 
   useEffect(() => {
-    if (!serviceName.trim()) {
+    if (!serviceName.trim() || !isBlueprintSetupValid) {
       navigate({ to: creationFlowUrl })
+      return
     }
-  }, [creationFlowUrl, navigate, serviceName])
+  }, [creationFlowUrl, isBlueprintSetupValid, navigate, serviceName])
 
   const handleSubmit = async (withDeploy: boolean) => {
     setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')

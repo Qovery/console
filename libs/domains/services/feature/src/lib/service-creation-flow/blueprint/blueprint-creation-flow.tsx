@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useBlueprintCatalogServiceManifest } from '../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
@@ -10,7 +10,6 @@ import {
   type BlueprintCreationFlowProps,
 } from './blueprint-create-context/blueprint-create-context'
 import {
-  getBlueprintFieldPath,
   getDefaultContextFieldValue,
   getDefaultFieldValue,
   isOptionalVariableField,
@@ -43,13 +42,6 @@ export function BlueprintCreationFlow({
   const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? 'latest'
   const serviceFamily = blueprint.serviceFamily ?? ''
   const { environmentId = '' } = useParams({ strict: false })
-  const form = useForm<BlueprintCreateFormData>({
-    defaultValues: {
-      serviceName: blueprint.name,
-      fields: {},
-    },
-    mode: 'onChange',
-  })
   const { data: blueprintManifestFields = [] } = useBlueprintCatalogServiceManifest({
     organizationId,
     provider: blueprint.provider,
@@ -57,6 +49,7 @@ export function BlueprintCreationFlow({
     serviceVersion,
     environmentId,
     enabled: Boolean(serviceVersion) && Boolean(serviceFamily) && Boolean(environmentId),
+    suspense: true,
   })
 
   const requiredBlueprintFields = useMemo(
@@ -71,28 +64,23 @@ export function BlueprintCreationFlow({
     () => blueprintManifestFields.filter(isOverridableContextVariableField),
     [blueprintManifestFields]
   )
-
-  useEffect(() => {
+  const defaultBlueprintFieldValues = useMemo(() => {
     const fieldsWithDefaultValue = [...requiredBlueprintFields, ...optionalBlueprintFields]
-    if (!fieldsWithDefaultValue.length && !overridableContextBlueprintFields.length) return
 
-    const currentValues = form.getValues('fields')
-    const nextValues = { ...currentValues }
-
-    fieldsWithDefaultValue.forEach((field) => {
-      if (nextValues[field.name] !== undefined) return
-
-      nextValues[field.name] = getDefaultFieldValue(field)
-      form.setValue(getBlueprintFieldPath(field.name), nextValues[field.name], { shouldValidate: true })
-    })
-
-    overridableContextBlueprintFields.forEach((field) => {
-      if (nextValues[field.name] !== undefined) return
-
-      nextValues[field.name] = getDefaultContextFieldValue(field)
-      form.setValue(getBlueprintFieldPath(field.name), nextValues[field.name], { shouldValidate: true })
-    })
-  }, [form, optionalBlueprintFields, overridableContextBlueprintFields, requiredBlueprintFields])
+    return {
+      ...Object.fromEntries(fieldsWithDefaultValue.map((field) => [field.name, getDefaultFieldValue(field)])),
+      ...Object.fromEntries(
+        overridableContextBlueprintFields.map((field) => [field.name, getDefaultContextFieldValue(field)])
+      ),
+    }
+  }, [optionalBlueprintFields, overridableContextBlueprintFields, requiredBlueprintFields])
+  const form = useForm<BlueprintCreateFormData>({
+    defaultValues: {
+      serviceName: blueprint.name,
+      fields: defaultBlueprintFieldValues,
+    },
+    mode: 'onChange',
+  })
 
   return (
     <BlueprintCreateContext.Provider
