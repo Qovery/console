@@ -11,7 +11,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { serviceFamily } = Route.useParams()
 
-  useDocumentTitle(`${serviceFamily} configuration - Qovery`)
+  useDocumentTitle(`${serviceFamily} configuration`)
 
   return <BlueprintConfigurationStep />
 }

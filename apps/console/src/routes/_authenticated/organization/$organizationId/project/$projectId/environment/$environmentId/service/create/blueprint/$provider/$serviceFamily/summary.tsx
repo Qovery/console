@@ -9,7 +9,7 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  useDocumentTitle('Summary - Create Blueprint')
+  useDocumentTitle('Summary - Create service from blueprint')
 
   return <BlueprintStepSummary />
 }

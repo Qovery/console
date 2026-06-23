@@ -13,7 +13,7 @@ export function useCreateBlueprint() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your blueprint service has been created',
+        title: 'Your service has been created',
       },
       notifyOnError: true,
     },
