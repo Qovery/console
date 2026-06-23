@@ -215,6 +215,9 @@ describe('BlueprintCreationFlow', () => {
         name: 'custom-postgres',
         tag: 'aws/postgres/17/1.0.0',
         icon: 'https://cdn.qovery.com/icons/postgresql.svg',
+        spec_overrides: {
+          engine_version: '1.13.3',
+        },
         variables: expect.arrayContaining([
           {
             name: 'db_name',
