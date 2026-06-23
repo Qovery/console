@@ -44,6 +44,7 @@ export * from './lib/hooks/use-redeploy-service-action/use-redeploy-service-acti
 export * from './lib/hooks/use-stop-all-services/use-stop-all-services'
 export * from './lib/hooks/use-stop-service/use-stop-service'
 export * from './lib/hooks/use-create-service/use-create-service'
+export * from './lib/hooks/use-create-blueprint/use-create-blueprint'
 export * from './lib/hooks/use-edit-service/use-edit-service'
 export * from './lib/hooks/use-default-advanced-settings/use-default-advanced-settings'
 export * from './lib/hooks/use-advanced-settings/use-advanced-settings'

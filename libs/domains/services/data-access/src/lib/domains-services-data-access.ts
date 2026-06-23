@@ -14,6 +14,7 @@ import {
   ApplicationsApi,
   ArgoCDApi,
   BlueprintCatalogApi,
+  type BlueprintCreateRequest,
   BlueprintMainCallsApi,
   type CleanFailedJobsRequest,
   ContainerActionsApi,
@@ -755,6 +756,12 @@ type CreateServiceRequest = {
       } & TerraformRequest)
 }
 
+type CreateBlueprintRequest = {
+  environmentId: string
+  payload: BlueprintCreateRequest
+  deploy?: boolean
+}
+
 type EditServiceRequest = {
   serviceId: string
   payload:
@@ -1022,6 +1029,10 @@ export const mutations = {
 
       .exhaustive()
     const response = await mutation()
+    return response.data
+  },
+  async createBlueprint({ environmentId, payload, deploy }: CreateBlueprintRequest) {
+    const response = await blueprintApi.createBlueprint(environmentId, payload, deploy)
     return response.data
   },
   async editService({ serviceId, payload }: EditServiceRequest) {

@@ -50,7 +50,7 @@ const hiddenProgressCardRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/new',
   '/_authenticated/organization/$organizationId/cluster/create/$slug',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm',
