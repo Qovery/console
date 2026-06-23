@@ -1,13 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import {
-  type BlueprintItem,
-  type BlueprintManifestContextVariableField,
-  type BlueprintManifestResponseResultsInner,
-  type BlueprintManifestVariableField,
-  type BlueprintVariableRequest,
-} from 'qovery-typescript-axios'
+import { type BlueprintItem, type BlueprintManifestVariableField } from 'qovery-typescript-axios'
 import {
   type Dispatch,
   type PropsWithChildren,
@@ -34,18 +28,30 @@ import {
 } from '@qovery/shared/ui'
 import { useBlueprintCatalogServiceManifest } from '../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
 import { useCreateBlueprint } from '../../hooks/use-create-blueprint/use-create-blueprint'
+import {
+  type BlueprintFieldValue,
+  type BlueprintFieldValues,
+  type OverridableBlueprintManifestContextVariableField,
+  buildBlueprintVariables,
+  formatFieldLabel,
+  getBlueprintFieldPath,
+  getBooleanFieldValue,
+  getDefaultContextFieldValue,
+  getDefaultFieldValue,
+  getFieldValidationError,
+  getStringFieldValue,
+  getSummaryFieldValue,
+  isFieldValid,
+  isOptionalVariableField,
+  isOverridableContextVariableField,
+  isRequiredVariableField,
+} from './blueprint-creation-utils/blueprint-creation-utils'
 
 export type BlueprintConfigurationSection = 'service-information' | 'blueprint-setup' | 'overrides'
-export type BlueprintFieldValue = string | boolean
-export type BlueprintFieldValues = Record<string, BlueprintFieldValue>
 
 export interface BlueprintCreateFormData {
   serviceName: string
   fields: BlueprintFieldValues
-}
-
-type OverridableBlueprintManifestContextVariableField = BlueprintManifestContextVariableField & {
-  overridable?: boolean
 }
 
 export interface BlueprintCreateContextInterface {
@@ -81,130 +87,6 @@ export const useBlueprintCreateContext = () => {
 }
 
 export const blueprintCreationSteps: { title: string }[] = [{ title: 'Configuration' }, { title: 'Summary' }]
-
-type BlueprintFieldPath = `fields.${string}`
-
-function getBlueprintFieldPath(name: string): BlueprintFieldPath {
-  return `fields.${name}`
-}
-
-function formatFieldLabel(name: string) {
-  const label = name.replace(/_/g, ' ')
-  return `${label.charAt(0).toUpperCase()}${label.slice(1)}`
-}
-
-function getDefaultFieldValue(field: BlueprintManifestVariableField): BlueprintFieldValue {
-  if (field.type.type === 'bool') return field.default_value === 'true'
-  return field.default_value ?? ''
-}
-
-function getDefaultContextFieldValue(field: BlueprintManifestContextVariableField): BlueprintFieldValue {
-  return field.value ?? ''
-}
-
-function getStringFieldValue(value: BlueprintFieldValue | undefined) {
-  return typeof value === 'string' ? value : ''
-}
-
-function getBooleanFieldValue(value: BlueprintFieldValue | undefined) {
-  return typeof value === 'boolean' ? value : false
-}
-
-function isFieldValueFulfilled(value: BlueprintFieldValue | undefined) {
-  if (typeof value === 'boolean') return true
-  return Boolean(value?.trim())
-}
-
-function isFieldValueMatchingPattern(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
-  if (typeof value !== 'string' || !value || !field.type.pattern) return true
-
-  try {
-    return new RegExp(field.type.pattern).test(value)
-  } catch {
-    return true
-  }
-}
-
-function getFieldLengthValidationError(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
-  if (typeof value !== 'string' || !value) return undefined
-
-  const { min_length: minLength, max_length: maxLength } = field.type
-  const hasMinLength = typeof minLength === 'number'
-  const hasMaxLength = typeof maxLength === 'number'
-
-  if (hasMinLength && hasMaxLength && (value.length < minLength || value.length > maxLength)) {
-    return `Value must be between ${minLength} and ${maxLength} characters.`
-  }
-
-  if (hasMinLength && value.length < minLength) return `Value must be at least ${minLength} characters.`
-  if (hasMaxLength && value.length > maxLength) return `Value must be at most ${maxLength} characters.`
-
-  return undefined
-}
-
-function getFieldValidationError(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
-  const lengthValidationError = getFieldLengthValidationError(field, value)
-  if (lengthValidationError) return lengthValidationError
-
-  if (!isFieldValueMatchingPattern(field, value)) return 'Value does not match the expected format.'
-  return undefined
-}
-
-function isFieldValid(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
-  if (field.required && !isFieldValueFulfilled(value)) return false
-  return !getFieldValidationError(field, value)
-}
-
-function isVariableField(field: BlueprintManifestResponseResultsInner): field is BlueprintManifestVariableField {
-  return field.kind === 'variable'
-}
-
-function isRequiredVariableField(
-  field: BlueprintManifestResponseResultsInner
-): field is BlueprintManifestVariableField {
-  return isVariableField(field) && field.required
-}
-
-function isOptionalVariableField(
-  field: BlueprintManifestResponseResultsInner
-): field is BlueprintManifestVariableField {
-  return isVariableField(field) && !field.required
-}
-
-function isOverridableContextVariableField(
-  field: BlueprintManifestResponseResultsInner
-): field is OverridableBlueprintManifestContextVariableField {
-  return field.kind === 'contextVariable' && 'overridable' in field && field.overridable === true
-}
-
-function getSummaryFieldValue(
-  field: BlueprintManifestVariableField | OverridableBlueprintManifestContextVariableField,
-  value: BlueprintFieldValue | undefined
-) {
-  if (typeof value === 'boolean') return value ? 'Enabled' : 'Disabled'
-  if (field.kind === 'variable' && field.is_secret && value) return '••••••••'
-  return value
-}
-
-function buildBlueprintVariables(
-  fields: BlueprintFieldValues,
-  blueprintFields: Array<BlueprintManifestVariableField | OverridableBlueprintManifestContextVariableField>
-): BlueprintVariableRequest[] {
-  const blueprintFieldsByName = new Map(blueprintFields.map((field) => [field.name, field]))
-
-  return Object.entries(fields).flatMap(([name, value]) => {
-    if (typeof value === 'string' && !value.trim()) return []
-    const field = blueprintFieldsByName.get(name)
-
-    return [
-      {
-        name,
-        value: String(value),
-        is_secret: field?.kind === 'variable' ? field.is_secret : false,
-      },
-    ]
-  })
-}
 
 function BlueprintSection({
   active = false,
