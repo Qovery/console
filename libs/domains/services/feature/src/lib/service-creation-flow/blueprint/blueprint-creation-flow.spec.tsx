@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
+import { within } from '@testing-library/react'
 import type { BlueprintItem, BlueprintManifestResponseResultsInner } from 'qovery-typescript-axios'
-import { useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
   BlueprintConfigurationView,
@@ -11,6 +12,7 @@ import {
 
 const mockNavigate = jest.fn()
 const mockUseBlueprintCatalogServiceManifest = jest.fn()
+const mockUseBlueprintCatalogServiceReadme = jest.fn()
 const mockCreateBlueprint = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
@@ -19,8 +21,27 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: jest.fn(),
 }))
 
+jest.mock('@qovery/shared/ui', () => {
+  const actual = jest.requireActual('@qovery/shared/ui')
+  return {
+    ...actual,
+    Link: ({ children, to, ...props }: { children: ReactNode; to?: string; [key: string]: unknown }) =>
+      typeof to === 'string' ? (
+        <a href={to} {...props}>
+          {children}
+        </a>
+      ) : (
+        <span {...props}>{children}</span>
+      ),
+  }
+})
+
 jest.mock('../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest', () => ({
   useBlueprintCatalogServiceManifest: (props: unknown) => mockUseBlueprintCatalogServiceManifest(props),
+}))
+
+jest.mock('../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
+  useBlueprintCatalogServiceReadme: (props: unknown) => mockUseBlueprintCatalogServiceReadme(props),
 }))
 
 jest.mock('../../hooks/use-create-blueprint/use-create-blueprint', () => ({
@@ -143,7 +164,29 @@ describe('BlueprintCreationFlow', () => {
       environmentId: 'env-1',
     })
     mockUseBlueprintCatalogServiceManifest.mockReturnValue({ data: manifestFields })
+    mockUseBlueprintCatalogServiceReadme.mockReturnValue({
+      data: {
+        content: '# AWS RDS PostgreSQL\n\nBlueprint documentation',
+        repository_url: 'https://github.com/qovery-blueprints/postgres',
+      },
+    })
     mockCreateBlueprint.mockResolvedValue({ environment_id: 'env-1' })
+  })
+
+  it('should open the blueprint details drawer from the configuration header', async () => {
+    jest.useFakeTimers()
+
+    const { userEvent } = renderBlueprintFlow(<BlueprintConfigurationView />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'AWS RDS PostgreSQL' }))
+
+    const dialog = await screen.findByRole('dialog', { name: 'AWS RDS PostgreSQL' })
+
+    expect(dialog).toHaveTextContent('Managed PostgreSQL database.')
+    expect(dialog).toHaveTextContent('Blueprint documentation')
+    expect(within(dialog).getByRole('button', { name: 'Close' })).toBeInTheDocument()
+    expect(within(dialog).queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument()
+    expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
   })
 
   it('should navigate to the blueprint summary from the confirm blueprint configuration button', async () => {

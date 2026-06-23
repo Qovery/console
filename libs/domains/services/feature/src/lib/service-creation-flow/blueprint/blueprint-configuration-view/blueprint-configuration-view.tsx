@@ -25,6 +25,7 @@ export function BlueprintConfigurationView() {
     form,
     optionalBlueprintFields,
     overridableContextBlueprintFields,
+    onViewDetails,
     requiredBlueprintFields,
     serviceVersion,
     setCurrentStep,
@@ -52,7 +53,15 @@ export function BlueprintConfigurationView() {
           <header className="mb-5">
             <h1 className="text-2xl font-medium leading-8 text-neutral">{blueprint.name} configuration</h1>
             <p className="mt-1 text-sm leading-5 text-neutral-subtle">
-              Provisioned from <span className="font-normal underline">{blueprint.name}</span> blueprint
+              Provisioned from{' '}
+              <button
+                type="button"
+                className="font-normal underline hover:text-neutral"
+                onClick={onViewDetails}
+              >
+                {blueprint.name}
+              </button>{' '}
+              blueprint
             </p>
           </header>
 

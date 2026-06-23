@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useBlueprintCatalogServiceManifest } from '../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
+import { BlueprintDetailsPanel } from '../../blueprint-details-panel/blueprint-details-panel'
 import {
   BlueprintCreateContext,
   type BlueprintCreateFormData,
@@ -38,6 +39,7 @@ export function BlueprintCreationFlow({
   onExit,
 }: BlueprintCreationFlowProps) {
   const [currentStep, setCurrentStep] = useState(1)
+  const [selectedBlueprint, setSelectedBlueprint] = useState<typeof blueprint | null>(null)
   const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? 'latest'
   const serviceFamily = blueprint.serviceFamily ?? ''
   const { environmentId = '' } = useParams({ strict: false })
@@ -101,6 +103,7 @@ export function BlueprintCreationFlow({
         currentStep,
         setCurrentStep,
         form,
+        onViewDetails: () => setSelectedBlueprint(blueprint),
         serviceVersion,
         requiredBlueprintFields,
         optionalBlueprintFields,
@@ -116,6 +119,16 @@ export function BlueprintCreationFlow({
         >
           {children}
         </FunnelFlow>
+        <BlueprintDetailsPanel
+          blueprint={selectedBlueprint}
+          deployPath={creationFlowUrl}
+          footerMode="close"
+          open={Boolean(selectedBlueprint)}
+          onOpenChange={(open) => {
+            if (!open) setSelectedBlueprint(null)
+          }}
+          onExitComplete={() => setSelectedBlueprint(null)}
+        />
       </FormProvider>
     </BlueprintCreateContext.Provider>
   )

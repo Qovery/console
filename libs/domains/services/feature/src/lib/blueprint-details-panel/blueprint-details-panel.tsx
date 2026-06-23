@@ -6,7 +6,7 @@ import remarkGfm from 'remark-gfm'
 import { formatCloudProvider } from '@qovery/domains/clusters/data-access'
 import { Badge, Button, ExternalLink, Icon, Link, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { useBlueprintCatalogServiceReadme } from '../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
+import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 
 function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) {
@@ -153,12 +153,14 @@ function BlueprintRepositoryBadge({
 function BlueprintDetailsPanelContent({
   blueprint,
   deployPath,
+  footerMode,
   open,
   onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem
   deployPath: string
+  footerMode: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void
   onOpenChange: (open: boolean) => void
@@ -232,18 +234,26 @@ function BlueprintDetailsPanelContent({
             </Dialog.Close>
 
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-end gap-2 border-t border-neutral bg-background px-6 py-4">
-              <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
-                Cancel
-              </Button>
-              <Link
-                // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
-                to={deployPath}
-                as="button"
-                color="brand"
-                size="lg"
-              >
-                Deploy blueprint
-              </Link>
+              {footerMode === 'close' ? (
+                <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
+                  Close
+                </Button>
+              ) : (
+                <>
+                  <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
+                    Cancel
+                  </Button>
+                  <Link
+                    // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+                    to={deployPath}
+                    as="button"
+                    color="brand"
+                    size="lg"
+                  >
+                    Deploy blueprint
+                  </Link>
+                </>
+              )}
             </div>
           </Sheet>
         </Dialog.Content>
@@ -255,12 +265,14 @@ function BlueprintDetailsPanelContent({
 export function BlueprintDetailsPanel({
   blueprint,
   deployPath,
+  footerMode = 'deploy',
   open,
   onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem | null
   deployPath: string
+  footerMode?: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void
   onOpenChange: (open: boolean) => void
@@ -271,6 +283,7 @@ export function BlueprintDetailsPanel({
     <BlueprintDetailsPanelContent
       blueprint={blueprint}
       deployPath={deployPath}
+      footerMode={footerMode}
       open={open}
       onExitComplete={onExitComplete}
       onOpenChange={onOpenChange}

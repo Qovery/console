@@ -20,6 +20,7 @@ export interface BlueprintCreateContextInterface {
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
   form: UseFormReturn<BlueprintCreateFormData>
+  onViewDetails: () => void
   serviceVersion: string
   requiredBlueprintFields: BlueprintManifestVariableField[]
   optionalBlueprintFields: BlueprintManifestVariableField[]

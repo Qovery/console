@@ -27,7 +27,7 @@ jest.mock('@qovery/shared/ui', () => {
   }
 })
 
-jest.mock('../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
+jest.mock('../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
   useBlueprintCatalogServiceReadme: (props: unknown) => mockUseBlueprintCatalogServiceReadme(props),
 }))
 
@@ -94,6 +94,8 @@ describe('BlueprintDetailsPanel', () => {
       'href',
       'https://github.com/qovery-blueprints/s3'
     )
+    expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
+    expect(within(dialog).getByRole('link', { name: 'Deploy blueprint' })).toHaveAttribute('href', deployPath)
     expect(mockUseBlueprintCatalogServiceReadme).toHaveBeenCalledWith({
       organizationId: 'org-1',
       provider: 'aws',
@@ -161,6 +163,30 @@ describe('BlueprintDetailsPanel', () => {
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  it('should render a close-only footer', async () => {
+    const onOpenChange = jest.fn()
+
+    const { userEvent } = renderWithProviders(
+      <BlueprintDetailsPanel
+        blueprint={blueprint}
+        deployPath={deployPath}
+        footerMode="close"
+        open
+        onOpenChange={onOpenChange}
+        onExitComplete={jest.fn()}
+      />
+    )
+
+    const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
+
+    expect(within(dialog).queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument()
+    expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
+
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Close' }))
 
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
