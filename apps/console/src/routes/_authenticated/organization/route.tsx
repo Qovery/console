@@ -52,6 +52,12 @@ const ORGANIZATION_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/overview',
   },
   {
+    id: 'clusters',
+    label: 'Clusters',
+    iconName: 'cube',
+    routeId: '/_authenticated/organization/$organizationId/clusters',
+  },
+  {
     id: 'audit-logs',
     label: 'Audit Logs',
     iconName: 'lock-keyhole',
@@ -62,12 +68,6 @@ const ORGANIZATION_TABS: NavigationTab[] = [
     label: 'Alerts',
     iconName: 'light-emergency',
     routeId: '/_authenticated/organization/$organizationId/alerts',
-  },
-  {
-    id: 'clusters',
-    label: 'Clusters',
-    iconName: 'cube',
-    routeId: '/_authenticated/organization/$organizationId/clusters',
   },
   {
     id: 'settings',
