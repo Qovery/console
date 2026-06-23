@@ -1,15 +1,16 @@
+import { useParams } from '@tanstack/react-router'
 import { type BlueprintItem } from 'qovery-typescript-axios'
 import { Button, Link } from '@qovery/shared/ui'
 
 export function BlueprintCard({
   blueprint,
-  deployPath,
   onViewDetails,
 }: {
   blueprint: BlueprintItem
-  deployPath: string
   onViewDetails: (blueprint: BlueprintItem) => void
 }) {
+  const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
+
   return (
     <section className="flex h-full flex-col gap-4 rounded-lg border border-neutral bg-surface-neutral p-4 [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)]">
       <div className="flex flex-1 flex-col gap-3">
@@ -21,8 +22,14 @@ export function BlueprintCard({
       </div>
       <div className="mt-auto flex items-center gap-1">
         <Link
-          // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
-          to={deployPath}
+          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
+          params={{
+            organizationId,
+            projectId,
+            environmentId,
+            provider: blueprint.provider,
+            serviceFamily: blueprint.serviceFamily ?? blueprint.provider,
+          }}
           as="button"
           variant="outline"
           color="neutral"

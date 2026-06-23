@@ -95,16 +95,12 @@ function BlueprintSectionErrorFallback({
 }
 
 function BlueprintSection({
-  environmentId,
   organizationId,
-  projectId,
   blueprintSearchInput,
   onBlueprintSearchInputChange,
   onViewDetails,
 }: {
-  environmentId: string
   organizationId: string
-  projectId: string
   blueprintSearchInput: string
   onBlueprintSearchInputChange: (value: string) => void
   onViewDetails: (blueprint: BlueprintItem) => void
@@ -138,12 +134,6 @@ function BlueprintSection({
             <BlueprintCard
               key={`${blueprint.provider}-${blueprint.serviceFamily}`}
               blueprint={blueprint}
-              deployPath={getServicesPath(
-                organizationId,
-                projectId,
-                environmentId,
-                getBlueprintCreateFlowPath(blueprint.provider, blueprint.serviceFamily ?? blueprint.provider)
-              )}
               onViewDetails={onViewDetails}
             />
           ))}
@@ -337,9 +327,7 @@ export function ServiceNew({
                 title="blueprint catalog"
               >
                 <BlueprintSection
-                  environmentId={environmentId}
                   organizationId={organizationId}
-                  projectId={projectId}
                   blueprintSearchInput={blueprintSearchInput}
                   onBlueprintSearchInputChange={setBlueprintSearchInput}
                   onViewDetails={openBlueprintDetails}

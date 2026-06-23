@@ -13,7 +13,7 @@ const blueprintReadmeResponse = {
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useParams: () => ({ organizationId: 'org-1' }),
+  useParams: () => ({ organizationId: 'org-1', projectId: 'project-1', environmentId: 'env-1' }),
 }))
 
 jest.mock('posthog-js', () => ({
@@ -26,9 +26,10 @@ jest.mock('posthog-js/react', () => ({
 
 jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
+
   return {
     ...actual,
-    Link: ({ children, to, ...props }: { children: ReactNode; to?: string }) =>
+    Link: ({ children, params: _params, to, ...props }: { children: ReactNode; params?: unknown; to?: string }) =>
       typeof to === 'string' ? (
         <a href={to} {...props}>
           {children}
@@ -149,7 +150,7 @@ describe('ServiceNew', () => {
     expect(deployLinks).toHaveLength(2)
     expect(deployLinks[0]).toHaveAttribute(
       'href',
-      '/organization/org-1/project/project-1/environment/env-1/service/create/blueprint/aws/s3'
+      '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily'
     )
 
     await userEvent.type(screen.getByPlaceholderText('Search blueprints...'), 'redis')
