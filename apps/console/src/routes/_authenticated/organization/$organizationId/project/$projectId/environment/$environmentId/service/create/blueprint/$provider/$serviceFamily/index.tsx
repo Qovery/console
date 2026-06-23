@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { BlueprintConfigurationStep } from '@qovery/domains/services/feature'
+import { BlueprintConfigurationView } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 export const Route = createFileRoute(
@@ -13,5 +13,5 @@ function RouteComponent() {
 
   useDocumentTitle(`${serviceFamily} configuration`)
 
-  return <BlueprintConfigurationStep />
+  return <BlueprintConfigurationView />
 }

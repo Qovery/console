@@ -3,7 +3,7 @@ import type { BlueprintItem, BlueprintManifestResponseResultsInner } from 'qover
 import { useEffect, useState } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import {
-  BlueprintConfigurationStep,
+  BlueprintConfigurationView,
   BlueprintCreationFlow,
   BlueprintStepSummary,
   useBlueprintCreateContext,
@@ -127,7 +127,7 @@ function BlueprintFlowRouteHarness() {
       creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres"
       onExit={jest.fn()}
     >
-      {step === 'configuration' ? <BlueprintConfigurationStep /> : <BlueprintStepSummary />}
+      {step === 'configuration' ? <BlueprintConfigurationView /> : <BlueprintStepSummary />}
     </BlueprintCreationFlow>
   )
 }
@@ -149,7 +149,7 @@ describe('BlueprintCreationFlow', () => {
   it('should navigate to the blueprint summary from the confirm blueprint configuration button', async () => {
     jest.useFakeTimers()
 
-    const { userEvent } = renderBlueprintFlow(<BlueprintConfigurationStep />)
+    const { userEvent } = renderBlueprintFlow(<BlueprintConfigurationView />)
 
     await userEvent.click(screen.getByRole('button', { name: /continue/i }))
     await userEvent.type(await screen.findByLabelText('Db name'), 'production')
