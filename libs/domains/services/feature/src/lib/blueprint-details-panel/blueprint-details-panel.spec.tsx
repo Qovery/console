@@ -6,6 +6,8 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { BlueprintDetailsPanel } from './blueprint-details-panel'
 
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
+const mockGetLinkHref = (to?: string, params?: Record<string, string>) =>
+  Object.entries(params ?? {}).reduce((path, [key, value]) => path.replace(`$${key}`, value), to ?? '')
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -16,9 +18,19 @@ jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
   return {
     ...actual,
-    Link: ({ children, to, ...props }: { children: ReactNode; to?: string; [key: string]: unknown }) =>
+    Link: ({
+      children,
+      params,
+      to,
+      ...props
+    }: {
+      children: ReactNode
+      params?: Record<string, string>
+      to?: string
+      [key: string]: unknown
+    }) =>
       typeof to === 'string' ? (
-        <a href={to} {...props}>
+        <a href={mockGetLinkHref(to, params)} {...props}>
           {children}
         </a>
       ) : (
@@ -49,7 +61,7 @@ describe('BlueprintDetailsPanel', () => {
 
   beforeEach(() => {
     jest.useFakeTimers()
-    useParamsMock.mockReturnValue({ organizationId: 'org-1' })
+    useParamsMock.mockReturnValue({ organizationId: 'org-1', projectId: 'project-1', environmentId: 'env-1' })
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({
       data: {
         content: '# AWS S3 Bucket\n\nBlueprint documentation\n\n- Versioning',
@@ -60,13 +72,7 @@ describe('BlueprintDetailsPanel', () => {
 
   it('should not render when no blueprint is selected', () => {
     renderWithProviders(
-      <BlueprintDetailsPanel
-        blueprint={null}
-        deployPath={deployPath}
-        open
-        onOpenChange={jest.fn()}
-        onExitComplete={jest.fn()}
-      />
+      <BlueprintDetailsPanel blueprint={null} open onOpenChange={jest.fn()} onExitComplete={jest.fn()} />
     )
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
@@ -74,13 +80,7 @@ describe('BlueprintDetailsPanel', () => {
 
   it('should render blueprint metadata, repository link and readme content', () => {
     renderWithProviders(
-      <BlueprintDetailsPanel
-        blueprint={blueprint}
-        deployPath={deployPath}
-        open
-        onOpenChange={jest.fn()}
-        onExitComplete={jest.fn()}
-      />
+      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={jest.fn()} onExitComplete={jest.fn()} />
     )
 
     const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
@@ -117,13 +117,7 @@ describe('BlueprintDetailsPanel', () => {
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({ data: undefined })
 
     renderWithProviders(
-      <BlueprintDetailsPanel
-        blueprint={blueprint}
-        deployPath={deployPath}
-        open
-        onOpenChange={jest.fn()}
-        onExitComplete={jest.fn()}
-      />
+      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={jest.fn()} onExitComplete={jest.fn()} />
     )
 
     const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
@@ -137,7 +131,6 @@ describe('BlueprintDetailsPanel', () => {
     renderWithProviders(
       <BlueprintDetailsPanel
         blueprint={{ ...blueprint, serviceFamily: undefined }}
-        deployPath={undefined}
         open
         onOpenChange={jest.fn()}
         onExitComplete={jest.fn()}
@@ -159,7 +152,6 @@ describe('BlueprintDetailsPanel', () => {
     renderWithProviders(
       <BlueprintDetailsPanel
         blueprint={{ ...blueprint, majorVersions: [{ serviceVersion: 'default', latestTag: 'aws/s3/default/1.0.0' }] }}
-        deployPath={deployPath}
         open
         onOpenChange={jest.fn()}
         onExitComplete={jest.fn()}
@@ -175,13 +167,7 @@ describe('BlueprintDetailsPanel', () => {
     const onOpenChange = jest.fn()
 
     const { userEvent } = renderWithProviders(
-      <BlueprintDetailsPanel
-        blueprint={blueprint}
-        deployPath={deployPath}
-        open
-        onOpenChange={onOpenChange}
-        onExitComplete={jest.fn()}
-      />
+      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={onOpenChange} onExitComplete={jest.fn()} />
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
@@ -195,7 +181,6 @@ describe('BlueprintDetailsPanel', () => {
     const { userEvent } = renderWithProviders(
       <BlueprintDetailsPanel
         blueprint={blueprint}
-        deployPath={deployPath}
         footerMode="close"
         open
         onOpenChange={onOpenChange}
@@ -217,19 +202,12 @@ describe('BlueprintDetailsPanel', () => {
     const onExitComplete = jest.fn()
     const onOpenChange = jest.fn()
     const { rerender } = renderWithProviders(
-      <BlueprintDetailsPanel
-        blueprint={blueprint}
-        deployPath={deployPath}
-        open
-        onOpenChange={onOpenChange}
-        onExitComplete={onExitComplete}
-      />
+      <BlueprintDetailsPanel blueprint={blueprint} open onOpenChange={onOpenChange} onExitComplete={onExitComplete} />
     )
 
     rerender(
       <BlueprintDetailsPanel
         blueprint={blueprint}
-        deployPath={deployPath}
         open={false}
         onOpenChange={onOpenChange}
         onExitComplete={onExitComplete}

@@ -105,12 +105,7 @@ const manifestFields: BlueprintManifestResponseResultsInner[] = [
 
 function renderBlueprintFlow(children: JSX.Element) {
   return renderWithProviders(
-    <BlueprintCreationFlow
-      blueprint={blueprint}
-      organizationId="org-1"
-      creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres"
-      onExit={jest.fn()}
-    >
+    <BlueprintCreationFlow blueprint={blueprint} onExit={jest.fn()}>
       {children}
     </BlueprintCreationFlow>
   )
@@ -144,12 +139,7 @@ function BlueprintFlowRouteHarness() {
   }, [])
 
   return (
-    <BlueprintCreationFlow
-      blueprint={blueprint}
-      organizationId="org-1"
-      creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres"
-      onExit={jest.fn()}
-    >
+    <BlueprintCreationFlow blueprint={blueprint} onExit={jest.fn()}>
       {step === 'configuration' ? <BlueprintConfigurationView /> : <BlueprintStepSummary />}
     </BlueprintCreationFlow>
   )
@@ -164,6 +154,8 @@ describe('BlueprintCreationFlow', () => {
       organizationId: 'org-1',
       projectId: 'proj-1',
       environmentId: 'env-1',
+      provider: 'AWS',
+      serviceFamily: 'postgres',
     })
     mockUseBlueprintCatalogServiceManifest.mockReturnValue({ data: manifestFields })
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({
@@ -222,12 +214,7 @@ describe('BlueprintCreationFlow', () => {
 
   it('should not load manifest fields when a blueprint has no service family', () => {
     renderWithProviders(
-      <BlueprintCreationFlow
-        blueprint={{ ...blueprint, serviceFamily: undefined }}
-        organizationId="org-1"
-        creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS"
-        onExit={jest.fn()}
-      >
+      <BlueprintCreationFlow blueprint={{ ...blueprint, serviceFamily: undefined }} onExit={jest.fn()}>
         <BlueprintConfigurationView />
       </BlueprintCreationFlow>
     )

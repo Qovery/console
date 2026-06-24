@@ -27,8 +27,6 @@ export interface BlueprintCreateContextInterface {
 
 export interface BlueprintCreationFlowProps extends PropsWithChildren {
   blueprint: BlueprintItem
-  organizationId: string
-  creationFlowUrl: string
   onExit: () => void
 }
 

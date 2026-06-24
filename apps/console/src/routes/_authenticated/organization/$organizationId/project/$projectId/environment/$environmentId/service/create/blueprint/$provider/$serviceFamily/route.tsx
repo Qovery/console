@@ -127,12 +127,11 @@ function BlueprintCreationFlowLoadingSkeleton() {
 }
 
 function BlueprintCreationFlowContent({ onExit }: { onExit: () => void }) {
-  const { organizationId, projectId, environmentId, provider, serviceFamily } = Route.useParams()
+  const { organizationId, provider, serviceFamily } = Route.useParams()
   const { data: blueprintCatalog } = useBlueprintCatalog({ organizationId, suspense: true })
   const blueprint = blueprintCatalog?.blueprints.find(
     (blueprint) => blueprint.provider === provider && blueprint.serviceFamily === serviceFamily
   )
-  const creationFlowUrl = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/blueprint/${encodeURIComponent(provider)}/${encodeURIComponent(serviceFamily)}`
 
   useEffect(() => {
     if (!blueprint) onExit()
@@ -141,12 +140,7 @@ function BlueprintCreationFlowContent({ onExit }: { onExit: () => void }) {
   if (!blueprint) return null
 
   return (
-    <BlueprintCreationFlow
-      blueprint={blueprint}
-      organizationId={organizationId}
-      creationFlowUrl={creationFlowUrl}
-      onExit={onExit}
-    >
+    <BlueprintCreationFlow blueprint={blueprint} onExit={onExit}>
       <Outlet />
     </BlueprintCreationFlow>
   )

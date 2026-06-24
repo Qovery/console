@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
@@ -13,12 +14,7 @@ import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-qu
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
-import {
-  buildCreateFlowPathForType,
-  getBlueprintCreateFlowPath,
-  getCreateFlowPath,
-  getServicesPath,
-} from './service-new-utils/service-new-utils'
+import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
 import { serviceTemplates } from './service-templates'
 
 const CloudFormationIcon = '/assets/devicon/cloudformation.svg'
@@ -95,16 +91,15 @@ function BlueprintSectionErrorFallback({
 }
 
 function BlueprintSection({
-  organizationId,
   blueprintSearchInput,
   onBlueprintSearchInputChange,
   onViewDetails,
 }: {
-  organizationId: string
   blueprintSearchInput: string
   onBlueprintSearchInputChange: (value: string) => void
   onViewDetails: (blueprint: BlueprintItem) => void
 }) {
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: blueprintCatalog } = useBlueprintCatalog({
     organizationId,
     suspense: true,
@@ -327,7 +322,6 @@ export function ServiceNew({
                 title="blueprint catalog"
               >
                 <BlueprintSection
-                  organizationId={organizationId}
                   blueprintSearchInput={blueprintSearchInput}
                   onBlueprintSearchInputChange={setBlueprintSearchInput}
                   onViewDetails={openBlueprintDetails}
@@ -446,16 +440,6 @@ export function ServiceNew({
       </div>
       <BlueprintDetailsPanel
         blueprint={selectedBlueprint}
-        deployPath={
-          selectedBlueprint?.serviceFamily
-            ? getServicesPath(
-                organizationId,
-                projectId,
-                environmentId,
-                getBlueprintCreateFlowPath(selectedBlueprint.provider, selectedBlueprint.serviceFamily)
-              )
-            : undefined
-        }
         open={isBlueprintDetailsOpen}
         onOpenChange={setIsBlueprintDetailsOpen}
         onExitComplete={() => setSelectedBlueprint(null)}

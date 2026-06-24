@@ -85,15 +85,8 @@ function BlueprintReadmeState({ readme }: { readme?: BlueprintReadmeResponse }) 
   return <BlueprintReadmeContent content={readme.content} />
 }
 
-function BlueprintReadme({
-  blueprint,
-  organizationId,
-  serviceVersion,
-}: {
-  blueprint: BlueprintItem
-  organizationId: string
-  serviceVersion: string
-}) {
+function BlueprintReadme({ blueprint, serviceVersion }: { blueprint: BlueprintItem; serviceVersion: string }) {
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: readme } = useBlueprintCatalogServiceReadme({
     organizationId,
     provider: blueprint.provider,
@@ -106,15 +99,8 @@ function BlueprintReadme({
   return <BlueprintReadmeState readme={readme} />
 }
 
-function BlueprintRepositoryBadge({
-  blueprint,
-  organizationId,
-  serviceVersion,
-}: {
-  blueprint: BlueprintItem
-  organizationId: string
-  serviceVersion: string
-}) {
+function BlueprintRepositoryBadge({ blueprint, serviceVersion }: { blueprint: BlueprintItem; serviceVersion: string }) {
+  const { organizationId = '' } = useParams({ strict: false })
   const repositoryName = getBlueprintRepositoryName(blueprint)
   const { data: readme } = useBlueprintCatalogServiceReadme({
     organizationId,
@@ -152,22 +138,21 @@ function BlueprintRepositoryBadge({
 
 function BlueprintDetailsPanelContent({
   blueprint,
-  deployPath,
   footerMode,
   open,
   onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem
-  deployPath?: string
   footerMode: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void
   onOpenChange: (open: boolean) => void
 }) {
-  const { organizationId = '' } = useParams({ strict: false })
+  const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? ''
   const shouldDisplayServiceVersion = serviceVersion && serviceVersion !== 'default'
+  const canDeploy = footerMode === 'deploy' && Boolean(blueprint.serviceFamily)
 
   const provider = formatCloudProvider(blueprint.provider)
 
@@ -193,11 +178,7 @@ function BlueprintDetailsPanelContent({
                   </Dialog.Description>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <BlueprintRepositoryBadge
-                    blueprint={blueprint}
-                    organizationId={organizationId}
-                    serviceVersion={serviceVersion}
-                  />
+                  <BlueprintRepositoryBadge blueprint={blueprint} serviceVersion={serviceVersion} />
                   <Badge size="sm" color="neutral" variant="outline" className="gap-1">
                     {provider}
                   </Badge>
@@ -214,11 +195,7 @@ function BlueprintDetailsPanelContent({
                   resetKeys={[organizationId, blueprint.provider, blueprint.serviceFamily, serviceVersion]}
                   title="blueprint details"
                 >
-                  <BlueprintReadme
-                    blueprint={blueprint}
-                    organizationId={organizationId}
-                    serviceVersion={serviceVersion}
-                  />
+                  <BlueprintReadme blueprint={blueprint} serviceVersion={serviceVersion} />
                 </BlueprintQueryBoundary>
               </div>
             </div>
@@ -234,7 +211,7 @@ function BlueprintDetailsPanelContent({
             </Dialog.Close>
 
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-end gap-2 border-t border-neutral bg-background px-6 py-4">
-              {footerMode === 'close' || !deployPath ? (
+              {!canDeploy ? (
                 <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
                   {footerMode === 'close' ? 'Close' : 'Cancel'}
                 </Button>
@@ -244,8 +221,14 @@ function BlueprintDetailsPanelContent({
                     Cancel
                   </Button>
                   <Link
-                    // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
-                    to={deployPath}
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
+                    params={{
+                      organizationId,
+                      projectId,
+                      environmentId,
+                      provider: blueprint.provider,
+                      serviceFamily: blueprint.serviceFamily ?? '',
+                    }}
                     as="button"
                     color="brand"
                     size="lg"
@@ -264,14 +247,12 @@ function BlueprintDetailsPanelContent({
 
 export function BlueprintDetailsPanel({
   blueprint,
-  deployPath,
   footerMode = 'deploy',
   open,
   onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem | null
-  deployPath?: string
   footerMode?: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void
@@ -282,7 +263,6 @@ export function BlueprintDetailsPanel({
   return (
     <BlueprintDetailsPanelContent
       blueprint={blueprint}
-      deployPath={deployPath}
       footerMode={footerMode}
       open={open}
       onExitComplete={onExitComplete}

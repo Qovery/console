@@ -29,18 +29,18 @@ export { BlueprintStepSummary } from './blueprint-step-summary/blueprint-step-su
 
 export const blueprintCreationSteps: { title: string }[] = [{ title: 'Configuration' }, { title: 'Summary' }]
 
-export function BlueprintCreationFlow({
-  blueprint,
-  children,
-  creationFlowUrl,
-  organizationId,
-  onExit,
-}: BlueprintCreationFlowProps) {
+export function BlueprintCreationFlow({ blueprint, children, onExit }: BlueprintCreationFlowProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [selectedBlueprint, setSelectedBlueprint] = useState<typeof blueprint | null>(null)
   const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? 'latest'
   const serviceFamily = blueprint.serviceFamily ?? ''
-  const { environmentId = '' } = useParams({ strict: false })
+  const {
+    environmentId = '',
+    organizationId = '',
+    projectId = '',
+    provider = blueprint.provider,
+  } = useParams({ strict: false })
+  const creationFlowUrl = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/blueprint/${encodeURIComponent(provider)}/${encodeURIComponent(serviceFamily)}`
   const { data: blueprintManifestFields = [] } = useBlueprintCatalogServiceManifest({
     organizationId,
     provider: blueprint.provider,
@@ -108,7 +108,6 @@ export function BlueprintCreationFlow({
         </FunnelFlow>
         <BlueprintDetailsPanel
           blueprint={selectedBlueprint}
-          deployPath={creationFlowUrl}
           footerMode="close"
           open={Boolean(selectedBlueprint)}
           onOpenChange={(open) => {
