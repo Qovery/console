@@ -294,7 +294,6 @@ export function ServiceTerminal({
                 <span className="shrink-0 text-neutral-subtle">Connected to live pod:</span>
                 {runningStatuses && runningStatuses.pods.length > 0 && (
                   <InputSearch
-                    label=""
                     value={selectedOrDefaultPodName}
                     onChange={onSelectedPodChange}
                     data={runningStatuses.pods.map((pod) => pod.name)}

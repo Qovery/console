@@ -7,12 +7,11 @@ export interface InputSearchProps {
   data: string[]
   onChange: (value?: string) => void
   placeholder: string
-  label: string
   value?: string
   trimLabel?: boolean
 }
 
-export function InputSearch({ data, value, onChange, placeholder, label, trimLabel }: InputSearchProps) {
+export function InputSearch({ data, value, onChange, placeholder, trimLabel }: InputSearchProps) {
   const [items, setItems] = useState(data)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -39,13 +38,11 @@ export function InputSearch({ data, value, onChange, placeholder, label, trimLab
 
   return (
     <div className="relative z-10">
-      {/* Trigger button — always visible, shows label + current value */}
       <button
         type="button"
         className="flex h-8 items-center gap-1.5 rounded border border-neutral bg-surface-neutral px-2.5 text-xs text-neutral hover:border-neutral-strong focus:outline-none"
         onClick={() => (isOpen ? closeMenu() : openMenu())}
       >
-        {label && <span className="font-medium text-neutral-subtle">{label}</span>}
         <span className="max-w-32 truncate">
           {displayValue ?? <span className="text-neutral-subtle">{placeholder}</span>}
         </span>
@@ -55,7 +52,6 @@ export function InputSearch({ data, value, onChange, placeholder, label, trimLab
         />
       </button>
 
-      {/* Dropdown */}
       <div
         className={clsx(
           'absolute left-0 top-full mt-1 w-64 overflow-hidden rounded-md border border-neutral bg-surface-neutral shadow-[0_0_32px_rgba(0,0,0,0.08)]',
