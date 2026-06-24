@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Button, Icon, InputText } from '@qovery/shared/ui'
 import {
@@ -17,8 +17,13 @@ import { BlueprintManifestVariableInput } from './blueprint-creation-components/
 import { BlueprintSection } from './blueprint-creation-components/blueprint-section/blueprint-section'
 import { OverridesSection } from './blueprint-creation-components/overrides-section/overrides-section'
 
+function isBlueprintConfigurationSection(value: unknown): value is BlueprintConfigurationSection {
+  return value === 'service-information' || value === 'blueprint-setup' || value === 'overrides'
+}
+
 export function BlueprintConfigurationView() {
   const navigate = useNavigate()
+  const search = useSearch({ strict: false }) as { section?: unknown }
   const {
     blueprint,
     creationFlowUrl,
@@ -30,7 +35,10 @@ export function BlueprintConfigurationView() {
     serviceVersion,
     setCurrentStep,
   } = useBlueprintCreateContext()
-  const [currentSection, setCurrentSection] = useState<BlueprintConfigurationSection>('service-information')
+  const initialSection = isBlueprintConfigurationSection(search.section)
+    ? search.section
+    : 'service-information'
+  const [currentSection, setCurrentSection] = useState<BlueprintConfigurationSection>(initialSection)
   const serviceName = form.watch('serviceName')
   const blueprintFieldValues = form.watch('fields')
   const hasOverrideFields = optionalBlueprintFields.length > 0 || overridableContextBlueprintFields.length > 0
@@ -45,6 +53,12 @@ export function BlueprintConfigurationView() {
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])
+
+  useEffect(() => {
+    if (isBlueprintConfigurationSection(search.section)) {
+      setCurrentSection(search.section)
+    }
+  }, [search.section])
 
   return (
     <div className="flex w-full items-start overflow-auto bg-background">

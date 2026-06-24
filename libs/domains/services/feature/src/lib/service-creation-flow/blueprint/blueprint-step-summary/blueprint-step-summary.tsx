@@ -3,7 +3,10 @@ import posthog from 'posthog-js'
 import { useEffect, useState } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
 import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
-import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
+import {
+  type BlueprintConfigurationSection,
+  useBlueprintCreateContext,
+} from '../blueprint-create-context/blueprint-create-context'
 import {
   buildBlueprintVariables,
   formatFieldLabel,
@@ -31,6 +34,10 @@ export function BlueprintStepSummary() {
   const overrideFields = [...optionalBlueprintFields, ...overridableContextBlueprintFields]
   const blueprintFields = [...variableFields, ...overridableContextBlueprintFields]
   const isBlueprintSetupValid = requiredBlueprintFields.every((field) => isFieldValid(field, fields[field.name]))
+
+  const handleEditSection = (section: BlueprintConfigurationSection) => {
+    navigate({ to: creationFlowUrl, search: { section } })
+  }
 
   useEffect(() => {
     setCurrentStep(2)
@@ -103,7 +110,7 @@ export function BlueprintStepSummary() {
                 variant="outline"
                 color="neutral"
                 size="md"
-                onClick={() => navigate({ to: creationFlowUrl })}
+                onClick={() => handleEditSection('service-information')}
                 iconOnly
               >
                 <Icon className="text-base" iconName="gear-complex" />
@@ -126,7 +133,7 @@ export function BlueprintStepSummary() {
                   variant="outline"
                   color="neutral"
                   size="md"
-                  onClick={() => navigate({ to: creationFlowUrl })}
+                  onClick={() => handleEditSection('blueprint-setup')}
                   iconOnly
                 >
                   <Icon className="text-base" iconName="gear-complex" />
@@ -153,7 +160,7 @@ export function BlueprintStepSummary() {
                 variant="outline"
                 color="neutral"
                 size="md"
-                onClick={() => navigate({ to: creationFlowUrl })}
+                onClick={() => handleEditSection('overrides')}
                 iconOnly
               >
                 <Icon className="text-base" iconName="gear-complex" />

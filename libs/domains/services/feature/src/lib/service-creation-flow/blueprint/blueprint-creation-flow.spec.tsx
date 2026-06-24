@@ -11,6 +11,7 @@ import {
 } from './blueprint-creation-flow'
 
 const mockNavigate = jest.fn()
+const mockUseSearch = jest.fn()
 const mockUseBlueprintCatalogServiceManifest = jest.fn()
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
 const mockCreateBlueprint = jest.fn()
@@ -19,6 +20,7 @@ jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => mockNavigate,
   useParams: jest.fn(),
+  useSearch: () => mockUseSearch(),
 }))
 
 jest.mock('@qovery/shared/ui', () => {
@@ -171,6 +173,7 @@ describe('BlueprintCreationFlow', () => {
       },
     })
     mockCreateBlueprint.mockResolvedValue({ environment_id: 'env-1' })
+    mockUseSearch.mockReturnValue({})
   })
 
   it('should open the blueprint details drawer from the configuration header', async () => {
@@ -229,6 +232,45 @@ describe('BlueprintCreationFlow', () => {
     await userEvent.click(screen.getByRole('button', { name: /continue/i }))
 
     expect(await screen.findByRole('checkbox', { name: 'Skip final snapshot' })).toHaveFocus()
+  })
+
+  it('should open the requested configuration section from route search', async () => {
+    mockUseSearch.mockReturnValue({ section: 'overrides' })
+
+    renderBlueprintFlow(<BlueprintConfigurationView />)
+
+    expect(await screen.findByText(/Use overrides to customize how your service is built or run/)).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'Skip final snapshot' })).toBeInTheDocument()
+  })
+
+  it('should navigate to the matching configuration section from summary edit buttons', async () => {
+    jest.useFakeTimers()
+
+    const { userEvent } = renderBlueprintFlow(
+      <FillFormValues>
+        <BlueprintStepSummary />
+      </FillFormValues>
+    )
+
+    await screen.findByText(/custom-postgres/)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit service information' }))
+    expect(mockNavigate).toHaveBeenLastCalledWith({
+      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres',
+      search: { section: 'service-information' },
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit blueprint setup' }))
+    expect(mockNavigate).toHaveBeenLastCalledWith({
+      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres',
+      search: { section: 'blueprint-setup' },
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit overrides' }))
+    expect(mockNavigate).toHaveBeenLastCalledWith({
+      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres',
+      search: { section: 'overrides' },
+    })
   })
 
   it('should render the summary with the previously filled blueprint values', async () => {
