@@ -104,9 +104,10 @@ export function BlueprintConfigurationView() {
             >
               {currentSection === 'blueprint-setup' && (
                 <>
-                  {requiredBlueprintFields.map((field) => (
+                  {requiredBlueprintFields.map((field, index) => (
                     <BlueprintManifestVariableInput
                       key={field.name}
+                      autoFocus={index === 0}
                       error={getFieldValidationError(field, blueprintFieldValues[field.name])}
                       field={field}
                       value={blueprintFieldValues[field.name]}
@@ -134,22 +135,24 @@ export function BlueprintConfigurationView() {
             >
               {hasOverrideFields && (
                 <>
-                  {optionalBlueprintFields.map((field) => (
+                  {optionalBlueprintFields.map((field, index) => (
                     <BlueprintManifestVariableInput
                       key={field.name}
+                      autoFocus={index === 0}
                       error={getFieldValidationError(field, blueprintFieldValues[field.name])}
                       field={field}
                       value={blueprintFieldValues[field.name]}
                       onChange={(value) => updateFieldValue(field.name, value)}
                     />
                   ))}
-                  {overridableContextBlueprintFields.map((field) => (
+                  {overridableContextBlueprintFields.map((field, index) => (
                     <InputText
                       key={field.name}
                       name={field.name}
                       label={formatFieldLabel(field.name)}
                       value={getStringFieldValue(blueprintFieldValues[field.name])}
                       hint={field.source ? `Automatically sourced from ${field.source}` : undefined}
+                      autoFocus={optionalBlueprintFields.length === 0 && index === 0}
                       onChange={(event) => updateFieldValue(field.name, event.currentTarget.value)}
                     />
                   ))}

@@ -9,13 +9,20 @@ import {
 import { CheckboxField } from '../checkbox-field/checkbox-field'
 
 export interface BlueprintManifestVariableInputProps {
+  autoFocus?: boolean
   error?: string
   field: BlueprintManifestVariableField
   onChange: (value: BlueprintFieldValue) => void
   value: BlueprintFieldValue | undefined
 }
 
-export function BlueprintManifestVariableInput({ error, field, onChange, value }: BlueprintManifestVariableInputProps) {
+export function BlueprintManifestVariableInput({
+  autoFocus,
+  error,
+  field,
+  onChange,
+  value,
+}: BlueprintManifestVariableInputProps) {
   const label = formatFieldLabel(field.name)
 
   if (field.allowed_values?.length) {
@@ -24,6 +31,7 @@ export function BlueprintManifestVariableInput({ error, field, onChange, value }
         label={label}
         value={getStringFieldValue(value)}
         options={field.allowed_values.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
+        autoFocus={autoFocus}
         onChange={(value) => {
           if (Array.isArray(value)) return
           onChange(value)
@@ -35,6 +43,7 @@ export function BlueprintManifestVariableInput({ error, field, onChange, value }
   if (field.type.type === 'bool') {
     return (
       <CheckboxField
+        autoFocus={autoFocus}
         checked={getBooleanFieldValue(value)}
         description={field.description ?? ''}
         label={label}
@@ -52,6 +61,7 @@ export function BlueprintManifestVariableInput({ error, field, onChange, value }
       value={getStringFieldValue(value)}
       error={error}
       hint={field.description ?? undefined}
+      autoFocus={autoFocus}
       onChange={(event) => onChange(event.currentTarget.value)}
     />
   )

@@ -206,6 +206,31 @@ describe('BlueprintCreationFlow', () => {
     })
   })
 
+  it('should focus the first blueprint setup field after continuing from service information', async () => {
+    jest.useFakeTimers()
+
+    const { userEvent } = renderBlueprintFlow(<BlueprintConfigurationView />)
+
+    await userEvent.type(screen.getByLabelText('Service name'), 'custom-postgres')
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(await screen.findByLabelText('Db name')).toHaveFocus()
+  })
+
+  it('should focus the first overrides field after continuing from blueprint setup', async () => {
+    jest.useFakeTimers()
+
+    const { userEvent } = renderBlueprintFlow(<BlueprintConfigurationView />)
+
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await userEvent.type(await screen.findByLabelText('Db name'), 'production')
+    await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
+    await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(await screen.findByRole('checkbox', { name: 'Skip final snapshot' })).toHaveFocus()
+  })
+
   it('should render the summary with the previously filled blueprint values', async () => {
     renderBlueprintFlow(
       <FillFormValues>
