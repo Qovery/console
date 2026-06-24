@@ -6,8 +6,8 @@ import remarkGfm from 'remark-gfm'
 import { formatCloudProvider } from '@qovery/domains/clusters/data-access'
 import { Badge, Button, ExternalLink, Icon, Link, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
+import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 
 function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) {
   return `qovery-blueprints/${serviceFamily || provider}`

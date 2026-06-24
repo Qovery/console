@@ -2,8 +2,8 @@ import { useParams } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FunnelFlow } from '@qovery/shared/ui'
-import { useBlueprintCatalogServiceManifest } from '../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
 import { BlueprintDetailsPanel } from '../../blueprint-details-panel/blueprint-details-panel'
+import { useBlueprintCatalogServiceManifest } from '../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
 import {
   BlueprintCreateContext,
   type BlueprintCreateFormData,

@@ -8,10 +8,10 @@ import {
 import { type ReactNode, useMemo, useState } from 'react'
 import { Button, ExternalLink, Heading, Icon, InputSearch, Section, Skeleton } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
-import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
-import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
+import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
+import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
 import {
   buildCreateFlowPathForType,
