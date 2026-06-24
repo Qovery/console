@@ -63,10 +63,6 @@ export function BlueprintStepSummary() {
           tag: blueprint.majorVersions[0]?.latestTag ?? '',
           icon: blueprint.icon,
           variables: buildBlueprintVariables(formValues.fields, blueprintFields),
-          // TODO Remove that once the API will be fixed
-          spec_overrides: {
-            engine_version: '1.13.3',
-          },
         },
       })
 
