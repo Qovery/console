@@ -153,7 +153,10 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
       return () => this.copyCommandToClipboard(this.getPortForwardCommand())
     }
 
-    if (contextLines.includes(TerminalShellActionsAddon.FIRST_COMMAND_TITLE)) {
+    if (
+      contextLines.includes(TerminalShellActionsAddon.FIRST_COMMAND_TITLE) ||
+      contextLines.includes(TerminalShellActionsAddon.FIRST_COMMAND_TITLE_EPHEMERAL)
+    ) {
       return () => this.copyCommandToClipboard(this.getShellCommand())
     }
 
