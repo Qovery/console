@@ -6,8 +6,6 @@ import {
   type OverridableBlueprintManifestContextVariableField,
 } from '../blueprint-creation-utils/blueprint-creation-utils'
 
-export type BlueprintConfigurationSection = 'service-information' | 'blueprint-setup' | 'overrides'
-
 export interface BlueprintCreateFormData {
   serviceName: string
   fields: BlueprintFieldValues

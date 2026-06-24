@@ -6,12 +6,14 @@ import {
   blueprintCreationSteps,
   useBlueprintCatalog,
 } from '@qovery/domains/services/feature'
+import { serviceCreateParamsSchema } from '@qovery/shared/router'
 import { Button, FunnelFlow, FunnelFlowBody, Icon, Skeleton } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily'
 )({
   component: RouteComponent,
+  validateSearch: serviceCreateParamsSchema,
 })
 
 function RouteComponent() {

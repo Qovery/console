@@ -1,12 +1,10 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useEffect, useState } from 'react'
+import { type ServiceCreateSection } from '@qovery/shared/router'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
 import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
-import {
-  type BlueprintConfigurationSection,
-  useBlueprintCreateContext,
-} from '../blueprint-create-context/blueprint-create-context'
+import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
   buildBlueprintVariables,
   formatFieldLabel,
@@ -35,7 +33,7 @@ export function BlueprintStepSummary() {
   const blueprintFields = [...variableFields, ...overridableContextBlueprintFields]
   const isBlueprintSetupValid = requiredBlueprintFields.every((field) => isFieldValid(field, fields[field.name]))
 
-  const handleEditSection = (section: BlueprintConfigurationSection) => {
+  const handleEditSection = (section: ServiceCreateSection) => {
     navigate({ to: creationFlowUrl, search: { section } })
   }
 

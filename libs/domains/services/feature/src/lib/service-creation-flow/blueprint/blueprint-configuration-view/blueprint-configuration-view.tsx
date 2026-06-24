@@ -1,10 +1,8 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { type ServiceCreateSection } from '@qovery/shared/router'
 import { Button, Icon, InputText } from '@qovery/shared/ui'
-import {
-  type BlueprintConfigurationSection,
-  useBlueprintCreateContext,
-} from '../blueprint-create-context/blueprint-create-context'
+import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
   type BlueprintFieldValue,
   formatFieldLabel,
@@ -17,7 +15,7 @@ import { BlueprintManifestVariableInput } from './blueprint-creation-components/
 import { BlueprintSection } from './blueprint-creation-components/blueprint-section/blueprint-section'
 import { OverridesSection } from './blueprint-creation-components/overrides-section/overrides-section'
 
-function isBlueprintConfigurationSection(value: unknown): value is BlueprintConfigurationSection {
+function isBlueprintConfigurationSection(value: unknown): value is ServiceCreateSection {
   return value === 'service-information' || value === 'blueprint-setup' || value === 'overrides'
 }
 
@@ -36,7 +34,7 @@ export function BlueprintConfigurationView() {
     setCurrentStep,
   } = useBlueprintCreateContext()
   const initialSection = isBlueprintConfigurationSection(search.section) ? search.section : 'service-information'
-  const [currentSection, setCurrentSection] = useState<BlueprintConfigurationSection>(initialSection)
+  const [currentSection, setCurrentSection] = useState<ServiceCreateSection>(initialSection)
   const serviceName = form.watch('serviceName')
   const blueprintFieldValues = form.watch('fields')
   const hasOverrideFields = optionalBlueprintFields.length > 0 || overridableContextBlueprintFields.length > 0

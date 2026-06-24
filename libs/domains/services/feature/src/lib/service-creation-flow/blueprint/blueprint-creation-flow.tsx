@@ -19,7 +19,6 @@ import {
 
 export {
   BlueprintCreateContext,
-  type BlueprintConfigurationSection,
   type BlueprintCreateContextInterface,
   type BlueprintCreateFormData,
   type BlueprintCreationFlowProps,
