@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-export type OnboardingStatus = 'IN_PROGRESS' | 'DISMISSED'
+export type OnboardingStatus = 'IN_PROGRESS' | 'DISMISSED' | 'COMPLETED'
 
 export interface OrganizationOnboarding {
   use_cases: string | null

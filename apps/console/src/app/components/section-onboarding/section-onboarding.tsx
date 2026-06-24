@@ -119,11 +119,16 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
 
   const [clusterExpanded, setClusterExpanded] = useState(!hasCluster)
 
-  const isDismissed = onboarding?.status === 'DISMISSED' || localDismissed
+  const isDismissed = onboarding?.status === 'DISMISSED' || onboarding?.status === 'COMPLETED' || localDismissed
 
   const dismiss = () => {
     setLocalDismissed(true)
     updateOnboarding('DISMISSED')
+  }
+
+  const complete = () => {
+    setLocalDismissed(true)
+    updateOnboarding('COMPLETED')
   }
 
   const resetDismiss = () => {
@@ -155,7 +160,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   }
 
   if (!organization || isOnboardingLoading) return null
-  if (onboarding?.status === null || onboarding?.status === undefined) return null
+  if (onboarding?.status == null) return null
 
   if (isDismissed) {
     if (NODE_ENV !== 'development') return null
@@ -315,7 +320,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
                 <span className="flex-1">Invite team members</span>
               </RouterLink>
             </div>
-            <Button color="neutral" variant="outline" size="sm" onClick={dismiss}>
+            <Button color="neutral" variant="outline" size="sm" onClick={complete}>
               Close
             </Button>
           </div>
