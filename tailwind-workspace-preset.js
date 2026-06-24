@@ -519,6 +519,13 @@ module.exports = {
             transform: 'scale(1)',
           },
         },
+        aiCarousel: {
+          '0%': { opacity: '0' },
+          '5%': { opacity: '1' },
+          '20%': { opacity: '1' },
+          '25%': { opacity: '0' },
+          '26%, 100%': { opacity: '0' },
+        },
         ...slideEntrances(),
         ...slideExits(),
       },

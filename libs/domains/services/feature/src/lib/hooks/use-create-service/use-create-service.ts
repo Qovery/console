@@ -1,15 +1,17 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/services/data-access'
+import { showMcpSuggestionToast } from '@qovery/shared/mcp-suggestion/feature'
 import { queries } from '@qovery/state/util-queries'
 
 export function useCreateService({ organizationId }: { organizationId: string }) {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.createService, {
-    onSuccess(response) {
+    onSuccess(response, { payload }) {
       queryClient.invalidateQueries({
         queryKey: queries.services.list(response.environment.id).queryKey,
       })
+      showMcpSuggestionToast({ type: 'service', name: response.name, serviceType: payload.serviceType })
 
       // gitTokens requests
       queryClient.invalidateQueries({

@@ -3,6 +3,7 @@ import { Link as RouterLink, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { type ReactNode, useMemo } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
+import { McpSuggestionCard } from '@qovery/shared/mcp-suggestion/feature'
 import { EmptyState, Heading, Icon, Link, LogoIcon, Section, useModal } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { AddCreditCardModalFeature } from '../add-credit-card-modal-feature/add-credit-card-modal-feature'
@@ -211,64 +212,71 @@ export function SectionProductionHealth() {
             </Link>
           </EmptyState>
         ) : (
-          <div className="flex flex-col gap-5 rounded-lg border border-neutral bg-surface-neutral p-4 text-sm">
-            <div className="flex flex-col gap-1">
-              <p className="font-medium text-neutral">
-                Install your first cluster and start tracking your production health
-              </p>
-              <p className="text-neutral-subtle">
-                Create a cluster on your cloud provider to be able to deploy apps later
-              </p>
-            </div>
-            <div className="grid gap-3 lg:grid-cols-3">
-              {CLUSTERS_OPTIONS.map((option) =>
-                option.action === 'create-cluster' ? (
-                  <RouterLink
-                    key={option.title}
-                    to="/organization/$organizationId/cluster/new"
-                    params={{ organizationId }}
-                    data-action={option.dataAction}
-                    className={getOptionCardClassName(option.highlight)}
-                  >
-                    {renderOptionCardContent(option)}
-                  </RouterLink>
-                ) : (
-                  <button
-                    key={option.title}
-                    type="button"
-                    data-action={option.dataAction}
-                    onClick={() =>
-                      option.requiresCreditCardOnFreeTrial && isNoCreditCardRestriction
-                        ? openCreditCardModal()
-                        : openInstallationGuideModal({ isDemo: option.isDemo })
-                    }
-                    className={getOptionCardClassName(option.highlight)}
-                  >
-                    {renderOptionCardContent(option)}
-                  </button>
-                )
-              )}
-            </div>
-            <div className="flex flex-col gap-2">
-              <p className="font-medium text-neutral">Related docs</p>
-              <div className="overflow-hidden rounded border border-neutral">
-                {RELATED_DOCUMENTATION.map((doc) => (
-                  <a
-                    key={doc.title}
-                    href={doc.url}
-                    title={doc.title}
-                    target="_blank"
-                    rel="noreferrer"
-                    data-action="org-overview__cluster-doc"
-                    className="group flex h-12 w-full items-center justify-between border-b border-neutral p-4 text-ssm text-neutral transition-colors last:border-b-0 hover:bg-surface-neutral-subtle focus:outline-none focus-visible:bg-surface-neutral-subtle"
-                  >
-                    {doc.title}
-                    <Icon
-                      iconName="external-link"
-                      className="text-xs text-neutral-subtle transition-colors group-hover:text-neutral"
-                    />
-                  </a>
-                ))}
+          <div className="flex flex-col gap-3">
+            <McpSuggestionCard
+              variant="setup"
+              title="Let your agent do the configuration with"
+              description="Just install our AI skills and ask your agent to get you started!"
+            />
+            <div className="flex flex-col gap-5 rounded-lg border border-neutral bg-surface-neutral p-4 text-sm">
+              <div className="flex flex-col gap-1">
+                <p className="font-medium text-neutral">
+                  Install your first cluster and start tracking your production health
+                </p>
+                <p className="text-neutral-subtle">
+                  Create a cluster on your cloud provider to be able to deploy apps later
+                </p>
+              </div>
+              <div className="grid gap-3 lg:grid-cols-3">
+                {CLUSTERS_OPTIONS.map((option) =>
+                  option.action === 'create-cluster' ? (
+                    <RouterLink
+                      key={option.title}
+                      to="/organization/$organizationId/cluster/new"
+                      params={{ organizationId }}
+                      data-action={option.dataAction}
+                      className={getOptionCardClassName(option.highlight)}
+                    >
+                      {renderOptionCardContent(option)}
+                    </RouterLink>
+                  ) : (
+                    <button
+                      key={option.title}
+                      type="button"
+                      data-action={option.dataAction}
+                      onClick={() =>
+                        option.requiresCreditCardOnFreeTrial && isNoCreditCardRestriction
+                          ? openCreditCardModal()
+                          : openInstallationGuideModal({ isDemo: option.isDemo })
+                      }
+                      className={getOptionCardClassName(option.highlight)}
+                    >
+                      {renderOptionCardContent(option)}
+                    </button>
+                  )
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <p className="font-medium text-neutral">Related docs</p>
+                <div className="overflow-hidden rounded border border-neutral">
+                  {RELATED_DOCUMENTATION.map((doc) => (
+                    <a
+                      key={doc.title}
+                      href={doc.url}
+                      title={doc.title}
+                      target="_blank"
+                      rel="noreferrer"
+                      data-action="org-overview__cluster-doc"
+                      className="group flex h-12 w-full items-center justify-between border-b border-neutral p-4 text-ssm text-neutral transition-colors last:border-b-0 hover:bg-surface-neutral-subtle focus:outline-none focus-visible:bg-surface-neutral-subtle"
+                    >
+                      {doc.title}
+                      <Icon
+                        iconName="external-link"
+                        className="text-xs text-neutral-subtle transition-colors group-hover:text-neutral"
+                      />
+                    </a>
+                  ))}
+                </div>
               </div>
             </div>
           </div>

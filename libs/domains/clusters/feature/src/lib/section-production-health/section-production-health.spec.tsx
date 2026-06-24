@@ -76,6 +76,9 @@ describe('SectionProductionHealth', () => {
     renderWithProviders(<SectionProductionHealth />)
 
     expect(screen.getByRole('heading', { name: 'Production health' })).toBeInTheDocument()
+    expect(screen.getByText('Let your agent do the configuration with')).toBeInTheDocument()
+    expect(screen.getByText('Just install our AI skills and ask your agent to get you started!')).toBeInTheDocument()
+    expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
     expect(screen.getByText('Qovery managed')).toBeInTheDocument()
     expect(screen.getByText('Bring your own cluster')).toBeInTheDocument()
     expect(screen.getByText('Local machine (demo)')).toBeInTheDocument()

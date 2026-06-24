@@ -55,6 +55,15 @@ describe('ShowUsageModal', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should render the report form and info callout', () => {
+    renderWithProviders(wrapWithReactHookForm(<ShowUsageModal {...modalProps} />))
+
+    expect(screen.queryByText('Try optimizing your costs with')).not.toBeInTheDocument()
+    expect(screen.queryByText('Or create a report')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Report period')).toBeInTheDocument()
+    expect(screen.getByText('The report generation can take a few seconds.')).toBeInTheDocument()
+  })
+
   it('should call onSubmit', async () => {
     const onSubmit = jest.fn((event) => event.preventDefault())
     const reportPeriods = getReportPeriods({ organization: mockOrganization, orgRenewalAt: modalProps.renewalAt })

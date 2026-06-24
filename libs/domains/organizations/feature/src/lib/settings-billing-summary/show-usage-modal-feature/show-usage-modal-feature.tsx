@@ -3,8 +3,7 @@ import { type OrganizationCurrentCost } from 'qovery-typescript-axios'
 import { type Organization } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { Controller, useFormContext } from 'react-hook-form'
-import { useModal } from '@qovery/shared/ui'
-import { Callout, Icon, InputSelect, InputText, ModalCrud } from '@qovery/shared/ui'
+import { Callout, Icon, InputSelect, InputText, ModalCrud, useModal } from '@qovery/shared/ui'
 import { setDayOfTheMonth } from '@qovery/shared/util-dates'
 import { useGenerateBillingUsageReport } from '../../hooks/use-generate-billing-usage-report/use-generate-billing-usage-report'
 import { useOrganization } from '../../hooks/use-organization/use-organization'
@@ -113,14 +112,6 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
       onClose={onClose}
       loading={loading}
     >
-      <Callout.Root className="mb-5" color="yellow">
-        <Callout.Icon>
-          <Icon iconName="triangle-exclamation" iconStyle="regular" />
-        </Callout.Icon>
-        <Callout.Text className="flex items-center">
-          The report generation could take a few seconds, please be patient.
-        </Callout.Text>
-      </Callout.Root>
       <Controller
         name="report_period"
         control={control}
@@ -128,8 +119,8 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
         render={({ field, fieldState: { error } }) => (
           <InputSelect
             dataTestId="input-select-report-period"
+            className="mb-2"
             label="Report period"
-            className="mb-5"
             options={reportPeriods}
             onChange={field.onChange}
             value={field.value}
@@ -152,7 +143,7 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
         render={({ field, fieldState: { error } }) => (
           <InputText
             dataTestId="input-expires"
-            className="mb-5"
+            className="mb-2"
             name={field.name}
             type="number"
             onChange={field.onChange}
@@ -162,6 +153,12 @@ export function ShowUsageModal({ organizationId, renewalAt, onSubmit, onClose, l
           />
         )}
       />
+      <Callout.Root className="p-3" color="sky">
+        <Callout.Icon>
+          <Icon iconName="circle-info" iconStyle="regular" />
+        </Callout.Icon>
+        <Callout.Text>The report generation can take a few seconds.</Callout.Text>
+      </Callout.Root>
     </ModalCrud>
   )
 }

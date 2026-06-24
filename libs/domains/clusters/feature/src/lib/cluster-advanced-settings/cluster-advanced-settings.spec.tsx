@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ClusterAdvancedSettings as ClusterAdvancedSettingsComponent } from './cluster-advanced-settings'
 
 const mockClusterAdvancedSettings = {
@@ -102,7 +102,7 @@ describe('ClusterAdvancedSettings', () => {
 
     expect(screen.getByTestId('sticky-action-form-toaster')).toBeInTheDocument()
     const toaster = screen.getByTestId('sticky-action-form-toaster')
-    expect(toaster).toHaveClass('visible')
+    await waitFor(() => expect(toaster).toHaveClass('visible'))
   })
 
   it('should not show StickyActionFormToaster when form is not dirty', () => {
