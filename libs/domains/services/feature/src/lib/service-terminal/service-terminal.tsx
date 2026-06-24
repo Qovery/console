@@ -311,18 +311,16 @@ export function ServiceTerminal({
           )}
         </div>
 
-        <div className="flex items-center gap-3">
-          <ExternalLink
-            as="button"
-            href="https://www.qovery.com/docs/cli/overview"
-            variant="surface"
-            color="neutral"
-            size="md"
-          >
-            <Icon iconName="book" />
-            CLI docs
-          </ExternalLink>
-        </div>
+        <ExternalLink
+          as="button"
+          href="https://www.qovery.com/docs/cli/overview"
+          variant="surface"
+          color="neutral"
+          size="md"
+        >
+          <Icon iconName="book" />
+          CLI docs
+        </ExternalLink>
       </div>
       <div className="flex h-full flex-1 flex-col bg-background px-3 pt-5">
         <div className="relative min-h-0 flex-1">
