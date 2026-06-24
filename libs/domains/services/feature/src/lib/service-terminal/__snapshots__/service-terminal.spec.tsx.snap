@@ -7,20 +7,26 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       class="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background"
     >
       <div
-        class="flex h-14 justify-between border-b border-neutral p-3"
+        class="flex h-12 items-center justify-between gap-3 border-b border-neutral px-3"
       >
         <div
-          class="flex gap-2 [&_input]:w-72"
+          class="flex min-w-0 items-center gap-3 text-xs text-neutral-subtle"
         >
           <div
-            class="relative"
+            class="flex items-center gap-2"
           >
+            <span
+              class="shrink-0 text-neutral-subtle"
+            >
+              Connected to live pod:
+            </span>
             <div
               class="relative z-10"
             >
               <button
-                class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral hidden"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
               >
+                pod-1
                 <span>
                   <i
                     aria-hidden="true"
@@ -29,7 +35,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
                 </span>
               </button>
               <div
-                class="relative"
+                class="hidden relative"
               >
                 <i
                   aria-hidden="true"
@@ -44,9 +50,9 @@ exports[`ServiceTerminal should match snapshot 1`] = `
                   autocomplete="off"
                   class="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]"
                   id="downshift-:r6:-input"
-                  placeholder="Select a pod to connect to"
+                  placeholder="Select a pod"
                   role="combobox"
-                  value=""
+                  value="pod-1"
                 />
               </div>
               <div
@@ -70,15 +76,12 @@ exports[`ServiceTerminal should match snapshot 1`] = `
                 </ul>
               </div>
             </div>
-            <div
-              class="pointer-events-none absolute right-2.5 top-1/2 z-20 -translate-y-1/2 text-xs text-neutral-subtle"
-            >
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-angle-down "
-              />
-            </div>
           </div>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm px-1.5 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral h-8"
+          >
+            Launch ephemeral pod
+          </button>
         </div>
         <a
           class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
@@ -100,12 +103,17 @@ exports[`ServiceTerminal should match snapshot 1`] = `
           class="relative min-h-0 flex-1"
         >
           <div
-            class="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-3"
+            class="absolute inset-0 flex flex-col items-center gap-2 border-neutral bg-background pt-6"
           >
             <div
               class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
               data-testid="spinner"
             />
+            <span
+              class="text-xs text-neutral-subtle"
+            >
+              Connecting…
+            </span>
           </div>
         </div>
       </div>

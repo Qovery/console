@@ -19,6 +19,7 @@ export function InputSearch({ data, value, onChange, placeholder, trimLabel }: I
   // We are waiting for radix combobox primitives
   // So we are using Downshift
   const { isOpen, getMenuProps, getInputProps, getItemProps, selectedItem, highlightedIndex, reset } = useCombobox({
+    defaultSelectedItem: value ?? null,
     onInputValueChange({ inputValue }) {
       setItems(data.filter((item) => item.toLowerCase().includes(inputValue.toLowerCase())))
     },
