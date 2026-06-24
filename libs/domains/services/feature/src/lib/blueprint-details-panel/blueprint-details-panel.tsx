@@ -159,7 +159,7 @@ function BlueprintDetailsPanelContent({
   onOpenChange,
 }: {
   blueprint: BlueprintItem
-  deployPath: string
+  deployPath?: string
   footerMode: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void
@@ -234,9 +234,9 @@ function BlueprintDetailsPanelContent({
             </Dialog.Close>
 
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-end gap-2 border-t border-neutral bg-background px-6 py-4">
-              {footerMode === 'close' ? (
+              {footerMode === 'close' || !deployPath ? (
                 <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
-                  Close
+                  {footerMode === 'close' ? 'Close' : 'Cancel'}
                 </Button>
               ) : (
                 <>
@@ -271,7 +271,7 @@ export function BlueprintDetailsPanel({
   onOpenChange,
 }: {
   blueprint: BlueprintItem | null
-  deployPath: string
+  deployPath?: string
   footerMode?: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void

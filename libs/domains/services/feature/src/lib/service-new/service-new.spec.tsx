@@ -159,6 +159,29 @@ describe('ServiceNew', () => {
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
   })
 
+  it('should not render deploy actions for blueprints without a service family', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: {
+        blueprints: [{ ...blueprints[0], serviceFamily: undefined }],
+      },
+    })
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    const blueprintsSection = screen.getByRole('heading', { name: 'Blueprints' }).closest('section')
+    const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
+
+    expect(blueprintsSectionScreen.queryByRole('link', { name: 'Deploy' })).not.toBeInTheDocument()
+
+    await userEvent.click(blueprintsSectionScreen.getByRole('button', { name: 'View details' }))
+
+    const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
+    expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
+  })
+
   it('should open blueprint details from a blueprint card', async () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })

@@ -133,6 +133,28 @@ describe('BlueprintDetailsPanel', () => {
     expect(within(dialog).queryByRole('link', { name: /qovery-blueprints\/s3/i })).not.toBeInTheDocument()
   })
 
+  it('should not render a deploy action when a blueprint has no service family', () => {
+    renderWithProviders(
+      <BlueprintDetailsPanel
+        blueprint={{ ...blueprint, serviceFamily: undefined }}
+        deployPath={undefined}
+        open
+        onOpenChange={jest.fn()}
+        onExitComplete={jest.fn()}
+      />
+    )
+
+    const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
+
+    expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
+    expect(mockUseBlueprintCatalogServiceReadme).toHaveBeenCalledWith(
+      expect.objectContaining({
+        provider: 'aws',
+        serviceFamily: '',
+      })
+    )
+  })
+
   it('should hide the version badge when the service version is default', () => {
     renderWithProviders(
       <BlueprintDetailsPanel

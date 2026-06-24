@@ -220,6 +220,27 @@ describe('BlueprintCreationFlow', () => {
     expect(await screen.findByLabelText('Db name')).toHaveFocus()
   })
 
+  it('should not load manifest fields when a blueprint has no service family', () => {
+    renderWithProviders(
+      <BlueprintCreationFlow
+        blueprint={{ ...blueprint, serviceFamily: undefined }}
+        organizationId="org-1"
+        creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS"
+        onExit={jest.fn()}
+      >
+        <BlueprintConfigurationView />
+      </BlueprintCreationFlow>
+    )
+
+    expect(mockUseBlueprintCatalogServiceManifest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        provider: 'AWS',
+        serviceFamily: '',
+        enabled: false,
+      })
+    )
+  })
+
   it('should focus the first overrides field after continuing from blueprint setup', async () => {
     jest.useFakeTimers()
 

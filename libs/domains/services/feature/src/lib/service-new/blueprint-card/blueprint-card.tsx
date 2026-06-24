@@ -21,22 +21,24 @@ export function BlueprintCard({
         </div>
       </div>
       <div className="mt-auto flex items-center gap-1">
-        <Link
-          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
-          params={{
-            organizationId,
-            projectId,
-            environmentId,
-            provider: blueprint.provider,
-            serviceFamily: blueprint.serviceFamily ?? blueprint.provider,
-          }}
-          as="button"
-          variant="outline"
-          color="neutral"
-          size="sm"
-        >
-          Deploy
-        </Link>
+        {blueprint.serviceFamily && (
+          <Link
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
+            params={{
+              organizationId,
+              projectId,
+              environmentId,
+              provider: blueprint.provider,
+              serviceFamily: blueprint.serviceFamily,
+            }}
+            as="button"
+            variant="outline"
+            color="neutral"
+            size="sm"
+          >
+            Deploy
+          </Link>
+        )}
         <Button type="button" variant="plain" color="neutral" size="sm" onClick={() => onViewDetails(blueprint)}>
           View details
         </Button>

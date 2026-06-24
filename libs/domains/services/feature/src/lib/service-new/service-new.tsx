@@ -447,17 +447,14 @@ export function ServiceNew({
       <BlueprintDetailsPanel
         blueprint={selectedBlueprint}
         deployPath={
-          selectedBlueprint
+          selectedBlueprint?.serviceFamily
             ? getServicesPath(
                 organizationId,
                 projectId,
                 environmentId,
-                getBlueprintCreateFlowPath(
-                  selectedBlueprint.provider,
-                  selectedBlueprint.serviceFamily ?? selectedBlueprint.provider
-                )
+                getBlueprintCreateFlowPath(selectedBlueprint.provider, selectedBlueprint.serviceFamily)
               )
-            : ''
+            : undefined
         }
         open={isBlueprintDetailsOpen}
         onOpenChange={setIsBlueprintDetailsOpen}
