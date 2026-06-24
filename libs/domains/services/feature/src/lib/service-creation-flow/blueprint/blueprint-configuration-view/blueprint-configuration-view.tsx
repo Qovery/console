@@ -76,7 +76,7 @@ export function BlueprintConfigurationView() {
               active={currentSection === 'service-information'}
               completed={currentSection !== 'service-information'}
               iconName="circle-info"
-              title="Service informations"
+              title="Service information"
               onClick={() => setCurrentSection('service-information')}
             >
               {currentSection === 'service-information' && (
