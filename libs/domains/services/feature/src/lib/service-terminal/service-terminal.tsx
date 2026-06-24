@@ -198,12 +198,10 @@ export function ServiceTerminal({
 
   const ephemeralDefaultValues = useMemo((): EphemeralShellFormValues => {
     const cpuMillicores = match(service)
-      .with({ serviceType: 'APPLICATION' }, (s) => s.cpu)
-      .with({ serviceType: 'CONTAINER' }, (s) => s.cpu)
+      .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => s.cpu)
       .otherwise(() => undefined)
     const memoryMib = match(service)
-      .with({ serviceType: 'APPLICATION' }, (s) => s.memory)
-      .with({ serviceType: 'CONTAINER' }, (s) => s.memory)
+      .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (s) => s.memory)
       .otherwise(() => undefined)
     const cpu = cpuMillicores != null && cpuMillicores > 0 ? String(cpuMillicores) : '1000'
     const memory = memoryMib != null && memoryMib > 0 ? String(memoryMib) : '2048'
