@@ -192,7 +192,7 @@ describe('ServiceTerminal', () => {
 
   it('should pre-select the first pod on load', () => {
     renderWithProviders(<ServiceTerminal {...props} />)
-    expect(screen.getByRole('button', { name: /pod-1/ })).toBeInTheDocument()
+    expect(screen.getByText(/pod-1/)).toBeInTheDocument()
   })
 
   it('should use /shell/exec endpoint by default', () => {
@@ -204,8 +204,8 @@ describe('ServiceTerminal', () => {
     const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
     const initialRequestId = getLatestWsSubscriptionSearchParams()['external_request_id']
 
-    await userEvent.click(screen.getByRole('button', { name: /pod-1/ }))
-    await userEvent.click(screen.getByRole('option', { name: /pod-2/ }))
+    await userEvent.click(screen.getByPlaceholderText('Select a pod'))
+    await userEvent.click(screen.getByText(/pod-2/))
 
     await waitFor(() => {
       expect(getLatestWsSubscriptionSearchParams()).toEqual(expect.objectContaining({ pod_name: 'pod-2' }))
@@ -221,8 +221,8 @@ describe('ServiceTerminal', () => {
       getLatestWsSubscriptionConfig().onOpen?.({} as QueryClient, createWebSocketEvent('open', initialWebsocket))
     })
 
-    await userEvent.click(screen.getByRole('button', { name: /pod-1/ }))
-    await userEvent.click(screen.getByRole('option', { name: /pod-2/ }))
+    await userEvent.click(screen.getByPlaceholderText('Select a pod'))
+    await userEvent.click(screen.getByText(/pod-2/))
 
     act(() => {
       getLatestWsSubscriptionConfig().onClose?.(

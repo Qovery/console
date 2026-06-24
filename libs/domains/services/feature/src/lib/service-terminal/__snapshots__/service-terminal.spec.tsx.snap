@@ -24,71 +24,55 @@ exports[`ServiceTerminal should match snapshot 1`] = `
               class="relative z-10"
             >
               <button
-                class="flex h-8 items-center gap-1.5 rounded border border-neutral bg-surface-neutral px-2.5 text-xs text-neutral hover:border-neutral-strong focus:outline-none"
-                type="button"
+                class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral hidden"
               >
-                <span
-                  class="max-w-32 truncate"
-                >
-                  pod-1...pod-1
-                </span>
-                <i
-                  aria-hidden="true"
-                  class="fa-regular fa-angle-down text-[10px] text-neutral-subtle transition-transform"
-                />
-              </button>
-              <div
-                class="absolute left-0 top-full mt-1 w-64 overflow-hidden rounded-md border border-neutral bg-surface-neutral shadow-[0_0_32px_rgba(0,0,0,0.08)] hidden"
-              >
-                <div
-                  class="relative border-b border-neutral p-2"
-                >
+                pod-1
+                <span>
                   <i
                     aria-hidden="true"
-                    class="fa-regular fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
+                    class="fa-regular fa-xmark text-sm"
                   />
-                  <input
-                    aria-activedescendant=""
-                    aria-autocomplete="list"
-                    aria-controls="downshift-:r6:-menu"
-                    aria-expanded="false"
-                    aria-labelledby="downshift-:r6:-label"
-                    autocomplete="off"
-                    class="h-7 w-full rounded border border-neutral bg-surface-neutral pl-6 pr-2 text-xs text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none"
-                    id="downshift-:r6:-input"
-                    placeholder="Search…"
-                    role="combobox"
-                    value="pod-1"
-                  />
-                </div>
+                </span>
+              </button>
+              <div
+                class="relative"
+              >
+                <i
+                  aria-hidden="true"
+                  class="fa-regular fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
+                />
+                <input
+                  aria-activedescendant=""
+                  aria-autocomplete="list"
+                  aria-controls="downshift-:r6:-menu"
+                  aria-expanded="false"
+                  aria-labelledby="downshift-:r6:-label"
+                  autocomplete="off"
+                  class="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]"
+                  id="downshift-:r6:-input"
+                  placeholder="Select a pod"
+                  role="combobox"
+                  value=""
+                />
+              </div>
+              <div
+                class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] hidden"
+              >
                 <ul
                   aria-labelledby="downshift-:r6:-label"
-                  class="m-0 max-h-40 list-none overflow-y-auto p-2"
+                  class="m-0 list-none p-0"
                   id="downshift-:r6:-menu"
                   role="listbox"
                 >
-                  <li
-                    aria-disabled="false"
-                    aria-selected="false"
-                    class="flex h-9 w-full items-center justify-between rounded px-2 text-xs text-neutral transition-colors hover:bg-surface-neutral-subtle"
-                    id="downshift-:r6:-item-0"
-                    role="option"
+                  <p
+                    class="flex w-full flex-col items-center py-2 text-center text-xs text-neutral-subtle"
                   >
-                    pod-1...pod-1
                     <i
                       aria-hidden="true"
-                      class="fa-regular fa-check text-brand"
+                      class="fa-regular fa-wave-pulse mb-1"
                     />
-                  </li>
-                  <li
-                    aria-disabled="false"
-                    aria-selected="false"
-                    class="flex h-9 w-full items-center justify-between rounded px-2 text-xs text-neutral transition-colors hover:bg-surface-neutral-subtle"
-                    id="downshift-:r6:-item-1"
-                    role="option"
-                  >
-                    pod-2...pod-2
-                  </li>
+                    No results found
+                  </p>
                 </ul>
               </div>
             </div>
