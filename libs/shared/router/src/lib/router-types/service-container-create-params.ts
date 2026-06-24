@@ -6,6 +6,8 @@ export const serviceCreateParamsSchema = z.object({
   source: serviceCreateSourceEnum.optional(),
   template: z.string().optional(),
   option: z.string().optional(),
+  // Used by blueprint service creation to reopen a specific configuration section from the summary.
+  section: z.string().optional(),
 })
 
 export type ServiceCreateParams = z.infer<typeof serviceCreateParamsSchema>
