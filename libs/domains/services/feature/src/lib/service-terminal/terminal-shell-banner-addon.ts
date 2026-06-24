@@ -40,7 +40,7 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
     private readonly getShellCommand: () => string,
     private readonly shouldWriteBanner: boolean,
     private readonly requestId: string,
-    private readonly isEphemeral: boolean = false
+    private readonly isEphemeral = false
   ) {}
 
   private toAnsiColor(color: string): string {
