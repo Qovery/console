@@ -4,6 +4,7 @@ import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { ServiceTerminal, type ServiceTerminalProps } from './service-terminal'
 
 const mockUseRunningStatus = jest.fn()
+const mockUseService = jest.fn()
 
 jest.mock('color', () => ({
   __esModule: true,
@@ -39,6 +40,7 @@ jest.mock('@qovery/state/util-queries', () => ({
 
 jest.mock('../..', () => ({
   useRunningStatus: (...args: unknown[]) => mockUseRunningStatus(...args),
+  useService: (...args: unknown[]) => mockUseService(...args),
 }))
 
 const props: ServiceTerminalProps = {
@@ -104,6 +106,9 @@ describe('ServiceTerminal', () => {
         state: 'STOPPED',
       },
       isLoading: false,
+    })
+    mockUseService.mockReturnValue({
+      data: { cpu: 1000, memory: 512, serviceType: 'APPLICATION' },
     })
   })
 
@@ -185,33 +190,25 @@ describe('ServiceTerminal', () => {
     })
   })
 
-  it('should show pod and container placeholders', async () => {
-    const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
-
-    expect(screen.getByPlaceholderText('Select a pod to connect to')).toBeInTheDocument()
-
-    await userEvent.click(screen.getByPlaceholderText('Select a pod to connect to'))
-    const [firstPodOption] = screen.getAllByRole('option')
-    await userEvent.click(firstPodOption)
-
-    expect(screen.getByPlaceholderText('Select a container to connect to')).toBeInTheDocument()
+  it('should pre-select the first pod on load', () => {
+    renderWithProviders(<ServiceTerminal {...props} />)
+    expect(screen.getByRole('button', { name: /pod-1/ })).toBeInTheDocument()
   })
 
-  it('should start a fresh terminal session when selecting a pod', async () => {
+  it('should use /shell/exec endpoint by default', () => {
+    renderWithProviders(<ServiceTerminal {...props} />)
+    expect(getLatestWsSubscriptionConfig().url).toContain('/shell/exec')
+  })
+
+  it('should start a fresh terminal session and update pod when selecting a different pod', async () => {
     const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
     const initialRequestId = getLatestWsSubscriptionSearchParams()['external_request_id']
 
-    await userEvent.click(screen.getByPlaceholderText('Select a pod to connect to'))
-    const [firstPodOption] = screen.getAllByRole('option')
-    await userEvent.click(firstPodOption)
+    await userEvent.click(screen.getByRole('button', { name: /pod-1/ }))
+    await userEvent.click(screen.getByRole('option', { name: /pod-2/ }))
 
     await waitFor(() => {
-      expect(getLatestWsSubscriptionSearchParams()).toEqual(
-        expect.objectContaining({
-          pod_name: 'pod-1',
-          container_name: undefined,
-        })
-      )
+      expect(getLatestWsSubscriptionSearchParams()).toEqual(expect.objectContaining({ pod_name: 'pod-2' }))
       expect(getLatestWsSubscriptionSearchParams()['external_request_id']).not.toBe(initialRequestId)
     })
   })
@@ -224,9 +221,8 @@ describe('ServiceTerminal', () => {
       getLatestWsSubscriptionConfig().onOpen?.({} as QueryClient, createWebSocketEvent('open', initialWebsocket))
     })
 
-    await userEvent.click(screen.getByPlaceholderText('Select a pod to connect to'))
-    const [firstPodOption] = screen.getAllByRole('option')
-    await userEvent.click(firstPodOption)
+    await userEvent.click(screen.getByRole('button', { name: /pod-1/ }))
+    await userEvent.click(screen.getByRole('option', { name: /pod-2/ }))
 
     act(() => {
       getLatestWsSubscriptionConfig().onClose?.(
@@ -237,5 +233,66 @@ describe('ServiceTerminal', () => {
 
     expect(screen.queryByText('Unable to launch CLI')).not.toBeInTheDocument()
     expect(useReactQueryWsSubscriptionMock).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: true }))
+  })
+
+  describe('ephemeral pod', () => {
+    it('should show the Switch to ephemeral pod button for APPLICATION', () => {
+      renderWithProviders(<ServiceTerminal {...props} serviceType="APPLICATION" />)
+      expect(screen.getByRole('button', { name: /switch to ephemeral pod/i })).toBeInTheDocument()
+    })
+
+    it('should show the Switch to ephemeral pod button for CONTAINER', () => {
+      renderWithProviders(<ServiceTerminal {...props} serviceType="CONTAINER" />)
+      expect(screen.getByRole('button', { name: /switch to ephemeral pod/i })).toBeInTheDocument()
+    })
+
+    it('should not show the Switch to ephemeral pod button for unsupported service types', () => {
+      renderWithProviders(<ServiceTerminal {...props} serviceType="JOB" />)
+      expect(screen.queryByRole('button', { name: /switch to ephemeral pod/i })).not.toBeInTheDocument()
+    })
+
+    it('should open the ephemeral modal pre-filled with service resources', async () => {
+      const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
+      await userEvent.click(screen.getByRole('button', { name: /switch to ephemeral pod/i }))
+      expect(screen.getByLabelText(/vCPU/i)).toHaveValue('1000')
+      expect(screen.getByLabelText(/Memory/i)).toHaveValue('512')
+    })
+
+    it('should switch to /shell/ephemeral with correct params after launch', async () => {
+      const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
+
+      await userEvent.click(screen.getByRole('button', { name: /switch to ephemeral pod/i }))
+      await userEvent.click(screen.getByRole('button', { name: 'Launch' }))
+
+      await waitFor(() => {
+        expect(getLatestWsSubscriptionConfig().url).toContain('/shell/ephemeral')
+        expect(getLatestWsSubscriptionSearchParams()).toEqual(
+          expect.objectContaining({ mode: 'clone', cpu_override: '1000m', memory_override: '512Mi' })
+        )
+      })
+    })
+
+    it('should show ephemeral active badge and back button after launch', async () => {
+      const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
+
+      await userEvent.click(screen.getByRole('button', { name: /switch to ephemeral pod/i }))
+      await userEvent.click(screen.getByRole('button', { name: 'Launch' }))
+
+      expect(screen.getByText(/Ephemeral pod/)).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /back to live pod/i })).toBeInTheDocument()
+    })
+
+    it('should return to /shell/exec after clicking Back to live pod', async () => {
+      const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
+
+      await userEvent.click(screen.getByRole('button', { name: /switch to ephemeral pod/i }))
+      await userEvent.click(screen.getByRole('button', { name: 'Launch' }))
+      await userEvent.click(screen.getByRole('button', { name: /back to live pod/i }))
+
+      await waitFor(() => {
+        expect(getLatestWsSubscriptionConfig().url).toContain('/shell/exec')
+        expect(screen.queryByRole('button', { name: /back to live pod/i })).not.toBeInTheDocument()
+      })
+    })
   })
 })

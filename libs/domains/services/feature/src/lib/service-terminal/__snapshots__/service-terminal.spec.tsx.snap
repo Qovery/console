@@ -7,78 +7,106 @@ exports[`ServiceTerminal should match snapshot 1`] = `
       class="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background"
     >
       <div
-        class="flex h-14 justify-between border-b border-neutral p-3"
+        class="flex h-12 items-center justify-between gap-3 border-b border-neutral px-3"
       >
         <div
-          class="flex gap-2 [&_input]:w-72"
+          class="flex min-w-0 items-center gap-3 text-xs text-neutral-subtle"
         >
           <div
-            class="relative"
+            class="flex items-center gap-2"
           >
+            <span
+              class="shrink-0 text-neutral-subtle"
+            >
+              Connected to live pod:
+            </span>
             <div
               class="relative z-10"
             >
               <button
-                class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral hidden"
+                class="flex h-8 items-center gap-1.5 rounded border border-neutral bg-surface-neutral px-2.5 text-xs text-neutral hover:border-neutral-strong focus:outline-none"
+                type="button"
               >
-                <span>
-                  <i
-                    aria-hidden="true"
-                    class="fa-regular fa-xmark text-sm"
-                  />
+                <span
+                  class="max-w-32 truncate"
+                >
+                  pod-1...pod-1
                 </span>
-              </button>
-              <div
-                class="relative"
-              >
                 <i
                   aria-hidden="true"
-                  class="fa-regular fa-magnifying-glass absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
+                  class="fa-regular fa-angle-down text-[10px] text-neutral-subtle transition-transform"
                 />
-                <input
-                  aria-activedescendant=""
-                  aria-autocomplete="list"
-                  aria-controls="downshift-:r6:-menu"
-                  aria-expanded="false"
-                  aria-labelledby="downshift-:r6:-label"
-                  autocomplete="off"
-                  class="h-8 w-56 rounded border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral placeholder:text-sm placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none focus:transition-[border-color]"
-                  id="downshift-:r6:-input"
-                  placeholder="Select a pod to connect to"
-                  role="combobox"
-                  value=""
-                />
-              </div>
+              </button>
               <div
-                class="mt-1 max-h-40 w-full min-w-56 overflow-y-auto rounded-md border border-neutral bg-surface-neutral p-2 shadow-[0_0_32px_rgba(0,0,0,0.08)] hidden"
+                class="absolute left-0 top-full mt-1 w-64 overflow-hidden rounded-md border border-neutral bg-surface-neutral shadow-[0_0_32px_rgba(0,0,0,0.08)] hidden"
               >
+                <div
+                  class="relative border-b border-neutral p-2"
+                >
+                  <i
+                    aria-hidden="true"
+                    class="fa-regular fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
+                  />
+                  <input
+                    aria-activedescendant=""
+                    aria-autocomplete="list"
+                    aria-controls="downshift-:r6:-menu"
+                    aria-expanded="false"
+                    aria-labelledby="downshift-:r6:-label"
+                    autocomplete="off"
+                    class="h-7 w-full rounded border border-neutral bg-surface-neutral pl-6 pr-2 text-xs text-neutral placeholder:text-neutral-subtle focus:border-brand-strong focus:outline-none"
+                    id="downshift-:r6:-input"
+                    placeholder="Search…"
+                    role="combobox"
+                    value="pod-1"
+                  />
+                </div>
                 <ul
                   aria-labelledby="downshift-:r6:-label"
-                  class="m-0 list-none p-0"
+                  class="m-0 max-h-40 list-none overflow-y-auto p-2"
                   id="downshift-:r6:-menu"
                   role="listbox"
                 >
-                  <p
-                    class="flex w-full flex-col items-center py-2 text-center text-xs text-neutral-subtle"
+                  <li
+                    aria-disabled="false"
+                    aria-selected="false"
+                    class="flex h-9 w-full items-center justify-between rounded px-2 text-xs text-neutral transition-colors hover:bg-surface-neutral-subtle"
+                    id="downshift-:r6:-item-0"
+                    role="option"
                   >
+                    pod-1...pod-1
                     <i
                       aria-hidden="true"
-                      class="fa-regular fa-wave-pulse mb-1"
+                      class="fa-regular fa-check text-brand"
                     />
-                    No results found
-                  </p>
+                  </li>
+                  <li
+                    aria-disabled="false"
+                    aria-selected="false"
+                    class="flex h-9 w-full items-center justify-between rounded px-2 text-xs text-neutral transition-colors hover:bg-surface-neutral-subtle"
+                    id="downshift-:r6:-item-1"
+                    role="option"
+                  >
+                    pod-2...pod-2
+                  </li>
                 </ul>
               </div>
             </div>
-            <div
-              class="pointer-events-none absolute right-2.5 top-1/2 z-20 -translate-y-1/2 text-xs text-neutral-subtle"
-            >
-              <i
-                aria-hidden="true"
-                class="fa-regular fa-angle-down "
-              />
-            </div>
           </div>
+          <button
+            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
+            data-state="closed"
+          >
+            <i
+              aria-hidden="true"
+              class="fa-solid fa-flask "
+            />
+            Switch to ephemeral pod
+            <i
+              aria-hidden="true"
+              class="fa-regular fa-circle-info "
+            />
+          </button>
         </div>
         <a
           class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
@@ -100,12 +128,17 @@ exports[`ServiceTerminal should match snapshot 1`] = `
           class="relative min-h-0 flex-1"
         >
           <div
-            class="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-3"
+            class="absolute inset-0 flex flex-col items-center gap-2 border-neutral bg-background pt-6"
           >
             <div
               class="aspect-square border-2  animate-spin rounded-full border-solid border-neutral border-r-neutral-strong w-4 "
               data-testid="spinner"
             />
+            <span
+              class="text-xs text-neutral-subtle"
+            >
+              Connecting…
+            </span>
           </div>
         </div>
       </div>

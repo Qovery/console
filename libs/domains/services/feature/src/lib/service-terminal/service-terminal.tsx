@@ -8,11 +8,22 @@ import { XTerm } from 'react-xtermjs'
 import { match } from 'ts-pattern'
 import { v7 as uuidv7 } from 'uuid'
 import { type ServiceType } from '@qovery/domains/services/data-access'
-import { Button, EmptyState, ExternalLink, Icon, LoaderSpinner, toast } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  EmptyState,
+  ExternalLink,
+  Icon,
+  LoaderSpinner,
+  Tooltip,
+  toast,
+  useModal,
+} from '@qovery/shared/ui'
 import { useTerminalReadiness } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
-import { useRunningStatus } from '../..'
+import { useRunningStatus, useService } from '../..'
+import { type EphemeralShellFormValues, EphemeralShellModal } from './ephemeral-shell-modal/ephemeral-shell-modal'
 import { InputSearch } from './input-search/input-search'
 import { TerminalShellActionsAddon } from './terminal-shell-banner-addon'
 
@@ -39,6 +50,7 @@ export function ServiceTerminal({
   serviceType,
 }: ServiceTerminalProps) {
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
+  const { data: service } = useService({ serviceId, serviceType })
   const hasWrittenShellBannerRef = useRef(false)
   const activeWebSocketRef = useRef<WebSocket | null>(null)
   const [requestId, setRequestId] = useState(() => uuidv7())
@@ -88,17 +100,24 @@ export function ServiceTerminal({
     [backgroundColor, foreground, selectionBackground, selectionForeground]
   )
 
+  const { openModal, closeModal } = useModal()
+  const [ephemeralConfig, setEphemeralConfig] = useState<EphemeralShellFormValues | null>(null)
+  const supportsEphemeral = serviceType === 'APPLICATION' || serviceType === 'CONTAINER'
+
   const [selectedPod, setSelectedPod] = useState<string | undefined>()
-  const [selectedContainer, setSelectedContainer] = useState<string | undefined>()
 
   const selectedOrDefaultPodName = selectedPod ?? runningStatuses?.pods[0]?.name
-  const selectedOrDefaultContainerName =
-    selectedContainer ?? runningStatuses?.pods.find((pod) => pod.name === selectedOrDefaultPodName)?.containers[0]?.name
-  const connectShellCommand = buildCommand(
-    `qovery shell https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}`,
-    selectedOrDefaultPodName ? `--pod=${selectedOrDefaultPodName}` : undefined,
-    selectedOrDefaultContainerName ? `--container=${selectedOrDefaultContainerName}` : undefined
-  )
+  const connectShellCommand = ephemeralConfig
+    ? buildCommand(
+        `qovery shell --ephemeral --mode clone`,
+        `--cpu ${ephemeralConfig.cpu}m`,
+        `--memory ${ephemeralConfig.memory}Mi`,
+        `https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}`
+      )
+    : buildCommand(
+        `qovery shell https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}`,
+        selectedOrDefaultPodName ? `--pod=${selectedOrDefaultPodName}` : undefined
+      )
   const portForwardCommand = buildCommand(
     `qovery port-forward https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId} --port local-port:target-port`
   )
@@ -127,7 +146,8 @@ export function ServiceTerminal({
           getPortForwardCommand,
           getShellCommand,
           shouldWriteShellBanner,
-          requestId
+          requestId,
+          ephemeralConfig !== null
         ),
       ])
     },
@@ -152,15 +172,49 @@ export function ServiceTerminal({
     [detachWebSocket]
   )
 
-  const resetTerminalSession = useCallback(() => {
-    activeWebSocketRef.current = null
-    detachWebSocket()
-    hasWrittenShellBannerRef.current = false
-    setAddons([])
-    setTerminalLaunchError(null)
-    setRequestId(uuidv7())
-    resetTerminalReadiness()
-  }, [detachWebSocket, resetTerminalReadiness])
+  const resetTerminalSession = useCallback(
+    (nextEphemeralConfig?: EphemeralShellFormValues | null) => {
+      activeWebSocketRef.current = null
+      detachWebSocket()
+      hasWrittenShellBannerRef.current = false
+      setAddons([])
+      setTerminalLaunchError(null)
+      setRequestId(uuidv7())
+      resetTerminalReadiness()
+      if (nextEphemeralConfig !== undefined) {
+        setEphemeralConfig(nextEphemeralConfig)
+      }
+    },
+    [detachWebSocket, resetTerminalReadiness]
+  )
+
+  const onLaunchEphemeral = useCallback(
+    (values: EphemeralShellFormValues) => {
+      setSelectedPod(undefined)
+      resetTerminalSession(values)
+    },
+    [resetTerminalSession]
+  )
+
+  const ephemeralDefaultValues = useMemo((): EphemeralShellFormValues => {
+    const cpuMillicores = match(service)
+      .with({ serviceType: 'TERRAFORM' }, (s) => s.job_resources?.cpu_milli)
+      .otherwise((s) => s?.cpu)
+    const memoryMib = match(service)
+      .with({ serviceType: 'TERRAFORM' }, (s) => s.job_resources?.ram_mib)
+      .otherwise((s) => s?.memory)
+    const cpu = cpuMillicores != null && cpuMillicores > 0 ? String(cpuMillicores) : '1000'
+    const memory = memoryMib != null && memoryMib > 0 ? String(memoryMib) : '2048'
+    return { cpu, memory }
+  }, [service])
+
+  const onOpenEphemeralModal = useCallback(() => {
+    openModal({
+      content: (
+        <EphemeralShellModal onClose={closeModal} onLaunch={onLaunchEphemeral} defaultValues={ephemeralDefaultValues} />
+      ),
+    })
+  }, [closeModal, ephemeralDefaultValues, onLaunchEphemeral, openModal])
 
   const onRetryCliLaunch = useCallback(() => {
     resetTerminalSession()
@@ -170,15 +224,6 @@ export function ServiceTerminal({
     (pod?: string) => {
       resetTerminalSession()
       setSelectedPod(pod)
-      setSelectedContainer(undefined)
-    },
-    [resetTerminalSession]
-  )
-
-  const onSelectedContainerChange = useCallback(
-    (container?: string) => {
-      resetTerminalSession()
-      setSelectedContainer(container)
     },
     [resetTerminalSession]
   )
@@ -198,7 +243,7 @@ export function ServiceTerminal({
   const cols = Math.ceil(document.body.clientWidth / 8)
 
   useReactQueryWsSubscription({
-    url: QOVERY_WS + '/shell/exec',
+    url: QOVERY_WS + (ephemeralConfig ? '/shell/ephemeral' : '/shell/exec'),
     urlSearchParams: {
       organization: organizationId,
       cluster: clusterId,
@@ -206,8 +251,9 @@ export function ServiceTerminal({
       environment: environmentId,
       service: serviceId,
       service_type: serviceType,
-      pod_name: selectedPod,
-      container_name: selectedContainer,
+      ...(ephemeralConfig
+        ? { mode: 'clone', cpu_override: `${ephemeralConfig.cpu}m`, memory_override: `${ephemeralConfig.memory}Mi` }
+        : { pod_name: selectedPod }),
       tty_height: rows.toString(),
       tty_width: cols.toString(),
       external_request_id: requestId,
@@ -225,44 +271,51 @@ export function ServiceTerminal({
 
   return (
     <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background">
-      <div className="flex h-14 justify-between border-b border-neutral p-3">
-        <div className="flex gap-2 [&_input]:w-72">
-          {runningStatuses && runningStatuses.pods.length > 0 && (
-            <div className="relative">
-              <InputSearch
-                value={selectedPod}
-                onChange={onSelectedPodChange}
-                data={runningStatuses.pods.map((pod) => pod.name)}
-                placeholder="Select a pod to connect to"
-                trimLabel
-              />
-              {!selectedPod && (
-                <div className="pointer-events-none absolute right-2.5 top-1/2 z-20 -translate-y-1/2 text-xs text-neutral-subtle">
-                  <Icon iconName="angle-down" />
-                </div>
+      <div className="flex h-12 items-center justify-between gap-3 border-b border-neutral px-3">
+        <div className="flex min-w-0 items-center gap-3 text-xs text-neutral-subtle">
+          {ephemeralConfig ? (
+            <>
+              <Badge variant="surface" color="brand" size="sm" radius="rounded" className="gap-1">
+                <Icon iconName="flask" iconStyle="solid" className="text-xs text-brand" />
+                Ephemeral pod · {ephemeralConfig.cpu}m CPU / {ephemeralConfig.memory} MiB
+              </Badge>
+              <Button variant="surface" color="neutral" size="xs" onClick={() => resetTerminalSession(null)}>
+                <Icon iconName="arrow-left" className="text-xs" />
+                Back to live pod
+              </Button>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-2">
+                <span className="shrink-0 text-neutral-subtle">Connected to live pod:</span>
+                {runningStatuses && runningStatuses.pods.length > 0 && (
+                  <InputSearch
+                    label=""
+                    value={selectedOrDefaultPodName}
+                    onChange={onSelectedPodChange}
+                    data={runningStatuses.pods.map((pod) => pod.name)}
+                    placeholder="Select a pod"
+                    trimLabel
+                  />
+                )}
+              </div>
+              {supportsEphemeral && (
+                <Tooltip
+                  content="Spawns a one-shot clone pod for troubleshooting. It mirrors your service's image and configuration but runs in isolation — nothing you do affects the live pods. The pod is automatically terminated when the session ends."
+                  side="bottom"
+                  classNameContent="max-w-xs whitespace-normal"
+                >
+                  <Button variant="surface" color="neutral" size="xs" onClick={onOpenEphemeralModal}>
+                    <Icon iconName="flask" iconStyle="solid" />
+                    Switch to ephemeral pod
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Button>
+                </Tooltip>
               )}
-            </div>
-          )}
-          {runningStatuses && selectedPod && (
-            <div className="relative">
-              <InputSearch
-                value={selectedContainer}
-                onChange={onSelectedContainerChange}
-                data={
-                  runningStatuses.pods
-                    .find((pod) => selectedPod === pod?.name)
-                    ?.containers.map((container) => container?.name) || []
-                }
-                placeholder="Select a container to connect to"
-              />
-              {!selectedContainer && (
-                <div className="pointer-events-none absolute right-2.5 top-1/2 z-20 -translate-y-1/2 text-xs text-neutral-subtle">
-                  <Icon iconName="angle-down" iconStyle="solid" />
-                </div>
-              )}
-            </div>
+            </>
           )}
         </div>
+
         <ExternalLink
           as="button"
           href="https://www.qovery.com/docs/cli/overview"
@@ -287,8 +340,15 @@ export function ServiceTerminal({
             <>
               {!isTerminalLoading && <MemoizedXTerm className="h-full" addons={addons} options={terminalOptions} />}
               {showLoader && (
-                <div className="absolute inset-0 flex items-start justify-center border-neutral bg-background pt-3">
+                <div className="absolute inset-0 flex flex-col items-center gap-2 border-neutral bg-background pt-6">
                   <LoaderSpinner />
+                  <span className="text-xs text-neutral-subtle">
+                    {ephemeralConfig
+                      ? 'Provisioning ephemeral pod…'
+                      : isTerminalLoading
+                        ? 'Connecting…'
+                        : 'Waiting for shell…'}
+                  </span>
                 </div>
               )}
             </>
