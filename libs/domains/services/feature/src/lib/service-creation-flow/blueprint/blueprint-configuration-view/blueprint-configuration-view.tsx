@@ -35,9 +35,7 @@ export function BlueprintConfigurationView() {
     serviceVersion,
     setCurrentStep,
   } = useBlueprintCreateContext()
-  const initialSection = isBlueprintConfigurationSection(search.section)
-    ? search.section
-    : 'service-information'
+  const initialSection = isBlueprintConfigurationSection(search.section) ? search.section : 'service-information'
   const [currentSection, setCurrentSection] = useState<BlueprintConfigurationSection>(initialSection)
   const serviceName = form.watch('serviceName')
   const blueprintFieldValues = form.watch('fields')
