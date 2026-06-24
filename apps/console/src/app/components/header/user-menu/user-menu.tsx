@@ -49,7 +49,7 @@ export function UserMenu() {
       <DropdownMenu.Content align="end" className="z-dropdown w-[15rem]">
         <div className="px-3 py-2 text-sm">
           <p className="font-medium text-neutral">{displayName}</p>
-          <p className="text-neutral-subtle">{user?.communication_email ?? userToken?.email}</p>
+          <p className="text-neutral-subtle">{userToken?.email}</p>
         </div>
 
         <DropdownMenu.Separator />

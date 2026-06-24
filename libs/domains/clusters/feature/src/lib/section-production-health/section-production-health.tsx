@@ -1,104 +1,12 @@
-import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { Link as RouterLink, useParams } from '@tanstack/react-router'
-import clsx from 'clsx'
-import { type ReactNode, useMemo } from 'react'
-import { IconEnum } from '@qovery/shared/enums'
-import { McpSuggestionCard } from '@qovery/shared/mcp-suggestion/feature'
-import { EmptyState, Heading, Icon, Link, LogoIcon, Section, useModal } from '@qovery/shared/ui'
-import { twMerge } from '@qovery/shared/util-js'
-import { AddCreditCardModalFeature } from '../add-credit-card-modal-feature/add-credit-card-modal-feature'
-import { ClusterInstallationGuideModal } from '../cluster-installation-guide-modal/cluster-installation-guide-modal'
+import { useParams } from '@tanstack/react-router'
+import { useMemo } from 'react'
+import { EmptyState, Heading, Icon, Link, Section } from '@qovery/shared/ui'
 import { ClusterProductionHealthSummaryCard } from '../cluster-production-health-summary-card/cluster-production-health-summary-card'
-import { useClusterCreationRestriction } from '../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction'
 import useClusterStatuses from '../hooks/use-cluster-statuses/use-cluster-statuses'
 import useClusters from '../hooks/use-clusters/use-clusters'
 
-type ClusterOption = {
-  highlight: boolean
-  tag: string
-  title: string
-  description: string
-  icon: IconName | ReactNode
-  compatibleWith?: IconEnum[]
-  dataAction: string
-} & (
-  | {
-      action: 'create-cluster'
-    }
-  | {
-      action: 'installation-guide'
-      isDemo?: boolean
-      requiresCreditCardOnFreeTrial?: boolean
-    }
-)
-
-const CLUSTERS_OPTIONS: ClusterOption[] = [
-  {
-    highlight: true,
-    tag: 'Recommended',
-    title: 'Qovery managed',
-    description:
-      'Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your cloud provider account.',
-    icon: <LogoIcon width="14" height="14" />,
-    compatibleWith: [IconEnum.AWS, IconEnum.GCP, IconEnum.AZURE, IconEnum.SCW_GRAY],
-    action: 'create-cluster',
-    dataAction: 'org-overview__cluster-option-managed',
-  },
-  {
-    highlight: false,
-    tag: 'Self-managed',
-    title: 'Bring your own cluster',
-    icon: 'cloud-fog',
-    description:
-      'You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge required.',
-    compatibleWith: [
-      IconEnum.AWS,
-      IconEnum.GCP,
-      IconEnum.AZURE,
-      IconEnum.SCW_GRAY,
-      IconEnum.OVH_CLOUD,
-      IconEnum.DO,
-      IconEnum.ORACLE_CLOUD,
-      IconEnum.HETZNER,
-      IconEnum.IBM_CLOUD,
-      IconEnum.CIVO,
-    ],
-    action: 'installation-guide',
-    requiresCreditCardOnFreeTrial: true,
-    dataAction: 'org-overview__cluster-option-byoc',
-  },
-  {
-    highlight: false,
-    tag: 'Demo',
-    title: 'Local machine (demo)',
-    icon: 'laptop-code',
-    description:
-      'Deploy a local Kubernetes cluster on your laptop using Docker. No cloud account or credit card required!',
-    action: 'installation-guide',
-    isDemo: true,
-    dataAction: 'org-overview__cluster-option-demo',
-  },
-]
-
-const RELATED_DOCUMENTATION: { title: string; url: string }[] = [
-  {
-    title: 'What is a cluster?',
-    url: 'https://www.qovery.com/docs/configuration/clusters/#what-is-a-cluster',
-  },
-  {
-    title: 'What does the qovery managed cluster offer me?',
-    url: 'https://www.qovery.com/docs/configuration/clusters/#creating-a-cluster',
-  },
-  {
-    title: 'What is a self-managed cluster?',
-    url: 'https://www.qovery.com/docs/configuration/clusters/#what-is-a-self-managed-cluster',
-  },
-]
-
 export function SectionProductionHealth() {
   const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
-  const { openModal, closeModal } = useModal()
-  const { isNoCreditCardRestriction } = useClusterCreationRestriction({ organizationId })
   const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
   const { data: clusterStatuses = [] } = useClusterStatuses({
     organizationId,
@@ -107,74 +15,6 @@ export function SectionProductionHealth() {
   })
 
   const clusterProduction = useMemo(() => clusters?.filter((cluster) => cluster.production), [clusters]) ?? []
-
-  const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
-    openModal({
-      options: {
-        width: 500,
-      },
-      content: (
-        <ClusterInstallationGuideModal mode="CREATE" isDemo={isDemo} type="ON_PREMISE" onClose={() => closeModal()} />
-      ),
-    })
-
-  const openCreditCardModal = () =>
-    openModal({
-      content: <AddCreditCardModalFeature organizationId={organizationId} />,
-    })
-
-  const getOptionCardClassName = (highlight: boolean) =>
-    twMerge(
-      clsx(
-        'flex flex-col gap-4 rounded-md border border-neutral bg-surface-neutral p-4 text-left transition-colors focus:outline-none',
-        {
-          'border-brand-subtle bg-surface-brand-subtle hover:border-brand-component hover:bg-surface-brand-component focus-visible:border-brand-component focus-visible:bg-surface-brand-component':
-            highlight,
-          'hover:bg-surface-neutral-subtle focus-visible:border-brand-component focus-visible:bg-surface-neutral-subtle':
-            !highlight,
-        }
-      )
-    )
-
-  const renderOptionCardContent = (option: ClusterOption) => (
-    <>
-      <span
-        className={twMerge(
-          clsx(
-            'flex h-5 max-w-max items-center justify-center rounded-full bg-surface-neutral-component px-2 text-xs font-medium text-neutral-subtle',
-            {
-              'bg-surface-brand-solid text-neutralInvert': option.highlight,
-            }
-          )
-        )}
-      >
-        {option.tag}
-      </span>
-      <span className="flex flex-col gap-2">
-        <p className="flex items-center gap-1 text-ssm font-medium text-neutral">
-          {typeof option.icon === 'string' ? (
-            <Icon iconName={option.icon as IconName} className="text-xs text-neutral-subtle" />
-          ) : (
-            option.icon
-          )}
-          {option.title}
-        </p>
-        <p className="text-ssm text-neutral-subtle">{option.description}</p>
-      </span>
-      <span className="mt-auto flex flex-col gap-1">
-        <span className="font-code text-2xs uppercase text-neutral">Compatible with</span>
-        {option.compatibleWith ? (
-          <div className="mt-2 flex flex-wrap items-center gap-3">
-            {option.compatibleWith.map((provider) => (
-              <Icon key={provider} name={provider} width={16} height={16} />
-            ))}
-          </div>
-        ) : (
-          <span className="text-ssm text-neutral-subtle">Every computer</span>
-        )}
-      </span>
-    </>
-  )
 
   return (
     <Section className="flex w-full flex-col gap-3">
@@ -193,94 +33,23 @@ export function SectionProductionHealth() {
         </Link>
       </div>
       {clusterProduction.length === 0 ? (
-        (clusters?.length ?? 0) > 0 ? (
-          <EmptyState
-            title="No production cluster created yet"
-            description="Create your first production cluster and start tracking your production health"
-            icon="cube"
+        <EmptyState
+          title="No production cluster created yet"
+          description="Create your first production cluster and start tracking your production health"
+          icon="cube"
+        >
+          <Link
+            as="button"
+            color="neutral"
+            size="md"
+            data-action="org-overview__create-cluster"
+            to="/organization/$organizationId/cluster/new"
+            params={{ organizationId }}
           >
-            <Link
-              as="button"
-              color="neutral"
-              size="md"
-              data-action="org-overview__create-cluster"
-              to="/organization/$organizationId/cluster/new"
-              params={{ organizationId }}
-            >
-              <Icon iconName="circle-plus" />
-              Create cluster
-            </Link>
-          </EmptyState>
-        ) : (
-          <div className="flex flex-col gap-3">
-            <McpSuggestionCard
-              variant="setup"
-              title="Let your agent do the configuration with"
-              description="Just install our AI skills and ask your agent to get you started!"
-            />
-            <div className="flex flex-col gap-5 rounded-lg border border-neutral bg-surface-neutral p-4 text-sm">
-              <div className="flex flex-col gap-1">
-                <p className="font-medium text-neutral">
-                  Install your first cluster and start tracking your production health
-                </p>
-                <p className="text-neutral-subtle">
-                  Create a cluster on your cloud provider to be able to deploy apps later
-                </p>
-              </div>
-              <div className="grid gap-3 lg:grid-cols-3">
-                {CLUSTERS_OPTIONS.map((option) =>
-                  option.action === 'create-cluster' ? (
-                    <RouterLink
-                      key={option.title}
-                      to="/organization/$organizationId/cluster/new"
-                      params={{ organizationId }}
-                      data-action={option.dataAction}
-                      className={getOptionCardClassName(option.highlight)}
-                    >
-                      {renderOptionCardContent(option)}
-                    </RouterLink>
-                  ) : (
-                    <button
-                      key={option.title}
-                      type="button"
-                      data-action={option.dataAction}
-                      onClick={() =>
-                        option.requiresCreditCardOnFreeTrial && isNoCreditCardRestriction
-                          ? openCreditCardModal()
-                          : openInstallationGuideModal({ isDemo: option.isDemo })
-                      }
-                      className={getOptionCardClassName(option.highlight)}
-                    >
-                      {renderOptionCardContent(option)}
-                    </button>
-                  )
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <p className="font-medium text-neutral">Related docs</p>
-                <div className="overflow-hidden rounded border border-neutral">
-                  {RELATED_DOCUMENTATION.map((doc) => (
-                    <a
-                      key={doc.title}
-                      href={doc.url}
-                      title={doc.title}
-                      target="_blank"
-                      rel="noreferrer"
-                      data-action="org-overview__cluster-doc"
-                      className="group flex h-12 w-full items-center justify-between border-b border-neutral p-4 text-ssm text-neutral transition-colors last:border-b-0 hover:bg-surface-neutral-subtle focus:outline-none focus-visible:bg-surface-neutral-subtle"
-                    >
-                      {doc.title}
-                      <Icon
-                        iconName="external-link"
-                        className="text-xs text-neutral-subtle transition-colors group-hover:text-neutral"
-                      />
-                    </a>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )
+            <Icon iconName="circle-plus" />
+            Create cluster
+          </Link>
+        </EmptyState>
       ) : (
         <ClusterProductionHealthSummaryCard clusters={clusterProduction} clusterStatuses={clusterStatuses} />
       )}
