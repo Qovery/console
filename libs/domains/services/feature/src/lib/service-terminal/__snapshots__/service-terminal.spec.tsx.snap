@@ -24,7 +24,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
               class="relative z-10"
             >
               <button
-                class="items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral hidden"
+                class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-neutral-component hover:bg-surface-neutral-componentHover text-neutral"
               >
                 pod-1
                 <span>
@@ -35,7 +35,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
                 </span>
               </button>
               <div
-                class="relative"
+                class="hidden relative"
               >
                 <i
                   aria-hidden="true"
@@ -52,7 +52,7 @@ exports[`ServiceTerminal should match snapshot 1`] = `
                   id="downshift-:r6:-input"
                   placeholder="Select a pod"
                   role="combobox"
-                  value=""
+                  value="pod-1"
                 />
               </div>
               <div
