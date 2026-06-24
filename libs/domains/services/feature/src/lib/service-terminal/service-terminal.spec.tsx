@@ -236,24 +236,24 @@ describe('ServiceTerminal', () => {
   })
 
   describe('ephemeral pod', () => {
-    it('should show the Switch to ephemeral pod button for APPLICATION', () => {
+    it('should show the Launch ephemeral pod button for APPLICATION', () => {
       renderWithProviders(<ServiceTerminal {...props} serviceType="APPLICATION" />)
-      expect(screen.getByRole('button', { name: /switch to ephemeral pod/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /launch ephemeral pod/i })).toBeInTheDocument()
     })
 
-    it('should show the Switch to ephemeral pod button for CONTAINER', () => {
+    it('should show the Launch ephemeral pod button for CONTAINER', () => {
       renderWithProviders(<ServiceTerminal {...props} serviceType="CONTAINER" />)
-      expect(screen.getByRole('button', { name: /switch to ephemeral pod/i })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /launch ephemeral pod/i })).toBeInTheDocument()
     })
 
-    it('should not show the Switch to ephemeral pod button for unsupported service types', () => {
+    it('should not show the Launch ephemeral pod button for unsupported service types', () => {
       renderWithProviders(<ServiceTerminal {...props} serviceType="JOB" />)
-      expect(screen.queryByRole('button', { name: /switch to ephemeral pod/i })).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /launch ephemeral pod/i })).not.toBeInTheDocument()
     })
 
     it('should open the ephemeral modal pre-filled with service resources', async () => {
       const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
-      await userEvent.click(screen.getByRole('button', { name: /switch to ephemeral pod/i }))
+      await userEvent.click(screen.getByRole('button', { name: /launch ephemeral pod/i }))
       expect(screen.getByLabelText(/vCPU/i)).toHaveValue('1000')
       expect(screen.getByLabelText(/Memory/i)).toHaveValue('512')
     })
@@ -261,7 +261,7 @@ describe('ServiceTerminal', () => {
     it('should switch to /shell/ephemeral with correct params after launch', async () => {
       const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
 
-      await userEvent.click(screen.getByRole('button', { name: /switch to ephemeral pod/i }))
+      await userEvent.click(screen.getByRole('button', { name: /launch ephemeral pod/i }))
       await userEvent.click(screen.getByRole('button', { name: 'Launch' }))
 
       await waitFor(() => {
@@ -275,7 +275,7 @@ describe('ServiceTerminal', () => {
     it('should show ephemeral active badge and back button after launch', async () => {
       const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
 
-      await userEvent.click(screen.getByRole('button', { name: /switch to ephemeral pod/i }))
+      await userEvent.click(screen.getByRole('button', { name: /launch ephemeral pod/i }))
       await userEvent.click(screen.getByRole('button', { name: 'Launch' }))
 
       expect(screen.getByText(/Ephemeral pod/)).toBeInTheDocument()
@@ -285,7 +285,7 @@ describe('ServiceTerminal', () => {
     it('should return to /shell/exec after clicking Back to live pod', async () => {
       const { userEvent } = renderWithProviders(<ServiceTerminal {...props} />)
 
-      await userEvent.click(screen.getByRole('button', { name: /switch to ephemeral pod/i }))
+      await userEvent.click(screen.getByRole('button', { name: /launch ephemeral pod/i }))
       await userEvent.click(screen.getByRole('button', { name: 'Launch' }))
       await userEvent.click(screen.getByRole('button', { name: /back to live pod/i }))
 

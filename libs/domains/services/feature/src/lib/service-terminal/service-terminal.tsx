@@ -277,14 +277,16 @@ export function ServiceTerminal({
         <div className="flex min-w-0 items-center gap-3 text-xs text-neutral-subtle">
           {ephemeralConfig ? (
             <>
-              <Badge variant="surface" color="brand" size="sm" radius="rounded" className="gap-1">
-                <Icon iconName="flask" iconStyle="solid" className="text-xs text-brand" />
-                Ephemeral pod · {ephemeralConfig.cpu}m CPU / {ephemeralConfig.memory} MiB
-              </Badge>
-              <Button variant="surface" color="neutral" size="xs" onClick={() => resetTerminalSession(null)}>
-                <Icon iconName="arrow-left" className="text-xs" />
+              <Button variant="surface" color="neutral" size="md" onClick={() => resetTerminalSession(null)}>
+                <Icon iconName="arrow-left" />
                 Back to live pod
               </Button>
+              <Tooltip content={`${ephemeralConfig.cpu}m CPU / ${ephemeralConfig.memory} MiB`} side="bottom">
+                <Badge variant="surface" color="brand" size="sm" radius="rounded" className="gap-1">
+                  Ephemeral pod
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-xs" />
+                </Badge>
+              </Tooltip>
             </>
           ) : (
             <>
@@ -302,32 +304,26 @@ export function ServiceTerminal({
                 )}
               </div>
               {supportsEphemeral && (
-                <Tooltip
-                  content="Spawns a one-shot clone pod for troubleshooting. It mirrors your service's image and configuration but runs in isolation — nothing you do affects the live pods. The pod is automatically terminated when the session ends."
-                  side="bottom"
-                  classNameContent="max-w-xs whitespace-normal"
-                >
-                  <Button variant="surface" color="neutral" size="xs" onClick={onOpenEphemeralModal}>
-                    <Icon iconName="flask" iconStyle="solid" />
-                    Switch to ephemeral pod
-                    <Icon iconName="circle-info" iconStyle="regular" />
-                  </Button>
-                </Tooltip>
+                <Button variant="surface" color="neutral" size="xs" className="h-8" onClick={onOpenEphemeralModal}>
+                  Launch ephemeral pod
+                </Button>
               )}
             </>
           )}
         </div>
 
-        <ExternalLink
-          as="button"
-          href="https://www.qovery.com/docs/cli/overview"
-          variant="surface"
-          color="neutral"
-          size="md"
-        >
-          <Icon iconName="book" />
-          CLI docs
-        </ExternalLink>
+        <div className="flex items-center gap-3">
+          <ExternalLink
+            as="button"
+            href="https://www.qovery.com/docs/cli/overview"
+            variant="surface"
+            color="neutral"
+            size="md"
+          >
+            <Icon iconName="book" />
+            CLI docs
+          </ExternalLink>
+        </div>
       </div>
       <div className="flex h-full flex-1 flex-col bg-background px-3 pt-5">
         <div className="relative min-h-0 flex-1">

@@ -27,7 +27,7 @@ export function EphemeralShellModal({ onClose, onLaunch, defaultValues }: Epheme
     <FormProvider {...methods}>
       <ModalCrud
         title="Launch ephemeral pod"
-        description="Spawns a one-shot clone pod for troubleshooting. It mirrors your service's image and configuration but runs in isolation — nothing you do affects the live pods. The pod is automatically terminated when the session ends."
+        description="Spawns a one-shot clone pod for troubleshooting. It mirrors your service's image and configuration but runs in isolation. Nothing you do affects the live pods. The pod is automatically terminated when the session ends."
         onClose={onClose}
         onSubmit={onSubmit}
         submitLabel="Launch"
