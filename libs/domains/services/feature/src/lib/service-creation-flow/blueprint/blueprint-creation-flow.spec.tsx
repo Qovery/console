@@ -258,9 +258,7 @@ describe('BlueprintCreationFlow', () => {
 
     expect(screen.getByLabelText('Service name')).toBeInTheDocument()
     expect(screen.queryByLabelText('Db name')).not.toBeInTheDocument()
-    expect(
-      screen.queryByText(/Use overrides to customize how your service is built or run/)
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText(/Use overrides to customize how your service is built or run/)).not.toBeInTheDocument()
   })
 
   it('should update the current section when the route search section changes to a valid section', async () => {
