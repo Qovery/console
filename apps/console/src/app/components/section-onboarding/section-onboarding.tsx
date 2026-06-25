@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Link as RouterLink } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { ClusterStateEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
+import { ClusterStateEnum, StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { ClusterInstallationGuideModal, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal, useDeploymentRule, useEnvironments } from '@qovery/domains/environments/feature'
@@ -50,7 +50,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const { data: services = [] } = useServices({ environmentId: firstEnvironment?.id })
   const { data: serviceStatuses } = useServiceStatuses({ environmentId: firstEnvironment?.id })
 
-  const isClusterDeployed = clusterStatuses.some((s) => s.is_deployed)
+  const isClusterDeployed = clusterStatuses.some((s) => s.status === ClusterStateEnum.DEPLOYED && s.is_deployed)
   const isClusterQueued =
     clusters.length > 0 &&
     !isClusterDeployed &&
@@ -83,9 +83,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
     ...(serviceStatuses?.terraforms ?? []),
   ]
   const hasService = services.length > 0
-  const isServiceDeployed = allServiceStatuses.some(
-    (s) => s.service_deployment_status !== ServiceDeploymentStatusEnum.NEVER_DEPLOYED
-  )
+  const isServiceDeployed = allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYED)
   const isServiceQueued = hasService && !isServiceDeployed && allServiceStatuses.some((s) => QUEUED_SERVICE_STATUSES.includes(s.state))
   const isServiceDeploying =
     hasService &&
@@ -99,6 +97,16 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
     )
   const failedServiceStatus = allServiceStatuses.find(
     (s) => s.state === StateEnum.DEPLOYMENT_ERROR || s.state === StateEnum.BUILD_ERROR
+  )
+  const isServiceStopped =
+    hasService &&
+    !isServiceDeployed &&
+    !isServiceQueued &&
+    !isServiceDeploying &&
+    !isServiceFailed &&
+    allServiceStatuses.some((s) => s.state === StateEnum.STOPPED || s.state === StateEnum.STOP_ERROR)
+  const stoppedServiceStatus = allServiceStatuses.find(
+    (s) => s.state === StateEnum.STOPPED || s.state === StateEnum.STOP_ERROR
   )
 
   const useCases = (onboarding?.use_cases ?? '').split(',').filter(Boolean)
@@ -535,6 +543,21 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
                 size="sm"
               >
                 Last deployment failed <Icon iconName="arrow-up-right" />
+              </Link>
+            ) : isServiceStopped ? (
+              <Link
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId"
+                params={{
+                  organizationId,
+                  projectId: firstProject?.id ?? '',
+                  environmentId: firstEnvironment?.id ?? '',
+                  serviceId: stoppedServiceStatus?.id ?? '',
+                }}
+                color="neutral"
+                underline
+                size="sm"
+              >
+                Service stopped <Icon iconName="arrow-up-right" />
               </Link>
             ) : hasEnvironment ? (
               <Link
