@@ -251,6 +251,36 @@ describe('BlueprintCreationFlow', () => {
     expect(screen.getByRole('checkbox', { name: 'Skip final snapshot' })).toBeInTheDocument()
   })
 
+  it('should fallback to service information when the route search section is invalid', () => {
+    mockUseSearch.mockReturnValue({ section: 'unknown-section' })
+
+    renderBlueprintFlow(<BlueprintConfigurationView />)
+
+    expect(screen.getByLabelText('Service name')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Db name')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText(/Use overrides to customize how your service is built or run/)
+    ).not.toBeInTheDocument()
+  })
+
+  it('should update the current section when the route search section changes to a valid section', async () => {
+    mockUseSearch.mockReturnValue({})
+
+    const { rerender } = renderBlueprintFlow(<BlueprintConfigurationView />)
+
+    expect(screen.getByLabelText('Service name')).toBeInTheDocument()
+
+    mockUseSearch.mockReturnValue({ section: 'blueprint-setup' })
+    rerender(
+      <BlueprintCreationFlow blueprint={blueprint} onExit={jest.fn()}>
+        <BlueprintConfigurationView />
+      </BlueprintCreationFlow>
+    )
+
+    expect(await screen.findByLabelText('Db name')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Service name')).not.toBeInTheDocument()
+  })
+
   it('should navigate to the matching configuration section from summary edit buttons', async () => {
     jest.useFakeTimers()
 
