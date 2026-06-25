@@ -22,6 +22,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, Tooltip, truncateText } from '@qovery/shared/ui'
 import { generateScopeLabel, prepareVariableImportRequest, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { toCpuArchitectureRequest } from '@qovery/shared/util-services'
 import { type DockerfileSettingsData } from '../../dockerfile-settings/dockerfile-settings'
 import { useJobCreateContext } from '../job-creation-flow'
 
@@ -78,6 +79,7 @@ function prepareJobRequest({
     cpu,
     gpu,
     memory,
+    cpu_architecture: toCpuArchitectureRequest(resourcesData.cpu_architecture),
     max_nb_restart: Number(configureData.nb_restarts) || 0,
     max_duration_seconds: Number(configureData.max_duration) || 0,
     auto_preview: false,

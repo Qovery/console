@@ -5,6 +5,7 @@ import {
   type JobLifecycleTypeEnum,
 } from 'qovery-typescript-axios'
 import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ApplicationResourcesData } from './application-creation-flow.interface'
 
 export interface JobGeneralData {
   name: string
@@ -69,8 +70,5 @@ export interface JobConfigureData {
   }
 }
 
-export interface JobResourcesData {
-  memory: number
-  cpu: number
-  gpu: number
-}
+export interface JobResourcesData
+  extends Pick<ApplicationResourcesData, 'memory' | 'cpu' | 'gpu' | 'cpu_architecture'> {}

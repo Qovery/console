@@ -80,7 +80,7 @@ function getDefaultValues(
     gpu: match(service)
       .with({ serviceType: 'TERRAFORM' }, (terraform) => terraform.job_resources.gpu)
       .otherwise((resourceService) => resourceService.gpu || 0),
-    cpu_architecture: (service as ServiceWithCpuArchitecture).cpu_architecture ?? undefined,
+    cpu_architecture: (service as ServiceWithCpuArchitecture).cpu_architecture ?? 'DEFAULT',
     autoscaling_mode: autoscalingMode,
     scalers: match(service)
       .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, (resourceService) => {

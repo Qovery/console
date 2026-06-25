@@ -37,7 +37,7 @@ export function StepResourcesContent({ templateType, onBack, onSubmit }: StepRes
           ))
           .with('GENERIC', undefined, () => undefined)
           .exhaustive()}
-        <ApplicationSettingsResources displayWarningCpu={false} displayInstanceLimits={false} />
+        <ApplicationSettingsResources displayWarningCpu={false} displayInstanceLimits={false} displayCpuArchitecture />
 
         <div className="flex justify-between">
           <Button onClick={onBack} type="button" size="lg" variant="plain">

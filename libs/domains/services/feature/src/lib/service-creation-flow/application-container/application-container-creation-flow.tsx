@@ -52,6 +52,7 @@ export const defaultResourcesData: ApplicationResourcesData = {
   memory: 512,
   cpu: 500,
   gpu: 0,
+  cpu_architecture: 'DEFAULT',
   min_running_instances: 1,
   max_running_instances: 1,
   autoscaling_mode: 'NONE',
