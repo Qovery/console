@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
@@ -8,10 +9,10 @@ import {
 import { type ReactNode, useMemo, useState } from 'react'
 import { Button, ExternalLink, Heading, Icon, InputSearch, Section, Skeleton } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
+import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
+import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
-import { BlueprintDetailsPanel } from './blueprint-details-panel/blueprint-details-panel'
-import { BlueprintQueryBoundary } from './blueprint-query-boundary/blueprint-query-boundary'
 import { Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
 import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
 import { serviceTemplates } from './service-templates'
@@ -90,16 +91,15 @@ function BlueprintSectionErrorFallback({
 }
 
 function BlueprintSection({
-  organizationId,
   blueprintSearchInput,
   onBlueprintSearchInputChange,
   onViewDetails,
 }: {
-  organizationId: string
   blueprintSearchInput: string
   onBlueprintSearchInputChange: (value: string) => void
   onViewDetails: (blueprint: BlueprintItem) => void
 }) {
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: blueprintCatalog } = useBlueprintCatalog({
     organizationId,
     suspense: true,
@@ -322,7 +322,6 @@ export function ServiceNew({
                 title="blueprint catalog"
               >
                 <BlueprintSection
-                  organizationId={organizationId}
                   blueprintSearchInput={blueprintSearchInput}
                   onBlueprintSearchInputChange={setBlueprintSearchInput}
                   onViewDetails={openBlueprintDetails}

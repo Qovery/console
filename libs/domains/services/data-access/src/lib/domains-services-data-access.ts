@@ -14,6 +14,7 @@ import {
   ApplicationsApi,
   ArgoCDApi,
   BlueprintCatalogApi,
+  type BlueprintCreateRequest,
   BlueprintMainCallsApi,
   type CleanFailedJobsRequest,
   ContainerActionsApi,
@@ -274,6 +275,31 @@ export const services = createQueryKeys('services', {
         serviceVersion
       )
       return response.data
+    },
+  }),
+  blueprintCatalogServiceManifest: ({
+    organizationId,
+    provider,
+    serviceFamily,
+    serviceVersion,
+    environmentId,
+  }: {
+    organizationId: string
+    provider: string
+    serviceFamily: string
+    serviceVersion: string
+    environmentId: string
+  }) => ({
+    queryKey: [organizationId, provider, serviceFamily, serviceVersion, environmentId],
+    async queryFn() {
+      const response = await blueprintCatalogApi.getBlueprintCatalogServiceManifest(
+        organizationId,
+        provider,
+        serviceFamily,
+        serviceVersion,
+        environmentId
+      )
+      return response.data.results
     },
   }),
   deploymentStatus: (environmentId: string, serviceId: string) => ({
@@ -730,6 +756,12 @@ type CreateServiceRequest = {
       } & TerraformRequest)
 }
 
+type CreateBlueprintRequest = {
+  environmentId: string
+  payload: BlueprintCreateRequest
+  deploy?: boolean
+}
+
 type EditServiceRequest = {
   serviceId: string
   payload:
@@ -997,6 +1029,10 @@ export const mutations = {
 
       .exhaustive()
     const response = await mutation()
+    return response.data
+  },
+  async createBlueprint({ environmentId, payload, deploy }: CreateBlueprintRequest) {
+    const response = await blueprintApi.createBlueprint(environmentId, payload, deploy)
     return response.data
   },
   async editService({ serviceId, payload }: EditServiceRequest) {

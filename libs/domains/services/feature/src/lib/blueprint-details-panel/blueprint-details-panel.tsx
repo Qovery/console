@@ -4,10 +4,10 @@ import { type BlueprintItem, type BlueprintReadmeResponse } from 'qovery-typescr
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { formatCloudProvider } from '@qovery/domains/clusters/data-access'
-import { Badge, Button, ExternalLink, Icon, Sheet } from '@qovery/shared/ui'
+import { Badge, Button, ExternalLink, Icon, Link, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { useBlueprintCatalogServiceReadme } from '../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
+import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 
 function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) {
   return `qovery-blueprints/${serviceFamily || provider}`
@@ -85,15 +85,8 @@ function BlueprintReadmeState({ readme }: { readme?: BlueprintReadmeResponse }) 
   return <BlueprintReadmeContent content={readme.content} />
 }
 
-function BlueprintReadme({
-  blueprint,
-  organizationId,
-  serviceVersion,
-}: {
-  blueprint: BlueprintItem
-  organizationId: string
-  serviceVersion: string
-}) {
+function BlueprintReadme({ blueprint, serviceVersion }: { blueprint: BlueprintItem; serviceVersion: string }) {
+  const { organizationId = '' } = useParams({ strict: false })
   const { data: readme } = useBlueprintCatalogServiceReadme({
     organizationId,
     provider: blueprint.provider,
@@ -106,15 +99,8 @@ function BlueprintReadme({
   return <BlueprintReadmeState readme={readme} />
 }
 
-function BlueprintRepositoryBadge({
-  blueprint,
-  organizationId,
-  serviceVersion,
-}: {
-  blueprint: BlueprintItem
-  organizationId: string
-  serviceVersion: string
-}) {
+function BlueprintRepositoryBadge({ blueprint, serviceVersion }: { blueprint: BlueprintItem; serviceVersion: string }) {
+  const { organizationId = '' } = useParams({ strict: false })
   const repositoryName = getBlueprintRepositoryName(blueprint)
   const { data: readme } = useBlueprintCatalogServiceReadme({
     organizationId,
@@ -152,18 +138,21 @@ function BlueprintRepositoryBadge({
 
 function BlueprintDetailsPanelContent({
   blueprint,
+  footerMode,
   open,
   onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem
+  footerMode: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void
   onOpenChange: (open: boolean) => void
 }) {
-  const { organizationId = '' } = useParams({ strict: false })
+  const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? ''
   const shouldDisplayServiceVersion = serviceVersion && serviceVersion !== 'default'
+  const canDeploy = footerMode === 'deploy' && Boolean(blueprint.serviceFamily)
 
   const provider = formatCloudProvider(blueprint.provider)
 
@@ -189,11 +178,7 @@ function BlueprintDetailsPanelContent({
                   </Dialog.Description>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <BlueprintRepositoryBadge
-                    blueprint={blueprint}
-                    organizationId={organizationId}
-                    serviceVersion={serviceVersion}
-                  />
+                  <BlueprintRepositoryBadge blueprint={blueprint} serviceVersion={serviceVersion} />
                   <Badge size="sm" color="neutral" variant="outline" className="gap-1">
                     {provider}
                   </Badge>
@@ -210,11 +195,7 @@ function BlueprintDetailsPanelContent({
                   resetKeys={[organizationId, blueprint.provider, blueprint.serviceFamily, serviceVersion]}
                   title="blueprint details"
                 >
-                  <BlueprintReadme
-                    blueprint={blueprint}
-                    organizationId={organizationId}
-                    serviceVersion={serviceVersion}
-                  />
+                  <BlueprintReadme blueprint={blueprint} serviceVersion={serviceVersion} />
                 </BlueprintQueryBoundary>
               </div>
             </div>
@@ -230,12 +211,32 @@ function BlueprintDetailsPanelContent({
             </Dialog.Close>
 
             <div className="absolute bottom-0 left-0 right-0 flex items-center justify-end gap-2 border-t border-neutral bg-background px-6 py-4">
-              <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
-                Cancel
-              </Button>
-              <Button type="button" color="brand" size="lg">
-                Deploy blueprint
-              </Button>
+              {!canDeploy ? (
+                <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
+                  {footerMode === 'close' ? 'Close' : 'Cancel'}
+                </Button>
+              ) : (
+                <>
+                  <Button type="button" variant="plain" color="neutral" size="lg" onClick={() => onOpenChange(false)}>
+                    Cancel
+                  </Button>
+                  <Link
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
+                    params={{
+                      organizationId,
+                      projectId,
+                      environmentId,
+                      provider: blueprint.provider,
+                      serviceFamily: blueprint.serviceFamily ?? '',
+                    }}
+                    as="button"
+                    color="brand"
+                    size="lg"
+                  >
+                    Deploy blueprint
+                  </Link>
+                </>
+              )}
             </div>
           </Sheet>
         </Dialog.Content>
@@ -246,11 +247,13 @@ function BlueprintDetailsPanelContent({
 
 export function BlueprintDetailsPanel({
   blueprint,
+  footerMode = 'deploy',
   open,
   onExitComplete,
   onOpenChange,
 }: {
   blueprint: BlueprintItem | null
+  footerMode?: 'close' | 'deploy'
   open: boolean
   onExitComplete: () => void
   onOpenChange: (open: boolean) => void
@@ -260,6 +263,7 @@ export function BlueprintDetailsPanel({
   return (
     <BlueprintDetailsPanelContent
       blueprint={blueprint}
+      footerMode={footerMode}
       open={open}
       onExitComplete={onExitComplete}
       onOpenChange={onOpenChange}
