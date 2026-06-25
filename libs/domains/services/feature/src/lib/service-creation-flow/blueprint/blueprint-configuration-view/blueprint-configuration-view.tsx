@@ -69,7 +69,7 @@ export function BlueprintConfigurationView() {
         </p>
       </header>
 
-      <div className="flex flex-col gap-3 pb-24">
+      <div className="flex flex-col gap-3 pb-14">
         <BlueprintSection
           active={currentSection === 'service-information'}
           completed={currentSection !== 'service-information'}

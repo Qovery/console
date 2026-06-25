@@ -83,46 +83,44 @@ function BlueprintCreationFlowBoundaryFallback({
 
 function BlueprintCreationFlowLoadingSkeleton() {
   return (
-    <div className="flex w-full items-start overflow-auto bg-background" aria-label="Loading blueprint configuration">
-      <main className="mx-auto flex w-full max-w-[620px] flex-col justify-between px-4 pt-6">
-        <div>
-          <header className="mb-5">
-            <Skeleton width="74%" height={32} />
-            <Skeleton width="44%" height={20} className="mt-1" />
-          </header>
-          <div className="flex flex-col gap-3 pb-24">
-            <section className="rounded-xl border border-neutral bg-surface-neutral">
-              <div className="flex items-center gap-3 px-4 py-4">
-                <Skeleton width={16} height={16} rounded />
-                <Skeleton width={172} height={24} />
-              </div>
-              <div className="flex flex-col gap-3 px-4 pb-4">
-                <Skeleton width="100%" height={52} className="rounded-md" />
-                <Skeleton width="100%" height={52} className="rounded-md" />
-                <Skeleton width={108} height={32} className="rounded-md" />
-              </div>
-            </section>
-            <section className="rounded-xl border border-neutral bg-surface-neutral">
-              <div className="flex items-center gap-3 px-4 py-4">
-                <Skeleton width={16} height={16} rounded />
-                <Skeleton width={152} height={24} />
-              </div>
-            </section>
-            <section className="rounded-xl border border-neutral bg-surface-neutral">
-              <div className="flex items-center gap-3 px-4 py-4">
-                <Skeleton width={16} height={16} rounded />
-                <Skeleton width={96} height={24} />
-                <Skeleton width={4} height={4} rounded />
-                <Skeleton width={128} height={20} />
-              </div>
-            </section>
-          </div>
+    <FunnelFlowBody customContentWidth="max-w-[620px]">
+      <div aria-label="Loading blueprint configuration">
+        <header className="mb-5">
+          <Skeleton width="74%" height={32} />
+          <Skeleton width="44%" height={20} className="mt-1" />
+        </header>
+        <div className="flex flex-col gap-3 pb-14">
+          <section className="rounded-xl border border-neutral bg-surface-neutral">
+            <div className="flex items-center gap-3 px-4 py-4">
+              <Skeleton width={16} height={16} rounded />
+              <Skeleton width={172} height={24} />
+            </div>
+            <div className="flex flex-col gap-3 px-4 pb-4">
+              <Skeleton width="100%" height={52} className="rounded-md" />
+              <Skeleton width="100%" height={52} className="rounded-md" />
+              <Skeleton width={108} height={32} className="rounded-md" />
+            </div>
+          </section>
+          <section className="rounded-xl border border-neutral bg-surface-neutral">
+            <div className="flex items-center gap-3 px-4 py-4">
+              <Skeleton width={16} height={16} rounded />
+              <Skeleton width={152} height={24} />
+            </div>
+          </section>
+          <section className="rounded-xl border border-neutral bg-surface-neutral">
+            <div className="flex items-center gap-3 px-4 py-4">
+              <Skeleton width={16} height={16} rounded />
+              <Skeleton width={96} height={24} />
+              <Skeleton width={4} height={4} rounded />
+              <Skeleton width={128} height={20} />
+            </div>
+          </section>
         </div>
-        <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
-          <Skeleton width="100%" height={40} className="rounded-md" />
-        </footer>
-      </main>
-    </div>
+      </div>
+      <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+        <Skeleton width="100%" height={40} className="rounded-md" />
+      </footer>
+    </FunnelFlowBody>
   )
 }
 
