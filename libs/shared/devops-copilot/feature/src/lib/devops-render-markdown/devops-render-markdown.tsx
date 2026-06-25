@@ -1,10 +1,11 @@
+import { useNavigate } from '@tanstack/react-router'
 import { isValidElement } from 'react'
-import type { FC, HTMLAttributes, PropsWithChildren } from 'react'
+import type { AnchorHTMLAttributes, FC, HTMLAttributes, MouseEvent, PropsWithChildren, ReactNode } from 'react'
 import Markdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import remarkGfm from 'remark-gfm'
-import { CopyToClipboardButtonIcon, ExternalLink, Link } from '@qovery/shared/ui'
+import { CopyToClipboardButtonIcon, ExternalLink } from '@qovery/shared/ui'
 import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 
 function getInternalPath(href: string): string | null {
@@ -19,17 +20,22 @@ function getInternalPath(href: string): string | null {
   return null
 }
 
-function MarkdownLink({
-  href,
-  children,
-}: React.AnchorHTMLAttributes<HTMLAnchorElement> & { children?: React.ReactNode }) {
+function MarkdownLink({ href, children }: AnchorHTMLAttributes<HTMLAnchorElement> & { children?: ReactNode }) {
+  const navigate = useNavigate()
   const internalPath = href ? getInternalPath(href) : null
 
   if (internalPath) {
     return (
-      <Link to={internalPath as string} color="brand" underline>
+      <a
+        href={internalPath}
+        className="text-brand transition-colors hover:underline"
+        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+          e.preventDefault()
+          navigate({ to: internalPath })
+        }}
+      >
         {children}
-      </Link>
+      </a>
     )
   }
 
