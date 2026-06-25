@@ -27,7 +27,7 @@ function MarkdownLink({
 
   if (internalPath) {
     return (
-      <Link to={internalPath} color="brand" underline>
+      <Link to={internalPath as string} color="brand" underline>
         {children}
       </Link>
     )
