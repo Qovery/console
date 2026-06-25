@@ -1,31 +1,13 @@
-import axios from 'axios'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { type OrganizationOnboardingStatusEnum } from 'qovery-typescript-axios'
+import { mutations, organizations } from '@qovery/domains/organizations/data-access'
+import { queries } from '@qovery/state/util-queries'
 
-export type OnboardingStatus = 'IN_PROGRESS' | 'DISMISSED' | 'COMPLETED'
-
-export interface OrganizationOnboarding {
-  use_cases: string | null
-  status: OnboardingStatus | null
-}
-
-const queryKey = (organizationId: string) => ['organization-onboarding', organizationId]
-
-async function fetchOnboarding(organizationId: string): Promise<OrganizationOnboarding> {
-  const response = await axios.get<OrganizationOnboarding>(`/api/organization/${organizationId}/onboarding`)
-  return response.data
-}
-
-async function updateOnboarding(organizationId: string, status: OnboardingStatus): Promise<OrganizationOnboarding> {
-  const response = await axios.post<OrganizationOnboarding>(`/api/organization/${organizationId}/onboarding`, {
-    status,
-  })
-  return response.data
-}
+export type { OrganizationOnboardingStatusEnum }
 
 export function useOrganizationOnboarding({ organizationId }: { organizationId: string }) {
   return useQuery({
-    queryKey: queryKey(organizationId),
-    queryFn: () => fetchOnboarding(organizationId),
+    ...queries.organizations.onboarding({ organizationId }),
     staleTime: 5 * 60 * 1000,
   })
 }
@@ -33,9 +15,10 @@ export function useOrganizationOnboarding({ organizationId }: { organizationId: 
 export function useUpdateOrganizationOnboarding({ organizationId }: { organizationId: string }) {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: (status: OnboardingStatus) => updateOnboarding(organizationId, status),
+    mutationFn: (status: OrganizationOnboardingStatusEnum) =>
+      mutations.updateOrganizationOnboarding({ organizationId, onboardingPatchRequest: { status } }),
     onSuccess(data) {
-      queryClient.setQueryData(queryKey(organizationId), data)
+      queryClient.setQueryData(queries.organizations.onboarding({ organizationId }).queryKey, data)
     },
   })
 }
