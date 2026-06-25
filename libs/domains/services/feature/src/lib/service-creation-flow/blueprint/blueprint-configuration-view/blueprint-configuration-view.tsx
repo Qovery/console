@@ -1,7 +1,7 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { type ServiceCreateSection } from '@qovery/shared/router'
-import { Button, Icon, InputText } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Icon, InputText } from '@qovery/shared/ui'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
   type BlueprintFieldValue,
@@ -57,134 +57,130 @@ export function BlueprintConfigurationView() {
   }, [search.section])
 
   return (
-    <div className="flex w-full items-start overflow-auto bg-background">
-      <main className="mx-auto flex w-full max-w-[620px] flex-col justify-between px-4 pt-6">
-        <div>
-          <header className="mb-5">
-            <h1 className="text-2xl font-medium leading-8 text-neutral">{blueprint.name} configuration</h1>
-            <p className="mt-1 text-sm leading-5 text-neutral-subtle">
-              Provisioned from{' '}
-              <button type="button" className="font-normal underline hover:text-neutral" onClick={onViewDetails}>
-                {blueprint.name}
-              </button>{' '}
-              blueprint
-            </p>
-          </header>
+    <FunnelFlowBody customContentWidth="max-w-[620px]">
+      <header className="mb-5">
+        <h1 className="text-2xl font-medium leading-8 text-neutral">{blueprint.name} configuration</h1>
+        <p className="mt-1 text-sm leading-5 text-neutral-subtle">
+          Provisioned from{' '}
+          <button type="button" className="font-normal underline hover:text-neutral" onClick={onViewDetails}>
+            {blueprint.name}
+          </button>{' '}
+          blueprint
+        </p>
+      </header>
 
-          <div className="flex flex-col gap-3 pb-24">
-            <BlueprintSection
-              active={currentSection === 'service-information'}
-              completed={currentSection !== 'service-information'}
-              iconName="circle-info"
-              title="Service information"
-              onClick={() => setCurrentSection('service-information')}
-            >
-              {currentSection === 'service-information' && (
-                <>
-                  <InputText
-                    name="service-name"
-                    label="Service name"
-                    value={serviceName}
-                    onChange={(event) => form.setValue('serviceName', event.currentTarget.value)}
-                    autoFocus
-                  />
-                  <InputText name="blueprint-version" label="Blueprint version" value={serviceVersion} disabled />
-                  <Button
-                    type="button"
-                    size="md"
-                    color="neutral"
-                    className="w-fit"
-                    disabled={!isServiceInformationValid}
-                    onClick={() => setCurrentSection('blueprint-setup')}
-                  >
-                    Continue
-                    <Icon iconName="arrow-right" />
-                  </Button>
-                </>
-              )}
-            </BlueprintSection>
+      <div className="flex flex-col gap-3 pb-24">
+        <BlueprintSection
+          active={currentSection === 'service-information'}
+          completed={currentSection !== 'service-information'}
+          iconName="circle-info"
+          title="Service information"
+          onClick={() => setCurrentSection('service-information')}
+        >
+          {currentSection === 'service-information' && (
+            <>
+              <InputText
+                name="service-name"
+                label="Service name"
+                value={serviceName}
+                onChange={(event) => form.setValue('serviceName', event.currentTarget.value)}
+                autoFocus
+              />
+              <InputText name="blueprint-version" label="Blueprint version" value={serviceVersion} disabled />
+              <Button
+                type="button"
+                size="md"
+                color="neutral"
+                className="w-fit"
+                disabled={!isServiceInformationValid}
+                onClick={() => setCurrentSection('blueprint-setup')}
+              >
+                Continue
+                <Icon iconName="arrow-right" />
+              </Button>
+            </>
+          )}
+        </BlueprintSection>
 
-            <BlueprintSection
-              active={currentSection === 'blueprint-setup'}
-              completed={currentSection === 'overrides'}
-              disabled={!isServiceInformationValid}
-              iconName="chart-bullet"
-              title="Blueprint setup"
-              onClick={() => setCurrentSection('blueprint-setup')}
-            >
-              {currentSection === 'blueprint-setup' && (
-                <>
-                  {requiredBlueprintFields.map((field, index) => (
-                    <BlueprintManifestVariableInput
-                      key={field.name}
-                      autoFocus={index === 0}
-                      error={getFieldValidationError(field, blueprintFieldValues[field.name])}
-                      field={field}
-                      value={blueprintFieldValues[field.name]}
-                      onChange={(value) => updateFieldValue(field.name, value)}
-                    />
-                  ))}
-                  <Button
-                    type="button"
-                    size="md"
-                    color="neutral"
-                    className="w-fit"
-                    disabled={!isBlueprintSetupValid}
-                    onClick={() => setCurrentSection('overrides')}
-                  >
-                    Continue
-                    <Icon iconName="arrow-right" />
-                  </Button>
-                </>
-              )}
-            </BlueprintSection>
-            <OverridesSection
-              active={currentSection === 'overrides'}
-              disabled={!isBlueprintSetupValid}
-              onClick={() => setCurrentSection('overrides')}
-            >
-              {hasOverrideFields && (
-                <>
-                  {optionalBlueprintFields.map((field, index) => (
-                    <BlueprintManifestVariableInput
-                      key={field.name}
-                      autoFocus={index === 0}
-                      error={getFieldValidationError(field, blueprintFieldValues[field.name])}
-                      field={field}
-                      value={blueprintFieldValues[field.name]}
-                      onChange={(value) => updateFieldValue(field.name, value)}
-                    />
-                  ))}
-                  {overridableContextBlueprintFields.map((field, index) => (
-                    <InputText
-                      key={field.name}
-                      name={field.name}
-                      label={formatFieldLabel(field.name)}
-                      value={getStringFieldValue(blueprintFieldValues[field.name])}
-                      hint={field.source ? `Automatically sourced from ${field.source}` : undefined}
-                      autoFocus={optionalBlueprintFields.length === 0 && index === 0}
-                      onChange={(event) => updateFieldValue(field.name, event.currentTarget.value)}
-                    />
-                  ))}
-                </>
-              )}
-            </OverridesSection>
-          </div>
-        </div>
+        <BlueprintSection
+          active={currentSection === 'blueprint-setup'}
+          completed={currentSection === 'overrides'}
+          disabled={!isServiceInformationValid}
+          iconName="chart-bullet"
+          title="Blueprint setup"
+          onClick={() => setCurrentSection('blueprint-setup')}
+        >
+          {currentSection === 'blueprint-setup' && (
+            <>
+              {requiredBlueprintFields.map((field, index) => (
+                <BlueprintManifestVariableInput
+                  key={field.name}
+                  autoFocus={index === 0}
+                  error={getFieldValidationError(field, blueprintFieldValues[field.name])}
+                  field={field}
+                  value={blueprintFieldValues[field.name]}
+                  onChange={(value) => updateFieldValue(field.name, value)}
+                />
+              ))}
+              <Button
+                type="button"
+                size="md"
+                color="neutral"
+                className="w-fit"
+                disabled={!isBlueprintSetupValid}
+                onClick={() => setCurrentSection('overrides')}
+              >
+                Continue
+                <Icon iconName="arrow-right" />
+              </Button>
+            </>
+          )}
+        </BlueprintSection>
+        <OverridesSection
+          active={currentSection === 'overrides'}
+          disabled={!isBlueprintSetupValid}
+          onClick={() => setCurrentSection('overrides')}
+        >
+          {hasOverrideFields && (
+            <>
+              {optionalBlueprintFields.map((field, index) => (
+                <BlueprintManifestVariableInput
+                  key={field.name}
+                  autoFocus={index === 0}
+                  error={getFieldValidationError(field, blueprintFieldValues[field.name])}
+                  field={field}
+                  value={blueprintFieldValues[field.name]}
+                  onChange={(value) => updateFieldValue(field.name, value)}
+                />
+              ))}
+              {overridableContextBlueprintFields.map((field, index) => (
+                <InputText
+                  key={field.name}
+                  name={field.name}
+                  label={formatFieldLabel(field.name)}
+                  value={getStringFieldValue(blueprintFieldValues[field.name])}
+                  hint={field.source ? `Automatically sourced from ${field.source}` : undefined}
+                  autoFocus={optionalBlueprintFields.length === 0 && index === 0}
+                  onChange={(event) => updateFieldValue(field.name, event.currentTarget.value)}
+                />
+              ))}
+            </>
+          )}
+        </OverridesSection>
+      </div>
 
-        <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
-          <Button
-            type="button"
-            size="lg"
-            className="w-full"
-            disabled={currentSection !== 'overrides'}
-            onClick={() => navigate({ to: `${creationFlowUrl}/summary` })}
-          >
-            Confirm blueprint configuration
-            <Icon iconName="arrow-right" />
-          </Button>
-        </footer>
-      </main>
-    </div>
+      <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+        <Button
+          type="button"
+          size="lg"
+          className="w-full"
+          disabled={currentSection !== 'overrides'}
+          onClick={() => navigate({ to: `${creationFlowUrl}/summary` })}
+        >
+          Confirm blueprint configuration
+          <Icon iconName="arrow-right" />
+        </Button>
+      </footer>
+    </FunnelFlowBody>
   )
 }
