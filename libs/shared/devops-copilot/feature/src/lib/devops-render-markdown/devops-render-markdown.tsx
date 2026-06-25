@@ -4,8 +4,41 @@ import Markdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import remarkGfm from 'remark-gfm'
-import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
+import { CopyToClipboardButtonIcon, ExternalLink, Link } from '@qovery/shared/ui'
 import { MermaidChart } from '../mermaid-chart/mermaid-chart'
+
+function getInternalPath(href: string): string | null {
+  try {
+    const url = new URL(href)
+    if (url.hostname === window.location.hostname || url.hostname === 'console.qovery.com') {
+      return url.pathname + url.search + url.hash
+    }
+  } catch {
+    if (href.startsWith('/')) return href
+  }
+  return null
+}
+
+function MarkdownLink({
+  href,
+  children,
+}: React.AnchorHTMLAttributes<HTMLAnchorElement> & { children?: React.ReactNode }) {
+  const internalPath = href ? getInternalPath(href) : null
+
+  if (internalPath) {
+    return (
+      <Link to={internalPath} color="brand" underline>
+        {children}
+      </Link>
+    )
+  }
+
+  return (
+    <ExternalLink href={href} color="brand" underline withIcon={false}>
+      {children}
+    </ExternalLink>
+  )
+}
 
 type CodeProps = PropsWithChildren<{
   inline?: boolean
@@ -44,15 +77,7 @@ export const RenderMarkdown: FC<Props> = ({ children, ...props }) => (
       ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
       ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
       li: ({ node, ...props }) => <li className="my-1" {...props} />,
-      a: ({ node, ...props }) => (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          title={typeof children === 'string' ? children : undefined}
-          className="text-brand transition-colors hover:underline"
-          {...props}
-        />
-      ),
+      a: ({ node, ...props }) => <MarkdownLink {...props} />,
       pre: ({ node, children, ...props }) => {
         const codeContent = isValidElement(children) ? (children.props as { children?: string })?.children : null
 
