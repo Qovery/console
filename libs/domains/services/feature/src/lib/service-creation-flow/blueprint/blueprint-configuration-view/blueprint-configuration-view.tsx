@@ -173,7 +173,7 @@ export function BlueprintConfigurationView() {
         <Button
           type="button"
           size="lg"
-          className="w-full"
+          className="w-full justify-center"
           disabled={currentSection !== 'overrides'}
           onClick={() => navigate({ to: `${creationFlowUrl}/summary` })}
         >
