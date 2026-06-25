@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Link as RouterLink } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { ClusterStateEnum, StateEnum } from 'qovery-typescript-axios'
+import { ClusterStateEnum, ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { ClusterInstallationGuideModal, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal, useDeploymentRule, useEnvironments } from '@qovery/domains/environments/feature'
@@ -50,7 +50,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const { data: services = [] } = useServices({ environmentId: firstEnvironment?.id })
   const { data: serviceStatuses } = useServiceStatuses({ environmentId: firstEnvironment?.id })
 
-  const isClusterDeployed = clusterStatuses.some((s) => s.status === ClusterStateEnum.DEPLOYED)
+  const isClusterDeployed = clusterStatuses.some((s) => s.is_deployed)
   const isClusterQueued =
     clusters.length > 0 &&
     !isClusterDeployed &&
@@ -83,7 +83,9 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
     ...(serviceStatuses?.terraforms ?? []),
   ]
   const hasService = services.length > 0
-  const isServiceDeployed = allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYED)
+  const isServiceDeployed = allServiceStatuses.some(
+    (s) => s.service_deployment_status !== ServiceDeploymentStatusEnum.NEVER_DEPLOYED
+  )
   const isServiceQueued = hasService && !isServiceDeployed && allServiceStatuses.some((s) => QUEUED_SERVICE_STATUSES.includes(s.state))
   const isServiceDeploying =
     hasService &&
@@ -160,7 +162,6 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   }
 
   if (!organization || isOnboardingLoading) return null
-  if (onboarding?.status == null) return null
 
   if (isDismissed) {
     if (NODE_ENV !== 'development') return null
