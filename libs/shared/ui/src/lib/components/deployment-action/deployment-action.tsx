@@ -2,14 +2,23 @@ import {
   type DeploymentHistoryTriggerAction,
   ServiceActionStatusEnum,
   type ServiceSubActionEnum,
+  type StageStatusEnum,
   StateEnum,
+  type StepMetricStatusEnum,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../icon/icon'
 
 export const getDeploymentAction = (
-  status: StateEnum | ServiceActionStatusEnum | DeploymentHistoryTriggerAction | ServiceSubActionEnum | undefined
+  status:
+    | StateEnum
+    | ServiceActionStatusEnum
+    | DeploymentHistoryTriggerAction
+    | ServiceSubActionEnum
+    | StageStatusEnum
+    | StepMetricStatusEnum
+    | undefined
 ) => {
   return match(status)
     .with(
@@ -88,6 +97,18 @@ export const getDeploymentAction = (
       status: 'Stop',
       icon: <Icon iconStyle="regular" iconName="circle-stop" />,
     }))
+    .with('SKIP', 'SKIPPED', () => ({
+      status: 'Skipped',
+      icon: <Icon iconStyle="regular" iconName="ban" />,
+    }))
+    .with('DONE', () => ({
+      status: 'Done',
+      icon: <Icon iconStyle="regular" iconName="circle-check" />,
+    }))
+    .with('CANCEL', () => ({
+      status: 'Cancel',
+      icon: <Icon iconStyle="regular" iconName="ban" />,
+    }))
     .with('UNKNOWN', 'NONE', 'DEPLOY', 'DEPLOY_DRY_RUN', 'TERRAFORM_PLAN_ONLY', 'TERRAFORM_PLAN_AND_APPLY', () => ({
       status: 'Deploy',
       icon: <Icon iconStyle="regular" iconName="rocket" />,
@@ -117,7 +138,14 @@ export const DeploymentAction = ({
   iconClassName,
   textClassName,
 }: {
-  status: StateEnum | ServiceActionStatusEnum | DeploymentHistoryTriggerAction | ServiceSubActionEnum | undefined
+  status:
+    | StateEnum
+    | ServiceActionStatusEnum
+    | DeploymentHistoryTriggerAction
+    | ServiceSubActionEnum
+    | StageStatusEnum
+    | StepMetricStatusEnum
+    | undefined
   className?: string
   iconClassName?: string
   textClassName?: string

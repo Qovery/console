@@ -1,9 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
-import { P, match } from 'ts-pattern'
-import { type AnyService, isManagedDatabase } from '@qovery/domains/services/data-access'
-import { type ServiceRunningStatus, type ServiceStatuses } from '@qovery/shared/interfaces'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { type AnyService } from '@qovery/domains/services/data-access'
+import { type ServiceStatuses } from '@qovery/shared/interfaces'
 import { queries } from '@qovery/state/util-queries'
+import { formatDeploymentStatusLabel, getServiceRunningStatus } from './service-status-utils'
 
 export interface UseDeploymentFullStatusProps {
   environmentId?: string
@@ -21,33 +20,8 @@ export function useServiceDeploymentAndRunningStatuses({ environmentId = '', ser
     ...queries.services.deploymentStatus(environmentId, serviceId),
   })
 
-  const deploymentStatusLabel = upperCaseFirstLetter(
-    (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace('_', ' ') ?? 'STOPPED'
-  )
-  const runningStatusLabel = upperCaseFirstLetter(runningStatus?.state.replace('_', ' ') ?? 'STOPPED')
-  const isManagedDb = isManagedDatabase(service)
-  const runningStatusOverride: ServiceRunningStatus = match({ runningStatus, isManagedDb })
-    .with({ runningStatus: P.any, isManagedDb: true }, () => ({
-      triggered_action: undefined,
-      ...deploymentStatus,
-      state: match(deploymentStatus?.state)
-        .with('DEPLOYED', () => 'RUNNING' as const)
-        .otherwise(() => 'UNKNOWN' as const),
-      stateLabel: match(deploymentStatus?.state)
-        .with('DEPLOYED', () => 'Running')
-        .otherwise(() => 'Unknown'),
-    }))
-    .with({ runningStatus: P.nullish, isManagedDb: false }, () => ({
-      state: undefined,
-      stateLabel: undefined,
-      triggered_action: undefined,
-    }))
-    .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
-      triggered_action: undefined, // will be unpacked from runningStatus if present
-      ...runningStatus,
-      stateLabel: runningStatusLabel,
-    }))
-    .exhaustive()
+  const deploymentStatusLabel = formatDeploymentStatusLabel(deploymentStatus)
+  const runningStatusOverride = getServiceRunningStatus({ service, runningStatus, deploymentStatus })
 
   const data: ServiceStatuses = {
     runningStatus: runningStatusOverride,
