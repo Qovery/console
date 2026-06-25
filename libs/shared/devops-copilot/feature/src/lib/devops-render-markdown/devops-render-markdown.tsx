@@ -11,7 +11,7 @@ import { MermaidChart } from '../mermaid-chart/mermaid-chart'
 function getInternalPath(href: string): string | null {
   try {
     const url = new URL(href)
-    if (url.hostname === window.location.hostname || url.hostname === 'console.qovery.com') {
+    if (url.hostname === window.location.hostname) {
       return url.pathname + url.search + url.hash
     }
   } catch {
