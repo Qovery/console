@@ -202,6 +202,12 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                   </li>
                 </>
               )}
+              {props.generalData.cloud_provider === 'GCP' && props.generalData.gke_kms_key?.value && (
+                <li>
+                  <strong className="font-medium">GKE KMS Key: </strong>
+                  {props.generalData.gke_kms_key.value}
+                </li>
+              )}
             </ul>
           </div>
 
