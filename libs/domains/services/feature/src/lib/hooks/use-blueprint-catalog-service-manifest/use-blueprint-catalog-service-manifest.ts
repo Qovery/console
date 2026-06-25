@@ -28,7 +28,6 @@ export function useBlueprintCatalogServiceManifest({
       serviceVersion,
       environmentId,
     }),
-    select: (data) => (Array.isArray(data) ? data : data.results ?? []),
     enabled:
       enabled &&
       Boolean(organizationId) &&

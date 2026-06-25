@@ -299,7 +299,7 @@ export const services = createQueryKeys('services', {
         serviceVersion,
         environmentId
       )
-      return response.data
+      return response.data.results
     },
   }),
   deploymentStatus: (environmentId: string, serviceId: string) => ({
