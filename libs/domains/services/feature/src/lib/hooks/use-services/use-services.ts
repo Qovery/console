@@ -1,9 +1,10 @@
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { P, match } from 'ts-pattern'
-import { isManagedDatabase } from '@qovery/domains/services/data-access'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
+import {
+  formatDeploymentStatusLabel,
+  getServiceRunningStatus,
+} from '../use-service-deployment-and-running-statuses/service-status-utils'
 
 export interface UseServicesProps {
   environmentId?: string
@@ -37,35 +38,8 @@ export function useServices({ environmentId, suspense = false }: UseServicesProp
       const runningStatus = runningStatusResults[index].data
       const deploymentStatus = deploymentStatusResults[index].data
 
-      const runningStatusLabel = upperCaseFirstLetter(runningStatus?.state.replace('_', ' ') ?? 'STOPPED')
-      const deploymentStatusLabel = upperCaseFirstLetter(
-        (deploymentStatus?.state === 'READY' ? 'NEVER_DEPLOYED' : deploymentStatus?.state)?.replace('_', ' ') ??
-          'STOPPED'
-      )
-      const isManagedDb = isManagedDatabase(service)
-
-      const runningStatusOverride = match({ runningStatus, isManagedDb })
-        .with({ runningStatus: P.any, isManagedDb: true }, () => ({
-          triggered_action: undefined,
-          ...deploymentStatus,
-          state: match(deploymentStatus?.state)
-            .with('DEPLOYED', () => 'RUNNING' as const)
-            .otherwise(() => 'UNKNOWN' as const),
-          stateLabel: match(deploymentStatus?.state)
-            .with('DEPLOYED', () => 'Running')
-            .otherwise(() => 'Unknown'),
-        }))
-        .with({ runningStatus: P.nullish, isManagedDb: false }, () => ({
-          state: undefined,
-          stateLabel: undefined,
-          triggered_action: undefined,
-        }))
-        .with({ runningStatus: P.not(P.nullish) }, ({ runningStatus }) => ({
-          triggered_action: undefined, // will be unpacked from runningStatus if present
-          ...runningStatus,
-          stateLabel: runningStatusLabel,
-        }))
-        .exhaustive()
+      const deploymentStatusLabel = formatDeploymentStatusLabel(deploymentStatus)
+      const runningStatusOverride = getServiceRunningStatus({ service, runningStatus, deploymentStatus })
 
       return {
         ...service,
