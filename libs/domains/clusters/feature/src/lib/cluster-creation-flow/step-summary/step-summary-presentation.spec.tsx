@@ -29,6 +29,8 @@ const defaultProps: StepSummaryPresentationProps = {
     region: 'us-east-1',
     installation_type: 'MANAGED',
     production: false,
+    credentials: '',
+    credentials_name: '',
   },
   resourcesData: {
     ...defaultResourcesData,
@@ -43,6 +45,8 @@ const defaultProps: StepSummaryPresentationProps = {
     cpu: 2,
     ram_in_gb: 4,
     architecture: 'x86_64',
+    bandwidth_in_gbps: '',
+    bandwidth_guarantee: '',
   },
 }
 
@@ -173,6 +177,41 @@ describe('StepSummaryPresentation', () => {
     )
 
     expect(screen.getByText('static_ips_enabled=true, static_ips_count=2')).toBeInTheDocument()
+  })
+
+  it('should display GKE KMS Key when cloud provider is GCP and a key is provided', () => {
+    renderWithProviders(
+      <StepSummaryPresentation
+        {...defaultProps}
+        generalData={{
+          ...defaultProps.generalData,
+          cloud_provider: CloudProviderEnum.GCP,
+          gke_kms_key: {
+            value: 'projects/my-project/locations/us-east1/keyRings/my-ring/cryptoKeys/my-key',
+            enabled: false,
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('GKE KMS Key:')).toBeInTheDocument()
+    expect(
+      screen.getByText('projects/my-project/locations/us-east1/keyRings/my-ring/cryptoKeys/my-key')
+    ).toBeInTheDocument()
+  })
+
+  it('should not display GKE KMS Key when cloud provider is GCP but no key is provided', () => {
+    renderWithProviders(
+      <StepSummaryPresentation
+        {...defaultProps}
+        generalData={{
+          ...defaultProps.generalData,
+          cloud_provider: CloudProviderEnum.GCP,
+        }}
+      />
+    )
+
+    expect(screen.queryByText('GKE KMS Key:')).not.toBeInTheDocument()
   })
 
   it('should render GCP existing VPC private nodes in summary', () => {
