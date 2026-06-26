@@ -11,7 +11,6 @@ import { useServiceStatuses, useServices } from '@qovery/domains/services/featur
 import { IconEnum } from '@qovery/shared/enums'
 import { AnimatedGradientText, Button, Heading, Icon, Link, LogoIcon, useModal } from '@qovery/shared/ui'
 import { McpSuggestionCard } from '@qovery/shared/mcp-suggestion/feature'
-import { NODE_ENV } from '@qovery/shared/util-node-env'
 import { useLocalStorage, useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { useOrganizationOnboarding, useUpdateOrganizationOnboarding } from './use-organization-onboarding'
@@ -141,11 +140,6 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
     updateOnboarding('COMPLETED')
   }
 
-  const resetDismiss = () => {
-    setLocalDismissed(false)
-    updateOnboarding('IN_PROGRESS')
-  }
-
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
       options: { width: 500 },
@@ -172,18 +166,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   if (!organization || isOnboardingLoading) return null
   if (!onboarding?.use_cases) return null
 
-  if (isDismissed) {
-    if (NODE_ENV !== 'development') return null
-    return (
-      <button
-        type="button"
-        onClick={resetDismiss}
-        className="self-start rounded px-2 py-0.5 font-code text-2xs text-neutral-subtle transition-colors hover:bg-surface-neutral-subtle hover:text-neutral focus:outline-none"
-      >
-        [reset onboarding dismiss]
-      </button>
-    )
-  }
+  if (isDismissed) return null
 
   const stepRowClass = 'flex items-center gap-3 px-4 py-3'
   const stepIconClass = 'w-4 text-center text-ssm text-neutral-subtle'
