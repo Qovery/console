@@ -17,10 +17,7 @@ import { getServiceVariableScope } from './service-variables-utils'
 export function ServiceVariablesCustomTab() {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
-  const { hasClusterSecretManagerConfigured } = useVariablesSecretManagers({
-    enabled: secretManagerEnabled,
-  })
+  const { hasClusterSecretManagerConfigured } = useVariablesSecretManagers()
   const redeployServiceAction = useRedeployServiceAction(service?.serviceType)
   const scope = getServiceVariableScope(service?.serviceType)
   const { openModal, closeModal } = useModal()
@@ -54,7 +51,7 @@ export function ServiceVariablesCustomTab() {
           mode="CREATE"
           onSubmit={onCreateVariableToast}
           isFile={isFile}
-          hasClusterSecretManagerConfigured={secretManagerEnabled && hasClusterSecretManagerConfigured}
+          hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
           scope={scope}
           projectId={projectId}
           environmentId={environmentId}
@@ -153,7 +150,7 @@ export function ServiceVariablesCustomTab() {
           onCreateVariable={onCreateVariableToast}
           onImportEnvFile={handleOpenImportVariablesModal}
           importEnvFileAccess="dropdown"
-          hasClusterSecretManagerConfigured={secretManagerEnabled && hasClusterSecretManagerConfigured}
+          hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
         />
       }
       scope={scope}

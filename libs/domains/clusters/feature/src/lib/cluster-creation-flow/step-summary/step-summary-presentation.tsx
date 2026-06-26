@@ -29,7 +29,6 @@ export interface StepSummaryPresentationProps {
   resourcesData: ClusterResourcesData
   featuresData?: ClusterFeaturesData
   addonsData: ClusterAddonsData
-  secretManagerEnabled?: boolean
   goToFeatures: () => void
   goToResources: () => void
   goToKubeconfig: () => void
@@ -112,11 +111,10 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
     .with('SCW', () => checkIfScwNetworkFeaturesAvailable())
     .otherwise(() => false)
   const showKedaSummary = props.generalData.cloud_provider === 'AWS' || props.generalData.cloud_provider === 'GCP'
-  const showSecretManagerSummary = props.secretManagerEnabled === true
   const showAddonsSection =
     props.generalData.installation_type === 'MANAGED' &&
     (props.generalData.cloud_provider === 'AWS' || props.generalData.cloud_provider === 'GCP') &&
-    (showKedaSummary || showSecretManagerSummary)
+    showKedaSummary
 
   return (
     <Section>
@@ -671,15 +669,13 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
                     {props.addonsData.kedaActivated ? 'activated' : 'not activated'}
                   </li>
                 )}
-                {showSecretManagerSummary && (
-                  <li>
-                    <strong className="font-medium">Secret manager: </strong>
-                    {props.addonsData.secretManagers.length > 0 ? 'activated' : 'not activated'}
-                  </li>
-                )}
+                <li>
+                  <strong className="font-medium">Secret manager: </strong>
+                  {props.addonsData.secretManagers.length > 0 ? 'activated' : 'not activated'}
+                </li>
               </ul>
 
-              {showSecretManagerSummary && props.addonsData.secretManagers.length > 0 && (
+              {props.addonsData.secretManagers.length > 0 && (
                 <div className="mt-3 space-y-3 border-t border-neutral pt-3 text-sm text-neutral-subtle">
                   {props.addonsData.secretManagers.map((manager, index) => (
                     <div key={getSecretManagerSummaryKey(manager, index)} className="space-y-3">

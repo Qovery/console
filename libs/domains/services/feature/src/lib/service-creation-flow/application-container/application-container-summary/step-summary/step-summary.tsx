@@ -1,6 +1,5 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type OrganizationAnnotationsGroupResponse,
   type OrganizationLabelsGroupEnrichedResponse,
@@ -32,7 +31,6 @@ export function ApplicationContainerStepSummary({
   const { organizationId = '', projectId = '', environmentId = '', slug = '' } = useParams({ strict: false })
   const search = useSearch({ strict: false })
   const navigate = useNavigate()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const { creationFlowUrl, generalForm, resourcesForm, portForm, variablesForm, setCurrentStep } =
     useApplicationContainerCreateContext()
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)
@@ -42,7 +40,7 @@ export function ApplicationContainerStepSummary({
   const portData = portForm.getValues()
   const variableData = variablesForm.getValues()
   const variablesData = variableData.variables
-  const externalSecretsData = secretManagerEnabled ? variableData.externalSecrets ?? [] : []
+  const externalSecretsData = variableData.externalSecrets ?? []
 
   const { mutateAsync: createService } = useCreateService({ organizationId })
   const { mutateAsync: createVariable } = useCreateVariable()
