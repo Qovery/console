@@ -532,12 +532,13 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
               </Link>
             ) : isServiceFailed ? (
               <Link
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                 params={{
                   organizationId,
                   projectId: firstProject?.id ?? '',
                   environmentId: firstEnvironment?.id ?? '',
                   serviceId: failedServiceStatus?.id ?? '',
+                  executionId: failedServiceStatus?.execution_id ?? '',
                 }}
                 color="red"
                 underline
