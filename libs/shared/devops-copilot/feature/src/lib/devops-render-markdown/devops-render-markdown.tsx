@@ -25,6 +25,7 @@ function MarkdownLink({ href, children }: AnchorHTMLAttributes<HTMLAnchorElement
   const internalPath = href ? getInternalPath(href) : null
 
   if (internalPath) {
+    // Using <a> over <Link> because TanStack Router's `to` only accepts statically known routes, not dynamic strings.
     return (
       <a
         href={internalPath}
