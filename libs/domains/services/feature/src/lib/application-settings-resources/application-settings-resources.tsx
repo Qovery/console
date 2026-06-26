@@ -3,7 +3,6 @@ import posthog from 'posthog-js'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
-import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import {
@@ -18,7 +17,6 @@ import {
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
 import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-services'
-import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { KedaSettings } from '../keda/components/keda-settings'
@@ -52,10 +50,8 @@ export function ApplicationSettingsResources({
   const { control, watch, setValue } = useFormContext()
   const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
-  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId, suspense: true })
-  const { data: cloudProviders = [] } = useCloudProviders()
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
   const isKedaCluster = Boolean(cluster?.keda?.enabled)
@@ -65,7 +61,7 @@ export function ApplicationSettingsResources({
   const environmentMode = environment?.mode
 
   const cloudProvider = environment?.cloud_provider.provider
-  const canChooseCpuArchitectureValue = canChooseCpuArchitecture({ service, cluster, cloudProviders, deploymentStatus })
+  const canChooseCpuArchitectureValue = canChooseCpuArchitecture({ service, cluster })
 
   const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 

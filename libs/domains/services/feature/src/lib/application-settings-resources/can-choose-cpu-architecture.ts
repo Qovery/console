@@ -1,51 +1,54 @@
-type ClusterRegionWithArmSupport = {
-  name: string
-  arm_supported?: boolean
-}
-
-type CpuArchitectureCluster = {
-  cloud_provider?: string
-  region?: string
-}
-
-type CpuArchitectureCloudProvider = {
-  short_name?: string
-  regions?: ClusterRegionWithArmSupport[]
+type CpuArchitectureRequirement = {
+  key?: string
+  values?: string[]
 }
 
 type CpuArchitectureService = {
   serviceType?: string
 }
 
-type CpuArchitectureDeploymentStatus = {
-  state?: string
+type CpuArchitectureKarpenterValue = {
+  qovery_node_pools?: {
+    requirements?: CpuArchitectureRequirement[]
+  }
+}
+
+type CpuArchitectureCluster = {
+  cloud_provider?: string
+  features?: Array<{
+    id?: string
+    value_object?: {
+      value?: unknown
+    } | null
+    value?: unknown
+  }>
+}
+
+function isKarpenterValue(value: unknown): value is CpuArchitectureKarpenterValue {
+  return Boolean(value && typeof value === 'object' && 'qovery_node_pools' in value)
 }
 
 export function canChooseCpuArchitecture({
   service,
   cluster,
-  cloudProviders = [],
-  deploymentStatus,
 }: {
   service?: CpuArchitectureService
   cluster?: CpuArchitectureCluster
-  cloudProviders?: CpuArchitectureCloudProvider[]
-  deploymentStatus?: CpuArchitectureDeploymentStatus | null
 }) {
+  const karpenterFeature = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
+  const rawKarpenterValue = karpenterFeature?.value_object?.value ?? karpenterFeature?.value
+  const karpenterValue = isKarpenterValue(rawKarpenterValue) ? rawKarpenterValue : undefined
+  const architectureRequirement = karpenterValue?.qovery_node_pools?.requirements?.find(
+    (requirement) => requirement.key === 'Arch'
+  )
+  const architectures = [...new Set(architectureRequirement?.values?.filter(Boolean) ?? [])]
   const clusterProvider = cluster?.cloud_provider
-  const targetProvider = cloudProviders.find((provider) => provider.short_name === clusterProvider)
-  const clusterRegion = targetProvider?.regions?.find((region) => region.name === cluster?.region)
-  const isSettingsPage = Boolean(service)
   const isSupportedCloudProvider = clusterProvider === 'GCP' || clusterProvider === 'AWS'
   const isSupportedServiceType =
-    service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER' || service?.serviceType === 'JOB'
-  const isServiceDeployed = deploymentStatus?.state === 'DEPLOYED'
+    !service ||
+    service.serviceType === 'APPLICATION' ||
+    service.serviceType === 'CONTAINER' ||
+    service.serviceType === 'JOB'
 
-  return (
-    isSettingsPage &&
-    isSupportedCloudProvider &&
-    clusterRegion?.arm_supported === true &&
-    isSupportedServiceType &&
-    isServiceDeployed
-  )
+  return isSupportedCloudProvider && isSupportedServiceType && architectures.length >= 2
 }

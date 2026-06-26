@@ -1,77 +1,107 @@
 import { canChooseCpuArchitecture } from './can-choose-cpu-architecture'
 
-const armSupportedCloudProviders = [
-  {
-    short_name: 'AWS',
-    regions: [
+function createCluster({
+  cloudProvider = 'AWS',
+  architectures = ['AMD64', 'ARM64'],
+}: {
+  cloudProvider?: string
+  architectures?: string[]
+} = {}) {
+  return {
+    cloud_provider: cloudProvider,
+    features: [
       {
-        name: 'eu-west-3',
-        arm_supported: true,
+        id: 'KARPENTER',
+        value_object: {
+          value: {
+            qovery_node_pools: {
+              requirements: [
+                {
+                  key: 'Arch',
+                  values: architectures,
+                },
+              ],
+            },
+          },
+        },
       },
     ],
-  },
-  {
-    short_name: 'GCP',
-    regions: [
-      {
-        name: 'europe-west1',
-        arm_supported: true,
-      },
-    ],
-  },
-]
+  }
+}
 
 describe('canChooseCpuArchitecture', () => {
-  it.each(['AWS', 'GCP'])('allows %s services on deployed ARM-supported clusters', (cloudProvider) => {
+  it.each(['AWS', 'GCP'])('allows %s services when Karpenter supports multiple architectures', (cloudProvider) => {
     expect(
       canChooseCpuArchitecture({
         service: { serviceType: 'APPLICATION' },
-        cluster: { cloud_provider: cloudProvider, region: cloudProvider === 'AWS' ? 'eu-west-3' : 'europe-west1' },
-        cloudProviders: armSupportedCloudProviders,
-        deploymentStatus: { state: 'DEPLOYED' },
+        cluster: createCluster({ cloudProvider }),
       })
     ).toBe(true)
   })
 
-  it('requires a settings service context', () => {
+  it('does not allow services when Karpenter supports a single architecture', () => {
     expect(
       canChooseCpuArchitecture({
-        cluster: { cloud_provider: 'AWS', region: 'eu-west-3' },
-        cloudProviders: armSupportedCloudProviders,
-        deploymentStatus: { state: 'DEPLOYED' },
+        service: { serviceType: 'APPLICATION' },
+        cluster: createCluster({ architectures: ['AMD64'] }),
       })
     ).toBe(false)
+  })
+
+  it('allows creation flow without an existing service', () => {
+    expect(
+      canChooseCpuArchitecture({
+        cluster: createCluster(),
+      })
+    ).toBe(true)
   })
 
   it('requires an AWS or GCP target cluster', () => {
     expect(
       canChooseCpuArchitecture({
         service: { serviceType: 'APPLICATION' },
-        cluster: { cloud_provider: 'SCW', region: 'fr-par-1' },
-        cloudProviders: [
-          ...armSupportedCloudProviders,
-          {
-            short_name: 'SCW',
-            regions: [{ name: 'fr-par-1', arm_supported: true }],
-          },
-        ],
-        deploymentStatus: { state: 'DEPLOYED' },
+        cluster: createCluster({ cloudProvider: 'SCW' }),
       })
     ).toBe(false)
   })
 
-  it('requires the target cluster region to support ARM workloads', () => {
+  it('requires Karpenter to support multiple architectures', () => {
     expect(
       canChooseCpuArchitecture({
         service: { serviceType: 'APPLICATION' },
-        cluster: { cloud_provider: 'AWS', region: 'eu-west-1' },
-        cloudProviders: [
-          {
-            short_name: 'AWS',
-            regions: [{ name: 'eu-west-1', arm_supported: false }],
-          },
-        ],
-        deploymentStatus: { state: 'DEPLOYED' },
+        cluster: createCluster({ architectures: [] }),
+      })
+    ).toBe(false)
+  })
+
+  it('deduplicates Karpenter architectures before checking support', () => {
+    expect(
+      canChooseCpuArchitecture({
+        service: { serviceType: 'APPLICATION' },
+        cluster: createCluster({ architectures: ['AMD64', 'AMD64'] }),
+      })
+    ).toBe(false)
+  })
+
+  it('requires a Karpenter architecture requirement', () => {
+    expect(
+      canChooseCpuArchitecture({
+        service: { serviceType: 'APPLICATION' },
+        cluster: {
+          cloud_provider: 'AWS',
+          features: [
+            {
+              id: 'KARPENTER',
+              value_object: {
+                value: {
+                  qovery_node_pools: {
+                    requirements: [],
+                  },
+                },
+              },
+            },
+          ],
+        },
       })
     ).toBe(false)
   })
@@ -80,9 +110,7 @@ describe('canChooseCpuArchitecture', () => {
     expect(
       canChooseCpuArchitecture({
         service: { serviceType },
-        cluster: { cloud_provider: 'AWS', region: 'eu-west-3' },
-        cloudProviders: armSupportedCloudProviders,
-        deploymentStatus: { state: 'DEPLOYED' },
+        cluster: createCluster(),
       })
     ).toBe(true)
   })
@@ -91,20 +119,7 @@ describe('canChooseCpuArchitecture', () => {
     expect(
       canChooseCpuArchitecture({
         service: { serviceType },
-        cluster: { cloud_provider: 'AWS', region: 'eu-west-3' },
-        cloudProviders: armSupportedCloudProviders,
-        deploymentStatus: { state: 'DEPLOYED' },
-      })
-    ).toBe(false)
-  })
-
-  it('requires the service to have already been deployed', () => {
-    expect(
-      canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
-        cluster: { cloud_provider: 'AWS', region: 'eu-west-3' },
-        cloudProviders: armSupportedCloudProviders,
-        deploymentStatus: { state: 'READY' },
+        cluster: createCluster(),
       })
     ).toBe(false)
   })
