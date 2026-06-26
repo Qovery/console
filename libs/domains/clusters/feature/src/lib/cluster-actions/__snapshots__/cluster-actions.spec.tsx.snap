@@ -203,7 +203,7 @@ exports[`ClusterActions should match other actions snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-circle-info text-sm mr-2 min-w-5 text-brand"
+          class="fa-regular fa-plug text-sm mr-2 min-w-5 text-brand"
         />
         Access info
       </div>
@@ -368,7 +368,7 @@ exports[`ClusterActions should match outdated snapshot 1`] = `
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-circle-info text-sm mr-2 min-w-5 text-brand"
+          class="fa-regular fa-plug text-sm mr-2 min-w-5 text-brand"
         />
         Access info
       </div>
