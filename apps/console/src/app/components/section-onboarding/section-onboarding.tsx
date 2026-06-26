@@ -303,24 +303,28 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
               </p>
             </div>
             <div className="flex w-full flex-col gap-2">
-              <a
-                href="https://www.qovery.com/docs/getting-started/guides/use-cases/preview-environments"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2.5 text-left text-ssm text-neutral transition-colors hover:bg-surface-neutral-component"
-              >
-                <Icon iconName="circle-check" className="shrink-0 text-sm text-positive" />
-                <span className="flex-1">Check how preview environments are working</span>
-                <Icon iconName="arrow-up-right-from-square" className="shrink-0 text-xs text-neutral-subtle" />
-              </a>
-              <button
-                type="button"
-                onClick={() => showPylonForm('request-ai-builder-portal')}
-                className="flex items-center gap-2 rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2.5 text-left text-ssm text-neutral transition-colors hover:bg-surface-neutral-component"
-              >
-                <Icon iconName="wand-magic-sparkles" className="shrink-0 text-sm text-neutral-subtle" />
-                <span className="flex-1">Ask for AI Builder Portal access</span>
-              </button>
+              {hasEphemeralEnvironments && (
+                <a
+                  href="https://www.qovery.com/docs/getting-started/guides/use-cases/preview-environments"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-2 rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2.5 text-left text-ssm text-neutral transition-colors hover:bg-surface-neutral-component"
+                >
+                  <Icon iconName="circle-check" className="shrink-0 text-sm text-positive" />
+                  <span className="flex-1">Check how preview environments are working</span>
+                  <Icon iconName="arrow-up-right-from-square" className="shrink-0 text-xs text-neutral-subtle" />
+                </a>
+              )}
+              {hasRde && (
+                <button
+                  type="button"
+                  onClick={() => showPylonForm('request-ai-builder-portal')}
+                  className="flex items-center gap-2 rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2.5 text-left text-ssm text-neutral transition-colors hover:bg-surface-neutral-component"
+                >
+                  <Icon iconName="wand-magic-sparkles" className="shrink-0 text-sm text-neutral-subtle" />
+                  <span className="flex-1">Ask for AI Builder Portal access</span>
+                </button>
+              )}
               <RouterLink
                 to="/organization/$organizationId/settings/members"
                 params={{ organizationId }}
