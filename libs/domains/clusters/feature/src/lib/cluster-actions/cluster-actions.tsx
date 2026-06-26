@@ -335,7 +335,7 @@ function MenuOtherActions({
         </Button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
-        <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={() => openAccessModal('MANAGED')}>
+        <DropdownMenu.Item icon={<Icon iconName="plug" />} onSelect={() => openAccessModal('MANAGED')}>
           Access info
         </DropdownMenu.Item>
         <DropdownMenu.Item

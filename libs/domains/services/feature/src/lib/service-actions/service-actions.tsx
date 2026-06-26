@@ -875,7 +875,7 @@ function MenuOtherActions({
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {serviceForAccessModal && (
-          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={openServiceAccessModal}>
+          <DropdownMenu.Item icon={<Icon iconName="plug" />} onSelect={openServiceAccessModal}>
             Access infos
           </DropdownMenu.Item>
         )}
