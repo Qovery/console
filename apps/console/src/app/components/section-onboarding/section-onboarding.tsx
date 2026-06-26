@@ -170,6 +170,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   }
 
   if (!organization || isOnboardingLoading) return null
+  if (!onboarding?.use_cases) return null
 
   if (isDismissed) {
     if (NODE_ENV !== 'development') return null
