@@ -1,5 +1,4 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type ClusterCloudProviderInfoRequest,
   type ClusterFeatureNatGatewayParameters,
@@ -46,7 +45,6 @@ const buildGcpNatGatewayFeature = (
 
 export function StepSummary({ organizationId }: StepSummaryProps) {
   const navigate = useNavigate()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const { generalData, kubeconfigData, resourcesData, featuresData, addonsData, setCurrentStep, creationFlowUrl } =
     useClusterContainerCreateContext()
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
@@ -130,7 +128,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       keda: {
         enabled: addonsData.kedaActivated,
       },
-      secret_manager_accesses: secretManagerEnabled ? addonsData.secretManagers : [],
+      secret_manager_accesses: addonsData.secretManagers,
     }
 
     const awsLabelsGroups =
@@ -456,7 +454,6 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           resourcesData={resourcesData}
           featuresData={featuresData}
           addonsData={addonsData}
-          secretManagerEnabled={secretManagerEnabled}
           detailInstanceType={detailInstanceType}
           goToResources={goToResources}
           goToGeneral={goToGeneral}

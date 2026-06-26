@@ -1,5 +1,4 @@
 import posthog from 'posthog-js'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type SecretManagerAccess } from 'qovery-typescript-axios'
 import { type FormEventHandler, useEffect, useMemo } from 'react'
 import { isSameSecretManagerAccess } from '@qovery/domains/clusters/data-access'
@@ -41,7 +40,6 @@ interface StepAddonsFormProps {
 function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProps) {
   const { openModal, closeModal } = useModal()
   const { generalData, addonsData, setAddonsData } = useClusterContainerCreateContext()
-  const secretManagerEnabled = useFeatureFlagEnabled('secret-manager')
   const isGcp = generalData?.cloud_provider === 'GCP'
 
   const secretManagerDropdownOptions = useMemo(() => {
@@ -126,73 +124,71 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
             />
           </div>
 
-          {secretManagerEnabled && (
-            <div className="p-4">
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-neutral">Secret manager integration</span>
-                    <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
-                      <Badge size="sm" radius="full" variant="surface" color="purple" className="text-ssm">
-                        Beta
-                      </Badge>
-                    </Tooltip>
-                  </div>
-                  <p className="text-sm text-neutral-subtle">
-                    Link any secret manager on your cluster to add external secrets variables to all the services
-                    running on your cluster.
-                  </p>
+          <div className="p-4">
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-neutral">Secret manager integration</span>
+                  <Tooltip content="This feature is in beta. Behaviour and accessibility may change when released in GA.">
+                    <Badge size="sm" radius="full" variant="surface" color="purple" className="text-ssm">
+                      Beta
+                    </Badge>
+                  </Tooltip>
                 </div>
-                <div className="flex flex-col items-start gap-3">
-                  <DropdownMenu.Root
-                    onOpenChange={(open) => {
-                      if (open) {
-                        posthog.capture('cluster-secret-manager-add-clicked', {
-                          organization_id: organizationId,
-                          source: 'creation-flow',
-                        })
-                      }
-                    }}
-                  >
-                    <DropdownMenu.Trigger asChild>
-                      <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
-                        <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
-                        Add secret manager
-                        <Icon iconName="chevron-down" className="text-[10px]" />
-                      </Button>
-                    </DropdownMenu.Trigger>
-                    <DropdownMenu.Content align="start">
-                      {secretManagerDropdownOptions.map((option) => (
-                        <DropdownMenu.Item
-                          key={option.value}
-                          color="neutral"
-                          icon={<Icon name={option.icon} width={16} height={16} />}
-                          onSelect={() => {
-                            posthog.capture('cluster-secret-manager-type-selected', {
-                              organization_id: organizationId,
-                              secret_manager_type: option.value,
-                            })
-                            openSecretManagerModal(option)
-                          }}
-                        >
-                          {option.label}
-                        </DropdownMenu.Item>
-                      ))}
-                    </DropdownMenu.Content>
-                  </DropdownMenu.Root>
-                  <SecretManagerList
-                    secretManagers={addonsData.secretManagers}
-                    onEdit={(manager) => openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)}
-                    onDelete={(manager) =>
-                      updateSecretManagers(
-                        addonsData.secretManagers.filter((item) => !isSameSecretManagerAccess(item, manager))
-                      )
+                <p className="text-sm text-neutral-subtle">
+                  Link any secret manager on your cluster to add external secrets variables to all the services running
+                  on your cluster.
+                </p>
+              </div>
+              <div className="flex flex-col items-start gap-3">
+                <DropdownMenu.Root
+                  onOpenChange={(open) => {
+                    if (open) {
+                      posthog.capture('cluster-secret-manager-add-clicked', {
+                        organization_id: organizationId,
+                        source: 'creation-flow',
+                      })
                     }
-                  />
-                </div>
+                  }}
+                >
+                  <DropdownMenu.Trigger asChild>
+                    <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
+                      <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
+                      Add secret manager
+                      <Icon iconName="chevron-down" className="text-[10px]" />
+                    </Button>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content align="start">
+                    {secretManagerDropdownOptions.map((option) => (
+                      <DropdownMenu.Item
+                        key={option.value}
+                        color="neutral"
+                        icon={<Icon name={option.icon} width={16} height={16} />}
+                        onSelect={() => {
+                          posthog.capture('cluster-secret-manager-type-selected', {
+                            organization_id: organizationId,
+                            secret_manager_type: option.value,
+                          })
+                          openSecretManagerModal(option)
+                        }}
+                      >
+                        {option.label}
+                      </DropdownMenu.Item>
+                    ))}
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+                <SecretManagerList
+                  secretManagers={addonsData.secretManagers}
+                  onEdit={(manager) => openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)}
+                  onDelete={(manager) =>
+                    updateSecretManagers(
+                      addonsData.secretManagers.filter((item) => !isSameSecretManagerAccess(item, manager))
+                    )
+                  }
+                />
               </div>
             </div>
-          )}
+          </div>
         </div>
 
         <div className="mt-6 flex justify-between">

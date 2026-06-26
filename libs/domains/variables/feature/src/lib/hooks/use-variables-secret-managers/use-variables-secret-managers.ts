@@ -3,19 +3,19 @@ import { useParams } from '@tanstack/react-router'
 import { useMemo } from 'react'
 import { queries } from '@qovery/state/util-queries'
 
-export function useVariablesSecretManagers({ enabled = true }: { enabled?: boolean } = {}) {
+export function useVariablesSecretManagers() {
   const { organizationId = '', environmentId = '' } = useParams({ strict: false })
 
   const { data: environment } = useQuery({
     ...queries.environments.details({ environmentId }),
-    enabled: enabled && Boolean(environmentId),
-    suspense: enabled,
+    enabled: Boolean(environmentId),
+    suspense: true,
   })
 
   const { data: clusters } = useQuery({
     ...queries.clusters.list({ organizationId }),
-    enabled: enabled && Boolean(organizationId),
-    suspense: enabled,
+    enabled: Boolean(organizationId),
+    suspense: true,
   })
 
   const cluster = useMemo(
