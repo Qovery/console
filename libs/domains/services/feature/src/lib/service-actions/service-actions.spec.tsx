@@ -9,6 +9,7 @@ const mockNavigate = jest.fn()
 const mockDeployService = jest.fn()
 const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
+const mockCopyToClipboard = jest.fn()
 
 let mockDeploymentStatus = {
   state: 'READY',
@@ -39,6 +40,11 @@ jest.mock('@qovery/shared/ui', () => ({
   useModalConfirmation: () => ({
     openModalConfirmation: mockOpenModalConfirmation,
   }),
+}))
+
+jest.mock('@qovery/shared/util-hooks', () => ({
+  ...jest.requireActual('@qovery/shared/util-hooks'),
+  useCopyToClipboard: () => [undefined, mockCopyToClipboard],
 }))
 
 jest.mock('../hooks/use-service/use-service', () => ({
@@ -121,6 +127,31 @@ describe('ServiceActions', () => {
     await userEvent.click(buttonOtherActions)
 
     expect(screen.getByRole('menuitem', { name: /access infos/i })).toBeInTheDocument()
+  })
+
+  it('should open service metadata without copying immediately and copy identifiers independently', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    expect(screen.queryByRole('menuitem', { name: /copy identifier/i })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('menuitem', { name: /service metadata/i }))
+
+    expect(mockCopyToClipboard).not.toHaveBeenCalled()
+    expect(screen.getByText('Cluster ID')).toBeInTheDocument()
+    expect(screen.getByText('Organization ID')).toBeInTheDocument()
+    expect(screen.getByText('Project ID')).toBeInTheDocument()
+    expect(screen.getByText('Environment ID')).toBeInTheDocument()
+    expect(screen.getByText('Service ID')).toBeInTheDocument()
+
+    screen.getByRole('menuitem', { name: /service id/i }).focus()
+    await userEvent.keyboard('{Enter}')
+
+    expect(mockCopyToClipboard).toHaveBeenCalledWith(mockService.id)
   })
 
   it('should redeploy directly without opening a modal when no changes are pending', async () => {
