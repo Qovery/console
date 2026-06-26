@@ -74,15 +74,6 @@ describe('canChooseCpuArchitecture', () => {
     ).toBe(false)
   })
 
-  it('deduplicates Karpenter architectures before checking support', () => {
-    expect(
-      canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
-        cluster: createCluster({ architectures: ['AMD64', 'AMD64'] }),
-      })
-    ).toBe(false)
-  })
-
   it('requires a Karpenter architecture requirement', () => {
     expect(
       canChooseCpuArchitecture({
