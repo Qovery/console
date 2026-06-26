@@ -18,6 +18,7 @@ import {
   inputSizeUnitRules,
 } from '@qovery/shared/ui'
 import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-services'
+import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { KedaSettings } from '../keda/components/keda-settings'
@@ -55,6 +56,7 @@ export function ApplicationSettingsResources({
   const { control, watch, setValue } = useFormContext()
   const { organizationId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
+  const { data: deploymentStatus } = useDeploymentStatus({ environmentId, serviceId })
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId, suspense: true })
   const { data: cloudProviders = [] } = useCloudProviders()
@@ -76,8 +78,13 @@ export function ApplicationSettingsResources({
   const isSupportedCloudProvider = clusterProvider === 'GCP' || clusterProvider === 'AWS'
   const isSupportedServiceType =
     service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER' || service?.serviceType === 'JOB'
+  const isServiceDeployed = deploymentStatus?.state === 'DEPLOYED'
   const canChooseCpuArchitecture =
-    isSettingsPage && isSupportedCloudProvider && clusterRegion?.arm_supported === true && isSupportedServiceType
+    isSettingsPage &&
+    isSupportedCloudProvider &&
+    clusterRegion?.arm_supported === true &&
+    isSupportedServiceType &&
+    isServiceDeployed
 
   const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 

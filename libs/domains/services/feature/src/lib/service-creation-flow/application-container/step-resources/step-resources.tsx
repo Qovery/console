@@ -34,7 +34,7 @@ export function ApplicationContainerStepResources({ onSubmit }: ApplicationConta
               <p className="text-sm text-neutral-subtle">Customize the resources assigned to the service.</p>
             </div>
 
-            <ApplicationSettingsResources displayWarningCpu={false} displayCpuArchitecture />
+            <ApplicationSettingsResources displayWarningCpu={false} />
 
             <div className="flex items-center justify-between">
               <Link
