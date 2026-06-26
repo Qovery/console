@@ -22,6 +22,7 @@ import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployme
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { KedaSettings } from '../keda/components/keda-settings'
+import { canChooseCpuArchitecture } from './can-choose-cpu-architecture'
 import { FixedInstancesMode } from './fixed-instances-mode'
 import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 
@@ -30,11 +31,6 @@ const CPU_ARCHITECTURE_OPTIONS = [
   { label: 'ARM64', value: 'ARM64' },
   { label: 'AMD64', value: 'AMD64' },
 ]
-
-type ClusterRegionWithArmSupport = {
-  name: string
-  arm_supported?: boolean
-}
 
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
@@ -69,22 +65,7 @@ export function ApplicationSettingsResources({
   const environmentMode = environment?.mode
 
   const cloudProvider = environment?.cloud_provider.provider
-  const clusterProvider = cluster?.cloud_provider
-  const targetProvider = cloudProviders.find((provider) => provider.short_name === clusterProvider)
-  const clusterRegion = targetProvider?.regions?.find((region) => region.name === cluster?.region) as
-    | ClusterRegionWithArmSupport
-    | undefined
-  const isSettingsPage = Boolean(service)
-  const isSupportedCloudProvider = clusterProvider === 'GCP' || clusterProvider === 'AWS'
-  const isSupportedServiceType =
-    service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER' || service?.serviceType === 'JOB'
-  const isServiceDeployed = deploymentStatus?.state === 'DEPLOYED'
-  const canChooseCpuArchitecture =
-    isSettingsPage &&
-    isSupportedCloudProvider &&
-    clusterRegion?.arm_supported === true &&
-    isSupportedServiceType &&
-    isServiceDeployed
+  const canChooseCpuArchitectureValue = canChooseCpuArchitecture({ service, cluster, cloudProviders, deploymentStatus })
 
   const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 
@@ -290,7 +271,7 @@ export function ApplicationSettingsResources({
             />
           )}
         />
-        {canChooseCpuArchitecture && (
+        {canChooseCpuArchitectureValue && (
           <Controller
             name="cpu_architecture"
             control={control}
