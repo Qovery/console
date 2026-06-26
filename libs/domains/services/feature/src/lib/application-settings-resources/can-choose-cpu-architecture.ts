@@ -1,3 +1,5 @@
+import { getKarpenterFeatureValue } from '@qovery/domains/clusters/feature'
+
 type CpuArchitectureRequirement = {
   key?: string
   values?: string[]
@@ -5,12 +7,6 @@ type CpuArchitectureRequirement = {
 
 type CpuArchitectureService = {
   serviceType?: string
-}
-
-type CpuArchitectureKarpenterValue = {
-  qovery_node_pools?: {
-    requirements?: CpuArchitectureRequirement[]
-  }
 }
 
 type CpuArchitectureCluster = {
@@ -24,10 +20,6 @@ type CpuArchitectureCluster = {
   }>
 }
 
-function isKarpenterValue(value: unknown): value is CpuArchitectureKarpenterValue {
-  return Boolean(value && typeof value === 'object' && 'qovery_node_pools' in value)
-}
-
 export function canChooseCpuArchitecture({
   service,
   cluster,
@@ -35,11 +27,9 @@ export function canChooseCpuArchitecture({
   service?: CpuArchitectureService
   cluster?: CpuArchitectureCluster
 }) {
-  const karpenterFeature = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
-  const rawKarpenterValue = karpenterFeature?.value_object?.value ?? karpenterFeature?.value
-  const karpenterValue = isKarpenterValue(rawKarpenterValue) ? rawKarpenterValue : undefined
+  const karpenterValue = getKarpenterFeatureValue(cluster)
   const architectureRequirement = karpenterValue?.qovery_node_pools?.requirements?.find(
-    (requirement) => requirement.key === 'Arch'
+    (requirement: CpuArchitectureRequirement) => requirement.key === 'Arch'
   )
   const architectures = [...new Set(architectureRequirement?.values?.filter(Boolean) ?? [])]
   const clusterProvider = cluster?.cloud_provider
