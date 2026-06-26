@@ -151,7 +151,6 @@ function ServiceResourcesSettingsForm({
           <form className="space-y-10" onSubmit={onSubmit}>
             <ApplicationSettingsResources
               displayWarningCpu={displayWarningCpu}
-              displayCpuArchitecture={service.serviceType !== 'TERRAFORM'}
               service={service}
               advancedSettings={advancedSettings}
             />

@@ -38,7 +38,6 @@ type ClusterRegionWithArmSupport = {
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
   displayInstanceLimits?: boolean
-  displayCpuArchitecture?: boolean
   service?: Exclude<AnyService, Helm | Database>
   minInstances?: number
   maxInstances?: number
@@ -48,7 +47,6 @@ export interface ApplicationSettingsResourcesProps {
 export function ApplicationSettingsResources({
   displayWarningCpu,
   displayInstanceLimits = true,
-  displayCpuArchitecture = false,
   service,
   minInstances = 1,
   maxInstances = 1000,
@@ -69,12 +67,17 @@ export function ApplicationSettingsResources({
   const environmentMode = environment?.mode
 
   const cloudProvider = environment?.cloud_provider.provider
-  const gcpProvider = cloudProviders.find((provider) => provider.short_name === 'GCP')
-  const clusterRegion = gcpProvider?.regions?.find((region) => region.name === cluster?.region) as
+  const clusterProvider = cluster?.cloud_provider
+  const targetProvider = cloudProviders.find((provider) => provider.short_name === clusterProvider)
+  const clusterRegion = targetProvider?.regions?.find((region) => region.name === cluster?.region) as
     | ClusterRegionWithArmSupport
     | undefined
+  const isSettingsPage = Boolean(service)
+  const isSupportedCloudProvider = clusterProvider === 'GCP' || clusterProvider === 'AWS'
+  const isSupportedServiceType =
+    service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER' || service?.serviceType === 'JOB'
   const canChooseCpuArchitecture =
-    displayCpuArchitecture && cluster?.cloud_provider === 'GCP' && clusterRegion?.arm_supported === true
+    isSettingsPage && isSupportedCloudProvider && clusterRegion?.arm_supported === true && isSupportedServiceType
 
   const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 
