@@ -352,7 +352,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
         </button>
       </div>
 
-      {!hasCluster && (
+      {!allRequiredDone && (
         <McpSuggestionCard
           variant="setup"
           title="Let your agent do the configuration with"
