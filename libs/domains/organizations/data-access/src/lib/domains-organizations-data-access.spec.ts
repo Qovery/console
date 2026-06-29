@@ -4,7 +4,9 @@ import { mutations, organizations } from './domains-organizations-data-access'
 describe('organizations.onboarding', () => {
   it('should return onboarding data', async () => {
     const mockData = { use_cases: 'ephemeral-environments,rde', status: OrganizationOnboardingStatusEnum.IN_PROGRESS }
-    jest.spyOn(OrganizationMainCallsApi.prototype, 'getOrganizationOnboarding').mockResolvedValue({ data: mockData } as any)
+    jest
+      .spyOn(OrganizationMainCallsApi.prototype, 'getOrganizationOnboarding')
+      .mockResolvedValue({ data: mockData } as any)
 
     const query = organizations.onboarding({ organizationId: 'org-1' })
     const result = await query.queryFn({} as any)
@@ -22,7 +24,9 @@ describe('organizations.onboarding', () => {
 describe('mutations.updateOrganizationOnboarding', () => {
   it('should call updateOrganizationOnboarding with correct args', async () => {
     const mockData = { use_cases: 'rde', status: OrganizationOnboardingStatusEnum.DISMISSED }
-    jest.spyOn(OrganizationMainCallsApi.prototype, 'updateOrganizationOnboarding').mockResolvedValue({ data: mockData } as any)
+    jest
+      .spyOn(OrganizationMainCallsApi.prototype, 'updateOrganizationOnboarding')
+      .mockResolvedValue({ data: mockData } as any)
 
     const result = await mutations.updateOrganizationOnboarding({
       organizationId: 'org-1',
