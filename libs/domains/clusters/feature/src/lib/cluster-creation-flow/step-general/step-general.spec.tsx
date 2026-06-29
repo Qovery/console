@@ -117,7 +117,7 @@ describe('StepGeneral', () => {
     expect(screen.getByTestId('button-submit')).toBeDisabled()
   })
 
-  it('should display an ARM supported badge for GCP regions with ARM support', async () => {
+  it('should display an ARM badge for GCP regions with ARM support', async () => {
     useCloudProvidersMockSpy.mockReturnValue({
       data: [
         {
@@ -137,6 +137,6 @@ describe('StepGeneral', () => {
     const regionSelect = await screen.findByLabelText('Region')
     selectEvent.openMenu(regionSelect)
 
-    expect(await screen.findAllByText('ARM supported')).toHaveLength(1)
+    expect(await screen.findAllByText('ARM')).toHaveLength(1)
   })
 })

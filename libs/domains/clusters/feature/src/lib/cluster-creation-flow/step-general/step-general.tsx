@@ -88,7 +88,8 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
               <span className="truncate">{label}</span>
               {showArmSupportedBadge && (
                 <Badge color="green" variant="surface" size="sm" className="gap-1">
-                  ARM supported
+                  <Icon iconName="check" className="text-xs text-positive" />
+                  ARM
                 </Badge>
               )}
             </span>
