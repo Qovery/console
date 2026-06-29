@@ -73,8 +73,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
     () => (startDate && endDate ? ([startDate, endDate] as [Date, Date]) : undefined),
     [startDate, endDate]
   )
-  const maxDate = new Date()
-  const minDate = subDays(maxDate, 84)
+  const maxDate = useMemo(() => new Date(), [isOpenDatePicker])
+  const minDate = useMemo(() => subDays(maxDate, 84), [maxDate])
 
   return (
     <>
