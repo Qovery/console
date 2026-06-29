@@ -39,8 +39,8 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const { data: onboarding, isLoading: isOnboardingLoading } = useOrganizationOnboarding({ organizationId })
   const { mutate: updateOnboarding } = useUpdateOrganizationOnboarding({ organizationId })
 
-  const { data: clusters = [], isLoading: isClustersLoading } = useClusters({ organizationId })
-  const { data: clusterStatuses = [], isLoading: isClusterStatusesLoading } = useClusterStatuses({
+  const { data: clusters = [] } = useClusters({ organizationId })
+  const { data: clusterStatuses = [] } = useClusterStatuses({
     organizationId,
     refetchInterval: 3000,
   })

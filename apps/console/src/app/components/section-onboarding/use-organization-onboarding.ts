@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { type OrganizationOnboardingStatusEnum } from 'qovery-typescript-axios'
-import { mutations, organizations } from '@qovery/domains/organizations/data-access'
+import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export type { OrganizationOnboardingStatusEnum }
