@@ -7,7 +7,7 @@ import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Button, Icon, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
-import { mergeServiceLogsParams } from '../search-service-logs/search-service-logs'
+import { mergeServiceLogsParams } from '../search-service-logs/search-service-logs-utils'
 
 export function LoaderPlaceholder({
   title = 'Service logs are loading…',

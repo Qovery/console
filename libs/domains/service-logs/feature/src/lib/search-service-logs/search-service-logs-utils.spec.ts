@@ -1,5 +1,10 @@
 import { type ServiceLogsParams } from '@qovery/shared/router'
-import { VALID_FILTER_KEYS, buildQueryParams, buildValueOptions, mergeServiceLogsParams } from './search-service-logs'
+import {
+  VALID_FILTER_KEYS,
+  buildQueryParams,
+  buildValueOptions,
+  mergeServiceLogsParams,
+} from './search-service-logs-utils'
 
 describe('SearchServiceLogs helpers', () => {
   describe('VALID_FILTER_KEYS', () => {

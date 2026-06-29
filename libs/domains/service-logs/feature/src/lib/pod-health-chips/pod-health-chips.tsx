@@ -6,7 +6,7 @@ import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Button, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
-import { mergeServiceLogsParams } from '../search-service-logs/search-service-logs'
+import { mergeServiceLogsParams } from '../search-service-logs/search-service-logs-utils'
 
 export function PodHealthChips({ service }: { service: AnyService }) {
   const navigate = useNavigate()

@@ -8,7 +8,8 @@ import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Button, DatePicker, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { HeaderLogs } from '../../header-logs/header-logs'
-import { SearchServiceLogs, mergeServiceLogsParams } from '../../search-service-logs/search-service-logs'
+import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
+import { mergeServiceLogsParams } from '../../search-service-logs/search-service-logs-utils'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 
 export interface HeaderServiceLogsProps {

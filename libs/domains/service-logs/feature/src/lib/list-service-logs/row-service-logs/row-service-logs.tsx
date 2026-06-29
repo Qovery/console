@@ -23,7 +23,7 @@ import {
   copySelectedLogMessages,
   twMerge,
 } from '@qovery/shared/util-js'
-import { mergeServiceLogsParams } from '../../search-service-logs/search-service-logs'
+import { mergeServiceLogsParams } from '../../search-service-logs/search-service-logs-utils'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 import './style.scss'
 
