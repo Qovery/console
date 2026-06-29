@@ -7,6 +7,7 @@ import { useDeploymentStatus } from '@qovery/domains/services/feature'
 import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Button, Icon, Link, LoaderDots, Tooltip } from '@qovery/shared/ui'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
+import { mergeServiceLogsParams } from '../search-service-logs/search-service-logs-utils'
 
 export function LoaderPlaceholder({
   title = 'Service logs are loading…',
@@ -105,10 +106,10 @@ export function ServiceLogsPlaceholder({
           environmentId,
           serviceId,
         },
-        search: searchParams,
+        search: mergeServiceLogsParams(queryParams, searchParams),
       })
     },
-    [navigate, organizationId, projectId, environmentId, serviceId]
+    [navigate, organizationId, projectId, environmentId, serviceId, queryParams]
   )
 
   useEffect(() => {

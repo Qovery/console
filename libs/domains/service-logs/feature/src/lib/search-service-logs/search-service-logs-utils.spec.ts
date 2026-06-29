@@ -1,4 +1,10 @@
-import { VALID_FILTER_KEYS, buildQueryParams, buildValueOptions } from './search-service-logs'
+import { type ServiceLogsParams } from '@qovery/shared/router'
+import {
+  VALID_FILTER_KEYS,
+  buildQueryParams,
+  buildValueOptions,
+  mergeServiceLogsParams,
+} from './search-service-logs-utils'
 
 describe('SearchServiceLogs helpers', () => {
   describe('VALID_FILTER_KEYS', () => {
@@ -19,43 +25,43 @@ describe('SearchServiceLogs helpers', () => {
 
   describe('buildValueOptions', () => {
     it('should create nginx filter option', () => {
-      const result = buildValueOptions({ nginx: true } as any)
+      const result = buildValueOptions({ nginx: true })
 
       expect(result).toEqual([{ value: 'nginx:true', label: 'nginx:true' }])
     })
 
     it('should create envoy filter option', () => {
-      const result = buildValueOptions({ envoy: true } as any)
+      const result = buildValueOptions({ envoy: true })
 
       expect(result).toEqual([{ value: 'envoy:true', label: 'envoy:true' }])
     })
 
     it('should create level filter option', () => {
-      const result = buildValueOptions({ level: 'error' } as any)
+      const result = buildValueOptions({ level: 'error' })
 
       expect(result).toEqual([{ value: 'level:error', label: 'level:error' }])
     })
 
     it('should create instance filter option', () => {
-      const result = buildValueOptions({ instance: 'pod-123' } as any)
+      const result = buildValueOptions({ instance: 'pod-123' })
 
       expect(result).toEqual([{ value: 'instance:pod-123', label: 'instance:pod-123' }])
     })
 
     it('should create message filter option', () => {
-      const result = buildValueOptions({ message: 'error occurred' } as any)
+      const result = buildValueOptions({ message: 'error occurred' })
 
       expect(result).toEqual([{ value: 'message:error occurred', label: 'message:error occurred' }])
     })
 
     it('should create search option', () => {
-      const result = buildValueOptions({ search: 'error text' } as any)
+      const result = buildValueOptions({ search: 'error text' })
 
       expect(result).toEqual([{ value: 'error text', label: 'error text' }])
     })
 
     it('should handle multiple filter options', () => {
-      const result = buildValueOptions({ level: 'error', nginx: true, instance: 'pod-123' } as any)
+      const result = buildValueOptions({ level: 'error', nginx: true, instance: 'pod-123' })
 
       expect(result).toHaveLength(3)
       expect(result).toContainEqual({ value: 'level:error', label: 'level:error' })
@@ -64,7 +70,7 @@ describe('SearchServiceLogs helpers', () => {
     })
 
     it('should handle both nginx and envoy params', () => {
-      const result = buildValueOptions({ nginx: true, envoy: true } as any)
+      const result = buildValueOptions({ nginx: true, envoy: true })
 
       expect(result).toHaveLength(2)
       expect(result).toContainEqual({ value: 'nginx:true', label: 'nginx:true' })
@@ -72,7 +78,7 @@ describe('SearchServiceLogs helpers', () => {
     })
 
     it('should handle deploymentId filter option', () => {
-      const result = buildValueOptions({ deploymentId: 'deploy-123' } as any)
+      const result = buildValueOptions({ deploymentId: 'deploy-123' })
 
       expect(result).toEqual([{ value: 'deploymentId:deploy-123', label: 'deploymentId:deploy-123' }])
     })
@@ -164,6 +170,64 @@ describe('SearchServiceLogs helpers', () => {
       expect(result.search).toBe('just some search text')
       expect(result.nginx).toBeUndefined()
       expect(result.envoy).toBeUndefined()
+    })
+  })
+
+  describe('mergeServiceLogsParams', () => {
+    it('should preserve the timeframe when filters change', () => {
+      const currentParams: ServiceLogsParams = {
+        startDate: '2026-06-25T00:00:00.000Z',
+        endDate: '2026-06-26T23:59:59.000Z',
+        mode: 'history',
+      }
+
+      const result = mergeServiceLogsParams(currentParams, { level: 'error' })
+
+      expect(result).toEqual({
+        startDate: '2026-06-25T00:00:00.000Z',
+        endDate: '2026-06-26T23:59:59.000Z',
+        mode: 'history',
+        level: 'error',
+      })
+    })
+
+    it('should preserve filters when the timeframe changes', () => {
+      const currentParams: ServiceLogsParams = {
+        level: 'error',
+        search: 'timeout',
+      }
+
+      const result = mergeServiceLogsParams(currentParams, {
+        startDate: '2026-06-25T00:00:00.000Z',
+        endDate: '2026-06-26T23:59:59.000Z',
+        mode: 'history',
+      })
+
+      expect(result).toEqual({
+        level: 'error',
+        search: 'timeout',
+        startDate: '2026-06-25T00:00:00.000Z',
+        endDate: '2026-06-26T23:59:59.000Z',
+        mode: 'history',
+      })
+    })
+
+    it('should clear filters while preserving unrelated params', () => {
+      const currentParams: ServiceLogsParams = {
+        startDate: '2026-06-25T00:00:00.000Z',
+        endDate: '2026-06-26T23:59:59.000Z',
+        mode: 'history',
+        level: 'error',
+      }
+
+      const result = mergeServiceLogsParams(currentParams, { level: undefined })
+
+      expect(result).toEqual({
+        startDate: '2026-06-25T00:00:00.000Z',
+        endDate: '2026-06-26T23:59:59.000Z',
+        mode: 'history',
+        level: undefined,
+      })
     })
   })
 })

@@ -1,7 +1,5 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { type DecodedValueMap } from 'serialize-query-params'
-import { useQueryParams } from 'use-query-params'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Kbd, MultipleSelector, type MultipleSelectorRef, type Option } from '@qovery/shared/ui'
@@ -9,96 +7,7 @@ import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 import { useServiceInstances } from '../hooks/use-service-instances/use-service-instances'
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
-import { type queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
-
-export const VALID_FILTER_KEYS = ['level', 'instance', 'message', 'nginx', 'envoy', 'search', 'deploymentId']
-
-export function buildValueOptions(queryParams: ServiceLogsParams): Option[] {
-  const options: Option[] = []
-
-  if (queryParams.level) {
-    const value = `level:${queryParams.level}`
-    options.push({ value, label: value })
-  }
-  if (queryParams.instance) {
-    const value = `instance:${queryParams.instance}`
-    options.push({ value, label: value })
-  }
-  if (queryParams.container) {
-    const value = `container:${queryParams.container}`
-    options.push({ value, label: value })
-  }
-  if (queryParams.version) {
-    const value = `version:${queryParams.version}`
-    options.push({ value, label: value })
-  }
-  if (queryParams.message) {
-    const value = `message:${queryParams.message}`
-    options.push({ value, label: value })
-  }
-  if (queryParams.nginx) {
-    const value = 'nginx:true'
-    options.push({ value, label: value })
-  }
-  if (queryParams.envoy) {
-    const value = 'envoy:true'
-    options.push({ value, label: value })
-  }
-  if (queryParams.deploymentId) {
-    const value = `deploymentId:${queryParams.deploymentId}`
-    options.push({ value, label: value })
-  }
-  if (queryParams.search) {
-    const value = queryParams.search
-    options.push({ value, label: value })
-  }
-
-  return options
-}
-
-export function buildQueryParams(value: string) {
-  const filterRegex = /(\w+)[:]([^\s]*)/g
-  const matches = value.match(filterRegex)
-  const queryParams: ServiceLogsParams = {
-    level: undefined,
-    instance: undefined,
-    container: undefined,
-    version: undefined,
-    message: undefined,
-    nginx: undefined,
-    envoy: undefined,
-    search: undefined,
-    deploymentId: undefined,
-  }
-
-  if (matches) {
-    matches.forEach((match) => {
-      const parts = match.split(/[:]/)
-      const filterKey = parts[0]
-      const filterValue = parts[1] || ''
-
-      const isValidFilter = VALID_FILTER_KEYS.includes(filterKey)
-
-      if (isValidFilter && filterValue) {
-        const typedQueryParams = queryParams as Record<string, string | boolean | undefined>
-        typedQueryParams[filterKey] = filterValue
-      }
-      if (filterKey === 'nginx') {
-        queryParams.nginx = true
-      }
-      if (filterKey === 'envoy') {
-        queryParams.envoy = true
-      }
-    })
-  }
-
-  const textWithoutFilters = value.replace(filterRegex, '').trim()
-  if (textWithoutFilters) {
-    queryParams.search = textWithoutFilters
-  }
-
-  return queryParams
-}
+import { buildQueryParams, buildValueOptions, mergeServiceLogsParams } from './search-service-logs-utils'
 
 export function SearchServiceLogs({
   service,
@@ -150,10 +59,10 @@ export function SearchServiceLogs({
           environmentId,
           serviceId,
         },
-        search: searchParams,
+        search: mergeServiceLogsParams(queryParams, searchParams),
       })
     },
-    [navigate, organizationId, projectId, environmentId, serviceId]
+    [navigate, organizationId, projectId, environmentId, serviceId, queryParams]
   )
 
   // Sync the input value with query params only when query params change
