@@ -8,7 +8,7 @@ import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Button, DatePicker, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { HeaderLogs } from '../../header-logs/header-logs'
-import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
+import { SearchServiceLogs, mergeServiceLogsParams } from '../../search-service-logs/search-service-logs'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 
 export interface HeaderServiceLogsProps {
@@ -55,10 +55,10 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           environmentId,
           serviceId,
         },
-        search: searchParams,
+        search: mergeServiceLogsParams(queryParams, searchParams),
       })
     },
-    [navigate, organizationId, projectId, environmentId, serviceId]
+    [navigate, organizationId, projectId, environmentId, serviceId, queryParams]
   )
 
   const clearDate = useCallback(() => {
@@ -73,8 +73,8 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
     () => (startDate && endDate ? ([startDate, endDate] as [Date, Date]) : undefined),
     [startDate, endDate]
   )
-  const maxDate = useMemo(() => new Date(), [isOpenDatePicker])
-  const minDate = useMemo(() => subDays(maxDate, 84), [maxDate])
+  const maxDate = new Date()
+  const minDate = subDays(maxDate, 84)
 
   return (
     <>

@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { useCallback, useState } from 'react'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
@@ -23,6 +23,7 @@ import {
   copySelectedLogMessages,
   twMerge,
 } from '@qovery/shared/util-js'
+import { mergeServiceLogsParams } from '../../search-service-logs/search-service-logs'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 import './style.scss'
 
@@ -40,6 +41,7 @@ export interface RowServiceLogsProps {
 export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, service }: RowServiceLogsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
+  const queryParams = useSearch({ strict: false })
 
   const [isExpanded, setIsExpanded] = useState(false)
 
@@ -64,10 +66,10 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           environmentId,
           serviceId,
         },
-        search: searchParams,
+        search: mergeServiceLogsParams(queryParams, searchParams),
       })
     },
-    [navigate, organizationId, projectId, environmentId, serviceId]
+    [navigate, organizationId, projectId, environmentId, serviceId, queryParams]
   )
 
   const toggleExpanded = () => {

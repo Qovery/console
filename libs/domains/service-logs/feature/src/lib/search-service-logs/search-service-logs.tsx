@@ -1,7 +1,5 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { type DecodedValueMap } from 'serialize-query-params'
-import { useQueryParams } from 'use-query-params'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Kbd, MultipleSelector, type MultipleSelectorRef, type Option } from '@qovery/shared/ui'
@@ -9,9 +7,18 @@ import { useFormatHotkeys } from '@qovery/shared/util-hooks'
 import { useServiceDeploymentId } from '../hooks/use-service-deployment-id/use-service-deployment-id'
 import { useServiceInstances } from '../hooks/use-service-instances/use-service-instances'
 import { useServiceLevels } from '../hooks/use-service-levels/use-service-levels'
-import { type queryParamsServiceLogs } from '../list-service-logs/service-logs-context/service-logs-context'
 
 export const VALID_FILTER_KEYS = ['level', 'instance', 'message', 'nginx', 'envoy', 'search', 'deploymentId']
+
+export function mergeServiceLogsParams(
+  currentParams: ServiceLogsParams,
+  nextParams: ServiceLogsParams
+): ServiceLogsParams {
+  return {
+    ...currentParams,
+    ...nextParams,
+  }
+}
 
 export function buildValueOptions(queryParams: ServiceLogsParams): Option[] {
   const options: Option[] = []
@@ -150,10 +157,10 @@ export function SearchServiceLogs({
           environmentId,
           serviceId,
         },
-        search: searchParams,
+        search: mergeServiceLogsParams(queryParams, searchParams),
       })
     },
-    [navigate, organizationId, projectId, environmentId, serviceId]
+    [navigate, organizationId, projectId, environmentId, serviceId, queryParams]
   )
 
   // Sync the input value with query params only when query params change
