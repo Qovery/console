@@ -79,16 +79,16 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
     () =>
       currentProvider?.regions?.map((region: ClusterRegion) => {
         const label = `${region.city} (${region.name})`
-        const showArmUnsupportedBadge =
-          currentProvider.short_name === CloudProviderEnum.GCP && region.arm_supported === false
+        const showArmSupportedBadge =
+          currentProvider.short_name === CloudProviderEnum.GCP && region.arm_supported === true
 
         return {
           label: (
             <span className="flex items-center gap-2">
               <span className="truncate">{label}</span>
-              {showArmUnsupportedBadge && (
-                <Badge color="yellow" variant="surface" size="sm" className="gap-1">
-                  No ARM
+              {showArmSupportedBadge && (
+                <Badge color="green" variant="surface" size="sm" className="gap-1">
+                  ARM supported
                 </Badge>
               )}
             </span>
