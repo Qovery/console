@@ -1,7 +1,7 @@
 import { within } from '@testing-library/react'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
-import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceNew } from './service-new'
 
 const mockUseFeatureFlagEnabled = jest.fn(() => false)
@@ -10,10 +10,12 @@ const blueprintReadmeResponse = {
   content: '# AWS S3 Bucket\n\nBlueprint documentation',
   repository_url: 'https://github.com/qovery-blueprints/s3',
 }
+const mockGetLinkHref = (to?: string, params?: Record<string, string>) =>
+  Object.entries(params ?? {}).reduce((path, [key, value]) => path.replace(`$${key}`, value), to ?? '')
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useParams: () => ({ organizationId: 'org-1' }),
+  useParams: () => ({ organizationId: 'org-1', projectId: 'project-1', environmentId: 'env-1' }),
 }))
 
 jest.mock('posthog-js', () => ({
@@ -26,11 +28,22 @@ jest.mock('posthog-js/react', () => ({
 
 jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
+
   return {
     ...actual,
-    Link: ({ children, to, ...props }: { children: ReactNode; to?: string }) =>
+    Link: ({
+      children,
+      params,
+      to,
+      ...props
+    }: {
+      children: ReactNode
+      params?: Record<string, string>
+      to?: string
+      [key: string]: unknown
+    }) =>
       typeof to === 'string' ? (
-        <a href={to} {...props}>
+        <a href={mockGetLinkHref(to, params)} {...props}>
           {children}
         </a>
       ) : (
@@ -145,12 +158,40 @@ describe('ServiceNew', () => {
     const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
     expect(blueprintsSectionScreen.getByText('AWS S3 Bucket')).toBeInTheDocument()
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
-    expect(blueprintsSectionScreen.getAllByRole('button', { name: 'Deploy' })).toHaveLength(2)
+    const deployLinks = blueprintsSectionScreen.getAllByRole('link', { name: 'Deploy' })
+    expect(deployLinks).toHaveLength(2)
+    expect(deployLinks[0]).toHaveAttribute(
+      'href',
+      '/organization/org-1/project/project-1/environment/env-1/service/create/blueprint/aws/s3'
+    )
 
     await userEvent.type(screen.getByPlaceholderText('Search blueprints...'), 'redis')
 
     expect(blueprintsSectionScreen.queryByText('AWS S3 Bucket')).not.toBeInTheDocument()
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
+  })
+
+  it('should not render deploy actions for blueprints without a service family', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: {
+        blueprints: [{ ...blueprints[0], serviceFamily: undefined }],
+      },
+    })
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    const blueprintsSection = screen.getByRole('heading', { name: 'Blueprints' }).closest('section')
+    const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
+
+    expect(blueprintsSectionScreen.queryByRole('link', { name: 'Deploy' })).not.toBeInTheDocument()
+
+    await userEvent.click(blueprintsSectionScreen.getByRole('button', { name: 'View details' }))
+
+    const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
+    expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
   })
 
   it('should open blueprint details from a blueprint card', async () => {
@@ -181,10 +222,16 @@ describe('ServiceNew', () => {
     expect(within(dialog).getByRole('heading', { name: 'AWS S3 Bucket' })).toBeInTheDocument()
     expect(within(dialog).getByText('AWS')).toBeInTheDocument()
     expect(within(dialog).getByText('v1')).toBeInTheDocument()
+    expect(within(dialog).getByRole('link', { name: 'Deploy blueprint' })).toHaveAttribute(
+      'href',
+      '/organization/org-1/project/project-1/environment/env-1/service/create/blueprint/aws/s3'
+    )
 
     await userEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }))
 
-    await waitForElementToBeRemoved(() => screen.queryByRole('dialog', { name: 'AWS S3 Bucket' }))
+    await waitFor(() => {
+      expect(screen.queryByRole('dialog', { name: 'AWS S3 Bucket' })).not.toBeInTheDocument()
+    })
   })
 
   it('should hide the blueprint version badge when version is default', async () => {

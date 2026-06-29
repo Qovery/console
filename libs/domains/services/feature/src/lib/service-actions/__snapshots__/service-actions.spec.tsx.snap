@@ -242,17 +242,22 @@ exports[`ServiceActions should match other actions snapshot 1`] = `
         Audit logs
       </a>
       <div
-        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"
+        aria-controls="radix-:ru:"
+        aria-expanded="false"
+        aria-haspopup="menu"
+        class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral data-[state=open]:bg-surface-brand-component data-[state=open]:text-brand"
         data-orientation="vertical"
         data-radix-collection-item=""
+        data-state="closed"
+        id="radix-:rv:"
         role="menuitem"
         tabindex="-1"
       >
         <i
           aria-hidden="true"
-          class="fa-regular fa-copy text-sm mr-2 min-w-5 text-brand"
+          class="fa-regular fa-circle-info text-sm mr-2 min-w-5 text-brand"
         />
-        Copy identifiers
+        Service metadata
       </div>
       <div
         class="px-3 flex items-center h-8 text-sm font-medium outline-none select-none rounded data-[highlighted]:bg-surface-brand-component data-[highlighted]:text-brand hover:bg-surface-brand-component hover:text-brand cursor-pointer text-neutral"

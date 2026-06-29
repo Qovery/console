@@ -31,6 +31,7 @@ import {
 } from '@qovery/shared/ui'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
 import { useListDeploymentStages } from '../hooks/use-list-deployment-stages/use-list-deployment-stages'
+import { getServiceListStatus } from '../hooks/use-service-deployment-and-running-statuses/service-status-utils'
 import { useServices } from '../hooks/use-services/use-services'
 import { ServiceActions } from '../service-actions/service-actions'
 import { ServiceListActionBar } from './service-list-action-bar'
@@ -126,14 +127,15 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
   const actualServices = useMemo(() => {
     return serviceList.map((service) => {
+      const isSkipped = skippedServicesMap.get(service.id) || false
+
       return {
         ...service,
-        status: match(service)
-          .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => service.deploymentStatus?.state)
-          .otherwise(() => service.runningStatus?.state),
+        isSkipped,
+        status: getServiceListStatus(service),
       }
     })
-  }, [serviceList])
+  }, [serviceList, skippedServicesMap])
 
   const sortedServices = useMemo(() => {
     return [...actualServices].sort((a, b) => {
@@ -235,11 +237,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         enableColumnFilter: false,
         enableSorting: false,
         cell: (info) => {
-          const serviceStatus = match(info.row.original)
-            .with({ serviceType: 'DATABASE', mode: 'MANAGED' }, () => info.row.original.deploymentStatus?.state)
-            .otherwise(() => info.row.original.runningStatus?.state)
-
-          return <StatusChip status={serviceStatus} />
+          return <StatusChip status={info.row.original.status} />
         },
       }),
       columnHelper.display({
@@ -247,7 +245,13 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         header: 'Last operation',
         enableColumnFilter: false,
         enableSorting: false,
-        cell: (info) => <ServiceLastDeploymentCell service={info.row.original} environment={environment} />,
+        cell: (info) => (
+          <ServiceLastDeploymentCell
+            service={info.row.original}
+            environment={environment}
+            isSkipped={info.row.original.isSkipped}
+          />
+        ),
       }),
       columnHelper.accessor('version', {
         header: 'Target version',
@@ -283,7 +287,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
       rowSelection,
     },
     enableRowSelection: (row) => {
-      return !skippedServicesMap.get(row.original.id)
+      return !row.original.isSkipped
     },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,

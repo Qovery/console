@@ -44,6 +44,10 @@ export function getCreateFlowPath(flowSlug: string, templateSlug?: string): stri
   return path
 }
 
+export function getBlueprintCreateFlowPath(provider: string, serviceFamily: string): string {
+  return `/service/create/blueprint/${encodeURIComponent(provider)}/${encodeURIComponent(serviceFamily)}`
+}
+
 export function buildCreateFlowPathForType(type: ServiceType, parentSlug: string, slug: string): string | undefined {
   const flowSlug = CREATE_FLOW_SLUG_BY_TYPE[type]
   if (!flowSlug) return undefined

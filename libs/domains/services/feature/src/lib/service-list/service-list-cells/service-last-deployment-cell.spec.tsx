@@ -78,4 +78,49 @@ describe('ServiceLastDeploymentCell', () => {
     expect(screen.queryByText('Launch diagnostic')).not.toBeInTheDocument()
     expect(screen.getByText('Deploy').previousElementSibling).toHaveClass('text-neutral-subtle')
   })
+
+  it('keeps the last operation visible when a ready service has previous deployment metadata', () => {
+    mockUseServiceDeploymentAndRunningStatuses.mockReturnValue({
+      data: {
+        deploymentStatus: {
+          execution_id: 'execution-id',
+          last_deployment_date: '2026-05-25T07:00:00Z',
+          state: 'READY',
+          status_details: {
+            action: 'DEPLOY',
+            status: 'SUCCESS',
+            sub_action: 'NONE',
+          },
+        },
+      },
+    })
+
+    renderWithProviders(<ServiceLastDeploymentCell environment={environment} service={service} />)
+
+    expect(screen.queryByText('No operations yet')).not.toBeInTheDocument()
+    expect(screen.getByText('Deploy')).toBeInTheDocument()
+  })
+
+  it('shows skipped as last operation for skipped services without service deployment date', () => {
+    mockUseServiceDeploymentAndRunningStatuses.mockReturnValue({
+      data: {
+        deploymentStatus: {
+          execution_id: 'execution-id',
+          last_deployment_date: '2026-05-25T07:00:00Z',
+          state: 'READY',
+          status_details: {
+            action: 'DEPLOY',
+            status: 'SUCCESS',
+            sub_action: 'NONE',
+          },
+        },
+      },
+    })
+
+    renderWithProviders(<ServiceLastDeploymentCell environment={environment} service={service} isSkipped />)
+
+    expect(screen.getByText('Skipped')).toBeInTheDocument()
+    expect(screen.queryByText(/ago/)).not.toBeInTheDocument()
+    expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
+  })
 })

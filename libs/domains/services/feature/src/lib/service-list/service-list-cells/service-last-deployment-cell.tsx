@@ -9,15 +9,17 @@ import { useServiceDeploymentAndRunningStatuses } from '../../hooks/use-service-
 type ServiceLastDeploymentCellProps = {
   service: AnyService
   environment: Environment
+  isSkipped?: boolean
 }
 
-export function ServiceLastDeploymentCell({ service, environment }: ServiceLastDeploymentCellProps) {
+export function ServiceLastDeploymentCell({ service, environment, isSkipped = false }: ServiceLastDeploymentCellProps) {
   const {
     data: { deploymentStatus },
   } = useServiceDeploymentAndRunningStatuses({ environmentId: environment.id, service })
   const subAction = deploymentStatus?.status_details?.sub_action
   const triggerAction = subAction !== 'NONE' ? subAction : deploymentStatus?.status_details?.action
   const hasDeploymentError = deploymentStatus?.status_details?.status === 'ERROR'
+  const hasPreviousDeployment = Boolean(deploymentStatus?.last_deployment_date || deploymentStatus?.execution_id)
 
   const WrappingLink = useCallback(
     ({ children }: PropsWithChildren) => {
@@ -44,7 +46,17 @@ export function ServiceLastDeploymentCell({ service, environment }: ServiceLastD
     [environment, service, deploymentStatus?.execution_id]
   )
 
-  return deploymentStatus?.state === 'READY' ? (
+  if (isSkipped) {
+    return (
+      <div className="flex w-full items-center justify-between gap-4">
+        <div className="group flex items-center gap-2">
+          <DeploymentAction status="SKIPPED" iconClassName="text-neutral-subtle" />
+        </div>
+      </div>
+    )
+  }
+
+  return deploymentStatus?.state === 'READY' && !hasPreviousDeployment ? (
     <span className="text-sm font-normal text-neutral-subtle">No operations yet</span>
   ) : (
     <div className="flex w-full items-center justify-between gap-4">

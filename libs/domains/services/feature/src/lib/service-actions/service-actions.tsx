@@ -9,6 +9,7 @@ import {
   type Status,
   TerraformDeployRequestActionEnum,
 } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { P, match } from 'ts-pattern'
 import {
   type AnyService,
@@ -696,8 +697,15 @@ function MenuOtherActions({
     environmentId: environment.id,
   })
 
+  const [copiedMetadataLabel, setCopiedMetadataLabel] = useState<string>()
   const [, copyToClipboard] = useCopyToClipboard()
-  const copyContent = `Cluster ID: ${environment?.cluster_id}\nOrganization ID: ${organizationId}\nProject ID: ${projectId}\nEnvironment ID: ${environmentId}\nService ID: ${service.id}`
+  const metadata = [
+    { label: 'Cluster ID', value: environment.cluster_id },
+    { label: 'Organization ID', value: organizationId },
+    { label: 'Project ID', value: projectId },
+    { label: 'Environment ID', value: environmentId },
+    { label: 'Service ID', value: service.id },
+  ]
   const serviceForAccessModal = match(service)
     .returnType<Application | Container | Database | null>()
     .with(
@@ -846,6 +854,14 @@ function MenuOtherActions({
     })
   }
 
+  const copyMetadata = ({ label, value }: { label: string; value: string }) => {
+    copyToClipboard(value)
+    setCopiedMetadataLabel(label)
+    setTimeout(() => {
+      setCopiedMetadataLabel(undefined)
+    }, 1000)
+  }
+
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
@@ -859,7 +875,7 @@ function MenuOtherActions({
       </DropdownMenu.Trigger>
       <DropdownMenu.Content>
         {serviceForAccessModal && (
-          <DropdownMenu.Item icon={<Icon iconName="circle-info" />} onSelect={openServiceAccessModal}>
+          <DropdownMenu.Item icon={<Icon iconName="plug" />} onSelect={openServiceAccessModal}>
             Access infos
           </DropdownMenu.Item>
         )}
@@ -878,9 +894,32 @@ function MenuOtherActions({
             Audit logs
           </Link>
         </DropdownMenu.Item>
-        <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => copyToClipboard(copyContent)}>
-          Copy identifiers
-        </DropdownMenu.Item>
+        <DropdownMenu.Sub>
+          <DropdownMenu.SubTrigger icon={<Icon iconName="circle-info" />}>Service metadata</DropdownMenu.SubTrigger>
+          <DropdownMenu.SubContent className="w-[290px]">
+            <div className="flex flex-col gap-1 px-1 py-1">
+              {metadata.map(({ label, value }) => (
+                <DropdownMenu.Item
+                  key={label}
+                  className="grid h-auto grid-cols-[110px_minmax(0,1fr)_auto] items-center gap-2 px-2 py-1.5"
+                  onSelect={(event) => {
+                    event.preventDefault()
+                    copyMetadata({ label, value })
+                  }}
+                >
+                  <span className="text-ssm text-neutral-subtle">{label}</span>
+                  <span className="truncate font-mono text-ssm text-neutral" title={value}>
+                    {value}
+                  </span>
+                  <Icon
+                    iconName={copiedMetadataLabel === label ? 'check' : 'copy'}
+                    className="justify-self-end text-ssm text-neutral-subtle"
+                  />
+                </DropdownMenu.Item>
+              ))}
+            </div>
+          </DropdownMenu.SubContent>
+        </DropdownMenu.Sub>
         <DropdownMenu.Item icon={<Icon iconName="copy" />} onSelect={() => openServiceCloneModal()}>
           Clone
         </DropdownMenu.Item>

@@ -22,6 +22,7 @@ interface TerminalBannerSegment {
 export class TerminalShellActionsAddon implements ITerminalAddon {
   private static readonly COPY_COMMAND_LABEL = '[copy command]'
   private static readonly FIRST_COMMAND_TITLE = '1. Use $ qovery shell in your local terminal'
+  private static readonly FIRST_COMMAND_TITLE_EPHEMERAL = 'Use $ qovery shell --ephemeral in your local terminal'
   private static readonly SECOND_COMMAND_TITLE = '2. Use $ qovery port-forward in your local terminal'
   private static readonly LOOKBACK_LINE_COUNT = 6
 
@@ -38,7 +39,8 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
     private readonly getPortForwardCommand: () => string,
     private readonly getShellCommand: () => string,
     private readonly shouldWriteBanner: boolean,
-    private readonly requestId: string
+    private readonly requestId: string,
+    private readonly isEphemeral = false
   ) {}
 
   private toAnsiColor(color: string): string {
@@ -151,7 +153,10 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
       return () => this.copyCommandToClipboard(this.getPortForwardCommand())
     }
 
-    if (contextLines.includes(TerminalShellActionsAddon.FIRST_COMMAND_TITLE)) {
+    if (
+      contextLines.includes(TerminalShellActionsAddon.FIRST_COMMAND_TITLE) ||
+      contextLines.includes(TerminalShellActionsAddon.FIRST_COMMAND_TITLE_EPHEMERAL)
+    ) {
       return () => this.copyCommandToClipboard(this.getShellCommand())
     }
 
@@ -168,21 +173,35 @@ export class TerminalShellActionsAddon implements ITerminalAddon {
     }
 
     const firstCommandLine: TerminalBannerSegment[] = [
-      { bold: true, color: this.colors.warning, text: TerminalShellActionsAddon.FIRST_COMMAND_TITLE },
+      {
+        bold: true,
+        color: this.colors.warning,
+        text: this.isEphemeral
+          ? TerminalShellActionsAddon.FIRST_COMMAND_TITLE_EPHEMERAL
+          : TerminalShellActionsAddon.FIRST_COMMAND_TITLE,
+      },
     ]
 
     const secondCommandLine: TerminalBannerSegment[] = [
       { bold: true, color: this.colors.warning, text: TerminalShellActionsAddon.SECOND_COMMAND_TITLE },
     ]
 
+    const firstCommandDescription = this.isEphemeral
+      ? 'Open an interactive shell inside an ephemeral container'
+      : 'Open an interactive shell inside a running container'
+
     const bannerLines: TerminalBannerSegment[][] = [
       firstCommandLine,
-      [{ color: this.colors.subtle, text: 'Open an interactive shell inside a running container' }],
+      [{ color: this.colors.subtle, text: firstCommandDescription }],
       [{ text: TerminalShellActionsAddon.COPY_COMMAND_LABEL }],
-      [{ text: '' }],
-      secondCommandLine,
-      [{ color: this.colors.subtle, text: 'Forward a pod port to localhost' }],
-      [{ text: TerminalShellActionsAddon.COPY_COMMAND_LABEL }],
+      ...(this.isEphemeral
+        ? []
+        : ([
+            [{ text: '' }],
+            secondCommandLine,
+            [{ color: this.colors.subtle, text: 'Forward a pod port to localhost' }],
+            [{ text: TerminalShellActionsAddon.COPY_COMMAND_LABEL }],
+          ] satisfies TerminalBannerSegment[][])),
       [{ text: '' }],
       [{ color: this.colors.subtle, text: `Request ID: ${this.requestId}` }],
     ]

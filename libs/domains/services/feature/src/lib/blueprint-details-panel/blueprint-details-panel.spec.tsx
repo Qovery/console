@@ -1,17 +1,45 @@
 import { useParams } from '@tanstack/react-router'
 import { within } from '@testing-library/react'
 import type { BlueprintItem } from 'qovery-typescript-axios'
+import type { ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { BlueprintDetailsPanel } from './blueprint-details-panel'
 
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
+const mockGetLinkHref = (to?: string, params?: Record<string, string>) =>
+  Object.entries(params ?? {}).reduce((path, [key, value]) => path.replace(`$${key}`, value), to ?? '')
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: jest.fn(),
 }))
 
-jest.mock('../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
+jest.mock('@qovery/shared/ui', () => {
+  const actual = jest.requireActual('@qovery/shared/ui')
+  return {
+    ...actual,
+    Link: ({
+      children,
+      params,
+      to,
+      ...props
+    }: {
+      children: ReactNode
+      params?: Record<string, string>
+      to?: string
+      [key: string]: unknown
+    }) =>
+      typeof to === 'string' ? (
+        <a href={mockGetLinkHref(to, params)} {...props}>
+          {children}
+        </a>
+      ) : (
+        <span {...props}>{children}</span>
+      ),
+  }
+})
+
+jest.mock('../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
   useBlueprintCatalogServiceReadme: (props: unknown) => mockUseBlueprintCatalogServiceReadme(props),
 }))
 
@@ -26,12 +54,14 @@ const blueprint: BlueprintItem = {
   majorVersions: [{ serviceVersion: '1', latestTag: 'aws/s3/1/1.0.0' }],
 }
 
+const deployPath = '/organization/org-1/project/project-1/environment/env-1/service/create/blueprint/aws/s3'
+
 describe('BlueprintDetailsPanel', () => {
   const useParamsMock = useParams as jest.MockedFunction<typeof useParams>
 
   beforeEach(() => {
     jest.useFakeTimers()
-    useParamsMock.mockReturnValue({ organizationId: 'org-1' })
+    useParamsMock.mockReturnValue({ organizationId: 'org-1', projectId: 'project-1', environmentId: 'env-1' })
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({
       data: {
         content: '# AWS S3 Bucket\n\nBlueprint documentation\n\n- Versioning',
@@ -64,6 +94,8 @@ describe('BlueprintDetailsPanel', () => {
       'href',
       'https://github.com/qovery-blueprints/s3'
     )
+    expect(within(dialog).getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
+    expect(within(dialog).getByRole('link', { name: 'Deploy blueprint' })).toHaveAttribute('href', deployPath)
     expect(mockUseBlueprintCatalogServiceReadme).toHaveBeenCalledWith({
       organizationId: 'org-1',
       provider: 'aws',
@@ -95,6 +127,27 @@ describe('BlueprintDetailsPanel', () => {
     expect(within(dialog).queryByRole('link', { name: /qovery-blueprints\/s3/i })).not.toBeInTheDocument()
   })
 
+  it('should not render a deploy action when a blueprint has no service family', () => {
+    renderWithProviders(
+      <BlueprintDetailsPanel
+        blueprint={{ ...blueprint, serviceFamily: undefined }}
+        open
+        onOpenChange={jest.fn()}
+        onExitComplete={jest.fn()}
+      />
+    )
+
+    const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
+
+    expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
+    expect(mockUseBlueprintCatalogServiceReadme).toHaveBeenCalledWith(
+      expect.objectContaining({
+        provider: 'aws',
+        serviceFamily: '',
+      })
+    )
+  })
+
   it('should hide the version badge when the service version is default', () => {
     renderWithProviders(
       <BlueprintDetailsPanel
@@ -118,6 +171,29 @@ describe('BlueprintDetailsPanel', () => {
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    expect(onOpenChange).toHaveBeenCalledWith(false)
+  })
+
+  it('should render a close-only footer', async () => {
+    const onOpenChange = jest.fn()
+
+    const { userEvent } = renderWithProviders(
+      <BlueprintDetailsPanel
+        blueprint={blueprint}
+        footerMode="close"
+        open
+        onOpenChange={onOpenChange}
+        onExitComplete={jest.fn()}
+      />
+    )
+
+    const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
+
+    expect(within(dialog).queryByRole('button', { name: 'Cancel' })).not.toBeInTheDocument()
+    expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
+
+    await userEvent.click(within(dialog).getByRole('button', { name: 'Close' }))
 
     expect(onOpenChange).toHaveBeenCalledWith(false)
   })
