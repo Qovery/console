@@ -2,7 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
 import { useMemo } from 'react'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { Icon, Link } from '@qovery/shared/ui'
+import { Heading, Icon, Link, Section } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
 const SECRET_KEYS = [
@@ -28,7 +28,7 @@ export function SectionSecretManagerHighlight() {
   }
 
   return (
-    <section className="flex justify-center">
+    <Section className="flex justify-center">
       <div className="relative w-full overflow-hidden rounded-lg border border-neutral bg-surface-neutral text-neutral">
         <img
           src="/assets/images/mesh-light.svg"
@@ -51,9 +51,9 @@ export function SectionSecretManagerHighlight() {
 
         <div className="relative flex h-full flex-col items-center px-3 pb-3 pt-7">
           <div className="mb-3 flex flex-col items-center gap-7">
-            <h2 className="text-center font-brand text-xl font-medium leading-6 text-neutral">
+            <Heading level={2} className="text-center font-brand text-xl font-medium leading-6 text-neutral">
               Use your secret manager <br /> directly in Qovery
-            </h2>
+            </Heading>
             <div className="flex items-center gap-2">
               <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-white border-opacity-30 bg-white bg-opacity-30 dark:border-opacity-10 dark:bg-opacity-10">
                 <Icon name="AWS" width={24} height={24} />
@@ -106,7 +106,7 @@ export function SectionSecretManagerHighlight() {
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   )
 }
 
