@@ -16,7 +16,11 @@ function createCluster({
       {
         id: 'KARPENTER',
         value_object: {
+          type: 'KARPENTER',
           value: {
+            spot_enabled: true,
+            disk_size_in_gib: 50,
+            default_service_architecture: 'AMD64',
             qovery_node_pools: {
               requirements: [
                 {
@@ -126,7 +130,11 @@ describe('canChooseCpuArchitecture', () => {
             {
               id: 'KARPENTER',
               value_object: {
+                type: 'KARPENTER',
                 value: {
+                  spot_enabled: true,
+                  disk_size_in_gib: 50,
+                  default_service_architecture: 'AMD64',
                   qovery_node_pools: {
                     requirements: [],
                   },

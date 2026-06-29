@@ -1,33 +1,9 @@
+import { type CloudProvider, type Cluster, type ServiceTypeEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { getKarpenterFeatureValue } from '@qovery/domains/clusters/feature'
 
-type CpuArchitectureRequirement = {
-  key?: string
-  values?: string[]
-}
-
 type CpuArchitectureService = {
-  serviceType?: string
-}
-
-type CpuArchitectureCluster = {
-  cloud_provider?: string
-  region?: string
-  features?: Array<{
-    id?: string
-    value_object?: {
-      value?: unknown
-    } | null
-    value?: unknown
-  }>
-}
-
-type CpuArchitectureCloudProvider = {
-  short_name?: string
-  regions?: Array<{
-    name?: string
-    arm_supported?: boolean
-  }>
+  serviceType?: ServiceTypeEnum
 }
 
 export function canChooseCpuArchitecture({
@@ -36,12 +12,12 @@ export function canChooseCpuArchitecture({
   cloudProviders = [],
 }: {
   service?: CpuArchitectureService
-  cluster?: CpuArchitectureCluster
-  cloudProviders?: CpuArchitectureCloudProvider[]
+  cluster?: Cluster
+  cloudProviders?: CloudProvider[]
 }) {
   const karpenterValue = getKarpenterFeatureValue(cluster)
   const architectureRequirement = karpenterValue?.qovery_node_pools?.requirements?.find(
-    (requirement: CpuArchitectureRequirement) => requirement.key === 'Arch'
+    (requirement) => requirement.key === 'Arch'
   )
   const architectures = [...new Set(architectureRequirement?.values?.filter(Boolean) ?? [])]
   const clusterProvider = cluster?.cloud_provider

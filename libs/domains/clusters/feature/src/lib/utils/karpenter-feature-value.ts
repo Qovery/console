@@ -1,30 +1,8 @@
-export type KarpenterFeatureValue = {
-  qovery_node_pools?: {
-    gpu_override?: unknown
-    requirements?: Array<{
-      key?: string
-      values?: string[]
-    }>
-  }
-}
+import { type Cluster } from 'qovery-typescript-axios'
 
-type ClusterWithFeatures = {
-  features?: Array<{
-    id?: string
-    value_object?: {
-      value?: unknown
-    } | null
-    value?: unknown
-  }>
-}
-
-function isKarpenterFeatureValue(value: unknown): value is KarpenterFeatureValue {
-  return Boolean(value && typeof value === 'object' && 'qovery_node_pools' in value)
-}
-
-export function getKarpenterFeatureValue(cluster?: ClusterWithFeatures) {
+export function getKarpenterFeatureValue(cluster?: Cluster) {
   const karpenterFeature = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
-  const rawKarpenterValue = karpenterFeature?.value_object?.value ?? karpenterFeature?.value
+  const valueObject = karpenterFeature?.value_object
 
-  return isKarpenterFeatureValue(rawKarpenterValue) ? rawKarpenterValue : undefined
+  return valueObject?.type === 'KARPENTER' ? valueObject.value : undefined
 }
