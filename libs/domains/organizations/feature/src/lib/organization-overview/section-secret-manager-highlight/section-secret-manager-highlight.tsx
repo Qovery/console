@@ -1,9 +1,11 @@
 import { useParams } from '@tanstack/react-router'
 import { motion } from 'framer-motion'
+import { PlanEnum } from 'qovery-typescript-axios'
 import { useMemo } from 'react'
 import { useClusters } from '@qovery/domains/clusters/feature'
-import { Heading, Icon, Link, Section } from '@qovery/shared/ui'
-import { useLocalStorage } from '@qovery/shared/util-hooks'
+import { Button, Heading, Icon, Link, Section } from '@qovery/shared/ui'
+import { useLocalStorage, useSupportChat } from '@qovery/shared/util-hooks'
+import useOrganization from '../../hooks/use-organization/use-organization'
 
 const SECRET_KEYS = [
   ['AWS_SECRET_ACCESS_KEY', 'AWS_SESSION_TOKEN', 'AWS_REGION', 'AWS_ACCOUNT_ID'],
@@ -13,15 +15,29 @@ const SECRET_KEYS = [
 ]
 const SECRET_KEY_SEGMENTS = [0, 1, 2, 3]
 const SECRET_MANAGER_HIGHLIGHT_VISIBLE_KEY = 'secret-manager-highlight-visible'
+const SECRET_KEY_SCROLL_DURATION = 80
+
+function canUseSecretManager(plan?: string): boolean {
+  return (
+    plan === PlanEnum.BUSINESS ||
+    plan === PlanEnum.BUSINESS_2025 ||
+    plan === PlanEnum.ENTERPRISE ||
+    plan === PlanEnum.ENTERPRISE_YEARLY ||
+    plan === PlanEnum.ENTERPRISE_2025
+  )
+}
 
 export function SectionSecretManagerHighlight() {
   const { organizationId = '' } = useParams({ strict: false })
   const { data: clusters = [] } = useClusters({ organizationId })
+  const { data: organization } = useOrganization({ organizationId })
+  const { showPylonForm } = useSupportChat()
   const [isVisible, setIsVisible] = useLocalStorage(SECRET_MANAGER_HIGHLIGHT_VISIBLE_KEY, true)
 
   const getSecretManagerClusterId = useMemo(() => {
     return clusters.find((cluster) => cluster)?.id
   }, [clusters])
+  const isSecretManagerAvailable = canUseSecretManager(organization?.plan)
 
   if (!isVisible || !getSecretManagerClusterId) {
     return null
@@ -64,17 +80,30 @@ export function SectionSecretManagerHighlight() {
             </div>
           </div>
 
-          <Link
-            as="button"
-            to="/organization/$organizationId/cluster/$clusterId/settings/addons"
-            params={{ organizationId, clusterId: getSecretManagerClusterId ?? '' }}
-            color="brand"
-            variant="solid"
-            size="lg"
-            className="absolute bottom-3 z-10 w-[calc(100%-24px)] justify-center"
-          >
-            Install it on your cluster here
-          </Link>
+          {isSecretManagerAvailable ? (
+            <Link
+              as="button"
+              to="/organization/$organizationId/cluster/$clusterId/settings/addons"
+              params={{ organizationId, clusterId: getSecretManagerClusterId ?? '' }}
+              color="brand"
+              variant="solid"
+              size="lg"
+              className="absolute bottom-3 z-10 w-[calc(100%-24px)] justify-center"
+            >
+              Install it on your cluster here
+            </Link>
+          ) : (
+            <Button
+              type="button"
+              color="brand"
+              variant="solid"
+              size="lg"
+              className="absolute bottom-3 z-10 w-[calc(100%-24px)] justify-center"
+              onClick={() => showPylonForm('request-upgrade-plan')}
+            >
+              Contact us
+            </Button>
+          )}
 
           <div className="relative mb-5 flex w-[calc(100%+96px)] flex-col gap-1 overflow-hidden [-webkit-mask-composite:source-in] [-webkit-mask-image:linear-gradient(to_right,transparent_0%,black_24%,black_76%,transparent_100%),linear-gradient(to_bottom,black_0%,black_48%,transparent_100%)] [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%] [mask-composite:intersect] [mask-image:linear-gradient(to_right,transparent_0%,black_24%,black_76%,transparent_100%),linear-gradient(to_bottom,black_0%,black_48%,transparent_100%)] [mask-repeat:no-repeat] [mask-size:100%_100%]">
             {SECRET_KEYS.map((keys, index) => (
@@ -83,7 +112,7 @@ export function SectionSecretManagerHighlight() {
                 animate={{ x: index % 2 === 0 ? ['0%', '-25%'] : ['-25%', '0%'] }}
                 className="flex w-max whitespace-nowrap text-[8px] font-medium leading-4 text-neutral"
                 transition={{
-                  duration: 18 + index * 2,
+                  duration: SECRET_KEY_SCROLL_DURATION,
                   ease: 'linear',
                   repeat: Infinity,
                   repeatType: 'loop',
