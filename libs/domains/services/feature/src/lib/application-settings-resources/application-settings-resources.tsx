@@ -3,6 +3,7 @@ import posthog from 'posthog-js'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import {
@@ -52,6 +53,7 @@ export function ApplicationSettingsResources({
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId, suspense: true })
+  const { data: cloudProviders = [] } = useCloudProviders({ suspense: true })
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
   const isKedaCluster = Boolean(cluster?.keda?.enabled)
@@ -61,7 +63,7 @@ export function ApplicationSettingsResources({
   const environmentMode = environment?.mode
 
   const cloudProvider = environment?.cloud_provider.provider
-  const canChooseCpuArchitectureValue = canChooseCpuArchitecture({ service, cluster })
+  const canChooseCpuArchitectureValue = canChooseCpuArchitecture({ service, cluster, cloudProviders })
 
   const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 

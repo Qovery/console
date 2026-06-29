@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern'
 import { getKarpenterFeatureValue } from '@qovery/domains/clusters/feature'
 
 type CpuArchitectureRequirement = {
@@ -11,6 +12,7 @@ type CpuArchitectureService = {
 
 type CpuArchitectureCluster = {
   cloud_provider?: string
+  region?: string
   features?: Array<{
     id?: string
     value_object?: {
@@ -20,12 +22,22 @@ type CpuArchitectureCluster = {
   }>
 }
 
+type CpuArchitectureCloudProvider = {
+  short_name?: string
+  regions?: Array<{
+    name?: string
+    arm_supported?: boolean
+  }>
+}
+
 export function canChooseCpuArchitecture({
   service,
   cluster,
+  cloudProviders = [],
 }: {
   service?: CpuArchitectureService
   cluster?: CpuArchitectureCluster
+  cloudProviders?: CpuArchitectureCloudProvider[]
 }) {
   const karpenterValue = getKarpenterFeatureValue(cluster)
   const architectureRequirement = karpenterValue?.qovery_node_pools?.requirements?.find(
@@ -33,12 +45,17 @@ export function canChooseCpuArchitecture({
   )
   const architectures = [...new Set(architectureRequirement?.values?.filter(Boolean) ?? [])]
   const clusterProvider = cluster?.cloud_provider
-  const isSupportedCloudProvider = clusterProvider === 'GCP' || clusterProvider === 'AWS'
   const isSupportedServiceType =
     !service ||
     service.serviceType === 'APPLICATION' ||
     service.serviceType === 'CONTAINER' ||
     service.serviceType === 'JOB'
+  const gcpProvider = cloudProviders.find((provider) => provider.short_name === 'GCP')
+  const gcpClusterRegion = gcpProvider?.regions?.find((region) => region.name === cluster?.region)
+  const supportsMultipleArchitectures = match(clusterProvider)
+    .with('GCP', () => gcpClusterRegion?.arm_supported === true)
+    .with('AWS', () => architectures.length >= 2)
+    .otherwise(() => false)
 
-  return isSupportedCloudProvider && isSupportedServiceType && architectures.length >= 2
+  return isSupportedServiceType && supportsMultipleArchitectures
 }
