@@ -1,5 +1,5 @@
-import { type SignUpRequest, UserSignUpApi } from 'qovery-typescript-axios'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { type SignUpRequest, UserSignUpApi } from 'qovery-typescript-axios'
 import { queries } from '@qovery/state/util-queries'
 
 const usersSignUpApi = new UserSignUpApi()

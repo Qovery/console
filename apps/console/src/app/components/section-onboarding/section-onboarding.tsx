@@ -9,8 +9,8 @@ import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { useServiceStatuses, useServices } from '@qovery/domains/services/feature'
 import { IconEnum } from '@qovery/shared/enums'
-import { AnimatedGradientText, Button, Heading, Icon, Link, LogoIcon, useModal } from '@qovery/shared/ui'
 import { McpSuggestionCard } from '@qovery/shared/mcp-suggestion/feature'
+import { AnimatedGradientText, Button, Heading, Icon, Link, LogoIcon, useModal } from '@qovery/shared/ui'
 import { useLocalStorage, useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
 import { useOrganizationOnboarding, useUpdateOrganizationOnboarding } from './use-organization-onboarding'
@@ -40,7 +40,10 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const { mutate: updateOnboarding } = useUpdateOrganizationOnboarding({ organizationId })
 
   const { data: clusters = [], isLoading: isClustersLoading } = useClusters({ organizationId })
-  const { data: clusterStatuses = [], isLoading: isClusterStatusesLoading } = useClusterStatuses({ organizationId, refetchInterval: 3000 })
+  const { data: clusterStatuses = [], isLoading: isClusterStatusesLoading } = useClusterStatuses({
+    organizationId,
+    refetchInterval: 3000,
+  })
   const { data: projects = [] } = useProjects({ organizationId })
 
   const firstProject = projects[0]
@@ -83,7 +86,8 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   ]
   const hasService = services.length > 0
   const isServiceDeployed = allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYED)
-  const isServiceQueued = hasService && !isServiceDeployed && allServiceStatuses.some((s) => QUEUED_SERVICE_STATUSES.includes(s.state))
+  const isServiceQueued =
+    hasService && !isServiceDeployed && allServiceStatuses.some((s) => QUEUED_SERVICE_STATUSES.includes(s.state))
   const isServiceDeploying =
     hasService &&
     !isServiceDeployed &&
@@ -91,9 +95,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const deployingServiceStatus = allServiceStatuses.find((s) => ALL_DEPLOYING_SERVICE_STATUSES.includes(s.state))
   const isServiceFailed =
     !isServiceDeployed &&
-    allServiceStatuses.some(
-      (s) => s.state === StateEnum.DEPLOYMENT_ERROR || s.state === StateEnum.BUILD_ERROR
-    )
+    allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYMENT_ERROR || s.state === StateEnum.BUILD_ERROR)
   const failedServiceStatus = allServiceStatuses.find(
     (s) => s.state === StateEnum.DEPLOYMENT_ERROR || s.state === StateEnum.BUILD_ERROR
   )
@@ -281,9 +283,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
             </div>
             <div className="flex flex-col gap-1">
               <p className="text-sm font-medium text-neutral">You're all set!</p>
-              <p className="text-ssm text-neutral-subtle">
-                Your workspace is ready. Here's what you can explore next.
-              </p>
+              <p className="text-ssm text-neutral-subtle">Your workspace is ready. Here's what you can explore next.</p>
             </div>
             <div className="flex w-full flex-col gap-2">
               {hasEphemeralEnvironments && (
@@ -350,7 +350,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
 
       <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
         <div className="flex items-center gap-3 border-b border-neutral px-4 py-3">
-          <span className="font-code shrink-0 text-2xs uppercase text-neutral-subtle">Onboarding checklist</span>
+          <span className="shrink-0 font-code text-2xs uppercase text-neutral-subtle">Onboarding checklist</span>
           <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-neutral-component">
             <div
               className="h-full rounded-full bg-surface-positive-solid transition-all duration-500 ease-in-out"
@@ -420,10 +420,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
                   <Icon iconName="arrow-up-right" />
                 </Link>
               ) : (
-                <Icon
-                  iconName={clusterExpanded ? 'angle-up' : 'angle-down'}
-                  className="text-xs text-neutral-subtle"
-                />
+                <Icon iconName={clusterExpanded ? 'angle-up' : 'angle-down'} className="text-xs text-neutral-subtle" />
               )}
             </button>
 
@@ -463,7 +460,11 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
             <span
               className={clsx(
                 'flex-1 text-ssm',
-                hasEnvironment ? 'text-neutral-subtle line-through' : hasCluster ? 'text-neutral' : 'text-neutral-disabled'
+                hasEnvironment
+                  ? 'text-neutral-subtle line-through'
+                  : hasCluster
+                    ? 'text-neutral'
+                    : 'text-neutral-disabled'
               )}
             >
               Create my first environment
@@ -471,7 +472,13 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
             {hasEnvironment ? (
               <Icon iconName="circle-check" className="text-sm text-positive" />
             ) : (
-              <Button size="sm" color="neutral" variant="solid" disabled={!hasCluster} onClick={openCreateEnvironmentModal}>
+              <Button
+                size="sm"
+                color="neutral"
+                variant="solid"
+                disabled={!hasCluster}
+                onClick={openCreateEnvironmentModal}
+              >
                 <Icon iconName="circle-plus" />
                 New Environment
               </Button>
@@ -618,7 +625,12 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
             <div className={stepRowClass}>
               <Icon iconName="laptop-code" className={stepIconClass} />
               <span className="flex-1 text-ssm text-neutral">AI Builder Portal</span>
-              <Button size="sm" color="neutral" variant="solid" onClick={() => showPylonForm('request-ai-builder-portal')}>
+              <Button
+                size="sm"
+                color="neutral"
+                variant="solid"
+                onClick={() => showPylonForm('request-ai-builder-portal')}
+              >
                 <Icon iconName="wand-magic-sparkles" />
                 Ask for access
               </Button>
