@@ -1,11 +1,51 @@
+import { useNavigate } from '@tanstack/react-router'
 import { isValidElement } from 'react'
-import type { FC, HTMLAttributes, PropsWithChildren } from 'react'
+import type { AnchorHTMLAttributes, FC, HTMLAttributes, MouseEvent, PropsWithChildren, ReactNode } from 'react'
 import Markdown from 'react-markdown'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
 import { materialDark } from 'react-syntax-highlighter/dist/esm/styles/prism'
 import remarkGfm from 'remark-gfm'
-import { CopyToClipboardButtonIcon } from '@qovery/shared/ui'
+import { CopyToClipboardButtonIcon, ExternalLink } from '@qovery/shared/ui'
 import { MermaidChart } from '../mermaid-chart/mermaid-chart'
+
+function getInternalPath(href: string): string | null {
+  try {
+    const url = new URL(href)
+    if (url.hostname === window.location.hostname) {
+      return url.pathname + url.search + url.hash
+    }
+  } catch {
+    if (href.startsWith('/')) return href
+  }
+  return null
+}
+
+function MarkdownLink({ href, children }: AnchorHTMLAttributes<HTMLAnchorElement> & { children?: ReactNode }) {
+  const navigate = useNavigate()
+  const internalPath = href ? getInternalPath(href) : null
+
+  if (internalPath) {
+    // Using <a> over <Link> because TanStack Router's `to` only accepts statically known routes, not dynamic strings.
+    return (
+      <a
+        href={internalPath}
+        className="text-brand transition-colors hover:underline"
+        onClick={(e: MouseEvent<HTMLAnchorElement>) => {
+          e.preventDefault()
+          navigate({ to: internalPath })
+        }}
+      >
+        {children}
+      </a>
+    )
+  }
+
+  return (
+    <ExternalLink href={href} color="brand" underline withIcon={false}>
+      {children}
+    </ExternalLink>
+  )
+}
 
 type CodeProps = PropsWithChildren<{
   inline?: boolean
@@ -44,15 +84,7 @@ export const RenderMarkdown: FC<Props> = ({ children, ...props }) => (
       ul: ({ node, ...props }) => <ul className="my-3 list-disc space-y-1 pl-6" {...props} />,
       ol: ({ node, ...props }) => <ol className="my-3 list-decimal space-y-1 pl-6" {...props} />,
       li: ({ node, ...props }) => <li className="my-1" {...props} />,
-      a: ({ node, ...props }) => (
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          title={typeof children === 'string' ? children : undefined}
-          className="text-brand transition-colors hover:underline"
-          {...props}
-        />
-      ),
+      a: ({ node, ...props }) => <MarkdownLink {...props} />,
       pre: ({ node, children, ...props }) => {
         const codeContent = isValidElement(children) ? (children.props as { children?: string })?.children : null
 
