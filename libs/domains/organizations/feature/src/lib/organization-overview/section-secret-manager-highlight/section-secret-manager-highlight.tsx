@@ -59,7 +59,7 @@ export function SectionSecretManagerHighlight() {
                 <Icon name="AWS" width={24} height={24} />
               </span>
               <span className="flex h-10 w-10 items-center justify-center rounded-lg border border-white border-opacity-30 bg-white bg-opacity-30 text-brand dark:border-opacity-10 dark:bg-opacity-10">
-                <Icon name="GCP" width={24} height={24} />
+                <Icon name="GCP" width={22} height={22} />
               </span>
             </div>
           </div>
