@@ -1,8 +1,12 @@
-import { type Cluster } from 'qovery-typescript-axios'
+import { type Cluster, type ClusterFeatureKarpenterParameters } from 'qovery-typescript-axios'
+
+function isKarpenterFeatureValue(value: unknown): value is ClusterFeatureKarpenterParameters {
+  return Boolean(value && typeof value === 'object' && 'qovery_node_pools' in value)
+}
 
 export function getKarpenterFeatureValue(cluster?: Cluster) {
   const karpenterFeature = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
-  const valueObject = karpenterFeature?.value_object
+  const value = karpenterFeature?.value_object?.value
 
-  return valueObject?.type === 'KARPENTER' ? valueObject.value : undefined
+  return isKarpenterFeatureValue(value) ? value : undefined
 }

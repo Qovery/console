@@ -31,6 +31,29 @@ describe('getKarpenterFeatureValue', () => {
     })
   })
 
+  it('returns the Karpenter value when value_object has no type discriminator', () => {
+    expect(
+      getKarpenterFeatureValue({
+        features: [
+          {
+            id: 'KARPENTER',
+            value_object: {
+              value: {
+                qovery_node_pools: {
+                  gpu_override: true,
+                },
+              },
+            },
+          },
+        ],
+      })
+    ).toEqual({
+      qovery_node_pools: {
+        gpu_override: true,
+      },
+    })
+  })
+
   it('returns undefined when the feature value is not a Karpenter value object', () => {
     expect(
       getKarpenterFeatureValue({
