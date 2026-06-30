@@ -3,6 +3,7 @@ import posthog from 'posthog-js'
 import { useEffect, useRef } from 'react'
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
+import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { hasGpuInstance, useCluster } from '@qovery/domains/clusters/feature'
 import { type AnyService, type Database, type Helm } from '@qovery/domains/services/data-access'
 import {
@@ -20,8 +21,15 @@ import { loadHpaSettingsFromAdvancedSettings } from '@qovery/shared/util-service
 import { useEnvironment } from '../hooks/use-environment/use-environment'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { KedaSettings } from '../keda/components/keda-settings'
+import { canChooseCpuArchitecture } from './can-choose-cpu-architecture'
 import { FixedInstancesMode } from './fixed-instances-mode'
 import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
+
+const CPU_ARCHITECTURE_OPTIONS = [
+  { label: 'Default', value: 'DEFAULT' },
+  { label: 'ARM64', value: 'ARM64' },
+  { label: 'AMD64', value: 'AMD64' },
+]
 
 export interface ApplicationSettingsResourcesProps {
   displayWarningCpu: boolean
@@ -45,6 +53,7 @@ export function ApplicationSettingsResources({
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: runningStatuses } = useRunningStatus({ environmentId, serviceId })
   const { data: cluster } = useCluster({ clusterId: environment?.cluster_id ?? '', organizationId, suspense: true })
+  const { data: cloudProviders = [] } = useCloudProviders({ suspense: true })
   const clusterFeatureKarpenter = cluster?.features?.find((f) => f.id === 'KARPENTER')
   const isKarpenterCluster = Boolean(clusterFeatureKarpenter)
   const isKedaCluster = Boolean(cluster?.keda?.enabled)
@@ -54,6 +63,11 @@ export function ApplicationSettingsResources({
   const environmentMode = environment?.mode
 
   const cloudProvider = environment?.cloud_provider.provider
+  const serviceType = service?.serviceType ?? watch('serviceType')
+  const canChooseCpuArchitectureValue = canChooseCpuArchitecture({ serviceType, cluster, cloudProviders })
+
+  console.log('serviceType', serviceType)
+  console.log('canChooseCpuArchitectureValue', canChooseCpuArchitectureValue)
 
   const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 
@@ -259,6 +273,21 @@ export function ApplicationSettingsResources({
             />
           )}
         />
+        {canChooseCpuArchitectureValue && (
+          <Controller
+            name="cpu_architecture"
+            control={control}
+            render={({ field }) => (
+              <InputSelect
+                label="CPU architecture"
+                options={CPU_ARCHITECTURE_OPTIONS}
+                hint="Select which node CPU architecture this workload can run on"
+                onChange={field.onChange}
+                value={field.value || 'DEFAULT'}
+              />
+            )}
+          />
+        )}
         {isKarpenterCluster && (
           <Controller
             name="gpu"

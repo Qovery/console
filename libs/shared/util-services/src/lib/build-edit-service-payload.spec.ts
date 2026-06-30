@@ -31,6 +31,7 @@ describe('testing payload refactoring', () => {
       },
       name: 'hello-2',
       healthchecks: {},
+      cpu_architecture: 'ARM64',
       environment: {
         id: '1',
       },
@@ -57,6 +58,7 @@ describe('testing payload refactoring', () => {
       },
       healthchecks: {},
       name: 'hello-2',
+      cpu_architecture: 'ARM64',
     })
   })
 
@@ -104,6 +106,7 @@ describe('testing payload refactoring', () => {
       },
       image_name: 'image_name',
       healthchecks: {},
+      cpu_architecture: null,
     }
 
     expect(buildEditServicePayload({ service: response })).toEqual({
@@ -133,6 +136,7 @@ describe('testing payload refactoring', () => {
       auto_preview: false,
       healthchecks: {},
       auto_deploy: false,
+      cpu_architecture: null,
     })
   })
 
@@ -220,6 +224,7 @@ describe('testing payload refactoring', () => {
       maximum_cpu: 10,
       maximum_memory: 10,
       maximum_gpu: 0,
+      cpu_architecture: 'AMD64',
     }
 
     expect(buildEditServicePayload({ service: job })).toEqual({
@@ -235,6 +240,7 @@ describe('testing payload refactoring', () => {
       port: null,
       max_nb_restart: 0,
       healthchecks: {},
+      cpu_architecture: 'AMD64',
       source: {
         docker: {
           dockerfile_path: 'Dockerfile',

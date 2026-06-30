@@ -172,6 +172,7 @@ function refactoApplication({ service: application, request = {} }: applicationP
     entrypoint: application.entrypoint,
     arguments: application.arguments,
     autoscaling,
+    ...('cpu_architecture' in application ? { cpu_architecture: application.cpu_architecture } : {}),
     ...cleanedRequest,
   }
 }
@@ -199,6 +200,7 @@ function refactoContainer({ service: container, request = {} }: containerProps):
     auto_deploy: container.auto_deploy,
     healthchecks: container.healthchecks,
     autoscaling,
+    ...('cpu_architecture' in container ? { cpu_architecture: container.cpu_architecture } : {}),
     ...cleanedRequest,
   }
 }
@@ -218,6 +220,7 @@ function refactoJob({ service: job, request = {} }: jobProps): JobRequest {
     max_nb_restart: job.max_nb_restart,
     schedule: job.schedule,
     healthchecks: job.healthchecks ?? {},
+    ...('cpu_architecture' in job ? { cpu_architecture: job.cpu_architecture } : {}),
     source: {},
   }
 

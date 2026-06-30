@@ -77,4 +77,5 @@ export * from './lib/hooks/use-secret-manager-associated-services/use-secret-man
 export * from './lib/hooks/use-secret-manager-provider-secrets/use-secret-manager-provider-secrets'
 export * from './lib/gpu-resources-settings/gpu-resources-settings'
 export * from './lib/utils/has-gpu-instance'
+export * from './lib/utils/karpenter-feature-value'
 export * from './lib/cluster-resources-settings/cluster-resources-settings'
