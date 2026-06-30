@@ -2,7 +2,7 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Link as RouterLink } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { ClusterStateEnum, StateEnum } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { type SVGAttributes, useEffect, useRef, useState } from 'react'
 import { ClusterInstallationGuideModal, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal, useDeploymentRule, useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
@@ -30,6 +30,229 @@ export interface SectionOnboardingProps {
   organizationId: string
 }
 
+const COMPLETION_ILLUSTRATION_ROW_TONES = [
+  '366333336963333366366333336963333366366333336963333366',
+  '369633333663366333336963333366336633333696333336633663333',
+  '366336633333696333366336633333696333366336633333696333',
+  '333336963333366336633333696333336633663333369633333663366',
+  '333336633663333369333336633663333369333336633663333369',
+  '336633333636333336633663333363633333663366333336363333366',
+  '366333336963333366336633333696333336633663333369633333663',
+  '696333336633663333696333336633663333696333336633663333',
+  '366336633333696333333663366333336963333336633663333369633333',
+  '333369633333663366333336963333366336633333696333336633663',
+  '333336633663333369633333366336633333696333333663366333336963',
+  '366333336963333366366333336963333366366333336963333366',
+  '369633333663366333336963333366336633333696333336633663333',
+  '366336633333696333366336633333696333366336633333696333',
+  '333336963333366336633333696333336633663333369633333663366',
+  '333336633663333369333336633663333369333336633663333369',
+  '336633333636333336633663333363633333663366333336363333366',
+] as const
+
+const COMPLETION_ILLUSTRATION_HEX_FILL = {
+  3: 'var(--positive-3)',
+  6: 'var(--positive-6)',
+  9: 'var(--positive-9)',
+} as const
+
+type CompletionIllustrationHexTone = keyof typeof COMPLETION_ILLUSTRATION_HEX_FILL
+
+const COMPLETION_ILLUSTRATION_HEX_GAP = 10.5
+const COMPLETION_ILLUSTRATION_HEX_PATH = 'M0 0L3.89711 2.25V6.75L0 9L-3.89711 6.75V2.25L0 0Z'
+const COMPLETION_ILLUSTRATION_HEX_COLUMN_COUNT = 50
+const COMPLETION_ILLUSTRATION_HEX_HALF_WIDTH = 3.89711
+const COMPLETION_ILLUSTRATION_HEX_HEIGHT = 9
+const COMPLETION_ILLUSTRATION_ROW_START_Y = -5
+const COMPLETION_ILLUSTRATION_ROW_GAP = 9
+const COMPLETION_ILLUSTRATION_ROW_OFFSET = {
+  even: -13.25,
+  odd: -8,
+} as const
+
+const COMPLETION_ILLUSTRATION_PATTERN_MIN_X = Math.floor(
+  Math.min(COMPLETION_ILLUSTRATION_ROW_OFFSET.even, COMPLETION_ILLUSTRATION_ROW_OFFSET.odd) -
+    COMPLETION_ILLUSTRATION_HEX_HALF_WIDTH
+)
+const COMPLETION_ILLUSTRATION_PATTERN_MAX_X = Math.ceil(
+  Math.max(COMPLETION_ILLUSTRATION_ROW_OFFSET.even, COMPLETION_ILLUSTRATION_ROW_OFFSET.odd) +
+    (COMPLETION_ILLUSTRATION_HEX_COLUMN_COUNT - 1) * COMPLETION_ILLUSTRATION_HEX_GAP +
+    COMPLETION_ILLUSTRATION_HEX_HALF_WIDTH
+)
+const COMPLETION_ILLUSTRATION_PATTERN_MAX_Y =
+  COMPLETION_ILLUSTRATION_ROW_START_Y +
+  (COMPLETION_ILLUSTRATION_ROW_TONES.length - 1) * COMPLETION_ILLUSTRATION_ROW_GAP +
+  COMPLETION_ILLUSTRATION_HEX_HEIGHT
+const COMPLETION_ILLUSTRATION_PATTERN_BOUNDS = {
+  x: COMPLETION_ILLUSTRATION_PATTERN_MIN_X,
+  y: COMPLETION_ILLUSTRATION_ROW_START_Y,
+  width: COMPLETION_ILLUSTRATION_PATTERN_MAX_X - COMPLETION_ILLUSTRATION_PATTERN_MIN_X,
+  height: COMPLETION_ILLUSTRATION_PATTERN_MAX_Y - COMPLETION_ILLUSTRATION_ROW_START_Y,
+} as const
+
+const COMPLETION_ILLUSTRATION_ROWS = COMPLETION_ILLUSTRATION_ROW_TONES.map((tones, index) => ({
+  x: index % 2 === 0 ? COMPLETION_ILLUSTRATION_ROW_OFFSET.even : COMPLETION_ILLUSTRATION_ROW_OFFSET.odd,
+  y: COMPLETION_ILLUSTRATION_ROW_START_Y + index * COMPLETION_ILLUSTRATION_ROW_GAP,
+  tones,
+}))
+
+function CompletionPartyHornIllustration({ className, ...props }: SVGAttributes<SVGSVGElement>) {
+  return (
+    <svg
+      aria-hidden
+      className={twMerge('h-36 w-full overflow-hidden', className)}
+      viewBox="0 0 488 148"
+      preserveAspectRatio="xMidYMin slice"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      {...props}
+    >
+      <defs>
+        <mask
+          id="completion-party-horn-pattern-mask"
+          maskUnits="userSpaceOnUse"
+          x={COMPLETION_ILLUSTRATION_PATTERN_BOUNDS.x}
+          y={COMPLETION_ILLUSTRATION_PATTERN_BOUNDS.y}
+          width={COMPLETION_ILLUSTRATION_PATTERN_BOUNDS.width}
+          height={COMPLETION_ILLUSTRATION_PATTERN_BOUNDS.height}
+          style={{ maskType: 'alpha' }}
+        >
+          <rect {...COMPLETION_ILLUSTRATION_PATTERN_BOUNDS} fill="url(#completion-party-horn-paint-0)" />
+          <rect {...COMPLETION_ILLUSTRATION_PATTERN_BOUNDS} fill="url(#completion-party-horn-paint-1)" />
+          <rect {...COMPLETION_ILLUSTRATION_PATTERN_BOUNDS} fill="url(#completion-party-horn-paint-2)" />
+          <rect {...COMPLETION_ILLUSTRATION_PATTERN_BOUNDS} fill="url(#completion-party-horn-paint-3)" />
+          <rect {...COMPLETION_ILLUSTRATION_PATTERN_BOUNDS} fill="url(#completion-party-horn-paint-4)" />
+        </mask>
+        <radialGradient
+          id="completion-party-horn-paint-0"
+          cx="0"
+          cy="0"
+          r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(8.13334 88) rotate(35.743) scale(102.713 57.3123)"
+        >
+          <stop stopColor="#D9D9D9" />
+          <stop offset="1" stopColor="#737373" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient
+          id="completion-party-horn-paint-1"
+          cx="0"
+          cy="0"
+          r="1"
+          gradientTransform="matrix(-45.5 63.5 -109.592 -10.0666 136 10.5)"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#D9D9D9" />
+          <stop offset="1" stopColor="#737373" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient
+          id="completion-party-horn-paint-2"
+          cx="0"
+          cy="0"
+          r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(432.5 7.5) rotate(139.764) scale(93.6617 109.413)"
+        >
+          <stop stopColor="#D9D9D9" />
+          <stop offset="0.931262" stopColor="#737373" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient
+          id="completion-party-horn-paint-3"
+          cx="0"
+          cy="0"
+          r="1"
+          gradientTransform="matrix(-32.5333 55.5 -9.70457 -51.6187 488 45.5)"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#D9D9D9" />
+          <stop offset="1" stopColor="#737373" stopOpacity="0" />
+        </radialGradient>
+        <radialGradient
+          id="completion-party-horn-paint-4"
+          cx="0"
+          cy="0"
+          r="1"
+          gradientUnits="userSpaceOnUse"
+          gradientTransform="translate(267.5 -53.5) rotate(69.1748) scale(87.1966 148.017)"
+        >
+          <stop />
+          <stop offset="1" stopOpacity="0" />
+        </radialGradient>
+        <filter
+          id="completion-party-horn-shadow"
+          x="-4.21224"
+          y="-4.33333"
+          width="72.6081"
+          height="72.6087"
+          filterUnits="userSpaceOnUse"
+          colorInterpolationFilters="sRGB"
+        >
+          <feFlood floodOpacity="0" result="BackgroundImageFix" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlpha"
+          />
+          <feOffset />
+          <feGaussianBlur stdDeviation="2.66667" />
+          <feComposite in2="hardAlpha" operator="out" result="outerShadowAlpha" />
+          <feFlood floodColor="currentColor" floodOpacity="0.2" result="outerShadowColor" />
+          <feComposite in="outerShadowColor" in2="outerShadowAlpha" operator="in" result="outerShadow" />
+          <feBlend mode="normal" in="outerShadow" in2="BackgroundImageFix" result="effect1_dropShadow" />
+          <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlphaInnerDark"
+          />
+          <feOffset dy="-1.33333" />
+          <feGaussianBlur stdDeviation="1.33333" />
+          <feComposite in2="hardAlphaInnerDark" operator="arithmetic" k2="-1" k3="1" />
+          <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.16 0" />
+          <feBlend mode="normal" in2="shape" result="effect2_innerShadow" />
+          <feColorMatrix
+            in="SourceAlpha"
+            type="matrix"
+            values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+            result="hardAlphaInnerLight"
+          />
+          <feOffset dy="1.33333" />
+          <feGaussianBlur stdDeviation="0.666667" />
+          <feComposite in2="hardAlphaInnerLight" operator="arithmetic" k2="-1" k3="1" />
+          <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0" />
+          <feBlend mode="normal" in2="effect2_innerShadow" result="effect3_innerShadow" />
+        </filter>
+      </defs>
+
+      <g mask="url(#completion-party-horn-pattern-mask)">
+        {COMPLETION_ILLUSTRATION_ROWS.map((row) =>
+          Array.from({ length: COMPLETION_ILLUSTRATION_HEX_COLUMN_COUNT }).map((_, index) => {
+            const tone = Number(row.tones[index % row.tones.length]) as CompletionIllustrationHexTone
+
+            return (
+              <path
+                key={`${row.y}-${index}`}
+                d={COMPLETION_ILLUSTRATION_HEX_PATH}
+                fill={COMPLETION_ILLUSTRATION_HEX_FILL[tone]}
+                transform={`translate(${row.x + index * COMPLETION_ILLUSTRATION_HEX_GAP} ${row.y})`}
+              />
+            )
+          })
+        )}
+      </g>
+
+      <g className="text-positive" filter="url(#completion-party-horn-shadow)" transform="translate(212 42)">
+        <path
+          d="M5.06256 4C5.06256 3.20435 5.37863 2.44129 5.94124 1.87868C6.50385 1.31607 7.26691 1 8.06256 1C8.85821 1 9.62128 1.31607 10.1839 1.87868C10.7465 2.44129 11.0626 3.20435 11.0626 4C11.0626 4.79565 10.7465 5.55871 10.1839 6.12132C9.62128 6.68393 8.85821 7 8.06256 7C7.26691 7 6.50385 6.68393 5.94124 6.12132C5.37863 5.55871 5.06256 4.79565 5.06256 4ZM57.0626 20C57.0626 19.2044 57.3786 18.4413 57.9412 17.8787C58.5039 17.3161 59.2669 17 60.0626 17C60.8582 17 61.6213 17.3161 62.1839 17.8787C62.7465 18.4413 63.0626 19.2044 63.0626 20C63.0626 20.7957 62.7465 21.5587 62.1839 22.1213C61.6213 22.6839 60.8582 23 60.0626 23C59.2669 23 58.5039 22.6839 57.9412 22.1213C57.3786 21.5587 57.0626 20.7957 57.0626 20ZM60.0626 53C60.8582 53 61.6213 53.3161 62.1839 53.8787C62.7465 54.4413 63.0626 55.2044 63.0626 56C63.0626 56.7957 62.7465 57.5587 62.1839 58.1213C61.6213 58.6839 60.8582 59 60.0626 59C59.2669 59 58.5039 58.6839 57.9412 58.1213C57.3786 57.5587 57.0626 56.7957 57.0626 56C57.0626 55.2044 57.3786 54.4413 57.9412 53.8787C58.5039 53.3161 59.2669 53 60.0626 53ZM59.4751 4.5875C60.2501 5.3625 60.2501 6.6375 59.4751 7.4125L57.1001 9.7875C55.6876 11.2 53.7626 12 51.7626 12H50.3876C48.6376 12 47.4126 13.7125 47.9626 15.3625C49.3751 19.6125 46.2126 24 41.7376 24H40.3626C39.4251 24 38.5126 24.375 37.8501 25.0375L35.4751 27.4125C34.7001 28.1875 33.4251 28.1875 32.6501 27.4125C31.8751 26.6375 31.8751 25.3625 32.6501 24.5875L35.0251 22.2125C36.4376 20.8 38.3626 20 40.3626 20H41.7376C43.4876 20 44.7126 18.2875 44.1626 16.6375C42.7501 12.3875 45.9126 8 50.3876 8H51.7626C52.7001 8 53.6126 7.625 54.2751 6.9625L56.6501 4.5875C57.4251 3.8125 58.7001 3.8125 59.4751 4.5875ZM30.0626 4V7.025C30.0626 10.7375 28.5876 14.3 25.9626 16.925L23.4751 19.4125C22.7001 20.1875 21.4251 20.1875 20.6501 19.4125C19.8751 18.6375 19.8751 17.3625 20.6501 16.5875L23.1376 14.1C25.0126 12.225 26.0626 9.675 26.0626 7.025V4C26.0626 2.9 26.9626 2 28.0626 2C29.1626 2 30.0626 2.9 30.0626 4ZM11.1626 26.5375C12.0626 23.675 15.6876 22.7875 17.8001 24.9125L39.1501 46.2625C41.2751 48.3875 40.3876 52 37.5251 52.9L6.33756 62.75C3.25006 63.725 0.337565 60.825 1.31256 57.725L11.1626 26.5375ZM36.3126 49.0875L14.9751 27.75L12.9751 34.0875L13.4751 34.5875L29.4751 50.5875L29.9751 51.0875L36.3126 49.0875ZM25.6751 52.45L11.6126 38.3875L9.12506 46.25L9.46256 46.5875L17.4626 54.5875L17.8001 54.925L25.6626 52.4375L25.6751 52.45ZM5.12506 58.9375L13.5126 56.2875L7.77506 50.55L5.12506 58.9375ZM62.0626 36C62.0626 37.1 61.1626 38 60.0626 38H57.0376C54.3876 38 51.8376 39.05 49.9626 40.925L47.4751 43.4125C46.7001 44.1875 45.4251 44.1875 44.6501 43.4125C43.8751 42.6375 43.8751 41.3625 44.6501 40.5875L47.1376 38.1C49.7626 35.475 53.3251 34 57.0376 34H60.0626C61.1626 34 62.0626 34.9 62.0626 36Z"
+          fill="currentColor"
+        />
+      </g>
+    </svg>
+  )
+}
+
 export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const [localDismissed, setLocalDismissed] = useLocalStorage(`onboarding_section_dismissed_${organizationId}`, false)
   const { openModal, closeModal } = useModal()
@@ -51,6 +274,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const firstEnvironment = environments[0]
   const { data: services = [] } = useServices({ environmentId: firstEnvironment?.id })
   const { data: serviceStatuses } = useServiceStatuses({ environmentId: firstEnvironment?.id })
+  const completionModalOpenedRef = useRef(false)
 
   const isClusterDeployed = clusterStatuses.some((s) => s.status === ClusterStateEnum.DEPLOYED && s.is_deployed)
   const isClusterQueued =
@@ -137,11 +361,6 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
     updateOnboarding('DISMISSED')
   }
 
-  const complete = () => {
-    setLocalDismissed(true)
-    updateOnboarding('COMPLETED')
-  }
-
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
       options: { width: 500 },
@@ -165,13 +384,84 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
     })
   }
 
+  useEffect(() => {
+    if (
+      !organization ||
+      isOnboardingLoading ||
+      !onboarding?.use_cases ||
+      !allRequiredDone ||
+      isDismissed ||
+      completionModalOpenedRef.current
+    ) {
+      return
+    }
+
+    completionModalOpenedRef.current = true
+
+    openModal({
+      content: (
+        <div className="flex flex-col items-center pb-8 text-center">
+          <div className="mb-6 h-36 w-full">
+            <CompletionPartyHornIllustration />
+          </div>
+          <div className="mb-6 flex flex-col gap-1 px-6">
+            <p className="text-base font-medium text-neutral">You're all set!</p>
+            <p className="text-sm text-neutral-subtle">
+              Your workspace is completely ready to use.
+              <br />
+              Here&apos;s what you can explore next.
+            </p>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-2 px-6">
+            {hasRde && (
+              <Button
+                type="button"
+                onClick={() => showPylonForm('request-ai-builder-portal')}
+                color="neutral"
+                variant="solid"
+                size="md"
+                className="gap-2"
+              >
+                <Icon iconName="wand-magic-sparkles" />
+                AI portal access
+              </Button>
+            )}
+            <Link
+              as="button"
+              to="/organization/$organizationId/settings/members"
+              params={{ organizationId }}
+              color="neutral"
+              variant={hasRde ? 'outline' : 'solid'}
+              size="md"
+              className="gap-2"
+            >
+              <Icon iconName="user-plus" />
+              Invite team
+            </Link>
+          </div>
+        </div>
+      ),
+    })
+  }, [
+    allRequiredDone,
+    hasRde,
+    isDismissed,
+    isOnboardingLoading,
+    onboarding?.use_cases,
+    openModal,
+    organization,
+    organizationId,
+    showPylonForm,
+  ])
+
   if (!organization || isOnboardingLoading) return null
   if (!onboarding?.use_cases) return null
 
   if (isDismissed) return null
+  if (allRequiredDone) return null
 
-  const stepRowClass = 'flex items-center gap-3 px-4 py-3'
-  const stepIconClass = 'w-4 text-center text-ssm text-neutral-subtle'
+  const stepRowClass = 'flex h-[52px] items-center gap-2 px-4 py-3'
+  const stepIconClass = 'w-4 text-center text-sm text-neutral-subtle'
 
   const CLUSTERS_OPTIONS = [
     {
@@ -272,60 +562,6 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
     </>
   )
 
-  if (allRequiredDone) {
-    return (
-      <div className="flex flex-col gap-3">
-        <Heading level={2}>Getting started</Heading>
-        <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-          <div className="flex flex-col items-center gap-4 px-6 py-8 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-positive-subtle">
-              <Icon iconName="party-horn" className="text-xl text-positive" />
-            </div>
-            <div className="flex flex-col gap-1">
-              <p className="text-sm font-medium text-neutral">You're all set!</p>
-              <p className="text-ssm text-neutral-subtle">Your workspace is ready. Here's what you can explore next.</p>
-            </div>
-            <div className="flex w-full flex-col gap-2">
-              {hasEphemeralEnvironments && (
-                <a
-                  href="https://www.qovery.com/docs/getting-started/guides/use-cases/preview-environments"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2.5 text-left text-ssm text-neutral transition-colors hover:bg-surface-neutral-component"
-                >
-                  <Icon iconName="circle-check" className="shrink-0 text-sm text-positive" />
-                  <span className="flex-1">Check how preview environments are working</span>
-                  <Icon iconName="arrow-up-right-from-square" className="shrink-0 text-xs text-neutral-subtle" />
-                </a>
-              )}
-              {hasRde && (
-                <button
-                  type="button"
-                  onClick={() => showPylonForm('request-ai-builder-portal')}
-                  className="flex items-center gap-2 rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2.5 text-left text-ssm text-neutral transition-colors hover:bg-surface-neutral-component"
-                >
-                  <Icon iconName="wand-magic-sparkles" className="shrink-0 text-sm text-neutral-subtle" />
-                  <span className="flex-1">Ask for AI Builder Portal access</span>
-                </button>
-              )}
-              <RouterLink
-                to="/organization/$organizationId/settings/members"
-                params={{ organizationId }}
-                className="flex items-center gap-2 rounded-md border border-neutral bg-surface-neutral-subtle px-3 py-2.5 text-left text-ssm text-neutral transition-colors hover:bg-surface-neutral-component"
-              >
-                <Icon iconName="user-plus" className="shrink-0 text-sm text-neutral-subtle" />
-                <span className="flex-1">Invite team members</span>
-              </RouterLink>
-            </div>
-            <Button color="neutral" variant="outline" size="sm" onClick={complete}>
-              Close
-            </Button>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
@@ -349,21 +585,23 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
       )}
 
       <div className="overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-        <div className="flex items-center gap-3 border-b border-neutral px-4 py-3">
-          <span className="shrink-0 font-code text-2xs uppercase text-neutral-subtle">Onboarding checklist</span>
-          <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-neutral-component">
+        <div className="flex h-12 items-center gap-4 border-b border-neutral bg-surface-neutral-subtle px-4 py-3">
+          <span className="shrink-0 font-code text-xs uppercase text-neutral">Onboarding checklist</span>
+          <div className="h-1 flex-1 overflow-hidden rounded-[1px] bg-surface-neutral-componentHover">
             <div
-              className="h-full rounded-full bg-surface-positive-solid transition-all duration-500 ease-in-out"
+              className="h-full rounded-[1px] bg-surface-positive-solid shadow-[0_1px_1px_0_rgba(255,255,255,0.05)_inset,0_-1px_2px_0_rgba(0,0,0,0.16)_inset,0_0_4px_0_rgba(48,164,108,0.20)] transition-all duration-500 ease-in-out"
               style={{ width: `${progressPercent}%` }}
             />
           </div>
-          <span className="shrink-0 text-ssm font-medium text-neutral-subtle">{progressPercent}%</span>
+          <span className="shrink-0 font-code text-xs tabular-nums text-neutral-subtle">{progressPercent}%</span>
         </div>
 
         <div className="divide-y divide-neutral">
           <div className={stepRowClass}>
             <Icon iconName="bolt" className={stepIconClass} />
-            <span className="flex-1 text-ssm text-neutral-subtle line-through">Create and setup my workspace</span>
+            <span className="flex-1 text-sm font-medium text-neutral-subtle line-through">
+              Create and setup my workspace
+            </span>
             <Icon iconName="circle-check" className="text-sm text-positive" />
           </div>
 
@@ -379,7 +617,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
               <Icon iconName="cube" className={stepIconClass} />
               <span
                 className={clsx(
-                  'flex-1 text-ssm',
+                  'flex-1 text-sm font-medium',
                   isClusterDeployed ? 'text-neutral-subtle line-through' : 'text-neutral'
                 )}
               >
@@ -459,42 +697,36 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
             <Icon iconName="box" className={stepIconClass} />
             <span
               className={clsx(
-                'flex-1 text-ssm',
+                'flex-1 text-sm font-medium',
                 hasEnvironment
                   ? 'text-neutral-subtle line-through'
                   : hasCluster
                     ? 'text-neutral'
-                    : 'text-neutral-disabled'
+                    : 'text-neutral-subtle'
               )}
             >
               Create my first environment
             </span>
             {hasEnvironment ? (
               <Icon iconName="circle-check" className="text-sm text-positive" />
-            ) : (
-              <Button
-                size="sm"
-                color="neutral"
-                variant="solid"
-                disabled={!hasCluster}
-                onClick={openCreateEnvironmentModal}
-              >
+            ) : hasCluster ? (
+              <Button size="sm" color="neutral" variant="solid" onClick={openCreateEnvironmentModal}>
                 <Icon iconName="circle-plus" />
                 New Environment
               </Button>
-            )}
+            ) : null}
           </div>
 
           <div className={stepRowClass}>
             <Icon iconName="rocket" className={stepIconClass} />
             <span
               className={clsx(
-                'flex-1 text-ssm',
+                'flex-1 text-sm font-medium',
                 isServiceDeployed
                   ? 'text-neutral-subtle line-through'
                   : hasEnvironment
                     ? 'text-neutral'
-                    : 'text-neutral-disabled'
+                    : 'text-neutral-subtle'
               )}
             >
               Create and deploy my first application
@@ -571,12 +803,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
                 <Icon iconName="circle-plus" />
                 New Service
               </Link>
-            ) : (
-              <Button size="sm" color="neutral" variant="solid" disabled>
-                <Icon iconName="circle-plus" />
-                New Service
-              </Button>
-            )}
+            ) : null}
           </div>
 
           {hasEphemeralEnvironments && (
@@ -584,12 +811,12 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
               <Icon iconName="flask" className={stepIconClass} />
               <span
                 className={clsx(
-                  'flex-1 text-ssm',
+                  'flex-1 text-sm font-medium',
                   isPreviewEnabled
                     ? 'text-neutral-subtle line-through'
                     : isServiceDeployed
                       ? 'text-neutral'
-                      : 'text-neutral-disabled'
+                      : 'text-neutral-subtle'
                 )}
               >
                 Turn on preview environment
@@ -612,28 +839,14 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
                   <Icon iconName="gear" />
                   Configure
                 </Link>
-              ) : (
-                <Button size="sm" color="neutral" variant="solid" disabled>
-                  <Icon iconName="gear" />
-                  Configure
-                </Button>
-              )}
+              ) : null}
             </div>
           )}
 
           {hasRde && (
             <div className={stepRowClass}>
               <Icon iconName="laptop-code" className={stepIconClass} />
-              <span className="flex-1 text-ssm text-neutral">AI Builder Portal</span>
-              <Button
-                size="sm"
-                color="neutral"
-                variant="solid"
-                onClick={() => showPylonForm('request-ai-builder-portal')}
-              >
-                <Icon iconName="wand-magic-sparkles" />
-                Ask for access
-              </Button>
+              <span className="flex-1 text-sm font-medium text-neutral-subtle">AI Builder Portal</span>
             </div>
           )}
         </div>
