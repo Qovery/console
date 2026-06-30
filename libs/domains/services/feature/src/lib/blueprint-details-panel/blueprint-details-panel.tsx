@@ -8,6 +8,7 @@ import { Badge, Button, ExternalLink, Icon, Link, Sheet } from '@qovery/shared/u
 import { twMerge } from '@qovery/shared/util-js'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
+import { getServiceIcon } from '../service-icon/service-icon'
 
 function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) {
   return `qovery-blueprints/${serviceFamily || provider}`
@@ -155,6 +156,7 @@ function BlueprintDetailsPanelContent({
   const canDeploy = footerMode === 'deploy' && Boolean(blueprint.serviceFamily)
 
   const provider = formatCloudProvider(blueprint.provider)
+  const blueprintIcon = getServiceIcon(blueprint.icon)
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -170,7 +172,12 @@ function BlueprintDetailsPanelContent({
               <div className="mb-8 flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
                   <Dialog.Title className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral">
-                    <img className="h-8 w-8 rounded" src={blueprint.icon} alt={blueprint.name} aria-hidden="true" />
+                    <img
+                      className={twMerge('h-8 w-8 rounded', blueprintIcon.className)}
+                      src={blueprintIcon.icon}
+                      alt={blueprint.name}
+                      aria-hidden="true"
+                    />
                     <span>{blueprint.name}</span>
                   </Dialog.Title>
                   <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
