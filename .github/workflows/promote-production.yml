@@ -1,0 +1,162 @@
+name: Open production promotion PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "confirm" to open the production promotion PR'
+        required: true
+      auto_merge:
+        description: 'Enable auto-merge once branch protection requirements are met'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  checks: read
+  contents: write
+  pull-requests: write
+  statuses: read
+
+jobs:
+  open-promotion-pr:
+    name: Open staging to main PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate confirmation
+        if: ${{ inputs.confirm != 'confirm' }}
+        run: |
+          echo 'Invalid confirmation. Type "confirm" to open the production promotion PR.'
+          exit 1
+
+      - name: Check if staging has changes to promote
+        id: compare
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          ahead_by="$(gh api "repos/${REPOSITORY}/compare/main...staging" --jq '.ahead_by')"
+          echo "ahead_by=${ahead_by}" >> "$GITHUB_OUTPUT"
+
+          if [ "$ahead_by" = "0" ]; then
+            echo "staging is already aligned with main. Nothing to promote."
+          fi
+
+      - name: Find existing promotion PR
+        id: existing-pr
+        if: ${{ steps.compare.outputs.ahead_by != '0' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          pr_url="$(gh pr list \
+            --repo "$REPOSITORY" \
+            --base main \
+            --head staging \
+            --state open \
+            --json url \
+            --jq '.[0].url')"
+
+          echo "url=${pr_url}" >> "$GITHUB_OUTPUT"
+
+      - name: Create promotion PR
+        id: create-pr
+        if: ${{ steps.compare.outputs.ahead_by != '0' && steps.existing-pr.outputs.url == '' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          pr_body="$(printf '%s\n\n%s' \
+            'Opens the production promotion path from staging to main. Merging this PR triggers semantic-release, then the existing production deployment workflow.' \
+            'Do not squash this PR. Use a merge commit to preserve the original conventional commits for semantic-release.')"
+
+          pr_url="$(gh pr create \
+            --repo "$REPOSITORY" \
+            --base main \
+            --head staging \
+            --title "chore(release): promote staging to production" \
+            --body "$pr_body")"
+
+          echo "url=${pr_url}" >> "$GITHUB_OUTPUT"
+          echo "Created promotion PR: ${pr_url}"
+
+      - name: Wait for required CI checks
+        if: ${{ inputs.auto_merge && steps.compare.outputs.ahead_by != '0' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          EXISTING_PR_URL: ${{ steps.existing-pr.outputs.url }}
+          CREATED_PR_URL: ${{ steps.create-pr.outputs.url }}
+        run: |
+          set -euo pipefail
+
+          pr_url="${EXISTING_PR_URL:-$CREATED_PR_URL}"
+
+          for attempt in $(seq 1 60); do
+            set +e
+            checks="$(gh pr checks "$pr_url" \
+              --repo "$REPOSITORY" \
+              --json name,state,workflow \
+              --jq '[.[] | select(((.name // "") | ascii_downcase | contains("codecov") | not) and ((.workflow // "") | ascii_downcase | contains("codecov") | not))]')"
+            checks_exit_code="$?"
+            set -e
+
+            if [ "$checks_exit_code" != "0" ] && [ "$checks_exit_code" != "1" ] && [ "$checks_exit_code" != "8" ]; then
+              echo "Unable to read PR checks."
+              exit "$checks_exit_code"
+            fi
+
+            total_count="$(echo "$checks" | jq 'length')"
+            blocking_count="$(echo "$checks" | jq '[.[] | select(.state == "FAILURE" or .state == "CANCELLED" or .state == "SKIPPED" or .state == "TIMED_OUT")] | length')"
+            pending_count="$(echo "$checks" | jq '[.[] | select(.state == "PENDING" or .state == "QUEUED" or .state == "IN_PROGRESS" or .state == "WAITING" or .state == "REQUESTED")] | length')"
+
+            if [ "$blocking_count" != "0" ]; then
+              echo "A non-Codecov CI check failed. Production promotion is blocked."
+              echo "$checks" | jq -r '.[] | select(.state == "FAILURE" or .state == "CANCELLED" or .state == "SKIPPED" or .state == "TIMED_OUT") | "- \(.workflow): \(.name) [\(.state)]"'
+              exit 1
+            fi
+
+            if [ "$total_count" = "0" ]; then
+              echo "No non-Codecov CI checks found yet. Waiting before enabling auto-merge."
+            elif [ "$pending_count" = "0" ]; then
+              echo "All non-Codecov CI checks passed."
+              exit 0
+            fi
+
+            echo "Waiting for non-Codecov CI checks to finish. Attempt ${attempt}/60."
+            sleep 30
+          done
+
+          echo "Timed out waiting for non-Codecov CI checks."
+          exit 1
+
+      - name: Enable auto-merge
+        if: ${{ inputs.auto_merge && steps.compare.outputs.ahead_by != '0' }}
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          REPOSITORY: ${{ github.repository }}
+          EXISTING_PR_URL: ${{ steps.existing-pr.outputs.url }}
+          CREATED_PR_URL: ${{ steps.create-pr.outputs.url }}
+        run: |
+          pr_url="${EXISTING_PR_URL:-$CREATED_PR_URL}"
+
+          gh pr merge "$pr_url" \
+            --repo "$REPOSITORY" \
+            --auto \
+            --merge
+
+          echo "Auto-merge enabled for ${pr_url}"
+
+      - name: Summary
+        env:
+          AHEAD_BY: ${{ steps.compare.outputs.ahead_by }}
+          EXISTING_PR_URL: ${{ steps.existing-pr.outputs.url }}
+          CREATED_PR_URL: ${{ steps.create-pr.outputs.url }}
+        run: |
+          if [ "$AHEAD_BY" = "0" ]; then
+            echo "staging is already aligned with main. Nothing to promote." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+
+          pr_url="${EXISTING_PR_URL:-$CREATED_PR_URL}"
+          echo "Promotion PR: ${pr_url}" >> "$GITHUB_STEP_SUMMARY"
