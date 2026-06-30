@@ -183,7 +183,7 @@ describe('ClusterCard', () => {
       features: [
         {
           id: 'KARPENTER',
-          value_object: { value: { qovery_node_pools: { gpu_override: true } } },
+          value_object: { type: 'KARPENTER', value: { qovery_node_pools: { gpu_override: true } } },
         } as unknown as ClusterFeatureResponseValueObject,
       ],
     } as Cluster
