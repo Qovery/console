@@ -78,7 +78,7 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
           </div>
         )}
       />
-      {isQoveryAdminUser && cloudProvider === 'GCP' && <GkeKmsKey fromDetail={fromDetail} />}
+      {cloudProvider === 'GCP' && <GkeKmsKey fromDetail={fromDetail} />}
       {fromDetail && isQoveryAdminUser && (
         <>
           <Controller
