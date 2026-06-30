@@ -68,7 +68,7 @@ jobs:
         run: |
           pr_body="$(printf '%s\n\n%s' \
             'Opens the production promotion path from staging to main. Merging this PR triggers semantic-release, then the existing production deployment workflow.' \
-            'Do not squash this PR. Use a merge commit to preserve the original conventional commits for semantic-release.')"
+            'Do not squash this PR. Use rebase merge to preserve the original conventional commits for semantic-release.')"
 
           pr_url="$(gh pr create \
             --repo "$REPOSITORY" \
@@ -143,7 +143,7 @@ jobs:
           gh pr merge "$pr_url" \
             --repo "$REPOSITORY" \
             --auto \
-            --merge
+            --rebase
 
           echo "Auto-merge enabled for ${pr_url}"
 
