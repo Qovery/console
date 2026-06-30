@@ -2,16 +2,12 @@ import { type CloudProvider, type Cluster, type ServiceTypeEnum } from 'qovery-t
 import { match } from 'ts-pattern'
 import { getKarpenterFeatureValue } from '@qovery/domains/clusters/feature'
 
-type CpuArchitectureService = {
-  serviceType?: ServiceTypeEnum
-}
-
 export function canChooseCpuArchitecture({
-  service,
+  serviceType,
   cluster,
   cloudProviders = [],
 }: {
-  service?: CpuArchitectureService
+  serviceType?: ServiceTypeEnum
   cluster?: Cluster
   cloudProviders?: CloudProvider[]
 }) {
@@ -22,10 +18,7 @@ export function canChooseCpuArchitecture({
   const architectures = [...new Set(architectureRequirement?.values?.filter(Boolean) ?? [])]
   const clusterProvider = cluster?.cloud_provider
   const isSupportedServiceType =
-    !service ||
-    service.serviceType === 'APPLICATION' ||
-    service.serviceType === 'CONTAINER' ||
-    service.serviceType === 'JOB'
+    serviceType === undefined || serviceType === 'APPLICATION' || serviceType === 'CONTAINER' || serviceType === 'JOB'
   const gcpProvider = cloudProviders.find((provider) => provider.short_name === 'GCP')
   const gcpClusterRegion = gcpProvider?.regions?.find((region) => region.name === cluster?.region)
   const supportsMultipleArchitectures = match(clusterProvider)

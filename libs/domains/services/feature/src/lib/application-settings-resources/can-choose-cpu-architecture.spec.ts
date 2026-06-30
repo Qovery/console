@@ -49,7 +49,7 @@ describe('canChooseCpuArchitecture', () => {
   it('allows AWS services when Karpenter supports multiple architectures', () => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
+        serviceType: 'APPLICATION',
         cluster: createCluster({ cloudProvider: 'AWS' }),
       })
     ).toBe(true)
@@ -58,7 +58,7 @@ describe('canChooseCpuArchitecture', () => {
   it('allows GCP services when the cluster region supports ARM', () => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
+        serviceType: 'APPLICATION',
         cluster: createCluster({ cloudProvider: 'GCP', region: 'europe-west9', architectures: [] }),
         cloudProviders: createCloudProviders({ gcpArmSupported: true }),
       })
@@ -68,7 +68,7 @@ describe('canChooseCpuArchitecture', () => {
   it('does not allow AWS services when Karpenter supports a single architecture', () => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
+        serviceType: 'APPLICATION',
         cluster: createCluster({ cloudProvider: 'AWS', architectures: ['AMD64'] }),
       })
     ).toBe(false)
@@ -77,7 +77,7 @@ describe('canChooseCpuArchitecture', () => {
   it('does not allow GCP services when the cluster region does not support ARM', () => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
+        serviceType: 'APPLICATION',
         cluster: createCluster({ cloudProvider: 'GCP', region: 'europe-west9', architectures: ['AMD64', 'ARM64'] }),
         cloudProviders: createCloudProviders({ gcpArmSupported: false }),
       })
@@ -87,7 +87,7 @@ describe('canChooseCpuArchitecture', () => {
   it('does not allow GCP services when the cluster region cannot be resolved', () => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
+        serviceType: 'APPLICATION',
         cluster: createCluster({ cloudProvider: 'GCP', region: 'us-east1', architectures: ['AMD64', 'ARM64'] }),
         cloudProviders: createCloudProviders({ gcpArmSupported: true }),
       })
@@ -105,7 +105,7 @@ describe('canChooseCpuArchitecture', () => {
   it('requires an AWS or GCP target cluster', () => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
+        serviceType: 'APPLICATION',
         cluster: createCluster({ cloudProvider: 'SCW' }),
       })
     ).toBe(false)
@@ -114,7 +114,7 @@ describe('canChooseCpuArchitecture', () => {
   it('requires Karpenter to support multiple architectures for AWS clusters', () => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
+        serviceType: 'APPLICATION',
         cluster: createCluster({ cloudProvider: 'AWS', architectures: [] }),
       })
     ).toBe(false)
@@ -123,7 +123,7 @@ describe('canChooseCpuArchitecture', () => {
   it('requires a Karpenter architecture requirement for AWS clusters', () => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType: 'APPLICATION' },
+        serviceType: 'APPLICATION',
         cluster: {
           cloud_provider: 'AWS',
           features: [
@@ -150,7 +150,7 @@ describe('canChooseCpuArchitecture', () => {
   it.each(['APPLICATION', 'CONTAINER', 'JOB'])('allows %s services', (serviceType) => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType },
+        serviceType,
         cluster: createCluster(),
       })
     ).toBe(true)
@@ -159,7 +159,7 @@ describe('canChooseCpuArchitecture', () => {
   it.each(['DATABASE', 'HELM', 'TERRAFORM'])('does not allow %s services', (serviceType) => {
     expect(
       canChooseCpuArchitecture({
-        service: { serviceType },
+        serviceType,
         cluster: createCluster(),
       })
     ).toBe(false)

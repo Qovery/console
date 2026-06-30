@@ -63,7 +63,11 @@ export function ApplicationSettingsResources({
   const environmentMode = environment?.mode
 
   const cloudProvider = environment?.cloud_provider.provider
-  const canChooseCpuArchitectureValue = canChooseCpuArchitecture({ service, cluster, cloudProviders })
+  const serviceType = service?.serviceType ?? watch('serviceType')
+  const canChooseCpuArchitectureValue = canChooseCpuArchitecture({ serviceType, cluster, cloudProviders })
+
+  console.log('serviceType', serviceType)
+  console.log('canChooseCpuArchitectureValue', canChooseCpuArchitectureValue)
 
   const maxMemoryBySize = service && 'maximum_memory' in service ? service.maximum_memory : 128000
 
