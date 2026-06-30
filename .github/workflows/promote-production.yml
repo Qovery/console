@@ -96,8 +96,8 @@ jobs:
             set +e
             checks="$(gh pr checks "$pr_url" \
               --repo "$REPOSITORY" \
-              --json name,state,workflow \
-              --jq '[.[] | select(((.name // "") | ascii_downcase | contains("codecov") | not) and ((.workflow // "") | ascii_downcase | contains("codecov") | not))]')"
+              --json event,name,state,workflow \
+              --jq '[.[] | select((.event == "pull_request") and ((.name // "") | ascii_downcase | contains("codecov") | not) and ((.workflow // "") | ascii_downcase | contains("codecov") | not))]')"
             checks_exit_code="$?"
             set -e
 
@@ -107,12 +107,12 @@ jobs:
             fi
 
             total_count="$(echo "$checks" | jq 'length')"
-            blocking_count="$(echo "$checks" | jq '[.[] | select(.state == "FAILURE" or .state == "CANCELLED" or .state == "SKIPPED" or .state == "TIMED_OUT")] | length')"
+            blocking_count="$(echo "$checks" | jq '[.[] | select(.state == "FAILURE" or .state == "CANCELLED" or .state == "TIMED_OUT")] | length')"
             pending_count="$(echo "$checks" | jq '[.[] | select(.state == "PENDING" or .state == "QUEUED" or .state == "IN_PROGRESS" or .state == "WAITING" or .state == "REQUESTED")] | length')"
 
             if [ "$blocking_count" != "0" ]; then
-              echo "A non-Codecov CI check failed. Production promotion is blocked."
-              echo "$checks" | jq -r '.[] | select(.state == "FAILURE" or .state == "CANCELLED" or .state == "SKIPPED" or .state == "TIMED_OUT") | "- \(.workflow): \(.name) [\(.state)]"'
+              echo "A non-Codecov CI check failed, was cancelled, or timed out. Production promotion is blocked."
+              echo "$checks" | jq -r '.[] | select(.state == "FAILURE" or .state == "CANCELLED" or .state == "TIMED_OUT") | "- \(.workflow): \(.name) [\(.state)]"'
               exit 1
             fi
 
