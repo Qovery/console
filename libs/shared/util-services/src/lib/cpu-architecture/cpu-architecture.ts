@@ -1,13 +1,20 @@
 import { type ApplicationResourcesData } from '@qovery/shared/interfaces'
 
-export type CpuArchitectureRequest = Exclude<ApplicationResourcesData['cpu_architecture'], 'DEFAULT' | undefined>
+export type CpuArchitectureFormValue = ApplicationResourcesData['cpu_architecture']
+export type CpuArchitectureRequest = Exclude<CpuArchitectureFormValue, 'DEFAULT' | undefined>
+
+export function getCpuArchitectureSummaryValue(
+  cpuArchitecture?: CpuArchitectureFormValue
+): CpuArchitectureRequest | undefined {
+  return cpuArchitecture && cpuArchitecture !== 'DEFAULT' ? cpuArchitecture : undefined
+}
 
 export function toCpuArchitectureRequest(
-  cpuArchitecture?: ApplicationResourcesData['cpu_architecture']
+  cpuArchitecture?: CpuArchitectureFormValue
 ): CpuArchitectureRequest | null | undefined {
   if (!cpuArchitecture) {
     return undefined
   }
 
-  return cpuArchitecture === 'DEFAULT' ? null : cpuArchitecture
+  return getCpuArchitectureSummaryValue(cpuArchitecture) ?? null
 }

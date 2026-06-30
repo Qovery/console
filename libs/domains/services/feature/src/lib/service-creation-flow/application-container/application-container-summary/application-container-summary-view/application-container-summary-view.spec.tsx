@@ -133,4 +133,27 @@ describe('ApplicationContainerSummaryView', () => {
     expect(screen.getByText('No variable declared')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Health checks' })).not.toBeInTheDocument()
   })
+
+  it('renders the selected CPU architecture when it is explicit', () => {
+    renderWithProviders(
+      <ApplicationContainerSummaryView
+        {...defaultProps}
+        resourcesData={{ ...defaultProps.resourcesData, cpu_architecture: 'ARM64' }}
+      />
+    )
+
+    expect(screen.getByText('CPU architecture:')).toBeInTheDocument()
+    expect(screen.getByText('ARM64')).toBeInTheDocument()
+  })
+
+  it('does not render CPU architecture when the default value is selected', () => {
+    renderWithProviders(
+      <ApplicationContainerSummaryView
+        {...defaultProps}
+        resourcesData={{ ...defaultProps.resourcesData, cpu_architecture: 'DEFAULT' }}
+      />
+    )
+
+    expect(screen.queryByText('CPU architecture:')).not.toBeInTheDocument()
+  })
 })

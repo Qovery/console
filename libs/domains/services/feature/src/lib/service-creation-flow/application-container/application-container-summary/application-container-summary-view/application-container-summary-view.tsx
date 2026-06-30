@@ -13,6 +13,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { Button, Heading, Icon, Section, SummaryValue, Tooltip, Truncate } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
+import { getCpuArchitectureSummaryValue } from '@qovery/shared/util-services'
 
 export interface ApplicationContainerSummaryViewProps {
   generalData: ApplicationGeneralData
@@ -77,6 +78,7 @@ export function ApplicationContainerSummaryView({
   const hasHealthchecks = Boolean(
     portsData.healthchecks?.item?.liveness_probe || portsData.healthchecks?.item?.readiness_probe
   )
+  const selectedCpuArchitecture = getCpuArchitectureSummaryValue(resourcesData.cpu_architecture)
 
   return (
     <Section className="space-y-10">
@@ -182,6 +184,7 @@ export function ApplicationContainerSummaryView({
                 .otherwise(() => 'Fixed')}
             />
             <SummaryValue label="GPU" value={resourcesData.gpu} />
+            {selectedCpuArchitecture && <SummaryValue label="CPU architecture" value={selectedCpuArchitecture} />}
           </ul>
         </Section>
 

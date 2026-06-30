@@ -1,4 +1,19 @@
-import { toCpuArchitectureRequest } from './cpu-architecture'
+import { getCpuArchitectureSummaryValue, toCpuArchitectureRequest } from './cpu-architecture'
+
+describe('getCpuArchitectureSummaryValue', () => {
+  it('should keep selected cpu architecture values', () => {
+    expect(getCpuArchitectureSummaryValue('ARM64')).toBe('ARM64')
+    expect(getCpuArchitectureSummaryValue('AMD64')).toBe('AMD64')
+  })
+
+  it('should omit default cpu architecture', () => {
+    expect(getCpuArchitectureSummaryValue('DEFAULT')).toBeUndefined()
+  })
+
+  it('should omit cpu architecture when the form value is missing', () => {
+    expect(getCpuArchitectureSummaryValue()).toBeUndefined()
+  })
+})
 
 describe('toCpuArchitectureRequest', () => {
   it('should keep selected cpu architecture values', () => {
