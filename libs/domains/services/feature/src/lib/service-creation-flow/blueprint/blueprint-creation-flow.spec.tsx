@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { within } from '@testing-library/react'
+import { act, within } from '@testing-library/react'
 import type { BlueprintItem, BlueprintManifestResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useState } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -14,6 +14,7 @@ const mockNavigate = jest.fn()
 const mockUseSearch = jest.fn()
 const mockUseBlueprintCatalogServiceManifest = jest.fn()
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
+const mockUseBlueprintServiceCreatedSocket = jest.fn()
 const mockCreateBlueprint = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
@@ -44,6 +45,10 @@ jest.mock('../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-cata
 
 jest.mock('../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
   useBlueprintCatalogServiceReadme: (props: unknown) => mockUseBlueprintCatalogServiceReadme(props),
+}))
+
+jest.mock('../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket', () => ({
+  useBlueprintServiceCreatedSocket: (props: unknown) => mockUseBlueprintServiceCreatedSocket(props),
 }))
 
 jest.mock('../../hooks/use-create-blueprint/use-create-blueprint', () => ({
@@ -393,6 +398,54 @@ describe('BlueprintCreationFlow', () => {
             is_secret: false,
           },
         ]),
+      },
+    })
+  })
+
+  it('should start listening for the blueprint service-created event before leaving the creation flow', async () => {
+    jest.useFakeTimers()
+
+    const { userEvent } = renderBlueprintFlow(
+      <FillFormValues>
+        <BlueprintStepSummary />
+      </FillFormValues>
+    )
+
+    await screen.findByText(/custom-postgres/)
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockUseBlueprintServiceCreatedSocket).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          organizationId: 'org-1',
+          projectId: 'proj-1',
+          environmentId: 'env-1',
+          enabled: true,
+        })
+      )
+    })
+    expect(mockNavigate).not.toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
+      },
+    })
+
+    const socketProps = mockUseBlueprintServiceCreatedSocket.mock.calls.at(-1)?.[0] as {
+      onServiceCreated: () => void
+    }
+    act(() => {
+      socketProps.onServiceCreated()
+    })
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
       },
     })
   })

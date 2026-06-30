@@ -1,8 +1,9 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { type ServiceCreateSection } from '@qovery/shared/router'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
+import { useBlueprintServiceCreatedSocket } from '../../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket'
 import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
@@ -26,6 +27,12 @@ export function BlueprintStepSummary() {
     setCurrentStep,
   } = useBlueprintCreateContext()
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)
+  const [serviceCreatedSubscription, setServiceCreatedSubscription] = useState<{
+    organizationId: string
+    projectId: string
+    environmentId: string
+  } | null>(null)
+  const hasHandledServiceCreatedRef = useRef(false)
   const { mutateAsync: createBlueprint } = useCreateBlueprint()
   const { fields, serviceName } = form.watch()
   const variableFields = [...requiredBlueprintFields, ...optionalBlueprintFields]
@@ -36,6 +43,36 @@ export function BlueprintStepSummary() {
   const handleEditSection = (section: ServiceCreateSection) => {
     navigate({ to: creationFlowUrl, search: { section } })
   }
+
+  const navigateToEnvironmentOverview = useCallback(() => {
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId,
+        projectId,
+        environmentId,
+      },
+    })
+  }, [environmentId, navigate, organizationId, projectId])
+
+  const handleBlueprintServiceCreated = useCallback(() => {
+    if (hasHandledServiceCreatedRef.current) {
+      return
+    }
+
+    hasHandledServiceCreatedRef.current = true
+    setServiceCreatedSubscription(null)
+    setSubmitMode(null)
+    navigateToEnvironmentOverview()
+  }, [navigateToEnvironmentOverview])
+
+  useBlueprintServiceCreatedSocket({
+    organizationId: serviceCreatedSubscription?.organizationId,
+    projectId: serviceCreatedSubscription?.projectId,
+    environmentId: serviceCreatedSubscription?.environmentId,
+    enabled: Boolean(serviceCreatedSubscription),
+    onServiceCreated: handleBlueprintServiceCreated,
+  })
 
   useEffect(() => {
     setCurrentStep(2)
@@ -50,6 +87,7 @@ export function BlueprintStepSummary() {
 
   const handleSubmit = async (withDeploy: boolean) => {
     setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')
+    hasHandledServiceCreatedRef.current = false
     const formValues = form.getValues()
 
     try {
@@ -69,17 +107,13 @@ export function BlueprintStepSummary() {
         selectedServiceSubType: blueprint.serviceFamily ?? blueprint.provider,
       })
 
-      navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
-        params: {
-          organizationId,
-          projectId,
-          environmentId,
-        },
+      setServiceCreatedSubscription({
+        organizationId,
+        projectId,
+        environmentId,
       })
     } catch {
       // errors are surfaced by mutation notifications
-    } finally {
       setSubmitMode(null)
     }
   }
