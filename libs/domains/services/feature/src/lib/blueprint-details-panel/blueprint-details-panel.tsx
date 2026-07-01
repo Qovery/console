@@ -170,16 +170,17 @@ function BlueprintDetailsPanelContent({
             <div className="flex-1 overflow-auto px-6 pb-24 pt-6">
               <div className="mb-8 flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
-                  <Dialog.Title className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral">
-                    <span aria-hidden="true">
-                      <ServiceAvatar
-                        className="h-8 w-8"
-                        radius="none"
-                        service={{ icon_uri: blueprint.icon, serviceType: 'APPLICATION' }}
-                        serviceAvatarRadius="sm"
-                        size="custom"
-                      />
-                    </span>
+                  <Dialog.Title
+                    aria-label={blueprint.name}
+                    className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral"
+                  >
+                    <ServiceAvatar
+                      className="h-8 w-8"
+                      radius="none"
+                      service={{ icon_uri: blueprint.icon, serviceType: 'APPLICATION' }}
+                      serviceAvatarRadius="sm"
+                      size="custom"
+                    />
                     <span>{blueprint.name}</span>
                   </Dialog.Title>
                   <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
