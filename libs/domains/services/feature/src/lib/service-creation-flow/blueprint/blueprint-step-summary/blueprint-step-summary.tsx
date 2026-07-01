@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
+import { type BlueprintCreateRequest } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { type ServiceCreateSection } from '@qovery/shared/router'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
@@ -27,12 +28,13 @@ export function BlueprintStepSummary() {
     setCurrentStep,
   } = useBlueprintCreateContext()
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)
-  const [serviceCreatedSubscription, setServiceCreatedSubscription] = useState<{
-    organizationId: string
-    projectId: string
-    environmentId: string
+  const [isWaitingForServiceCreated, setIsWaitingForServiceCreated] = useState(false)
+  const [pendingBlueprintCreation, setPendingBlueprintCreation] = useState<{
+    deploy: boolean
+    payload: BlueprintCreateRequest
   } | null>(null)
   const hasHandledServiceCreatedRef = useRef(false)
+  const hasStartedBlueprintCreationRef = useRef(false)
   const { mutateAsync: createBlueprint } = useCreateBlueprint()
   const { fields, serviceName } = form.watch()
   const variableFields = [...requiredBlueprintFields, ...optionalBlueprintFields]
@@ -61,16 +63,16 @@ export function BlueprintStepSummary() {
     }
 
     hasHandledServiceCreatedRef.current = true
-    setServiceCreatedSubscription(null)
+    setIsWaitingForServiceCreated(false)
     setSubmitMode(null)
     navigateToEnvironmentOverview()
   }, [navigateToEnvironmentOverview])
 
   useBlueprintServiceCreatedSocket({
-    organizationId: serviceCreatedSubscription?.organizationId,
-    projectId: serviceCreatedSubscription?.projectId,
-    environmentId: serviceCreatedSubscription?.environmentId,
-    enabled: Boolean(serviceCreatedSubscription),
+    organizationId,
+    projectId,
+    environmentId,
+    enabled: isWaitingForServiceCreated,
     onServiceCreated: handleBlueprintServiceCreated,
   })
 
@@ -85,37 +87,75 @@ export function BlueprintStepSummary() {
     }
   }, [creationFlowUrl, isBlueprintSetupValid, navigate, serviceName])
 
-  const handleSubmit = async (withDeploy: boolean) => {
-    setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')
-    hasHandledServiceCreatedRef.current = false
+  useEffect(() => {
+    if (!pendingBlueprintCreation || !isWaitingForServiceCreated || hasStartedBlueprintCreationRef.current) {
+      return
+    }
+
+    let shouldUpdateState = true
+    const blueprintCreation = pendingBlueprintCreation
+    hasStartedBlueprintCreationRef.current = true
+
+    async function createPendingBlueprint() {
+      try {
+        await createBlueprint({
+          environmentId,
+          deploy: blueprintCreation.deploy,
+          payload: blueprintCreation.payload,
+        })
+
+        if (!shouldUpdateState) {
+          return
+        }
+
+        posthog.capture('create-service', {
+          selectedServiceType: 'blueprint',
+          selectedServiceSubType: blueprint.serviceFamily ?? blueprint.provider,
+        })
+        setPendingBlueprintCreation(null)
+      } catch {
+        if (!shouldUpdateState) {
+          return
+        }
+
+        // errors are surfaced by mutation notifications
+        hasStartedBlueprintCreationRef.current = false
+        setPendingBlueprintCreation(null)
+        setIsWaitingForServiceCreated(false)
+        setSubmitMode(null)
+      }
+    }
+
+    createPendingBlueprint()
+
+    return () => {
+      shouldUpdateState = false
+    }
+  }, [
+    blueprint.provider,
+    blueprint.serviceFamily,
+    createBlueprint,
+    environmentId,
+    isWaitingForServiceCreated,
+    pendingBlueprintCreation,
+  ])
+
+  const handleSubmit = (withDeploy: boolean) => {
     const formValues = form.getValues()
 
-    try {
-      await createBlueprint({
-        environmentId,
-        deploy: withDeploy,
-        payload: {
-          name: formValues.serviceName,
-          tag: blueprint.majorVersions[0]?.latestTag ?? '',
-          icon: blueprint.icon,
-          variables: buildBlueprintVariables(formValues.fields, blueprintFields),
-        },
-      })
-
-      posthog.capture('create-service', {
-        selectedServiceType: 'blueprint',
-        selectedServiceSubType: blueprint.serviceFamily ?? blueprint.provider,
-      })
-
-      setServiceCreatedSubscription({
-        organizationId,
-        projectId,
-        environmentId,
-      })
-    } catch {
-      // errors are surfaced by mutation notifications
-      setSubmitMode(null)
-    }
+    setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')
+    hasHandledServiceCreatedRef.current = false
+    hasStartedBlueprintCreationRef.current = false
+    setIsWaitingForServiceCreated(true)
+    setPendingBlueprintCreation({
+      deploy: withDeploy,
+      payload: {
+        name: formValues.serviceName,
+        tag: blueprint.majorVersions[0]?.latestTag ?? '',
+        icon: blueprint.icon,
+        variables: buildBlueprintVariables(formValues.fields, blueprintFields),
+      },
+    })
   }
 
   return (

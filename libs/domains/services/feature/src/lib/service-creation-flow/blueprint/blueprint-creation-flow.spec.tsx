@@ -369,41 +369,50 @@ describe('BlueprintCreationFlow', () => {
     await screen.findByText(/custom-postgres/)
     await userEvent.click(screen.getByTestId('button-create-deploy'))
 
-    expect(mockCreateBlueprint).toHaveBeenCalledWith({
-      environmentId: 'env-1',
-      deploy: true,
-      payload: {
-        name: 'custom-postgres',
-        tag: 'aws/postgres/17/1.0.0',
-        icon: 'https://cdn.qovery.com/icons/postgresql.svg',
-        variables: expect.arrayContaining([
-          {
-            name: 'db_name',
-            value: 'production',
-            is_secret: false,
-          },
-          {
-            name: 'db_username',
-            value: 'postgres',
-            is_secret: false,
-          },
-          {
-            name: 'db_password',
-            value: 'super-secret',
-            is_secret: true,
-          },
-          {
-            name: 'skip_final_snapshot',
-            value: 'true',
-            is_secret: false,
-          },
-        ]),
-      },
+    await waitFor(() => {
+      expect(mockCreateBlueprint).toHaveBeenCalledWith({
+        environmentId: 'env-1',
+        deploy: true,
+        payload: {
+          name: 'custom-postgres',
+          tag: 'aws/postgres/17/1.0.0',
+          icon: 'https://cdn.qovery.com/icons/postgresql.svg',
+          variables: expect.arrayContaining([
+            {
+              name: 'db_name',
+              value: 'production',
+              is_secret: false,
+            },
+            {
+              name: 'db_username',
+              value: 'postgres',
+              is_secret: false,
+            },
+            {
+              name: 'db_password',
+              value: 'super-secret',
+              is_secret: true,
+            },
+            {
+              name: 'skip_final_snapshot',
+              value: 'true',
+              is_secret: false,
+            },
+          ]),
+        },
+      })
     })
   })
 
-  it('should start listening for the blueprint service-created event before leaving the creation flow', async () => {
+  it('should start listening for the blueprint service-created event before creating the blueprint', async () => {
     jest.useFakeTimers()
+    let resolveCreateBlueprint: (value: { environment_id: string }) => void = jest.fn()
+    mockCreateBlueprint.mockImplementationOnce(
+      () =>
+        new Promise<{ environment_id: string }>((resolve) => {
+          resolveCreateBlueprint = resolve
+        })
+    )
 
     const { userEvent } = renderBlueprintFlow(
       <FillFormValues>
@@ -415,15 +424,30 @@ describe('BlueprintCreationFlow', () => {
     await userEvent.click(screen.getByTestId('button-create'))
 
     await waitFor(() => {
-      expect(mockUseBlueprintServiceCreatedSocket).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          organizationId: 'org-1',
-          projectId: 'proj-1',
-          environmentId: 'env-1',
-          enabled: true,
-        })
-      )
+      expect(mockCreateBlueprint).toHaveBeenCalled()
     })
+
+    const enabledSocketCall = mockUseBlueprintServiceCreatedSocket.mock.calls.find(
+      ([props]) =>
+        (props as { enabled?: boolean; organizationId?: string; projectId?: string; environmentId?: string })
+          .enabled === true
+    )
+    const enabledSocketCallIndex = mockUseBlueprintServiceCreatedSocket.mock.calls.findIndex(
+      ([props]) =>
+        (props as { enabled?: boolean; organizationId?: string; projectId?: string; environmentId?: string })
+          .enabled === true
+    )
+    expect(enabledSocketCall?.[0]).toEqual(
+      expect.objectContaining({
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
+        enabled: true,
+      })
+    )
+    expect(mockUseBlueprintServiceCreatedSocket.mock.invocationCallOrder[enabledSocketCallIndex]).toBeLessThan(
+      mockCreateBlueprint.mock.invocationCallOrder[0]
+    )
     expect(mockNavigate).not.toHaveBeenCalledWith({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
       params: {
@@ -431,6 +455,10 @@ describe('BlueprintCreationFlow', () => {
         projectId: 'proj-1',
         environmentId: 'env-1',
       },
+    })
+
+    await act(async () => {
+      resolveCreateBlueprint({ environment_id: 'env-1' })
     })
 
     const socketProps = mockUseBlueprintServiceCreatedSocket.mock.calls.at(-1)?.[0] as {
