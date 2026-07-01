@@ -464,11 +464,73 @@ describe('BlueprintCreationFlow', () => {
     })
     expect(mockToast).not.toHaveBeenCalled()
 
+    act(() => {
+      jest.advanceTimersByTime(29_999)
+    })
+    expect(mockToast).not.toHaveBeenCalled()
+
     const socketProps = mockUseBlueprintServiceCreatedSocket.mock.calls.at(-1)?.[0] as {
       onServiceCreated: () => void
     }
     act(() => {
       socketProps.onServiceCreated()
+    })
+
+    expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
+      },
+    })
+
+    act(() => {
+      jest.advanceTimersByTime(1)
+    })
+    expect(mockToast).toHaveBeenCalledTimes(1)
+  })
+
+  it('should complete the blueprint creation flow after a fallback timeout when the websocket event is missed', async () => {
+    jest.useFakeTimers()
+    let resolveCreateBlueprint: (value: { environment_id: string }) => void = jest.fn()
+    mockCreateBlueprint.mockImplementationOnce(
+      () =>
+        new Promise<{ environment_id: string }>((resolve) => {
+          resolveCreateBlueprint = resolve
+        })
+    )
+
+    const { userEvent } = renderBlueprintFlow(
+      <FillFormValues>
+        <BlueprintStepSummary />
+      </FillFormValues>
+    )
+
+    await screen.findByText(/custom-postgres/)
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateBlueprint).toHaveBeenCalled()
+    })
+
+    await act(async () => {
+      resolveCreateBlueprint({ environment_id: 'env-1' })
+    })
+
+    expect(mockToast).not.toHaveBeenCalled()
+    expect(mockNavigate).not.toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
+      },
+    })
+
+    act(() => {
+      jest.advanceTimersByTime(30_000)
     })
 
     expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')

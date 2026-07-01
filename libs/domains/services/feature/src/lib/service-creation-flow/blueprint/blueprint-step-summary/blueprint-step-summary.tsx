@@ -14,6 +14,8 @@ import {
   isFieldValid,
 } from '../blueprint-creation-utils/blueprint-creation-utils'
 
+const BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS = 30_000
+
 export function BlueprintStepSummary() {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
@@ -35,6 +37,7 @@ export function BlueprintStepSummary() {
   } | null>(null)
   const hasHandledServiceCreatedRef = useRef(false)
   const hasStartedBlueprintCreationRef = useRef(false)
+  const serviceCreatedFallbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { mutateAsync: createBlueprint } = useCreateBlueprint()
   const { fields, serviceName } = form.watch()
   const variableFields = [...requiredBlueprintFields, ...optionalBlueprintFields]
@@ -57,17 +60,38 @@ export function BlueprintStepSummary() {
     })
   }, [environmentId, navigate, organizationId, projectId])
 
+  const clearServiceCreatedFallbackTimeout = useCallback(() => {
+    if (!serviceCreatedFallbackTimeoutRef.current) {
+      return
+    }
+
+    clearTimeout(serviceCreatedFallbackTimeoutRef.current)
+    serviceCreatedFallbackTimeoutRef.current = null
+  }, [])
+
   const handleBlueprintServiceCreated = useCallback(() => {
     if (hasHandledServiceCreatedRef.current) {
       return
     }
 
     hasHandledServiceCreatedRef.current = true
+    clearServiceCreatedFallbackTimeout()
     setIsWaitingForServiceCreated(false)
     setSubmitMode(null)
     toast('success', 'Your service has been created')
     navigateToEnvironmentOverview()
-  }, [navigateToEnvironmentOverview])
+  }, [clearServiceCreatedFallbackTimeout, navigateToEnvironmentOverview])
+
+  const startServiceCreatedFallbackTimeout = useCallback(() => {
+    if (hasHandledServiceCreatedRef.current) {
+      return
+    }
+
+    clearServiceCreatedFallbackTimeout()
+    serviceCreatedFallbackTimeoutRef.current = setTimeout(() => {
+      handleBlueprintServiceCreated()
+    }, BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS)
+  }, [clearServiceCreatedFallbackTimeout, handleBlueprintServiceCreated])
 
   useBlueprintServiceCreatedSocket({
     organizationId,
@@ -80,6 +104,8 @@ export function BlueprintStepSummary() {
   useEffect(() => {
     setCurrentStep(2)
   }, [setCurrentStep])
+
+  useEffect(() => () => clearServiceCreatedFallbackTimeout(), [clearServiceCreatedFallbackTimeout])
 
   useEffect(() => {
     if (!serviceName.trim() || !isBlueprintSetupValid) {
@@ -114,12 +140,14 @@ export function BlueprintStepSummary() {
           selectedServiceSubType: blueprint.serviceFamily ?? blueprint.provider,
         })
         setPendingBlueprintCreation(null)
+        startServiceCreatedFallbackTimeout()
       } catch {
         if (!shouldUpdateState) {
           return
         }
 
         // errors are surfaced by mutation notifications
+        clearServiceCreatedFallbackTimeout()
         hasStartedBlueprintCreationRef.current = false
         setPendingBlueprintCreation(null)
         setIsWaitingForServiceCreated(false)
@@ -135,16 +163,19 @@ export function BlueprintStepSummary() {
   }, [
     blueprint.provider,
     blueprint.serviceFamily,
+    clearServiceCreatedFallbackTimeout,
     createBlueprint,
     environmentId,
     isWaitingForServiceCreated,
     pendingBlueprintCreation,
+    startServiceCreatedFallbackTimeout,
   ])
 
   const handleSubmit = (withDeploy: boolean) => {
     const formValues = form.getValues()
 
     setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')
+    clearServiceCreatedFallbackTimeout()
     hasHandledServiceCreatedRef.current = false
     hasStartedBlueprintCreationRef.current = false
     setIsWaitingForServiceCreated(true)
