@@ -135,11 +135,3 @@ const serviceIcons = {
 export type IconURI = keyof typeof serviceIcons
 
 export const ServiceIcons: Readonly<Record<IconURI, ServiceIcon>> = serviceIcons
-
-export function getServiceIcon(iconUri: string): ServiceIcon {
-  if (iconUri in ServiceIcons) {
-    return ServiceIcons[iconUri as IconURI]
-  }
-
-  return { icon: iconUri, title: iconUri }
-}

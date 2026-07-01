@@ -158,10 +158,7 @@ describe('ServiceNew', () => {
     const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
     expect(blueprintsSectionScreen.getByText('AWS S3 Bucket')).toBeInTheDocument()
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
-    expect(blueprintsSection?.querySelector('img[alt="AWS S3 Bucket"]')).toHaveAttribute(
-      'src',
-      '/assets/devicon/s3.svg'
-    )
+    expect(blueprintsSection?.querySelector('img[src="/assets/devicon/s3.svg"]')).toBeInTheDocument()
     const deployLinks = blueprintsSectionScreen.getAllByRole('link', { name: 'Deploy' })
     expect(deployLinks).toHaveLength(2)
     expect(deployLinks[0]).toHaveAttribute(

@@ -85,7 +85,7 @@ describe('BlueprintDetailsPanel', () => {
 
     const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
 
-    expect(dialog.querySelector('img[alt="AWS S3 Bucket"]')).toHaveAttribute('src', '/assets/devicon/s3.svg')
+    expect(dialog.querySelector('img[src="/assets/devicon/s3.svg"]')).toBeInTheDocument()
     expect(within(dialog).getByText('Object storage with server-side encryption.')).toBeInTheDocument()
     expect(within(dialog).getByText('AWS')).toBeInTheDocument()
     expect(within(dialog).getByText('v1')).toBeInTheDocument()
