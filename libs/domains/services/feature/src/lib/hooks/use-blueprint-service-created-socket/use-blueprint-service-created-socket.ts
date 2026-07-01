@@ -40,6 +40,6 @@ export function useBlueprintServiceCreatedSocket({
     },
     enabled: enabled && Boolean(organizationId) && Boolean(projectId) && Boolean(environmentId),
     onMessage: handleServiceCreated,
-    onInvalidateOperation: handleServiceCreated,
+    onQueryInvalidated: handleServiceCreated,
   })
 }

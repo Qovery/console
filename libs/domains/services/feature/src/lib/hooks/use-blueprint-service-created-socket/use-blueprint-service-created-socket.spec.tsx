@@ -83,7 +83,7 @@ describe('useBlueprintServiceCreatedSocket', () => {
     })
   })
 
-  it('should notify the caller when an invalidate operation event is received', () => {
+  it('should notify the caller when a query invalidation event is processed', () => {
     const onServiceCreated = jest.fn()
     const queryClient = renderUseBlueprintServiceCreatedSocket({
       organizationId: 'org-1',
@@ -93,7 +93,7 @@ describe('useBlueprintServiceCreatedSocket', () => {
     })
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
-    subscriptionConfig?.onInvalidateOperation?.(queryClient, { entity: ['services'], id: 'service-1' })
+    subscriptionConfig?.onQueryInvalidated?.(queryClient, { entity: ['services'], id: 'service-1' })
 
     expect(onServiceCreated).toHaveBeenCalledTimes(1)
   })

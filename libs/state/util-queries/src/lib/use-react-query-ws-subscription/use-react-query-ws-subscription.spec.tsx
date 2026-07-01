@@ -72,9 +72,9 @@ describe('useReactQueryWsSubscription', () => {
   })
 
   it('should invalidate query keys on invalidate operation message', async () => {
-    const onInvalidateOperation = jest.fn()
+    const onQueryInvalidated = jest.fn()
     const { unmount } = renderHook(() =>
-      useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage: jest.fn(), onInvalidateOperation })
+      useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage: jest.fn(), onQueryInvalidated })
     )
     const queryClient = useQueryClient()
     const connection = await server.connected
@@ -82,7 +82,7 @@ describe('useReactQueryWsSubscription', () => {
     server.send({ entity: ['projects', 'list'] })
 
     expect(queryClient.invalidateQueries).toHaveBeenNthCalledWith(1, { queryKey: ['projects', 'list'] })
-    expect(onInvalidateOperation).toHaveBeenCalledWith(queryClient, { entity: ['projects', 'list'] })
+    expect(onQueryInvalidated).toHaveBeenCalledWith(queryClient, { entity: ['projects', 'list'] })
     connection.close()
     unmount()
   })
