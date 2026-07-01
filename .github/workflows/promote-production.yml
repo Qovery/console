@@ -97,7 +97,7 @@ jobs:
             checks="$(gh pr checks "$pr_url" \
               --repo "$REPOSITORY" \
               --json event,name,state,workflow \
-              --jq '[.[] | select((.event == "pull_request") and ((.name // "") | ascii_downcase | contains("codecov") | not) and ((.workflow // "") | ascii_downcase | contains("codecov") | not))]')"
+              --jq '[.[] | select((.event == "pull_request" or (.event == "push" and ((.name // "") | ascii_downcase | contains("staging smoke test")))) and ((.name // "") | ascii_downcase | contains("codecov") | not) and ((.workflow // "") | ascii_downcase | contains("codecov") | not))]')"
             checks_exit_code="$?"
             set -e
 
