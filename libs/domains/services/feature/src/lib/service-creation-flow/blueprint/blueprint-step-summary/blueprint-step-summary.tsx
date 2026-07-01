@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { type BlueprintCreateRequest } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { type ServiceCreateSection } from '@qovery/shared/router'
-import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, toast } from '@qovery/shared/ui'
 import { useBlueprintServiceCreatedSocket } from '../../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket'
 import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
@@ -65,6 +65,7 @@ export function BlueprintStepSummary() {
     hasHandledServiceCreatedRef.current = true
     setIsWaitingForServiceCreated(false)
     setSubmitMode(null)
+    toast('success', 'Your service has been created')
     navigateToEnvironmentOverview()
   }, [navigateToEnvironmentOverview])
 

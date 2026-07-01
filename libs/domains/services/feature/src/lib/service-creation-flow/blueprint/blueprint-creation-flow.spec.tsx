@@ -16,6 +16,7 @@ const mockUseBlueprintCatalogServiceManifest = jest.fn()
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
 const mockUseBlueprintServiceCreatedSocket = jest.fn()
 const mockCreateBlueprint = jest.fn()
+const mockToast = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -28,6 +29,7 @@ jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
   return {
     ...actual,
+    toast: (...args: Parameters<typeof actual.toast>) => mockToast(...args),
     Link: ({ children, to, ...props }: { children: ReactNode; to?: string; [key: string]: unknown }) =>
       typeof to === 'string' ? (
         <a href={to} {...props}>
@@ -460,6 +462,7 @@ describe('BlueprintCreationFlow', () => {
     await act(async () => {
       resolveCreateBlueprint({ environment_id: 'env-1' })
     })
+    expect(mockToast).not.toHaveBeenCalled()
 
     const socketProps = mockUseBlueprintServiceCreatedSocket.mock.calls.at(-1)?.[0] as {
       onServiceCreated: () => void
@@ -468,6 +471,7 @@ describe('BlueprintCreationFlow', () => {
       socketProps.onServiceCreated()
     })
 
+    expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
       params: {
