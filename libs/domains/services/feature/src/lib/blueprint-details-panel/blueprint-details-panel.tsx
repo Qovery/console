@@ -8,6 +8,7 @@ import { Badge, Button, ExternalLink, Icon, Link, Sheet } from '@qovery/shared/u
 import { twMerge } from '@qovery/shared/util-js'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
+import { ServiceAvatar } from '../service-avatar/service-avatar'
 
 function getBlueprintRepositoryName({ provider, serviceFamily }: BlueprintItem) {
   return `qovery-blueprints/${serviceFamily || provider}`
@@ -169,8 +170,17 @@ function BlueprintDetailsPanelContent({
             <div className="flex-1 overflow-auto px-6 pb-24 pt-6">
               <div className="mb-8 flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
-                  <Dialog.Title className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral">
-                    <img className="h-8 w-8 rounded" src={blueprint.icon} alt={blueprint.name} aria-hidden="true" />
+                  <Dialog.Title
+                    aria-label={blueprint.name}
+                    className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral"
+                  >
+                    <ServiceAvatar
+                      className="h-8 w-8"
+                      radius="none"
+                      service={{ icon_uri: blueprint.icon, serviceType: 'APPLICATION' }}
+                      serviceAvatarRadius="sm"
+                      size="custom"
+                    />
                     <span>{blueprint.name}</span>
                   </Dialog.Title>
                   <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
