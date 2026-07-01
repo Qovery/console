@@ -1,4 +1,3 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type AvailableContainerRegistryResponse,
   type Cluster,
@@ -56,8 +55,6 @@ export function ContainerRegistryForm({
   registry,
 }: ContainerRegistryFormProps) {
   const methods = useFormContext()
-  const isGcpWifEnabled = Boolean(useFeatureFlagEnabled('gcp-wif'))
-
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     maxFiles: 1,
@@ -176,7 +173,7 @@ export function ContainerRegistryForm({
                 methods.setValue('config.login_type', 'ACCOUNT')
               }
               if (value === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY) {
-                methods.setValue('type', isGcpWifEnabled ? 'WIF' : 'STATIC')
+                methods.setValue('type', 'WIF')
               } else if (value === ContainerRegistryKindEnum.ECR) {
                 methods.setValue('type', 'STS')
               } else {
@@ -464,7 +461,7 @@ export function ContainerRegistryForm({
               options={
                 watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY
                   ? [
-                      ...(isGcpWifEnabled ? [{ label: 'Workload Identity Federation (preferred)', value: 'WIF' }] : []),
+                      { label: 'Workload Identity Federation (preferred)', value: 'WIF' },
                       { label: 'Static credentials', value: 'STATIC' },
                     ]
                   : [
@@ -602,7 +599,7 @@ export function ContainerRegistryForm({
           )}
         </>
       )}
-      {watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY && watchType === 'WIF' && isGcpWifEnabled && (
+      {watchKind === ContainerRegistryKindEnum.GCP_ARTIFACT_REGISTRY && watchType === 'WIF' && (
         <>
           <Controller
             name="config.service_account_email"

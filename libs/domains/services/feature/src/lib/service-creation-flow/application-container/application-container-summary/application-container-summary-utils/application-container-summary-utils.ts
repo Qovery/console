@@ -12,6 +12,7 @@ import {
   type ApplicationResourcesData,
   type FlowPortData,
 } from '@qovery/shared/interfaces'
+import { toCpuArchitectureRequest } from '@qovery/shared/util-services'
 
 export type ApplicationContainerCreatePayload =
   | { serviceType: 'APPLICATION'; payload: ApplicationRequest }
@@ -97,6 +98,7 @@ export function buildApplicationContainerCreatePayload({
     cpu: Number(resourcesData.cpu),
     memory: Number(resourcesData.memory),
     gpu: Number(resourcesData.gpu),
+    cpu_architecture: toCpuArchitectureRequest(resourcesData.cpu_architecture),
     min_running_instances: resourcesData.min_running_instances,
     max_running_instances: resourcesData.max_running_instances,
     ports: buildPorts(portData),

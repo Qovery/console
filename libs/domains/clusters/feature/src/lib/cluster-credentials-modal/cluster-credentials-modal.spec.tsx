@@ -1,6 +1,7 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum, type ClusterCredentials } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import * as useCreateCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import * as useDeleteCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
 import * as useEditCloudProviderCredentialHook from '@qovery/domains/cloud-providers/feature'
@@ -91,7 +92,6 @@ describe('ClusterCredentialsModal', () => {
         isEdit: true,
         isAwsMode: true,
         isGcpMode: false,
-        isGcpWifEnabled: false,
       })
     ).toBe('EKS_ANYWHERE_VSPHERE_ROLE')
 
@@ -101,7 +101,6 @@ describe('ClusterCredentialsModal', () => {
         isEdit: true,
         isAwsMode: true,
         isGcpMode: false,
-        isGcpWifEnabled: false,
       })
     ).toBe('EKS_ANYWHERE_VSPHERE_STATIC')
 
@@ -111,7 +110,6 @@ describe('ClusterCredentialsModal', () => {
         isEdit: true,
         isAwsMode: false,
         isGcpMode: true,
-        isGcpWifEnabled: true,
       })
     ).toBe('WIF')
 
@@ -121,7 +119,6 @@ describe('ClusterCredentialsModal', () => {
         isEdit: true,
         isAwsMode: false,
         isGcpMode: true,
-        isGcpWifEnabled: true,
       })
     ).toBe('STATIC')
 
@@ -131,7 +128,6 @@ describe('ClusterCredentialsModal', () => {
         isEdit: true,
         isAwsMode: true,
         isGcpMode: false,
-        isGcpWifEnabled: true,
       })
     ).toBe('STS')
   })
@@ -143,7 +139,6 @@ describe('ClusterCredentialsModal', () => {
         isEdit: false,
         isAwsMode: true,
         isGcpMode: false,
-        isGcpWifEnabled: false,
       })
     ).toBe('STS')
 
@@ -153,19 +148,8 @@ describe('ClusterCredentialsModal', () => {
         isEdit: false,
         isAwsMode: false,
         isGcpMode: true,
-        isGcpWifEnabled: true,
       })
     ).toBe('WIF')
-
-    expect(
-      getDefaultClusterCredentialType({
-        credential: undefined,
-        isEdit: false,
-        isAwsMode: false,
-        isGcpMode: true,
-        isGcpWifEnabled: false,
-      })
-    ).toBe('STATIC')
 
     expect(
       getDefaultClusterCredentialType({
@@ -173,7 +157,6 @@ describe('ClusterCredentialsModal', () => {
         isEdit: true,
         isAwsMode: true,
         isGcpMode: false,
-        isGcpWifEnabled: false,
       })
     ).toBe('STATIC')
   })
@@ -286,13 +269,17 @@ describe('ClusterCredentialsModal', () => {
     expect(screen.queryByRole('link', { name: 'How to generate setup command' })).not.toBeInTheDocument()
   })
 
-  it('should keep legacy GCP documentation link for static credentials', () => {
+  it('should keep legacy GCP documentation link for static credentials', async () => {
     props.cloudProvider = CloudProviderEnum.GCP
-    mockUseFeatureFlagEnabled.mockReturnValue(false)
 
     renderWithProviders(wrapWithReactHookForm(<ClusterCredentialsModal {...props} />))
 
     expect(screen.getByText('Authentication type')).toBeInTheDocument()
+
+    await selectEvent.select(screen.getByLabelText('Authentication type'), 'Static credentials', {
+      container: document.body,
+    })
+
     expect(screen.getByTestId('input-credentials-json')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: 'Learn more' })).toHaveAttribute(
       'href',

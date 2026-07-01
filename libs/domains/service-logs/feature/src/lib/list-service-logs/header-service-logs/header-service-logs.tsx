@@ -9,6 +9,7 @@ import { Button, DatePicker, DropdownMenu, Icon, Tooltip } from '@qovery/shared/
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { HeaderLogs } from '../../header-logs/header-logs'
 import { SearchServiceLogs } from '../../search-service-logs/search-service-logs'
+import { mergeServiceLogsParams } from '../../search-service-logs/search-service-logs-utils'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
 
 export interface HeaderServiceLogsProps {
@@ -55,10 +56,10 @@ export function HeaderServiceLogs({ logs, isLiveMode, refetchHistoryLogs }: Head
           environmentId,
           serviceId,
         },
-        search: searchParams,
+        search: mergeServiceLogsParams(queryParams, searchParams),
       })
     },
-    [navigate, organizationId, projectId, environmentId, serviceId]
+    [navigate, organizationId, projectId, environmentId, serviceId, queryParams]
   )
 
   const clearDate = useCallback(() => {

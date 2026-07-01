@@ -22,6 +22,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, Tooltip, truncateText } from '@qovery/shared/ui'
 import { generateScopeLabel, prepareVariableImportRequest, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { getCpuArchitectureSummaryValue, toCpuArchitectureRequest } from '@qovery/shared/util-services'
 import { type DockerfileSettingsData } from '../../dockerfile-settings/dockerfile-settings'
 import { useJobCreateContext } from '../job-creation-flow'
 
@@ -78,6 +79,7 @@ function prepareJobRequest({
     cpu,
     gpu,
     memory,
+    cpu_architecture: toCpuArchitectureRequest(resourcesData.cpu_architecture),
     max_nb_restart: Number(configureData.nb_restarts) || 0,
     max_duration_seconds: Number(configureData.max_duration) || 0,
     auto_preview: false,
@@ -155,6 +157,8 @@ function prepareJobRequest({
 }
 
 function StepSummaryContent(props: StepSummaryProps) {
+  const selectedCpuArchitecture = getCpuArchitectureSummaryValue(props.resourcesData.cpu_architecture)
+
   return (
     <Section>
       <Heading className="mb-2">
@@ -375,6 +379,7 @@ function StepSummaryContent(props: StepSummaryProps) {
               <SummaryValue label="CPU" value={props.resourcesData['cpu']} />
               <SummaryValue label="Memory" value={`${props.resourcesData.memory} MB`} />
               <SummaryValue label="GPU" value={props.resourcesData.gpu} />
+              {selectedCpuArchitecture && <SummaryValue label="CPU architecture" value={selectedCpuArchitecture} />}
             </ul>
           </Section>
           <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">

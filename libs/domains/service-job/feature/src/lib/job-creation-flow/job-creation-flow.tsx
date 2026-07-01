@@ -118,6 +118,7 @@ export function JobCreationFlow({ children, creationFlowUrl }: JobCreationFlowPr
     memory: 512,
     cpu: 500,
     gpu: 0,
+    cpu_architecture: 'DEFAULT',
   })
 
   const [variableData, setVariableData] = useState<FlowVariableData | undefined>({

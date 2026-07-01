@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { within } from '@testing-library/react'
+import { act, within } from '@testing-library/react'
 import type { BlueprintItem, BlueprintManifestResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useState } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -14,7 +14,9 @@ const mockNavigate = jest.fn()
 const mockUseSearch = jest.fn()
 const mockUseBlueprintCatalogServiceManifest = jest.fn()
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
+const mockUseBlueprintServiceCreatedSocket = jest.fn()
 const mockCreateBlueprint = jest.fn()
+const mockToast = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -27,6 +29,7 @@ jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
   return {
     ...actual,
+    toast: (...args: Parameters<typeof actual.toast>) => mockToast(...args),
     Link: ({ children, to, ...props }: { children: ReactNode; to?: string; [key: string]: unknown }) =>
       typeof to === 'string' ? (
         <a href={to} {...props}>
@@ -44,6 +47,10 @@ jest.mock('../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-cata
 
 jest.mock('../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
   useBlueprintCatalogServiceReadme: (props: unknown) => mockUseBlueprintCatalogServiceReadme(props),
+}))
+
+jest.mock('../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket', () => ({
+  useBlueprintServiceCreatedSocket: (props: unknown) => mockUseBlueprintServiceCreatedSocket(props),
 }))
 
 jest.mock('../../hooks/use-create-blueprint/use-create-blueprint', () => ({
@@ -364,35 +371,175 @@ describe('BlueprintCreationFlow', () => {
     await screen.findByText(/custom-postgres/)
     await userEvent.click(screen.getByTestId('button-create-deploy'))
 
-    expect(mockCreateBlueprint).toHaveBeenCalledWith({
-      environmentId: 'env-1',
-      deploy: true,
-      payload: {
-        name: 'custom-postgres',
-        tag: 'aws/postgres/17/1.0.0',
-        icon: 'https://cdn.qovery.com/icons/postgresql.svg',
-        variables: expect.arrayContaining([
-          {
-            name: 'db_name',
-            value: 'production',
-            is_secret: false,
-          },
-          {
-            name: 'db_username',
-            value: 'postgres',
-            is_secret: false,
-          },
-          {
-            name: 'db_password',
-            value: 'super-secret',
-            is_secret: true,
-          },
-          {
-            name: 'skip_final_snapshot',
-            value: 'true',
-            is_secret: false,
-          },
-        ]),
+    await waitFor(() => {
+      expect(mockCreateBlueprint).toHaveBeenCalledWith({
+        environmentId: 'env-1',
+        deploy: true,
+        payload: {
+          name: 'custom-postgres',
+          tag: 'aws/postgres/17/1.0.0',
+          icon: 'https://cdn.qovery.com/icons/postgresql.svg',
+          variables: expect.arrayContaining([
+            {
+              name: 'db_name',
+              value: 'production',
+              is_secret: false,
+            },
+            {
+              name: 'db_username',
+              value: 'postgres',
+              is_secret: false,
+            },
+            {
+              name: 'db_password',
+              value: 'super-secret',
+              is_secret: true,
+            },
+            {
+              name: 'skip_final_snapshot',
+              value: 'true',
+              is_secret: false,
+            },
+          ]),
+        },
+      })
+    })
+  })
+
+  it('should start listening for the blueprint service-created event before creating the blueprint', async () => {
+    jest.useFakeTimers()
+    let resolveCreateBlueprint: (value: { environment_id: string }) => void = jest.fn()
+    mockCreateBlueprint.mockImplementationOnce(
+      () =>
+        new Promise<{ environment_id: string }>((resolve) => {
+          resolveCreateBlueprint = resolve
+        })
+    )
+
+    const { userEvent } = renderBlueprintFlow(
+      <FillFormValues>
+        <BlueprintStepSummary />
+      </FillFormValues>
+    )
+
+    await screen.findByText(/custom-postgres/)
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateBlueprint).toHaveBeenCalled()
+    })
+
+    const enabledSocketCall = mockUseBlueprintServiceCreatedSocket.mock.calls.find(
+      ([props]) =>
+        (props as { enabled?: boolean; organizationId?: string; projectId?: string; environmentId?: string })
+          .enabled === true
+    )
+    const enabledSocketCallIndex = mockUseBlueprintServiceCreatedSocket.mock.calls.findIndex(
+      ([props]) =>
+        (props as { enabled?: boolean; organizationId?: string; projectId?: string; environmentId?: string })
+          .enabled === true
+    )
+    expect(enabledSocketCall?.[0]).toEqual(
+      expect.objectContaining({
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
+        enabled: true,
+      })
+    )
+    expect(mockUseBlueprintServiceCreatedSocket.mock.invocationCallOrder[enabledSocketCallIndex]).toBeLessThan(
+      mockCreateBlueprint.mock.invocationCallOrder[0]
+    )
+    expect(mockNavigate).not.toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
+      },
+    })
+
+    await act(async () => {
+      resolveCreateBlueprint({ environment_id: 'env-1' })
+    })
+    expect(mockToast).not.toHaveBeenCalled()
+
+    act(() => {
+      jest.advanceTimersByTime(29_999)
+    })
+    expect(mockToast).not.toHaveBeenCalled()
+
+    const socketProps = mockUseBlueprintServiceCreatedSocket.mock.calls.at(-1)?.[0] as {
+      onServiceCreated: () => void
+    }
+    act(() => {
+      socketProps.onServiceCreated()
+    })
+
+    expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
+      },
+    })
+
+    act(() => {
+      jest.advanceTimersByTime(1)
+    })
+    expect(mockToast).toHaveBeenCalledTimes(1)
+  })
+
+  it('should complete the blueprint creation flow after a fallback timeout when the websocket event is missed', async () => {
+    jest.useFakeTimers()
+    let resolveCreateBlueprint: (value: { environment_id: string }) => void = jest.fn()
+    mockCreateBlueprint.mockImplementationOnce(
+      () =>
+        new Promise<{ environment_id: string }>((resolve) => {
+          resolveCreateBlueprint = resolve
+        })
+    )
+
+    const { userEvent } = renderBlueprintFlow(
+      <FillFormValues>
+        <BlueprintStepSummary />
+      </FillFormValues>
+    )
+
+    await screen.findByText(/custom-postgres/)
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateBlueprint).toHaveBeenCalled()
+    })
+
+    await act(async () => {
+      resolveCreateBlueprint({ environment_id: 'env-1' })
+    })
+
+    expect(mockToast).not.toHaveBeenCalled()
+    expect(mockNavigate).not.toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
+      },
+    })
+
+    act(() => {
+      jest.advanceTimersByTime(30_000)
+    })
+
+    expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId: 'org-1',
+        projectId: 'proj-1',
+        environmentId: 'env-1',
       },
     })
   })

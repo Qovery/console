@@ -72,13 +72,11 @@ export const getDefaultClusterCredentialType = ({
   isEdit,
   isAwsMode,
   isGcpMode,
-  isGcpWifEnabled,
 }: {
   credential?: ClusterCredentials
   isEdit: boolean
   isAwsMode: boolean
   isGcpMode: boolean
-  isGcpWifEnabled: boolean
 }): ClusterCredentialsFormValues['type'] =>
   match<ClusterCredentials | undefined, ClusterCredentialsFormValues['type']>(credential)
     .with({ object_type: 'EKS_ANYWHERE_VSPHERE' }, ({ role_arn }) =>
@@ -93,7 +91,7 @@ export const getDefaultClusterCredentialType = ({
     )
     .with(
       P.when(() => !isEdit && isGcpMode),
-      () => (isGcpWifEnabled ? 'WIF' : 'STATIC')
+      () => 'WIF'
     )
     .otherwise(() => 'STATIC')
 
@@ -241,7 +239,6 @@ export function ClusterCredentialsModal({
   cloudProvider = 'AWS',
 }: ClusterCredentialsModalProps) {
   const isEksAnywhereEnabled = Boolean(useFeatureFlagEnabled('eks-anywhere'))
-  const isGcpWifEnabled = Boolean(useFeatureFlagEnabled('gcp-wif'))
   const { enableAlertClickOutside } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
 
@@ -303,21 +300,9 @@ export function ClusterCredentialsModal({
             ? EKS_ANYWHERE_CREDENTIAL_TYPES
             : AWS_CREDENTIAL_TYPES
       ).filter((type) =>
-        type === 'EKS_ANYWHERE_VSPHERE_ROLE' || type === 'EKS_ANYWHERE_VSPHERE_STATIC'
-          ? isEksAnywhereEnabled
-          : type === 'WIF'
-            ? isGcpWifEnabled || credential?.object_type === 'GCP_WORKLOAD_IDENTITY_FEDERATION'
-            : true
+        type === 'EKS_ANYWHERE_VSPHERE_ROLE' || type === 'EKS_ANYWHERE_VSPHERE_STATIC' ? isEksAnywhereEnabled : true
       ),
-    [
-      cloudProviderLocal,
-      credential?.object_type,
-      inferredCredentialTypes,
-      isEdit,
-      isEksAnywhereEnabled,
-      isGcpMode,
-      isGcpWifEnabled,
-    ]
+    [cloudProviderLocal, credential?.object_type, inferredCredentialTypes, isEdit, isEksAnywhereEnabled, isGcpMode]
   )
 
   const defaultType: ClusterCredentialsFormValues['type'] = getDefaultClusterCredentialType({
@@ -325,7 +310,6 @@ export function ClusterCredentialsModal({
     isEdit,
     isAwsMode,
     isGcpMode,
-    isGcpWifEnabled,
   })
   const initialType = authTypeOptions.includes(defaultType)
     ? defaultType

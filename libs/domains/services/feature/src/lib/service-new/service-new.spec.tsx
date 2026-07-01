@@ -76,7 +76,7 @@ const blueprints: BlueprintItem[] = [
     name: 'AWS S3 Bucket',
     kind: 'ServiceBlueprint',
     description: 'Object storage with server-side encryption, versioning, and configurable lifecycle policies.',
-    icon: 'https://cdn.qovery.com/icons/s3.svg',
+    icon: 'app://qovery-console/s3',
     categories: ['storage'],
     provider: 'aws',
     serviceFamily: 's3',
@@ -158,6 +158,7 @@ describe('ServiceNew', () => {
     const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
     expect(blueprintsSectionScreen.getByText('AWS S3 Bucket')).toBeInTheDocument()
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
+    expect(blueprintsSection?.querySelector('img[src="/assets/devicon/s3.svg"]')).toBeInTheDocument()
     const deployLinks = blueprintsSectionScreen.getAllByRole('link', { name: 'Deploy' })
     expect(deployLinks).toHaveLength(2)
     expect(deployLinks[0]).toHaveAttribute(

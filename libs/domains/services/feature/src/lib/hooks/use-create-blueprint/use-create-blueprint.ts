@@ -12,9 +12,6 @@ export function useCreateBlueprint() {
       })
     },
     meta: {
-      notifyOnSuccess: {
-        title: 'Your service has been created',
-      },
       notifyOnError: true,
     },
   })

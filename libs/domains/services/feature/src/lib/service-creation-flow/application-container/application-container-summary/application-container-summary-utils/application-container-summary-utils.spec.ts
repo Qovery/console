@@ -18,6 +18,7 @@ describe('application-container-summary-utils', () => {
         cpu: 500,
         memory: 512,
         gpu: 0,
+        cpu_architecture: 'DEFAULT',
         min_running_instances: 1,
         max_running_instances: 1,
         autoscaling_mode: 'NONE',
@@ -44,6 +45,7 @@ describe('application-container-summary-utils', () => {
         name: 'my-app',
         build_mode: 'DOCKER',
         dockerfile_path: 'Dockerfile',
+        cpu_architecture: null,
         ports: [
           expect.objectContaining({
             internal_port: 3000,
@@ -71,6 +73,7 @@ describe('application-container-summary-utils', () => {
         cpu: 500,
         memory: 512,
         gpu: 0,
+        cpu_architecture: 'ARM64',
         min_running_instances: 1,
         max_running_instances: 1,
         autoscaling_mode: 'NONE',
@@ -87,6 +90,7 @@ describe('application-container-summary-utils', () => {
         registry_id: 'registry-id',
         image_name: 'qovery/console',
         tag: 'latest',
+        cpu_architecture: 'ARM64',
       }),
     })
   })

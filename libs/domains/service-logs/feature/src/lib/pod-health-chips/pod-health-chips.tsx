@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from '@tanstack/react-router'
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useCallback, useMemo, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type Pod, useMetrics, useRunningStatus } from '@qovery/domains/services/feature'
@@ -6,10 +6,12 @@ import { type ServiceLogsParams } from '@qovery/shared/router'
 import { Button, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { pluralize, twMerge } from '@qovery/shared/util-js'
+import { mergeServiceLogsParams } from '../search-service-logs/search-service-logs-utils'
 
 export function PodHealthChips({ service }: { service: AnyService }) {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const queryParams = useSearch({ strict: false })
   const [openStatus, setOpenStatus] = useState<string | null>(null)
 
   const { data: metrics = [], isLoading: isMetricsLoading } = useMetrics({
@@ -31,10 +33,10 @@ export function PodHealthChips({ service }: { service: AnyService }) {
           environmentId,
           serviceId,
         },
-        search: searchParams,
+        search: mergeServiceLogsParams(queryParams, searchParams),
       })
     },
-    [navigate, organizationId, projectId, environmentId, serviceId]
+    [navigate, organizationId, projectId, environmentId, serviceId, queryParams]
   )
 
   const pods: Pod[] = useMemo(() => {

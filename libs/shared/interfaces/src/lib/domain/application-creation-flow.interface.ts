@@ -42,6 +42,7 @@ export interface ApplicationResourcesData {
   memory: number
   cpu: number
   gpu: number
+  cpu_architecture?: 'DEFAULT' | 'ARM64' | 'AMD64'
   min_running_instances: number
   max_running_instances: number
 

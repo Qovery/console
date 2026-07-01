@@ -6,7 +6,7 @@ import ClusterGeneralSettings, { type ClusterGeneralSettingsProps } from './clus
 jest.mock('@qovery/shared/iam/feature', () => ({
   ...jest.requireActual('@qovery/shared/iam/feature'),
   useUserRole: () => ({
-    isQoveryAdminUser: true,
+    isQoveryAdminUser: false,
     isQoveryUser: false,
     loading: false,
     roles: [],

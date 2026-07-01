@@ -47,7 +47,7 @@ const blueprint: BlueprintItem = {
   name: 'AWS S3 Bucket',
   kind: 'ServiceBlueprint',
   description: 'Object storage with server-side encryption.',
-  icon: 'https://cdn.qovery.com/icons/s3.svg',
+  icon: 'app://qovery-console/s3',
   categories: ['storage'],
   provider: 'aws',
   serviceFamily: 's3',
@@ -85,6 +85,7 @@ describe('BlueprintDetailsPanel', () => {
 
     const dialog = screen.getByRole('dialog', { name: 'AWS S3 Bucket' })
 
+    expect(dialog.querySelector('img[src="/assets/devicon/s3.svg"]')).toBeInTheDocument()
     expect(within(dialog).getByText('Object storage with server-side encryption.')).toBeInTheDocument()
     expect(within(dialog).getByText('AWS')).toBeInTheDocument()
     expect(within(dialog).getByText('v1')).toBeInTheDocument()
