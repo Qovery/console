@@ -8,6 +8,7 @@ import {
 
 export interface BlueprintCreateFormData {
   serviceName: string
+  versionTag: string
   fields: BlueprintFieldValues
 }
 

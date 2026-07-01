@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { BlueprintDetailsPanel } from '../../blueprint-details-panel/blueprint-details-panel'
@@ -15,6 +15,7 @@ import {
   isOptionalVariableField,
   isOverridableContextVariableField,
   isRequiredVariableField,
+  sortBlueprintMajorVersions,
 } from './blueprint-creation-utils/blueprint-creation-utils'
 
 export {
@@ -32,7 +33,17 @@ export const blueprintCreationSteps: { title: string }[] = [{ title: 'Configurat
 export function BlueprintCreationFlow({ blueprint, children, onExit }: BlueprintCreationFlowProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [selectedBlueprint, setSelectedBlueprint] = useState<typeof blueprint | null>(null)
-  const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? 'latest'
+  const sortedBlueprintVersions = useMemo(
+    () => sortBlueprintMajorVersions(blueprint.majorVersions),
+    [blueprint.majorVersions]
+  )
+  const defaultBlueprintVersion = sortedBlueprintVersions[0]
+  const [selectedVersionTag, setSelectedVersionTag] = useState(defaultBlueprintVersion?.latestTag ?? '')
+  const selectedBlueprintVersion =
+    sortedBlueprintVersions.find((majorVersion) => majorVersion.latestTag === selectedVersionTag) ??
+    defaultBlueprintVersion
+  const serviceVersion = selectedBlueprintVersion?.serviceVersion ?? 'latest'
+  const versionTag = selectedBlueprintVersion?.latestTag ?? selectedVersionTag
   const serviceFamily = blueprint.serviceFamily ?? ''
   const {
     environmentId = '',
@@ -76,10 +87,30 @@ export function BlueprintCreationFlow({ blueprint, children, onExit }: Blueprint
   const form = useForm<BlueprintCreateFormData>({
     defaultValues: {
       serviceName: blueprint.name,
+      versionTag,
       fields: defaultBlueprintFieldValues,
     },
     mode: 'onChange',
   })
+  const watchedVersionTag = form.watch('versionTag')
+  const previousVersionTagRef = useRef(versionTag)
+
+  useEffect(() => {
+    setSelectedVersionTag(watchedVersionTag)
+  }, [watchedVersionTag])
+
+  useEffect(() => {
+    if (previousVersionTagRef.current === versionTag) {
+      return
+    }
+
+    previousVersionTagRef.current = versionTag
+    form.reset({
+      ...form.getValues(),
+      versionTag,
+      fields: defaultBlueprintFieldValues,
+    })
+  }, [defaultBlueprintFieldValues, form, versionTag])
 
   return (
     <BlueprintCreateContext.Provider

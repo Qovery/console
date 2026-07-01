@@ -183,7 +183,7 @@ export function BlueprintStepSummary() {
       deploy: withDeploy,
       payload: {
         name: formValues.serviceName,
-        tag: blueprint.majorVersions[0]?.latestTag ?? '',
+        tag: formValues.versionTag,
         icon: blueprint.icon,
         variables: buildBlueprintVariables(formValues.fields, blueprintFields),
       },

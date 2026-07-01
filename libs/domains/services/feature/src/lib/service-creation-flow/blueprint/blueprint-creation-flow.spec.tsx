@@ -2,6 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { act, within } from '@testing-library/react'
 import type { BlueprintItem, BlueprintManifestResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useState } from 'react'
+import selectEvent from 'react-select-event'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   BlueprintConfigurationView,
@@ -134,7 +135,7 @@ function FillFormValues({ children }: { children: JSX.Element }) {
   return children
 }
 
-function BlueprintFlowRouteHarness() {
+function BlueprintFlowRouteHarness({ flowBlueprint = blueprint }: { flowBlueprint?: BlueprintItem }) {
   const [step, setStep] = useState<'configuration' | 'summary'>('configuration')
 
   useEffect(() => {
@@ -146,7 +147,7 @@ function BlueprintFlowRouteHarness() {
   }, [])
 
   return (
-    <BlueprintCreationFlow blueprint={blueprint} onExit={jest.fn()}>
+    <BlueprintCreationFlow blueprint={flowBlueprint} onExit={jest.fn()}>
       {step === 'configuration' ? <BlueprintConfigurationView /> : <BlueprintStepSummary />}
     </BlueprintCreationFlow>
   )
@@ -403,6 +404,61 @@ describe('BlueprintCreationFlow', () => {
           ]),
         },
       })
+    })
+  })
+
+  it('should sort blueprint versions and send the selected version tag in the create payload', async () => {
+    jest.useFakeTimers()
+    const versionedBlueprint: BlueprintItem = {
+      ...blueprint,
+      majorVersions: [
+        { serviceVersion: '14', latestTag: 'aws/postgres/14/1.0.0' },
+        { serviceVersion: '17', latestTag: 'aws/postgres/17/1.0.0' },
+        { serviceVersion: '16', latestTag: 'aws/postgres/16/1.0.0' },
+      ],
+    }
+
+    const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness flowBlueprint={versionedBlueprint} />)
+
+    expect(screen.getByText('17')).toBeInTheDocument()
+    await waitFor(() => {
+      expect(mockUseBlueprintCatalogServiceManifest).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          serviceVersion: '17',
+        })
+      )
+    })
+
+    await selectEvent.select(screen.getByLabelText('Blueprint version'), '16')
+
+    await waitFor(() => {
+      expect(mockUseBlueprintCatalogServiceManifest).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          serviceVersion: '16',
+        })
+      )
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await userEvent.type(await screen.findByLabelText('Db name'), 'production')
+    await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
+    await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await userEvent.click(screen.getByRole('button', { name: /confirm blueprint configuration/i }))
+
+    expect(await screen.findByText('Ready to create your blueprint service')).toBeInTheDocument()
+    expect(screen.getByText('16')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateBlueprint).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            tag: 'aws/postgres/16/1.0.0',
+          }),
+        })
+      )
     })
   })
 
