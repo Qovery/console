@@ -1,8 +1,8 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { Link as RouterLink } from '@tanstack/react-router'
+import { Link as RouterLink, useNavigate } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { ClusterStateEnum, StateEnum } from 'qovery-typescript-axios'
-import { type SVGAttributes, useEffect, useRef, useState } from 'react'
+import { type SVGAttributes, useCallback, useEffect, useRef, useState } from 'react'
 import { ClusterInstallationGuideModal, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal, useDeploymentRule, useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
@@ -255,7 +255,8 @@ function CompletionPartyHornIllustration({ className, ...props }: SVGAttributes<
 
 export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const [localDismissed, setLocalDismissed] = useLocalStorage(`onboarding_section_dismissed_${organizationId}`, false)
-  const { openModal, closeModal } = useModal()
+  const { openModal, closeModal, enableAlertClickOutside } = useModal()
+  const navigate = useNavigate()
   const { showPylonForm } = useSupportChat()
 
   const { data: organization } = useOrganization({ organizationId })
@@ -361,6 +362,11 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
     updateOnboarding('DISMISSED')
   }
 
+  const complete = useCallback(() => {
+    setLocalDismissed(true)
+    updateOnboarding('COMPLETED')
+  }, [setLocalDismissed, updateOnboarding])
+
   const openInstallationGuideModal = ({ isDemo = false }: { isDemo?: boolean } = {}) =>
     openModal({
       options: { width: 500 },
@@ -397,6 +403,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
     }
 
     completionModalOpenedRef.current = true
+    enableAlertClickOutside(false)
 
     openModal({
       content: (
@@ -416,7 +423,11 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
             {hasRde && (
               <Button
                 type="button"
-                onClick={() => showPylonForm('request-ai-builder-portal')}
+                onClick={() => {
+                  complete()
+                  closeModal()
+                  showPylonForm('request-ai-builder-portal')
+                }}
                 color="neutral"
                 variant="solid"
                 size="md"
@@ -426,27 +437,34 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
                 AI portal access
               </Button>
             )}
-            <Link
-              as="button"
-              to="/organization/$organizationId/settings/members"
-              params={{ organizationId }}
+            <Button
+              type="button"
               color="neutral"
               variant={hasRde ? 'outline' : 'solid'}
               size="md"
               className="gap-2"
+              onClick={() => {
+                complete()
+                closeModal()
+                navigate({ to: '/organization/$organizationId/settings/members', params: { organizationId } })
+              }}
             >
               <Icon iconName="user-plus" />
               Invite team
-            </Link>
+            </Button>
           </div>
         </div>
       ),
     })
   }, [
     allRequiredDone,
+    closeModal,
+    complete,
+    enableAlertClickOutside,
     hasRde,
     isDismissed,
     isOnboardingLoading,
+    navigate,
     onboarding?.use_cases,
     openModal,
     organization,
@@ -479,7 +497,7 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
       highlight: false,
       tag: 'Self-managed',
       title: 'Bring your own cluster',
-      icon: 'cloud-cog',
+      icon: 'cloud',
       description:
         'You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge required.',
       compatibleWith: [
@@ -840,13 +858,6 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
                   Configure
                 </Link>
               ) : null}
-            </div>
-          )}
-
-          {hasRde && (
-            <div className={stepRowClass}>
-              <Icon iconName="laptop-code" className={stepIconClass} />
-              <span className="flex-1 text-sm font-medium text-neutral-subtle">AI Builder Portal</span>
             </div>
           )}
         </div>
