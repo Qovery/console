@@ -1,35 +1,17 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { SectionProductionHealth } from './section-production-health'
 
-const mockUseClusterCreationRestriction = jest.fn(() => ({
-  isNoCreditCardRestriction: false,
-}))
-const mockUseClusters = jest.fn(() => ({ data: [] }))
-const mockUseClusterStatuses = jest.fn(() => ({ data: [] }))
-
-jest.mock('../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction', () => ({
-  useClusterCreationRestriction: (params: { organizationId: string }) => mockUseClusterCreationRestriction(params),
-}))
+const mockUseClusters = jest.fn()
+const mockUseClusterStatuses = jest.fn()
 
 jest.mock('../hooks/use-clusters/use-clusters', () => ({
   __esModule: true,
-  default: (params: { organizationId: string }) => mockUseClusters(params),
+  default: () => mockUseClusters(),
 }))
 
 jest.mock('../hooks/use-cluster-statuses/use-cluster-statuses', () => ({
   __esModule: true,
-  default: (params: { organizationId: string }) => mockUseClusterStatuses(params),
-}))
-
-const mockOpenModal = jest.fn()
-const mockCloseModal = jest.fn()
-
-jest.mock('@qovery/shared/ui', () => ({
-  ...jest.requireActual('@qovery/shared/ui'),
-  useModal: () => ({
-    openModal: mockOpenModal,
-    closeModal: mockCloseModal,
-  }),
+  default: () => mockUseClusterStatuses(),
 }))
 
 const mockUseParams = jest.fn((_options?: { strict?: boolean }) => ({ organizationId: 'test-org-id' }))
@@ -67,30 +49,25 @@ describe('SectionProductionHealth', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseParams.mockReturnValue({ organizationId: 'test-org-id' })
-    mockUseClusterCreationRestriction.mockReturnValue({ isNoCreditCardRestriction: false })
-    mockUseClusters.mockReturnValue({ data: [] })
-    mockUseClusterStatuses.mockReturnValue({ data: [] })
+    mockUseClusters.mockReturnValue({ data: [], isLoading: false })
+    mockUseClusterStatuses.mockReturnValue({ data: [], isLoading: false })
   })
 
-  it('should render the cluster option cards when no cluster exists', () => {
+  it('should render the empty state when no production cluster exists', () => {
     renderWithProviders(<SectionProductionHealth />)
 
     expect(screen.getByRole('heading', { name: 'Production health' })).toBeInTheDocument()
-    expect(screen.getByText('Let your agent do the configuration with')).toBeInTheDocument()
-    expect(screen.getByText('Just install our AI skills and ask your agent to get you started!')).toBeInTheDocument()
-    expect(screen.getByText('curl -fsSL https://skill.qovery.com/install.sh | bash')).toBeInTheDocument()
-    expect(screen.getByText('Qovery managed')).toBeInTheDocument()
-    expect(screen.getByText('Bring your own cluster')).toBeInTheDocument()
-    expect(screen.getByText('Local machine (demo)')).toBeInTheDocument()
+    expect(screen.getByText('No production cluster created yet')).toBeInTheDocument()
+    expect(screen.getByText('Create cluster')).toBeInTheDocument()
   })
 
-  it('should keep the Qovery managed card linked to cluster creation', () => {
+  it('should keep the create cluster button linked to cluster creation', () => {
     renderWithProviders(<SectionProductionHealth />)
 
-    const managedLink = screen.getByText('Qovery managed').closest('a')
-    expect(managedLink).toBeInTheDocument()
-    expect(managedLink).toHaveAttribute('data-to', '/organization/$organizationId/cluster/new')
-    expect(managedLink).toHaveAttribute('data-params', JSON.stringify({ organizationId: 'test-org-id' }))
+    const createLink = screen.getByText('Create cluster').closest('a')
+    expect(createLink).toBeInTheDocument()
+    expect(createLink).toHaveAttribute('data-to', '/organization/$organizationId/cluster/new')
+    expect(createLink).toHaveAttribute('data-params', JSON.stringify({ organizationId: 'test-org-id' }))
   })
 
   it('should keep the all clusters link pointing to the clusters list', () => {
@@ -100,41 +77,5 @@ describe('SectionProductionHealth', () => {
     expect(allClustersLink).toBeInTheDocument()
     expect(allClustersLink).toHaveAttribute('data-to', '/organization/$organizationId/clusters')
     expect(allClustersLink).toHaveAttribute('data-params', JSON.stringify({ organizationId: 'test-org-id' }))
-  })
-
-  it('should open the add credit card modal from self-managed during free trial restriction', async () => {
-    mockUseClusterCreationRestriction.mockReturnValue({ isNoCreditCardRestriction: true })
-    const { userEvent } = renderWithProviders(<SectionProductionHealth />)
-
-    const selfManagedButton = screen.getByText('Bring your own cluster').closest('button')
-    expect(selfManagedButton).toBeInTheDocument()
-
-    await userEvent.click(selfManagedButton as Element)
-
-    expect(mockOpenModal).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: expect.objectContaining({
-          props: expect.objectContaining({ organizationId: 'test-org-id' }),
-        }),
-      })
-    )
-  })
-
-  it('should keep the local machine card opening the installation guide modal', async () => {
-    mockUseClusterCreationRestriction.mockReturnValue({ isNoCreditCardRestriction: true })
-    const { userEvent } = renderWithProviders(<SectionProductionHealth />)
-
-    const demoButton = screen.getByText('Local machine (demo)').closest('button')
-    expect(demoButton).toBeInTheDocument()
-
-    await userEvent.click(demoButton as Element)
-
-    expect(mockOpenModal).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: expect.objectContaining({
-          props: expect.objectContaining({ isDemo: true, type: 'ON_PREMISE' }),
-        }),
-      })
-    )
   })
 })
