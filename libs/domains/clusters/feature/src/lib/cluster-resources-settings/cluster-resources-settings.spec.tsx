@@ -3,7 +3,7 @@ import { CloudProviderEnum, type Cluster } from 'qovery-typescript-axios'
 import { act } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
-import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterResourcesSettings } from './cluster-resources-settings'
 
 const mockOpenModal = jest.fn()
@@ -225,7 +225,9 @@ describe('ClusterResourcesSettings', () => {
       )
     )
 
-    fireEvent.click(screen.getByRole('button', { name: /edit/i }))
+    act(() => {
+      screen.getByRole('button', { name: /edit/i }).click()
+    })
 
     const modalContent = mockOpenModal.mock.calls[0][0].content as {
       props: {
