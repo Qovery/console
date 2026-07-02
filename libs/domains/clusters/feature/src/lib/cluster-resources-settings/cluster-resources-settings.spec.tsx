@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
-import { act } from 'react'
 import { CloudProviderEnum, type Cluster } from 'qovery-typescript-axios'
+import { act } from 'react'
 import { useFormContext } from 'react-hook-form'
 import { type ClusterResourcesData } from '@qovery/shared/interfaces'
 import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
