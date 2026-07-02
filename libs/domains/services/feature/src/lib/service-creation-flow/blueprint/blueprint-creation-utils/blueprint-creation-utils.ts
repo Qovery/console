@@ -1,4 +1,5 @@
 import {
+  type BlueprintMajorVersion,
   type BlueprintManifestContextVariableField,
   type BlueprintManifestResponseResultsInner,
   type BlueprintManifestVariableField,
@@ -20,6 +21,15 @@ export function getBlueprintFieldPath(name: string): BlueprintFieldPath {
 export function formatFieldLabel(name: string) {
   const label = name.replace(/_/g, ' ')
   return `${label.charAt(0).toUpperCase()}${label.slice(1)}`
+}
+
+export function sortBlueprintMajorVersions(versions: BlueprintMajorVersion[]) {
+  return [...versions].sort((a, b) =>
+    b.serviceVersion.localeCompare(a.serviceVersion, undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    })
+  )
 }
 
 export function getDefaultFieldValue(field: BlueprintManifestVariableField): BlueprintFieldValue {

@@ -302,6 +302,13 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
+  blueprintUpdate: ({ blueprintId }: { blueprintId: string }) => ({
+    queryKey: [blueprintId],
+    async queryFn() {
+      const response = await blueprintApi.checkBlueprintUpdate(blueprintId)
+      return response.data
+    },
+  }),
   deploymentStatus: (environmentId: string, serviceId: string) => ({
     queryKey: [environmentId, serviceId],
     // NOTE: Value is set by WebSocket

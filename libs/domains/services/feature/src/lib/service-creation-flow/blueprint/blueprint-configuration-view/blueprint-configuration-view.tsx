@@ -1,7 +1,8 @@
 import { useNavigate, useSearch } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { type Value } from '@qovery/shared/interfaces'
 import { type ServiceCreateSection } from '@qovery/shared/router'
-import { Button, FunnelFlowBody, Icon, InputText } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
   type BlueprintFieldValue,
@@ -10,6 +11,7 @@ import {
   getFieldValidationError,
   getStringFieldValue,
   isFieldValid,
+  sortBlueprintMajorVersions,
 } from '../blueprint-creation-utils/blueprint-creation-utils'
 import { BlueprintManifestVariableInput } from './blueprint-creation-components/blueprint-manifest-variable-input/blueprint-manifest-variable-input'
 import { BlueprintSection } from './blueprint-creation-components/blueprint-section/blueprint-section'
@@ -36,7 +38,16 @@ export function BlueprintConfigurationView() {
   const initialSection = isBlueprintConfigurationSection(search.section) ? search.section : 'service-information'
   const [currentSection, setCurrentSection] = useState<ServiceCreateSection>(initialSection)
   const serviceName = form.watch('serviceName')
+  const versionTag = form.watch('versionTag')
   const blueprintFieldValues = form.watch('fields')
+  const blueprintVersionOptions = useMemo<Value[]>(
+    () =>
+      sortBlueprintMajorVersions(blueprint.majorVersions).map((majorVersion) => ({
+        label: majorVersion.serviceVersion,
+        value: majorVersion.latestTag,
+      })),
+    [blueprint.majorVersions]
+  )
   const hasOverrideFields = optionalBlueprintFields.length > 0 || overridableContextBlueprintFields.length > 0
   const isServiceInformationValid = Boolean(serviceName.trim())
   const isBlueprintSetupValid = requiredBlueprintFields.every((field) =>
@@ -86,7 +97,19 @@ export function BlueprintConfigurationView() {
                 onChange={(event) => form.setValue('serviceName', event.currentTarget.value)}
                 autoFocus
               />
-              <InputText name="blueprint-version" label="Blueprint version" value={serviceVersion} disabled />
+              {blueprintVersionOptions.length > 1 ? (
+                <InputSelect
+                  label="Blueprint version"
+                  value={versionTag}
+                  options={blueprintVersionOptions}
+                  onChange={(value) =>
+                    form.setValue('versionTag', Array.isArray(value) ? value[0] : value, { shouldDirty: true })
+                  }
+                  isSearchable={blueprintVersionOptions.length > 6}
+                />
+              ) : (
+                <InputText name="blueprint-version" label="Blueprint version" value={serviceVersion} disabled />
+              )}
               <Button
                 type="button"
                 size="md"
