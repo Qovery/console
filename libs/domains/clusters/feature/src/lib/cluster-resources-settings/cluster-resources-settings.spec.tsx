@@ -213,8 +213,6 @@ describe('ClusterResourcesSettings', () => {
             ...defaultValues,
             karpenter: {
               enabled: true,
-              spot_enabled: false,
-              disk_size_in_gib: 40,
               default_service_architecture: 'AMD64',
               qovery_node_pools: {
                 requirements: [{ key: 'InstanceSize', operator: 'In', values: ['2xlarge'] }],
@@ -251,6 +249,8 @@ describe('ClusterResourcesSettings', () => {
 
     expect(JSON.parse(screen.getByTestId('karpenter-values').textContent ?? '{}')).toEqual(
       expect.objectContaining({
+        spot_enabled: false,
+        disk_size_in_gib: 50,
         default_service_architecture: 'ARM64',
         qovery_node_pools: {
           requirements: [{ key: 'InstanceSize', operator: 'In', values: ['4xlarge'] }],
