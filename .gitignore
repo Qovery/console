@@ -43,6 +43,7 @@ node_modules
 .settings/
 *.sublime-workspace
 .zed*
+.codex/environments
 
 # IDE - VSCode
 .vscode/*
