@@ -1,8 +1,8 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { Link as RouterLink, useNavigate } from '@tanstack/react-router'
+import { Link as RouterLink, useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { ClusterStateEnum, StateEnum } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ClusterInstallationGuideModal, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal, useDeploymentRule, useEnvironments } from '@qovery/domains/environments/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
@@ -27,11 +27,8 @@ const QUEUED_SERVICE_STATUSES: StateEnum[] = [StateEnum.DEPLOYMENT_QUEUED, State
 const ACTIVE_DEPLOYING_SERVICE_STATUSES: StateEnum[] = [StateEnum.DEPLOYING, StateEnum.BUILDING]
 const ALL_DEPLOYING_SERVICE_STATUSES: StateEnum[] = [...QUEUED_SERVICE_STATUSES, ...ACTIVE_DEPLOYING_SERVICE_STATUSES]
 
-export interface SectionOnboardingProps {
-  organizationId: string
-}
-
-export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
+export function SectionOnboarding() {
+  const { organizationId = '' } = useParams({ strict: false })
   const [localDismissed, setLocalDismissed] = useLocalStorage(`onboarding_section_dismissed_${organizationId}`, false)
   const { openModal, closeModal, enableAlertClickOutside } = useModal()
   const navigate = useNavigate()
@@ -62,79 +59,125 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const { data: serviceStatuses } = useServiceStatuses({ environmentId: firstEnvironment?.id })
   const completionModalOpenedRef = useRef(false)
 
-  const isClusterDeployed = clusterStatuses.some((s) => s.status === ClusterStateEnum.DEPLOYED && s.is_deployed)
-  const isClusterQueued =
-    clusters.length > 0 &&
-    !isClusterDeployed &&
-    clusterStatuses.some((s) => QUEUED_CLUSTER_STATUSES.includes(s.status as ClusterStateEnum))
-  const isClusterDeploying =
-    clusters.length > 0 &&
-    !isClusterDeployed &&
-    clusterStatuses.some((s) => ACTIVE_DEPLOYING_CLUSTER_STATUSES.includes(s.status as ClusterStateEnum))
-  const deployingClusterStatus = clusterStatuses.find((s) =>
-    ALL_DEPLOYING_CLUSTER_STATUSES.includes(s.status as ClusterStateEnum)
+  const isClusterDeployed = useMemo(
+    () => clusterStatuses.some((s) => s.status === ClusterStateEnum.DEPLOYED && s.is_deployed),
+    [clusterStatuses]
   )
-  const isClusterFailed =
-    !isClusterDeployed &&
-    clusterStatuses.some(
-      (s) => s.status === ClusterStateEnum.DEPLOYMENT_ERROR || s.status === ClusterStateEnum.INVALID_CREDENTIALS
-    )
-  const failedClusterStatus = clusterStatuses.find(
-    (s) => s.status === ClusterStateEnum.DEPLOYMENT_ERROR || s.status === ClusterStateEnum.INVALID_CREDENTIALS
+  const isClusterQueued = useMemo(
+    () =>
+      clusters.length > 0 &&
+      !isClusterDeployed &&
+      clusterStatuses.some((s) => QUEUED_CLUSTER_STATUSES.includes(s.status as ClusterStateEnum)),
+    [clusters.length, isClusterDeployed, clusterStatuses]
+  )
+  const isClusterDeploying = useMemo(
+    () =>
+      clusters.length > 0 &&
+      !isClusterDeployed &&
+      clusterStatuses.some((s) => ACTIVE_DEPLOYING_CLUSTER_STATUSES.includes(s.status as ClusterStateEnum)),
+    [clusters.length, isClusterDeployed, clusterStatuses]
+  )
+  const deployingClusterStatus = useMemo(
+    () => clusterStatuses.find((s) => ALL_DEPLOYING_CLUSTER_STATUSES.includes(s.status as ClusterStateEnum)),
+    [clusterStatuses]
+  )
+  const isClusterFailed = useMemo(
+    () =>
+      !isClusterDeployed &&
+      clusterStatuses.some(
+        (s) => s.status === ClusterStateEnum.DEPLOYMENT_ERROR || s.status === ClusterStateEnum.INVALID_CREDENTIALS
+      ),
+    [isClusterDeployed, clusterStatuses]
+  )
+  const failedClusterStatus = useMemo(
+    () =>
+      clusterStatuses.find(
+        (s) => s.status === ClusterStateEnum.DEPLOYMENT_ERROR || s.status === ClusterStateEnum.INVALID_CREDENTIALS
+      ),
+    [clusterStatuses]
   )
 
   const hasCluster = clusters.length > 0
   const hasEnvironment = environments.length > 0
 
-  const allServiceStatuses = [
-    ...(serviceStatuses?.applications ?? []),
-    ...(serviceStatuses?.containers ?? []),
-    ...(serviceStatuses?.jobs ?? []),
-    ...(serviceStatuses?.helms ?? []),
-    ...(serviceStatuses?.databases ?? []),
-    ...(serviceStatuses?.terraforms ?? []),
-  ]
-  const hasService = services.length > 0
-  const isServiceDeployed = allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYED)
-  const isServiceQueued =
-    hasService && !isServiceDeployed && allServiceStatuses.some((s) => QUEUED_SERVICE_STATUSES.includes(s.state))
-  const isServiceDeploying =
-    hasService &&
-    !isServiceDeployed &&
-    allServiceStatuses.some((s) => ACTIVE_DEPLOYING_SERVICE_STATUSES.includes(s.state))
-  const deployingServiceStatus = allServiceStatuses.find((s) => ALL_DEPLOYING_SERVICE_STATUSES.includes(s.state))
-  const isServiceFailed =
-    !isServiceDeployed &&
-    allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYMENT_ERROR || s.state === StateEnum.BUILD_ERROR)
-  const failedServiceStatus = allServiceStatuses.find(
-    (s) => s.state === StateEnum.DEPLOYMENT_ERROR || s.state === StateEnum.BUILD_ERROR
+  const allServiceStatuses = useMemo(
+    () => [
+      ...(serviceStatuses?.applications ?? []),
+      ...(serviceStatuses?.containers ?? []),
+      ...(serviceStatuses?.jobs ?? []),
+      ...(serviceStatuses?.helms ?? []),
+      ...(serviceStatuses?.databases ?? []),
+      ...(serviceStatuses?.terraforms ?? []),
+    ],
+    [serviceStatuses]
   )
-  const isServiceStopped =
-    hasService &&
-    !isServiceDeployed &&
-    !isServiceQueued &&
-    !isServiceDeploying &&
-    !isServiceFailed &&
-    allServiceStatuses.some((s) => s.state === StateEnum.STOPPED || s.state === StateEnum.STOP_ERROR)
-  const stoppedServiceStatus = allServiceStatuses.find(
-    (s) => s.state === StateEnum.STOPPED || s.state === StateEnum.STOP_ERROR
+  const hasService = services.length > 0
+  const isServiceDeployed = useMemo(
+    () => allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYED),
+    [allServiceStatuses]
+  )
+  const isServiceQueued = useMemo(
+    () => hasService && !isServiceDeployed && allServiceStatuses.some((s) => QUEUED_SERVICE_STATUSES.includes(s.state)),
+    [hasService, isServiceDeployed, allServiceStatuses]
+  )
+  const isServiceDeploying = useMemo(
+    () =>
+      hasService &&
+      !isServiceDeployed &&
+      allServiceStatuses.some((s) => ACTIVE_DEPLOYING_SERVICE_STATUSES.includes(s.state)),
+    [hasService, isServiceDeployed, allServiceStatuses]
+  )
+  const deployingServiceStatus = useMemo(
+    () => allServiceStatuses.find((s) => ALL_DEPLOYING_SERVICE_STATUSES.includes(s.state)),
+    [allServiceStatuses]
+  )
+  const isServiceFailed = useMemo(
+    () =>
+      !isServiceDeployed &&
+      allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYMENT_ERROR || s.state === StateEnum.BUILD_ERROR),
+    [isServiceDeployed, allServiceStatuses]
+  )
+  const failedServiceStatus = useMemo(
+    () => allServiceStatuses.find((s) => s.state === StateEnum.DEPLOYMENT_ERROR || s.state === StateEnum.BUILD_ERROR),
+    [allServiceStatuses]
+  )
+  const isServiceStopped = useMemo(
+    () =>
+      hasService &&
+      !isServiceDeployed &&
+      !isServiceQueued &&
+      !isServiceDeploying &&
+      !isServiceFailed &&
+      allServiceStatuses.some((s) => s.state === StateEnum.STOPPED || s.state === StateEnum.STOP_ERROR),
+    [hasService, isServiceDeployed, isServiceQueued, isServiceDeploying, isServiceFailed, allServiceStatuses]
+  )
+  const stoppedServiceStatus = useMemo(
+    () => allServiceStatuses.find((s) => s.state === StateEnum.STOPPED || s.state === StateEnum.STOP_ERROR),
+    [allServiceStatuses]
   )
 
-  const useCases = (onboarding?.use_cases ?? '').split(',').filter(Boolean)
+  const useCases = useMemo(() => (onboarding?.use_cases ?? '').split(',').filter(Boolean), [onboarding?.use_cases])
   const hasEphemeralEnvironments = useCases.includes('ephemeral-environments')
   const hasRde = useCases.includes('rde')
 
-  const { data: deploymentRule } = useDeploymentRule({ environmentId: firstEnvironment?.id ?? '' })
+  const { data: deploymentRule } = useDeploymentRule({
+    environmentId: firstEnvironment?.id ?? '',
+    enabled: !!firstEnvironment?.id,
+  })
   const isPreviewEnabled = hasEphemeralEnvironments && (deploymentRule?.auto_preview ?? false)
 
   const requiredStepsTotal = 4 + (hasEphemeralEnvironments ? 1 : 0)
-  const completedCount = [
-    true,
-    isClusterDeployed,
-    hasEnvironment,
-    isServiceDeployed,
-    ...(hasEphemeralEnvironments ? [isPreviewEnabled] : []),
-  ].filter(Boolean).length
+  const completedCount = useMemo(
+    () =>
+      [
+        true,
+        isClusterDeployed,
+        hasEnvironment,
+        isServiceDeployed,
+        ...(hasEphemeralEnvironments ? [isPreviewEnabled] : []),
+      ].filter(Boolean).length,
+    [isClusterDeployed, hasEnvironment, isServiceDeployed, hasEphemeralEnvironments, isPreviewEnabled]
+  )
   const allRequiredDone = completedCount === requiredStepsTotal
   const progressPercent = Math.round((completedCount / requiredStepsTotal) * 100)
 
