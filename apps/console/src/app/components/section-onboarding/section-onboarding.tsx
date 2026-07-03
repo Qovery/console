@@ -41,12 +41,19 @@ export function SectionOnboarding({ organizationId }: SectionOnboardingProps) {
   const { data: onboarding, isLoading: isOnboardingLoading } = useOrganizationOnboarding({ organizationId })
   const { mutate: updateOnboarding } = useUpdateOrganizationOnboarding({ organizationId })
 
-  const { data: clusters = [] } = useClusters({ organizationId })
+  const isOnboardingActive =
+    Boolean(onboarding?.use_cases) &&
+    onboarding?.status !== 'DISMISSED' &&
+    onboarding?.status !== 'COMPLETED' &&
+    !localDismissed
+
+  const { data: clusters = [] } = useClusters({ organizationId, enabled: isOnboardingActive })
   const { data: clusterStatuses = [] } = useClusterStatuses({
     organizationId,
-    refetchInterval: 3000,
+    refetchInterval: isOnboardingActive ? 3000 : undefined,
+    enabled: isOnboardingActive,
   })
-  const { data: projects = [] } = useProjects({ organizationId })
+  const { data: projects = [] } = useProjects({ organizationId, enabled: isOnboardingActive })
 
   const firstProject = projects[0]
   const { data: environments = [] } = useEnvironments({ projectId: firstProject?.id ?? '' })
