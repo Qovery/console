@@ -18,7 +18,7 @@ function RouteComponent() {
   return (
     <div className="mt-6">
       <OrganizationOverview>
-        <SectionOnboarding organizationId={organizationId} />
+        <SectionOnboarding />
         <SectionProductionHealth />
         {hasClusters ? <ProjectList /> : null}
       </OrganizationOverview>
