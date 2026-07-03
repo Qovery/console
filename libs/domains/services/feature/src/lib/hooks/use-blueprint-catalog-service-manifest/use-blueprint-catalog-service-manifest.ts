@@ -1,5 +1,5 @@
-import { useCallback } from 'react'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseBlueprintCatalogServiceManifestProps {
