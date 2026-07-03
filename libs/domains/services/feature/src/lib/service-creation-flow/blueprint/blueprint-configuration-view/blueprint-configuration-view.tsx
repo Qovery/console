@@ -82,9 +82,7 @@ export function BlueprintConfigurationView({ currentSection }: BlueprintConfigur
           title="Blueprint setup"
           onClick={() => navigateToSection('blueprint-setup')}
         >
-          {currentSection === 'blueprint-setup' && (
-            <BlueprintSetupSectionContent onContinue={() => navigateToSection('overrides')} />
-          )}
+          {currentSection === 'blueprint-setup' && <BlueprintSetupSectionContent />}
         </BlueprintSection>
 
         {currentSection === 'service-information' ? (
@@ -94,7 +92,11 @@ export function BlueprintConfigurationView({ currentSection }: BlueprintConfigur
         )}
       </div>
 
-      {currentSection === 'overrides' ? <ConfirmConfigurationFooter /> : <DisabledConfirmConfigurationFooter />}
+      {currentSection === 'service-information' ? (
+        <DisabledConfirmBlueprintCreationFooter />
+      ) : (
+        <ConfirmBlueprintCreationFooter />
+      )}
     </FunnelFlowBody>
   )
 }
@@ -127,7 +129,7 @@ function ServiceInformationSectionContent({ onContinue }: ServiceInformationSect
   )
   const handleContinue = async () => {
     setIsLoadingBlueprintSetup(true)
-    await prefetchBlueprintManifestFields()
+    await prefetchBlueprintManifestFields().catch(() => undefined)
     onContinue()
   }
 
@@ -169,15 +171,10 @@ function ServiceInformationSectionContent({ onContinue }: ServiceInformationSect
   )
 }
 
-interface BlueprintSetupSectionContentProps {
-  onContinue: () => void
-}
-
-function BlueprintSetupSectionContent({ onContinue }: BlueprintSetupSectionContentProps) {
+function BlueprintSetupSectionContent() {
   const { form } = useBlueprintCreateContext()
   const { requiredBlueprintFields } = useBlueprintManifestFields()
   const blueprintFieldValues = form.watch('fields')
-  const isBlueprintSetupValid = useIsBlueprintSetupValid()
   const updateFieldValue = (name: string, value: BlueprintFieldValue) => {
     form.setValue(getBlueprintFieldPath(name), value, { shouldDirty: true, shouldValidate: true })
   }
@@ -194,17 +191,6 @@ function BlueprintSetupSectionContent({ onContinue }: BlueprintSetupSectionConte
           onChange={(value) => updateFieldValue(field.name, value)}
         />
       ))}
-      <Button
-        type="button"
-        size="md"
-        color="neutral"
-        className="w-fit"
-        disabled={!isBlueprintSetupValid}
-        onClick={onContinue}
-      >
-        Continue
-        <Icon iconName="arrow-right" />
-      </Button>
     </>
   )
 }
@@ -261,9 +247,10 @@ function OverridesSectionContent() {
   )
 }
 
-function ConfirmConfigurationFooter() {
+function ConfirmBlueprintCreationFooter() {
   const navigate = useNavigate()
   const { creationFlowUrl } = useBlueprintCreateContext()
+  const isServiceInformationValid = useIsServiceInformationValid()
   const isBlueprintSetupValid = useIsBlueprintSetupValid()
 
   return (
@@ -272,7 +259,7 @@ function ConfirmConfigurationFooter() {
         type="button"
         size="lg"
         className="w-full justify-center"
-        disabled={!isBlueprintSetupValid}
+        disabled={!isServiceInformationValid || !isBlueprintSetupValid}
         onClick={() => navigate({ to: `${creationFlowUrl}/summary` })}
       >
         Confirm blueprint configuration
@@ -282,7 +269,7 @@ function ConfirmConfigurationFooter() {
   )
 }
 
-function DisabledConfirmConfigurationFooter() {
+function DisabledConfirmBlueprintCreationFooter() {
   return (
     <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
       <Button type="button" size="lg" className="w-full justify-center" disabled>

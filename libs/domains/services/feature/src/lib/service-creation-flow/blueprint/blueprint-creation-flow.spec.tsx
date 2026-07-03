@@ -243,11 +243,13 @@ describe('BlueprintCreationFlow', () => {
     const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
 
     await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    const confirmBlueprintCreation = await screen.findByRole('button', { name: /confirm blueprint configuration/i })
+    expect(confirmBlueprintCreation).toBeDisabled()
     await userEvent.type(await screen.findByLabelText('Db name'), 'production')
     await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
     await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
-    await userEvent.click(screen.getByRole('button', { name: /confirm blueprint configuration/i }))
+    expect(confirmBlueprintCreation).toBeEnabled()
+    await userEvent.click(confirmBlueprintCreation)
 
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/summary',
@@ -292,7 +294,7 @@ describe('BlueprintCreationFlow', () => {
     expect(mockUseBlueprintCatalogServiceManifest).not.toHaveBeenCalled()
   })
 
-  it('should focus the first overrides field after continuing from blueprint setup', async () => {
+  it('should focus the first overrides field after opening overrides from blueprint setup', async () => {
     jest.useFakeTimers()
 
     const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
@@ -301,7 +303,7 @@ describe('BlueprintCreationFlow', () => {
     await userEvent.type(await screen.findByLabelText('Db name'), 'production')
     await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
     await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await userEvent.click(screen.getByRole('button', { name: /overrides/i }))
 
     expect(await screen.findByRole('checkbox', { name: 'Skip final snapshot' })).toHaveFocus()
   })
@@ -361,13 +363,43 @@ describe('BlueprintCreationFlow', () => {
     await userEvent.type(await screen.findByLabelText('Db name'), 'production')
     await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
     await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
     await userEvent.click(screen.getByRole('button', { name: /confirm blueprint configuration/i }))
 
     expect(await screen.findByText('Ready to create your blueprint service')).toBeInTheDocument()
     expect(screen.getByText(/production/)).toBeInTheDocument()
     expect(screen.getByText(/^postgres$/)).toBeInTheDocument()
     expect(screen.getByText(/••••••••/)).toBeInTheDocument()
+  })
+
+  it('should send default override values in the create payload when overrides were not opened', async () => {
+    jest.useFakeTimers()
+
+    const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
+
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await userEvent.type(await screen.findByLabelText('Db name'), 'production')
+    await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
+    await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
+    await userEvent.click(screen.getByRole('button', { name: /confirm blueprint configuration/i }))
+    expect(await screen.findByText('Ready to create your blueprint service')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateBlueprint).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            variables: expect.arrayContaining([
+              {
+                name: 'skip_final_snapshot',
+                value: 'true',
+                is_secret: false,
+              },
+            ]),
+          }),
+        })
+      )
+    })
   })
 
   it('should redirect to configuration when summary is opened without required blueprint values', async () => {
@@ -462,7 +494,6 @@ describe('BlueprintCreationFlow', () => {
     await userEvent.type(await screen.findByLabelText('Db name'), 'production')
     await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
     await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
     await userEvent.click(screen.getByRole('button', { name: /confirm blueprint configuration/i }))
 
     expect(await screen.findByText('Ready to create your blueprint service')).toBeInTheDocument()
