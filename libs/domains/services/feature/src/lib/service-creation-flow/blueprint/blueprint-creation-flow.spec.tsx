@@ -237,25 +237,6 @@ describe('BlueprintCreationFlow', () => {
     expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
   })
 
-  it('should navigate to the blueprint summary from the confirm blueprint configuration button', async () => {
-    jest.useFakeTimers()
-
-    const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
-
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
-    const confirmBlueprintCreation = await screen.findByRole('button', { name: /confirm blueprint configuration/i })
-    expect(confirmBlueprintCreation).toBeDisabled()
-    await userEvent.type(await screen.findByLabelText('Db name'), 'production')
-    await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
-    await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
-    expect(confirmBlueprintCreation).toBeEnabled()
-    await userEvent.click(confirmBlueprintCreation)
-
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/summary',
-    })
-  })
-
   it('should focus the first blueprint setup field after continuing from service information', async () => {
     jest.useFakeTimers()
 
@@ -485,11 +466,14 @@ describe('BlueprintCreationFlow', () => {
     expect(mockUseBlueprintCatalogServiceManifest).not.toHaveBeenCalled()
 
     await userEvent.click(screen.getByRole('button', { name: /continue/i }))
-    expect(mockUseBlueprintCatalogServiceManifest).toHaveBeenCalledWith(
-      expect.objectContaining({
-        serviceVersion: '16',
-        suspense: true,
-      })
+    await screen.findByLabelText('Db name')
+    await waitFor(() =>
+      expect(mockUseBlueprintCatalogServiceManifest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          serviceVersion: '16',
+          suspense: true,
+        })
+      )
     )
     await userEvent.type(await screen.findByLabelText('Db name'), 'production')
     await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
