@@ -1,7 +1,8 @@
-import { useNavigate } from '@tanstack/react-router'
-import { useEffect, useMemo } from 'react'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { useEffect, useMemo, useState } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Icon, InputSelect, InputText } from '@qovery/shared/ui'
+import { usePrefetchBlueprintCatalogServiceManifest } from '../../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
   type BlueprintFieldValue,
@@ -103,7 +104,16 @@ interface ServiceInformationSectionContentProps {
 }
 
 function ServiceInformationSectionContent({ onContinue }: ServiceInformationSectionContentProps) {
-  const { blueprint, form, serviceVersion } = useBlueprintCreateContext()
+  const { blueprint, form, organizationId, serviceVersion } = useBlueprintCreateContext()
+  const { environmentId = '', serviceFamily = blueprint.serviceFamily ?? '' } = useParams({ strict: false })
+  const prefetchBlueprintManifestFields = usePrefetchBlueprintCatalogServiceManifest({
+    organizationId,
+    provider: blueprint.provider,
+    serviceFamily,
+    serviceVersion,
+    environmentId,
+  })
+  const [isLoadingBlueprintSetup, setIsLoadingBlueprintSetup] = useState(false)
   const serviceName = form.watch('serviceName')
   const versionTag = form.watch('versionTag')
   const isServiceInformationValid = useIsServiceInformationValid()
@@ -115,6 +125,11 @@ function ServiceInformationSectionContent({ onContinue }: ServiceInformationSect
       })),
     [blueprint.majorVersions]
   )
+  const handleContinue = async () => {
+    setIsLoadingBlueprintSetup(true)
+    await prefetchBlueprintManifestFields()
+    onContinue()
+  }
 
   return (
     <>
@@ -143,8 +158,9 @@ function ServiceInformationSectionContent({ onContinue }: ServiceInformationSect
         size="md"
         color="neutral"
         className="w-fit"
-        disabled={!isServiceInformationValid}
-        onClick={onContinue}
+        disabled={!isServiceInformationValid || isLoadingBlueprintSetup}
+        loading={isLoadingBlueprintSetup}
+        onClick={handleContinue}
       >
         Continue
         <Icon iconName="arrow-right" />

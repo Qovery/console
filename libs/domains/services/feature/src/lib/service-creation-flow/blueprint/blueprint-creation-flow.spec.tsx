@@ -16,6 +16,7 @@ import {
 
 const mockNavigate = jest.fn()
 const mockUseBlueprintCatalogServiceManifest = jest.fn()
+const mockPrefetchBlueprintManifestFields = jest.fn()
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
 const mockUseBlueprintServiceCreatedSocket = jest.fn()
 const mockCreateBlueprint = jest.fn()
@@ -45,6 +46,7 @@ jest.mock('@qovery/shared/ui', () => {
 
 jest.mock('../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest', () => ({
   useBlueprintCatalogServiceManifest: (props: unknown) => mockUseBlueprintCatalogServiceManifest(props),
+  usePrefetchBlueprintCatalogServiceManifest: () => mockPrefetchBlueprintManifestFields,
 }))
 
 jest.mock('../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
@@ -209,6 +211,7 @@ describe('BlueprintCreationFlow', () => {
     mockUseBlueprintCatalogServiceManifest.mockReturnValue({
       data: manifestFields,
     })
+    mockPrefetchBlueprintManifestFields.mockResolvedValue(undefined)
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({
       data: {
         content: '# AWS RDS PostgreSQL\n\nBlueprint documentation',
@@ -260,6 +263,23 @@ describe('BlueprintCreationFlow', () => {
     await userEvent.click(screen.getByRole('button', { name: /continue/i }))
 
     expect(await screen.findByLabelText('Db name')).toHaveFocus()
+  })
+
+  it('should prefetch blueprint setup fields before navigating from service information', async () => {
+    mockPrefetchBlueprintManifestFields.mockImplementation(async () => {
+      expect(mockNavigate).not.toHaveBeenCalledWith({
+        to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/blueprint-setup',
+      })
+    })
+
+    const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
+
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockPrefetchBlueprintManifestFields).toHaveBeenCalled()
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/blueprint-setup',
+    })
   })
 
   it('should not load manifest fields from the service information route', () => {
