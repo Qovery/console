@@ -101,7 +101,7 @@ export function SectionSecretManagerHighlight() {
               variant="solid"
               size="lg"
               className="absolute bottom-3 z-10 w-[calc(100%-24px)] justify-center"
-              onClick={() => showPylonForm('request-upgrade-plan')}
+              onClick={() => showPylonForm('request-access-secrets-manager')}
             >
               Contact us
             </Button>
