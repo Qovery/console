@@ -3,19 +3,12 @@ import { useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { BlueprintDetailsPanel } from '../../blueprint-details-panel/blueprint-details-panel'
-import { useBlueprintCatalogServiceManifest } from '../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
 import {
   BlueprintCreateContext,
   type BlueprintCreateFormData,
   type BlueprintCreationFlowProps,
 } from './blueprint-create-context/blueprint-create-context'
-import {
-  getDefaultContextFieldValue,
-  getDefaultFieldValue,
-  isOptionalVariableField,
-  isOverridableContextVariableField,
-  isRequiredVariableField,
-} from './blueprint-creation-utils/blueprint-creation-utils'
+import { sortBlueprintMajorVersions } from './blueprint-creation-utils/blueprint-creation-utils'
 
 export {
   BlueprintCreateContext,
@@ -24,7 +17,16 @@ export {
   type BlueprintCreationFlowProps,
   useBlueprintCreateContext,
 } from './blueprint-create-context/blueprint-create-context'
-export { BlueprintConfigurationView } from './blueprint-configuration-view/blueprint-configuration-view'
+export {
+  BlueprintConfigurationView,
+  BlueprintOverridesConfigurationSection,
+  BlueprintServiceInformationSection,
+  BlueprintSetupSection,
+} from './blueprint-configuration-view/blueprint-configuration-view'
+export {
+  BlueprintManifestFieldsProvider,
+  useBlueprintManifestFields,
+} from './blueprint-manifest-context/blueprint-manifest-context'
 export { BlueprintStepSummary } from './blueprint-step-summary/blueprint-step-summary'
 
 export const blueprintCreationSteps: { title: string }[] = [{ title: 'Configuration' }, { title: 'Summary' }]
@@ -32,7 +34,25 @@ export const blueprintCreationSteps: { title: string }[] = [{ title: 'Configurat
 export function BlueprintCreationFlow({ blueprint, children, onExit }: BlueprintCreationFlowProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [selectedBlueprint, setSelectedBlueprint] = useState<typeof blueprint | null>(null)
-  const serviceVersion = blueprint.majorVersions[0]?.serviceVersion ?? 'latest'
+  const sortedBlueprintVersions = useMemo(
+    () => sortBlueprintMajorVersions(blueprint.majorVersions),
+    [blueprint.majorVersions]
+  )
+  const defaultBlueprintVersion = sortedBlueprintVersions[0]
+  const defaultVersionTag = defaultBlueprintVersion?.latestTag ?? ''
+  const form = useForm<BlueprintCreateFormData>({
+    defaultValues: {
+      serviceName: blueprint.name,
+      versionTag: defaultVersionTag,
+      fields: {},
+    },
+    mode: 'onChange',
+  })
+  const selectedVersionTag = form.watch('versionTag')
+  const selectedBlueprintVersion =
+    sortedBlueprintVersions.find((majorVersion) => majorVersion.latestTag === selectedVersionTag) ??
+    defaultBlueprintVersion
+  const serviceVersion = selectedBlueprintVersion?.serviceVersion ?? 'latest'
   const serviceFamily = blueprint.serviceFamily ?? ''
   const {
     environmentId = '',
@@ -41,45 +61,6 @@ export function BlueprintCreationFlow({ blueprint, children, onExit }: Blueprint
     provider = blueprint.provider,
   } = useParams({ strict: false })
   const creationFlowUrl = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/blueprint/${encodeURIComponent(provider)}/${encodeURIComponent(serviceFamily)}`
-  const { data: blueprintManifestFields = [] } = useBlueprintCatalogServiceManifest({
-    organizationId,
-    provider: blueprint.provider,
-    serviceFamily,
-    serviceVersion,
-    environmentId,
-    enabled: Boolean(serviceVersion) && Boolean(serviceFamily) && Boolean(environmentId),
-    suspense: true,
-  })
-
-  const requiredBlueprintFields = useMemo(
-    () => blueprintManifestFields.filter(isRequiredVariableField),
-    [blueprintManifestFields]
-  )
-  const optionalBlueprintFields = useMemo(
-    () => blueprintManifestFields.filter(isOptionalVariableField),
-    [blueprintManifestFields]
-  )
-  const overridableContextBlueprintFields = useMemo(
-    () => blueprintManifestFields.filter(isOverridableContextVariableField),
-    [blueprintManifestFields]
-  )
-  const defaultBlueprintFieldValues = useMemo(() => {
-    const fieldsWithDefaultValue = [...requiredBlueprintFields, ...optionalBlueprintFields]
-
-    return {
-      ...Object.fromEntries(fieldsWithDefaultValue.map((field) => [field.name, getDefaultFieldValue(field)])),
-      ...Object.fromEntries(
-        overridableContextBlueprintFields.map((field) => [field.name, getDefaultContextFieldValue(field)])
-      ),
-    }
-  }, [optionalBlueprintFields, overridableContextBlueprintFields, requiredBlueprintFields])
-  const form = useForm<BlueprintCreateFormData>({
-    defaultValues: {
-      serviceName: blueprint.name,
-      fields: defaultBlueprintFieldValues,
-    },
-    mode: 'onChange',
-  })
 
   return (
     <BlueprintCreateContext.Provider
@@ -92,9 +73,6 @@ export function BlueprintCreationFlow({ blueprint, children, onExit }: Blueprint
         form,
         onViewDetails: () => setSelectedBlueprint(blueprint),
         serviceVersion,
-        requiredBlueprintFields,
-        optionalBlueprintFields,
-        overridableContextBlueprintFields,
       }}
     >
       <FormProvider {...form}>

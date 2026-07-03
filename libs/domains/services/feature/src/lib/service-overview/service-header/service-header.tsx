@@ -1,5 +1,6 @@
 import { Link, useParams } from '@tanstack/react-router'
 import { type ApplicationGitRepository, type Credentials, type Environment } from 'qovery-typescript-axios'
+import { Suspense } from 'react'
 import { P, match } from 'ts-pattern'
 import {
   ClusterAvatar,
@@ -23,6 +24,7 @@ import {
   ExternalLink,
   Heading,
   Icon,
+  Skeleton,
   Tooltip,
   Truncate,
   toast,
@@ -32,6 +34,7 @@ import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-service-actions'
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
+import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
@@ -156,6 +159,32 @@ interface ServiceHeaderMetadataProps {
   service: AnyService
 }
 
+function BlueprintUpdateBadgeSkeleton() {
+  return <Skeleton width={122} height={24} />
+}
+
+function BlueprintUpdateBadge({ blueprintId }: { blueprintId: string }) {
+  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
+
+  if (!blueprintUpdate) {
+    return null
+  }
+
+  return blueprintUpdate.is_up_to_date ? (
+    <Badge variant="outline" color="green" className="gap-1 whitespace-nowrap">
+      <Icon iconName="circle-check" iconStyle="regular" />
+      Up to date
+    </Badge>
+  ) : (
+    <Tooltip content={`Latest blueprint version: ${blueprintUpdate.latest_tag}`}>
+      <Badge variant="surface" color="sky" className="gap-1 whitespace-nowrap font-medium">
+        <Icon iconName="arrow-rotate-right" iconStyle="regular" />
+        Update available
+      </Badge>
+    </Tooltip>
+  )
+}
+
 function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: masterCredentials } = useMasterCredentials({
@@ -163,6 +192,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
     serviceType: service?.service_type,
   })
   const [, copyToClipboard] = useCopyToClipboard()
+  const blueprintId = 'blueprint_id' in service ? service.blueprint_id : undefined
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
@@ -292,6 +322,11 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
             {helmRepository.chart_version}
           </Badge>
         </>
+      )}
+      {blueprintId && (
+        <Suspense fallback={<BlueprintUpdateBadgeSkeleton />}>
+          <BlueprintUpdateBadge blueprintId={blueprintId} />
+        </Suspense>
       )}
       {databaseSource && (
         <>

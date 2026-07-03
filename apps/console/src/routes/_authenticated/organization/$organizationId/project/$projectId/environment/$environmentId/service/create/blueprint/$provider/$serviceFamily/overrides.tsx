@@ -1,0 +1,24 @@
+import { createFileRoute } from '@tanstack/react-router'
+import {
+  BlueprintManifestFieldsProvider,
+  BlueprintOverridesConfigurationSection,
+} from '@qovery/domains/services/feature'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
+
+export const Route = createFileRoute(
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/overrides'
+)({
+  component: RouteComponent,
+})
+
+function RouteComponent() {
+  const { serviceFamily } = Route.useParams()
+
+  useDocumentTitle(`${serviceFamily} overrides`)
+
+  return (
+    <BlueprintManifestFieldsProvider>
+      <BlueprintOverridesConfigurationSection />
+    </BlueprintManifestFieldsProvider>
+  )
+}

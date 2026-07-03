@@ -2,14 +2,14 @@ import { type ReactNode } from 'react'
 import { Heading, Icon, Section } from '@qovery/shared/ui'
 import { BlueprintSection } from '../blueprint-section/blueprint-section'
 
-export interface OverridesSectionProps {
+export interface OverridesSectionCardProps {
   active: boolean
   children?: ReactNode
   disabled?: boolean
   onClick: () => void
 }
 
-export function OverridesSection({ active, children, disabled = false, onClick }: OverridesSectionProps) {
+export function OverridesSectionCard({ active, children, disabled = false, onClick }: OverridesSectionCardProps) {
   if (!active) {
     return (
       <BlueprintSection

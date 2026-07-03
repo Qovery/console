@@ -2,7 +2,6 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type BlueprintCreateRequest } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { type ServiceCreateSection } from '@qovery/shared/router'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, toast } from '@qovery/shared/ui'
 import { useBlueprintServiceCreatedSocket } from '../../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket'
 import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
@@ -13,22 +12,18 @@ import {
   getSummaryFieldValue,
   isFieldValid,
 } from '../blueprint-creation-utils/blueprint-creation-utils'
+import { useBlueprintManifestFields } from '../blueprint-manifest-context/blueprint-manifest-context'
+
+type BlueprintConfigurationSection = 'service-information' | 'blueprint-setup' | 'overrides'
 
 const BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS = 30_000
 
 export function BlueprintStepSummary() {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  const {
-    blueprint,
-    creationFlowUrl,
-    form,
-    optionalBlueprintFields,
-    overridableContextBlueprintFields,
-    requiredBlueprintFields,
-    serviceVersion,
-    setCurrentStep,
-  } = useBlueprintCreateContext()
+  const { blueprint, creationFlowUrl, form, serviceVersion, setCurrentStep } = useBlueprintCreateContext()
+  const { optionalBlueprintFields, overridableContextBlueprintFields, requiredBlueprintFields } =
+    useBlueprintManifestFields()
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)
   const [isWaitingForServiceCreated, setIsWaitingForServiceCreated] = useState(false)
   const [pendingBlueprintCreation, setPendingBlueprintCreation] = useState<{
@@ -45,8 +40,8 @@ export function BlueprintStepSummary() {
   const blueprintFields = [...variableFields, ...overridableContextBlueprintFields]
   const isBlueprintSetupValid = requiredBlueprintFields.every((field) => isFieldValid(field, fields[field.name]))
 
-  const handleEditSection = (section: ServiceCreateSection) => {
-    navigate({ to: creationFlowUrl, search: { section } })
+  const handleEditSection = (section: BlueprintConfigurationSection) => {
+    navigate({ to: `${creationFlowUrl}/${section}` })
   }
 
   const navigateToEnvironmentOverview = useCallback(() => {
@@ -109,7 +104,7 @@ export function BlueprintStepSummary() {
 
   useEffect(() => {
     if (!serviceName.trim() || !isBlueprintSetupValid) {
-      navigate({ to: creationFlowUrl })
+      navigate({ to: `${creationFlowUrl}/blueprint-setup` })
       return
     }
   }, [creationFlowUrl, isBlueprintSetupValid, navigate, serviceName])
@@ -183,7 +178,7 @@ export function BlueprintStepSummary() {
       deploy: withDeploy,
       payload: {
         name: formValues.serviceName,
-        tag: blueprint.majorVersions[0]?.latestTag ?? '',
+        tag: formValues.versionTag,
         icon: blueprint.icon,
         variables: buildBlueprintVariables(formValues.fields, blueprintFields),
       },
@@ -283,7 +278,12 @@ export function BlueprintStepSummary() {
         </div>
 
         <div className="flex justify-between">
-          <Button onClick={() => navigate({ to: creationFlowUrl })} type="button" size="lg" variant="plain">
+          <Button
+            onClick={() => navigate({ to: `${creationFlowUrl}/overrides` })}
+            type="button"
+            size="lg"
+            variant="plain"
+          >
             Back
           </Button>
           <div className="flex gap-2">

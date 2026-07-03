@@ -1,7 +1,8 @@
-import { useNavigate, useSearch } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
-import { type ServiceCreateSection } from '@qovery/shared/router'
-import { Button, FunnelFlowBody, Icon, InputText } from '@qovery/shared/ui'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { useEffect, useMemo, useState } from 'react'
+import { type Value } from '@qovery/shared/interfaces'
+import { Button, FunnelFlowBody, Icon, InputSelect, InputText } from '@qovery/shared/ui'
+import { usePrefetchBlueprintCatalogServiceManifest } from '../../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
   type BlueprintFieldValue,
@@ -10,51 +11,42 @@ import {
   getFieldValidationError,
   getStringFieldValue,
   isFieldValid,
+  sortBlueprintMajorVersions,
 } from '../blueprint-creation-utils/blueprint-creation-utils'
+import { useBlueprintManifestFields } from '../blueprint-manifest-context/blueprint-manifest-context'
 import { BlueprintManifestVariableInput } from './blueprint-creation-components/blueprint-manifest-variable-input/blueprint-manifest-variable-input'
 import { BlueprintSection } from './blueprint-creation-components/blueprint-section/blueprint-section'
-import { OverridesSection } from './blueprint-creation-components/overrides-section/overrides-section'
+import { OverridesSectionCard } from './blueprint-creation-components/overrides-section-card/overrides-section-card'
 
-function isBlueprintConfigurationSection(value: unknown): value is ServiceCreateSection {
-  return value === 'service-information' || value === 'blueprint-setup' || value === 'overrides'
+type BlueprintConfigurationSection = 'service-information' | 'blueprint-setup' | 'overrides'
+
+interface BlueprintConfigurationViewProps {
+  currentSection: BlueprintConfigurationSection
 }
 
-export function BlueprintConfigurationView() {
+export function BlueprintServiceInformationSection() {
+  return <BlueprintConfigurationView currentSection="service-information" />
+}
+
+export function BlueprintSetupSection() {
+  return <BlueprintConfigurationView currentSection="blueprint-setup" />
+}
+
+export function BlueprintOverridesConfigurationSection() {
+  return <BlueprintConfigurationView currentSection="overrides" />
+}
+
+export function BlueprintConfigurationView({ currentSection }: BlueprintConfigurationViewProps) {
   const navigate = useNavigate()
-  const search = useSearch({ strict: false }) as { section?: unknown }
-  const {
-    blueprint,
-    creationFlowUrl,
-    form,
-    optionalBlueprintFields,
-    overridableContextBlueprintFields,
-    onViewDetails,
-    requiredBlueprintFields,
-    serviceVersion,
-    setCurrentStep,
-  } = useBlueprintCreateContext()
-  const initialSection = isBlueprintConfigurationSection(search.section) ? search.section : 'service-information'
-  const [currentSection, setCurrentSection] = useState<ServiceCreateSection>(initialSection)
-  const serviceName = form.watch('serviceName')
-  const blueprintFieldValues = form.watch('fields')
-  const hasOverrideFields = optionalBlueprintFields.length > 0 || overridableContextBlueprintFields.length > 0
-  const isServiceInformationValid = Boolean(serviceName.trim())
-  const isBlueprintSetupValid = requiredBlueprintFields.every((field) =>
-    isFieldValid(field, blueprintFieldValues[field.name])
-  )
-  const updateFieldValue = (name: string, value: BlueprintFieldValue) => {
-    form.setValue(getBlueprintFieldPath(name), value, { shouldDirty: true, shouldValidate: true })
+  const { blueprint, creationFlowUrl, onViewDetails, setCurrentStep } = useBlueprintCreateContext()
+  const isServiceInformationValid = useIsServiceInformationValid()
+  const navigateToSection = (section: BlueprintConfigurationSection) => {
+    navigate({ to: `${creationFlowUrl}/${section}` })
   }
 
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])
-
-  useEffect(() => {
-    if (isBlueprintConfigurationSection(search.section)) {
-      setCurrentSection(search.section)
-    }
-  }, [search.section])
 
   return (
     <FunnelFlowBody customContentWidth="max-w-[620px]">
@@ -75,30 +67,10 @@ export function BlueprintConfigurationView() {
           completed={currentSection !== 'service-information'}
           iconName="circle-info"
           title="Service information"
-          onClick={() => setCurrentSection('service-information')}
+          onClick={() => navigateToSection('service-information')}
         >
           {currentSection === 'service-information' && (
-            <>
-              <InputText
-                name="service-name"
-                label="Service name"
-                value={serviceName}
-                onChange={(event) => form.setValue('serviceName', event.currentTarget.value)}
-                autoFocus
-              />
-              <InputText name="blueprint-version" label="Blueprint version" value={serviceVersion} disabled />
-              <Button
-                type="button"
-                size="md"
-                color="neutral"
-                className="w-fit"
-                disabled={!isServiceInformationValid}
-                onClick={() => setCurrentSection('blueprint-setup')}
-              >
-                Continue
-                <Icon iconName="arrow-right" />
-              </Button>
-            </>
+            <ServiceInformationSectionContent onContinue={() => navigateToSection('blueprint-setup')} />
           )}
         </BlueprintSection>
 
@@ -108,79 +80,217 @@ export function BlueprintConfigurationView() {
           disabled={!isServiceInformationValid}
           iconName="chart-bullet"
           title="Blueprint setup"
-          onClick={() => setCurrentSection('blueprint-setup')}
+          onClick={() => navigateToSection('blueprint-setup')}
         >
-          {currentSection === 'blueprint-setup' && (
-            <>
-              {requiredBlueprintFields.map((field, index) => (
-                <BlueprintManifestVariableInput
-                  key={field.name}
-                  autoFocus={index === 0}
-                  error={getFieldValidationError(field, blueprintFieldValues[field.name])}
-                  field={field}
-                  value={blueprintFieldValues[field.name]}
-                  onChange={(value) => updateFieldValue(field.name, value)}
-                />
-              ))}
-              <Button
-                type="button"
-                size="md"
-                color="neutral"
-                className="w-fit"
-                disabled={!isBlueprintSetupValid}
-                onClick={() => setCurrentSection('overrides')}
-              >
-                Continue
-                <Icon iconName="arrow-right" />
-              </Button>
-            </>
-          )}
+          {currentSection === 'blueprint-setup' && <BlueprintSetupSectionContent />}
         </BlueprintSection>
-        <OverridesSection
-          active={currentSection === 'overrides'}
-          disabled={!isBlueprintSetupValid}
-          onClick={() => setCurrentSection('overrides')}
-        >
-          {hasOverrideFields && (
-            <>
-              {optionalBlueprintFields.map((field, index) => (
-                <BlueprintManifestVariableInput
-                  key={field.name}
-                  autoFocus={index === 0}
-                  error={getFieldValidationError(field, blueprintFieldValues[field.name])}
-                  field={field}
-                  value={blueprintFieldValues[field.name]}
-                  onChange={(value) => updateFieldValue(field.name, value)}
-                />
-              ))}
-              {overridableContextBlueprintFields.map((field, index) => (
-                <InputText
-                  key={field.name}
-                  name={field.name}
-                  label={formatFieldLabel(field.name)}
-                  value={getStringFieldValue(blueprintFieldValues[field.name])}
-                  hint={field.source ? `Automatically sourced from ${field.source}` : undefined}
-                  autoFocus={optionalBlueprintFields.length === 0 && index === 0}
-                  onChange={(event) => updateFieldValue(field.name, event.currentTarget.value)}
-                />
-              ))}
-            </>
-          )}
-        </OverridesSection>
+
+        {currentSection === 'service-information' ? (
+          <OverridesSectionCard active={false} disabled onClick={() => navigateToSection('overrides')} />
+        ) : (
+          <BlueprintOverridesSection currentSection={currentSection} onClick={() => navigateToSection('overrides')} />
+        )}
       </div>
 
-      <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
-        <Button
-          type="button"
-          size="lg"
-          className="w-full justify-center"
-          disabled={currentSection !== 'overrides'}
-          onClick={() => navigate({ to: `${creationFlowUrl}/summary` })}
-        >
-          Confirm blueprint configuration
-          <Icon iconName="arrow-right" />
-        </Button>
-      </footer>
+      {currentSection === 'service-information' ? (
+        <DisabledConfirmBlueprintCreationFooter />
+      ) : (
+        <ConfirmBlueprintCreationFooter />
+      )}
     </FunnelFlowBody>
   )
+}
+
+interface ServiceInformationSectionContentProps {
+  onContinue: () => void
+}
+
+function ServiceInformationSectionContent({ onContinue }: ServiceInformationSectionContentProps) {
+  const { blueprint, form, organizationId, serviceVersion } = useBlueprintCreateContext()
+  const { environmentId = '', serviceFamily = blueprint.serviceFamily ?? '' } = useParams({ strict: false })
+  const prefetchBlueprintManifestFields = usePrefetchBlueprintCatalogServiceManifest({
+    organizationId,
+    provider: blueprint.provider,
+    serviceFamily,
+    serviceVersion,
+    environmentId,
+  })
+  const [isLoadingBlueprintSetup, setIsLoadingBlueprintSetup] = useState(false)
+  const serviceName = form.watch('serviceName')
+  const versionTag = form.watch('versionTag')
+  const isServiceInformationValid = useIsServiceInformationValid()
+  const blueprintVersionOptions = useMemo<Value[]>(
+    () =>
+      sortBlueprintMajorVersions(blueprint.majorVersions).map((majorVersion) => ({
+        label: majorVersion.serviceVersion,
+        value: majorVersion.latestTag,
+      })),
+    [blueprint.majorVersions]
+  )
+  const handleContinue = async () => {
+    setIsLoadingBlueprintSetup(true)
+    await prefetchBlueprintManifestFields().catch(() => undefined)
+    onContinue()
+  }
+
+  return (
+    <>
+      <InputText
+        name="service-name"
+        label="Service name"
+        value={serviceName}
+        onChange={(event) => form.setValue('serviceName', event.currentTarget.value)}
+        autoFocus
+      />
+      {blueprintVersionOptions.length > 1 ? (
+        <InputSelect
+          label="Blueprint version"
+          value={versionTag}
+          options={blueprintVersionOptions}
+          onChange={(value) =>
+            form.setValue('versionTag', Array.isArray(value) ? value[0] : value, { shouldDirty: true })
+          }
+          isSearchable={blueprintVersionOptions.length > 6}
+        />
+      ) : (
+        <InputText name="blueprint-version" label="Blueprint version" value={serviceVersion} disabled />
+      )}
+      <Button
+        type="button"
+        size="md"
+        color="neutral"
+        className="w-fit"
+        disabled={!isServiceInformationValid || isLoadingBlueprintSetup}
+        loading={isLoadingBlueprintSetup}
+        onClick={handleContinue}
+      >
+        Continue
+        <Icon iconName="arrow-right" />
+      </Button>
+    </>
+  )
+}
+
+function BlueprintSetupSectionContent() {
+  const { form } = useBlueprintCreateContext()
+  const { requiredBlueprintFields } = useBlueprintManifestFields()
+  const blueprintFieldValues = form.watch('fields')
+  const updateFieldValue = (name: string, value: BlueprintFieldValue) => {
+    form.setValue(getBlueprintFieldPath(name), value, { shouldDirty: true, shouldValidate: true })
+  }
+
+  return (
+    <>
+      {requiredBlueprintFields.map((field, index) => (
+        <BlueprintManifestVariableInput
+          key={field.name}
+          autoFocus={index === 0}
+          error={getFieldValidationError(field, blueprintFieldValues[field.name])}
+          field={field}
+          value={blueprintFieldValues[field.name]}
+          onChange={(value) => updateFieldValue(field.name, value)}
+        />
+      ))}
+    </>
+  )
+}
+
+interface BlueprintOverridesSectionProps {
+  currentSection: Exclude<BlueprintConfigurationSection, 'service-information'>
+  onClick: () => void
+}
+
+function BlueprintOverridesSection({ currentSection, onClick }: BlueprintOverridesSectionProps) {
+  const { optionalBlueprintFields, overridableContextBlueprintFields } = useBlueprintManifestFields()
+  const isBlueprintSetupValid = useIsBlueprintSetupValid()
+  const hasOverrideFields = optionalBlueprintFields.length > 0 || overridableContextBlueprintFields.length > 0
+
+  return (
+    <OverridesSectionCard active={currentSection === 'overrides'} disabled={!isBlueprintSetupValid} onClick={onClick}>
+      {currentSection === 'overrides' && hasOverrideFields && <OverridesSectionContent />}
+    </OverridesSectionCard>
+  )
+}
+
+function OverridesSectionContent() {
+  const { form } = useBlueprintCreateContext()
+  const { optionalBlueprintFields, overridableContextBlueprintFields } = useBlueprintManifestFields()
+  const blueprintFieldValues = form.watch('fields')
+  const updateFieldValue = (name: string, value: BlueprintFieldValue) => {
+    form.setValue(getBlueprintFieldPath(name), value, { shouldDirty: true, shouldValidate: true })
+  }
+
+  return (
+    <>
+      {optionalBlueprintFields.map((field, index) => (
+        <BlueprintManifestVariableInput
+          key={field.name}
+          autoFocus={index === 0}
+          error={getFieldValidationError(field, blueprintFieldValues[field.name])}
+          field={field}
+          value={blueprintFieldValues[field.name]}
+          onChange={(value) => updateFieldValue(field.name, value)}
+        />
+      ))}
+      {overridableContextBlueprintFields.map((field, index) => (
+        <InputText
+          key={field.name}
+          name={field.name}
+          label={formatFieldLabel(field.name)}
+          value={getStringFieldValue(blueprintFieldValues[field.name])}
+          hint={field.source ? `Automatically sourced from ${field.source}` : undefined}
+          autoFocus={optionalBlueprintFields.length === 0 && index === 0}
+          onChange={(event) => updateFieldValue(field.name, event.currentTarget.value)}
+        />
+      ))}
+    </>
+  )
+}
+
+function ConfirmBlueprintCreationFooter() {
+  const navigate = useNavigate()
+  const { creationFlowUrl } = useBlueprintCreateContext()
+  const isServiceInformationValid = useIsServiceInformationValid()
+  const isBlueprintSetupValid = useIsBlueprintSetupValid()
+
+  return (
+    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+      <Button
+        type="button"
+        size="lg"
+        className="w-full justify-center"
+        disabled={!isServiceInformationValid || !isBlueprintSetupValid}
+        onClick={() => navigate({ to: `${creationFlowUrl}/summary` })}
+      >
+        Confirm blueprint configuration
+        <Icon iconName="arrow-right" />
+      </Button>
+    </footer>
+  )
+}
+
+function DisabledConfirmBlueprintCreationFooter() {
+  return (
+    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+      <Button type="button" size="lg" className="w-full justify-center" disabled>
+        Confirm blueprint configuration
+        <Icon iconName="arrow-right" />
+      </Button>
+    </footer>
+  )
+}
+
+function useIsBlueprintSetupValid() {
+  const { form } = useBlueprintCreateContext()
+  const { requiredBlueprintFields } = useBlueprintManifestFields()
+  const blueprintFieldValues = form.watch('fields')
+
+  return requiredBlueprintFields.every((field) => isFieldValid(field, blueprintFieldValues[field.name]))
+}
+
+function useIsServiceInformationValid() {
+  const { form } = useBlueprintCreateContext()
+  const serviceName = form.watch('serviceName')
+
+  return Boolean(serviceName.trim())
 }

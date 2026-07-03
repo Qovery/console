@@ -7,6 +7,7 @@ import { ServiceHeader } from './service-header'
 
 const mockCopyToClipboard = jest.fn()
 const mockGetDatabaseConnectionUri = jest.fn(() => 'postgres://copied-uri')
+const mockUseBlueprintUpdate = jest.fn()
 const services = {
   'application-mock': {
     id: 'ebb84aa8-91c2-40fb-916d-3a158db354b7',
@@ -67,6 +68,28 @@ const services = {
       branch: 'main',
     },
     manifest_revision: '313a525a4ad53b37f0b33f81282c52fef5f8e7d8',
+  },
+  'terraform-mock': {
+    id: 'terraform-mock',
+    serviceType: 'TERRAFORM',
+    service_type: 'TERRAFORM',
+    name: 'aws-s3-bucket',
+    description: 'Provisioned from AWS S3 Bucket blueprint',
+    icon_uri: null,
+    environment: {
+      id: 'environment-id',
+    },
+    terraform_files_source: {
+      git: {
+        git_repository: {
+          provider: 'GITHUB',
+          url: 'https://github.com/qovery-blueprints/s3.git',
+          name: 'qovery-blueprints/s3',
+          branch: 'main',
+        },
+      },
+    },
+    blueprint_id: 'blueprint-id',
   },
 }
 
@@ -252,6 +275,10 @@ jest.mock('../../hooks/use-master-credentials/use-master-credentials', () => ({
   }),
 }))
 
+jest.mock('../../hooks/use-blueprint-update/use-blueprint-update', () => ({
+  useBlueprintUpdate: (props: unknown) => mockUseBlueprintUpdate(props),
+}))
+
 jest.mock('../../service-access-modal/service-access-modal', () => ({
   getDatabaseConnectionUri: () => mockGetDatabaseConnectionUri(),
 }))
@@ -290,10 +317,12 @@ describe('ServiceHeader', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockGetDatabaseConnectionUri.mockReturnValue('postgres://copied-uri')
+    mockUseBlueprintUpdate.mockReturnValue({ data: undefined })
   })
 
-  const renderServiceHeader = (serviceId: 'application-mock' | 'database-mock' | 'job-mock' | 'argocd-mock') =>
-    renderWithProviders(<ServiceHeader environment={environment} service={services[serviceId] as AnyService} />)
+  const renderServiceHeader = (
+    serviceId: 'application-mock' | 'database-mock' | 'job-mock' | 'argocd-mock' | 'terraform-mock'
+  ) => renderWithProviders(<ServiceHeader environment={environment} service={services[serviceId] as AnyService} />)
 
   it('renders application details and git metadata', () => {
     renderServiceHeader('application-mock')
@@ -340,5 +369,52 @@ describe('ServiceHeader', () => {
     expect(screen.getByText('Qovery/kube-dns')).toBeInTheDocument()
     expect(screen.getByText('main')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /313a525/i })).toBeInTheDocument()
+  })
+
+  it('renders an up to date badge for a current blueprint service', () => {
+    mockUseBlueprintUpdate.mockReturnValue({
+      data: {
+        is_up_to_date: true,
+        latest_tag: 'aws/s3/1.0.0',
+      },
+    })
+
+    renderServiceHeader('terraform-mock')
+
+    expect(mockUseBlueprintUpdate).toHaveBeenCalledWith({ blueprintId: 'blueprint-id', suspense: true })
+    expect(screen.getByText('Up to date')).toBeInTheDocument()
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+  })
+
+  it('renders an update available badge for an outdated blueprint service', () => {
+    mockUseBlueprintUpdate.mockReturnValue({
+      data: {
+        is_up_to_date: false,
+        latest_tag: 'aws/s3/2.0.0',
+      },
+    })
+
+    renderServiceHeader('terraform-mock')
+
+    expect(screen.getByText('Update available')).toBeInTheDocument()
+    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+  })
+
+  it('renders a skeleton while the blueprint update badge is loading', () => {
+    mockUseBlueprintUpdate.mockImplementation(() => {
+      throw new Promise(() => undefined)
+    })
+
+    renderServiceHeader('terraform-mock')
+
+    expect(screen.getByRole('generic', { busy: true })).toBeInTheDocument()
+  })
+
+  it('does not check blueprint update availability for non-blueprint services', () => {
+    renderServiceHeader('application-mock')
+
+    expect(mockUseBlueprintUpdate).not.toHaveBeenCalled()
+    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
   })
 })
