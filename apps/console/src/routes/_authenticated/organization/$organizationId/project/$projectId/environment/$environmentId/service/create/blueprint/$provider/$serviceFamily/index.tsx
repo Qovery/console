@@ -1,6 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { BlueprintConfigurationView } from '@qovery/domains/services/feature'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { Navigate, createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/'
@@ -9,9 +7,13 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  const { serviceFamily } = Route.useParams()
+  const { organizationId, projectId, environmentId, provider, serviceFamily } = Route.useParams()
 
-  useDocumentTitle(`${serviceFamily} configuration`)
-
-  return <BlueprintConfigurationView />
+  return (
+    <Navigate
+      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/service-information"
+      params={{ organizationId, projectId, environmentId, provider, serviceFamily }}
+      replace
+    />
+  )
 }

@@ -41,6 +41,20 @@ export function getDefaultContextFieldValue(field: BlueprintManifestContextVaria
   return field.value ?? ''
 }
 
+export function getDefaultBlueprintFieldValues(blueprintManifestFields: BlueprintManifestResponseResultsInner[]) {
+  const requiredBlueprintFields = blueprintManifestFields.filter(isRequiredVariableField)
+  const optionalBlueprintFields = blueprintManifestFields.filter(isOptionalVariableField)
+  const overridableContextBlueprintFields = blueprintManifestFields.filter(isOverridableContextVariableField)
+  const fieldsWithDefaultValue = [...requiredBlueprintFields, ...optionalBlueprintFields]
+
+  return {
+    ...Object.fromEntries(fieldsWithDefaultValue.map((field) => [field.name, getDefaultFieldValue(field)])),
+    ...Object.fromEntries(
+      overridableContextBlueprintFields.map((field) => [field.name, getDefaultContextFieldValue(field)])
+    ),
+  }
+}
+
 export function getStringFieldValue(value: BlueprintFieldValue | undefined) {
   return typeof value === 'string' ? value : ''
 }
