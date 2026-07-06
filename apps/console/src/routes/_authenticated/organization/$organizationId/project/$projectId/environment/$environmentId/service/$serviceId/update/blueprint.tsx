@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useCallback, useEffect } from 'react'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { BlueprintUpdateFlow, useService } from '@qovery/domains/services/feature'
 
 export const Route = createFileRoute(
@@ -11,6 +12,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
   const navigate = useNavigate()
+  const { data: environment } = useEnvironment({ environmentId, suspense: true })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const blueprintId = service && 'blueprint_id' in service ? service.blueprint_id : undefined
   const navigateToOverview = useCallback(() => {
@@ -29,7 +31,9 @@ function RouteComponent() {
   return (
     <BlueprintUpdateFlow
       blueprintId={blueprintId}
+      clusterId={environment?.cluster_id}
       environmentId={environmentId}
+      organizationId={organizationId}
       service={service}
       onExit={navigateToOverview}
     />

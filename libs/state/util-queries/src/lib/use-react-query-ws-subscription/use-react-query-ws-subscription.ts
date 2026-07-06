@@ -32,6 +32,18 @@ function isInvalidateOperation(data: any): data is InvalidateOperation {
   return Array.isArray(data?.entity)
 }
 
+function parseWebSocketMessageData(data: MessageEvent['data']) {
+  if (typeof data !== 'string') {
+    return data
+  }
+
+  try {
+    return JSON.parse(data)
+  } catch {
+    return data
+  }
+}
+
 // TODO: Add better naming for the hook we can use it without ReactQuery
 export function useReactQueryWsSubscription({
   url,
@@ -87,7 +99,7 @@ export function useReactQueryWsSubscription({
         onOpen?.(queryClient, event)
       }
       websocket.onmessage = async (event) => {
-        const data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data
+        const data = parseWebSocketMessageData(event.data)
 
         if (isInvalidateOperation(data)) {
           const queryKey = [...data.entity, data.id].filter(Boolean)

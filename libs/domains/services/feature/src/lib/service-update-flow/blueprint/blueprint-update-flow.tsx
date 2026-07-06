@@ -2,6 +2,11 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type ReactNode, useEffect, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Button, FunnelFlowBody, Icon, InputText, LogoIcon, Skeleton, Tooltip, toast } from '@qovery/shared/ui'
+import {
+  type BlueprintUpdatePreviewImpact,
+  type BlueprintUpdatePreviewImpactLevel,
+  useBlueprintUpdatePreviewSocket,
+} from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
 import { usePreviewBlueprintUpdate } from '../../hooks/use-preview-blueprint-update/use-preview-blueprint-update'
 import { useUpdateBlueprint } from '../../hooks/use-update-blueprint/use-update-blueprint'
@@ -12,8 +17,10 @@ type BlueprintUpdateVariablePatch = Record<string, { value: string; is_secret?: 
 
 export interface BlueprintUpdateFlowProps {
   blueprintId: string
+  clusterId?: string
   environmentId: string
   onExit: () => void
+  organizationId: string
   service: AnyService
 }
 
@@ -49,7 +56,14 @@ const updateSections: Array<{
   },
 ]
 
-export function BlueprintUpdateFlow({ blueprintId, environmentId, onExit, service }: BlueprintUpdateFlowProps) {
+export function BlueprintUpdateFlow({
+  blueprintId,
+  clusterId,
+  environmentId,
+  onExit,
+  organizationId,
+  service,
+}: BlueprintUpdateFlowProps) {
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
   const {
     mutateAsync: previewBlueprintUpdate,
@@ -65,12 +79,14 @@ export function BlueprintUpdateFlow({ blueprintId, environmentId, onExit, servic
   const [activeSection, setActiveSection] = useState<BlueprintUpdateSection>('required')
   const [completedSections, setCompletedSections] = useState<BlueprintUpdateSection[]>([])
   const [values, setValues] = useState<Record<string, string>>({})
+  const [initializedBlueprintId, setInitializedBlueprintId] = useState<string>()
 
   useEffect(() => {
-    if (blueprintUpdate && Object.keys(values).length === 0) {
+    if (blueprintUpdate && initializedBlueprintId !== blueprintId) {
       setValues(getInitialUpdateValues(blueprintUpdate))
+      setInitializedBlueprintId(blueprintId)
     }
-  }, [blueprintUpdate, values])
+  }, [blueprintId, blueprintUpdate, initializedBlueprintId])
 
   if (!blueprintUpdate) return null
 
@@ -175,8 +191,9 @@ export function BlueprintUpdateFlow({ blueprintId, environmentId, onExit, servic
         </FunnelFlowBody>
       ) : (
         <BlueprintUpdatePreview
+          clusterId={clusterId}
           previewId={preview?.preview_id}
-          serviceType={preview?.service_type}
+          organizationId={organizationId}
           onBack={() => setCurrentStep('review')}
           onConfirm={handleUpdate}
           loading={isUpdateLoading}
@@ -405,9 +422,10 @@ function UpdatedValuesList({
     <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral-subtle">
       {values.map((value) => {
         const label = formatUpdateFieldLabel(value.name)
-        const editedValue = editableValues[value.name] ?? value.current_value ?? ''
-        const hasCurrentOverride = Boolean(value.current_value)
-        const hasEditedOverride = editedValue.length > 0
+        const hasManualOverride = Object.prototype.hasOwnProperty.call(editableValues, value.name)
+        const editedValue = hasManualOverride ? editableValues[value.name] ?? '' : value.current_value ?? ''
+        const newDefaultValue = value.new_default_value ?? ''
+        const hasEditedOverride = hasManualOverride && editedValue !== newDefaultValue
         const editing = editedValueName === value.name
 
         return (
@@ -432,12 +450,11 @@ function UpdatedValuesList({
               </div>
 
               <div className="flex shrink-0 items-center gap-2">
-                {hasCurrentOverride && (
+                {hasEditedOverride && (
                   <Tooltip
                     content={
                       <span>
-                        Reset the override to the new default value. Overrides are kept by default when a blueprint
-                        default changes.
+                        Reset the override to the new default value
                       </span>
                     }
                   >
@@ -518,18 +535,32 @@ function CodeChip({ children, color = 'neutral' }: { children: ReactNode; color?
 }
 
 function BlueprintUpdatePreview({
+  clusterId,
   loading,
   onBack,
   onConfirm,
+  organizationId,
   previewId,
-  serviceType,
 }: {
+  clusterId?: string
   loading: boolean
   onBack: () => void
   onConfirm: () => void
+  organizationId: string
   previewId?: string
-  serviceType?: string
 }) {
+  const {
+    impact,
+    rawOutput,
+    isLoading: isPreviewOutputLoading,
+    hasError: hasPreviewOutputError,
+    hasReceivedMessage: hasReceivedPreviewMessage,
+  } = useBlueprintUpdatePreviewSocket({
+    organizationId,
+    clusterId,
+    previewId,
+  })
+
   return (
     <FunnelFlowBody customContentWidth="max-w-[620px]">
       <div className="flex flex-col gap-6 pb-20">
@@ -543,32 +574,22 @@ function BlueprintUpdatePreview({
               <Icon iconName="sparkles" className="text-xs" />
             </div>
           </div>
-          <div className="rounded-lg border border-neutral bg-surface-neutral p-4">
-            <div className="mb-4 inline-flex items-center gap-1 rounded-md border border-info-subtle bg-surface-info-component px-1 py-0.5 text-xs font-medium text-info">
-              <Icon iconName="circle-info" className="text-xs" />
-              Preview generated
-            </div>
-            <p className="text-sm leading-5 text-neutral">
-              The blueprint update preview has been created. Review the generated preview before confirming the update.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-1.5 text-sm text-neutral-subtle">
-              <span>Preview ID:</span>
-              <CodeChip>{previewId ?? 'pending'}</CodeChip>
-              {serviceType && (
-                <>
-                  <span>Service type:</span>
-                  <CodeChip>{serviceType}</CodeChip>
-                </>
-              )}
-            </div>
-          </div>
+          <PreviewImpactCard
+            impact={impact}
+            loading={isPreviewOutputLoading && !impact}
+            hasError={hasPreviewOutputError}
+          />
         </section>
 
         <section className="flex flex-col gap-2">
           <h2 className="text-sm font-medium leading-5 text-neutral">Raw output</h2>
-          <div className="rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-[10px] leading-4 text-neutral">
-            {previewId ? (
-              <pre className="whitespace-pre-wrap">{`Preview ${previewId} is ready. Raw infrastructure output is not returned by the current API response.`}</pre>
+          <div className="max-h-[420px] overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral">
+            {rawOutput ? (
+              <pre className="whitespace-pre-wrap">{rawOutput}</pre>
+            ) : previewId ? (
+              <p className="font-sans text-sm text-neutral-subtle">
+                {hasPreviewOutputError ? 'Unable to load preview output.' : 'Waiting for preview output…'}
+              </p>
             ) : (
               <Skeleton width="100%" height={72} />
             )}
@@ -580,7 +601,14 @@ function BlueprintUpdatePreview({
         <Button type="button" size="lg" variant="outline" color="neutral" onClick={onBack}>
           Back
         </Button>
-        <Button type="button" size="lg" className="flex-1 justify-center" loading={loading} onClick={onConfirm}>
+        <Button
+          type="button"
+          size="lg"
+          className="flex-1 justify-center"
+          disabled={!hasReceivedPreviewMessage || isPreviewOutputLoading || loading}
+          loading={loading}
+          onClick={onConfirm}
+        >
           Confirm & deploy update
           <Icon iconName="arrow-right" />
         </Button>
@@ -589,13 +617,93 @@ function BlueprintUpdatePreview({
   )
 }
 
+function PreviewImpactCard({
+  hasError,
+  impact,
+  loading,
+}: {
+  hasError: boolean
+  impact?: BlueprintUpdatePreviewImpact
+  loading: boolean
+}) {
+  if (loading) {
+    return (
+      <div className="rounded-lg border border-neutral bg-surface-neutral p-4">
+        <Skeleton width="128px" height={24} />
+        <div className="mt-4 flex flex-col gap-2">
+          <Skeleton width="100%" height={20} />
+          <Skeleton width="92%" height={20} />
+          <Skeleton width="84%" height={20} />
+        </div>
+      </div>
+    )
+  }
+
+  if (!impact || (impact.description.length === 0 && impact.impactedServices.length === 0)) {
+    return (
+      <div className="rounded-lg border border-neutral bg-surface-neutral p-4">
+        <div className="mb-4 inline-flex items-center gap-1 rounded-md border border-info-subtle bg-surface-info-component px-1 py-0.5 text-xs font-medium text-info">
+          <Icon iconName={hasError ? 'triangle-exclamation' : 'circle-info'} className="text-xs" />
+          {hasError ? 'Preview unavailable' : 'Preview pending'}
+        </div>
+        <p className="text-sm leading-5 text-neutral">
+          {hasError
+            ? 'The deployment impact could not be loaded. You can go back and generate the preview again.'
+            : 'Deployment impact will appear here when available.'}
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="rounded-lg border border-neutral bg-surface-neutral p-4">
+      <PreviewImpactBadge level={impact.level} />
+      {impact.description.length > 0 && (
+        <div className="mt-4 flex flex-col gap-3 text-sm leading-5 text-neutral">
+          {impact.description.map((description) => (
+            <p key={description}>{description}</p>
+          ))}
+        </div>
+      )}
+      {impact.impactedServices.length > 0 && (
+        <div className="mt-4">
+          <p className="mb-2 text-sm leading-5 text-neutral-subtle">Impacted services</p>
+          <div className="flex flex-wrap gap-1.5">
+            {impact.impactedServices.map((service) => (
+              <CodeChip key={service}>{service}</CodeChip>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function PreviewImpactBadge({ level }: { level: BlueprintUpdatePreviewImpactLevel }) {
+  const badgeClassName = {
+    high: 'border-negative-component bg-surface-negative-component text-negative',
+    medium: 'border-warning-component bg-surface-warning-component text-warning',
+    low: 'border-positive-component bg-surface-positive-component text-positive',
+    unknown: 'border-info-subtle bg-surface-info-component text-info',
+  }[level]
+
+  const iconName = level === 'high' || level === 'medium' ? 'circle-exclamation' : 'circle-info'
+
+  return (
+    <div className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-1 text-sm font-medium ${badgeClassName}`}>
+      <Icon iconName={iconName} className="text-sm" />
+      {getImpactLabel(level)}
+    </div>
+  )
+}
+
+function getImpactLabel(level: BlueprintUpdatePreviewImpactLevel) {
+  return `${level.charAt(0).toUpperCase()}${level.slice(1)} impact`
+}
+
 function getInitialUpdateValues(blueprintUpdate: NonNullable<ReturnType<typeof useBlueprintUpdate>['data']>) {
   return {
     ...Object.fromEntries(blueprintUpdate.new_optional_values.map((value) => [value.name, value.default_value ?? ''])),
-    ...Object.fromEntries(blueprintUpdate.updated_values.map((value) => [value.name, value.current_value ?? ''])),
-    ...Object.fromEntries(
-      blueprintUpdate.engine_diff.updated_values.map((value) => [value.name, value.current_value ?? ''])
-    ),
   }
 }
 
@@ -613,7 +721,7 @@ function buildBlueprintUpdatePayload({
   optionalValues: Array<{ name: string; default_value?: string | null }>
   requiredValues: Array<{ name: string }>
   tag: string
-  updatedValues: Array<{ name: string; current_value?: string | null }>
+  updatedValues: Array<{ name: string; new_default_value?: string | null }>
   values: Record<string, string>
 }) {
   const variables: BlueprintUpdateVariablePatch = {}
@@ -626,9 +734,9 @@ function buildBlueprintUpdatePayload({
     const value = values[name]?.trim()
     if (value && value !== defaultValue) variables[name] = { value }
   })
-  updatedValues.forEach(({ name, current_value: currentValue }) => {
+  updatedValues.forEach(({ name, new_default_value: newDefaultValue }) => {
     const value = values[name]?.trim()
-    if (value && value !== currentValue) variables[name] = { value }
+    if (value && value !== newDefaultValue) variables[name] = { value }
   })
 
   return {
