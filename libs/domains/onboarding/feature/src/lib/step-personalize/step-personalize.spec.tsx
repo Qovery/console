@@ -45,4 +45,31 @@ describe('StepPersonalize', () => {
 
     await waitFor(() => expect(continueButton).toBeEnabled())
   })
+
+  it('should reject personal email addresses', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(<StepPersonalize {...props} />, {
+        defaultValues: {
+          first_name: 'John',
+          last_name: 'Doe',
+          user_email: '',
+          company_name: 'Acme Corp',
+        },
+      })
+    )
+
+    const continueButton = screen.getByRole('button', { name: 'Continue' })
+    const emailInput = screen.getByLabelText('Email address')
+
+    await userEvent.type(emailInput, 'john.doe@gmail.com')
+    await userEvent.tab()
+
+    expect(await screen.findByText('Please enter your professional email address.')).toBeInTheDocument()
+    expect(continueButton).toBeDisabled()
+
+    await userEvent.clear(emailInput)
+    await userEvent.type(emailInput, 'john.doe@acme.com')
+
+    await waitFor(() => expect(continueButton).toBeEnabled())
+  })
 })

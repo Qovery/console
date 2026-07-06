@@ -1,5 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { Button, Icon, InputText } from '@qovery/shared/ui'
+import { PERSONAL_EMAIL_DOMAINS } from './personal-email-domains'
 
 export interface StepPersonalizeProps {
   onSubmit: () => void
@@ -55,6 +56,9 @@ export function StepPersonalize({ onSubmit, authLogout }: StepPersonalizeProps) 
               value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
               message: 'Please enter a valid email address.',
             },
+            validate: (value: string) =>
+              !PERSONAL_EMAIL_DOMAINS.has(value.split('@')[1]?.toLowerCase()) ||
+              'Please enter your professional email address.',
           }}
           render={({ field, fieldState: { error } }) => (
             <InputText
