@@ -1,3 +1,7 @@
+export function isPersonalEmail(email: string): boolean {
+  return PERSONAL_EMAIL_DOMAINS.has(email.split('@')[1]?.toLowerCase())
+}
+
 export const PERSONAL_EMAIL_DOMAINS = new Set([
   '0-mail.com',
   '027168.com',

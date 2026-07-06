@@ -59,7 +59,7 @@ describe('StepPersonalize', () => {
     )
 
     const continueButton = screen.getByRole('button', { name: 'Continue' })
-    const emailInput = screen.getByLabelText('Email address')
+    const emailInput = screen.getByLabelText('Professional email address')
 
     await userEvent.type(emailInput, 'john.doe@gmail.com')
     await userEvent.tab()
