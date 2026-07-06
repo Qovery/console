@@ -8,6 +8,9 @@ import { ServiceHeader } from './service-header'
 const mockCopyToClipboard = jest.fn()
 const mockGetDatabaseConnectionUri = jest.fn(() => 'postgres://copied-uri')
 const mockUseBlueprintUpdate = jest.fn()
+const mockOpenModal = jest.fn()
+const mockCloseModal = jest.fn()
+const mockNavigate = jest.fn()
 const services = {
   'application-mock': {
     id: 'ebb84aa8-91c2-40fb-916d-3a158db354b7',
@@ -90,12 +93,19 @@ const services = {
       },
     },
     blueprint_id: 'blueprint-id',
+    tag: 'aws/s3/1.2',
   },
 }
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useParams: () => ({ organizationId: '', projectId: '' }),
+  useNavigate: () => mockNavigate,
+  useParams: () => ({
+    organizationId: 'org-id',
+    projectId: 'project-id',
+    environmentId: 'environment-id',
+    serviceId: 'terraform-mock',
+  }),
   Link: ({
     children,
     to,
@@ -117,6 +127,10 @@ jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
   toast: jest.fn(),
   Heading: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
+  useModal: () => ({
+    openModal: mockOpenModal,
+    closeModal: mockCloseModal,
+  }),
 }))
 
 jest.mock('@qovery/shared/util-hooks', () => ({
@@ -126,6 +140,13 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   ...jest.requireActual('@qovery/domains/clusters/feature'),
+  ClusterRunningStatusIndicator: () => <div>cluster-running-status</div>,
+  useCluster: () => ({
+    data: {
+      id: 'cluster-id',
+      name: 'my-cluster',
+    },
+  }),
   useClusterRunningStatusSocket: jest.fn(),
 }))
 
@@ -376,6 +397,14 @@ describe('ServiceHeader', () => {
       data: {
         is_up_to_date: true,
         latest_tag: 'aws/s3/1.0.0',
+        new_required_values: [],
+        new_optional_values: [],
+        now_required_values: [],
+        updated_values: [],
+        removed_values: [],
+        engine_diff: {
+          updated_values: [],
+        },
       },
     })
 
@@ -386,18 +415,48 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
   })
 
-  it('renders an update available badge for an outdated blueprint service', () => {
+  it('opens the blueprint update modal from the update available badge', async () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: false,
-        latest_tag: 'aws/s3/2.0.0',
+        latest_tag: 'aws/s3/2.0',
+        new_required_values: [],
+        new_optional_values: [],
+        now_required_values: [],
+        updated_values: [],
+        removed_values: [],
+        engine_diff: {
+          updated_values: [],
+        },
       },
     })
 
-    renderServiceHeader('terraform-mock')
+    const { userEvent } = renderServiceHeader('terraform-mock')
 
-    expect(screen.getByText('Update available')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /update available/i }))
+
+    expect(mockOpenModal).toHaveBeenCalledTimes(1)
+    renderWithProviders(mockOpenModal.mock.calls[0][0].content)
+
+    expect(screen.getAllByText('Update available')[0]).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Blueprint update from 1.2 to 2.0' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: 'release notes' })).toBeInTheDocument()
+    expect(screen.queryByText('0')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument()
     expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Review & update' }))
+
+    expect(mockCloseModal).toHaveBeenCalled()
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+      params: {
+        organizationId: 'org-id',
+        projectId: 'project-id',
+        environmentId: 'environment-id',
+        serviceId: 'terraform-mock',
+      },
+    })
   })
 
   it('renders a skeleton while the blueprint update badge is loading', () => {

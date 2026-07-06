@@ -1,5 +1,10 @@
-import { Link, useParams } from '@tanstack/react-router'
-import { type ApplicationGitRepository, type Credentials, type Environment } from 'qovery-typescript-axios'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
+import {
+  type ApplicationGitRepository,
+  type BlueprintUpdateResponse,
+  type Credentials,
+  type Environment,
+} from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { P, match } from 'ts-pattern'
 import {
@@ -28,6 +33,7 @@ import {
   Tooltip,
   Truncate,
   toast,
+  useModal,
 } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
@@ -163,8 +169,81 @@ function BlueprintUpdateBadgeSkeleton() {
   return <Skeleton width={122} height={24} />
 }
 
-function BlueprintUpdateBadge({ blueprintId }: { blueprintId: string }) {
+interface BlueprintUpdateModalProps {
+  blueprintUpdate: BlueprintUpdateResponse
+  currentVersion?: string
+  onClose: () => void
+  onReviewUpdate: () => void
+}
+
+const BLUEPRINT_RELEASE_NOTES_URL = 'https://github.com/Qovery/service-catalog/releases'
+
+function getVersionFromTag(tag?: string) {
+  return tag?.split('/').at(-1)
+}
+
+function getServiceBlueprintVersion(service: AnyService) {
+  if ('tag' in service && typeof service.tag === 'string') {
+    return getVersionFromTag(service.tag)
+  }
+
+  return undefined
+}
+
+function BlueprintUpdateModal({ blueprintUpdate, currentVersion, onClose, onReviewUpdate }: BlueprintUpdateModalProps) {
+  const latestVersion = getVersionFromTag(blueprintUpdate.latest_tag) ?? blueprintUpdate.latest_tag
+
+  return (
+    <div className="flex flex-col gap-6 p-5">
+      <div className="flex flex-col gap-2">
+        <h2 className="h4 max-w-sm text-neutral">
+          Blueprint update from {currentVersion ?? 'current version'} to {latestVersion}
+        </h2>
+        <p className="max-w-[520px] text-sm leading-6 text-neutral-subtle">
+          This update improves bucket performance for large object transfers and hardens IAM permission scoping. See the
+          full{' '}
+          <a
+            href={BLUEPRINT_RELEASE_NOTES_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-info hover:underline"
+          >
+            release notes
+          </a>{' '}
+          for more details.
+        </p>
+      </div>
+
+      <div className="flex justify-end gap-3">
+        <Button type="button" variant="plain" color="neutral" size="lg" onClick={onClose}>
+          Dismiss
+        </Button>
+        <Button type="button" size="lg" onClick={onReviewUpdate}>
+          Review & update
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function BlueprintUpdateBadge({ blueprintId, service }: { blueprintId: string; service: AnyService }) {
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
+  const { openModal, closeModal } = useModal()
+  const navigate = useNavigate()
+  const {
+    organizationId = '',
+    projectId = '',
+    environmentId = '',
+    serviceId = service.id,
+  } = useParams({ strict: false })
+  const currentVersion = getServiceBlueprintVersion(service)
+  const openUpdateFlow = () => {
+    closeModal()
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+      params: { organizationId, projectId, environmentId, serviceId },
+    })
+  }
 
   if (!blueprintUpdate) {
     return null
@@ -176,12 +255,27 @@ function BlueprintUpdateBadge({ blueprintId }: { blueprintId: string }) {
       Up to date
     </Badge>
   ) : (
-    <Tooltip content={`Latest blueprint version: ${blueprintUpdate.latest_tag}`}>
+    <button
+      type="button"
+      className="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+      onClick={() =>
+        openModal({
+          content: (
+            <BlueprintUpdateModal
+              blueprintUpdate={blueprintUpdate}
+              currentVersion={currentVersion}
+              onClose={closeModal}
+              onReviewUpdate={openUpdateFlow}
+            />
+          ),
+        })
+      }
+    >
       <Badge variant="surface" color="sky" className="gap-1 whitespace-nowrap font-medium">
         <Icon iconName="arrow-rotate-right" iconStyle="regular" />
         Update available
       </Badge>
-    </Tooltip>
+    </button>
   )
 }
 
@@ -325,7 +419,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
       )}
       {blueprintId && (
         <Suspense fallback={<BlueprintUpdateBadgeSkeleton />}>
-          <BlueprintUpdateBadge blueprintId={blueprintId} />
+          <BlueprintUpdateBadge blueprintId={blueprintId} service={service} />
         </Suspense>
       )}
       {databaseSource && (
