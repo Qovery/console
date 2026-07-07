@@ -5,13 +5,14 @@ import {
   formatFieldLabel,
   getBooleanFieldValue,
   getStringFieldValue,
-} from '../../../blueprint-creation-utils/blueprint-creation-utils'
-import { CheckboxField } from '../checkbox-field/checkbox-field'
+} from '../blueprint-field-utils/blueprint-field-utils'
+import { CheckboxField } from './checkbox-field'
 
 export interface BlueprintManifestVariableInputProps {
   autoFocus?: boolean
   error?: string
   field: BlueprintManifestVariableField
+  label?: string
   onChange: (value: BlueprintFieldValue) => void
   value: BlueprintFieldValue | undefined
 }
@@ -20,15 +21,16 @@ export function BlueprintManifestVariableInput({
   autoFocus,
   error,
   field,
+  label,
   onChange,
   value,
 }: BlueprintManifestVariableInputProps) {
-  const label = formatFieldLabel(field.name)
+  const inputLabel = label ?? formatFieldLabel(field.name)
 
   if (field.allowed_values?.length) {
     return (
       <InputSelect
-        label={label}
+        label={inputLabel}
         value={getStringFieldValue(value)}
         options={field.allowed_values.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
         autoFocus={autoFocus}
@@ -46,7 +48,7 @@ export function BlueprintManifestVariableInput({
         autoFocus={autoFocus}
         checked={getBooleanFieldValue(value)}
         description={field.description ?? ''}
-        label={label}
+        label={inputLabel}
         name={field.name}
         onChange={onChange}
       />
@@ -56,7 +58,7 @@ export function BlueprintManifestVariableInput({
   return (
     <InputText
       name={field.name}
-      label={label}
+      label={inputLabel}
       type={field.type.type === 'number' ? 'number' : field.is_secret ? 'password' : 'text'}
       value={getStringFieldValue(value)}
       error={error}

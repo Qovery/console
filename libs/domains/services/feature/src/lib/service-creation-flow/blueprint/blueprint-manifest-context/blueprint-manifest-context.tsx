@@ -4,15 +4,15 @@ import {
   type BlueprintManifestVariableField,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useContext, useEffect, useMemo } from 'react'
-import { useBlueprintCatalogServiceManifest } from '../../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
-import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
   type OverridableBlueprintManifestContextVariableField,
   getDefaultBlueprintFieldValues,
   isOptionalVariableField,
   isOverridableContextVariableField,
   isRequiredVariableField,
-} from '../blueprint-creation-utils/blueprint-creation-utils'
+} from '../../../blueprint-field-utils/blueprint-field-utils'
+import { useBlueprintCatalogServiceManifest } from '../../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
+import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 
 interface BlueprintManifestContextInterface {
   blueprintManifestFields: BlueprintManifestResponseResultsInner[]

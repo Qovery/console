@@ -1,7 +1,22 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
+import {
+  type BlueprintManifestVariableField,
+  type BlueprintUpdateEngineFieldChange,
+  type BlueprintUpdateNewOptionalValue,
+  type BlueprintUpdateNewRequiredValue,
+  type BlueprintUpdateRemovedValue,
+  type BlueprintUpdateUpdatedValue,
+} from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Button, FunnelFlowBody, Icon, InputText, LogoIcon, Skeleton, Tooltip, toast } from '@qovery/shared/ui'
+import {
+  type BlueprintFieldValue,
+  type BlueprintFieldValues,
+  getFieldValidationError,
+  isFieldValid,
+} from '../../blueprint-field-utils/blueprint-field-utils'
+import { BlueprintManifestVariableInput } from '../../blueprint-manifest-variable-input/blueprint-manifest-variable-input'
 import {
   type BlueprintUpdatePreviewImpact,
   type BlueprintUpdatePreviewImpactLevel,
@@ -14,6 +29,11 @@ import { useUpdateBlueprint } from '../../hooks/use-update-blueprint/use-update-
 type BlueprintUpdateSection = 'required' | 'optional' | 'modified' | 'removed'
 
 type BlueprintUpdateVariablePatch = Record<string, { value: string; is_secret?: boolean }>
+type BlueprintUpdateField =
+  | BlueprintUpdateNewRequiredValue
+  | BlueprintUpdateNewOptionalValue
+  | BlueprintUpdateUpdatedValue
+type BlueprintUpdateEditableValue = BlueprintUpdateUpdatedValue | BlueprintUpdateEngineFieldChange
 
 export interface BlueprintUpdateFlowProps {
   blueprintId: string
@@ -80,7 +100,7 @@ export function BlueprintUpdateFlow({
     blueprintUpdate ? getFirstAvailableUpdateSection(blueprintUpdate) : 'required'
   )
   const [completedSections, setCompletedSections] = useState<BlueprintUpdateSection[]>([])
-  const [values, setValues] = useState<Record<string, string>>({})
+  const [values, setValues] = useState<BlueprintFieldValues>({})
   const [initializedBlueprintId, setInitializedBlueprintId] = useState<string>()
 
   useEffect(() => {
@@ -103,7 +123,9 @@ export function BlueprintUpdateFlow({
   const visibleSections = updateSections.filter(({ id }) => sectionHasContent[id])
   const reviewSections = visibleSections.length > 0 ? visibleSections : updateSections.slice(0, 1)
   const activeSectionIndex = reviewSections.findIndex(({ id }) => id === activeSection)
-  const isRequiredValid = requiredValues.every(({ name }) => Boolean(values[name]?.trim()))
+  const isRequiredValid = requiredValues.every((value) =>
+    isFieldValid(getBlueprintUpdateVariableField(value, true), values[value.name])
+  )
   const isReviewComplete =
     reviewSections.every(({ id }) => completedSections.includes(id)) || reviewSections.length === 0
   const latestVersion = getVersionFromTag(blueprintUpdate.latest_tag) ?? blueprintUpdate.latest_tag
@@ -335,50 +357,52 @@ function BlueprintUpdateSectionContent({
   values,
 }: {
   continueDisabled: boolean
-  onChange: (name: string, value: string) => void
+  onChange: (name: string, value: BlueprintFieldValue) => void
   onContinue: () => void
-  optionalValues: Array<{ name: string; default_value?: string | null }>
-  removedValues: Array<{ name: string }>
-  requiredValues: Array<{ name: string }>
+  optionalValues: BlueprintUpdateNewOptionalValue[]
+  removedValues: BlueprintUpdateRemovedValue[]
+  requiredValues: BlueprintUpdateNewRequiredValue[]
   section: BlueprintUpdateSection
-  updatedValues: Array<{
-    name: string
-    current_default_value?: string | null
-    new_default_value?: string | null
-    current_value?: string | null
-  }>
-  values: Record<string, string>
+  updatedValues: BlueprintUpdateEditableValue[]
+  values: BlueprintFieldValues
 }) {
   return (
     <>
       {section === 'required' && (
         <div className="flex flex-col gap-3">
-          {requiredValues.map(({ name }, index) => (
-            <InputText
-              key={name}
-              name={name}
-              label={formatUpdateFieldLabel(name)}
-              value={values[name] ?? ''}
-              autoFocus={index === 0}
-              onChange={(event) => onChange(name, event.currentTarget.value)}
-            />
-          ))}
+          {requiredValues.map((value, index) => {
+            const field = getBlueprintUpdateVariableField(value, true)
+
+            return (
+              <BlueprintManifestVariableInput
+                key={value.name}
+                field={field}
+                value={values[value.name]}
+                error={getFieldValidationError(field, values[value.name])}
+                autoFocus={index === 0}
+                onChange={(fieldValue) => onChange(value.name, fieldValue)}
+              />
+            )
+          })}
         </div>
       )}
 
       {section === 'optional' && (
         <div className="flex flex-col gap-3">
-          {optionalValues.map(({ name, default_value: defaultValue }, index) => (
-            <InputText
-              key={name}
-              name={name}
-              label={formatUpdateFieldLabel(name)}
-              value={values[name] ?? ''}
-              hint={defaultValue ? `Default: ${defaultValue}` : undefined}
-              autoFocus={index === 0}
-              onChange={(event) => onChange(name, event.currentTarget.value)}
-            />
-          ))}
+          {optionalValues.map((value, index) => {
+            const field = getBlueprintUpdateVariableField(value, false, value.default_value)
+
+            return (
+              <BlueprintManifestVariableInput
+                key={value.name}
+                field={field}
+                value={values[value.name]}
+                error={getFieldValidationError(field, values[value.name])}
+                autoFocus={index === 0}
+                onChange={(fieldValue) => onChange(value.name, fieldValue)}
+              />
+            )
+          })}
         </div>
       )}
 
@@ -408,14 +432,9 @@ function UpdatedValuesList({
   onChange,
   values,
 }: {
-  editableValues: Record<string, string>
-  onChange: (name: string, value: string) => void
-  values: Array<{
-    name: string
-    current_default_value?: string | null
-    new_default_value?: string | null
-    current_value?: string | null
-  }>
+  editableValues: BlueprintFieldValues
+  onChange: (name: string, value: BlueprintFieldValue) => void
+  values: BlueprintUpdateEditableValue[]
 }) {
   const [editedValueName, setEditedValueName] = useState<string>()
 
@@ -426,10 +445,16 @@ function UpdatedValuesList({
       {values.map((value) => {
         const label = formatUpdateFieldLabel(value.name)
         const hasManualOverride = Object.prototype.hasOwnProperty.call(editableValues, value.name)
-        const editedValue = hasManualOverride ? editableValues[value.name] ?? '' : value.current_value ?? ''
+        const editedValue = hasManualOverride
+          ? editableValues[value.name] ?? ''
+          : getBlueprintUpdateFieldValue(value, value.current_value)
         const newDefaultValue = value.new_default_value ?? ''
-        const hasEditedOverride = hasManualOverride && editedValue !== newDefaultValue
+        const hasEditedOverride = hasManualOverride && getBlueprintUpdatePayloadValue(editedValue) !== newDefaultValue
         const editing = editedValueName === value.name
+        const canUseTypedInput = isBlueprintUpdateVariableField(value)
+        const field = canUseTypedInput
+          ? getBlueprintUpdateVariableField(value, false, value.new_default_value)
+          : undefined
 
         return (
           <div key={value.name} className="flex flex-col gap-3 border-b border-neutral p-3 last:border-b-0">
@@ -446,7 +471,7 @@ function UpdatedValuesList({
                   {hasEditedOverride && (
                     <div className="flex items-center gap-1.5">
                       <span>Override:</span>
-                      <CodeChip color="info">{editedValue}</CodeChip>
+                      <CodeChip color="info">{formatUpdateValue(editedValue)}</CodeChip>
                     </div>
                   )}
                 </div>
@@ -463,7 +488,7 @@ function UpdatedValuesList({
                       iconOnly
                       aria-label={`Reset ${label} override to default`}
                       onClick={() => {
-                        onChange(value.name, value.new_default_value ?? '')
+                        onChange(value.name, getBlueprintUpdateFieldValue(value, value.new_default_value))
                         setEditedValueName(undefined)
                       }}
                     >
@@ -489,15 +514,25 @@ function UpdatedValuesList({
               </div>
             </div>
 
-            {editing && (
-              <InputText
-                name={value.name}
-                label="Override"
-                value={editedValue}
-                autoFocus
-                onChange={(event) => onChange(value.name, event.currentTarget.value)}
-              />
-            )}
+            {editing &&
+              (field ? (
+                <BlueprintManifestVariableInput
+                  autoFocus
+                  error={getFieldValidationError(field, editedValue)}
+                  field={field}
+                  label="Override"
+                  value={editedValue}
+                  onChange={(fieldValue) => onChange(value.name, fieldValue)}
+                />
+              ) : (
+                <InputText
+                  name={value.name}
+                  label="Override"
+                  value={getBlueprintUpdatePayloadValue(editedValue) ?? ''}
+                  autoFocus
+                  onChange={(event) => onChange(value.name, event.currentTarget.value)}
+                />
+              ))}
           </div>
         )
       })}
@@ -704,7 +739,12 @@ function getImpactLabel(level: BlueprintUpdatePreviewImpactLevel) {
 
 function getInitialUpdateValues(blueprintUpdate: NonNullable<ReturnType<typeof useBlueprintUpdate>['data']>) {
   return {
-    ...Object.fromEntries(blueprintUpdate.new_optional_values.map((value) => [value.name, value.default_value ?? ''])),
+    ...Object.fromEntries(
+      blueprintUpdate.new_optional_values.map((value) => [
+        value.name,
+        getBlueprintUpdateFieldValue(value, value.default_value),
+      ])
+    ),
   }
 }
 
@@ -733,25 +773,30 @@ function buildBlueprintUpdatePayload({
 }: {
   icon: string
   name: string
-  optionalValues: Array<{ name: string; default_value?: string | null }>
-  requiredValues: Array<{ name: string }>
+  optionalValues: BlueprintUpdateNewOptionalValue[]
+  requiredValues: BlueprintUpdateNewRequiredValue[]
   tag: string
-  updatedValues: Array<{ name: string; new_default_value?: string | null }>
-  values: Record<string, string>
+  updatedValues: BlueprintUpdateEditableValue[]
+  values: BlueprintFieldValues
 }) {
   const variables: BlueprintUpdateVariablePatch = {}
 
-  requiredValues.forEach(({ name }) => {
-    const value = values[name]?.trim()
-    if (value) variables[name] = { value }
+  requiredValues.forEach((field) => {
+    const value = getBlueprintUpdatePayloadValue(values[field.name])
+    if (value) variables[field.name] = { value, is_secret: field.is_secret }
   })
-  optionalValues.forEach(({ name, default_value: defaultValue }) => {
-    const value = values[name]?.trim()
-    if (value && value !== defaultValue) variables[name] = { value }
+  optionalValues.forEach((field) => {
+    const value = getBlueprintUpdatePayloadValue(values[field.name])
+    if (value && value !== field.default_value) variables[field.name] = { value, is_secret: field.is_secret }
   })
-  updatedValues.forEach(({ name, new_default_value: newDefaultValue }) => {
-    const value = values[name]?.trim()
-    if (value && value !== newDefaultValue) variables[name] = { value }
+  updatedValues.forEach((field) => {
+    const value = getBlueprintUpdatePayloadValue(values[field.name])
+    if (!value || value === field.new_default_value) return
+
+    variables[field.name] = {
+      value,
+      ...(isBlueprintUpdateVariableField(field) ? { is_secret: field.is_secret } : {}),
+    }
   })
 
   return {
@@ -762,12 +807,53 @@ function buildBlueprintUpdatePayload({
   }
 }
 
+function getBlueprintUpdateVariableField(
+  field: BlueprintUpdateField,
+  required: boolean,
+  defaultValue?: string | null
+): BlueprintManifestVariableField {
+  return {
+    kind: 'variable',
+    name: field.name,
+    type: field.type,
+    required,
+    is_secret: field.is_secret,
+    allowed_values: field.allowed_values,
+    default_value: defaultValue,
+  }
+}
+
+function isBlueprintUpdateVariableField(
+  field: BlueprintUpdateEditableValue | BlueprintUpdateNewOptionalValue
+): field is BlueprintUpdateUpdatedValue | BlueprintUpdateNewOptionalValue {
+  return 'type' in field && 'is_secret' in field
+}
+
+function getBlueprintUpdateFieldValue(
+  field: BlueprintUpdateEditableValue | BlueprintUpdateNewOptionalValue,
+  value?: string | null
+): BlueprintFieldValue {
+  if (isBlueprintUpdateVariableField(field) && field.type.type === 'bool' && !field.allowed_values?.length) {
+    return value === 'true'
+  }
+
+  return value ?? ''
+}
+
+function getBlueprintUpdatePayloadValue(value: BlueprintFieldValue | undefined) {
+  if (typeof value === 'boolean') return String(value)
+
+  const trimmedValue = value?.trim()
+  return trimmedValue ? trimmedValue : undefined
+}
+
 function formatUpdateFieldLabel(name: string) {
   const label = name.replace(/_/g, ' ')
   return `${label.charAt(0).toUpperCase()}${label.slice(1)}`
 }
 
-function formatUpdateValue(value?: string | null) {
+function formatUpdateValue(value?: BlueprintFieldValue | string | null) {
+  if (typeof value === 'boolean') return String(value)
   return value && value.length > 0 ? value : '-'
 }
 
