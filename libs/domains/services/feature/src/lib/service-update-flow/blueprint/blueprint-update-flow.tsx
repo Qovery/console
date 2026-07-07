@@ -76,7 +76,9 @@ export function BlueprintUpdateFlow({
     serviceType: service.service_type,
   })
   const [currentStep, setCurrentStep] = useState<'review' | 'preview'>('review')
-  const [activeSection, setActiveSection] = useState<BlueprintUpdateSection>('required')
+  const [activeSection, setActiveSection] = useState<BlueprintUpdateSection>(() =>
+    blueprintUpdate ? getFirstAvailableUpdateSection(blueprintUpdate) : 'required'
+  )
   const [completedSections, setCompletedSections] = useState<BlueprintUpdateSection[]>([])
   const [values, setValues] = useState<Record<string, string>>({})
   const [initializedBlueprintId, setInitializedBlueprintId] = useState<string>()
@@ -84,6 +86,7 @@ export function BlueprintUpdateFlow({
   useEffect(() => {
     if (blueprintUpdate && initializedBlueprintId !== blueprintId) {
       setValues(getInitialUpdateValues(blueprintUpdate))
+      setActiveSection(getFirstAvailableUpdateSection(blueprintUpdate))
       setInitializedBlueprintId(blueprintId)
     }
   }, [blueprintId, blueprintUpdate, initializedBlueprintId])
@@ -705,6 +708,20 @@ function getInitialUpdateValues(blueprintUpdate: NonNullable<ReturnType<typeof u
   return {
     ...Object.fromEntries(blueprintUpdate.new_optional_values.map((value) => [value.name, value.default_value ?? ''])),
   }
+}
+
+function getFirstAvailableUpdateSection(
+  blueprintUpdate: NonNullable<ReturnType<typeof useBlueprintUpdate>['data']>
+): BlueprintUpdateSection {
+  if (blueprintUpdate.new_required_values.length > 0 || blueprintUpdate.now_required_values.length > 0) {
+    return 'required'
+  }
+  if (blueprintUpdate.new_optional_values.length > 0) return 'optional'
+  if (blueprintUpdate.updated_values.length > 0 || blueprintUpdate.engine_diff.updated_values.length > 0) {
+    return 'modified'
+  }
+  if (blueprintUpdate.removed_values.length > 0) return 'removed'
+  return 'required'
 }
 
 function buildBlueprintUpdatePayload({
