@@ -1,6 +1,6 @@
 import { Controller, useFormContext } from 'react-hook-form'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
-import { ExternalLink, Icon, InputText, InputToggle, Tooltip } from '@qovery/shared/ui'
+import { Callout, ExternalLink, Icon, InputText, InputToggle, Tooltip } from '@qovery/shared/ui'
 
 export interface GkeKmsKeyProps {
   fromDetail?: boolean
@@ -82,14 +82,29 @@ export function GkeKmsKey({ fromDetail }: GkeKmsKeyProps) {
             },
           }}
           render={({ field, fieldState: { error } }) => (
-            <InputText
-              name={field.name}
-              onChange={field.onChange}
-              value={(field.value as string) ?? ''}
-              label="KMS Key"
-              placeholder="projects/{project}/locations/{location}/keyRings/{keyRing}/cryptoKeys/{key}"
-              error={error?.message}
-            />
+            <>
+              <InputText
+                name={field.name}
+                onChange={field.onChange}
+                value={(field.value as string) ?? ''}
+                label="KMS Key"
+                placeholder="projects/{project}/locations/{location}/keyRings/{keyRing}/cryptoKeys/{key}"
+                error={error?.message}
+              />
+              <Callout.Root color="yellow">
+                <Callout.Icon>
+                  <Icon iconName="warning" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextDescription>
+                    The KMS key must be <strong>in the same region as your GKE cluster</strong> <br />
+                    <strong>Never delete the KMS key associated with your cluster</strong> - doing so will permanently
+                    and irrecoverably destroy all encrypted data, including node disks, persistent volumes, and
+                    Kubernetes secrets.
+                  </Callout.TextDescription>
+                </Callout.Text>
+              </Callout.Root>
+            </>
           )}
         />
       )}

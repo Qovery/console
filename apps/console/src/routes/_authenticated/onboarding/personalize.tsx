@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 import { TypeOfUseEnum } from 'qovery-typescript-axios'
 import { useContext } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Container, ContextOnboarding, StepPersonalize } from '@qovery/domains/onboarding/feature'
+import { Container, ContextOnboarding, StepPersonalize, isPersonalEmail } from '@qovery/domains/onboarding/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -23,6 +23,9 @@ function Personalize() {
   const { data: userSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
 
+  const socialEmail = userSignUp?.user_email ? userSignUp.user_email : user?.email
+  const defaultEmail = socialEmail && !isPersonalEmail(socialEmail) ? socialEmail : ''
+
   const methods = useForm<{
     first_name: string
     last_name: string
@@ -35,7 +38,7 @@ function Personalize() {
     defaultValues: {
       first_name: userSignUp?.first_name ? userSignUp.first_name : user?.name?.split(' ')[0],
       last_name: userSignUp?.last_name ? userSignUp.last_name : user?.name?.split(' ')[1],
-      user_email: userSignUp?.user_email ? userSignUp.user_email : user?.email,
+      user_email: defaultEmail,
       company_name: userSignUp?.company_name ?? '',
       type_of_use: userSignUp?.type_of_use ?? TypeOfUseEnum.WORK,
       phone: '',

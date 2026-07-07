@@ -5,6 +5,7 @@ import { isSameSecretManagerAccess } from '@qovery/domains/clusters/data-access'
 import {
   Badge,
   Button,
+  Callout,
   DropdownMenu,
   FunnelFlowBody,
   Heading,
@@ -186,6 +187,16 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                     )
                   }
                 />
+                <Callout.Root color="sky" className="w-full">
+                  <Callout.Icon>
+                    <Icon iconName="info-circle" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    <Callout.TextDescription>
+                      This feature is in beta. Behaviour and accessibility may change when released in GA.
+                    </Callout.TextDescription>
+                  </Callout.Text>
+                </Callout.Root>
               </div>
             </div>
           </div>

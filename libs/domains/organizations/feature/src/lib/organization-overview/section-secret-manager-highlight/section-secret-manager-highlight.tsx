@@ -5,6 +5,7 @@ import { useMemo } from 'react'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { Button, Heading, Icon, Link, Section } from '@qovery/shared/ui'
 import { useLocalStorage, useSupportChat } from '@qovery/shared/util-hooks'
+import { isFirefoxBrowser } from '@qovery/shared/util-js'
 import useOrganization from '../../hooks/use-organization/use-organization'
 
 const SECRET_KEYS = [
@@ -38,6 +39,7 @@ export function SectionSecretManagerHighlight() {
     return clusters.find((cluster) => cluster)?.id
   }, [clusters])
   const isSecretManagerAvailable = canUseSecretManager(organization?.plan)
+  const shouldDisableAnimation = isFirefoxBrowser()
 
   if (!isVisible || !getSecretManagerClusterId) {
     return null
@@ -99,7 +101,7 @@ export function SectionSecretManagerHighlight() {
               variant="solid"
               size="lg"
               className="absolute bottom-3 z-10 w-[calc(100%-24px)] justify-center"
-              onClick={() => showPylonForm('request-upgrade-plan')}
+              onClick={() => showPylonForm('request-access-secrets-manager')}
             >
               Contact us
             </Button>
@@ -109,12 +111,12 @@ export function SectionSecretManagerHighlight() {
             {SECRET_KEYS.map((keys, index) => (
               <motion.div
                 key={keys.join('-')}
-                animate={{ x: index % 2 === 0 ? ['0%', '-25%'] : ['-25%', '0%'] }}
+                animate={shouldDisableAnimation ? { x: 0 } : { x: index % 2 === 0 ? ['0%', '-25%'] : ['-25%', '0%'] }}
                 className="flex w-max whitespace-nowrap text-[8px] font-medium leading-4 text-neutral"
                 transition={{
-                  duration: SECRET_KEY_SCROLL_DURATION,
+                  duration: shouldDisableAnimation ? 0 : SECRET_KEY_SCROLL_DURATION,
                   ease: 'linear',
-                  repeat: Infinity,
+                  repeat: shouldDisableAnimation ? 0 : Infinity,
                   repeatType: 'loop',
                 }}
               >

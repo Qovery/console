@@ -1,4 +1,5 @@
 import {
+  type BlueprintMajorVersion,
   type BlueprintManifestContextVariableField,
   type BlueprintManifestResponseResultsInner,
   type BlueprintManifestVariableField,
@@ -22,6 +23,15 @@ export function formatFieldLabel(name: string) {
   return `${label.charAt(0).toUpperCase()}${label.slice(1)}`
 }
 
+export function sortBlueprintMajorVersions(versions: BlueprintMajorVersion[]) {
+  return [...versions].sort((a, b) =>
+    b.serviceVersion.localeCompare(a.serviceVersion, undefined, {
+      numeric: true,
+      sensitivity: 'base',
+    })
+  )
+}
+
 export function getDefaultFieldValue(field: BlueprintManifestVariableField): BlueprintFieldValue {
   if (field.type.type === 'bool') return field.default_value === 'true'
   return field.default_value ?? ''
@@ -29,6 +39,20 @@ export function getDefaultFieldValue(field: BlueprintManifestVariableField): Blu
 
 export function getDefaultContextFieldValue(field: BlueprintManifestContextVariableField): BlueprintFieldValue {
   return field.value ?? ''
+}
+
+export function getDefaultBlueprintFieldValues(blueprintManifestFields: BlueprintManifestResponseResultsInner[]) {
+  const requiredBlueprintFields = blueprintManifestFields.filter(isRequiredVariableField)
+  const optionalBlueprintFields = blueprintManifestFields.filter(isOptionalVariableField)
+  const overridableContextBlueprintFields = blueprintManifestFields.filter(isOverridableContextVariableField)
+  const fieldsWithDefaultValue = [...requiredBlueprintFields, ...optionalBlueprintFields]
+
+  return {
+    ...Object.fromEntries(fieldsWithDefaultValue.map((field) => [field.name, getDefaultFieldValue(field)])),
+    ...Object.fromEntries(
+      overridableContextBlueprintFields.map((field) => [field.name, getDefaultContextFieldValue(field)])
+    ),
+  }
 }
 
 export function getStringFieldValue(value: BlueprintFieldValue | undefined) {

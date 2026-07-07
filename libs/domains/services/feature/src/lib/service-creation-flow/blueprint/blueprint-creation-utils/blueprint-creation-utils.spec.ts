@@ -1,4 +1,5 @@
 import {
+  type BlueprintMajorVersion,
   type BlueprintManifestContextVariableField,
   type BlueprintManifestResponseResultsInner,
   type BlueprintManifestVariableField,
@@ -22,6 +23,7 @@ import {
   isOverridableContextVariableField,
   isRequiredVariableField,
   isVariableField,
+  sortBlueprintMajorVersions,
 } from './blueprint-creation-utils'
 
 function createVariableField(overrides: Partial<BlueprintManifestVariableField> = {}): BlueprintManifestVariableField {
@@ -59,6 +61,22 @@ describe('blueprint-creation-utils', () => {
   describe('formatFieldLabel', () => {
     it('formats a snake case field name into a readable label', () => {
       expect(formatFieldLabel('db_name')).toBe('Db name')
+    })
+  })
+
+  describe('sortBlueprintMajorVersions', () => {
+    it('sorts blueprint versions from latest to oldest', () => {
+      const versions: BlueprintMajorVersion[] = [
+        { serviceVersion: '9.6', latestTag: 'aws/postgres/9.6/1.0.0' },
+        { serviceVersion: '17', latestTag: 'aws/postgres/17/1.0.0' },
+        { serviceVersion: '14', latestTag: 'aws/postgres/14/1.0.0' },
+      ]
+
+      expect(sortBlueprintMajorVersions(versions)).toEqual([
+        { serviceVersion: '17', latestTag: 'aws/postgres/17/1.0.0' },
+        { serviceVersion: '14', latestTag: 'aws/postgres/14/1.0.0' },
+        { serviceVersion: '9.6', latestTag: 'aws/postgres/9.6/1.0.0' },
+      ])
     })
   })
 

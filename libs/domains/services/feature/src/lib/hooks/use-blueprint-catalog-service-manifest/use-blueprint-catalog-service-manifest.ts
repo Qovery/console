@@ -1,4 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useCallback } from 'react'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseBlueprintCatalogServiceManifestProps {
@@ -37,6 +38,32 @@ export function useBlueprintCatalogServiceManifest({
       Boolean(environmentId),
     suspense,
   })
+}
+
+export function usePrefetchBlueprintCatalogServiceManifest({
+  organizationId,
+  provider,
+  serviceFamily,
+  serviceVersion,
+  environmentId = '',
+}: UseBlueprintCatalogServiceManifestProps) {
+  const queryClient = useQueryClient()
+
+  return useCallback(async () => {
+    if (!organizationId || !provider || !serviceFamily || !serviceVersion || !environmentId) {
+      return
+    }
+
+    await queryClient.prefetchQuery(
+      queries.services.blueprintCatalogServiceManifest({
+        organizationId,
+        provider,
+        serviceFamily,
+        serviceVersion,
+        environmentId,
+      })
+    )
+  }, [environmentId, organizationId, provider, queryClient, serviceFamily, serviceVersion])
 }
 
 export default useBlueprintCatalogServiceManifest

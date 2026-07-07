@@ -31,6 +31,7 @@ import {
   OrganizationLabelsGroupApi,
   type OrganizationLabelsGroupCreateRequest,
   OrganizationMainCallsApi,
+  type OrganizationOnboardingPatchRequest,
   type OrganizationRequest,
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
@@ -393,6 +394,13 @@ export const organizations = createQueryKeys('organizations', {
     queryKey: [organizationId, inviteId],
     async queryFn() {
       const response = await membersApi.getMemberInvitation(organizationId, inviteId)
+      return response.data
+    },
+  }),
+  onboarding: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.getOrganizationOnboarding(organizationId)
       return response.data
     },
   }),
@@ -829,6 +837,16 @@ export const mutations = {
   },
   async changePlan({ organizationId, plan }: { organizationId: string; plan: PlanEnum }) {
     const response = await billingApi.changePlan(organizationId, { plan })
+    return response.data
+  },
+  async updateOrganizationOnboarding({
+    organizationId,
+    onboardingPatchRequest,
+  }: {
+    organizationId: string
+    onboardingPatchRequest: OrganizationOnboardingPatchRequest
+  }) {
+    const response = await organizationApi.updateOrganizationOnboarding(organizationId, onboardingPatchRequest)
     return response.data
   },
 }

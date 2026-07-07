@@ -1,18 +1,22 @@
 import { useParams } from '@tanstack/react-router'
 import { act, within } from '@testing-library/react'
 import type { BlueprintItem, BlueprintManifestResponseResultsInner } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useLayoutEffect, useState } from 'react'
+import selectEvent from 'react-select-event'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
-  BlueprintConfigurationView,
   BlueprintCreationFlow,
+  BlueprintManifestFieldsProvider,
+  BlueprintOverridesConfigurationSection,
+  BlueprintServiceInformationSection,
+  BlueprintSetupSection,
   BlueprintStepSummary,
   useBlueprintCreateContext,
 } from './blueprint-creation-flow'
 
 const mockNavigate = jest.fn()
-const mockUseSearch = jest.fn()
 const mockUseBlueprintCatalogServiceManifest = jest.fn()
+const mockPrefetchBlueprintManifestFields = jest.fn()
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
 const mockUseBlueprintServiceCreatedSocket = jest.fn()
 const mockCreateBlueprint = jest.fn()
@@ -22,7 +26,6 @@ jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => mockNavigate,
   useParams: jest.fn(),
-  useSearch: () => mockUseSearch(),
 }))
 
 jest.mock('@qovery/shared/ui', () => {
@@ -43,6 +46,7 @@ jest.mock('@qovery/shared/ui', () => {
 
 jest.mock('../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest', () => ({
   useBlueprintCatalogServiceManifest: (props: unknown) => mockUseBlueprintCatalogServiceManifest(props),
+  usePrefetchBlueprintCatalogServiceManifest: () => mockPrefetchBlueprintManifestFields,
 }))
 
 jest.mock('../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme', () => ({
@@ -120,25 +124,50 @@ function renderBlueprintFlow(children: JSX.Element) {
 
 function FillFormValues({ children }: { children: JSX.Element }) {
   const { form } = useBlueprintCreateContext()
+  const [ready, setReady] = useState(false)
 
-  useEffect(() => {
-    form.setValue('serviceName', 'custom-postgres')
-    form.setValue('fields', {
-      db_name: 'production',
-      db_username: 'postgres',
-      db_password: 'super-secret',
-      skip_final_snapshot: true,
+  useLayoutEffect(() => {
+    form.reset({
+      ...form.getValues(),
+      serviceName: 'custom-postgres',
+      loadedVersionTag: 'aws/postgres/17/1.0.0',
+      fields: {
+        db_name: 'production',
+        db_username: 'postgres',
+        db_password: 'super-secret',
+        skip_final_snapshot: true,
+      },
     })
+    setReady(true)
   }, [form])
+
+  if (!ready) {
+    return null
+  }
 
   return children
 }
 
-function BlueprintFlowRouteHarness() {
-  const [step, setStep] = useState<'configuration' | 'summary'>('configuration')
+function WithBlueprintManifestFields({ children }: { children: JSX.Element }) {
+  return <BlueprintManifestFieldsProvider>{children}</BlueprintManifestFieldsProvider>
+}
+
+type BlueprintRouteStep = 'service-information' | 'blueprint-setup' | 'overrides' | 'summary'
+
+function BlueprintFlowRouteHarness({ flowBlueprint = blueprint }: { flowBlueprint?: BlueprintItem }) {
+  const [step, setStep] = useState<BlueprintRouteStep>('service-information')
 
   useEffect(() => {
     mockNavigate.mockImplementation((options: { to?: string }) => {
+      if (options.to?.endsWith('/service-information')) {
+        setStep('service-information')
+      }
+      if (options.to?.endsWith('/blueprint-setup')) {
+        setStep('blueprint-setup')
+      }
+      if (options.to?.endsWith('/overrides')) {
+        setStep('overrides')
+      }
       if (options.to?.endsWith('/summary')) {
         setStep('summary')
       }
@@ -146,8 +175,23 @@ function BlueprintFlowRouteHarness() {
   }, [])
 
   return (
-    <BlueprintCreationFlow blueprint={blueprint} onExit={jest.fn()}>
-      {step === 'configuration' ? <BlueprintConfigurationView /> : <BlueprintStepSummary />}
+    <BlueprintCreationFlow blueprint={flowBlueprint} onExit={jest.fn()}>
+      {step === 'service-information' && <BlueprintServiceInformationSection />}
+      {step === 'blueprint-setup' && (
+        <WithBlueprintManifestFields>
+          <BlueprintSetupSection />
+        </WithBlueprintManifestFields>
+      )}
+      {step === 'overrides' && (
+        <WithBlueprintManifestFields>
+          <BlueprintOverridesConfigurationSection />
+        </WithBlueprintManifestFields>
+      )}
+      {step === 'summary' && (
+        <WithBlueprintManifestFields>
+          <BlueprintStepSummary />
+        </WithBlueprintManifestFields>
+      )}
     </BlueprintCreationFlow>
   )
 }
@@ -164,7 +208,10 @@ describe('BlueprintCreationFlow', () => {
       provider: 'AWS',
       serviceFamily: 'postgres',
     })
-    mockUseBlueprintCatalogServiceManifest.mockReturnValue({ data: manifestFields })
+    mockUseBlueprintCatalogServiceManifest.mockReturnValue({
+      data: manifestFields,
+    })
+    mockPrefetchBlueprintManifestFields.mockResolvedValue(undefined)
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({
       data: {
         content: '# AWS RDS PostgreSQL\n\nBlueprint documentation',
@@ -172,13 +219,12 @@ describe('BlueprintCreationFlow', () => {
       },
     })
     mockCreateBlueprint.mockResolvedValue({ environment_id: 'env-1' })
-    mockUseSearch.mockReturnValue({})
   })
 
   it('should open the blueprint details drawer from the configuration header', async () => {
     jest.useFakeTimers()
 
-    const { userEvent } = renderBlueprintFlow(<BlueprintConfigurationView />)
+    const { userEvent } = renderBlueprintFlow(<BlueprintServiceInformationSection />)
 
     await userEvent.click(screen.getByRole('button', { name: 'AWS RDS PostgreSQL' }))
 
@@ -191,27 +237,10 @@ describe('BlueprintCreationFlow', () => {
     expect(within(dialog).queryByRole('link', { name: 'Deploy blueprint' })).not.toBeInTheDocument()
   })
 
-  it('should navigate to the blueprint summary from the confirm blueprint configuration button', async () => {
-    jest.useFakeTimers()
-
-    const { userEvent } = renderBlueprintFlow(<BlueprintConfigurationView />)
-
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
-    await userEvent.type(await screen.findByLabelText('Db name'), 'production')
-    await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
-    await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
-    await userEvent.click(screen.getByRole('button', { name: /confirm blueprint configuration/i }))
-
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/summary',
-    })
-  })
-
   it('should focus the first blueprint setup field after continuing from service information', async () => {
     jest.useFakeTimers()
 
-    const { userEvent } = renderBlueprintFlow(<BlueprintConfigurationView />)
+    const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
 
     await userEvent.type(screen.getByLabelText('Service name'), 'custom-postgres')
     await userEvent.click(screen.getByRole('button', { name: /continue/i }))
@@ -219,108 +248,83 @@ describe('BlueprintCreationFlow', () => {
     expect(await screen.findByLabelText('Db name')).toHaveFocus()
   })
 
-  it('should not load manifest fields when a blueprint has no service family', () => {
+  it('should prefetch blueprint setup fields before navigating from service information', async () => {
+    mockPrefetchBlueprintManifestFields.mockImplementation(async () => {
+      expect(mockNavigate).not.toHaveBeenCalledWith({
+        to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/blueprint-setup',
+      })
+    })
+
+    const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
+
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockPrefetchBlueprintManifestFields).toHaveBeenCalled()
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/blueprint-setup',
+    })
+  })
+
+  it('should not load manifest fields from the service information route', () => {
     renderWithProviders(
       <BlueprintCreationFlow blueprint={{ ...blueprint, serviceFamily: undefined }} onExit={jest.fn()}>
-        <BlueprintConfigurationView />
+        <BlueprintServiceInformationSection />
       </BlueprintCreationFlow>
     )
 
-    expect(mockUseBlueprintCatalogServiceManifest).toHaveBeenCalledWith(
-      expect.objectContaining({
-        provider: 'AWS',
-        serviceFamily: '',
-        enabled: false,
-      })
-    )
+    expect(mockUseBlueprintCatalogServiceManifest).not.toHaveBeenCalled()
   })
 
-  it('should focus the first overrides field after continuing from blueprint setup', async () => {
+  it('should focus the first overrides field after opening overrides from blueprint setup', async () => {
     jest.useFakeTimers()
 
-    const { userEvent } = renderBlueprintFlow(<BlueprintConfigurationView />)
+    const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
 
     await userEvent.click(screen.getByRole('button', { name: /continue/i }))
     await userEvent.type(await screen.findByLabelText('Db name'), 'production')
     await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
     await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await userEvent.click(screen.getByRole('button', { name: /overrides/i }))
 
     expect(await screen.findByRole('checkbox', { name: 'Skip final snapshot' })).toHaveFocus()
-  })
-
-  it('should open the requested configuration section from route search', async () => {
-    mockUseSearch.mockReturnValue({ section: 'overrides' })
-
-    renderBlueprintFlow(<BlueprintConfigurationView />)
-
-    expect(await screen.findByText(/Use overrides to customize how your service is built or run/)).toBeInTheDocument()
-    expect(screen.getByRole('checkbox', { name: 'Skip final snapshot' })).toBeInTheDocument()
-  })
-
-  it('should fallback to service information when the route search section is invalid', () => {
-    mockUseSearch.mockReturnValue({ section: 'unknown-section' })
-
-    renderBlueprintFlow(<BlueprintConfigurationView />)
-
-    expect(screen.getByLabelText('Service name')).toBeInTheDocument()
-    expect(screen.queryByLabelText('Db name')).not.toBeInTheDocument()
-    expect(screen.queryByText(/Use overrides to customize how your service is built or run/)).not.toBeInTheDocument()
-  })
-
-  it('should update the current section when the route search section changes to a valid section', async () => {
-    mockUseSearch.mockReturnValue({})
-
-    const { rerender } = renderBlueprintFlow(<BlueprintConfigurationView />)
-
-    expect(screen.getByLabelText('Service name')).toBeInTheDocument()
-
-    mockUseSearch.mockReturnValue({ section: 'blueprint-setup' })
-    rerender(
-      <BlueprintCreationFlow blueprint={blueprint} onExit={jest.fn()}>
-        <BlueprintConfigurationView />
-      </BlueprintCreationFlow>
-    )
-
-    expect(await screen.findByLabelText('Db name')).toBeInTheDocument()
-    expect(screen.queryByLabelText('Service name')).not.toBeInTheDocument()
   })
 
   it('should navigate to the matching configuration section from summary edit buttons', async () => {
     jest.useFakeTimers()
 
     const { userEvent } = renderBlueprintFlow(
-      <FillFormValues>
-        <BlueprintStepSummary />
-      </FillFormValues>
+      <WithBlueprintManifestFields>
+        <FillFormValues>
+          <BlueprintStepSummary />
+        </FillFormValues>
+      </WithBlueprintManifestFields>
     )
 
     await screen.findByText(/custom-postgres/)
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit service information' }))
     expect(mockNavigate).toHaveBeenLastCalledWith({
-      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres',
-      search: { section: 'service-information' },
+      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/service-information',
     })
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit blueprint setup' }))
     expect(mockNavigate).toHaveBeenLastCalledWith({
-      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres',
-      search: { section: 'blueprint-setup' },
+      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/blueprint-setup',
     })
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit overrides' }))
     expect(mockNavigate).toHaveBeenLastCalledWith({
-      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres',
-      search: { section: 'overrides' },
+      to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/overrides',
     })
   })
 
   it('should render the summary with the previously filled blueprint values', async () => {
     renderBlueprintFlow(
-      <FillFormValues>
-        <BlueprintStepSummary />
-      </FillFormValues>
+      <WithBlueprintManifestFields>
+        <FillFormValues>
+          <BlueprintStepSummary />
+        </FillFormValues>
+      </WithBlueprintManifestFields>
     )
 
     expect(screen.getByText('Ready to create your blueprint service')).toBeInTheDocument()
@@ -340,7 +344,6 @@ describe('BlueprintCreationFlow', () => {
     await userEvent.type(await screen.findByLabelText('Db name'), 'production')
     await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
     await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
     await userEvent.click(screen.getByRole('button', { name: /confirm blueprint configuration/i }))
 
     expect(await screen.findByText('Ready to create your blueprint service')).toBeInTheDocument()
@@ -349,12 +352,47 @@ describe('BlueprintCreationFlow', () => {
     expect(screen.getByText(/••••••••/)).toBeInTheDocument()
   })
 
+  it('should send default override values in the create payload when overrides were not opened', async () => {
+    jest.useFakeTimers()
+
+    const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
+
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await userEvent.type(await screen.findByLabelText('Db name'), 'production')
+    await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
+    await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
+    await userEvent.click(screen.getByRole('button', { name: /confirm blueprint configuration/i }))
+    expect(await screen.findByText('Ready to create your blueprint service')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateBlueprint).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            variables: expect.arrayContaining([
+              {
+                name: 'skip_final_snapshot',
+                value: 'true',
+                is_secret: false,
+              },
+            ]),
+          }),
+        })
+      )
+    })
+  })
+
   it('should redirect to configuration when summary is opened without required blueprint values', async () => {
-    renderBlueprintFlow(<BlueprintStepSummary />)
+    renderBlueprintFlow(
+      <WithBlueprintManifestFields>
+        <BlueprintStepSummary />
+      </WithBlueprintManifestFields>
+    )
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith({
-        to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres',
+        to: '/organization/org-1/project/proj-1/environment/env-1/service/create/blueprint/AWS/postgres/blueprint-setup',
       })
     })
   })
@@ -363,9 +401,11 @@ describe('BlueprintCreationFlow', () => {
     jest.useFakeTimers()
 
     const { userEvent } = renderBlueprintFlow(
-      <FillFormValues>
-        <BlueprintStepSummary />
-      </FillFormValues>
+      <WithBlueprintManifestFields>
+        <FillFormValues>
+          <BlueprintStepSummary />
+        </FillFormValues>
+      </WithBlueprintManifestFields>
     )
 
     await screen.findByText(/custom-postgres/)
@@ -406,6 +446,56 @@ describe('BlueprintCreationFlow', () => {
     })
   })
 
+  it('should sort blueprint versions and send the selected version tag in the create payload', async () => {
+    jest.useFakeTimers()
+    const versionedBlueprint: BlueprintItem = {
+      ...blueprint,
+      majorVersions: [
+        { serviceVersion: '14', latestTag: 'aws/postgres/14/1.0.0' },
+        { serviceVersion: '17', latestTag: 'aws/postgres/17/1.0.0' },
+        { serviceVersion: '16', latestTag: 'aws/postgres/16/1.0.0' },
+      ],
+    }
+
+    const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness flowBlueprint={versionedBlueprint} />)
+
+    expect(screen.getByText('17')).toBeInTheDocument()
+    expect(mockUseBlueprintCatalogServiceManifest).not.toHaveBeenCalled()
+
+    await selectEvent.select(screen.getByLabelText('Blueprint version'), '16')
+    expect(mockUseBlueprintCatalogServiceManifest).not.toHaveBeenCalled()
+
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await screen.findByLabelText('Db name')
+    await waitFor(() =>
+      expect(mockUseBlueprintCatalogServiceManifest).toHaveBeenCalledWith(
+        expect.objectContaining({
+          serviceVersion: '16',
+          suspense: true,
+        })
+      )
+    )
+    await userEvent.type(await screen.findByLabelText('Db name'), 'production')
+    await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
+    await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
+    await userEvent.click(screen.getByRole('button', { name: /confirm blueprint configuration/i }))
+
+    expect(await screen.findByText('Ready to create your blueprint service')).toBeInTheDocument()
+    expect(screen.getByText('16')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateBlueprint).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({
+            tag: 'aws/postgres/16/1.0.0',
+          }),
+        })
+      )
+    })
+  })
+
   it('should start listening for the blueprint service-created event before creating the blueprint', async () => {
     jest.useFakeTimers()
     let resolveCreateBlueprint: (value: { environment_id: string }) => void = jest.fn()
@@ -417,9 +507,11 @@ describe('BlueprintCreationFlow', () => {
     )
 
     const { userEvent } = renderBlueprintFlow(
-      <FillFormValues>
-        <BlueprintStepSummary />
-      </FillFormValues>
+      <WithBlueprintManifestFields>
+        <FillFormValues>
+          <BlueprintStepSummary />
+        </FillFormValues>
+      </WithBlueprintManifestFields>
     )
 
     await screen.findByText(/custom-postgres/)
@@ -503,9 +595,11 @@ describe('BlueprintCreationFlow', () => {
     )
 
     const { userEvent } = renderBlueprintFlow(
-      <FillFormValues>
-        <BlueprintStepSummary />
-      </FillFormValues>
+      <WithBlueprintManifestFields>
+        <FillFormValues>
+          <BlueprintStepSummary />
+        </FillFormValues>
+      </WithBlueprintManifestFields>
     )
 
     await screen.findByText(/custom-postgres/)

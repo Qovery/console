@@ -22,6 +22,7 @@ export interface CreateCloneEnvironmentModalProps {
   organizationId: string
   environmentToClone?: Environment
   onClose: () => void
+  onSuccess?: (environmentId: string) => void
   type?: EnvironmentModeEnum
 }
 
@@ -30,6 +31,7 @@ export function CreateCloneEnvironmentModal({
   organizationId,
   environmentToClone,
   onClose,
+  onSuccess,
   type,
 }: CreateCloneEnvironmentModalProps) {
   const navigate = useNavigate()
@@ -55,6 +57,16 @@ export function CreateCloneEnvironmentModal({
   })
 
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
+  const handleResult = (environmentId: string, project_id: string) => {
+    if (onSuccess) {
+      onSuccess(environmentId)
+    } else {
+      navigate({
+        to: `/organization/${organizationId}/project/${project_id}/environment/${environmentId}/overview`,
+      })
+    }
+  }
+
   const onSubmit = methods.handleSubmit(async ({ name, cluster, mode, project_id }) => {
     if (environmentToClone) {
       const result = await cloneEnvironment({
@@ -66,10 +78,7 @@ export function CreateCloneEnvironmentModal({
           project_id,
         },
       })
-
-      navigate({
-        to: `/organization/${organizationId}/project/${project_id}/environment/${result.id}/overview`,
-      })
+      handleResult(result.id, project_id)
     } else {
       const result = await createEnvironment({
         projectId: project_id,
@@ -79,9 +88,7 @@ export function CreateCloneEnvironmentModal({
           cluster: cluster,
         },
       })
-      navigate({
-        to: `/organization/${organizationId}/project/${project_id}/environment/${result.id}/overview`,
-      })
+      handleResult(result.id, project_id)
     }
     onClose()
   })

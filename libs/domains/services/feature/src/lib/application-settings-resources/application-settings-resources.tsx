@@ -26,7 +26,7 @@ import { FixedInstancesMode } from './fixed-instances-mode'
 import { HpaAutoscalingMode } from './hpa-autoscaling-mode'
 
 const CPU_ARCHITECTURE_OPTIONS = [
-  { label: 'Default', value: 'DEFAULT' },
+  { label: 'Any', value: 'DEFAULT' },
   { label: 'ARM64', value: 'ARM64' },
   { label: 'AMD64', value: 'AMD64' },
 ]

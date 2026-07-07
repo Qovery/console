@@ -1,13 +1,12 @@
-import { type BlueprintItem, type BlueprintManifestVariableField } from 'qovery-typescript-axios'
+import { type BlueprintItem } from 'qovery-typescript-axios'
 import { type Dispatch, type PropsWithChildren, type SetStateAction, createContext, useContext } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
-import {
-  type BlueprintFieldValues,
-  type OverridableBlueprintManifestContextVariableField,
-} from '../blueprint-creation-utils/blueprint-creation-utils'
+import { type BlueprintFieldValues } from '../blueprint-creation-utils/blueprint-creation-utils'
 
 export interface BlueprintCreateFormData {
   serviceName: string
+  versionTag: string
+  loadedVersionTag?: string
   fields: BlueprintFieldValues
 }
 
@@ -20,9 +19,6 @@ export interface BlueprintCreateContextInterface {
   form: UseFormReturn<BlueprintCreateFormData>
   onViewDetails: () => void
   serviceVersion: string
-  requiredBlueprintFields: BlueprintManifestVariableField[]
-  optionalBlueprintFields: BlueprintManifestVariableField[]
-  overridableContextBlueprintFields: OverridableBlueprintManifestContextVariableField[]
 }
 
 export interface BlueprintCreationFlowProps extends PropsWithChildren {

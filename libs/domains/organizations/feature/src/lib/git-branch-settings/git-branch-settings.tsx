@@ -1,4 +1,5 @@
 import { type GitProviderEnum } from 'qovery-typescript-axios'
+import { useMemo } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { InputSelect, InputText, LoaderSpinner } from '@qovery/shared/ui'
 import { useBranches } from '../hooks/use-branches/use-branches'
@@ -40,6 +41,25 @@ export function GitBranchSettings({
     enabled: !disabled,
   })
 
+  const branchOptionsWithSelectedValue = useMemo(() => {
+    const branchOptions = branches.map((branch) => ({
+      label: branch.name,
+      value: branch.name,
+    }))
+
+    if (disabled || !watchFieldBranch || branchOptions.some((branch) => branch.value === watchFieldBranch)) {
+      return branchOptions
+    }
+
+    return [
+      ...branchOptions,
+      {
+        label: watchFieldBranch,
+        value: watchFieldBranch,
+      },
+    ]
+  }, [branches, disabled, watchFieldBranch])
+
   if (isError) {
     return null
   }
@@ -71,16 +91,14 @@ export function GitBranchSettings({
                       value: watchFieldBranch ?? '',
                     },
                   ]
-                : branches.map((branch) => ({
-                    label: branch.name,
-                    value: branch.name,
-                  }))
+                : branchOptionsWithSelectedValue
             }
             onChange={field.onChange}
             value={field.value}
             error={error?.message}
             disabled={disabled}
             isSearchable
+            isCreatable
           />
         )}
       />
