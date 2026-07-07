@@ -454,13 +454,7 @@ function UpdatedValuesList({
 
               <div className="flex shrink-0 items-center gap-2">
                 {hasEditedOverride && (
-                  <Tooltip
-                    content={
-                      <span>
-                        Reset the override to the new default value
-                      </span>
-                    }
-                  >
+                  <Tooltip content={<span>Reset the override to the new default value</span>}>
                     <Button
                       type="button"
                       variant="outline"
@@ -485,7 +479,9 @@ function UpdatedValuesList({
                     size="xs"
                     iconOnly
                     aria-label={`Edit ${label} override`}
-                    onClick={() => setEditedValueName((currentName) => (currentName === value.name ? undefined : value.name))}
+                    onClick={() =>
+                      setEditedValueName((currentName) => (currentName === value.name ? undefined : value.name))
+                    }
                   >
                     <Icon iconName="pen" iconStyle="regular" className="text-xs" />
                   </Button>
@@ -693,7 +689,9 @@ function PreviewImpactBadge({ level }: { level: BlueprintUpdatePreviewImpactLeve
   const iconName = level === 'high' || level === 'medium' ? 'circle-exclamation' : 'circle-info'
 
   return (
-    <div className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-1 text-sm font-medium ${badgeClassName}`}>
+    <div
+      className={`inline-flex items-center gap-1 rounded-md border px-1.5 py-1 text-sm font-medium ${badgeClassName}`}
+    >
       <Icon iconName={iconName} className="text-sm" />
       {getImpactLabel(level)}
     </div>
