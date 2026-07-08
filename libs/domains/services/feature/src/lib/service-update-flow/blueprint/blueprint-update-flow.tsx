@@ -626,7 +626,7 @@ function BlueprintUpdatePreview({
           <h2 className="text-sm font-medium leading-5 text-neutral">Raw output</h2>
           <div className="h-[min(75vh,calc(100vh-260px))] min-h-[260px] overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral">
             {rawOutput ? (
-              <pre className="whitespace-pre-wrap">{rawOutput}</pre>
+              <BlueprintUpdateRawOutput rawOutput={rawOutput} />
             ) : previewId ? (
               hasPreviewOutputError ? (
                 <p className="font-sans text-sm text-neutral-subtle">Unable to load preview output.</p>
@@ -660,6 +660,21 @@ function BlueprintUpdatePreview({
   )
 }
 
+function BlueprintUpdateRawOutput({ rawOutput }: { rawOutput: string }) {
+  const lines = rawOutput.split('\n')
+
+  return (
+    <pre className="whitespace-pre-wrap">
+      {lines.map((line, index) => (
+        <span key={`${index}-${line}`} className={getRawOutputLineClassName(line)}>
+          {line}
+          {index < lines.length - 1 ? '\n' : null}
+        </span>
+      ))}
+    </pre>
+  )
+}
+
 function BlueprintUpdateRawOutputSkeleton() {
   return (
     <div aria-label="Waiting for preview output" className="flex min-h-[148px] flex-col gap-3">
@@ -674,6 +689,16 @@ function BlueprintUpdateRawOutputSkeleton() {
       <Skeleton width="82%" height={16} />
     </div>
   )
+}
+
+function getRawOutputLineClassName(line: string) {
+  const prefix = line.trimStart().charAt(0)
+
+  if (prefix === '+') return 'text-positive'
+  if (prefix === '-') return 'text-negative'
+  if (prefix === '~') return 'text-info'
+
+  return undefined
 }
 
 function getInitialUpdateValues(blueprintUpdate: NonNullable<ReturnType<typeof useBlueprintUpdate>['data']>) {
