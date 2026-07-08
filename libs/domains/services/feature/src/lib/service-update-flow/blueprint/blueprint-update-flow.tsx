@@ -130,12 +130,14 @@ export function BlueprintUpdateFlow({
   }
   const visibleSections = updateSections.filter(({ id }) => sectionHasContent[id])
   const reviewSections = visibleSections.length > 0 ? visibleSections : updateSections.slice(0, 1)
+  const hasSingleReviewSection = reviewSections.length === 1
   const activeSectionIndex = reviewSections.findIndex(({ id }) => id === activeSection)
   const isRequiredValid = requiredValues.every((value) =>
     isFieldValid(getBlueprintUpdateVariableField(value, true), values[value.name])
   )
   const isReviewComplete =
     reviewSections.every(({ id }) => completedSections.includes(id)) || reviewSections.length === 0
+  const canContinueReview = hasSingleReviewSection ? activeSection !== 'required' || isRequiredValid : isReviewComplete
   const latestVersion = getVersionFromTag(blueprintUpdate.latest_tag) ?? blueprintUpdate.latest_tag
   const title = `${service.name} blueprint update to ${latestVersion}`
   const payload = buildBlueprintUpdatePayload({
@@ -160,7 +162,7 @@ export function BlueprintUpdateFlow({
   }
 
   const handlePreview = async () => {
-    if (!isReviewComplete) return
+    if (!canContinueReview) return
 
     await previewBlueprintUpdate({ blueprintId, payload })
     setCurrentStep('preview')
@@ -211,6 +213,7 @@ export function BlueprintUpdateFlow({
                     onChange={(name, value) => setValues((currentValues) => ({ ...currentValues, [name]: value }))}
                     onContinue={completeActiveSection}
                     continueDisabled={section.id === 'required' && !isRequiredValid}
+                    showContinueButton={!hasSingleReviewSection}
                   />
                 )}
               </BlueprintUpdateSectionCard>
@@ -222,7 +225,7 @@ export function BlueprintUpdateFlow({
               type="button"
               size="lg"
               className="w-full justify-center"
-              disabled={!isReviewComplete || isPreviewLoading}
+              disabled={!canContinueReview || isPreviewLoading}
               loading={isPreviewLoading}
               onClick={handlePreview}
             >
@@ -370,6 +373,7 @@ function BlueprintUpdateSectionContent({
   removedValues,
   requiredValues,
   section,
+  showContinueButton,
   updatedValues,
   values,
 }: {
@@ -380,6 +384,7 @@ function BlueprintUpdateSectionContent({
   removedValues: BlueprintUpdateRemovedValue[]
   requiredValues: BlueprintUpdateNewRequiredValue[]
   section: BlueprintUpdateSection
+  showContinueButton: boolean
   updatedValues: BlueprintUpdateEditableValue[]
   values: BlueprintFieldValues
 }) {
@@ -429,17 +434,19 @@ function BlueprintUpdateSectionContent({
 
       {section === 'removed' && <RemovedValuesList values={removedValues} />}
 
-      <Button
-        type="button"
-        size="md"
-        color="neutral"
-        className="w-fit"
-        disabled={continueDisabled}
-        onClick={onContinue}
-      >
-        Continue
-        <Icon iconName="arrow-right" />
-      </Button>
+      {showContinueButton && (
+        <Button
+          type="button"
+          size="md"
+          color="neutral"
+          className="w-fit"
+          disabled={continueDisabled}
+          onClick={onContinue}
+        >
+          Continue
+          <Icon iconName="arrow-right" />
+        </Button>
+      )}
     </>
   )
 }
