@@ -14,7 +14,6 @@ import {
   FunnelFlowBody,
   Icon,
   InputText,
-  LoaderSpinner,
   LogoIcon,
   Skeleton,
   Tooltip,
@@ -629,12 +628,13 @@ function BlueprintUpdatePreview({
             {rawOutput ? (
               <pre className="whitespace-pre-wrap">{rawOutput}</pre>
             ) : previewId ? (
-              <div className="flex min-h-[72px] flex-col items-center justify-center gap-3 font-sans text-sm text-neutral-subtle">
-                {!hasPreviewOutputError && <LoaderSpinner className="w-5" />}
-                <p>{hasPreviewOutputError ? 'Unable to load preview output.' : 'Waiting for preview output…'}</p>
-              </div>
+              hasPreviewOutputError ? (
+                <p className="font-sans text-sm text-neutral-subtle">Unable to load preview output.</p>
+              ) : (
+                <BlueprintUpdateRawOutputSkeleton />
+              )
             ) : (
-              <Skeleton width="100%" height={72} />
+              <BlueprintUpdateRawOutputSkeleton />
             )}
           </div>
         </section>
@@ -657,6 +657,22 @@ function BlueprintUpdatePreview({
         </Button>
       </footer>
     </FunnelFlowBody>
+  )
+}
+
+function BlueprintUpdateRawOutputSkeleton() {
+  return (
+    <div aria-label="Waiting for preview output" className="flex min-h-[148px] flex-col gap-3">
+      <div className="mb-1 flex items-center gap-2 font-sans text-sm text-neutral-subtle">
+        <Skeleton width={8} height={8} rounded />
+        <span>Generating preview output</span>
+      </div>
+      <Skeleton width="46%" height={16} />
+      <Skeleton width="28%" height={16} />
+      <Skeleton width="72%" height={16} />
+      <Skeleton width="64%" height={16} />
+      <Skeleton width="82%" height={16} />
+    </div>
   )
 }
 
