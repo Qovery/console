@@ -23,10 +23,7 @@ import {
   isRequiredVariableField,
   isVariableField,
 } from '../../../blueprint-field-utils/blueprint-field-utils'
-import {
-  buildBlueprintVariables,
-  sortBlueprintMajorVersions,
-} from './blueprint-creation-utils'
+import { buildBlueprintVariables, sortBlueprintMajorVersions } from './blueprint-creation-utils'
 
 function createVariableField(overrides: Partial<BlueprintManifestVariableField> = {}): BlueprintManifestVariableField {
   return {
