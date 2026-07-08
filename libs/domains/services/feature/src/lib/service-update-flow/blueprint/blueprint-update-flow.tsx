@@ -173,7 +173,7 @@ export function BlueprintUpdateFlow({
   return (
     <BlueprintUpdateFlowShell currentStep={currentStep === 'review' ? 1 : 2} onExit={onExit}>
       {currentStep === 'review' ? (
-        <FunnelFlowBody customContentWidth="max-w-[620px]">
+        <FunnelFlowBody customContentWidth="max-w-[652px]">
           <header className="mb-6">
             <h1 className="text-2xl font-medium leading-8 text-neutral">{title}</h1>
           </header>
