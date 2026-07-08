@@ -1,12 +1,11 @@
 import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
-import { InputSelect, InputText } from '@qovery/shared/ui'
+import { InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
 import {
   type BlueprintFieldValue,
   formatFieldLabel,
   getBooleanFieldValue,
   getStringFieldValue,
 } from '../blueprint-field-utils/blueprint-field-utils'
-import { CheckboxField } from './checkbox-field'
 
 export interface BlueprintManifestVariableInputProps {
   autoFocus?: boolean
@@ -27,6 +26,23 @@ export function BlueprintManifestVariableInput({
 }: BlueprintManifestVariableInputProps) {
   const inputLabel = label ?? formatFieldLabel(field.name)
 
+  if (field.type.type === 'bool') {
+    return (
+      <div className="rounded-md border border-neutral bg-surface-neutral px-3 py-3">
+        <InputToggle
+          small
+          align="top"
+          name={field.name}
+          value={getBooleanFieldValue(value)}
+          title={inputLabel}
+          description={field.description ?? undefined}
+          ariaLabel={inputLabel}
+          onChange={onChange}
+        />
+      </div>
+    )
+  }
+
   if (field.allowed_values?.length) {
     return (
       <InputSelect
@@ -38,19 +54,6 @@ export function BlueprintManifestVariableInput({
           if (Array.isArray(value)) return
           onChange(value)
         }}
-      />
-    )
-  }
-
-  if (field.type.type === 'bool') {
-    return (
-      <CheckboxField
-        autoFocus={autoFocus}
-        checked={getBooleanFieldValue(value)}
-        description={field.description ?? ''}
-        label={inputLabel}
-        name={field.name}
-        onChange={onChange}
       />
     )
   }
