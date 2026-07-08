@@ -616,6 +616,9 @@ function BlueprintUpdatePreview({
     clusterId,
     previewId,
   })
+  const rawOutputContainerHeightClassName = rawOutput
+    ? 'h-[min(75vh,calc(100vh-260px))] min-h-[260px]'
+    : 'min-h-[180px]'
 
   return (
     <FunnelFlowBody customContentWidth="max-w-[620px]">
@@ -624,7 +627,9 @@ function BlueprintUpdatePreview({
 
         <section className="flex flex-col gap-2">
           <h2 className="text-sm font-medium leading-5 text-neutral">Raw output</h2>
-          <div className="h-[min(75vh,calc(100vh-260px))] min-h-[260px] overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral">
+          <div
+            className={`${rawOutputContainerHeightClassName} overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
+          >
             {rawOutput ? (
               <BlueprintUpdateRawOutput rawOutput={rawOutput} />
             ) : previewId ? (
@@ -676,17 +681,17 @@ function BlueprintUpdateRawOutput({ rawOutput }: { rawOutput: string }) {
 }
 
 function BlueprintUpdateRawOutputSkeleton() {
+  const skeletonLineWidths = ['46%', '28%', '72%', '64%', '82%', '34%']
+
   return (
-    <div aria-label="Waiting for preview output" className="flex min-h-[148px] flex-col gap-3">
+    <div aria-label="Waiting for preview output" className="flex flex-col gap-3">
       <div className="mb-1 flex items-center gap-2 font-sans text-sm text-neutral-subtle">
         <Skeleton width={8} height={8} rounded />
         <span>Generating preview output</span>
       </div>
-      <Skeleton width="46%" height={16} />
-      <Skeleton width="28%" height={16} />
-      <Skeleton width="72%" height={16} />
-      <Skeleton width="64%" height={16} />
-      <Skeleton width="82%" height={16} />
+      {skeletonLineWidths.map((width, index) => (
+        <Skeleton key={`${width}-${index}`} width={width} height={16} />
+      ))}
     </div>
   )
 }
