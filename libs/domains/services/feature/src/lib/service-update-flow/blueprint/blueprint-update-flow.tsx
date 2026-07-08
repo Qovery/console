@@ -624,7 +624,7 @@ function BlueprintUpdatePreview({
 
         <section className="flex flex-col gap-2">
           <h2 className="text-sm font-medium leading-5 text-neutral">Raw output</h2>
-          <div className="max-h-[420px] overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral">
+          <div className="h-[min(75vh,calc(100vh-260px))] min-h-[260px] overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral">
             {rawOutput ? (
               <pre className="whitespace-pre-wrap">{rawOutput}</pre>
             ) : previewId ? (
