@@ -14,6 +14,7 @@ export interface InputToggleProps {
   align?: 'center' | 'top'
   disabled?: boolean
   name?: string
+  autoFocus?: boolean
 }
 
 export function InputToggle(props: InputToggleProps) {
@@ -28,6 +29,7 @@ export function InputToggle(props: InputToggleProps) {
     disabled = false,
     name,
     ariaLabel,
+    autoFocus,
   } = props
 
   const switchId = useId()
@@ -76,6 +78,7 @@ export function InputToggle(props: InputToggleProps) {
         checked={isChecked}
         disabled={disabled}
         name={name}
+        autoFocus={autoFocus}
         value={String(isChecked)}
         className={clsx(
           toggleSizeBg,

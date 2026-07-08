@@ -286,7 +286,7 @@ describe('BlueprintCreationFlow', () => {
     await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
     await userEvent.click(screen.getByRole('button', { name: /overrides/i }))
 
-    expect(await screen.findByRole('checkbox', { name: 'Skip final snapshot' })).toHaveFocus()
+    expect(await screen.findByRole('switch', { name: 'Skip final snapshot' })).toHaveFocus()
   })
 
   it('should navigate to the matching configuration section from summary edit buttons', async () => {

@@ -37,6 +37,7 @@ export function BlueprintManifestVariableInput({
           title={inputLabel}
           description={field.description ?? undefined}
           ariaLabel={inputLabel}
+          autoFocus={autoFocus}
           onChange={onChange}
         />
       </div>

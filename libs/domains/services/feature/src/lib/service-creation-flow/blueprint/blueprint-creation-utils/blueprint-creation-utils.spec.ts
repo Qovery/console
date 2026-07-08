@@ -6,7 +6,6 @@ import {
 } from 'qovery-typescript-axios'
 import {
   type OverridableBlueprintManifestContextVariableField,
-  buildBlueprintVariables,
   formatFieldLabel,
   getBlueprintFieldPath,
   getBooleanFieldValue,
@@ -23,6 +22,9 @@ import {
   isOverridableContextVariableField,
   isRequiredVariableField,
   isVariableField,
+} from '../../../blueprint-field-utils/blueprint-field-utils'
+import {
+  buildBlueprintVariables,
   sortBlueprintMajorVersions,
 } from './blueprint-creation-utils'
 
