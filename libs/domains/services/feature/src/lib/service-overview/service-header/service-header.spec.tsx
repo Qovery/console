@@ -8,8 +8,6 @@ import { ServiceHeader } from './service-header'
 const mockCopyToClipboard = jest.fn()
 const mockGetDatabaseConnectionUri = jest.fn(() => 'postgres://copied-uri')
 const mockUseBlueprintUpdate = jest.fn()
-const mockOpenModal = jest.fn()
-const mockCloseModal = jest.fn()
 const mockNavigate = jest.fn()
 const services = {
   'application-mock': {
@@ -127,10 +125,6 @@ jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
   toast: jest.fn(),
   Heading: ({ children }: { children?: ReactNode }) => <h2>{children}</h2>,
-  useModal: () => ({
-    openModal: mockOpenModal,
-    closeModal: mockCloseModal,
-  }),
 }))
 
 jest.mock('@qovery/shared/util-hooks', () => ({
@@ -415,7 +409,7 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
   })
 
-  it('opens the blueprint update modal from the update available badge', async () => {
+  it('opens the blueprint update flow from the update available badge', async () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: false,
@@ -435,19 +429,7 @@ describe('ServiceHeader', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /update available/i }))
 
-    expect(mockOpenModal).toHaveBeenCalledTimes(1)
-    renderWithProviders(mockOpenModal.mock.calls[0][0].content)
-
-    expect(screen.getAllByText('Update available')[0]).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Blueprint update from 1.2 to 2.0' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: 'release notes' })).toBeInTheDocument()
-    expect(screen.queryByText('0')).not.toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Dismiss' })).toBeInTheDocument()
     expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
-
-    await userEvent.click(screen.getByRole('button', { name: 'Review & update' }))
-
-    expect(mockCloseModal).toHaveBeenCalled()
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
       params: {

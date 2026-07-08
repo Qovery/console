@@ -82,6 +82,8 @@ const updateSections: Array<{
   },
 ]
 
+const BLUEPRINT_RELEASE_NOTES_URL = 'https://github.com/Qovery/service-catalog/releases'
+
 export function BlueprintUpdateFlow({
   blueprintId,
   clusterId,
@@ -174,8 +176,17 @@ export function BlueprintUpdateFlow({
     <BlueprintUpdateFlowShell currentStep={currentStep === 'review' ? 1 : 2} onExit={onExit}>
       {currentStep === 'review' ? (
         <FunnelFlowBody customContentWidth="max-w-[652px]">
-          <header className="mb-6">
+          <header className="mb-6 flex flex-col items-start gap-2">
             <h1 className="text-2xl font-medium leading-8 text-neutral">{title}</h1>
+            <a
+              href={BLUEPRINT_RELEASE_NOTES_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+            >
+              Release notes
+              <Icon iconName="arrow-up-right-from-square" className="text-xs" />
+            </a>
           </header>
 
           <div className="flex flex-col gap-3 pb-20">
