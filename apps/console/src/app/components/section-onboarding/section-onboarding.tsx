@@ -327,7 +327,7 @@ export function SectionOnboarding() {
       title: 'Bring your own cluster',
       icon: 'cloud',
       description:
-        'You will manage the infrastructure, including any update/ upgrade. Advanced Kubernetes knowledge required.',
+        'You will manage the infrastructure, including any updates/upgrades. Advanced Kubernetes knowledge required.',
       compatibleWith: [
         IconEnum.AWS,
         IconEnum.GCP,
