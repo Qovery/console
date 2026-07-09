@@ -100,7 +100,8 @@ const updateSections: Array<{
     id: 'modified',
     title: 'Modified values',
     iconName: 'arrows-rotate',
-    description: "Existing values for which the default value has been updated. Your overrides has priority over the default value.",
+    description:
+      'Existing values for which the default value has been updated. Your overrides has priority over the default value.',
   },
   {
     id: 'removed',
@@ -139,10 +140,7 @@ export function BlueprintUpdateFlow({
   service,
 }: BlueprintUpdateFlowProps) {
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
-  const {
-    mutateAsync: previewBlueprintUpdate,
-    isLoading: isPreviewLoading,
-  } = usePreviewBlueprintUpdate()
+  const { mutateAsync: previewBlueprintUpdate, isLoading: isPreviewLoading } = usePreviewBlueprintUpdate()
   const { mutateAsync: updateBlueprint, isLoading: isUpdateLoading } = useUpdateBlueprint({
     environmentId,
     serviceId: service.id,
@@ -202,7 +200,14 @@ export function BlueprintUpdateFlow({
         requiredValues,
         updatedValues,
       }),
-    [blueprintUpdateData.latest_tag, blueprintUpdateData.new_optional_values, requiredValues, service, updatedValues, values]
+    [
+      blueprintUpdateData.latest_tag,
+      blueprintUpdateData.new_optional_values,
+      requiredValues,
+      service,
+      updatedValues,
+      values,
+    ]
   )
 
   const completeActiveSection = useCallback(() => {
@@ -357,14 +362,8 @@ export function BlueprintUpdateReviewStep({ onContinue }: { onContinue: () => vo
 }
 
 export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
-  const {
-    clusterId,
-    handleUpdate,
-    isUpdateLoading,
-    organizationId,
-    previewId,
-    requestPreview,
-  } = useBlueprintUpdateFlowContext()
+  const { clusterId, handleUpdate, isUpdateLoading, organizationId, previewId, requestPreview } =
+    useBlueprintUpdateFlowContext()
 
   useEffect(() => {
     requestPreview()
@@ -762,11 +761,7 @@ function BlueprintUpdatePreview({
           <div
             className={`${rawOutputContainerHeightClassName} overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
           >
-            {rawOutput ? (
-              <BlueprintUpdateRawOutput rawOutput={rawOutput} />
-            ) : (
-              <BlueprintUpdateRawOutputSkeleton />
-            )}
+            {rawOutput ? <BlueprintUpdateRawOutput rawOutput={rawOutput} /> : <BlueprintUpdateRawOutputSkeleton />}
           </div>
         </section>
       </div>
