@@ -9,16 +9,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import {
-  Button,
-  FunnelFlowBody,
-  Icon,
-  InputText,
-  LogoIcon,
-  Skeleton,
-  Tooltip,
-  toast,
-} from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Icon, InputText, LogoIcon, Skeleton, Tooltip, toast } from '@qovery/shared/ui'
 import {
   type BlueprintFieldValue,
   type BlueprintFieldValues,
