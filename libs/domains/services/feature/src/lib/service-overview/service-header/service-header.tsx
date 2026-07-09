@@ -36,6 +36,7 @@ import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-servic
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
+import { useService } from '../../hooks/use-service/use-service'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
@@ -163,19 +164,20 @@ function BlueprintUpdateBadgeSkeleton() {
   return <Skeleton width={122} height={24} />
 }
 
-function BlueprintUpdateBadge({ blueprintId, service }: { blueprintId: string; service: AnyService }) {
-  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
-  const navigate = useNavigate()
+function BlueprintUpdateBadge({ blueprintId }: { blueprintId: string }) {
   const {
     organizationId = '',
     projectId = '',
     environmentId = '',
-    serviceId = service.id,
+    serviceId = '',
   } = useParams({ strict: false })
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
+  const navigate = useNavigate()
   const openUpdateFlow = () => {
     navigate({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
-      params: { organizationId, projectId, environmentId, serviceId },
+      params: { organizationId, projectId, environmentId, serviceId: service?.id ?? serviceId },
     })
   }
 
@@ -342,7 +344,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
       )}
       {blueprintId && (
         <Suspense fallback={<BlueprintUpdateBadgeSkeleton />}>
-          <BlueprintUpdateBadge blueprintId={blueprintId} service={service} />
+          <BlueprintUpdateBadge blueprintId={blueprintId} />
         </Suspense>
       )}
       {databaseSource && (
