@@ -9,7 +9,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { Button, FunnelFlowBody, Icon, InputText, LogoIcon, Skeleton, Tooltip, toast } from '@qovery/shared/ui'
+import { Badge, Button, FunnelFlowBody, Icon, InputText, LogoIcon, Skeleton, Tooltip, toast } from '@qovery/shared/ui'
 import {
   type BlueprintFieldValue,
   type BlueprintFieldValues,
@@ -478,14 +478,20 @@ function UpdatedValuesList({
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-subtle">
                   <div className="flex items-center gap-1.5">
                     <span>Default:</span>
-                    <CodeChip>{formatUpdateValue(value.current_default_value)}</CodeChip>
+                    <Badge size="sm" variant="surface" className="font-mono leading-5">
+                      {formatUpdateValue(value.current_default_value)}
+                    </Badge>
                     <Icon iconName="arrow-right" className="text-xs" />
-                    <CodeChip>{formatUpdateValue(value.new_default_value)}</CodeChip>
+                    <Badge size="sm" variant="surface" className="font-mono leading-5">
+                      {formatUpdateValue(value.new_default_value)}
+                    </Badge>
                   </div>
                   {hasEditedOverride && (
                     <div className="flex items-center gap-1.5">
                       <span>Override:</span>
-                      <CodeChip color="info">{formatUpdateValue(editedValue)}</CodeChip>
+                      <Badge size="sm" variant="surface" color="sky" className="font-mono leading-5">
+                        {formatUpdateValue(editedValue)}
+                      </Badge>
                     </div>
                   )}
                 </div>
@@ -565,21 +571,13 @@ function RemovedValuesList({ values }: { values: Array<{ name: string }> }) {
           className="flex items-center justify-between gap-3 border-b border-neutral p-3 last:border-b-0"
         >
           <p className="text-sm leading-5 text-neutral">{formatUpdateFieldLabel(value.name)}</p>
-          <CodeChip color="negative">Deleted</CodeChip>
+          <Badge size="sm" variant="surface" color="red" className="font-mono leading-5">
+            Deleted
+          </Badge>
         </div>
       ))}
     </div>
   )
-}
-
-function CodeChip({ children, color = 'neutral' }: { children: ReactNode; color?: 'neutral' | 'info' | 'negative' }) {
-  const className = {
-    neutral: 'border-neutral bg-surface-neutral-component text-neutral',
-    info: 'border-info-subtle bg-surface-info-component text-info',
-    negative: 'border-negative-subtle bg-surface-negative-component text-negative',
-  }[color]
-
-  return <span className={`rounded-sm border px-1 font-mono text-xs leading-5 ${className}`}>{children}</span>
 }
 
 function BlueprintUpdatePreview({
