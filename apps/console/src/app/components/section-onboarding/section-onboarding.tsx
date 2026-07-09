@@ -158,7 +158,7 @@ export function SectionOnboarding() {
 
   const useCases = useMemo(() => (onboarding?.use_cases ?? '').split(',').filter(Boolean), [onboarding?.use_cases])
   const hasEphemeralEnvironments = useCases.includes('ephemeral-environments')
-  const hasRde = useCases.includes('rde')
+  const hasRde = ['rde', 'ai-workflows', 'spec-to-prod'].some((useCase) => useCases.includes(useCase))
 
   const { data: deploymentRule } = useDeploymentRule({
     environmentId: firstEnvironment?.id ?? '',
@@ -313,7 +313,7 @@ export function SectionOnboarding() {
     {
       highlight: true,
       tag: 'Recommended',
-      title: 'Qovery managed',
+      title: 'Create a new cluster (Qovery Managed)',
       description:
         'Qovery will install and manage the Kubernetes cluster and the underlying infrastructure on your cloud provider account.',
       icon: <LogoIcon width="14" height="14" />,
@@ -347,10 +347,10 @@ export function SectionOnboarding() {
     {
       highlight: false,
       tag: 'Demo',
-      title: 'Local machine',
+      title: 'Local Machine',
       icon: 'laptop-code',
       description:
-        'Deploy a local Kubernetes cluster on your laptop using Docker Desktop. No cloud account or credit card required!',
+        'The best choice for exploration and testing. Deploy a local Kubernetes cluster on your laptop using Docker Desktop, no cloud account or credit card required!',
       compatibleWith: null,
       action: 'installation-guide' as const,
       isDemo: true,
@@ -467,7 +467,7 @@ export function SectionOnboarding() {
                   isClusterDeployed ? 'text-neutral-subtle line-through' : 'text-neutral'
                 )}
               >
-                Create and deploy my first cluster
+                Install Qovery
               </span>
               {isClusterDeployed ? (
                 <Icon iconName="circle-check" className="text-sm text-positive" />
@@ -575,7 +575,7 @@ export function SectionOnboarding() {
                     : 'text-neutral-subtle'
               )}
             >
-              Create and deploy my first application
+              Go to my environment to create and deploy my first application
             </span>
             {isServiceDeployed ? (
               <Icon iconName="circle-check" className="text-sm text-positive" />
@@ -639,7 +639,7 @@ export function SectionOnboarding() {
                 size="sm"
                 color="neutral"
                 variant="solid"
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
+                to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
                 params={{
                   organizationId,
                   projectId: firstProject?.id ?? '',
@@ -647,7 +647,7 @@ export function SectionOnboarding() {
                 }}
               >
                 <Icon iconName="circle-plus" />
-                New Service
+                Go to my environment
               </Link>
             ) : null}
           </div>
