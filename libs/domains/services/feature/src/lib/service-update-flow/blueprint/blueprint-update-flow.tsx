@@ -5,9 +5,10 @@ import {
   type BlueprintUpdateNewOptionalValue,
   type BlueprintUpdateNewRequiredValue,
   type BlueprintUpdateRemovedValue,
+  type BlueprintUpdateResponse,
   type BlueprintUpdateUpdatedValue,
 } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Badge, Button, FunnelFlowBody, Icon, InputText, LogoIcon, Skeleton, Tooltip, toast } from '@qovery/shared/ui'
 import {
@@ -33,11 +34,47 @@ type BlueprintUpdateEditableValue = BlueprintUpdateUpdatedValue | BlueprintUpdat
 
 export interface BlueprintUpdateFlowProps {
   blueprintId: string
+  children: ReactNode
   clusterId?: string
+  currentStep: 1 | 2
   environmentId: string
   onExit: () => void
   organizationId: string
   service: AnyService
+}
+
+interface BlueprintUpdateFlowContextValue {
+  activeSection: BlueprintUpdateSection
+  blueprintUpdate: BlueprintUpdateResponse
+  canContinueReview: boolean
+  clusterId?: string
+  completeActiveSection: () => void
+  completedSections: BlueprintUpdateSection[]
+  handleUpdate: () => Promise<void>
+  isPreviewLoading: boolean
+  isRequiredValid: boolean
+  isUpdateLoading: boolean
+  onChange: (name: string, value: BlueprintFieldValue) => void
+  organizationId: string
+  previewId?: string
+  removedValues: BlueprintUpdateRemovedValue[]
+  requestPreview: () => Promise<void>
+  requiredValues: BlueprintUpdateNewRequiredValue[]
+  reviewSections: Array<(typeof updateSections)[number]>
+  service: AnyService
+  setActiveSection: (section: BlueprintUpdateSection) => void
+  title: string
+  updatedValues: BlueprintUpdateEditableValue[]
+  values: BlueprintFieldValues
+}
+
+const BlueprintUpdateFlowContext = createContext<BlueprintUpdateFlowContextValue | undefined>(undefined)
+
+export function useBlueprintUpdateFlowContext() {
+  const context = useContext(BlueprintUpdateFlowContext)
+  if (!context) throw new Error('useBlueprintUpdateFlowContext must be used within BlueprintUpdateFlow')
+
+  return context
 }
 
 const updateSections: Array<{
@@ -72,11 +109,30 @@ const updateSections: Array<{
   },
 ]
 
-const BLUEPRINT_RELEASE_NOTES_URL = 'https://github.com/Qovery/service-catalog/releases'
+export const blueprintUpdateSteps: { title: string }[] = [{ title: 'Review update' }, { title: 'Preview changes' }]
+
+export const BLUEPRINT_RELEASE_NOTES_URL = 'https://github.com/Qovery/service-catalog/releases'
+
+export function hasBlueprintUpdateReviewSections(blueprintUpdate: BlueprintUpdateResponse) {
+  return (
+    blueprintUpdate.new_required_values.length > 0 ||
+    blueprintUpdate.now_required_values.length > 0 ||
+    blueprintUpdate.new_optional_values.length > 0 ||
+    blueprintUpdate.updated_values.length > 0 ||
+    blueprintUpdate.engine_diff.updated_values.length > 0 ||
+    blueprintUpdate.removed_values.length > 0
+  )
+}
+
+export function getBlueprintUpdateVersion(tag: string) {
+  return tag.split('/').filter(Boolean).at(-1)
+}
 
 export function BlueprintUpdateFlow({
   blueprintId,
+  children,
   clusterId,
+  currentStep,
   environmentId,
   onExit,
   organizationId,
@@ -85,7 +141,6 @@ export function BlueprintUpdateFlow({
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
   const {
     mutateAsync: previewBlueprintUpdate,
-    data: preview,
     isLoading: isPreviewLoading,
   } = usePreviewBlueprintUpdate()
   const { mutateAsync: updateBlueprint, isLoading: isUpdateLoading } = useUpdateBlueprint({
@@ -93,11 +148,12 @@ export function BlueprintUpdateFlow({
     serviceId: service.id,
     serviceType: service.service_type,
   })
-  const [currentStep, setCurrentStep] = useState<'review' | 'preview'>('review')
   const [activeSection, setActiveSection] = useState<BlueprintUpdateSection>(() =>
     blueprintUpdate ? getFirstAvailableUpdateSection(blueprintUpdate) : 'required'
   )
   const [completedSections, setCompletedSections] = useState<BlueprintUpdateSection[]>([])
+  const [previewId, setPreviewId] = useState<string>()
+  const [previewPayloadKey, setPreviewPayloadKey] = useState<string>()
   const [values, setValues] = useState<BlueprintFieldValues>({})
   const [initializedBlueprintId, setInitializedBlueprintId] = useState<string>()
 
@@ -109,17 +165,22 @@ export function BlueprintUpdateFlow({
     }
   }, [blueprintId, blueprintUpdate, initializedBlueprintId])
 
-  if (!blueprintUpdate) return null
-
-  const requiredValues = [...blueprintUpdate.new_required_values, ...blueprintUpdate.now_required_values]
+  const blueprintUpdateData = blueprintUpdate as BlueprintUpdateResponse
+  const requiredValues = useMemo(
+    () => [...blueprintUpdateData.new_required_values, ...blueprintUpdateData.now_required_values],
+    [blueprintUpdateData.new_required_values, blueprintUpdateData.now_required_values]
+  )
+  const updatedValues = useMemo(
+    () => [...blueprintUpdateData.updated_values, ...blueprintUpdateData.engine_diff.updated_values],
+    [blueprintUpdateData.engine_diff.updated_values, blueprintUpdateData.updated_values]
+  )
   const sectionHasContent = {
     required: requiredValues.length > 0,
-    optional: blueprintUpdate.new_optional_values.length > 0,
-    modified: blueprintUpdate.updated_values.length > 0 || blueprintUpdate.engine_diff.updated_values.length > 0,
-    removed: blueprintUpdate.removed_values.length > 0,
+    optional: blueprintUpdateData.new_optional_values.length > 0,
+    modified: updatedValues.length > 0,
+    removed: blueprintUpdateData.removed_values.length > 0,
   }
-  const visibleSections = updateSections.filter(({ id }) => sectionHasContent[id])
-  const reviewSections = visibleSections.length > 0 ? visibleSections : updateSections.slice(0, 1)
+  const reviewSections = updateSections.filter(({ id }) => sectionHasContent[id])
   const hasSingleReviewSection = reviewSections.length === 1
   const activeSectionIndex = reviewSections.findIndex(({ id }) => id === activeSection)
   const isRequiredValid = requiredValues.every((value) =>
@@ -128,19 +189,23 @@ export function BlueprintUpdateFlow({
   const isReviewComplete =
     reviewSections.every(({ id }) => completedSections.includes(id)) || reviewSections.length === 0
   const canContinueReview = hasSingleReviewSection ? activeSection !== 'required' || isRequiredValid : isReviewComplete
-  const latestVersion = getVersionFromTag(blueprintUpdate.latest_tag) ?? blueprintUpdate.latest_tag
+  const latestVersion = getBlueprintUpdateVersion(blueprintUpdateData.latest_tag) ?? blueprintUpdateData.latest_tag
   const title = `${service.name} blueprint update to ${latestVersion}`
-  const payload = buildBlueprintUpdatePayload({
-    icon: service.icon_uri ?? getFallbackServiceIcon(service.service_type),
-    name: service.name,
-    tag: blueprintUpdate.latest_tag,
-    values,
-    optionalValues: blueprintUpdate.new_optional_values,
-    requiredValues,
-    updatedValues: [...blueprintUpdate.updated_values, ...blueprintUpdate.engine_diff.updated_values],
-  })
+  const payload = useMemo(
+    () =>
+      buildBlueprintUpdatePayload({
+        icon: service.icon_uri ?? getFallbackServiceIcon(service.service_type),
+        name: service.name,
+        tag: blueprintUpdateData.latest_tag,
+        values,
+        optionalValues: blueprintUpdateData.new_optional_values,
+        requiredValues,
+        updatedValues,
+      }),
+    [blueprintUpdateData.latest_tag, blueprintUpdateData.new_optional_values, requiredValues, service, updatedValues, values]
+  )
 
-  const completeActiveSection = () => {
+  const completeActiveSection = useCallback(() => {
     if (activeSection === 'required' && !isRequiredValid) return
     const nextCompletedSections = completedSections.includes(activeSection)
       ? completedSections
@@ -149,92 +214,171 @@ export function BlueprintUpdateFlow({
 
     setCompletedSections(nextCompletedSections)
     if (nextSection) setActiveSection(nextSection)
-  }
+  }, [activeSection, activeSectionIndex, completedSections, isRequiredValid, reviewSections])
 
-  const handlePreview = async () => {
-    if (!canContinueReview) return
+  const requestPreview = useCallback(async () => {
+    const payloadKey = JSON.stringify(payload)
+    if (previewPayloadKey === payloadKey) return
 
-    await previewBlueprintUpdate({ blueprintId, payload })
-    setCurrentStep('preview')
-  }
+    setPreviewPayloadKey(payloadKey)
+    setPreviewId(undefined)
 
-  const handleUpdate = async () => {
+    try {
+      const preview = await previewBlueprintUpdate({ blueprintId, payload })
+      setPreviewId(preview?.preview_id)
+    } catch (error) {
+      setPreviewPayloadKey(undefined)
+      throw error
+    }
+  }, [blueprintId, payload, previewBlueprintUpdate, previewPayloadKey])
+
+  const handleUpdate = useCallback(async () => {
     await updateBlueprint({ blueprintId, payload })
     toast('success', 'Blueprint update started')
     onExit()
+  }, [blueprintId, onExit, payload, updateBlueprint])
+
+  const contextValue: BlueprintUpdateFlowContextValue = {
+    activeSection,
+    blueprintUpdate: blueprintUpdateData,
+    canContinueReview,
+    clusterId,
+    completeActiveSection,
+    completedSections,
+    handleUpdate,
+    isPreviewLoading,
+    isRequiredValid,
+    isUpdateLoading,
+    onChange: (name, value) => setValues((currentValues) => ({ ...currentValues, [name]: value })),
+    organizationId,
+    previewId,
+    removedValues: blueprintUpdateData.removed_values,
+    requestPreview,
+    requiredValues,
+    reviewSections,
+    service,
+    setActiveSection,
+    title,
+    updatedValues,
+    values,
   }
 
   return (
-    <BlueprintUpdateFlowShell currentStep={currentStep === 'review' ? 1 : 2} onExit={onExit}>
-      {currentStep === 'review' ? (
-        <FunnelFlowBody customContentWidth="max-w-[620px]">
-          <header className="mb-6 flex flex-col items-start gap-2">
-            <h1 className="text-2xl font-medium leading-8 text-neutral">{title}</h1>
-            <a
-              href={BLUEPRINT_RELEASE_NOTES_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
-            >
-              Release notes
-              <Icon iconName="arrow-up-right-from-square" className="text-xs" />
-            </a>
-          </header>
+    <BlueprintUpdateFlowContext.Provider value={contextValue}>
+      <BlueprintUpdateFlowShell currentStep={currentStep} onExit={onExit}>
+        {children}
+      </BlueprintUpdateFlowShell>
+    </BlueprintUpdateFlowContext.Provider>
+  )
+}
 
-          <div className="flex flex-col gap-3 pb-20">
-            {reviewSections.map((section) => (
-              <BlueprintUpdateSectionCard
-                key={section.id}
-                active={activeSection === section.id}
-                completed={completedSections.includes(section.id)}
-                iconName={section.iconName}
-                title={section.title}
-                description={section.description}
-                onClick={() => setActiveSection(section.id)}
-              >
-                {activeSection === section.id && (
-                  <BlueprintUpdateSectionContent
-                    section={section.id}
-                    requiredValues={requiredValues}
-                    optionalValues={blueprintUpdate.new_optional_values}
-                    updatedValues={[...blueprintUpdate.updated_values, ...blueprintUpdate.engine_diff.updated_values]}
-                    removedValues={blueprintUpdate.removed_values}
-                    values={values}
-                    onChange={(name, value) => setValues((currentValues) => ({ ...currentValues, [name]: value }))}
-                    onContinue={completeActiveSection}
-                    continueDisabled={section.id === 'required' && !isRequiredValid}
-                    showContinueButton={!hasSingleReviewSection}
-                  />
-                )}
-              </BlueprintUpdateSectionCard>
-            ))}
-          </div>
+export function BlueprintUpdateReviewStep({ onContinue }: { onContinue: () => void }) {
+  const {
+    activeSection,
+    blueprintUpdate,
+    canContinueReview,
+    completeActiveSection,
+    completedSections,
+    isRequiredValid,
+    requiredValues,
+    reviewSections,
+    setActiveSection,
+    title,
+    updatedValues,
+    values,
+    onChange,
+  } = useBlueprintUpdateFlowContext()
+  const hasSingleReviewSection = reviewSections.length === 1
 
-          <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
-            <Button
-              type="button"
-              size="lg"
-              className="w-full justify-center"
-              disabled={!canContinueReview || isPreviewLoading}
-              loading={isPreviewLoading}
-              onClick={handlePreview}
+  return (
+    <FunnelFlowBody customContentWidth="max-w-[620px]">
+      <header className="mb-6 flex flex-col items-start gap-2">
+        <h1 className="text-2xl font-medium leading-8 text-neutral">{title}</h1>
+        <a
+          href={BLUEPRINT_RELEASE_NOTES_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+        >
+          Release notes
+          <Icon iconName="arrow-up-right-from-square" className="text-xs" />
+        </a>
+      </header>
+
+      <div className="flex flex-col gap-3 pb-20">
+        {reviewSections.length > 0 ? (
+          reviewSections.map((section) => (
+            <BlueprintUpdateSectionCard
+              key={section.id}
+              active={activeSection === section.id}
+              completed={completedSections.includes(section.id)}
+              iconName={section.iconName}
+              title={section.title}
+              description={section.description}
+              onClick={() => setActiveSection(section.id)}
             >
-              Continue
-              <Icon iconName="arrow-right" />
-            </Button>
-          </footer>
-        </FunnelFlowBody>
-      ) : (
-        <BlueprintUpdatePreview
-          clusterId={clusterId}
-          previewId={preview?.preview_id}
-          organizationId={organizationId}
-          onBack={() => setCurrentStep('review')}
-          onConfirm={handleUpdate}
-          loading={isUpdateLoading}
-        />
-      )}
-    </BlueprintUpdateFlowShell>
+              {activeSection === section.id && (
+                <BlueprintUpdateSectionContent
+                  section={section.id}
+                  requiredValues={requiredValues}
+                  optionalValues={blueprintUpdate.new_optional_values}
+                  updatedValues={updatedValues}
+                  removedValues={blueprintUpdate.removed_values}
+                  values={values}
+                  onChange={onChange}
+                  onContinue={completeActiveSection}
+                  continueDisabled={section.id === 'required' && !isRequiredValid}
+                  showContinueButton={!hasSingleReviewSection}
+                />
+              )}
+            </BlueprintUpdateSectionCard>
+          ))
+        ) : (
+          <p className="text-sm leading-5 text-neutral-subtle">
+            No configuration input is required. Continue to preview the update.
+          </p>
+        )}
+      </div>
+
+      <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+        <Button
+          type="button"
+          size="lg"
+          className="w-full justify-center"
+          disabled={!canContinueReview}
+          onClick={onContinue}
+        >
+          Continue
+          <Icon iconName="arrow-right" />
+        </Button>
+      </footer>
+    </FunnelFlowBody>
+  )
+}
+
+export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
+  const {
+    clusterId,
+    handleUpdate,
+    isUpdateLoading,
+    organizationId,
+    previewId,
+    requestPreview,
+  } = useBlueprintUpdateFlowContext()
+
+  useEffect(() => {
+    requestPreview()
+  }, [requestPreview])
+
+  return (
+    <BlueprintUpdatePreview
+      clusterId={clusterId}
+      previewId={previewId}
+      organizationId={organizationId}
+      onBack={onBack}
+      onConfirm={handleUpdate}
+      loading={isUpdateLoading}
+    />
   )
 }
 
@@ -598,7 +742,6 @@ function BlueprintUpdatePreview({
   const {
     rawOutput,
     isLoading: isPreviewOutputLoading,
-    hasError: hasPreviewOutputError,
     hasReceivedMessage: hasReceivedPreviewMessage,
   } = useBlueprintUpdatePreviewSocket({
     organizationId,
@@ -621,12 +764,6 @@ function BlueprintUpdatePreview({
           >
             {rawOutput ? (
               <BlueprintUpdateRawOutput rawOutput={rawOutput} />
-            ) : previewId ? (
-              hasPreviewOutputError ? (
-                <p className="font-sans text-sm text-neutral-subtle">Unable to load preview output.</p>
-              ) : (
-                <BlueprintUpdateRawOutputSkeleton />
-              )
             ) : (
               <BlueprintUpdateRawOutputSkeleton />
             )}
@@ -813,10 +950,6 @@ function formatUpdateFieldLabel(name: string) {
 function formatUpdateValue(value?: BlueprintFieldValue | string | null) {
   if (typeof value === 'boolean') return String(value)
   return value && value.length > 0 ? value : '-'
-}
-
-function getVersionFromTag(tag: string) {
-  return tag.split('/').filter(Boolean).at(-1)
 }
 
 function getFallbackServiceIcon(serviceType: AnyService['service_type']) {

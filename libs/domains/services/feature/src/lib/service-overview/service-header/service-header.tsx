@@ -1,4 +1,5 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
+import * as Dialog from '@radix-ui/react-dialog'
 import { type ApplicationGitRepository, type Credentials, type Environment } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { P, match } from 'ts-pattern'
@@ -28,6 +29,7 @@ import {
   Tooltip,
   Truncate,
   toast,
+  useModal,
 } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
@@ -42,6 +44,11 @@ import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
+import {
+  BLUEPRINT_RELEASE_NOTES_URL,
+  getBlueprintUpdateVersion,
+  hasBlueprintUpdateReviewSections,
+} from '../../service-update-flow/blueprint/blueprint-update-flow'
 
 export function GitRepository({ gitRepository }: { gitRepository: ApplicationGitRepository }) {
   return (
@@ -169,9 +176,13 @@ function BlueprintUpdateBadge({ blueprintId }: { blueprintId: string }) {
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
   const navigate = useNavigate()
-  const openUpdateFlow = () => {
+  const { openModal } = useModal()
+  const openUpdateFlow = (step?: 'preview') => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+      to:
+        step === 'preview'
+          ? '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
+          : '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
       params: { organizationId, projectId, environmentId, serviceId: service?.id ?? serviceId },
     })
   }
@@ -189,13 +200,71 @@ function BlueprintUpdateBadge({ blueprintId }: { blueprintId: string }) {
     <button
       type="button"
       className="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-      onClick={openUpdateFlow}
+      onClick={() => {
+        if (hasBlueprintUpdateReviewSections(blueprintUpdate)) {
+          openUpdateFlow()
+          return
+        }
+
+        openModal({
+          content: (
+            <BlueprintUpdateNoInputConfirmationModal
+              title={`${service?.name ?? 'Blueprint'} blueprint update to ${
+                getBlueprintUpdateVersion(blueprintUpdate.latest_tag) ?? blueprintUpdate.latest_tag
+              }`}
+              onConfirm={() => openUpdateFlow('preview')}
+            />
+          ),
+        })
+      }}
     >
       <Badge variant="surface" color="sky" className="gap-1 whitespace-nowrap font-medium">
         <Icon iconName="arrow-rotate-right" iconStyle="regular" />
         Update available
       </Badge>
     </button>
+  )
+}
+
+function BlueprintUpdateNoInputConfirmationModal({ onConfirm, title }: { onConfirm: () => void; title: string }) {
+  const { closeModal } = useModal()
+
+  return (
+    <div className="flex flex-col gap-5 p-6">
+      <div className="flex flex-col gap-2 pr-12">
+        <Dialog.Title asChild>
+          <h2 className="text-xl font-medium leading-7 text-neutral">{title}</h2>
+        </Dialog.Title>
+        <a
+          href={BLUEPRINT_RELEASE_NOTES_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex w-fit items-center gap-1 text-sm font-medium text-brand hover:underline"
+        >
+          Release notes
+          <Icon iconName="arrow-up-right-from-square" className="text-xs" />
+        </a>
+      </div>
+      <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
+        No configuration input is required. Continue to preview the update.
+      </Dialog.Description>
+      <div className="flex justify-end gap-3">
+        <Button type="button" variant="outline" color="neutral" size="lg" onClick={closeModal}>
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          size="lg"
+          onClick={() => {
+            closeModal()
+            onConfirm()
+          }}
+        >
+          Continue
+          <Icon iconName="arrow-right" />
+        </Button>
+      </div>
+    </div>
   )
 }
 
