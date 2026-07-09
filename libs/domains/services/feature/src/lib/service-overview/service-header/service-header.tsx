@@ -165,12 +165,7 @@ function BlueprintUpdateBadgeSkeleton() {
 }
 
 function BlueprintUpdateBadge({ blueprintId }: { blueprintId: string }) {
-  const {
-    organizationId = '',
-    projectId = '',
-    environmentId = '',
-    serviceId = '',
-  } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
   const navigate = useNavigate()
