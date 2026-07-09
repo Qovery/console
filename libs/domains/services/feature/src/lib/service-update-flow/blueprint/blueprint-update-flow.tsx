@@ -63,7 +63,7 @@ const updateSections: Array<{
     id: 'modified',
     title: 'Modified values',
     iconName: 'arrows-rotate',
-    description: "Existing values that I've seen their default updated. Your overrides stays prioritaire.",
+    description: "Existing values for which the default value has been updated. Your overrides has priority over the default value.",
   },
   {
     id: 'removed',
