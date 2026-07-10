@@ -235,15 +235,14 @@ function BlueprintUpdateNoInputConfirmationModal({ onConfirm, title }: { onConfi
         <Dialog.Title asChild>
           <h2 className="text-xl font-medium leading-7 text-neutral">{title}</h2>
         </Dialog.Title>
-        <a
+        <ExternalLink
           href={BLUEPRINT_RELEASE_NOTES_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex w-fit items-center gap-1 text-sm font-medium text-brand hover:underline"
+          color="brand"
+          size="sm"
+          underline
         >
           Release notes
-          <Icon iconName="arrow-up-right-from-square" className="text-xs" />
-        </a>
+        </ExternalLink>
       </div>
       <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
         No configuration input is required. Continue to preview the update.
