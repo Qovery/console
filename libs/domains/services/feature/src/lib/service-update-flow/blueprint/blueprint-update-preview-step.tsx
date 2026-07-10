@@ -1,12 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, Skeleton } from '@qovery/shared/ui'
 import { useBlueprintUpdatePreviewSocket } from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
-import { BlueprintUpdateLoadingModal } from './blueprint-update-loading-modal'
 import { getRawOutputLineClassName } from './blueprint-update-utils'
 
 export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
-  const { clusterId, handleUpdate, isUpdateLoading, organizationId, previewId, requestPreview, service } =
+  const { clusterId, handleUpdate, isUpdateLoading, organizationId, previewId, requestPreview } =
     useBlueprintUpdateFlowContext()
 
   useEffect(() => {
@@ -21,7 +20,6 @@ export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
       onBack={onBack}
       onConfirm={handleUpdate}
       loading={isUpdateLoading}
-      serviceName={service.name}
     />
   )
 }
@@ -33,7 +31,6 @@ function BlueprintUpdatePreview({
   onConfirm,
   organizationId,
   previewId,
-  serviceName,
 }: {
   clusterId?: string
   loading: boolean
@@ -41,10 +38,7 @@ function BlueprintUpdatePreview({
   onConfirm: () => Promise<void>
   organizationId: string
   previewId?: string
-  serviceName: string
 }) {
-  const [submissionState, setSubmissionState] = useState<'loading' | 'error'>()
-  const [errorMessage, setErrorMessage] = useState<string>()
   const {
     rawOutput,
     isLoading: isPreviewOutputLoading,
@@ -53,24 +47,6 @@ function BlueprintUpdatePreview({
   const rawOutputContainerHeightClassName = rawOutput
     ? 'h-[min(75vh,calc(100vh-260px))] min-h-[260px]'
     : 'min-h-[180px]'
-
-  const handleConfirm = async () => {
-    setErrorMessage(undefined)
-    setSubmissionState('loading')
-
-    try {
-      await onConfirm()
-    } catch (error) {
-      setErrorMessage(error instanceof Error && error.message ? error.message : undefined)
-      setSubmissionState('error')
-    }
-  }
-
-  const handleEditConfig = () => {
-    setSubmissionState(undefined)
-    setErrorMessage(undefined)
-    onBack()
-  }
 
   return (
     <FunnelFlowBody customContentWidth="max-w-[620px]">
@@ -95,23 +71,14 @@ function BlueprintUpdatePreview({
           type="button"
           size="lg"
           className="flex-1 justify-center"
-          disabled={!hasReceivedPreviewMessage || isPreviewOutputLoading || loading || submissionState !== undefined}
+          disabled={!hasReceivedPreviewMessage || isPreviewOutputLoading || loading}
           loading={loading}
-          onClick={handleConfirm}
+          onClick={onConfirm}
         >
           Confirm & deploy update
           <Icon iconName="arrow-right" />
         </Button>
       </footer>
-
-      <BlueprintUpdateLoadingModal
-        errorMessage={errorMessage}
-        onEditConfig={handleEditConfig}
-        onRetry={handleConfirm}
-        open={submissionState !== undefined}
-        serviceName={serviceName}
-        state={submissionState ?? 'loading'}
-      />
     </FunnelFlowBody>
   )
 }
