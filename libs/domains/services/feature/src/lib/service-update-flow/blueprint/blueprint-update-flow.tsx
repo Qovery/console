@@ -767,18 +767,18 @@ function BlueprintUpdatePreview({
 
   return (
     <FunnelFlowBody customContentWidth="max-w-[620px]">
-      <div className="flex flex-col gap-6 pb-20">
-        <h1 className="text-2xl font-medium leading-8 text-neutral">Preview changes</h1>
+      <Section className="gap-6 pb-20">
+        <Heading level={1}>Preview changes</Heading>
 
-        <section className="flex flex-col gap-2">
-          <h2 className="text-sm font-medium leading-5 text-neutral">Raw output</h2>
+        <Section className="gap-2">
+          <Heading level={3}>Raw output</Heading>
           <div
             className={`${rawOutputContainerHeightClassName} overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
           >
             {rawOutput ? <BlueprintUpdateRawOutput rawOutput={rawOutput} /> : <BlueprintUpdateRawOutputSkeleton />}
           </div>
-        </section>
-      </div>
+        </Section>
+      </Section>
 
       <footer className="fixed bottom-0 left-1/2 z-10 flex w-full max-w-[620px] -translate-x-1/2 gap-3 border-t border-neutral bg-background px-4 py-4">
         <Button type="button" size="lg" variant="outline" color="neutral" onClick={onBack}>
