@@ -606,7 +606,8 @@ function UpdatedValuesList({
           ? editableValues[value.name] ?? ''
           : getBlueprintUpdateFieldValue(value, value.new_default_value)
         const newDefaultValue = value.new_default_value ?? ''
-        const hasEditedOverride = hasManualOverride && getBlueprintUpdatePayloadValue(editedValue) !== newDefaultValue
+        const overrideValue = getBlueprintUpdatePayloadValue(editedValue)
+        const hasEditedOverride = hasManualOverride && overrideValue !== undefined && overrideValue !== newDefaultValue
         const editing = editedValueName === value.name
         const canUseTypedInput = isBlueprintUpdateVariableField(value)
         const field = canUseTypedInput
