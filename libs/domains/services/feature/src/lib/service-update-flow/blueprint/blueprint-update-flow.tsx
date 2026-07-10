@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import {
   type BlueprintManifestVariableField,
@@ -10,7 +11,19 @@ import {
 } from 'qovery-typescript-axios'
 import { type ReactNode, createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { Badge, Button, FunnelFlowBody, Icon, InputText, LogoIcon, Skeleton, Tooltip, toast } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  FunnelFlowBody,
+  Heading,
+  Icon,
+  InputText,
+  LogoIcon,
+  Section,
+  Skeleton,
+  Tooltip,
+  toast,
+} from '@qovery/shared/ui'
 import {
   type BlueprintFieldValue,
   type BlueprintFieldValues,
@@ -439,16 +452,15 @@ function StepIndicator({
         <Icon iconName="circle-check" className="text-xs text-positive" />
       ) : (
         <span
-          className={`flex h-3.5 w-3.5 items-center justify-center rounded-full text-[10px] font-semibold ${
-            active
-              ? 'bg-surface-brand-solid text-neutralInvert'
-              : 'border border-neutral bg-background text-neutral-disabled'
-          }`}
+          className={clsx(
+            'flex h-3.5 w-3.5 items-center justify-center rounded-full text-[10px] font-semibold',
+            active ? 'bg-surface-brand-solid text-neutralInvert' : 'border border-neutral bg-background text-neutral-disabled'
+          )}
         >
           {number}
         </span>
       )}
-      <span className={`text-sm leading-5 ${active || completed ? 'text-neutral' : 'text-neutral-disabled'}`}>
+      <span className={clsx('text-sm leading-5', active || completed ? 'text-neutral' : 'text-neutral-disabled')}>
         {title}
       </span>
     </div>
@@ -473,7 +485,7 @@ function BlueprintUpdateSectionCard({
   title: string
 }) {
   return (
-    <section className="rounded-xl border border-neutral bg-surface-neutral shadow-sm">
+    <Section className="rounded-xl border border-neutral bg-surface-neutral shadow-sm">
       <button
         type="button"
         className="flex w-full items-start justify-between gap-3 rounded-t-xl p-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
@@ -483,18 +495,19 @@ function BlueprintUpdateSectionCard({
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <Icon iconName={iconName} className="text-sm text-neutral-subtle" />
-            <h2
-              className={`text-base font-medium leading-6 ${active || completed ? 'text-neutral' : 'text-neutral-subtle'}`}
+            <Heading
+              level={2}
+              className={active || completed ? 'text-neutral' : 'text-neutral-subtle'}
             >
               {title}
-            </h2>
+            </Heading>
           </div>
           {active && description && <p className="mt-1 text-sm leading-5 text-neutral-subtle">{description}</p>}
         </div>
         {completed && <Icon iconName="circle-check" className="mt-1 text-sm text-positive" />}
       </button>
       {children && <div className="flex flex-col gap-4 px-4 pb-4">{children}</div>}
-    </section>
+    </Section>
   )
 }
 
