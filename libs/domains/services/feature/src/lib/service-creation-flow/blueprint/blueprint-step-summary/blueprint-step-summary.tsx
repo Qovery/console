@@ -3,15 +3,15 @@ import posthog from 'posthog-js'
 import { type BlueprintCreateRequest } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, toast } from '@qovery/shared/ui'
-import { useBlueprintServiceCreatedSocket } from '../../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket'
-import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
-import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
-  buildBlueprintVariables,
   formatFieldLabel,
   getSummaryFieldValue,
   isFieldValid,
-} from '../blueprint-creation-utils/blueprint-creation-utils'
+} from '../../../blueprint-field-utils/blueprint-field-utils'
+import { useBlueprintServiceCreatedSocket } from '../../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket'
+import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
+import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
+import { buildBlueprintVariables } from '../blueprint-creation-utils/blueprint-creation-utils'
 import { useBlueprintManifestFields } from '../blueprint-manifest-context/blueprint-manifest-context'
 
 type BlueprintConfigurationSection = 'service-information' | 'blueprint-setup' | 'overrides'

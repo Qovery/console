@@ -1,7 +1,7 @@
 import { type BlueprintItem } from 'qovery-typescript-axios'
 import { type Dispatch, type PropsWithChildren, type SetStateAction, createContext, useContext } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
-import { type BlueprintFieldValues } from '../blueprint-creation-utils/blueprint-creation-utils'
+import { type BlueprintFieldValues } from '../../../blueprint-field-utils/blueprint-field-utils'
 
 export interface BlueprintCreateFormData {
   serviceName: string

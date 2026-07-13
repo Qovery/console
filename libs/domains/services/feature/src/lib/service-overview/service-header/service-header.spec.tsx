@@ -8,6 +8,7 @@ import { ServiceHeader } from './service-header'
 const mockCopyToClipboard = jest.fn()
 const mockGetDatabaseConnectionUri = jest.fn(() => 'postgres://copied-uri')
 const mockUseBlueprintUpdate = jest.fn()
+const mockNavigate = jest.fn()
 const services = {
   'application-mock': {
     id: 'ebb84aa8-91c2-40fb-916d-3a158db354b7',
@@ -90,12 +91,19 @@ const services = {
       },
     },
     blueprint_id: 'blueprint-id',
+    tag: 'aws/s3/1.2',
   },
 }
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useParams: () => ({ organizationId: '', projectId: '' }),
+  useNavigate: () => mockNavigate,
+  useParams: () => ({
+    organizationId: 'org-id',
+    projectId: 'project-id',
+    environmentId: 'environment-id',
+    serviceId: 'terraform-mock',
+  }),
   Link: ({
     children,
     to,
@@ -126,6 +134,13 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   ...jest.requireActual('@qovery/domains/clusters/feature'),
+  ClusterRunningStatusIndicator: () => <div>cluster-running-status</div>,
+  useCluster: () => ({
+    data: {
+      id: 'cluster-id',
+      name: 'my-cluster',
+    },
+  }),
   useClusterRunningStatusSocket: jest.fn(),
 }))
 
@@ -134,7 +149,7 @@ jest.mock('../../hooks/use-service/use-service', () => ({
     serviceId,
   }: {
     environmentId: string
-    serviceId: 'application-mock' | 'database-mock' | 'job-mock'
+    serviceId: 'application-mock' | 'database-mock' | 'job-mock' | 'terraform-mock'
   }) => {
     const mocks = {
       'application-mock': {
@@ -260,6 +275,29 @@ jest.mock('../../hooks/use-service/use-service', () => ({
           liveness_probe: null,
         },
       },
+      'terraform-mock': {
+        id: 'terraform-mock',
+        serviceType: 'TERRAFORM',
+        service_type: 'TERRAFORM',
+        name: 'aws-s3-bucket',
+        description: 'Provisioned from AWS S3 Bucket blueprint',
+        icon_uri: null,
+        environment: {
+          id: 'environment-id',
+        },
+        terraform_files_source: {
+          git: {
+            git_repository: {
+              provider: 'GITHUB',
+              url: 'https://github.com/qovery-blueprints/s3.git',
+              name: 'qovery-blueprints/s3',
+              branch: 'main',
+            },
+          },
+        },
+        blueprint_id: 'blueprint-id',
+        tag: 'aws/s3/1.2',
+      },
     }
     return {
       data: mocks[serviceId],
@@ -376,6 +414,14 @@ describe('ServiceHeader', () => {
       data: {
         is_up_to_date: true,
         latest_tag: 'aws/s3/1.0.0',
+        new_required_values: [],
+        new_optional_values: [],
+        now_required_values: [],
+        updated_values: [],
+        removed_values: [],
+        engine_diff: {
+          updated_values: [],
+        },
       },
     })
 
@@ -386,18 +432,83 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
   })
 
-  it('renders an update available badge for an outdated blueprint service', () => {
+  it('opens the blueprint update review flow from the update available badge when values require review', async () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: false,
-        latest_tag: 'aws/s3/2.0.0',
+        latest_tag: 'aws/s3/2.0',
+        new_required_values: [],
+        new_optional_values: [],
+        now_required_values: [],
+        updated_values: [
+          {
+            name: 'multi_az',
+            current_default_value: 'false',
+            new_default_value: 'true',
+            current_value: 'false',
+            type: { type: 'bool' },
+            allowed_values: null,
+            is_secret: false,
+          },
+        ],
+        removed_values: [],
+        engine_diff: {
+          updated_values: [],
+        },
       },
     })
 
-    renderServiceHeader('terraform-mock')
+    const { userEvent } = renderServiceHeader('terraform-mock')
 
-    expect(screen.getByText('Update available')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /update available/i }))
+
     expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+      params: {
+        organizationId: 'org-id',
+        projectId: 'project-id',
+        environmentId: 'environment-id',
+        serviceId: 'terraform-mock',
+      },
+    })
+  })
+
+  it('opens a confirmation modal before previewing a blueprint update without review values', async () => {
+    mockUseBlueprintUpdate.mockReturnValue({
+      data: {
+        is_up_to_date: false,
+        latest_tag: 'aws/s3/2.0',
+        new_required_values: [],
+        new_optional_values: [],
+        now_required_values: [],
+        updated_values: [],
+        removed_values: [],
+        engine_diff: {
+          updated_values: [],
+        },
+      },
+    })
+
+    const { userEvent } = renderServiceHeader('terraform-mock')
+
+    await userEvent.click(screen.getByRole('button', { name: /update available/i }))
+
+    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'aws-s3-bucket blueprint update to 2.0' })).toBeInTheDocument()
+    expect(screen.getByText('No configuration input is required. Continue to preview the update.')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview',
+      params: {
+        organizationId: 'org-id',
+        projectId: 'project-id',
+        environmentId: 'environment-id',
+        serviceId: 'terraform-mock',
+      },
+    })
   })
 
   it('renders a skeleton while the blueprint update badge is loading', () => {

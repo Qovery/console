@@ -101,6 +101,22 @@ describe('useReactQueryWsSubscription', () => {
     unmount()
   })
 
+  it('should call onMessage handler with plain text messages', async () => {
+    server.close()
+    server = new WS('ws://localhost:4321')
+    const onMessage = jest.fn()
+    const { unmount } = renderHook(() => useReactQueryWsSubscription({ url: 'ws://localhost:4321', onMessage }))
+    const queryClient = useQueryClient()
+    const connection = await server.connected
+
+    server.send('raw output line')
+
+    expect(queryClient.invalidateQueries).not.toHaveBeenCalled()
+    expect(onMessage).toHaveBeenNthCalledWith(1, queryClient, 'raw output line')
+    connection.close()
+    unmount()
+  })
+
   it('should do nothing when not enabled', async () => {
     const onMessage = jest.fn()
     const { unmount } = renderHook(() =>
