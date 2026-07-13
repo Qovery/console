@@ -19,7 +19,7 @@ import {
   toast,
   useModal,
 } from '@qovery/shared/ui'
-import { useTerminalReadiness } from '@qovery/shared/util-hooks'
+import { useTerminalDimensions, useTerminalReadiness } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 import { useRunningStatus, useService } from '../..'
@@ -236,11 +236,17 @@ export function ServiceTerminal({
     [runningStatuses?.state]
   )
 
-  // Necesssary to calculate the number of rows and columns (tty) for the terminal
-  // https://github.com/xtermjs/xterm.js/issues/1412#issuecomment-724421101
-  // 16 is the font height
-  const rows = Math.ceil(document.body.clientHeight / 16)
-  const cols = Math.ceil(document.body.clientWidth / 8)
+  // Measure the actual terminal container (not document.body) so the TTY size sent to the
+  // backend matches what is rendered. https://github.com/xtermjs/xterm.js/issues/1412#issuecomment-724421101
+  // 9x17 is the font cell size.
+  const {
+    ref: terminalContainerRef,
+    cols,
+    rows,
+  } = useTerminalDimensions({
+    cellWidth: 9,
+    cellHeight: 17,
+  })
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + (ephemeralConfig ? '/shell/ephemeral' : '/shell/exec'),
@@ -321,7 +327,7 @@ export function ServiceTerminal({
         </ExternalLink>
       </div>
       <div className="flex h-full flex-1 flex-col bg-background px-3 pt-5">
-        <div className="relative min-h-0 flex-1">
+        <div ref={terminalContainerRef} className="relative min-h-0 flex-1">
           {terminalLaunchError ? (
             <EmptyState icon="terminal" title="Unable to launch CLI" description={terminalUnavailableDescription}>
               <p className="text-xs text-neutral-subtle">Request ID: {requestId}</p>
