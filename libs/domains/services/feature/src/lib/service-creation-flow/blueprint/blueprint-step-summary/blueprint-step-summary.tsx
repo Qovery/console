@@ -8,11 +8,14 @@ import {
   getSummaryFieldValue,
   isFieldValid,
 } from '../../../blueprint-field-utils/blueprint-field-utils'
+import { useBlueprintCreationLogs } from '../../../hooks/use-blueprint-creation-logs/use-blueprint-creation-logs'
 import { useBlueprintServiceCreatedSocket } from '../../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket'
 import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
+import { useEnvironment } from '../../../hooks/use-environment/use-environment'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import { buildBlueprintVariables } from '../blueprint-creation-utils/blueprint-creation-utils'
 import { useBlueprintManifestFields } from '../blueprint-manifest-context/blueprint-manifest-context'
+import { BlueprintCreationLoadingModal } from './blueprint-creation-loading-modal/blueprint-creation-loading-modal'
 
 type BlueprintConfigurationSection = 'service-information' | 'blueprint-setup' | 'overrides'
 
@@ -26,6 +29,7 @@ export function BlueprintStepSummary() {
     useBlueprintManifestFields()
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)
   const [isWaitingForServiceCreated, setIsWaitingForServiceCreated] = useState(false)
+  const [createdBlueprintId, setCreatedBlueprintId] = useState<string>()
   const [pendingBlueprintCreation, setPendingBlueprintCreation] = useState<{
     deploy: boolean
     payload: BlueprintCreateRequest
@@ -34,11 +38,20 @@ export function BlueprintStepSummary() {
   const hasStartedBlueprintCreationRef = useRef(false)
   const serviceCreatedFallbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { mutateAsync: createBlueprint } = useCreateBlueprint()
+  const { data: environment } = useEnvironment({ environmentId })
   const { fields, serviceName } = form.watch()
   const variableFields = [...requiredBlueprintFields, ...optionalBlueprintFields]
   const overrideFields = [...optionalBlueprintFields, ...overridableContextBlueprintFields]
   const blueprintFields = [...variableFields, ...overridableContextBlueprintFields]
   const isBlueprintSetupValid = requiredBlueprintFields.every((field) => isFieldValid(field, fields[field.name]))
+  const { logs: blueprintCreationLogs } = useBlueprintCreationLogs({
+    blueprintId: createdBlueprintId,
+    clusterId: environment?.cluster_id,
+    environmentId,
+    organizationId,
+    projectId,
+    enabled: isWaitingForServiceCreated,
+  })
 
   const handleEditSection = (section: BlueprintConfigurationSection) => {
     navigate({ to: `${creationFlowUrl}/${section}` })
@@ -120,7 +133,7 @@ export function BlueprintStepSummary() {
 
     async function createPendingBlueprint() {
       try {
-        await createBlueprint({
+        const createdBlueprint = await createBlueprint({
           environmentId,
           deploy: blueprintCreation.deploy,
           payload: blueprintCreation.payload,
@@ -130,6 +143,7 @@ export function BlueprintStepSummary() {
           return
         }
 
+        setCreatedBlueprintId(createdBlueprint.id)
         posthog.capture('create-service', {
           selectedServiceType: 'blueprint',
           selectedServiceSubType: blueprint.serviceFamily ?? blueprint.provider,
@@ -173,6 +187,7 @@ export function BlueprintStepSummary() {
     clearServiceCreatedFallbackTimeout()
     hasHandledServiceCreatedRef.current = false
     hasStartedBlueprintCreationRef.current = false
+    setCreatedBlueprintId(undefined)
     setIsWaitingForServiceCreated(true)
     setPendingBlueprintCreation({
       deploy: withDeploy,
@@ -186,129 +201,136 @@ export function BlueprintStepSummary() {
   }
 
   return (
-    <FunnelFlowBody customContentWidth="max-w-[1024px]">
-      <Section className="space-y-10">
-        <div className="flex flex-col gap-2">
-          <Heading className="mb-2">Ready to create your blueprint service</Heading>
-          <p className="text-sm text-neutral-subtle">
-            Review the configuration generated from the selected blueprint before creating the service.
-          </p>
-        </div>
+    <>
+      <FunnelFlowBody customContentWidth="max-w-[1024px]">
+        <Section className="space-y-10">
+          <div className="flex flex-col gap-2">
+            <Heading className="mb-2">Ready to create your blueprint service</Heading>
+            <p className="text-sm text-neutral-subtle">
+              Review the configuration generated from the selected blueprint before creating the service.
+            </p>
+          </div>
 
-        <div className="flex flex-col gap-6">
-          <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
-            <div className="flex justify-between">
-              <Heading>Service information</Heading>
-              <Button
-                aria-label="Edit service information"
-                type="button"
-                variant="outline"
-                color="neutral"
-                size="md"
-                onClick={() => handleEditSection('service-information')}
-                iconOnly
-              >
-                <Icon className="text-base" iconName="gear-complex" />
-              </Button>
-            </div>
-            <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-              <SummaryValue label="Name" value={serviceName} />
-              <SummaryValue label="Blueprint" value={blueprint.name} />
-              <SummaryValue label="Blueprint version" value={serviceVersion} />
-            </ul>
-          </Section>
-
-          {requiredBlueprintFields.length > 0 && (
+          <div className="flex flex-col gap-6">
             <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
-                <Heading>Blueprint setup</Heading>
+                <Heading>Service information</Heading>
                 <Button
-                  aria-label="Edit blueprint setup"
+                  aria-label="Edit service information"
                   type="button"
                   variant="outline"
                   color="neutral"
                   size="md"
-                  onClick={() => handleEditSection('blueprint-setup')}
+                  onClick={() => handleEditSection('service-information')}
                   iconOnly
                 >
                   <Icon className="text-base" iconName="gear-complex" />
                 </Button>
               </div>
               <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-                {requiredBlueprintFields.map((field) => (
-                  <SummaryValue
-                    key={field.name}
-                    label={formatFieldLabel(field.name)}
-                    value={getSummaryFieldValue(field, fields[field.name])}
-                  />
-                ))}
+                <SummaryValue label="Name" value={serviceName} />
+                <SummaryValue label="Blueprint" value={blueprint.name} />
+                <SummaryValue label="Blueprint version" value={serviceVersion} />
               </ul>
             </Section>
-          )}
 
-          <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
-            <div className="flex justify-between">
-              <Heading>Overrides</Heading>
+            {requiredBlueprintFields.length > 0 && (
+              <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
+                <div className="flex justify-between">
+                  <Heading>Blueprint setup</Heading>
+                  <Button
+                    aria-label="Edit blueprint setup"
+                    type="button"
+                    variant="outline"
+                    color="neutral"
+                    size="md"
+                    onClick={() => handleEditSection('blueprint-setup')}
+                    iconOnly
+                  >
+                    <Icon className="text-base" iconName="gear-complex" />
+                  </Button>
+                </div>
+                <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                  {requiredBlueprintFields.map((field) => (
+                    <SummaryValue
+                      key={field.name}
+                      label={formatFieldLabel(field.name)}
+                      value={getSummaryFieldValue(field, fields[field.name])}
+                    />
+                  ))}
+                </ul>
+              </Section>
+            )}
+
+            <Section className="rounded-md border border-neutral bg-surface-neutral-subtle p-4">
+              <div className="flex justify-between">
+                <Heading>Overrides</Heading>
+                <Button
+                  aria-label="Edit overrides"
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="md"
+                  onClick={() => handleEditSection('overrides')}
+                  iconOnly
+                >
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </div>
+              {overrideFields.length > 0 ? (
+                <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                  {overrideFields.map((field) => (
+                    <SummaryValue
+                      key={field.name}
+                      label={formatFieldLabel(field.name)}
+                      value={getSummaryFieldValue(field, fields[field.name])}
+                    />
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-neutral-subtle">No overrides configured.</p>
+              )}
+            </Section>
+          </div>
+
+          <div className="flex justify-between">
+            <Button
+              onClick={() => navigate({ to: `${creationFlowUrl}/overrides` })}
+              type="button"
+              size="lg"
+              variant="plain"
+            >
+              Back
+            </Button>
+            <div className="flex gap-2">
               <Button
-                aria-label="Edit overrides"
+                data-testid="button-create"
+                loading={submitMode === 'create'}
+                onClick={() => handleSubmit(false)}
+                size="lg"
                 type="button"
                 variant="outline"
-                color="neutral"
-                size="md"
-                onClick={() => handleEditSection('overrides')}
-                iconOnly
               >
-                <Icon className="text-base" iconName="gear-complex" />
+                Create
+              </Button>
+              <Button
+                data-testid="button-create-deploy"
+                loading={submitMode === 'create-and-deploy'}
+                onClick={() => handleSubmit(true)}
+                type="button"
+                size="lg"
+              >
+                Create and deploy
               </Button>
             </div>
-            {overrideFields.length > 0 ? (
-              <ul className="list-none space-y-2 text-sm text-neutral-subtle">
-                {overrideFields.map((field) => (
-                  <SummaryValue
-                    key={field.name}
-                    label={formatFieldLabel(field.name)}
-                    value={getSummaryFieldValue(field, fields[field.name])}
-                  />
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-neutral-subtle">No overrides configured.</p>
-            )}
-          </Section>
-        </div>
-
-        <div className="flex justify-between">
-          <Button
-            onClick={() => navigate({ to: `${creationFlowUrl}/overrides` })}
-            type="button"
-            size="lg"
-            variant="plain"
-          >
-            Back
-          </Button>
-          <div className="flex gap-2">
-            <Button
-              data-testid="button-create"
-              loading={submitMode === 'create'}
-              onClick={() => handleSubmit(false)}
-              size="lg"
-              type="button"
-              variant="outline"
-            >
-              Create
-            </Button>
-            <Button
-              data-testid="button-create-deploy"
-              loading={submitMode === 'create-and-deploy'}
-              onClick={() => handleSubmit(true)}
-              type="button"
-              size="lg"
-            >
-              Create and deploy
-            </Button>
           </div>
-        </div>
-      </Section>
-    </FunnelFlowBody>
+        </Section>
+      </FunnelFlowBody>
+      <BlueprintCreationLoadingModal
+        logs={blueprintCreationLogs}
+        open={isWaitingForServiceCreated}
+        serviceName={serviceName}
+      />
+    </>
   )
 }

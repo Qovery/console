@@ -19,6 +19,8 @@ const mockUseBlueprintCatalogServiceManifest = jest.fn()
 const mockPrefetchBlueprintManifestFields = jest.fn()
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
 const mockUseBlueprintServiceCreatedSocket = jest.fn()
+const mockUseBlueprintCreationLogs = jest.fn()
+const mockUseEnvironment = jest.fn()
 const mockCreateBlueprint = jest.fn()
 const mockToast = jest.fn()
 
@@ -55,6 +57,14 @@ jest.mock('../../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalo
 
 jest.mock('../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket', () => ({
   useBlueprintServiceCreatedSocket: (props: unknown) => mockUseBlueprintServiceCreatedSocket(props),
+}))
+
+jest.mock('../../hooks/use-blueprint-creation-logs/use-blueprint-creation-logs', () => ({
+  useBlueprintCreationLogs: (props: unknown) => mockUseBlueprintCreationLogs(props) ?? { logs: [] },
+}))
+
+jest.mock('../../hooks/use-environment/use-environment', () => ({
+  useEnvironment: () => mockUseEnvironment(),
 }))
 
 jest.mock('../../hooks/use-create-blueprint/use-create-blueprint', () => ({
@@ -218,7 +228,8 @@ describe('BlueprintCreationFlow', () => {
         repository_url: 'https://github.com/qovery-blueprints/postgres',
       },
     })
-    mockCreateBlueprint.mockResolvedValue({ environment_id: 'env-1' })
+    mockUseEnvironment.mockReturnValue({ data: { cluster_id: 'cluster-1' } })
+    mockCreateBlueprint.mockResolvedValue({ id: 'blueprint-1', environment_id: 'env-1' })
   })
 
   it('should open the blueprint details drawer from the configuration header', async () => {
@@ -498,10 +509,10 @@ describe('BlueprintCreationFlow', () => {
 
   it('should start listening for the blueprint service-created event before creating the blueprint', async () => {
     jest.useFakeTimers()
-    let resolveCreateBlueprint: (value: { environment_id: string }) => void = jest.fn()
+    let resolveCreateBlueprint: (value: { id: string; environment_id: string }) => void = jest.fn()
     mockCreateBlueprint.mockImplementationOnce(
       () =>
-        new Promise<{ environment_id: string }>((resolve) => {
+        new Promise<{ id: string; environment_id: string }>((resolve) => {
           resolveCreateBlueprint = resolve
         })
     )
@@ -520,6 +531,7 @@ describe('BlueprintCreationFlow', () => {
     await waitFor(() => {
       expect(mockCreateBlueprint).toHaveBeenCalled()
     })
+    expect(await screen.findByRole('dialog', { name: 'Creating custom-postgres' })).toBeInTheDocument()
 
     const enabledSocketCall = mockUseBlueprintServiceCreatedSocket.mock.calls.find(
       ([props]) =>
@@ -552,8 +564,17 @@ describe('BlueprintCreationFlow', () => {
     })
 
     await act(async () => {
-      resolveCreateBlueprint({ environment_id: 'env-1' })
+      resolveCreateBlueprint({ id: 'blueprint-1', environment_id: 'env-1' })
     })
+    await waitFor(() =>
+      expect(mockUseBlueprintCreationLogs).toHaveBeenCalledWith(
+        expect.objectContaining({
+          blueprintId: 'blueprint-1',
+          clusterId: 'cluster-1',
+          enabled: true,
+        })
+      )
+    )
     expect(mockToast).not.toHaveBeenCalled()
 
     act(() => {
@@ -586,10 +607,10 @@ describe('BlueprintCreationFlow', () => {
 
   it('should complete the blueprint creation flow after a fallback timeout when the websocket event is missed', async () => {
     jest.useFakeTimers()
-    let resolveCreateBlueprint: (value: { environment_id: string }) => void = jest.fn()
+    let resolveCreateBlueprint: (value: { id: string; environment_id: string }) => void = jest.fn()
     mockCreateBlueprint.mockImplementationOnce(
       () =>
-        new Promise<{ environment_id: string }>((resolve) => {
+        new Promise<{ id: string; environment_id: string }>((resolve) => {
           resolveCreateBlueprint = resolve
         })
     )
@@ -610,7 +631,7 @@ describe('BlueprintCreationFlow', () => {
     })
 
     await act(async () => {
-      resolveCreateBlueprint({ environment_id: 'env-1' })
+      resolveCreateBlueprint({ id: 'blueprint-1', environment_id: 'env-1' })
     })
 
     expect(mockToast).not.toHaveBeenCalled()
