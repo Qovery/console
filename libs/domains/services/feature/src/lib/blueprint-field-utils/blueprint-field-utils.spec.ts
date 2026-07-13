@@ -36,7 +36,12 @@ describe('getDefaultBlueprintFieldValues', () => {
       createVariableField({ name: 'required_string', required: true, default_value: 'required-value' }),
       createVariableField({ name: 'optional_string', required: false, default_value: 'optional-value' }),
       {
-        ...createVariableField({ name: 'required_bool', required: true, type: { type: 'bool' }, default_value: 'true' }),
+        ...createVariableField({
+          name: 'required_bool',
+          required: true,
+          type: { type: 'bool' },
+          default_value: 'true',
+        }),
       },
       {
         ...createContextVariableField({ name: 'overridable_context', value: 'context-value' }),

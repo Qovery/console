@@ -1,4 +1,8 @@
-import { type BlueprintUpdateNewRequiredValue, type BlueprintUpdateRemovedValue, type BlueprintUpdateResponse } from 'qovery-typescript-axios'
+import {
+  type BlueprintUpdateNewRequiredValue,
+  type BlueprintUpdateRemovedValue,
+  type BlueprintUpdateResponse,
+} from 'qovery-typescript-axios'
 import { type ReactNode, createContext, useContext } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type BlueprintFieldValue, type BlueprintFieldValues } from '../../blueprint-field-utils/blueprint-field-utils'

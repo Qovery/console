@@ -17,12 +17,12 @@ import {
   BLUEPRINT_RELEASE_NOTES_URL,
   type BlueprintUpdateEditableValue,
   type BlueprintUpdateSection,
+  formatUpdateFieldLabel,
+  formatUpdateValue,
   getBlueprintUpdateFieldValue,
   getBlueprintUpdatePayloadValue,
   getBlueprintUpdateVariableField,
   isBlueprintUpdateVariableField,
-  formatUpdateFieldLabel,
-  formatUpdateValue,
 } from './blueprint-update-utils'
 
 export function BlueprintUpdateReviewStep({ onContinue }: { onContinue: () => void }) {
@@ -94,7 +94,13 @@ export function BlueprintUpdateReviewStep({ onContinue }: { onContinue: () => vo
       </div>
 
       <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
-        <Button type="button" size="lg" className="w-full justify-center" disabled={!canContinueReview} onClick={onContinue}>
+        <Button
+          type="button"
+          size="lg"
+          className="w-full justify-center"
+          disabled={!canContinueReview}
+          onClick={onContinue}
+        >
           Continue
           <Icon iconName="arrow-right" />
         </Button>
@@ -207,11 +213,20 @@ function BlueprintUpdateSectionContent({
         </div>
       )}
 
-      {section === 'modified' && <UpdatedValuesList values={updatedValues} editableValues={values} onChange={onChange} />}
+      {section === 'modified' && (
+        <UpdatedValuesList values={updatedValues} editableValues={values} onChange={onChange} />
+      )}
       {section === 'removed' && <RemovedValuesList values={removedValues} />}
 
       {showContinueButton && (
-        <Button type="button" size="md" color="neutral" className="w-fit" disabled={continueDisabled} onClick={onContinue}>
+        <Button
+          type="button"
+          size="md"
+          color="neutral"
+          className="w-fit"
+          disabled={continueDisabled}
+          onClick={onContinue}
+        >
           Continue
           <Icon iconName="arrow-right" />
         </Button>
@@ -304,7 +319,9 @@ function UpdatedValuesList({
                     size="xs"
                     iconOnly
                     aria-label={`Edit ${label} override`}
-                    onClick={() => setEditedValueName((currentName) => (currentName === value.name ? undefined : value.name))}
+                    onClick={() =>
+                      setEditedValueName((currentName) => (currentName === value.name ? undefined : value.name))
+                    }
                   >
                     <Icon iconName="pen" iconStyle="regular" className="text-xs" />
                   </Button>
@@ -344,7 +361,10 @@ function RemovedValuesList({ values }: { values: BlueprintUpdateRemovedValue[] }
   return (
     <div className="overflow-hidden rounded-md border border-neutral bg-surface-neutral-subtle">
       {values.map((value) => (
-        <div key={value.name} className="flex items-center justify-between gap-3 border-b border-neutral p-3 last:border-b-0">
+        <div
+          key={value.name}
+          className="flex items-center justify-between gap-3 border-b border-neutral p-3 last:border-b-0"
+        >
           <p className="text-sm leading-5 text-neutral">{formatUpdateFieldLabel(value.name)}</p>
           <Badge size="sm" variant="surface" color="red">
             Deleted

@@ -1,3 +1,4 @@
+import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
 import {
   buildBlueprintUpdatePayload,
   getBlueprintUpdateFieldValue,
@@ -7,7 +8,6 @@ import {
   getRawOutputLineClassName,
   hasBlueprintUpdateReviewSections,
 } from './blueprint-update-utils'
-import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
 
 function createBlueprintUpdate(overrides: Partial<BlueprintUpdateResponse> = {}): BlueprintUpdateResponse {
   return {
@@ -29,15 +29,39 @@ describe('blueprint update utils', () => {
   })
 
   it('selects the first section that needs user attention', () => {
-    expect(getFirstAvailableUpdateSection(createBlueprintUpdate({ new_required_values: [{ name: 'required', type: { type: 'string' }, is_secret: false }] }))).toBe('required')
-    expect(getFirstAvailableUpdateSection(createBlueprintUpdate({ new_optional_values: [{ name: 'optional', default_value: 'value', type: { type: 'string' }, is_secret: false }] }))).toBe('optional')
-    expect(getFirstAvailableUpdateSection(createBlueprintUpdate({ engine_diff: { updated_values: [{ name: 'engine', current_default_value: 'old', new_default_value: 'new' }] } }))).toBe('modified')
-    expect(getFirstAvailableUpdateSection(createBlueprintUpdate({ removed_values: [{ name: 'removed' }] }))).toBe('removed')
+    expect(
+      getFirstAvailableUpdateSection(
+        createBlueprintUpdate({
+          new_required_values: [{ name: 'required', type: { type: 'string' }, is_secret: false }],
+        })
+      )
+    ).toBe('required')
+    expect(
+      getFirstAvailableUpdateSection(
+        createBlueprintUpdate({
+          new_optional_values: [
+            { name: 'optional', default_value: 'value', type: { type: 'string' }, is_secret: false },
+          ],
+        })
+      )
+    ).toBe('optional')
+    expect(
+      getFirstAvailableUpdateSection(
+        createBlueprintUpdate({
+          engine_diff: { updated_values: [{ name: 'engine', current_default_value: 'old', new_default_value: 'new' }] },
+        })
+      )
+    ).toBe('modified')
+    expect(getFirstAvailableUpdateSection(createBlueprintUpdate({ removed_values: [{ name: 'removed' }] }))).toBe(
+      'removed'
+    )
   })
 
   it('reports whether the update contains review sections', () => {
     expect(hasBlueprintUpdateReviewSections(createBlueprintUpdate())).toBe(false)
-    expect(hasBlueprintUpdateReviewSections(createBlueprintUpdate({ removed_values: [{ name: 'removed' }] }))).toBe(true)
+    expect(hasBlueprintUpdateReviewSections(createBlueprintUpdate({ removed_values: [{ name: 'removed' }] }))).toBe(
+      true
+    )
   })
 
   it('normalizes field values for the update payload', () => {
@@ -57,7 +81,13 @@ describe('blueprint update utils', () => {
     const requiredValues = [{ name: 'required', type: { type: 'string' }, is_secret: true }]
     const optionalValues = [{ name: 'optional', default_value: 'default', type: { type: 'string' }, is_secret: false }]
     const updatedValues = [
-      { name: 'changed', current_default_value: 'old', new_default_value: 'new', type: { type: 'string' }, is_secret: false },
+      {
+        name: 'changed',
+        current_default_value: 'old',
+        new_default_value: 'new',
+        type: { type: 'string' },
+        is_secret: false,
+      },
       { name: 'engine_changed', current_default_value: 'old', new_default_value: 'new' },
     ]
 

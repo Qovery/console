@@ -1,6 +1,4 @@
-import {
-  type BlueprintUpdateResponse,
-} from 'qovery-typescript-axios'
+import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { toast } from '@qovery/shared/ui'
@@ -15,14 +13,14 @@ import { useUpdateBlueprint } from '../../hooks/use-update-blueprint/use-update-
 import { BlueprintUpdateFlowProvider } from './blueprint-update-context'
 import { BlueprintUpdateFlowShell } from './blueprint-update-flow-shell'
 import {
+  type BlueprintUpdateEditableValue,
+  type BlueprintUpdateSection,
   buildBlueprintUpdatePayload,
   getBlueprintUpdateFieldValue,
+  getBlueprintUpdateVariableField,
   getBlueprintUpdateVersion,
   getFallbackServiceIcon,
   getFirstAvailableUpdateSection,
-  getBlueprintUpdateVariableField,
-  type BlueprintUpdateEditableValue,
-  type BlueprintUpdateSection,
   updateSections,
 } from './blueprint-update-utils'
 
@@ -107,10 +105,10 @@ export function BlueprintUpdateFlow({
   const isRequiredValid = requiredValues.every((value) =>
     isFieldValid(getBlueprintUpdateVariableField(value, true), values[value.name])
   )
-  const isReviewComplete = reviewSections.every(({ id }) => completedSections.includes(id)) || reviewSections.length === 0
-  const canContinueReview = reviewSections.length === 1
-    ? activeSection !== 'required' || isRequiredValid
-    : isReviewComplete
+  const isReviewComplete =
+    reviewSections.every(({ id }) => completedSections.includes(id)) || reviewSections.length === 0
+  const canContinueReview =
+    reviewSections.length === 1 ? activeSection !== 'required' || isRequiredValid : isReviewComplete
   const latestVersion = getBlueprintUpdateVersion(blueprintUpdateData.latest_tag) ?? blueprintUpdateData.latest_tag
   const title = `${service.name} blueprint update to ${latestVersion}`
   const payload = useMemo(
@@ -124,7 +122,14 @@ export function BlueprintUpdateFlow({
         requiredValues,
         updatedValues,
       }),
-    [blueprintUpdateData.latest_tag, blueprintUpdateData.new_optional_values, requiredValues, service, updatedValues, values]
+    [
+      blueprintUpdateData.latest_tag,
+      blueprintUpdateData.new_optional_values,
+      requiredValues,
+      service,
+      updatedValues,
+      values,
+    ]
   )
 
   const completeActiveSection = useCallback(() => {

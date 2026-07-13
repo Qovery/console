@@ -37,17 +37,14 @@ export function useBlueprintUpdatePreviewSocket({
     setHasReceivedMessage(false)
   }, [clusterId, organizationId, previewId])
 
-  const handleMessage = useCallback(
-    (_: QueryClient, message: BlueprintPreviewResult) => {
-      setIsLoading(false)
-      setHasReceivedMessage(true)
+  const handleMessage = useCallback((_: QueryClient, message: BlueprintPreviewResult) => {
+    setIsLoading(false)
+    setHasReceivedMessage(true)
 
-      match(message)
-        .with({ type: 'diff' }, ({ payload }) => setRawOutput(payload))
-        .otherwise(() => undefined)
-    },
-    []
-  )
+    match(message)
+      .with({ type: 'diff' }, ({ payload }) => setRawOutput(payload))
+      .otherwise(() => undefined)
+  }, [])
 
   const handleOpen = useCallback(() => {
     setIsLoading(true)

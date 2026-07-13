@@ -235,12 +235,7 @@ function BlueprintUpdateNoInputConfirmationModal({ onConfirm, title }: { onConfi
         <Dialog.Title asChild>
           <h2 className="text-xl font-medium leading-7 text-neutral">{title}</h2>
         </Dialog.Title>
-        <ExternalLink
-          href={BLUEPRINT_RELEASE_NOTES_URL}
-          color="brand"
-          size="sm"
-          underline
-        >
+        <ExternalLink href={BLUEPRINT_RELEASE_NOTES_URL} color="brand" size="sm" underline>
           Release notes
         </ExternalLink>
       </div>

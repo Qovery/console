@@ -25,7 +25,15 @@ export function BlueprintUpdateFlowShell({
           </div>
         </div>
         <div className="flex h-full items-center px-4">
-          <Button type="button" variant="surface" color="neutral" size="md" iconOnly aria-label="Close" onClick={onExit}>
+          <Button
+            type="button"
+            variant="surface"
+            color="neutral"
+            size="md"
+            iconOnly
+            aria-label="Close"
+            onClick={onExit}
+          >
             <Icon iconName="xmark" iconStyle="regular" />
           </Button>
         </div>
@@ -54,7 +62,9 @@ function StepIndicator({
         <span
           className={clsx(
             'flex h-3.5 w-3.5 items-center justify-center rounded-full text-[10px] font-semibold',
-            active ? 'bg-surface-brand-solid text-neutralInvert' : 'border border-neutral bg-background text-neutral-disabled'
+            active
+              ? 'bg-surface-brand-solid text-neutralInvert'
+              : 'border border-neutral bg-background text-neutral-disabled'
           )}
         >
           {number}

@@ -65,27 +65,26 @@ describe('useBlueprintUpdatePreviewSocket', () => {
     expect(result.current.rawOutput).toBe('# Terraform will perform the following actions:')
   })
 
-  it.each([
-    { type: 'error', message: 'Preview failed' },
-    { type: 'cancelled' },
-    { type: 'timeout' },
-  ])('should complete without raw output for a $type result', (message) => {
-    const { result } = renderHook(() =>
-      useBlueprintUpdatePreviewSocket({
-        organizationId: 'org-1',
-        clusterId: 'cluster-1',
-        previewId: 'preview-1',
+  it.each([{ type: 'error', message: 'Preview failed' }, { type: 'cancelled' }, { type: 'timeout' }])(
+    'should complete without raw output for a $type result',
+    (message) => {
+      const { result } = renderHook(() =>
+        useBlueprintUpdatePreviewSocket({
+          organizationId: 'org-1',
+          clusterId: 'cluster-1',
+          previewId: 'preview-1',
+        })
+      )
+      const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
+
+      act(() => {
+        subscriptionConfig?.onMessage?.({} as QueryClient, message)
       })
-    )
-    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
-    act(() => {
-      subscriptionConfig?.onMessage?.({} as QueryClient, message)
-    })
-
-    expect(result.current.rawOutput).toBe('')
-    expect(result.current.hasReceivedMessage).toBe(true)
-  })
+      expect(result.current.rawOutput).toBe('')
+      expect(result.current.hasReceivedMessage).toBe(true)
+    }
+  )
 
   it('should reset message state when preview id changes', () => {
     const { result, rerender } = renderHook(
