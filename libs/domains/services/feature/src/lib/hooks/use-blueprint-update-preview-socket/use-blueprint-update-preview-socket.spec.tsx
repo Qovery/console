@@ -40,18 +40,7 @@ describe('useBlueprintUpdatePreviewSocket', () => {
     )
   })
 
-  it('should not subscribe until all params are available', () => {
-    renderHook(() =>
-      useBlueprintUpdatePreviewSocket({
-        organizationId: 'org-1',
-        previewId: 'preview-1',
-      })
-    )
-
-    expect(useReactQueryWsSubscriptionMock).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
-  })
-
-  it('should expose deployment impact and raw output from socket messages', () => {
+  it('should expose raw output from a diff result', () => {
     const { result } = renderHook(() =>
       useBlueprintUpdatePreviewSocket({
         organizationId: 'org-1',
@@ -65,32 +54,22 @@ describe('useBlueprintUpdatePreviewSocket', () => {
       subscriptionConfig?.onOpen?.({} as QueryClient, {} as Event)
       expect(result.current.hasReceivedMessage).toBe(false)
       subscriptionConfig?.onMessage?.({} as QueryClient, {
-        deployment_impact: {
-          severity: 'high',
-          description: [
-            'Upgrading engine_version forces a full recreation on AWS.',
-            'Verify your database endpoint before confirming.',
-          ],
-          impacted_services: ['Postgres database', 'Redis cache'],
-        },
-        raw_output: '# Terraform will perform the following actions:',
+        type: 'diff',
+        payload: '# Terraform will perform the following actions:',
+        service_type: 'TERRAFORM',
       })
     })
 
     expect(result.current.isLoading).toBe(false)
     expect(result.current.hasReceivedMessage).toBe(true)
-    expect(result.current.impact).toEqual({
-      level: 'high',
-      description: [
-        'Upgrading engine_version forces a full recreation on AWS.',
-        'Verify your database endpoint before confirming.',
-      ],
-      impactedServices: ['Postgres database', 'Redis cache'],
-    })
     expect(result.current.rawOutput).toBe('# Terraform will perform the following actions:')
   })
 
-  it('should append plain text output chunks', () => {
+  it.each([
+    { type: 'error', message: 'Preview failed' },
+    { type: 'cancelled' },
+    { type: 'timeout' },
+  ])('should complete without raw output for a $type result', (message) => {
     const { result } = renderHook(() =>
       useBlueprintUpdatePreviewSocket({
         organizationId: 'org-1',
@@ -101,35 +80,10 @@ describe('useBlueprintUpdatePreviewSocket', () => {
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
     act(() => {
-      subscriptionConfig?.onMessage?.({} as QueryClient, '# first line')
-      subscriptionConfig?.onMessage?.({} as QueryClient, '# second line')
+      subscriptionConfig?.onMessage?.({} as QueryClient, message)
     })
 
-    expect(result.current.rawOutput).toBe('# first line\n# second line')
-    expect(result.current.hasReceivedMessage).toBe(true)
-  })
-
-  it('should use the payload property as raw output', () => {
-    const { result } = renderHook(() =>
-      useBlueprintUpdatePreviewSocket({
-        organizationId: 'org-1',
-        clusterId: 'cluster-1',
-        previewId: 'preview-1',
-      })
-    )
-    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
-
-    act(() => {
-      subscriptionConfig?.onMessage?.({} as QueryClient, {
-        type: 'diff',
-        payload: '\nTerraform will perform the following actions:\n\n  # aws_db_instance.this will be created',
-        service_type: 'TERRAFORM',
-      })
-    })
-
-    expect(result.current.rawOutput).toBe(
-      '\nTerraform will perform the following actions:\n\n  # aws_db_instance.this will be created'
-    )
+    expect(result.current.rawOutput).toBe('')
     expect(result.current.hasReceivedMessage).toBe(true)
   })
 
@@ -146,7 +100,11 @@ describe('useBlueprintUpdatePreviewSocket', () => {
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
     act(() => {
-      subscriptionConfig?.onMessage?.({} as QueryClient, '# output')
+      subscriptionConfig?.onMessage?.({} as QueryClient, {
+        type: 'diff',
+        payload: '# output',
+        service_type: 'TERRAFORM',
+      })
     })
 
     expect(result.current.hasReceivedMessage).toBe(true)

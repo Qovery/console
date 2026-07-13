@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useBlueprintUpdatePreviewSocket } from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
@@ -7,11 +8,19 @@ jest.mock('../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-
   useBlueprintUpdatePreviewSocket: jest.fn(),
 }))
 
+jest.mock('@tanstack/react-router', () => ({
+  useParams: jest.fn(),
+}))
+
 jest.mock('./blueprint-update-context', () => ({
   useBlueprintUpdateFlowContext: jest.fn(),
 }))
 
 describe('BlueprintUpdatePreviewStep', () => {
+  beforeEach(() => {
+    jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-id' })
+  })
+
   it('requests a preview and keeps confirmation disabled while output is loading', () => {
     const requestPreview = jest.fn()
     const handleUpdate = jest.fn()
@@ -19,7 +28,6 @@ describe('BlueprintUpdatePreviewStep', () => {
       clusterId: 'cluster-id',
       handleUpdate,
       isUpdateLoading: false,
-      organizationId: 'organization-id',
       previewId: 'preview-id',
       requestPreview,
       service: { name: 'AWS S3 Bucket' },
@@ -38,6 +46,11 @@ describe('BlueprintUpdatePreviewStep', () => {
     expect(screen.getByLabelText('Waiting for preview output')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /Confirm & deploy update/i })).toBeDisabled()
     expect(requestPreview).toHaveBeenCalledTimes(1)
+    expect(useBlueprintUpdatePreviewSocket).toHaveBeenCalledWith({
+      clusterId: 'cluster-id',
+      organizationId: 'organization-id',
+      previewId: 'preview-id',
+    })
     expect(handleUpdate).not.toHaveBeenCalled()
   })
 
@@ -46,7 +59,6 @@ describe('BlueprintUpdatePreviewStep', () => {
       clusterId: 'cluster-id',
       handleUpdate: jest.fn(),
       isUpdateLoading: false,
-      organizationId: 'organization-id',
       previewId: 'preview-id',
       requestPreview: jest.fn(),
       service: { name: 'AWS S3 Bucket' },

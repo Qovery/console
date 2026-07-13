@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, Skeleton } from '@qovery/shared/ui'
 import { useBlueprintUpdatePreviewSocket } from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
@@ -5,8 +6,7 @@ import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import { getRawOutputLineClassName } from './blueprint-update-utils'
 
 export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
-  const { clusterId, handleUpdate, isUpdateLoading, organizationId, previewId, requestPreview } =
-    useBlueprintUpdateFlowContext()
+  const { clusterId, handleUpdate, isUpdateLoading, previewId, requestPreview } = useBlueprintUpdateFlowContext()
 
   useEffect(() => {
     requestPreview()
@@ -16,7 +16,6 @@ export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
     <BlueprintUpdatePreview
       clusterId={clusterId}
       previewId={previewId}
-      organizationId={organizationId}
       onBack={onBack}
       onConfirm={handleUpdate}
       loading={isUpdateLoading}
@@ -29,21 +28,85 @@ function BlueprintUpdatePreview({
   loading,
   onBack,
   onConfirm,
-  organizationId,
   previewId,
 }: {
   clusterId?: string
   loading: boolean
   onBack: () => void
   onConfirm: () => Promise<void>
-  organizationId: string
   previewId?: string
 }) {
+  if (!clusterId || !previewId) {
+    return (
+      <BlueprintUpdatePreviewContent
+        hasReceivedPreviewMessage={false}
+        isPreviewOutputLoading
+        loading={loading}
+        onBack={onBack}
+        onConfirm={onConfirm}
+        rawOutput=""
+      />
+    )
+  }
+
+  return (
+    <BlueprintUpdatePreviewWithSocket
+      clusterId={clusterId}
+      loading={loading}
+      onBack={onBack}
+      onConfirm={onConfirm}
+      previewId={previewId}
+    />
+  )
+}
+
+function BlueprintUpdatePreviewWithSocket({
+  clusterId,
+  loading,
+  onBack,
+  onConfirm,
+  previewId,
+}: {
+  clusterId: string
+  loading: boolean
+  onBack: () => void
+  onConfirm: () => Promise<void>
+  previewId: string
+}) {
+  const { organizationId = '' } = useParams({ strict: false })
   const {
     rawOutput,
     isLoading: isPreviewOutputLoading,
     hasReceivedMessage: hasReceivedPreviewMessage,
   } = useBlueprintUpdatePreviewSocket({ organizationId, clusterId, previewId })
+
+  return (
+    <BlueprintUpdatePreviewContent
+      hasReceivedPreviewMessage={hasReceivedPreviewMessage}
+      isPreviewOutputLoading={isPreviewOutputLoading}
+      loading={loading}
+      onBack={onBack}
+      onConfirm={onConfirm}
+      rawOutput={rawOutput}
+    />
+  )
+}
+
+function BlueprintUpdatePreviewContent({
+  hasReceivedPreviewMessage,
+  isPreviewOutputLoading,
+  loading,
+  onBack,
+  onConfirm,
+  rawOutput,
+}: {
+  hasReceivedPreviewMessage: boolean
+  isPreviewOutputLoading: boolean
+  loading: boolean
+  onBack: () => void
+  onConfirm: () => Promise<void>
+  rawOutput: string
+}) {
   const rawOutputContainerHeightClassName = rawOutput
     ? 'h-[min(75vh,calc(100vh-260px))] min-h-[260px]'
     : 'min-h-[180px]'

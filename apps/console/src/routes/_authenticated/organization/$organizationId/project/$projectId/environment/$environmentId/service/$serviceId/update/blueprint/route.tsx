@@ -36,7 +36,6 @@ function RouteComponent() {
       clusterId={environment?.cluster_id}
       currentStep={currentStep}
       environmentId={environmentId}
-      organizationId={organizationId}
       service={service}
       onExit={navigateToOverview}
     >

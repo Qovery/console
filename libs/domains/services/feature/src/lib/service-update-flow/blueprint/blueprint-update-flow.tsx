@@ -44,7 +44,6 @@ export interface BlueprintUpdateFlowProps {
   currentStep: 1 | 2
   environmentId: string
   onExit: () => void
-  organizationId: string
   service: AnyService
 }
 
@@ -55,7 +54,6 @@ export function BlueprintUpdateFlow({
   currentStep,
   environmentId,
   onExit,
-  organizationId,
   service,
 }: BlueprintUpdateFlowProps) {
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
@@ -175,7 +173,6 @@ export function BlueprintUpdateFlow({
     isUpdateLoading,
     onChange: (name: string, value: BlueprintFieldValue) =>
       setValues((currentValues) => ({ ...currentValues, [name]: value })),
-    organizationId,
     previewId,
     removedValues: blueprintUpdateData.removed_values,
     requestPreview,

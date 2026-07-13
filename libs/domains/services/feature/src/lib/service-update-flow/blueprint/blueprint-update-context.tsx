@@ -20,7 +20,6 @@ export interface BlueprintUpdateFlowContextValue {
   isRequiredValid: boolean
   isUpdateLoading: boolean
   onChange: (name: string, value: BlueprintFieldValue) => void
-  organizationId: string
   previewId?: string
   removedValues: BlueprintUpdateRemovedValue[]
   requestPreview: () => Promise<void>
