@@ -255,29 +255,29 @@ function UpdatedValuesList({
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <p className="text-sm leading-5 text-neutral">{label}</p>
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-subtle">
+                <div className="flex min-h-6 flex-wrap items-center gap-x-4 gap-y-1 text-sm text-neutral-subtle">
                   <div className="flex items-center gap-1.5">
                     <span>Default:</span>
-                    <Badge size="sm" variant="surface" className="font-mono leading-5">
+                    <code className="rounded bg-surface-neutral-component px-1 py-0.5 font-mono text-xs">
                       {formatUpdateValue(value.current_default_value)}
-                    </Badge>
+                    </code>
                     <Icon iconName="arrow-right" className="text-xs" />
-                    <Badge size="sm" variant="surface" className="font-mono leading-5">
+                    <code className="rounded bg-surface-neutral-component px-1 py-0.5 font-mono text-xs">
                       {formatUpdateValue(value.new_default_value)}
-                    </Badge>
+                    </code>
                   </div>
                   {hasEditedOverride && (
                     <div className="flex items-center gap-1.5">
                       <span>Override:</span>
-                      <Badge size="sm" variant="surface" color="sky" className="font-mono leading-5">
+                      <code className="rounded border border-info-subtle bg-surface-info-subtle px-1 py-0.5 font-mono text-xs text-info">
                         {formatUpdateValue(editedValue)}
-                      </Badge>
+                      </code>
                     </div>
                   )}
                 </div>
               </div>
 
-              <div className="flex shrink-0 items-center gap-2">
+              <div className="flex w-14 shrink-0 items-center justify-end gap-2">
                 {hasEditedOverride && (
                   <Tooltip content={<span>Reset the override to the new default value</span>}>
                     <Button
@@ -346,7 +346,7 @@ function RemovedValuesList({ values }: { values: BlueprintUpdateRemovedValue[] }
       {values.map((value) => (
         <div key={value.name} className="flex items-center justify-between gap-3 border-b border-neutral p-3 last:border-b-0">
           <p className="text-sm leading-5 text-neutral">{formatUpdateFieldLabel(value.name)}</p>
-          <Badge size="sm" variant="surface" color="red" className="font-mono leading-5">
+          <Badge size="sm" variant="surface" color="red">
             Deleted
           </Badge>
         </div>

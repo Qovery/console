@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import { act } from '@testing-library/react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useBlueprintUpdatePreviewSocket } from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
@@ -75,5 +76,33 @@ describe('BlueprintUpdatePreviewStep', () => {
     expect(screen.getByText('- removed')).toHaveClass('text-negative')
     expect(screen.getByText('~ changed')).toHaveClass('text-info')
     expect(screen.getByRole('button', { name: /Confirm & deploy update/i })).toBeEnabled()
+  })
+
+  it('updates the loading message while waiting for preview output', () => {
+    jest.useFakeTimers()
+    jest.mocked(useBlueprintUpdateFlowContext).mockReturnValue({
+      clusterId: 'cluster-id',
+      handleUpdate: jest.fn(),
+      isUpdateLoading: false,
+      previewId: 'preview-id',
+      requestPreview: jest.fn(),
+      service: { name: 'AWS S3 Bucket' },
+    } as ReturnType<typeof useBlueprintUpdateFlowContext>)
+    jest.mocked(useBlueprintUpdatePreviewSocket).mockReturnValue({
+      hasReceivedMessage: false,
+      isLoading: true,
+      rawOutput: undefined,
+    })
+
+    renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
+
+    expect(screen.getByText('Generating preview output')).toBeInTheDocument()
+
+    act(() => {
+      jest.advanceTimersByTime(8_000)
+    })
+
+    expect(screen.getByText('Analyzing the planned changes')).toBeInTheDocument()
+    jest.useRealTimers()
   })
 })

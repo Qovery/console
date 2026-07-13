@@ -1,9 +1,17 @@
 import { useParams } from '@tanstack/react-router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, Skeleton } from '@qovery/shared/ui'
 import { useBlueprintUpdatePreviewSocket } from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import { getRawOutputLineClassName } from './blueprint-update-utils'
+
+const PREVIEW_LOADING_MESSAGES = [
+  'Generating preview output',
+  'Analyzing the planned changes',
+  'Still working on your preview',
+  'Finalizing preview output',
+]
+const PREVIEW_LOADING_MESSAGE_INTERVAL = 8_000
 
 export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
   const { clusterId, handleUpdate, isUpdateLoading, previewId, requestPreview } = useBlueprintUpdateFlowContext()
@@ -163,12 +171,21 @@ function BlueprintUpdateRawOutput({ rawOutput }: { rawOutput: string }) {
 
 function BlueprintUpdateRawOutputSkeleton() {
   const skeletonLineWidths = ['46%', '28%', '72%', '64%', '82%', '34%']
+  const [messageIndex, setMessageIndex] = useState(0)
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setMessageIndex((currentIndex) => (currentIndex + 1) % PREVIEW_LOADING_MESSAGES.length)
+    }, PREVIEW_LOADING_MESSAGE_INTERVAL)
+
+    return () => window.clearInterval(intervalId)
+  }, [])
 
   return (
     <div aria-label="Waiting for preview output" className="flex flex-col gap-3">
       <div className="mb-1 flex items-center gap-2 font-sans text-sm text-neutral-subtle">
         <Skeleton width={8} height={8} rounded />
-        <span>Generating preview output</span>
+        <span aria-live="polite">{PREVIEW_LOADING_MESSAGES[messageIndex]}</span>
       </div>
       {skeletonLineWidths.map((width, index) => (
         <Skeleton key={`${width}-${index}`} width={width} height={16} />
