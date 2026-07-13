@@ -2,6 +2,7 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type BlueprintCreateRequest } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { LogsType } from '@qovery/shared/enums'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, toast } from '@qovery/shared/ui'
 import {
   formatFieldLabel,
@@ -18,6 +19,10 @@ import { useBlueprintManifestFields } from '../blueprint-manifest-context/bluepr
 import { BlueprintCreationLoadingModal } from './blueprint-creation-loading-modal/blueprint-creation-loading-modal'
 
 type BlueprintConfigurationSection = 'service-information' | 'blueprint-setup' | 'overrides'
+type PendingBlueprintCreation = {
+  deploy: boolean
+  payload: BlueprintCreateRequest
+}
 
 const BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS = 30_000
 
@@ -29,12 +34,12 @@ export function BlueprintStepSummary() {
     useBlueprintManifestFields()
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)
   const [isWaitingForServiceCreated, setIsWaitingForServiceCreated] = useState(false)
+  const [isBlueprintCreationFailed, setIsBlueprintCreationFailed] = useState(false)
   const [createdBlueprintId, setCreatedBlueprintId] = useState<string>()
-  const [pendingBlueprintCreation, setPendingBlueprintCreation] = useState<{
-    deploy: boolean
-    payload: BlueprintCreateRequest
-  } | null>(null)
+  const [pendingBlueprintCreation, setPendingBlueprintCreation] = useState<PendingBlueprintCreation | null>(null)
+  const [lastBlueprintCreation, setLastBlueprintCreation] = useState<PendingBlueprintCreation | null>(null)
   const hasHandledServiceCreatedRef = useRef(false)
+  const hasBlueprintCreationErrorRef = useRef(false)
   const hasStartedBlueprintCreationRef = useRef(false)
   const serviceCreatedFallbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { mutateAsync: createBlueprint } = useCreateBlueprint()
@@ -50,8 +55,10 @@ export function BlueprintStepSummary() {
     environmentId,
     organizationId,
     projectId,
-    enabled: isWaitingForServiceCreated,
+    enabled: isWaitingForServiceCreated && !isBlueprintCreationFailed,
   })
+  const hasBlueprintCreationError =
+    Boolean(createdBlueprintId) && blueprintCreationLogs.some((log) => log.type === LogsType.ERROR)
 
   const handleEditSection = (section: BlueprintConfigurationSection) => {
     navigate({ to: `${creationFlowUrl}/${section}` })
@@ -78,7 +85,7 @@ export function BlueprintStepSummary() {
   }, [])
 
   const handleBlueprintServiceCreated = useCallback(() => {
-    if (hasHandledServiceCreatedRef.current) {
+    if (hasHandledServiceCreatedRef.current || hasBlueprintCreationErrorRef.current) {
       return
     }
 
@@ -105,7 +112,7 @@ export function BlueprintStepSummary() {
     organizationId,
     projectId,
     environmentId,
-    enabled: isWaitingForServiceCreated,
+    enabled: isWaitingForServiceCreated && !isBlueprintCreationFailed,
     onServiceCreated: handleBlueprintServiceCreated,
   })
 
@@ -114,6 +121,19 @@ export function BlueprintStepSummary() {
   }, [setCurrentStep])
 
   useEffect(() => () => clearServiceCreatedFallbackTimeout(), [clearServiceCreatedFallbackTimeout])
+
+  useEffect(() => {
+    if (!hasBlueprintCreationError) {
+      return
+    }
+
+    hasBlueprintCreationErrorRef.current = true
+    clearServiceCreatedFallbackTimeout()
+    setPendingBlueprintCreation(null)
+    setIsWaitingForServiceCreated(false)
+    setIsBlueprintCreationFailed(true)
+    setSubmitMode(null)
+  }, [clearServiceCreatedFallbackTimeout, hasBlueprintCreationError])
 
   useEffect(() => {
     if (!serviceName.trim() || !isBlueprintSetupValid) {
@@ -182,14 +202,7 @@ export function BlueprintStepSummary() {
 
   const handleSubmit = (withDeploy: boolean) => {
     const formValues = form.getValues()
-
-    setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')
-    clearServiceCreatedFallbackTimeout()
-    hasHandledServiceCreatedRef.current = false
-    hasStartedBlueprintCreationRef.current = false
-    setCreatedBlueprintId(undefined)
-    setIsWaitingForServiceCreated(true)
-    setPendingBlueprintCreation({
+    const blueprintCreation = {
       deploy: withDeploy,
       payload: {
         name: formValues.serviceName,
@@ -197,7 +210,43 @@ export function BlueprintStepSummary() {
         icon: blueprint.icon,
         variables: buildBlueprintVariables(formValues.fields, blueprintFields),
       },
-    })
+    }
+
+    setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')
+    clearServiceCreatedFallbackTimeout()
+    hasHandledServiceCreatedRef.current = false
+    hasBlueprintCreationErrorRef.current = false
+    hasStartedBlueprintCreationRef.current = false
+    setCreatedBlueprintId(undefined)
+    setIsBlueprintCreationFailed(false)
+    setLastBlueprintCreation(blueprintCreation)
+    setIsWaitingForServiceCreated(true)
+
+    setPendingBlueprintCreation(blueprintCreation)
+  }
+
+  const handleRetry = () => {
+    if (!lastBlueprintCreation) return
+
+    clearServiceCreatedFallbackTimeout()
+    hasHandledServiceCreatedRef.current = false
+    hasBlueprintCreationErrorRef.current = false
+    hasStartedBlueprintCreationRef.current = false
+    setCreatedBlueprintId(undefined)
+    setIsBlueprintCreationFailed(false)
+    setSubmitMode(lastBlueprintCreation.deploy ? 'create-and-deploy' : 'create')
+    setIsWaitingForServiceCreated(true)
+
+    setPendingBlueprintCreation(lastBlueprintCreation)
+  }
+
+  const handleEditConfig = () => {
+    clearServiceCreatedFallbackTimeout()
+    hasBlueprintCreationErrorRef.current = false
+    setIsWaitingForServiceCreated(false)
+    setIsBlueprintCreationFailed(false)
+    setSubmitMode(null)
+    navigate({ to: `${creationFlowUrl}/overrides` }) // TODO [blueprints]: Should redirect to the main section, not "overrides"
   }
 
   return (
@@ -328,7 +377,9 @@ export function BlueprintStepSummary() {
       </FunnelFlowBody>
       <BlueprintCreationLoadingModal
         logs={blueprintCreationLogs}
-        open={isWaitingForServiceCreated}
+        onEditConfig={handleEditConfig}
+        onRetry={handleRetry}
+        open={isWaitingForServiceCreated || isBlueprintCreationFailed}
         serviceName={serviceName}
       />
     </>
