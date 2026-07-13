@@ -1,5 +1,5 @@
 import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
-import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { type PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { toast } from '@qovery/shared/ui'
 import {
@@ -35,9 +35,8 @@ export {
 export { BlueprintUpdatePreviewStep } from './blueprint-update-preview-step'
 export { BlueprintUpdateReviewStep } from './blueprint-update-review-step'
 
-export interface BlueprintUpdateFlowProps {
+export interface BlueprintUpdateFlowProps extends PropsWithChildren {
   blueprintId: string
-  children: ReactNode
   clusterId?: string
   currentStep: 1 | 2
   environmentId: string
