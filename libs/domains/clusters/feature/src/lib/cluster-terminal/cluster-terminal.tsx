@@ -9,7 +9,7 @@ import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { XTerm } from 'react-xtermjs'
 import { match } from 'ts-pattern'
 import { LoaderSpinner, toast } from '@qovery/shared/ui'
-import { useTerminalReadiness } from '@qovery/shared/util-hooks'
+import { useTerminalDimensions, useTerminalReadiness } from '@qovery/shared/util-hooks'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
 import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 
@@ -76,12 +76,18 @@ export function ClusterTerminal({ organizationId, clusterId, cloudProvider }: Cl
     [detachWebSocket]
   )
 
-  // Necesssary to calculate the number of rows and columns (tty) for the terminal
-  // https://github.com/xtermjs/xterm.js/issues/1412#issuecomment-724421101
-  // 14 is the font height for better k9s compatibility
-  const rows = Math.ceil(document.body.clientHeight / 14)
-  // 9 is the font width for better k9s compatibility, with a minimum width of 80 columns
-  const cols = Math.max(80, Math.ceil(document.body.clientWidth / 9))
+  // Measure the actual terminal container (not document.body) so the TTY size sent to the
+  // backend matches what is rendered. https://github.com/xtermjs/xterm.js/issues/1412#issuecomment-724421101
+  // 9x17 is the font cell size for better k9s compatibility, with a minimum width of 80 columns.
+  const {
+    ref: terminalContainerRef,
+    cols,
+    rows,
+  } = useTerminalDimensions({
+    cellWidth: 9,
+    cellHeight: 17,
+    minCols: 80,
+  })
 
   useReactQueryWsSubscription({
     url: QOVERY_WS + '/shell/debug',
@@ -104,7 +110,7 @@ export function ClusterTerminal({ organizationId, clusterId, cloudProvider }: Cl
 
   return (
     <div className="flex h-full min-h-0 w-full flex-1 flex-col overflow-hidden rounded-none border-0 bg-background">
-      <div className="relative h-full flex-1 border-neutral bg-background px-4 py-2">
+      <div ref={terminalContainerRef} className="relative h-full flex-1 border-neutral bg-background px-4 py-2">
         {isTerminalLoading ? (
           <div className="flex h-40 items-start justify-center p-5">
             <LoaderSpinner />
