@@ -1,5 +1,6 @@
 export * from './lib/components/action-toolbar/action-toolbar'
 export * from './lib/components/callout/callout'
+export * from './lib/components/catalog-variable-input/catalog-variable-input'
 export * from './lib/components/button/button'
 export * from './lib/components/button-primitive/button-primitive'
 export * from './lib/components/copy-button/copy-button'
