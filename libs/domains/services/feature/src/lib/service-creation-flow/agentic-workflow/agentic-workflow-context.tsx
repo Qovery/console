@@ -60,7 +60,7 @@ export interface AgenticWorkflowFormData {
   name: string
   description: string
   workflowEnabled: boolean
-  aiModel: 'Claude' | 'Codex'
+  aiModel: 'Claude' | 'Bedrock'
   webhookEnabled: boolean
   connectors: AgenticWorkflowConnector[]
   gitRepositories: AgenticWorkflowGitRepository[]
