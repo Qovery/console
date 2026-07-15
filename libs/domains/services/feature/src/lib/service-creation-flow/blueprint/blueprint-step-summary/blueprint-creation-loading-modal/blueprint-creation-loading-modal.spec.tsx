@@ -11,6 +11,14 @@ const errorLog = {
   },
 } as EnvironmentLogs
 
+const infoLog = {
+  type: LogsType.INFO,
+  timestamp: '2026-07-13T12:00:42.000Z',
+  message: {
+    safe_message: 'Creating service resources',
+  },
+} as EnvironmentLogs
+
 describe('BlueprintCreationLoadingModal', () => {
   it('renders log skeletons while waiting for the first log', () => {
     renderWithProviders(
@@ -24,6 +32,32 @@ describe('BlueprintCreationLoadingModal', () => {
     )
 
     expect(screen.getByLabelText('Waiting for creation logs')).toBeVisible()
+  })
+
+  it('scrolls to the latest log', () => {
+    const { rerender } = renderWithProviders(
+      <BlueprintCreationLoadingModal
+        logs={[infoLog]}
+        open
+        serviceName="postgres"
+        onEditConfig={jest.fn()}
+        onRetry={jest.fn()}
+      />
+    )
+    const logsContainer = screen.getByRole('log')
+    Object.defineProperty(logsContainer, 'scrollHeight', { configurable: true, value: 240 })
+
+    rerender(
+      <BlueprintCreationLoadingModal
+        logs={[infoLog, errorLog]}
+        open
+        serviceName="postgres"
+        onEditConfig={jest.fn()}
+        onRetry={jest.fn()}
+      />
+    )
+
+    expect(logsContainer.scrollTop).toBe(240)
   })
 
   it('renders recovery actions and highlights the error log', async () => {

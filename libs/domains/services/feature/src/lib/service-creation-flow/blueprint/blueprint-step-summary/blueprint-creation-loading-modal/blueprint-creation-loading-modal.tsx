@@ -1,5 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type EnvironmentLogs } from 'qovery-typescript-axios'
+import { useLayoutEffect, useRef } from 'react'
 import { LogsType } from '@qovery/shared/enums'
 import { Ansi, Button, Heading, Icon, Skeleton } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -20,6 +21,14 @@ export function BlueprintCreationLoadingModal({
   serviceName,
 }: BlueprintCreationLoadingModalProps) {
   const hasError = logs.some((log) => log.type === LogsType.ERROR)
+  const logsContainerRef = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    const logsContainer = logsContainerRef.current
+    if (!logsContainer || logs.length === 0) return
+
+    logsContainer.scrollTop = logsContainer.scrollHeight
+  }, [logs])
 
   return (
     <Dialog.Root open={open} onOpenChange={() => undefined}>
@@ -57,6 +66,7 @@ export function BlueprintCreationLoadingModal({
           </div>
 
           <div
+            ref={logsContainerRef}
             className="min-h-0 flex-1 overflow-auto bg-surface-neutral-subtle py-3 font-code text-xs leading-5 text-neutral"
             role="log"
           >
