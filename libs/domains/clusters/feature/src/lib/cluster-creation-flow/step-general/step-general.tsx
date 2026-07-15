@@ -32,7 +32,8 @@ export interface StepGeneralProps extends PropsWithChildren {
 export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGeneralProps) {
   useDocumentTitle('General - Create Cluster')
 
-  const { generalData, setGeneralData, setResourcesData, setCurrentStep } = useClusterContainerCreateContext()
+  const { generalData, setGeneralData, setResourcesData, setCurrentStep, isEngineV2SelfManaged } =
+    useClusterContainerCreateContext()
 
   const methods = useForm<ClusterGeneralData>({
     defaultValues: { installation_type: 'LOCAL_DEMO', production: false, ...generalData },
@@ -47,11 +48,11 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
   }, [generalData, methods])
 
   useEffect(() => {
-    const stepIndex = steps(generalData).findIndex((step) => step.key === 'general') + 1
+    const stepIndex = steps(generalData, isEngineV2SelfManaged).findIndex((step) => step.key === 'general') + 1
     if (stepIndex > 0) {
       setCurrentStep(stepIndex)
     }
-  }, [setCurrentStep, generalData])
+  }, [setCurrentStep, generalData, isEngineV2SelfManaged])
 
   const { control, formState, watch } = methods
 
@@ -111,6 +112,9 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
 
   const watchCloudProvider = watch('cloud_provider')
   const watchInstallationType = watch('installation_type')
+  const isSelfManagedAwsCreation = Boolean(isEngineV2SelfManaged) && watchCloudProvider === 'AWS'
+  const showExtraTags =
+    watchCloudProvider === 'AWS' && watchInstallationType !== 'PARTIALLY_MANAGED' && !isSelfManagedAwsCreation
 
   useEffect(() => {
     const provider = cloudProviders?.filter((cloud) => cloud.short_name === watchCloudProvider && cloud.regions)[0]
@@ -160,10 +164,10 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
           <form onSubmit={handleSubmit}>
             <Section className="mb-10">
               <Heading className="mb-4">General</Heading>
-              <ClusterGeneralSettings />
+              <ClusterGeneralSettings hideDescription={isSelfManagedAwsCreation} />
             </Section>
             <Section className="mb-10">
-              <Heading className="mb-3">Provider credentials</Heading>
+              <Heading className="mb-3">{isEngineV2SelfManaged ? 'Provider details' : 'Provider credentials'}</Heading>
               {cloudProviders.length > 0 ? (
                 <>
                   <Controller
@@ -220,49 +224,52 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
                             : (currentProvider.short_name as CloudProviderEnum)
                         }
                         isSetting={false}
+                        requiresEcrAccess={isSelfManagedAwsCreation}
                       />
 
-                      <Callout.Root className="mb-5 mt-10 grid grid-cols-[40px_auto] gap-4" color="neutral">
-                        <Callout.Icon className="w-10 text-4xl">
-                          <Icon name="KUBERNETES" className="w-full" />
-                        </Callout.Icon>
+                      {watchInstallationType !== 'SELF_MANAGED' ? (
+                        <Callout.Root className="mb-5 mt-10 grid grid-cols-[40px_auto] gap-4" color="neutral">
+                          <Callout.Icon className="w-10 text-4xl">
+                            <Icon name="KUBERNETES" className="w-full" />
+                          </Callout.Icon>
 
-                        <Callout.Text>
-                          <div className="flex flex-col gap-3">
-                            <div className="flex flex-col gap-1">
-                              <p className="text-base font-semibold">
-                                A fully managed Kubernetes cluster will be deployed
-                                <br />
-                                on your{' '}
-                                {match(currentProvider.short_name as Exclude<CloudProviderEnum, 'ON_PREMISE'>)
-                                  .with('AWS', () => 'AWS account (EKS)')
-                                  .with('SCW', () => 'Scaleway account (Kapsule)')
-                                  .with('AZURE', () => 'Azure account (AKS)')
-                                  .with('GCP', () => 'GCP account (Autopilot GKE)')
-                                  .exhaustive()}
+                          <Callout.Text>
+                            <div className="flex flex-col gap-3">
+                              <div className="flex flex-col gap-1">
+                                <p className="text-base font-semibold">
+                                  A fully managed Kubernetes cluster will be deployed
+                                  <br />
+                                  on your{' '}
+                                  {match(currentProvider.short_name as Exclude<CloudProviderEnum, 'ON_PREMISE'>)
+                                    .with('AWS', () => 'AWS account (EKS)')
+                                    .with('SCW', () => 'Scaleway account (Kapsule)')
+                                    .with('AZURE', () => 'Azure account (AKS)')
+                                    .with('GCP', () => 'GCP account (Autopilot GKE)')
+                                    .exhaustive()}
+                                </p>
+                                <ul className="list-disc pl-3 text-neutral-subtle">
+                                  <li>High-availability infrastructure deployed across multiple zones</li>
+                                  <li>Customizable resources (in the next steps)</li>
+                                  <li>No Kubernetes expertise required</li>
+                                </ul>
+                              </div>
+                            </div>
+                          </Callout.Text>
+
+                          <div className="col-span-2 flex items-start gap-4 rounded border border-info-component bg-surface-info-subtle p-3 pl-4">
+                            <Icon iconName="circle-info" iconStyle="regular" className="text-base text-info" />
+
+                            <div className="flex flex-col gap-0.5 text-neutral">
+                              <p className="font-medium">Qovery manages this cluster for you</p>
+                              <p className="text-neutral-subtle">
+                                Secure, stable, and optimized environment with continuous security patches and proactive
+                                health monitoring. Qovery performs weekly maintenance following a staged rollout to
+                                minimize risk.
                               </p>
-                              <ul className="list-disc pl-3 text-neutral-subtle">
-                                <li>High-availability infrastructure deployed across multiple zones</li>
-                                <li>Customizable resources (in the next steps)</li>
-                                <li>No Kubernetes expertise required</li>
-                              </ul>
                             </div>
                           </div>
-                        </Callout.Text>
-
-                        <div className="col-span-2 flex items-start gap-4 rounded border border-info-component bg-surface-info-subtle p-3 pl-4">
-                          <Icon iconName="circle-info" iconStyle="regular" className="text-base text-info" />
-
-                          <div className="flex flex-col gap-0.5 text-neutral">
-                            <p className="font-medium">Qovery manages this cluster for you</p>
-                            <p className="text-neutral-subtle">
-                              Secure, stable, and optimized environment with continuous security patches and proactive
-                              health monitoring. Qovery performs weekly maintenance following a staged rollout to
-                              minimize risk.
-                            </p>
-                          </div>
-                        </div>
-                      </Callout.Root>
+                        </Callout.Root>
+                      ) : null}
                     </>
                   )}
                 </>
@@ -273,7 +280,7 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
               )}
             </Section>
 
-            {watchCloudProvider === 'AWS' && watchInstallationType !== 'PARTIALLY_MANAGED' && (
+            {showExtraTags && (
               <Section className="mb-10 gap-3">
                 <Heading>Extra tags</Heading>
                 {labelsSetting}

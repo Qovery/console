@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { match } from 'ts-pattern'
-import { StepGeneral } from '@qovery/domains/clusters/feature'
+import { StepGeneral, useClusterContainerCreateContext } from '@qovery/domains/clusters/feature'
 import { LabelSetting } from '@qovery/domains/organizations/feature'
 import { type ClusterGeneralData } from '@qovery/shared/interfaces'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -13,12 +13,15 @@ function General() {
   useDocumentTitle('General - Create Cluster')
   const { organizationId = '', slug } = useParams({ strict: false })
   const navigate = useNavigate()
+  const { isEngineV2SelfManaged } = useClusterContainerCreateContext()
 
   const creationFlowUrl = `/organization/${organizationId}/cluster/create/${slug}`
 
   const handleSubmit = (data: ClusterGeneralData) => {
     match(data)
-      .with({ installation_type: 'SELF_MANAGED' }, () => navigate({ to: `${creationFlowUrl}/kubeconfig` }))
+      .with({ installation_type: 'SELF_MANAGED' }, () =>
+        navigate({ to: `${creationFlowUrl}/${isEngineV2SelfManaged ? 'platform' : 'kubeconfig'}` })
+      )
       .with({ installation_type: 'MANAGED', cloud_provider: 'GCP' }, () =>
         navigate({ to: `${creationFlowUrl}/features` })
       )

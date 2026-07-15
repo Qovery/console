@@ -15,6 +15,7 @@ import {
   KubernetesEnum,
   OrganizationMainCallsApi,
   SecretManagerAccessApi,
+  type SelfManagedClusterRequest,
 } from 'qovery-typescript-axios'
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
@@ -205,6 +206,16 @@ export const clusters = createQueryKeys('clusters', {
 export const mutations = {
   async createCluster({ organizationId, clusterRequest }: { organizationId: string; clusterRequest: ClusterRequest }) {
     const response = await clusterApi.createCluster(organizationId, clusterRequest)
+    return response.data
+  },
+  async createSelfManagedCluster({
+    organizationId,
+    selfManagedClusterRequest,
+  }: {
+    organizationId: string
+    selfManagedClusterRequest: SelfManagedClusterRequest
+  }) {
+    const response = await clusterApi.createSelfManagedCluster(organizationId, selfManagedClusterRequest)
     return response.data
   },
   async editCluster({

@@ -6,10 +6,11 @@ import { GkeKmsKey } from '../gcp-kms-key/gke-kms-key'
 
 export interface ClusterGeneralSettingsProps {
   fromDetail?: boolean
+  hideDescription?: boolean
 }
 
 export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
-  const { fromDetail } = props
+  const { fromDetail, hideDescription } = props
   const { control, setValue, watch } = useFormContext<ClusterGeneralData>()
   const { isQoveryAdminUser } = useUserRole()
 
@@ -41,20 +42,22 @@ export function ClusterGeneralSettings(props: ClusterGeneralSettingsProps) {
           />
         )}
       />
-      <Controller
-        name="description"
-        control={control}
-        render={({ field }) => (
-          <InputTextArea
-            className={`${!fromDetail ? 'mb-3' : 'mb-5'}`}
-            dataTestId="input-description"
-            name={field.name}
-            onChange={field.onChange}
-            value={field.value}
-            label="Description"
-          />
-        )}
-      />
+      {!hideDescription && (
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <InputTextArea
+              className={`${!fromDetail ? 'mb-3' : 'mb-5'}`}
+              dataTestId="input-description"
+              name={field.name}
+              onChange={field.onChange}
+              value={field.value}
+              label="Description"
+            />
+          )}
+        />
+      )}
       <Controller
         name="production"
         control={control}

@@ -2,7 +2,11 @@ import { Outlet, createFileRoute, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { match } from 'ts-pattern'
-import { useCluster } from '@qovery/domains/clusters/feature'
+import {
+  PLATFORM_CONFIGURATION_FEATURE_FLAG,
+  useCluster,
+  useClusterPlatformConfiguration,
+} from '@qovery/domains/clusters/feature'
 import { Sidebar } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
@@ -14,6 +18,11 @@ function RouteComponent() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const isEksAnywhereEnabled = useFeatureFlagEnabled('eks-anywhere')
+  const isPlatformConfigurationEnabled = useFeatureFlagEnabled(PLATFORM_CONFIGURATION_FEATURE_FLAG)
+  const { data: platformConfiguration } = useClusterPlatformConfiguration({
+    clusterId,
+    enabled: Boolean(isPlatformConfigurationEnabled),
+  })
 
   const pathSettings = `/organization/${organizationId}/cluster/${clusterId}/settings`
 
@@ -71,6 +80,12 @@ function RouteComponent() {
     icon: 'gears' as const,
   }
 
+  const platformConfigurationLink = {
+    title: 'Platform configuration',
+    to: `${pathSettings}/platform`,
+    icon: 'layer-group' as const,
+  }
+
   const dangerZoneLink = {
     title: 'Danger zone',
     to: `${pathSettings}/danger-zone`,
@@ -78,6 +93,11 @@ function RouteComponent() {
   }
 
   const eksAnywhereCluster = isEksAnywhereEnabled && cluster?.kubernetes === 'PARTIALLY_MANAGED'
+  const hasPlatformConfiguration = Boolean(
+    platformConfiguration?.platform.templateKey && platformConfiguration.platform.templateVersion
+  )
+  const platformConfigurationLinks =
+    isPlatformConfigurationEnabled && hasPlatformConfiguration ? [platformConfigurationLink] : []
 
   const LINKS_SETTINGS = match(cluster)
     .with({ kubernetes: 'SELF_MANAGED' }, () => [
@@ -85,6 +105,7 @@ function RouteComponent() {
       dnsProviderLink,
       imageRegistryLink,
       advancedSettingsLink,
+      ...platformConfigurationLinks,
       dangerZoneLink,
     ])
     .with(
@@ -101,6 +122,7 @@ function RouteComponent() {
           dnsProviderLink,
           addonsLink,
           ...(eksAnywhereCluster ? [] : [advancedSettingsLink]),
+          ...platformConfigurationLinks,
           dangerZoneLink,
         ]
       }
@@ -113,6 +135,7 @@ function RouteComponent() {
       networkLink,
       dnsProviderLink,
       advancedSettingsLink,
+      ...platformConfigurationLinks,
       dangerZoneLink,
     ])
     .with({ cloud_provider: 'GCP' }, () => [
@@ -123,6 +146,7 @@ function RouteComponent() {
       dnsProviderLink,
       addonsLink,
       advancedSettingsLink,
+      ...platformConfigurationLinks,
       dangerZoneLink,
     ])
     .with({ cloud_provider: 'AZURE' }, () => [
@@ -133,6 +157,7 @@ function RouteComponent() {
       networkLink,
       dnsProviderLink,
       advancedSettingsLink,
+      ...platformConfigurationLinks,
       dangerZoneLink,
     ])
     .otherwise(() => [])
