@@ -69,7 +69,7 @@ const TerraformConfigurationSettingsWrapper = () => {
           description="Customize the resources assigned to the service."
         />
         <div className="max-w-content-with-navigation-left">
-          <TerraformConfigurationSettings methods={methods} />
+          <TerraformConfigurationSettings methods={methods} isSettings />
           <div className="mt-10 flex justify-end">
             <Button
               type="submit"
