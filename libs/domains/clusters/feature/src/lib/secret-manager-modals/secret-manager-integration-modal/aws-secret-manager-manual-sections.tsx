@@ -181,7 +181,10 @@ function AwsManualAuthenticationModeSections({
 }
 
 function AwsAssumeRoleSections({ cluster, methods, option, regions }: AwsManualAuthenticationModeSectionsProps) {
-  const templateURL = `https://s3.amazonaws.com/cloudformation-aws-secrets-manager-role/template.json`
+  const templateURL =
+    option.value === 'AWS_PARAMETER_STORE'
+      ? 'https://s3.amazonaws.com/cloudformation-aws-parameter-store-role/template.json'
+      : 'https://s3.amazonaws.com/cloudformation-aws-secrets-manager-role/template.json'
   const providerURL = match(cluster?.infrastructure_outputs)
     .with({ kind: 'GKE' }, { kind: 'SCW_KAPSULE' }, P.nullish, () => '')
     .otherwise((o) => o.cluster_oidc_issuer)
