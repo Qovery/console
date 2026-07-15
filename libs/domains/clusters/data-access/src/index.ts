@@ -1,4 +1,6 @@
 export * from './lib/domains-clusters-data-access'
+export * from './lib/cluster-operator/cluster-operator'
+export * from './lib/platform-configuration/platform-configuration'
 export { isGcpCluster } from './lib/cluster-checks/is-gcp-cluster'
 export { isAwsCluster } from './lib/cluster-checks/is-aws-cluster'
 export { excludeSecretManagerAccess } from './lib/secret-manager/exclude-secret-manager-access'

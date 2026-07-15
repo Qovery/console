@@ -1,4 +1,4 @@
-import { Link, useParams } from '@tanstack/react-router'
+import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import Azure from 'devicon/icons/azure/azure-original.svg'
 import DigitalOcean from 'devicon/icons/digitalocean/digitalocean-original.svg'
@@ -16,6 +16,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import { AddCreditCardModalFeature } from '../../add-credit-card-modal-feature/add-credit-card-modal-feature'
 import { ClusterInstallationGuideModal } from '../../cluster-installation-guide-modal/cluster-installation-guide-modal'
 import { useClusterCreationRestriction } from '../../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction'
+import { PLATFORM_CONFIGURATION_FEATURE_FLAG } from '../../platform-configuration/platform-configuration-feature-flag'
 
 const Qovery = '/assets/logos/logo-icon.svg'
 
@@ -40,7 +41,8 @@ type CardOptionProps = RestrictedActionProps & {
       }
     | {
         selectedInstallationType: 'self-managed'
-        openInstallationGuideModal: () => void
+        onSelect: () => void
+        opensInstallationGuide: boolean
       }
     | {
         selectedInstallationType: 'partially-managed'
@@ -109,28 +111,34 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
     : undefined
 
   return match(props)
-    .with({ selectedInstallationType: 'self-managed' }, ({ selectedInstallationType, openInstallationGuideModal }) => (
-      <button
-        type="button"
-        aria-disabled={disabled}
-        className={twMerge(baseClassNames, disabledClassNames)}
-        onClick={(e) => {
-          e.preventDefault()
-          if (disabled) {
-            onDisabledClick?.()
-            return
-          }
-          handleAnalytics(selectedInstallationType)
-          openInstallationGuideModal()
-        }}
-      >
-        {renderIcon(disabled ? 'opacity-60' : undefined)}
-        {renderContent()}
-        <span className="absolute right-5 top-5">
-          <Icon iconName="arrow-up-right" className={disabled ? 'text-neutral-disabled' : 'text-neutral-subtle'} />
-        </span>
-      </button>
-    ))
+    .with(
+      { selectedInstallationType: 'self-managed' },
+      ({ selectedInstallationType, onSelect, opensInstallationGuide }) => (
+        <button
+          type="button"
+          aria-disabled={disabled}
+          className={twMerge(baseClassNames, disabledClassNames)}
+          onClick={(e) => {
+            e.preventDefault()
+            if (disabled) {
+              onDisabledClick?.()
+              return
+            }
+            handleAnalytics(selectedInstallationType)
+            onSelect()
+          }}
+        >
+          {renderIcon(disabled ? 'opacity-60' : undefined)}
+          {renderContent()}
+          <span className="absolute right-5 top-5">
+            <Icon
+              iconName={opensInstallationGuide ? 'arrow-up-right' : 'chevron-right'}
+              className={disabled ? 'text-neutral-disabled' : 'text-neutral-subtle'}
+            />
+          </span>
+        </button>
+      )
+    )
     .with({ selectedInstallationType: 'managed' }, ({ selectedInstallationType }) =>
       disabled ? (
         <button
@@ -408,7 +416,9 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
 
 export function ClusterNew() {
   const { organizationId = '' } = useParams({ strict: false })
+  const navigate = useNavigate()
   const { openModal, closeModal } = useModal()
+  const isEngineV2Enabled = useFeatureFlagEnabled(PLATFORM_CONFIGURATION_FEATURE_FLAG)
   const { isClusterCreationRestricted, isNoCreditCardRestriction } = useClusterCreationRestriction({
     organizationId,
   })
@@ -429,6 +439,18 @@ export function ClusterNew() {
         />
       ),
     })
+
+  const selectSelfManaged = (cloudProvider: CloudProviderEnum) => {
+    if (!isEngineV2Enabled) {
+      openInstallationGuideModal()
+      return
+    }
+
+    navigate({
+      to: '/organization/$organizationId/cluster/create/$slug',
+      params: { organizationId, slug: `${cloudProvider.toLowerCase()}-self-managed` },
+    })
+  }
 
   const openCreditCardModal = () =>
     openModal({
@@ -470,7 +492,8 @@ export function ClusterNew() {
           icon: <Icon name="AWS" />,
           selectedCloudProvider: 'AWS',
           selectedInstallationType: 'self-managed',
-          openInstallationGuideModal,
+          onSelect: () => selectSelfManaged(CloudProviderEnum.AWS),
+          opensInstallationGuide: !isEngineV2Enabled,
           ...disabledCloudProviderProps,
         },
         {
@@ -505,7 +528,8 @@ export function ClusterNew() {
           icon: <Icon name="GCP" />,
           selectedCloudProvider: 'GCP',
           selectedInstallationType: 'self-managed',
-          openInstallationGuideModal,
+          onSelect: () => selectSelfManaged(CloudProviderEnum.GCP),
+          opensInstallationGuide: !isEngineV2Enabled,
           ...disabledCloudProviderProps,
         },
       ],
@@ -531,7 +555,8 @@ export function ClusterNew() {
           icon: <Icon name="SCW" />,
           selectedCloudProvider: 'SCW',
           selectedInstallationType: 'self-managed',
-          openInstallationGuideModal,
+          onSelect: () => selectSelfManaged(CloudProviderEnum.SCW),
+          opensInstallationGuide: !isEngineV2Enabled,
           ...disabledCloudProviderProps,
         },
       ],
@@ -557,7 +582,8 @@ export function ClusterNew() {
           icon: <Icon name="AZURE" />,
           selectedCloudProvider: 'AZURE',
           selectedInstallationType: 'self-managed',
-          openInstallationGuideModal,
+          onSelect: () => selectSelfManaged(CloudProviderEnum.AZURE),
+          opensInstallationGuide: !isEngineV2Enabled,
           ...disabledCloudProviderProps,
         },
       ],

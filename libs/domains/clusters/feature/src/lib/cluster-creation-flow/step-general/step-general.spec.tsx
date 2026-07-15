@@ -83,6 +83,8 @@ const defaultProps: StepGeneralProps = {
 describe('StepGeneral', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockContextValue.generalData = undefined
+    mockContextValue.isEngineV2SelfManaged = false
     useCloudProvidersMockSpy.mockReturnValue({
       data: [
         {
@@ -101,6 +103,7 @@ describe('StepGeneral', () => {
     expect(screen.getByTestId('input-name')).toBeInTheDocument()
     expect(screen.getByTestId('input-description')).toBeInTheDocument()
     expect(screen.getByTestId('input-cloud-provider')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Provider credentials' })).toBeInTheDocument()
   })
 
   it('should show loader when cloud providers are not loaded', () => {
@@ -115,6 +118,22 @@ describe('StepGeneral', () => {
     renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
 
     expect(screen.getByTestId('button-submit')).toBeDisabled()
+  })
+
+  it('should require cloud credentials for an Engine v2 self-managed cluster', () => {
+    mockContextValue.generalData = {
+      installation_type: 'SELF_MANAGED',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'us-east-1',
+      production: false,
+    }
+    mockContextValue.isEngineV2SelfManaged = true
+
+    renderWithProviders(<StepGeneral {...defaultProps} />, { wrapper: Wrapper })
+
+    expect(screen.getByTestId('input-credentials')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Provider details' })).toBeInTheDocument()
+    expect(screen.queryByText(/A fully managed Kubernetes cluster will be deployed/)).not.toBeInTheDocument()
   })
 
   it('should display an ARM badge for GCP regions with ARM support', async () => {

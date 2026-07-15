@@ -3,8 +3,22 @@ import {
   type BlueprintManifestResponseResultsInner,
   type BlueprintManifestVariableField,
 } from 'qovery-typescript-axios'
+import {
+  type CatalogVariableField,
+  type CatalogVariableValue,
+  formatCatalogKey,
+  getCatalogBooleanValue,
+  getCatalogFieldLengthValidationError,
+  getCatalogFieldValidationError,
+  getCatalogStringValue,
+  getCatalogSummaryFieldValue,
+  getCatalogVariableValue,
+  isCatalogFieldValid,
+  isCatalogFieldValueFulfilled,
+  isCatalogFieldValueMatchingPattern,
+} from '@qovery/shared/util-js'
 
-export type BlueprintFieldValue = string | boolean
+export type BlueprintFieldValue = CatalogVariableValue
 export type BlueprintFieldValues = Record<string, BlueprintFieldValue>
 export type BlueprintFieldPath = `fields.${string}`
 
@@ -17,13 +31,30 @@ export function getBlueprintFieldPath(name: string): BlueprintFieldPath {
 }
 
 export function formatFieldLabel(name: string) {
-  const label = name.replace(/_/g, ' ')
-  return `${label.charAt(0).toUpperCase()}${label.slice(1)}`
+  return formatCatalogKey(name)
+}
+
+export function toCatalogVariableField(field: BlueprintManifestVariableField, label?: string): CatalogVariableField {
+  return {
+    key: field.name,
+    label: label ?? formatFieldLabel(field.name),
+    type: field.type.type,
+    description: field.description ?? undefined,
+    required: field.required,
+    sensitive: field.is_secret,
+    defaultValue: field.default_value ?? undefined,
+    allowedValues: field.allowed_values ?? undefined,
+    pattern: field.type.pattern ?? undefined,
+    minLength: field.type.min_length ?? undefined,
+    maxLength: field.type.max_length ?? undefined,
+    min: field.type.min ?? undefined,
+    max: field.type.max ?? undefined,
+  }
 }
 
 export function getDefaultFieldValue(field: BlueprintManifestVariableField): BlueprintFieldValue {
-  if (field.type.type === 'bool') return field.default_value === 'true'
-  return field.default_value ?? ''
+  const defaultValue = getCatalogVariableValue({ type: field.type.type, defaultValue: field.default_value }, undefined)
+  return defaultValue ?? (field.type.type === 'bool' ? false : '')
 }
 
 export function getDefaultContextFieldValue(field: BlueprintManifestContextVariableField): BlueprintFieldValue {
@@ -45,62 +76,37 @@ export function getDefaultBlueprintFieldValues(blueprintManifestFields: Blueprin
 }
 
 export function getStringFieldValue(value: BlueprintFieldValue | undefined) {
-  return typeof value === 'string' ? value : ''
+  return getCatalogStringValue(value)
 }
 
 export function getBooleanFieldValue(value: BlueprintFieldValue | undefined) {
-  return typeof value === 'boolean' ? value : false
+  return getCatalogBooleanValue(value)
 }
 
 export function isFieldValueFulfilled(value: BlueprintFieldValue | undefined) {
-  if (typeof value === 'boolean') return true
-  return Boolean(value?.trim())
+  return isCatalogFieldValueFulfilled(value)
 }
 
 export function isFieldValueMatchingPattern(
   field: BlueprintManifestVariableField,
   value: BlueprintFieldValue | undefined
 ) {
-  if (typeof value !== 'string' || !value || !field.type.pattern) return true
-
-  try {
-    return new RegExp(field.type.pattern).test(value)
-  } catch {
-    return true
-  }
+  return isCatalogFieldValueMatchingPattern(toCatalogVariableField(field), value)
 }
 
 export function getFieldLengthValidationError(
   field: BlueprintManifestVariableField,
   value: BlueprintFieldValue | undefined
 ) {
-  if (typeof value !== 'string' || !value) return undefined
-
-  const { min_length: minLength, max_length: maxLength } = field.type
-  const hasMinLength = typeof minLength === 'number'
-  const hasMaxLength = typeof maxLength === 'number'
-
-  if (hasMinLength && hasMaxLength && (value.length < minLength || value.length > maxLength)) {
-    return `Value must be between ${minLength} and ${maxLength} characters.`
-  }
-
-  if (hasMinLength && value.length < minLength) return `Value must be at least ${minLength} characters.`
-  if (hasMaxLength && value.length > maxLength) return `Value must be at most ${maxLength} characters.`
-
-  return undefined
+  return getCatalogFieldLengthValidationError(toCatalogVariableField(field), value)
 }
 
 export function getFieldValidationError(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
-  const lengthValidationError = getFieldLengthValidationError(field, value)
-  if (lengthValidationError) return lengthValidationError
-
-  if (!isFieldValueMatchingPattern(field, value)) return 'Value does not match the expected format.'
-  return undefined
+  return getCatalogFieldValidationError(toCatalogVariableField(field), value)
 }
 
 export function isFieldValid(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
-  if (field.required && !isFieldValueFulfilled(value)) return false
-  return !getFieldValidationError(field, value)
+  return isCatalogFieldValid(toCatalogVariableField(field), value)
 }
 
 export function isVariableField(field: BlueprintManifestResponseResultsInner): field is BlueprintManifestVariableField {
@@ -129,7 +135,5 @@ export function getSummaryFieldValue(
   field: BlueprintManifestVariableField | OverridableBlueprintManifestContextVariableField,
   value: BlueprintFieldValue | undefined
 ) {
-  if (typeof value === 'boolean') return value ? 'Enabled' : 'Disabled'
-  if (field.kind === 'variable' && field.is_secret && value) return '••••••••'
-  return value
+  return getCatalogSummaryFieldValue({ sensitive: field.kind === 'variable' && field.is_secret }, value)
 }
