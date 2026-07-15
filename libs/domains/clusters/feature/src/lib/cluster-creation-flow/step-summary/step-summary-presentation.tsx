@@ -1,4 +1,8 @@
-import { type ClusterInstanceTypeResponseListResultsInner, type SecretManagerAccess } from 'qovery-typescript-axios'
+import {
+  type ClusterInstanceTypeResponseListResultsInner,
+  type ClusterPlatformBindingRequest,
+  type SecretManagerAccess,
+} from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import {
   CONTROL_PLANE_LABELS,
@@ -29,9 +33,12 @@ export interface StepSummaryPresentationProps {
   resourcesData: ClusterResourcesData
   featuresData?: ClusterFeaturesData
   addonsData: ClusterAddonsData
+  isEngineV2SelfManaged?: boolean
+  platformConfigurationData?: ClusterPlatformBindingRequest
   goToFeatures: () => void
   goToResources: () => void
   goToKubeconfig: () => void
+  goToPlatform?: () => void
   goToEksConfig: () => void
   goToGeneral: () => void
   goToAddons: () => void
@@ -119,9 +126,13 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
   return (
     <Section>
       <div className="mb-10">
-        <Heading className="mb-2">Ready to install your cluster</Heading>
+        <Heading className="mb-2">
+          {props.isEngineV2SelfManaged ? 'Ready to connect your cluster' : 'Ready to install your cluster'}
+        </Heading>
         <p className="text-sm text-neutral-subtle">
-          Here is what we will deploy, this action can take up to 30 minutes.
+          {props.isEngineV2SelfManaged
+            ? 'Review your configuration before creating the cluster and installing the Qovery operator.'
+            : 'Here is what we will deploy, this action can take up to 30 minutes.'}
         </p>
       </div>
 
@@ -292,25 +303,48 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
               </Section>
             )
           )
-          .with({ installation_type: 'SELF_MANAGED' }, () => (
-            <Section
-              data-testid="summary-kubeconfig"
-              className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4"
-            >
-              <div className="mr-2 flex-grow">
-                <Heading className="mb-3">Kubeconfig</Heading>
-                <ul className="list-none text-sm text-neutral-subtle">
-                  <li>
-                    <strong className="font-medium">Kubeconfig: </strong>
-                    {props.kubeconfigData?.file_name}
-                  </li>
-                </ul>
-              </div>
-              <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToKubeconfig}>
-                <Icon className="text-base" iconName="gear-complex" />
-              </Button>
-            </Section>
-          ))
+          .with({ installation_type: 'SELF_MANAGED' }, () =>
+            props.isEngineV2SelfManaged ? (
+              <Section
+                data-testid="summary-platform-layers"
+                className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4"
+              >
+                <div className="mr-2 flex-grow">
+                  <Heading className="mb-3">Platform layers</Heading>
+                  <ul className="list-none text-sm text-neutral-subtle">
+                    <li>
+                      <strong className="font-medium">Optional layers enabled: </strong>
+                      {Object.entries(props.platformConfigurationData?.layerSelections ?? {})
+                        .filter(([, enabled]) => enabled)
+                        .map(([key]) => key)
+                        .join(', ') || 'None'}
+                    </li>
+                  </ul>
+                </div>
+                <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToPlatform}>
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </Section>
+            ) : (
+              <Section
+                data-testid="summary-kubeconfig"
+                className="mb-2 flex w-full flex-row rounded border border-neutral bg-surface-neutral-component p-4"
+              >
+                <div className="mr-2 flex-grow">
+                  <Heading className="mb-3">Kubeconfig</Heading>
+                  <ul className="list-none text-sm text-neutral-subtle">
+                    <li>
+                      <strong className="font-medium">Kubeconfig: </strong>
+                      {props.kubeconfigData?.file_name}
+                    </li>
+                  </ul>
+                </div>
+                <Button type="button" variant="outline" size="md" iconOnly onClick={props.goToKubeconfig}>
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </Section>
+            )
+          )
           .with({ installation_type: 'PARTIALLY_MANAGED' }, () => (
             <>
               <Section
@@ -713,23 +747,25 @@ export function StepSummaryPresentation(props: StepSummaryPresentationProps) {
             Back
           </Button>
           <div className="flex gap-2">
-            <Button
-              data-testid="button-create"
-              loading={props.isLoadingCreate}
-              onClick={() => props.onSubmit(false)}
-              size="lg"
-              color="neutral"
-              variant="surface"
-            >
-              Create
-            </Button>
+            {!props.isEngineV2SelfManaged ? (
+              <Button
+                data-testid="button-create"
+                loading={props.isLoadingCreate}
+                onClick={() => props.onSubmit(false)}
+                size="lg"
+                color="neutral"
+                variant="surface"
+              >
+                Create
+              </Button>
+            ) : null}
             <Button
               data-testid="button-create-deploy"
               loading={props.isLoadingCreateAndDeploy}
               onClick={() => props.onSubmit(true)}
               size="lg"
             >
-              Create and install
+              {props.isEngineV2SelfManaged ? 'Create and continue' : 'Create and install'}
             </Button>
           </div>
         </div>

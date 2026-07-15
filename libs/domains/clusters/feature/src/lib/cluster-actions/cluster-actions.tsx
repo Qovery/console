@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type Cluster,
   type ClusterStatus,
@@ -28,6 +29,8 @@ import { useEksAnywhereClusterJwt } from '../hooks/use-eks-anywhere-cluster-jwt/
 import { useStopCluster } from '../hooks/use-stop-cluster/use-stop-cluster'
 import { useUpdateEksAnywhereCommit } from '../hooks/use-update-eks-anywhere-commit/use-update-eks-anywhere-commit'
 import { useUpgradeCluster } from '../hooks/use-upgrade-cluster/use-upgrade-cluster'
+import { usePlatformBinding } from '../platform-configuration/hooks/use-platform-binding'
+import { PLATFORM_CONFIGURATION_FEATURE_FLAG } from '../platform-configuration/platform-configuration-feature-flag'
 import { SelectEksAnywhereCommitModal } from './select-eks-anywhere-commit-modal'
 
 type ActionToolbarVariant = 'default' | 'header' | 'card'
@@ -66,6 +69,7 @@ function MenuManageDeployment({
     cluster.kubernetes !== 'PARTIALLY_MANAGED'
   const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
   const isEksAnywhereCluster = cluster.kubernetes === 'PARTIALLY_MANAGED'
+  const isSelfManagedCluster = cluster.kubernetes === 'SELF_MANAGED'
   const hasEksAnywhereGitRepository = Boolean(
     cluster.infrastructure_charts_parameters?.eks_anywhere_parameters?.git_repository?.url
   )
@@ -77,7 +81,11 @@ function MenuManageDeployment({
     isEksAnywhereCluster &&
     hasEksAnywhereGitRepository &&
     (isDeployAvailable(clusterStatus.status) || isRedeployAvailable(clusterStatus.status))
-  const deployActionLabel = isEksAnywhereCluster ? 'Update' : clusterStatus.is_deployed ? 'Deploy' : 'Install'
+  const deployActionLabel = isEksAnywhereCluster
+    ? 'Update'
+    : isSelfManagedCluster || clusterStatus.is_deployed
+      ? 'Deploy'
+      : 'Install'
   const actionButtonVariant = hasTextActionButton ? 'solid' : 'outline'
   const actionButtonColor =
     clusterNeedUpdate || k8sUpdateAvailable ? 'yellow' : hasTextActionButton ? 'brand' : 'neutral'
@@ -182,11 +190,11 @@ function MenuManageDeployment({
       <DropdownMenu.Item
         key="1"
         icon={<Icon iconName="rotate-right" />}
-        onSelect={mutationUpdate}
+        onSelect={isSelfManagedCluster ? mutationDeploy : mutationUpdate}
         className="relative"
         color={clusterNeedUpdate ? 'yellow' : 'brand'}
       >
-        Update
+        {isSelfManagedCluster ? 'Deploy' : 'Update'}
         {tooltipClusterNeedUpdate}
       </DropdownMenu.Item>
     ),
@@ -417,11 +425,22 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
   const navigate = useNavigate()
   const location = useLocation()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
+  const isPlatformConfigurationEnabled = Boolean(useFeatureFlagEnabled(PLATFORM_CONFIGURATION_FEATURE_FLAG))
+  const isSelfManaged = cluster.kubernetes === 'SELF_MANAGED'
   const { openModal, closeModal } = useModal()
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })
+  const { data: platformBinding } = usePlatformBinding({
+    organizationId: cluster.organization.id,
+    clusterId: cluster.id,
+    enabled: isPlatformConfigurationEnabled && isSelfManaged,
+  })
+  const isEngineV2SelfManaged =
+    isPlatformConfigurationEnabled &&
+    isSelfManaged &&
+    Boolean(platformBinding?.templateKey && platformBinding.templateVersion)
 
   const searchParams = useMemo(() => {
     // @ts-expect-error TODO needs to be fixed
@@ -470,10 +489,15 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
     return () => (bool ? closeModal() : undefined)
   }, [searchParams, location.search, location.pathname, cluster.kubernetes, closeModal, openInstallationGuideModal])
 
-  const primaryActionButton = match(cluster)
+  const installationGuideButton = match(cluster)
     .with({ cloud_provider: P.not('ON_PREMISE'), kubernetes: 'SELF_MANAGED' }, () => (
       <Tooltip content="Installation guide">
-        <Button onClick={() => openInstallationGuideModal()} iconOnly size={variant === 'default' ? 'sm' : 'md'}>
+        <Button
+          aria-label="Installation guide"
+          onClick={() => openInstallationGuideModal()}
+          iconOnly
+          size={variant === 'default' ? 'sm' : 'md'}
+        >
           <Icon iconName="circle-info" />
         </Button>
       </Tooltip>
@@ -481,6 +505,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
     .with({ cloud_provider: 'ON_PREMISE', kubernetes: 'SELF_MANAGED' }, () => (
       <Tooltip content="Installation guide">
         <Button
+          aria-label="Installation guide"
           onClick={() => openInstallationGuideModal({ type: 'ON_PREMISE' })}
           color={!runningStatus ? 'yellow' : 'neutral'}
           variant="outline"
@@ -491,7 +516,17 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
         </Button>
       </Tooltip>
     ))
-    .otherwise(() => <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />)
+    .otherwise(() => null)
+  const primaryActionButton = isSelfManaged ? (
+    <>
+      {isEngineV2SelfManaged ? (
+        <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />
+      ) : null}
+      {installationGuideButton}
+    </>
+  ) : (
+    <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />
+  )
   const logsButton =
     variant === 'card' && cluster.kubernetes !== 'SELF_MANAGED' ? (
       <Tooltip content="Logs">
