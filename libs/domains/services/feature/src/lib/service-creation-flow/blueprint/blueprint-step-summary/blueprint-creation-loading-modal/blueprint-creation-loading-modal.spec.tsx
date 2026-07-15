@@ -12,6 +12,20 @@ const errorLog = {
 } as EnvironmentLogs
 
 describe('BlueprintCreationLoadingModal', () => {
+  it('renders log skeletons while waiting for the first log', () => {
+    renderWithProviders(
+      <BlueprintCreationLoadingModal
+        logs={[]}
+        open
+        serviceName="postgres"
+        onEditConfig={jest.fn()}
+        onRetry={jest.fn()}
+      />
+    )
+
+    expect(screen.getByLabelText('Waiting for creation logs')).toBeVisible()
+  })
+
   it('renders recovery actions and highlights the error log', async () => {
     const onEditConfig = jest.fn()
     const onRetry = jest.fn()

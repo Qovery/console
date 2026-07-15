@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type EnvironmentLogs } from 'qovery-typescript-axios'
 import { LogsType } from '@qovery/shared/enums'
-import { Ansi, Button, Heading, Icon } from '@qovery/shared/ui'
+import { Ansi, Button, Heading, Icon, Skeleton } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 
 export interface BlueprintCreationLoadingModalProps {
@@ -60,30 +60,49 @@ export function BlueprintCreationLoadingModal({
             className="min-h-0 flex-1 overflow-auto bg-surface-neutral-subtle py-3 font-code text-xs leading-5 text-neutral"
             role="log"
           >
-            <div className="flex flex-col gap-1">
-              {logs.map((log) => {
-                const isError = log.type === LogsType.ERROR
-                const message = isError ? log.error?.user_log_message : log.message?.safe_message
+            {logs.length === 0 ? (
+              <BlueprintCreationLogsSkeleton />
+            ) : (
+              <div className="flex flex-col gap-1">
+                {logs.map((log) => {
+                  const isError = log.type === LogsType.ERROR
+                  const message = isError ? log.error?.user_log_message : log.message?.safe_message
 
-                return (
-                  <div
-                    key={log.timestamp}
-                    className={isError ? 'bg-surface-negative-subtle px-5 text-negative' : 'px-5 text-neutral'}
-                  >
-                    <span
-                      className={isError ? 'mr-3 select-none text-negative' : 'mr-3 select-none text-neutral-subtle'}
+                  return (
+                    <div
+                      key={log.timestamp}
+                      className={isError ? 'bg-surface-negative-subtle px-5 text-negative' : 'px-5 text-neutral'}
                     >
-                      {dateFullFormat(log.timestamp, 'UTC', 'HH:mm:ss')}
-                    </span>
-                    <Ansi>{message}</Ansi>
-                  </div>
-                )
-              })}
-            </div>
+                      <span
+                        className={isError ? 'mr-3 select-none text-negative' : 'mr-3 select-none text-neutral-subtle'}
+                      >
+                        {dateFullFormat(log.timestamp, 'UTC', 'HH:mm:ss')}
+                      </span>
+                      <Ansi>{message}</Ansi>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
           </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
+  )
+}
+
+function BlueprintCreationLogsSkeleton() {
+  const lineWidths = ['64%', '48%', '72%', '56%', '68%', '42%', '76%', '52%', '62%', '44%', '70%', '58%']
+
+  return (
+    <div aria-label="Waiting for creation logs" className="flex flex-col gap-3 px-5 py-1">
+      {lineWidths.map((width, index) => (
+        <div key={`${width}-${index}`} className="flex items-center gap-3">
+          <Skeleton width={56} height={12} />
+          <Skeleton width={width} height={12} />
+        </div>
+      ))}
+    </div>
   )
 }
 
