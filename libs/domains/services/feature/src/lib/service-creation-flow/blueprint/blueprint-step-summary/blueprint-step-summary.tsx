@@ -246,7 +246,7 @@ export function BlueprintStepSummary() {
     setIsWaitingForServiceCreated(false)
     setIsBlueprintCreationFailed(false)
     setSubmitMode(null)
-    navigate({ to: `${creationFlowUrl}/overrides` }) // TODO [blueprints]: Should redirect to the main section, not "overrides"
+    navigate({ to: `${creationFlowUrl}/service-information` })
   }
 
   return (
