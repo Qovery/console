@@ -3,6 +3,7 @@ import { Controller, type UseFormReturn } from 'react-hook-form'
 import {
   Callout,
   CopyButton,
+  ExternalLink,
   Heading,
   Icon,
   InputSelect,
@@ -12,14 +13,25 @@ import {
   Section,
 } from '@qovery/shared/ui'
 import { useTerraformAvailableVersions } from '../hooks/use-terraform-available-versions/use-terraform-available-versions'
-import { type TerraformGeneralData } from '../terraform-general-data/terraform-general-data'
+import {
+  type DockerfileFragmentSource,
+  type TerraformGeneralData,
+} from '../terraform-general-data/terraform-general-data'
+import { DockerfileFragmentInlineSetting } from '../terraform-variables-settings/dockerfile-fragment-inline-setting/dockerfile-fragment-inline-setting'
 import { TERRAFORM_ENGINES } from '../utils/terraform-engines'
 
-export const TerraformConfigurationSettings = ({ methods }: { methods: UseFormReturn<TerraformGeneralData> }) => {
+export const TerraformConfigurationSettings = ({
+  methods,
+  isSettings = false,
+}: {
+  methods: UseFormReturn<TerraformGeneralData>
+  isSettings?: boolean
+}) => {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: versions = [], isLoading: isTerraformVersionLoading } = useTerraformAvailableVersions()
   const cliCommand = `qovery terraform setup-backend --terraform ${serviceId || '<SERVICE_ID>'}`
   const backend = methods.watch('backend')
+  const dockerfileFragmentSource = methods.watch('dockerfile_fragment_source') ?? 'none'
 
   return (
     <div className="space-y-10">
@@ -214,6 +226,105 @@ export const TerraformConfigurationSettings = ({ methods }: { methods: UseFormRe
           )}
         />
       </Section>
+
+      {isSettings ? (
+        <Section className="gap-4">
+          <div className="space-y-1">
+            <Heading level={2}>Dockerfile fragment</Heading>
+            <p className="text-sm text-neutral-subtle">
+              Install additional tools in the Terraform execution environment with custom Dockerfile commands.{' '}
+              <ExternalLink href="https://www.qovery.com/docs/configuration/terraform#file-based-fragment">
+                Learn more
+              </ExternalLink>
+            </p>
+          </div>
+
+          <Callout.Root color="neutral" className="p-4">
+            <Callout.Text className="w-full">
+              <Controller
+                name="dockerfile_fragment_source"
+                control={methods.control}
+                defaultValue={methods.getValues('dockerfile_fragment_source') ?? 'none'}
+                render={({ field }) => (
+                  <RadioGroup.Root
+                    className="flex flex-col gap-5"
+                    value={field.value}
+                    onValueChange={(value: DockerfileFragmentSource) => field.onChange(value)}
+                  >
+                    <label className="grid grid-cols-[16px_1fr] gap-3">
+                      <RadioGroup.Item value="none" />
+                      <div className="flex flex-col gap-1">
+                        <span className="font-medium">No fragment</span>
+                        <span className="text-sm text-neutral-subtle">
+                          Use the default Terraform image without modifications.
+                        </span>
+                      </div>
+                    </label>
+
+                    <div>
+                      <label className="grid grid-cols-[16px_1fr] gap-3">
+                        <RadioGroup.Item value="file" />
+                        <div className="flex flex-col gap-1">
+                          <span className="font-medium">Custom file path</span>
+                          <span className="text-sm text-neutral-subtle">
+                            Reference a Dockerfile fragment stored in your repository.
+                          </span>
+                        </div>
+                      </label>
+                      {dockerfileFragmentSource === 'file' ? (
+                        <div className="ml-7 mt-3">
+                          <Controller
+                            name="dockerfile_fragment_path"
+                            control={methods.control}
+                            rules={{
+                              required: 'File path is required',
+                              pattern: {
+                                value: /^\/[^/]+(\/[^/]+)*$/,
+                                message: 'Enter an absolute path starting with /',
+                              },
+                            }}
+                            render={({ field: pathField, fieldState: { error } }) => (
+                              <InputText
+                                name={pathField.name}
+                                type="text"
+                                onChange={pathField.onChange}
+                                value={pathField.value ?? ''}
+                                label="File path"
+                                error={error?.message}
+                                hint="Absolute path within the service root path, for example /terraform/custom-build.dockerfile"
+                              />
+                            )}
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+
+                    <div>
+                      <label className="grid grid-cols-[16px_1fr] gap-3">
+                        <RadioGroup.Item value="inline" />
+                        <div className="flex flex-col gap-1">
+                          <span className="font-medium">Inline content</span>
+                          <span className="text-sm text-neutral-subtle">Enter Dockerfile commands directly.</span>
+                        </div>
+                      </label>
+                      {dockerfileFragmentSource === 'inline' ? (
+                        <div className="ml-7 mt-3">
+                          <DockerfileFragmentInlineSetting
+                            content={methods.watch('dockerfile_fragment_content') ?? ''}
+                            onSubmit={(value) =>
+                              methods.setValue('dockerfile_fragment_content', value ?? '', { shouldDirty: true })
+                            }
+                          />
+                        </div>
+                      ) : null}
+                    </div>
+                  </RadioGroup.Root>
+                )}
+              />
+            </Callout.Text>
+          </Callout.Root>
+        </Section>
+      ) : null}
     </div>
   )
 }
