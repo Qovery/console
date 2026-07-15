@@ -1,4 +1,3 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   ClusterDeploymentStatusEnum,
   ClusterStateEnum,
@@ -15,7 +14,11 @@ const mockCluster = clusterFactoryMock(1)[0]
 const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockCopyToClipboard = jest.fn()
-const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.Mock
+const mockDeployCluster = jest.fn()
+const mockUseFeatureFlagEnabled = jest.fn((flag: string) => flag === 'cluster-deployment-history')
+const mockUsePlatformBinding = jest.fn(
+  (_props?: unknown): { data: { templateKey: string; templateVersion: string } | null } => ({ data: null })
+)
 let mockClusterStatus: ClusterStatus = {
   cluster_id: mockCluster.id,
   status: ClusterStateEnum.DEPLOYED,
@@ -23,7 +26,7 @@ let mockClusterStatus: ClusterStatus = {
 }
 
 jest.mock('posthog-js/react', () => ({
-  useFeatureFlagEnabled: jest.fn(() => true),
+  useFeatureFlagEnabled: (flag: string) => mockUseFeatureFlagEnabled(flag),
 }))
 
 jest.mock('react-router-dom', () => ({
@@ -57,10 +60,19 @@ jest.mock('@qovery/shared/util-hooks', () => ({
   useCopyToClipboard: () => [undefined, mockCopyToClipboard],
 }))
 
+jest.mock('../hooks/use-deploy-cluster/use-deploy-cluster', () => ({
+  useDeployCluster: () => ({ mutate: mockDeployCluster }),
+}))
+
+jest.mock('../platform-configuration/hooks/use-platform-binding', () => ({
+  usePlatformBinding: (props: unknown) => mockUsePlatformBinding(props),
+}))
+
 describe('ClusterActions', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    useFeatureFlagEnabledMock.mockReturnValue(true)
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'cluster-deployment-history')
+    mockUsePlatformBinding.mockReturnValue({ data: null })
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     mockClusterStatus = {
       cluster_id: mockCluster.id,
@@ -139,6 +151,75 @@ describe('ClusterActions', () => {
     await userEvent.click(buttonManageDeployment)
 
     expect(screen.getByText('Update another version')).toBeInTheDocument()
+  })
+
+  it.each([
+    { status: ClusterStateEnum.READY, isDeployed: false },
+    { status: ClusterStateEnum.DEPLOYED, isDeployed: true },
+  ])(
+    'should deploy an Engine v2 self-managed cluster in $status state when the feature flag is enabled',
+    async ({ status, isDeployed }) => {
+      mockUseFeatureFlagEnabled.mockReturnValue(true)
+      mockUsePlatformBinding.mockReturnValue({
+        data: { templateKey: 'qovery-cluster-v0', templateVersion: '0.1.0' },
+      })
+      const selfManagedCluster = {
+        ...mockCluster,
+        kubernetes: KubernetesEnum.SELF_MANAGED,
+      }
+      const clusterStatus: ClusterStatus = {
+        cluster_id: selfManagedCluster.id,
+        status,
+        is_deployed: isDeployed,
+      }
+      const { userEvent } = renderWithProviders(
+        <ClusterActions cluster={selfManagedCluster} clusterStatus={clusterStatus} />,
+        { container: document.body }
+      )
+
+      expect(mockUsePlatformBinding).toHaveBeenCalledWith({
+        organizationId: selfManagedCluster.organization.id,
+        clusterId: selfManagedCluster.id,
+        enabled: true,
+      })
+      expect(screen.getByLabelText('Installation guide')).toBeInTheDocument()
+      await userEvent.click(screen.getByLabelText(/manage deployment/i))
+      await userEvent.click(screen.getByRole('menuitem', { name: 'Deploy' }))
+
+      expect(mockDeployCluster).toHaveBeenCalledWith({
+        organizationId: selfManagedCluster.organization.id,
+        clusterId: selfManagedCluster.id,
+      })
+    }
+  )
+
+  it('should not show deployment actions for a self-managed cluster when the feature flag is disabled', () => {
+    mockUsePlatformBinding.mockReturnValue({
+      data: { templateKey: 'qovery-cluster-v0', templateVersion: '0.1.0' },
+    })
+    const selfManagedCluster = {
+      ...mockCluster,
+      kubernetes: KubernetesEnum.SELF_MANAGED,
+    }
+
+    renderWithProviders(<ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} />)
+
+    expect(screen.queryByLabelText(/manage deployment/i)).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Installation guide')).toBeInTheDocument()
+    expect(mockUsePlatformBinding).toHaveBeenCalledWith(expect.objectContaining({ enabled: false }))
+  })
+
+  it('should not show deployment actions for a legacy self-managed cluster without a platform binding', () => {
+    mockUseFeatureFlagEnabled.mockReturnValue(true)
+    const selfManagedCluster = {
+      ...mockCluster,
+      kubernetes: KubernetesEnum.SELF_MANAGED,
+    }
+
+    renderWithProviders(<ClusterActions cluster={selfManagedCluster} clusterStatus={mockClusterStatus} />)
+
+    expect(screen.queryByLabelText(/manage deployment/i)).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Installation guide')).toBeInTheDocument()
   })
 
   it('should show "Update" instead of "Install" for non-deployed EKS Anywhere clusters', async () => {
@@ -319,7 +400,7 @@ describe('ClusterActions', () => {
   })
 
   it('labels the card action as logs when deployment history is disabled', () => {
-    useFeatureFlagEnabledMock.mockReturnValue(false)
+    mockUseFeatureFlagEnabled.mockReturnValue(false)
 
     renderWithProviders(<ClusterActions cluster={mockCluster} clusterStatus={mockClusterStatus} variant="card" />)
 
