@@ -249,8 +249,8 @@ function AIModelCards() {
         disabled
       >
         <span className="flex items-center gap-2 text-sm font-medium text-neutral">
-          <img src="/assets/ai-tools/codex.png" alt="" aria-hidden="true" className="h-5 w-5" />
-          Codex
+          <Icon name={IconEnum.AWS_GRAY} className="h-5 w-5" />
+          Bedrock
         </span>
         <span className="text-xs text-neutral-subtle">Coming later.</span>
       </button>
