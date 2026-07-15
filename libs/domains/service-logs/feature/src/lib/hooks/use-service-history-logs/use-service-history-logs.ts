@@ -3,6 +3,7 @@ import { useSearch } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { type ServiceLog, normalizeServiceLog, serviceLogs } from '@qovery/domains/service-logs/data-access'
 import { queries } from '@qovery/state/util-queries'
+import { normalizeServiceHistoryDateRange } from './normalize-service-history-date-range'
 
 export interface UseServiceHistoryLogsProps {
   clusterId: string
@@ -49,14 +50,13 @@ export function useServiceHistoryLogs({ clusterId, serviceId, enabled = false }:
     return Boolean(queryParams.startDate || queryParams.endDate)
   }, [queryParams.mode, queryParams.startDate, queryParams.endDate])
 
-  const startDate = useMemo(
-    () => (queryParams.startDate ? new Date(queryParams.startDate) : undefined),
-    [queryParams.startDate]
-  )
-
-  const endDate = useMemo(
-    () => (queryParams.endDate ? new Date(queryParams.endDate) : undefined),
-    [queryParams.endDate]
+  const { startDate, endDate } = useMemo(
+    () =>
+      normalizeServiceHistoryDateRange(
+        queryParams.startDate ? new Date(queryParams.startDate) : undefined,
+        queryParams.endDate ? new Date(queryParams.endDate) : undefined
+      ),
+    [queryParams.startDate, queryParams.endDate]
   )
 
   const startTimestampNs = useMemo(() => toTimestampNs(startDate), [startDate])

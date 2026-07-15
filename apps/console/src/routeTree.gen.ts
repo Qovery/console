@@ -182,6 +182,9 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsAdvancedSettingsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/advanced-settings'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/route'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/index'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/index'
@@ -1615,6 +1618,32 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteImport.update(
+    {
+      id: '/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+      path: '/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRouteImport.update(
+    {
+      id: '/',
+      path: '/',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRouteImport.update(
+    {
+      id: '/preview',
+      path: '/preview',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRouteImport.update(
     {
@@ -1808,6 +1837,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateIndexRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsAdvancedSettingsRoute
@@ -1870,6 +1900,8 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/blueprint-setup': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyBlueprintSetupRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/overrides': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyOverridesRoute
@@ -2033,6 +2065,8 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/blueprint-setup': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyBlueprintSetupRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/overrides': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyOverridesRoute
@@ -2156,6 +2190,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateIndexRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringDashboardRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/advanced-settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdSettingsAdvancedSettingsRoute
@@ -2218,6 +2253,8 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/blueprint-setup': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyBlueprintSetupRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/overrides': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyOverridesRoute
@@ -2341,6 +2378,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/advanced-settings'
@@ -2403,6 +2441,8 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/blueprint-setup'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/overrides'
@@ -2566,6 +2606,8 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/blueprint-setup'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/overrides'
@@ -2688,6 +2730,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/dashboard'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/advanced-settings'
@@ -2750,6 +2793,8 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/blueprint-setup'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily/overrides'
@@ -3979,6 +4024,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringRouteRoute
     }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint'
+      path: '/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/'
+      path: '/'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
+      path: '/preview'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRoute
+    }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
       path: '/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId'
@@ -4609,6 +4675,24 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteChildren,
   )
 
+interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRoute
+}
+
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteChildren: AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteChildren =
+  {
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintPreviewRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintIndexRoute,
+  }
+
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteWithChildren =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRoute._addFileChildren(
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteChildren,
+  )
+
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyBlueprintSetupRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyBlueprintSetupRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyOverridesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyOverridesRoute
@@ -4681,6 +4765,7 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentDeploymentIdIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateIndexRoute
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsLogsExecutionIdRoute
@@ -4776,6 +4861,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateIndexRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateIndexRoute,
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdUpdateBlueprintRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsIndexRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdDeploymentsIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateBlueprintProviderServiceFamilyRouteRoute:

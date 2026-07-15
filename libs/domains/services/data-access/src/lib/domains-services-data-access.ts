@@ -16,6 +16,7 @@ import {
   BlueprintCatalogApi,
   type BlueprintCreateRequest,
   BlueprintMainCallsApi,
+  type BlueprintUpdateRequest,
   type CleanFailedJobsRequest,
   ContainerActionsApi,
   type ContainerAdvancedSettings,
@@ -769,6 +770,16 @@ type CreateBlueprintRequest = {
   deploy?: boolean
 }
 
+type PreviewBlueprintUpdateRequest = {
+  blueprintId: string
+  payload: BlueprintUpdateRequest
+}
+
+type UpdateBlueprintRequest = {
+  blueprintId: string
+  payload: BlueprintUpdateRequest
+}
+
 type EditServiceRequest = {
   serviceId: string
   payload:
@@ -1040,6 +1051,14 @@ export const mutations = {
   },
   async createBlueprint({ environmentId, payload, deploy }: CreateBlueprintRequest) {
     const response = await blueprintApi.createBlueprint(environmentId, payload, deploy)
+    return response.data
+  },
+  async previewBlueprintUpdate({ blueprintId, payload }: PreviewBlueprintUpdateRequest) {
+    const response = await blueprintApi.previewBlueprintUpdate(blueprintId, payload)
+    return response.data
+  },
+  async updateBlueprint({ blueprintId, payload }: UpdateBlueprintRequest) {
+    const response = await blueprintApi.updateBlueprint(blueprintId, payload)
     return response.data
   },
   async editService({ serviceId, payload }: EditServiceRequest) {

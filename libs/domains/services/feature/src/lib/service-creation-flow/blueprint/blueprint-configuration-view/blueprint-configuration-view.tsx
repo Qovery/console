@@ -2,8 +2,6 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import { useEffect, useMemo, useState } from 'react'
 import { type Value } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Icon, InputSelect, InputText } from '@qovery/shared/ui'
-import { usePrefetchBlueprintCatalogServiceManifest } from '../../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
-import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import {
   type BlueprintFieldValue,
   formatFieldLabel,
@@ -11,10 +9,12 @@ import {
   getFieldValidationError,
   getStringFieldValue,
   isFieldValid,
-  sortBlueprintMajorVersions,
-} from '../blueprint-creation-utils/blueprint-creation-utils'
+} from '../../../blueprint-field-utils/blueprint-field-utils'
+import { BlueprintManifestVariableInput } from '../../../blueprint-manifest-variable-input/blueprint-manifest-variable-input'
+import { usePrefetchBlueprintCatalogServiceManifest } from '../../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
+import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
+import { sortBlueprintMajorVersions } from '../blueprint-creation-utils/blueprint-creation-utils'
 import { useBlueprintManifestFields } from '../blueprint-manifest-context/blueprint-manifest-context'
-import { BlueprintManifestVariableInput } from './blueprint-creation-components/blueprint-manifest-variable-input/blueprint-manifest-variable-input'
 import { BlueprintSection } from './blueprint-creation-components/blueprint-section/blueprint-section'
 import { OverridesSectionCard } from './blueprint-creation-components/overrides-section-card/overrides-section-card'
 

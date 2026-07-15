@@ -1,17 +1,17 @@
 import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
-import { InputSelect, InputText } from '@qovery/shared/ui'
+import { InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
 import {
   type BlueprintFieldValue,
   formatFieldLabel,
   getBooleanFieldValue,
   getStringFieldValue,
-} from '../../../blueprint-creation-utils/blueprint-creation-utils'
-import { CheckboxField } from '../checkbox-field/checkbox-field'
+} from '../blueprint-field-utils/blueprint-field-utils'
 
 export interface BlueprintManifestVariableInputProps {
   autoFocus?: boolean
   error?: string
   field: BlueprintManifestVariableField
+  label?: string
   onChange: (value: BlueprintFieldValue) => void
   value: BlueprintFieldValue | undefined
 }
@@ -20,15 +20,34 @@ export function BlueprintManifestVariableInput({
   autoFocus,
   error,
   field,
+  label,
   onChange,
   value,
 }: BlueprintManifestVariableInputProps) {
-  const label = formatFieldLabel(field.name)
+  const inputLabel = label ?? formatFieldLabel(field.name)
+
+  if (field.type.type === 'bool') {
+    return (
+      <div className="rounded-md border border-neutral bg-surface-neutral px-3 py-3">
+        <InputToggle
+          small
+          align="top"
+          name={field.name}
+          value={getBooleanFieldValue(value)}
+          title={inputLabel}
+          description={field.description ?? undefined}
+          ariaLabel={inputLabel}
+          autoFocus={autoFocus}
+          onChange={onChange}
+        />
+      </div>
+    )
+  }
 
   if (field.allowed_values?.length) {
     return (
       <InputSelect
-        label={label}
+        label={inputLabel}
         value={getStringFieldValue(value)}
         options={field.allowed_values.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
         autoFocus={autoFocus}
@@ -40,23 +59,10 @@ export function BlueprintManifestVariableInput({
     )
   }
 
-  if (field.type.type === 'bool') {
-    return (
-      <CheckboxField
-        autoFocus={autoFocus}
-        checked={getBooleanFieldValue(value)}
-        description={field.description ?? ''}
-        label={label}
-        name={field.name}
-        onChange={onChange}
-      />
-    )
-  }
-
   return (
     <InputText
       name={field.name}
-      label={label}
+      label={inputLabel}
       type={field.type.type === 'number' ? 'number' : field.is_secret ? 'password' : 'text'}
       value={getStringFieldValue(value)}
       error={error}
