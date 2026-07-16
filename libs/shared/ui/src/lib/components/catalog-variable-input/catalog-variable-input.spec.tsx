@@ -58,6 +58,22 @@ describe('CatalogVariableInput', () => {
     expect(screen.getByText('Enable this option.')).toBeInTheDocument()
   })
 
+  it('renders a boolean control even when the field declares allowed values', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <CatalogVariableInput
+        {...defaultProps}
+        field={{ key: 'enabled', label: 'Enabled', type: 'bool', allowedValues: ['true', 'false'] }}
+        value={true}
+        onChange={onChange}
+      />
+    )
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Enabled' }))
+
+    expect(onChange).toHaveBeenCalledWith(false)
+  })
+
   it('supports a checkbox presentation for boolean fields', async () => {
     const onChange = jest.fn()
     const { userEvent } = renderWithProviders(
