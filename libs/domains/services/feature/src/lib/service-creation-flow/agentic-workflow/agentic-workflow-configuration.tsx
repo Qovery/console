@@ -872,7 +872,7 @@ export function AgenticWorkflowConfiguration() {
                   <>
                     <InputText
                       name={`output-url-${index}`}
-                      label="MCP URL"
+                      label="URL"
                       value={output.url}
                       onChange={(event) => {
                         const outputs = [...values.outputs]

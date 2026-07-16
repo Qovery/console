@@ -1,28 +1,13 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { type ReactNode, useEffect, useState } from 'react'
-import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, toast } from '@qovery/shared/ui'
+import { type ReactNode, useEffect } from 'react'
+import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
 import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowFormData,
   useAgenticWorkflowCreateContext,
 } from './agentic-workflow-context'
-
-function generateToken(prefix: string) {
-  const randomPart = Math.random().toString(36).slice(2, 10)
-  const timePart = Date.now().toString(36).slice(-6)
-
-  return `${prefix}_${timePart}${randomPart}`
-}
-
-function generateWebhookDetails() {
-  const id = generateToken('awf')
-
-  return {
-    webhookUrl: `https://hooks.qovery.local/agentic-workflows/${id}`,
-    webhookSecret: generateToken('qvy_whsec'),
-  }
-}
+import { formatAgenticWorkflowRequest, useCreateAgenticWorkflow } from './use-create-agentic-workflow'
 
 function truncateSummary(value: string) {
   if (!value.trim()) return '-'
@@ -78,7 +63,7 @@ export function AgenticWorkflowSummary() {
   const navigate = useNavigate()
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const { creationFlowUrl, form, setActiveSection, setCurrentStep } = useAgenticWorkflowCreateContext()
-  const [isCreating, setIsCreating] = useState(false)
+  const { isLoading: isCreating, mutateAsync: createAgenticWorkflow } = useCreateAgenticWorkflow({ environmentId })
   const values = form.watch()
 
   useEffect(() => {
@@ -102,13 +87,14 @@ export function AgenticWorkflowSummary() {
     navigate({ to: `${creationFlowUrl}/configuration` })
   }
 
-  const handleCreate = () => {
-    setIsCreating(true)
-    generateWebhookDetails()
+  const handleCreate = async () => {
+    await createAgenticWorkflow({
+      environmentId,
+      payload: formatAgenticWorkflowRequest(form.getValues()),
+    })
     posthog.capture('create-service', {
       selectedServiceType: 'agentic-workflow',
     })
-    toast('success', 'Your agentic workflow has been created')
     navigate({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
       params: { organizationId, projectId, environmentId },
