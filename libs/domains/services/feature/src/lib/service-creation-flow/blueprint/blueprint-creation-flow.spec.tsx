@@ -531,6 +531,7 @@ describe('BlueprintCreationFlow', () => {
     await waitFor(() => {
       expect(mockCreateBlueprint).toHaveBeenCalled()
     })
+    expect(screen.queryByRole('heading', { name: 'Creating custom-postgres...' })).not.toBeInTheDocument()
 
     const enabledSocketCall = mockUseBlueprintServiceCreatedSocket.mock.calls.find(
       ([props]) =>

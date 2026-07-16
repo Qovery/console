@@ -379,7 +379,7 @@ export function BlueprintStepSummary() {
         logs={blueprintCreationLogs}
         onEditConfig={handleEditConfig}
         onRetry={handleRetry}
-        open={isWaitingForServiceCreated || isBlueprintCreationFailed}
+        open={blueprintCreationLogs.length > 0 && (isWaitingForServiceCreated || isBlueprintCreationFailed)}
         serviceName={serviceName}
       />
     </>
