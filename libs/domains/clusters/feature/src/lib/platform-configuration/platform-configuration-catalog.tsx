@@ -7,13 +7,11 @@ import {
 import { match } from 'ts-pattern'
 import { Accordion, Badge, Button, Checkbox, Heading, Icon } from '@qovery/shared/ui'
 import { formatCatalogKey } from '@qovery/shared/util-js'
-import { hasConfigurableFields } from './platform-configuration-utils'
 
 interface PlatformConfigurationCatalogProps {
   binding: ClusterPlatformBindingResponse | null | undefined
   cloudProvider?: PlatformCloudVendor
   clusterMode?: PlatformClusterMode
-  componentsConfigurable?: boolean
   description?: string
   layerSelections: Record<string, boolean>
   isSaving: boolean
@@ -37,7 +35,6 @@ export function PlatformConfigurationCatalog({
   binding,
   cloudProvider,
   clusterMode,
-  componentsConfigurable = true,
   description = 'Enable the layers to include in the next cluster deployment, then configure their components.',
   layerSelections,
   isSaving,
@@ -134,14 +131,14 @@ export function PlatformConfigurationCatalog({
                           <Badge size="sm" variant="surface" color="neutral">
                             {formatCatalogKey(component.kind)}
                           </Badge>
-                          {componentsConfigurable && hasConfigurableFields(component) ? (
-                            <Icon iconName="chevron-right" className="text-xs text-neutral-subtle" />
-                          ) : null}
+                          <Icon iconName="chevron-right" className="text-xs text-neutral-subtle" />
                         </span>
                       </>
                     )
 
-                    return componentsConfigurable && hasConfigurableFields(component) ? (
+                    // Components without catalog fields stay openable: their configuration
+                    // may consist solely of resolver-provided cluster-input requirements.
+                    return (
                       <Button
                         key={component.key}
                         type="button"
@@ -153,13 +150,6 @@ export function PlatformConfigurationCatalog({
                       >
                         {content}
                       </Button>
-                    ) : (
-                      <div
-                        key={component.key}
-                        className="flex min-h-10 w-full items-center justify-between rounded border border-neutral px-3 py-2 text-left text-sm text-neutral"
-                      >
-                        {content}
-                      </div>
                     )
                   })}
                 </div>

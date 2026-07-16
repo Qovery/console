@@ -1,15 +1,8 @@
 import { type ClusterPlatformBindingRequest } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
-import {
-  Button,
-  Callout,
-  type CatalogVariableValue,
-  FunnelFlowBody,
-  Icon,
-  LoaderSpinner,
-  Section,
-} from '@qovery/shared/ui'
+import { Button, Callout, FunnelFlowBody, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
+import { type CatalogVariableValue } from '@qovery/shared/util-js'
 import { usePlatformTemplateComponentConfiguration } from '../../platform-configuration/hooks/use-platform-template-component-configuration'
 import { usePlatformTemplates } from '../../platform-configuration/hooks/use-platform-templates'
 import { PlatformComponentConfiguration } from '../../platform-configuration/platform-component-configuration'
@@ -19,6 +12,7 @@ import {
   createPlatformConfigurationDraft,
   findPlatformComponent,
   getCurrentPlatformConfigurationPreview,
+  omitEmptyValues,
   toPlatformCloudVendor,
   toPlatformConfigurationValue,
 } from '../../platform-configuration/platform-configuration-utils'
@@ -68,17 +62,26 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
       : createPlatformConfigurationDraft(template, null)
     : undefined
   const selectedComponent = template ? findPlatformComponent(template, componentDraft?.componentKey) : undefined
-  const previewRequest = useMemo(
+  // profileConfig drives the form display and may contain '' for fields the user
+  // explicitly cleared; the resolver request must omit those so a cleared required
+  // field surfaces as a violation instead of silently resurrecting its default.
+  const { profileConfig, clusterInputs } = useMemo(
     () => ({
       profileConfig: selectedComponent
         ? applyPlatformConfigurationDefaults(selectedComponent.fields, componentDraft?.managedConfig ?? {})
         : {},
       clusterInputs: componentDraft?.clusterInputs ?? {},
-      componentOutputs: {},
     }),
     [componentDraft?.clusterInputs, componentDraft?.managedConfig, selectedComponent]
   )
-  const { profileConfig, clusterInputs } = previewRequest
+  const previewRequest = useMemo(
+    () => ({
+      profileConfig: omitEmptyValues(profileConfig),
+      clusterInputs,
+      componentOutputs: {},
+    }),
+    [profileConfig, clusterInputs]
+  )
   const previewQuery = useMemo(
     () => ({ componentKey: selectedComponent?.key, request: previewRequest }),
     [previewRequest, selectedComponent?.key]
@@ -175,7 +178,8 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
         ...current,
         managedConfig: {
           ...current.managedConfig,
-          [componentDraft.componentKey]: componentDraft.managedConfig,
+          // '' entries are only display markers for cleared fields — never persist them.
+          [componentDraft.componentKey]: omitEmptyValues(componentDraft.managedConfig),
         },
         customerProvidedInputs,
       }
@@ -191,12 +195,19 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
             <LoaderSpinner className="w-4" />
           </div>
         ) : isError ? (
-          <Callout.Root color="red">
-            <Callout.Icon>
-              <Icon iconName="circle-exclamation" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>Platform layers could not be loaded. Please try again.</Callout.Text>
-          </Callout.Root>
+          <div className="flex max-w-4xl flex-col gap-6">
+            <Callout.Root color="red">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>Platform layers could not be loaded. Please try again.</Callout.Text>
+            </Callout.Root>
+            <div className="flex justify-between border-t border-neutral pt-4">
+              <Button type="button" size="lg" color="neutral" variant="plain" onClick={onPrevious}>
+                Back
+              </Button>
+            </div>
+          </div>
         ) : template && draft && selectedComponent ? (
           <div className="flex max-w-3xl flex-col gap-4">
             <Button
@@ -249,12 +260,19 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
             saveLabel="Continue"
           />
         ) : (
-          <Callout.Root color="neutral">
-            <Callout.Icon>
-              <Icon iconName="circle-info" iconStyle="regular" />
-            </Callout.Icon>
-            <Callout.Text>No platform template is available for this organization.</Callout.Text>
-          </Callout.Root>
+          <div className="flex max-w-4xl flex-col gap-6">
+            <Callout.Root color="neutral">
+              <Callout.Icon>
+                <Icon iconName="circle-info" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>No platform template is available for this organization.</Callout.Text>
+            </Callout.Root>
+            <div className="flex justify-between border-t border-neutral pt-4">
+              <Button type="button" size="lg" color="neutral" variant="plain" onClick={onPrevious}>
+                Back
+              </Button>
+            </div>
+          </div>
         )}
       </Section>
     </FunnelFlowBody>

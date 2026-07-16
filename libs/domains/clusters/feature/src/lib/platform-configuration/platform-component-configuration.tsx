@@ -1,51 +1,18 @@
 import {
   type PlatformComponentConfigurationResolutionResponse,
+  type PlatformComponentInputRequirementResponse,
   type PlatformTemplateComponentResponse,
 } from 'qovery-typescript-axios'
+import { useRef } from 'react'
 import { match } from 'ts-pattern'
-import {
-  Badge,
-  Button,
-  Callout,
-  CatalogVariableInput,
-  type CatalogVariableValue,
-  Heading,
-  Icon,
-} from '@qovery/shared/ui'
-import {
-  formatCatalogKey,
-  getCatalogFieldValidationError,
-  getCatalogVariableValue,
-  isCatalogFieldValueFulfilled,
-} from '@qovery/shared/util-js'
+import { Badge, Button, Callout, CatalogVariableInput, Heading, Icon } from '@qovery/shared/ui'
+import { type CatalogVariableValue, formatCatalogKey, getCatalogVariableValue } from '@qovery/shared/util-js'
 import {
   getFieldViolation,
   getUnmappedViolations,
   isPlatformConfigurationReady,
   toCatalogVariableField,
 } from './platform-configuration-utils'
-
-function getLocalFieldValidationError(
-  field: ReturnType<typeof toCatalogVariableField>,
-  value: CatalogVariableValue | undefined
-) {
-  const validationError = getCatalogFieldValidationError(field, value)
-  if (validationError || typeof value !== 'string' || !value) return validationError
-  if (typeof field.min !== 'number' && typeof field.max !== 'number') return undefined
-
-  const numberValue = Number(value)
-  if (!Number.isFinite(numberValue)) return 'Value must be a number.'
-  if (
-    typeof field.min === 'number' &&
-    typeof field.max === 'number' &&
-    (numberValue < field.min || numberValue > field.max)
-  ) {
-    return `Value must be between ${field.min} and ${field.max}.`
-  }
-  if (typeof field.min === 'number' && numberValue < field.min) return `Value must be at least ${field.min}.`
-  if (typeof field.max === 'number' && numberValue > field.max) return `Value must be at most ${field.max}.`
-  return undefined
-}
 
 interface PlatformComponentConfigurationProps {
   clusterInputs: Record<string, string>
@@ -58,7 +25,6 @@ interface PlatformComponentConfigurationProps {
   onSave: () => void
   preview?: PlatformComponentConfigurationResolutionResponse
   profileConfig: Record<string, unknown>
-  validationMode?: 'local' | 'resolver'
 }
 
 function RequirementStatus({ status }: { status: 'MISSING' | 'READY' }) {
@@ -83,28 +49,24 @@ export function PlatformComponentConfiguration({
   onSave,
   preview,
   profileConfig,
-  validationMode = 'resolver',
 }: PlatformComponentConfigurationProps) {
   const fields = preview?.fields ?? component.fields
-  const requirements = preview?.requirements ?? []
+  // The preview is undefined while a new resolution is debounced/fetched. Keep the
+  // last known requirements for the same component so their inputs (including the
+  // one being typed into) don't unmount and lose focus on every keystroke.
+  const lastRequirementsRef = useRef<{
+    componentKey: string
+    requirements: PlatformComponentInputRequirementResponse[]
+  }>()
+  if (preview) {
+    lastRequirementsRef.current = { componentKey: component.key, requirements: preview.requirements }
+  }
+  const requirements =
+    preview?.requirements ??
+    (lastRequirementsRef.current?.componentKey === component.key ? lastRequirementsRef.current.requirements : [])
   const violations = preview?.violations ?? []
   const unmappedViolations = getUnmappedViolations(violations, fields, requirements)
-  const localValidationErrors = new Map(
-    validationMode === 'local'
-      ? fields.flatMap((field) => {
-          const catalogField = toCatalogVariableField(field)
-          const value = getCatalogVariableValue(field, profileConfig[field.key])
-          const error =
-            catalogField.required && !isCatalogFieldValueFulfilled(value)
-              ? `${catalogField.label} is required.`
-              : getLocalFieldValidationError(catalogField, value)
-          return error ? [[field.key, error] as const] : []
-        })
-      : []
-  )
-  const ready = preview
-    ? isPlatformConfigurationReady(violations, requirements)
-    : validationMode === 'local' && localValidationErrors.size === 0
+  const ready = preview ? isPlatformConfigurationReady(violations, requirements) : false
 
   return (
     <div className="rounded-lg border border-neutral bg-surface-neutral p-5">
@@ -117,7 +79,7 @@ export function PlatformComponentConfiguration({
           <Badge size="sm" variant="surface" color="neutral">
             Checking…
           </Badge>
-        ) : (preview || validationMode === 'local') && !ready ? (
+        ) : preview && !ready ? (
           <Badge size="sm" variant="surface" color="yellow">
             Action required
           </Badge>
@@ -154,7 +116,7 @@ export function PlatformComponentConfiguration({
                   booleanControl="checkbox"
                   field={toCatalogVariableField(field)}
                   value={getCatalogVariableValue(field, profileConfig[field.key])}
-                  error={getFieldViolation(violations, field.key) ?? localValidationErrors.get(field.key)}
+                  error={getFieldViolation(violations, field.key)}
                   onChange={(value) => onProfileConfigChange(field.key, value)}
                 />
               ))}
@@ -179,7 +141,7 @@ export function PlatformComponentConfiguration({
                   <CatalogVariableInput
                     booleanControl="checkbox"
                     field={toCatalogVariableField(requirement)}
-                    value={clusterInputs[requirement.key]}
+                    value={getCatalogVariableValue(requirement, clusterInputs[requirement.key])}
                     error={getFieldViolation(violations, requirement.key, 'clusterInputs')}
                     onChange={(value) => onClusterInputChange(requirement.key, value)}
                   />
@@ -228,11 +190,7 @@ export function PlatformComponentConfiguration({
           type="button"
           size="lg"
           loading={isSaving}
-          disabled={
-            validationMode === 'local'
-              ? fields.length > 0 && !ready
-              : !preview || isFetching || hasPreviewError || !ready
-          }
+          disabled={!preview || isFetching || hasPreviewError || !ready}
           onClick={onSave}
         >
           Save configuration
