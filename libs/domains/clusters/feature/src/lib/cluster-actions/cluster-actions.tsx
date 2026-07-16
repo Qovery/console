@@ -66,7 +66,9 @@ function MenuManageDeployment({
     clusterStatus.next_k8s_available_version &&
     clusterStatus.next_k8s_available_version !== null &&
     clusterStatus.status === 'DEPLOYED' &&
-    cluster.kubernetes !== 'PARTIALLY_MANAGED'
+    cluster.kubernetes !== 'PARTIALLY_MANAGED' &&
+    // Qovery cannot upgrade Kubernetes on customer-managed clusters.
+    cluster.kubernetes !== 'SELF_MANAGED'
   const clusterNeedUpdate = cluster.deployment_status !== 'UP_TO_DATE' && clusterStatus.status !== 'STOPPED'
   const isEksAnywhereCluster = cluster.kubernetes === 'PARTIALLY_MANAGED'
   const isSelfManagedCluster = cluster.kubernetes === 'SELF_MANAGED'
@@ -213,7 +215,9 @@ function MenuManageDeployment({
     cluster.cloud_provider !== 'GCP' &&
       cluster.cloud_provider !== 'AZURE' &&
       isStopAvailable(clusterStatus.status) &&
-      cluster.kubernetes !== 'PARTIALLY_MANAGED' && (
+      cluster.kubernetes !== 'PARTIALLY_MANAGED' &&
+      // Qovery cannot stop customer-managed (self-managed / Engine v2) clusters.
+      cluster.kubernetes !== 'SELF_MANAGED' && (
         <DropdownMenu.Item key="2" icon={<Icon iconName="circle-stop" />} onSelect={mutationStop}>
           Stop
         </DropdownMenu.Item>

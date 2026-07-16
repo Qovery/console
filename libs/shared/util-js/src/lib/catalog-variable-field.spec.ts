@@ -71,9 +71,7 @@ describe('catalog field validation', () => {
     expect(getCatalogFieldNumberValidationError({ type: 'number', min: 20, max: 65536 }, '19')).toBe(
       'Value must be between 20 and 65536.'
     )
-    expect(getCatalogFieldNumberValidationError({ type: 'number', min: 20 }, '19')).toBe(
-      'Value must be at least 20.'
-    )
+    expect(getCatalogFieldNumberValidationError({ type: 'number', min: 20 }, '19')).toBe('Value must be at least 20.')
     expect(getCatalogFieldNumberValidationError({ type: 'number', max: 65536 }, '65537')).toBe(
       'Value must be at most 65536.'
     )

@@ -8,6 +8,7 @@ import {
   createPlatformConfigurationDraft,
   getCurrentPlatformConfigurationPreview,
   isPlatformConfigurationReady,
+  omitEmptyValues,
   toCatalogVariableField,
   toPlatformCloudVendor,
   toPlatformClusterMode,
@@ -36,7 +37,15 @@ describe('platform configuration utils', () => {
 
   it('converts number inputs at the API boundary without losing their type', () => {
     expect(toPlatformConfigurationValue(field, '24')).toBe(24)
-    expect(toPlatformConfigurationValue(field, '')).toBeUndefined()
+    // '' marks a field the user explicitly cleared so defaults are not resurrected.
+    expect(toPlatformConfigurationValue(field, '')).toBe('')
+  })
+
+  it('omits cleared markers from API payloads', () => {
+    expect(omitEmptyValues({ retention: 24, bucket: '', region: undefined, enabled: false })).toEqual({
+      retention: 24,
+      enabled: false,
+    })
   })
 
   it('maps the full field vocabulary to the catalog variable contract', () => {
