@@ -4,8 +4,6 @@ import { InputSelect } from '../inputs/input-select/input-select'
 import { InputText } from '../inputs/input-text/input-text'
 import { InputToggle } from '../inputs/input-toggle/input-toggle'
 
-export type { CatalogVariableField, CatalogVariableValue } from '@qovery/shared/util-js'
-
 export interface CatalogVariableInputProps {
   autoFocus?: boolean
   booleanControl?: 'checkbox' | 'toggle'
@@ -23,23 +21,8 @@ export function CatalogVariableInput({
   onChange,
   value,
 }: CatalogVariableInputProps) {
-  if (field.allowedValues?.length) {
-    return (
-      <InputSelect
-        label={field.label}
-        value={typeof value === 'string' ? value : ''}
-        options={field.allowedValues.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
-        hint={field.description}
-        error={error}
-        autoFocus={autoFocus}
-        onChange={(value) => {
-          if (Array.isArray(value)) return
-          onChange(value)
-        }}
-      />
-    )
-  }
-
+  // Bool fields take precedence over allowedValues: a bool field carrying allowed
+  // values must keep emitting booleans, not the allowed-value strings.
   if (field.type === 'bool') {
     if (booleanControl === 'toggle') {
       return (
@@ -82,6 +65,23 @@ export function CatalogVariableInput({
         ) : null}
         {error ? <p className="mt-1 pl-6 text-xs text-negative">{error}</p> : null}
       </div>
+    )
+  }
+
+  if (field.allowedValues?.length) {
+    return (
+      <InputSelect
+        label={field.label}
+        value={typeof value === 'string' ? value : ''}
+        options={field.allowedValues.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
+        hint={field.description}
+        error={error}
+        autoFocus={autoFocus}
+        onChange={(value) => {
+          if (Array.isArray(value)) return
+          onChange(value)
+        }}
+      />
     )
   }
 

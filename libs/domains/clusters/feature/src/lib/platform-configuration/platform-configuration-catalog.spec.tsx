@@ -154,22 +154,20 @@ describe('PlatformConfigurationCatalog', () => {
     expect(defaultProps.onSave).toHaveBeenCalledTimes(1)
   })
 
-  it('reuses the catalog for creation without opening component configuration', async () => {
+  it('reuses the catalog for creation with its own labels and back navigation', async () => {
+    const onPrevious = jest.fn()
     const { userEvent } = renderWithProviders(
-      <PlatformConfigurationCatalog
-        {...defaultProps}
-        componentsConfigurable={false}
-        saveLabel="Continue"
-        onPrevious={jest.fn()}
-      />
+      <PlatformConfigurationCatalog {...defaultProps} saveLabel="Continue" onPrevious={onPrevious} />
     )
 
-    expect(screen.queryByRole('button', { name: 'Loki HELM' })).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
     expect(defaultProps.onSave).toHaveBeenCalledTimes(1)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Back' }))
+    expect(onPrevious).toHaveBeenCalledTimes(1)
   })
 
-  it('hides the template and management modes and keeps components without configuration static', async () => {
+  it('hides the template and management modes and keeps components without catalog fields selectable', async () => {
     const agentTemplate = {
       ...template,
       layers: [
@@ -194,10 +192,10 @@ describe('PlatformConfigurationCatalog', () => {
     expect(screen.queryByText('Platform template')).not.toBeInTheDocument()
     expect(screen.queryByText('CUSTOMER MANAGED')).not.toBeInTheDocument()
     expect(screen.queryByText('QOVERY MANAGED')).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Cluster agent HELM' })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Shell agent HELM' })).not.toBeInTheDocument()
 
-    await userEvent.click(screen.getByText('Cluster agent'))
-    expect(defaultProps.onComponentSelect).not.toHaveBeenCalled()
+    // Components without catalog fields stay selectable: their configuration may
+    // consist solely of resolver-provided cluster-input requirements.
+    await userEvent.click(screen.getByRole('button', { name: 'Cluster agent HELM' }))
+    expect(defaultProps.onComponentSelect).toHaveBeenCalledWith('cluster-agent')
   })
 })
