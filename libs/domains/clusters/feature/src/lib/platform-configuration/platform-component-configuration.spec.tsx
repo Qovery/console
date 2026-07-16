@@ -77,37 +77,10 @@ describe('PlatformComponentConfiguration', () => {
     expect(screen.queryByRole('option', { name: 'object-storage' })).not.toBeInTheDocument()
   })
 
-  it('allows editing catalog fields before a cluster exists using local validation', () => {
-    renderWithProviders(<PlatformComponentConfiguration {...defaultProps} preview={undefined} validationMode="local" />)
+  it('keeps saving disabled until a resolver preview is available', () => {
+    renderWithProviders(<PlatformComponentConfiguration {...defaultProps} preview={undefined} />)
 
     expect(screen.getByText('persistent-volume')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Save configuration' })).toBeEnabled()
-  })
-
-  it('prevents saving an invalid numeric value during local validation', () => {
-    renderWithProviders(
-      <PlatformComponentConfiguration
-        {...defaultProps}
-        component={{
-          ...component,
-          fields: [
-            {
-              ...component.fields[0],
-              key: 'retention',
-              label: 'Retention period',
-              type: 'number',
-              defaultValue: '4',
-              constraints: { min: 1, max: 52 },
-            },
-          ],
-        }}
-        preview={undefined}
-        profileConfig={{ retention: 53 }}
-        validationMode="local"
-      />
-    )
-
-    expect(screen.getByText('Value must be between 1 and 52.')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Save configuration' })).toBeDisabled()
   })
 

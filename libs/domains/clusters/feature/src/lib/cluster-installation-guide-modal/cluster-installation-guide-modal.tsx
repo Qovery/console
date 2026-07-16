@@ -27,7 +27,10 @@ export type ClusterInstallationGuideModalProps = {
 export function ClusterInstallationGuideModal({ type, onClose, ...props }: ClusterInstallationGuideModalProps) {
   const isEngineV2Enabled = useFeatureFlagEnabled(PLATFORM_CONFIGURATION_FEATURE_FLAG)
   const cluster = props.mode === 'EDIT' ? props.cluster : undefined
-  const canUseOperator = isEngineV2Enabled && cluster?.kubernetes === 'SELF_MANAGED'
+  // Boolean() matters: the flag is undefined while PostHog loads, and passing
+  // `enabled: undefined` to the operator hooks would fall back to their `enabled = true` default.
+  const canUseOperator = Boolean(isEngineV2Enabled) && cluster?.kubernetes === 'SELF_MANAGED'
+  const isFeatureFlagLoading = isEngineV2Enabled === undefined && cluster?.kubernetes === 'SELF_MANAGED'
   const {
     data: operatorStatus,
     isLoading: isOperatorStatusLoading,
@@ -61,11 +64,13 @@ export function ClusterInstallationGuideModal({ type, onClose, ...props }: Clust
   }
 
   const isDemo = props.mode === 'CREATE' ? props.isDemo : props.cluster.is_demo
-  const isOperatorManaged = Boolean(operatorStatus)
+  const isOperatorManaged = canUseOperator && Boolean(operatorStatus)
   const isOperatorGuideLoading =
-    canUseOperator && (isOperatorStatusLoading || (isOperatorManaged && isOperatorBootstrapLoading))
-  const hasOperatorGuideError =
-    canUseOperator && (isOperatorStatusError || (isOperatorManaged && isOperatorBootstrapError))
+    isFeatureFlagLoading ||
+    (canUseOperator && (isOperatorStatusLoading || (isOperatorManaged && isOperatorBootstrapLoading)))
+  // Only a bootstrap failure of a confirmed operator-managed cluster blocks the guide;
+  // a status failure falls back to the legacy instructions, which don't depend on the operator.
+  const hasOperatorGuideError = isOperatorManaged && isOperatorBootstrapError
 
   const retryOperatorGuide = () => {
     if (isOperatorStatusError) void refetchOperatorStatus()
