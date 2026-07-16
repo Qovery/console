@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import {
+  type Cluster,
   type ClusterCloudProviderInfoRequest,
   type ClusterFeatureNatGatewayParameters,
   type ClusterFeatureNatGatewayTypeGcp,
@@ -8,7 +9,7 @@ import {
   type ClusterRequestFeaturesInner,
   type KubernetesEnum,
 } from 'qovery-typescript-axios'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { FunnelFlowBody } from '@qovery/shared/ui'
@@ -64,6 +65,8 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   const { mutateAsync: deployCluster, isLoading: isDeployClusterLoading } = useDeployCluster()
   const { mutateAsync: updatePlatformBinding, isLoading: isPlatformBindingLoading } = useUpdatePlatformBinding()
   const { mutateAsync: attachClusterOperator, isLoading: isOperatorAttachLoading } = useAttachClusterOperator()
+  // Survives failed submit attempts so retries reuse the already-created cluster.
+  const createdClusterRef = useRef<Cluster>()
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(generalData)
@@ -164,25 +167,33 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
         : {}
 
     if (generalData.installation_type === 'SELF_MANAGED' && (isEngineV2SelfManaged || kubeconfigData)) {
+      if (isEngineV2SelfManaged && !platformConfigurationData) {
+        // The platform step was skipped (deep link / legacy kubeconfig route): send the
+        // user there instead of failing silently.
+        navigate({ to: `${creationFlowUrl}/platform` })
+        return
+      }
       try {
-        if (isEngineV2SelfManaged && !platformConfigurationData) {
-          throw new Error('Platform configuration is required for an Engine v2 self-managed cluster')
-        }
-        const cluster = await createCluster({
-          organizationId,
-          clusterRequest: {
-            name: generalData.name,
-            description: generalData.description,
-            region: generalData.region,
-            cloud_provider: generalData.cloud_provider,
-            kubernetes: 'SELF_MANAGED',
-            production: generalData.production,
-            features: [],
-            cloud_provider_credentials: cloudProviderCredentials,
-            ...addonsPayload,
-            ...awsLabelsGroups,
-          },
-        })
+        // Keep the created cluster across attempts: if a follow-up call fails
+        // (binding, operator attach), retrying must not create a second cluster.
+        const cluster =
+          createdClusterRef.current ??
+          (await createCluster({
+            organizationId,
+            clusterRequest: {
+              name: generalData.name,
+              description: generalData.description,
+              region: generalData.region,
+              cloud_provider: generalData.cloud_provider,
+              kubernetes: 'SELF_MANAGED',
+              production: generalData.production,
+              features: [],
+              cloud_provider_credentials: cloudProviderCredentials,
+              ...addonsPayload,
+              ...awsLabelsGroups,
+            },
+          }))
+        createdClusterRef.current = cluster
         if (cloudProviderCredentials) {
           await editCloudProviderInfo({
             organizationId,

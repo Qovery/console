@@ -1,7 +1,8 @@
 import { type PlatformCloudVendor, type PlatformClusterMode } from 'qovery-typescript-axios'
-import { useMemo, useState } from 'react'
-import { Button, Callout, type CatalogVariableValue, Icon } from '@qovery/shared/ui'
+import { useEffect, useMemo, useState } from 'react'
+import { Button, Callout, Icon } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
+import { type CatalogVariableValue } from '@qovery/shared/util-js'
 import { usePlatformBinding } from './hooks/use-platform-binding'
 import { usePlatformComponentConfiguration } from './hooks/use-platform-component-configuration'
 import { usePlatformTemplates } from './hooks/use-platform-templates'
@@ -15,7 +16,7 @@ import {
   findPlatformComponent,
   getCurrentPlatformConfigurationPreview,
   getTemplateId,
-  hasConfigurableFields,
+  omitEmptyValues,
   toPlatformConfigurationValue,
   updateComponentValue,
 } from './platform-configuration-utils'
@@ -63,18 +64,45 @@ export function PlatformConfiguration({
 
   const selectedTemplate = templates.find((template) => getTemplateId(template) === state?.templateId)
   const selectedComponent = selectedTemplate ? findPlatformComponent(selectedTemplate, state?.componentKey) : undefined
-  const previewRequest = useMemo(() => {
+
+  // Re-seed when the selected template disappears from the list (e.g. the template
+  // version was bumped between refetches, or templates arrived after an empty list).
+  useEffect(() => {
+    if (selectedTemplate || templates.length === 0) return
+
+    const template =
+      templates.find(
+        (candidate) => candidate.key === binding?.templateKey && candidate.version === binding.templateVersion
+      ) ?? templates[0]
+    setState({
+      templateId: getTemplateId(template),
+      draft: createPlatformConfigurationDraft(template, binding),
+    })
+  }, [selectedTemplate, templates, binding])
+
+  // profileConfig drives the form display and may contain '' for fields the user
+  // explicitly cleared; the resolver request must omit those so a cleared required
+  // field surfaces as a violation instead of silently resurrecting its default.
+  const { profileConfig, clusterInputs } = useMemo(() => {
     const componentKey = selectedComponent?.key
-    const storedProfileConfig = state && componentKey ? state.draft.managedConfig[componentKey] ?? {} : {}
     return {
       profileConfig: selectedComponent
-        ? applyPlatformConfigurationDefaults(selectedComponent.fields, storedProfileConfig)
+        ? applyPlatformConfigurationDefaults(
+            selectedComponent.fields,
+            state && componentKey ? state.draft.managedConfig[componentKey] ?? {} : {}
+          )
         : {},
       clusterInputs: state && componentKey ? state.draft.customerProvidedInputs[componentKey] ?? {} : {},
-      componentOutputs: {},
     }
   }, [selectedComponent, state])
-  const { profileConfig, clusterInputs } = previewRequest
+  const previewRequest = useMemo(
+    () => ({
+      profileConfig: omitEmptyValues(profileConfig),
+      clusterInputs,
+      componentOutputs: {},
+    }),
+    [profileConfig, clusterInputs]
+  )
   const previewQuery = useMemo(
     () => ({ componentKey: selectedComponent?.key, request: previewRequest }),
     [previewRequest, selectedComponent?.key]
@@ -90,7 +118,7 @@ export function PlatformConfiguration({
     clusterId,
     componentKey: debouncedPreviewQuery.componentKey,
     request: debouncedPreviewQuery.request,
-    enabled: hasConfigurableFields(selectedComponent) && debouncedPreviewQuery.componentKey === selectedComponent?.key,
+    enabled: Boolean(selectedComponent) && debouncedPreviewQuery.componentKey === selectedComponent?.key,
   })
   const preview = getCurrentPlatformConfigurationPreview(previewData, selectedComponent?.key, isPreviewPending)
 
@@ -154,7 +182,16 @@ export function PlatformConfiguration({
     updateBinding({
       organizationId,
       clusterId,
-      request: state.draft,
+      request: {
+        ...state.draft,
+        // '' entries are only display markers for cleared fields — never persist them.
+        managedConfig: Object.fromEntries(
+          Object.entries(state.draft.managedConfig).map(([componentKey, values]) => [
+            componentKey,
+            omitEmptyValues(values),
+          ])
+        ),
+      },
     })
 
   if (!selectedComponent) {

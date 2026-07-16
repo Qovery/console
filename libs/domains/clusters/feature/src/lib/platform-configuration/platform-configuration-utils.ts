@@ -9,9 +9,9 @@ import {
   type PlatformComponentConfigurationResolutionResponse,
   type PlatformComponentConfigurationViolationResponse,
   type PlatformComponentInputRequirementResponse,
-  type PlatformTemplateComponentResponse,
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
+import { match } from 'ts-pattern'
 import { type CatalogVariableField, type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 
 export interface PlatformConfigurationDraft {
@@ -25,15 +25,17 @@ export interface PlatformConfigurationDraft {
 export function toPlatformCloudVendor(
   cloudProvider: CloudProviderEnum | CloudVendorEnum | undefined
 ): PlatformCloudVendor | undefined {
-  if (!cloudProvider) return undefined
-  if (cloudProvider === 'ON_PREMISE') return 'UNKNOWN'
-  return cloudProvider
+  return match(cloudProvider)
+    .with(undefined, () => undefined)
+    .with('ON_PREMISE', () => 'UNKNOWN' as const)
+    .otherwise((provider) => provider)
 }
 
 export function toPlatformClusterMode(kubernetes: KubernetesEnum | undefined): PlatformClusterMode | undefined {
-  if (kubernetes === 'MANAGED') return 'QOVERY_MANAGED'
-  if (kubernetes === 'SELF_MANAGED') return 'CUSTOMER_MANAGED'
-  return undefined
+  return match(kubernetes)
+    .with('MANAGED', () => 'QOVERY_MANAGED' as const)
+    .with('SELF_MANAGED', () => 'CUSTOMER_MANAGED' as const)
+    .otherwise(() => undefined)
 }
 
 type PlatformFieldDescriptor = Pick<
@@ -132,10 +134,17 @@ export function applyPlatformConfigurationDefaults(
 
 export function toPlatformConfigurationValue(field: Pick<FieldSchemaResponse, 'type'>, value: CatalogVariableValue) {
   if (field.type !== 'number') return value
-  if (typeof value !== 'string' || value.trim() === '') return undefined
+  if (typeof value !== 'string') return undefined
+  // Keep the empty string: it marks a field the user explicitly cleared, so
+  // applyPlatformConfigurationDefaults must not resurrect the schema default.
+  if (value.trim() === '') return ''
 
   const numberValue = Number(value)
   return Number.isFinite(numberValue) ? numberValue : value
+}
+
+export function omitEmptyValues(values: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(values).filter(([, value]) => value !== '' && value !== undefined))
 }
 
 export function updateComponentValue<T>(
@@ -184,8 +193,4 @@ export function isPlatformConfigurationReady(
   requirements: PlatformComponentInputRequirementResponse[]
 ) {
   return violations.length === 0 && requirements.every((requirement) => requirement.status === 'READY')
-}
-
-export function hasConfigurableFields(component: PlatformTemplateComponentResponse | undefined) {
-  return Boolean(component?.fields.length)
 }
