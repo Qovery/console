@@ -134,7 +134,7 @@ export function AgenticWorkflowSummary() {
           </SummarySection>
 
           <SummarySection title="Governance" onEdit={() => handleEditSection('governance')}>
-            <SummaryValue label="Whitelist hosts" value={values.whitelistHosts || undefined} />
+            <SummaryValue label="IP allow list" value={values.ipAllowlist || undefined} />
             <SummaryValue label="Claude configuration" value={truncateSummary(values.claudeConfigJson)} />
           </SummarySection>
 

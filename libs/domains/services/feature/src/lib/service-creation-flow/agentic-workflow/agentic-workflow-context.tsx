@@ -66,7 +66,7 @@ export interface AgenticWorkflowFormData {
   gitRepositories: AgenticWorkflowGitRepository[]
   modelApiKey: string
   modelSettingsJson: string
-  whitelistHosts: string
+  ipAllowlist: string
   claudeConfigJson: string
   dockerFragment: string
   outputs: AgenticWorkflowOutput[]
@@ -113,7 +113,7 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
       gitRepositories: [],
       modelApiKey: '',
       modelSettingsJson: DEFAULT_MODEL_SETTINGS,
-      whitelistHosts: '',
+      ipAllowlist: '',
       claudeConfigJson: DEFAULT_CLAUDE_CONFIG,
       dockerFragment: '',
       outputs: [],
