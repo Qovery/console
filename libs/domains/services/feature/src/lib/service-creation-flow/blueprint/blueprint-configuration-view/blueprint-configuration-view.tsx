@@ -144,7 +144,7 @@ function ServiceInformationSectionContent({ onContinue }: ServiceInformationSect
       />
       {blueprintVersionOptions.length > 1 ? (
         <InputSelect
-          label="Blueprint version"
+          label="Version"
           value={versionTag}
           options={blueprintVersionOptions}
           onChange={(value) =>
@@ -153,7 +153,7 @@ function ServiceInformationSectionContent({ onContinue }: ServiceInformationSect
           isSearchable={blueprintVersionOptions.length > 6}
         />
       ) : (
-        <InputText name="blueprint-version" label="Blueprint version" value={serviceVersion} disabled />
+        <InputText name="blueprint-version" label="Version" value={serviceVersion} disabled />
       )}
       <Button
         type="button"

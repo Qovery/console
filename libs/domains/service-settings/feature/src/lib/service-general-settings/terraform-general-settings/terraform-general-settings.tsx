@@ -63,7 +63,6 @@ export function TerraformGeneralSettings({ service, organization }: TerraformGen
 
 function BlueprintUpdateSettings({ blueprintId }: { blueprintId: string }) {
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
-  console.log('blueprintUpdate', blueprintUpdate)
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
 
@@ -79,9 +78,11 @@ function BlueprintUpdateSettings({ blueprintId }: { blueprintId: string }) {
   return (
     <>
       {blueprintUpdate.new_major_versions?.length > 0 && (
-        <button type="button" className="w-fit text-sm text-brand hover:underline" onClick={openBlueprintUpdate}>
-          New major version available
-        </button>
+        <div>
+          <Button type="button" variant="plain" color="brand" size="md" onClick={openBlueprintUpdate}>
+            New major version available
+          </Button>
+        </div>
       )}
       {!blueprintUpdate.is_up_to_date && (
         <Callout.Root color="sky" className="items-center">
