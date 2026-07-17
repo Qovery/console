@@ -179,7 +179,7 @@ jobs:
 
       - name: Complete Nx Cloud CI run
         if: always() && steps.start-agents.outcome == 'success'
-        run: yarn nx complete-ci-run
+        run: yarn nx-cloud complete-ci-run
 
   codecoverage:
     runs-on: ubuntu-latest
