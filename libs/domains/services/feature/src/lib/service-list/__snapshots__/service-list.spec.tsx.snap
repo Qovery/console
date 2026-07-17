@@ -81,7 +81,7 @@ exports[`ServiceList should match snapshot 1`] = `
             class="divide-y divide-neutral"
           >
             <tr
-              class="h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]"
+              class="h-[60px] cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]"
               tabindex="0"
             >
               <td
@@ -468,7 +468,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </td>
             </tr>
             <tr
-              class="h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]"
+              class="h-[60px] cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]"
               tabindex="0"
             >
               <td
@@ -844,7 +844,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </td>
             </tr>
             <tr
-              class="h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]"
+              class="h-[60px] cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]"
               tabindex="0"
             >
               <td
@@ -1542,7 +1542,7 @@ exports[`ServiceList should match snapshot 1`] = `
               </td>
             </tr>
             <tr
-              class="h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]"
+              class="h-[60px] cursor-pointer hover:bg-surface-neutral-subtle grid w-full grid-cols-[44px_minmax(250px,1.5fr)_48px_minmax(250px,1fr)_minmax(320px,1.24fr)_130px]"
               tabindex="0"
             >
               <td
