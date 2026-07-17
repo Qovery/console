@@ -8,6 +8,7 @@ interface EditGitRepositorySettingsProps {
   gitRepository?: ApplicationGitRepository
   rootPathLabel?: string
   rootPathHint?: string
+  showEditAction?: boolean
 }
 
 export function EditGitRepositorySettings({
@@ -15,6 +16,7 @@ export function EditGitRepositorySettings({
   gitRepository,
   rootPathHint,
   rootPathLabel,
+  showEditAction = true,
 }: EditGitRepositorySettingsProps) {
   const { setValue } = useFormContext<{
     provider: GitProviderEnum | undefined
@@ -52,7 +54,7 @@ export function EditGitRepositorySettings({
   return (
     <GitRepositorySettings
       gitDisabled={gitDisabled}
-      editGitSettings={editGitSettings}
+      editGitSettings={showEditAction ? editGitSettings : undefined}
       currentProvider={gitRepository?.provider}
       currentRepository={gitRepository?.name}
       urlRepository={gitRepository?.url}

@@ -6,6 +6,7 @@ import { TerraformGeneralSettings } from './terraform-general-settings'
 
 const mockNavigate = jest.fn()
 const mockUseBlueprintUpdate = jest.fn()
+const mockEditGitRepositorySettings = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -19,7 +20,10 @@ jest.mock('@tanstack/react-router', () => ({
 }))
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
-  EditGitRepositorySettings: () => null,
+  EditGitRepositorySettings: (props: unknown) => {
+    mockEditGitRepositorySettings(props)
+    return null
+  },
 }))
 
 jest.mock('@qovery/domains/services/feature', () => ({
@@ -73,6 +77,9 @@ describe('TerraformGeneralSettings', () => {
 
     expect(screen.getByRole('button', { name: 'New major version available' })).toBeInTheDocument()
     expect(screen.getByText('New blueprint version available')).toBeInTheDocument()
+    expect(mockEditGitRepositorySettings).toHaveBeenCalledWith(
+      expect.objectContaining({ showEditAction: false })
+    )
 
     await userEvent.click(screen.getByRole('button', { name: 'Update' }))
 
@@ -85,6 +92,19 @@ describe('TerraformGeneralSettings', () => {
         serviceId: 'service-id',
       },
     })
+  })
+
+  it('allows editing the Git repository for non-blueprint services', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(<TerraformGeneralSettings service={service} organization={organization} />, {
+        defaultValues: {
+          name: service.name,
+          terraform_action: TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
+        },
+      })
+    )
+
+    expect(mockEditGitRepositorySettings).toHaveBeenCalledWith(expect.objectContaining({ showEditAction: true }))
   })
 
   it('hides blueprint update signals when the blueprint is up to date', () => {

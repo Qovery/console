@@ -34,6 +34,7 @@ export function TerraformGeneralSettings({ service, organization }: TerraformGen
           gitRepository={service.terraform_files_source?.git?.git_repository}
           rootPathLabel="Terraform root folder path"
           rootPathHint="Provide the folder path where the Terraform code is located in the repository."
+          showEditAction={!service.blueprint_id}
         />
         {service.blueprint_id && <BlueprintUpdateSettings blueprintId={service.blueprint_id} />}
       </Section>
