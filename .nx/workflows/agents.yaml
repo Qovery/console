@@ -1,0 +1,18 @@
+launch-templates:
+  console-ci:
+    resource-class: 'docker_linux_amd64/medium'
+    image: 'ubuntu22.04-node24.14-v1'
+    init-steps:
+      - name: Checkout
+        uses: 'nrwl/nx-cloud-workflows/v6/workflow-steps/checkout/main.yaml'
+
+      - name: Install Node.js
+        uses: 'nrwl/nx-cloud-workflows/v6/workflow-steps/install-node/main.yaml'
+        inputs:
+          node_version: '23'
+
+      - name: Enable Corepack
+        script: corepack enable
+
+      - name: Install dependencies
+        uses: 'nrwl/nx-cloud-workflows/v6/workflow-steps/install-node-modules/main.yaml'
