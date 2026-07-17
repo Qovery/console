@@ -1,7 +1,8 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type ReactNode, useEffect } from 'react'
-import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
+import { pluralize } from '@qovery/shared/util-js'
 import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowFormData,
@@ -12,17 +13,17 @@ import { formatAgenticWorkflowRequest, useCreateAgenticWorkflow } from './use-cr
 function truncateSummary(value: string) {
   if (!value.trim()) return '-'
 
-  return value.length > 160 ? `${value.slice(0, 157)}...` : value
+  return value.length > 160 ? `${truncateText(value, 157)}…` : value
 }
 
 function formatCount(count: number, singular: string) {
   if (count === 0) return 'None'
 
-  return `${count} ${singular}${count > 1 ? 's' : ''}`
+  return `${count} ${pluralize(count, singular)}`
 }
 
 function maskValue(value: string) {
-  return value.trim() ? '••••••••••••' : '-'
+  return value.trim() ? '********' : '-'
 }
 
 function hasIncompleteGitRepository(values: AgenticWorkflowFormData) {
