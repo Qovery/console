@@ -61,7 +61,7 @@ export function SectionSecretManagerHighlight() {
         <button
           type="button"
           aria-label="Dismiss secret manager integration card"
-          className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center text-xs text-neutral-subtle transition-colors hover:text-neutral"
+          className="absolute right-1.5 top-1.5 z-[1] flex h-5 w-5 items-center justify-center text-xs text-neutral-subtle transition-colors hover:text-neutral"
           onClick={() => setIsVisible(false)}
         >
           <Icon iconName="xmark" />
