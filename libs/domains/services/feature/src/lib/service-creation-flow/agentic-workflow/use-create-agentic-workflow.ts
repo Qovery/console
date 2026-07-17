@@ -20,10 +20,10 @@ function parseHeaders(headersJson: string): AgenticWorkflowHeader[] {
     .map(([name, value]) => ({ name, value }))
 }
 
-function formatWhitelistHosts(value: string) {
+function formatIpAllowlist(value: string) {
   return value
     .split(',')
-    .map((host) => host.trim())
+    .map((entry) => entry.trim())
     .filter(Boolean)
 }
 
@@ -39,7 +39,7 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
   return {
     name: values.name,
     description: values.description,
-    whitelist_hosts: formatWhitelistHosts(values.whitelistHosts),
+    whitelist_hosts: formatIpAllowlist(values.ipAllowlist),
     model_settings: values.modelSettingsJson,
     docker_fragment: values.dockerFragment,
     enabled: values.workflowEnabled,

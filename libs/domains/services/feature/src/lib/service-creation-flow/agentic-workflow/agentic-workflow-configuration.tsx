@@ -764,11 +764,11 @@ export function AgenticWorkflowConfiguration() {
 
         <AgenticWorkflowSection section="governance" iconName="shield-halved" invalid={sectionInvalid.governance}>
           <InputTextArea
-            name="whitelist-hosts"
-            label="Whitelist hosts"
-            value={values.whitelistHosts}
-            hint="Enter domains separated by commas. Example: api.github.com, jira.company.com. Hosts from configured connectors are automatically whitelisted."
-            onChange={(event) => form.setValue('whitelistHosts', event.currentTarget.value, { shouldDirty: true })}
+            name="ip-allow-list"
+            label="IP allow list"
+            value={values.ipAllowlist}
+            hint="Enter IPs or CIDR ranges separated by commas. Example: 203.0.113.10, 198.51.100.0/24."
+            onChange={(event) => form.setValue('ipAllowlist', event.currentTarget.value, { shouldDirty: true })}
           />
           <CodeEditorField
             name="claude-config"
