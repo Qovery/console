@@ -53,7 +53,7 @@ export function BlueprintConfigurationView({ currentSection }: BlueprintConfigur
     <FunnelFlowBody customContentWidth="max-w-[620px]">
       <header className="mb-5">
         <h1 className="text-2xl font-medium leading-8 text-neutral">{formatBlueprintName(blueprint.name)} configuration</h1>
-        <p className="mt-1 text-sm leading-5 text-neutral-subtle">
+        <p className="mt-2 text-sm leading-5 text-neutral-subtle">
           Provisioned from{' '}
           <button type="button" className="font-normal underline hover:text-neutral" onClick={onViewDetails}>
             {formatBlueprintName(blueprint.name)}
