@@ -67,9 +67,11 @@ function BlueprintReadmeContent({ content }: BlueprintReadmeContentProps) {
           </div>
         ),
         th: ({ node, ...props }) => (
-          <th className="border-b border-r border-neutral px-3 py-2 text-left font-medium" {...props} />
+          <th className="border-r border-neutral px-3 py-2 text-left font-medium last:border-r-0" {...props} />
         ),
-        td: ({ node, ...props }) => <td className="border-b border-r border-neutral px-3 py-2" {...props} />,
+        td: ({ node, ...props }) => (
+          <td className="border-r border-t border-neutral px-3 py-2 last:border-r-0" {...props} />
+        ),
       }}
     >
       {contentWithoutTitle}
