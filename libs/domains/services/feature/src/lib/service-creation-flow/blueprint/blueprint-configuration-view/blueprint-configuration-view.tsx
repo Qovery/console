@@ -11,6 +11,7 @@ import {
   isFieldValid,
 } from '../../../blueprint-field-utils/blueprint-field-utils'
 import { BlueprintManifestVariableInput } from '../../../blueprint-manifest-variable-input/blueprint-manifest-variable-input'
+import { formatBlueprintName } from '../../../blueprint-utils/blueprint-utils'
 import { usePrefetchBlueprintCatalogServiceManifest } from '../../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import { sortBlueprintMajorVersions } from '../blueprint-creation-utils/blueprint-creation-utils'
@@ -51,11 +52,11 @@ export function BlueprintConfigurationView({ currentSection }: BlueprintConfigur
   return (
     <FunnelFlowBody customContentWidth="max-w-[620px]">
       <header className="mb-5">
-        <h1 className="text-2xl font-medium leading-8 text-neutral">{blueprint.name} configuration</h1>
+        <h1 className="text-2xl font-medium leading-8 text-neutral">{formatBlueprintName(blueprint.name)} configuration</h1>
         <p className="mt-1 text-sm leading-5 text-neutral-subtle">
           Provisioned from{' '}
           <button type="button" className="font-normal underline hover:text-neutral" onClick={onViewDetails}>
-            {blueprint.name}
+            {formatBlueprintName(blueprint.name)}
           </button>{' '}
           blueprint
         </p>

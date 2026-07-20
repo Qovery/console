@@ -172,6 +172,19 @@ describe('ServiceNew', () => {
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
   })
 
+  it('should format slug blueprint names', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: { blueprints: [{ ...blueprints[0], name: 'aws-rds-mysql' }] },
+    })
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.getByText('AWS RDS MySQL')).toBeInTheDocument()
+  })
+
   it('should not render deploy actions for blueprints without a service family', async () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({

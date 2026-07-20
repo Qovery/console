@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm'
 import { formatCloudProvider } from '@qovery/domains/clusters/data-access'
 import { Badge, Button, ExternalLink, Icon, Link, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { formatBlueprintName } from '../blueprint-utils/blueprint-utils'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
@@ -156,6 +157,7 @@ function BlueprintDetailsPanelContent({
   const canDeploy = footerMode === 'deploy' && Boolean(blueprint.serviceFamily)
 
   const provider = formatCloudProvider(blueprint.provider)
+  const blueprintName = formatBlueprintName(blueprint.name)
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -171,7 +173,7 @@ function BlueprintDetailsPanelContent({
               <div className="mb-8 flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
                   <Dialog.Title
-                    aria-label={blueprint.name}
+                    aria-label={blueprintName}
                     className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral"
                   >
                     <ServiceAvatar
@@ -181,7 +183,7 @@ function BlueprintDetailsPanelContent({
                       serviceAvatarRadius="sm"
                       size="custom"
                     />
-                    <span>{blueprint.name}</span>
+                    <span>{blueprintName}</span>
                   </Dialog.Title>
                   <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
                     {blueprint.description}
