@@ -4,6 +4,13 @@ import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 
+function formatWhitelistHosts(value: string) {
+  return value
+    .split(',')
+    .map((host) => host.trim())
+    .filter(Boolean)
+}
+
 function parseHeaders(headersJson: string): AgenticWorkflowHeader[] {
   if (!headersJson.trim()) {
     return []
@@ -20,46 +27,31 @@ function parseHeaders(headersJson: string): AgenticWorkflowHeader[] {
     .map(([name, value]) => ({ name, value }))
 }
 
-function formatIpAllowlist(value: string) {
-  return value
-    .split(',')
-    .map((entry) => entry.trim())
-    .filter(Boolean)
-}
-
-function formatOutputHeaders(authentication: string): AgenticWorkflowHeader[] {
-  if (!authentication.trim()) {
-    return []
-  }
-
-  return [{ name: 'Authorization', value: authentication.trim() }]
-}
-
 export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequest {
   return {
     name: values.name,
     description: values.description,
-    whitelist_hosts: formatIpAllowlist(values.ipAllowlist),
+    whitelist_hosts: formatWhitelistHosts(values.whitelistHosts),
     model_settings: values.modelSettingsJson,
     docker_fragment: values.dockerFragment,
     enabled: values.workflowEnabled,
-    mcp_connectors: values.connectors.map((connector) => ({
-      name: connector.name,
-      url: connector.url,
-      headers: parseHeaders(connector.headersJson),
+    mcp_connectors: values.connectors.map((connector, index) => ({
+      name: `MCP ${index + 1}`,
+      url: '',
+      headers: [],
       instructions: connector.mcpServersJson,
     })),
-    outputs: values.outputs.map((output) => ({
-      name: output.name,
-      url: output.type === 'Other' ? null : output.url,
-      headers: output.type === 'Other' ? [] : formatOutputHeaders(output.authentication),
+    outputs: values.outputs.map((output, index) => ({
+      name: `Output ${index + 1}`,
+      url: output.url,
+      headers: parseHeaders(output.headersJson),
       instructions: output.prompt,
     })),
     model: values.aiModel === 'Claude' ? AgenticWorkflowModel.CLAUDE : AgenticWorkflowModel.BEDROCK,
     project_repositories: values.gitRepositories.map((repository) => ({
       url: repository.repository,
       branch: repository.branch,
-      root_path: '',
+      root_path: repository.rootPath || '/',
       git_token_id: repository.gitTokenId ?? '',
     })),
   }
