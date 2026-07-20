@@ -23,7 +23,6 @@ export function GitRepositoryCard({
     is_public_repository?: boolean
     repository: string
     branch: string
-    root_path: string
     git_token_name?: string | null
     git_token_id?: string | null
     git_repository?: GitRepository
@@ -33,7 +32,6 @@ export function GitRepositoryCard({
       is_public_repository: repository.isPublicRepository,
       repository: repository.repository,
       branch: repository.branch,
-      root_path: repository.rootPath || '/',
       git_token_name: repository.gitTokenName,
       git_token_id: repository.gitTokenId,
       git_repository: repository.gitRepository,
@@ -55,7 +53,6 @@ export function GitRepositoryCard({
         repository: values.repository ?? '',
         gitRepository: values.git_repository as GitRepository | undefined,
         branch: values.branch ?? '',
-        rootPath: values.root_path ?? '/',
       })
     })
 
@@ -83,8 +80,7 @@ export function GitRepositoryCard({
                   organizationId={organizationId}
                   gitProvider={provider}
                   gitTokenId={gitTokenId}
-                  rootPathLabel="Repository folder path"
-                  rootPathHint="Folder inside the repository the workflow should use. Use / for the repository root."
+                  hideRootPath
                 />
               )}
             </>

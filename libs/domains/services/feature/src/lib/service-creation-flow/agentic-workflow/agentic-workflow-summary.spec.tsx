@@ -38,6 +38,7 @@ const validValues: Partial<AgenticWorkflowFormData> = {
   modelApiKey: 'sk-ant-test',
   agentPrompt: 'Review payloads and open pull requests.',
   whitelistHosts: '*',
+  mcpJson: '{"mcpServers":{"costory":{"type":"http","url":"https://app-api.costory.io/mcp"}}}',
   outputs: [{ url: 'https://hooks.example.com/workflow', headersJson: '{}', prompt: 'Notify the team.' }],
 }
 
@@ -88,12 +89,22 @@ describe('AgenticWorkflowSummary', () => {
   })
 
   it('should render configured values from the configuration form', () => {
-    renderSummary()
+    renderSummary({
+      ...validValues,
+      gitRepositories: [
+        {
+          provider: 'GITHUB',
+          repository: 'Qovery/console',
+          branch: 'staging',
+        },
+      ],
+    })
 
     expect(screen.getByText('review-agent')).toBeInTheDocument()
     expect(screen.getByText('Reviews incoming changes')).toBeInTheDocument()
     expect(screen.getByText('********')).toBeInTheDocument()
     expect(screen.getByText('*')).toBeInTheDocument()
+    expect(screen.getByText(validValues.mcpJson ?? '')).toBeInTheDocument()
     expect(screen.getByText('1 webhook')).toBeInTheDocument()
   })
 
@@ -114,6 +125,7 @@ describe('AgenticWorkflowSummary', () => {
       environmentId: 'environment-1',
       payload: expect.objectContaining({
         name: 'review-agent',
+        mcp: validValues.mcpJson,
         outputs: [expect.objectContaining({ url: 'https://hooks.example.com/workflow' })],
       }),
     })

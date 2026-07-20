@@ -1,3 +1,4 @@
+import { AgenticWorkflowModelType } from 'qovery-typescript-axios'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'
 import { useAgenticWorkflowCreateContext } from '../agentic-workflow-context'
@@ -11,11 +12,11 @@ export function AIModelCards() {
       <button
         type="button"
         className={`flex min-h-[104px] flex-col gap-2 rounded border p-4 text-left transition ${
-          selectedModel === 'Claude'
+          selectedModel === AgenticWorkflowModelType.CLAUDE
             ? 'border-brand-strong bg-surface-brand-subtle'
             : 'border-neutral bg-surface-neutral-subtle hover:bg-surface-neutral-componentHover'
         }`}
-        onClick={() => form.setValue('aiModel', 'Claude', { shouldDirty: true })}
+        onClick={() => form.setValue('aiModel', AgenticWorkflowModelType.CLAUDE, { shouldDirty: true })}
       >
         <span className="flex items-center gap-2 text-sm font-medium text-neutral">
           <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-5 w-5" />

@@ -1,4 +1,4 @@
-import { type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
+import { AgenticWorkflowModelType, type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useContext, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { FunnelFlow } from '@qovery/shared/ui'
@@ -34,8 +34,6 @@ const DEFAULT_MODEL_SETTINGS = `{
     "Write"
   ]
 }`
-
-export const DEFAULT_CONNECTOR_JSON = ''
 
 export const MCP_CONNECTOR_JSON_EXAMPLE = `{
   "mcpServers": {
@@ -83,11 +81,6 @@ export interface AgenticWorkflowGitRepository {
   repository: string
   gitRepository?: GitRepository
   branch: string
-  rootPath: string
-}
-
-export interface AgenticWorkflowConnector {
-  mcpServersJson: string
 }
 
 export interface AgenticWorkflowFormData {
@@ -97,9 +90,9 @@ export interface AgenticWorkflowFormData {
   memory: string
   storage: string
   workflowEnabled: boolean
-  aiModel: 'Claude' | 'Bedrock'
+  aiModel: AgenticWorkflowModelType
   webhookEnabled: boolean
-  connectors: AgenticWorkflowConnector[]
+  mcpJson: string
   gitRepositories: AgenticWorkflowGitRepository[]
   modelApiKey: string
   modelSettingsJson: string
@@ -146,9 +139,9 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
       memory: '2048',
       storage: '10',
       workflowEnabled: true,
-      aiModel: 'Claude',
+      aiModel: AgenticWorkflowModelType.CLAUDE,
       webhookEnabled: true,
-      connectors: [],
+      mcpJson: MCP_CONNECTOR_JSON_EXAMPLE,
       gitRepositories: [],
       modelApiKey: '',
       modelSettingsJson: DEFAULT_MODEL_SETTINGS,

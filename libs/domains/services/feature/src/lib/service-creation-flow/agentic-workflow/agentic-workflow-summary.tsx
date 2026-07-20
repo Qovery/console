@@ -3,6 +3,7 @@ import posthog from 'posthog-js'
 import { type ReactNode, useEffect } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
+import { isGitRepositoryComplete } from './agentic-workflow-configuration/agentic-workflow-configuration'
 import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowFormData,
@@ -30,9 +31,7 @@ function maskValue(value: string) {
 }
 
 function hasIncompleteGitRepository(values: AgenticWorkflowFormData) {
-  return values.gitRepositories.some(
-    (repository) => !repository.gitTokenId || !repository.repository.trim() || !repository.branch.trim()
-  )
+  return values.gitRepositories.some((repository) => !isGitRepositoryComplete(repository))
 }
 
 function hasIncompleteOutput(values: AgenticWorkflowFormData) {
@@ -141,7 +140,7 @@ export function AgenticWorkflowSummary() {
           </SummarySection>
 
           <SummarySection title="MCPs" onEdit={() => handleEditSection('connectors')}>
-            <SummaryValue label="MCPs" value={formatCount(values.connectors.length, 'MCP')} />
+            <SummaryValue label="Configuration" value={truncateSummary(values.mcpJson)} />
           </SummarySection>
 
           <SummarySection title="Git repositories" onEdit={() => handleEditSection('git-repositories')}>
