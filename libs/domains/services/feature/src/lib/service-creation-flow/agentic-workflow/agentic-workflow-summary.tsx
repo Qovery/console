@@ -33,9 +33,18 @@ function hasIncompleteGitRepository(values: AgenticWorkflowFormData) {
 }
 
 function hasIncompleteOutput(values: AgenticWorkflowFormData) {
-  return values.outputs.some((output) =>
-    output.type === 'Other' ? !output.prompt.trim() : !output.url.trim() || !output.authentication.trim()
-  )
+  return values.outputs.some((output) => {
+    if (!output.url.trim()) return true
+
+    if (!output.headersJson.trim()) return false
+
+    try {
+      JSON.parse(output.headersJson)
+      return false
+    } catch {
+      return true
+    }
+  })
 }
 
 function SummarySection({ children, onEdit, title }: { children: ReactNode; onEdit: () => void; title: string }) {
@@ -116,6 +125,9 @@ export function AgenticWorkflowSummary() {
           <SummarySection title="Service information" onEdit={() => handleEditSection('service-information')}>
             <SummaryValue label="Name" value={values.name} />
             <SummaryValue label="Description" value={values.description || undefined} />
+            <SummaryValue label="CPU" value={values.cpu ? `${values.cpu} mCPU` : undefined} />
+            <SummaryValue label="Memory" value={values.memory ? `${values.memory} MB` : undefined} />
+            <SummaryValue label="Storage" value={values.storage ? `${values.storage} GB` : undefined} />
             <SummaryValue label="Enabled" value={values.workflowEnabled ? 'Yes' : 'No'} />
           </SummarySection>
 
@@ -125,8 +137,8 @@ export function AgenticWorkflowSummary() {
             <SummaryValue label="Model settings" value={truncateSummary(values.modelSettingsJson)} />
           </SummarySection>
 
-          <SummarySection title="Connectors" onEdit={() => handleEditSection('connectors')}>
-            <SummaryValue label="Connectors" value={formatCount(values.connectors.length, 'connector')} />
+          <SummarySection title="MCPs" onEdit={() => handleEditSection('connectors')}>
+            <SummaryValue label="MCPs" value={formatCount(values.connectors.length, 'MCP')} />
           </SummarySection>
 
           <SummarySection title="Git repositories" onEdit={() => handleEditSection('git-repositories')}>
@@ -134,16 +146,15 @@ export function AgenticWorkflowSummary() {
           </SummarySection>
 
           <SummarySection title="Governance" onEdit={() => handleEditSection('governance')}>
-            <SummaryValue label="IP allow list" value={values.ipAllowlist || undefined} />
-            <SummaryValue label="Claude configuration" value={truncateSummary(values.claudeConfigJson)} />
+            <SummaryValue label="Domain allowlist" value={values.whitelistHosts || undefined} />
           </SummarySection>
 
           <SummarySection title="Docker fragment" onEdit={() => handleEditSection('docker-fragment')}>
             <SummaryValue label="Fragment" value={truncateSummary(values.dockerFragment)} />
           </SummarySection>
 
-          <SummarySection title="Outputs" onEdit={() => handleEditSection('outputs')}>
-            <SummaryValue label="Outputs" value={formatCount(values.outputs.length, 'output')} />
+          <SummarySection title="Output webhooks" onEdit={() => handleEditSection('outputs')}>
+            <SummaryValue label="Webhooks" value={formatCount(values.outputs.length, 'webhook')} />
           </SummarySection>
 
           <SummarySection title="Agent prompt" onEdit={() => handleEditSection('agent-prompt')}>

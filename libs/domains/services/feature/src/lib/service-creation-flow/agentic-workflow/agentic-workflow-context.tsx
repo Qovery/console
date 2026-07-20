@@ -5,17 +5,56 @@ import { FunnelFlow } from '@qovery/shared/ui'
 
 const DEFAULT_MODEL_SETTINGS = `{
   "provider": "anthropic",
-  "model": "claude-sonnet-4",
-  "temperature": 0.2
+  "models": [
+    {
+      "name": "claude-sonnet-4"
+    },
+    {
+      "name": "claude-haiku-4"
+    }
+  ],
+  "extendedThinking": false,
+  "tools": [
+    "Agent",
+    "Bash",
+    "Edit",
+    "Glob",
+    "Grep",
+    "LSP",
+    "NotebookEdit",
+    "Read",
+    "Skill",
+    "TaskCreate",
+    "TaskGet",
+    "TaskList",
+    "TaskUpdate",
+    "TodoWrite",
+    "WebFetch",
+    "WebSearch",
+    "Write"
+  ]
 }`
 
-const DEFAULT_CLAUDE_CONFIG = `{
-  "tools": [],
-  "commands": []
-}`
+export const DEFAULT_CONNECTOR_JSON = ''
 
-export const DEFAULT_CONNECTOR_JSON = `{
-  "mcpServers": {}
+export const MCP_CONNECTOR_JSON_EXAMPLE = `{
+  "mcpServers": {
+    "investigator": {
+      "type": "stdio",
+      "command": "target/debug/mcp_server_example",
+      "args": [],
+      "env": {
+        "INVESTIGATOR_TOKEN": "{{INVESTIGATOR_TOKEN}}"
+      }
+    },
+    "costory": {
+      "type": "http",
+      "url": "https://app-api.costory.io/mcp",
+      "headers": {
+        "Authorization": "Bearer {{COSTORY_TOKEN}}"
+      }
+    }
+  }
 }`
 
 export const agenticWorkflowCreationSteps: { title: string }[] = [{ title: 'Configuration' }, { title: 'Summary' }]
@@ -31,10 +70,8 @@ export type AgenticWorkflowConfigurationSection =
   | 'agent-prompt'
 
 export interface AgenticWorkflowOutput {
-  type: 'Slack' | 'Jira' | 'GitHub' | 'Other'
-  name: string
   url: string
-  authentication: string
+  headersJson: string
   prompt: string
 }
 
@@ -46,19 +83,19 @@ export interface AgenticWorkflowGitRepository {
   repository: string
   gitRepository?: GitRepository
   branch: string
+  rootPath: string
 }
 
 export interface AgenticWorkflowConnector {
-  type: 'Slack' | 'Jira' | 'GitHub' | 'Other'
-  name: string
-  url: string
   mcpServersJson: string
-  headersJson: string
 }
 
 export interface AgenticWorkflowFormData {
   name: string
   description: string
+  cpu: string
+  memory: string
+  storage: string
   workflowEnabled: boolean
   aiModel: 'Claude' | 'Bedrock'
   webhookEnabled: boolean
@@ -66,8 +103,7 @@ export interface AgenticWorkflowFormData {
   gitRepositories: AgenticWorkflowGitRepository[]
   modelApiKey: string
   modelSettingsJson: string
-  ipAllowlist: string
-  claudeConfigJson: string
+  whitelistHosts: string
   dockerFragment: string
   outputs: AgenticWorkflowOutput[]
   agentPrompt: string
@@ -106,6 +142,9 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
     defaultValues: {
       name: '',
       description: '',
+      cpu: '2000',
+      memory: '2048',
+      storage: '10',
       workflowEnabled: true,
       aiModel: 'Claude',
       webhookEnabled: true,
@@ -113,8 +152,7 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
       gitRepositories: [],
       modelApiKey: '',
       modelSettingsJson: DEFAULT_MODEL_SETTINGS,
-      ipAllowlist: '',
-      claudeConfigJson: DEFAULT_CLAUDE_CONFIG,
+      whitelistHosts: '*',
       dockerFragment: '',
       outputs: [],
       agentPrompt: '',
