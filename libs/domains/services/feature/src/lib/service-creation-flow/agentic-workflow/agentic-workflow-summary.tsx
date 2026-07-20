@@ -8,7 +8,7 @@ import {
   type AgenticWorkflowFormData,
   useAgenticWorkflowCreateContext,
 } from './agentic-workflow-context'
-import { formatAgenticWorkflowRequest, useCreateAgenticWorkflow } from './hooks/use-create-agentic-workflow'
+import { formatAgenticWorkflowRequest, useCreateAgenticWorkflow } from './hooks/use-create-agentic-workflow/use-create-agentic-workflow'
 
 function truncateSummary(value: string) {
   if (!value.trim()) return '-'
