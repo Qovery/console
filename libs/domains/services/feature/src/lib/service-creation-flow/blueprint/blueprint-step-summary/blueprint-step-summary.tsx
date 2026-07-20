@@ -279,7 +279,7 @@ export function BlueprintStepSummary() {
               <ul className="list-none space-y-2 text-sm text-neutral-subtle">
                 <SummaryValue label="Name" value={serviceName} />
                 <SummaryValue label="Blueprint" value={blueprint.name} />
-                <SummaryValue label="Blueprint version" value={serviceVersion} />
+                <SummaryValue label="Version" value={serviceVersion} />
               </ul>
             </Section>
 
