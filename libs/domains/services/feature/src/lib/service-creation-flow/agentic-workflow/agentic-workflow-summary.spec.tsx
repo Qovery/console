@@ -1,6 +1,10 @@
 import { useLayoutEffect, useState } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData, useAgenticWorkflowCreateContext } from './agentic-workflow-context'
+import {
+  AgenticWorkflowCreationFlow,
+  type AgenticWorkflowFormData,
+  useAgenticWorkflowCreateContext,
+} from './agentic-workflow-context'
 import { AgenticWorkflowSummary } from './agentic-workflow-summary'
 
 const mockNavigate = jest.fn()
@@ -37,7 +41,13 @@ const validValues: Partial<AgenticWorkflowFormData> = {
   outputs: [{ url: 'https://hooks.example.com/workflow', headersJson: '{}', prompt: 'Notify the team.' }],
 }
 
-function WithFormValues({ children, values = validValues }: { children: JSX.Element; values?: Partial<AgenticWorkflowFormData> }) {
+function WithFormValues({
+  children,
+  values = validValues,
+}: {
+  children: JSX.Element
+  values?: Partial<AgenticWorkflowFormData>
+}) {
   const { form } = useAgenticWorkflowCreateContext()
   const [ready, setReady] = useState(false)
 

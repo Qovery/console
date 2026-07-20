@@ -59,7 +59,10 @@ function getSectionTitle(section: AgenticWorkflowConfigurationSection) {
 
 export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository) {
   return Boolean(
-    repository.gitTokenId && repository.repository.trim() && repository.branch.trim() && (repository.rootPath || '/').trim()
+    repository.gitTokenId &&
+      repository.repository.trim() &&
+      repository.branch.trim() &&
+      (repository.rootPath || '/').trim()
   )
 }
 
