@@ -1,7 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import { type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
 import { IconEnum } from '@qovery/shared/enums'
@@ -12,41 +12,9 @@ import {
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
   DEFAULT_CONNECTOR_JSON,
+  MCP_CONNECTOR_JSON_EXAMPLE,
   useAgenticWorkflowCreateContext,
 } from './agentic-workflow-context'
-
-const outputTypes: { iconName: IconName; label: AgenticWorkflowOutput['type'] }[] = [
-  { label: 'Slack', iconName: 'slack' },
-  { label: 'Jira', iconName: 'jira' },
-  { label: 'GitHub', iconName: 'github' },
-  { label: 'Other', iconName: 'ellipsis' },
-]
-
-const connectorTypes: { iconName: IconName; label: AgenticWorkflowConnector['type'] }[] = outputTypes
-
-const defaultMcpUrls: Record<Exclude<AgenticWorkflowConnector['type'], 'Other'>, string> = {
-  Slack: 'https://mcp.slack.com/mcp',
-  Jira: 'https://mcp.atlassian.com/v1/sse',
-  GitHub: 'https://api.githubcopilot.com/mcp/',
-}
-
-function getDefaultIntegrationName(type: AgenticWorkflowConnector['type'] | AgenticWorkflowOutput['type']) {
-  return type
-}
-
-function getNextIntegrationName(
-  currentName: string,
-  previousType: AgenticWorkflowConnector['type'] | AgenticWorkflowOutput['type'],
-  nextType: AgenticWorkflowConnector['type'] | AgenticWorkflowOutput['type']
-) {
-  const trimmedName = currentName.trim()
-
-  if (!trimmedName || trimmedName === getDefaultIntegrationName(previousType)) {
-    return getDefaultIntegrationName(nextType)
-  }
-
-  return currentName
-}
 
 const sectionOrder: AgenticWorkflowConfigurationSection[] = [
   'service-information',
@@ -81,11 +49,11 @@ function getSectionTitle(section: AgenticWorkflowConfigurationSection) {
   const titles: Record<AgenticWorkflowConfigurationSection, string> = {
     'service-information': 'Service information',
     'ai-model': 'AI model',
-    connectors: 'Connectors',
+    connectors: 'MCPs',
     'git-repositories': 'Git repositories',
     governance: 'Governance',
     'docker-fragment': 'Docker fragment',
-    outputs: 'Outputs',
+    outputs: 'Output webhooks',
     'agent-prompt': 'Agent prompt',
   }
 
@@ -93,17 +61,13 @@ function getSectionTitle(section: AgenticWorkflowConfigurationSection) {
 }
 
 function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository) {
-  return Boolean(repository.gitTokenId && repository.repository.trim() && repository.branch.trim())
+  return Boolean(
+    repository.gitTokenId && repository.repository.trim() && repository.branch.trim() && (repository.rootPath || '/').trim()
+  )
 }
 
 function isOutputComplete(output: AgenticWorkflowOutput) {
-  return output.type === 'Other'
-    ? Boolean(output.prompt.trim())
-    : Boolean(output.url.trim() && output.authentication.trim())
-}
-
-function isConnectorComplete(connector: AgenticWorkflowConnector) {
-  return Boolean(connector.url.trim())
+  return Boolean(output.url.trim())
 }
 
 function AgenticWorkflowSection({
@@ -216,7 +180,7 @@ function CodeEditorField({
           }}
         />
       </div>
-      {hint && !error && <p className="px-3 text-xs font-normal text-neutral-subtle">{hint}</p>}
+      {hint && !error && <div className="flex flex-col gap-2 px-3 text-xs font-normal text-neutral-subtle">{hint}</div>}
       {error && <p className="px-3 text-xs font-medium text-negative">{error}</p>}
     </div>
   )
@@ -258,98 +222,6 @@ function AIModelCards() {
   )
 }
 
-function IntegrationTypeIcon({
-  iconName,
-  label,
-  selected,
-}: {
-  iconName: IconName
-  label: AgenticWorkflowConnector['type'] | AgenticWorkflowOutput['type']
-  selected: boolean
-}) {
-  if (label === 'Slack') {
-    return <Icon name={IconEnum.SLACK} className="h-5 w-5" />
-  }
-
-  if (label === 'GitHub') {
-    return <Icon name={IconEnum.GITHUB} className="h-5 w-5" />
-  }
-
-  if (label === 'Jira') {
-    return <img src="/assets/ai-tools/jira.svg" alt="" aria-hidden="true" className="h-5 w-5" />
-  }
-
-  return <Icon iconName={iconName} className={selected ? 'text-brand' : 'text-neutral-subtle'} />
-}
-
-function ConnectorTypeCards({
-  onChange,
-  value,
-}: {
-  onChange: (value: AgenticWorkflowConnector['type']) => void
-  value: AgenticWorkflowConnector['type']
-}) {
-  return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      {connectorTypes.map((connectorType) => {
-        const selected = value === connectorType.label
-
-        return (
-          <button
-            key={connectorType.label}
-            type="button"
-            className={`flex min-h-[82px] flex-col items-center justify-center gap-2 rounded border p-3 text-center transition ${
-              selected
-                ? 'border-brand-strong bg-surface-brand-subtle'
-                : 'border-neutral bg-surface-neutral hover:bg-surface-neutral-componentHover'
-            }`}
-            onClick={() => onChange(connectorType.label)}
-          >
-            <span className="flex h-7 w-7 items-center justify-center">
-              <IntegrationTypeIcon iconName={connectorType.iconName} label={connectorType.label} selected={selected} />
-            </span>
-            <span className="text-sm font-medium text-neutral">{connectorType.label}</span>
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
-function OutputTypeCards({
-  onChange,
-  value,
-}: {
-  onChange: (value: AgenticWorkflowOutput['type']) => void
-  value: AgenticWorkflowOutput['type']
-}) {
-  return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-      {outputTypes.map((outputType) => {
-        const selected = value === outputType.label
-
-        return (
-          <button
-            key={outputType.label}
-            type="button"
-            className={`flex min-h-[82px] flex-col items-center justify-center gap-2 rounded border p-3 text-center transition ${
-              selected
-                ? 'border-brand-strong bg-surface-brand-subtle'
-                : 'border-neutral bg-surface-neutral hover:bg-surface-neutral-componentHover'
-            }`}
-            onClick={() => onChange(outputType.label)}
-          >
-            <span className="flex h-7 w-7 items-center justify-center">
-              <IntegrationTypeIcon iconName={outputType.iconName} label={outputType.label} selected={selected} />
-            </span>
-            <span className="text-sm font-medium text-neutral">{outputType.label}</span>
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
 function GitRepositoryCard({
   index,
   onChange,
@@ -367,6 +239,7 @@ function GitRepositoryCard({
     is_public_repository?: boolean
     repository: string
     branch: string
+    root_path: string
     git_token_name?: string | null
     git_token_id?: string | null
     git_repository?: GitRepository
@@ -376,6 +249,7 @@ function GitRepositoryCard({
       is_public_repository: repository.isPublicRepository,
       repository: repository.repository,
       branch: repository.branch,
+      root_path: repository.rootPath || '/',
       git_token_name: repository.gitTokenName,
       git_token_id: repository.gitTokenId,
       git_repository: repository.gitRepository,
@@ -397,6 +271,7 @@ function GitRepositoryCard({
         repository: values.repository ?? '',
         gitRepository: values.git_repository as GitRepository | undefined,
         branch: values.branch ?? '',
+        rootPath: values.root_path ?? '/',
       })
     })
 
@@ -424,7 +299,8 @@ function GitRepositoryCard({
                   organizationId={organizationId}
                   gitProvider={provider}
                   gitTokenId={gitTokenId}
-                  hideRootPath
+                  rootPathLabel="Repository folder path"
+                  rootPathHint="Folder inside the repository the workflow should use. Use / for the repository root."
                 />
               )}
             </>
@@ -438,13 +314,14 @@ function GitRepositoryCard({
 export function AgenticWorkflowConfiguration() {
   const navigate = useNavigate()
   const { activeSection, creationFlowUrl, form, setActiveSection, setCurrentStep } = useAgenticWorkflowCreateContext()
+  const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
+  const whitelistHostsTextareaRef = useRef<HTMLTextAreaElement>(null)
+  const agentPromptTextareaRef = useRef<HTMLTextAreaElement>(null)
   const values = form.watch()
   const { dirtyFields } = form.formState
   const connectorErrors = values.connectors.map((connector) => getJsonError(connector.mcpServersJson, true))
-  const connectorHeadersErrors = values.connectors.map((connector) => getJsonError(connector.headersJson))
-  const connectorsValid = values.connectors.every(isConnectorComplete)
+  const outputHeadersErrors = values.outputs.map((output) => getJsonError(output.headersJson))
   const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
-  const claudeConfigJsonError = getJsonError(values.claudeConfigJson, true)
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
   const outputsValid = values.outputs.every(isOutputComplete)
   const showNameError = Boolean(dirtyFields.name) && !values.name.trim()
@@ -452,11 +329,11 @@ export function AgenticWorkflowConfiguration() {
   const sectionInvalid: Record<AgenticWorkflowConfigurationSection, boolean> = {
     'service-information': !values.name.trim(),
     'ai-model': !values.modelApiKey.trim() || Boolean(modelSettingsJsonError),
-    connectors: !connectorsValid || connectorErrors.some(Boolean) || connectorHeadersErrors.some(Boolean),
+    connectors: connectorErrors.some(Boolean),
     'git-repositories': !gitRepositoriesValid,
-    governance: Boolean(claudeConfigJsonError),
+    governance: false,
     'docker-fragment': false,
-    outputs: !outputsValid,
+    outputs: !outputsValid || outputHeadersErrors.some(Boolean),
     'agent-prompt': !values.agentPrompt.trim(),
   }
   const isValid =
@@ -465,15 +342,23 @@ export function AgenticWorkflowConfiguration() {
     Boolean(values.agentPrompt.trim()) &&
     gitRepositoriesValid &&
     outputsValid &&
-    connectorsValid &&
     connectorErrors.every((error) => !error) &&
-    connectorHeadersErrors.every((error) => !error) &&
-    !modelSettingsJsonError &&
-    !claudeConfigJsonError
+    outputHeadersErrors.every((error) => !error) &&
+    !modelSettingsJsonError
 
   useEffect(() => {
     setCurrentStep(1)
   }, [setCurrentStep])
+
+  useEffect(() => {
+    const inputBySection: Partial<Record<AgenticWorkflowConfigurationSection, HTMLElement | null>> = {
+      'ai-model': modelApiKeyInputRef.current,
+      governance: whitelistHostsTextareaRef.current,
+      'agent-prompt': agentPromptTextareaRef.current,
+    }
+
+    window.requestAnimationFrame(() => inputBySection[activeSection]?.focus())
+  }, [activeSection])
 
   const goToNextSection = () => {
     const nextSection = sectionOrder[sectionOrder.indexOf(activeSection) + 1]
@@ -492,11 +377,7 @@ export function AgenticWorkflowConfiguration() {
       [
         ...values.connectors,
         {
-          type: 'Slack',
-          name: getDefaultIntegrationName('Slack'),
-          url: defaultMcpUrls.Slack,
           mcpServersJson: DEFAULT_CONNECTOR_JSON,
-          headersJson: '{}',
         },
       ],
       {
@@ -517,6 +398,7 @@ export function AgenticWorkflowConfiguration() {
           repository: '',
           gitRepository: undefined,
           branch: '',
+          rootPath: '/',
         },
       ],
       { shouldDirty: true }
@@ -528,10 +410,10 @@ export function AgenticWorkflowConfiguration() {
       [
         ...values.outputs,
         {
-          type: 'Slack',
-          name: getDefaultIntegrationName('Slack'),
-          url: defaultMcpUrls.Slack,
-          authentication: '',
+          url: '',
+          headersJson: `{
+  "Authorization": "Bearer {{TOKEN}}"
+}`,
           prompt: '',
         },
       ],
@@ -569,6 +451,29 @@ export function AgenticWorkflowConfiguration() {
             value={values.description}
             onChange={(event) => form.setValue('description', event.currentTarget.value, { shouldDirty: true })}
           />
+          <div className="grid gap-3 sm:grid-cols-3">
+            <InputText
+              name="cpu"
+              label="CPU (mCPU)"
+              type="number"
+              value={values.cpu}
+              onChange={(event) => form.setValue('cpu', event.currentTarget.value, { shouldDirty: true })}
+            />
+            <InputText
+              name="memory"
+              label="Memory (MB)"
+              type="number"
+              value={values.memory}
+              onChange={(event) => form.setValue('memory', event.currentTarget.value, { shouldDirty: true })}
+            />
+            <InputText
+              name="storage"
+              label="Storage (GB)"
+              type="number"
+              value={values.storage}
+              onChange={(event) => form.setValue('storage', event.currentTarget.value, { shouldDirty: true })}
+            />
+          </div>
           <InputToggle
             small
             align="top"
@@ -583,6 +488,7 @@ export function AgenticWorkflowConfiguration() {
         <AgenticWorkflowSection section="ai-model" iconName="brain-circuit" invalid={sectionInvalid['ai-model']}>
           <AIModelCards />
           <InputText
+            ref={modelApiKeyInputRef}
             name="model-api-key"
             label="API key"
             type="password"
@@ -597,6 +503,20 @@ export function AgenticWorkflowConfiguration() {
             language="json"
             value={values.modelSettingsJson}
             error={modelSettingsJsonError}
+            hint={
+              <>
+                Need help configuring Claude Code settings? Read the{' '}
+                <a
+                  href="https://code.claude.com/docs/en/settings"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-brand hover:underline"
+                >
+                  Claude Code settings documentation
+                </a>
+                .
+              </>
+            }
             onChange={(value) => form.setValue('modelSettingsJson', value, { shouldDirty: true })}
           />
           <ContinueButton
@@ -619,14 +539,14 @@ export function AgenticWorkflowConfiguration() {
               onClick={addConnector}
             >
               <Icon iconName="plus" />
-              Add connector
+              Add MCP
             </Button>
           }
         >
           {values.connectors.map((connector, index) => (
             <div key={index} className="rounded-lg border border-neutral bg-surface-neutral p-4">
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-medium text-neutral">Connector {index + 1}</span>
+                <span className="text-sm font-medium text-neutral">MCP {index + 1}</span>
                 <Button
                   type="button"
                   variant="plain"
@@ -643,78 +563,50 @@ export function AgenticWorkflowConfiguration() {
                   Remove
                 </Button>
               </div>
-              <div className="flex flex-col gap-4">
-                <ConnectorTypeCards
-                  value={connector.type}
-                  onChange={(type) => {
-                    const connectors = [...values.connectors]
-                    connectors[index] = {
-                      ...connector,
-                      type,
-                      name: getNextIntegrationName(connector.name, connector.type, type),
-                      url: type === 'Other' ? '' : defaultMcpUrls[type],
-                    }
-                    form.setValue('connectors', connectors, { shouldDirty: true })
-                  }}
-                />
-                <InputText
-                  name={`connector-name-${index}`}
-                  label="Name"
-                  value={connector.name}
-                  onChange={(event) => {
-                    const connectors = [...values.connectors]
-                    connectors[index] = { ...connector, name: event.currentTarget.value }
-                    form.setValue('connectors', connectors, { shouldDirty: true })
-                  }}
-                />
-                <InputText
-                  name={`connector-url-${index}`}
-                  label="MCP URL"
-                  value={connector.url}
-                  error={!connector.url.trim() ? 'Please enter the connector MCP URL.' : undefined}
-                  onChange={(event) => {
-                    const connectors = [...values.connectors]
-                    connectors[index] = { ...connector, url: event.currentTarget.value }
-                    form.setValue('connectors', connectors, { shouldDirty: true })
-                  }}
-                />
-                <CodeEditorField
-                  name={`connector-headers-${index}`}
-                  label="Request headers JSON"
-                  language="json"
-                  height="120px"
-                  value={connector.headersJson}
-                  error={connectorHeadersErrors[index]}
-                  hint='Optional request headers. Example: { "Authorization": "Bearer {{TOKEN}}" }'
-                  onChange={(value) => {
-                    const connectors = [...values.connectors]
-                    connectors[index] = { ...connector, headersJson: value }
-                    form.setValue('connectors', connectors, { shouldDirty: true })
-                  }}
-                />
-                <CodeEditorField
-                  name={`connector-${index}`}
-                  label="mcpServers JSON"
-                  language="json"
-                  value={connector.mcpServersJson}
-                  error={connectorErrors[index]}
-                  hint="Secret variables can be referenced with {{VAR_NAME}}."
-                  onChange={(value) => {
-                    const connectors = [...values.connectors]
-                    connectors[index] = { ...connector, mcpServersJson: value }
-                    form.setValue('connectors', connectors, { shouldDirty: true })
-                  }}
-                />
-              </div>
+              <CodeEditorField
+                name={`mcp-${index}`}
+                label="MCP JSON"
+                language="json"
+                value={connector.mcpServersJson}
+                error={connectorErrors[index]}
+                hint={
+                  <>
+                    <span>
+                      See Claude Code docs for{' '}
+                      <a
+                        href="https://code.claude.com/docs/fr/mcp#option-1-add-a-remote-http-server"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-brand hover:underline"
+                      >
+                        remote HTTP
+                      </a>{' '}
+                      and{' '}
+                      <a
+                        href="https://code.claude.com/docs/fr/mcp#option-3-add-a-local-stdio-server"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-brand hover:underline"
+                      >
+                        local stdio
+                      </a>{' '}
+                      servers.
+                    </span>
+                    <span>Example:</span>
+                    <pre className="overflow-auto rounded border border-neutral bg-surface-neutral px-3 py-2 font-mono text-xs text-neutral">
+                      {MCP_CONNECTOR_JSON_EXAMPLE}
+                    </pre>
+                  </>
+                }
+                onChange={(value) => {
+                  const connectors = [...values.connectors]
+                  connectors[index] = { ...connector, mcpServersJson: value }
+                  form.setValue('connectors', connectors, { shouldDirty: true })
+                }}
+              />
             </div>
           ))}
-          {!connectorsValid && (
-            <p className="px-3 text-xs font-medium text-negative">Enter an MCP URL for each configured connector.</p>
-          )}
-          <ContinueButton
-            disabled={!connectorsValid || connectorErrors.some(Boolean) || connectorHeadersErrors.some(Boolean)}
-            onClick={goToNextSection}
-          />
+          <ContinueButton disabled={connectorErrors.some(Boolean)} onClick={goToNextSection} />
         </AgenticWorkflowSection>
 
         <AgenticWorkflowSection
@@ -764,33 +656,12 @@ export function AgenticWorkflowConfiguration() {
 
         <AgenticWorkflowSection section="governance" iconName="shield-halved" invalid={sectionInvalid.governance}>
           <InputTextArea
-            name="ip-allow-list"
-            label="IP allow list"
-            value={values.ipAllowlist}
-            hint="Enter IPs or CIDR ranges separated by commas. Example: 203.0.113.10, 198.51.100.0/24."
-            onChange={(event) => form.setValue('ipAllowlist', event.currentTarget.value, { shouldDirty: true })}
-          />
-          <CodeEditorField
-            name="claude-config"
-            label="Claude configuration JSON"
-            language="json"
-            value={values.claudeConfigJson}
-            error={claudeConfigJsonError}
-            hint={
-              <>
-                Need help with permissions and allowed routes? Use{' '}
-                <a
-                  href="https://claude-settings.nl/"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium text-brand hover:underline"
-                >
-                  Claude settings generator
-                </a>
-                .
-              </>
-            }
-            onChange={(value) => form.setValue('claudeConfigJson', value, { shouldDirty: true })}
+            ref={whitelistHostsTextareaRef}
+            name="whitelist-hosts"
+            label="Domain allowlist"
+            value={values.whitelistHosts}
+            hint="Use * to allow all domains, or enter hostnames separated by commas. Example: api.github.com, jira.company.com."
+            onChange={(event) => form.setValue('whitelistHosts', event.currentTarget.value, { shouldDirty: true })}
           />
           <ContinueButton onClick={goToNextSection} />
         </AgenticWorkflowSection>
@@ -801,6 +672,7 @@ export function AgenticWorkflowConfiguration() {
             label="Dockerfile fragment"
             language="dockerfile"
             value={values.dockerFragment}
+            hint="Use this to install CLI or binary. Example: RUN npm install -g @modelcontextprotocol/server-github."
             onChange={(value) => form.setValue('dockerFragment', value, { shouldDirty: true })}
           />
           <ContinueButton onClick={goToNextSection} />
@@ -820,14 +692,14 @@ export function AgenticWorkflowConfiguration() {
               onClick={addOutput}
             >
               <Icon iconName="plus" />
-              Add output
+              Add webhook
             </Button>
           }
         >
           {values.outputs.map((output, index) => (
             <div key={index} className="rounded-lg border border-neutral bg-surface-neutral p-4">
               <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-medium text-neutral">Output {index + 1}</span>
+                <span className="text-sm font-medium text-neutral">Webhook {index + 1}</span>
                 <Button
                   type="button"
                   variant="plain"
@@ -845,62 +717,34 @@ export function AgenticWorkflowConfiguration() {
                 </Button>
               </div>
               <div className="flex flex-col gap-3">
-                <OutputTypeCards
-                  value={output.type}
-                  onChange={(type) => {
-                    const outputs = [...values.outputs]
-                    outputs[index] = {
-                      ...output,
-                      type,
-                      name: getNextIntegrationName(output.name, output.type, type),
-                      url: type === 'Other' ? '' : defaultMcpUrls[type],
-                    }
-                    form.setValue('outputs', outputs, { shouldDirty: true })
-                  }}
-                />
                 <InputText
-                  name={`output-name-${index}`}
-                  label="Name"
-                  value={output.name}
+                  name={`output-url-${index}`}
+                  label="Webhook URL"
+                  value={output.url}
+                  error={!output.url.trim() ? 'Please enter the output webhook URL.' : undefined}
                   onChange={(event) => {
                     const outputs = [...values.outputs]
-                    outputs[index] = { ...output, name: event.currentTarget.value }
+                    outputs[index] = { ...output, url: event.currentTarget.value }
                     form.setValue('outputs', outputs, { shouldDirty: true })
                   }}
                 />
-                {output.type !== 'Other' && (
-                  <>
-                    <InputText
-                      name={`output-url-${index}`}
-                      label="URL"
-                      value={output.url}
-                      onChange={(event) => {
-                        const outputs = [...values.outputs]
-                        outputs[index] = { ...output, url: event.currentTarget.value }
-                        form.setValue('outputs', outputs, { shouldDirty: true })
-                      }}
-                    />
-                    <InputText
-                      name={`output-authentication-${index}`}
-                      label="Authentication"
-                      hint="Bearer token or authentication string used by this output."
-                      value={output.authentication}
-                      onChange={(event) => {
-                        const outputs = [...values.outputs]
-                        outputs[index] = { ...output, authentication: event.currentTarget.value }
-                        form.setValue('outputs', outputs, { shouldDirty: true })
-                      }}
-                    />
-                  </>
-                )}
+                <CodeEditorField
+                  name={`output-headers-${index}`}
+                  label="Request headers JSON"
+                  language="json"
+                  height="120px"
+                  value={output.headersJson}
+                  error={outputHeadersErrors[index]}
+                  hint='Optional request headers. Example: { "Authorization": "Bearer {{TOKEN}}" }'
+                  onChange={(value) => {
+                    const outputs = [...values.outputs]
+                    outputs[index] = { ...output, headersJson: value }
+                    form.setValue('outputs', outputs, { shouldDirty: true })
+                  }}
+                />
                 <InputTextArea
                   name={`output-prompt-${index}`}
-                  label={output.type === 'Other' ? 'Instructions' : 'Prompt'}
-                  hint={
-                    output.type === 'Other'
-                      ? 'Describe exactly what the agent should do with this custom output.'
-                      : undefined
-                  }
+                  label="Prompt"
                   value={output.prompt}
                   onChange={(event) => {
                     const outputs = [...values.outputs]
@@ -913,10 +757,10 @@ export function AgenticWorkflowConfiguration() {
           ))}
           {!outputsValid && (
             <p className="px-3 text-xs font-medium text-negative">
-              Enter a URL and authentication value for each configured output. For Other, describe the expected output.
+              Enter a webhook URL for each configured output webhook.
             </p>
           )}
-          <ContinueButton disabled={!outputsValid} onClick={goToNextSection} />
+          <ContinueButton disabled={!outputsValid || outputHeadersErrors.some(Boolean)} onClick={goToNextSection} />
         </AgenticWorkflowSection>
 
         <AgenticWorkflowSection
@@ -925,6 +769,7 @@ export function AgenticWorkflowConfiguration() {
           invalid={sectionInvalid['agent-prompt']}
         >
           <InputTextArea
+            ref={agentPromptTextareaRef}
             name="agent-prompt"
             label="Agent prompt"
             value={values.agentPrompt}
