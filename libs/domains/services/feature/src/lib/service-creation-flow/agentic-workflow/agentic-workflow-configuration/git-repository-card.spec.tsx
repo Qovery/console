@@ -43,7 +43,6 @@ describe('GitRepositoryCard', () => {
           gitTokenId: 'token-1',
           repository: 'https://github.com/qovery/console',
           branch: 'main',
-          rootPath: '/',
         }}
       />
     )

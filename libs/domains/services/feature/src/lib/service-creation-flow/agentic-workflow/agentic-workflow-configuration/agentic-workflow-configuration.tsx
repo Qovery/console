@@ -6,7 +6,6 @@ import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
-  DEFAULT_CONNECTOR_JSON,
   MCP_CONNECTOR_JSON_EXAMPLE,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
@@ -59,10 +58,9 @@ function getSectionTitle(section: AgenticWorkflowConfigurationSection) {
 
 export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository) {
   return Boolean(
-    repository.gitTokenId &&
+    (repository.gitTokenId || repository.provider || repository.isPublicRepository) &&
       repository.repository.trim() &&
-      repository.branch.trim() &&
-      (repository.rootPath || '/').trim()
+      repository.branch.trim()
   )
 }
 
@@ -180,7 +178,7 @@ function CodeEditorField({
           }}
         />
       </div>
-      {hint && !error && <div className="flex flex-col gap-2 px-3 text-xs font-normal text-neutral-subtle">{hint}</div>}
+      {hint && !error && <div className="px-3 text-xs font-normal text-neutral-subtle">{hint}</div>}
       {error && <p className="px-3 text-xs font-medium text-negative">{error}</p>}
     </div>
   )
@@ -194,7 +192,7 @@ export function AgenticWorkflowConfiguration() {
   const agentPromptTextareaRef = useRef<HTMLTextAreaElement>(null)
   const values = form.watch()
   const { dirtyFields } = form.formState
-  const connectorErrors = values.connectors.map((connector) => getJsonError(connector.mcpServersJson, true))
+  const mcpJsonError = getJsonError(values.mcpJson)
   const outputHeadersErrors = values.outputs.map((output) => getJsonError(output.headersJson))
   const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
@@ -204,7 +202,7 @@ export function AgenticWorkflowConfiguration() {
   const sectionInvalid: Record<AgenticWorkflowConfigurationSection, boolean> = {
     'service-information': !values.name.trim(),
     'ai-model': !values.modelApiKey.trim() || Boolean(modelSettingsJsonError),
-    connectors: connectorErrors.some(Boolean),
+    connectors: Boolean(mcpJsonError),
     'git-repositories': !gitRepositoriesValid,
     governance: false,
     'docker-fragment': false,
@@ -217,7 +215,7 @@ export function AgenticWorkflowConfiguration() {
     Boolean(values.agentPrompt.trim()) &&
     gitRepositoriesValid &&
     outputsValid &&
-    connectorErrors.every((error) => !error) &&
+    !mcpJsonError &&
     outputHeadersErrors.every((error) => !error) &&
     !modelSettingsJsonError
 
@@ -246,20 +244,6 @@ export function AgenticWorkflowConfiguration() {
     navigate({ to: `${creationFlowUrl}/summary` })
   }
 
-  const addConnector = () =>
-    form.setValue(
-      'connectors',
-      [
-        ...values.connectors,
-        {
-          mcpServersJson: DEFAULT_CONNECTOR_JSON,
-        },
-      ],
-      {
-        shouldDirty: true,
-      }
-    )
-
   const addRepository = () =>
     form.setValue(
       'gitRepositories',
@@ -273,7 +257,6 @@ export function AgenticWorkflowConfiguration() {
           repository: '',
           gitRepository: undefined,
           branch: '',
-          rootPath: '/',
         },
       ],
       { shouldDirty: true }
@@ -400,88 +383,41 @@ export function AgenticWorkflowConfiguration() {
           />
         </AgenticWorkflowSection>
 
-        <AgenticWorkflowSection
-          section="connectors"
-          iconName="plug"
-          invalid={sectionInvalid.connectors}
-          headerAction={
-            <Button
-              type="button"
-              variant="outline"
-              color="neutral"
-              size="sm"
-              className="h-8 w-fit whitespace-nowrap"
-              onClick={addConnector}
-            >
-              <Icon iconName="plus" />
-              Add MCP
-            </Button>
-          }
-        >
-          {values.connectors.map((connector, index) => (
-            <div key={index} className="rounded-lg border border-neutral bg-surface-neutral p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-medium text-neutral">MCP {index + 1}</span>
-                <Button
-                  type="button"
-                  variant="plain"
-                  color="neutral"
-                  size="md"
-                  onClick={() =>
-                    form.setValue(
-                      'connectors',
-                      values.connectors.filter((_, connectorIndex) => connectorIndex !== index),
-                      { shouldDirty: true }
-                    )
-                  }
-                >
-                  Remove
-                </Button>
-              </div>
-              <CodeEditorField
-                name={`mcp-${index}`}
-                label="MCP JSON"
-                language="json"
-                value={connector.mcpServersJson}
-                error={connectorErrors[index]}
-                hint={
-                  <>
-                    <span>
-                      See Claude Code docs for{' '}
-                      <a
-                        href="https://code.claude.com/docs/fr/mcp#option-1-add-a-remote-http-server"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-medium text-brand hover:underline"
-                      >
-                        remote HTTP
-                      </a>{' '}
-                      and{' '}
-                      <a
-                        href="https://code.claude.com/docs/fr/mcp#option-3-add-a-local-stdio-server"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-medium text-brand hover:underline"
-                      >
-                        local stdio
-                      </a>{' '}
-                      servers.
-                    </span>
-                    <span>Example:</span>
-                    <pre className="overflow-auto rounded border border-neutral bg-surface-neutral px-3 py-2 font-mono text-xs text-neutral">
-                      {MCP_CONNECTOR_JSON_EXAMPLE}
-                    </pre>
-                  </>
-                }
-                onChange={(value) => {
-                  const connectors = [...values.connectors]
-                  connectors[index] = { ...connector, mcpServersJson: value }
-                  form.setValue('connectors', connectors, { shouldDirty: true })
-                }}
-              />
-            </div>
-          ))}
-          <ContinueButton disabled={connectorErrors.some(Boolean)} onClick={goToNextSection} />
+        <AgenticWorkflowSection section="connectors" iconName="plug" invalid={sectionInvalid.connectors}>
+          <CodeEditorField
+            name="mcp"
+            label="MCP JSON"
+            language="json"
+            value={values.mcpJson}
+            error={mcpJsonError}
+            hint={
+              <>
+                <span>
+                  See Claude Code docs for{' '}
+                  <a
+                    href="https://code.claude.com/docs/fr/mcp#option-1-add-a-remote-http-server"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-brand hover:underline"
+                  >
+                    remote HTTP
+                  </a>{' '}
+                  and{' '}
+                  <a
+                    href="https://code.claude.com/docs/fr/mcp#option-3-add-a-local-stdio-server"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-brand hover:underline"
+                  >
+                    local stdio
+                  </a>{' '}
+                  servers.
+                </span>
+              </>
+            }
+            onChange={(value) => form.setValue('mcpJson', value, { shouldDirty: true })}
+          />
+          <ContinueButton disabled={Boolean(mcpJsonError)} onClick={goToNextSection} />
         </AgenticWorkflowSection>
 
         <AgenticWorkflowSection

@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { type AgenticWorkflowHeader, AgenticWorkflowModel, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
+import { type AgenticWorkflowHeader, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { type AgenticWorkflowFormData } from '../../agentic-workflow-context'
@@ -31,29 +31,29 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
   return {
     name: values.name,
     description: values.description,
-    whitelist_hosts: formatWhitelistHosts(values.whitelistHosts),
-    model_settings: values.modelSettingsJson,
     docker_fragment: values.dockerFragment,
     enabled: values.workflowEnabled,
-    mcp_connectors: values.connectors.map((connector, index) => ({
-      name: `MCP ${index + 1}`,
-      url: '',
-      headers: [],
-      instructions: connector.mcpServersJson,
-    })),
+    mcp: values.mcpJson.trim() || undefined,
     outputs: values.outputs.map((output, index) => ({
       name: `Output ${index + 1}`,
       url: output.url,
       headers: parseHeaders(output.headersJson),
       instructions: output.prompt,
     })),
-    model: values.aiModel === 'Claude' ? AgenticWorkflowModel.CLAUDE : AgenticWorkflowModel.BEDROCK,
+    model: {
+      type: values.aiModel,
+      api_key: values.modelApiKey,
+      settings: values.modelSettingsJson,
+    },
     project_repositories: values.gitRepositories.map((repository) => ({
       url: repository.repository,
       branch: repository.branch,
-      root_path: repository.rootPath || '/',
       git_token_id: repository.gitTokenId ?? '',
     })),
+    agent_prompt: values.agentPrompt,
+    governance: {
+      host_allowlist: formatWhitelistHosts(values.whitelistHosts),
+    },
   }
 }
 

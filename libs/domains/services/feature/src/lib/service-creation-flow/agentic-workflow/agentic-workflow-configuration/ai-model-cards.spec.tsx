@@ -27,11 +27,11 @@ describe('AIModelCards', () => {
       </AgenticWorkflowCreationFlow>
     )
 
-    expect(screen.getByTestId('selected-model')).toHaveTextContent('Claude')
+    expect(screen.getByTestId('selected-model')).toHaveTextContent('CLAUDE')
     expect(screen.getByRole('button', { name: /bedrock/i })).toBeDisabled()
 
     await userEvent.click(screen.getByRole('button', { name: /claude/i }))
 
-    expect(screen.getByTestId('selected-model')).toHaveTextContent('Claude')
+    expect(screen.getByTestId('selected-model')).toHaveTextContent('CLAUDE')
   })
 })

@@ -8,22 +8,20 @@ describe('AgenticWorkflowConfiguration validation', () => {
     expect(getJsonError('{invalid', true)).toBe('Invalid JSON format.')
   })
 
-  it('should require token, repository, branch, and root path for configured repositories', () => {
+  it('should require token, repository, and branch for configured repositories', () => {
     expect(
       isGitRepositoryComplete({
-        gitTokenId: 'token-1',
+        provider: 'GITHUB',
         repository: 'https://github.com/qovery/console',
         branch: 'main',
-        rootPath: '/',
       })
     ).toBe(true)
 
     expect(
       isGitRepositoryComplete({
-        gitTokenId: 'token-1',
+        provider: 'GITHUB',
         repository: 'https://github.com/qovery/console',
         branch: '',
-        rootPath: '/',
       })
     ).toBe(false)
   })
