@@ -7,6 +7,7 @@ export interface BlueprintSectionProps {
   completed?: boolean
   disabled?: boolean
   iconName: IconName
+  action?: ReactNode
   onClick?: () => void
   title: string
   description?: string
@@ -18,31 +19,27 @@ export function BlueprintSection({
   completed = false,
   disabled = false,
   iconName,
+  action,
   onClick,
   title,
   description,
   children,
 }: BlueprintSectionProps) {
-  const isClickable = Boolean(onClick && !active)
+  const isClickable = Boolean(onClick && !active && !action)
   const isDisabled = disabled && isClickable
   const headerContent = (
-    <>
-      <div className="flex items-center gap-2">
-        <Icon iconName={iconName} className="text-sm text-neutral-subtle" />
-        <h2
-          className={`text-base font-medium leading-6 ${active || completed ? 'text-neutral' : 'text-neutral-subtle'}`}
-        >
-          {title}
-        </h2>
-        {description && (
-          <>
-            <span className="h-1 w-1 rounded-full bg-surface-neutral-component" aria-hidden="true" />
-            <p className="text-sm leading-5 text-neutral-subtle">{description}</p>
-          </>
-        )}
-      </div>
-      {completed && <Icon iconName="circle-check" className="text-sm text-positive" />}
-    </>
+    <div className="flex items-center gap-2">
+      <Icon iconName={iconName} className="text-sm text-neutral-subtle" />
+      <h2 className={`text-base font-medium leading-6 ${active || completed ? 'text-neutral' : 'text-neutral-subtle'}`}>
+        {title}
+      </h2>
+      {description && (
+        <>
+          <span className="h-1 w-1 rounded-full bg-surface-neutral-component" aria-hidden="true" />
+          <p className="text-sm leading-5 text-neutral-subtle">{description}</p>
+        </>
+      )}
+    </div>
   )
 
   return (
@@ -56,9 +53,18 @@ export function BlueprintSection({
           onClick={onClick}
         >
           {headerContent}
+          {completed && <Icon iconName="circle-check" className="text-sm text-positive" />}
         </button>
       ) : (
-        <div className="flex items-center justify-between gap-3 px-4 py-4">{headerContent}</div>
+        <div className="flex items-center justify-between gap-3 px-4 py-4">
+          {headerContent}
+          {(completed || action) && (
+            <div className="flex items-center gap-2">
+              {completed && <Icon iconName="circle-check" className="text-sm text-positive" />}
+              {action}
+            </div>
+          )}
+        </div>
       )}
       {children && <div className="flex flex-col gap-3 px-4 pb-4">{children}</div>}
     </section>
