@@ -11,6 +11,7 @@ import { Button, ExternalLink, Heading, Icon, InputSearch, Section, Skeleton } f
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
+import { isBlueprintCompatibleWithCluster } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
@@ -92,10 +93,12 @@ function BlueprintSectionErrorFallback({
 
 function BlueprintSection({
   blueprintSearchInput,
+  cloudProvider,
   onBlueprintSearchInputChange,
   onViewDetails,
 }: {
   blueprintSearchInput: string
+  cloudProvider?: CloudProviderEnum | string
   onBlueprintSearchInputChange: (value: string) => void
   onViewDetails: (blueprint: BlueprintItem) => void
 }) {
@@ -107,9 +110,11 @@ function BlueprintSection({
   const blueprints = blueprintCatalog?.blueprints ?? []
   const filterBlueprint = ({ name, description, categories }: BlueprintItem) =>
     `${name} ${description} ${categories?.join(' ')}`.toLowerCase().includes(blueprintSearchInput.toLowerCase())
-  const filteredBlueprints = blueprints.filter(filterBlueprint)
+  const filteredBlueprints = blueprints
+    .filter((blueprint) => isBlueprintCompatibleWithCluster(blueprint.provider, cloudProvider))
+    .filter(filterBlueprint)
 
-  if (blueprints.length === 0) return null
+  if (filteredBlueprints.length === 0) return null
 
   return (
     <Section>
@@ -323,6 +328,7 @@ export function ServiceNew({
               >
                 <BlueprintSection
                   blueprintSearchInput={blueprintSearchInput}
+                  cloudProvider={cloudProvider}
                   onBlueprintSearchInputChange={setBlueprintSearchInput}
                   onViewDetails={openBlueprintDetails}
                 />

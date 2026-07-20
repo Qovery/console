@@ -185,6 +185,33 @@ describe('ServiceNew', () => {
     expect(screen.getByText('AWS RDS MySQL')).toBeInTheDocument()
   })
 
+  it('should only display blueprints compatible with the environment cluster', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: {
+        blueprints: [
+          { ...blueprints[0], name: 'AWS S3', provider: 'AWS' },
+          { ...blueprints[0], name: 'Scaleway Object Storage', provider: 'SCW' },
+          { ...blueprints[1], name: 'Helm Redis', provider: 'HELM' },
+        ],
+      },
+    })
+
+    renderWithProviders(
+      <ServiceNew
+        organizationId="org-1"
+        projectId="project-1"
+        environmentId="env-1"
+        cloudProvider="AWS"
+        availableTemplates={[]}
+      />
+    )
+
+    expect(screen.getByText('AWS S3')).toBeInTheDocument()
+    expect(screen.getByText('Helm Redis')).toBeInTheDocument()
+    expect(screen.queryByText('Scaleway Object Storage')).not.toBeInTheDocument()
+  })
+
   it('should not render deploy actions for blueprints without a service family', async () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({
