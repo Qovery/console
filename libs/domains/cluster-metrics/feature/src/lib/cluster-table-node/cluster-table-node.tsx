@@ -143,6 +143,7 @@ export function ClusterTableNode({
       {nodes?.map((node) => {
         const nodeWarning = nodeWarnings[node.name]
 
+        const hasReadyCondition = node.conditions?.some((condition) => condition.type === 'Ready')
         const isReady = node.conditions?.some((condition) => condition.type === 'Ready' && condition.status === 'True')
         const isDiskPressure = node.conditions?.some(
           (condition) => condition.type === 'DiskPressure' && condition.status === 'True'
@@ -155,14 +156,12 @@ export function ClusterTableNode({
         )
 
         const isRemoving = node.unschedulable
-        const isDeploying = !isReady && !isRemoving
+        // The kubelet hasn't reported any status yet: the node is still joining the cluster.
+        const isDeploying = !hasReadyCondition && !isRemoving
+        // The kubelet has reported a status, but the node isn't healthy (distinct from still bootstrapping).
+        const isNotReady = hasReadyCondition && !isReady && !isRemoving
 
-        const isWarning =
-          isDiskPressure ||
-          isMemoryPressure ||
-          (!isReady && !isDeploying && !isRemoving) ||
-          isPIDPressure ||
-          nodeWarning
+        const isWarning = isDiskPressure || isMemoryPressure || isPIDPressure || isNotReady || nodeWarning
 
         const status = () => {
           if (isRemoving) {
@@ -174,7 +173,7 @@ export function ClusterTableNode({
           if (!isWarning) {
             return 'Ready'
           }
-          if (!isReady) {
+          if (isNotReady) {
             return 'NotReady'
           }
           if (isDiskPressure) {
