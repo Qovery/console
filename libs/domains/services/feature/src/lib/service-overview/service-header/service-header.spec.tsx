@@ -496,9 +496,9 @@ describe('ServiceHeader', () => {
 
     expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
     expect(await screen.findByRole('heading', { name: 'aws-s3-bucket blueprint update to 2.0' })).toBeInTheDocument()
-    expect(screen.getByText('No configuration input is required. Continue to preview the update.')).toBeInTheDocument()
+    expect(screen.queryByText('No configuration input is required. Continue to preview the update.')).not.toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await userEvent.click(screen.getByRole('button', { name: /preview changes/i }))
 
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview',

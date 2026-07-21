@@ -64,6 +64,7 @@ describe('ServiceVersionCell', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Update available' }))
 
     expect(await screen.findByRole('heading', { name: 'AWS S3 Bucket blueprint update to 2.0.0' })).toBeInTheDocument()
-    expect(screen.getByText('No configuration input is required. Continue to preview the update.')).toBeInTheDocument()
+    expect(screen.queryByText('No configuration input is required. Continue to preview the update.')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Preview changes' })).toBeInTheDocument()
   })
 })
