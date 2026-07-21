@@ -6296,7 +6296,7 @@ __metadata:
     "@xterm/xterm": 5.5.0
     ansi-to-react: 6.1.6
     autoprefixer: 10.4.13
-    axios: 1.15.2
+    axios: 1.18.1
     babel-jest: 30.0.5
     babel-loader: 8.3.0
     chance: 1.1.10
@@ -6343,7 +6343,7 @@ __metadata:
     prettier: 3.2.5
     prettier-plugin-tailwindcss: 0.5.14
     pretty-quick: 4.0.0
-    qovery-typescript-axios: 1.1.920
+    qovery-typescript-axios: 1.1.932
     qovery-ws-typescript-axios: 0.1.621
     react: 18.3.1
     react-country-flag: 3.0.2
@@ -12108,14 +12108,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:1.15.2":
-  version: 1.15.2
-  resolution: "axios@npm:1.15.2"
+"axios@npm:1.18.1":
+  version: 1.18.1
+  resolution: "axios@npm:1.18.1"
   dependencies:
-    follow-redirects: ^1.15.11
+    follow-redirects: ^1.16.0
     form-data: ^4.0.5
+    https-proxy-agent: ^5.0.1
     proxy-from-env: ^2.1.0
-  checksum: e7d208b751959c7c6936417b870d6286979e0dff17784ae230d3988e754b6322682cb136e25669b534072b6f44c08715801ab961227eb8cc075323d9fda8ad43
   languageName: node
   linkType: hard
 
@@ -17256,7 +17256,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"follow-redirects@npm:^1.15.11":
+"follow-redirects@npm:^1.16.0":
   version: 1.16.0
   resolution: "follow-redirects@npm:1.16.0"
   peerDependenciesMeta:
@@ -18522,7 +18522,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"https-proxy-agent@npm:^5.0.0":
+"https-proxy-agent@npm:^5.0.0, https-proxy-agent@npm:^5.0.1":
   version: 5.0.1
   resolution: "https-proxy-agent@npm:5.0.1"
   dependencies:
@@ -25862,12 +25862,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:1.1.920":
-  version: 1.1.920
-  resolution: "qovery-typescript-axios@npm:1.1.920"
+"qovery-typescript-axios@npm:1.1.932":
+  version: 1.1.932
+  resolution: "qovery-typescript-axios@npm:1.1.932"
   dependencies:
-    axios: 1.15.2
-  checksum: ea8634a4c39cffb4127fd69ff1e9f59948db6ab35ddce30afd8a32312ae5a2394e88196b6ab25f47bf5a8d1801c839d5b63e8d7ca708da1da77eb9bdf6fe0e68
+    axios: 1.18.1
   languageName: node
   linkType: hard
 
@@ -25875,7 +25874,7 @@ __metadata:
   version: 0.1.621
   resolution: "qovery-ws-typescript-axios@npm:0.1.621"
   dependencies:
-    axios: 1.15.2
+    axios: 1.18.1
   checksum: c688dacc49f8adf2986f412a9da5c66d366324e3676a3790b925198bfc06d3edb1595cb09e609caa460c67a19ccac47bf84244f22792260f1f56f4fe8221bd90
   languageName: node
   linkType: hard

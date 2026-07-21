@@ -133,7 +133,7 @@ jobs:
           yarn nx start-ci-run \
             --distribute-on="3 console-ci" \
             --require-explicit-completion \
-            --stop-agents-on-failure=false \
+            --stop-agents-on-failure=true \
             --with-env-vars="NX_PUBLIC_GIT_SHA,NX_PUBLIC_GTM,NX_PUBLIC_INTERCOM,NX_PUBLIC_OAUTH_AUDIENCE,NX_PUBLIC_OAUTH_DOMAIN,NX_PUBLIC_OAUTH_KEY,NX_PUBLIC_POSTHOG,NX_PUBLIC_POSTHOG_APIHOST,NX_PUBLIC_QOVERY_API,NX_PUBLIC_QOVERY_WS,NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY,NX_PUBLIC_INSTATUS_APP_ID,NX_PUBLIC_MINTLIFY_API_KEY,NX_PUBLIC_CARGO_API_TOKEN,NX_PUBLIC_PYLON_APP_ID,NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL"
 
       - name: Check formatting
@@ -157,7 +157,8 @@ jobs:
             --ci \
             --coverage \
             --coverageReporters=lcov \
-            --silent
+            --maxWorkers=2 \
+            --forceExit
 
           yarn nx run console:build \
             --parallel=3 \
