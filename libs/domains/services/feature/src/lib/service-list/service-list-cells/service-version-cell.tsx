@@ -1,9 +1,9 @@
+import { useParams } from '@tanstack/react-router'
 import {
   type ApplicationGitRepository,
   type ContainerResponse,
   type HelmSourceRepositoryResponse,
 } from 'qovery-typescript-axios'
-import { useParams } from '@tanstack/react-router'
 import { P, match } from 'ts-pattern'
 import {
   type AnyService,
@@ -113,12 +113,7 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
     if (!gitRepository) return null
 
     if (isBlueprintService(service)) {
-      return (
-        <BlueprintVersionInfo
-          service={service}
-          gitRepository={gitRepository}
-        />
-      )
+      return <BlueprintVersionInfo service={service} gitRepository={gitRepository} />
     }
 
     return (
