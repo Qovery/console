@@ -156,7 +156,9 @@ jobs:
             --configuration=${{ inputs.configuration }} \
             --ci \
             --coverage \
-            --coverageReporters=lcov
+            --coverageReporters=lcov \
+            --maxWorkers=2 \
+            --forceExit
 
           yarn nx run console:build \
             --parallel=3 \
