@@ -252,7 +252,7 @@ export function BlueprintStepSummary() {
 
   return (
     <>
-      <FunnelFlowBody customContentWidth="max-w-[1024px]">
+      <FunnelFlowBody customContentWidth="max-w-[684px]">
         <Section className="space-y-10">
           <div className="flex flex-col gap-2">
             <Heading className="mb-2">Ready to create your blueprint service</Heading>

@@ -17,6 +17,7 @@ export function OverridesSectionCard({ active, children, disabled = false, onCli
         iconName="code"
         title="Overrides"
         description="For advanced users"
+        headerClassName={disabled ? undefined : 'py-3'}
         action={
           !disabled ? (
             <Button type="button" variant="outline" color="neutral" size="md" onClick={onClick}>

@@ -50,7 +50,7 @@ export function BlueprintConfigurationView({ currentSection }: BlueprintConfigur
   }, [setCurrentStep])
 
   return (
-    <FunnelFlowBody customContentWidth="max-w-[620px]">
+    <FunnelFlowBody customContentWidth="max-w-[684px]">
       <header className="mb-5">
         <h1 className="text-2xl font-medium leading-8 text-neutral">
           {formatBlueprintName(blueprint.name)} configuration
@@ -257,7 +257,7 @@ function ConfirmBlueprintCreationFooter() {
   const isBlueprintSetupValid = useIsBlueprintSetupValid()
 
   return (
-    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background py-4">
       <Button
         type="button"
         size="lg"
@@ -274,7 +274,7 @@ function ConfirmBlueprintCreationFooter() {
 
 function DisabledConfirmBlueprintCreationFooter() {
   return (
-    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background py-4">
       <Button type="button" size="lg" className="w-full justify-center" disabled>
         Confirm blueprint configuration
         <Icon iconName="arrow-right" />

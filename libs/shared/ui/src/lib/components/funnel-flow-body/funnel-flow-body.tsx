@@ -16,9 +16,7 @@ export function FunnelFlowBody(props: PropsWithChildren<FunnelFlowBodyProps>) {
         <section className={`w-full bg-background pt-14 ${props.helpSection ? 'lg:w-[70%]' : 'overflow-auto'}`}>
           <div
             data-testid="funnel-body-content"
-            className={`relative mx-auto px-8 pb-14 ${
-              props.customContentWidth || 'max-w-content-with-navigation-left'
-            }`}
+            className={`relative mx-auto px-8 pb-14 ${props.customContentWidth || 'max-w-content-with-navigation-left'}`}
           >
             {props.children}
           </div>

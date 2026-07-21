@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type ReactNode } from 'react'
 import { Icon } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 
 export interface BlueprintSectionProps {
   active?: boolean
@@ -8,6 +9,7 @@ export interface BlueprintSectionProps {
   disabled?: boolean
   iconName: IconName
   action?: ReactNode
+  headerClassName?: string
   onClick?: () => void
   title: string
   description?: string
@@ -20,6 +22,7 @@ export function BlueprintSection({
   disabled = false,
   iconName,
   action,
+  headerClassName,
   onClick,
   title,
   description,
@@ -47,7 +50,10 @@ export function BlueprintSection({
       {isClickable ? (
         <button
           type="button"
-          className="flex w-full items-center justify-between gap-3 rounded-t-xl px-4 py-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
+          className={twMerge(
+            'flex w-full items-center justify-between gap-3 rounded-t-xl px-4 py-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong',
+            headerClassName
+          )}
           aria-expanded={active}
           disabled={isDisabled}
           onClick={onClick}
@@ -56,7 +62,7 @@ export function BlueprintSection({
           {completed && <Icon iconName="circle-check" className="text-sm text-positive" />}
         </button>
       ) : (
-        <div className="flex items-center justify-between gap-3 px-4 py-4">
+        <div className={twMerge('flex items-center justify-between gap-3 px-4 py-4', headerClassName)}>
           {headerContent}
           {(completed || action) && (
             <div className="flex items-center gap-2">

@@ -120,7 +120,7 @@ function BlueprintUpdatePreviewContent({
     : 'min-h-[180px]'
 
   return (
-    <FunnelFlowBody customContentWidth="max-w-[620px]">
+    <FunnelFlowBody customContentWidth="max-w-[684px]">
       <Section className="gap-6 pb-20">
         <Heading level={1}>Preview changes</Heading>
 
@@ -134,7 +134,7 @@ function BlueprintUpdatePreviewContent({
         </Section>
       </Section>
 
-      <footer className="fixed bottom-0 left-1/2 z-10 flex w-full max-w-[620px] -translate-x-1/2 gap-3 border-t border-neutral bg-background px-4 py-4">
+      <footer className="fixed bottom-0 left-1/2 z-10 flex w-full max-w-[620px] -translate-x-1/2 gap-3 border-t border-neutral bg-background py-4">
         <Button type="button" size="lg" variant="outline" color="neutral" onClick={onBack}>
           Back
         </Button>
