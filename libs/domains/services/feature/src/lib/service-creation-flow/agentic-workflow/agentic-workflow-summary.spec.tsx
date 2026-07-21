@@ -79,13 +79,8 @@ function renderSummary(values?: Partial<AgenticWorkflowFormData>) {
 
 describe('AgenticWorkflowSummary', () => {
   beforeEach(() => {
-    jest.useFakeTimers()
     jest.clearAllMocks()
     mockCreateAgenticWorkflow.mockResolvedValue({ id: 'workflow-1' })
-  })
-
-  afterEach(() => {
-    jest.useRealTimers()
   })
 
   it('should render configured values from the configuration form', () => {
