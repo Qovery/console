@@ -334,84 +334,88 @@ export function ServiceNew({
                 />
               </BlueprintQueryBoundary>
             )}
-            <SectionByTag
-              title="Data & Storage"
-              description="Find your perfect data and storage template with presets."
-              tag="DATA_STORAGE"
-              cloudProvider={cloudProvider}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              isTerraformFeatureFlag={isTerraformFeatureFlag}
-              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-            />
-            <SectionByTag
-              title="Back-end"
-              description="Find your perfect Back-end template with presets."
-              tag="BACK_END"
-              cloudProvider={cloudProvider}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              isTerraformFeatureFlag={isTerraformFeatureFlag}
-              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-            />
-            <SectionByTag
-              title="Front-end"
-              description="Find your perfect Front-end template with presets."
-              tag="FRONT_END"
-              cloudProvider={cloudProvider}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              isTerraformFeatureFlag={isTerraformFeatureFlag}
-              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-            />
-            <Section>
-              <Heading className="mb-1">IAC</Heading>
-              <p className="mb-5 text-xs text-neutral-subtle">
-                Deploy external cloud resources with Terraform or use IAC templates.
-              </p>
-              <div className="mt-5 grid grid-cols-3 gap-4">
-                {serviceEmpty
-                  .filter((s) => s.title === 'Terraform')
-                  .map((service) => (
-                    <Card key={service.title} {...service} />
-                  ))}
-                {serviceTemplates
-                  .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-                  .filter(({ tag: t }) => t === 'IAC')
-                  .sort((a, b) => a.title.localeCompare(b.title))
-                  .map((service) => (
-                    <CardService
-                      key={service.title}
-                      availableTemplates={availableTemplates}
-                      organizationId={organizationId}
-                      projectId={projectId}
-                      environmentId={environmentId}
-                      cloudProvider={cloudProvider}
-                      isTerraformFeatureFlag={isTerraformFeatureFlag}
-                      onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-                      {...service}
-                    />
-                  ))}
-              </div>
-            </Section>
-            <SectionByTag
-              title="More template"
-              description="Look for other template presets."
-              tag="OTHER"
-              cloudProvider={cloudProvider}
-              availableTemplates={availableTemplates}
-              organizationId={organizationId}
-              projectId={projectId}
-              environmentId={environmentId}
-              isTerraformFeatureFlag={isTerraformFeatureFlag}
-              onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-            />
+            {!isServiceCatalogEnabled && (
+              <>
+                <SectionByTag
+                  title="Data & Storage"
+                  description="Find your perfect data and storage template with presets."
+                  tag="DATA_STORAGE"
+                  cloudProvider={cloudProvider}
+                  availableTemplates={availableTemplates}
+                  organizationId={organizationId}
+                  projectId={projectId}
+                  environmentId={environmentId}
+                  isTerraformFeatureFlag={isTerraformFeatureFlag}
+                  onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
+                />
+                <SectionByTag
+                  title="Back-end"
+                  description="Find your perfect Back-end template with presets."
+                  tag="BACK_END"
+                  cloudProvider={cloudProvider}
+                  availableTemplates={availableTemplates}
+                  organizationId={organizationId}
+                  projectId={projectId}
+                  environmentId={environmentId}
+                  isTerraformFeatureFlag={isTerraformFeatureFlag}
+                  onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
+                />
+                <SectionByTag
+                  title="Front-end"
+                  description="Find your perfect Front-end template with presets."
+                  tag="FRONT_END"
+                  cloudProvider={cloudProvider}
+                  availableTemplates={availableTemplates}
+                  organizationId={organizationId}
+                  projectId={projectId}
+                  environmentId={environmentId}
+                  isTerraformFeatureFlag={isTerraformFeatureFlag}
+                  onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
+                />
+                <Section>
+                  <Heading className="mb-1">IAC</Heading>
+                  <p className="mb-5 text-xs text-neutral-subtle">
+                    Deploy external cloud resources with Terraform or use IAC templates.
+                  </p>
+                  <div className="mt-5 grid grid-cols-3 gap-4">
+                    {serviceEmpty
+                      .filter((s) => s.title === 'Terraform')
+                      .map((service) => (
+                        <Card key={service.title} {...service} />
+                      ))}
+                    {serviceTemplates
+                      .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
+                      .filter(({ tag: t }) => t === 'IAC')
+                      .sort((a, b) => a.title.localeCompare(b.title))
+                      .map((service) => (
+                        <CardService
+                          key={service.title}
+                          availableTemplates={availableTemplates}
+                          organizationId={organizationId}
+                          projectId={projectId}
+                          environmentId={environmentId}
+                          cloudProvider={cloudProvider}
+                          isTerraformFeatureFlag={isTerraformFeatureFlag}
+                          onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
+                          {...service}
+                        />
+                      ))}
+                  </div>
+                </Section>
+                <SectionByTag
+                  title="More template"
+                  description="Look for other template presets."
+                  tag="OTHER"
+                  cloudProvider={cloudProvider}
+                  availableTemplates={availableTemplates}
+                  organizationId={organizationId}
+                  projectId={projectId}
+                  environmentId={environmentId}
+                  isTerraformFeatureFlag={isTerraformFeatureFlag}
+                  onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
+                />
+              </>
+            )}
           </>
         ) : [...serviceEmpty, ...serviceTemplates]
             .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)

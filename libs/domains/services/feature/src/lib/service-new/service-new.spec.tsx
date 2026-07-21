@@ -133,15 +133,30 @@ describe('ServiceNew', () => {
     expect(screen.getAllByText('Terraform').length).toBeGreaterThanOrEqual(1)
   })
 
-  it('should render template sections by tag', () => {
+  it('should render legacy template sections when the service catalog is disabled', () => {
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
+
     expect(screen.getByRole('heading', { name: 'Data & Storage' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Back-end' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Front-end' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'IAC' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'More template' })).toBeInTheDocument()
+  })
+
+  it('should hide legacy template sections when the service catalog is enabled', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.queryByRole('heading', { name: 'Data & Storage' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Back-end' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Front-end' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'IAC' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'More template' })).not.toBeInTheDocument()
   })
 
   it('should render blueprint cards from the catalog', async () => {
