@@ -6,8 +6,10 @@ jest.mock('posthog-js', () => ({
   capture: jest.fn(),
 }))
 
+const mockUseFeatureFlagEnabled = jest.fn((_flag: string) => false)
+
 jest.mock('posthog-js/react', () => ({
-  useFeatureFlagEnabled: jest.fn(() => false),
+  useFeatureFlagEnabled: (flag: string) => mockUseFeatureFlagEnabled(flag),
 }))
 
 const mockShowPylonForm = jest.fn()
@@ -40,12 +42,14 @@ jest.mock('@qovery/shared/ui', () => ({
 }))
 
 const mockUseParams = jest.fn((_options?: { strict?: boolean }) => ({ organizationId: 'test-org-id' }))
+const mockNavigate = jest.fn()
 
 jest.mock('@tanstack/react-router', () => {
   const React = jest.requireActual('react')
   return {
     ...jest.requireActual('@tanstack/react-router'),
     useParams: (options?: { strict?: boolean }) => mockUseParams(options),
+    useNavigate: () => mockNavigate,
     Link: React.forwardRef(
       (
         { children, ...props }: { children?: React.ReactNode; [key: string]: unknown },
@@ -67,6 +71,7 @@ describe('ClusterNew', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockUseParams.mockReturnValue({ organizationId: 'test-org-id' })
+    mockUseFeatureFlagEnabled.mockReturnValue(false)
     mockUseClusterCreationRestriction.mockReturnValue({
       isClusterCreationRestricted: false,
       isNoCreditCardRestriction: false,
@@ -138,6 +143,20 @@ describe('ClusterNew', () => {
       selectedCloudProvider: 'AWS',
       selectedInstallationType: 'self-managed',
     })
+  })
+
+  it('should start the Engine v2 creation flow when clicking self-managed under the feature flag', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag) => flag === 'engine-v2-platform-configuration')
+    const { userEvent } = renderWithProviders(<ClusterNew />)
+
+    await userEvent.click(getProviderCard('Amazon Web Services') as Element)
+    await userEvent.click(getExpandedSelfManagedButton() as Element)
+
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/cluster/create/$slug',
+      params: { organizationId: 'test-org-id', slug: 'aws-self-managed' },
+    })
+    expect(mockOpenModal).not.toHaveBeenCalled()
   })
 
   it('should open demo modal when clicking local machine option', async () => {
