@@ -23,6 +23,14 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
 }))
 
 describe('GitRepositoryCard', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   it('should render repository settings and remove the repository', async () => {
     const onRemove = jest.fn()
     const { userEvent } = renderWithProviders(
