@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type AgenticWorkflowHeader, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
-import { type AgenticWorkflowFormData } from '../../agentic-workflow-context'
+import { type AgenticWorkflowFormData } from '../../service-creation-flow/agentic-workflow/agentic-workflow-context'
 
 function formatWhitelistHosts(value: string) {
   return value

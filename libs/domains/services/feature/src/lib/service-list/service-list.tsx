@@ -150,12 +150,8 @@ export function ServiceList({ className, containerClassName, environment, ...pro
     })
   }, [actualServices, skippedServicesMap])
 
-  const tableData = useMemo(() => {
-    return sortedServices.map((service) => ({ ...service, kind: 'service' as const }))
-  }, [sortedServices])
-
   const columns = useMemo(() => {
-    const columnHelper = createColumnHelper<(typeof tableData)[number]>()
+    const columnHelper = createColumnHelper<(typeof actualServices)[number]>()
     return [
       columnHelper.display({
         id: 'select',
@@ -249,15 +245,13 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         header: 'Last operation',
         enableColumnFilter: false,
         enableSorting: false,
-        cell: (info) => {
-          return (
-            <ServiceLastDeploymentCell
-              service={info.row.original}
-              environment={environment}
-              isSkipped={info.row.original.isSkipped}
-            />
-          )
-        },
+        cell: (info) => (
+          <ServiceLastDeploymentCell
+            service={info.row.original}
+            environment={environment}
+            isSkipped={info.row.original.isSkipped}
+          />
+        ),
       }),
       columnHelper.accessor('version', {
         header: 'Target version',
@@ -283,10 +277,10 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         },
       }),
     ]
-  }, [environment, organizationId, projectId, tableData])
+  }, [environment, organizationId, projectId])
 
   const table = useReactTable({
-    data: tableData,
+    data: sortedServices,
     columns,
     state: {
       sorting,
@@ -433,14 +427,9 @@ export function ServiceList({ className, containerClassName, environment, ...pro
             {table.getRowModel().rows.map((row) => (
               <Fragment key={row.id}>
                 <Table.Row
-                  className={twMerge(
-                    'h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle',
-                    tableGridLayoutClassName
-                  )}
+                  className={`h-[60px] w-full cursor-pointer hover:bg-surface-neutral-subtle ${tableGridLayoutClassName}`}
                   tabIndex={0}
-                  onClick={() => {
-                    handleNavigateToService(row.original.id)
-                  }}
+                  onClick={() => handleNavigateToService(row.original.id)}
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') handleNavigateToService(row.original.id)
                   }}

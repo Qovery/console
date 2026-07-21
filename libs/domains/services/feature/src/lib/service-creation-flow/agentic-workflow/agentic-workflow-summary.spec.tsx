@@ -24,8 +24,8 @@ jest.mock('posthog-js', () => ({
   capture: jest.fn(),
 }))
 
-jest.mock('./hooks/use-create-agentic-workflow/use-create-agentic-workflow', () => ({
-  ...jest.requireActual('./hooks/use-create-agentic-workflow/use-create-agentic-workflow'),
+jest.mock('../../hooks/use-create-agentic-workflow/use-create-agentic-workflow', () => ({
+  ...jest.requireActual('../../hooks/use-create-agentic-workflow/use-create-agentic-workflow'),
   useCreateAgenticWorkflow: () => ({
     isLoading: false,
     mutateAsync: mockCreateAgenticWorkflow,

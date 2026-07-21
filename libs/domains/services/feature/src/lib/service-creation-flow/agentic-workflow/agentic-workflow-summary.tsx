@@ -3,16 +3,16 @@ import posthog from 'posthog-js'
 import { type ReactNode, useEffect } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
+import {
+  formatAgenticWorkflowRequest,
+  useCreateAgenticWorkflow,
+} from '../../hooks/use-create-agentic-workflow/use-create-agentic-workflow'
 import { isGitRepositoryComplete } from './agentic-workflow-configuration/agentic-workflow-configuration'
 import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowFormData,
   useAgenticWorkflowCreateContext,
 } from './agentic-workflow-context'
-import {
-  formatAgenticWorkflowRequest,
-  useCreateAgenticWorkflow,
-} from './hooks/use-create-agentic-workflow/use-create-agentic-workflow'
 
 function truncateSummary(value: string) {
   if (!value.trim()) return '-'
