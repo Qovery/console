@@ -116,14 +116,13 @@ function BlueprintUpdatePreviewContent({
   rawOutput: string
 }) {
   const rawOutputContainerHeightClassName = rawOutput
-    ? 'h-[min(75vh,calc(100vh-260px))] min-h-[260px]'
+    ? 'h-[min(75vh,calc(100vh-320px))] min-h-[260px]'
     : 'min-h-[180px]'
 
   return (
     <FunnelFlowBody customContentWidth="max-w-[684px]">
-      <Section className="gap-6 pb-20">
+      <Section className="gap-4">
         <Heading level={1}>Preview changes</Heading>
-
         <Section className="gap-2">
           <Heading level={3}>Raw output</Heading>
           <div
