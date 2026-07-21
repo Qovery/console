@@ -3,6 +3,7 @@ import {
   type ContainerResponse,
   type HelmSourceRepositoryResponse,
 } from 'qovery-typescript-axios'
+import { useParams } from '@tanstack/react-router'
 import { P, match } from 'ts-pattern'
 import {
   type AnyService,
@@ -19,21 +20,108 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { ExternalLink, Icon, Tooltip } from '@qovery/shared/ui'
+import { ExternalLink, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
+import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
 import LastCommit from '../../last-commit/last-commit'
 import LastVersion from '../../last-version/last-version'
+import { ServiceAvatar } from '../../service-avatar/service-avatar'
+import { BlueprintUpdateBadge } from '../../service-update-flow/blueprint/blueprint-update-badge'
+import { getBlueprintUpdateVersion } from '../../service-update-flow/blueprint/blueprint-update-utils'
 
 type ServiceVersionCellProps = {
   service: AnyService
-  organizationId: string
-  projectId: string
 }
 
-export function ServiceVersionCell({ service, organizationId, projectId }: ServiceVersionCellProps) {
-  const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) =>
-    gitRepository && (
+type BlueprintService = AnyService & {
+  blueprint_id: string
+  tag?: string
+}
+
+function isBlueprintService(service: AnyService): service is BlueprintService {
+  return 'blueprint_id' in service && Boolean(service.blueprint_id)
+}
+
+function BlueprintVersionInfo({
+  service,
+  gitRepository,
+}: {
+  service: BlueprintService
+  gitRepository: ApplicationGitRepository
+}) {
+  const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
+  const { data: blueprintUpdate, isLoading } = useBlueprintUpdate({ blueprintId: service.blueprint_id })
+  const version = service.tag ? getBlueprintUpdateVersion(service.tag) : undefined
+
+  return (
+    <div
+      className="flex w-full min-w-0 items-center justify-between gap-6"
+      onClick={(event) => event.stopPropagation()}
+    >
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <div className="flex min-w-0 items-center gap-2 text-neutral">
+          <Icon className="h-3 w-3 shrink-0 text-inherit" name={gitRepository.provider} />
+          <ExternalLink
+            href={gitRepository.url}
+            underline
+            color="neutral"
+            size="ssm"
+            withIcon={false}
+            className="min-w-0 flex-1 font-normal"
+          >
+            <span className="min-w-0 truncate" title={gitRepository.name}>
+              {gitRepository.name}
+            </span>
+          </ExternalLink>
+        </div>
+        {version && (
+          <div className="flex min-w-0 items-center gap-2 text-neutral">
+            <ServiceAvatar
+              service={service}
+              size="custom"
+              radius="none"
+              serviceAvatarRadius="sm"
+              className="h-3.5 w-3.5 shrink-0"
+            />
+            <span className="min-w-0 truncate text-ssm" title={`v${version}`}>
+              v{version}
+            </span>
+          </div>
+        )}
+      </div>
+      {isLoading ? (
+        <Skeleton width={100} height={24} />
+      ) : blueprintUpdate ? (
+        <BlueprintUpdateBadge
+          blueprintUpdate={blueprintUpdate}
+          service={service}
+          serviceId={service.id}
+          environmentId={environmentId}
+          organizationId={organizationId}
+          projectId={projectId}
+        />
+      ) : null}
+    </div>
+  )
+}
+
+export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
+  const { organizationId = '', projectId = '' } = useParams({ strict: false })
+
+  const gitInfo = (service: Application | Job | Helm | Terraform, gitRepository?: ApplicationGitRepository) => {
+    if (!gitRepository) return null
+
+    if (isBlueprintService(service)) {
+      return (
+        <BlueprintVersionInfo
+          service={service}
+          gitRepository={gitRepository}
+        />
+      )
+    }
+
+    return (
       <div className="flex w-full min-w-0 items-center justify-between gap-3" onClick={(e) => e.stopPropagation()}>
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 flex-col gap-0.5">
@@ -88,6 +176,7 @@ export function ServiceVersionCell({ service, organizationId, projectId }: Servi
         </div>
       </div>
     )
+  }
   const containerInfo = (containerImage?: Pick<ContainerResponse, 'image_name' | 'tag' | 'registry'>) =>
     containerImage && (
       <div className="flex w-full min-w-0 items-center gap-1 text-ssm" onClick={(e) => e.stopPropagation()}>

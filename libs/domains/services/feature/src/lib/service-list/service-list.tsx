@@ -259,7 +259,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
         enableSorting: false,
         cell: (info) => {
           return (
-            <ServiceVersionCell service={info.row.original} organizationId={organizationId} projectId={projectId} />
+            <ServiceVersionCell service={info.row.original} />
           )
         },
       }),
