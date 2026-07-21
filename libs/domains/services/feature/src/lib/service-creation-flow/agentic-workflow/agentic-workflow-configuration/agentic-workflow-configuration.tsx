@@ -6,7 +6,6 @@ import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
-  MCP_CONNECTOR_JSON_EXAMPLE,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
 import { AIModelCards } from './ai-model-cards'
@@ -391,29 +390,27 @@ export function AgenticWorkflowConfiguration() {
             value={values.mcpJson}
             error={mcpJsonError}
             hint={
-              <>
-                <span>
-                  See Claude Code docs for{' '}
-                  <a
-                    href="https://code.claude.com/docs/fr/mcp#option-1-add-a-remote-http-server"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-medium text-brand hover:underline"
-                  >
-                    remote HTTP
-                  </a>{' '}
-                  and{' '}
-                  <a
-                    href="https://code.claude.com/docs/fr/mcp#option-3-add-a-local-stdio-server"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-medium text-brand hover:underline"
-                  >
-                    local stdio
-                  </a>{' '}
-                  servers.
-                </span>
-              </>
+              <span>
+                See Claude Code docs for{' '}
+                <a
+                  href="https://code.claude.com/docs/fr/mcp#option-1-add-a-remote-http-server"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-brand hover:underline"
+                >
+                  remote HTTP
+                </a>{' '}
+                and{' '}
+                <a
+                  href="https://code.claude.com/docs/fr/mcp#option-3-add-a-local-stdio-server"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="font-medium text-brand hover:underline"
+                >
+                  local stdio
+                </a>{' '}
+                servers.
+              </span>
             }
             onChange={(value) => form.setValue('mcpJson', value, { shouldDirty: true })}
           />

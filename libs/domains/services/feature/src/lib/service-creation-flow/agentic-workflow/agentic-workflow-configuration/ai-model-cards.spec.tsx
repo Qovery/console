@@ -9,6 +9,14 @@ function SelectedModel() {
 }
 
 describe('AIModelCards', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   it('should keep Claude selectable and Bedrock disabled', async () => {
     const { userEvent } = renderWithProviders(
       <AgenticWorkflowCreationFlow creationFlowUrl="/create/agentic-workflow" onExit={jest.fn()}>
