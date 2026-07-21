@@ -142,7 +142,7 @@ export function HelmValuesOverrideFileSettings() {
 
     const nextService = {
       ...service,
-      auto_deploy: data.is_public_repository ? false : (service.auto_deploy ?? false) || (data.auto_deploy ?? false),
+      auto_deploy: data.is_public_repository ? false : (data.auto_deploy ?? false),
     }
 
     editService({
