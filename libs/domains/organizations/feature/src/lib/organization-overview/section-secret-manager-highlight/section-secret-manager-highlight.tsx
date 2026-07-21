@@ -61,7 +61,7 @@ export function SectionSecretManagerHighlight() {
         <button
           type="button"
           aria-label="Dismiss secret manager integration card"
-          className="absolute right-1.5 top-1.5 z-dropdown flex h-5 w-5 items-center justify-center text-xs text-neutral-subtle transition-colors hover:text-neutral"
+          className="absolute right-1.5 top-1.5 z-[1] flex h-5 w-5 items-center justify-center text-xs text-neutral-subtle transition-colors hover:text-neutral"
           onClick={() => setIsVisible(false)}
         >
           <Icon iconName="xmark" />
@@ -90,7 +90,7 @@ export function SectionSecretManagerHighlight() {
               color="brand"
               variant="solid"
               size="lg"
-              className="absolute bottom-3 z-10 w-[calc(100%-24px)] justify-center"
+              className="absolute bottom-3 z-[1] w-[calc(100%-24px)] justify-center"
             >
               Install it on your cluster here
             </Link>
@@ -100,7 +100,7 @@ export function SectionSecretManagerHighlight() {
               color="brand"
               variant="solid"
               size="lg"
-              className="absolute bottom-3 z-10 w-[calc(100%-24px)] justify-center"
+              className="absolute bottom-3 z-[1] w-[calc(100%-24px)] justify-center"
               onClick={() => showPylonForm('request-access-secrets-manager')}
             >
               Contact us

@@ -75,6 +75,20 @@ jest.mock('@qovery/domains/service-helm/feature', () => ({
         >
           Select public git
         </button>
+        <button
+          type="button"
+          onClick={() => {
+            methods.setValue('type', 'GIT_REPOSITORY')
+            methods.setValue('provider', 'GITHUB')
+            methods.setValue('is_public_repository', false)
+            methods.setValue('git_repository', { url: 'https://github.com/Qovery/console' })
+            methods.setValue('branch', 'main')
+            methods.setValue('paths', 'values.yaml')
+            methods.setValue('auto_deploy', false)
+          }}
+        >
+          Select private git with auto deploy off
+        </button>
         {children}
       </div>
     )
@@ -263,6 +277,46 @@ describe('HelmValuesOverrideFileSettings', () => {
                   git_token_id: undefined,
                 },
                 paths: ['values.yaml', 'extra.yaml'],
+              },
+            },
+          },
+        },
+      }),
+    })
+  })
+
+  it('persists auto deploy disabled for private git repositories even if it was previously enabled', async () => {
+    const service = makeHelmService()
+    service.auto_deploy = true
+
+    useServiceSpy.mockReturnValue({
+      data: service,
+    })
+
+    const { userEvent } = renderWithProviders(<HelmValuesOverrideFileSettings />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Select private git with auto deploy off' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Submit mocked form' }))
+
+    expect(mockEditService).toHaveBeenCalledWith({
+      serviceId: 'service-1',
+      payload: buildEditServicePayload({
+        service: {
+          ...service,
+          auto_deploy: false,
+        },
+        request: {
+          values_override: {
+            ...service.values_override,
+            file: {
+              git: {
+                git_repository: {
+                  provider: 'GITHUB',
+                  url: 'https://github.com/Qovery/console',
+                  branch: 'main',
+                  git_token_id: undefined,
+                },
+                paths: ['values.yaml'],
               },
             },
           },

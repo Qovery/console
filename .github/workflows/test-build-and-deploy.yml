@@ -65,74 +65,121 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # NOTE: Create a "variables" ouput which expose github repository variables as .env string
-  # for NX Cloud main reusable workflow.
-  #
-  # https://github.com/nrwl/ci?tab=readme-ov-file#limited-secrets-support
-  # https://docs.github.com/en/enterprise-cloud@latest/actions/learn-github-actions/variables#defining-configuration-variables-for-multiple-workflows
-  env-vars:
-    runs-on: ubuntu-latest
-    outputs:
-      variables: ${{ steps.var.outputs.variables }}
-    steps:
-      - name: Setting global variables
-        uses: actions/github-script@v7
-        id: var
-        with:
-          script: |
-            const varsFromJSON = ${{ toJSON(vars) }}
-            const variables = []
-            for (const v in varsFromJSON) {
-              variables.push(v + '=' + varsFromJSON[v])
-            }
-            core.setOutput('variables', variables.join('\n'))
-
   nx-main:
-    needs: [env-vars]
     name: Nx Cloud - Main Job
-    uses: nrwl/ci/.github/workflows/nx-cloud-main.yml@v0.15.0
-    secrets:
+    runs-on: ubuntu-latest
+    env:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.nx-cloud-access-token }}
-    with:
-      environment-variables: |
-        ${{ needs.env-vars.outputs.variables }}
-        NX_PUBLIC_GIT_SHA=${{ inputs.application-commit-id }}
-        NX_BRANCH=${{ github.ref_name }}
-        NX_CI_EXECUTION_ID=${{ github.run_id }}
-        NX_HEAD_SHA=${{ github.sha }}
-        NX_BASE_SHA=${{ github.event.pull_request.base.sha || github.event.before }}
-      # NOTE: Here we are using the special `nx-cloud record` command to ensure that any commands we run that do not go through the cloud task runner natively
-      # (i.e. anything that starts with `nx run`/`nx run-many`/`nx affected --target`), are still captured in the Nx Cloud UI and Github App comment for
-      # easier troubleshooting. See more here: https://nx.dev/nx-cloud/set-up/record-commands#recording-non-nx-commands
-      parallel-commands: |
-        npx nx-cloud record -- npx nx format:check
-      # Single line required: nrwl/ci splits by newline and runs each line as a separate parallel command
-      parallel-commands-on-agents: |
-        if [ "${{ inputs.flow }}" = "pull-request" ]; then npx nx affected --target=lint --parallel=3 && npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent && yarn sync-changelog && npx nx run console:build --configuration=development; else npx nx affected --target=lint --parallel=3 && npx nx affected --target=test --parallel=3 --configuration=${{ inputs.configuration }} --ci --coverage --coverageReporters=lcov --silent && yarn sync-changelog && npx nx run console:build --configuration=production; fi
-      artifacts-path: |
-        dist/
-        coverage/
-        !coverage/**/*.js
-        !coverage/**/*.css
-        !coverage/**/*.html
-        !coverage/**/*.png
-      artifacts-name: dist-and-coverage-artifacts
+      NX_CLOUD_CONTINUOUS_ASSIGNMENT: true
+      NX_PUBLIC_GIT_SHA: ${{ inputs.application-commit-id }}
+      NX_PUBLIC_GTM: ${{ vars.NX_PUBLIC_GTM }}
+      NX_PUBLIC_INTERCOM: ${{ vars.NX_PUBLIC_INTERCOM }}
+      NX_PUBLIC_OAUTH_AUDIENCE: ${{ vars.NX_PUBLIC_OAUTH_AUDIENCE }}
+      NX_PUBLIC_OAUTH_DOMAIN: ${{ vars.NX_PUBLIC_OAUTH_DOMAIN }}
+      NX_PUBLIC_OAUTH_KEY: ${{ vars.NX_PUBLIC_OAUTH_KEY }}
+      NX_PUBLIC_POSTHOG: ${{ vars.NX_PUBLIC_POSTHOG }}
+      NX_PUBLIC_POSTHOG_APIHOST: ${{ vars.NX_PUBLIC_POSTHOG_APIHOST }}
+      NX_PUBLIC_QOVERY_API: ${{ vars.NX_PUBLIC_QOVERY_API }}
+      NX_PUBLIC_QOVERY_WS: ${{ vars.NX_PUBLIC_QOVERY_WS }}
+      NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY: ${{ vars.NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY }}
+      NX_PUBLIC_INSTATUS_APP_ID: ${{ vars.NX_PUBLIC_INSTATUS_APP_ID }}
+      NX_PUBLIC_MINTLIFY_API_KEY: ${{ vars.NX_PUBLIC_MINTLIFY_API_KEY }}
+      NX_PUBLIC_CARGO_API_TOKEN: ${{ vars.NX_PUBLIC_CARGO_API_TOKEN }}
+      NX_PUBLIC_PYLON_APP_ID: ${{ vars.NX_PUBLIC_PYLON_APP_ID }}
+      NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL: ${{ vars.NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  agents:
-    needs: [env-vars]
-    name: Nx Cloud - Agents
-    uses: nrwl/ci/.github/workflows/nx-cloud-agents.yml@v0.15.0
-    secrets:
-      NX_CLOUD_ACCESS_TOKEN: ${{ secrets.nx-cloud-access-token }}
-    with:
-      number-of-agents: 3
-      environment-variables: |
-        ${{ needs.env-vars.outputs.variables }}
-        NX_PUBLIC_GIT_SHA=${{ inputs.application-commit-id }}
-        NX_BRANCH=${{ github.ref_name }}
-        NX_CI_EXECUTION_ID=${{ github.run_id }}
-        NX_HEAD_SHA=${{ github.sha }}
-        NX_BASE_SHA=${{ github.event.pull_request.base.sha || github.event.before }}
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 23
+          cache: yarn
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install --immutable
+
+      - name: Set affected SHAs
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BASE_SHA: ${{ github.event.before }}
+          HEAD_SHA: ${{ github.sha }}
+        run: |
+          set -euo pipefail
+
+          base_sha="$PUSH_BASE_SHA"
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            base_sha="$PR_BASE_SHA"
+          fi
+
+          if [ -z "$base_sha" ] || [ "$base_sha" = "0000000000000000000000000000000000000000" ]; then
+            base_sha="$(git rev-parse HEAD^)"
+          fi
+
+          echo "NX_BASE=$base_sha" >> "$GITHUB_ENV"
+          echo "NX_HEAD=$HEAD_SHA" >> "$GITHUB_ENV"
+
+      - name: Start Nx Agents
+        id: start-agents
+        run: |
+          yarn nx start-ci-run \
+            --distribute-on="3 console-ci" \
+            --require-explicit-completion \
+            --stop-agents-on-failure=false \
+            --with-env-vars="NX_PUBLIC_GIT_SHA,NX_PUBLIC_GTM,NX_PUBLIC_INTERCOM,NX_PUBLIC_OAUTH_AUDIENCE,NX_PUBLIC_OAUTH_DOMAIN,NX_PUBLIC_OAUTH_KEY,NX_PUBLIC_POSTHOG,NX_PUBLIC_POSTHOG_APIHOST,NX_PUBLIC_QOVERY_API,NX_PUBLIC_QOVERY_WS,NX_PUBLIC_CHARGEBEE_PUBLISHABLE_KEY,NX_PUBLIC_INSTATUS_APP_ID,NX_PUBLIC_MINTLIFY_API_KEY,NX_PUBLIC_CARGO_API_TOKEN,NX_PUBLIC_PYLON_APP_ID,NX_PUBLIC_DEVOPS_COPILOT_API_BASE_URL"
+
+      - name: Check formatting
+        run: yarn nx-cloud record -- yarn nx format:check
+
+      - name: Run distributed checks and build
+        shell: bash
+        run: |
+          if [ "${{ inputs.flow }}" = "pull-request" ]; then
+            build_configuration="development"
+          else
+            build_configuration="production"
+          fi
+
+          yarn nx affected --target=lint --parallel=3
+
+          yarn nx affected \
+            --target=test \
+            --parallel=3 \
+            --configuration=${{ inputs.configuration }} \
+            --ci \
+            --coverage \
+            --coverageReporters=lcov \
+            --silent
+
+          yarn nx run console:build \
+            --parallel=3 \
+            --configuration="$build_configuration"
+
+      - name: Upload build and coverage artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-and-coverage-artifacts
+          path: |
+            dist/
+            coverage/
+            !coverage/**/*.js
+            !coverage/**/*.css
+            !coverage/**/*.html
+            !coverage/**/*.png
+          if-no-files-found: warn
+
+      - name: Complete Nx Cloud CI run
+        if: always() && steps.start-agents.outcome == 'success'
+        run: yarn nx-cloud complete-ci-run
 
   codecoverage:
     runs-on: ubuntu-latest
