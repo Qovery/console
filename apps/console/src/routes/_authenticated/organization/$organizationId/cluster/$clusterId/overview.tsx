@@ -30,6 +30,7 @@ import {
   ExternalLink,
   Heading,
   Icon,
+  Link,
   Section,
   Skeleton,
   Tooltip,
@@ -129,6 +130,15 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
       <Section className="my-6 gap-6 pb-6">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
+            <Link
+              to="/organization/$organizationId/clusters"
+              params={{ organizationId }}
+              color="subtle"
+              className="text-subtle w-fit"
+            >
+              <Icon iconName="arrow-left" />
+              Back to clusters
+            </Link>
             <div className="flex items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-2">
                 <Skeleton width={40} height={40} show={!cluster} rounded>
