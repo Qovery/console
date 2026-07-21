@@ -112,25 +112,37 @@ describe('ServiceNew', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render search input and documentation link', () => {
+  it('should not render a page-level service search', () => {
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
-    expect(screen.getByPlaceholderText('Search…')).toBeInTheDocument()
-    expect(screen.getByText('See documentation')).toBeInTheDocument()
+    expect(screen.queryByPlaceholderText('Search…')).not.toBeInTheDocument()
+    expect(screen.queryByText('See documentation')).not.toBeInTheDocument()
   })
 
-  it('should render Default Qovery services section with main service types', () => {
+  it('should render Base services section with main service types', () => {
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
-    expect(screen.getByRole('heading', { name: 'Default Qovery services' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Base services' })).toBeInTheDocument()
     expect(screen.getByText('Application')).toBeInTheDocument()
     expect(screen.getByText('Database')).toBeInTheDocument()
     expect(screen.getByText('Lifecycle Job')).toBeInTheDocument()
     expect(screen.getByText('Cron Job')).toBeInTheDocument()
     expect(screen.getByText('Helm')).toBeInTheDocument()
     expect(screen.getAllByText('Terraform').length).toBeGreaterThanOrEqual(1)
+  })
+
+  it('should show base service descriptions in info tooltips', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    await userEvent.hover(screen.getByRole('img', { name: 'Lifecycle Job details' }))
+
+    expect(
+      await screen.findByText('Execute any type of script coming from Git or a Container Registry.')
+    ).toBeInTheDocument()
   })
 
   it('should render legacy template sections when the service catalog is disabled', () => {
@@ -185,6 +197,24 @@ describe('ServiceNew', () => {
 
     expect(blueprintsSectionScreen.queryByText('AWS S3 Bucket')).not.toBeInTheDocument()
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
+  })
+
+  it('should show an empty state when the blueprint search has no results', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    const blueprintsSection = screen.getByRole('heading', { name: 'Blueprints' }).closest('section')
+    const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
+
+    await userEvent.type(screen.getByPlaceholderText('Search blueprints...'), 'does-not-exist')
+
+    expect(screen.getByRole('heading', { name: 'Blueprints' })).toBeInTheDocument()
+    expect(blueprintsSectionScreen.getByText('No blueprints found')).toBeInTheDocument()
+    expect(blueprintsSectionScreen.queryByText('AWS S3 Bucket')).not.toBeInTheDocument()
   })
 
   it('should format slug blueprint names', () => {
