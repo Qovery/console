@@ -55,10 +55,7 @@ function BlueprintVersionInfo({
   const version = service.tag ? getBlueprintUpdateVersion(service.tag) : undefined
 
   return (
-    <div
-      className="flex w-full min-w-0 items-center justify-between gap-6"
-      onClick={(event) => event.stopPropagation()}
-    >
+    <div className="flex w-full min-w-0 items-center justify-between gap-6">
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
         <div className="flex min-w-0 items-center gap-2 text-neutral">
           <Icon className="h-3 w-3 shrink-0 text-inherit" name={gitRepository.provider} />
@@ -68,7 +65,8 @@ function BlueprintVersionInfo({
             color="neutral"
             size="ssm"
             withIcon={false}
-            className="min-w-0 flex-1 font-normal"
+            className="min-w-0 max-w-full font-normal"
+            onClick={(event) => event.stopPropagation()}
           >
             <span className="min-w-0 truncate" title={gitRepository.name}>
               {gitRepository.name}
@@ -91,16 +89,18 @@ function BlueprintVersionInfo({
         )}
       </div>
       {isLoading ? (
-        <Skeleton width={100} height={24} />
+        <Skeleton width={119} height={24} />
       ) : blueprintUpdate ? (
-        <BlueprintUpdateBadge
-          blueprintUpdate={blueprintUpdate}
-          service={service}
-          serviceId={service.id}
-          environmentId={environmentId}
-          organizationId={organizationId}
-          projectId={projectId}
-        />
+        <div onClick={(event) => event.stopPropagation()}>
+          <BlueprintUpdateBadge
+            blueprintUpdate={blueprintUpdate}
+            service={service}
+            serviceId={service.id}
+            environmentId={environmentId}
+            organizationId={organizationId}
+            projectId={projectId}
+          />
+        </div>
       ) : null}
     </div>
   )
