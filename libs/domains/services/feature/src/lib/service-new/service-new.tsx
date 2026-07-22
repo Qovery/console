@@ -169,7 +169,7 @@ export function ServiceNew({
         cloud_provider: cloudProvider,
       },
       {
-        title: 'Database',
+        title: 'Container Database',
         description: 'Easy and fastest way to deploy the most popular databases.',
         icon: <Icon name="DATABASE" width={32} height={32} />,
         link: getServicesPath(

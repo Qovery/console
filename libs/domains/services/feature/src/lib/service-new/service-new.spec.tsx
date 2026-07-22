@@ -126,7 +126,7 @@ describe('ServiceNew', () => {
     )
     expect(screen.getByRole('heading', { name: 'Base services' })).toBeInTheDocument()
     expect(screen.getByText('Application')).toBeInTheDocument()
-    expect(screen.getByText('Database')).toBeInTheDocument()
+    expect(screen.getByText('Container Database')).toBeInTheDocument()
     expect(screen.getByText('Lifecycle Job')).toBeInTheDocument()
     expect(screen.getByText('Cron Job')).toBeInTheDocument()
     expect(screen.getByText('Helm')).toBeInTheDocument()
