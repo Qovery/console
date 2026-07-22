@@ -150,7 +150,10 @@ function BlueprintUpdatePreviewContent({
             className={`${rawOutputContainerHeightClassName} overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
           >
             {previewError ? (
-              <div role="alert" className="flex h-full flex-col items-center justify-center gap-3 text-sm text-neutral-subtle">
+              <div
+                role="alert"
+                className="flex h-full flex-col items-center justify-center gap-3 text-sm text-neutral-subtle"
+              >
                 <span>Unable to generate the preview.</span>
                 <Button type="button" variant="outline" color="neutral" size="md" onClick={() => void onRetry()}>
                   <Icon iconName="arrow-rotate-right" iconStyle="regular" />
