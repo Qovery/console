@@ -131,6 +131,24 @@ describe('ServiceNew', () => {
     expect(screen.getByText('Cron Job')).toBeInTheDocument()
     expect(screen.getByText('Helm')).toBeInTheDocument()
     expect(screen.getAllByText('Terraform').length).toBeGreaterThanOrEqual(1)
+    expect(screen.queryByText('Agentic workflow')).not.toBeInTheDocument()
+  })
+
+  it('should render agentic workflow entry when feature flag is enabled', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.getByText('Agentic workflow')).toBeInTheDocument()
+    expect(
+      screen.getByText('Run an AI workflow with webhooks, MCP connectors, governance, and configured outputs.')
+    ).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Agentic workflow/i })).toHaveAttribute(
+      'href',
+      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow'
+    )
   })
 
   it('should render template sections by tag', () => {
