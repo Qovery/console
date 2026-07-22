@@ -21,12 +21,14 @@ export interface BlueprintUpdateFlowContextValue {
   completedSections: BlueprintUpdateSection[]
   handleUpdate: () => Promise<void>
   isPreviewLoading: boolean
+  previewError: boolean
   isRequiredValid: boolean
   isUpdateLoading: boolean
   onChange: (name: string, value: BlueprintFieldValue) => void
   previewId?: string
   removedValues: BlueprintUpdateRemovedValue[]
   requestPreview: () => Promise<void>
+  retryPreview: () => Promise<void>
   requiredValues: BlueprintUpdateNewRequiredValue[]
   reviewSections: BlueprintUpdateReviewSection[]
   service: AnyService

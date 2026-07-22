@@ -1,10 +1,12 @@
 import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
+import { useEffect } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import { BlueprintUpdateFlow } from './blueprint-update-flow'
 
 const mockDeployBlueprint = jest.fn()
+const mockPreviewBlueprintUpdate = jest.fn()
 const mockUpdateBlueprint = jest.fn()
 
 jest.mock('../../hooks/use-blueprint-update/use-blueprint-update', () => ({
@@ -28,7 +30,7 @@ jest.mock('../../hooks/use-deploy-blueprint/use-deploy-blueprint', () => ({
 }))
 
 jest.mock('../../hooks/use-preview-blueprint-update/use-preview-blueprint-update', () => ({
-  usePreviewBlueprintUpdate: () => ({ mutateAsync: jest.fn(), isLoading: false }),
+  usePreviewBlueprintUpdate: () => ({ mutateAsync: mockPreviewBlueprintUpdate, isLoading: false }),
 }))
 
 jest.mock('../../hooks/use-update-blueprint/use-update-blueprint', () => ({
@@ -49,6 +51,16 @@ function ConfirmUpdateButton() {
   )
 }
 
+function PreviewRequester() {
+  const { previewError, requestPreview } = useBlueprintUpdateFlowContext()
+
+  useEffect(() => {
+    void requestPreview()
+  }, [requestPreview])
+
+  return previewError ? <span>Preview failed</span> : null
+}
+
 describe('BlueprintUpdateFlow', () => {
   const service = {
     id: 'service-id',
@@ -61,6 +73,7 @@ describe('BlueprintUpdateFlow', () => {
   beforeEach(() => {
     mockUpdateBlueprint.mockResolvedValue({})
     mockDeployBlueprint.mockResolvedValue({})
+    mockPreviewBlueprintUpdate.mockResolvedValue({ preview_id: 'preview-id' })
   })
 
   it('deploys the saved blueprint update before exiting', async () => {
@@ -90,5 +103,25 @@ describe('BlueprintUpdateFlow', () => {
     expect(mockUpdateBlueprint.mock.invocationCallOrder[0]).toBeLessThan(
       mockDeployBlueprint.mock.invocationCallOrder[0]
     )
+  })
+
+  it('does not retry a failed preview automatically', async () => {
+    mockPreviewBlueprintUpdate.mockRejectedValue(new Error('Preview failed'))
+
+    renderWithProviders(
+      <BlueprintUpdateFlow
+        blueprintId="blueprint-id"
+        currentStep={2}
+        environmentId="environment-id"
+        onExit={jest.fn()}
+        service={service}
+      >
+        <PreviewRequester />
+      </BlueprintUpdateFlow>
+    )
+
+    await waitFor(() => expect(screen.getByText('Preview failed')).toBeInTheDocument())
+
+    expect(mockPreviewBlueprintUpdate).toHaveBeenCalledTimes(1)
   })
 })

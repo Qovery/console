@@ -78,6 +78,30 @@ describe('BlueprintUpdatePreviewStep', () => {
     expect(screen.getByRole('button', { name: /Confirm & deploy update/i })).toBeEnabled()
   })
 
+  it('shows an explicit retry action when preview generation fails', async () => {
+    const retryPreview = jest.fn()
+
+    jest.mocked(useBlueprintUpdateFlowContext).mockReturnValue({
+      clusterId: 'cluster-id',
+      handleUpdate: jest.fn(),
+      isUpdateLoading: false,
+      previewError: true,
+      previewId: undefined,
+      requestPreview: jest.fn(),
+      retryPreview,
+      service: { name: 'AWS S3 Bucket' },
+    } as ReturnType<typeof useBlueprintUpdateFlowContext>)
+
+    const { userEvent } = renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Unable to generate the preview.')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Retry preview' }))
+
+    expect(retryPreview).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('button', { name: /Confirm & deploy update/i })).toBeDisabled()
+  })
+
   it('updates the loading message while waiting for preview output', () => {
     jest.useFakeTimers()
     jest.mocked(useBlueprintUpdateFlowContext).mockReturnValue({

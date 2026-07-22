@@ -1,5 +1,5 @@
 import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
+import { type PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { toast } from '@qovery/shared/ui'
 import {
@@ -71,7 +71,8 @@ export function BlueprintUpdateFlow({
   )
   const [completedSections, setCompletedSections] = useState<BlueprintUpdateSection[]>([])
   const [previewId, setPreviewId] = useState<string>()
-  const [previewPayloadKey, setPreviewPayloadKey] = useState<string>()
+  const previewPayloadKeyRef = useRef<string>()
+  const [previewError, setPreviewError] = useState(false)
   const [values, setValues] = useState<BlueprintFieldValues>({})
   const [initializedBlueprintId, setInitializedBlueprintId] = useState<string>()
 
@@ -87,6 +88,8 @@ export function BlueprintUpdateFlow({
       )
       setActiveSection(getFirstAvailableUpdateSection(blueprintUpdate))
       setInitializedBlueprintId(blueprintId)
+      previewPayloadKeyRef.current = undefined
+      setPreviewError(false)
     }
   }, [blueprintId, blueprintUpdate, initializedBlueprintId])
 
@@ -152,20 +155,27 @@ export function BlueprintUpdateFlow({
   }, [activeSection, activeSectionIndex, completedSections, isRequiredValid, reviewSections])
 
   const requestPreview = useCallback(async () => {
-    const payloadKey = JSON.stringify(payload)
-    if (previewPayloadKey === payloadKey) return
+    if (initializedBlueprintId !== blueprintId) return
 
-    setPreviewPayloadKey(payloadKey)
+    const payloadKey = JSON.stringify(payload)
+    if (previewPayloadKeyRef.current === payloadKey) return
+
+    previewPayloadKeyRef.current = payloadKey
+    setPreviewError(false)
     setPreviewId(undefined)
 
     try {
       const preview = await previewBlueprintUpdate({ blueprintId, payload })
       setPreviewId(preview?.preview_id)
-    } catch (error) {
-      setPreviewPayloadKey(undefined)
-      throw error
+    } catch {
+      setPreviewError(true)
     }
-  }, [blueprintId, payload, previewBlueprintUpdate, previewPayloadKey])
+  }, [blueprintId, initializedBlueprintId, payload, previewBlueprintUpdate])
+
+  const retryPreview = useCallback(async () => {
+    previewPayloadKeyRef.current = undefined
+    await requestPreview()
+  }, [requestPreview])
 
   const handleUpdate = useCallback(async () => {
     await updateBlueprint({ blueprintId, payload })
@@ -183,6 +193,7 @@ export function BlueprintUpdateFlow({
     completedSections,
     handleUpdate,
     isPreviewLoading,
+    previewError,
     isRequiredValid,
     isUpdateLoading: isUpdateLoading || isDeployLoading,
     onChange: (name: string, value: BlueprintFieldValue) =>
@@ -190,6 +201,7 @@ export function BlueprintUpdateFlow({
     previewId,
     removedValues: blueprintUpdateData.removed_values,
     requestPreview,
+    retryPreview,
     requiredValues,
     reviewSections,
     service,
