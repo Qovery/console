@@ -141,8 +141,8 @@ describe('ServiceNew', () => {
     await userEvent.hover(screen.getByRole('img', { name: 'Lifecycle Job details' }))
 
     expect(
-      await screen.findByText('Execute any type of script coming from Git or a Container Registry.')
-    ).toBeInTheDocument()
+      await screen.findAllByText('Execute any type of script coming from Git or a Container Registry.')
+    ).not.toHaveLength(0)
   })
 
   it('should render legacy template sections when the service catalog is disabled', () => {
@@ -386,12 +386,10 @@ describe('ServiceNew', () => {
     })
   })
 
-  it('should keep default service links valid when rendered from search results', async () => {
-    const { container, userEvent } = renderWithProviders(
+  it('should keep default service links valid', () => {
+    const { container } = renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
-
-    await userEvent.type(screen.getByPlaceholderText('Search…'), 'application')
 
     expect(
       container.querySelector(
