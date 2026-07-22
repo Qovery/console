@@ -4,8 +4,13 @@ import { organizationFactoryMock, terraformFactoryMock } from '@qovery/shared/fa
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { TerraformGeneralSettings } from './terraform-general-settings'
 
+const mockEditGitRepositorySettings = jest.fn()
+
 jest.mock('@qovery/domains/organizations/feature', () => ({
-  EditGitRepositorySettings: () => null,
+  EditGitRepositorySettings: (props: unknown) => {
+    mockEditGitRepositorySettings(props)
+    return null
+  },
 }))
 
 jest.mock('@qovery/domains/services/feature', () => ({
@@ -30,5 +35,23 @@ describe('TerraformGeneralSettings', () => {
     expect(screen.getByText('General')).toBeInTheDocument()
     expect(screen.getByText('Source')).toBeInTheDocument()
     expect(screen.getByText('Build and deploy')).toBeInTheDocument()
+  })
+
+  it('hides the source edit action for blueprint services', () => {
+    renderWithProviders(
+      wrapWithReactHookForm(
+        <TerraformGeneralSettings service={{ ...service, blueprint_id: 'blueprint-id' }} organization={organization} />,
+        {
+          defaultValues: {
+            name: service.name,
+            terraform_action: TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
+          },
+        }
+      )
+    )
+
+    expect(mockEditGitRepositorySettings).toHaveBeenLastCalledWith(
+      expect.objectContaining({ showEditAction: false })
+    )
   })
 })
