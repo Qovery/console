@@ -8,6 +8,7 @@ import {
   isFieldValid,
 } from '../../blueprint-field-utils/blueprint-field-utils'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
+import { useDeployBlueprint } from '../../hooks/use-deploy-blueprint/use-deploy-blueprint'
 import { usePreviewBlueprintUpdate } from '../../hooks/use-preview-blueprint-update/use-preview-blueprint-update'
 import { useUpdateBlueprint } from '../../hooks/use-update-blueprint/use-update-blueprint'
 import { BlueprintUpdateFlowProvider } from './blueprint-update-context'
@@ -55,6 +56,11 @@ export function BlueprintUpdateFlow({
 }: BlueprintUpdateFlowProps) {
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
   const { mutateAsync: previewBlueprintUpdate, isLoading: isPreviewLoading } = usePreviewBlueprintUpdate()
+  const { mutateAsync: deployBlueprint, isLoading: isDeployLoading } = useDeployBlueprint({
+    environmentId,
+    serviceId: service.id,
+    serviceType: service.service_type,
+  })
   const { mutateAsync: updateBlueprint, isLoading: isUpdateLoading } = useUpdateBlueprint({
     environmentId,
     serviceId: service.id,
@@ -163,9 +169,10 @@ export function BlueprintUpdateFlow({
 
   const handleUpdate = useCallback(async () => {
     await updateBlueprint({ blueprintId, payload })
+    await deployBlueprint({ blueprintId })
     toast('success', 'Blueprint update started')
     onExit()
-  }, [blueprintId, onExit, payload, updateBlueprint])
+  }, [blueprintId, deployBlueprint, onExit, payload, updateBlueprint])
 
   const contextValue = {
     activeSection,
@@ -177,7 +184,7 @@ export function BlueprintUpdateFlow({
     handleUpdate,
     isPreviewLoading,
     isRequiredValid,
-    isUpdateLoading,
+    isUpdateLoading: isUpdateLoading || isDeployLoading,
     onChange: (name: string, value: BlueprintFieldValue) =>
       setValues((currentValues) => ({ ...currentValues, [name]: value })),
     previewId,

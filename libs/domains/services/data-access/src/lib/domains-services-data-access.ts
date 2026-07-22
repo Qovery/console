@@ -780,6 +780,10 @@ type UpdateBlueprintRequest = {
   payload: BlueprintUpdateRequest
 }
 
+type DeployBlueprintRequest = {
+  blueprintId: string
+}
+
 type EditServiceRequest = {
   serviceId: string
   payload:
@@ -1059,6 +1063,10 @@ export const mutations = {
   },
   async updateBlueprint({ blueprintId, payload }: UpdateBlueprintRequest) {
     const response = await blueprintApi.updateBlueprint(blueprintId, payload)
+    return response.data
+  },
+  async deployBlueprint({ blueprintId }: DeployBlueprintRequest) {
+    const response = await blueprintApi.deployBlueprint(blueprintId)
     return response.data
   },
   async editService({ serviceId, payload }: EditServiceRequest) {
