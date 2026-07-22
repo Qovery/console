@@ -1,9 +1,9 @@
 import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
 import {
   buildBlueprintUpdatePayload,
+  getBlueprintServiceVersion,
   getBlueprintUpdateFieldValue,
   getBlueprintUpdatePayloadValue,
-  getBlueprintServiceVersion,
   getBlueprintUpdateTitle,
   getBlueprintUpdateVersion,
   getFirstAvailableUpdateSection,

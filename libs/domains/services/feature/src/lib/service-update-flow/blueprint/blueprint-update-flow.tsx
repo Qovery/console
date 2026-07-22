@@ -18,10 +18,10 @@ import {
   type BlueprintUpdateSection,
   buildBlueprintUpdatePayload,
   getBlueprintUpdateFieldValue,
+  getBlueprintUpdateTitle,
   getBlueprintUpdateVariableField,
   getFallbackServiceIcon,
   getFirstAvailableUpdateSection,
-  getBlueprintUpdateTitle,
   updateSections,
 } from './blueprint-update-utils'
 

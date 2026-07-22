@@ -50,8 +50,6 @@ describe('TerraformGeneralSettings', () => {
       )
     )
 
-    expect(mockEditGitRepositorySettings).toHaveBeenLastCalledWith(
-      expect.objectContaining({ showEditAction: false })
-    )
+    expect(mockEditGitRepositorySettings).toHaveBeenLastCalledWith(expect.objectContaining({ showEditAction: false }))
   })
 })

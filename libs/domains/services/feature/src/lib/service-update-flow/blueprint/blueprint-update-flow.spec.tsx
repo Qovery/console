@@ -87,6 +87,8 @@ describe('BlueprintUpdateFlow', () => {
       expect(mockDeployBlueprint).toHaveBeenCalledWith({ blueprintId: 'blueprint-id' })
       expect(onExit).toHaveBeenCalled()
     })
-    expect(mockUpdateBlueprint.mock.invocationCallOrder[0]).toBeLessThan(mockDeployBlueprint.mock.invocationCallOrder[0])
+    expect(mockUpdateBlueprint.mock.invocationCallOrder[0]).toBeLessThan(
+      mockDeployBlueprint.mock.invocationCallOrder[0]
+    )
   })
 })
