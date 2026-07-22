@@ -429,7 +429,7 @@ describe('ServiceHeader', () => {
     renderServiceHeader('terraform-mock')
 
     expect(mockUseBlueprintUpdate).toHaveBeenCalledWith({ blueprintId: 'blueprint-id', suspense: true })
-    expect(screen.getByText('8')).toBeInTheDocument()
+    expect(screen.getByText('v8')).toBeInTheDocument()
     expect(screen.getByText('qovery-blueprints/s3')).toBeInTheDocument()
     expect(screen.queryByText('GitHub')).not.toBeInTheDocument()
     expect(screen.queryByText('main')).not.toBeInTheDocument()
@@ -542,14 +542,14 @@ describe('ServiceHeader', () => {
     })
   })
 
-  it('renders a skeleton while the blueprint update badge is loading', () => {
+  it('renders metadata skeletons while the blueprint update is loading', () => {
     mockUseBlueprintUpdate.mockImplementation(() => {
       throw new Promise(() => undefined)
     })
 
     renderServiceHeader('terraform-mock')
 
-    expect(screen.getByRole('generic', { busy: true })).toBeInTheDocument()
+    expect(screen.getAllByRole('generic', { busy: true })).toHaveLength(2)
   })
 
   it('does not check blueprint update availability for non-blueprint services', () => {

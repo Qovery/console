@@ -21,7 +21,7 @@ function ServiceNewContent() {
 
   return (
     <Section className="flex w-full flex-1 flex-col pb-24 pt-8">
-      <div className="mx-auto flex w-[1240px] flex-col gap-8">
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-8">
         <div className="flex flex-col gap-2 border-b border-neutral pb-6">
           <Link
             color="brand"

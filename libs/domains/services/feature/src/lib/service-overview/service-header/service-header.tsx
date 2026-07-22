@@ -216,8 +216,8 @@ function BlueprintMetadata({
     <>
       {currentVersion && currentVersion !== 'default' && (
         <Badge variant="outline" className="gap-1 whitespace-nowrap">
-          <ServiceAvatar service={service} size="custom" radius="none" serviceAvatarRadius="sm" className="h-3 w-3" />v
-          {currentVersion}
+          <ServiceAvatar service={service} size="custom" radius="none" serviceAvatarRadius="sm" className="h-3 w-3" />
+          <span>v{currentVersion}</span>
         </Badge>
       )}
       {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
