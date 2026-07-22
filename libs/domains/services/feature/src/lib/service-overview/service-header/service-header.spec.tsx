@@ -430,7 +430,10 @@ describe('ServiceHeader', () => {
 
     expect(mockUseBlueprintUpdate).toHaveBeenCalledWith({ blueprintId: 'blueprint-id', suspense: true })
     expect(screen.getByText('v8')).toBeInTheDocument()
-    expect(screen.getByText('qovery-blueprints/s3')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /qovery-blueprints/ })).toHaveAttribute(
+      'href',
+      'https://github.com/qovery-blueprints/s3'
+    )
     expect(screen.queryByText('GitHub')).not.toBeInTheDocument()
     expect(screen.queryByText('main')).not.toBeInTheDocument()
     expect(screen.getByText('Up to date')).toBeInTheDocument()
