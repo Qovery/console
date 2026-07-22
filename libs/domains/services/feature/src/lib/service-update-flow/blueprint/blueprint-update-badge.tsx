@@ -3,7 +3,7 @@ import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Badge, Icon, useModal } from '@qovery/shared/ui'
 import { BlueprintUpdateNoInputConfirmationModal } from './blueprint-update-no-input-confirmation-modal'
-import { getBlueprintUpdateVersion, hasBlueprintUpdateReviewSections } from './blueprint-update-utils'
+import { getBlueprintUpdateTitle, hasBlueprintUpdateReviewSections } from './blueprint-update-utils'
 
 export interface BlueprintUpdateBadgeProps {
   blueprintUpdate: BlueprintUpdateResponse
@@ -57,9 +57,11 @@ export function BlueprintUpdateBadge({
         openModal({
           content: (
             <BlueprintUpdateNoInputConfirmationModal
-              title={`${service?.name ?? 'Blueprint'} blueprint update to ${
-                getBlueprintUpdateVersion(blueprintUpdate.latest_tag) ?? blueprintUpdate.latest_tag
-              }`}
+              title={getBlueprintUpdateTitle({
+                serviceName: service?.name ?? 'Blueprint',
+                currentTag: blueprintUpdate.current_tag,
+                latestTag: blueprintUpdate.latest_tag,
+              })}
               onConfirm={() => openUpdateFlow('preview')}
             />
           ),

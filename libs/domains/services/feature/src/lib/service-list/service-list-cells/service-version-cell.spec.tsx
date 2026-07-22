@@ -32,7 +32,7 @@ describe('ServiceVersionCell', () => {
     { isUpToDate: false, status: 'Update available' },
   ])('renders the $status state for a blueprint service', ({ isUpToDate, status }) => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({
-      data: { is_up_to_date: isUpToDate },
+      data: { is_up_to_date: isUpToDate, current_tag: 'AWS/s3/2.3.4' },
       isLoading: false,
     } as ReturnType<typeof useBlueprintUpdate>)
 
@@ -40,7 +40,7 @@ describe('ServiceVersionCell', () => {
 
     expect(useBlueprintUpdate).toHaveBeenCalledWith({ blueprintId: 'blueprint-id' })
     expect(screen.getByText('qovery-blueprints/s3')).toBeInTheDocument()
-    expect(screen.getByText('v1.2.3')).toBeInTheDocument()
+    expect(screen.getByText('v2.3.4')).toBeInTheDocument()
     expect(screen.getByText(status)).toBeInTheDocument()
   })
 
@@ -48,6 +48,7 @@ describe('ServiceVersionCell', () => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({
       data: {
         is_up_to_date: false,
+        current_tag: 'AWS/s3/1.2.3',
         latest_tag: 'AWS/s3/2.0.0',
         new_required_values: [],
         new_optional_values: [],
@@ -63,7 +64,9 @@ describe('ServiceVersionCell', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Update available' }))
 
-    expect(await screen.findByRole('heading', { name: 'AWS S3 Bucket blueprint update to 2.0.0' })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { name: 'AWS S3 Bucket blueprint update from 1.2.3 to 2.0.0' })
+    ).toBeInTheDocument()
     expect(
       screen.queryByText('No configuration input is required. Continue to preview the update.')
     ).not.toBeInTheDocument()

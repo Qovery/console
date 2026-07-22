@@ -413,6 +413,7 @@ describe('ServiceHeader', () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: true,
+        current_tag: 'aws/s3/1.0.0',
         latest_tag: 'aws/s3/1.0.0',
         new_required_values: [],
         new_optional_values: [],
@@ -436,6 +437,7 @@ describe('ServiceHeader', () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: false,
+        current_tag: 'aws/s3/1.0',
         latest_tag: 'aws/s3/2.0',
         new_required_values: [],
         new_optional_values: [],
@@ -478,6 +480,7 @@ describe('ServiceHeader', () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: false,
+        current_tag: 'aws/s3/1.0',
         latest_tag: 'aws/s3/2.0',
         new_required_values: [],
         new_optional_values: [],
@@ -495,7 +498,9 @@ describe('ServiceHeader', () => {
     await userEvent.click(screen.getByRole('button', { name: /update available/i }))
 
     expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
-    expect(await screen.findByRole('heading', { name: 'aws-s3-bucket blueprint update to 2.0' })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { name: 'aws-s3-bucket blueprint update from 1.0 to 2.0' })
+    ).toBeInTheDocument()
     expect(
       screen.queryByText('No configuration input is required. Continue to preview the update.')
     ).not.toBeInTheDocument()

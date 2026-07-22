@@ -70,6 +70,21 @@ export function getBlueprintUpdateVersion(tag: string) {
   return tag.split('/').filter(Boolean).at(-1)
 }
 
+export function getBlueprintUpdateTitle({
+  currentTag,
+  latestTag,
+  serviceName,
+}: {
+  currentTag: string
+  latestTag: string
+  serviceName: string
+}) {
+  const currentVersion = getBlueprintUpdateVersion(currentTag) ?? currentTag
+  const latestVersion = getBlueprintUpdateVersion(latestTag) ?? latestTag
+
+  return `${serviceName} blueprint update from ${currentVersion} to ${latestVersion}`
+}
+
 export function getInitialUpdateValues(blueprintUpdate: BlueprintUpdateResponse) {
   return Object.fromEntries(
     blueprintUpdate.new_optional_values.map((value) => [

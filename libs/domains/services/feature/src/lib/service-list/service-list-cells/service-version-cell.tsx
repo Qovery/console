@@ -52,7 +52,7 @@ function BlueprintVersionInfo({
 }) {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false }) ?? {}
   const { data: blueprintUpdate, isLoading } = useBlueprintUpdate({ blueprintId: service.blueprint_id })
-  const version = service.tag ? getBlueprintUpdateVersion(service.tag) : undefined
+  const version = blueprintUpdate?.current_tag ? getBlueprintUpdateVersion(blueprintUpdate.current_tag) : undefined
 
   return (
     <div className="flex w-full min-w-0 items-center justify-between gap-6">

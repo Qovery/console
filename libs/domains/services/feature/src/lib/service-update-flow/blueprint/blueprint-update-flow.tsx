@@ -18,9 +18,9 @@ import {
   buildBlueprintUpdatePayload,
   getBlueprintUpdateFieldValue,
   getBlueprintUpdateVariableField,
-  getBlueprintUpdateVersion,
   getFallbackServiceIcon,
   getFirstAvailableUpdateSection,
+  getBlueprintUpdateTitle,
   updateSections,
 } from './blueprint-update-utils'
 
@@ -108,8 +108,11 @@ export function BlueprintUpdateFlow({
     reviewSections.every(({ id }) => completedSections.includes(id)) || reviewSections.length === 0
   const canContinueReview =
     reviewSections.length === 1 ? activeSection !== 'required' || isRequiredValid : isReviewComplete
-  const latestVersion = getBlueprintUpdateVersion(blueprintUpdateData.latest_tag) ?? blueprintUpdateData.latest_tag
-  const title = `${service.name} blueprint update to ${latestVersion}`
+  const title = getBlueprintUpdateTitle({
+    serviceName: service.name,
+    currentTag: blueprintUpdateData.current_tag,
+    latestTag: blueprintUpdateData.latest_tag,
+  })
   const payload = useMemo(
     () =>
       buildBlueprintUpdatePayload({
