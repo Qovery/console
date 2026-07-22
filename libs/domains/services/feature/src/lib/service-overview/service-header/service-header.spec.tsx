@@ -413,8 +413,8 @@ describe('ServiceHeader', () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: true,
-        current_tag: 'aws/s3/1.0.0',
-        latest_tag: 'aws/s3/1.0.0',
+        current_tag: 'AWS/mysql/8/1.0.0',
+        latest_tag: 'AWS/mysql/8/1.0.0',
         new_required_values: [],
         new_optional_values: [],
         now_required_values: [],
@@ -429,8 +429,32 @@ describe('ServiceHeader', () => {
     renderServiceHeader('terraform-mock')
 
     expect(mockUseBlueprintUpdate).toHaveBeenCalledWith({ blueprintId: 'blueprint-id', suspense: true })
+    expect(screen.getByText('8')).toBeInTheDocument()
+    expect(screen.getByText('qovery-blueprints/s3')).toBeInTheDocument()
+    expect(screen.queryByText('GitHub')).not.toBeInTheDocument()
+    expect(screen.queryByText('main')).not.toBeInTheDocument()
     expect(screen.getByText('Up to date')).toBeInTheDocument()
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+  })
+
+  it('does not render the default service version', () => {
+    mockUseBlueprintUpdate.mockReturnValue({
+      data: {
+        is_up_to_date: true,
+        current_tag: 'AWS/mysql/default/1.0.0',
+        latest_tag: 'AWS/mysql/default/1.0.0',
+        new_required_values: [],
+        new_optional_values: [],
+        now_required_values: [],
+        updated_values: [],
+        removed_values: [],
+        engine_diff: { updated_values: [] },
+      },
+    })
+
+    renderServiceHeader('terraform-mock')
+
+    expect(screen.queryByText('default')).not.toBeInTheDocument()
   })
 
   it('opens the blueprint update review flow from the update available badge when values require review', async () => {

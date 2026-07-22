@@ -3,6 +3,7 @@ import {
   buildBlueprintUpdatePayload,
   getBlueprintUpdateFieldValue,
   getBlueprintUpdatePayloadValue,
+  getBlueprintServiceVersion,
   getBlueprintUpdateTitle,
   getBlueprintUpdateVersion,
   getFirstAvailableUpdateSection,
@@ -28,6 +29,10 @@ function createBlueprintUpdate(overrides: Partial<BlueprintUpdateResponse> = {})
 describe('blueprint update utils', () => {
   it('extracts the version from a blueprint tag', () => {
     expect(getBlueprintUpdateVersion('AWS/postgres/17/1.2.5/')).toBe('1.2.5')
+  })
+
+  it('extracts the service version from a blueprint tag', () => {
+    expect(getBlueprintServiceVersion('AWS/mysql/7.8/1.2.5/')).toBe('7.8')
   })
 
   it('formats a blueprint update title with the current and latest versions', () => {

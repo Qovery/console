@@ -32,7 +32,7 @@ describe('ServiceVersionCell', () => {
     { isUpToDate: false, status: 'Update available' },
   ])('renders the $status state for a blueprint service', ({ isUpToDate, status }) => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({
-      data: { is_up_to_date: isUpToDate, current_tag: 'AWS/s3/2.3.4' },
+      data: { is_up_to_date: isUpToDate, current_tag: 'AWS/mysql/8/2.3.4' },
       isLoading: false,
     } as ReturnType<typeof useBlueprintUpdate>)
 
@@ -40,8 +40,19 @@ describe('ServiceVersionCell', () => {
 
     expect(useBlueprintUpdate).toHaveBeenCalledWith({ blueprintId: 'blueprint-id' })
     expect(screen.getByText('qovery-blueprints/s3')).toBeInTheDocument()
-    expect(screen.getByText('v2.3.4')).toBeInTheDocument()
+    expect(screen.getByText('v8')).toBeInTheDocument()
     expect(screen.getByText(status)).toBeInTheDocument()
+  })
+
+  it('does not render the default service version', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: { is_up_to_date: true, current_tag: 'AWS/mysql/default/2.3.4' },
+      isLoading: false,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={blueprintService} />)
+
+    expect(screen.queryByText('vdefault')).not.toBeInTheDocument()
   })
 
   it('opens the blueprint update confirmation modal when no input is required', async () => {

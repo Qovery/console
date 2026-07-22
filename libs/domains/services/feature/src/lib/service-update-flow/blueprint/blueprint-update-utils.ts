@@ -70,6 +70,10 @@ export function getBlueprintUpdateVersion(tag: string) {
   return tag.split('/').filter(Boolean).at(-1)
 }
 
+export function getBlueprintServiceVersion(tag: string) {
+  return tag.split('/').filter(Boolean).at(-2)
+}
+
 export function getBlueprintUpdateTitle({
   currentTag,
   latestTag,

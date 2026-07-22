@@ -28,7 +28,7 @@ import LastCommit from '../../last-commit/last-commit'
 import LastVersion from '../../last-version/last-version'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import { BlueprintUpdateBadge } from '../../service-update-flow/blueprint/blueprint-update-badge'
-import { getBlueprintUpdateVersion } from '../../service-update-flow/blueprint/blueprint-update-utils'
+import { getBlueprintServiceVersion } from '../../service-update-flow/blueprint/blueprint-update-utils'
 
 type ServiceVersionCellProps = {
   service: AnyService
@@ -52,7 +52,7 @@ function BlueprintVersionInfo({
 }) {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false }) ?? {}
   const { data: blueprintUpdate, isLoading } = useBlueprintUpdate({ blueprintId: service.blueprint_id })
-  const version = blueprintUpdate?.current_tag ? getBlueprintUpdateVersion(blueprintUpdate.current_tag) : undefined
+  const version = blueprintUpdate?.current_tag ? getBlueprintServiceVersion(blueprintUpdate.current_tag) : undefined
 
   return (
     <div className="flex w-full min-w-0 items-center justify-between gap-6">
@@ -73,7 +73,7 @@ function BlueprintVersionInfo({
             </span>
           </ExternalLink>
         </div>
-        {version && (
+        {version && version !== 'default' && (
           <div className="flex min-w-0 items-center gap-2 text-neutral">
             <ServiceAvatar
               service={service}

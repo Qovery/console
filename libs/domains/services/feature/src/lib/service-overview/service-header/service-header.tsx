@@ -36,13 +36,13 @@ import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-servic
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
-import { useService } from '../../hooks/use-service/use-service'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
 import { BlueprintUpdateBadge } from '../../service-update-flow/blueprint/blueprint-update-badge'
+import { getBlueprintServiceVersion } from '../../service-update-flow/blueprint/blueprint-update-utils'
 
 export function GitRepository({ gitRepository }: { gitRepository: ApplicationGitRepository }) {
   return (
@@ -165,24 +165,73 @@ function BlueprintUpdateBadgeSkeleton() {
   return <Skeleton width={122} height={24} />
 }
 
-function BlueprintUpdateBadgeContent({ blueprintId }: { blueprintId: string }) {
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
-  const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
-
-  if (!blueprintUpdate) {
+function BlueprintRepository({ gitRepository }: { gitRepository: ApplicationGitRepository }) {
+  if (!gitRepository.url || !gitRepository.name) {
     return null
   }
 
   return (
-    <BlueprintUpdateBadge
-      blueprintUpdate={blueprintUpdate}
-      service={service}
-      serviceId={serviceId}
-      environmentId={environmentId}
-      organizationId={organizationId}
-      projectId={projectId}
-    />
+    <ExternalLink
+      href={buildGitProviderUrl(gitRepository.url)}
+      target="_blank"
+      rel="noopener noreferrer"
+      variant="outline"
+      color="neutral"
+      size="xs"
+      as="button"
+      className="text-nowrap"
+    >
+      {gitRepository.provider && <Icon width={12} name={gitRepository.provider} />}
+      <Truncate text={gitRepository.name} truncateLimit={17} />
+    </ExternalLink>
+  )
+}
+
+function BlueprintMetadataSkeleton({ gitRepository }: { gitRepository?: ApplicationGitRepository }) {
+  return (
+    <>
+      <Skeleton width={50} height={24} />
+      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
+      <BlueprintUpdateBadgeSkeleton />
+    </>
+  )
+}
+
+function BlueprintMetadata({
+  blueprintId,
+  gitRepository,
+  service,
+}: {
+  blueprintId: string
+  gitRepository?: ApplicationGitRepository
+  service: AnyService
+}) {
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
+  const currentVersion = blueprintUpdate?.current_tag
+    ? getBlueprintServiceVersion(blueprintUpdate.current_tag)
+    : undefined
+
+  return (
+    <>
+      {currentVersion && currentVersion !== 'default' && (
+        <Badge variant="outline" className="gap-1 whitespace-nowrap">
+          <ServiceAvatar service={service} size="custom" radius="none" serviceAvatarRadius="sm" className="h-3 w-3" />v
+          {currentVersion}
+        </Badge>
+      )}
+      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
+      {blueprintUpdate && (
+        <BlueprintUpdateBadge
+          blueprintUpdate={blueprintUpdate}
+          service={service}
+          serviceId={serviceId}
+          environmentId={environmentId}
+          organizationId={organizationId}
+          projectId={projectId}
+        />
+      )}
+    </>
   )
 }
 
@@ -194,6 +243,13 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
   })
   const [, copyToClipboard] = useCopyToClipboard()
   const blueprintId = 'blueprint_id' in service ? service.blueprint_id : undefined
+  const gitRepository = match(service)
+    .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+    .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, ({ source }) => source.docker?.git_repository)
+    .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, ({ source }) => source.git?.git_repository)
+    .with({ serviceType: 'TERRAFORM' }, ({ terraform_files_source }) => terraform_files_source?.git?.git_repository)
+    .with({ serviceType: 'ARGOCD_APP' }, ({ git_repository }) => git_repository)
+    .otherwise(() => undefined)
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
@@ -231,41 +287,14 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
 
   return (
     <div className="mt-3 flex items-center gap-1">
-      {match(service)
-        .with(
-          { serviceType: 'APPLICATION' },
-          {
-            serviceType: 'JOB',
-            source: P.when(isJobGitSource),
-          },
-          {
-            serviceType: 'TERRAFORM',
-          },
-          {
-            serviceType: 'HELM',
-            source: P.when(isHelmGitSource),
-          },
-          { serviceType: 'ARGOCD_APP' },
-          (service) => {
-            const gitRepository = match(service)
-              .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
-              .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
-              .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
-              .with(
-                { serviceType: 'TERRAFORM' },
-                ({ terraform_files_source }) => terraform_files_source?.git?.git_repository
-              )
-              .with({ serviceType: 'ARGOCD_APP' }, ({ git_repository }) => git_repository)
-              .exhaustive()
-
-            if (!gitRepository) {
-              return null
-            }
-
-            return <GitRepository gitRepository={gitRepository} />
-          }
-        )
-        .otherwise(() => undefined)}
+      {gitRepository &&
+        (blueprintId ? (
+          <Suspense fallback={<BlueprintMetadataSkeleton gitRepository={gitRepository} />}>
+            <BlueprintMetadata blueprintId={blueprintId} gitRepository={gitRepository} service={service} />
+          </Suspense>
+        ) : (
+          <GitRepository gitRepository={gitRepository} />
+        ))}
       {isArgoCdService && 'manifest_revision' in service && service.manifest_revision && (
         <CopyToClipboard text={service.manifest_revision}>
           <Button type="button" variant="outline" color="neutral" size="xs" className="pl-1">
@@ -324,9 +353,9 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           </Badge>
         </>
       )}
-      {blueprintId && (
-        <Suspense fallback={<BlueprintUpdateBadgeSkeleton />}>
-          <BlueprintUpdateBadgeContent blueprintId={blueprintId} />
+      {blueprintId && !gitRepository && (
+        <Suspense fallback={<BlueprintMetadataSkeleton />}>
+          <BlueprintMetadata blueprintId={blueprintId} service={service} />
         </Suspense>
       )}
       {databaseSource && (
