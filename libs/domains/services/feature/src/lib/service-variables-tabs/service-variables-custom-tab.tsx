@@ -42,13 +42,7 @@ export function ServiceVariablesCustomTab() {
     return null
   }
 
-  const handleOpenCreateVariableModal = ({
-    isFile = false,
-    isSecret = false,
-  }: {
-    isFile?: boolean
-    isSecret?: boolean
-  } = {}) =>
+  const handleOpenCreateVariableModal = (isSecret = false) =>
     openModal({
       content: (
         <CreateUpdateVariableModal
@@ -56,7 +50,6 @@ export function ServiceVariablesCustomTab() {
           type="VALUE"
           mode="CREATE"
           onSubmit={onCreateVariableToast}
-          isFile={isFile}
           isSecret={isSecret}
           hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
           scope={scope}
@@ -101,12 +94,7 @@ export function ServiceVariablesCustomTab() {
               Add variable
             </Button>
 
-            <Button
-              color="neutral"
-              variant="outline"
-              size="md"
-              onClick={() => handleOpenCreateVariableModal({ isSecret: true })}
-            >
+            <Button color="neutral" variant="outline" size="md" onClick={() => handleOpenCreateVariableModal(true)}>
               <Icon iconName="lock-keyhole" iconStyle="regular" />
               Add secret
             </Button>

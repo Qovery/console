@@ -1,7 +1,7 @@
 import { type VariableResponse } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { CreateUpdateVariableModal } from './create-update-variable-modal'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { CreateUpdateVariableModal, VariableFormModal } from './create-update-variable-modal'
 
 jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
@@ -151,6 +151,33 @@ describe('CreateUpdateVariableModal', () => {
     await userEvent.click(screen.getByRole('checkbox', { name: /show value/i }))
 
     expect(valueField).not.toHaveClass('[-webkit-text-security:disc]')
+  })
+
+  it('should submit a secret created as a file with the selected format', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <VariableFormModal {...baseProps} mode="CREATE" type="VALUE" isSecret onSubmit={onSubmit} />
+    )
+
+    await userEvent.click(screen.getByRole('radio', { name: /as file/i }))
+    await userEvent.type(screen.getByLabelText('Variable'), 'MY_SECRET')
+    await userEvent.click(screen.getByLabelText('Path'))
+    await userEvent.type(screen.getByLabelText('Path'), 'vault/secrets/my-secret')
+    await userEvent.type(screen.getByLabelText('Value'), 'secret-value')
+    await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: 'MY_SECRET',
+          value: 'secret-value',
+          scope: 'ENVIRONMENT',
+          isSecret: true,
+          isFile: true,
+          mountPath: '/vault/secrets/my-secret',
+        })
+      )
+    })
   })
 
   it('should not render the open editor button for aliases', () => {

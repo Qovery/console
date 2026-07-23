@@ -40,7 +40,7 @@ export function VariablesActionToolbar({
   const hasImportEnvFile = Boolean(onImportEnvFile)
   const showImportButton = hasImportEnvFile && importEnvFileAccess === 'button'
 
-  const _onCreateVariable = ({ isFile, isSecret = false }: { isFile?: boolean; isSecret?: boolean } = {}) =>
+  const _onCreateVariable = (isSecret = false) =>
     openModal({
       content: (
         <CreateUpdateVariableModal
@@ -48,7 +48,6 @@ export function VariablesActionToolbar({
           type="VALUE"
           mode="CREATE"
           onSubmit={onCreateVariable}
-          isFile={isFile}
           isSecret={isSecret}
           hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
           {...props}
@@ -107,7 +106,7 @@ export function VariablesActionToolbar({
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 
-      <Button color="neutral" variant="outline" size="md" onClick={() => _onCreateVariable({ isSecret: true })}>
+      <Button color="neutral" variant="outline" size="md" onClick={() => _onCreateVariable(true)}>
         <Icon iconName="lock-keyhole" iconStyle="regular" />
         Add secret
       </Button>

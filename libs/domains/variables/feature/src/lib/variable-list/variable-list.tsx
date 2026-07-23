@@ -172,10 +172,7 @@ export function VariableList({
     })
   }
 
-  const _onCreateStandaloneVariable = ({
-    isFile = false,
-    isSecret = false,
-  }: { isFile?: boolean; isSecret?: boolean } = {}) =>
+  const _onCreateStandaloneVariable = (isSecret = false) =>
     openModal({
       content: (
         <CreateUpdateVariableModal
@@ -183,7 +180,6 @@ export function VariableList({
           type="VALUE"
           mode="CREATE"
           onSubmit={onCreateVariable}
-          isFile={isFile}
           isSecret={isSecret}
           {...props}
         />
@@ -868,12 +864,7 @@ export function VariableList({
               Add variable
             </Button>
 
-            <Button
-              color="neutral"
-              variant="outline"
-              size="md"
-              onClick={() => _onCreateStandaloneVariable({ isSecret: true })}
-            >
+            <Button color="neutral" variant="outline" size="md" onClick={() => _onCreateStandaloneVariable(true)}>
               <Icon iconName="lock-keyhole" iconStyle="regular" />
               Add secret
             </Button>

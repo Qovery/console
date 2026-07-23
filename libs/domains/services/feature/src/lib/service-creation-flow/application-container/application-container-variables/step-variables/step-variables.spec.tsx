@@ -40,7 +40,6 @@ jest.mock('@qovery/domains/variables/feature', () => ({
   VariableFormModal: ({
     onSubmit,
     scope,
-    isFile,
     isSecret,
   }: {
     onSubmit?: (data: {
@@ -52,19 +51,17 @@ jest.mock('@qovery/domains/variables/feature', () => ({
       mountPath?: string
     }) => void
     scope: 'APPLICATION' | 'CONTAINER'
-    isFile?: boolean
     isSecret?: boolean
   }) => (
     <button
       type="button"
       onClick={() =>
         onSubmit?.({
-          key: isFile ? 'CONFIG_FILE' : 'NODE_ENV',
-          value: isFile ? '{"key":"value"}' : 'production',
+          key: 'NODE_ENV',
+          value: 'production',
           scope,
           isSecret: !!isSecret,
-          isFile: !!isFile,
-          mountPath: isFile ? '/vault/secrets/config-file' : undefined,
+          isFile: false,
         })
       }
     >

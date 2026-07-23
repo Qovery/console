@@ -35,9 +35,11 @@ export function FlowCreateVariable({
         <Heading className="mb-2">Environment variables</Heading>
         <div className="flex items-center gap-2">
           <Button size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
+            <Icon iconName="lock-keyhole" iconStyle="regular" />
             Add secret
           </Button>
           <Button size="md" onClick={() => onAdd(false)}>
+            <Icon iconName="key" />
             Add variable
           </Button>
         </div>

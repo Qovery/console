@@ -176,14 +176,12 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
   }, [setCurrentStep])
 
   const openVariableModal = ({
-    isFile,
     isSecret = false,
     index,
   }: {
-    isFile: boolean
     isSecret?: boolean
     index?: number
-  }) => {
+  } = {}) => {
     const currentVariable = typeof index === 'number' ? variables[index] : undefined
     const mode = typeof index === 'number' ? 'UPDATE' : 'CREATE'
 
@@ -193,7 +191,6 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
           closeModal={closeModal}
           mode={mode}
           type={currentVariable?.file ? APIVariableTypeEnum.FILE : APIVariableTypeEnum.VALUE}
-          isFile={isFile}
           variable={
             typeof index === 'number' && currentVariable
               ? mapVariableToModalVariable(currentVariable, index, serviceScope)
@@ -275,7 +272,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                       variant="outline"
                       size="sm"
                       className="text-ssm"
-                      onClick={() => openVariableModal({ isFile: false, isSecret: true })}
+                      onClick={() => openVariableModal({ isSecret: true })}
                     >
                       <Icon iconName="lock-keyhole" iconStyle="regular" className="text-ssm" />
                       Add secret
@@ -286,7 +283,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                       variant="solid"
                       size="sm"
                       className="text-ssm"
-                      onClick={() => openVariableModal({ isFile: false })}
+                      onClick={() => openVariableModal()}
                     >
                       <Icon iconName="key" className="text-ssm" />
                       Add variable
@@ -311,7 +308,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                         variant="solid"
                         size="md"
                         className="text-ssm"
-                        onClick={() => openVariableModal({ isFile: false })}
+                        onClick={() => openVariableModal()}
                       >
                         <Icon iconName="key" className="text-ssm" />
                         Add variable
@@ -322,7 +319,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                         variant="outline"
                         size="md"
                         className="text-ssm"
-                        onClick={() => openVariableModal({ isFile: false, isSecret: true })}
+                        onClick={() => openVariableModal({ isSecret: true })}
                       >
                         <Icon iconName="lock-keyhole" iconStyle="regular" className="text-ssm" />
                         Add secret
@@ -393,7 +390,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                             size="xs"
                             iconOnly
                             disabled={variable.isReadOnly}
-                            onClick={() => openVariableModal({ isFile: !!variable.file, index })}
+                            onClick={() => openVariableModal({ index })}
                           >
                             <Icon iconName="pen" />
                           </Button>
