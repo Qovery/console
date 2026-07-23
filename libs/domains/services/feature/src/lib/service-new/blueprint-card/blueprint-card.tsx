@@ -1,6 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { type BlueprintItem } from 'qovery-typescript-axios'
-import { Button, Link } from '@qovery/shared/ui'
+import { Button, Heading, Link } from '@qovery/shared/ui'
 import { formatBlueprintName } from '../../blueprint-utils/blueprint-utils'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 
@@ -24,7 +24,7 @@ export function BlueprintCard({
           size="custom"
         />
         <div className="flex flex-col gap-1">
-          <h3 className="text-sm font-medium leading-5 text-neutral">{formatBlueprintName(blueprint.name)}</h3>
+          <Heading level={3}>{formatBlueprintName(blueprint.name)}</Heading>
           <p className="text-sm leading-5 text-neutral-subtle">{blueprint.description}</p>
         </div>
       </div>
