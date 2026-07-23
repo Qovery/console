@@ -292,10 +292,12 @@ describe('BlueprintCreationFlow', () => {
     const { userEvent } = renderWithProviders(<BlueprintFlowRouteHarness />)
 
     await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    expect(screen.queryByRole('button', { name: 'Configure' })).not.toBeInTheDocument()
+
     await userEvent.type(await screen.findByLabelText('Db name'), 'production')
     await userEvent.type(screen.getByLabelText('Db username'), 'postgres')
     await userEvent.type(screen.getByLabelText('Db password'), 'super-secret')
-    await userEvent.click(screen.getByRole('button', { name: /overrides/i }))
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
 
     expect(await screen.findByRole('switch', { name: 'Skip final snapshot' })).toHaveFocus()
   })
@@ -473,7 +475,7 @@ describe('BlueprintCreationFlow', () => {
     expect(screen.getByText('17')).toBeInTheDocument()
     expect(mockUseBlueprintCatalogServiceManifest).not.toHaveBeenCalled()
 
-    await selectEvent.select(screen.getByLabelText('Blueprint version'), '16')
+    await selectEvent.select(screen.getByLabelText('Version'), '16')
     expect(mockUseBlueprintCatalogServiceManifest).not.toHaveBeenCalled()
 
     await userEvent.click(screen.getByRole('button', { name: /continue/i }))

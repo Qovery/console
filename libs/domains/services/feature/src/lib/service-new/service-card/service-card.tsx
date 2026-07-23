@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { type CloudProviderEnum, type LifecycleTemplateListResponseResultsInner } from 'qovery-typescript-axios'
 import { type ReactElement, cloneElement, useState } from 'react'
-import { Badge, Button, Heading, Icon, Link, Section } from '@qovery/shared/ui'
+import { Badge, Button, Heading, Icon, Link, Section, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { TemplateIds } from '@qovery/shared/util-services'
 import { ServiceIcons } from '../../service-icon/service-icon'
@@ -23,6 +23,46 @@ export type ServiceBlock = {
   onClick?: () => void
   disabledCTA?: ReactElement
   badge?: string
+}
+
+export function BaseServiceCard({ title, description, icon, link, onClick }: ServiceBlock) {
+  const className =
+    'flex h-14 w-full items-center justify-between gap-3 rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)] hover:bg-surface-neutral-subtle'
+  const content = (
+    <>
+      <span className="flex min-w-0 items-center gap-1.5">
+        {cloneElement(icon as ReactElement, { width: 20, height: 20, className: 'h-5 w-5 shrink-0' })}
+        <span className="truncate text-sm font-medium leading-5 text-neutral">{title}</span>
+        {(title === 'Lifecycle Job' || title === 'Cron Job') && (
+          <Tooltip content={description}>
+            <span role="img" aria-label={`${title} details`} className="inline-flex shrink-0">
+              <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-subtle" />
+            </span>
+          </Tooltip>
+        )}
+      </span>
+      <Icon iconName="chevron-right" className="shrink-0 text-sm text-neutral-subtle" />
+    </>
+  )
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={className}>
+        {content}
+      </button>
+    )
+  }
+
+  if (!link) {
+    return <div className={className}>{content}</div>
+  }
+
+  return (
+    // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+    <Link to={link} className={className}>
+      {content}
+    </Link>
+  )
 }
 
 export function Card({ title, description, icon, link, onClick, disabledCTA, badge }: ServiceBlock) {

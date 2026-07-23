@@ -9,6 +9,7 @@ import {
   getSummaryFieldValue,
   isFieldValid,
 } from '../../../blueprint-field-utils/blueprint-field-utils'
+import { formatBlueprintName } from '../../../blueprint-utils/blueprint-utils'
 import { useBlueprintCreationLogs } from '../../../hooks/use-blueprint-creation-logs/use-blueprint-creation-logs'
 import { useBlueprintServiceCreatedSocket } from '../../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket'
 import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
@@ -251,7 +252,7 @@ export function BlueprintStepSummary() {
 
   return (
     <>
-      <FunnelFlowBody customContentWidth="max-w-[1024px]">
+      <FunnelFlowBody customContentWidth="max-w-[684px]">
         <Section className="space-y-10">
           <div className="flex flex-col gap-2">
             <Heading className="mb-2">Ready to create your blueprint service</Heading>
@@ -278,8 +279,8 @@ export function BlueprintStepSummary() {
               </div>
               <ul className="list-none space-y-2 text-sm text-neutral-subtle">
                 <SummaryValue label="Name" value={serviceName} />
-                <SummaryValue label="Blueprint" value={blueprint.name} />
-                <SummaryValue label="Blueprint version" value={serviceVersion} />
+                <SummaryValue label="Blueprint" value={formatBlueprintName(blueprint.name)} />
+                <SummaryValue label="Version" value={serviceVersion} />
               </ul>
             </Section>
 

@@ -1,11 +1,11 @@
 import { useParams } from '@tanstack/react-router'
 import { act } from '@testing-library/react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useBlueprintUpdatePreviewSocket } from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
+import { useBlueprintUpdatePreviewSocket } from '../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import { BlueprintUpdatePreviewStep } from './blueprint-update-preview-step'
 
-jest.mock('../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket', () => ({
+jest.mock('../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket', () => ({
   useBlueprintUpdatePreviewSocket: jest.fn(),
 }))
 
@@ -76,6 +76,30 @@ describe('BlueprintUpdatePreviewStep', () => {
     expect(screen.getByText('- removed')).toHaveClass('text-negative')
     expect(screen.getByText('~ changed')).toHaveClass('text-info')
     expect(screen.getByRole('button', { name: /Confirm & deploy update/i })).toBeEnabled()
+  })
+
+  it('shows an explicit retry action when preview generation fails', async () => {
+    const retryPreview = jest.fn()
+
+    jest.mocked(useBlueprintUpdateFlowContext).mockReturnValue({
+      clusterId: 'cluster-id',
+      handleUpdate: jest.fn(),
+      isUpdateLoading: false,
+      previewError: true,
+      previewId: undefined,
+      requestPreview: jest.fn(),
+      retryPreview,
+      service: { name: 'AWS S3 Bucket' },
+    } as ReturnType<typeof useBlueprintUpdateFlowContext>)
+
+    const { userEvent } = renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Unable to generate the preview.')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Retry preview' }))
+
+    expect(retryPreview).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('button', { name: /Confirm & deploy update/i })).toBeDisabled()
   })
 
   it('updates the loading message while waiting for preview output', () => {

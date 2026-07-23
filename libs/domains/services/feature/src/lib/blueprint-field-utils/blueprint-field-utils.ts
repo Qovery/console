@@ -90,7 +90,33 @@ export function getFieldLengthValidationError(
   return undefined
 }
 
+export function getFieldNumberValidationError(
+  field: BlueprintManifestVariableField,
+  value: BlueprintFieldValue | undefined
+) {
+  if (field.type.type !== 'number' || typeof value !== 'string' || !value.trim()) return undefined
+
+  const numberValue = Number(value)
+  if (!Number.isFinite(numberValue)) return 'Value must be a number.'
+
+  const { min, max } = field.type
+  const hasMin = typeof min === 'number'
+  const hasMax = typeof max === 'number'
+
+  if (hasMin && hasMax && (numberValue < min || numberValue > max)) {
+    return `Value must be between ${min} and ${max}.`
+  }
+
+  if (hasMin && numberValue < min) return `Value must be at least ${min}.`
+  if (hasMax && numberValue > max) return `Value must be at most ${max}.`
+
+  return undefined
+}
+
 export function getFieldValidationError(field: BlueprintManifestVariableField, value: BlueprintFieldValue | undefined) {
+  const numberValidationError = getFieldNumberValidationError(field, value)
+  if (numberValidationError) return numberValidationError
+
   const lengthValidationError = getFieldLengthValidationError(field, value)
   if (lengthValidationError) return lengthValidationError
 

@@ -8,7 +8,7 @@ import {
   type BlueprintUpdateUpdatedValue,
 } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { type BlueprintFieldValue, type BlueprintFieldValues } from '../../blueprint-field-utils/blueprint-field-utils'
+import { type BlueprintFieldValue, type BlueprintFieldValues } from '../blueprint-field-utils/blueprint-field-utils'
 
 export type BlueprintUpdateSection = 'required' | 'optional' | 'modified' | 'removed'
 export type BlueprintUpdateVariablePatch = Record<string, { value: string; is_secret?: boolean }>
@@ -68,6 +68,25 @@ export function hasBlueprintUpdateReviewSections(blueprintUpdate: BlueprintUpdat
 
 export function getBlueprintUpdateVersion(tag: string) {
   return tag.split('/').filter(Boolean).at(-1)
+}
+
+export function getBlueprintServiceVersion(tag: string) {
+  return tag.split('/').filter(Boolean).at(-2)
+}
+
+export function getBlueprintUpdateTitle({
+  currentTag,
+  latestTag,
+  serviceName,
+}: {
+  currentTag: string
+  latestTag: string
+  serviceName: string
+}) {
+  const currentVersion = getBlueprintUpdateVersion(currentTag) ?? currentTag
+  const latestVersion = getBlueprintUpdateVersion(latestTag) ?? latestTag
+
+  return `${serviceName} blueprint update from ${currentVersion} to ${latestVersion}`
 }
 
 export function getInitialUpdateValues(blueprintUpdate: BlueprintUpdateResponse) {

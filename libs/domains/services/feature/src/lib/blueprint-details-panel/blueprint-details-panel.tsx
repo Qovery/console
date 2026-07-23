@@ -4,9 +4,10 @@ import { type BlueprintItem, type BlueprintReadmeResponse } from 'qovery-typescr
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { formatCloudProvider } from '@qovery/domains/clusters/data-access'
-import { Badge, Button, ExternalLink, Icon, Link, Sheet } from '@qovery/shared/ui'
+import { Badge, Button, ExternalLink, Heading, Icon, Link, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
+import { formatBlueprintName } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 
@@ -19,24 +20,26 @@ interface BlueprintReadmeContentProps {
 }
 
 function BlueprintReadmeContent({ content }: BlueprintReadmeContentProps) {
+  const contentWithoutTitle = content.replace(/^#\s+[^\r\n]+(?:\r?\n)*/, '')
+
   return (
     <Markdown
       remarkPlugins={[remarkGfm]}
       components={{
         h1: ({ node, children, ...props }) => (
-          <h1 className="mb-4 text-2xl font-medium leading-8 text-neutral" {...props}>
+          <Heading level={1} {...props}>
             {children}
-          </h1>
+          </Heading>
         ),
         h2: ({ node, children, ...props }) => (
-          <h2 className="mb-3 mt-6 text-lg font-medium leading-7 text-neutral" {...props}>
+          <Heading level={2} {...props}>
             {children}
-          </h2>
+          </Heading>
         ),
         h3: ({ node, children, ...props }) => (
-          <h3 className="mb-2 mt-5 text-base font-medium leading-6 text-neutral" {...props}>
+          <Heading level={3} {...props}>
             {children}
-          </h3>
+          </Heading>
         ),
         p: ({ node, ...props }) => <p className="my-3 text-sm leading-6 text-neutral" {...props} />,
         a: ({ node, children, ...props }) => (
@@ -64,12 +67,14 @@ function BlueprintReadmeContent({ content }: BlueprintReadmeContentProps) {
           </div>
         ),
         th: ({ node, ...props }) => (
-          <th className="border-b border-r border-neutral px-3 py-2 text-left font-medium" {...props} />
+          <th className="border-r border-neutral px-3 py-2 text-left font-medium last:border-r-0" {...props} />
         ),
-        td: ({ node, ...props }) => <td className="border-b border-r border-neutral px-3 py-2" {...props} />,
+        td: ({ node, ...props }) => (
+          <td className="border-r border-t border-neutral px-3 py-2 last:border-r-0" {...props} />
+        ),
       }}
     >
-      {content}
+      {contentWithoutTitle}
     </Markdown>
   )
 }
@@ -156,6 +161,7 @@ function BlueprintDetailsPanelContent({
   const canDeploy = footerMode === 'deploy' && Boolean(blueprint.serviceFamily)
 
   const provider = formatCloudProvider(blueprint.provider)
+  const blueprintName = formatBlueprintName(blueprint.name)
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>
@@ -171,7 +177,7 @@ function BlueprintDetailsPanelContent({
               <div className="mb-8 flex flex-col gap-5">
                 <div className="flex flex-col gap-2">
                   <Dialog.Title
-                    aria-label={blueprint.name}
+                    aria-label={blueprintName}
                     className="flex items-center gap-3 pr-8 text-2xl font-medium leading-8 text-neutral"
                   >
                     <ServiceAvatar
@@ -181,7 +187,7 @@ function BlueprintDetailsPanelContent({
                       serviceAvatarRadius="sm"
                       size="custom"
                     />
-                    <span>{blueprint.name}</span>
+                    <span>{blueprintName}</span>
                   </Dialog.Title>
                   <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
                     {blueprint.description}
@@ -200,14 +206,12 @@ function BlueprintDetailsPanelContent({
                 </div>
               </div>
 
-              <div className="rounded border border-neutral bg-surface-neutral p-5">
-                <BlueprintQueryBoundary
-                  resetKeys={[organizationId, blueprint.provider, blueprint.serviceFamily, serviceVersion]}
-                  title="blueprint details"
-                >
-                  <BlueprintReadme blueprint={blueprint} serviceVersion={serviceVersion} />
-                </BlueprintQueryBoundary>
-              </div>
+              <BlueprintQueryBoundary
+                resetKeys={[organizationId, blueprint.provider, blueprint.serviceFamily, serviceVersion]}
+                title="blueprint details"
+              >
+                <BlueprintReadme blueprint={blueprint} serviceVersion={serviceVersion} />
+              </BlueprintQueryBoundary>
             </div>
 
             <Dialog.Close asChild>

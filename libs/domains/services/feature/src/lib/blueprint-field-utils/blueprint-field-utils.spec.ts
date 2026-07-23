@@ -11,6 +11,7 @@ import {
   getDefaultContextFieldValue,
   getDefaultFieldValue,
   getFieldLengthValidationError,
+  getFieldNumberValidationError,
   getFieldValidationError,
   getStringFieldValue,
   getSummaryFieldValue,
@@ -166,12 +167,32 @@ describe('field validation', () => {
     expect(getFieldLengthValidationError(rangeField, false)).toBeUndefined()
   })
 
+  it('validates numeric minimum and maximum values', () => {
+    const rangeField = createVariableField({ type: { type: 'number', min: 20, max: 65536 } })
+    const minField = createVariableField({ type: { type: 'number', min: 20 } })
+    const maxField = createVariableField({ type: { type: 'number', max: 65536 } })
+
+    expect(getFieldNumberValidationError(rangeField, '19')).toBe('Value must be between 20 and 65536.')
+    expect(getFieldNumberValidationError(rangeField, '65537')).toBe('Value must be between 20 and 65536.')
+    expect(getFieldNumberValidationError(rangeField, '20')).toBeUndefined()
+    expect(getFieldNumberValidationError(rangeField, '65536')).toBeUndefined()
+    expect(getFieldNumberValidationError(minField, '19')).toBe('Value must be at least 20.')
+    expect(getFieldNumberValidationError(maxField, '65537')).toBe('Value must be at most 65536.')
+    expect(getFieldNumberValidationError(rangeField, 'not-a-number')).toBe('Value must be a number.')
+  })
+
   it('prioritizes length errors before pattern errors', () => {
     const field = createVariableField({ type: { type: 'string', min_length: 2, pattern: '^value$' } })
 
     expect(getFieldValidationError(field, 'a')).toBe('Value must be at least 2 characters.')
     expect(getFieldValidationError(field, 'other')).toBe('Value does not match the expected format.')
     expect(getFieldValidationError(field, 'value')).toBeUndefined()
+  })
+
+  it('returns numeric validation errors', () => {
+    const field = createVariableField({ type: { type: 'number', min: 20, max: 65536 } })
+
+    expect(getFieldValidationError(field, '19')).toBe('Value must be between 20 and 65536.')
   })
 
   it('requires a fulfilled value only for required fields', () => {

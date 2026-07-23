@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { BlueprintDetailsPanel } from '../../blueprint-details-panel/blueprint-details-panel'
+import { formatBlueprintName } from '../../blueprint-utils/blueprint-utils'
 import {
   BlueprintCreateContext,
   type BlueprintCreateFormData,
@@ -42,7 +43,7 @@ export function BlueprintCreationFlow({ blueprint, children, onExit }: Blueprint
   const defaultVersionTag = defaultBlueprintVersion?.latestTag ?? ''
   const form = useForm<BlueprintCreateFormData>({
     defaultValues: {
-      serviceName: blueprint.name,
+      serviceName: formatBlueprintName(blueprint.name),
       versionTag: defaultVersionTag,
       fields: {},
     },

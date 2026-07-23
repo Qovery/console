@@ -10,8 +10,8 @@ import {
   type BlueprintFieldValue,
   type BlueprintFieldValues,
   getFieldValidationError,
-} from '../../blueprint-field-utils/blueprint-field-utils'
-import { BlueprintManifestVariableInput } from '../../blueprint-manifest-variable-input/blueprint-manifest-variable-input'
+} from '../blueprint-field-utils/blueprint-field-utils'
+import { BlueprintManifestVariableInput } from '../blueprint-manifest-variable-input/blueprint-manifest-variable-input'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import {
   BLUEPRINT_RELEASE_NOTES_URL,
@@ -44,7 +44,7 @@ export function BlueprintUpdateReviewStep({ onContinue }: { onContinue: () => vo
   const hasSingleReviewSection = reviewSections.length === 1
 
   return (
-    <FunnelFlowBody customContentWidth="max-w-[620px]">
+    <FunnelFlowBody customContentWidth="max-w-[684px]">
       <header className="mb-6 flex flex-col items-start gap-2">
         <h1 className="text-2xl font-medium leading-8 text-neutral">{title}</h1>
         <a
@@ -93,7 +93,7 @@ export function BlueprintUpdateReviewStep({ onContinue }: { onContinue: () => vo
         )}
       </div>
 
-      <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+      <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background py-4">
         <Button
           type="button"
           size="lg"
