@@ -1,5 +1,5 @@
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { useEffect, useId, useRef, useState } from 'react'
+import { useId, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
@@ -31,7 +31,6 @@ import { VariableValueEditorModal } from './variable-value-editor-modal/variable
 
 type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 type ValueEditorScope = Extract<Scope, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'>
-type VariableFormat = 'VALUE' | 'FILE'
 
 function isValueEditorScope(scope: Scope | undefined): scope is ValueEditorScope {
   return ['APPLICATION', 'CONTAINER', 'JOB', 'HELM', 'TERRAFORM'].includes(scope ?? '')
@@ -112,17 +111,15 @@ export function VariableFormModal(props: VariableFormModalProps) {
     isSecret,
     hasClusterSecretManagerConfigured = false,
   } = props
-  const initialIsFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
-  const canSelectVariableFormat = mode === 'CREATE' && type === 'VALUE'
-  const [variableFormat, setVariableFormat] = useState<VariableFormat>(initialIsFile ? 'FILE' : 'VALUE')
-  const _isFile = canSelectVariableFormat ? variableFormat === 'FILE' : initialIsFile
+  const isCreateValue = mode === 'CREATE' && type === 'VALUE'
+  const [isFileVariable, setIsFileVariable] = useState(() =>
+    Boolean((variable && environmentVariableFile(variable)) || isFile)
+  )
   const { enableAlertClickOutside } = useModal()
   const [isValueEditorOpen, setIsValueEditorOpen] = useState(false)
   const [showSecretValue, setShowSecretValue] = useState(false)
   const showSecretValueId = useId()
-  const isCreateValue = mode === 'CREATE' && type === 'VALUE'
   const isSecretVariable = isCreateValue ? Boolean(isSecret) : Boolean(variable?.is_secret)
-  const isSecretValueHidden = isSecretVariable && !showSecretValue
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -153,7 +150,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
 
   const defaultScope =
     // Check if it's a file and the scope is one of services and assign the default scope to 'ENVIRONMENT'
-    isFile && ['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(scope)
+    isFileVariable && ['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(scope)
       ? 'ENVIRONMENT'
       : variable?.scope === 'BUILT_IN'
         ? undefined
@@ -180,16 +177,16 @@ export function VariableFormModal(props: VariableFormModalProps) {
       value: variable?.value,
       isSecret: isSecretVariable,
       description: variable?.description,
-      enable_interpolation_in_file: initialIsFile ? variable?.enable_interpolation_in_file ?? true : undefined,
+      enable_interpolation_in_file: isFileVariable ? variable?.enable_interpolation_in_file ?? true : undefined,
       mountPath,
     },
     mode: 'onChange',
   })
 
-  const handleVariableFormatChange = (format: VariableFormat) => {
-    setVariableFormat(format)
+  const handleVariableFormatChange = (isFileSelected: boolean) => {
+    setIsFileVariable(isFileSelected)
 
-    if (format !== 'FILE') {
+    if (!isFileSelected) {
       return
     }
 
@@ -204,16 +201,10 @@ export function VariableFormModal(props: VariableFormModalProps) {
     }
   }
 
-  useEffect(() => {
-    if (_isFile && methods.getValues('enable_interpolation_in_file') === undefined) {
-      methods.setValue('enable_interpolation_in_file', true)
-    }
-  }, [_isFile, methods])
-
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
   const watchScope = methods.watch('scope')
   const watchMountPath = methods.watch('mountPath')
-  const valueEditorLanguage = getValueEditorLanguage({ isFile: _isFile, mountPath: watchMountPath })
+  const valueEditorLanguage = getValueEditorLanguage({ isFile: isFileVariable, mountPath: watchMountPath })
   const valueEditorServiceId = isValueEditorScope(watchScope) ? props.serviceId : undefined
   const valueEditorScope = isValueEditorScope(watchScope) ? watchScope : undefined
 
@@ -223,7 +214,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
     // allow empty variable value
     if (!cloneData.value) cloneData.value = ''
 
-    if (!_isFile) {
+    if (!isFileVariable) {
       delete cloneData.mountPath
       delete cloneData.enable_interpolation_in_file
     } else if (cloneData.enable_interpolation_in_file === undefined) {
@@ -233,7 +224,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
     try {
       await onSubmit({
         ...cloneData,
-        isFile: _isFile,
+        isFile: isFileVariable,
       })
       closeModal()
     } catch (e) {
@@ -258,13 +249,13 @@ export function VariableFormModal(props: VariableFormModalProps) {
     title += ' variable'
   }
 
-  title += _isFile ? ' as file' : ''
+  title += isFileVariable ? ' as file' : ''
 
-  const description = match({ type, _isFile })
+  const description = match({ type, isFileVariable })
     .with({ type: 'ALIAS' }, () => 'Aliases allow you to specify a different name for a variable on a specific scope.')
     .with({ type: 'OVERRIDE' }, () => 'Overrides allow you to define a different env var value on a specific scope.')
     .with(
-      { _isFile: true },
+      { isFileVariable: true },
       () =>
         'The content of the Value field will be mounted as a file in the specified "Path". Accessing the environment variable at runtime will return the "Path" of the file.'
     )
@@ -284,12 +275,12 @@ export function VariableFormModal(props: VariableFormModalProps) {
         onSubmit={_onSubmit}
         loading={loading}
       >
-        {canSelectVariableFormat && (
+        {isCreateValue && (
           <SegmentedControl.Root
             aria-label="Variable format"
             className="mb-3 w-full text-sm"
-            value={variableFormat}
-            onValueChange={(value) => handleVariableFormatChange(value as VariableFormat)}
+            value={isFileVariable ? 'FILE' : 'VALUE'}
+            onValueChange={(value) => handleVariableFormatChange(value === 'FILE')}
           >
             <SegmentedControl.Item value="VALUE">Value</SegmentedControl.Item>
             <SegmentedControl.Item value="FILE">As file</SegmentedControl.Item>
@@ -318,7 +309,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
           />
         )}
 
-        {_isFile &&
+        {isFileVariable &&
           (type === 'ALIAS' || type === 'OVERRIDE' || mode === 'UPDATE' ? (
             <InputText className="mb-3" name="Path" value={mountPath} label="Path" disabled />
           ) : (
@@ -414,7 +405,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
                     value={value}
                     label="Value"
                     error={error?.message}
-                    maskValue={isSecretValueHidden}
+                    maskValue={isSecretVariable && !showSecretValue}
                   />
                   {props.environmentId && (
                     <DropdownVariable
@@ -462,7 +453,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
           />
         )}
 
-        {_isFile && (
+        {isFileVariable && (
           <Controller
             name="enable_interpolation_in_file"
             control={methods.control}
