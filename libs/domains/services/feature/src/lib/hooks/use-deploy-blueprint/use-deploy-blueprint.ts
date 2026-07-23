@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { mutations } from '@qovery/domains/services/data-access'
+import { type AnyService, mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 
 export function useDeployBlueprint({
@@ -9,7 +9,7 @@ export function useDeployBlueprint({
 }: {
   environmentId: string
   serviceId: string
-  serviceType: Parameters<typeof queries.services.details>[0]['serviceType']
+  serviceType: AnyService['serviceType']
 }) {
   const queryClient = useQueryClient()
 
