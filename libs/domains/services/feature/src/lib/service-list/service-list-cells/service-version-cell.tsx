@@ -8,10 +8,12 @@ import { P, match } from 'ts-pattern'
 import {
   type AnyService,
   type Application,
+  type BlueprintService,
   type Database,
   type Helm,
   type Job,
   type Terraform,
+  isBlueprintService,
 } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
@@ -32,15 +34,6 @@ import { getBlueprintServiceVersion } from '../../service-update-flow/blueprint/
 
 type ServiceVersionCellProps = {
   service: AnyService
-}
-
-type BlueprintService = AnyService & {
-  blueprint_id: string
-  tag?: string
-}
-
-function isBlueprintService(service: AnyService): service is BlueprintService {
-  return 'blueprint_id' in service && Boolean(service.blueprint_id)
 }
 
 function BlueprintVersionInfo({

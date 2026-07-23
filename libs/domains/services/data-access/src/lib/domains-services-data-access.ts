@@ -192,6 +192,10 @@ export type ArgoCd = _ArgoCd & {
   serviceType: ArgoCdType
 }
 export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd
+export type BlueprintService = AnyService & {
+  blueprint_id: string
+  tag?: string
+}
 export type ReadOnlyService = ArgoCd
 export type EditableService = Exclude<AnyService, ReadOnlyService>
 export type EditableServiceType = Exclude<ServiceType, ArgoCdType>
@@ -223,6 +227,10 @@ export function isJob(service: AnyService): service is Job {
 
 export function isHelm(service: AnyService): service is Helm {
   return service.service_type === 'HELM'
+}
+
+export function isBlueprintService(service: AnyService): service is BlueprintService {
+  return 'blueprint_id' in service && Boolean(service.blueprint_id)
 }
 
 export function isArgoCd(service?: AnyService): service is ArgoCd {
