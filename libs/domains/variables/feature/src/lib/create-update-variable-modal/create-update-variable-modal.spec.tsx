@@ -118,6 +118,34 @@ describe('CreateUpdateVariableModal', () => {
     expect(screen.getByText('Variable interpolation')).toBeInTheDocument()
   })
 
+  it('should render secret file edit with hidden value control', async () => {
+    const { userEvent } = renderWithProviders(
+      <CreateUpdateVariableModal
+        {...baseProps}
+        mode="UPDATE"
+        type="FILE"
+        variable={{
+          ...baseVariable,
+          value: '',
+          mount_path: '/vault/secrets/my-secret',
+          variable_type: 'FILE',
+          variable_kind: 'Private',
+          is_secret: true,
+        }}
+      />
+    )
+
+    const valueField = screen.getByLabelText('Value')
+
+    expect(screen.getByText('Edit secret as file')).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /show value/i })).toBeInTheDocument()
+    expect(valueField).toHaveClass('[-webkit-text-security:disc]')
+
+    await userEvent.click(screen.getByRole('checkbox', { name: /show value/i }))
+
+    expect(valueField).not.toHaveClass('[-webkit-text-security:disc]')
+  })
+
   it('should not render the open editor button for aliases', () => {
     renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="ALIAS" variable={baseVariable} />)
 

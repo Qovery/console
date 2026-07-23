@@ -121,8 +121,8 @@ export function VariableFormModal(props: VariableFormModalProps) {
   const [showSecretValue, setShowSecretValue] = useState(false)
   const showSecretValueId = useId()
   const isCreateValue = mode === 'CREATE' && type === 'VALUE'
-  const isSecretCreation = isCreateValue && Boolean(isSecret)
-  const isSecretValueHidden = isSecretCreation && !showSecretValue
+  const isSecretVariable = isCreateValue ? Boolean(isSecret) : Boolean(variable?.is_secret)
+  const isSecretValueHidden = isSecretVariable && !showSecretValue
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -178,7 +178,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
       key: variable?.key,
       scope: defaultScope,
       value: variable?.value,
-      isSecret: isCreateValue ? Boolean(isSecret) : variable?.is_secret,
+      isSecret: isSecretVariable,
       description: variable?.description,
       enable_interpolation_in_file: initialIsFile ? variable?.enable_interpolation_in_file ?? true : undefined,
       mountPath,
@@ -251,7 +251,9 @@ export function VariableFormModal(props: VariableFormModalProps) {
   }
 
   if (isCreateValue) {
-    title += isSecretCreation ? ' secret' : ' variable'
+    title += isSecretVariable ? ' secret' : ' variable'
+  } else if (mode === 'UPDATE' && type !== 'ALIAS' && type !== 'OVERRIDE') {
+    title += isSecretVariable ? ' secret' : ' variable'
   } else {
     title += ' variable'
   }
@@ -267,7 +269,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
         'The content of the Value field will be mounted as a file in the specified "Path". Accessing the environment variable at runtime will return the "Path" of the file.'
     )
     .otherwise(() =>
-      isSecretCreation
+      isSecretVariable
         ? 'Secrets can only be accessed by your application at runtime. Use them for sensitive values such as tokens, credentials, and private configuration.'
         : "Environment variables can be accessed at both build and run time. Set them as ARGS in your Dockerfile to use them during build processes. At runtime, they're available to your application automatically."
     )
@@ -400,7 +402,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
                 <div className="relative">
                   <InputTextArea
                     ref={textareaRef}
-                    className={isSecretCreation ? 'mb-2' : 'mb-3'}
+                    className={isSecretVariable ? 'mb-2' : 'mb-3'}
                     name={name}
                     onChange={onChange}
                     value={value}
@@ -425,7 +427,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
                     </DropdownVariable>
                   )}
                 </div>
-                {isSecretCreation && (
+                {isSecretVariable && (
                   <div className="mb-3 flex w-fit items-center gap-2">
                     <Checkbox
                       id={showSecretValueId}
@@ -507,7 +509,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
           }
         />
 
-        {isSecretCreation && hasClusterSecretManagerConfigured && (
+        {isCreateValue && isSecretVariable && hasClusterSecretManagerConfigured && (
           <Callout.Root color="yellow" className="mb-3">
             <Callout.Icon>
               <Icon iconName="exclamation-triangle" iconStyle="regular" />
