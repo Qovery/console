@@ -115,7 +115,7 @@ describe('CreateUpdateVariableModal', () => {
 
     const pathField = screen.getByLabelText('Path')
 
-    expect(screen.getByText('New variable as file')).toBeInTheDocument()
+    expect(screen.getByText('New variable file')).toBeInTheDocument()
     expect(pathField).not.toHaveAttribute('placeholder')
     expect(pathField).toHaveValue('')
     expect(screen.getByText('Variable interpolation')).toBeInTheDocument()
@@ -144,7 +144,7 @@ describe('CreateUpdateVariableModal', () => {
 
     const valueField = screen.getByLabelText('Value')
 
-    expect(screen.getByText('Edit secret as file')).toBeInTheDocument()
+    expect(screen.getByText('Edit secret file')).toBeInTheDocument()
     expect(screen.getByRole('checkbox', { name: /show value/i })).toBeInTheDocument()
     expect(valueField).toHaveClass('[-webkit-text-security:disc]')
 

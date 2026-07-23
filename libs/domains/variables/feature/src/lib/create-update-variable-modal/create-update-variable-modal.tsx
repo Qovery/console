@@ -249,7 +249,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
     title += ' variable'
   }
 
-  title += isFileVariable ? ' as file' : ''
+  title += isFileVariable ? ' file' : ''
 
   const description = match({ type, isFileVariable })
     .with({ type: 'ALIAS' }, () => 'Aliases allow you to specify a different name for a variable on a specific scope.')
