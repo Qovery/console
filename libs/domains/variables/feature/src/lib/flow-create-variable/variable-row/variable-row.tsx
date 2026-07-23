@@ -3,7 +3,7 @@ import { type APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
-import { BlockContent, Button, Icon, InputSelectSmall, InputTextSmall, InputToggle, Tooltip } from '@qovery/shared/ui'
+import { BlockContent, Button, Icon, InputSelectSmall, InputTextSmall, Tooltip } from '@qovery/shared/ui'
 import { generateScopeLabel } from '@qovery/shared/util-js'
 import { CodeEditorVariable } from '../../code-editor-variable/code-editor-variable'
 import { FieldVariableSuggestion } from '../../field-variable-suggestion/field-variable-suggestion'
@@ -141,14 +141,6 @@ export function VariableRow(props: VariableRowProps) {
             />
           )}
         />
-
-        <div className="flex w-14 items-center justify-center">
-          <Controller
-            name={`variables.${index}.isSecret`}
-            control={control}
-            render={({ field }) => <InputToggle small value={field.value} onChange={field.onChange} />}
-          />
-        </div>
 
         <div className="flex items-center">
           <Button type="button" variant="outline" size="md" iconOnly onClick={() => props.onDelete(index)}>

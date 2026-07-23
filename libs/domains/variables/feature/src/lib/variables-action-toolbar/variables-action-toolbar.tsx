@@ -40,7 +40,7 @@ export function VariablesActionToolbar({
   const hasImportEnvFile = Boolean(onImportEnvFile)
   const showImportButton = hasImportEnvFile && importEnvFileAccess === 'button'
 
-  const _onCreateVariable = (isFile?: boolean) =>
+  const _onCreateVariable = ({ isFile, isSecret = false }: { isFile?: boolean; isSecret?: boolean } = {}) =>
     openModal({
       content: (
         <CreateUpdateVariableModal
@@ -49,6 +49,7 @@ export function VariablesActionToolbar({
           mode="CREATE"
           onSubmit={onCreateVariable}
           isFile={isFile}
+          isSecret={isSecret}
           hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
           {...props}
         />
@@ -106,25 +107,21 @@ export function VariablesActionToolbar({
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 
-      <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <Button color="brand" variant="solid" size="md">
-            <Icon iconName="circle-plus" iconStyle="regular" />
-            New variable
-          </Button>
-        </DropdownMenu.Trigger>
-        <DropdownMenu.Content>
-          <DropdownMenu.Item onSelect={() => _onCreateVariable()} icon={<Icon iconName="key" />}>
-            Variable
-          </DropdownMenu.Item>
-          <DropdownMenu.Item
-            onSelect={() => _onCreateVariable(true)}
-            icon={<Icon iconName="file-lines" iconStyle="regular" />}
-          >
-            Variable as file
-          </DropdownMenu.Item>
-        </DropdownMenu.Content>
-      </DropdownMenu.Root>
+      <Button
+        color="neutral"
+        variant="outline"
+        size="md"
+        className="gap-1.5"
+        onClick={() => _onCreateVariable({ isSecret: true })}
+      >
+        <Icon iconName="lock-keyhole" iconStyle="regular" />
+        Add secret
+      </Button>
+
+      <Button color="brand" variant="solid" size="md" className="gap-1.5" onClick={() => _onCreateVariable()}>
+        <Icon iconName="key" />
+        Add variable
+      </Button>
     </div>
   )
 }

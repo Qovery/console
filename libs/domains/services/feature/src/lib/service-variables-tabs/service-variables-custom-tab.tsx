@@ -42,7 +42,13 @@ export function ServiceVariablesCustomTab() {
     return null
   }
 
-  const handleOpenCreateVariableModal = (isFile = false) =>
+  const handleOpenCreateVariableModal = ({
+    isFile = false,
+    isSecret = false,
+  }: {
+    isFile?: boolean
+    isSecret?: boolean
+  } = {}) =>
     openModal({
       content: (
         <CreateUpdateVariableModal
@@ -51,6 +57,7 @@ export function ServiceVariablesCustomTab() {
           mode="CREATE"
           onSubmit={onCreateVariableToast}
           isFile={isFile}
+          isSecret={isSecret}
           hasClusterSecretManagerConfigured={hasClusterSecretManagerConfigured}
           scope={scope}
           projectId={projectId}
@@ -89,26 +96,27 @@ export function ServiceVariablesCustomTab() {
           className="rounded-none border-0 bg-transparent py-12"
         >
           <div className="flex items-center gap-2">
-            <DropdownMenu.Root>
-              <DropdownMenu.Trigger asChild>
-                <Button color="neutral" variant="solid" size="md" className="gap-1.5">
-                  <Icon iconName="circle-plus" iconStyle="regular" />
-                  Add variable
-                  <Icon iconName="angle-down" />
-                </Button>
-              </DropdownMenu.Trigger>
-              <DropdownMenu.Content>
-                <DropdownMenu.Item onSelect={() => handleOpenCreateVariableModal()} icon={<Icon iconName="key" />}>
-                  Variable
-                </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  onSelect={() => handleOpenCreateVariableModal(true)}
-                  icon={<Icon iconName="file-lines" iconStyle="regular" />}
-                >
-                  Variable as file
-                </DropdownMenu.Item>
-              </DropdownMenu.Content>
-            </DropdownMenu.Root>
+            <Button
+              color="neutral"
+              variant="solid"
+              size="md"
+              className="gap-1.5"
+              onClick={() => handleOpenCreateVariableModal()}
+            >
+              <Icon iconName="key" />
+              Add variable
+            </Button>
+
+            <Button
+              color="neutral"
+              variant="outline"
+              size="md"
+              className="gap-1.5"
+              onClick={() => handleOpenCreateVariableModal({ isSecret: true })}
+            >
+              <Icon iconName="lock-keyhole" iconStyle="regular" />
+              Add secret
+            </Button>
 
             <DropdownMenu.Root>
               <DropdownMenu.Trigger asChild>
@@ -121,12 +129,6 @@ export function ServiceVariablesCustomTab() {
               <DropdownMenu.Content>
                 <DropdownMenu.Item onSelect={handleOpenImportVariablesModal} icon={<Icon iconName="file-import" />}>
                   Import from .env file
-                </DropdownMenu.Item>
-                <DropdownMenu.Item
-                  onSelect={() => window.open('https://dashboard.doppler.com', '_blank')}
-                  icon={<Icon iconName="arrow-up-right-from-square" />}
-                >
-                  Import from Doppler
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Root>

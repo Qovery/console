@@ -10,7 +10,7 @@ import VariableRow from './variable-row/variable-row'
 export interface FlowCreateVariableProps {
   onBack: () => void
   onSubmit: FormEventHandler<HTMLFormElement>
-  onAdd: () => void
+  onAdd: (isSecret?: boolean) => void
   onRemove: (index: number) => void
   variables: VariableData[]
   availableScopes: APIVariableScopeEnum[]
@@ -27,16 +27,20 @@ export function FlowCreateVariable({
   availableScopes,
 }: FlowCreateVariableProps) {
   const { formState } = useFormContext<FlowVariableData>()
-  const gridTemplateColumns = '1fr 1fr 1fr 56px 32px'
+  const gridTemplateColumns = '1fr 1fr 1fr 32px'
 
   return (
     <Section>
       <div className="flex justify-between">
         <Heading className="mb-2">Environment variables</Heading>
-        <Button size="md" onClick={onAdd}>
-          Add Variable
-          <Icon iconName="plus-circle" iconStyle="regular" />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
+            Add secret
+          </Button>
+          <Button size="md" onClick={() => onAdd(false)}>
+            Add variable
+          </Button>
+        </div>
       </div>
 
       <form className="space-y-10" onSubmit={onSubmit}>
@@ -71,7 +75,6 @@ export function FlowCreateVariable({
               <span className="text-sm font-medium text-neutral">Variable</span>
               <span className="text-sm font-medium text-neutral">Value</span>
               <span className="text-sm font-medium text-neutral">Scope</span>
-              <span className="pl-1.5 text-sm font-medium text-neutral">Secret</span>
               <span></span>
             </div>
           )}

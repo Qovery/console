@@ -1,16 +1,18 @@
 import { type APIVariableScopeEnum, type APIVariableTypeEnum, type VariableResponse } from 'qovery-typescript-axios'
-import { useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
   Button,
   Callout,
+  Checkbox,
   Icon,
   InputSelect,
   InputText,
   InputTextArea,
   InputToggle,
   ModalCrud,
+  SegmentedControl,
   Tooltip,
   useModal,
 } from '@qovery/shared/ui'
@@ -29,6 +31,7 @@ import { VariableValueEditorModal } from './variable-value-editor-modal/variable
 
 type Scope = Exclude<keyof typeof APIVariableScopeEnum, 'BUILT_IN'>
 type ValueEditorScope = Extract<Scope, 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'>
+type VariableFormat = 'VALUE' | 'FILE'
 
 function isValueEditorScope(scope: Scope | undefined): scope is ValueEditorScope {
   return ['APPLICATION', 'CONTAINER', 'JOB', 'HELM', 'TERRAFORM'].includes(scope ?? '')
@@ -88,6 +91,7 @@ export type VariableFormModalProps = {
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
   isFile?: boolean
+  isSecret?: boolean
   hasClusterSecretManagerConfigured?: boolean
   scope: Scope
   projectId?: string
@@ -105,11 +109,20 @@ export function VariableFormModal(props: VariableFormModalProps) {
     mode,
     type,
     isFile,
+    isSecret,
     hasClusterSecretManagerConfigured = false,
   } = props
-  const _isFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
+  const initialIsFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
+  const canSelectVariableFormat = mode === 'CREATE' && type === 'VALUE'
+  const [variableFormat, setVariableFormat] = useState<VariableFormat>(initialIsFile ? 'FILE' : 'VALUE')
+  const _isFile = canSelectVariableFormat ? variableFormat === 'FILE' : initialIsFile
   const { enableAlertClickOutside } = useModal()
   const [isValueEditorOpen, setIsValueEditorOpen] = useState(false)
+  const [showSecretValue, setShowSecretValue] = useState(false)
+  const showSecretValueId = useId()
+  const isCreateValue = mode === 'CREATE' && type === 'VALUE'
+  const isSecretCreation = isCreateValue && Boolean(isSecret)
+  const isSecretValueHidden = isSecretCreation && !showSecretValue
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -165,17 +178,40 @@ export function VariableFormModal(props: VariableFormModalProps) {
       key: variable?.key,
       scope: defaultScope,
       value: variable?.value,
-      isSecret: variable?.is_secret,
+      isSecret: isCreateValue ? Boolean(isSecret) : variable?.is_secret,
       description: variable?.description,
-      enable_interpolation_in_file: _isFile ? variable?.enable_interpolation_in_file ?? true : undefined,
+      enable_interpolation_in_file: initialIsFile ? variable?.enable_interpolation_in_file ?? true : undefined,
       mountPath,
     },
     mode: 'onChange',
   })
 
+  const handleVariableFormatChange = (format: VariableFormat) => {
+    setVariableFormat(format)
+
+    if (format !== 'FILE') {
+      return
+    }
+
+    if (methods.getValues('enable_interpolation_in_file') === undefined) {
+      methods.setValue('enable_interpolation_in_file', true)
+    }
+
+    const currentScope = methods.getValues('scope')
+
+    if (currentScope && ['APPLICATION', 'CONTAINER', 'JOB', 'HELM'].includes(currentScope)) {
+      methods.setValue('scope', 'ENVIRONMENT', { shouldValidate: true, shouldDirty: true })
+    }
+  }
+
+  useEffect(() => {
+    if (_isFile && methods.getValues('enable_interpolation_in_file') === undefined) {
+      methods.setValue('enable_interpolation_in_file', true)
+    }
+  }, [_isFile, methods])
+
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
   const watchScope = methods.watch('scope')
-  const watchIsSecret = methods.watch('isSecret')
   const watchMountPath = methods.watch('mountPath')
   const valueEditorLanguage = getValueEditorLanguage({ isFile: _isFile, mountPath: watchMountPath })
   const valueEditorServiceId = isValueEditorScope(watchScope) ? props.serviceId : undefined
@@ -189,6 +225,9 @@ export function VariableFormModal(props: VariableFormModalProps) {
 
     if (!_isFile) {
       delete cloneData.mountPath
+      delete cloneData.enable_interpolation_in_file
+    } else if (cloneData.enable_interpolation_in_file === undefined) {
+      cloneData.enable_interpolation_in_file = true
     }
 
     try {
@@ -211,7 +250,13 @@ export function VariableFormModal(props: VariableFormModalProps) {
     title = 'Create ' + (type === 'ALIAS' ? 'alias' : type === 'OVERRIDE' ? 'override' : '')
   }
 
-  title += ' variable' + (_isFile ? ' file' : '')
+  if (isCreateValue) {
+    title += isSecretCreation ? ' secret' : ' variable'
+  } else {
+    title += ' variable'
+  }
+
+  title += _isFile ? ' as file' : ''
 
   const description = match({ type, _isFile })
     .with({ type: 'ALIAS' }, () => 'Aliases allow you to specify a different name for a variable on a specific scope.')
@@ -221,9 +266,10 @@ export function VariableFormModal(props: VariableFormModalProps) {
       () =>
         'The content of the Value field will be mounted as a file in the specified "Path". Accessing the environment variable at runtime will return the "Path" of the file.'
     )
-    .otherwise(
-      () =>
-        "Environment variables can be accessed at both build and run time. Set them as ARGS in your Dockerfile to use them during build processes. At runtime, they're available to your application automatically. Secrets value can only be accessed by your application."
+    .otherwise(() =>
+      isSecretCreation
+        ? 'Secrets can only be accessed by your application at runtime. Use them for sensitive values such as tokens, credentials, and private configuration.'
+        : "Environment variables can be accessed at both build and run time. Set them as ARGS in your Dockerfile to use them during build processes. At runtime, they're available to your application automatically."
     )
 
   return (
@@ -236,6 +282,18 @@ export function VariableFormModal(props: VariableFormModalProps) {
         onSubmit={_onSubmit}
         loading={loading}
       >
+        {canSelectVariableFormat && (
+          <SegmentedControl.Root
+            aria-label="Variable format"
+            className="mb-3 w-full text-sm"
+            value={variableFormat}
+            onValueChange={(value) => handleVariableFormatChange(value as VariableFormat)}
+          >
+            <SegmentedControl.Item value="VALUE">Value</SegmentedControl.Item>
+            <SegmentedControl.Item value="FILE">As file</SegmentedControl.Item>
+          </SegmentedControl.Root>
+        )}
+
         {type === 'ALIAS' || type === 'OVERRIDE' ? (
           <InputText className="mb-3" name="Variable" value={variable?.key} label="Variable" disabled />
         ) : (
@@ -342,12 +400,13 @@ export function VariableFormModal(props: VariableFormModalProps) {
                 <div className="relative">
                   <InputTextArea
                     ref={textareaRef}
-                    className="mb-3"
+                    className={isSecretCreation ? 'mb-2' : 'mb-3'}
                     name={name}
                     onChange={onChange}
                     value={value}
                     label="Value"
                     error={error?.message}
+                    maskValue={isSecretValueHidden}
                   />
                   {props.environmentId && (
                     <DropdownVariable
@@ -366,6 +425,18 @@ export function VariableFormModal(props: VariableFormModalProps) {
                     </DropdownVariable>
                   )}
                 </div>
+                {isSecretCreation && (
+                  <div className="mb-3 flex w-fit items-center gap-2">
+                    <Checkbox
+                      id={showSecretValueId}
+                      checked={showSecretValue}
+                      onCheckedChange={(checked) => setShowSecretValue(checked === true)}
+                    />
+                    <label htmlFor={showSecretValueId} className="text-sm font-medium text-neutral">
+                      Show value
+                    </label>
+                  </div>
+                )}
                 <VariableValueEditorModal
                   open={isValueEditorOpen}
                   onOpenChange={setIsValueEditorOpen}
@@ -436,24 +507,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
           }
         />
 
-        {mode === 'CREATE' && type === 'VALUE' && (
-          <div className="mb-8 flex items-center gap-3">
-            <Controller
-              name="isSecret"
-              control={methods.control}
-              render={({ field }) => (
-                <InputToggle
-                  small
-                  value={field.value}
-                  onChange={field.onChange}
-                  title={`Secret ${_isFile ? 'file' : 'variable'}`}
-                />
-              )}
-            />
-          </div>
-        )}
-
-        {mode === 'CREATE' && type === 'VALUE' && watchIsSecret && hasClusterSecretManagerConfigured && (
+        {isSecretCreation && hasClusterSecretManagerConfigured && (
           <Callout.Root color="yellow" className="mb-3">
             <Callout.Icon>
               <Icon iconName="exclamation-triangle" iconStyle="regular" />
@@ -507,6 +561,7 @@ export type CreateUpdateVariableModalProps = {
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
   isFile?: boolean
+  isSecret?: boolean
   hasClusterSecretManagerConfigured?: boolean
 } & CreateUpdateVariableModalScopeProps
 

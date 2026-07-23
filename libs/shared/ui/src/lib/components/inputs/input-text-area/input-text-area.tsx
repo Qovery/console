@@ -11,10 +11,11 @@ export interface InputTextAreaProps {
   hint?: ReactNode
   error?: string
   dataTestId?: string
+  maskValue?: boolean
 }
 
 export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>(function InputTextArea(props, ref) {
-  const { label, value = '', name, onChange, className, hint, error, dataTestId = 'input-textarea' } = props
+  const { label, value = '', name, onChange, className, hint, error, dataTestId = 'input-textarea', maskValue } = props
 
   const [currentValue, setCurrentValue] = useState(value)
   const previousValueRef = useRef(value)
@@ -71,7 +72,10 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
           ref={ref}
           name={name}
           id={label}
-          className="mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral outline-0"
+          className={twMerge(
+            'mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral outline-0',
+            maskValue && '[-webkit-text-security:disc]'
+          )}
           value={!currentValue ? undefined : currentValue}
           onChange={(e) => {
             if (onChange) onChange(e)

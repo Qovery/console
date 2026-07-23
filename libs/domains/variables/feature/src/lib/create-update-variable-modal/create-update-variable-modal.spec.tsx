@@ -97,6 +97,27 @@ describe('CreateUpdateVariableModal', () => {
     expect(descriptionField).not.toBeInstanceOf(HTMLTextAreaElement)
   })
 
+  it('should render secret creation without the secret toggle and with hidden value control', () => {
+    renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="VALUE" isSecret />)
+
+    expect(screen.getByText('New secret')).toBeInTheDocument()
+    expect(screen.queryByText('Secret variable')).not.toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /show value/i })).toBeInTheDocument()
+  })
+
+  it('should default to value format and show file inputs when selecting as file', async () => {
+    const { userEvent } = renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="VALUE" />)
+
+    expect(screen.getByRole('radio', { name: /value/i })).toHaveAttribute('data-state', 'on')
+    expect(screen.queryByLabelText('Path')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('radio', { name: /as file/i }))
+
+    expect(screen.getByText('New variable as file')).toBeInTheDocument()
+    expect(screen.getByLabelText('Path')).toBeInTheDocument()
+    expect(screen.getByText('Variable interpolation')).toBeInTheDocument()
+  })
+
   it('should not render the open editor button for aliases', () => {
     renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="ALIAS" variable={baseVariable} />)
 
