@@ -116,7 +116,7 @@ describe('CreateUpdateVariableModal', () => {
     const pathField = screen.getByLabelText('Path')
 
     expect(screen.getByText('New variable as file')).toBeInTheDocument()
-    expect(pathField).toHaveAttribute('placeholder', '/path/to/file')
+    expect(pathField).not.toHaveAttribute('placeholder')
     expect(pathField).toHaveValue('')
     expect(screen.getByText('Variable interpolation')).toBeInTheDocument()
 

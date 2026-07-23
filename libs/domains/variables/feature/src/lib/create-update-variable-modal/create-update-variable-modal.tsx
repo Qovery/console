@@ -320,20 +320,22 @@ export function VariableFormModal(props: VariableFormModalProps) {
                 required: 'Please enter a mount path.',
               }}
               render={({ field, fieldState: { error } }) => (
-                <InputText
-                  className="mb-3"
-                  name={field.name}
-                  onChange={field.onChange}
-                  onFocus={() => {
+                <div
+                  onFocusCapture={() => {
                     if (!field.value) {
                       field.onChange('/')
                     }
                   }}
-                  value={field.value}
-                  label="Path"
-                  placeholder="/path/to/file"
-                  error={error?.message}
-                />
+                >
+                  <InputText
+                    className="mb-3"
+                    name={field.name}
+                    onChange={field.onChange}
+                    value={field.value}
+                    label="Path"
+                    error={error?.message}
+                  />
+                </div>
               )}
             />
           ))}
