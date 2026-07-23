@@ -1,6 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { type ReactNode } from 'react'
-import { Icon } from '@qovery/shared/ui'
+import { Heading, Icon, Section } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 export interface BlueprintSectionProps {
@@ -33,9 +33,9 @@ export function BlueprintSection({
   const headerContent = (
     <div className="flex items-center gap-2">
       <Icon iconName={iconName} className="text-sm text-neutral-subtle" />
-      <h2 className={`text-base font-medium leading-6 ${active || completed ? 'text-neutral' : 'text-neutral-subtle'}`}>
+      <Heading level={2} className={`text-base leading-6 ${active || completed ? 'text-neutral' : 'text-neutral-subtle'}`}>
         {title}
-      </h2>
+      </Heading>
       {description && (
         <>
           <span className="h-1 w-1 rounded-full bg-surface-neutral-component" aria-hidden="true" />
@@ -46,7 +46,7 @@ export function BlueprintSection({
   )
 
   return (
-    <section className="rounded-xl border border-neutral bg-surface-neutral shadow-sm">
+    <Section className="rounded-xl border border-neutral bg-surface-neutral shadow-sm">
       {isClickable ? (
         <button
           type="button"
@@ -73,6 +73,6 @@ export function BlueprintSection({
         </div>
       )}
       {children && <div className="flex flex-col gap-3 px-4 pb-4">{children}</div>}
-    </section>
+    </Section>
   )
 }
