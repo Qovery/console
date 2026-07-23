@@ -39,10 +39,10 @@ import { useMasterCredentials } from '../../hooks/use-master-credentials/use-mas
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
-import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
-import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
 import { BlueprintUpdateBadge } from '../../service-blueprint-update-flow/blueprint-update-badge'
 import { getBlueprintServiceVersion } from '../../service-blueprint-update-flow/blueprint-update-utils'
+import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
+import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
 
 export function GitRepository({ gitRepository }: { gitRepository: ApplicationGitRepository }) {
   return (
