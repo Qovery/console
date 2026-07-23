@@ -1,15 +1,16 @@
 import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
-import { type PropsWithChildren, useCallback, useEffect, useMemo, useState } from 'react'
+import { type PropsWithChildren, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { toast } from '@qovery/shared/ui'
 import {
   type BlueprintFieldValue,
   type BlueprintFieldValues,
   isFieldValid,
-} from '../../blueprint-field-utils/blueprint-field-utils'
-import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
-import { usePreviewBlueprintUpdate } from '../../hooks/use-preview-blueprint-update/use-preview-blueprint-update'
-import { useUpdateBlueprint } from '../../hooks/use-update-blueprint/use-update-blueprint'
+} from '../blueprint-field-utils/blueprint-field-utils'
+import { useBlueprintUpdate } from '../hooks/use-blueprint-update/use-blueprint-update'
+import { useDeployBlueprint } from '../hooks/use-deploy-blueprint/use-deploy-blueprint'
+import { usePreviewBlueprintUpdate } from '../hooks/use-preview-blueprint-update/use-preview-blueprint-update'
+import { useUpdateBlueprint } from '../hooks/use-update-blueprint/use-update-blueprint'
 import { BlueprintUpdateFlowProvider } from './blueprint-update-context'
 import { BlueprintUpdateFlowShell } from './blueprint-update-flow-shell'
 import {
@@ -17,8 +18,8 @@ import {
   type BlueprintUpdateSection,
   buildBlueprintUpdatePayload,
   getBlueprintUpdateFieldValue,
+  getBlueprintUpdateTitle,
   getBlueprintUpdateVariableField,
-  getBlueprintUpdateVersion,
   getFallbackServiceIcon,
   getFirstAvailableUpdateSection,
   updateSections,
@@ -55,6 +56,11 @@ export function BlueprintUpdateFlow({
 }: BlueprintUpdateFlowProps) {
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
   const { mutateAsync: previewBlueprintUpdate, isLoading: isPreviewLoading } = usePreviewBlueprintUpdate()
+  const { mutateAsync: deployBlueprint, isLoading: isDeployLoading } = useDeployBlueprint({
+    environmentId,
+    serviceId: service.id,
+    serviceType: service.service_type,
+  })
   const { mutateAsync: updateBlueprint, isLoading: isUpdateLoading } = useUpdateBlueprint({
     environmentId,
     serviceId: service.id,
@@ -65,7 +71,8 @@ export function BlueprintUpdateFlow({
   )
   const [completedSections, setCompletedSections] = useState<BlueprintUpdateSection[]>([])
   const [previewId, setPreviewId] = useState<string>()
-  const [previewPayloadKey, setPreviewPayloadKey] = useState<string>()
+  const previewPayloadKeyRef = useRef<string>()
+  const [previewError, setPreviewError] = useState(false)
   const [values, setValues] = useState<BlueprintFieldValues>({})
   const [initializedBlueprintId, setInitializedBlueprintId] = useState<string>()
 
@@ -81,6 +88,8 @@ export function BlueprintUpdateFlow({
       )
       setActiveSection(getFirstAvailableUpdateSection(blueprintUpdate))
       setInitializedBlueprintId(blueprintId)
+      previewPayloadKeyRef.current = undefined
+      setPreviewError(false)
     }
   }, [blueprintId, blueprintUpdate, initializedBlueprintId])
 
@@ -108,8 +117,11 @@ export function BlueprintUpdateFlow({
     reviewSections.every(({ id }) => completedSections.includes(id)) || reviewSections.length === 0
   const canContinueReview =
     reviewSections.length === 1 ? activeSection !== 'required' || isRequiredValid : isReviewComplete
-  const latestVersion = getBlueprintUpdateVersion(blueprintUpdateData.latest_tag) ?? blueprintUpdateData.latest_tag
-  const title = `${service.name} blueprint update to ${latestVersion}`
+  const title = getBlueprintUpdateTitle({
+    serviceName: service.name,
+    currentTag: blueprintUpdateData.current_tag,
+    latestTag: blueprintUpdateData.latest_tag,
+  })
   const payload = useMemo(
     () =>
       buildBlueprintUpdatePayload({
@@ -143,26 +155,34 @@ export function BlueprintUpdateFlow({
   }, [activeSection, activeSectionIndex, completedSections, isRequiredValid, reviewSections])
 
   const requestPreview = useCallback(async () => {
-    const payloadKey = JSON.stringify(payload)
-    if (previewPayloadKey === payloadKey) return
+    if (initializedBlueprintId !== blueprintId) return
 
-    setPreviewPayloadKey(payloadKey)
+    const payloadKey = JSON.stringify(payload)
+    if (previewPayloadKeyRef.current === payloadKey) return
+
+    previewPayloadKeyRef.current = payloadKey
+    setPreviewError(false)
     setPreviewId(undefined)
 
     try {
       const preview = await previewBlueprintUpdate({ blueprintId, payload })
       setPreviewId(preview?.preview_id)
-    } catch (error) {
-      setPreviewPayloadKey(undefined)
-      throw error
+    } catch {
+      setPreviewError(true)
     }
-  }, [blueprintId, payload, previewBlueprintUpdate, previewPayloadKey])
+  }, [blueprintId, initializedBlueprintId, payload, previewBlueprintUpdate])
+
+  const retryPreview = useCallback(async () => {
+    previewPayloadKeyRef.current = undefined
+    await requestPreview()
+  }, [requestPreview])
 
   const handleUpdate = useCallback(async () => {
     await updateBlueprint({ blueprintId, payload })
+    await deployBlueprint({ blueprintId })
     toast('success', 'Blueprint update started')
     onExit()
-  }, [blueprintId, onExit, payload, updateBlueprint])
+  }, [blueprintId, deployBlueprint, onExit, payload, updateBlueprint])
 
   const contextValue = {
     activeSection,
@@ -173,13 +193,15 @@ export function BlueprintUpdateFlow({
     completedSections,
     handleUpdate,
     isPreviewLoading,
+    previewError,
     isRequiredValid,
-    isUpdateLoading,
+    isUpdateLoading: isUpdateLoading || isDeployLoading,
     onChange: (name: string, value: BlueprintFieldValue) =>
       setValues((currentValues) => ({ ...currentValues, [name]: value })),
     previewId,
     removedValues: blueprintUpdateData.removed_values,
     requestPreview,
+    retryPreview,
     requiredValues,
     reviewSections,
     service,

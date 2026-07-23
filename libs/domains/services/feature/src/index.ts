@@ -105,7 +105,7 @@ export * from './lib/service-creation-flow/database/step-resources/step-resource
 export * from './lib/service-creation-flow/database/database-summary-view/database-summary-view'
 export * from './lib/service-creation-flow/database/step-summary/step-summary'
 export * from './lib/service-creation-flow/blueprint/blueprint-creation-flow'
-export * from './lib/service-update-flow/blueprint/blueprint-update-flow'
+export * from './lib/service-blueprint-update-flow/blueprint-update-flow'
 export * from './lib/application-container-healthchecks/application-container-healthchecks-form/application-container-healthchecks-form'
 export * from './lib/application-container-healthchecks/healthchecks-utils'
 export * from './lib/application-container-healthchecks/step-healthchecks/step-healthchecks'

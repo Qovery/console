@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { Heading, Icon, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section } from '@qovery/shared/ui'
 import { BlueprintSection } from '../blueprint-section/blueprint-section'
 
 export interface OverridesSectionCardProps {
@@ -17,7 +17,14 @@ export function OverridesSectionCard({ active, children, disabled = false, onCli
         iconName="code"
         title="Overrides"
         description="For advanced users"
-        onClick={onClick}
+        headerClassName={disabled ? undefined : 'py-3'}
+        action={
+          !disabled ? (
+            <Button type="button" variant="outline" color="neutral" size="md" onClick={onClick}>
+              Configure
+            </Button>
+          ) : undefined
+        }
       />
     )
   }

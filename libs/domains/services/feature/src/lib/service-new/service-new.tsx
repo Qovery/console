@@ -1,5 +1,4 @@
 import { useParams } from '@tanstack/react-router'
-import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type BlueprintItem,
@@ -7,17 +6,16 @@ import {
   type LifecycleTemplateListResponseResultsInner,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
-import { Button, ExternalLink, Heading, Icon, InputSearch, Section, Skeleton } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSearch, Section, Skeleton } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
+import { isBlueprintCompatibleWithCluster } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
-import { Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
+import { BaseServiceCard, Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
 import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
 import { serviceTemplates } from './service-templates'
-
-const CloudFormationIcon = '/assets/devicon/cloudformation.svg'
 
 export interface ServiceNewProps {
   organizationId: string
@@ -30,10 +28,12 @@ export interface ServiceNewProps {
 
 function BlueprintSectionHeader({ action }: { action?: ReactNode }) {
   return (
-    <div className="mb-5 flex items-start justify-between gap-4">
-      <div>
-        <Heading className="mb-1">Blueprints</Heading>
-        <p className="text-xs text-neutral-subtle">Qovery managed blueprints that you can deploy in a few clicks.</p>
+    <div className="flex items-center justify-between gap-4">
+      <div className="flex flex-col gap-1">
+        <Heading>Blueprints</Heading>
+        <p className="text-sm leading-5 text-neutral-subtle">
+          Qovery managed blueprints that you can deploy in a few clicks.
+        </p>
       </div>
       {action}
     </div>
@@ -42,9 +42,9 @@ function BlueprintSectionHeader({ action }: { action?: ReactNode }) {
 
 function BlueprintSectionFallback() {
   return (
-    <Section>
+    <Section className="gap-4">
       <BlueprintSectionHeader action={<Skeleton width={240} height={36} />} />
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-3 gap-3">
         {[0, 1, 2].map((item) => (
           <div
             key={item}
@@ -77,7 +77,7 @@ function BlueprintSectionErrorFallback({
   title: string
 }) {
   return (
-    <Section>
+    <Section className="gap-4">
       <BlueprintSectionHeader />
       <div className="flex min-h-[186px] flex-col items-center justify-center gap-3 rounded border border-neutral bg-surface-neutral px-3 py-6 text-sm text-neutral-subtle">
         <span>Unable to load {title}.</span>
@@ -92,10 +92,12 @@ function BlueprintSectionErrorFallback({
 
 function BlueprintSection({
   blueprintSearchInput,
+  cloudProvider,
   onBlueprintSearchInputChange,
   onViewDetails,
 }: {
   blueprintSearchInput: string
+  cloudProvider?: CloudProviderEnum | string
   onBlueprintSearchInputChange: (value: string) => void
   onViewDetails: (blueprint: BlueprintItem) => void
 }) {
@@ -107,24 +109,27 @@ function BlueprintSection({
   const blueprints = blueprintCatalog?.blueprints ?? []
   const filterBlueprint = ({ name, description, categories }: BlueprintItem) =>
     `${name} ${description} ${categories?.join(' ')}`.toLowerCase().includes(blueprintSearchInput.toLowerCase())
-  const filteredBlueprints = blueprints.filter(filterBlueprint)
+  const compatibleBlueprints = blueprints.filter((blueprint) =>
+    isBlueprintCompatibleWithCluster(blueprint.provider, cloudProvider)
+  )
+  const filteredBlueprints = compatibleBlueprints.filter(filterBlueprint)
 
-  if (blueprints.length === 0) return null
+  if (compatibleBlueprints.length === 0) return null
 
   return (
-    <Section>
+    <Section className="gap-4">
       <BlueprintSectionHeader
         action={
           <InputSearch
             placeholder="Search blueprints..."
             className="w-60"
-            customSize="h-9 text-xs"
+            customSize="h-9 text-sm"
             onChange={onBlueprintSearchInputChange}
           />
         }
       />
       {filteredBlueprints.length > 0 ? (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-3">
           {filteredBlueprints.map((blueprint) => (
             <BlueprintCard
               key={`${blueprint.provider}-${blueprint.serviceFamily}`}
@@ -134,9 +139,9 @@ function BlueprintSection({
           ))}
         </div>
       ) : (
-        <div className="rounded border border-neutral bg-surface-neutral px-3 py-6 text-center">
+        <div className="flex min-h-[186px] flex-col items-center justify-center rounded border border-neutral bg-surface-neutral px-3 py-6 text-center">
           <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-          <p className="mt-1 text-xs font-medium text-neutral-subtle">No blueprint found</p>
+          <p className="mt-1 text-xs font-medium text-neutral-subtle">No blueprints found</p>
         </div>
       )}
     </Section>
@@ -164,7 +169,7 @@ export function ServiceNew({
         cloud_provider: cloudProvider,
       },
       {
-        title: 'Database',
+        title: 'Container Database',
         description: 'Easy and fastest way to deploy the most popular databases.',
         icon: <Icon name="DATABASE" width={32} height={32} />,
         link: getServicesPath(
@@ -226,7 +231,6 @@ export function ServiceNew({
     [cloudProvider, organizationId, projectId, environmentId, isTerraformFeatureFlag, showPylonForm]
   )
 
-  const [searchInput, setSearchInput] = useState('')
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
   const [selectedBlueprint, setSelectedBlueprint] = useState<BlueprintItem | null>(null)
   const [isBlueprintDetailsOpen, setIsBlueprintDetailsOpen] = useState(false)
@@ -236,98 +240,39 @@ export function ServiceNew({
     setIsBlueprintDetailsOpen(true)
   }
 
-  const filterService = ({ title }: { title: string }) => title.toLowerCase().includes(searchInput.toLowerCase())
-
-  const handleSearchInputChange = (value: string) => {
-    if ([...serviceEmpty, ...serviceTemplates].filter(filterService).length === 0) {
-      posthog.capture('search-service', {
-        qoveryServiceType: 'INPUT_SEARCH',
-        searchValue: value,
-      })
-    }
-
-    setSearchInput(value)
-  }
-
-  const emptyState = (
-    <Section className="w-full">
-      <Heading className="mb-1">You didn't find what you want?</Heading>
-      <p className="mb-5 text-xs text-neutral-subtle">Use one of those options below.</p>
-
-      <div className="grid grid-cols-3 gap-4">
-        {[
-          ...serviceEmpty,
-          ...[
-            {
-              title: 'CloudFormation',
-              description:
-                'AWS CloudFormation is a service provided by Amazon Web Services that enables users to model and manage infrastructure resources in an automated and secure manner.',
-              icon: (
-                <img className="select-none" width={32} height={32} src={CloudFormationIcon} alt="CloudFormation" />
-              ),
-              link: getServicesPath(
-                organizationId,
-                projectId,
-                environmentId,
-                buildCreateFlowPathForType('LIFECYCLE_JOB', 'cloudformation', 'current') ??
-                  '/service/create/lifecycle-job'
-              ),
-              cloud_provider: cloudProvider,
-            },
-          ],
-        ].map((service) => (
-          <Card key={service.title} {...service} />
-        ))}
-      </div>
-    </Section>
-  )
-
   return (
     <>
-      <div className="mb-10 flex flex-col text-center">
-        <InputSearch
-          autofocus
-          placeholder="Search…"
-          className="mx-auto mb-4 w-[360px]"
-          customSize="h-9 text-xs rounded-full"
-          onChange={handleSearchInputChange}
-        />
-        <ExternalLink
-          className="mx-auto"
-          href="https://www.qovery.com/docs/getting-started/basic-concepts#services"
-          size="xs"
-        >
-          See documentation
-        </ExternalLink>
-      </div>
-      <div className="mx-auto flex w-[1024px] flex-col gap-8">
-        {searchInput.length === 0 ? (
+      <div className="flex w-full flex-col gap-8">
+        <Section className="gap-4">
+          <div className="flex flex-col gap-1">
+            <Heading>Base services</Heading>
+            <p className="text-sm leading-5 text-neutral-subtle">
+              Services without pre-configuration. These are the basic blocks to deploy any technical stack.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-3">
+            {serviceEmpty.map((service) => (
+              <BaseServiceCard key={service.title} {...service} />
+            ))}
+          </div>
+        </Section>
+        {isServiceCatalogEnabled && (
+          <BlueprintQueryBoundary
+            errorFallback={BlueprintSectionErrorFallback}
+            fallback={<BlueprintSectionFallback />}
+            resetKeys={[organizationId, isServiceCatalogEnabled]}
+            title="blueprint catalog"
+          >
+            <BlueprintSection
+              blueprintSearchInput={blueprintSearchInput}
+              cloudProvider={cloudProvider}
+              onBlueprintSearchInputChange={setBlueprintSearchInput}
+              onViewDetails={openBlueprintDetails}
+            />
+          </BlueprintQueryBoundary>
+        )}
+        {!isServiceCatalogEnabled && (
           <>
-            <Section>
-              <Heading className="mb-1">Default Qovery services</Heading>
-              <p className="mb-5 text-xs text-neutral-subtle">
-                Services without pre-configuration. These are the basic blocks to deploy any technical stack.
-              </p>
-              <div className="grid grid-cols-3 gap-4">
-                {serviceEmpty.map((service) => (
-                  <Card key={service.title} {...service} />
-                ))}
-              </div>
-            </Section>
-            {isServiceCatalogEnabled && (
-              <BlueprintQueryBoundary
-                errorFallback={BlueprintSectionErrorFallback}
-                fallback={<BlueprintSectionFallback />}
-                resetKeys={[organizationId, isServiceCatalogEnabled]}
-                title="blueprint catalog"
-              >
-                <BlueprintSection
-                  blueprintSearchInput={blueprintSearchInput}
-                  onBlueprintSearchInputChange={setBlueprintSearchInput}
-                  onViewDetails={openBlueprintDetails}
-                />
-              </BlueprintQueryBoundary>
-            )}
             <SectionByTag
               title="Data & Storage"
               description="Find your perfect data and storage template with presets."
@@ -407,35 +352,6 @@ export function ServiceNew({
               onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
             />
           </>
-        ) : [...serviceEmpty, ...serviceTemplates]
-            .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-            .filter(filterService).length > 0 ? (
-          <Section>
-            <Heading className="mb-1">Search results</Heading>
-            <p className="mb-5 text-xs text-neutral-subtle">
-              Find the service you need to kickstart your next project.
-            </p>
-            <div className="grid grid-cols-3 gap-4">
-              {[...serviceEmpty, ...serviceTemplates]
-                .filter((c) => c.cloud_provider === cloudProvider || !c.cloud_provider)
-                .filter(filterService)
-                .map((service) => (
-                  <CardService
-                    key={service.title}
-                    availableTemplates={availableTemplates}
-                    organizationId={organizationId}
-                    projectId={projectId}
-                    environmentId={environmentId}
-                    cloudProvider={cloudProvider}
-                    isTerraformFeatureFlag={isTerraformFeatureFlag}
-                    onUpgradePlanClick={() => showPylonForm('request-upgrade-plan')}
-                    {...service}
-                  />
-                ))}
-            </div>
-          </Section>
-        ) : (
-          emptyState
         )}
       </div>
       <BlueprintDetailsPanel

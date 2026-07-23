@@ -89,6 +89,7 @@ describe('BlueprintDetailsPanel', () => {
     expect(within(dialog).getByText('Object storage with server-side encryption.')).toBeInTheDocument()
     expect(within(dialog).getByText('AWS')).toBeInTheDocument()
     expect(within(dialog).getByText('v1')).toBeInTheDocument()
+    expect(within(dialog).getAllByText('AWS S3 Bucket')).toHaveLength(1)
     expect(dialog).toHaveTextContent('Blueprint documentation')
     expect(dialog).toHaveTextContent('Versioning')
     expect(within(dialog).getByRole('link', { name: /qovery-blueprints\/s3/i })).toHaveAttribute(

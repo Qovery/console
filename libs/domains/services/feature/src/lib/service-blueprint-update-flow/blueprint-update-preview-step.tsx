@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, Skeleton } from '@qovery/shared/ui'
-import { useBlueprintUpdatePreviewSocket } from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
+import { useBlueprintUpdatePreviewSocket } from '../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import { getRawOutputLineClassName } from './blueprint-update-utils'
 
@@ -14,7 +14,8 @@ const PREVIEW_LOADING_MESSAGES = [
 const PREVIEW_LOADING_MESSAGE_INTERVAL = 8_000
 
 export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
-  const { clusterId, handleUpdate, isUpdateLoading, previewId, requestPreview } = useBlueprintUpdateFlowContext()
+  const { clusterId, handleUpdate, isUpdateLoading, previewError, previewId, requestPreview, retryPreview } =
+    useBlueprintUpdateFlowContext()
 
   useEffect(() => {
     requestPreview()
@@ -26,7 +27,9 @@ export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
       previewId={previewId}
       onBack={onBack}
       onConfirm={handleUpdate}
+      onRetry={retryPreview}
       loading={isUpdateLoading}
+      previewError={previewError}
     />
   )
 }
@@ -36,12 +39,16 @@ function BlueprintUpdatePreview({
   loading,
   onBack,
   onConfirm,
+  onRetry,
+  previewError,
   previewId,
 }: {
   clusterId?: string
   loading: boolean
   onBack: () => void
   onConfirm: () => Promise<void>
+  onRetry: () => Promise<void>
+  previewError: boolean
   previewId?: string
 }) {
   if (!clusterId || !previewId) {
@@ -52,6 +59,8 @@ function BlueprintUpdatePreview({
         loading={loading}
         onBack={onBack}
         onConfirm={onConfirm}
+        onRetry={onRetry}
+        previewError={previewError}
         rawOutput=""
       />
     )
@@ -63,6 +72,8 @@ function BlueprintUpdatePreview({
       loading={loading}
       onBack={onBack}
       onConfirm={onConfirm}
+      onRetry={onRetry}
+      previewError={previewError}
       previewId={previewId}
     />
   )
@@ -73,12 +84,16 @@ function BlueprintUpdatePreviewWithSocket({
   loading,
   onBack,
   onConfirm,
+  onRetry,
+  previewError,
   previewId,
 }: {
   clusterId: string
   loading: boolean
   onBack: () => void
   onConfirm: () => Promise<void>
+  onRetry: () => Promise<void>
+  previewError: boolean
   previewId: string
 }) {
   const { organizationId = '' } = useParams({ strict: false })
@@ -95,6 +110,8 @@ function BlueprintUpdatePreviewWithSocket({
       loading={loading}
       onBack={onBack}
       onConfirm={onConfirm}
+      onRetry={onRetry}
+      previewError={previewError}
       rawOutput={rawOutput}
     />
   )
@@ -106,6 +123,8 @@ function BlueprintUpdatePreviewContent({
   loading,
   onBack,
   onConfirm,
+  onRetry,
+  previewError,
   rawOutput,
 }: {
   hasReceivedPreviewMessage: boolean
@@ -113,28 +132,44 @@ function BlueprintUpdatePreviewContent({
   loading: boolean
   onBack: () => void
   onConfirm: () => Promise<void>
+  onRetry: () => Promise<void>
+  previewError: boolean
   rawOutput: string
 }) {
   const rawOutputContainerHeightClassName = rawOutput
-    ? 'h-[min(75vh,calc(100vh-260px))] min-h-[260px]'
+    ? 'h-[min(75vh,calc(100vh-320px))] min-h-[260px]'
     : 'min-h-[180px]'
 
   return (
-    <FunnelFlowBody customContentWidth="max-w-[620px]">
-      <Section className="gap-6 pb-20">
+    <FunnelFlowBody customContentWidth="max-w-[684px]">
+      <Section className="gap-4">
         <Heading level={1}>Preview changes</Heading>
-
         <Section className="gap-2">
           <Heading level={3}>Raw output</Heading>
           <div
             className={`${rawOutputContainerHeightClassName} overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
           >
-            {rawOutput ? <BlueprintUpdateRawOutput rawOutput={rawOutput} /> : <BlueprintUpdateRawOutputSkeleton />}
+            {previewError ? (
+              <div
+                role="alert"
+                className="flex h-full flex-col items-center justify-center gap-3 text-sm text-neutral-subtle"
+              >
+                <span>Unable to generate the preview.</span>
+                <Button type="button" variant="outline" color="neutral" size="md" onClick={() => void onRetry()}>
+                  <Icon iconName="arrow-rotate-right" iconStyle="regular" />
+                  Retry preview
+                </Button>
+              </div>
+            ) : rawOutput ? (
+              <BlueprintUpdateRawOutput rawOutput={rawOutput} />
+            ) : (
+              <BlueprintUpdateRawOutputSkeleton />
+            )}
           </div>
         </Section>
       </Section>
 
-      <footer className="fixed bottom-0 left-1/2 z-10 flex w-full max-w-[620px] -translate-x-1/2 gap-3 border-t border-neutral bg-background px-4 py-4">
+      <footer className="fixed bottom-0 left-1/2 z-10 flex w-full max-w-[620px] -translate-x-1/2 gap-3 border-t border-neutral bg-background py-4">
         <Button type="button" size="lg" variant="outline" color="neutral" onClick={onBack}>
           Back
         </Button>
@@ -142,7 +177,7 @@ function BlueprintUpdatePreviewContent({
           type="button"
           size="lg"
           className="flex-1 justify-center"
-          disabled={!hasReceivedPreviewMessage || isPreviewOutputLoading || loading}
+          disabled={!hasReceivedPreviewMessage || isPreviewOutputLoading || loading || previewError}
           loading={loading}
           onClick={onConfirm}
         >

@@ -11,6 +11,7 @@ import {
   isFieldValid,
 } from '../../../blueprint-field-utils/blueprint-field-utils'
 import { BlueprintManifestVariableInput } from '../../../blueprint-manifest-variable-input/blueprint-manifest-variable-input'
+import { formatBlueprintName } from '../../../blueprint-utils/blueprint-utils'
 import { usePrefetchBlueprintCatalogServiceManifest } from '../../../hooks/use-blueprint-catalog-service-manifest/use-blueprint-catalog-service-manifest'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import { sortBlueprintMajorVersions } from '../blueprint-creation-utils/blueprint-creation-utils'
@@ -49,13 +50,15 @@ export function BlueprintConfigurationView({ currentSection }: BlueprintConfigur
   }, [setCurrentStep])
 
   return (
-    <FunnelFlowBody customContentWidth="max-w-[620px]">
+    <FunnelFlowBody customContentWidth="max-w-[684px]">
       <header className="mb-5">
-        <h1 className="text-2xl font-medium leading-8 text-neutral">{blueprint.name} configuration</h1>
-        <p className="mt-1 text-sm leading-5 text-neutral-subtle">
+        <h1 className="text-2xl font-medium leading-8 text-neutral">
+          {formatBlueprintName(blueprint.name)} configuration
+        </h1>
+        <p className="mt-2 text-sm leading-5 text-neutral-subtle">
           Provisioned from{' '}
           <button type="button" className="font-normal underline hover:text-neutral" onClick={onViewDetails}>
-            {blueprint.name}
+            {formatBlueprintName(blueprint.name)}
           </button>{' '}
           blueprint
         </p>
@@ -144,7 +147,7 @@ function ServiceInformationSectionContent({ onContinue }: ServiceInformationSect
       />
       {blueprintVersionOptions.length > 1 ? (
         <InputSelect
-          label="Blueprint version"
+          label="Version"
           value={versionTag}
           options={blueprintVersionOptions}
           onChange={(value) =>
@@ -153,7 +156,7 @@ function ServiceInformationSectionContent({ onContinue }: ServiceInformationSect
           isSearchable={blueprintVersionOptions.length > 6}
         />
       ) : (
-        <InputText name="blueprint-version" label="Blueprint version" value={serviceVersion} disabled />
+        <InputText name="blueprint-version" label="Version" value={serviceVersion} disabled />
       )}
       <Button
         type="button"
@@ -254,7 +257,7 @@ function ConfirmBlueprintCreationFooter() {
   const isBlueprintSetupValid = useIsBlueprintSetupValid()
 
   return (
-    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background py-4">
       <Button
         type="button"
         size="lg"
@@ -271,7 +274,7 @@ function ConfirmBlueprintCreationFooter() {
 
 function DisabledConfirmBlueprintCreationFooter() {
   return (
-    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background px-4 py-4">
+    <footer className="fixed bottom-0 left-1/2 z-10 w-full max-w-[620px] -translate-x-1/2 border-t border-neutral bg-background py-4">
       <Button type="button" size="lg" className="w-full justify-center" disabled>
         Confirm blueprint configuration
         <Icon iconName="arrow-right" />
