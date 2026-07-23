@@ -107,18 +107,12 @@ export function VariablesActionToolbar({
         </DropdownMenu.Content>
       </DropdownMenu.Root>
 
-      <Button
-        color="neutral"
-        variant="outline"
-        size="md"
-        className="gap-1.5"
-        onClick={() => _onCreateVariable({ isSecret: true })}
-      >
+      <Button color="neutral" variant="outline" size="md" onClick={() => _onCreateVariable({ isSecret: true })}>
         <Icon iconName="lock-keyhole" iconStyle="regular" />
         Add secret
       </Button>
 
-      <Button color="brand" variant="solid" size="md" className="gap-1.5" onClick={() => _onCreateVariable()}>
+      <Button color="brand" variant="solid" size="md" onClick={() => _onCreateVariable()}>
         <Icon iconName="key" />
         Add variable
       </Button>

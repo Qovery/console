@@ -96,13 +96,7 @@ export function ServiceVariablesCustomTab() {
           className="rounded-none border-0 bg-transparent py-12"
         >
           <div className="flex items-center gap-2">
-            <Button
-              color="neutral"
-              variant="solid"
-              size="md"
-              className="gap-1.5"
-              onClick={() => handleOpenCreateVariableModal()}
-            >
+            <Button color="neutral" variant="solid" size="md" onClick={() => handleOpenCreateVariableModal()}>
               <Icon iconName="key" />
               Add variable
             </Button>
@@ -111,7 +105,6 @@ export function ServiceVariablesCustomTab() {
               color="neutral"
               variant="outline"
               size="md"
-              className="gap-1.5"
               onClick={() => handleOpenCreateVariableModal({ isSecret: true })}
             >
               <Icon iconName="lock-keyhole" iconStyle="regular" />

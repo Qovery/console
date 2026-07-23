@@ -863,13 +863,7 @@ export function VariableList({
           className="rounded-none border-0 bg-transparent py-12"
         >
           <div className="flex items-center gap-2">
-            <Button
-              color="neutral"
-              variant="solid"
-              size="md"
-              className="gap-1.5"
-              onClick={() => _onCreateStandaloneVariable()}
-            >
+            <Button color="neutral" variant="solid" size="md" onClick={() => _onCreateStandaloneVariable()}>
               <Icon iconName="key" />
               Add variable
             </Button>
@@ -878,7 +872,6 @@ export function VariableList({
               color="neutral"
               variant="outline"
               size="md"
-              className="gap-1.5"
               onClick={() => _onCreateStandaloneVariable({ isSecret: true })}
             >
               <Icon iconName="lock-keyhole" iconStyle="regular" />

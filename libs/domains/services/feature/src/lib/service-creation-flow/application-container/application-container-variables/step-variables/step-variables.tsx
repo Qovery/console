@@ -274,7 +274,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                       color="neutral"
                       variant="outline"
                       size="sm"
-                      className="gap-1.5 text-ssm"
+                      className="text-ssm"
                       onClick={() => openVariableModal({ isFile: false, isSecret: true })}
                     >
                       <Icon iconName="lock-keyhole" iconStyle="regular" className="text-ssm" />
@@ -285,7 +285,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                       color="neutral"
                       variant="solid"
                       size="sm"
-                      className="gap-1.5 text-ssm"
+                      className="text-ssm"
                       onClick={() => openVariableModal({ isFile: false })}
                     >
                       <Icon iconName="key" className="text-ssm" />
@@ -310,7 +310,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                         color="neutral"
                         variant="solid"
                         size="md"
-                        className="gap-1.5 text-ssm"
+                        className="text-ssm"
                         onClick={() => openVariableModal({ isFile: false })}
                       >
                         <Icon iconName="key" className="text-ssm" />
@@ -321,7 +321,7 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                         color="neutral"
                         variant="outline"
                         size="md"
-                        className="gap-1.5 text-ssm"
+                        className="text-ssm"
                         onClick={() => openVariableModal({ isFile: false, isSecret: true })}
                       >
                         <Icon iconName="lock-keyhole" iconStyle="regular" className="text-ssm" />
