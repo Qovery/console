@@ -156,6 +156,33 @@ describe('WebhookCrudModal', () => {
     })
   })
 
+  it('should commit a project filter typed but not confirmed with Enter when submitting', async () => {
+    const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} webhook={mockWebhook} />)
+    const url = screen.getByLabelText('URL')
+    const kind = screen.getByLabelText('Kind')
+    const tags = screen.getByTestId('input-tags-field')
+
+    await userEvent.clear(url)
+    await userEvent.type(url, 'https://test.com')
+
+    await selectEvent.select(kind, ['Standard'], {
+      container: document.body,
+    })
+
+    await userEvent.type(tags, 'test')
+
+    const button = screen.getByTestId('submit-button')
+    await userEvent.click(button)
+
+    expect(editWebhookMock).toHaveBeenCalledWith({
+      organizationId: '000-000-000',
+      webhookId: mockWebhook.id,
+      webhookRequest: expect.objectContaining({
+        project_names_filter: ['test'],
+      }),
+    })
+  })
+
   it('should trim URL with trailing whitespace on create', async () => {
     const { userEvent } = renderWithProviders(<WebhookCrudModal {...props} />)
 

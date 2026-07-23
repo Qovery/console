@@ -55,6 +55,17 @@ export function InputTags(props: InputTagsProps) {
     isLabelTransitionDisabled && '!transition-none'
   )
 
+  const commitTag = (rawValue: string) => {
+    const value = rawValue.trim()
+    if (!value) return
+    if (currentTags.find((v) => value.toLowerCase() === v.toLowerCase())) return
+
+    const newTags = [...currentTags, value]
+    setCurrentTags(newTags)
+    setInputValue('')
+    onChange && onChange(newTags)
+  }
+
   const handleKeyDown = (event: FormEvent<HTMLInputElement>) => {
     const key = (event as KeyboardEvent<HTMLInputElement>).key
     const target = event.target as HTMLInputElement
@@ -69,14 +80,7 @@ export function InputTags(props: InputTagsProps) {
     if (key === 'Enter') {
       event.preventDefault()
       event.stopPropagation()
-
-      if (!value.trim()) return
-      if (currentTags.find((v) => value.toLowerCase() === v.toLowerCase())) return
-
-      const newTags = [...currentTags, value]
-      setCurrentTags(newTags)
-      setInputValue('')
-      onChange && onChange(newTags)
+      commitTag(value)
     }
   }
 
@@ -116,6 +120,7 @@ export function InputTags(props: InputTagsProps) {
           ref={ref}
           data-testid="input-tags-field"
           onKeyDown={handleKeyDown}
+          onBlur={(e) => commitTag(e.currentTarget.value)}
           type="text"
           className={twMerge(
             'bg-transparent',
