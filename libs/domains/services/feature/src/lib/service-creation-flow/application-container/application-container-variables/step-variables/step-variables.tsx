@@ -87,62 +87,6 @@ function emptyState({
   )
 }
 
-function customVariableActions({
-  buttonSize,
-  variableFirst = false,
-  onAddVariable,
-  onAddSecret,
-}: {
-  buttonSize: 'sm' | 'md'
-  variableFirst?: boolean
-  onAddVariable: () => void
-  onAddSecret: () => void
-}) {
-  const variableButton = (
-    <Button
-      type="button"
-      color="neutral"
-      variant="solid"
-      size={buttonSize}
-      className="gap-1.5 text-ssm"
-      onClick={onAddVariable}
-    >
-      <Icon iconName="key" className="text-ssm" />
-      Add variable
-    </Button>
-  )
-
-  const secretButton = (
-    <Button
-      type="button"
-      color="neutral"
-      variant="outline"
-      size={buttonSize}
-      className="gap-1.5 text-ssm"
-      onClick={onAddSecret}
-    >
-      <Icon iconName="lock-keyhole" iconStyle="regular" className="text-ssm" />
-      Add secret
-    </Button>
-  )
-
-  return (
-    <div className="flex flex-wrap items-center justify-center gap-2">
-      {variableFirst ? (
-        <>
-          {variableButton}
-          {secretButton}
-        </>
-      ) : (
-        <>
-          {secretButton}
-          {variableButton}
-        </>
-      )}
-    </div>
-  )
-}
-
 function mapModalDataToVariable(data: CreateUpdateVariableModalSubmitData, current?: VariableData): VariableData {
   return {
     variable: data.key,
@@ -323,12 +267,32 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
             <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
               <div className="flex min-h-[52px] items-center justify-between px-4 pb-5 pt-3">
                 <p className="text-sm font-medium text-neutral">Custom variables</p>
-                {variables.length > 0 &&
-                  customVariableActions({
-                    buttonSize: 'sm',
-                    onAddVariable: () => openVariableModal({ isFile: false }),
-                    onAddSecret: () => openVariableModal({ isFile: false, isSecret: true }),
-                  })}
+                {variables.length > 0 && (
+                  <div className="flex flex-wrap items-center justify-center gap-2">
+                    <Button
+                      type="button"
+                      color="neutral"
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 text-ssm"
+                      onClick={() => openVariableModal({ isFile: false, isSecret: true })}
+                    >
+                      <Icon iconName="lock-keyhole" iconStyle="regular" className="text-ssm" />
+                      Add secret
+                    </Button>
+                    <Button
+                      type="button"
+                      color="neutral"
+                      variant="solid"
+                      size="sm"
+                      className="gap-1.5 text-ssm"
+                      onClick={() => openVariableModal({ isFile: false })}
+                    >
+                      <Icon iconName="key" className="text-ssm" />
+                      Add variable
+                    </Button>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -340,12 +304,30 @@ export function ApplicationContainerStepVariables({ onBack, onSubmit }: Applicat
                     icon="lock-keyhole"
                     className="h-auto rounded-none border-0 bg-transparent px-8 py-8"
                   >
-                    {customVariableActions({
-                      buttonSize: 'md',
-                      variableFirst: true,
-                      onAddVariable: () => openVariableModal({ isFile: false }),
-                      onAddSecret: () => openVariableModal({ isFile: false, isSecret: true }),
-                    })}
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      <Button
+                        type="button"
+                        color="neutral"
+                        variant="solid"
+                        size="md"
+                        className="gap-1.5 text-ssm"
+                        onClick={() => openVariableModal({ isFile: false })}
+                      >
+                        <Icon iconName="key" className="text-ssm" />
+                        Add variable
+                      </Button>
+                      <Button
+                        type="button"
+                        color="neutral"
+                        variant="outline"
+                        size="md"
+                        className="gap-1.5 text-ssm"
+                        onClick={() => openVariableModal({ isFile: false, isSecret: true })}
+                      >
+                        <Icon iconName="lock-keyhole" iconStyle="regular" className="text-ssm" />
+                        Add secret
+                      </Button>
+                    </div>
                   </EmptyState>
                 ) : (
                   <>
