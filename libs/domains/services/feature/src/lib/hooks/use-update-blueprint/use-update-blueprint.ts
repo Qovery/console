@@ -14,9 +14,9 @@ export function useUpdateBlueprint({
   const queryClient = useQueryClient()
 
   return useMutation(mutations.updateBlueprint, {
-    onSuccess(response) {
+    onSuccess() {
       queryClient.invalidateQueries({
-        queryKey: queries.services.list(response.environment_id).queryKey,
+        queryKey: queries.services.list(environmentId).queryKey,
       })
       queryClient.invalidateQueries({
         queryKey: queries.services.details({ serviceId, serviceType }).queryKey,
