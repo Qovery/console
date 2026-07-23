@@ -13,6 +13,7 @@ const blueprintService = {
   service_type: 'TERRAFORM',
   serviceType: 'TERRAFORM',
   icon_uri: 'app://qovery-console/s3',
+  environment: { id: 'environment-id' },
   blueprint_id: 'blueprint-id',
   tag: 'AWS/s3/1.2.3',
   terraform_files_source: {

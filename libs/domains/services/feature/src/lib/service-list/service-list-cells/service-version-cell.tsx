@@ -43,7 +43,7 @@ function BlueprintVersionInfo({
   service: BlueprintService
   gitRepository: ApplicationGitRepository
 }) {
-  const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false }) ?? {}
+  const { organizationId = '', projectId = '' } = useParams({ strict: false }) ?? {}
   const { data: blueprintUpdate, isLoading } = useBlueprintUpdate({ blueprintId: service.blueprint_id })
   const version = blueprintUpdate?.current_tag ? getBlueprintServiceVersion(blueprintUpdate.current_tag) : undefined
 
@@ -88,8 +88,6 @@ function BlueprintVersionInfo({
           <BlueprintUpdateBadge
             blueprintUpdate={blueprintUpdate}
             service={service}
-            serviceId={service.id}
-            environmentId={environmentId}
             organizationId={organizationId}
             projectId={projectId}
           />

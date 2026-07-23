@@ -7,20 +7,16 @@ import { getBlueprintUpdateTitle, hasBlueprintUpdateReviewSections } from './blu
 
 export interface BlueprintUpdateBadgeProps {
   blueprintUpdate: BlueprintUpdateResponse
-  environmentId: string
   organizationId: string
   projectId: string
-  service?: Pick<AnyService, 'id' | 'name'>
-  serviceId: string
+  service: AnyService
 }
 
 export function BlueprintUpdateBadge({
   blueprintUpdate,
-  environmentId,
   organizationId,
   projectId,
   service,
-  serviceId,
 }: BlueprintUpdateBadgeProps) {
   const navigate = useNavigate()
   const { openModal } = useModal()
@@ -31,7 +27,7 @@ export function BlueprintUpdateBadge({
         step === 'preview'
           ? '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
           : '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
-      params: { organizationId, projectId, environmentId, serviceId: service?.id ?? serviceId },
+      params: { organizationId, projectId, environmentId: service.environment.id, serviceId: service.id },
     })
   }
 
@@ -58,7 +54,7 @@ export function BlueprintUpdateBadge({
           content: (
             <BlueprintUpdateNoInputConfirmationModal
               title={getBlueprintUpdateTitle({
-                serviceName: service?.name ?? 'Blueprint',
+                serviceName: service.name,
                 currentTag: blueprintUpdate.current_tag,
                 latestTag: blueprintUpdate.latest_tag,
               })}

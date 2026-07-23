@@ -206,7 +206,7 @@ function BlueprintMetadata({
   gitRepository?: ApplicationGitRepository
   service: AnyService
 }) {
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
+  const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
   const currentVersion = blueprintUpdate?.current_tag
     ? getBlueprintServiceVersion(blueprintUpdate.current_tag)
@@ -225,8 +225,6 @@ function BlueprintMetadata({
         <BlueprintUpdateBadge
           blueprintUpdate={blueprintUpdate}
           service={service}
-          serviceId={serviceId}
-          environmentId={environmentId}
           organizationId={organizationId}
           projectId={projectId}
         />
