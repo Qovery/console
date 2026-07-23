@@ -5,7 +5,7 @@ import {
 } from 'qovery-typescript-axios'
 import { type ReactNode, createContext, useContext } from 'react'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { type BlueprintFieldValue, type BlueprintFieldValues } from '../../blueprint-field-utils/blueprint-field-utils'
+import { type BlueprintFieldValue, type BlueprintFieldValues } from '../blueprint-field-utils/blueprint-field-utils'
 import {
   type BlueprintUpdateEditableValue,
   type BlueprintUpdateReviewSection,
@@ -21,12 +21,14 @@ export interface BlueprintUpdateFlowContextValue {
   completedSections: BlueprintUpdateSection[]
   handleUpdate: () => Promise<void>
   isPreviewLoading: boolean
+  previewError: boolean
   isRequiredValid: boolean
   isUpdateLoading: boolean
   onChange: (name: string, value: BlueprintFieldValue) => void
   previewId?: string
   removedValues: BlueprintUpdateRemovedValue[]
   requestPreview: () => Promise<void>
+  retryPreview: () => Promise<void>
   requiredValues: BlueprintUpdateNewRequiredValue[]
   reviewSections: BlueprintUpdateReviewSection[]
   service: AnyService

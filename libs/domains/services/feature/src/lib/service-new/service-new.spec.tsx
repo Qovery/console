@@ -112,21 +112,21 @@ describe('ServiceNew', () => {
     expect(baseElement).toBeTruthy()
   })
 
-  it('should render search input and documentation link', () => {
+  it('should not render a page-level service search', () => {
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
-    expect(screen.getByPlaceholderText('Search…')).toBeInTheDocument()
-    expect(screen.getByText('See documentation')).toBeInTheDocument()
+    expect(screen.queryByPlaceholderText('Search…')).not.toBeInTheDocument()
+    expect(screen.queryByText('See documentation')).not.toBeInTheDocument()
   })
 
-  it('should render Default Qovery services section with main service types', () => {
+  it('should render Base services section with main service types', () => {
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
-    expect(screen.getByRole('heading', { name: 'Default Qovery services' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Base services' })).toBeInTheDocument()
     expect(screen.getByText('Application')).toBeInTheDocument()
-    expect(screen.getByText('Database')).toBeInTheDocument()
+    expect(screen.getByText('Container Database')).toBeInTheDocument()
     expect(screen.getByText('Lifecycle Job')).toBeInTheDocument()
     expect(screen.getByText('Cron Job')).toBeInTheDocument()
     expect(screen.getByText('Helm')).toBeInTheDocument()
@@ -151,15 +151,42 @@ describe('ServiceNew', () => {
     )
   })
 
-  it('should render template sections by tag', () => {
+  it('should show base service descriptions in info tooltips', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    await userEvent.hover(screen.getByRole('img', { name: 'Lifecycle Job details' }))
+
+    expect(
+      await screen.findAllByText('Execute any type of script coming from Git or a Container Registry.')
+    ).not.toHaveLength(0)
+  })
+
+  it('should render legacy template sections when the service catalog is disabled', () => {
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
+
     expect(screen.getByRole('heading', { name: 'Data & Storage' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Back-end' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Front-end' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'IAC' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'More template' })).toBeInTheDocument()
+  })
+
+  it('should hide legacy template sections when the service catalog is enabled', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.queryByRole('heading', { name: 'Data & Storage' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Back-end' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Front-end' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'IAC' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'More template' })).not.toBeInTheDocument()
   })
 
   it('should render blueprint cards from the catalog', async () => {
@@ -188,6 +215,64 @@ describe('ServiceNew', () => {
 
     expect(blueprintsSectionScreen.queryByText('AWS S3 Bucket')).not.toBeInTheDocument()
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
+  })
+
+  it('should show an empty state when the blueprint search has no results', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    const blueprintsSection = screen.getByRole('heading', { name: 'Blueprints' }).closest('section')
+    const blueprintsSectionScreen = within(blueprintsSection as HTMLElement)
+
+    await userEvent.type(screen.getByPlaceholderText('Search blueprints...'), 'does-not-exist')
+
+    expect(screen.getByRole('heading', { name: 'Blueprints' })).toBeInTheDocument()
+    expect(blueprintsSectionScreen.getByText('No blueprints found')).toBeInTheDocument()
+    expect(blueprintsSectionScreen.queryByText('AWS S3 Bucket')).not.toBeInTheDocument()
+  })
+
+  it('should format slug blueprint names', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: { blueprints: [{ ...blueprints[0], name: 'aws-rds-mysql' }] },
+    })
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.getByText('AWS RDS MySQL')).toBeInTheDocument()
+  })
+
+  it('should only display blueprints compatible with the environment cluster', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: {
+        blueprints: [
+          { ...blueprints[0], name: 'AWS S3', provider: 'AWS' },
+          { ...blueprints[0], name: 'Scaleway Object Storage', provider: 'SCW' },
+          { ...blueprints[1], name: 'Helm Redis', provider: 'HELM' },
+        ],
+      },
+    })
+
+    renderWithProviders(
+      <ServiceNew
+        organizationId="org-1"
+        projectId="project-1"
+        environmentId="env-1"
+        cloudProvider="AWS"
+        availableTemplates={[]}
+      />
+    )
+
+    expect(screen.getByText('AWS S3')).toBeInTheDocument()
+    expect(screen.getByText('Helm Redis')).toBeInTheDocument()
+    expect(screen.queryByText('Scaleway Object Storage')).not.toBeInTheDocument()
   })
 
   it('should not render deploy actions for blueprints without a service family', async () => {
@@ -319,12 +404,10 @@ describe('ServiceNew', () => {
     })
   })
 
-  it('should keep default service links valid when rendered from search results', async () => {
-    const { container, userEvent } = renderWithProviders(
+  it('should keep default service links valid', () => {
+    const { container } = renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
-
-    await userEvent.type(screen.getByPlaceholderText('Search…'), 'application')
 
     expect(
       container.querySelector(

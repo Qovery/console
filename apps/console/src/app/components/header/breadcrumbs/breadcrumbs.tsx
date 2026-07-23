@@ -148,6 +148,17 @@ export function Breadcrumbs() {
   if (currentCluster) {
     breadcrumbData.push({
       item: {
+        id: 'clusters',
+        label: 'Clusters',
+        path: buildLocation({
+          to: '/organization/$organizationId/clusters',
+          params: { organizationId },
+        }).href,
+      },
+      items: [],
+    })
+    breadcrumbData.push({
+      item: {
         ...currentCluster,
         prefix: <ClusterAvatar cluster={clusters.find((cluster) => cluster.id === clusterId)} size="sm" />,
       },

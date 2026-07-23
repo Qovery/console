@@ -21,28 +21,28 @@ function ServiceNewContent() {
 
   return (
     <Section className="flex w-full flex-1 flex-col pb-24 pt-8">
-      <Link
-        color="brand"
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
-        params={{ organizationId, projectId, environmentId }}
-        className="mb-8 gap-1 text-sm"
-      >
-        <Icon iconName="arrow-left" />
-        Back to services list
-      </Link>
-      <div className="mb-4 flex flex-col text-center">
-        <Heading className="mb-2 text-2xl text-neutral">Create new service</Heading>
-        <p className="text-sm text-neutral-subtle">
-          Step into the Qovery service and embrace the power of collaboration to kickstart your next project.
-        </p>
+      <div className="mx-auto flex w-full max-w-[1240px] flex-col gap-8">
+        <div className="flex flex-col gap-2 border-b border-neutral pb-6">
+          <Link
+            color="brand"
+            size="xs"
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
+            params={{ organizationId, projectId, environmentId }}
+            className="gap-1"
+          >
+            <Icon iconName="arrow-left" className="text-2xs" />
+            Back to services list
+          </Link>
+          <Heading className="text-2xl leading-8 text-neutral">Create new service</Heading>
+        </div>
+        <ServiceNew
+          organizationId={organizationId}
+          projectId={projectId}
+          environmentId={environmentId}
+          cloudProvider={cloudProvider}
+          availableTemplates={availableTemplates}
+        />
       </div>
-      <ServiceNew
-        organizationId={organizationId}
-        projectId={projectId}
-        environmentId={environmentId}
-        cloudProvider={cloudProvider}
-        availableTemplates={availableTemplates}
-      />
     </Section>
   )
 }

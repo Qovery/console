@@ -1,5 +1,4 @@
-import * as Dialog from '@radix-ui/react-dialog'
-import { Link, useNavigate, useParams } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import { type ApplicationGitRepository, type Credentials, type Environment } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { P, match } from 'ts-pattern'
@@ -29,7 +28,6 @@ import {
   Tooltip,
   Truncate,
   toast,
-  useModal,
 } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
@@ -38,17 +36,13 @@ import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-servic
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
-import { useService } from '../../hooks/use-service/use-service'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
+import { BlueprintUpdateBadge } from '../../service-blueprint-update-flow/blueprint-update-badge'
+import { getBlueprintServiceVersion } from '../../service-blueprint-update-flow/blueprint-update-utils'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
-import {
-  BLUEPRINT_RELEASE_NOTES_URL,
-  getBlueprintUpdateVersion,
-  hasBlueprintUpdateReviewSections,
-} from '../../service-update-flow/blueprint/blueprint-update-flow'
 
 export function GitRepository({ gitRepository }: { gitRepository: ApplicationGitRepository }) {
   return (
@@ -171,94 +165,71 @@ function BlueprintUpdateBadgeSkeleton() {
   return <Skeleton width={122} height={24} />
 }
 
-function BlueprintUpdateBadge({ blueprintId }: { blueprintId: string }) {
-  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
-  const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
-  const navigate = useNavigate()
-  const { openModal } = useModal()
-  const openUpdateFlow = (step?: 'preview') => {
-    navigate({
-      to:
-        step === 'preview'
-          ? '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
-          : '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
-      params: { organizationId, projectId, environmentId, serviceId: service?.id ?? serviceId },
-    })
-  }
-
-  if (!blueprintUpdate) {
+function BlueprintRepository({ gitRepository }: { gitRepository: ApplicationGitRepository }) {
+  if (!gitRepository.url || !gitRepository.name) {
     return null
   }
 
-  return blueprintUpdate.is_up_to_date ? (
-    <Badge variant="outline" color="green" className="gap-1 whitespace-nowrap">
-      <Icon iconName="circle-check" iconStyle="regular" />
-      Up to date
-    </Badge>
-  ) : (
-    <button
-      type="button"
-      className="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-      onClick={() => {
-        if (hasBlueprintUpdateReviewSections(blueprintUpdate)) {
-          openUpdateFlow()
-          return
-        }
-
-        openModal({
-          content: (
-            <BlueprintUpdateNoInputConfirmationModal
-              title={`${service?.name ?? 'Blueprint'} blueprint update to ${
-                getBlueprintUpdateVersion(blueprintUpdate.latest_tag) ?? blueprintUpdate.latest_tag
-              }`}
-              onConfirm={() => openUpdateFlow('preview')}
-            />
-          ),
-        })
-      }}
+  return (
+    <ExternalLink
+      href={buildGitProviderUrl(gitRepository.url)}
+      target="_blank"
+      rel="noopener noreferrer"
+      variant="outline"
+      color="neutral"
+      size="xs"
+      as="button"
+      className="text-nowrap"
     >
-      <Badge variant="surface" color="sky" className="gap-1 whitespace-nowrap font-medium">
-        <Icon iconName="arrow-rotate-right" iconStyle="regular" />
-        Update available
-      </Badge>
-    </button>
+      {gitRepository.provider && <Icon width={12} name={gitRepository.provider} />}
+      <Truncate text={gitRepository.name} truncateLimit={17} />
+    </ExternalLink>
   )
 }
 
-function BlueprintUpdateNoInputConfirmationModal({ onConfirm, title }: { onConfirm: () => void; title: string }) {
-  const { closeModal } = useModal()
+function BlueprintMetadataSkeleton({ gitRepository }: { gitRepository?: ApplicationGitRepository }) {
+  return (
+    <>
+      <Skeleton width={50} height={24} />
+      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
+      <BlueprintUpdateBadgeSkeleton />
+    </>
+  )
+}
+
+function BlueprintMetadata({
+  blueprintId,
+  gitRepository,
+  service,
+}: {
+  blueprintId: string
+  gitRepository?: ApplicationGitRepository
+  service: AnyService
+}) {
+  const { organizationId = '', projectId = '' } = useParams({ strict: false })
+  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
+  const currentVersion = blueprintUpdate?.current_tag
+    ? getBlueprintServiceVersion(blueprintUpdate.current_tag)
+    : undefined
 
   return (
-    <div className="flex flex-col gap-5 p-6">
-      <div className="flex flex-col gap-2 pr-12">
-        <Dialog.Title asChild>
-          <h2 className="text-xl font-medium leading-7 text-neutral">{title}</h2>
-        </Dialog.Title>
-        <ExternalLink href={BLUEPRINT_RELEASE_NOTES_URL} color="brand" size="sm" underline>
-          Release notes
-        </ExternalLink>
-      </div>
-      <Dialog.Description className="text-sm leading-5 text-neutral-subtle">
-        No configuration input is required. Continue to preview the update.
-      </Dialog.Description>
-      <div className="flex justify-end gap-3">
-        <Button type="button" variant="outline" color="neutral" size="lg" onClick={closeModal}>
-          Cancel
-        </Button>
-        <Button
-          type="button"
-          size="lg"
-          onClick={() => {
-            closeModal()
-            onConfirm()
-          }}
-        >
-          Continue
-          <Icon iconName="arrow-right" />
-        </Button>
-      </div>
-    </div>
+    <>
+      {currentVersion && currentVersion !== 'default' && (
+        <Badge variant="outline" className="gap-1 whitespace-nowrap">
+          <ServiceAvatar service={service} size="custom" radius="none" serviceAvatarRadius="sm" className="h-3 w-3" />
+          <span>v{currentVersion}</span>
+        </Badge>
+      )}
+      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
+      {blueprintUpdate && (
+        <BlueprintUpdateBadge
+          blueprintUpdate={blueprintUpdate}
+          service={service}
+          organizationId={organizationId}
+          projectId={projectId}
+        />
+      )}
+    </>
   )
 }
 
@@ -270,6 +241,13 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
   })
   const [, copyToClipboard] = useCopyToClipboard()
   const blueprintId = 'blueprint_id' in service ? service.blueprint_id : undefined
+  const gitRepository = match(service)
+    .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+    .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, ({ source }) => source.docker?.git_repository)
+    .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, ({ source }) => source.git?.git_repository)
+    .with({ serviceType: 'TERRAFORM' }, ({ terraform_files_source }) => terraform_files_source?.git?.git_repository)
+    .with({ serviceType: 'ARGOCD_APP' }, ({ git_repository }) => git_repository)
+    .otherwise(() => undefined)
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
@@ -307,41 +285,14 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
 
   return (
     <div className="mt-3 flex items-center gap-1">
-      {match(service)
-        .with(
-          { serviceType: 'APPLICATION' },
-          {
-            serviceType: 'JOB',
-            source: P.when(isJobGitSource),
-          },
-          {
-            serviceType: 'TERRAFORM',
-          },
-          {
-            serviceType: 'HELM',
-            source: P.when(isHelmGitSource),
-          },
-          { serviceType: 'ARGOCD_APP' },
-          (service) => {
-            const gitRepository = match(service)
-              .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
-              .with({ serviceType: 'JOB' }, ({ source }) => source.docker?.git_repository)
-              .with({ serviceType: 'HELM' }, ({ source }) => source.git?.git_repository)
-              .with(
-                { serviceType: 'TERRAFORM' },
-                ({ terraform_files_source }) => terraform_files_source?.git?.git_repository
-              )
-              .with({ serviceType: 'ARGOCD_APP' }, ({ git_repository }) => git_repository)
-              .exhaustive()
-
-            if (!gitRepository) {
-              return null
-            }
-
-            return <GitRepository gitRepository={gitRepository} />
-          }
-        )
-        .otherwise(() => undefined)}
+      {gitRepository &&
+        (blueprintId ? (
+          <Suspense fallback={<BlueprintMetadataSkeleton gitRepository={gitRepository} />}>
+            <BlueprintMetadata blueprintId={blueprintId} gitRepository={gitRepository} service={service} />
+          </Suspense>
+        ) : (
+          <GitRepository gitRepository={gitRepository} />
+        ))}
       {isArgoCdService && 'manifest_revision' in service && service.manifest_revision && (
         <CopyToClipboard text={service.manifest_revision}>
           <Button type="button" variant="outline" color="neutral" size="xs" className="pl-1">
@@ -400,9 +351,9 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           </Badge>
         </>
       )}
-      {blueprintId && (
-        <Suspense fallback={<BlueprintUpdateBadgeSkeleton />}>
-          <BlueprintUpdateBadge blueprintId={blueprintId} />
+      {blueprintId && !gitRepository && (
+        <Suspense fallback={<BlueprintMetadataSkeleton />}>
+          <BlueprintMetadata blueprintId={blueprintId} service={service} />
         </Suspense>
       )}
       {databaseSource && (

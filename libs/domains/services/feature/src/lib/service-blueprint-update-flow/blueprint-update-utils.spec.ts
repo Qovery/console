@@ -1,8 +1,10 @@
 import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
 import {
   buildBlueprintUpdatePayload,
+  getBlueprintServiceVersion,
   getBlueprintUpdateFieldValue,
   getBlueprintUpdatePayloadValue,
+  getBlueprintUpdateTitle,
   getBlueprintUpdateVersion,
   getFirstAvailableUpdateSection,
   getRawOutputLineClassName,
@@ -12,6 +14,7 @@ import {
 function createBlueprintUpdate(overrides: Partial<BlueprintUpdateResponse> = {}): BlueprintUpdateResponse {
   return {
     is_up_to_date: false,
+    current_tag: 'AWS/postgres/17/1.1.0',
     latest_tag: 'AWS/postgres/17/1.2.5',
     new_required_values: [],
     new_optional_values: [],
@@ -26,6 +29,20 @@ function createBlueprintUpdate(overrides: Partial<BlueprintUpdateResponse> = {})
 describe('blueprint update utils', () => {
   it('extracts the version from a blueprint tag', () => {
     expect(getBlueprintUpdateVersion('AWS/postgres/17/1.2.5/')).toBe('1.2.5')
+  })
+
+  it('extracts the service version from a blueprint tag', () => {
+    expect(getBlueprintServiceVersion('AWS/mysql/7.8/1.2.5/')).toBe('7.8')
+  })
+
+  it('formats a blueprint update title with the current and latest versions', () => {
+    expect(
+      getBlueprintUpdateTitle({
+        serviceName: 'postgres',
+        currentTag: 'AWS/postgres/17/1.1.0',
+        latestTag: 'AWS/postgres/17/1.2.5',
+      })
+    ).toBe('postgres blueprint update from 1.1.0 to 1.2.5')
   })
 
   it('selects the first section that needs user attention', () => {

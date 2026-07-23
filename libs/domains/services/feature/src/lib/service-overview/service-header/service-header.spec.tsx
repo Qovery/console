@@ -413,7 +413,8 @@ describe('ServiceHeader', () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: true,
-        latest_tag: 'aws/s3/1.0.0',
+        current_tag: 'AWS/mysql/8/1.0.0',
+        latest_tag: 'AWS/mysql/8/1.0.0',
         new_required_values: [],
         new_optional_values: [],
         now_required_values: [],
@@ -428,14 +429,42 @@ describe('ServiceHeader', () => {
     renderServiceHeader('terraform-mock')
 
     expect(mockUseBlueprintUpdate).toHaveBeenCalledWith({ blueprintId: 'blueprint-id', suspense: true })
+    expect(screen.getByText('v8')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /qovery-blueprints/ })).toHaveAttribute(
+      'href',
+      'https://github.com/qovery-blueprints/s3'
+    )
+    expect(screen.queryByText('GitHub')).not.toBeInTheDocument()
+    expect(screen.queryByText('main')).not.toBeInTheDocument()
     expect(screen.getByText('Up to date')).toBeInTheDocument()
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+  })
+
+  it('does not render the default service version', () => {
+    mockUseBlueprintUpdate.mockReturnValue({
+      data: {
+        is_up_to_date: true,
+        current_tag: 'AWS/mysql/default/1.0.0',
+        latest_tag: 'AWS/mysql/default/1.0.0',
+        new_required_values: [],
+        new_optional_values: [],
+        now_required_values: [],
+        updated_values: [],
+        removed_values: [],
+        engine_diff: { updated_values: [] },
+      },
+    })
+
+    renderServiceHeader('terraform-mock')
+
+    expect(screen.queryByText('default')).not.toBeInTheDocument()
   })
 
   it('opens the blueprint update review flow from the update available badge when values require review', async () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: false,
+        current_tag: 'aws/s3/1.0',
         latest_tag: 'aws/s3/2.0',
         new_required_values: [],
         new_optional_values: [],
@@ -478,6 +507,7 @@ describe('ServiceHeader', () => {
     mockUseBlueprintUpdate.mockReturnValue({
       data: {
         is_up_to_date: false,
+        current_tag: 'aws/s3/1.0',
         latest_tag: 'aws/s3/2.0',
         new_required_values: [],
         new_optional_values: [],
@@ -495,10 +525,14 @@ describe('ServiceHeader', () => {
     await userEvent.click(screen.getByRole('button', { name: /update available/i }))
 
     expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
-    expect(await screen.findByRole('heading', { name: 'aws-s3-bucket blueprint update to 2.0' })).toBeInTheDocument()
-    expect(screen.getByText('No configuration input is required. Continue to preview the update.')).toBeInTheDocument()
+    expect(
+      await screen.findByRole('heading', { name: 'aws-s3-bucket blueprint update from 1.0 to 2.0' })
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByText('No configuration input is required. Continue to preview the update.')
+    ).not.toBeInTheDocument()
 
-    await userEvent.click(screen.getByRole('button', { name: /continue/i }))
+    await userEvent.click(screen.getByRole('button', { name: /preview changes/i }))
 
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview',
@@ -511,14 +545,14 @@ describe('ServiceHeader', () => {
     })
   })
 
-  it('renders a skeleton while the blueprint update badge is loading', () => {
+  it('renders metadata skeletons while the blueprint update is loading', () => {
     mockUseBlueprintUpdate.mockImplementation(() => {
       throw new Promise(() => undefined)
     })
 
     renderServiceHeader('terraform-mock')
 
-    expect(screen.getByRole('generic', { busy: true })).toBeInTheDocument()
+    expect(screen.getAllByRole('generic', { busy: true })).toHaveLength(2)
   })
 
   it('does not check blueprint update availability for non-blueprint services', () => {
