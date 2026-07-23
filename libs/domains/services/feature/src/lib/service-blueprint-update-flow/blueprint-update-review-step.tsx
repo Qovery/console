@@ -10,8 +10,8 @@ import {
   type BlueprintFieldValue,
   type BlueprintFieldValues,
   getFieldValidationError,
-} from '../../blueprint-field-utils/blueprint-field-utils'
-import { BlueprintManifestVariableInput } from '../../blueprint-manifest-variable-input/blueprint-manifest-variable-input'
+} from '../blueprint-field-utils/blueprint-field-utils'
+import { BlueprintManifestVariableInput } from '../blueprint-manifest-variable-input/blueprint-manifest-variable-input'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import {
   BLUEPRINT_RELEASE_NOTES_URL,

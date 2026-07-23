@@ -9,7 +9,7 @@ const mockDeployBlueprint = jest.fn()
 const mockPreviewBlueprintUpdate = jest.fn()
 const mockUpdateBlueprint = jest.fn()
 
-jest.mock('../../hooks/use-blueprint-update/use-blueprint-update', () => ({
+jest.mock('../hooks/use-blueprint-update/use-blueprint-update', () => ({
   useBlueprintUpdate: () => ({
     data: {
       is_up_to_date: false,
@@ -25,15 +25,15 @@ jest.mock('../../hooks/use-blueprint-update/use-blueprint-update', () => ({
   }),
 }))
 
-jest.mock('../../hooks/use-deploy-blueprint/use-deploy-blueprint', () => ({
+jest.mock('../hooks/use-deploy-blueprint/use-deploy-blueprint', () => ({
   useDeployBlueprint: () => ({ mutateAsync: mockDeployBlueprint, isLoading: false }),
 }))
 
-jest.mock('../../hooks/use-preview-blueprint-update/use-preview-blueprint-update', () => ({
+jest.mock('../hooks/use-preview-blueprint-update/use-preview-blueprint-update', () => ({
   usePreviewBlueprintUpdate: () => ({ mutateAsync: mockPreviewBlueprintUpdate, isLoading: false }),
 }))
 
-jest.mock('../../hooks/use-update-blueprint/use-update-blueprint', () => ({
+jest.mock('../hooks/use-update-blueprint/use-update-blueprint', () => ({
   useUpdateBlueprint: () => ({ mutateAsync: mockUpdateBlueprint, isLoading: false }),
 }))
 

@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, Skeleton } from '@qovery/shared/ui'
-import { useBlueprintUpdatePreviewSocket } from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
+import { useBlueprintUpdatePreviewSocket } from '../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import { getRawOutputLineClassName } from './blueprint-update-utils'
 

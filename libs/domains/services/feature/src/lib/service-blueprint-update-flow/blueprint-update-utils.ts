@@ -8,7 +8,7 @@ import {
   type BlueprintUpdateUpdatedValue,
 } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
-import { type BlueprintFieldValue, type BlueprintFieldValues } from '../../blueprint-field-utils/blueprint-field-utils'
+import { type BlueprintFieldValue, type BlueprintFieldValues } from '../blueprint-field-utils/blueprint-field-utils'
 
 export type BlueprintUpdateSection = 'required' | 'optional' | 'modified' | 'removed'
 export type BlueprintUpdateVariablePatch = Record<string, { value: string; is_secret?: boolean }>

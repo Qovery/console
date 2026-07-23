@@ -41,8 +41,8 @@ import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
-import { BlueprintUpdateBadge } from '../../service-update-flow/blueprint/blueprint-update-badge'
-import { getBlueprintServiceVersion } from '../../service-update-flow/blueprint/blueprint-update-utils'
+import { BlueprintUpdateBadge } from '../../service-blueprint-update-flow/blueprint-update-badge'
+import { getBlueprintServiceVersion } from '../../service-blueprint-update-flow/blueprint-update-utils'
 
 export function GitRepository({ gitRepository }: { gitRepository: ApplicationGitRepository }) {
   return (

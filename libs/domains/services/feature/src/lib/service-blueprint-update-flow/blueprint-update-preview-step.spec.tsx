@@ -1,11 +1,11 @@
 import { useParams } from '@tanstack/react-router'
 import { act } from '@testing-library/react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useBlueprintUpdatePreviewSocket } from '../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
+import { useBlueprintUpdatePreviewSocket } from '../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import { BlueprintUpdatePreviewStep } from './blueprint-update-preview-step'
 
-jest.mock('../../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket', () => ({
+jest.mock('../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket', () => ({
   useBlueprintUpdatePreviewSocket: jest.fn(),
 }))
 

@@ -29,8 +29,8 @@ import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-bluepri
 import LastCommit from '../../last-commit/last-commit'
 import LastVersion from '../../last-version/last-version'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
-import { BlueprintUpdateBadge } from '../../service-update-flow/blueprint/blueprint-update-badge'
-import { getBlueprintServiceVersion } from '../../service-update-flow/blueprint/blueprint-update-utils'
+import { BlueprintUpdateBadge } from '../../service-blueprint-update-flow/blueprint-update-badge'
+import { getBlueprintServiceVersion } from '../../service-blueprint-update-flow/blueprint-update-utils'
 
 type ServiceVersionCellProps = {
   service: AnyService
