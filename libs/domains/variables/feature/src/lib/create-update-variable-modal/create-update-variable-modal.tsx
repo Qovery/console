@@ -333,8 +333,14 @@ export function VariableFormModal(props: VariableFormModalProps) {
                   className="mb-3"
                   name={field.name}
                   onChange={field.onChange}
+                  onFocus={() => {
+                    if (!field.value) {
+                      field.onChange('/')
+                    }
+                  }}
                   value={field.value}
                   label="Path"
+                  placeholder="/path/to/file"
                   error={error?.message}
                 />
               )}

@@ -113,9 +113,16 @@ describe('CreateUpdateVariableModal', () => {
 
     await userEvent.click(screen.getByRole('radio', { name: /as file/i }))
 
+    const pathField = screen.getByLabelText('Path')
+
     expect(screen.getByText('New variable as file')).toBeInTheDocument()
-    expect(screen.getByLabelText('Path')).toBeInTheDocument()
+    expect(pathField).toHaveAttribute('placeholder', '/path/to/file')
+    expect(pathField).toHaveValue('')
     expect(screen.getByText('Variable interpolation')).toBeInTheDocument()
+
+    await userEvent.click(pathField)
+
+    expect(pathField).toHaveValue('/')
   })
 
   it('should render secret file edit with hidden value control', async () => {

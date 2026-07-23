@@ -1,5 +1,6 @@
 import {
   type ChangeEventHandler,
+  type FocusEventHandler,
   type ReactNode,
   forwardRef,
   useEffect,
@@ -25,6 +26,7 @@ export interface InputTextProps {
   placeholder?: string
   autoFocus?: boolean
   autoComplete?: string
+  onFocus?: FocusEventHandler<HTMLInputElement>
 }
 
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function InputText(props, ref) {
@@ -43,6 +45,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
     placeholder,
     autoFocus,
     autoComplete = 'off',
+    onFocus,
   } = props
 
   const [focused, setFocused] = useState(false)
@@ -128,7 +131,10 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
                 if (onChange) onChange(e)
                 setCurrentValue(e.currentTarget.value)
               }}
-              onFocus={() => setFocused(true)}
+              onFocus={(e) => {
+                setFocused(true)
+                onFocus?.(e)
+              }}
               onBlur={() => setFocused(false)}
             />
             {isInputDate && (
