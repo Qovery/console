@@ -88,6 +88,7 @@ export type VariableFormModalProps = {
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
   isFile?: boolean
+  defaultIsSecret?: boolean
   hasClusterSecretManagerConfigured?: boolean
   scope: Scope
   projectId?: string
@@ -105,6 +106,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
     mode,
     type,
     isFile,
+    defaultIsSecret = false,
     hasClusterSecretManagerConfigured = false,
   } = props
   const _isFile = (variable && environmentVariableFile(variable)) || (isFile ?? false)
@@ -165,7 +167,7 @@ export function VariableFormModal(props: VariableFormModalProps) {
       key: variable?.key,
       scope: defaultScope,
       value: variable?.value,
-      isSecret: variable?.is_secret,
+      isSecret: variable?.is_secret ?? defaultIsSecret,
       description: variable?.description,
       enable_interpolation_in_file: _isFile ? variable?.enable_interpolation_in_file ?? true : undefined,
       mountPath,
@@ -204,14 +206,19 @@ export function VariableFormModal(props: VariableFormModalProps) {
 
   let title = ''
   if (mode === 'CREATE' && type === 'VALUE') {
-    title = 'New'
+    title = watchIsSecret ? 'New secret' : 'New variable'
   } else if (mode === 'UPDATE') {
     title = 'Edit ' + (type === 'ALIAS' ? 'alias' : type === 'OVERRIDE' ? 'override' : '')
   } else if (mode === 'CREATE') {
     title = 'Create ' + (type === 'ALIAS' ? 'alias' : type === 'OVERRIDE' ? 'override' : '')
   }
 
-  title += ' variable' + (_isFile ? ' file' : '')
+  if (!(mode === 'CREATE' && type === 'VALUE')) {
+    title += ' variable'
+  }
+  if (_isFile) {
+    title += ' file'
+  }
 
   const description = match({ type, _isFile })
     .with({ type: 'ALIAS' }, () => 'Aliases allow you to specify a different name for a variable on a specific scope.')

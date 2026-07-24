@@ -1,6 +1,6 @@
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group'
 import { useControllableState } from '@radix-ui/react-use-controllable-state'
-import { type ComponentPropsWithoutRef, type ElementRef, forwardRef } from 'react'
+import { type ComponentPropsWithoutRef, type ElementRef, type ReactNode, forwardRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
 // Inspired by https://github.com/radix-ui/themes/blob/b46984504c4f87306140b2c6078508d7b10af3b4/packages/radix-ui-themes/src/components/segmented-control.tsx
@@ -34,7 +34,7 @@ const SegmentedControlRoot = forwardRef<ElementRef<typeof ToggleGroupPrimitive.R
       <ToggleGroupPrimitive.Root
         ref={forwardedRef}
         className={twMerge(
-          'relative inline-grid h-9 min-w-max auto-cols-[1fr] grid-flow-col items-stretch rounded bg-surface-neutral-component align-top font-medium text-neutral-disabled',
+          'relative inline-grid h-9 min-w-max auto-cols-[1fr] grid-flow-col items-stretch rounded border border-neutral bg-surface-neutral-component align-top text-ssm font-medium leading-[18px] text-neutral-disabled',
           className
         )}
         onValueChange={(value) => {
@@ -56,30 +56,25 @@ const SegmentedControlRoot = forwardRef<ElementRef<typeof ToggleGroupPrimitive.R
 
 interface SegmentedControlItemProps
   extends Omit<ComponentPropsWithoutRef<typeof ToggleGroupPrimitive.Item>, 'asChild' | 'disabled' | 'value'> {
+  icon?: ReactNode
   value: string
 }
 
 const SegmentedControlItem = forwardRef<ElementRef<typeof ToggleGroupPrimitive.Item>, SegmentedControlItemProps>(
-  function SegmentedControlItem({ children, className, ...props }, forwardedRef) {
+  function SegmentedControlItem({ children, className, icon, ...props }, forwardedRef) {
     return (
       <ToggleGroupPrimitive.Item
         ref={forwardedRef}
-        className={twMerge('group box-border flex select-none items-stretch', className)}
+        className={twMerge(
+          'box-border flex select-none items-center justify-center gap-2 rounded px-4 transition-colors hover:text-neutral data-[state=on]:bg-surface-neutral data-[state=on]:text-neutral',
+          className
+        )}
         {...props}
         disabled={false}
         asChild={false}
       >
-        {/* SegmentedControlItemLabel */}
-        <span className="box-border flex grow items-center justify-center">
-          {/* SegmentedControlItemLabelActive */}
-          <span className="box-border flex h-9 grow items-center justify-center rounded border border-neutral bg-surface-neutral px-4 text-neutral opacity-0 group-data-[state=on]:opacity-100">
-            {children}
-          </span>
-          {/* SegmentedControlItemLabelInactive */}
-          <span className="absolute box-border flex grow items-center justify-center opacity-100 group-data-[state=on]:opacity-0">
-            {children}
-          </span>
-        </span>
+        {icon ? <span className="flex shrink-0 items-center">{icon}</span> : null}
+        <span>{children}</span>
       </ToggleGroupPrimitive.Item>
     )
   }

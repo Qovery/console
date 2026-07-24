@@ -9,6 +9,7 @@ export interface GitRepositorySettingProps {
   gitProvider: keyof typeof GitProviderEnum
   gitTokenId?: string
   disabled?: boolean
+  portal?: boolean
   urlRepository?: string
 }
 
@@ -17,6 +18,7 @@ export function GitRepositorySetting({
   disabled,
   gitProvider,
   gitTokenId,
+  portal,
   urlRepository,
 }: GitRepositorySettingProps) {
   const { control, setValue, watch } = useFormContext<{
@@ -86,6 +88,7 @@ export function GitRepositorySetting({
             error={error?.message}
             disabled={disabled}
             isSearchable
+            portal={portal}
           />
           {urlRepository && (
             <ExternalLink className="ml-3" size="xs" href={urlRepository}>

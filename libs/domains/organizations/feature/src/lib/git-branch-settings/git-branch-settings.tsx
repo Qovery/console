@@ -10,6 +10,7 @@ export interface GitBranchSettingsProps {
   gitTokenId?: string
   disabled?: boolean
   hideRootPath?: boolean
+  portal?: boolean
   rootPathLabel?: string
   rootPathHint?: string
 }
@@ -20,6 +21,7 @@ export function GitBranchSettings({
   gitProvider,
   gitTokenId,
   hideRootPath,
+  portal,
   rootPathLabel = 'Application root folder path',
   rootPathHint = 'Provide the folder path in the repository where the application is located.',
 }: GitBranchSettingsProps) {
@@ -99,6 +101,7 @@ export function GitBranchSettings({
             disabled={disabled}
             isSearchable
             isCreatable
+            portal={portal}
           />
         )}
       />

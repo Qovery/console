@@ -1,7 +1,13 @@
-import { AgenticWorkflowModelType, type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
+import {
+  AgenticWorkflowModelType,
+  type EnvironmentModeEnum,
+  type GitProviderEnum,
+  type GitRepository,
+  type ServiceTypeEnum,
+} from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useContext, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
-import { FunnelFlow } from '@qovery/shared/ui'
+import { type VariableData } from '@qovery/shared/interfaces'
 
 const DEFAULT_MODEL_SETTINGS = `{
   "provider": "anthropic",
@@ -83,9 +89,61 @@ export interface AgenticWorkflowGitRepository {
   branch: string
 }
 
+export interface AgenticWorkflowContextService {
+  id: string
+  name: string
+  serviceType: ServiceTypeEnum
+}
+
+export interface AgenticWorkflowEnvironmentContext {
+  id: string
+  environmentId: string
+  environmentName: string
+  environmentMode: EnvironmentModeEnum
+  projectId: string
+  projectName: string
+  clusterId: string
+  services: AgenticWorkflowContextService[]
+}
+
+export interface AgenticWorkflowProvider {
+  id: 'openai' | 'anthropic'
+  name: string
+  apiKey: string
+  allowedModels: string[]
+  model: string
+  effort: string
+}
+
+export type AgenticWorkflowMcpAuthType = 'none' | 'headers' | 'token' | 'oauth'
+
+export interface AgenticWorkflowMcpServer {
+  id: string
+  name: string
+  url: string
+  authType: AgenticWorkflowMcpAuthType
+  headers: string
+  token: string
+  oauthClientId: string
+  oauthClientSecret: string
+  oauthScopes: string
+}
+
+export type AgenticWorkflowSkillSource = 'repository' | 'import' | 'scratch'
+
+export interface AgenticWorkflowSkill {
+  id: string
+  name: string
+  description: string
+  source: AgenticWorkflowSkillSource
+  sourceValue: string
+}
+
 export interface AgenticWorkflowFormData {
   name: string
   description: string
+  projectId: string
+  clusterId: string
   cpu: string
   memory: string
   storage: string
@@ -94,12 +152,18 @@ export interface AgenticWorkflowFormData {
   webhookEnabled: boolean
   mcpJson: string
   gitRepositories: AgenticWorkflowGitRepository[]
+  environmentContexts: AgenticWorkflowEnvironmentContext[]
   modelApiKey: string
   modelSettingsJson: string
   whitelistHosts: string
   dockerFragment: string
   outputs: AgenticWorkflowOutput[]
   agentPrompt: string
+  provider?: AgenticWorkflowProvider
+  orgMcpServers: AgenticWorkflowMcpServer[]
+  linkedMcpServerIds: string[]
+  skills: AgenticWorkflowSkill[]
+  environmentVariables: VariableData[]
 }
 
 export interface AgenticWorkflowCreateContextInterface {
@@ -107,6 +171,7 @@ export interface AgenticWorkflowCreateContextInterface {
   creationFlowUrl: string
   currentStep: number
   form: UseFormReturn<AgenticWorkflowFormData>
+  onExit: () => void
   setActiveSection: (section: AgenticWorkflowConfigurationSection) => void
   setCurrentStep: (step: number) => void
 }
@@ -133,8 +198,10 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
   const [activeSection, setActiveSection] = useState<AgenticWorkflowConfigurationSection>('service-information')
   const form = useForm<AgenticWorkflowFormData>({
     defaultValues: {
-      name: '',
+      name: 'New agent',
       description: '',
+      projectId: '',
+      clusterId: '',
       cpu: '2000',
       memory: '2048',
       storage: '10',
@@ -143,30 +210,27 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
       webhookEnabled: true,
       mcpJson: MCP_CONNECTOR_JSON_EXAMPLE,
       gitRepositories: [],
+      environmentContexts: [],
       modelApiKey: '',
       modelSettingsJson: DEFAULT_MODEL_SETTINGS,
       whitelistHosts: '*',
       dockerFragment: '',
       outputs: [],
       agentPrompt: '',
+      provider: undefined,
+      orgMcpServers: [],
+      linkedMcpServerIds: [],
+      skills: [],
+      environmentVariables: [],
     },
     mode: 'onChange',
   })
 
   return (
     <AgenticWorkflowCreateContext.Provider
-      value={{ activeSection, creationFlowUrl, currentStep, form, setActiveSection, setCurrentStep }}
+      value={{ activeSection, creationFlowUrl, currentStep, form, onExit, setActiveSection, setCurrentStep }}
     >
-      <FormProvider {...form}>
-        <FunnelFlow
-          totalSteps={agenticWorkflowCreationSteps.length}
-          currentStep={currentStep}
-          currentTitle={agenticWorkflowCreationSteps[currentStep - 1]?.title}
-          onExit={onExit}
-        >
-          {children}
-        </FunnelFlow>
-      </FormProvider>
+      <FormProvider {...form}>{children}</FormProvider>
     </AgenticWorkflowCreateContext.Provider>
   )
 }
