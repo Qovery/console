@@ -47,10 +47,10 @@ export function StepVariables() {
 
   const [variables, setVariables] = useState(methods.getValues().variables)
 
-  const onAddPort = () => {
+  const onAddPort = (isSecret = false) => {
     const newVariableRow: VariableData = {
       variable: '',
-      isSecret: false,
+      isSecret,
       value: '',
       scope: APIVariableScopeEnum.JOB,
     }
