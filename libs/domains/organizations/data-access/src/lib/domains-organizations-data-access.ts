@@ -80,6 +80,13 @@ export const organizations = createQueryKeys('organizations', {
       return response.data
     },
   }),
+  environments: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await organizationApi.listEnvironmentsByOrganizationId(organizationId)
+      return response.data.results ?? []
+    },
+  }),
   helmRepositories: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn() {

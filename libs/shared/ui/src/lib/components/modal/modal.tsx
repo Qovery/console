@@ -15,6 +15,7 @@ export interface ModalProps {
   className?: string
   externalOpen?: boolean
   setExternalOpen?: (e: boolean) => void
+  preventAutoFocus?: boolean
   /**
    * This is a workaround to avoid radix dialog restriction.
    * Radix use [react-remove-scroll](https://www.npmjs.com/package/react-remove-scroll) to prevent wheel / scroll event directly on `<html>` node
@@ -45,6 +46,7 @@ export const Modal = (props: ModalProps) => {
     externalOpen = false,
     setExternalOpen,
     fakeModal = false,
+    preventAutoFocus = false,
   } = props
 
   const [open, setOpen] = useState(defaultOpen)
@@ -132,6 +134,9 @@ export const Modal = (props: ModalProps) => {
           />
         )}
         <Dialog.Content
+          onOpenAutoFocus={(event) => {
+            if (preventAutoFocus) event.preventDefault()
+          }}
           onPointerDownOutside={(event) => {
             event.preventDefault()
             if (isToastInteraction(event.detail.originalEvent)) {
