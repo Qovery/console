@@ -1,5 +1,7 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  type AgenticWorkflowRequest,
+  AgenticWorkflowsApi,
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
@@ -104,6 +106,7 @@ const helmsApi = new HelmsApi()
 const terraformsApi = new TerraformsApi()
 const blueprintApi = new BlueprintMainCallsApi()
 const blueprintCatalogApi = new BlueprintCatalogApi()
+const agenticWorkflowsApi = new AgenticWorkflowsApi()
 
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
@@ -788,6 +791,11 @@ type UpdateBlueprintRequest = {
   payload: BlueprintUpdateRequest
 }
 
+type CreateAgenticWorkflowRequest = {
+  environmentId: string
+  payload: AgenticWorkflowRequest
+}
+
 type DeployBlueprintRequest = {
   blueprintId: string
 }
@@ -1071,6 +1079,10 @@ export const mutations = {
   },
   async updateBlueprint({ blueprintId, payload }: UpdateBlueprintRequest) {
     const response = await blueprintApi.updateBlueprint(blueprintId, payload)
+    return response.data
+  },
+  async createAgenticWorkflow({ environmentId, payload }: CreateAgenticWorkflowRequest) {
+    const response = await agenticWorkflowsApi.createAgenticWorkflow(environmentId, payload)
     return response.data
   },
   async deployBlueprint({ blueprintId }: DeployBlueprintRequest) {

@@ -157,10 +157,23 @@ export function ServiceNew({
 }: ServiceNewProps) {
   const isTerraformFeatureFlag = Boolean(useFeatureFlagEnabled('terraform'))
   const isServiceCatalogEnabled = Boolean(useFeatureFlagEnabled('service-catalog'))
+  const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
   const { showPylonForm } = useSupportChat()
 
   const serviceEmpty: ServiceBlock[] = useMemo(
     () => [
+      ...(isAgenticWorkflowEnabled
+        ? [
+            {
+              title: 'Agentic workflow',
+              description: 'Run an AI workflow with webhooks, MCP connectors, governance, and configured outputs.',
+              icon: <Icon iconName="brain-circuit" className="text-2xl text-neutral" />,
+              link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
+              cloud_provider: cloudProvider,
+              badge: 'BETA',
+            },
+          ]
+        : []),
       {
         title: 'Application',
         description: 'Deploy a long running service running from Git or a Container Registry.',
@@ -228,7 +241,15 @@ export function ServiceNew({
             },
           ]),
     ],
-    [cloudProvider, organizationId, projectId, environmentId, isTerraformFeatureFlag, showPylonForm]
+    [
+      cloudProvider,
+      environmentId,
+      isAgenticWorkflowEnabled,
+      isTerraformFeatureFlag,
+      organizationId,
+      projectId,
+      showPylonForm,
+    ]
   )
 
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
