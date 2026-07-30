@@ -151,7 +151,7 @@ export function ClusterRunningStatusIndicator({
               {Object.entries(s.node_warnings).length === 0 ? (
                 <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
               ) : isFeatureFlag ? (
-                <Icon iconName="chevron-down" className="text-surface-positive-solid" />
+                <Icon iconName="chevron-down" className="text-surface-warning-solid" />
               ) : (
                 <span className="block h-2 w-2 rounded-full bg-surface-positive-solid" />
               )}

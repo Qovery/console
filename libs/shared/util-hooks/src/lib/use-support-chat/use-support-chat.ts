@@ -1,5 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useMatches, useParams } from '@tanstack/react-router'
+import { useMatches } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo } from 'react'
 import { type IntercomProps, useIntercom } from 'react-use-intercom'
 
@@ -10,28 +10,28 @@ type PylonChatSettings = {
   email?: string
   email_hash?: string
   name?: string
-  account_id?: string
   avatar_url?: string
-  account_external_id?: string
 }
 
 type ChatSettings = IntercomChatSettings | PylonChatSettings
+type PylonCommand = {
+  (cmd: 'showTicketForm', formSlug: string): void
+  (cmd: 'show' | 'hide'): void
+  e?: (args: unknown[]) => void
+  q?: unknown[][]
+}
 
 declare global {
   interface Window {
     pylon?: {
       chat_settings: ChatSettings
     }
-    Pylon?: {
-      (cmd: 'showTicketForm', formSlug: string): void
-      (cmd: 'show' | 'hide'): void
-    }
+    Pylon?: PylonCommand
   }
 }
 
 export function useSupportChat() {
   const { user } = useAuth0()
-  const { organizationId } = useParams({ strict: false })
 
   const { update: updateIntercom, shutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
   const matches = useMatches()
@@ -50,10 +50,8 @@ export function useSupportChat() {
         app_id: process.env.NX_PUBLIC_PYLON_APP_ID,
         email: user.email,
         name: user.name,
-        account_id: user.sub,
         email_hash: user['https://qovery.com/pylon_hash'],
         avatar_url: user.picture,
-        account_external_id: organizationId,
       }
     } else {
       defaultChatParams = {
@@ -65,22 +63,22 @@ export function useSupportChat() {
     }
 
     return defaultChatParams
-  }, [service, user, organizationId])
+  }, [service, user])
 
   const initChat = () => {
     if (service === 'pylon') {
-      insertPylonScriptTag()
+      bootstrapPylon(defaultChatParams)
     }
   }
 
   const whenPylonReady = (callback: () => void) => {
-    if (window.Pylon) {
+    if (isPylonReady()) {
       callback()
       return
     }
 
-    insertPylonScriptTag()
-    document.getElementById('pylon-script')?.addEventListener('load', callback, { once: true })
+    bootstrapPylon(defaultChatParams)
+    callback()
   }
 
   const showChat = () => {
@@ -93,6 +91,30 @@ export function useSupportChat() {
 
   const showPylonForm = (formSlug: string) => {
     whenPylonReady(() => window.Pylon?.('showTicketForm', formSlug))
+  }
+
+  const isPylonReady = () => Boolean(window.Pylon && !window.Pylon.q)
+
+  const setPylonChatSettings = (settings?: ChatSettings) => {
+    if (!settings) return
+
+    window.pylon = {
+      chat_settings: { ...window.pylon?.chat_settings, ...settings },
+    }
+  }
+
+  const bootstrapPylon = (settings?: ChatSettings) => {
+    setPylonChatSettings(settings)
+
+    if (!window.Pylon) {
+      const pylonQueue = ((...args: unknown[]) => pylonQueue.e?.(args)) as PylonCommand
+
+      pylonQueue.q = []
+      pylonQueue.e = (args) => pylonQueue.q?.push(args)
+      window.Pylon = pylonQueue
+    }
+
+    insertPylonScriptTag()
   }
 
   const insertPylonScriptTag = () => {
@@ -115,9 +137,7 @@ export function useSupportChat() {
 
       if (service === 'pylon') {
         shutdownIntercom()
-        window.pylon = {
-          chat_settings: { ...defaultChatParams, ...settings },
-        }
+        setPylonChatSettings({ ...defaultChatParams, ...settings })
       } else {
         window.Pylon?.('hide')
         updateIntercom({ ...defaultChatParams, ...settings })
@@ -128,7 +148,8 @@ export function useSupportChat() {
 
   useEffect(() => {
     if (service === 'pylon') {
-      insertPylonScriptTag()
+      bootstrapPylon(defaultChatParams)
+      return
     }
 
     updateUserInfo(defaultChatParams)
