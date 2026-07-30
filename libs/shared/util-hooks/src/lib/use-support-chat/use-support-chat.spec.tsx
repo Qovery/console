@@ -68,6 +68,7 @@ describe('useSupportChat', () => {
     expect(window.pylon?.chat_settings).not.toHaveProperty('account_id')
     expect(document.getElementById('pylon-script')).not.toBeNull()
     expect(window.Pylon?.q).toEqual([])
+    expect(window.Pylon?.e).toEqual(expect.any(Function))
   })
 
   it('queues show calls until the pylon script is loaded', () => {

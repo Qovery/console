@@ -18,6 +18,7 @@ type ChatSettings = IntercomChatSettings | PylonChatSettings
 type PylonCommand = {
   (cmd: 'showTicketForm', formSlug: string): void
   (cmd: 'show' | 'hide'): void
+  e?: (args: unknown[]) => void
   q?: unknown[][]
 }
 
@@ -109,11 +110,10 @@ export function useSupportChat() {
     setPylonChatSettings(settings)
 
     if (!window.Pylon) {
-      const pylonQueue: PylonCommand = ((...args: Parameters<PylonCommand>) => {
-        pylonQueue.q = [...(pylonQueue.q ?? []), args]
-      }) as PylonCommand
+      const pylonQueue = ((...args: unknown[]) => pylonQueue.e?.(args)) as PylonCommand
 
       pylonQueue.q = []
+      pylonQueue.e = (args) => pylonQueue.q?.push(args)
       window.Pylon = pylonQueue
     }
 
