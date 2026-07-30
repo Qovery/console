@@ -10,6 +10,7 @@ import { isGitTokenExpired, useGitTokens } from '../hooks/use-git-tokens/use-git
 export interface GitProviderSettingProps {
   organizationId: string
   disabled?: boolean
+  portal?: boolean
   showAuthProviders?: boolean
 }
 
@@ -74,7 +75,12 @@ export const mergeProviders = (authProviders: GitAuthProvider[] = [], gitTokens:
   return [...currentAuthProviders, ...currentGitTokens]
 }
 
-export function GitProviderSetting({ disabled, organizationId, showAuthProviders = true }: GitProviderSettingProps) {
+export function GitProviderSetting({
+  disabled,
+  organizationId,
+  portal,
+  showAuthProviders = true,
+}: GitProviderSettingProps) {
   const { control, watch, setValue, clearErrors } = useFormContext()
   const { openModal, closeModal } = useModal()
 
@@ -174,6 +180,7 @@ export function GitProviderSetting({ disabled, organizationId, showAuthProviders
               disabled={disabled}
               isSearchable
               filterOption={customFilterOption}
+              portal={portal}
             />
           )}
         />
