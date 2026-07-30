@@ -1,11 +1,16 @@
+import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { ClusterRunningStatusIndicator } from './cluster-running-status-indicator'
 
 jest.mock('../hooks/use-cluster-running-status/use-cluster-running-status')
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagVariantKey: jest.fn(),
+}))
 
 const mockUseClusterRunningStatus = useClusterRunningStatus as jest.MockedFunction<typeof useClusterRunningStatus>
+const mockUseFeatureFlagVariantKey = useFeatureFlagVariantKey as jest.MockedFunction<typeof useFeatureFlagVariantKey>
 
 const mockCluster = {
   id: 'cluster-id',
@@ -158,6 +163,25 @@ describe('ClusterRunningStatusIndicator', () => {
 
     expect(screen.getByText('warning')).toBeInTheDocument()
     expect(screen.getByText('2')).toBeInTheDocument()
+  })
+
+  it('should use the warning color for the warning badge chevron', () => {
+    mockUseFeatureFlagVariantKey.mockReturnValue('test')
+    mockUseClusterRunningStatus.mockReturnValue({
+      data: {
+        computed_status: {
+          global_status: 'WARNING',
+          node_warnings: {
+            'node-1': [],
+          },
+        },
+      },
+      isLoading: false,
+    })
+
+    const { container } = renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} />)
+
+    expect(container.querySelector('.text-surface-warning-solid')).toBeInTheDocument()
   })
 
   it.skip('should render "Error" badge with count when global status is ERROR', () => {
