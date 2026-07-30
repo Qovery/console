@@ -1,5 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useMatches, useParams } from '@tanstack/react-router'
+import { useMatches } from '@tanstack/react-router'
 import { renderHook } from '@testing-library/react'
 import { useIntercom } from 'react-use-intercom'
 import { useSupportChat } from './use-support-chat'
@@ -10,7 +10,6 @@ jest.mock('@auth0/auth0-react', () => ({
 
 jest.mock('@tanstack/react-router', () => ({
   useMatches: jest.fn(),
-  useParams: jest.fn(),
 }))
 
 jest.mock('react-use-intercom', () => ({
@@ -20,7 +19,6 @@ jest.mock('react-use-intercom', () => ({
 describe('useSupportChat', () => {
   const mockUseAuth0 = jest.mocked(useAuth0)
   const mockUseMatches = jest.mocked(useMatches)
-  const mockUseParams = jest.mocked(useParams)
   const mockUseIntercom = jest.mocked(useIntercom)
   const mockUpdateIntercom = jest.fn()
   const mockShutdownIntercom = jest.fn()
@@ -41,7 +39,6 @@ describe('useSupportChat', () => {
     mockUseMatches.mockReturnValue([{ routeId: '/_authenticated/organization/$organizationId' }] as ReturnType<
       typeof useMatches
     >)
-    mockUseParams.mockReturnValue({ organizationId: 'org_123' } as ReturnType<typeof useParams>)
     mockUseIntercom.mockReturnValue({
       update: mockUpdateIntercom,
       shutdown: mockShutdownIntercom,
@@ -54,7 +51,7 @@ describe('useSupportChat', () => {
     jest.clearAllMocks()
   })
 
-  it('bootstraps pylon with verified user settings and no external account id misuse', () => {
+  it('bootstraps pylon with verified user settings and no account override', () => {
     renderHook(() => useSupportChat())
 
     expect(window.pylon?.chat_settings).toEqual({
@@ -63,9 +60,9 @@ describe('useSupportChat', () => {
       name: 'Qovery User',
       email_hash: 'secure-hash',
       avatar_url: 'https://example.com/avatar.png',
-      account_external_id: 'org_123',
     })
     expect(window.pylon?.chat_settings).not.toHaveProperty('account_id')
+    expect(window.pylon?.chat_settings).not.toHaveProperty('account_external_id')
     expect(document.getElementById('pylon-script')).not.toBeNull()
     expect(window.Pylon?.q).toEqual([])
     expect(window.Pylon?.e).toEqual(expect.any(Function))

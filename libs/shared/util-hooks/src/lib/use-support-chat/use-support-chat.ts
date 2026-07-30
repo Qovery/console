@@ -1,5 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useMatches, useParams } from '@tanstack/react-router'
+import { useMatches } from '@tanstack/react-router'
 import { useCallback, useEffect, useMemo } from 'react'
 import { type IntercomProps, useIntercom } from 'react-use-intercom'
 
@@ -11,7 +11,6 @@ type PylonChatSettings = {
   email_hash?: string
   name?: string
   avatar_url?: string
-  account_external_id?: string
 }
 
 type ChatSettings = IntercomChatSettings | PylonChatSettings
@@ -33,7 +32,6 @@ declare global {
 
 export function useSupportChat() {
   const { user } = useAuth0()
-  const { organizationId } = useParams({ strict: false })
 
   const { update: updateIntercom, shutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
   const matches = useMatches()
@@ -54,7 +52,6 @@ export function useSupportChat() {
         name: user.name,
         email_hash: user['https://qovery.com/pylon_hash'],
         avatar_url: user.picture,
-        account_external_id: organizationId,
       }
     } else {
       defaultChatParams = {
@@ -66,7 +63,7 @@ export function useSupportChat() {
     }
 
     return defaultChatParams
-  }, [service, user, organizationId])
+  }, [service, user])
 
   const initChat = () => {
     if (service === 'pylon') {
