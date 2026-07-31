@@ -997,7 +997,7 @@ export const mutations = {
     environment: Environment
     payload: EnvironmentServiceIdsAllRequest
   }) {
-    const response = await environmentActionApi.deleteSelectedServices(environment.id, undefined, payload)
+    const response = await environmentActionApi.deleteSelectedServices(environment.id, payload)
     return response.data
   },
   async deleteService({
@@ -1031,7 +1031,6 @@ export const mutations = {
         mutation: (serviceId: string) =>
           terraformMainCallsApi.deleteTerraform.bind(terraformMainCallsApi)(
             serviceId,
-            undefined,
             undefined,
             skipDestroy ? 'SKIP_DESTROY' : undefined
           ),
