@@ -1,7 +1,7 @@
 import { type VariableResponse } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { CreateUpdateVariableModal } from './create-update-variable-modal'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { CreateUpdateVariableModal, VariableFormModal } from './create-update-variable-modal'
 
 jest.mock('@qovery/shared/ui', () => {
   const actual = jest.requireActual('@qovery/shared/ui')
@@ -95,6 +95,89 @@ describe('CreateUpdateVariableModal', () => {
 
     expect(descriptionField).toBeInstanceOf(HTMLInputElement)
     expect(descriptionField).not.toBeInstanceOf(HTMLTextAreaElement)
+  })
+
+  it('should render secret creation without the secret toggle and with hidden value control', () => {
+    renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="VALUE" isSecret />)
+
+    expect(screen.getByText('New secret')).toBeInTheDocument()
+    expect(screen.queryByText('Secret variable')).not.toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /show value/i })).toBeInTheDocument()
+  })
+
+  it('should default to value format and show file inputs when selecting as file', async () => {
+    const { userEvent } = renderWithProviders(<CreateUpdateVariableModal {...baseProps} mode="CREATE" type="VALUE" />)
+
+    expect(screen.getByRole('radio', { name: /value/i })).toHaveAttribute('data-state', 'on')
+    expect(screen.queryByLabelText('Path')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('radio', { name: /as file/i }))
+
+    const pathField = screen.getByLabelText('Path')
+
+    expect(screen.getByText('New variable file')).toBeInTheDocument()
+    expect(pathField).not.toHaveAttribute('placeholder')
+    expect(pathField).toHaveValue('')
+    expect(screen.getByText('Variable interpolation')).toBeInTheDocument()
+
+    await userEvent.click(pathField)
+
+    expect(pathField).toHaveValue('/')
+  })
+
+  it('should render secret file edit with hidden value control', async () => {
+    const { userEvent } = renderWithProviders(
+      <CreateUpdateVariableModal
+        {...baseProps}
+        mode="UPDATE"
+        type="FILE"
+        variable={{
+          ...baseVariable,
+          value: '',
+          mount_path: '/vault/secrets/my-secret',
+          variable_type: 'FILE',
+          variable_kind: 'Private',
+          is_secret: true,
+        }}
+      />
+    )
+
+    const valueField = screen.getByLabelText('Value')
+
+    expect(screen.getByText('Edit secret file')).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /show value/i })).toBeInTheDocument()
+    expect(valueField).toHaveClass('[-webkit-text-security:disc]')
+
+    await userEvent.click(screen.getByRole('checkbox', { name: /show value/i }))
+
+    expect(valueField).not.toHaveClass('[-webkit-text-security:disc]')
+  })
+
+  it('should submit a secret created as a file with the selected format', async () => {
+    const onSubmit = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <VariableFormModal {...baseProps} mode="CREATE" type="VALUE" isSecret onSubmit={onSubmit} />
+    )
+
+    await userEvent.click(screen.getByRole('radio', { name: /as file/i }))
+    await userEvent.type(screen.getByLabelText('Variable'), 'MY_SECRET')
+    await userEvent.click(screen.getByLabelText('Path'))
+    await userEvent.type(screen.getByLabelText('Path'), 'vault/secrets/my-secret')
+    await userEvent.type(screen.getByLabelText('Value'), 'secret-value')
+    await userEvent.click(screen.getByRole('button', { name: /confirm/i }))
+
+    await waitFor(() => {
+      expect(onSubmit).toHaveBeenCalledWith(
+        expect.objectContaining({
+          key: 'MY_SECRET',
+          value: 'secret-value',
+          scope: 'ENVIRONMENT',
+          isSecret: true,
+          isFile: true,
+          mountPath: '/vault/secrets/my-secret',
+        })
+      )
+    })
   })
 
   it('should not render the open editor button for aliases', () => {

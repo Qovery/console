@@ -40,7 +40,7 @@ jest.mock('@qovery/domains/variables/feature', () => ({
   VariableFormModal: ({
     onSubmit,
     scope,
-    isFile,
+    isSecret,
   }: {
     onSubmit?: (data: {
       key: string
@@ -51,18 +51,17 @@ jest.mock('@qovery/domains/variables/feature', () => ({
       mountPath?: string
     }) => void
     scope: 'APPLICATION' | 'CONTAINER'
-    isFile?: boolean
+    isSecret?: boolean
   }) => (
     <button
       type="button"
       onClick={() =>
         onSubmit?.({
-          key: isFile ? 'CONFIG_FILE' : 'NODE_ENV',
-          value: isFile ? '{"key":"value"}' : 'production',
+          key: 'NODE_ENV',
+          value: 'production',
           scope,
-          isSecret: false,
-          isFile: !!isFile,
-          mountPath: isFile ? '/vault/secrets/config-file' : undefined,
+          isSecret: !!isSecret,
+          isFile: false,
         })
       }
     >
@@ -113,6 +112,28 @@ describe('ApplicationContainerStepVariables', () => {
     })
   })
 
+  it('adds a secret with application scope by default', async () => {
+    const { userEvent } = renderWithProviders(
+      <ApplicationContainerCreationFlow
+        creationFlowUrl="/organization/org-1/project/proj-1/environment/env-1/service/create/application"
+        defaultServiceType="APPLICATION"
+      >
+        <>
+          <ApplicationContainerStepVariables onBack={onBack} onSubmit={onSubmit} />
+          <VariablesState />
+        </>
+      </ApplicationContainerCreationFlow>
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /^add secret$/i }))
+    await userEvent.click(screen.getByRole('button', { name: /confirm variable modal/i }))
+
+    await waitFor(() => {
+      expect(screen.getByTestId('variables-state')).toHaveTextContent('"scope":"APPLICATION"')
+      expect(screen.getByTestId('variables-state')).toHaveTextContent('"isSecret":true')
+    })
+  })
+
   it('calls onBack when going back', async () => {
     const { userEvent } = renderWithProviders(
       <ApplicationContainerCreationFlow
@@ -154,7 +175,6 @@ describe('ApplicationContainerStepVariables', () => {
     )
 
     expect(screen.getByText('No secret manager linked on your cluster')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /^add secret$/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /^add secret as file$/i })).not.toBeInTheDocument()
   })
 })
