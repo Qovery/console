@@ -241,7 +241,7 @@ export function isArgoCd(service?: AnyService): service is ArgoCd {
 }
 
 export function isEditableService(service: AnyService): service is EditableService {
-  return ['APPLICATION', 'CONTAINER', 'DATABASE', 'JOB', 'HELM', 'TERRAFORM'].includes(service.service_type)
+  return !isArgoCd(service) && (service.service_type as string) !== 'AGENTIC_WORKFLOW'
 }
 
 export function isEditableServiceType(serviceType?: ServiceType): serviceType is EditableServiceType {
