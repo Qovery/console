@@ -1,5 +1,7 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  type AgenticWorkflowResponse,
+  AgenticWorkflowsApi,
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
   ApplicationConfigurationApi,
@@ -104,6 +106,7 @@ const helmsApi = new HelmsApi()
 const terraformsApi = new TerraformsApi()
 const blueprintApi = new BlueprintMainCallsApi()
 const blueprintCatalogApi = new BlueprintCatalogApi()
+const agenticWorkflowsApi = new AgenticWorkflowsApi()
 
 const applicationMainCallsApi = new ApplicationMainCallsApi()
 const containerMainCallsApi = new ContainerMainCallsApi()
@@ -238,7 +241,7 @@ export function isArgoCd(service?: AnyService): service is ArgoCd {
 }
 
 export function isEditableService(service: AnyService): service is EditableService {
-  return !isArgoCd(service)
+  return !isArgoCd(service) && (service.service_type as string) !== 'AGENTIC_WORKFLOW'
 }
 
 export function isEditableServiceType(serviceType?: ServiceType): serviceType is EditableServiceType {
@@ -363,6 +366,13 @@ export const services = createQueryKeys('services', {
               serviceType: service.service_type,
             }) as ArgoCd
         )
+    },
+  }),
+  listAgenticWorkflows: (environmentId: string) => ({
+    queryKey: [environmentId],
+    async queryFn(): Promise<AgenticWorkflowResponse[]> {
+      const response = await agenticWorkflowsApi.listAgenticWorkflows(environmentId)
+      return response.data.results ?? []
     },
   }),
   argocdManifest: (serviceId: string) => ({

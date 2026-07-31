@@ -2,6 +2,7 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import { Link as RouterLink } from '@tanstack/react-router'
 import posthog from 'posthog-js'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useEffect, useMemo } from 'react'
 import {
   ClusterAvatar,
@@ -22,7 +23,7 @@ import {
 } from '@qovery/domains/environments/feature'
 import { useEnvironmentsOverview } from '@qovery/domains/projects/feature'
 import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
-import { ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
+import { AgenticWorkflowServiceList, ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
@@ -44,6 +45,7 @@ function RouteComponent() {
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id, suspense: true })
   const { data: services = [] } = useServices({ environmentId, suspense: true })
+  const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
 
   useClusterRunningStatusSocket({
     organizationId,
@@ -195,6 +197,9 @@ function RouteComponent() {
                 )}
               </div>
               {shouldDisplayArgoCdServicesBelowQovery && <ArgoCdServiceList environment={environment} />}
+              {isServicesListTab && isAgenticWorkflowEnabled && (
+                <AgenticWorkflowServiceList environmentId={environmentId} />
+              )}
             </div>
           </Section>
         </div>
