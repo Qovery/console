@@ -469,6 +469,24 @@ describe('ServiceList', () => {
     expect(screen.queryByText('ARGOCD APP')).not.toBeInTheDocument()
   })
 
+  it('should not pass agentic workflows to the standard service table', () => {
+    mockServicesData = [
+      {
+        id: 'agentic-workflow-id',
+        name: 'Review pull requests',
+        service_type: 'AGENTIC_WORKFLOW',
+        serviceType: 'AGENTIC_WORKFLOW',
+        enabled: true,
+        model: { type: 'CLAUDE' },
+      },
+    ]
+
+    renderWithProviders(<ServiceList {...serviceListProps} />)
+
+    expect(screen.getByText('No service found')).toBeInTheDocument()
+    expect(screen.queryByText('Review pull requests')).not.toBeInTheDocument()
+  })
+
   it('should navigate to service on row click', async () => {
     const { userEvent } = renderWithProviders(<ServiceList {...serviceListProps} />)
     const rows = screen.getAllByRole('row')
