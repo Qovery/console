@@ -33,17 +33,10 @@ on:
         required: false
       aws-secret-access-key:
         required: false
+      # S3 origin bucket behind CloudFront
       s3-bucket-name:
         required: false
-      # CloudFront migration (QOV-2108): origin bucket behind CloudFront.
-      # When set, builds are also deployed there and index.html is invalidated.
-      s3-bucket-name-with-cloudfront:
-        required: false
       cloudfront-distribution-id:
-        required: false
-      cloudflare-zone:
-        required: false
-      cloudflare-token:
         required: false
       nx-cloud-access-token:
         required: true
@@ -215,7 +208,7 @@ jobs:
     needs: [nx-main]
     if: ${{ inputs.flow != 'pull-request' }}
     env:
-      S3_BUCKET_NAME_WITH_CLOUDFRONT: ${{ secrets.s3-bucket-name-with-cloudfront }}
+      S3_BUCKET_NAME: ${{ secrets.s3-bucket-name }}
       CLOUDFRONT_DISTRIBUTION_ID: ${{ secrets.cloudfront-distribution-id }}
     steps:
       - name: Git clone the repository
@@ -227,24 +220,11 @@ jobs:
           merge-multiple: true
       - name: Copy assets to S3
         run: |
-          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://${{ secrets.s3-bucket-name }}/  --recursive --exclude "index.html"
+          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://$S3_BUCKET_NAME/  --recursive --exclude "index.html"
       - name: Copy index.html to S3 last
         run: |
-          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://${{ secrets.s3-bucket-name }}/
-      # Dual-target during the CloudFront migration (QOV-2108): the bucket
-      # below is the OAC origin behind CloudFront; the legacy bucket above
-      # keeps serving the live site until the DNS cutover. Remove the legacy
-      # steps once the migration is complete.
-      - name: Copy assets to CloudFront origin bucket
-        if: env.S3_BUCKET_NAME_WITH_CLOUDFRONT != ''
-        run: |
-          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/ s3://$S3_BUCKET_NAME_WITH_CLOUDFRONT/  --recursive --exclude "index.html"
-      - name: Copy index.html to CloudFront origin bucket last
-        if: env.S3_BUCKET_NAME_WITH_CLOUDFRONT != ''
-        run: |
-          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://$S3_BUCKET_NAME_WITH_CLOUDFRONT/
+          AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws s3 cp ./dist/dist/apps/console/index.html s3://$S3_BUCKET_NAME/
       - name: Invalidate CloudFront cached index.html
-        if: env.CLOUDFRONT_DISTRIBUTION_ID != ''
         run: |
           AWS_REGION=${{ secrets.aws-region }} AWS_ACCESS_KEY_ID=${{ secrets.aws-access-key-id }} AWS_SECRET_ACCESS_KEY=${{ secrets.aws-secret-access-key }} aws cloudfront create-invalidation --distribution-id $CLOUDFRONT_DISTRIBUTION_ID --paths "/index.html" "/"
 

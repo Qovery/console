@@ -22,12 +22,8 @@ jobs:
       aws-region: ${{ secrets.AWS_REGION }}
       aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
       aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      s3-bucket-name: 'console-staging.qovery.com'
-      # CloudFront migration (QOV-2108): dual-target until the DNS cutover
-      s3-bucket-name-with-cloudfront: 'qovery-console-staging'
+      s3-bucket-name: 'qovery-console-staging'
       cloudfront-distribution-id: 'EN3DKJ81R0NBQ'
-      cloudflare-zone: ${{ secrets.CLOUDFLARE_ZONE }}
-      cloudflare-token: ${{ secrets.CLOUDFLARE_TOKEN }}
       nx-cloud-access-token: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
       codecov-token: ${{ secrets.CODECOV_TOKEN }}
       e2e-auth-token: ${{ secrets.E2E_AUTH_TOKEN }}
