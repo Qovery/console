@@ -1,7 +1,6 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
   type AgenticWorkflowRequest,
-  type AgenticWorkflowResponse,
   AgenticWorkflowsApi,
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
@@ -66,6 +65,7 @@ import {
   type JobRequest,
   JobsApi,
   type RebootServicesRequest,
+  type ReferenceObject,
   ServiceMainCallsApi,
   type Status,
   TerraformActionsApi,
@@ -200,6 +200,8 @@ export type ArgoCd = _ArgoCd & {
 export type AgenticWorkflow = _AgenticWorkflow & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: AgenticWorkflowType
+  environment: ReferenceObject
+  icon_uri: string
 }
 export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd | AgenticWorkflow
 export type BlueprintService = AnyService & {
@@ -207,7 +209,7 @@ export type BlueprintService = AnyService & {
   tag?: string
 }
 export type ReadOnlyService = ArgoCd
-export type EditableService = Exclude<AnyService, ReadOnlyService>
+export type EditableService = Exclude<AnyService, ReadOnlyService | AgenticWorkflow>
 export type EditableServiceType = Exclude<ServiceType, ArgoCdType>
 export type DeployableServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB' | AgenticWorkflowType>
 export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType | AgenticWorkflowType>
@@ -249,6 +251,15 @@ export function isArgoCd(service?: AnyService): service is ArgoCd {
 
 export function isAgenticWorkflow(service?: AnyService): service is AgenticWorkflow {
   return service?.service_type === 'AGENTIC_WORKFLOW'
+}
+
+function normalizeAgenticWorkflow(service: _AgenticWorkflow): AgenticWorkflow {
+  return {
+    ...service,
+    serviceType: 'AGENTIC_WORKFLOW',
+    environment: { id: service.environment_id },
+    icon_uri: '',
+  }
 }
 
 export function isEditableService(service: AnyService): service is EditableService {
@@ -381,9 +392,9 @@ export const services = createQueryKeys('services', {
   }),
   listAgenticWorkflows: (environmentId: string) => ({
     queryKey: [environmentId],
-    async queryFn(): Promise<AgenticWorkflowResponse[]> {
+    async queryFn(): Promise<AgenticWorkflow[]> {
       const response = await agenticWorkflowsApi.listAgenticWorkflows(environmentId)
-      return response.data.results ?? []
+      return response.data.results?.map(normalizeAgenticWorkflow) ?? []
     },
   }),
   argocdManifest: (serviceId: string) => ({
@@ -397,12 +408,10 @@ export const services = createQueryKeys('services', {
     queryKey: [environmentId],
     async queryFn() {
       const response = await environmentApi.listServicesByEnvironmentId(environmentId)
-      return (response.data.results || []).map(
-        (service) =>
-          ({
-            ...service,
-            serviceType: service.service_type,
-          }) as AnyService
+      return (response.data.results || []).map((service) =>
+        service.service_type === 'AGENTIC_WORKFLOW'
+          ? normalizeAgenticWorkflow(service)
+          : ({ ...service, serviceType: service.service_type } as AnyService)
       )
     },
   }),
@@ -497,8 +506,7 @@ export const services = createQueryKeys('services', {
           }
         })
         .with('AGENTIC_WORKFLOW', async () => ({
-          ...(await agenticWorkflowsApi.getAgenticWorkflow(serviceId)).data,
-          serviceType: 'AGENTIC_WORKFLOW' as const,
+          ...normalizeAgenticWorkflow((await agenticWorkflowsApi.getAgenticWorkflow(serviceId)).data),
         }))
         .exhaustive()
       return service
@@ -1122,7 +1130,7 @@ export const mutations = {
       }))
       .exhaustive()
     const response = await mutation()
-    return response.data
+    return 'environment_id' in response.data ? normalizeAgenticWorkflow(response.data) : response.data
   },
   async createBlueprint({ environmentId, payload, deploy }: CreateBlueprintRequest) {
     const response = await blueprintApi.createBlueprint(environmentId, payload, deploy)
@@ -1287,7 +1295,7 @@ export const mutations = {
       .with('TERRAFORM', (serviceType) => ({
         mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }),
         serviceType,
-      })) // TODO [QOV-821] to implement
+      }))
       .with('AGENTIC_WORKFLOW', (serviceType) => ({
         mutation: () =>
           new Promise<never>(() => {

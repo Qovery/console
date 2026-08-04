@@ -301,7 +301,7 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
     .with({ service: { serviceType: 'TERRAFORM' } }, ({ service }) => {
       return gitInfo(service, service?.terraform_files_source?.git?.git_repository)
     })
-    .with({ service: { serviceType: 'ARGOCD_APP' } }, () => null)
+    .with({ service: { serviceType: P.union('ARGOCD_APP', 'AGENTIC_WORKFLOW') } }, () => null)
     .exhaustive()
   return cell
 }
