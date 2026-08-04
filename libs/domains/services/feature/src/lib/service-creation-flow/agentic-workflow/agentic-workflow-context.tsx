@@ -86,6 +86,9 @@ export interface AgenticWorkflowGitRepository {
 export interface AgenticWorkflowFormData {
   name: string
   description: string
+  cpu: string
+  memory: string
+  storage: string
   workflowEnabled: boolean
   aiModel: AgenticWorkflowModelType
   webhookEnabled: boolean
@@ -132,6 +135,9 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
     defaultValues: {
       name: '',
       description: '',
+      cpu: '2000',
+      memory: '2048',
+      storage: '10',
       workflowEnabled: true,
       aiModel: AgenticWorkflowModelType.CLAUDE,
       webhookEnabled: true,

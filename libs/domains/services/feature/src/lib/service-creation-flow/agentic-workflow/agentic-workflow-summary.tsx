@@ -128,6 +128,9 @@ export function AgenticWorkflowSummary() {
           <SummarySection title="Service information" onEdit={() => handleEditSection('service-information')}>
             <SummaryValue label="Name" value={values.name} />
             <SummaryValue label="Description" value={values.description || undefined} />
+            <SummaryValue label="CPU" value={values.cpu ? `${values.cpu} mCPU` : undefined} />
+            <SummaryValue label="Memory" value={values.memory ? `${values.memory} MB` : undefined} />
+            <SummaryValue label="Storage" value={values.storage ? `${values.storage} GB` : undefined} />
             <SummaryValue label="Enabled" value={values.workflowEnabled ? 'Yes' : 'No'} />
           </SummarySection>
 

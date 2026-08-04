@@ -308,6 +308,29 @@ export function AgenticWorkflowConfiguration() {
             value={values.description}
             onChange={(event) => form.setValue('description', event.currentTarget.value, { shouldDirty: true })}
           />
+          <div className="grid gap-3 sm:grid-cols-3">
+            <InputText
+              name="cpu"
+              label="CPU (mCPU)"
+              type="number"
+              value={values.cpu}
+              onChange={(event) => form.setValue('cpu', event.currentTarget.value, { shouldDirty: true })}
+            />
+            <InputText
+              name="memory"
+              label="Memory (MB)"
+              type="number"
+              value={values.memory}
+              onChange={(event) => form.setValue('memory', event.currentTarget.value, { shouldDirty: true })}
+            />
+            <InputText
+              name="storage"
+              label="Storage (GB)"
+              type="number"
+              value={values.storage}
+              onChange={(event) => form.setValue('storage', event.currentTarget.value, { shouldDirty: true })}
+            />
+          </div>
           <InputToggle
             small
             align="top"
