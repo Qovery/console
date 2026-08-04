@@ -3,7 +3,6 @@ import posthog from 'posthog-js'
 import { type ReactNode, useEffect } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { formatAgenticWorkflowRequest } from '../../hooks/use-create-agentic-workflow/use-create-agentic-workflow'
 import { useCreateService } from '../../hooks/use-create-service/use-create-service'
 import { isGitRepositoryComplete } from './agentic-workflow-configuration/agentic-workflow-configuration'
 import {
@@ -11,6 +10,7 @@ import {
   type AgenticWorkflowFormData,
   useAgenticWorkflowCreateContext,
 } from './agentic-workflow-context'
+import { formatAgenticWorkflowRequest } from './agentic-workflow-request'
 
 function truncateSummary(value: string) {
   if (!value.trim()) return '-'
