@@ -5,3 +5,5 @@ export const enum AuthEnum {
   GOOGLE_SSO = 'google-oauth2',
   MICROSOFT = 'windowslive',
 }
+
+export const LAST_USED_LOGIN_STORAGE_KEY = 'lastUsedLogin'

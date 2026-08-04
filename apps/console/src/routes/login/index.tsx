@@ -4,12 +4,10 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { AuthEnum, useAuth } from '@qovery/shared/auth'
+import { AuthEnum, LAST_USED_LOGIN_STORAGE_KEY, useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
 import { Badge, Button, Icon, InputTextSmall, Link } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
-
-const LAST_USED_LOGIN_STORAGE_KEY = 'lastUsedLogin'
 
 const CUBIC_BEZIER_EASE = [0.65, 0.05, 0.36, 1] as const
 const SCREEN_STACK_MOVE_DURATION_S = 0.6

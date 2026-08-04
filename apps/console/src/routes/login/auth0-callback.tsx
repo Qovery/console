@@ -3,9 +3,8 @@ import { Navigate, createFileRoute, useNavigate } from '@tanstack/react-router'
 import axios from 'axios'
 import { useEffect } from 'react'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
-import { getOnboardingEntryUrl } from '@qovery/shared/routes'
+import { ONBOARDING_CONFIRM_URL, ONBOARDING_URL } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
@@ -38,7 +37,6 @@ function useRedirectIfLogged(connection?: string) {
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
     enabled: isAuthenticated,
   })
-  const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
 
   useEffect(() => {
     if (connection && !isAuthenticated) {
@@ -71,15 +69,15 @@ function useRedirectIfLogged(connection?: string) {
           navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
         }
       } else {
-        const { data: userSignUp } = await refetchUserSignUp()
-        navigate({ href: getOnboardingEntryUrl(userSignUp) })
+        // No organization yet: confirm this is really a new account before entering the onboarding funnel
+        navigate({ href: `${ONBOARDING_URL}${ONBOARDING_CONFIRM_URL}` })
       }
     }
 
     if (isAuthenticated) {
       fetchData()
     }
-  }, [authLogin, connection, navigate, isAuthenticated, organizations, isFetchedOrganizations, refetchUserSignUp])
+  }, [authLogin, connection, navigate, isAuthenticated, organizations, isFetchedOrganizations])
 }
 
 function PageRedirectLogin() {
