@@ -152,12 +152,6 @@ const argoCdApi = new ArgoCDApi()
 
 const serviceMainCallsApi = new ServiceMainCallsApi()
 
-// TODO: Add the corresponding Agentic Workflow API request when these operations are supported.
-const pendingAgenticWorkflowRequest = () =>
-  new Promise<never>(() => {
-    // Intentionally left pending until the API request is available.
-  })
-
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
 // ServiceTypeEnum still exist mainly for compatibility reason (to use redux and react-query fetched services in data-access).
@@ -423,7 +417,13 @@ export const services = createQueryKeys('services', {
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.getJobStatus.bind(jobMainCallsApi))
         .with('HELM', () => helmMainCallsApi.getHelmStatus.bind(helmMainCallsApi))
         .with('TERRAFORM', () => terraformMainCallsApi.getTerraform.bind(terraformMainCallsApi)) // TODO [QOV-821] should it be replaced with `getTerraformStatus` ?
-        .with('AGENTIC_WORKFLOW', () => pendingAgenticWorkflowRequest)
+        .with(
+          'AGENTIC_WORKFLOW',
+          () => () =>
+            new Promise<never>(() => {
+              // TODO: Add the Agentic Workflow status request when supported.
+            })
+        )
         .exhaustive()
       const response = await fn(serviceId)
       return response.data
@@ -448,7 +448,13 @@ export const services = createQueryKeys('services', {
           terraformDeploymentRestrictionApi.getTerraformDeploymentRestrictions.bind(terraformDeploymentRestrictionApi)
         )
         .with('CONTAINER', 'DATABASE', () => null)
-        .with('AGENTIC_WORKFLOW', () => pendingAgenticWorkflowRequest)
+        .with(
+          'AGENTIC_WORKFLOW',
+          () => () =>
+            new Promise<never>(() => {
+              // TODO: Add the Agentic Workflow deployment restrictions request when supported.
+            })
+        )
         .exhaustive()
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
@@ -582,7 +588,13 @@ export const services = createQueryKeys('services', {
           'TERRAFORM',
           async () => (await terraformDeploymentsApi.listTerraformDeploymentHistoryV2(serviceId, pageSize)).data.results
         )
-        .with('AGENTIC_WORKFLOW', pendingAgenticWorkflowRequest)
+        .with(
+          'AGENTIC_WORKFLOW',
+          () =>
+            new Promise<never>(() => {
+              // TODO: Add the Agentic Workflow deployment history request when supported.
+            })
+        )
         .exhaustive()
     },
   }),
@@ -922,7 +934,13 @@ export const mutations = {
         mutation: terraformsApi.cloneTerraform.bind(terraformsApi),
         serviceType,
       }))
-      .with('AGENTIC_WORKFLOW', (serviceType) => ({ mutation: pendingAgenticWorkflowRequest, serviceType }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: () =>
+          new Promise<never>(() => {
+            // TODO: Add the Agentic Workflow clone request when supported.
+          }),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -1182,7 +1200,13 @@ export const mutations = {
         mutation: terraformActionsApi.redeployTerraform.bind(terraformActionsApi),
         serviceType,
       }))
-      .with('AGENTIC_WORKFLOW', (serviceType) => ({ mutation: pendingAgenticWorkflowRequest, serviceType }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: () =>
+          new Promise<never>(() => {
+            // TODO: Add the Agentic Workflow restart request when supported.
+          }),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
@@ -1264,7 +1288,13 @@ export const mutations = {
         mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }),
         serviceType,
       })) // TODO [QOV-821] to implement
-      .with('AGENTIC_WORKFLOW', (serviceType) => ({ mutation: pendingAgenticWorkflowRequest, serviceType }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: () =>
+          new Promise<never>(() => {
+            // TODO: Add the Agentic Workflow stop request when supported.
+          }),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
@@ -1304,7 +1334,13 @@ export const mutations = {
           ),
         serviceType,
       }))
-      .with('AGENTIC_WORKFLOW', (serviceType) => ({ mutation: pendingAgenticWorkflowRequest, serviceType }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: () =>
+          new Promise<never>(() => {
+            // TODO: Add the Agentic Workflow uninstall request when supported.
+          }),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
