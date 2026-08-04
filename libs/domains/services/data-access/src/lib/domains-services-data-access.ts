@@ -200,7 +200,6 @@ export type ArgoCd = _ArgoCd & {
 export type AgenticWorkflow = _AgenticWorkflow & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: AgenticWorkflowType
-  service_type: AgenticWorkflowType
 }
 export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd | AgenticWorkflow
 export type BlueprintService = AnyService & {
@@ -248,7 +247,7 @@ export function isArgoCd(service?: AnyService): service is ArgoCd {
   return service?.service_type === 'ARGOCD_APP'
 }
 
-export function isAgenticWorkflow(service?: { service_type?: string }): boolean {
+export function isAgenticWorkflow(service?: AnyService): service is AgenticWorkflow {
   return service?.service_type === 'AGENTIC_WORKFLOW'
 }
 
@@ -1043,7 +1042,7 @@ export const mutations = {
     environment: Environment
     payload: EnvironmentServiceIdsAllRequest
   }) {
-    const response = await environmentActionApi.deleteSelectedServices(environment.id, payload)
+    const response = await environmentActionApi.deleteSelectedServices(environment.id, undefined, payload)
     return response.data
   },
   async deleteService({
@@ -1077,6 +1076,7 @@ export const mutations = {
         mutation: (serviceId: string) =>
           terraformMainCallsApi.deleteTerraform.bind(terraformMainCallsApi)(
             serviceId,
+            undefined,
             undefined,
             skipDestroy ? 'SKIP_DESTROY' : undefined
           ),
