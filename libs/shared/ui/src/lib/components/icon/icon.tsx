@@ -6,6 +6,7 @@ import { type IconAwesomeEnum } from './icon-awesome.enum'
 import BitbucketIcon from './icons-git/bitbucket'
 import { GithubIcon, GithubWhiteIcon } from './icons-git/github'
 import GitlabIcon from './icons-git/gitlab'
+import AgenticWorkflowIcon from './icons/agentic-workflow'
 import ApplicationIcon from './icons/application'
 import ArgoCdIcon from './icons/argocd'
 import AWSIcon from './icons/aws'
@@ -117,6 +118,8 @@ export const Icon = forwardRef<HTMLElement, IconProps | FontAwesomeIconProps>(fu
       return <GCPGrayIcon {...formattedProps} />
     case IconEnum.APPLICATION:
       return <ApplicationIcon {...formattedProps} />
+    case IconEnum.AGENTIC_WORKFLOW:
+      return <AgenticWorkflowIcon {...formattedProps} />
     case IconEnum.ARGOCD:
       return <ArgoCdIcon {...formattedProps} />
     case IconEnum.AZURE:

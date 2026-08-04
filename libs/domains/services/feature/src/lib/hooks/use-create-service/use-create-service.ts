@@ -7,9 +7,9 @@ export function useCreateService({ organizationId }: { organizationId: string })
   const queryClient = useQueryClient()
 
   return useMutation(mutations.createService, {
-    onSuccess(response, { payload }) {
+    onSuccess(response, { environmentId, payload }) {
       queryClient.invalidateQueries({
-        queryKey: queries.services.list(response.environment.id).queryKey,
+        queryKey: queries.services.list(environmentId).queryKey,
       })
       showMcpSuggestionToast({ type: 'service', name: response.name, serviceType: payload.serviceType })
 

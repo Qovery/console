@@ -8,7 +8,7 @@ import {
 import { AgenticWorkflowSummary } from './agentic-workflow-summary'
 
 const mockNavigate = jest.fn()
-const mockCreateAgenticWorkflow = jest.fn()
+const mockCreateService = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -24,11 +24,11 @@ jest.mock('posthog-js', () => ({
   capture: jest.fn(),
 }))
 
-jest.mock('../../hooks/use-create-agentic-workflow/use-create-agentic-workflow', () => ({
-  ...jest.requireActual('../../hooks/use-create-agentic-workflow/use-create-agentic-workflow'),
-  useCreateAgenticWorkflow: () => ({
+jest.mock('../../hooks/use-create-service/use-create-service', () => ({
+  ...jest.requireActual('../../hooks/use-create-service/use-create-service'),
+  useCreateService: () => ({
     isLoading: false,
-    mutateAsync: mockCreateAgenticWorkflow,
+    mutateAsync: mockCreateService,
   }),
 }))
 
@@ -81,7 +81,7 @@ describe('AgenticWorkflowSummary', () => {
   beforeEach(() => {
     jest.useFakeTimers()
     jest.clearAllMocks()
-    mockCreateAgenticWorkflow.mockResolvedValue({ id: 'workflow-1' })
+    mockCreateService.mockResolvedValue({ id: 'workflow-1' })
   })
 
   afterEach(() => {
@@ -121,9 +121,10 @@ describe('AgenticWorkflowSummary', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-    expect(mockCreateAgenticWorkflow).toHaveBeenCalledWith({
+    expect(mockCreateService).toHaveBeenCalledWith({
       environmentId: 'environment-1',
       payload: expect.objectContaining({
+        serviceType: 'AGENTIC_WORKFLOW',
         name: 'review-agent',
         mcp: validValues.mcpJson,
         outputs: [expect.objectContaining({ url: 'https://hooks.example.com/workflow' })],

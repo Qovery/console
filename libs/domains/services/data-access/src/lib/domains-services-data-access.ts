@@ -164,6 +164,7 @@ export type JobType = Extract<ServiceType, 'JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
 export type TerraformType = Extract<ServiceType, 'TERRAFORM'>
 export type ArgoCdType = Extract<ServiceType, 'ARGOCD_APP'>
+export type AgenticWorkflowType = 'AGENTIC_WORKFLOW'
 
 // XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
 // Waiting to have this implementation available in the edition interfaces.
@@ -781,6 +782,9 @@ type CreateServiceRequest = {
     | ({
         serviceType: TerraformType
       } & TerraformRequest)
+    | ({
+        serviceType: AgenticWorkflowType
+      } & AgenticWorkflowRequest)
 }
 
 type CreateBlueprintRequest = {
@@ -801,11 +805,6 @@ type UpdateBlueprintRequest = {
 
 type DeployBlueprintRequest = {
   blueprintId: string
-}
-
-type CreateAgenticWorkflowRequest = {
-  environmentId: string
-  payload: AgenticWorkflowRequest
 }
 
 type EditServiceRequest = {
@@ -1072,7 +1071,10 @@ export const mutations = {
         mutation: terraformsApi.createTerraform.bind(terraformsApi, environmentId, payload),
         serviceType: 'TERRAFORM' as const,
       }))
-
+      .with({ serviceType: 'AGENTIC_WORKFLOW' }, ({ serviceType, ...payload }) => ({
+        mutation: agenticWorkflowsApi.createAgenticWorkflow.bind(agenticWorkflowsApi, environmentId, payload),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation()
     return response.data
@@ -1091,10 +1093,6 @@ export const mutations = {
   },
   async deployBlueprint({ blueprintId }: DeployBlueprintRequest) {
     const response = await blueprintApi.deployBlueprint(blueprintId)
-    return response.data
-  },
-  async createAgenticWorkflow({ environmentId, payload }: CreateAgenticWorkflowRequest) {
-    const response = await agenticWorkflowsApi.createAgenticWorkflow(environmentId, payload)
     return response.data
   },
   async editService({ serviceId, payload }: EditServiceRequest) {

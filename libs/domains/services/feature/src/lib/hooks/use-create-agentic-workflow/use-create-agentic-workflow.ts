@@ -1,7 +1,4 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { type AgenticWorkflowHeader, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
-import { mutations } from '@qovery/domains/services/data-access'
-import { queries } from '@qovery/state/util-queries'
 import { type AgenticWorkflowFormData } from '../../service-creation-flow/agentic-workflow/agentic-workflow-context'
 
 function formatWhitelistHosts(value: string) {
@@ -55,22 +52,4 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
       host_allowlist: formatWhitelistHosts(values.whitelistHosts),
     },
   }
-}
-
-export function useCreateAgenticWorkflow({ environmentId }: { environmentId: string }) {
-  const queryClient = useQueryClient()
-
-  return useMutation(mutations.createAgenticWorkflow, {
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: queries.services.list(environmentId).queryKey,
-      })
-    },
-    meta: {
-      notifyOnSuccess: {
-        title: 'Your agentic workflow has been created',
-      },
-      notifyOnError: true,
-    },
-  })
 }
