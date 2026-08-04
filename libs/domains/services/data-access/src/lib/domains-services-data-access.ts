@@ -78,6 +78,7 @@ import {
   TerraformMainCallsApi,
   type TerraformRequest,
   TerraformsApi,
+  type AgenticWorkflowResponse as _AgenticWorkflow,
   type Application as _Application,
   type ArgocdAppResponse as _ArgoCd,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -196,7 +197,12 @@ export type ArgoCd = _ArgoCd & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: ArgoCdType
 }
-export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd
+export type AgenticWorkflow = _AgenticWorkflow & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: AgenticWorkflowType
+  service_type: AgenticWorkflowType
+}
+export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd | AgenticWorkflow
 export type BlueprintService = AnyService & {
   blueprint_id: string
   tag?: string
@@ -474,9 +480,8 @@ export const services = createQueryKeys('services', {
           serviceType: 'TERRAFORM' as const,
         }))
         .with('ARGOCD_APP', async () => {
-          const service = (await argoCdApi.getArgoCdApp(serviceId)).data
           return {
-            ...service,
+            ...(await argoCdApi.getArgoCdApp(serviceId)).data,
             serviceType: 'ARGOCD_APP' as const,
           }
         })
