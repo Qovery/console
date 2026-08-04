@@ -204,7 +204,6 @@ export type BlueprintService = AnyService & {
 export type ReadOnlyService = ArgoCd
 export type EditableService = Exclude<AnyService, ReadOnlyService>
 export type EditableServiceType = Exclude<ServiceType, ArgoCdType>
-type NonAgenticWorkflowServiceType = Exclude<EditableServiceType, AgenticWorkflowType>
 export type DeployableServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB' | AgenticWorkflowType>
 export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType | AgenticWorkflowType>
 
@@ -398,7 +397,7 @@ export const services = createQueryKeys('services', {
       )
     },
   }),
-  status: ({ id: serviceId, serviceType }: { id: string; serviceType: NonAgenticWorkflowServiceType }) => ({
+  status: ({ id: serviceId, serviceType }: { id: string; serviceType: EditableServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const fn = match(serviceType)
@@ -408,18 +407,14 @@ export const services = createQueryKeys('services', {
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.getJobStatus.bind(jobMainCallsApi))
         .with('HELM', () => helmMainCallsApi.getHelmStatus.bind(helmMainCallsApi))
         .with('TERRAFORM', () => terraformMainCallsApi.getTerraform.bind(terraformMainCallsApi)) // TODO [QOV-821] should it be replaced with `getTerraformStatus` ?
-        .exhaustive()
+        .otherwise(() => {
+          throw new Error(`Status unsupported for serviceType: ${serviceType}`)
+        })
       const response = await fn(serviceId)
       return response.data
     },
   }),
-  deploymentRestrictions: ({
-    serviceId,
-    serviceType,
-  }: {
-    serviceId: string
-    serviceType: NonAgenticWorkflowServiceType
-  }) => ({
+  deploymentRestrictions: ({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const fn = match(serviceType)
@@ -438,7 +433,7 @@ export const services = createQueryKeys('services', {
           terraformDeploymentRestrictionApi.getTerraformDeploymentRestrictions.bind(terraformDeploymentRestrictionApi)
         )
         .with('CONTAINER', 'DATABASE', () => null)
-        .exhaustive()
+        .otherwise(() => null)
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
       }
@@ -539,7 +534,7 @@ export const services = createQueryKeys('services', {
     pageSize,
   }: {
     serviceId: string
-    serviceType: NonAgenticWorkflowServiceType
+    serviceType: EditableServiceType
     pageSize?: number
   }) => ({
     queryKey: [serviceId],
@@ -572,7 +567,9 @@ export const services = createQueryKeys('services', {
           'TERRAFORM',
           async () => (await terraformDeploymentsApi.listTerraformDeploymentHistoryV2(serviceId, pageSize)).data.results
         )
-        .exhaustive()
+        .otherwise(() => {
+          throw new Error(`Deployment history unsupported for serviceType: ${serviceType}`)
+        })
     },
   }),
   deploymentQueue: ({ serviceId }: { serviceId: string }) => ({
@@ -742,7 +739,7 @@ export const services = createQueryKeys('services', {
 
 type CloneServiceRequest = {
   serviceId: string
-  serviceType: NonAgenticWorkflowServiceType
+  serviceType: EditableServiceType
   payload: _CloneServiceRequest
 }
 
@@ -911,7 +908,9 @@ export const mutations = {
         mutation: terraformsApi.cloneTerraform.bind(terraformsApi),
         serviceType,
       }))
-      .exhaustive()
+      .otherwise(() => {
+        throw new Error(`Clone unsupported for serviceType: ${serviceType}`)
+      })
     const response = await mutation(serviceId, payload)
     return response.data
   },
@@ -1022,7 +1021,7 @@ export const mutations = {
     skipDestroy,
   }: {
     serviceId: string
-    serviceType: NonAgenticWorkflowServiceType
+    serviceType: EditableServiceType
     skipDestroy?: boolean
   }) {
     const { mutation } = match(serviceType)
@@ -1050,6 +1049,10 @@ export const mutations = {
             undefined,
             skipDestroy ? 'SKIP_DESTROY' : undefined
           ),
+        serviceType,
+      }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: agenticWorkflowsApi.deleteAgenticWorkflow.bind(agenticWorkflowsApi),
         serviceType,
       }))
       .exhaustive()
@@ -1140,7 +1143,7 @@ export const mutations = {
     const response = await environmentActionApi.rebootServices(environment.id, payload)
     return response.data
   },
-  async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: NonAgenticWorkflowServiceType }) {
+  async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
         mutation: applicationActionsApi.rebootApplication.bind(applicationActionsApi),
@@ -1166,7 +1169,9 @@ export const mutations = {
         mutation: terraformActionsApi.redeployTerraform.bind(terraformActionsApi),
         serviceType,
       }))
-      .exhaustive()
+      .otherwise(() => {
+        throw new Error(`Restart unsupported for serviceType: ${serviceType}`)
+      })
     const response = await mutation(serviceId)
     return response.data
   },
@@ -1224,7 +1229,7 @@ export const mutations = {
     const response = await environmentActionApi.uninstallSelectedServices(environment.id, payload)
     return response.data
   },
-  async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: NonAgenticWorkflowServiceType }) {
+  async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
         mutation: applicationActionsApi.stopApplication.bind(applicationActionsApi),
@@ -1247,7 +1252,9 @@ export const mutations = {
         mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }),
         serviceType,
       })) // TODO [QOV-821] to implement
-      .exhaustive()
+      .otherwise(() => {
+        throw new Error(`Stop unsupported for serviceType: ${serviceType}`)
+      })
     const response = await mutation(serviceId)
     return response.data
   },
@@ -1257,7 +1264,7 @@ export const mutations = {
     skipDestroy,
   }: {
     serviceId: string
-    serviceType: NonAgenticWorkflowServiceType
+    serviceType: EditableServiceType
     skipDestroy?: boolean
   }) {
     const { mutation } = match(serviceType)
@@ -1286,7 +1293,9 @@ export const mutations = {
           ),
         serviceType,
       }))
-      .exhaustive()
+      .otherwise(() => {
+        throw new Error(`Uninstall unsupported for serviceType: ${serviceType}`)
+      })
     const response = await mutation(serviceId)
     return response.data
   },
