@@ -164,7 +164,7 @@ export type JobType = Extract<ServiceType, 'JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
 export type TerraformType = Extract<ServiceType, 'TERRAFORM'>
 export type ArgoCdType = Extract<ServiceType, 'ARGOCD_APP'>
-export type AgenticWorkflowType = 'AGENTIC_WORKFLOW'
+export type AgenticWorkflowType = Extract<ServiceType, 'AGENTIC_WORKFLOW'>
 
 // XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
 // Waiting to have this implementation available in the edition interfaces.
@@ -203,9 +203,9 @@ export type BlueprintService = AnyService & {
 }
 export type ReadOnlyService = ArgoCd
 export type EditableService = Exclude<AnyService, ReadOnlyService>
-export type EditableServiceType = Exclude<ServiceType, ArgoCdType>
+export type EditableServiceType = Exclude<ServiceType, ArgoCdType | AgenticWorkflowType>
 export type DeployableServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB'>
-export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType>
+export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType | AgenticWorkflowType>
 
 export type AdvancedSettings =
   | ApplicationAdvancedSettings
@@ -439,7 +439,13 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
-  details: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
+  details: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: Exclude<ServiceType, AgenticWorkflowType>
+  }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const service = await match(serviceType)
