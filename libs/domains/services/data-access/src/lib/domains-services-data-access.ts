@@ -242,8 +242,12 @@ export function isArgoCd(service?: AnyService): service is ArgoCd {
   return service?.service_type === 'ARGOCD_APP'
 }
 
+export function isAgenticWorkflow(service?: { service_type?: string }): boolean {
+  return service?.service_type === 'AGENTIC_WORKFLOW'
+}
+
 export function isEditableService(service: AnyService): service is EditableService {
-  return !isArgoCd(service)
+  return !isArgoCd(service) && !isAgenticWorkflow(service)
 }
 
 export function isEditableServiceType(serviceType?: ServiceType): serviceType is EditableServiceType {
