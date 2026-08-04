@@ -152,6 +152,12 @@ const argoCdApi = new ArgoCDApi()
 
 const serviceMainCallsApi = new ServiceMainCallsApi()
 
+// TODO: Add the corresponding Agentic Workflow API request when these operations are supported.
+const pendingAgenticWorkflowRequest = () =>
+  new Promise<never>(() => {
+    // Intentionally left pending until the API request is available.
+  })
+
 // Prefer this type in param instead of ServiceTypeEnum
 // to suppport string AND enum as param.
 // ServiceTypeEnum still exist mainly for compatibility reason (to use redux and react-query fetched services in data-access).
@@ -417,9 +423,8 @@ export const services = createQueryKeys('services', {
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.getJobStatus.bind(jobMainCallsApi))
         .with('HELM', () => helmMainCallsApi.getHelmStatus.bind(helmMainCallsApi))
         .with('TERRAFORM', () => terraformMainCallsApi.getTerraform.bind(terraformMainCallsApi)) // TODO [QOV-821] should it be replaced with `getTerraformStatus` ?
-        .otherwise(() => {
-          throw new Error(`Status unsupported for serviceType: ${serviceType}`)
-        })
+        .with('AGENTIC_WORKFLOW', () => pendingAgenticWorkflowRequest)
+        .exhaustive()
       const response = await fn(serviceId)
       return response.data
     },
@@ -443,7 +448,8 @@ export const services = createQueryKeys('services', {
           terraformDeploymentRestrictionApi.getTerraformDeploymentRestrictions.bind(terraformDeploymentRestrictionApi)
         )
         .with('CONTAINER', 'DATABASE', () => null)
-        .otherwise(() => null)
+        .with('AGENTIC_WORKFLOW', () => pendingAgenticWorkflowRequest)
+        .exhaustive()
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
       }
@@ -576,9 +582,8 @@ export const services = createQueryKeys('services', {
           'TERRAFORM',
           async () => (await terraformDeploymentsApi.listTerraformDeploymentHistoryV2(serviceId, pageSize)).data.results
         )
-        .otherwise(() => {
-          throw new Error(`Deployment history unsupported for serviceType: ${serviceType}`)
-        })
+        .with('AGENTIC_WORKFLOW', pendingAgenticWorkflowRequest)
+        .exhaustive()
     },
   }),
   deploymentQueue: ({ serviceId }: { serviceId: string }) => ({
@@ -917,9 +922,8 @@ export const mutations = {
         mutation: terraformsApi.cloneTerraform.bind(terraformsApi),
         serviceType,
       }))
-      .otherwise(() => {
-        throw new Error(`Clone unsupported for serviceType: ${serviceType}`)
-      })
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({ mutation: pendingAgenticWorkflowRequest, serviceType }))
+      .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
   },
@@ -1178,9 +1182,8 @@ export const mutations = {
         mutation: terraformActionsApi.redeployTerraform.bind(terraformActionsApi),
         serviceType,
       }))
-      .otherwise(() => {
-        throw new Error(`Restart unsupported for serviceType: ${serviceType}`)
-      })
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({ mutation: pendingAgenticWorkflowRequest, serviceType }))
+      .exhaustive()
     const response = await mutation(serviceId)
     return response.data
   },
@@ -1261,9 +1264,8 @@ export const mutations = {
         mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }),
         serviceType,
       })) // TODO [QOV-821] to implement
-      .otherwise(() => {
-        throw new Error(`Stop unsupported for serviceType: ${serviceType}`)
-      })
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({ mutation: pendingAgenticWorkflowRequest, serviceType }))
+      .exhaustive()
     const response = await mutation(serviceId)
     return response.data
   },
@@ -1302,9 +1304,8 @@ export const mutations = {
           ),
         serviceType,
       }))
-      .otherwise(() => {
-        throw new Error(`Uninstall unsupported for serviceType: ${serviceType}`)
-      })
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({ mutation: pendingAgenticWorkflowRequest, serviceType }))
+      .exhaustive()
     const response = await mutation(serviceId)
     return response.data
   },
