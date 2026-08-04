@@ -65,7 +65,6 @@ import {
   type JobRequest,
   JobsApi,
   type RebootServicesRequest,
-  type ReferenceObject,
   ServiceMainCallsApi,
   type Status,
   TerraformActionsApi,
@@ -200,7 +199,6 @@ export type ArgoCd = _ArgoCd & {
 export type AgenticWorkflow = _AgenticWorkflow & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: AgenticWorkflowType
-  environment: ReferenceObject
   icon_uri: string
 }
 export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd | AgenticWorkflow
@@ -251,15 +249,6 @@ export function isArgoCd(service?: AnyService): service is ArgoCd {
 
 export function isAgenticWorkflow(service?: AnyService): service is AgenticWorkflow {
   return service?.service_type === 'AGENTIC_WORKFLOW'
-}
-
-function normalizeAgenticWorkflow(service: _AgenticWorkflow): AgenticWorkflow {
-  return {
-    ...service,
-    serviceType: 'AGENTIC_WORKFLOW',
-    environment: { id: service.environment_id },
-    icon_uri: '',
-  }
 }
 
 export function isEditableService(service: AnyService): service is EditableService {
@@ -394,7 +383,13 @@ export const services = createQueryKeys('services', {
     queryKey: [environmentId],
     async queryFn(): Promise<AgenticWorkflow[]> {
       const response = await agenticWorkflowsApi.listAgenticWorkflows(environmentId)
-      return response.data.results?.map(normalizeAgenticWorkflow) ?? []
+      return (
+        response.data.results?.map((service) => ({
+          ...service,
+          serviceType: 'AGENTIC_WORKFLOW',
+          icon_uri: 'app://qovery-console/agentic-workflow',
+        })) ?? []
+      )
     },
   }),
   argocdManifest: (serviceId: string) => ({
@@ -408,10 +403,8 @@ export const services = createQueryKeys('services', {
     queryKey: [environmentId],
     async queryFn() {
       const response = await environmentApi.listServicesByEnvironmentId(environmentId)
-      return (response.data.results || []).map((service) =>
-        service.service_type === 'AGENTIC_WORKFLOW'
-          ? normalizeAgenticWorkflow(service)
-          : ({ ...service, serviceType: service.service_type } as AnyService)
+      return (response.data.results || []).map(
+        (service) => ({ ...service, serviceType: service.service_type }) as AnyService
       )
     },
   }),
@@ -506,7 +499,8 @@ export const services = createQueryKeys('services', {
           }
         })
         .with('AGENTIC_WORKFLOW', async () => ({
-          ...normalizeAgenticWorkflow((await agenticWorkflowsApi.getAgenticWorkflow(serviceId)).data),
+          ...(await agenticWorkflowsApi.getAgenticWorkflow(serviceId)).data,
+          serviceType: 'AGENTIC_WORKFLOW' as const,
         }))
         .exhaustive()
       return service
@@ -1130,7 +1124,7 @@ export const mutations = {
       }))
       .exhaustive()
     const response = await mutation()
-    return 'environment_id' in response.data ? normalizeAgenticWorkflow(response.data) : response.data
+    return response.data
   },
   async createBlueprint({ environmentId, payload, deploy }: CreateBlueprintRequest) {
     const response = await blueprintApi.createBlueprint(environmentId, payload, deploy)

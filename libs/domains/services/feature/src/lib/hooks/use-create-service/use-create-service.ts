@@ -9,9 +9,7 @@ export function useCreateService({ organizationId }: { organizationId: string })
   return useMutation(mutations.createService, {
     onSuccess(response, { payload }) {
       queryClient.invalidateQueries({
-        queryKey: queries.services.list(
-          'environment_id' in response ? response.environment_id : response.environment.id
-        ).queryKey,
+        queryKey: queries.services.list(response.environment.id).queryKey,
       })
       showMcpSuggestionToast({ type: 'service', name: response.name, serviceType: payload.serviceType })
 
