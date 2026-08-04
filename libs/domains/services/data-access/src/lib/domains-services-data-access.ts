@@ -203,8 +203,9 @@ export type BlueprintService = AnyService & {
 }
 export type ReadOnlyService = ArgoCd
 export type EditableService = Exclude<AnyService, ReadOnlyService>
-export type EditableServiceType = Exclude<ServiceType, ArgoCdType | AgenticWorkflowType>
-export type DeployableServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB'>
+export type EditableServiceType = Exclude<ServiceType, ArgoCdType>
+type NonAgenticWorkflowServiceType = Exclude<EditableServiceType, AgenticWorkflowType>
+export type DeployableServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB' | AgenticWorkflowType>
 export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType | AgenticWorkflowType>
 
 export type AdvancedSettings =
@@ -243,7 +244,7 @@ export function isArgoCd(service?: AnyService): service is ArgoCd {
 }
 
 export function isEditableService(service: AnyService): service is EditableService {
-  return !isArgoCd(service) && (service.service_type as string) !== 'AGENTIC_WORKFLOW'
+  return !isArgoCd(service)
 }
 
 export function isEditableServiceType(serviceType?: ServiceType): serviceType is EditableServiceType {
@@ -397,7 +398,7 @@ export const services = createQueryKeys('services', {
       )
     },
   }),
-  status: ({ id: serviceId, serviceType }: { id: string; serviceType: EditableServiceType }) => ({
+  status: ({ id: serviceId, serviceType }: { id: string; serviceType: NonAgenticWorkflowServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const fn = match(serviceType)
@@ -412,7 +413,13 @@ export const services = createQueryKeys('services', {
       return response.data
     },
   }),
-  deploymentRestrictions: ({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) => ({
+  deploymentRestrictions: ({
+    serviceId,
+    serviceType,
+  }: {
+    serviceId: string
+    serviceType: NonAgenticWorkflowServiceType
+  }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const fn = match(serviceType)
@@ -439,13 +446,7 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
-  details: ({
-    serviceId,
-    serviceType,
-  }: {
-    serviceId: string
-    serviceType: Exclude<ServiceType, AgenticWorkflowType>
-  }) => ({
+  details: ({ serviceId, serviceType }: { serviceId: string; serviceType: ServiceType }) => ({
     queryKey: [serviceId],
     async queryFn() {
       const service = await match(serviceType)
@@ -480,6 +481,10 @@ export const services = createQueryKeys('services', {
             serviceType: 'ARGOCD_APP' as const,
           }
         })
+        .with('AGENTIC_WORKFLOW', async () => ({
+          ...(await agenticWorkflowsApi.getAgenticWorkflow(serviceId)).data,
+          serviceType: 'AGENTIC_WORKFLOW' as const,
+        }))
         .exhaustive()
       return service
     },
@@ -534,7 +539,7 @@ export const services = createQueryKeys('services', {
     pageSize,
   }: {
     serviceId: string
-    serviceType: EditableServiceType
+    serviceType: NonAgenticWorkflowServiceType
     pageSize?: number
   }) => ({
     queryKey: [serviceId],
@@ -737,7 +742,7 @@ export const services = createQueryKeys('services', {
 
 type CloneServiceRequest = {
   serviceId: string
-  serviceType: EditableServiceType
+  serviceType: NonAgenticWorkflowServiceType
   payload: _CloneServiceRequest
 }
 
@@ -1017,7 +1022,7 @@ export const mutations = {
     skipDestroy,
   }: {
     serviceId: string
-    serviceType: EditableServiceType
+    serviceType: NonAgenticWorkflowServiceType
     skipDestroy?: boolean
   }) {
     const { mutation } = match(serviceType)
@@ -1135,7 +1140,7 @@ export const mutations = {
     const response = await environmentActionApi.rebootServices(environment.id, payload)
     return response.data
   },
-  async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) {
+  async restartService({ serviceId, serviceType }: { serviceId: string; serviceType: NonAgenticWorkflowServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
         mutation: applicationActionsApi.rebootApplication.bind(applicationActionsApi),
@@ -1219,7 +1224,7 @@ export const mutations = {
     const response = await environmentActionApi.uninstallSelectedServices(environment.id, payload)
     return response.data
   },
-  async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: EditableServiceType }) {
+  async stopService({ serviceId, serviceType }: { serviceId: string; serviceType: NonAgenticWorkflowServiceType }) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
         mutation: applicationActionsApi.stopApplication.bind(applicationActionsApi),
@@ -1252,7 +1257,7 @@ export const mutations = {
     skipDestroy,
   }: {
     serviceId: string
-    serviceType: EditableServiceType
+    serviceType: NonAgenticWorkflowServiceType
     skipDestroy?: boolean
   }) {
     const { mutation } = match(serviceType)
