@@ -50,7 +50,7 @@ export function StepConfirm({ provider, email, previousProvider, onContinue, onW
           </div>
 
           <p className="mt-6 text-center text-ssm text-neutral-subtle">
-            You can invite your team and manage sign-in providers later.
+            You can invite your team later.
           </p>
         </div>
       </div>
