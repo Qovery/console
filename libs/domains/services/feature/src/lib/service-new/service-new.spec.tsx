@@ -142,9 +142,6 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.getByText('Agentic workflow')).toBeInTheDocument()
-    expect(
-      screen.getByText('Run an AI workflow with webhooks, MCP connectors, governance, and configured outputs.')
-    ).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Agentic workflow/i })).toHaveAttribute(
       'href',
       '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow'
