@@ -38,7 +38,7 @@ function useRedirectIfLogged(connection?: string) {
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
     enabled: isAuthenticated,
   })
-  const { data: userSignUp, isFetched: isFetchedUserSignUp } = useUserSignUp({ enabled: isAuthenticated })
+  const { refetch: refetchUserSignUp } = useUserSignUp({ enabled: false })
 
   useEffect(() => {
     if (connection && !isAuthenticated) {
@@ -52,8 +52,8 @@ function useRedirectIfLogged(connection?: string) {
       return
     }
 
-    function redirect() {
-      if (!isFetchedOrganizations || !isFetchedUserSignUp) {
+    async function fetchData() {
+      if (!isFetchedOrganizations) {
         return
       }
 
@@ -70,25 +70,16 @@ function useRedirectIfLogged(connection?: string) {
         } else {
           navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
         }
-        return
+      } else {
+        const { data: userSignUp } = await refetchUserSignUp()
+        navigate({ href: getOnboardingEntryUrl(userSignUp) })
       }
-
-      navigate({ href: getOnboardingEntryUrl(userSignUp) })
     }
 
     if (isAuthenticated) {
-      redirect()
+      fetchData()
     }
-  }, [
-    authLogin,
-    connection,
-    navigate,
-    isAuthenticated,
-    organizations,
-    isFetchedOrganizations,
-    userSignUp,
-    isFetchedUserSignUp,
-  ])
+  }, [authLogin, connection, navigate, isAuthenticated, organizations, isFetchedOrganizations, refetchUserSignUp])
 }
 
 function PageRedirectLogin() {
