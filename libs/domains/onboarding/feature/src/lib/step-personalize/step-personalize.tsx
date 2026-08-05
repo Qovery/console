@@ -12,10 +12,10 @@ export function StepPersonalize({ onSubmit, authLogout }: StepPersonalizeProps) 
 
   return (
     <div className="mx-auto max-w-content-with-navigation-left pb-10">
-      <h1 className="h3 mb-3 text-neutral">To tailor your experience</h1>
+      <h1 className="h3 mb-3 text-neutral">Set up your new organization</h1>
       <p className="mb-10 text-sm text-neutral">
-        We need a few details to tailor your experience. Continuing creates a brand-new organization, so ask your team
-        for an invitation if they already have one.
+        We need a few details to set up your new organization. If your team already has one, ask them for an invitation
+        instead.
       </p>
       <form onSubmit={onSubmit}>
         <div className="mb-3 flex gap-3">
