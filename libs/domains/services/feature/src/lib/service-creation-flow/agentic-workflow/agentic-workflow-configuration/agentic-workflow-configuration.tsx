@@ -1,7 +1,17 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useNavigate } from '@tanstack/react-router'
 import { type ReactNode, useEffect, useRef } from 'react'
-import { Button, CodeEditor, FunnelFlowBody, Icon, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import {
+  Button,
+  CodeEditor,
+  FunnelFlowBody,
+  Heading,
+  Icon,
+  InputText,
+  InputTextArea,
+  InputToggle,
+  Section,
+} from '@qovery/shared/ui'
 import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowGitRepository,
@@ -89,11 +99,7 @@ function AgenticWorkflowSection({
     <>
       <div className="flex items-center gap-2">
         <Icon iconName={iconName} className="text-sm text-neutral-subtle" />
-        <h2
-          className={`text-base font-medium leading-6 ${active || completed ? 'text-neutral' : 'text-neutral-subtle'}`}
-        >
-          {title}
-        </h2>
+        <Heading level={2}>{title}</Heading>
       </div>
       <div className="flex items-center gap-3">
         {showStatus &&
@@ -107,7 +113,7 @@ function AgenticWorkflowSection({
   )
 
   return (
-    <section className="rounded-xl border border-neutral bg-surface-neutral shadow-sm">
+    <Section className="rounded-xl border border-neutral bg-surface-neutral shadow-sm">
       {active ? (
         <div className="relative flex min-h-[56px] items-center justify-between gap-3 px-4 py-4 pr-40">
           {headerContent}
@@ -124,7 +130,7 @@ function AgenticWorkflowSection({
         </button>
       )}
       {active && <div className="flex flex-col gap-3 px-4 pb-4">{children}</div>}
-    </section>
+    </Section>
   )
 }
 
@@ -281,327 +287,329 @@ export function AgenticWorkflowConfiguration() {
 
   return (
     <FunnelFlowBody customContentWidth="max-w-[620px]">
-      <header className="mb-5">
-        <h1 className="text-2xl font-medium leading-8 text-neutral">Create agentic workflow</h1>
-        <p className="mt-1 text-sm leading-5 text-neutral-subtle">
-          Configure the inputs, tools, model, governance, and outputs used by your workflow.
-        </p>
-      </header>
+      <Section>
+        <header className="mb-5">
+          <Heading level={1}>Create agentic workflow</Heading>
+          <p className="mt-1 text-sm leading-5 text-neutral-subtle">
+            Configure the inputs, tools, model, governance, and outputs used by your workflow.
+          </p>
+        </header>
 
-      <div className="flex flex-col gap-3 pb-20">
-        <AgenticWorkflowSection
-          section="service-information"
-          iconName="circle-info"
-          invalid={sectionInvalid['service-information']}
-        >
-          <InputText
-            name="name"
-            label="Name"
-            value={values.name}
-            autoFocus
-            error={showNameError ? 'Please enter a workflow name.' : undefined}
-            onChange={(event) => form.setValue('name', event.currentTarget.value, { shouldDirty: true })}
-          />
-          <InputTextArea
-            name="description"
-            label="Description"
-            value={values.description}
-            onChange={(event) => form.setValue('description', event.currentTarget.value, { shouldDirty: true })}
-          />
-          <div className="grid gap-3 sm:grid-cols-3">
-            <InputText
-              name="cpu"
-              label="CPU (mCPU)"
-              type="number"
-              value={values.cpu}
-              onChange={(event) => form.setValue('cpu', event.currentTarget.value, { shouldDirty: true })}
-            />
-            <InputText
-              name="memory"
-              label="Memory (MB)"
-              type="number"
-              value={values.memory}
-              onChange={(event) => form.setValue('memory', event.currentTarget.value, { shouldDirty: true })}
-            />
-            <InputText
-              name="storage"
-              label="Storage (GB)"
-              type="number"
-              value={values.storage}
-              onChange={(event) => form.setValue('storage', event.currentTarget.value, { shouldDirty: true })}
-            />
-          </div>
-          <InputToggle
-            small
-            align="top"
-            value={values.workflowEnabled}
-            title="Enable workflow"
-            description="Start listening and executing this workflow as soon as it is created."
-            onChange={(value) => form.setValue('workflowEnabled', value, { shouldDirty: true })}
-          />
-          <ContinueButton disabled={!values.name.trim()} onClick={goToNextSection} />
-        </AgenticWorkflowSection>
-
-        <AgenticWorkflowSection section="ai-model" iconName="brain-circuit" invalid={sectionInvalid['ai-model']}>
-          <AIModelCards />
-          <InputText
-            ref={modelApiKeyInputRef}
-            name="model-api-key"
-            label="API key"
-            type="password"
-            value={values.modelApiKey}
-            hint="API key used to call the selected cloud model."
-            error={showModelApiKeyError ? 'Please enter an API key.' : undefined}
-            onChange={(event) => form.setValue('modelApiKey', event.currentTarget.value, { shouldDirty: true })}
-          />
-          <CodeEditorField
-            name="model-settings"
-            label="Model settings JSON"
-            language="json"
-            value={values.modelSettingsJson}
-            error={modelSettingsJsonError}
-            hint={
-              <>
-                Need help configuring Claude Code settings? Read the{' '}
-                <a
-                  href="https://code.claude.com/docs/en/settings"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium text-brand hover:underline"
-                >
-                  Claude Code settings documentation
-                </a>
-                .
-              </>
-            }
-            onChange={(value) => form.setValue('modelSettingsJson', value, { shouldDirty: true })}
-          />
-          <ContinueButton
-            disabled={!values.modelApiKey.trim() || Boolean(modelSettingsJsonError)}
-            onClick={goToNextSection}
-          />
-        </AgenticWorkflowSection>
-
-        <AgenticWorkflowSection section="connectors" iconName="plug" invalid={sectionInvalid.connectors}>
-          <CodeEditorField
-            name="mcp"
-            label="MCP JSON"
-            language="json"
-            value={values.mcpJson}
-            error={mcpJsonError}
-            hint={
-              <span>
-                See Claude Code docs for{' '}
-                <a
-                  href="https://code.claude.com/docs/fr/mcp#option-1-add-a-remote-http-server"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium text-brand hover:underline"
-                >
-                  remote HTTP
-                </a>{' '}
-                and{' '}
-                <a
-                  href="https://code.claude.com/docs/fr/mcp#option-3-add-a-local-stdio-server"
-                  target="_blank"
-                  rel="noreferrer"
-                  className="font-medium text-brand hover:underline"
-                >
-                  local stdio
-                </a>{' '}
-                servers.
-              </span>
-            }
-            onChange={(value) => form.setValue('mcpJson', value, { shouldDirty: true })}
-          />
-          <ContinueButton disabled={Boolean(mcpJsonError)} onClick={goToNextSection} />
-        </AgenticWorkflowSection>
-
-        <AgenticWorkflowSection
-          section="git-repositories"
-          iconName="code-branch"
-          invalid={sectionInvalid['git-repositories']}
-          headerAction={
-            <Button
-              type="button"
-              variant="outline"
-              color="neutral"
-              size="sm"
-              className="h-8 w-fit whitespace-nowrap"
-              onClick={addRepository}
-            >
-              <Icon iconName="plus" />
-              Add repository
-            </Button>
-          }
-        >
-          {values.gitRepositories.map((repository, index) => (
-            <GitRepositoryCard
-              key={index}
-              index={index}
-              repository={repository}
-              onChange={(nextRepository) => {
-                const gitRepositories = [...values.gitRepositories]
-                gitRepositories[index] = nextRepository
-                form.setValue('gitRepositories', gitRepositories, { shouldDirty: true })
-              }}
-              onRemove={() =>
-                form.setValue(
-                  'gitRepositories',
-                  values.gitRepositories.filter((_, repositoryIndex) => repositoryIndex !== index),
-                  { shouldDirty: true }
-                )
-              }
-            />
-          ))}
-          {!gitRepositoriesValid && (
-            <p className="px-3 text-xs font-medium text-negative">
-              Select a Git account, repository, and branch for each repository.
-            </p>
-          )}
-          <ContinueButton disabled={!gitRepositoriesValid} onClick={goToNextSection} />
-        </AgenticWorkflowSection>
-
-        <AgenticWorkflowSection section="governance" iconName="shield-halved" invalid={sectionInvalid.governance}>
-          <InputTextArea
-            ref={whitelistHostsTextareaRef}
-            name="whitelist-hosts"
-            label="Domain allowlist"
-            value={values.whitelistHosts}
-            hint="Use * to allow all domains, or enter hostnames separated by commas. Example: api.github.com, jira.company.com."
-            onChange={(event) => form.setValue('whitelistHosts', event.currentTarget.value, { shouldDirty: true })}
-          />
-          <ContinueButton onClick={goToNextSection} />
-        </AgenticWorkflowSection>
-
-        <AgenticWorkflowSection section="docker-fragment" iconName="box" invalid={sectionInvalid['docker-fragment']}>
-          <CodeEditorField
-            name="docker-fragment"
-            label="Dockerfile fragment"
-            language="dockerfile"
-            value={values.dockerFragment}
-            hint="Use this to install CLI or binary. Example: RUN npm install -g @modelcontextprotocol/server-github."
-            onChange={(value) => form.setValue('dockerFragment', value, { shouldDirty: true })}
-          />
-          <ContinueButton onClick={goToNextSection} />
-        </AgenticWorkflowSection>
-
-        <AgenticWorkflowSection
-          section="outputs"
-          iconName="paper-plane"
-          invalid={sectionInvalid.outputs}
-          headerAction={
-            <Button
-              type="button"
-              variant="outline"
-              color="neutral"
-              size="sm"
-              className="h-8 w-fit whitespace-nowrap"
-              onClick={addOutput}
-            >
-              <Icon iconName="plus" />
-              Add webhook
-            </Button>
-          }
-        >
-          {values.outputs.map((output, index) => (
-            <div key={index} className="rounded-lg border border-neutral bg-surface-neutral p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-sm font-medium text-neutral">Webhook {index + 1}</span>
-                <Button
-                  type="button"
-                  variant="plain"
-                  color="neutral"
-                  size="md"
-                  onClick={() =>
-                    form.setValue(
-                      'outputs',
-                      values.outputs.filter((_, outputIndex) => outputIndex !== index),
-                      { shouldDirty: true }
-                    )
-                  }
-                >
-                  Remove
-                </Button>
-              </div>
-              <div className="flex flex-col gap-3">
-                <InputText
-                  name={`output-url-${index}`}
-                  label="Webhook URL"
-                  value={output.url}
-                  error={!output.url.trim() ? 'Please enter the output webhook URL.' : undefined}
-                  onChange={(event) => {
-                    const outputs = [...values.outputs]
-                    outputs[index] = { ...output, url: event.currentTarget.value }
-                    form.setValue('outputs', outputs, { shouldDirty: true })
-                  }}
-                />
-                <CodeEditorField
-                  name={`output-headers-${index}`}
-                  label="Request headers JSON"
-                  language="json"
-                  height="120px"
-                  value={output.headersJson}
-                  error={outputHeadersErrors[index]}
-                  hint='Optional request headers. Example: { "Authorization": "Bearer {{TOKEN}}" }'
-                  onChange={(value) => {
-                    const outputs = [...values.outputs]
-                    outputs[index] = { ...output, headersJson: value }
-                    form.setValue('outputs', outputs, { shouldDirty: true })
-                  }}
-                />
-                <InputTextArea
-                  name={`output-prompt-${index}`}
-                  label="Prompt"
-                  value={output.prompt}
-                  onChange={(event) => {
-                    const outputs = [...values.outputs]
-                    outputs[index] = { ...output, prompt: event.currentTarget.value }
-                    form.setValue('outputs', outputs, { shouldDirty: true })
-                  }}
-                />
-              </div>
-            </div>
-          ))}
-          {!outputsValid && (
-            <p className="px-3 text-xs font-medium text-negative">
-              Enter a webhook URL for each configured output webhook.
-            </p>
-          )}
-          <ContinueButton disabled={!outputsValid || outputHeadersErrors.some(Boolean)} onClick={goToNextSection} />
-        </AgenticWorkflowSection>
-
-        <AgenticWorkflowSection
-          section="agent-prompt"
-          iconName="message-lines"
-          invalid={sectionInvalid['agent-prompt']}
-        >
-          <InputTextArea
-            ref={agentPromptTextareaRef}
-            name="agent-prompt"
-            label="Agent prompt"
-            value={values.agentPrompt}
-            hint="Describe the workflow behavior. Example: review incoming webhook payloads, open a pull request when needed, then notify the team."
-            onChange={(event) => form.setValue('agentPrompt', event.currentTarget.value, { shouldDirty: true })}
-          />
-          <ContinueButton disabled={!values.agentPrompt.trim()} onClick={goToNextSection} />
-        </AgenticWorkflowSection>
-      </div>
-
-      <footer className="fixed bottom-0 left-1/2 z-header w-full max-w-[620px] -translate-x-1/2 bg-background px-8 pb-4">
-        <div className="border-t border-neutral pt-4">
-          <Button
-            type="button"
-            size="lg"
-            className="w-full justify-center"
-            disabled={!isValid}
-            onClick={() => navigate({ to: `${creationFlowUrl}/summary` })}
+        <div className="flex flex-col gap-3 pb-20">
+          <AgenticWorkflowSection
+            section="service-information"
+            iconName="circle-info"
+            invalid={sectionInvalid['service-information']}
           >
-            Confirm configuration
-            <Icon iconName="arrow-right" />
-          </Button>
+            <InputText
+              name="name"
+              label="Name"
+              value={values.name}
+              autoFocus
+              error={showNameError ? 'Please enter a workflow name.' : undefined}
+              onChange={(event) => form.setValue('name', event.currentTarget.value, { shouldDirty: true })}
+            />
+            <InputTextArea
+              name="description"
+              label="Description"
+              value={values.description}
+              onChange={(event) => form.setValue('description', event.currentTarget.value, { shouldDirty: true })}
+            />
+            <div className="grid gap-3 sm:grid-cols-3">
+              <InputText
+                name="cpu"
+                label="CPU (mCPU)"
+                type="number"
+                value={values.cpu}
+                onChange={(event) => form.setValue('cpu', event.currentTarget.value, { shouldDirty: true })}
+              />
+              <InputText
+                name="memory"
+                label="Memory (MB)"
+                type="number"
+                value={values.memory}
+                onChange={(event) => form.setValue('memory', event.currentTarget.value, { shouldDirty: true })}
+              />
+              <InputText
+                name="storage"
+                label="Storage (GB)"
+                type="number"
+                value={values.storage}
+                onChange={(event) => form.setValue('storage', event.currentTarget.value, { shouldDirty: true })}
+              />
+            </div>
+            <InputToggle
+              small
+              align="top"
+              value={values.workflowEnabled}
+              title="Enable workflow"
+              description="Start listening and executing this workflow as soon as it is created."
+              onChange={(value) => form.setValue('workflowEnabled', value, { shouldDirty: true })}
+            />
+            <ContinueButton disabled={!values.name.trim()} onClick={goToNextSection} />
+          </AgenticWorkflowSection>
+
+          <AgenticWorkflowSection section="ai-model" iconName="brain-circuit" invalid={sectionInvalid['ai-model']}>
+            <AIModelCards />
+            <InputText
+              ref={modelApiKeyInputRef}
+              name="model-api-key"
+              label="API key"
+              type="password"
+              value={values.modelApiKey}
+              hint="API key used to call the selected cloud model."
+              error={showModelApiKeyError ? 'Please enter an API key.' : undefined}
+              onChange={(event) => form.setValue('modelApiKey', event.currentTarget.value, { shouldDirty: true })}
+            />
+            <CodeEditorField
+              name="model-settings"
+              label="Model settings JSON"
+              language="json"
+              value={values.modelSettingsJson}
+              error={modelSettingsJsonError}
+              hint={
+                <>
+                  Need help configuring Claude Code settings? Read the{' '}
+                  <a
+                    href="https://code.claude.com/docs/en/settings"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-brand hover:underline"
+                  >
+                    Claude Code settings documentation
+                  </a>
+                  .
+                </>
+              }
+              onChange={(value) => form.setValue('modelSettingsJson', value, { shouldDirty: true })}
+            />
+            <ContinueButton
+              disabled={!values.modelApiKey.trim() || Boolean(modelSettingsJsonError)}
+              onClick={goToNextSection}
+            />
+          </AgenticWorkflowSection>
+
+          <AgenticWorkflowSection section="connectors" iconName="plug" invalid={sectionInvalid.connectors}>
+            <CodeEditorField
+              name="mcp"
+              label="MCP JSON"
+              language="json"
+              value={values.mcpJson}
+              error={mcpJsonError}
+              hint={
+                <span>
+                  See Claude Code docs for{' '}
+                  <a
+                    href="https://code.claude.com/docs/fr/mcp#option-1-add-a-remote-http-server"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-brand hover:underline"
+                  >
+                    remote HTTP
+                  </a>{' '}
+                  and{' '}
+                  <a
+                    href="https://code.claude.com/docs/fr/mcp#option-3-add-a-local-stdio-server"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="font-medium text-brand hover:underline"
+                  >
+                    local stdio
+                  </a>{' '}
+                  servers.
+                </span>
+              }
+              onChange={(value) => form.setValue('mcpJson', value, { shouldDirty: true })}
+            />
+            <ContinueButton disabled={Boolean(mcpJsonError)} onClick={goToNextSection} />
+          </AgenticWorkflowSection>
+
+          <AgenticWorkflowSection
+            section="git-repositories"
+            iconName="code-branch"
+            invalid={sectionInvalid['git-repositories']}
+            headerAction={
+              <Button
+                type="button"
+                variant="outline"
+                color="neutral"
+                size="sm"
+                className="h-8 w-fit whitespace-nowrap"
+                onClick={addRepository}
+              >
+                <Icon iconName="plus" />
+                Add repository
+              </Button>
+            }
+          >
+            {values.gitRepositories.map((repository, index) => (
+              <GitRepositoryCard
+                key={index}
+                index={index}
+                repository={repository}
+                onChange={(nextRepository) => {
+                  const gitRepositories = [...values.gitRepositories]
+                  gitRepositories[index] = nextRepository
+                  form.setValue('gitRepositories', gitRepositories, { shouldDirty: true })
+                }}
+                onRemove={() =>
+                  form.setValue(
+                    'gitRepositories',
+                    values.gitRepositories.filter((_, repositoryIndex) => repositoryIndex !== index),
+                    { shouldDirty: true }
+                  )
+                }
+              />
+            ))}
+            {!gitRepositoriesValid && (
+              <p className="px-3 text-xs font-medium text-negative">
+                Select a Git account, repository, and branch for each repository.
+              </p>
+            )}
+            <ContinueButton disabled={!gitRepositoriesValid} onClick={goToNextSection} />
+          </AgenticWorkflowSection>
+
+          <AgenticWorkflowSection section="governance" iconName="shield-halved" invalid={sectionInvalid.governance}>
+            <InputTextArea
+              ref={whitelistHostsTextareaRef}
+              name="whitelist-hosts"
+              label="Domain allowlist"
+              value={values.whitelistHosts}
+              hint="Use * to allow all domains, or enter hostnames separated by commas. Example: api.github.com, jira.company.com."
+              onChange={(event) => form.setValue('whitelistHosts', event.currentTarget.value, { shouldDirty: true })}
+            />
+            <ContinueButton onClick={goToNextSection} />
+          </AgenticWorkflowSection>
+
+          <AgenticWorkflowSection section="docker-fragment" iconName="box" invalid={sectionInvalid['docker-fragment']}>
+            <CodeEditorField
+              name="docker-fragment"
+              label="Dockerfile fragment"
+              language="dockerfile"
+              value={values.dockerFragment}
+              hint="Use this to install CLI or binary. Example: RUN npm install -g @modelcontextprotocol/server-github."
+              onChange={(value) => form.setValue('dockerFragment', value, { shouldDirty: true })}
+            />
+            <ContinueButton onClick={goToNextSection} />
+          </AgenticWorkflowSection>
+
+          <AgenticWorkflowSection
+            section="outputs"
+            iconName="paper-plane"
+            invalid={sectionInvalid.outputs}
+            headerAction={
+              <Button
+                type="button"
+                variant="outline"
+                color="neutral"
+                size="sm"
+                className="h-8 w-fit whitespace-nowrap"
+                onClick={addOutput}
+              >
+                <Icon iconName="plus" />
+                Add webhook
+              </Button>
+            }
+          >
+            {values.outputs.map((output, index) => (
+              <div key={index} className="rounded-lg border border-neutral bg-surface-neutral p-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <span className="text-sm font-medium text-neutral">Webhook {index + 1}</span>
+                  <Button
+                    type="button"
+                    variant="plain"
+                    color="neutral"
+                    size="md"
+                    onClick={() =>
+                      form.setValue(
+                        'outputs',
+                        values.outputs.filter((_, outputIndex) => outputIndex !== index),
+                        { shouldDirty: true }
+                      )
+                    }
+                  >
+                    Remove
+                  </Button>
+                </div>
+                <div className="flex flex-col gap-3">
+                  <InputText
+                    name={`output-url-${index}`}
+                    label="Webhook URL"
+                    value={output.url}
+                    error={!output.url.trim() ? 'Please enter the output webhook URL.' : undefined}
+                    onChange={(event) => {
+                      const outputs = [...values.outputs]
+                      outputs[index] = { ...output, url: event.currentTarget.value }
+                      form.setValue('outputs', outputs, { shouldDirty: true })
+                    }}
+                  />
+                  <CodeEditorField
+                    name={`output-headers-${index}`}
+                    label="Request headers JSON"
+                    language="json"
+                    height="120px"
+                    value={output.headersJson}
+                    error={outputHeadersErrors[index]}
+                    hint='Optional request headers. Example: { "Authorization": "Bearer {{TOKEN}}" }'
+                    onChange={(value) => {
+                      const outputs = [...values.outputs]
+                      outputs[index] = { ...output, headersJson: value }
+                      form.setValue('outputs', outputs, { shouldDirty: true })
+                    }}
+                  />
+                  <InputTextArea
+                    name={`output-prompt-${index}`}
+                    label="Prompt"
+                    value={output.prompt}
+                    onChange={(event) => {
+                      const outputs = [...values.outputs]
+                      outputs[index] = { ...output, prompt: event.currentTarget.value }
+                      form.setValue('outputs', outputs, { shouldDirty: true })
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+            {!outputsValid && (
+              <p className="px-3 text-xs font-medium text-negative">
+                Enter a webhook URL for each configured output webhook.
+              </p>
+            )}
+            <ContinueButton disabled={!outputsValid || outputHeadersErrors.some(Boolean)} onClick={goToNextSection} />
+          </AgenticWorkflowSection>
+
+          <AgenticWorkflowSection
+            section="agent-prompt"
+            iconName="message-lines"
+            invalid={sectionInvalid['agent-prompt']}
+          >
+            <InputTextArea
+              ref={agentPromptTextareaRef}
+              name="agent-prompt"
+              label="Agent prompt"
+              value={values.agentPrompt}
+              hint="Describe the workflow behavior. Example: review incoming webhook payloads, open a pull request when needed, then notify the team."
+              onChange={(event) => form.setValue('agentPrompt', event.currentTarget.value, { shouldDirty: true })}
+            />
+            <ContinueButton disabled={!values.agentPrompt.trim()} onClick={goToNextSection} />
+          </AgenticWorkflowSection>
         </div>
-      </footer>
+
+        <footer className="fixed bottom-0 left-1/2 z-header w-full max-w-[620px] -translate-x-1/2 bg-background px-8 pb-4">
+          <div className="border-t border-neutral pt-4">
+            <Button
+              type="button"
+              size="lg"
+              className="w-full justify-center"
+              disabled={!isValid}
+              onClick={() => navigate({ to: `${creationFlowUrl}/summary` })}
+            >
+              Confirm configuration
+              <Icon iconName="arrow-right" />
+            </Button>
+          </div>
+        </footer>
+      </Section>
     </FunnelFlowBody>
   )
 }
