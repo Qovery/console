@@ -22,7 +22,6 @@ import { Route as AuthenticatedOnboardingUseCasesRouteImport } from './routes/_a
 import { Route as AuthenticatedOnboardingProjectRouteImport } from './routes/_authenticated/onboarding/project'
 import { Route as AuthenticatedOnboardingPlansRouteImport } from './routes/_authenticated/onboarding/plans'
 import { Route as AuthenticatedOnboardingPersonalizeRouteImport } from './routes/_authenticated/onboarding/personalize'
-import { Route as AuthenticatedOnboardingConfirmRouteImport } from './routes/_authenticated/onboarding/confirm'
 import { Route as AuthenticatedOrganizationOrganizationIdRouteRouteImport } from './routes/_authenticated/organization/$organizationId/route'
 import { Route as AuthenticatedOrganizationOrganizationIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdOverviewRouteImport } from './routes/_authenticated/organization/$organizationId/overview'
@@ -267,12 +266,6 @@ const AuthenticatedOnboardingPersonalizeRoute =
   AuthenticatedOnboardingPersonalizeRouteImport.update({
     id: '/onboarding/personalize',
     path: '/onboarding/personalize',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedOnboardingConfirmRoute =
-  AuthenticatedOnboardingConfirmRouteImport.update({
-    id: '/onboarding/confirm',
-    path: '/onboarding/confirm',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedOrganizationOrganizationIdRouteRoute =
@@ -1739,7 +1732,6 @@ export interface FileRoutesByFullPath {
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login': typeof LoginIndexRoute
   '/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdRouteRouteWithChildren
-  '/onboarding/confirm': typeof AuthenticatedOnboardingConfirmRoute
   '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
@@ -1924,7 +1916,6 @@ export interface FileRoutesByTo {
   '/preview-code': typeof AuthenticatedPreviewCodeRoute
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login': typeof LoginIndexRoute
-  '/onboarding/confirm': typeof AuthenticatedOnboardingConfirmRoute
   '/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
@@ -2094,7 +2085,6 @@ export interface FileRoutesById {
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
   '/login/': typeof LoginIndexRoute
   '/_authenticated/organization/$organizationId': typeof AuthenticatedOrganizationOrganizationIdRouteRouteWithChildren
-  '/_authenticated/onboarding/confirm': typeof AuthenticatedOnboardingConfirmRoute
   '/_authenticated/onboarding/personalize': typeof AuthenticatedOnboardingPersonalizeRoute
   '/_authenticated/onboarding/plans': typeof AuthenticatedOnboardingPlansRoute
   '/_authenticated/onboarding/project': typeof AuthenticatedOnboardingProjectRoute
@@ -2283,7 +2273,6 @@ export interface FileRouteTypes {
     | '/login/auth0-callback'
     | '/login'
     | '/organization/$organizationId'
-    | '/onboarding/confirm'
     | '/onboarding/personalize'
     | '/onboarding/plans'
     | '/onboarding/project'
@@ -2468,7 +2457,6 @@ export interface FileRouteTypes {
     | '/preview-code'
     | '/login/auth0-callback'
     | '/login'
-    | '/onboarding/confirm'
     | '/onboarding/personalize'
     | '/onboarding/plans'
     | '/onboarding/project'
@@ -2637,7 +2625,6 @@ export interface FileRouteTypes {
     | '/login/auth0-callback'
     | '/login/'
     | '/_authenticated/organization/$organizationId'
-    | '/_authenticated/onboarding/confirm'
     | '/_authenticated/onboarding/personalize'
     | '/_authenticated/onboarding/plans'
     | '/_authenticated/onboarding/project'
@@ -2915,13 +2902,6 @@ declare module '@tanstack/react-router' {
       path: '/onboarding/personalize'
       fullPath: '/onboarding/personalize'
       preLoaderRoute: typeof AuthenticatedOnboardingPersonalizeRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/onboarding/confirm': {
-      id: '/_authenticated/onboarding/confirm'
-      path: '/onboarding/confirm'
-      fullPath: '/onboarding/confirm'
-      preLoaderRoute: typeof AuthenticatedOnboardingConfirmRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/organization/$organizationId': {
@@ -4917,7 +4897,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedOrganizationRouteRoute: typeof AuthenticatedOrganizationRouteRouteWithChildren
   AuthenticatedHelmDefaultValuesRoute: typeof AuthenticatedHelmDefaultValuesRoute
   AuthenticatedPreviewCodeRoute: typeof AuthenticatedPreviewCodeRoute
-  AuthenticatedOnboardingConfirmRoute: typeof AuthenticatedOnboardingConfirmRoute
   AuthenticatedOnboardingPersonalizeRoute: typeof AuthenticatedOnboardingPersonalizeRoute
   AuthenticatedOnboardingPlansRoute: typeof AuthenticatedOnboardingPlansRoute
   AuthenticatedOnboardingProjectRoute: typeof AuthenticatedOnboardingProjectRoute
@@ -4930,7 +4909,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedOrganizationRouteRouteWithChildren,
   AuthenticatedHelmDefaultValuesRoute: AuthenticatedHelmDefaultValuesRoute,
   AuthenticatedPreviewCodeRoute: AuthenticatedPreviewCodeRoute,
-  AuthenticatedOnboardingConfirmRoute: AuthenticatedOnboardingConfirmRoute,
   AuthenticatedOnboardingPersonalizeRoute:
     AuthenticatedOnboardingPersonalizeRoute,
   AuthenticatedOnboardingPlansRoute: AuthenticatedOnboardingPlansRoute,

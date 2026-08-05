@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { useEffect, useState } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { AuthEnum, LAST_USED_LOGIN_STORAGE_KEY, PREVIOUS_USED_LOGIN_STORAGE_KEY, useAuth } from '@qovery/shared/auth'
+import { AuthEnum, LAST_USED_LOGIN_STORAGE_KEY, useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
 import { Badge, Button, Icon, InputTextSmall, Link } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
@@ -192,7 +192,6 @@ function RouteComponent() {
   const { auth0Error, setAuth0Error } = useAuth0Error()
   const [loading, setLoading] = useState<{ provider: string; active: boolean } | undefined>()
   const [lastUsedLogin, setLastUsedLogin] = useLocalStorage<string | undefined>(LAST_USED_LOGIN_STORAGE_KEY, undefined)
-  const [, setPreviousUsedLogin] = useLocalStorage<string | undefined>(PREVIOUS_USED_LOGIN_STORAGE_KEY, undefined)
   const [lastUsedLoginAtPageLoad] = useState(lastUsedLogin)
 
   const [testimonialIndex, setTestimonialIndex] = useState(0)
@@ -235,11 +234,6 @@ function RouteComponent() {
       active: true,
     })
 
-    // Stash the provider used before this click, so the onboarding confirm
-    // screen can tell a genuine first-time signup from a provider switch.
-    if (lastUsedLogin) {
-      setPreviousUsedLogin(lastUsedLogin)
-    }
     setLastUsedLogin(lastUsedProvider)
 
     try {

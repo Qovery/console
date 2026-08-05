@@ -12,8 +12,11 @@ export function StepPersonalize({ onSubmit, authLogout }: StepPersonalizeProps) 
 
   return (
     <div className="mx-auto max-w-content-with-navigation-left pb-10">
-      <h1 className="h3 mb-3 text-neutral">To tailor your experience</h1>
-      <p className="mb-10 text-sm text-neutral">We need some information to proceed with your account creation.</p>
+      <h1 className="h3 mb-3 text-neutral">Set up your new organization</h1>
+      <p className="mb-10 text-sm text-neutral">
+        You're starting a brand-new Qovery organization. If your team already has one, you need an invitation from them
+        instead.
+      </p>
       <form onSubmit={onSubmit}>
         <div className="mb-3 flex gap-3">
           <Controller
@@ -105,7 +108,14 @@ export function StepPersonalize({ onSubmit, authLogout }: StepPersonalizeProps) 
             />
           )}
         />
-        <div className="mt-10 flex justify-between border-t border-surface-neutral-subtle pt-5">
+        <p className="mt-10 text-sm text-neutral-subtle">
+          Already part of an organization on Qovery?{' '}
+          <button type="button" className="text-brand hover:underline" onClick={() => authLogout()}>
+            Sign in with a different account
+          </button>{' '}
+          if you signed up with a different provider last time.
+        </p>
+        <div className="mt-5 flex justify-between border-t border-surface-neutral-subtle pt-5">
           <Button type="button" color="neutral" variant="surface" size="lg" onClick={() => authLogout()}>
             <Icon iconName="arrow-left" />
             Disconnect
