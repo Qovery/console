@@ -1,6 +1,6 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
-  type AgenticWorkflowResponse,
+  type AgenticWorkflowRequest,
   AgenticWorkflowsApi,
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
@@ -77,6 +77,7 @@ import {
   TerraformMainCallsApi,
   type TerraformRequest,
   TerraformsApi,
+  type AgenticWorkflowResponse as _AgenticWorkflow,
   type Application as _Application,
   type ArgocdAppResponse as _ArgoCd,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -163,6 +164,7 @@ export type JobType = Extract<ServiceType, 'JOB'>
 export type HelmType = Extract<ServiceType, 'HELM'>
 export type TerraformType = Extract<ServiceType, 'TERRAFORM'>
 export type ArgoCdType = Extract<ServiceType, 'ARGOCD_APP'>
+export type AgenticWorkflowType = Extract<ServiceType, 'AGENTIC_WORKFLOW'>
 
 // XXX: Need to remove `serviceType` and use only `service_type` since the the API now supports it.
 // Waiting to have this implementation available in the edition interfaces.
@@ -194,16 +196,21 @@ export type ArgoCd = _ArgoCd & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: ArgoCdType
 }
-export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd
+export type AgenticWorkflow = _AgenticWorkflow & {
+  // @deprecated Prefer use `service_type` from API instead of `serviceType`
+  serviceType: AgenticWorkflowType
+  icon_uri: string
+}
+export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd | AgenticWorkflow
 export type BlueprintService = AnyService & {
   blueprint_id: string
   tag?: string
 }
 export type ReadOnlyService = ArgoCd
-export type EditableService = Exclude<AnyService, ReadOnlyService>
+export type EditableService = Exclude<AnyService, ReadOnlyService | AgenticWorkflow>
 export type EditableServiceType = Exclude<ServiceType, ArgoCdType>
-export type DeployableServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB'>
-export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType>
+export type DeployableServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB' | AgenticWorkflowType>
+export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType | AgenticWorkflowType>
 
 export type AdvancedSettings =
   | ApplicationAdvancedSettings
@@ -240,8 +247,12 @@ export function isArgoCd(service?: AnyService): service is ArgoCd {
   return service?.service_type === 'ARGOCD_APP'
 }
 
+export function isAgenticWorkflow(service?: AnyService): service is AgenticWorkflow {
+  return service?.service_type === 'AGENTIC_WORKFLOW'
+}
+
 export function isEditableService(service: AnyService): service is EditableService {
-  return !isArgoCd(service) && (service.service_type as string) !== 'AGENTIC_WORKFLOW'
+  return !isArgoCd(service) && !isAgenticWorkflow(service)
 }
 
 export function isEditableServiceType(serviceType?: ServiceType): serviceType is EditableServiceType {
@@ -370,9 +381,15 @@ export const services = createQueryKeys('services', {
   }),
   listAgenticWorkflows: (environmentId: string) => ({
     queryKey: [environmentId],
-    async queryFn(): Promise<AgenticWorkflowResponse[]> {
+    async queryFn(): Promise<AgenticWorkflow[]> {
       const response = await agenticWorkflowsApi.listAgenticWorkflows(environmentId)
-      return response.data.results ?? []
+      return (
+        response.data.results?.map((service) => ({
+          ...service,
+          serviceType: 'AGENTIC_WORKFLOW',
+          icon_uri: 'app://qovery-console/agentic-workflow',
+        })) ?? []
+      )
     },
   }),
   argocdManifest: (serviceId: string) => ({
@@ -387,11 +404,7 @@ export const services = createQueryKeys('services', {
     async queryFn() {
       const response = await environmentApi.listServicesByEnvironmentId(environmentId)
       return (response.data.results || []).map(
-        (service) =>
-          ({
-            ...service,
-            serviceType: service.service_type,
-          }) as AnyService
+        (service) => ({ ...service, serviceType: service.service_type }) as AnyService
       )
     },
   }),
@@ -405,6 +418,13 @@ export const services = createQueryKeys('services', {
         .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => jobMainCallsApi.getJobStatus.bind(jobMainCallsApi))
         .with('HELM', () => helmMainCallsApi.getHelmStatus.bind(helmMainCallsApi))
         .with('TERRAFORM', () => terraformMainCallsApi.getTerraform.bind(terraformMainCallsApi)) // TODO [QOV-821] should it be replaced with `getTerraformStatus` ?
+        .with(
+          'AGENTIC_WORKFLOW',
+          () => () =>
+            new Promise<never>(() => {
+              // TODO: Add the Agentic Workflow status request when supported.
+            })
+        )
         .exhaustive()
       const response = await fn(serviceId)
       return response.data
@@ -429,6 +449,13 @@ export const services = createQueryKeys('services', {
           terraformDeploymentRestrictionApi.getTerraformDeploymentRestrictions.bind(terraformDeploymentRestrictionApi)
         )
         .with('CONTAINER', 'DATABASE', () => null)
+        .with(
+          'AGENTIC_WORKFLOW',
+          () => () =>
+            new Promise<never>(() => {
+              // TODO: Add the Agentic Workflow deployment restrictions request when supported.
+            })
+        )
         .exhaustive()
       if (!fn) {
         throw new Error(`deploymentRestrictions unsupported for serviceType: ${serviceType}`)
@@ -466,12 +493,15 @@ export const services = createQueryKeys('services', {
           serviceType: 'TERRAFORM' as const,
         }))
         .with('ARGOCD_APP', async () => {
-          const service = (await argoCdApi.getArgoCdApp(serviceId)).data
           return {
-            ...service,
+            ...(await argoCdApi.getArgoCdApp(serviceId)).data,
             serviceType: 'ARGOCD_APP' as const,
           }
         })
+        .with('AGENTIC_WORKFLOW', async () => ({
+          ...(await agenticWorkflowsApi.getAgenticWorkflow(serviceId)).data,
+          serviceType: 'AGENTIC_WORKFLOW' as const,
+        }))
         .exhaustive()
       return service
     },
@@ -558,6 +588,13 @@ export const services = createQueryKeys('services', {
         .with(
           'TERRAFORM',
           async () => (await terraformDeploymentsApi.listTerraformDeploymentHistoryV2(serviceId, pageSize)).data.results
+        )
+        .with(
+          'AGENTIC_WORKFLOW',
+          () =>
+            new Promise<never>(() => {
+              // TODO: Add the Agentic Workflow deployment history request when supported.
+            })
         )
         .exhaustive()
     },
@@ -780,6 +817,9 @@ type CreateServiceRequest = {
     | ({
         serviceType: TerraformType
       } & TerraformRequest)
+    | ({
+        serviceType: AgenticWorkflowType
+      } & AgenticWorkflowRequest)
 }
 
 type CreateBlueprintRequest = {
@@ -895,6 +935,13 @@ export const mutations = {
         mutation: terraformsApi.cloneTerraform.bind(terraformsApi),
         serviceType,
       }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: () =>
+          new Promise<never>(() => {
+            // TODO: Add the Agentic Workflow clone request when supported.
+          }),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId, payload)
     return response.data
@@ -997,7 +1044,7 @@ export const mutations = {
     environment: Environment
     payload: EnvironmentServiceIdsAllRequest
   }) {
-    const response = await environmentActionApi.deleteSelectedServices(environment.id, payload)
+    const response = await environmentActionApi.deleteSelectedServices(environment.id, undefined, payload)
     return response.data
   },
   async deleteService({
@@ -1032,8 +1079,13 @@ export const mutations = {
           terraformMainCallsApi.deleteTerraform.bind(terraformMainCallsApi)(
             serviceId,
             undefined,
+            undefined,
             skipDestroy ? 'SKIP_DESTROY' : undefined
           ),
+        serviceType,
+      }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: agenticWorkflowsApi.deleteAgenticWorkflow.bind(agenticWorkflowsApi),
         serviceType,
       }))
       .exhaustive()
@@ -1066,7 +1118,10 @@ export const mutations = {
         mutation: terraformsApi.createTerraform.bind(terraformsApi, environmentId, payload),
         serviceType: 'TERRAFORM' as const,
       }))
-
+      .with({ serviceType: 'AGENTIC_WORKFLOW' }, ({ serviceType, ...payload }) => ({
+        mutation: agenticWorkflowsApi.createAgenticWorkflow.bind(agenticWorkflowsApi, environmentId, payload),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation()
     return response.data
@@ -1145,6 +1200,13 @@ export const mutations = {
       }))
       .with('TERRAFORM', (serviceType) => ({
         mutation: terraformActionsApi.redeployTerraform.bind(terraformActionsApi),
+        serviceType,
+      }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: () =>
+          new Promise<never>(() => {
+            // TODO: Add the Agentic Workflow restart request when supported.
+          }),
         serviceType,
       }))
       .exhaustive()
@@ -1227,7 +1289,14 @@ export const mutations = {
       .with('TERRAFORM', (serviceType) => ({
         mutation: () => ({ data: { deployment_request_id: 'id', id: 'id' } }),
         serviceType,
-      })) // TODO [QOV-821] to implement
+      }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: () =>
+          new Promise<never>(() => {
+            // TODO: Add the Agentic Workflow stop request when supported.
+          }),
+        serviceType,
+      }))
       .exhaustive()
     const response = await mutation(serviceId)
     return response.data
@@ -1265,6 +1334,13 @@ export const mutations = {
             serviceId,
             skipDestroy ? 'SKIP_DESTROY' : undefined
           ),
+        serviceType,
+      }))
+      .with('AGENTIC_WORKFLOW', (serviceType) => ({
+        mutation: () =>
+          new Promise<never>(() => {
+            // TODO: Add the Agentic Workflow uninstall request when supported.
+          }),
         serviceType,
       }))
       .exhaustive()

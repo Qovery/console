@@ -56,7 +56,8 @@ export function useQuickActions(): QuickAction[] {
         iconName: 'clock-rotate-left',
         link: AUDIT_LOGS_PARAMS_URL(organizationId, {
           targetId: serviceId,
-          targetType: isEditableServiceType(serviceType) ? serviceType : undefined,
+          targetType:
+            serviceType !== 'AGENTIC_WORKFLOW' && isEditableServiceType(serviceType) ? serviceType : undefined,
           projectId,
           environmentId,
         }),

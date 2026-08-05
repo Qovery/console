@@ -54,7 +54,7 @@ export function AgenticWorkflowServiceList({ environmentId }: AgenticWorkflowSer
               <Table.Row key={service.id} className={`h-[60px] w-full ${tableGridLayoutClassName}`}>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
                   <div className="flex min-w-0 items-center gap-3 text-sm font-medium">
-                    <Icon iconName="brain-circuit" className="shrink-0 text-neutral" />
+                    <Icon name="AGENTIC_WORKFLOW" width={20} height={20} />
                     <Tooltip content={service.name}>
                       <span className="truncate text-neutral">{service.name}</span>
                     </Tooltip>

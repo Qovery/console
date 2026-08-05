@@ -37,6 +37,15 @@ describe('computeAvailableEnvironmentVariableScope', () => {
       const scopes = computeAvailableScope(undefined, false, 'PROJECT')
       expect(scopes).toEqual([APIVariableScopeEnum.PROJECT])
     })
+
+    it('should use the application scope for an agentic workflow', () => {
+      const scopes = computeAvailableScope(undefined, false, 'AGENTIC_WORKFLOW')
+      expect(scopes).toEqual([
+        APIVariableScopeEnum.PROJECT,
+        APIVariableScopeEnum.ENVIRONMENT,
+        APIVariableScopeEnum.APPLICATION,
+      ])
+    })
   })
 
   describe('when the scope is set', () => {

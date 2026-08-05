@@ -35,12 +35,10 @@ function scopeHierarchy(targetScope: APIVariableScopeEnum) {
 
 function targetToScope(target: keyof typeof APIVariableScopeEnum | keyof typeof ServiceTypeEnum): APIVariableScopeEnum {
   return match(target)
-    .with('APPLICATION', () => APIVariableScopeEnum.APPLICATION)
-    .with('DATABASE', () => APIVariableScopeEnum.APPLICATION)
+    .with('APPLICATION', 'DATABASE', 'ARGOCD_APP', 'AGENTIC_WORKFLOW', () => APIVariableScopeEnum.APPLICATION)
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
     .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => APIVariableScopeEnum.JOB)
     .with('HELM', () => APIVariableScopeEnum.HELM)
-    .with('ARGOCD_APP', () => APIVariableScopeEnum.APPLICATION)
     .with('BUILT_IN', () => APIVariableScopeEnum.BUILT_IN)
     .with('PROJECT', () => APIVariableScopeEnum.PROJECT)
     .with('ENVIRONMENT', () => APIVariableScopeEnum.ENVIRONMENT)
