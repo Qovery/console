@@ -1,5 +1,7 @@
 import { type UseQueryResult, useQuery } from '@tanstack/react-query'
 import {
+  type AgenticWorkflow,
+  type AgenticWorkflowType,
   type AnyService,
   type Application,
   type ApplicationType,
@@ -55,23 +57,25 @@ export function useService<
   T extends ServiceType,
   R = T extends ApplicationType
     ? Application
-    : T extends ArgoCdType
-      ? ArgoCd
-      : T extends ContainerType
-        ? Container
-        : T extends DatabaseType
-          ? Database
-          : T extends JobType
-            ? Job
-            : T extends 'CRON_JOB'
+    : T extends AgenticWorkflowType
+      ? AgenticWorkflow
+      : T extends ArgoCdType
+        ? ArgoCd
+        : T extends ContainerType
+          ? Container
+          : T extends DatabaseType
+            ? Database
+            : T extends JobType
               ? Job
-              : T extends 'LIFECYCLE_JOB'
+              : T extends 'CRON_JOB'
                 ? Job
-                : T extends HelmType
-                  ? Helm
-                  : T extends TerraformType
-                    ? Terraform
-                    : never,
+                : T extends 'LIFECYCLE_JOB'
+                  ? Job
+                  : T extends HelmType
+                    ? Helm
+                    : T extends TerraformType
+                      ? Terraform
+                      : never,
 >(props: { serviceId: string; serviceType: T; suspense?: boolean }): UseQueryResult<R>
 export function useService({ serviceId, suspense = false, ...props }: UseServiceProps) {
   const { data: serviceType } = useServiceType({

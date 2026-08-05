@@ -93,6 +93,17 @@ const services = {
     blueprint_id: 'blueprint-id',
     tag: 'aws/s3/1.2',
   },
+  'agentic-workflow-mock': {
+    id: 'agentic-workflow-mock',
+    serviceType: 'AGENTIC_WORKFLOW',
+    service_type: 'AGENTIC_WORKFLOW',
+    name: 'Review pull requests',
+    description: 'Reviews pull requests with Claude',
+    icon_uri: '',
+    enabled: true,
+    model: { type: 'CLAUDE' },
+    environment: { id: 'environment-id' },
+  },
 }
 
 jest.mock('@tanstack/react-router', () => ({
@@ -359,7 +370,13 @@ describe('ServiceHeader', () => {
   })
 
   const renderServiceHeader = (
-    serviceId: 'application-mock' | 'database-mock' | 'job-mock' | 'argocd-mock' | 'terraform-mock'
+    serviceId:
+      | 'application-mock'
+      | 'database-mock'
+      | 'job-mock'
+      | 'argocd-mock'
+      | 'terraform-mock'
+      | 'agentic-workflow-mock'
   ) => renderWithProviders(<ServiceHeader environment={environment} service={services[serviceId] as AnyService} />)
 
   it('renders application details and git metadata', () => {
@@ -407,6 +424,16 @@ describe('ServiceHeader', () => {
     expect(screen.getByText('Qovery/kube-dns')).toBeInTheDocument()
     expect(screen.getByText('main')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /313a525/i })).toBeInTheDocument()
+  })
+
+  it('renders agentic workflow model and enabled state', () => {
+    renderServiceHeader('agentic-workflow-mock')
+
+    expect(screen.getByRole('heading', { name: 'Review pull requests' })).toBeInTheDocument()
+    const modelBadge = screen.getByText('Claude').parentElement
+    expect(modelBadge).toBeInTheDocument()
+    expect(screen.getByText('Enabled')).toBeInTheDocument()
+    expect(modelBadge?.querySelector('img')).toHaveAttribute('src', '/assets/ai-tools/claude.svg')
   })
 
   it('renders an up to date badge for a current blueprint service', () => {

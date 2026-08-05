@@ -34,10 +34,10 @@ export const ServiceAvatar = forwardRef<ElementRef<typeof Avatar>, ServiceAvatar
     .with({ serviceType: 'JOB', job_type: 'LIFECYCLE' }, () => 'LIFECYCLE_JOB')
     .with({ serviceType: 'JOB', job_type: 'CRON' }, () => 'CRON_JOB')
     .with({ serviceType: 'ARGOCD_APP' }, () => 'ARGOCD')
+    .with({ serviceType: 'AGENTIC_WORKFLOW' }, () => 'AGENTIC_WORKFLOW')
     .with({ serviceType: 'APPLICATION' }, { serviceType: 'CONTAINER' }, () => 'APPLICATION')
     .with({ serviceType: 'DATABASE' }, () => 'DATABASE')
     .with({ serviceType: 'TERRAFORM' }, () => 'TERRAFORM')
-    .with({ serviceType: 'AGENTIC_WORKFLOW' }, () => 'AGENTIC_WORKFLOW')
     .exhaustive()
 
   const serviceAvatar = ServiceIcons[service.icon_uri as IconURI]

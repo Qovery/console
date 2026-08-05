@@ -198,7 +198,7 @@ function RouteComponent() {
               </div>
               {shouldDisplayArgoCdServicesBelowQovery && <ArgoCdServiceList environment={environment} />}
               {isServicesListTab && isAgenticWorkflowEnabled && (
-                <AgenticWorkflowServiceList environmentId={environmentId} />
+                <AgenticWorkflowServiceList environment={environment} />
               )}
             </div>
           </Section>

@@ -379,19 +379,6 @@ export const services = createQueryKeys('services', {
         )
     },
   }),
-  listAgenticWorkflows: (environmentId: string) => ({
-    queryKey: [environmentId],
-    async queryFn(): Promise<AgenticWorkflow[]> {
-      const response = await agenticWorkflowsApi.listAgenticWorkflows(environmentId)
-      return (
-        response.data.results?.map((service) => ({
-          ...service,
-          serviceType: 'AGENTIC_WORKFLOW',
-          icon_uri: 'app://qovery-console/agentic-workflow',
-        })) ?? []
-      )
-    },
-  }),
   argocdManifest: (serviceId: string) => ({
     queryKey: [serviceId],
     async queryFn() {

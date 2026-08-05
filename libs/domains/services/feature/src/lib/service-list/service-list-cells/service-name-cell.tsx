@@ -89,6 +89,24 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
                 </span>
               )
             })
+            .with({ serviceType: 'AGENTIC_WORKFLOW' }, (workflow) => (
+              <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
+                <Link
+                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                  params={serviceLinkParams}
+                  onClick={stopRowNavigation}
+                  onKeyDown={stopRowNavigation}
+                  className="group min-w-0"
+                >
+                  <Tooltip content={workflow.name}>
+                    <span className="block min-w-0 truncate group-hover:underline">{workflow.name}</span>
+                  </Tooltip>
+                </Link>
+                <span className="text-ssm font-normal text-neutral-subtle">
+                  {workflow.enabled ? 'Enabled' : 'Disabled'}
+                </span>
+              </span>
+            ))
             .otherwise(() => (
               <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
                 <Link

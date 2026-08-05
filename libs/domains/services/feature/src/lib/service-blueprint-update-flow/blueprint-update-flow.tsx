@@ -59,12 +59,12 @@ export function BlueprintUpdateFlow({
   const { mutateAsync: deployBlueprint, isLoading: isDeployLoading } = useDeployBlueprint({
     environmentId,
     serviceId: service.id,
-    serviceType: service.service_type,
+    serviceType: service.serviceType,
   })
   const { mutateAsync: updateBlueprint, isLoading: isUpdateLoading } = useUpdateBlueprint({
     environmentId,
     serviceId: service.id,
-    serviceType: service.service_type,
+    serviceType: service.serviceType,
   })
   const [activeSection, setActiveSection] = useState<BlueprintUpdateSection>(() =>
     blueprintUpdate ? getFirstAvailableUpdateSection(blueprintUpdate) : 'required'
