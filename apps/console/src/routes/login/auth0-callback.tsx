@@ -2,10 +2,13 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { Navigate, createFileRoute, useNavigate } from '@tanstack/react-router'
 import axios from 'axios'
 import { useEffect } from 'react'
+import { getProviderKeyFromSub } from '@qovery/domains/onboarding/feature'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
-import { useAuth } from '@qovery/shared/auth'
-import { ONBOARDING_CONFIRM_URL, ONBOARDING_URL } from '@qovery/shared/routes'
+import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
+import { PREVIOUS_USED_LOGIN_STORAGE_KEY, useAuth } from '@qovery/shared/auth'
+import { ONBOARDING_CONFIRM_URL, ONBOARDING_URL, getOnboardingEntryUrl } from '@qovery/shared/routes'
 import { LoadingScreen } from '@qovery/shared/ui'
+import { useLocalStorage } from '@qovery/shared/util-hooks'
 import { QOVERY_API } from '@qovery/shared/util-node-env'
 import { useAuthInterceptor } from '@qovery/shared/utils'
 import { consumePendingReturnTo } from '../../auth/auth0'
@@ -33,10 +36,12 @@ export const Route = createFileRoute('/login/auth0-callback')({
 function useRedirectIfLogged(connection?: string) {
   const navigate = useNavigate()
   const { authLogin } = useAuth()
-  const { isAuthenticated } = useAuth0()
+  const { isAuthenticated, user } = useAuth0()
   const { data: organizations = [], isFetched: isFetchedOrganizations } = useOrganizations({
     enabled: isAuthenticated,
   })
+  const { data: userSignUp, isFetched: isFetchedUserSignUp } = useUserSignUp({ enabled: isAuthenticated })
+  const [previousUsedLogin] = useLocalStorage<string | undefined>(PREVIOUS_USED_LOGIN_STORAGE_KEY, undefined)
 
   useEffect(() => {
     if (connection && !isAuthenticated) {
@@ -50,8 +55,8 @@ function useRedirectIfLogged(connection?: string) {
       return
     }
 
-    async function fetchData() {
-      if (!isFetchedOrganizations) {
+    function redirect() {
+      if (!isFetchedOrganizations || !isFetchedUserSignUp) {
         return
       }
 
@@ -68,16 +73,35 @@ function useRedirectIfLogged(connection?: string) {
         } else {
           navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
         }
-      } else {
-        // No organization yet: confirm this is really a new account before entering the onboarding funnel
-        navigate({ href: `${ONBOARDING_URL}${ONBOARDING_CONFIRM_URL}` })
+        return
       }
+
+      // No organization yet: only pause on the confirm screen if this browser was
+      // previously used to sign in with a different provider than the one just used
+      const provider = getProviderKeyFromSub(user?.sub)
+      if (previousUsedLogin && previousUsedLogin !== provider) {
+        navigate({ href: `${ONBOARDING_URL}${ONBOARDING_CONFIRM_URL}` })
+        return
+      }
+
+      navigate({ href: getOnboardingEntryUrl(userSignUp) })
     }
 
     if (isAuthenticated) {
-      fetchData()
+      redirect()
     }
-  }, [authLogin, connection, navigate, isAuthenticated, organizations, isFetchedOrganizations])
+  }, [
+    authLogin,
+    connection,
+    navigate,
+    isAuthenticated,
+    organizations,
+    isFetchedOrganizations,
+    userSignUp,
+    isFetchedUserSignUp,
+    previousUsedLogin,
+    user,
+  ])
 }
 
 function PageRedirectLogin() {

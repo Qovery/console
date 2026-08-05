@@ -7,3 +7,4 @@ export const enum AuthEnum {
 }
 
 export const LAST_USED_LOGIN_STORAGE_KEY = 'lastUsedLogin'
+export const PREVIOUS_USED_LOGIN_STORAGE_KEY = 'previousUsedLogin'
