@@ -47,7 +47,7 @@ export function Container(props: PropsWithChildren) {
   const titlesPerRoute = [
     {
       path: '/personalize',
-      title: 'Create a new organization',
+      title: 'New organization',
     },
     {
       path: '/use-cases',
