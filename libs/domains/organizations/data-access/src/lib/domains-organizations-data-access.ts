@@ -32,6 +32,8 @@ import {
   type OrganizationLabelsGroupCreateRequest,
   OrganizationMainCallsApi,
   type OrganizationOnboardingPatchRequest,
+  OrganizationPolicyApiTokenApi,
+  type OrganizationPolicyApiTokenCreateRequest,
   type OrganizationRequest,
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
@@ -51,6 +53,7 @@ const helmRepositoriesApi = new HelmRepositoriesApi()
 const organizationApi = new OrganizationMainCallsApi()
 const gitApi = new OrganizationAccountGitRepositoriesApi()
 const apiTokenApi = new OrganizationApiTokenApi()
+const policyApiTokenApi = new OrganizationPolicyApiTokenApi()
 const webhookApi = new OrganizationWebhookApi()
 const billingApi = new BillingApi()
 const customRolesApi = new OrganizationCustomRoleApi()
@@ -324,6 +327,13 @@ export const organizations = createQueryKeys('organizations', {
     queryKey: [organizationId],
     async queryFn() {
       const response = await apiTokenApi.listOrganizationApiTokens(organizationId)
+      return response.data.results
+    },
+  }),
+  policyApiTokens: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await policyApiTokenApi.listOrganizationPolicyApiTokens(organizationId)
       return response.data.results
     },
   }),
@@ -646,6 +656,29 @@ export const mutations = {
   },
   async deleteApiToken({ organizationId, apiTokenId }: { organizationId: string; apiTokenId: string }) {
     const response = await apiTokenApi.deleteOrganizationApiToken(organizationId, apiTokenId)
+    return response.data
+  },
+  async deletePolicyApiToken({
+    organizationId,
+    policyApiTokenId,
+  }: {
+    organizationId: string
+    policyApiTokenId: string
+  }) {
+    const response = await policyApiTokenApi.deleteOrganizationPolicyApiToken(organizationId, policyApiTokenId)
+    return response.data
+  },
+  async createPolicyApiToken({
+    organizationId,
+    policyApiTokenCreateRequest,
+  }: {
+    organizationId: string
+    policyApiTokenCreateRequest: OrganizationPolicyApiTokenCreateRequest
+  }) {
+    const response = await policyApiTokenApi.createOrganizationPolicyApiToken(
+      organizationId,
+      policyApiTokenCreateRequest
+    )
     return response.data
   },
   async createApiToken({
