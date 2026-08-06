@@ -26,6 +26,10 @@ jest.mock('../environment-action-toolbar/environment-action-toolbar', () => ({
   MenuOtherActions: () => <button type="button">Other actions</button>,
 }))
 
+jest.mock('./environments-table-action-bar', () => ({
+  EnvironmentsTableActionBar: () => <div data-testid="environments-table-action-bar" />,
+}))
+
 jest.mock('./environment-section/environment-section', () => ({
   __esModule: true,
   EnvironmentSection: ({ type, items }: EnvironmentSectionMockProps) => (

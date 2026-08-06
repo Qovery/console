@@ -1,12 +1,19 @@
 import { useParams } from '@tanstack/react-router'
 import { EnvironmentModeEnum, type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
-import { Suspense, useCallback, useMemo } from 'react'
+import { Suspense, useCallback, useMemo, useState } from 'react'
 import { useEnvironmentsOverview, useProject } from '@qovery/domains/projects/feature'
 import { Button, Heading, Icon, Section, Skeleton, TablePrimitives, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import CreateCloneEnvironmentModal from '../create-clone-environment-modal/create-clone-environment-modal'
 import EnvironmentMode from '../environment-mode/environment-mode'
-import { EnvironmentSection } from './environment-section/environment-section'
+import {
+  EnvironmentSection,
+  environmentNameCellContentClassName,
+  environmentSelectionCellClassName,
+  environmentTableCellClassName,
+  environmentTableGridLayoutClassName,
+} from './environment-section/environment-section'
+import { EnvironmentsTableActionBar } from './environments-table-action-bar'
 
 const { Table } = TablePrimitives
 
@@ -23,9 +30,8 @@ const SECTION_TITLES: Record<EnvironmentModeEnum, string> = {
   [EnvironmentModeEnum.DEVELOPMENT]: 'Development',
   [EnvironmentModeEnum.PREVIEW]: 'Ephemeral',
 }
-
-const skeletonGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(280px,2fr)_minmax(220px,1.4fr)_minmax(240px,1.2fr)_minmax(140px,1fr)_96px] items-center'
+const BODY_TEXT_SKELETON_HEIGHT = 20
+const ACTION_BUTTON_SKELETON_HEIGHT = 32
 
 function EnvironmentsTableSkeleton() {
   return (
@@ -47,45 +53,62 @@ function EnvironmentsTableSkeleton() {
               </div>
               <Table.Root className="w-full min-w-[1080px]" containerClassName="no-scrollbar overflow-x-auto">
                 <Table.Header>
-                  <Table.Row className={skeletonGridLayoutClassName}>
-                    {[130, 110, 80, 90, 70].map((width, index) => (
-                      <Table.ColumnHeaderCell
-                        key={width}
-                        className={`h-9 items-center py-2.5 ${index > 0 ? 'border-l border-neutral' : ''}`}
-                      >
-                        <Skeleton height={16} width={width} />
-                      </Table.ColumnHeaderCell>
-                    ))}
+                  <Table.Row className={`${environmentTableGridLayoutClassName} w-full items-center text-xs`}>
+                    <Table.ColumnHeaderCell className="h-9 p-0 text-neutral-subtle">
+                      <div className={environmentSelectionCellClassName}>
+                        <Skeleton height={16} width={16} />
+                      </div>
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="flex h-9 items-center py-0 pl-0 pr-4 text-neutral-subtle">
+                      <Skeleton height={16} width={130} />
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                      <Skeleton height={16} width={110} />
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                      <Skeleton height={16} width={80} />
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="flex h-9 items-center border-l border-neutral text-neutral-subtle">
+                      <Skeleton height={16} width={90} />
+                    </Table.ColumnHeaderCell>
+                    <Table.ColumnHeaderCell className="flex h-9 items-center justify-end border-l border-neutral text-left text-neutral-subtle">
+                      <Skeleton height={16} width={54} />
+                    </Table.ColumnHeaderCell>
                   </Table.Row>
                 </Table.Header>
                 <Table.Body className="divide-y divide-neutral">
                   {[...Array(2)].map((_, index) => (
-                    <Table.Row key={index} className={skeletonGridLayoutClassName}>
-                      <Table.Cell className="border-none p-0">
-                        <div className="flex h-full items-center justify-between gap-2 px-4">
-                          <Skeleton height={16} width={180} />
-                          <Skeleton height={16} width={90} />
+                    <Table.Row key={index} className={environmentTableGridLayoutClassName}>
+                      <Table.Cell className="h-auto border-none p-0">
+                        <div className={environmentSelectionCellClassName}>
+                          <Skeleton height={16} width={16} />
                         </div>
                       </Table.Cell>
-                      <Table.Cell className="h-full border-l border-neutral p-0">
-                        <div className="flex h-full items-center justify-between px-4">
-                          <Skeleton height={16} width={140} />
+                      <Table.Cell className={`${environmentTableCellClassName} border-none p-0`}>
+                        <div className={environmentNameCellContentClassName}>
+                          <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={180} />
+                          <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={90} />
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell className={environmentTableCellClassName}>
+                        <div className="flex h-full items-center justify-between">
+                          <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={140} />
                           <Skeleton height={16} width={64} />
                         </div>
                       </Table.Cell>
-                      <Table.Cell className="h-full border-l border-neutral p-0">
-                        <div className="flex h-full items-center gap-2 px-4">
-                          <Skeleton height={16} width={140} />
+                      <Table.Cell className={environmentTableCellClassName}>
+                        <div className="flex h-full items-center gap-2">
+                          <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={140} />
                         </div>
                       </Table.Cell>
-                      <Table.Cell className="h-full border-l border-neutral p-0">
-                        <div className="flex h-full items-center px-4">
-                          <Skeleton height={16} width={100} />
+                      <Table.Cell className={environmentTableCellClassName}>
+                        <div className="flex h-full items-center">
+                          <Skeleton height={BODY_TEXT_SKELETON_HEIGHT} width={100} />
                         </div>
                       </Table.Cell>
-                      <Table.Cell className="h-full border-l border-neutral p-0">
-                        <div className="flex h-full items-center gap-1.5 px-4">
-                          <Skeleton height={16} width={40} />
+                      <Table.Cell className={environmentTableCellClassName}>
+                        <div className="flex h-full items-center justify-end gap-1.5">
+                          <Skeleton height={ACTION_BUTTON_SKELETON_HEIGHT} width={56} />
                         </div>
                       </Table.Cell>
                     </Table.Row>
@@ -105,6 +128,7 @@ function EnvironmentsTableContent() {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: project } = useProject({ organizationId, projectId, suspense: true })
   const { data: environmentsOverview } = useEnvironmentsOverview({ projectId, suspense: true })
+  const [selectedEnvironmentIds, setSelectedEnvironmentIds] = useState<string[]>([])
 
   const groupedEnvs = useMemo(() => {
     if (!environmentsOverview) {
@@ -144,6 +168,39 @@ function EnvironmentsTableContent() {
     [projectId, organizationId, closeModal, openModal]
   )
 
+  const handleEnvironmentSelectionChange = useCallback((environmentId: string, checked: boolean) => {
+    setSelectedEnvironmentIds((currentSelectedEnvironmentIds) => {
+      if (checked) {
+        return currentSelectedEnvironmentIds.includes(environmentId)
+          ? currentSelectedEnvironmentIds
+          : [...currentSelectedEnvironmentIds, environmentId]
+      }
+
+      return currentSelectedEnvironmentIds.filter((selectedEnvironmentId) => selectedEnvironmentId !== environmentId)
+    })
+  }, [])
+
+  const handleSectionSelectionChange = useCallback((environmentIds: string[], checked: boolean) => {
+    setSelectedEnvironmentIds((currentSelectedEnvironmentIds) => {
+      if (checked) {
+        return Array.from(new Set([...currentSelectedEnvironmentIds, ...environmentIds]))
+      }
+
+      return currentSelectedEnvironmentIds.filter(
+        (selectedEnvironmentId) => !environmentIds.includes(selectedEnvironmentId)
+      )
+    })
+  }, [])
+
+  const selectedRows = useMemo(() => {
+    if (!environmentsOverview) {
+      return []
+    }
+
+    const selectedEnvironmentIdsSet = new Set(selectedEnvironmentIds)
+    return environmentsOverview.filter(({ id }) => selectedEnvironmentIdsSet.has(id))
+  }, [environmentsOverview, selectedEnvironmentIds])
+
   const Sections = useCallback(() => {
     const filledSections = SECTIONS.filter((section) => groupedEnvs?.has(section))
     const emptySections = SECTIONS.filter((section) => !groupedEnvs?.has(section))
@@ -155,11 +212,20 @@ function EnvironmentsTableContent() {
             type={section}
             items={groupedEnvs?.get(section) || []}
             onCreateEnvClicked={() => onCreateEnvClicked(section)}
+            selectedEnvironmentIds={selectedEnvironmentIds}
+            onEnvironmentSelectionChange={handleEnvironmentSelectionChange}
+            onSectionSelectionChange={handleSectionSelectionChange}
           />
         ))}
       </>
     )
-  }, [groupedEnvs, onCreateEnvClicked])
+  }, [
+    groupedEnvs,
+    handleEnvironmentSelectionChange,
+    handleSectionSelectionChange,
+    onCreateEnvClicked,
+    selectedEnvironmentIds,
+  ])
 
   return (
     <div className="container mx-auto mt-6 pb-10">
@@ -184,6 +250,11 @@ function EnvironmentsTableContent() {
           <Sections />
         </div>
       </Section>
+      <EnvironmentsTableActionBar
+        projectId={projectId}
+        selectedRows={selectedRows}
+        resetRowSelection={() => setSelectedEnvironmentIds([])}
+      />
     </div>
   )
 }
