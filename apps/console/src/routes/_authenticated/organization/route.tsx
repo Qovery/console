@@ -6,11 +6,12 @@ import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
-import { type AnyService, isArgoCd, isEditableService, isManagedDatabase } from '@qovery/domains/services/data-access'
+import { type AnyService, isAgenticWorkflow, isArgoCd, isManagedDatabase } from '@qovery/domains/services/data-access'
 import { useRecentServices, useServiceSummary } from '@qovery/domains/services/feature'
 import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
@@ -218,6 +219,7 @@ const SERVICE_TABS: NavigationTab[] = [
 ]
 
 const ARGOCD_SERVICE_TAB_IDS = ['overview', 'service-logs', 'cloud-shell', 'manifest']
+const AGENTIC_WORKFLOW_SERVICE_TAB_IDS = ['overview', 'service-logs']
 
 function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
   if (!service) return false
@@ -254,6 +256,10 @@ function createRoutePatternRegex(routeIdPattern: string): RegExp {
 function getServiceTabs(service?: AnyService, cluster?: Cluster) {
   if (isArgoCd(service)) {
     return SERVICE_TABS.filter((tab) => ARGOCD_SERVICE_TAB_IDS.includes(tab.id))
+  }
+
+  if (isAgenticWorkflow(service)) {
+    return SERVICE_TABS.filter((tab) => AGENTIC_WORKFLOW_SERVICE_TAB_IDS.includes(tab.id))
   }
 
   const isDatabase = service?.serviceType === 'DATABASE'
@@ -564,7 +570,7 @@ function OrganizationRoute() {
         name: service.name,
         description: 'description' in service ? service.description || '' : '',
         icon_uri: service.icon_uri,
-        service_type: service.service_type,
+        service_type: isAgenticWorkflow(service) ? ServiceTypeEnum.ARGOCD_APP : service.service_type,
         project_id: project.id,
         project_name: project.name,
         environment_id: environment.id,

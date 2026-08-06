@@ -8,7 +8,7 @@ import {
   useCluster,
   useClusterRunningStatusSocket,
 } from '@qovery/domains/clusters/feature'
-import { type AnyService, isArgoCd } from '@qovery/domains/services/data-access'
+import { type AnyService, isAgenticWorkflow, isArgoCd } from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -95,6 +95,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
 
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
   const isArgoCdService = isArgoCd(service)
+  const isAgenticWorkflowService = isAgenticWorkflow(service)
 
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
 
@@ -150,7 +151,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
       </div>
       {isArgoCdService ? (
         <ArgoCdServiceActions variant="header" environment={environment} service={service} />
-      ) : (
+      ) : isAgenticWorkflowService ? null : (
         <ServiceActions environment={environment} serviceId={service.id} variant="header" />
       )}
     </div>
@@ -237,17 +238,19 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: masterCredentials } = useMasterCredentials({
     serviceId,
-    serviceType: service?.service_type,
+    serviceType: isAgenticWorkflow(service) ? undefined : service?.service_type,
   })
   const [, copyToClipboard] = useCopyToClipboard()
   const blueprintId = 'blueprint_id' in service ? service.blueprint_id : undefined
-  const gitRepository = match(service)
-    .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
-    .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, ({ source }) => source.docker?.git_repository)
-    .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, ({ source }) => source.git?.git_repository)
-    .with({ serviceType: 'TERRAFORM' }, ({ terraform_files_source }) => terraform_files_source?.git?.git_repository)
-    .with({ serviceType: 'ARGOCD_APP' }, ({ git_repository }) => git_repository)
-    .otherwise(() => undefined)
+  const gitRepository = isAgenticWorkflow(service)
+    ? undefined
+    : match(service)
+        .with({ serviceType: 'APPLICATION' }, ({ git_repository }) => git_repository)
+        .with({ serviceType: 'JOB', source: P.when(isJobGitSource) }, ({ source }) => source.docker?.git_repository)
+        .with({ serviceType: 'HELM', source: P.when(isHelmGitSource) }, ({ source }) => source.git?.git_repository)
+        .with({ serviceType: 'TERRAFORM' }, ({ terraform_files_source }) => terraform_files_source?.git?.git_repository)
+        .with({ serviceType: 'ARGOCD_APP' }, ({ git_repository }) => git_repository)
+        .otherwise(() => undefined)
 
   const containerImage = match(service)
     .with({ serviceType: ServiceTypeEnum.JOB, source: P.when(isJobContainerSource) }, ({ source }) => source.image)
@@ -273,6 +276,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
     .otherwise(() => undefined)
 
   const isArgoCdService = isArgoCd(service)
+  const isAgenticWorkflowService = isAgenticWorkflow(service)
 
   const handleCopyCredentials = (credentials: Credentials) => {
     if (!databaseSource) {
@@ -382,6 +386,29 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           )}
         </>
       )}
+      {isAgenticWorkflowService && (
+        <>
+          <Badge variant="surface" className="items-center gap-1">
+            {match(service.model.type)
+              .with('CLAUDE', () => (
+                <>
+                  <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-3 w-3" />
+                  Claude
+                </>
+              ))
+              .with('BEDROCK', () => (
+                <>
+                  <Icon name={IconEnum.AWS_GRAY} className="h-3 w-3" />
+                  Bedrock
+                </>
+              ))
+              .otherwise((model) => model)}
+          </Badge>
+          <Badge variant="surface" color={service.enabled ? 'green' : 'neutral'}>
+            {service.enabled ? 'Enabled' : 'Disabled'}
+          </Badge>
+        </>
+      )}
       {'auto_deploy' in service &&
         service.auto_deploy &&
         match(service)
@@ -415,7 +442,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
           <Truncate text={argoCdSourceTargetRevision} truncateLimit={18} />
         </Badge>
       ) : null} */}
-      {!isArgoCdService && (
+      {!isArgoCdService && !isAgenticWorkflowService && (
         <ServiceLinksPopover
           organizationId={organizationId}
           projectId={projectId}

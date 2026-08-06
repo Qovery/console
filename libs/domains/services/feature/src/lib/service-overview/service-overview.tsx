@@ -6,6 +6,7 @@ import {
   type EditableService,
   type Job,
   type Terraform,
+  isAgenticWorkflow,
   isArgoCd,
   isEditableService,
 } from '@qovery/domains/services/data-access'
@@ -169,7 +170,6 @@ function ServiceOverviewContent({
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { data: runningStatus } = useRunningStatus({ environmentId, serviceId })
 
-  const isLifecycleJob = useMemo(() => service?.serviceType === 'JOB' && service.job_type === 'LIFECYCLE', [service])
   const isTerraformService = useMemo(() => service?.serviceType === 'TERRAFORM', [service])
   const isKedaAutoscaling = useMemo(
     () =>
@@ -208,7 +208,7 @@ function ServiceOverviewContent({
             <ServiceHeader environment={environment} service={service} />
             {hasNoMetrics && observabilityCallout}
             {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
-            {!isTerraformService && isEditableService(service) && (
+            {!isTerraformService && (isEditableService(service) || isAgenticWorkflow(service)) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />
             )}
             {isArgoCd(service) && <ServiceMetricsSection environmentId={environment.id} service={service} />}
