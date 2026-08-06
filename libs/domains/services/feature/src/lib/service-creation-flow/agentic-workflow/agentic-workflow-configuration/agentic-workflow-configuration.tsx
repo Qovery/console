@@ -80,13 +80,15 @@ export function isOutputComplete(output: AgenticWorkflowOutput) {
 function AgenticWorkflowSection({
   children,
   headerAction,
+  icon,
   iconName,
   invalid,
   section,
 }: {
   children: ReactNode
   headerAction?: ReactNode
-  iconName: IconName
+  icon?: ReactNode
+  iconName?: IconName
   invalid?: boolean
   section: AgenticWorkflowConfigurationSection
 }) {
@@ -98,7 +100,7 @@ function AgenticWorkflowSection({
   const headerContent = (
     <>
       <div className="flex items-center gap-2">
-        <Icon iconName={iconName} className="text-sm text-neutral-subtle" />
+        {icon ?? (iconName ? <Icon iconName={iconName} className="text-sm text-neutral-subtle" /> : null)}
         <Heading level={2}>{title}</Heading>
       </div>
       <div className="flex items-center gap-3">
@@ -349,7 +351,11 @@ export function AgenticWorkflowConfiguration() {
             <ContinueButton disabled={!values.name.trim()} onClick={goToNextSection} />
           </AgenticWorkflowSection>
 
-          <AgenticWorkflowSection section="ai-model" iconName="brain-circuit" invalid={sectionInvalid['ai-model']}>
+          <AgenticWorkflowSection
+            section="ai-model"
+            icon={<Icon name="AGENTIC_WORKFLOW" className="h-4 w-4" />}
+            invalid={sectionInvalid['ai-model']}
+          >
             <AIModelCards />
             <InputText
               ref={modelApiKeyInputRef}

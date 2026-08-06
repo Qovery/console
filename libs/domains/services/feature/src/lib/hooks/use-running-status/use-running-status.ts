@@ -4,14 +4,14 @@ import { queries } from '@qovery/state/util-queries'
 export interface UseRunningStatusProps {
   environmentId?: string
   serviceId?: string
+  enabled?: boolean
   suspense?: boolean
 }
 
-export function useRunningStatus({ environmentId, serviceId, suspense }: UseRunningStatusProps) {
+export function useRunningStatus({ environmentId, serviceId, enabled = true, suspense }: UseRunningStatusProps) {
   return useQuery({
-    // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
-    ...queries.services.runningStatus(environmentId!!, serviceId!!),
-    enabled: Boolean(environmentId) && Boolean(serviceId),
+    ...queries.services.runningStatus(environmentId ?? '', serviceId ?? ''),
+    enabled: enabled && Boolean(environmentId) && Boolean(serviceId),
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
