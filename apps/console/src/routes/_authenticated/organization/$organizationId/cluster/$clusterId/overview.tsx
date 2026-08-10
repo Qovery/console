@@ -12,6 +12,7 @@ import { ClusterCardSetup } from '@qovery/domains/cluster-metrics/feature'
 import {
   ClusterActions,
   ClusterAvatar,
+  ClusterLastDeploymentSection,
   ClusterNeedRedeployFlag,
   ClusterRunningStatusIndicator,
   ClusterType,
@@ -83,7 +84,7 @@ function TableSkeleton() {
 
 function TableLegend() {
   return (
-    <div className="flex w-full items-center justify-end gap-1.5 text-xs text-neutral">
+    <div className="flex items-center justify-end gap-1.5 text-xs text-neutral">
       <span className="bg-brand block h-2 w-2"></span>
       <span className="flex items-center gap-1">
         Reserved
@@ -126,7 +127,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           }
         />
       )}
-      <Section className="my-6 gap-6 pb-6">
+      <Section className="my-6 gap-8 pb-6">
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-4">
@@ -214,52 +215,58 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           </div>
           <hr className="w-full border-neutral" />
         </div>
-        {typeof runningStatus === 'string' ? (
-          <div className="h-64">
-            <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
-              <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
-              <span className="font-medium">No metrics available because the running status is unavailable.</span>
-            </div>
+        <ClusterLastDeploymentSection
+          organizationId={organizationId}
+          clusterId={clusterId}
+          clusterStatus={clusterStatus}
+          isLoading={isClusterStatusLoading}
+        />
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center justify-between gap-4">
+            <Heading className="text-base font-medium text-neutral">Cluster information</Heading>
+            {typeof runningStatus !== 'string' && <TableLegend />}
           </div>
-        ) : (
-          <>
-            {clusterStatus?.status === 'DEPLOYING' && clusterStatus.reason === 'MAINTENANCE' && (
-              <Callout.Root color="sky">
-                <Callout.Icon>
-                  <Icon iconName="circle-info" iconStyle="regular" />
-                </Callout.Icon>
-                <Callout.Text className="text-info">
-                  <Callout.TextHeading>
-                    Qovery maintenance is in progress with no impact on your applications availability.
-                  </Callout.TextHeading>
-                </Callout.Text>
-                <ExternalLink href={`${QOVERY_DOCS_URL}/getting-started/configuration/maintenance#update-strategy`}>
-                  Maintenance strategy
-                </ExternalLink>
-              </Callout.Root>
-            )}
-            <div className="grid gap-6 lg:grid-cols-3">
-              <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
-              <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
-              <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />
-            </div>
-            {isLoading ? (
-              <TableSkeleton />
-            ) : isKarpenter ? (
-              <div className="flex flex-col gap-4">
-                <TableLegend />
-                <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
+          {typeof runningStatus === 'string' ? (
+            <div className="h-64">
+              <div className="flex h-full flex-col items-center justify-center gap-1 rounded border border-neutral bg-surface-neutral py-10 text-sm text-neutral">
+                <Icon className="text-xl text-neutral-subtle" iconName="circle-info" iconStyle="regular" />
+                <span className="font-medium">No metrics available because the running status is unavailable.</span>
               </div>
-            ) : (
-              <div className="flex flex-col gap-4">
-                <TableLegend />
+            </div>
+          ) : (
+            <div className="flex flex-col gap-5">
+              {clusterStatus?.status === 'DEPLOYING' && clusterStatus.reason === 'MAINTENANCE' && (
+                <Callout.Root color="sky">
+                  <Callout.Icon>
+                    <Icon iconName="circle-info" iconStyle="regular" />
+                  </Callout.Icon>
+                  <Callout.Text className="text-info">
+                    <Callout.TextHeading>
+                      Qovery maintenance is in progress with no impact on your applications availability.
+                    </Callout.TextHeading>
+                  </Callout.Text>
+                  <ExternalLink href={`${QOVERY_DOCS_URL}/getting-started/configuration/maintenance#update-strategy`}>
+                    Maintenance strategy
+                  </ExternalLink>
+                </Callout.Root>
+              )}
+              <div className="grid gap-6 lg:grid-cols-3">
+                <ClusterCardNodeUsage organizationId={organizationId} clusterId={clusterId} />
+                <ClusterCardResources organizationId={organizationId} clusterId={clusterId} />
+                <ClusterCardSetup organizationId={organizationId} clusterId={clusterId} />
+              </div>
+              {isLoading ? (
+                <TableSkeleton />
+              ) : isKarpenter ? (
+                <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
+              ) : (
                 <div className="overflow-hidden rounded border border-neutral bg-surface-neutral">
                   <ClusterTableNode organizationId={organizationId} clusterId={clusterId} className="border-0" />
                 </div>
-              </div>
-            )}
-          </>
-        )}
+              )}
+            </div>
+          )}
+        </div>
       </Section>
     </>
   )
