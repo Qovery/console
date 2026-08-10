@@ -25,8 +25,10 @@ jest.mock('../hooks/use-services/use-services', () => ({
   useServices: () => mockUseServices(),
 }))
 
-jest.mock('../service-actions/service-actions', () => ({
-  ServiceActions: ({ serviceId }: { serviceId: string }) => <button type="button">Actions for {serviceId}</button>,
+jest.mock('../agentic-workflow-service-actions/agentic-workflow-service-actions', () => ({
+  AgenticWorkflowServiceActions: ({ service }: { service: { id: string } }) => (
+    <button type="button">Actions for {service.id}</button>
+  ),
 }))
 
 describe('AgenticWorkflowServiceList', () => {

@@ -5,8 +5,8 @@ import { match } from 'ts-pattern'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { IconEnum } from '@qovery/shared/enums'
 import { Badge, Heading, Icon, Section, TablePrimitives } from '@qovery/shared/ui'
+import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
-import { ServiceActions } from '../service-actions/service-actions'
 import { ServiceLastDeploymentCell, ServiceNameCell } from '../service-list/service-list-cells'
 import { ServiceStateChip } from '../service-state-chip/service-state-chip'
 
@@ -118,9 +118,11 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                   <ModelCell service={service} />
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center">
-                  <div onClick={stopRowNavigation} onKeyDown={stopRowNavigation}>
-                    <ServiceActions serviceId={service.id} environment={environment} />
-                  </div>
+                  <AgenticWorkflowServiceActions
+                    service={service}
+                    environment={environment}
+                    onAction={stopRowNavigation}
+                  />
                 </Table.Cell>
               </Table.Row>
             ))}
