@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useState } from 'react'
 import { type AgenticWorkflow } from '@qovery/domains/services/data-access'
@@ -76,6 +76,21 @@ export function AgenticWorkflowServiceActions({
           </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
+          <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
+            <Link
+              className="gap-0"
+              to="/organization/$organizationId/audit-logs"
+              params={{ organizationId }}
+              search={{
+                targetId: service.id,
+                targetType: undefined,
+                projectId,
+                environmentId,
+              }}
+            >
+              Audit logs
+            </Link>
+          </DropdownMenu.Item>
           <DropdownMenu.Sub>
             <DropdownMenu.SubTrigger icon={<Icon iconName="circle-info" />}>Service metadata</DropdownMenu.SubTrigger>
             <DropdownMenu.SubContent className="w-[290px]">
