@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import {
   type Row,
@@ -15,7 +16,7 @@ import clsx from 'clsx'
 import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { isEditableServiceType } from '@qovery/domains/services/data-access'
+import { isAgenticWorkflow, isEditableServiceType } from '@qovery/domains/services/data-access'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import {
@@ -37,10 +38,12 @@ import {
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { queries } from '@qovery/state/util-queries'
 import { useCancelDeploymentQueueService } from '../hooks/use-cancel-deployment-queue-service/use-cancel-deployment-queue-service'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
 import { useDeploymentHistory } from '../hooks/use-deployment-history/use-deployment-history'
 import { useDeploymentQueue } from '../hooks/use-deployment-queue/use-deployment-queue'
+import { getAgenticWorkflowDeployments } from '../hooks/use-service-deployment-and-running-statuses/use-service-deployment-and-running-statuses'
 import { useService } from '../hooks/use-service/use-service'
 import { ServiceDeploymentDurationCell } from './service-deployment-duration-cell'
 import { ServiceDeploymentListSkeleton } from './service-deployment-list-skeleton'
@@ -69,13 +72,28 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
   const navigate = useNavigate()
   const { data: service } = useService({ environmentId: environment?.id, serviceId, suspense: true })
-  const deploymentHistoryServiceType = isEditableServiceType(service?.service_type) ? service.service_type : undefined
+  const isAgenticWorkflowService = isAgenticWorkflow(service)
+  const deploymentHistoryServiceType =
+    !isAgenticWorkflowService && isEditableServiceType(service?.service_type) ? service.service_type : undefined
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
     serviceId,
     serviceType: deploymentHistoryServiceType,
     suspense: true,
   })
+
+  const { data: agenticWorkflowDeploymentHistory = [], isFetched: isFetchedAgenticWorkflowDeploymentHistory } =
+    useQuery({
+      ...queries.environments.deploymentHistoryV2({ environmentId: environment?.id ?? '', pageSize: 100 }),
+      select: (history) => getAgenticWorkflowDeployments(history ?? [], serviceId),
+      enabled: Boolean(environment?.id) && isAgenticWorkflowService,
+      suspense: isAgenticWorkflowService,
+    })
+
+  const resolvedDeploymentHistory = isAgenticWorkflowService ? agenticWorkflowDeploymentHistory : deploymentHistory
+  const isResolvedDeploymentHistoryFetched = isAgenticWorkflowService
+    ? isFetchedAgenticWorkflowDeploymentHistory
+    : isFetchedDeloymentHistory
 
   const { data: deploymentHistoryQueue = [], isFetched: isFetchedDeloymentQueue } = useDeploymentQueue({
     serviceId,
@@ -458,8 +476,8 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   )
 
   const data = useMemo(
-    () => [...deploymentHistoryQueue, ...deploymentHistory],
-    [deploymentHistory, deploymentHistoryQueue]
+    () => [...deploymentHistoryQueue, ...resolvedDeploymentHistory],
+    [resolvedDeploymentHistory, deploymentHistoryQueue]
   )
 
   const table = useReactTable({
@@ -481,12 +499,12 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
     },
   })
 
-  if (!isFetchedDeloymentHistory || !isFetchedDeloymentQueue) return <ServiceDeploymentListSkeleton />
+  if (!isResolvedDeploymentHistoryFetched || !isFetchedDeloymentQueue) return <ServiceDeploymentListSkeleton />
 
   if (
-    isFetchedDeloymentHistory &&
+    isResolvedDeploymentHistoryFetched &&
     isFetchedDeloymentQueue &&
-    !deploymentHistory.length &&
+    !resolvedDeploymentHistory.length &&
     !deploymentHistoryQueue.length
   ) {
     return (

@@ -11,13 +11,23 @@ export interface UseDeploymentFullStatusProps {
   service?: AnyService
 }
 
+export function getAgenticWorkflowDeployments(deploymentHistory: DeploymentHistoryEnvironmentV2[], serviceId: string) {
+  return mergeDeploymentServices(deploymentHistory)
+    .filter(({ identifier }) => identifier.service_id === serviceId)
+    .map((deployment) => ({
+      ...deployment,
+      identifier: {
+        ...deployment.identifier,
+        execution_id: deployment.execution_id,
+      },
+    }))
+}
+
 export function getAgenticWorkflowDeploymentStatus(
   deploymentHistory: DeploymentHistoryEnvironmentV2[],
   serviceId: string
 ): Status | undefined {
-  const lastDeployment = mergeDeploymentServices(deploymentHistory).find(
-    ({ identifier }) => identifier.service_id === serviceId
-  )
+  const lastDeployment = getAgenticWorkflowDeployments(deploymentHistory, serviceId)[0]
 
   if (!lastDeployment) return undefined
 

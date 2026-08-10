@@ -1,5 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { P, match } from 'ts-pattern'
+import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { EmptyState as EmptyStateComponent } from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useDeploymentStatus } from '../../hooks/use-deployment-status/use-deployment-status'
@@ -27,6 +28,10 @@ export function EmptyState({ environmentId, serviceId }: EmptyStateProps) {
   const { data: service } = useService({ environmentId, serviceId })
   const { data: deploymentStatus } = useDeploymentStatus({ serviceId, environmentId })
   const { data: runningStatus } = useRunningStatus({ serviceId, environmentId })
+
+  if (!deploymentStatus && isAgenticWorkflow(service)) {
+    return <Box title="Agentic workflow is not running" description="Deploy the agentic workflow first" />
+  }
 
   if (!deploymentStatus) {
     return null
