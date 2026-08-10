@@ -5,6 +5,7 @@ import { AgenticWorkflowServiceActions } from './agentic-workflow-service-action
 const mockDeleteService = jest.fn()
 const mockNavigate = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
+const mockCopyToClipboard = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
@@ -19,9 +20,14 @@ jest.mock('../hooks/use-delete-service/use-delete-service', () => ({
   useDeleteService: () => ({ mutateAsync: mockDeleteService }),
 }))
 
+jest.mock('@qovery/shared/util-hooks', () => ({
+  useCopyToClipboard: () => [undefined, mockCopyToClipboard],
+}))
+
 describe('AgenticWorkflowServiceActions', () => {
   const environment = {
     id: 'environment-1',
+    cluster_id: 'cluster-1',
     organization: { id: 'organization-1' },
     project: { id: 'project-1' },
   } as Environment
@@ -36,15 +42,35 @@ describe('AgenticWorkflowServiceActions', () => {
     jest.clearAllMocks()
   })
 
-  it('only exposes the delete action', async () => {
+  it('only exposes metadata and delete actions', async () => {
     const { userEvent } = renderWithProviders(
       <AgenticWorkflowServiceActions environment={environment} service={service} />
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Other actions for Review pull requests' }))
 
+    expect(screen.getByRole('menuitem', { name: 'Service metadata' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'Delete' })).toBeInTheDocument()
     expect(screen.queryByRole('menuitem', { name: 'Redeploy' })).not.toBeInTheDocument()
+  })
+
+  it('shows and copies service metadata', async () => {
+    const { userEvent } = renderWithProviders(
+      <AgenticWorkflowServiceActions environment={environment} service={service} />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Other actions for Review pull requests' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Service metadata' }))
+
+    expect(screen.getByText('Cluster ID')).toBeInTheDocument()
+    expect(screen.getByText('Organization ID')).toBeInTheDocument()
+    expect(screen.getByText('Project ID')).toBeInTheDocument()
+    expect(screen.getByText('Environment ID')).toBeInTheDocument()
+    expect(screen.getByText('Service ID')).toBeInTheDocument()
+
+    screen.getByRole('menuitem', { name: /Cluster ID cluster-1/i }).focus()
+    await userEvent.keyboard('{Enter}')
+    expect(mockCopyToClipboard).toHaveBeenCalledWith('cluster-1')
   })
 
   it('deletes the workflow and redirects to the environment overview', async () => {

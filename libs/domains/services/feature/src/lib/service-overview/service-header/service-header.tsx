@@ -153,7 +153,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
       {isArgoCdService ? (
         <ArgoCdServiceActions variant="header" environment={environment} service={service} />
       ) : isAgenticWorkflowService ? (
-        <AgenticWorkflowServiceActions environment={environment} service={service} />
+        <AgenticWorkflowServiceActions variant="header" environment={environment} service={service} />
       ) : (
         <ServiceActions environment={environment} serviceId={service.id} variant="header" />
       )}
