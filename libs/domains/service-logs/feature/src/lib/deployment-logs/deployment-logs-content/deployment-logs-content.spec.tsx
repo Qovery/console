@@ -26,6 +26,18 @@ const services: DeploymentStageWithServicesStatuses[] = [
   },
   {
     stage: {
+      id: 'agentic-workflow-stage',
+      name: 'AGENTIC WORKFLOW DEFAULT',
+    },
+    agentic_workflows: [
+      {
+        id: 'workflow-id',
+        state: StateEnum.RUNNING,
+      },
+    ],
+  },
+  {
+    stage: {
       id: 'c5b554bc-850b-4ddb-bb45-3d47112c3e82',
       name: 'APPLICATION DEFAULT',
     },
@@ -72,6 +84,13 @@ describe('DeploymentLogsFeature', () => {
       is_part_last_deployment: false,
     }
     expect(getServiceStatusesById(services, serviceId)).toEqual(expectedService)
+  })
+
+  it('should return an agentic workflow status with the given id', () => {
+    expect(getServiceStatusesById(services, 'workflow-id')).toEqual({
+      id: 'workflow-id',
+      state: StateEnum.RUNNING,
+    })
   })
 
   it('uses the selected environment execution as a fallback for agentic workflow deployment logs', () => {

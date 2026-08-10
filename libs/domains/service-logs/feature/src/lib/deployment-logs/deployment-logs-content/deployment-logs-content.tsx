@@ -90,6 +90,13 @@ export function getServiceStatusesById(services?: DeploymentStageWithServicesSta
           }
         }
       }
+      if (service.agentic_workflows && service.agentic_workflows.length > 0) {
+        for (const agenticWorkflow of service.agentic_workflows) {
+          if (agenticWorkflow.id === serviceId) {
+            return agenticWorkflow
+          }
+        }
+      }
     }
   }
   return null
@@ -107,6 +114,7 @@ export function getStageFromServiceId(
       'databases',
       'helms',
       'terraforms',
+      'agentic_workflows',
     ]
 
     for (const serviceType of serviceTypes) {
