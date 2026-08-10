@@ -46,33 +46,31 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                       </Badge>
                     </>
                   ))
-                  .with({ type: 'DRIFT' }, (status) => (
-                    <>
-                      {isEksAnywhereCluster ? (
-                        <>
-                          <span className="flex w-5 shrink-0 justify-center">
-                            <StatusChip status="RUNNING" />
-                          </span>
-                          Kubernetes version
-                          <Badge variant="surface" size="sm">
-                            {status.kube_version}
-                          </Badge>
-                        </>
-                      ) : (
-                        <>
-                          <span className="flex w-5 shrink-0 justify-center">
-                            <StatusChip status="WARNING" />
-                          </span>
-                          Upgrade Kubernetes
-                          <Badge color="yellow" size="sm" variant="surface">
-                            {!status.expected_kube_version
-                              ? status.kube_version
-                              : `${status.kube_version} → ${status.expected_kube_version}`}
-                          </Badge>
-                        </>
-                      )}
-                    </>
-                  ))
+                  .with({ type: 'DRIFT' }, (status) =>
+                    isEksAnywhereCluster ? (
+                      <>
+                        <span className="flex w-5 shrink-0 justify-center">
+                          <StatusChip status="RUNNING" />
+                        </span>
+                        Kubernetes version
+                        <Badge variant="surface" size="sm">
+                          {status.kube_version}
+                        </Badge>
+                      </>
+                    ) : (
+                      <>
+                        <span className="flex w-5 shrink-0 justify-center">
+                          <StatusChip status="WARNING" />
+                        </span>
+                        Upgrade Kubernetes
+                        <Badge color="yellow" size="sm" variant="surface">
+                          {!status.expected_kube_version
+                            ? status.kube_version
+                            : `${status.kube_version} → ${status.expected_kube_version}`}
+                        </Badge>
+                      </>
+                    )
+                  )
                   .with({ type: 'UNKNOWN' }, () => (
                     <>
                       <span className="flex w-5 shrink-0 justify-center">

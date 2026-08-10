@@ -7,6 +7,9 @@ jest.mock('@qovery/domains/clusters/feature', () => ({
   useClusterRunningStatus: jest.fn(),
 }))
 
+const mockUseCluster = useCluster as jest.Mock
+const mockUseClusterRunningStatus = useClusterRunningStatus as jest.Mock
+
 describe('ClusterCardSetup', () => {
   const mockOrganizationId = 'org-123'
   const mockClusterId = 'cluster-456'
@@ -20,7 +23,7 @@ describe('ClusterCardSetup', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useCluster as jest.Mock).mockReturnValue({
+    mockUseCluster.mockReturnValue({
       data: mockCluster,
     })
   })
@@ -34,7 +37,7 @@ describe('ClusterCardSetup', () => {
         },
       },
     }
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    mockUseClusterRunningStatus.mockReturnValue({
       data: mockRunningStatus,
     })
 
@@ -49,10 +52,10 @@ describe('ClusterCardSetup', () => {
   })
 
   it('should show Wednesday maintenance for production clusters', () => {
-    ;(useCluster as jest.Mock).mockReturnValue({
+    mockUseCluster.mockReturnValue({
       data: { ...mockCluster, production: true },
     })
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    mockUseClusterRunningStatus.mockReturnValue({
       data: {
         computed_status: {
           kube_version_status: {
@@ -78,7 +81,7 @@ describe('ClusterCardSetup', () => {
         },
       },
     }
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    mockUseClusterRunningStatus.mockReturnValue({
       data: mockRunningStatus,
     })
 
@@ -98,13 +101,13 @@ describe('ClusterCardSetup', () => {
         },
       },
     }
-    ;(useCluster as jest.Mock).mockReturnValue({
+    mockUseCluster.mockReturnValue({
       data: {
         ...mockCluster,
         kubernetes: 'PARTIALLY_MANAGED',
       },
     })
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    mockUseClusterRunningStatus.mockReturnValue({
       data: mockRunningStatus,
     })
 
@@ -124,7 +127,7 @@ describe('ClusterCardSetup', () => {
         },
       },
     }
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    mockUseClusterRunningStatus.mockReturnValue({
       data: mockRunningStatus,
     })
 

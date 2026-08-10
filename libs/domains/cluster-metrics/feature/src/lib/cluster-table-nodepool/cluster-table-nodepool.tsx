@@ -287,7 +287,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
   const nodePools = metrics?.node_pools
-  const nodes = metrics?.nodes || []
+  const nodes = useMemo(() => metrics?.nodes ?? [], [metrics?.nodes])
   const nodeWarnings = runningStatus?.computed_status?.node_warnings || {}
 
   // Find nodes that don't belong to any Karpenter nodepool (untracked nodes)
