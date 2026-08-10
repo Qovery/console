@@ -1,4 +1,5 @@
 import {
+  type ClusterStateEnum,
   type DeploymentHistoryTriggerAction,
   ServiceActionStatusEnum,
   type ServiceSubActionEnum,
@@ -13,6 +14,7 @@ import Icon from '../icon/icon'
 export const getDeploymentAction = (
   status:
     | StateEnum
+    | ClusterStateEnum
     | ServiceActionStatusEnum
     | DeploymentHistoryTriggerAction
     | ServiceSubActionEnum
@@ -36,6 +38,8 @@ export const getDeploymentAction = (
       StateEnum.EXECUTING,
       StateEnum.READY,
       StateEnum.RECAP,
+      'DRY_RUN',
+      'INVALID_CREDENTIALS',
       undefined,
       () => ({
         status: 'Deploy',
@@ -140,6 +144,7 @@ export const DeploymentAction = ({
 }: {
   status:
     | StateEnum
+    | ClusterStateEnum
     | ServiceActionStatusEnum
     | DeploymentHistoryTriggerAction
     | ServiceSubActionEnum

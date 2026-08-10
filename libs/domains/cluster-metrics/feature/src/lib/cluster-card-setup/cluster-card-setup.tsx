@@ -1,10 +1,8 @@
-import { Link } from '@tanstack/react-router'
 import clsx from 'clsx'
 import { match } from 'ts-pattern'
-import { useCluster, useClusterRunningStatus, useClusterStatus } from '@qovery/domains/clusters/feature'
-import { Badge, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
+import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
+import { Badge, ExternalLink, Icon, Skeleton, StatusChip } from '@qovery/shared/ui'
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 export interface ClusterCardSetupProps {
   organizationId: string
@@ -14,7 +12,6 @@ export interface ClusterCardSetupProps {
 export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetupProps) {
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
-  const { data: deploymentStatus } = useClusterStatus({ organizationId, clusterId, refetchInterval: 5000 })
   const { data: runningStatus } = useClusterRunningStatus({
     organizationId: organizationId,
     clusterId: clusterId,
@@ -23,8 +20,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
   const kubeVersion = runningStatus?.computed_status?.kube_version_status
   const isEksAnywhereCluster = cluster?.kubernetes === 'PARTIALLY_MANAGED'
 
-  const isLoading =
-    !deploymentStatus?.is_deployed || !deploymentStatus?.last_deployment_date || !cluster?.created_at || !kubeVersion
+  const isLoading = !cluster?.created_at || !kubeVersion
 
   return (
     <div className="flex flex-col gap-2.5 rounded border border-neutral bg-surface-neutral p-4">
@@ -36,12 +32,14 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
       >
         <Skeleton width="65%" height={20} show={isLoading}>
           <div className="flex h-8 items-center p-1.5">
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-2.5">
               {kubeVersion &&
                 match(kubeVersion)
                   .with({ type: 'OK' }, (status) => (
                     <>
-                      <StatusChip status="RUNNING" />
+                      <span className="flex w-5 shrink-0 justify-center">
+                        <StatusChip status="RUNNING" />
+                      </span>
                       Kubernetes up to date
                       <Badge variant="surface" size="sm">
                         {status.kube_version}
@@ -52,7 +50,9 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                     <>
                       {isEksAnywhereCluster ? (
                         <>
-                          <StatusChip status="RUNNING" />
+                          <span className="flex w-5 shrink-0 justify-center">
+                            <StatusChip status="RUNNING" />
+                          </span>
                           Kubernetes version
                           <Badge variant="surface" size="sm">
                             {status.kube_version}
@@ -60,7 +60,9 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                         </>
                       ) : (
                         <>
-                          <StatusChip status="WARNING" />
+                          <span className="flex w-5 shrink-0 justify-center">
+                            <StatusChip status="WARNING" />
+                          </span>
                           Upgrade Kubernetes
                           <Badge color="yellow" size="sm" variant="surface">
                             {!status.expected_kube_version
@@ -73,7 +75,9 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
                   ))
                   .with({ type: 'UNKNOWN' }, () => (
                     <>
-                      <StatusChip status="ERROR" />
+                      <span className="flex w-5 shrink-0 justify-center">
+                        <StatusChip status="ERROR" />
+                      </span>
                       Kubernetes version{' '}
                       <Badge color="red" size="sm" variant="surface">
                         Unsupported
@@ -84,46 +88,30 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
             </span>
           </div>
         </Skeleton>
-        {cluster?.cloud_provider !== 'ON_PREMISE' && deploymentStatus?.is_deployed && (
+        {cluster?.cloud_provider !== 'ON_PREMISE' && (
           <Skeleton width="65%" height={20} show={isLoading} className="truncate">
-            <Link
-              title={
-                deploymentStatus?.last_deployment_date
-                  ? dateUTCString(deploymentStatus.last_deployment_date)
-                  : undefined
-              }
-              to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
-              params={{ organizationId, clusterId }}
-              className="flex h-8 w-full items-center gap-2.5 rounded p-1.5 transition-colors hover:bg-surface-neutral-componentHover"
+            <ExternalLink
+              href="https://www.qovery.com/docs/configuration/clusters#faq"
+              color="neutral"
+              withIcon={false}
+              className="flex h-8 w-full items-center gap-2.5 rounded p-1.5 font-normal transition-colors hover:bg-surface-neutral-componentHover hover:text-neutral"
             >
-              <StatusChip status={deploymentStatus.status} />
-              {match(deploymentStatus?.status)
-                .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
-                  <>{upperCaseFirstLetter(s).replace('_', ' ')}...</>
-                ))
-                .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) =>
-                  s === 'DRY_RUN' ? 'Evaluating changes (dry-run) ' : upperCaseFirstLetter(s) + '...'
-                )
-                .with(
-                  'BUILD_ERROR',
-                  'DELETE_ERROR',
-                  'DEPLOYMENT_ERROR',
-                  'STOP_ERROR',
-                  'RESTART_ERROR',
-                  () => 'Last deployment failed'
-                )
-                .otherwise((s) => upperCaseFirstLetter(s))}{' '}
-              {deploymentStatus?.last_deployment_date && timeAgo(new Date(deploymentStatus.last_deployment_date))} ago
+              <span className="flex w-5 shrink-0 justify-center">
+                <Icon className="text-base text-neutral-subtle" iconName="wrench" iconStyle="regular" />
+              </span>
+              Maintenance every {cluster?.production ? 'Wednesday' : 'Monday'}
               <Icon className="ml-auto text-base text-neutral-subtle" iconName="arrow-up-right" iconStyle="regular" />
-            </Link>
+            </ExternalLink>
           </Skeleton>
         )}
         <Skeleton width="65%" height={20} show={isLoading}>
           <div
             title={cluster?.created_at ? dateUTCString(cluster.created_at) : undefined}
-            className="flex h-8 items-center gap-2.5 p-1.5 pl-0.5"
+            className="flex h-8 items-center gap-2.5 p-1.5"
           >
-            <Icon className="text-base text-neutral-subtle" iconName="calendar-day" iconStyle="regular" />
+            <span className="flex w-5 shrink-0 justify-center">
+              <Icon className="text-base text-neutral-subtle" iconName="calendar-day" iconStyle="regular" />
+            </span>
             Created {cluster?.created_at && timeAgo(new Date(cluster.created_at))} ago
           </div>
         </Skeleton>
