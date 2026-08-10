@@ -172,6 +172,20 @@ describe('ServiceOverview', () => {
     expect(screen.queryByText('service-instance')).not.toBeInTheDocument()
   })
 
+  it('renders the instances block for an agentic workflow', () => {
+    mockUseService.mockReturnValue({
+      data: {
+        id: 'workflow-1',
+        service_type: 'AGENTIC_WORKFLOW',
+        serviceType: 'AGENTIC_WORKFLOW',
+      },
+    })
+
+    renderWithProviders(<ServiceOverview environment={environment} />)
+
+    expect(screen.getByText('service-instance')).toBeInTheDocument()
+  })
+
   it.each(['APPLICATION', 'CONTAINER', 'HELM', 'JOB'])('renders core overview blocks for %s service', (serviceType) => {
     mockUseService.mockReturnValue({
       data: {

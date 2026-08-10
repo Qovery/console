@@ -11,7 +11,7 @@ const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockCopyToClipboard = jest.fn()
 
-let mockDeploymentStatus = {
+let mockDeploymentStatus: { state: string; service_deployment_status: string } | undefined = {
   state: 'READY',
   service_deployment_status: 'OUT_OF_DATE',
 }
@@ -127,6 +127,22 @@ describe('ServiceActions', () => {
     await userEvent.click(buttonOtherActions)
 
     expect(screen.getByRole('menuitem', { name: /access infos/i })).toBeInTheDocument()
+  })
+
+  it('should keep service logs accessible for an agentic workflow without a deployment status', () => {
+    mockService = {
+      id: 'workflow-1',
+      name: 'Review pull requests',
+      service_type: 'AGENTIC_WORKFLOW',
+      serviceType: 'AGENTIC_WORKFLOW',
+    } as never
+    mockDeploymentStatus = undefined
+
+    renderWithProviders(<ServiceActions serviceId={mockService.id} environment={mockEnvironment} />)
+
+    expect(screen.getByLabelText('Service logs')).toHaveAttribute('to', expect.stringContaining('/service-logs'))
+    expect(screen.queryByLabelText(/manage deployment/i)).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/other actions/i)).not.toBeInTheDocument()
   })
 
   it('should open service metadata without copying immediately and copy identifiers independently', async () => {
