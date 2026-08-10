@@ -12,7 +12,8 @@ export function mergeServices(
   containers?: Status[],
   jobs?: Status[],
   helms?: Status[],
-  terraforms?: Status[]
+  terraforms?: Status[],
+  agenticWorkflows?: Status[]
 ) {
   return [
     ...(applications || []),
@@ -21,6 +22,7 @@ export function mergeServices(
     ...(jobs || []),
     ...(helms || []),
     ...(terraforms || []),
+    ...(agenticWorkflows || []),
   ]
 }
 export interface BreadcrumbDeploymentLogsProps {
@@ -52,7 +54,8 @@ export function BreadcrumbDeploymentLogs({
         stage.containers,
         stage.jobs,
         stage.helms,
-        stage.terraforms
+        stage.terraforms,
+        stage.agentic_workflows
       )
       if (mergedServices.some((service) => service.id === serviceId)) {
         return i + 1
@@ -73,7 +76,8 @@ export function BreadcrumbDeploymentLogs({
           stage.containers,
           stage.jobs,
           stage.helms,
-          stage.terraforms
+          stage.terraforms,
+          stage.agentic_workflows
         ),
       })),
     [statusStages]

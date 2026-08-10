@@ -63,6 +63,7 @@ export function useDeploymentStatusWebSocket({
             ...(stage.jobs ?? []),
             ...(stage.helms ?? []),
             ...(stage.terraforms ?? []),
+            ...(stage.agentic_workflows ?? []),
           ]
           for (const serviceDeploymentStatus of services) {
             queryClient.setQueryData(
@@ -145,6 +146,7 @@ export function useRunningStatusWebSocket({
           ...env.helms,
           ...env.argocd_apps,
           ...env.terraform,
+          ...env.agentic_workflows,
         ]
         for (const serviceRunningStatus of services) {
           queryClient.setQueryData(
