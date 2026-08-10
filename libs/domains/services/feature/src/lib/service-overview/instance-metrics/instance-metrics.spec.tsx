@@ -133,4 +133,42 @@ describe('InstanceMetrics', () => {
     expect(screen.getByText('Deploy the database first')).toBeInTheDocument()
     expect(screen.queryByText('Metrics for instances are not available, try again')).not.toBeInTheDocument()
   })
+
+  it('shows a stopped state for an agentic workflow instead of loading indefinitely', () => {
+    const agenticWorkflow = {
+      ...service,
+      service_type: ServiceTypeEnum.AGENTIC_WORKFLOW,
+      serviceType: ServiceTypeEnum.AGENTIC_WORKFLOW,
+    } as AnyService
+
+    jest.spyOn(useMetricsImport, 'useMetrics').mockReturnValue({
+      data: [],
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
+    jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
+    jest.spyOn(useRunningStatusImport, 'useRunningStatus').mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      error: {},
+      isError: false,
+    })
+    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
+      data: agenticWorkflow,
+      isLoading: false,
+      error: {},
+      isError: false,
+    })
+
+    renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" service={agenticWorkflow} />)
+
+    expect(screen.getByText('Agentic workflow is not running')).toBeInTheDocument()
+    expect(screen.queryByTestId('skeleton')).not.toBeInTheDocument()
+  })
 })
