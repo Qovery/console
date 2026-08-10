@@ -223,7 +223,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
         />
         <div className="flex flex-col gap-[12px]">
           <div className="flex items-center justify-between gap-4">
-            <Heading className="text-base font-medium text-neutral">Metrics</Heading>
+            <Heading className="text-base font-medium text-neutral">Cluster information</Heading>
             {typeof runningStatus !== 'string' && <TableLegend />}
           </div>
           {typeof runningStatus === 'string' ? (
