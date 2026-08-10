@@ -54,14 +54,14 @@ function RouteComponent() {
           environment && <JobStatusesCallout environmentId={environment.id} serviceId={service.id} />
         }
       />
-      {environment && service?.serviceType && !isAgenticWorkflow(service) && (
+      {environment && service?.serviceType && (
         <WebSocketListenerMemo
           organizationId={environment.organization.id}
           clusterId={environment.cluster_id}
           projectId={environment.project.id}
           environmentId={environment.id}
           serviceId={serviceId}
-          serviceType={service?.serviceType}
+          serviceType={isAgenticWorkflow(service) ? 'JOB' : service.serviceType}
         />
       )}
     </>

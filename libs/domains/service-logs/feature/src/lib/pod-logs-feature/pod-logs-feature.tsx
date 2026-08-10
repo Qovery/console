@@ -7,6 +7,7 @@ import {
 } from 'qovery-typescript-axios'
 import { memo } from 'react'
 import { useCluster } from '@qovery/domains/clusters/feature'
+import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
@@ -52,7 +53,7 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
           projectId={environment.project.id}
           environmentId={environment.id}
           serviceId={service.id}
-          serviceType={service.serviceType}
+          serviceType={isAgenticWorkflow(service) ? 'JOB' : service.serviceType}
         />
       )}
     </div>
