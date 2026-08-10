@@ -19,7 +19,6 @@ import {
   type Helm,
   type Job,
   type Terraform,
-  isAgenticWorkflow,
   isEditableService,
   isManagedDatabase,
 } from '@qovery/domains/services/data-access'
@@ -61,30 +60,6 @@ import { ServiceCloneModal } from '../service-clone-modal/service-clone-modal'
 import useServiceRemoveModal from '../service-remove-modal/use-service-remove-modal/use-service-remove-modal'
 
 type ActionToolbarVariant = 'default' | 'header' | 'deploy-dropdown-only'
-
-function ServiceLogsButton({ environment, service }: { environment: Environment; service: AnyService }) {
-  return (
-    <Tooltip content="Logs">
-      <Link
-        aria-label="Service logs"
-        as="button"
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
-        params={{
-          organizationId: environment.organization.id,
-          projectId: environment.project.id,
-          environmentId: environment.id,
-          serviceId: service.id,
-        }}
-        color="neutral"
-        variant="outline"
-        size="sm"
-        iconOnly
-      >
-        <Icon iconName="scroll" />
-      </Link>
-    </Tooltip>
-  )
-}
 
 function MenuManageDeployment({
   deploymentStatus,
@@ -974,18 +949,7 @@ export function ServiceActions({
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId: environment.id, serviceId })
   const isHeaderVariant = ['header', 'deploy-dropdown-only'].includes(variant)
 
-  if (!service)
-    return (
-      <Skeleton height={variant === 'default' ? 26 : 28} width={variant === 'default' || isHeaderVariant ? 96 : 67} />
-    )
-
-  // Agentic workflows are not exposed by the deployment status endpoint yet. In particular,
-  // stopped workflows have no WebSocket status to fall back to, but their logs remain available.
-  if (isAgenticWorkflow(service)) {
-    return variant === 'default' ? <ServiceLogsButton environment={environment} service={service} /> : null
-  }
-
-  if (!deploymentStatus)
+  if (!service || !deploymentStatus)
     return (
       <Skeleton height={variant === 'default' ? 26 : 28} width={variant === 'default' || isHeaderVariant ? 96 : 67} />
     )
@@ -999,7 +963,26 @@ export function ServiceActions({
         variant={variant}
       />
 
-      {variant === 'default' && <ServiceLogsButton environment={environment} service={service} />}
+      {variant === 'default' && (
+        <Tooltip content="Logs">
+          <Link
+            as="button"
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+            params={{
+              organizationId: environment.organization.id,
+              projectId: environment.project.id,
+              environmentId: environment.id,
+              serviceId: service.id,
+            }}
+            color="neutral"
+            variant="outline"
+            size="sm"
+            iconOnly
+          >
+            <Icon iconName="scroll" />
+          </Link>
+        </Tooltip>
+      )}
 
       {variant !== 'deploy-dropdown-only' && (
         <MenuOtherActions

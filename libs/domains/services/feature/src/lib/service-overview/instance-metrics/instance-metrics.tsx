@@ -12,7 +12,7 @@ import { ServiceDeploymentStatusEnum, StateEnum } from 'qovery-typescript-axios'
 import { type ServiceStateDto } from 'qovery-ws-typescript-axios'
 import { Fragment, type PropsWithChildren, memo, useEffect, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { type AnyService, isAgenticWorkflow } from '@qovery/domains/services/data-access'
+import { type AnyService } from '@qovery/domains/services/data-access'
 import { ServiceTypeEnum, isJobContainerSource } from '@qovery/shared/enums'
 import {
   Badge,
@@ -466,9 +466,7 @@ export function InstanceMetrics(props: InstanceMetricsProps) {
   } = useRunningStatus({ environmentId, serviceId })
   const showDeploymentEmptyState =
     deploymentStatus?.service_deployment_status === ServiceDeploymentStatusEnum.NEVER_DEPLOYED ||
-    deploymentStatus?.state === StateEnum.READY ||
-    isAgenticWorkflow(service)
-  const resolvedRunningStatusesLoading = isAgenticWorkflow(service) ? false : isRunningStatusesLoading
+    deploymentStatus?.state === StateEnum.READY
 
   const pods: Pod[] = useMemo(() => {
     // NOTE: metrics or runningStatuses could be undefined because backend doesn't have the info.
@@ -493,7 +491,7 @@ export function InstanceMetrics(props: InstanceMetricsProps) {
       service={service}
       isMetricsLoading={isMetricsLoading}
       isMetricsError={isMetricsError}
-      isRunningStatusesLoading={resolvedRunningStatusesLoading}
+      isRunningStatusesLoading={isRunningStatusesLoading}
       isRunningStatusesError={isRunningStatusesError}
       showDeploymentEmptyState={showDeploymentEmptyState}
     >
