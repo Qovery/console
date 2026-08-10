@@ -12,7 +12,6 @@ import { useDeploymentHistory } from '@qovery/domains/environments/feature'
 import { useService, useDeploymentStatus as useServiceDeploymentStatus } from '@qovery/domains/services/feature'
 import { Banner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { mergeDeploymentServices } from '@qovery/shared/util-js'
 import { ListDeploymentLogs } from '../../list-deployment-logs/list-deployment-logs'
 import { LoaderPlaceholder } from '../deployment-logs-placeholder/deployment-logs-placeholder'
 
@@ -21,25 +20,6 @@ export interface DeploymentLogsContentProps {
   deploymentStages?: DeploymentStageWithServicesStatuses[]
   environmentStatus?: EnvironmentStatus
   preCheckStage?: EnvironmentStatusesWithStagesPreCheckStage
-}
-
-export function getHistoricalServiceStatus(
-  environmentDeploymentHistory: Parameters<typeof mergeDeploymentServices>[0],
-  serviceId: string,
-  executionId: string
-): Status | undefined {
-  const deployment = mergeDeploymentServices(environmentDeploymentHistory).find(
-    (deployment) => deployment.identifier.service_id === serviceId && deployment.execution_id === executionId
-  )
-
-  return deployment
-    ? ({
-        id: serviceId,
-        execution_id: deployment.execution_id,
-        state: deployment.status,
-        status_details: deployment.status_details,
-      } as Status)
-    : undefined
 }
 
 export function getServiceStatusesById(services?: DeploymentStageWithServicesStatuses[], serviceId = '') {
@@ -153,11 +133,7 @@ export function DeploymentLogsContent({
 
   useDocumentTitle(`Deployment logs - ${service?.name ?? 'Loading…'}`)
 
-  const historicalServiceStatus = getHistoricalServiceStatus(environmentDeploymentHistory, serviceId, executionId)
-  const serviceStatus =
-    (getServiceStatusesById(deploymentStages, serviceId) as Status | null) ??
-    fallbackServiceStatus ??
-    historicalServiceStatus
+  const serviceStatus = (getServiceStatusesById(deploymentStages, serviceId) as Status | null) ?? fallbackServiceStatus
 
   if (!serviceStatus) {
     return (

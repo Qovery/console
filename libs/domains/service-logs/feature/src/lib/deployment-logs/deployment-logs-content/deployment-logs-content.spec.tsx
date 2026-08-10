@@ -1,5 +1,4 @@
 import {
-  type DeploymentHistoryEnvironmentV2,
   type DeploymentStageWithServicesStatuses,
   ServiceDeploymentStatusEnum,
   StateEnum,
@@ -9,7 +8,6 @@ import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders } from '@qovery/shared/util-tests'
 import DeploymentLogsFeature, {
   type DeploymentLogsContentProps,
-  getHistoricalServiceStatus,
   getServiceStatusesById,
 } from './deployment-logs-content'
 
@@ -91,36 +89,5 @@ describe('DeploymentLogsFeature', () => {
       id: 'workflow-id',
       state: StateEnum.RUNNING,
     })
-  })
-
-  it('uses the selected environment execution as a fallback for agentic workflow deployment logs', () => {
-    const history = [
-      {
-        identifier: { execution_id: 'execution-id', environment_id: 'environment-id' },
-        stages: [
-          {
-            services: [
-              {
-                identifier: {
-                  service_id: 'workflow-id',
-                  service_type: 'AGENTIC_WORKFLOW',
-                  name: 'Review pull requests',
-                },
-                status: 'STOPPED',
-                status_details: { action: 'STOP', status: 'SUCCESS', sub_action: 'NONE' },
-              },
-            ],
-          },
-        ],
-      },
-    ] as DeploymentHistoryEnvironmentV2[]
-
-    expect(getHistoricalServiceStatus(history, 'workflow-id', 'execution-id')).toEqual(
-      expect.objectContaining({
-        id: 'workflow-id',
-        execution_id: 'execution-id',
-        state: 'STOPPED',
-      })
-    )
   })
 })
