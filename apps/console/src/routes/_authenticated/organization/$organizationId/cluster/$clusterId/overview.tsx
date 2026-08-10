@@ -221,7 +221,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           clusterStatus={clusterStatus}
           isLoading={isClusterStatusLoading}
         />
-        <div className="flex flex-col gap-[12px]">
+        <div className="flex flex-col gap-3">
           <div className="flex items-center justify-between gap-4">
             <Heading className="text-base font-medium text-neutral">Cluster information</Heading>
             {typeof runningStatus !== 'string' && <TableLegend />}
@@ -234,7 +234,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
               </div>
             </div>
           ) : (
-            <div className="flex flex-col gap-[20px]">
+            <div className="flex flex-col gap-5">
               {clusterStatus?.status === 'DEPLOYING' && clusterStatus.reason === 'MAINTENANCE' && (
                 <Callout.Root color="sky">
                   <Callout.Icon>

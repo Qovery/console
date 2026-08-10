@@ -48,7 +48,7 @@ function SystemNodepool({ organizationId, clusterId, untrackedNodes, nodeWarning
   )
 
   return (
-    <div className="flex flex-col gap-[12px]">
+    <div className="flex flex-col gap-3">
       <div className="flex flex-col gap-1">
         <div className="text-sm font-medium text-neutral">System & infrastructure nodes (1)</div>
         <div className="text-xs text-neutral-subtle">
@@ -303,9 +303,9 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
   if (nodes?.length === 0) return null
 
   return (
-    <Accordion.Root type="multiple" className="flex flex-col gap-[20px]">
+    <Accordion.Root type="multiple" className="flex flex-col gap-5">
       {nodePools && nodePools.length > 0 && (
-        <div className="flex flex-col gap-[12px]">
+        <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-1">
             <div className="text-sm font-medium text-neutral">Application node pools ({nodePools.length})</div>
             <div className="text-xs text-neutral-subtle">
