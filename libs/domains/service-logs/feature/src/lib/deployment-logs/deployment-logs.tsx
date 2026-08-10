@@ -13,7 +13,6 @@ import {
   useDeploymentStages as useEnvironmentDeploymentStages,
   useDeploymentStatus as useEnvironmentDeploymentStatus,
 } from '@qovery/domains/environments/feature'
-import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { Skeleton } from '@qovery/shared/ui'
 import { QOVERY_WS } from '@qovery/shared/util-node-env'
@@ -157,7 +156,7 @@ export function DeploymentLogs() {
             projectId={environment.project.id}
             environmentId={environment.id}
             serviceId={service.id}
-            serviceType={isAgenticWorkflow(service) ? 'JOB' : service.serviceType}
+            serviceType={service.serviceType}
           />
         )}
       </ServiceStageIdsProvider>

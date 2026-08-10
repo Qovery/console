@@ -5,7 +5,6 @@ import { type Cluster, type Environment, type EnvironmentStatus, type Status } f
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { match } from 'ts-pattern'
 import { EnableObservabilityButtonContactUs } from '@qovery/domains/observability/feature'
-import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { useRunningStatus, useService } from '@qovery/domains/services/feature'
 import { TablePrimitives } from '@qovery/shared/ui'
 import { useServiceHistoryLogs } from '../hooks/use-service-history-logs/use-service-history-logs'
@@ -124,7 +123,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
   } = useServiceLiveLogs({
     clusterId: environment.cluster_id,
     serviceId: serviceId ?? '',
-    serviceType: isAgenticWorkflow(service) ? 'JOB' : service?.service_type,
+    serviceType: service?.service_type,
     enabled: isLiveMode && serviceEnabled,
   })
 
