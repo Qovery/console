@@ -47,6 +47,7 @@ describe('AgenticWorkflowServiceList', () => {
           name: 'Review pull requests',
           enabled: true,
           model: { type: 'CLAUDE' },
+          webhook: { url: 'https://api.qovery.com/workflows/workflow-1' },
           service_type: 'AGENTIC_WORKFLOW',
           serviceType: 'AGENTIC_WORKFLOW',
           project_repositories: [
@@ -59,6 +60,7 @@ describe('AgenticWorkflowServiceList', () => {
           name: 'Triage incidents',
           enabled: false,
           model: { type: 'BEDROCK' },
+          webhook: { url: 'https://api.qovery.com/workflows/workflow-2' },
           service_type: 'AGENTIC_WORKFLOW',
           serviceType: 'AGENTIC_WORKFLOW',
           project_repositories: [],
@@ -76,8 +78,11 @@ describe('AgenticWorkflowServiceList', () => {
     expect(screen.getByText('1 enabled')).toBeInTheDocument()
     expect(screen.getByText('Last operation')).toBeInTheDocument()
     expect(screen.getByText('Model')).toBeInTheDocument()
+    expect(screen.getByText('Webhook')).toBeInTheDocument()
     expect(screen.getByText('Claude')).toBeInTheDocument()
     expect(screen.getByText('Bedrock')).toBeInTheDocument()
+    expect(screen.getByText('https://api.qovery.com/workflows/workflow-1')).toBeInTheDocument()
+    expect(screen.getByText('https://api.qovery.com/workflows/workflow-2')).toBeInTheDocument()
     expect(screen.queryByText('Git repositories')).not.toBeInTheDocument()
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Actions for workflow-1' })).toBeInTheDocument()
