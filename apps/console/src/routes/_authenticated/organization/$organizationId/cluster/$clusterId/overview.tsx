@@ -84,7 +84,7 @@ function TableSkeleton() {
 
 function TableLegend() {
   return (
-    <div className="flex shrink-0 items-center justify-end gap-1.5 text-xs text-neutral">
+    <div className="flex items-center justify-end gap-1.5 text-xs text-neutral">
       <span className="bg-brand block h-2 w-2"></span>
       <span className="flex items-center gap-1">
         Reserved
