@@ -1,4 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowServiceActions } from './agentic-workflow-service-actions'
 
@@ -6,9 +7,30 @@ const mockDeleteService = jest.fn()
 const mockNavigate = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockCopyToClipboard = jest.fn()
+const mockAuditLogsLink = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
+  Link: ({
+    children,
+    to,
+    params,
+    search,
+    ...props
+  }: {
+    children: ReactNode
+    to: string
+    params: unknown
+    search: unknown
+    [key: string]: unknown
+  }) => {
+    mockAuditLogsLink({ to, params, search })
+    return (
+      <a href="/audit-logs" {...props}>
+        {children}
+      </a>
+    )
+  },
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -42,13 +64,24 @@ describe('AgenticWorkflowServiceActions', () => {
     jest.clearAllMocks()
   })
 
-  it('only exposes metadata and delete actions', async () => {
+  it('only exposes audit logs, metadata, and delete actions', async () => {
     const { userEvent } = renderWithProviders(
       <AgenticWorkflowServiceActions environment={environment} service={service} />
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Other actions for Review pull requests' }))
 
+    expect(screen.getByRole('menuitem', { name: 'Audit logs' })).toBeInTheDocument()
+    expect(mockAuditLogsLink).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/audit-logs',
+      params: { organizationId: 'organization-1' },
+      search: {
+        targetId: 'workflow-1',
+        targetType: undefined,
+        projectId: 'project-1',
+        environmentId: 'environment-1',
+      },
+    })
     expect(screen.getByRole('menuitem', { name: 'Service metadata' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'Delete' })).toBeInTheDocument()
     expect(screen.queryByRole('menuitem', { name: 'Redeploy' })).not.toBeInTheDocument()
