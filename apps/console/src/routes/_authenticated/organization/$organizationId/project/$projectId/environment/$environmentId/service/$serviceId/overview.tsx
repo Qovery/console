@@ -6,7 +6,6 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { JobStatusesCallout } from '@qovery/domains/service-job/feature'
 import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
-import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { ObservabilityCallout, ServiceOverview, useService } from '@qovery/domains/services/feature'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 
@@ -61,7 +60,7 @@ function RouteComponent() {
           projectId={environment.project.id}
           environmentId={environment.id}
           serviceId={serviceId}
-          serviceType={isAgenticWorkflow(service) ? 'JOB' : service.serviceType}
+          serviceType={service.serviceType}
         />
       )}
     </>
