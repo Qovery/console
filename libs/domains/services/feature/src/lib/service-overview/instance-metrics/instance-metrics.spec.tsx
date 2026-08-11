@@ -133,45 +133,4 @@ describe('InstanceMetrics', () => {
     expect(screen.getByText('Deploy the database first')).toBeInTheDocument()
     expect(screen.queryByText('Metrics for instances are not available, try again')).not.toBeInTheDocument()
   })
-
-  it('shows an empty state instead of a skeleton when an agentic workflow has no pods', () => {
-    const agenticWorkflow = {
-      ...service,
-      serviceType: ServiceTypeEnum.AGENTIC_WORKFLOW,
-    } as AnyService
-
-    jest.spyOn(useMetricsImport, 'useMetrics').mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      error: {},
-      isError: false,
-    })
-    jest.spyOn(useDeploymentStatusImport, 'useDeploymentStatus').mockReturnValue({
-      data: {
-        id: '1',
-        service_deployment_status: ServiceDeploymentStatusEnum.UP_TO_DATE,
-        state: StateEnum.DEPLOYED,
-      },
-      isLoading: false,
-      error: {},
-      isError: false,
-    })
-    jest.spyOn(useRunningStatusImport, 'useRunningStatus').mockReturnValue({
-      data: { state: 'COMPLETED', pods: [] },
-      isLoading: false,
-      error: {},
-      isError: false,
-    })
-    jest.spyOn(useServiceImport, 'useService').mockReturnValue({
-      data: agenticWorkflow,
-      isLoading: false,
-      error: {},
-      isError: false,
-    })
-
-    renderWithProviders(<InstanceMetrics environmentId="1" serviceId="1" service={agenticWorkflow} />)
-
-    expect(screen.getByText('No instances available')).toBeInTheDocument()
-    expect(screen.getByText('There are no instances for this agentic workflow.')).toBeInTheDocument()
-  })
 })

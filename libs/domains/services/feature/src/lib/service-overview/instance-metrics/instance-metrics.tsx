@@ -280,15 +280,6 @@ function InstanceMetricsTable({
   }, [service.serviceType, table.setSorting])
 
   if (
-    service.serviceType === 'AGENTIC_WORKFLOW' &&
-    pods.length === 0 &&
-    !isRunningStatusesLoading &&
-    !isRunningStatusesError
-  ) {
-    return <EmptyStatePodsMetrics serviceId={serviceId} environmentId={environmentId} />
-  }
-
-  if (
     pods.length === 0 &&
     !isMetricsLoading &&
     !isMetricsError &&
