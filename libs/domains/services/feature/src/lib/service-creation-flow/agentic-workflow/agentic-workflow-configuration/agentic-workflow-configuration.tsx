@@ -353,7 +353,7 @@ export function AgenticWorkflowConfiguration() {
 
           <AgenticWorkflowSection
             section="ai-model"
-            icon={<Icon name="AGENTIC_WORKFLOW" className="h-4 w-4 text-neutral-subtle" />}
+            icon={<Icon iconName="brain" className="h-4 w-4 text-neutral-subtle" />}
             invalid={sectionInvalid['ai-model']}
           >
             <AIModelCards />
