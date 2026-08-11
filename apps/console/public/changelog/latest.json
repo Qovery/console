@@ -1,8 +1,8 @@
 [
   {
-    "name": "ArgoCD Integration, Remote Dev Environments Improvements, Restrict Copilot Access",
-    "summary": "Hey Team, This release brings three things worth your attention: ArgoCD is now a first-class integration in Qovery, the AI Copilot gets proper access controls, and Remote Dev Environments ship a round of improvements shaped directly by feedback from early customers. --- 🔗 ArgoCD Integration ...",
-    "url": "https://www.qovery.com/changelog/2026-06-03",
-    "firstPublishedAt": "2026-06-03T00:00:00.000Z"
+    "name": "Qovery Blueprints, Builders Portal improvements",
+    "summary": "Hey Team, AI agents are provisioning infrastructure now, not just writing code, spinning up a database or a full environment in seconds, faster than any ticket queue or manual review was built for. That leaves platform teams with the same old choice, hand-build every request or hand out raw access ...",
+    "url": "https://www.qovery.com/changelog/2026-07-29",
+    "firstPublishedAt": "2026-07-29T00:00:00.000Z"
   }
 ]
