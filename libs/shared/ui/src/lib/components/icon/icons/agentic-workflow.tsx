@@ -2,7 +2,7 @@ import { type IconProps } from '../icon'
 
 export function AgenticWorkflowIcon(props: IconProps) {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 980 980" {...props}>
+    <svg xmlns="http://www.w3.org/2000/svg" {...props} fill="none" viewBox="0 0 980 980">
       <g filter="url(#agentic-workflow-a)">
         <path
           fill="#9A97EB"
