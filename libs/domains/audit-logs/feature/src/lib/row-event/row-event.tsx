@@ -70,13 +70,15 @@ const containerRegistriesSettingsUrl = (organizationId: string) =>
 const helmRepositoriesSettingsUrl = (organizationId: string) =>
   `${organizationSettingsUrl(organizationId)}/helm-repositories`
 
+const AGENTIC_WORKFLOW_TARGET_TYPE = 'AGENTIC_WORKFLOW'
+
 export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth, validTargetIds } = props
   const { organizationId = '' } = useParams({ strict: false })
   const [diffStats, setDiffStats] = useState<DiffStats>({ additions: 0, deletions: 0 })
 
   // Check if target still exists
-  const checkTargetExists = (targetType: OrganizationEventTargetType): boolean => {
+  const checkTargetExists = (targetType: string): boolean => {
     const { target_id } = event
 
     if (!validTargetIds || !target_id) return true // If no validation data, assume exists
@@ -88,6 +90,7 @@ export function RowEvent(props: RowEventProps) {
       case OrganizationEventTargetType.HELM:
       case OrganizationEventTargetType.TERRAFORM:
       case OrganizationEventTargetType.DATABASE:
+      case AGENTIC_WORKFLOW_TARGET_TYPE:
         return validTargetIds.services.has(target_id)
       case OrganizationEventTargetType.PROJECT:
         return validTargetIds.projects.has(target_id)
@@ -98,7 +101,7 @@ export function RowEvent(props: RowEventProps) {
     }
   }
 
-  const renderLink = (targetType: OrganizationEventTargetType) => {
+  const renderLink = (targetType: string) => {
     const { event_type, target_name, project_id, environment_id, target_id } = event
 
     const targetExists = checkTargetExists(targetType)
@@ -117,12 +120,13 @@ export function RowEvent(props: RowEventProps) {
     const generateServiceLink = () =>
       customLink(serviceOverviewUrl(organizationId, project_id!, environment_id!, target_id!))
 
-    const linkConfig: { [key in OrganizationEventTargetType]: () => JSX.Element } = {
+    const linkConfig: Record<string, () => JSX.Element> = {
       [OrganizationEventTargetType.APPLICATION]: generateServiceLink,
       [OrganizationEventTargetType.CONTAINER]: generateServiceLink,
       [OrganizationEventTargetType.JOB]: generateServiceLink,
       [OrganizationEventTargetType.HELM]: generateServiceLink,
       [OrganizationEventTargetType.TERRAFORM]: generateServiceLink,
+      [AGENTIC_WORKFLOW_TARGET_TYPE]: generateServiceLink,
       [OrganizationEventTargetType.ORGANIZATION]: () => customLink(organizationSettingsUrl(organizationId)),
       [OrganizationEventTargetType.MEMBERS_AND_ROLES]: () => customLink(membersSettingsUrl(organizationId)),
       [OrganizationEventTargetType.PROJECT]: () => customLink(projectSettingsUrl(organizationId, target_id!)),
@@ -137,11 +141,12 @@ export function RowEvent(props: RowEventProps) {
       [OrganizationEventTargetType.HELM_REPOSITORY]: () => customLink(helmRepositoriesSettingsUrl(organizationId)),
     }
 
-    if (event_type !== OrganizationEventType.DELETE && targetExists) {
-      return linkConfig[targetType]()
-    } else {
-      return <span className="truncate">{target_name}</span>
+    const renderTargetLink = linkConfig[targetType]
+    if (event_type !== OrganizationEventType.DELETE && targetExists && renderTargetLink) {
+      return renderTargetLink()
     }
+
+    return <span className="truncate">{target_name}</span>
   }
 
   const isEventTypeFailed = event.event_type?.toLowerCase().includes('fail')
