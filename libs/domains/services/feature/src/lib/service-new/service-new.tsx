@@ -12,6 +12,7 @@ import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-deta
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 import { isBlueprintCompatibleWithCluster } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
+import { ServiceIcons } from '../service-icon/service-icon'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { BaseServiceCard, Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
 import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
@@ -159,6 +160,7 @@ export function ServiceNew({
   const isServiceCatalogEnabled = Boolean(useFeatureFlagEnabled('service-catalog'))
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
   const { showPylonForm } = useSupportChat()
+  const agenticWorkflowIcon = ServiceIcons['app://qovery-console/agentic-workflow']
 
   const serviceEmpty: ServiceBlock[] = useMemo(
     () => [
@@ -167,7 +169,7 @@ export function ServiceNew({
             {
               title: 'Agentic workflow',
               description: 'Run an AI workflow with webhooks, MCP connectors, governance, and configured outputs.',
-              icon: <Icon name="AGENTIC_WORKFLOW" width={32} height={32} />,
+              icon: <img src={agenticWorkflowIcon.icon} alt="" />,
               link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
               cloud_provider: cloudProvider,
               badge: 'BETA',
@@ -242,6 +244,7 @@ export function ServiceNew({
           ]),
     ],
     [
+      agenticWorkflowIcon,
       cloudProvider,
       environmentId,
       isAgenticWorkflowEnabled,

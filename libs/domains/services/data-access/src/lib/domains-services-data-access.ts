@@ -829,6 +829,11 @@ type DeployBlueprintRequest = {
   blueprintId: string
 }
 
+type CreateAgenticWorkflowRequest = {
+  environmentId: string
+  payload: AgenticWorkflowRequest
+}
+
 type EditServiceRequest = {
   serviceId: string
   payload:
@@ -1127,6 +1132,10 @@ export const mutations = {
   },
   async deployBlueprint({ blueprintId }: DeployBlueprintRequest) {
     const response = await blueprintApi.deployBlueprint(blueprintId)
+    return response.data
+  },
+  async createAgenticWorkflow({ environmentId, payload }: CreateAgenticWorkflowRequest) {
+    const response = await agenticWorkflowsApi.createAgenticWorkflow(environmentId, payload)
     return response.data
   },
   async editService({ serviceId, payload }: EditServiceRequest) {

@@ -142,7 +142,9 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.getByText('Agentic workflow')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Agentic workflow/i })).toHaveAttribute(
+    const agenticWorkflowLink = screen.getByRole('link', { name: /Agentic workflow/i })
+    expect(agenticWorkflowLink.querySelector('img')).toHaveAttribute('src', '/assets/services/agentic-workflow.svg')
+    expect(agenticWorkflowLink).toHaveAttribute(
       'href',
       '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow'
     )

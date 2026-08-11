@@ -89,7 +89,9 @@ export type VariableFormModalProps = {
   variable?: VariableResponse
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
+  isFile?: boolean
   isSecret?: boolean
+  defaultIsSecret?: boolean
   hasClusterSecretManagerConfigured?: boolean
   scope: Scope
   projectId?: string
@@ -106,18 +108,20 @@ export function VariableFormModal(props: VariableFormModalProps) {
     variable,
     mode,
     type,
+    isFile,
     isSecret,
+    defaultIsSecret = false,
     hasClusterSecretManagerConfigured = false,
   } = props
   const isCreateValue = mode === 'CREATE' && type === 'VALUE'
   const [isFileVariable, setIsFileVariable] = useState(() =>
-    Boolean(type === 'FILE' || (variable && environmentVariableFile(variable)))
+    Boolean(type === 'FILE' || (variable && environmentVariableFile(variable)) || isFile)
   )
   const { enableAlertClickOutside } = useModal()
   const [isValueEditorOpen, setIsValueEditorOpen] = useState(false)
   const [showSecretValue, setShowSecretValue] = useState(false)
   const showSecretValueId = useId()
-  const isSecretVariable = isCreateValue ? Boolean(isSecret) : Boolean(variable?.is_secret)
+  const isSecretVariable = isCreateValue ? Boolean(isSecret ?? defaultIsSecret) : Boolean(variable?.is_secret)
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
@@ -559,7 +563,9 @@ export type CreateUpdateVariableModalProps = {
   variable?: VariableResponse
   mode: 'CREATE' | 'UPDATE'
   type: keyof typeof APIVariableTypeEnum
+  isFile?: boolean
   isSecret?: boolean
+  defaultIsSecret?: boolean
   hasClusterSecretManagerConfigured?: boolean
 } & CreateUpdateVariableModalScopeProps
 

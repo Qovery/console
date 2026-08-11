@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { type ReactNode, useEffect } from 'react'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
 import { pluralize } from '@qovery/shared/util-js'
-import { useCreateService } from '../../hooks/use-create-service/use-create-service'
+import { useCreateAgenticWorkflow } from '../../hooks/use-create-agentic-workflow/use-create-agentic-workflow'
 import { isGitRepositoryComplete } from './agentic-workflow-configuration/agentic-workflow-configuration'
 import {
   type AgenticWorkflowConfigurationSection,
@@ -73,7 +73,7 @@ export function AgenticWorkflowSummary() {
   const navigate = useNavigate()
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const { creationFlowUrl, form, setActiveSection, setCurrentStep } = useAgenticWorkflowCreateContext()
-  const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
+  const { isLoading: isCreating, mutateAsync: createAgenticWorkflow } = useCreateAgenticWorkflow({ environmentId })
   const values = form.watch()
 
   useEffect(() => {
@@ -98,12 +98,9 @@ export function AgenticWorkflowSummary() {
   }
 
   const handleCreate = async () => {
-    await createService({
+    await createAgenticWorkflow({
       environmentId,
-      payload: {
-        serviceType: 'AGENTIC_WORKFLOW',
-        ...formatAgenticWorkflowRequest(form.getValues()),
-      },
+      payload: formatAgenticWorkflowRequest(form.getValues()),
     })
     posthog.capture('create-service', {
       selectedServiceType: 'agentic-workflow',
