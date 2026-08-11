@@ -454,7 +454,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
         },
       }),
     ],
-    [columnHelper, environment, mutationCancelDeployment, service, serviceId]
+    [columnHelper, environment, mutationCancelDeployment, serviceId]
   )
 
   const data = useMemo(

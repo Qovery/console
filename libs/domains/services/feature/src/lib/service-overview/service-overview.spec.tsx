@@ -172,6 +172,23 @@ describe('ServiceOverview', () => {
     expect(screen.queryByText('service-instance')).not.toBeInTheDocument()
   })
 
+  it('renders the instances block for an agentic workflow', () => {
+    mockUseService.mockReturnValue({
+      data: {
+        id: 'workflow-1',
+        service_type: 'AGENTIC_WORKFLOW',
+        serviceType: 'AGENTIC_WORKFLOW',
+        webhook: { url: 'https://api.qovery.com/agentic-workflow/webhook-1' },
+      },
+    })
+
+    renderWithProviders(<ServiceOverview environment={environment} />)
+
+    expect(screen.getByText('service-instance')).toBeInTheDocument()
+    expect(screen.getByText('Webhook')).toBeInTheDocument()
+    expect(screen.getByLabelText('Webhook URL')).toHaveValue('https://api.qovery.com/agentic-workflow/webhook-1')
+  })
+
   it.each(['APPLICATION', 'CONTAINER', 'HELM', 'JOB'])('renders core overview blocks for %s service', (serviceType) => {
     mockUseService.mockReturnValue({
       data: {

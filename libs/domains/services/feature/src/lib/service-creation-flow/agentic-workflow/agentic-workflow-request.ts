@@ -43,7 +43,7 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
       settings: values.modelSettingsJson,
     },
     project_repositories: values.gitRepositories.map((repository) => ({
-      url: repository.repository,
+      url: repository.gitRepository?.url ?? repository.repository,
       branch: repository.branch,
       git_token_id: repository.gitTokenId ?? '',
     })),

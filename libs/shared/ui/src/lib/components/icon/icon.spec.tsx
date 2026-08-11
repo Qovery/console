@@ -20,4 +20,10 @@ describe('Icon', () => {
 
     expect(screen.getByRole('img')).toBeInTheDocument()
   })
+
+  it('should preserve the agentic workflow icon view box', () => {
+    const { container } = render(<Icon name="AGENTIC_WORKFLOW" />)
+
+    expect(container.querySelector('svg')).toHaveAttribute('viewBox', '0 0 980 980')
+  })
 })

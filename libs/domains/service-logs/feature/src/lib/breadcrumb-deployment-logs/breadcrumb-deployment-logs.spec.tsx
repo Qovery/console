@@ -1,5 +1,9 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { BreadcrumbDeploymentLogs, type BreadcrumbDeploymentLogsProps } from './breadcrumb-deployment-logs'
+import {
+  BreadcrumbDeploymentLogs,
+  type BreadcrumbDeploymentLogsProps,
+  mergeServices,
+} from './breadcrumb-deployment-logs'
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -40,6 +44,12 @@ const mockProps: BreadcrumbDeploymentLogsProps = {
 }
 
 describe('BreadcrumbDeploymentLogs', () => {
+  it('merges agentic workflows with the other deployment services', () => {
+    expect(mergeServices([], [], [], [], [], [], [{ id: 'workflow-1', state: 'RUNNING' }])).toEqual([
+      { id: 'workflow-1', state: 'RUNNING' },
+    ])
+  })
+
   it('renders correctly with given props', async () => {
     renderWithProviders(<BreadcrumbDeploymentLogs {...mockProps} />)
     expect(screen.getByText('Deployment logs')).toBeInTheDocument()
