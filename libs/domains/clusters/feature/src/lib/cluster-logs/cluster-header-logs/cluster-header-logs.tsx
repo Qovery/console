@@ -1,6 +1,8 @@
 import download from 'downloadjs'
+import posthog from 'posthog-js'
 import { type Cluster, type ClusterLogs, type ClusterStatus } from 'qovery-typescript-axios'
-import { type RefObject } from 'react'
+import { type RefObject, useContext } from 'react'
+import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
 import { Badge, Button, CopyToClipboardButtonIcon, Icon, Tooltip } from '@qovery/shared/ui'
 import { trimId } from '@qovery/shared/util-js'
 
@@ -12,6 +14,17 @@ export interface ClusterHeaderLogsProps {
 }
 
 export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, data }: ClusterHeaderLogsProps) {
+  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
+
+  const hasDeploymentError = [
+    'BUILD_ERROR',
+    'DELETE_ERROR',
+    'DEPLOYMENT_ERROR',
+    'STOP_ERROR',
+    'RESTART_ERROR',
+    'INVALID_CREDENTIALS',
+  ].includes(clusterStatus.status ?? '')
+
   const downloadJSON = () => {
     download(JSON.stringify(data), `data-${Date.now()}.json`, 'text/json;charset=utf-8')
   }
@@ -62,7 +75,25 @@ export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, da
           </span>
         </Tooltip>
       </div>
-      <div>
+      <div className="flex items-center gap-2">
+        {hasDeploymentError && (
+          <Button
+            color="brand"
+            variant="surface"
+            onClick={() => {
+              posthog.capture('ai-copilot-troubleshoot-triggered', {
+                source: 'cluster-logs',
+                cluster_id: cluster.id,
+              })
+              const message = `Why did my cluster deployment fail? (cluster id: ${cluster.id})`
+              setDevopsCopilotOpen(true)
+              sendMessageRef?.current?.(message)
+            }}
+          >
+            <Icon iconName="sparkles" iconStyle="solid" />
+            Launch diagnostic for this error
+          </Button>
+        )}
         <Button
           data-testid="scroll-up-button"
           className="rounded-br-none rounded-tr-none border-r-0"

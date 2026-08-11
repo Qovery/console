@@ -1,12 +1,14 @@
-import { useCluster, useClusterRunningStatus, useClusterStatus } from '@qovery/domains/clusters/feature'
+import { useCluster, useClusterRunningStatus } from '@qovery/domains/clusters/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterCardSetup } from './cluster-card-setup'
 
 jest.mock('@qovery/domains/clusters/feature', () => ({
   useCluster: jest.fn(),
-  useClusterStatus: jest.fn(),
   useClusterRunningStatus: jest.fn(),
 }))
+
+const mockUseCluster = useCluster as jest.Mock
+const mockUseClusterRunningStatus = useClusterRunningStatus as jest.Mock
 
 describe('ClusterCardSetup', () => {
   const mockOrganizationId = 'org-123'
@@ -16,21 +18,13 @@ describe('ClusterCardSetup', () => {
     created_at: '2024-05-01T12:00:00Z',
     cloud_provider: 'AWS',
     kubernetes: 'MANAGED',
-  }
-
-  const mockDeploymentStatus = {
-    is_deployed: true,
-    last_deployment_date: '2024-05-15T10:00:00Z',
-    status: 'DEPLOYED',
+    production: false,
   }
 
   beforeEach(() => {
     jest.clearAllMocks()
-    ;(useCluster as jest.Mock).mockReturnValue({
+    mockUseCluster.mockReturnValue({
       data: mockCluster,
-    })
-    ;(useClusterStatus as jest.Mock).mockReturnValue({
-      data: mockDeploymentStatus,
     })
   })
 
@@ -43,7 +37,7 @@ describe('ClusterCardSetup', () => {
         },
       },
     }
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    mockUseClusterRunningStatus.mockReturnValue({
       data: mockRunningStatus,
     })
 
@@ -51,6 +45,30 @@ describe('ClusterCardSetup', () => {
 
     expect(screen.getByText('Kubernetes up to date')).toBeInTheDocument()
     expect(screen.getByText('v1.28.1')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Maintenance every Monday/ })).toHaveAttribute(
+      'href',
+      'https://www.qovery.com/docs/configuration/clusters#faq'
+    )
+  })
+
+  it('should show Wednesday maintenance for production clusters', () => {
+    mockUseCluster.mockReturnValue({
+      data: { ...mockCluster, production: true },
+    })
+    mockUseClusterRunningStatus.mockReturnValue({
+      data: {
+        computed_status: {
+          kube_version_status: {
+            type: 'OK',
+            kube_version: 'v1.28.1',
+          },
+        },
+      },
+    })
+
+    renderWithProviders(<ClusterCardSetup organizationId={mockOrganizationId} clusterId={mockClusterId} />)
+
+    expect(screen.getByRole('link', { name: /Maintenance every Wednesday/ })).toBeInTheDocument()
   })
 
   it('should render upgrade Kubernetes status', () => {
@@ -63,7 +81,7 @@ describe('ClusterCardSetup', () => {
         },
       },
     }
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    mockUseClusterRunningStatus.mockReturnValue({
       data: mockRunningStatus,
     })
 
@@ -83,13 +101,13 @@ describe('ClusterCardSetup', () => {
         },
       },
     }
-    ;(useCluster as jest.Mock).mockReturnValue({
+    mockUseCluster.mockReturnValue({
       data: {
         ...mockCluster,
         kubernetes: 'PARTIALLY_MANAGED',
       },
     })
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    mockUseClusterRunningStatus.mockReturnValue({
       data: mockRunningStatus,
     })
 
@@ -109,7 +127,7 @@ describe('ClusterCardSetup', () => {
         },
       },
     }
-    ;(useClusterRunningStatus as jest.Mock).mockReturnValue({
+    mockUseClusterRunningStatus.mockReturnValue({
       data: mockRunningStatus,
     })
 
