@@ -77,7 +77,7 @@ describe('AgenticWorkflowServiceActions', () => {
       params: { organizationId: 'organization-1' },
       search: {
         targetId: 'workflow-1',
-        targetType: undefined,
+        targetType: 'AGENTIC_WORKFLOW',
         projectId: 'project-1',
         environmentId: 'environment-1',
       },

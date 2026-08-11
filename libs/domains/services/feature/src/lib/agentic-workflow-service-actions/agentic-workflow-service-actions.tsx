@@ -1,5 +1,5 @@
 import { Link, useNavigate } from '@tanstack/react-router'
-import { type Environment } from 'qovery-typescript-axios'
+import { type Environment, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useState } from 'react'
 import { type AgenticWorkflow } from '@qovery/domains/services/data-access'
 import { Button, DropdownMenu, Icon, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
@@ -83,7 +83,7 @@ export function AgenticWorkflowServiceActions({
               params={{ organizationId }}
               search={{
                 targetId: service.id,
-                targetType: undefined,
+                targetType: OrganizationEventTargetType.AGENTIC_WORKFLOW,
                 projectId,
                 environmentId,
               }}
