@@ -578,10 +578,8 @@ export const services = createQueryKeys('services', {
         )
         .with(
           'AGENTIC_WORKFLOW',
-          () =>
-            new Promise<never>(() => {
-              // TODO: Add the Agentic Workflow deployment history request when supported.
-            })
+          async () =>
+            (await agenticWorkflowsApi.listAgenticWorkflowDeploymentHistoryV2(serviceId, pageSize)).data.results
         )
         .exhaustive()
     },
