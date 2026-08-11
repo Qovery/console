@@ -77,14 +77,14 @@ describe('RowEvent', () => {
     OrganizationEventTargetType.HELM,
     OrganizationEventTargetType.TERRAFORM,
     OrganizationEventTargetType.DATABASE,
-    'AGENTIC_WORKFLOW',
+    OrganizationEventTargetType.AGENTIC_WORKFLOW,
   ])('should render unified service link for %s target', (targetType) => {
     renderWithProviders(
       <RowEvent
         {...props}
         event={{
           ...props.event,
-          target_type: targetType as OrganizationEventTargetType,
+          target_type: targetType,
           target_id: 'service-1',
           target_name: 'service-name',
           project_id: 'project-1',

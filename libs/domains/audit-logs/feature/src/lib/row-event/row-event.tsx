@@ -70,15 +70,13 @@ const containerRegistriesSettingsUrl = (organizationId: string) =>
 const helmRepositoriesSettingsUrl = (organizationId: string) =>
   `${organizationSettingsUrl(organizationId)}/helm-repositories`
 
-const AGENTIC_WORKFLOW_TARGET_TYPE = 'AGENTIC_WORKFLOW'
-
 export function RowEvent(props: RowEventProps) {
   const { event, expanded, setExpanded, isPlaceholder, columnsWidth, validTargetIds } = props
   const { organizationId = '' } = useParams({ strict: false })
   const [diffStats, setDiffStats] = useState<DiffStats>({ additions: 0, deletions: 0 })
 
   // Check if target still exists
-  const checkTargetExists = (targetType: string): boolean => {
+  const checkTargetExists = (targetType: OrganizationEventTargetType): boolean => {
     const { target_id } = event
 
     if (!validTargetIds || !target_id) return true // If no validation data, assume exists
@@ -90,7 +88,7 @@ export function RowEvent(props: RowEventProps) {
       case OrganizationEventTargetType.HELM:
       case OrganizationEventTargetType.TERRAFORM:
       case OrganizationEventTargetType.DATABASE:
-      case AGENTIC_WORKFLOW_TARGET_TYPE:
+      case OrganizationEventTargetType.AGENTIC_WORKFLOW:
         return validTargetIds.services.has(target_id)
       case OrganizationEventTargetType.PROJECT:
         return validTargetIds.projects.has(target_id)
@@ -101,7 +99,7 @@ export function RowEvent(props: RowEventProps) {
     }
   }
 
-  const renderLink = (targetType: string) => {
+  const renderLink = (targetType: OrganizationEventTargetType) => {
     const { event_type, target_name, project_id, environment_id, target_id } = event
 
     const targetExists = checkTargetExists(targetType)
@@ -120,13 +118,13 @@ export function RowEvent(props: RowEventProps) {
     const generateServiceLink = () =>
       customLink(serviceOverviewUrl(organizationId, project_id!, environment_id!, target_id!))
 
-    const linkConfig: Record<string, () => JSX.Element> = {
+    const linkConfig: Partial<Record<OrganizationEventTargetType, () => JSX.Element>> = {
       [OrganizationEventTargetType.APPLICATION]: generateServiceLink,
       [OrganizationEventTargetType.CONTAINER]: generateServiceLink,
       [OrganizationEventTargetType.JOB]: generateServiceLink,
       [OrganizationEventTargetType.HELM]: generateServiceLink,
       [OrganizationEventTargetType.TERRAFORM]: generateServiceLink,
-      [AGENTIC_WORKFLOW_TARGET_TYPE]: generateServiceLink,
+      [OrganizationEventTargetType.AGENTIC_WORKFLOW]: generateServiceLink,
       [OrganizationEventTargetType.ORGANIZATION]: () => customLink(organizationSettingsUrl(organizationId)),
       [OrganizationEventTargetType.MEMBERS_AND_ROLES]: () => customLink(membersSettingsUrl(organizationId)),
       [OrganizationEventTargetType.PROJECT]: () => customLink(projectSettingsUrl(organizationId, target_id!)),
