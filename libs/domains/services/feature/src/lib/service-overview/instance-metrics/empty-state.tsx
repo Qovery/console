@@ -68,6 +68,9 @@ export function EmptyState({ environmentId, serviceId }: EmptyStateProps) {
         description="It will be executed based on the configured scheduling."
       />
     ))
+    .with({ service: { serviceType: 'AGENTIC_WORKFLOW' } }, () => (
+      <Box title="No instances available" description="There are no instances for this agentic workflow." />
+    ))
     .otherwise((s) => {
       const serviceType = s.service?.serviceType ?? 'Service'
       return (
