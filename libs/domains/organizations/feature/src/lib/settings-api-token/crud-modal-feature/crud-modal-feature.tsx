@@ -167,6 +167,10 @@ export function CrudModalFeature(props: CrudModalFeatureProps) {
       const token = await createApiToken({ organizationId, apiTokenCreateRequest: data })
       onClose()
       if (token) {
+        // The dirty-form guard lives in the modal context, not in this component, and swapping the
+        // content does not reset it. Without this the token modal inherits the guard and its close
+        // button offers to discard changes that have already been saved.
+        enableAlertClickOutside(false)
         openModal({
           content: <ValueModal token={token.token ?? ''} onClose={closeModal} />,
         })

@@ -77,6 +77,7 @@ describe('RowEvent', () => {
     OrganizationEventTargetType.HELM,
     OrganizationEventTargetType.TERRAFORM,
     OrganizationEventTargetType.DATABASE,
+    OrganizationEventTargetType.AGENTIC_WORKFLOW,
   ])('should render unified service link for %s target', (targetType) => {
     renderWithProviders(
       <RowEvent
@@ -96,6 +97,21 @@ describe('RowEvent', () => {
       'href',
       '/organization/1/project/project-1/environment/environment-1/service/service-1/overview'
     )
+  })
+
+  it('should render an unsupported target type without crashing', () => {
+    renderWithProviders(
+      <RowEvent
+        {...props}
+        event={{
+          ...props.event,
+          target_type: 'NEW_TARGET_TYPE' as OrganizationEventTargetType,
+          target_name: 'unsupported-target',
+        }}
+      />
+    )
+
+    expect(screen.getByText('unsupported-target')).not.toHaveAttribute('href')
   })
 
   it.each([

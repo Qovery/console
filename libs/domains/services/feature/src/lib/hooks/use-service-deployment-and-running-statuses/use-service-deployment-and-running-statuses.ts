@@ -21,7 +21,11 @@ export function useServiceDeploymentAndRunningStatuses({ environmentId = '', ser
   })
 
   const deploymentStatusLabel = formatDeploymentStatusLabel(deploymentStatus)
-  const runningStatusOverride = getServiceRunningStatus({ service, runningStatus, deploymentStatus })
+  const runningStatusOverride = getServiceRunningStatus({
+    service,
+    runningStatus,
+    deploymentStatus,
+  })
 
   const data: ServiceStatuses = {
     runningStatus: runningStatusOverride,

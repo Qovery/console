@@ -4,16 +4,16 @@ import { type KeyboardEvent, type MouseEvent } from 'react'
 import { match } from 'ts-pattern'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, Heading, Icon, Section, TablePrimitives } from '@qovery/shared/ui'
+import { Badge, CopyToClipboardButtonIcon, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
-import { ServiceActions } from '../service-actions/service-actions'
 import { ServiceLastDeploymentCell, ServiceNameCell } from '../service-list/service-list-cells'
 import { ServiceStateChip } from '../service-state-chip/service-state-chip'
 
 const { Table } = TablePrimitives
 
 const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(280px,1.1fr)_minmax(300px,1fr)_minmax(200px,0.7fr)_130px]'
+  'grid w-full grid-cols-[minmax(280px,1.1fr)_minmax(260px,1fr)_minmax(180px,0.7fr)_minmax(280px,1fr)_130px]'
 
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
@@ -34,6 +34,27 @@ function ModelCell({ service }: { service: AgenticWorkflow }) {
       </span>
     ))
     .otherwise((model) => <span className="text-sm text-neutral-subtle">{model ?? 'Not configured'}</span>)
+}
+
+function WebhookCell({
+  service,
+  onAction,
+}: {
+  service: AgenticWorkflow
+  onAction: (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
+}) {
+  return (
+    <div className="flex min-w-0 flex-1 items-center gap-2" onClick={onAction} onKeyDown={onAction}>
+      <Tooltip content={service.webhook.url}>
+        <span className="min-w-0 flex-1 truncate font-mono text-xs text-neutral">{service.webhook.url}</span>
+      </Tooltip>
+      <CopyToClipboardButtonIcon
+        content={service.webhook.url}
+        tooltipContent="Copy webhook URL"
+        className="shrink-0 text-neutral-subtle hover:text-neutral"
+      />
+    </div>
+  )
 }
 
 export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServiceListProps) {
@@ -76,7 +97,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
         </div>
         <Table.Root
           containerClassName="rounded-none border-x-0 border-b-0 border-t"
-          className="w-full min-w-[1080px] overflow-x-scroll text-xs xl:overflow-auto"
+          className="w-full min-w-[1320px] overflow-x-scroll text-xs xl:overflow-auto"
         >
           <Table.Header className="border-neutral">
             <Table.Row className={`h-9 w-full ${tableGridLayoutClassName}`}>
@@ -88,6 +109,9 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Model
+              </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
+                Webhook
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
                 Actions
@@ -117,10 +141,15 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
                   <ModelCell service={service} />
                 </Table.Cell>
+                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
+                  <WebhookCell service={service} onAction={stopRowNavigation} />
+                </Table.Cell>
                 <Table.Cell className="flex h-full items-center">
-                  <div onClick={stopRowNavigation} onKeyDown={stopRowNavigation}>
-                    <ServiceActions serviceId={service.id} environment={environment} />
-                  </div>
+                  <AgenticWorkflowServiceActions
+                    service={service}
+                    environment={environment}
+                    onAction={stopRowNavigation}
+                  />
                 </Table.Cell>
               </Table.Row>
             ))}

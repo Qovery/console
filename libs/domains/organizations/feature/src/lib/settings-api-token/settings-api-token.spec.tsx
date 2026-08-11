@@ -2,6 +2,8 @@ import { type OrganizationApiToken } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useApiTokensModule from '../hooks/use-api-tokens/use-api-tokens'
 import * as useDeleteApiTokenModule from '../hooks/use-delete-api-token/use-delete-api-token'
+import * as useDeletePolicyApiTokenModule from '../hooks/use-delete-policy-api-token/use-delete-policy-api-token'
+import * as usePolicyApiTokensModule from '../hooks/use-policy-api-tokens/use-policy-api-tokens'
 import { SettingsApiToken } from './settings-api-token'
 
 const mockOpenModal = jest.fn()
@@ -26,6 +28,8 @@ jest.mock('@tanstack/react-router', () => ({
 
 const useApiTokensMockSpy = jest.spyOn(useApiTokensModule, 'useApiTokens') as jest.Mock
 const useDeleteApiTokenMockSpy = jest.spyOn(useDeleteApiTokenModule, 'useDeleteApiToken') as jest.Mock
+const usePolicyApiTokensMockSpy = jest.spyOn(usePolicyApiTokensModule, 'usePolicyApiTokens') as jest.Mock
+const useDeletePolicyApiTokenMockSpy = jest.spyOn(useDeletePolicyApiTokenModule, 'useDeletePolicyApiToken') as jest.Mock
 
 const deleteApiTokenMock = jest.fn()
 
@@ -35,6 +39,9 @@ describe('SettingsApiToken', () => {
     useDeleteApiTokenMockSpy.mockReturnValue({
       mutateAsync: deleteApiTokenMock,
     })
+    // The page now renders the Policy API Token sub-section too.
+    usePolicyApiTokensMockSpy.mockReturnValue({ data: [] })
+    useDeletePolicyApiTokenMockSpy.mockReturnValue({ mutateAsync: jest.fn() })
   })
 
   it('should render empty state', () => {
@@ -50,7 +57,7 @@ describe('SettingsApiToken', () => {
 
     const { userEvent } = renderWithProviders(<SettingsApiToken />)
 
-    const addButton = screen.getByRole('button', { name: /add new/i })
+    const addButton = screen.getByRole('button', { name: 'Add new' })
     await userEvent.click(addButton)
 
     expect(mockOpenModal).toHaveBeenCalled()

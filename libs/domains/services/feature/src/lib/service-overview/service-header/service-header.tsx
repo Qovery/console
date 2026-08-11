@@ -32,6 +32,7 @@ import {
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { AgenticWorkflowServiceActions } from '../../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-service-actions'
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
@@ -151,7 +152,9 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
       </div>
       {isArgoCdService ? (
         <ArgoCdServiceActions variant="header" environment={environment} service={service} />
-      ) : isAgenticWorkflowService ? null : (
+      ) : isAgenticWorkflowService ? (
+        <AgenticWorkflowServiceActions variant="header" environment={environment} service={service} />
+      ) : (
         <ServiceActions environment={environment} serviceId={service.id} variant="header" />
       )}
     </div>
