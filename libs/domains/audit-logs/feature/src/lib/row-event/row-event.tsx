@@ -88,6 +88,7 @@ export function RowEvent(props: RowEventProps) {
       case OrganizationEventTargetType.HELM:
       case OrganizationEventTargetType.TERRAFORM:
       case OrganizationEventTargetType.DATABASE:
+      case OrganizationEventTargetType.AGENTIC_WORKFLOW:
         return validTargetIds.services.has(target_id)
       case OrganizationEventTargetType.PROJECT:
         return validTargetIds.projects.has(target_id)
@@ -117,12 +118,13 @@ export function RowEvent(props: RowEventProps) {
     const generateServiceLink = () =>
       customLink(serviceOverviewUrl(organizationId, project_id!, environment_id!, target_id!))
 
-    const linkConfig: { [key in OrganizationEventTargetType]: () => JSX.Element } = {
+    const linkConfig: Partial<Record<OrganizationEventTargetType, () => JSX.Element>> = {
       [OrganizationEventTargetType.APPLICATION]: generateServiceLink,
       [OrganizationEventTargetType.CONTAINER]: generateServiceLink,
       [OrganizationEventTargetType.JOB]: generateServiceLink,
       [OrganizationEventTargetType.HELM]: generateServiceLink,
       [OrganizationEventTargetType.TERRAFORM]: generateServiceLink,
+      [OrganizationEventTargetType.AGENTIC_WORKFLOW]: generateServiceLink,
       [OrganizationEventTargetType.ORGANIZATION]: () => customLink(organizationSettingsUrl(organizationId)),
       [OrganizationEventTargetType.MEMBERS_AND_ROLES]: () => customLink(membersSettingsUrl(organizationId)),
       [OrganizationEventTargetType.PROJECT]: () => customLink(projectSettingsUrl(organizationId, target_id!)),
@@ -137,11 +139,12 @@ export function RowEvent(props: RowEventProps) {
       [OrganizationEventTargetType.HELM_REPOSITORY]: () => customLink(helmRepositoriesSettingsUrl(organizationId)),
     }
 
-    if (event_type !== OrganizationEventType.DELETE && targetExists) {
-      return linkConfig[targetType]()
-    } else {
-      return <span className="truncate">{target_name}</span>
+    const renderTargetLink = linkConfig[targetType]
+    if (event_type !== OrganizationEventType.DELETE && targetExists && renderTargetLink) {
+      return renderTargetLink()
     }
+
+    return <span className="truncate">{target_name}</span>
   }
 
   const isEventTypeFailed = event.event_type?.toLowerCase().includes('fail')
