@@ -139,7 +139,7 @@ describe('ClusterLastDeploymentSection', () => {
     screen.getByRole('button', { name: 'Launch diagnostic' }).click()
 
     expect(mockSetDevopsCopilotOpen).toHaveBeenCalledWith(true)
-    expect(mockSendMessage).toHaveBeenCalledWith('Why did my cluster deployment fail? (deployment id: execution-1)')
+    expect(mockSendMessage).toHaveBeenCalledWith('Why did my cluster deployment fail? (cluster id: cluster-1)')
     expect(posthog.capture).toHaveBeenCalledWith('ai-copilot-troubleshoot-triggered', {
       source: 'cluster-last-deployment',
       troubleshoot_type: 'cluster',
