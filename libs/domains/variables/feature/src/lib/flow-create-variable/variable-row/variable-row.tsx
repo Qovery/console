@@ -13,11 +13,12 @@ export interface VariableRowProps {
   onDelete: (index: number) => void
   availableScopes: APIVariableScopeEnum[]
   gridTemplateColumns?: string
+  showScope?: boolean
 }
 
 export function VariableRow(props: VariableRowProps) {
   const { environmentId = '' } = useParams({ strict: false })
-  const { index, availableScopes, gridTemplateColumns = '172px 172px 188px 2fr 1fr' } = props
+  const { index, availableScopes, gridTemplateColumns = '172px 172px 188px 2fr 1fr', showScope = true } = props
   const { control, trigger, watch } = useFormContext<FlowVariableData>()
   const [openEditor, setOpenEditor] = useState(true)
   const watchSecret = watch().variables[index]?.isSecret
@@ -125,22 +126,24 @@ export function VariableRow(props: VariableRowProps) {
           />
         )}
 
-        <Controller
-          name={`variables.${index}.scope`}
-          control={control}
-          render={({ field }) => (
-            <InputSelectSmall
-              data-testid="scope"
-              name={field.name}
-              defaultValue={field.value}
-              onChange={(e) => {
-                field.onChange(e)
-                trigger(`variables.${index}.value`).then()
-              }}
-              items={availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
-            />
-          )}
-        />
+        {showScope && (
+          <Controller
+            name={`variables.${index}.scope`}
+            control={control}
+            render={({ field }) => (
+              <InputSelectSmall
+                data-testid="scope"
+                name={field.name}
+                defaultValue={field.value}
+                onChange={(e) => {
+                  field.onChange(e)
+                  trigger(`variables.${index}.value`).then()
+                }}
+                items={availableScopes.map((s) => ({ value: s, label: generateScopeLabel(s) }))}
+              />
+            )}
+          />
+        )}
 
         <div className="flex items-center">
           <Button type="button" variant="outline" size="md" iconOnly onClick={() => props.onDelete(index)}>

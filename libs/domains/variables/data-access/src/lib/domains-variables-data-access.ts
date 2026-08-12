@@ -69,12 +69,12 @@ export const mutations = {
     variableImportRequest,
   }: {
     serviceId: string
-    serviceType: ServiceTypeForVariableEnum
+    serviceType: ServiceTypeForVariableEnum | 'AGENTIC_WORKFLOW'
     variableImportRequest: VariableImportRequest
   }) {
     const response = await variableMainCallsApi.importEnvironmentVariables(
       serviceId,
-      serviceType,
+      serviceType as ServiceTypeForVariableEnum,
       variableImportRequest
     )
     return response.data

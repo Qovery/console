@@ -1,6 +1,7 @@
 import { AgenticWorkflowModelType, type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
 import { type PropsWithChildren, createContext, useContext, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
+import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { FunnelFlow } from '@qovery/shared/ui'
 
 const DEFAULT_MODEL_SETTINGS = `{
@@ -64,6 +65,7 @@ export type AgenticWorkflowConfigurationSection =
   | 'git-repositories'
   | 'governance'
   | 'docker-fragment'
+  | 'variables'
   | 'outputs'
   | 'agent-prompt'
 
@@ -107,6 +109,7 @@ export interface AgenticWorkflowCreateContextInterface {
   creationFlowUrl: string
   currentStep: number
   form: UseFormReturn<AgenticWorkflowFormData>
+  variablesForm: UseFormReturn<FlowVariableData>
   setActiveSection: (section: AgenticWorkflowConfigurationSection) => void
   setCurrentStep: (step: number) => void
 }
@@ -131,6 +134,10 @@ export interface AgenticWorkflowCreationFlowProps extends PropsWithChildren {
 export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit }: AgenticWorkflowCreationFlowProps) {
   const [currentStep, setCurrentStep] = useState(1)
   const [activeSection, setActiveSection] = useState<AgenticWorkflowConfigurationSection>('service-information')
+  const variablesForm = useForm<FlowVariableData>({
+    defaultValues: { variables: [], externalSecrets: [] },
+    mode: 'onChange',
+  })
   const form = useForm<AgenticWorkflowFormData>({
     defaultValues: {
       name: '',
@@ -155,7 +162,15 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
 
   return (
     <AgenticWorkflowCreateContext.Provider
-      value={{ activeSection, creationFlowUrl, currentStep, form, setActiveSection, setCurrentStep }}
+      value={{
+        activeSection,
+        creationFlowUrl,
+        currentStep,
+        form,
+        variablesForm,
+        setActiveSection,
+        setCurrentStep,
+      }}
     >
       <FormProvider {...form}>
         <FunnelFlow

@@ -1,8 +1,9 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type ReactNode, useEffect } from 'react'
+import { useImportVariables } from '@qovery/domains/variables/feature'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
-import { pluralize } from '@qovery/shared/util-js'
+import { pluralize, prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useCreateService } from '../../hooks/use-create-service/use-create-service'
 import { isGitRepositoryComplete } from './agentic-workflow-configuration/agentic-workflow-configuration'
 import {
@@ -72,8 +73,9 @@ function SummarySection({ children, onEdit, title }: { children: ReactNode; onEd
 export function AgenticWorkflowSummary() {
   const navigate = useNavigate()
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
-  const { creationFlowUrl, form, setActiveSection, setCurrentStep } = useAgenticWorkflowCreateContext()
+  const { creationFlowUrl, form, setActiveSection, setCurrentStep, variablesForm } = useAgenticWorkflowCreateContext()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
+  const { isLoading: isImportingVariables, mutateAsync: importVariables } = useImportVariables()
   const values = form.watch()
 
   useEffect(() => {
@@ -98,13 +100,21 @@ export function AgenticWorkflowSummary() {
   }
 
   const handleCreate = async () => {
-    await createService({
+    const service = await createService({
       environmentId,
       payload: {
         serviceType: 'AGENTIC_WORKFLOW',
         ...formatAgenticWorkflowRequest(form.getValues()),
       },
     })
+    const variableImportRequest = prepareVariableImportRequest(variablesForm.getValues('variables'))
+    if (variableImportRequest) {
+      await importVariables({
+        serviceId: service.id,
+        serviceType: 'AGENTIC_WORKFLOW',
+        variableImportRequest,
+      })
+    }
     posthog.capture('create-service', {
       selectedServiceType: 'agentic-workflow',
     })
@@ -163,6 +173,13 @@ export function AgenticWorkflowSummary() {
           <SummarySection title="Agent prompt" onEdit={() => handleEditSection('agent-prompt')}>
             <SummaryValue label="Prompt" value={truncateSummary(values.agentPrompt)} />
           </SummarySection>
+
+          <SummarySection title="Environment variables" onEdit={() => handleEditSection('variables')}>
+            <SummaryValue
+              label="Variables"
+              value={formatCount(variablesForm.getValues('variables').length, 'variable')}
+            />
+          </SummarySection>
         </div>
 
         <div className="flex justify-between">
@@ -174,7 +191,13 @@ export function AgenticWorkflowSummary() {
           >
             Back
           </Button>
-          <Button data-testid="button-create" loading={isCreating} onClick={handleCreate} size="lg" type="button">
+          <Button
+            data-testid="button-create"
+            loading={isCreating || isImportingVariables}
+            onClick={handleCreate}
+            size="lg"
+            type="button"
+          >
             Create
           </Button>
         </div>

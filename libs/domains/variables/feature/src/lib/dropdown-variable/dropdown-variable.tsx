@@ -10,6 +10,8 @@ export interface DropdownVariableProps extends PropsWithChildren {
   environmentId: string
   onChange: (value: string) => void
   onOpenChange?: (open: boolean) => void
+  open?: boolean
+  variableKeys?: string[]
   serviceId?: string
   scope?: VariableScope
   disableBuiltInVariables?: boolean
@@ -22,6 +24,8 @@ export function DropdownVariable({
   onChange,
   children,
   onOpenChange,
+  open: controlledOpen,
+  variableKeys = [],
   disableBuiltInVariables = false,
 }: DropdownVariableProps) {
   // Determine which scope to query based on provided props
@@ -32,16 +36,26 @@ export function DropdownVariable({
     parentId: parentIdToUse,
     scope: scopeToUse,
   })
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = controlledOpen ?? internalOpen
 
   const [searchTerm, setSearchTerm] = useState('')
-  const filteredVariables = variables.filter((variable) =>
+  const availableVariables = [
+    ...variableKeys
+      .filter(
+        (key, index) =>
+          key && variableKeys.indexOf(key) === index && !variables.some((variable) => variable.key === key)
+      )
+      .map((key) => ({ key, scope: APIVariableScopeEnum.APPLICATION })),
+    ...variables,
+  ]
+  const filteredVariables = availableVariables.filter((variable) =>
     variable.key.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
   const _onOpenChange = useCallback(
     (open: boolean) => {
-      setOpen(open)
+      setInternalOpen(open)
       onOpenChange?.(open)
     },
     [onOpenChange]
@@ -92,7 +106,7 @@ export function DropdownVariable({
                           <Truncate text={variable.key} truncateLimit={38} />
                         </span>
 
-                        {variable.service_name ? (
+                        {'service_name' in variable && variable.service_name ? (
                           <span className="truncate text-xs font-normal">
                             <Truncate text={variable.service_name} truncateLimit={44} />
                           </span>
@@ -113,6 +127,7 @@ export function DropdownVariable({
                             </span>
                           </Tooltip>
                         ) : (
+                          'description' in variable &&
                           variable.description && (
                             <Tooltip content={variable.description} side="bottom">
                               <span>

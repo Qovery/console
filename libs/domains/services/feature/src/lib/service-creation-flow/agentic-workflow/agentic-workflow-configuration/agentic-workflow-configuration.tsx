@@ -1,6 +1,9 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { useNavigate } from '@tanstack/react-router'
+import { useNavigate, useParams } from '@tanstack/react-router'
+import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useRef } from 'react'
+import { FormProvider, useFieldArray } from 'react-hook-form'
+import { TextAreaVariableSuggestion, VariableRow } from '@qovery/domains/variables/feature'
 import {
   Button,
   CodeEditor,
@@ -28,6 +31,7 @@ const sectionOrder: AgenticWorkflowConfigurationSection[] = [
   'git-repositories',
   'governance',
   'docker-fragment',
+  'variables',
   'outputs',
   'agent-prompt',
 ]
@@ -58,6 +62,7 @@ function getSectionTitle(section: AgenticWorkflowConfigurationSection) {
     'git-repositories': 'Git repositories',
     governance: 'Governance',
     'docker-fragment': 'Docker fragment',
+    variables: 'Environment variables',
     outputs: 'Output webhooks',
     'agent-prompt': 'Agent prompt',
   }
@@ -193,7 +198,17 @@ function CodeEditorField({
 
 export function AgenticWorkflowConfiguration() {
   const navigate = useNavigate()
-  const { activeSection, creationFlowUrl, form, setActiveSection, setCurrentStep } = useAgenticWorkflowCreateContext()
+  const { environmentId = '' } = useParams({ strict: false })
+  const { activeSection, creationFlowUrl, form, setActiveSection, setCurrentStep, variablesForm } =
+    useAgenticWorkflowCreateContext()
+  const {
+    fields: variables,
+    append: appendVariable,
+    remove: removeVariable,
+  } = useFieldArray({
+    control: variablesForm.control,
+    name: 'variables',
+  })
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
   const whitelistHostsTextareaRef = useRef<HTMLTextAreaElement>(null)
   const agentPromptTextareaRef = useRef<HTMLTextAreaElement>(null)
@@ -213,6 +228,7 @@ export function AgenticWorkflowConfiguration() {
     'git-repositories': !gitRepositoriesValid,
     governance: false,
     'docker-fragment': false,
+    variables: !variablesForm.formState.isValid,
     outputs: !outputsValid || outputHeadersErrors.some(Boolean),
     'agent-prompt': !values.agentPrompt.trim(),
   }
@@ -500,6 +516,77 @@ export function AgenticWorkflowConfiguration() {
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection
+            section="variables"
+            iconName="key"
+            invalid={sectionInvalid.variables}
+            headerAction={
+              <div className="flex items-center gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="sm"
+                  className="h-8 w-fit whitespace-nowrap"
+                  onClick={() =>
+                    appendVariable({
+                      variable: '',
+                      value: '',
+                      scope: APIVariableScopeEnum.APPLICATION,
+                      isSecret: true,
+                    })
+                  }
+                >
+                  <Icon iconName="lock-keyhole" iconStyle="regular" />
+                  Add secret
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="sm"
+                  className="h-8 w-fit whitespace-nowrap"
+                  onClick={() =>
+                    appendVariable({
+                      variable: '',
+                      value: '',
+                      scope: APIVariableScopeEnum.APPLICATION,
+                      isSecret: false,
+                    })
+                  }
+                >
+                  <Icon iconName="plus" />
+                  Add variable
+                </Button>
+              </div>
+            }
+          >
+            <FormProvider {...variablesForm}>
+              {variables.length > 0 ? (
+                <div>
+                  <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_36px] gap-3 text-xs font-medium text-neutral-subtle">
+                    <span>Variable</span>
+                    <span>Value</span>
+                    <span className="sr-only">Actions</span>
+                  </div>
+                  {variables.map((variable, index) => (
+                    <VariableRow
+                      key={variable.id}
+                      index={index}
+                      availableScopes={[APIVariableScopeEnum.APPLICATION]}
+                      gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 36px"
+                      onDelete={removeVariable}
+                      showScope={false}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-neutral-subtle">No environment variables configured.</p>
+              )}
+              <ContinueButton disabled={!variablesForm.formState.isValid} onClick={goToNextSection} />
+            </FormProvider>
+          </AgenticWorkflowSection>
+
+          <AgenticWorkflowSection
             section="outputs"
             iconName="paper-plane"
             invalid={sectionInvalid.outputs}
@@ -589,13 +676,18 @@ export function AgenticWorkflowConfiguration() {
             iconName="message-lines"
             invalid={sectionInvalid['agent-prompt']}
           >
-            <InputTextArea
+            <TextAreaVariableSuggestion
               ref={agentPromptTextareaRef}
+              environmentId={environmentId}
               name="agent-prompt"
               label="Agent prompt"
               value={values.agentPrompt}
+              variableKeys={variablesForm
+                .watch('variables')
+                .map((variable) => variable.variable ?? '')
+                .filter(Boolean)}
               hint="Describe the workflow behavior. Example: review incoming webhook payloads, open a pull request when needed, then notify the team."
-              onChange={(event) => form.setValue('agentPrompt', event.currentTarget.value, { shouldDirty: true })}
+              onChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
             />
             <ContinueButton disabled={!values.agentPrompt.trim()} onClick={goToNextSection} />
           </AgenticWorkflowSection>
