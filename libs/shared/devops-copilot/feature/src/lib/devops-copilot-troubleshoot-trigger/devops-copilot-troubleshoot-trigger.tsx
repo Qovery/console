@@ -19,6 +19,7 @@ export function DevopsCopilotTroubleshootTrigger({
   const openTroubleshoot = () => {
     posthog.capture('ai-copilot-troubleshoot-triggered', {
       source,
+      troubleshoot_type: 'deployment',
       deployment_id: deploymentId,
     })
 

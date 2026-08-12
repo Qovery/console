@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { memo } from 'react'
-import { Button, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
+import { Button, Icon, LoaderSpinner, Tooltip } from '@qovery/shared/ui'
 import { type Thread } from '../hooks/use-threads/use-threads'
 import { isToday, isWithinLastSevenDays, isWithinLastThirtyDays, isYesterday } from '../utils/date-utils/date-utils'
 
@@ -64,13 +64,13 @@ export const DevopsCopilotHistory = ({
             <div
               onClick={() => setThreadId(thread.id)}
               className={clsx(
-                'cursor-pointer rounded-md p-2 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle',
+                'cursor-pointer truncate rounded-md p-2 text-sm text-neutral transition-colors hover:bg-surface-neutral-subtle',
                 {
                   'bg-surface-brand-subtle text-brand': threadId === thread.id,
                 }
               )}
             >
-              {thread.title.length >= 28 ? `${truncateText(thread.title, 28)}...` : thread.title}
+              {thread.title}
             </div>
           </Tooltip>
         ))}
@@ -80,7 +80,7 @@ export const DevopsCopilotHistory = ({
 
   if ((isLoading && threads.length === 0) || error) {
     return (
-      <div className="flex h-full w-80 items-center justify-center border-r border-neutral px-3">
+      <div className="flex h-full w-64 shrink-0 items-center justify-center border-r border-neutral px-3">
         {error ? <span className="text-sm text-negative">{error}</span> : <LoaderSpinner />}
       </div>
     )
@@ -89,7 +89,7 @@ export const DevopsCopilotHistory = ({
   const groupedThreads = groupThreadsByTimeAgo(threads)
 
   return (
-    <div className="flex h-full w-80 flex-col justify-between border-r border-neutral">
+    <div className="flex h-full w-64 shrink-0 flex-col justify-between border-r border-neutral">
       <div className="flex h-[45px] justify-between border-b border-neutral py-2 pl-4 pr-2">
         <div className="flex w-full items-center justify-between font-bold">
           <span className="text-sm text-neutral">History</span>

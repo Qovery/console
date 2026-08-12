@@ -481,6 +481,7 @@ function DeploymentLogsBody({
               onClick={() => {
                 posthog.capture('ai-copilot-troubleshoot-triggered', {
                   source: 'deployment-logs',
+                  troubleshoot_type: 'deployment',
                   deployment_id: executionId,
                   trigger_reason: isCrashLoopDetected ? 'crash-loop' : 'error',
                 })

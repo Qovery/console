@@ -52,7 +52,7 @@ export function Header({
           </Badge>
         </Tooltip>
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex shrink-0 items-center gap-1">
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <span>

@@ -83,6 +83,7 @@ export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, da
             onClick={() => {
               posthog.capture('ai-copilot-troubleshoot-triggered', {
                 source: 'cluster-logs',
+                troubleshoot_type: 'cluster',
                 cluster_id: cluster.id,
               })
               const message = `Why did my cluster deployment fail? (cluster id: ${cluster.id})`
