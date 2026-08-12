@@ -126,7 +126,7 @@ export function SettingsApiToken() {
       <Section className="px-8 pb-8 pt-6">
         <div className="relative">
           <SettingsHeading
-            title="API Token"
+            title="API Tokens"
             description="API token allows third-party applications or script to access your organization via the Qovery API (CI/CD,
               Terraform script, Pulumi etc..). A role can be assigned to limit the Token permission."
           />
