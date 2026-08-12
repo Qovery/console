@@ -8,7 +8,7 @@ const targetTypeItem: SelectedItem = {
   filterKey: 'target_type',
   item: {
     value: OrganizationEventTargetType.AGENTIC_WORKFLOW,
-    name: 'Agentic workflow',
+    name: 'Agents',
   },
 }
 
@@ -19,7 +19,7 @@ describe('computeMenusToDisplay', () => {
     } as never)
   })
 
-  it('loads the project, environment, and workflow levels for agentic workflows', async () => {
+  it('loads the project, environment, and workflow levels for agents', async () => {
     const projects = await computeMenusToDisplay('organization-1', [targetTypeItem], {})
 
     expect(projects).toEqual({

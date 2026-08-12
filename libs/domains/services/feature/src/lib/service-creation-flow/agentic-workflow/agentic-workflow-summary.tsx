@@ -115,7 +115,7 @@ export function AgenticWorkflowSummary() {
     <FunnelFlowBody customContentWidth="max-w-[1024px]">
       <Section className="space-y-10">
         <div className="flex flex-col gap-2">
-          <Heading className="mb-2">Ready to create your agentic workflow</Heading>
+          <Heading className="mb-2">Ready to create your agent</Heading>
           <p className="text-sm text-neutral-subtle">
             Review the workflow configuration before creating it. Webhook details will be generated after creation.
           </p>

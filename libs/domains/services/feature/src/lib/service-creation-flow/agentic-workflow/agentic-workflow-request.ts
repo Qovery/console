@@ -24,6 +24,12 @@ function parseHeaders(headersJson: string): AgenticWorkflowHeader[] {
     .map(([name, value]) => ({ name, value }))
 }
 
+function parseResourceValue(value: string) {
+  const parsedValue = Number.parseInt(value, 10)
+
+  return Number.isFinite(parsedValue) ? parsedValue : 0
+}
+
 export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequest {
   return {
     name: values.name,
@@ -50,6 +56,12 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
     agent_prompt: values.agentPrompt,
     governance: {
       host_allowlist: formatWhitelistHosts(values.whitelistHosts),
+    },
+    resources: {
+      cpu_milli: parseResourceValue(values.cpu),
+      ram_mib: parseResourceValue(values.memory),
+      gpu: 0,
+      storage_gib: parseResourceValue(values.storage),
     },
   }
 }

@@ -60,7 +60,7 @@ const Lambda = '/assets/devicon/lambda.svg'
 const S3 = '/assets/devicon/s3.svg'
 
 const serviceIcons = {
-  'app://qovery-console/agentic-workflow': { icon: '/assets/services/agentic-workflow.svg', title: 'AgenticWorkflow' },
+  'app://qovery-console/agentic-workflow': { icon: '/assets/services/agentic-workflow.svg', title: 'Agent' },
   'app://qovery-console/lifecycle-job': { icon: '/assets/services/lifecycle-job.svg', title: 'LifecycleJob' },
   'app://qovery-console/cron-job': { icon: '/assets/services/cron-job.svg', title: 'CronJob' },
   'app://qovery-console/container': { icon: '/assets/services/application.svg', title: 'Container' },

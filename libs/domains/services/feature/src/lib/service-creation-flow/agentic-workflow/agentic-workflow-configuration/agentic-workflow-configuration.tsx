@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useParams } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import {
   APIVariableTypeEnum,
   type EnvironmentModeEnum,
@@ -46,10 +47,12 @@ import {
   SegmentedControl,
   Sheet,
   Tooltip,
+  toast,
   useModal,
 } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
+import { useCreateAgenticWorkflow } from '../../../hooks/use-create-agentic-workflow/use-create-agentic-workflow'
 import { useEnvironment } from '../../../hooks/use-environment/use-environment'
 import { ServiceAvatar } from '../../../service-avatar/service-avatar'
 import { ServiceIcons } from '../../../service-icon/service-icon'
@@ -60,6 +63,7 @@ import {
   type AgenticWorkflowAutomationTrigger,
   type AgenticWorkflowAutomationTriggerType,
   type AgenticWorkflowEnvironmentContext,
+  type AgenticWorkflowFormData,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowMcpAuthType,
   type AgenticWorkflowMcpServer,
@@ -69,6 +73,7 @@ import {
   type AgenticWorkflowSkillSource,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
+import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
 import { InstructionsEditor } from './instructions-editor'
 
 type SettingsSection = 'information' | 'resources' | 'environment' | 'network' | 'cost' | 'access' | 'docker'
@@ -143,6 +148,32 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
 
 export function isOutputComplete(output: AgenticWorkflowOutput) {
   return Boolean(output.url.trim())
+}
+
+export function getAgenticWorkflowValidationErrors(
+  values: Pick<AgenticWorkflowFormData, 'name' | 'modelApiKey' | 'agentPrompt' | 'gitRepositories' | 'outputs'>
+) {
+  const errors: string[] = []
+
+  if (!values.name.trim()) errors.push('Agent name')
+  if (!values.modelApiKey.trim()) errors.push('Model API key')
+  if (!values.agentPrompt.trim()) errors.push('Agent prompt')
+
+  if (values.gitRepositories.some((repository) => !isGitRepositoryComplete(repository))) {
+    errors.push('Git repository configuration')
+  }
+
+  if (
+    values.outputs.some((output) => {
+      if (!isOutputComplete(output)) return true
+
+      return Boolean(getJsonError(output.headersJson))
+    })
+  ) {
+    errors.push('Output webhook configuration')
+  }
+
+  return errors
 }
 
 function formatMcpJson(servers: AgenticWorkflowMcpServer[], linkedIds: string[]) {
@@ -335,17 +366,19 @@ export function ContextMenu({ onAddGit, onAddQovery }: { onAddGit: () => void; o
 }
 
 export function AgentCreationActions({
+  isCreating,
   onCloneAgent,
   onCreateAgent,
   onDeleteAgent,
 }: {
+  isCreating?: boolean
   onCloneAgent: () => void
   onCreateAgent: () => void
   onDeleteAgent: () => void
 }) {
   return (
     <div className="flex items-center gap-2">
-      <Button type="button" variant="solid" color="brand" size="sm" onClick={onCreateAgent}>
+      <Button type="button" variant="solid" color="brand" size="sm" loading={isCreating} onClick={onCreateAgent}>
         Create agent
       </Button>
       <DropdownMenu.Root>
@@ -2889,7 +2922,9 @@ function DockerFragmentModal({ setOpen }: { setOpen?: (open: boolean) => void })
 
 export function AgenticWorkflowConfiguration() {
   const navigate = useNavigate()
-  const { creationFlowUrl, form, onExit, setCurrentStep } = useAgenticWorkflowCreateContext()
+  const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
+  const { form, onExit, setCurrentStep } = useAgenticWorkflowCreateContext()
+  const { isLoading: isCreating, mutateAsync: createAgenticWorkflow } = useCreateAgenticWorkflow({ environmentId })
   const agenticWorkflowIcon = ServiceIcons['app://qovery-console/agentic-workflow']
   const [activeSheet, setActiveSheet] = useState<SheetView>(null)
   const [editingAutomationId, setEditingAutomationId] = useState<string | null>(null)
@@ -3020,6 +3055,27 @@ export function AgenticWorkflowConfiguration() {
     onExit()
   }
 
+  const handleCreate = async () => {
+    const validationErrors = getAgenticWorkflowValidationErrors(form.getValues())
+
+    if (validationErrors.length > 0) {
+      toast('error', 'Complete the agent configuration', validationErrors.join(', '))
+      return
+    }
+
+    await createAgenticWorkflow({
+      environmentId,
+      payload: formatAgenticWorkflowRequest(form.getValues()),
+    })
+    posthog.capture('create-service', {
+      selectedServiceType: 'agentic-workflow',
+    })
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: { organizationId, projectId, environmentId },
+    })
+  }
+
   return (
     <div className="absolute inset-0 z-10 flex min-h-[640px] min-w-[960px] overflow-hidden bg-background">
       <div className="flex min-w-0 flex-1 flex-col">
@@ -3028,7 +3084,8 @@ export function AgenticWorkflowConfiguration() {
             <Icon iconName="arrow-left" />
           </Button>
           <AgentCreationActions
-            onCreateAgent={() => navigate({ to: `${creationFlowUrl}/summary` })}
+            isCreating={isCreating}
+            onCreateAgent={handleCreate}
             onCloneAgent={cloneAgent}
             onDeleteAgent={deleteAgent}
           />

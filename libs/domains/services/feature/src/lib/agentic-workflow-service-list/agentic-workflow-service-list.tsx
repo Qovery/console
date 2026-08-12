@@ -63,7 +63,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
     <Section className="flex flex-col gap-3.5">
       <div className="flex flex-col gap-1">
         <Heading level={3} className="font-medium text-neutral-subtle">
-          Agentic workflows
+          Agents
         </Heading>
         <p className="text-sm text-neutral-subtle">AI workflows triggered through webhooks and connected services.</p>
       </div>

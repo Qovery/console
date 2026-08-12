@@ -13,7 +13,7 @@ export function useCreateAgenticWorkflow({ environmentId }: { environmentId: str
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your agentic workflow has been created',
+        title: 'Your agent has been created',
       },
       notifyOnError: true,
     },

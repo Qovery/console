@@ -5,6 +5,7 @@ import {
   AgentCreationActions,
   ContextMenu,
   DockerSettings,
+  getAgenticWorkflowValidationErrors,
   getJsonError,
   isGitRepositoryComplete,
   isOutputComplete,
@@ -44,6 +45,18 @@ function DockerSettingsHarness() {
 }
 
 describe('AgenticWorkflowConfiguration validation', () => {
+  it('should list the required values missing from the configuration', () => {
+    expect(
+      getAgenticWorkflowValidationErrors({
+        name: '',
+        modelApiKey: '',
+        agentPrompt: '',
+        gitRepositories: [],
+        outputs: [],
+      })
+    ).toEqual(['Agent name', 'Model API key', 'Agent prompt'])
+  })
+
   it('should require valid JSON only when a required JSON field is empty or invalid', () => {
     expect(getJsonError('', false)).toBeUndefined()
     expect(getJsonError('', true)).toBe('Please enter a valid JSON configuration.')

@@ -131,18 +131,18 @@ describe('ServiceNew', () => {
     expect(screen.getByText('Cron Job')).toBeInTheDocument()
     expect(screen.getByText('Helm')).toBeInTheDocument()
     expect(screen.getAllByText('Terraform').length).toBeGreaterThanOrEqual(1)
-    expect(screen.queryByText('Agentic workflow')).not.toBeInTheDocument()
+    expect(screen.queryByText('Agent')).not.toBeInTheDocument()
   })
 
-  it('should render agentic workflow entry when feature flag is enabled', () => {
+  it('should render agents entry when feature flag is enabled', () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
 
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
 
-    expect(screen.getByText('Agentic workflow')).toBeInTheDocument()
-    const agenticWorkflowLink = screen.getByRole('link', { name: /Agentic workflow/i })
+    expect(screen.getByText('Agent')).toBeInTheDocument()
+    const agenticWorkflowLink = screen.getByRole('link', { name: /Agent/i })
     expect(agenticWorkflowLink.querySelector('img')).toHaveAttribute('src', '/assets/services/agentic-workflow.svg')
     expect(agenticWorkflowLink).toHaveAttribute(
       'href',

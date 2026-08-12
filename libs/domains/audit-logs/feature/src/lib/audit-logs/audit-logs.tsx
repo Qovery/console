@@ -23,13 +23,13 @@ import {
   type TableHeadProps,
 } from '@qovery/shared/ui'
 import { type SelectedTimestamps } from '@qovery/shared/ui'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import FilterSection from '../filter-section/filter-section'
 import RowEventFeature from '../row-event-feature/row-event-feature'
 import {
   computeDisplayByLabel,
   computeMenusToDisplay,
   computeSelectedItemsFromFilter,
+  formatTargetTypeLabel,
 } from '../utils/target-type-selection-utils'
 
 export interface AuditLogsProps {
@@ -141,7 +141,7 @@ function createTableDataHead(
         initialData: Object.keys(OrganizationEventTargetType).map((item) => {
           return {
             value: item,
-            name: upperCaseFirstLetter(item).replace(/_/g, ' '),
+            name: formatTargetTypeLabel(item),
           }
         }),
         initialSelectedItems: targetTypeSelectedItems,

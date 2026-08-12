@@ -37,7 +37,7 @@ describe('AgenticWorkflowServiceList', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('should render agentic workflows in their own section', () => {
+  it('should render agents in their own section', () => {
     mockUseServices.mockReturnValue({
       data: [
         {
@@ -66,7 +66,7 @@ describe('AgenticWorkflowServiceList', () => {
     })
     renderWithProviders(<AgenticWorkflowServiceList environment={environment} />)
 
-    expect(screen.getByRole('heading', { name: 'Agentic workflows' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Agents' })).toBeInTheDocument()
     expect(screen.getByText('Review pull requests')).toBeInTheDocument()
     expect(screen.getByText('Triage incidents')).toBeInTheDocument()
     expect(screen.getByText('Enabled')).toBeInTheDocument()
