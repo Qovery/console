@@ -142,6 +142,7 @@ describe('ClusterLastDeploymentSection', () => {
     expect(mockSendMessage).toHaveBeenCalledWith('Why did my cluster deployment fail? (deployment id: execution-1)')
     expect(posthog.capture).toHaveBeenCalledWith('ai-copilot-troubleshoot-triggered', {
       source: 'cluster-last-deployment',
+      troubleshoot_type: 'cluster',
       deployment_id: 'execution-1',
       cluster_id: 'cluster-1',
       trigger_reason: 'error',

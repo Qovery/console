@@ -85,6 +85,7 @@ describe('DevopsCopilotTroubleshootTrigger', () => {
     expect(mockSendMessage).toHaveBeenCalledWith('Why did my deployment fail? (execution id: exec-123)')
     expect(posthog.capture).toHaveBeenCalledWith('ai-copilot-troubleshoot-triggered', {
       source: 'service-deployment-list',
+      troubleshoot_type: 'deployment',
       deployment_id: 'exec-123',
     })
   })

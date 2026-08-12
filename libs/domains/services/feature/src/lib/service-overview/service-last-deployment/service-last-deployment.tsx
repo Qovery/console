@@ -193,6 +193,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
   const handleLaunchDiagnostic = () => {
     posthog.capture('ai-copilot-troubleshoot-triggered', {
       source: 'service-last-deployment',
+      troubleshoot_type: 'deployment',
       deployment_id: lastDeployment.identifier.execution_id,
       trigger_reason: 'error',
     })

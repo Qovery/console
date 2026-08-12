@@ -116,6 +116,7 @@ export function ClusterLastDeploymentSection({
 
     posthog.capture('ai-copilot-troubleshoot-triggered', {
       source: 'cluster-last-deployment',
+      troubleshoot_type: 'cluster',
       deployment_id: clusterStatus.last_execution_id,
       cluster_id: clusterId,
       trigger_reason: 'error',
