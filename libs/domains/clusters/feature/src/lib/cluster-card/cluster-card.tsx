@@ -1,13 +1,9 @@
 import { Link, useRouter } from '@tanstack/react-router'
-import posthog from 'posthog-js'
 import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
-import { useContext } from 'react'
 import { match } from 'ts-pattern'
-import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
 import {
   AnimatedGradientText,
   Badge,
-  Button,
   Icon,
   Indicator,
   Link as LinkUI,
@@ -24,20 +20,6 @@ import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicat
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
-  const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
-
-  const handleLaunchDiagnostic = () => {
-    posthog.capture('ai-copilot-troubleshoot-triggered', {
-      source: 'cluster-card',
-      cluster_id: cluster.id,
-      trigger_reason: 'error',
-    })
-
-    const message = `Why did my cluster deployment fail? (cluster id: ${cluster.id})`
-    setDevopsCopilotOpen(true)
-    sendMessageRef?.current?.(message)
-  }
-
   return match(clusterDeploymentStatus?.status)
     .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
       <span className="text-ssm font-normal text-neutral-subtle">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
@@ -64,46 +46,21 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
       </LinkUI>
     ))
     .with('BUILD_ERROR', 'DELETE_ERROR', 'DEPLOYMENT_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
-      <Tooltip
-        classNameContent="group rounded-full cursor-pointer pl-3 pr-1.5"
-        side="bottom"
-        align="center"
-        content={
-          <div
-            className="flex items-center gap-1.5"
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              handleLaunchDiagnostic()
-            }}
-          >
-            <Icon iconName="sparkles" iconStyle="solid" className="text-brand" />
-            <span className="text-ssm">Ask for diagnostic</span>
-            <Button
-              size="xs"
-              variant="surface"
-              iconOnly
-              radius="full"
-              className="ml-0.5 group-hover:bg-surface-neutral-componentHover"
-            >
-              <Icon iconName="arrow-right" />
-            </Button>
-          </div>
-        }
+      <LinkUI
+        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        params={{
+          organizationId: cluster.organization.id,
+          clusterId: cluster.id,
+        }}
+        color="red"
+        underline
+        size="sm"
+        className="truncate"
+        onClick={(e) => e.stopPropagation()}
       >
-        <button
-          type="button"
-          onClick={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-            handleLaunchDiagnostic()
-          }}
-          className="flex max-w-max items-center gap-0.5 text-sm font-medium text-negative transition hover:text-negative-hover hover:underline"
-        >
-          Last deployment failed
-          <Icon iconName="arrow-up-right" />
-        </button>
-      </Tooltip>
+        Last deployment failed
+        <Icon iconName="arrow-up-right" />
+      </LinkUI>
     ))
     .with('INVALID_CREDENTIALS', () => (
       <LinkUI

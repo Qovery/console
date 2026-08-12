@@ -362,7 +362,7 @@ export function DevopsCopilotPanel({ onClose, style }: DevopsCopilotPanelProps) 
               organizationId={organizationId}
             />
           )}
-          <div className="flex h-full w-full flex-col justify-between">
+          <div className="flex h-full min-w-0 flex-1 flex-col justify-between">
             <Header
               threadId={threadId}
               threads={threads}

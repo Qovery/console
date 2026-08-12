@@ -116,12 +116,13 @@ export function ClusterLastDeploymentSection({
 
     posthog.capture('ai-copilot-troubleshoot-triggered', {
       source: 'cluster-last-deployment',
+      troubleshoot_type: 'cluster',
       deployment_id: clusterStatus.last_execution_id,
       cluster_id: clusterId,
       trigger_reason: 'error',
     })
 
-    const message = `Why did my cluster deployment fail?${clusterStatus.last_execution_id ? ` (deployment id: ${clusterStatus.last_execution_id})` : ''}`
+    const message = `Why did my cluster deployment fail? (cluster id: ${clusterId})`
 
     setDevopsCopilotOpen(true)
     sendMessageRef?.current?.(message)
