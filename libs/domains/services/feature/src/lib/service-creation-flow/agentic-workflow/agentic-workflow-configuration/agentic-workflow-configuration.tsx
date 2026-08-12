@@ -563,9 +563,10 @@ export function AgenticWorkflowConfiguration() {
             <FormProvider {...variablesForm}>
               {variables.length > 0 ? (
                 <div>
-                  <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_36px] gap-3 text-xs font-medium text-neutral-subtle">
+                  <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_112px_36px] gap-3 text-xs font-medium text-neutral-subtle">
                     <span>Variable</span>
                     <span>Value</span>
+                    <span>Scope</span>
                     <span className="sr-only">Actions</span>
                   </div>
                   {variables.map((variable, index) => (
@@ -573,9 +574,8 @@ export function AgenticWorkflowConfiguration() {
                       key={variable.id}
                       index={index}
                       availableScopes={[APIVariableScopeEnum.APPLICATION]}
-                      gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 36px"
+                      gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 112px 36px"
                       onDelete={removeVariable}
-                      showScope={false}
                     />
                   ))}
                 </div>
