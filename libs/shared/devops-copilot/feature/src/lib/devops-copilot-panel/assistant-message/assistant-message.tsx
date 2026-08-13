@@ -1,7 +1,8 @@
 import clsx from 'clsx'
+import { marked } from 'marked'
 import { useThumbSurvey } from 'posthog-js/react/surveys'
-import { useMemo } from 'react'
-import { Button, Icon } from '@qovery/shared/ui'
+import { useCallback, useMemo, useState } from 'react'
+import { Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { RenderMarkdown } from '../../devops-render-markdown/devops-render-markdown'
 import { getIconClass, getIconName } from '../../utils/icon-utils/icon-utils'
 import type { Message, PlanStep } from '../devops-copilot-panel'
@@ -16,7 +17,39 @@ interface AssistantMessageProps {
   threadId?: string
 }
 
-function VoteButtons({ messageId, threadId }: { messageId: string; threadId?: string }) {
+function CopyRichTextButton({ text }: { text: string }) {
+  const [icon, setIcon] = useState<'copy' | 'check'>('copy')
+
+  const handleCopy = useCallback(async () => {
+    const html = await marked.parse(text)
+    const htmlBlob = new Blob([html], { type: 'text/html' })
+    const plainBlob = new Blob([text], { type: 'text/plain' })
+    await navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': plainBlob })])
+    setIcon('check')
+    setTimeout(() => setIcon('copy'), 1000)
+  }, [text])
+
+  return (
+    <Tooltip content="Copy message">
+      <span
+        onClick={handleCopy}
+        className="flex cursor-pointer items-center rounded-md bg-surface-neutral-component px-2 py-1 text-neutral hover:bg-surface-neutral-componentHover"
+      >
+        <Icon iconName={icon} />
+      </span>
+    </Tooltip>
+  )
+}
+
+function MessageActions({
+  messageId,
+  messageText,
+  threadId,
+}: {
+  messageId: string
+  messageText: string
+  threadId?: string
+}) {
   const { respond, response, triggerRef } = useThumbSurvey({
     surveyId: POSTHOG_SURVEY_ID,
     properties: {
@@ -27,6 +60,7 @@ function VoteButtons({ messageId, threadId }: { messageId: string; threadId?: st
 
   return (
     <div ref={triggerRef} className="mt-2 flex gap-2 text-xs text-neutral-400">
+      <CopyRichTextButton text={messageText} />
       <Button
         type="button"
         variant="surface"
@@ -89,7 +123,7 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans, threa
         </div>
       )}
       {renderedMarkdown}
-      <VoteButtons messageId={message.id} threadId={threadId} />
+      <MessageActions messageId={message.id} messageText={message.text} threadId={threadId} />
     </div>
   )
 }
