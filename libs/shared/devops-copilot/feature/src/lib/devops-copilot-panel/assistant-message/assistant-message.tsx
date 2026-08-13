@@ -43,7 +43,6 @@ function CopyRichTextButton({
       onClick={handleCopy}
       className="cursor-pointer font-sans font-medium"
     >
-      Copy
       <Icon iconName={icon} className="text-xs" />
     </Button>
   )
