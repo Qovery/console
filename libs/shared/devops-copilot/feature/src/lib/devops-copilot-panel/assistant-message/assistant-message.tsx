@@ -1,7 +1,8 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { useThumbSurvey } from 'posthog-js/react/surveys'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { Button, Icon, Tooltip } from '@qovery/shared/ui'
+import { Button, Icon } from '@qovery/shared/ui'
 import { RenderMarkdown } from '../../devops-render-markdown/devops-render-markdown'
 import { getIconClass, getIconName } from '../../utils/icon-utils/icon-utils'
 import type { Message, PlanStep } from '../devops-copilot-panel'
@@ -23,7 +24,7 @@ function CopyRichTextButton({
   text: string
   contentRef: React.RefObject<HTMLDivElement | null>
 }) {
-  const [icon, setIcon] = useState<'copy' | 'check'>('copy')
+  const [icon, setIcon] = useState<IconName>('copy')
 
   const handleCopy = useCallback(async () => {
     const html = contentRef.current?.innerHTML ?? text
@@ -35,14 +36,16 @@ function CopyRichTextButton({
   }, [text, contentRef])
 
   return (
-    <Tooltip content="Copy message">
-      <span
-        onClick={handleCopy}
-        className="flex cursor-pointer items-center rounded-md bg-surface-neutral-component px-2 py-1 text-neutral hover:bg-surface-neutral-componentHover"
-      >
-        <Icon iconName={icon} />
-      </span>
-    </Tooltip>
+    <Button
+      type="button"
+      color="neutral"
+      variant="surface"
+      onClick={handleCopy}
+      className="cursor-pointer font-sans font-medium"
+    >
+      Copy
+      <Icon iconName={icon} className="text-xs" />
+    </Button>
   )
 }
 
