@@ -161,7 +161,7 @@ describe('DeploymentActionButton', () => {
     expect(mockStopAllServices).not.toHaveBeenCalled()
   })
 
-  it('opens an uninstall confirmation modal for DELETE_RESOURCES_ONLY', async () => {
+  it('disables the "Run again" button for DELETE_RESOURCES_ONLY and does not trigger any mutation', async () => {
     const { userEvent } = renderWithProviders(
       <DeploymentActionButton
         environment={mockEnvironment}
@@ -172,14 +172,21 @@ describe('DeploymentActionButton', () => {
       />
     )
 
-    await userEvent.click(screen.getByRole('button', { name: /run again/i }))
+    const button = screen.getByRole('button', { name: /run again/i })
+    expect(button).toBeDisabled()
 
-    expect(mockOpenModalConfirmation).toHaveBeenCalledWith(expect.objectContaining({ title: 'Confirm uninstall' }))
+    await userEvent.click(button)
+
+    expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+    expect(mockDeployAllServices).not.toHaveBeenCalled()
+    expect(mockRestartAllServices).not.toHaveBeenCalled()
+    expect(mockStopAllServices).not.toHaveBeenCalled()
     expect(mockUninstallAllServices).not.toHaveBeenCalled()
+    expect(mockDeleteAllServices).not.toHaveBeenCalled()
   })
 
-  it('defaults an unmapped action (TERRAFORM_FORCE_UNLOCK) to a deploy replay without confirmation', async () => {
-    const { userEvent } = renderWithProviders(
+  it('disables the "Run again" button for an unmapped action (TERRAFORM_FORCE_UNLOCK)', () => {
+    renderWithProviders(
       <DeploymentActionButton
         environment={mockEnvironment}
         deploymentHistory={buildDeploymentHistory('TERRAFORM_FORCE_UNLOCK', [
@@ -189,9 +196,6 @@ describe('DeploymentActionButton', () => {
       />
     )
 
-    await userEvent.click(screen.getByRole('button', { name: /run again/i }))
-
-    expect(mockDeployAllServices).toHaveBeenCalled()
-    expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: /run again/i })).toBeDisabled()
   })
 })

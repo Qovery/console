@@ -100,16 +100,16 @@ export function DeploymentActionButton({ environment, deploymentHistory, state }
     })
 
   // Map the deployment's original trigger action to the matching bulk action, scoped to the
-  // services in this deployment. Anything not explicitly handled (plain deploy, dry-run,
-  // terraform state ops, unknown) is replayed as a deploy of the same services.
+  // services in this deployment. Actions we can't safely replay leave the button disabled.
   const action = match(deploymentHistory.trigger_action)
+    .with('DEPLOY', 'DEPLOY_DRY_RUN', () => ({ verb: 'deploy', destructive: false, run: runDeploy }))
     .with('RESTART', () => ({ verb: 'restart', destructive: false, run: runRestart }))
     .with('STOP', () => ({
       verb: 'stop',
       destructive: true,
       run: () => stopAllServices({ environment, payload: serviceIdsPayload }),
     }))
-    .with('UNINSTALL', 'DELETE_RESOURCES_ONLY', () => ({
+    .with('UNINSTALL', () => ({
       verb: 'uninstall',
       destructive: true,
       run: () => uninstallAllServices({ environment, payload: serviceIdsPayload }),
@@ -119,9 +119,10 @@ export function DeploymentActionButton({ environment, deploymentHistory, state }
       destructive: true,
       run: () => deleteAllServices({ environment, payload: serviceIdsPayload }),
     }))
-    .otherwise(() => ({ verb: 'deploy', destructive: false, run: runDeploy }))
+    .otherwise(() => null)
 
   const handleRunAgain = () => {
+    if (!action) return
     if (action.destructive) {
       openModalConfirmation({
         title: `Confirm ${action.verb}`,
@@ -134,10 +135,21 @@ export function DeploymentActionButton({ environment, deploymentHistory, state }
     }
   }
 
+  const tooltipContent = action
+    ? `Repeat this ${action.verb} on the same service(s)`
+    : "This deployment's action cannot be repeated"
+
   return (
-    <Tooltip content={`Repeat this ${action.verb} on the same service(s)`}>
+    <Tooltip content={tooltipContent}>
       <div>
-        <Button aria-label="Run again" color="brand" variant="solid" size="md" onClick={handleRunAgain}>
+        <Button
+          aria-label="Run again"
+          color="brand"
+          variant="solid"
+          size="md"
+          disabled={!action}
+          onClick={handleRunAgain}
+        >
           <span className="flex h-full w-full items-center justify-center gap-1.5">
             <Icon iconName="arrow-rotate-right" />
             Run again
