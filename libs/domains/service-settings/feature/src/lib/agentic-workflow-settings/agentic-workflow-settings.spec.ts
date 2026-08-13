@@ -1,7 +1,7 @@
 import {
   agenticWorkflowJsonValidation,
   agenticWorkflowOutputsValidation,
-  agenticWorkflowRepositoriesValidation,
+  getGitRepositoryName,
 } from './agentic-workflow-settings'
 
 describe('Agentic Workflow settings validation', () => {
@@ -9,17 +9,16 @@ describe('Agentic Workflow settings validation', () => {
     expect(agenticWorkflowJsonValidation('{')).toBe('Invalid JSON format.')
   })
 
-  it('requires a URL and branch for every repository', () => {
-    expect(agenticWorkflowRepositoriesValidation('[{"url":"https://github.com/qovery/console"}]')).toBe(
-      'Each repository must have a URL and a branch.'
-    )
-    expect(
-      agenticWorkflowRepositoriesValidation('[{"url":"https://github.com/qovery/console","branch":"staging"}]')
-    ).toBe(true)
-  })
-
   it('requires a URL for every output webhook', () => {
     expect(agenticWorkflowOutputsValidation('[{"name":"Output 1"}]')).toBe('Each output webhook must have a URL.')
     expect(agenticWorkflowOutputsValidation('[{"name":"Output 1","url":"https://example.com/hook"}]')).toBe(true)
+  })
+
+  it.each([
+    ['https://github.com/qovery/console.git', 'qovery/console'],
+    ['https://gitlab.com/qovery/backend', 'qovery/backend'],
+    ['qovery/console', 'qovery/console'],
+  ])('normalizes the repository value displayed by Git settings', (url, expected) => {
+    expect(getGitRepositoryName(url)).toBe(expected)
   })
 })

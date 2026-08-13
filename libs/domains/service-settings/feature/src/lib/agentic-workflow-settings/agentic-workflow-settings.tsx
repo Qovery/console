@@ -1,10 +1,18 @@
 import { useParams } from '@tanstack/react-router'
 import { AgenticWorkflowModelType, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
+import { useGitTokens } from '@qovery/domains/organizations/feature'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { useEditService, useService } from '@qovery/domains/services/feature'
+import {
+  AgenticWorkflowCodeEditorField,
+  type AgenticWorkflowGitRepository,
+  GitRepositoryCard,
+  isGitRepositoryComplete,
+  useEditService,
+  useService,
+} from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, InputText, InputTextArea, InputToggle, Section } from '@qovery/shared/ui'
+import { Button, Icon, InputText, InputTextArea, InputToggle, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'outputs' | 'governance'
@@ -20,7 +28,7 @@ interface FormValues {
   modelApiKey: string
   modelSettings: string
   agentPrompt: string
-  repositories: string
+  repositories: AgenticWorkflowGitRepository[]
   mcp: string
   dockerFragment: string
   outputs: string
@@ -57,6 +65,15 @@ function parseJson<T>(value: string): T {
   return JSON.parse(value) as T
 }
 
+export function getGitRepositoryName(url: string) {
+  try {
+    const pathname = new URL(url).pathname
+    return pathname.replace(/^\//, '').replace(/\.git$/, '')
+  } catch {
+    return url.replace(/\.git$/, '')
+  }
+}
+
 export function agenticWorkflowJsonValidation(value: string) {
   try {
     JSON.parse(value)
@@ -64,16 +81,6 @@ export function agenticWorkflowJsonValidation(value: string) {
   } catch {
     return 'Invalid JSON format.'
   }
-}
-
-export function agenticWorkflowRepositoriesValidation(value: string) {
-  const jsonError = agenticWorkflowJsonValidation(value)
-  if (jsonError !== true) return jsonError
-  const repositories = parseJson<Array<{ url?: string; branch?: string }>>(value)
-  return (
-    (Array.isArray(repositories) && repositories.every(({ url, branch }) => url?.trim() && branch?.trim())) ||
-    'Each repository must have a URL and a branch.'
-  )
 }
 
 export function agenticWorkflowOutputsValidation(value: string) {
@@ -86,6 +93,7 @@ export function agenticWorkflowOutputsValidation(value: string) {
 export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const { data: gitTokens = [] } = useGitTokens({ organizationId, enabled: page === 'connections' })
   const { mutate: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
@@ -99,7 +107,24 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       modelApiKey: '',
       modelSettings: service && isAgenticWorkflow(service) ? service.model.settings : '',
       agentPrompt: service && isAgenticWorkflow(service) ? service.agent_prompt : '',
-      repositories: formatJson(service && isAgenticWorkflow(service) ? service.project_repositories : []),
+      repositories:
+        service && isAgenticWorkflow(service)
+          ? service.project_repositories.map(({ url, branch, git_token_id }) => {
+              const name = getGitRepositoryName(url)
+              return {
+                repository: name,
+                branch,
+                gitTokenId: git_token_id,
+                isPublicRepository: !git_token_id,
+                gitRepository: {
+                  id: url,
+                  name,
+                  url,
+                  default_branch: branch,
+                },
+              }
+            })
+          : [],
       mcp: service && isAgenticWorkflow(service) ? service.mcp : '',
       dockerFragment: service && isAgenticWorkflow(service) ? service.docker_fragment : '',
       outputs: formatJson(service && isAgenticWorkflow(service) ? service.outputs : []),
@@ -112,7 +137,6 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
     },
   })
   form.register('modelSettings', { validate: agenticWorkflowJsonValidation })
-  form.register('repositories', { validate: agenticWorkflowRepositoriesValidation })
   form.register('mcp', { validate: (value) => !value.trim() || agenticWorkflowJsonValidation(value) })
   form.register('outputs', { validate: agenticWorkflowOutputsValidation })
 
@@ -132,7 +156,11 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       enabled: data.enabled,
       model,
       agent_prompt: data.agentPrompt,
-      project_repositories: parseJson(data.repositories),
+      project_repositories: data.repositories.map(({ repository, branch, gitTokenId }) => ({
+        url: repository,
+        branch,
+        git_token_id: gitTokenId,
+      })),
       mcp: data.mcp,
       docker_fragment: data.dockerFragment,
       outputs: parseJson(data.outputs),
@@ -156,16 +184,21 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
     editService({ serviceId, payload })
   })
 
-  const jsonField = (name: 'modelSettings' | 'repositories' | 'mcp' | 'outputs', label: string, hint?: string) => (
-    <InputTextArea
+  const jsonField = (name: 'modelSettings' | 'mcp' | 'outputs', label: string, hint?: string) => (
+    <AgenticWorkflowCodeEditorField
       name={name}
       label={label}
+      language="json"
       value={values[name]}
       hint={hint}
       error={form.formState.errors[name]?.message}
-      onChange={(event) => form.setValue(name, event.currentTarget.value, { shouldDirty: true, shouldValidate: true })}
+      onChange={(value) => form.setValue(name, value, { shouldDirty: true, shouldValidate: true })}
     />
   )
+
+  const repositoriesValid = values.repositories.every(isGitRepositoryComplete)
+  const addRepository = () =>
+    form.setValue('repositories', [...values.repositories, { repository: '', branch: '' }], { shouldDirty: true })
 
   return (
     <Section className="px-8 pb-8 pt-6">
@@ -235,13 +268,52 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         )}
         {page === 'connections' && (
           <>
-            {jsonField('repositories', 'Git repositories JSON')}
+            <div className="flex items-center justify-between pt-2">
+              <div>
+                <h2 className="text-base font-medium text-neutral">Git repositories</h2>
+                <p className="mt-1 text-sm text-neutral-subtle">
+                  Select the repositories and branches the workflow can access.
+                </p>
+              </div>
+              <Button type="button" variant="outline" color="neutral" size="sm" onClick={addRepository}>
+                <Icon iconName="plus" />
+                Add repository
+              </Button>
+            </div>
+            {values.repositories.map((repository, index) => (
+              <GitRepositoryCard
+                key={`${index}-${repository.provider ?? gitTokens.find(({ id }) => id === repository.gitTokenId)?.type ?? ''}`}
+                index={index}
+                repository={{
+                  ...repository,
+                  provider: repository.provider ?? gitTokens.find(({ id }) => id === repository.gitTokenId)?.type,
+                }}
+                onChange={(nextRepository) => {
+                  const repositories = [...values.repositories]
+                  repositories[index] = nextRepository
+                  form.setValue('repositories', repositories, { shouldDirty: true })
+                }}
+                onRemove={() =>
+                  form.setValue(
+                    'repositories',
+                    values.repositories.filter((_, repositoryIndex) => repositoryIndex !== index),
+                    { shouldDirty: true }
+                  )
+                }
+              />
+            ))}
+            {!repositoriesValid && (
+              <p className="px-3 text-xs font-medium text-negative">
+                Select a Git account, repository, and branch for each repository.
+              </p>
+            )}
             {jsonField('mcp', 'MCP JSON')}
-            <InputTextArea
+            <AgenticWorkflowCodeEditorField
               name="docker-fragment"
               label="Dockerfile fragment"
+              language="dockerfile"
               value={values.dockerFragment}
-              onChange={(event) => form.setValue('dockerFragment', event.currentTarget.value, { shouldDirty: true })}
+              onChange={(value) => form.setValue('dockerFragment', value, { shouldDirty: true })}
             />
           </>
         )}
@@ -267,7 +339,12 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           </>
         )}
         <div className="flex justify-end pt-6">
-          <Button type="submit" size="lg" loading={isLoading} disabled={!form.formState.isDirty || !values.name.trim()}>
+          <Button
+            type="submit"
+            size="lg"
+            loading={isLoading}
+            disabled={!form.formState.isDirty || !values.name.trim() || !repositoriesValid || !form.formState.isValid}
+          >
             Save
           </Button>
         </div>
