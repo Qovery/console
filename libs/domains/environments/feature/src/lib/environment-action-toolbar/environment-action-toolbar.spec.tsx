@@ -164,6 +164,10 @@ describe('EnvironmentActionToolbar', () => {
           services: [
             { identifier: { service_id: 'app-1', service_type: 'APPLICATION', name: 'app' } },
             { identifier: { service_id: 'db-1', service_type: 'DATABASE', name: 'db' } },
+            { identifier: { service_id: 'container-1', service_type: 'CONTAINER', name: 'container' } },
+            { identifier: { service_id: 'job-1', service_type: 'JOB', name: 'job' } },
+            { identifier: { service_id: 'helm-1', service_type: 'HELM', name: 'helm' } },
+            { identifier: { service_id: 'terraform-1', service_type: 'TERRAFORM', name: 'terraform' } },
           ],
         },
       ],
@@ -184,11 +188,11 @@ describe('EnvironmentActionToolbar', () => {
       environment: mockEnvironment,
       payload: {
         applications: [{ application_id: 'app-1' }],
-        containers: [],
+        containers: [{ id: 'container-1' }],
         databases: ['db-1'],
-        jobs: [],
-        helms: [],
-        terraforms: [],
+        jobs: [{ id: 'job-1' }],
+        helms: [{ id: 'helm-1' }],
+        terraforms: [{ id: 'terraform-1' }],
       },
     })
     expect(mockDeployEnvironment).not.toHaveBeenCalled()
