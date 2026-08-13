@@ -150,7 +150,7 @@ export function GitTokenList() {
         <div className="p-4 text-center">
           <Icon iconName="wave-pulse" className="text-neutral-subtle" />
           <p className="mt-1 text-xs font-medium text-neutral-subtle">
-            No Git Tokens found. <br /> Please add one.
+            No Git tokens found. <br /> Please add one.
           </p>
         </div>
       )}
