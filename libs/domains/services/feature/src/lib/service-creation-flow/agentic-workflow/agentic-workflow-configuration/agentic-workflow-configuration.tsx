@@ -682,6 +682,7 @@ export function AgenticWorkflowConfiguration() {
               name="agent-prompt"
               label="Agent prompt"
               value={values.agentPrompt}
+              textareaClassName="min-h-40"
               variableKeys={variablesForm
                 .watch('variables')
                 .map((variable) => variable.variable ?? '')
