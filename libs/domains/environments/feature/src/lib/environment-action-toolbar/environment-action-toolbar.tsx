@@ -1,6 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
 import {
-  type DeploymentHistoryEnvironmentV2,
   type Environment,
   EnvironmentDeploymentStatusEnum,
   type EnvironmentStatus,
@@ -26,7 +25,6 @@ import {
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
 import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
-import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deploy-all-services'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
 import { useDeploymentStatus } from '../hooks/use-deployment-status/use-deployment-status'
 import { useEnvironmentServices } from '../hooks/use-environment-services/use-environment-services'
@@ -75,12 +73,10 @@ export function MenuManageDeployment({
   environment,
   deploymentStatus,
   variant = 'default',
-  deploymentHistory,
 }: {
   environment: Environment
   deploymentStatus: EnvironmentStatus
   variant?: ActionToolbarVariant
-  deploymentHistory?: DeploymentHistoryEnvironmentV2
 }) {
   const state = deploymentStatus.state
   const environmentNeedUpdate = deploymentStatus?.deployment_status !== EnvironmentDeploymentStatusEnum.UP_TO_DATE
@@ -105,7 +101,6 @@ export function MenuManageDeployment({
     projectId: environment.project.id,
     logsLink,
   })
-  const { mutate: deployAllServices } = useDeployAllServices()
   const { mutate: stopEnvironment } = useStopEnvironment({ projectId: environment.project.id, logsLink })
   const { mutate: uninstallEnvironment } = useUninstallEnvironment({ projectId: environment.project.id, logsLink })
   const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
@@ -140,35 +135,6 @@ export function MenuManageDeployment({
     })
 
   const mutationRedeploy = () => {
-    // On the deployment detail page we redeploy the exact same set of services that
-    // were part of this specific deployment, instead of the whole environment.
-    if (deploymentHistory) {
-      const deployedServices = deploymentHistory.stages.flatMap((stage) => stage.services ?? [])
-      deployAllServices({
-        environment,
-        payload: {
-          applications: deployedServices
-            .filter(({ identifier }) => identifier.service_type === 'APPLICATION')
-            .map(({ identifier }) => ({ application_id: identifier.service_id })),
-          containers: deployedServices
-            .filter(({ identifier }) => identifier.service_type === 'CONTAINER')
-            .map(({ identifier }) => ({ id: identifier.service_id })),
-          databases: deployedServices
-            .filter(({ identifier }) => identifier.service_type === 'DATABASE')
-            .map(({ identifier }) => identifier.service_id),
-          jobs: deployedServices
-            .filter(({ identifier }) => identifier.service_type === 'JOB')
-            .map(({ identifier }) => ({ id: identifier.service_id })),
-          helms: deployedServices
-            .filter(({ identifier }) => identifier.service_type === 'HELM')
-            .map(({ identifier }) => ({ id: identifier.service_id })),
-          terraforms: deployedServices
-            .filter(({ identifier }) => identifier.service_type === 'TERRAFORM')
-            .map(({ identifier }) => ({ id: identifier.service_id })),
-        },
-      })
-      return
-    }
     deployEnvironment({ environmentId: environment.id })
   }
 
@@ -504,14 +470,12 @@ export interface EnvironmentActionToolbarProps {
   environment: Environment
   isArgoCdEnvironment?: boolean
   variant?: ActionToolbarVariant
-  deploymentHistory?: DeploymentHistoryEnvironmentV2
 }
 
 export function EnvironmentActionToolbar({
   environment,
   isArgoCdEnvironment = false,
   variant = 'default',
-  deploymentHistory,
 }: EnvironmentActionToolbarProps) {
   const { data: services = [], isLoading: isServicesLoading } = useEnvironmentServices({
     environmentId: environment.id,
@@ -529,12 +493,7 @@ export function EnvironmentActionToolbar({
   return (
     <div className="flex items-center gap-2">
       {hasDeployableServices ? (
-        <MenuManageDeployment
-          environment={environment}
-          deploymentStatus={deploymentStatus}
-          variant={variant}
-          deploymentHistory={deploymentHistory}
-        />
+        <MenuManageDeployment environment={environment} deploymentStatus={deploymentStatus} variant={variant} />
       ) : (
         <DisabledManageDeploymentButton tooltip={disabledManageDeploymentTooltip} variant={variant} />
       )}
