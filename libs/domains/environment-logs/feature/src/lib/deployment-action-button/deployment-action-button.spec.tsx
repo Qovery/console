@@ -1,7 +1,7 @@
 import { type DeploymentHistoryEnvironmentV2 } from 'qovery-typescript-axios'
 import { environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { RunAgainButton } from './run-again-button'
+import { DeploymentActionButton } from './deployment-action-button'
 
 const mockEnvironment = environmentFactoryMock(1)[0]
 
@@ -10,6 +10,7 @@ const mockRestartAllServices = jest.fn()
 const mockStopAllServices = jest.fn()
 const mockUninstallAllServices = jest.fn()
 const mockDeleteAllServices = jest.fn()
+const mockCancel = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 
 jest.mock('@qovery/domains/services/feature', () => ({
@@ -18,6 +19,11 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useStopAllServices: () => ({ mutate: mockStopAllServices }),
   useUninstallAllServices: () => ({ mutate: mockUninstallAllServices }),
   useDeleteAllServices: () => ({ mutate: mockDeleteAllServices }),
+}))
+
+jest.mock('@qovery/domains/environments/feature', () => ({
+  ...jest.requireActual('@qovery/domains/environments/feature'),
+  useCancelDeploymentEnvironment: () => ({ mutate: mockCancel }),
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -40,34 +46,55 @@ function buildDeploymentHistory(
   } as unknown as DeploymentHistoryEnvironmentV2
 }
 
-describe('RunAgainButton', () => {
+describe('DeploymentActionButton', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  it('renders a "Run again" button with the arrow-rotate-right icon', () => {
+  it('renders a "Run again" button with the arrow-rotate-right icon in a finished state', () => {
     const { baseElement } = renderWithProviders(
-      <RunAgainButton
+      <DeploymentActionButton
         environment={mockEnvironment}
         deploymentHistory={buildDeploymentHistory('DEPLOY', [
           { service_id: 'app-1', service_type: 'APPLICATION', name: 'app' },
         ])}
-        state="RUNNING"
+        state="DEPLOYED"
       />
     )
     expect(screen.getByRole('button', { name: /run again/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /cancel deployment/i })).not.toBeInTheDocument()
     expect(baseElement.querySelector('.fa-arrow-rotate-right')).toBeInTheDocument()
+  })
+
+  it('renders a "Cancel deployment" button while a deployment is in progress and confirms before cancelling', async () => {
+    const { userEvent } = renderWithProviders(
+      <DeploymentActionButton
+        environment={mockEnvironment}
+        deploymentHistory={buildDeploymentHistory('DEPLOY', [
+          { service_id: 'app-1', service_type: 'APPLICATION', name: 'app' },
+        ])}
+        state="DEPLOYING"
+      />
+    )
+
+    expect(screen.getByRole('button', { name: /cancel deployment/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /run again/i })).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: /cancel deployment/i }))
+
+    expect(mockOpenModalConfirmation).toHaveBeenCalledWith(expect.objectContaining({ title: 'Confirm cancel' }))
+    expect(mockCancel).not.toHaveBeenCalled()
   })
 
   it('replays a DEPLOY scoped to the deployment services', async () => {
     const { userEvent } = renderWithProviders(
-      <RunAgainButton
+      <DeploymentActionButton
         environment={mockEnvironment}
         deploymentHistory={buildDeploymentHistory('DEPLOY', [
           { service_id: 'app-1', service_type: 'APPLICATION', name: 'app' },
           { service_id: 'db-1', service_type: 'DATABASE', name: 'db' },
         ])}
-        state="RUNNING"
+        state="DEPLOYED"
       />
     )
 
@@ -92,14 +119,14 @@ describe('RunAgainButton', () => {
 
   it('replays a RESTART scoped to the deployment services', async () => {
     const { userEvent } = renderWithProviders(
-      <RunAgainButton
+      <DeploymentActionButton
         environment={mockEnvironment}
         deploymentHistory={buildDeploymentHistory('RESTART', [
           { service_id: 'app-1', service_type: 'APPLICATION', name: 'app' },
           { service_id: 'container-1', service_type: 'CONTAINER', name: 'container' },
           { service_id: 'db-1', service_type: 'DATABASE', name: 'db' },
         ])}
-        state="RUNNING"
+        state="DEPLOYED"
       />
     )
 
@@ -117,12 +144,12 @@ describe('RunAgainButton', () => {
 
   it('opens a confirmation modal for a destructive STOP without stopping immediately', async () => {
     const { userEvent } = renderWithProviders(
-      <RunAgainButton
+      <DeploymentActionButton
         environment={mockEnvironment}
         deploymentHistory={buildDeploymentHistory('STOP', [
           { service_id: 'app-1', service_type: 'APPLICATION', name: 'app' },
         ])}
-        state="RUNNING"
+        state="DEPLOYED"
       />
     )
 
@@ -134,29 +161,37 @@ describe('RunAgainButton', () => {
     expect(mockStopAllServices).not.toHaveBeenCalled()
   })
 
-  it('disables the button while a deployment is in progress', () => {
-    renderWithProviders(
-      <RunAgainButton
+  it('opens an uninstall confirmation modal for DELETE_RESOURCES_ONLY', async () => {
+    const { userEvent } = renderWithProviders(
+      <DeploymentActionButton
         environment={mockEnvironment}
-        deploymentHistory={buildDeploymentHistory('DEPLOY', [
+        deploymentHistory={buildDeploymentHistory('DELETE_RESOURCES_ONLY', [
           { service_id: 'app-1', service_type: 'APPLICATION', name: 'app' },
         ])}
-        state="DEPLOYING"
+        state="DEPLOYED"
       />
     )
-    expect(screen.getByRole('button', { name: /run again/i })).toBeDisabled()
+
+    await userEvent.click(screen.getByRole('button', { name: /run again/i }))
+
+    expect(mockOpenModalConfirmation).toHaveBeenCalledWith(expect.objectContaining({ title: 'Confirm uninstall' }))
+    expect(mockUninstallAllServices).not.toHaveBeenCalled()
   })
 
-  it('disables the button for an action that cannot be replayed', () => {
-    renderWithProviders(
-      <RunAgainButton
+  it('defaults an unmapped action (TERRAFORM_FORCE_UNLOCK) to a deploy replay without confirmation', async () => {
+    const { userEvent } = renderWithProviders(
+      <DeploymentActionButton
         environment={mockEnvironment}
         deploymentHistory={buildDeploymentHistory('TERRAFORM_FORCE_UNLOCK', [
           { service_id: 'tf-1', service_type: 'TERRAFORM', name: 'tf' },
         ])}
-        state="RUNNING"
+        state="DEPLOYED"
       />
     )
-    expect(screen.getByRole('button', { name: /run again/i })).toBeDisabled()
+
+    await userEvent.click(screen.getByRole('button', { name: /run again/i }))
+
+    expect(mockDeployAllServices).toHaveBeenCalled()
+    expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
   })
 })

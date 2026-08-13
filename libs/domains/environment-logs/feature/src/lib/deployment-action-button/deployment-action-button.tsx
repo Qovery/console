@@ -1,5 +1,6 @@
 import { type DeploymentHistoryEnvironmentV2, type Environment, type StateEnum } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
+import { useCancelDeploymentEnvironment } from '@qovery/domains/environments/feature'
 import {
   useDeleteAllServices,
   useDeployAllServices,
@@ -7,21 +8,56 @@ import {
   useStopAllServices,
   useUninstallAllServices,
 } from '@qovery/domains/services/feature'
+import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import { Button, Icon, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
+import { isCancelBuildAvailable } from '@qovery/shared/util-js'
 
-export interface RunAgainButtonProps {
+export interface DeploymentActionButtonProps {
   environment: Environment
   deploymentHistory: DeploymentHistoryEnvironmentV2
   state: StateEnum
 }
 
-export function RunAgainButton({ environment, deploymentHistory, state }: RunAgainButtonProps) {
+export function DeploymentActionButton({ environment, deploymentHistory, state }: DeploymentActionButtonProps) {
   const { openModalConfirmation } = useModalConfirmation()
+
+  const logsLink =
+    ENVIRONMENT_LOGS_URL(environment.organization.id, environment.project.id, environment.id) + ENVIRONMENT_STAGES_URL()
+
+  const { mutate: cancelDeploymentEnvironment } = useCancelDeploymentEnvironment({
+    projectId: environment.project.id,
+    logsLink,
+  })
   const { mutate: deployAllServices } = useDeployAllServices()
   const { mutate: restartAllServices } = useRestartAllServices()
   const { mutate: stopAllServices } = useStopAllServices()
   const { mutate: uninstallAllServices } = useUninstallAllServices()
   const { mutate: deleteAllServices } = useDeleteAllServices()
+
+  // While a deployment is in progress, offer to cancel it; once finished, offer to run it again.
+  if (isCancelBuildAvailable(state)) {
+    const handleCancel = () =>
+      openModalConfirmation({
+        title: 'Confirm cancel',
+        description:
+          'Stopping a deployment may take a while, as a safe point needs to be reached. Some operations cannot be stopped (i.e: terraform actions) and need to be completed before stopping the deployment. Any action performed before won’t be rolled back. To confirm the cancellation of your deployment, please type the name of the environment:',
+        name: environment.name,
+        action: () => cancelDeploymentEnvironment({ environmentId: environment.id }),
+      })
+
+    return (
+      <Tooltip content="Cancel the current deployment">
+        <div>
+          <Button aria-label="Cancel deployment" color="neutral" variant="outline" size="md" onClick={handleCancel}>
+            <span className="flex h-full w-full items-center justify-center gap-1.5">
+              <Icon iconName="xmark" />
+              Cancel deployment
+            </span>
+          </Button>
+        </div>
+      </Tooltip>
+    )
+  }
 
   const services = deploymentHistory.stages.flatMap((stage) => stage.services ?? [])
   const idsOf = (serviceType: string) =>
@@ -63,17 +99,17 @@ export function RunAgainButton({ environment, deploymentHistory, state }: RunAga
       },
     })
 
-  // Map the deployment's original trigger action to the matching bulk action, scoped to
-  // the services in this deployment. `null` = the action type can't be replayed from here.
+  // Map the deployment's original trigger action to the matching bulk action, scoped to the
+  // services in this deployment. Anything not explicitly handled (plain deploy, dry-run,
+  // terraform state ops, unknown) is replayed as a deploy of the same services.
   const action = match(deploymentHistory.trigger_action)
-    .with('DEPLOY', 'DEPLOY_DRY_RUN', () => ({ verb: 'deploy', destructive: false, run: runDeploy }))
     .with('RESTART', () => ({ verb: 'restart', destructive: false, run: runRestart }))
     .with('STOP', () => ({
       verb: 'stop',
       destructive: true,
       run: () => stopAllServices({ environment, payload: serviceIdsPayload }),
     }))
-    .with('UNINSTALL', () => ({
+    .with('UNINSTALL', 'DELETE_RESOURCES_ONLY', () => ({
       verb: 'uninstall',
       destructive: true,
       run: () => uninstallAllServices({ environment, payload: serviceIdsPayload }),
@@ -83,28 +119,9 @@ export function RunAgainButton({ environment, deploymentHistory, state }: RunAga
       destructive: true,
       run: () => deleteAllServices({ environment, payload: serviceIdsPayload }),
     }))
-    .otherwise(() => null)
+    .otherwise(() => ({ verb: 'deploy', destructive: false, run: runDeploy }))
 
-  const isInProgress = match(state)
-    .with(
-      'DEPLOYING',
-      'RESTARTING',
-      'BUILDING',
-      'DELETING',
-      'CANCELING',
-      'STOPPING',
-      'DEPLOYMENT_QUEUED',
-      'DELETE_QUEUED',
-      'STOP_QUEUED',
-      'RESTART_QUEUED',
-      () => true
-    )
-    .otherwise(() => false)
-
-  const disabled = isInProgress || action === null
-
-  const handleClick = () => {
-    if (!action) return
+  const handleRunAgain = () => {
     if (action.destructive) {
       openModalConfirmation({
         title: `Confirm ${action.verb}`,
@@ -117,24 +134,10 @@ export function RunAgainButton({ environment, deploymentHistory, state }: RunAga
     }
   }
 
-  const tooltipContent =
-    action === null
-      ? "This deployment's action cannot be repeated"
-      : isInProgress
-        ? 'A deployment is currently in progress'
-        : `Repeat this ${action.verb} on the same service(s)`
-
   return (
-    <Tooltip content={tooltipContent}>
+    <Tooltip content={`Repeat this ${action.verb} on the same service(s)`}>
       <div>
-        <Button
-          aria-label="Run again"
-          color="brand"
-          variant="solid"
-          size="md"
-          disabled={disabled}
-          onClick={handleClick}
-        >
+        <Button aria-label="Run again" color="brand" variant="solid" size="md" onClick={handleRunAgain}>
           <span className="flex h-full w-full items-center justify-center gap-1.5">
             <Icon iconName="arrow-rotate-right" />
             Run again
@@ -145,4 +148,4 @@ export function RunAgainButton({ environment, deploymentHistory, state }: RunAga
   )
 }
 
-export default RunAgainButton
+export default DeploymentActionButton

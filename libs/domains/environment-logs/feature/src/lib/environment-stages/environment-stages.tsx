@@ -22,8 +22,8 @@ import {
 } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { DeploymentActionButton } from '../deployment-action-button/deployment-action-button'
 import { HeaderEnvironmentStages } from '../header-environment-stages/header-environment-stages'
-import { RunAgainButton } from '../run-again-button/run-again-button'
 
 export interface EnvironmentStagesProps extends PropsWithChildren {
   environment: Environment
@@ -123,7 +123,7 @@ export function EnvironmentStages({
             </DropdownMenu.Content>
           </DropdownMenu.Root>
           {deploymentHistory ? (
-            <RunAgainButton
+            <DeploymentActionButton
               environment={environment}
               deploymentHistory={deploymentHistory}
               state={environmentStatus.state}
