@@ -1,7 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { type MutableRefObject } from 'react'
 import { Badge, Button, DropdownMenu, Icon, Tooltip } from '@qovery/shared/ui'
-import { QOVERY_FEEDBACK_URL, QOVERY_FORUM_URL } from '@qovery/shared/util-const'
+import { QOVERY_FEEDBACK_URL } from '@qovery/shared/util-const'
 import type { Message, PlanStep } from '../devops-copilot-panel'
 
 interface HeaderProps {
@@ -82,11 +82,6 @@ export function Header({
                 Show history
               </DropdownMenu.Item>
             )}
-            <DropdownMenu.Item asChild icon={<Icon iconName="user-group" />}>
-              <a href={QOVERY_FORUM_URL} target="_blank" rel="noopener noreferrer">
-                Community forum
-              </a>
-            </DropdownMenu.Item>
             <DropdownMenu.Item asChild icon={<Icon iconName="comment-lines" />}>
               <a href={QOVERY_FEEDBACK_URL} target="_blank" rel="noopener noreferrer">
                 Feedback
