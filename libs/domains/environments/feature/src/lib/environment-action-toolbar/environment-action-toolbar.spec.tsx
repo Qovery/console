@@ -170,7 +170,11 @@ describe('EnvironmentActionToolbar', () => {
     } as unknown as DeploymentHistoryEnvironmentV2
 
     const { userEvent } = renderWithProviders(
-      <EnvironmentActionToolbar variant="header" environment={mockEnvironment} deploymentHistory={mockDeploymentHistory} />
+      <EnvironmentActionToolbar
+        variant="header"
+        environment={mockEnvironment}
+        deploymentHistory={mockDeploymentHistory}
+      />
     )
 
     await userEvent.click(screen.getByLabelText(/manage deployment/i))
