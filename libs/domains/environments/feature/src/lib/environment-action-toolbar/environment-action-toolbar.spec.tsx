@@ -1,3 +1,4 @@
+import type { DeploymentHistoryEnvironmentV2 } from 'qovery-typescript-axios'
 import type { ForwardedRef, ReactNode } from 'react'
 import { applicationFactoryMock, environmentFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -6,6 +7,7 @@ import { EnvironmentActionToolbar } from './environment-action-toolbar'
 const mockEnvironment = environmentFactoryMock(1)[0]
 let mockServices: unknown[] = applicationFactoryMock(3)
 const mockDeployEnvironment = jest.fn()
+const mockDeployAllServices = jest.fn()
 const mockDeleteEnvironment = jest.fn()
 const mockNavigate = jest.fn()
 const mockOpenModal = jest.fn()
@@ -85,6 +87,12 @@ jest.mock('../hooks/use-deploy-environment/use-deploy-environment', () => ({
   }),
 }))
 
+jest.mock('../hooks/use-deploy-all-services/use-deploy-all-services', () => ({
+  useDeployAllServices: () => ({
+    mutate: mockDeployAllServices,
+  }),
+}))
+
 jest.mock('../hooks/use-delete-environment/use-delete-environment', () => ({
   useDeleteEnvironment: () => ({
     mutate: mockDeleteEnvironment,
@@ -147,6 +155,39 @@ describe('EnvironmentActionToolbar', () => {
 
     expect(mockDeployEnvironment).toHaveBeenCalledWith({ environmentId: mockEnvironment.id })
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+  })
+
+  it('should redeploy only the services of the given deployment when deploymentHistory is provided', async () => {
+    const mockDeploymentHistory = {
+      stages: [
+        {
+          services: [
+            { identifier: { service_id: 'app-1', service_type: 'APPLICATION', name: 'app' } },
+            { identifier: { service_id: 'db-1', service_type: 'DATABASE', name: 'db' } },
+          ],
+        },
+      ],
+    } as unknown as DeploymentHistoryEnvironmentV2
+
+    const { userEvent } = renderWithProviders(
+      <EnvironmentActionToolbar variant="header" environment={mockEnvironment} deploymentHistory={mockDeploymentHistory} />
+    )
+
+    await userEvent.click(screen.getByLabelText(/manage deployment/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /redeploy/i }))
+
+    expect(mockDeployAllServices).toHaveBeenCalledWith({
+      environment: mockEnvironment,
+      payload: {
+        applications: [{ application_id: 'app-1' }],
+        containers: [],
+        databases: ['db-1'],
+        jobs: [],
+        helms: [],
+        terraforms: [],
+      },
+    })
+    expect(mockDeployEnvironment).not.toHaveBeenCalled()
   })
 
   it('should disable manage deployment when the environment has no services', async () => {

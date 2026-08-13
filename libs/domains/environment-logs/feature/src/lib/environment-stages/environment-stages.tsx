@@ -121,7 +121,7 @@ export function EnvironmentStages({
               ))}
             </DropdownMenu.Content>
           </DropdownMenu.Root>
-          <EnvironmentActionToolbar variant="header" environment={environment} />
+          <EnvironmentActionToolbar variant="header" environment={environment} deploymentHistory={deploymentHistory} />
         </div>
       </HeaderEnvironmentStages>
       <hr className="mb-4 mt-2 w-full border-neutral" />
