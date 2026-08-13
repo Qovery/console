@@ -16,7 +16,13 @@ interface AssistantMessageProps {
   threadId?: string
 }
 
-function CopyRichTextButton({ text, contentRef }: { text: string; contentRef: React.RefObject<HTMLDivElement | null> }) {
+function CopyRichTextButton({
+  text,
+  contentRef,
+}: {
+  text: string
+  contentRef: React.RefObject<HTMLDivElement | null>
+}) {
   const [icon, setIcon] = useState<'copy' | 'check'>('copy')
 
   const handleCopy = useCallback(async () => {
