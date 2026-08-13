@@ -1,6 +1,7 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import clsx from 'clsx'
 import { useThumbSurvey } from 'posthog-js/react/surveys'
-import { useMemo } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Button, Icon } from '@qovery/shared/ui'
 import { RenderMarkdown } from '../../devops-render-markdown/devops-render-markdown'
 import { getIconClass, getIconName } from '../../utils/icon-utils/icon-utils'
@@ -16,7 +17,48 @@ interface AssistantMessageProps {
   threadId?: string
 }
 
-function VoteButtons({ messageId, threadId }: { messageId: string; threadId?: string }) {
+function CopyRichTextButton({
+  text,
+  contentRef,
+}: {
+  text: string
+  contentRef: React.RefObject<HTMLDivElement | null>
+}) {
+  const [icon, setIcon] = useState<IconName>('copy')
+
+  const handleCopy = useCallback(async () => {
+    const html = contentRef.current?.innerHTML ?? text
+    const htmlBlob = new Blob([html], { type: 'text/html' })
+    const plainBlob = new Blob([text], { type: 'text/plain' })
+    await navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': plainBlob })])
+    setIcon('check')
+    setTimeout(() => setIcon('copy'), 1000)
+  }, [text, contentRef])
+
+  return (
+    <Button
+      type="button"
+      color="neutral"
+      variant="surface"
+      onClick={handleCopy}
+      className="cursor-pointer font-sans font-medium"
+    >
+      <Icon iconName={icon} className="text-xs" />
+    </Button>
+  )
+}
+
+function MessageActions({
+  messageId,
+  messageText,
+  contentRef,
+  threadId,
+}: {
+  messageId: string
+  messageText: string
+  contentRef: React.RefObject<HTMLDivElement | null>
+  threadId?: string
+}) {
   const { respond, response, triggerRef } = useThumbSurvey({
     surveyId: POSTHOG_SURVEY_ID,
     properties: {
@@ -27,6 +69,7 @@ function VoteButtons({ messageId, threadId }: { messageId: string; threadId?: st
 
   return (
     <div ref={triggerRef} className="mt-2 flex gap-2 text-xs text-neutral-400">
+      <CopyRichTextButton text={messageText} contentRef={contentRef} />
       <Button
         type="button"
         variant="surface"
@@ -56,6 +99,7 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans, threa
   const hasPlan = messagePlans.length > 0
   const isPlanVisible = showPlans[message.id]
 
+  const contentRef = useRef<HTMLDivElement>(null)
   const renderedMarkdown = useMemo(() => <RenderMarkdown>{message.text}</RenderMarkdown>, [message.text])
 
   return (
@@ -88,8 +132,8 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans, threa
           ))}
         </div>
       )}
-      {renderedMarkdown}
-      <VoteButtons messageId={message.id} threadId={threadId} />
+      <div ref={contentRef}>{renderedMarkdown}</div>
+      <MessageActions messageId={message.id} messageText={message.text} contentRef={contentRef} threadId={threadId} />
     </div>
   )
 }

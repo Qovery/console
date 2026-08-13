@@ -1,4 +1,4 @@
-import { render, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import type { Message, PlanStep } from '../devops-copilot-panel'
 import { AssistantMessage } from './assistant-message'
 
@@ -50,7 +50,7 @@ describe('AssistantMessage', () => {
 
   describe('rendering', () => {
     it('should render assistant message text', () => {
-      render(<AssistantMessage {...defaultProps} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} />)
 
       expect(screen.getByTestId('render-markdown')).toBeInTheDocument()
       expect(screen.getByTestId('render-markdown')).toHaveTextContent('This is an assistant message')
@@ -65,19 +65,19 @@ describe('AssistantMessage', () => {
     ]
 
     it('should show plan toggle when message has plan steps', () => {
-      render(<AssistantMessage {...defaultProps} plan={mockPlan} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} plan={mockPlan} />)
 
       expect(screen.getByText('Plan steps')).toBeInTheDocument()
     })
 
     it('should not show plan toggle when message has no plan steps', () => {
-      render(<AssistantMessage {...defaultProps} plan={[]} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} plan={[]} />)
 
       expect(screen.queryByText('Plan steps')).not.toBeInTheDocument()
     })
 
     it('should filter plan steps by message ID', () => {
-      render(<AssistantMessage {...defaultProps} plan={mockPlan} showPlans={{ 'msg-1': true }} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} plan={mockPlan} showPlans={{ 'msg-1': true }} />)
 
       expect(screen.getByText('Step 1')).toBeInTheDocument()
       expect(screen.getByText('Step 2')).toBeInTheDocument()
@@ -99,21 +99,21 @@ describe('AssistantMessage', () => {
     })
 
     it('should show plan steps when visible', () => {
-      render(<AssistantMessage {...defaultProps} plan={mockPlan} showPlans={{ 'msg-1': true }} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} plan={mockPlan} showPlans={{ 'msg-1': true }} />)
 
       expect(screen.getByText('Step 1')).toBeInTheDocument()
       expect(screen.getByText('Step 2')).toBeInTheDocument()
     })
 
     it('should hide plan steps when not visible', () => {
-      render(<AssistantMessage {...defaultProps} plan={mockPlan} showPlans={{ 'msg-1': false }} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} plan={mockPlan} showPlans={{ 'msg-1': false }} />)
 
       expect(screen.queryByText('Step 1')).not.toBeInTheDocument()
       expect(screen.queryByText('Step 2')).not.toBeInTheDocument()
     })
 
     it('should display step status', () => {
-      render(<AssistantMessage {...defaultProps} plan={mockPlan} showPlans={{ 'msg-1': true }} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} plan={mockPlan} showPlans={{ 'msg-1': true }} />)
 
       expect(screen.getByText('completed')).toBeInTheDocument()
       expect(screen.getByText('in progress')).toBeInTheDocument()
@@ -122,7 +122,7 @@ describe('AssistantMessage', () => {
 
   describe('voting', () => {
     it('should render voting buttons', () => {
-      render(<AssistantMessage {...defaultProps} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} />)
 
       const buttons = screen.getAllByRole('button')
       expect(buttons.length).toBeGreaterThan(0)
@@ -131,7 +131,7 @@ describe('AssistantMessage', () => {
 
   describe('styling', () => {
     it('should apply group class for hover effects', () => {
-      const { container } = render(<AssistantMessage {...defaultProps} />)
+      const { container } = renderWithProviders(<AssistantMessage {...defaultProps} />)
 
       const messageContainer = container.querySelector('.group')
       expect(messageContainer).toBeInTheDocument()
@@ -142,7 +142,7 @@ describe('AssistantMessage', () => {
         { messageId: 'msg-1', description: 'Completed step', toolName: 'tool1', status: 'completed' },
       ]
 
-      render(<AssistantMessage {...defaultProps} plan={completedPlan} showPlans={{ 'msg-1': true }} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} plan={completedPlan} showPlans={{ 'msg-1': true }} />)
 
       const completedDescription = screen.getByText('Completed step')
       expect(completedDescription).toHaveClass('text-neutral-subtle')
@@ -153,7 +153,7 @@ describe('AssistantMessage', () => {
         { messageId: 'msg-1', description: 'In progress step', toolName: 'tool1', status: 'in_progress' },
       ]
 
-      render(<AssistantMessage {...defaultProps} plan={inProgressPlan} showPlans={{ 'msg-1': true }} />)
+      renderWithProviders(<AssistantMessage {...defaultProps} plan={inProgressPlan} showPlans={{ 'msg-1': true }} />)
 
       const inProgressDescription = screen.getByText('In progress step')
       expect(inProgressDescription).not.toHaveClass('text-neutral-subtle')
@@ -166,7 +166,7 @@ describe('AssistantMessage', () => {
         { messageId: 'msg-1', description: 'Step 1', toolName: 'tool1', status: 'completed' },
       ]
 
-      const { container } = render(<AssistantMessage {...defaultProps} plan={mockPlan} />)
+      const { container } = renderWithProviders(<AssistantMessage {...defaultProps} plan={mockPlan} />)
 
       const planToggle = container.querySelector('.plan-toggle')
       expect(planToggle).toHaveClass('cursor-pointer')
