@@ -4,6 +4,7 @@ import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useRef } from 'react'
 import { FormProvider, useFieldArray } from 'react-hook-form'
 import { TextAreaVariableSuggestion, VariableRow } from '@qovery/domains/variables/feature'
+import { type VariableData } from '@qovery/shared/interfaces'
 import {
   Button,
   CodeEditor,
@@ -80,6 +81,13 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
 
 export function isOutputComplete(output: AgenticWorkflowOutput) {
   return Boolean(output.url.trim())
+}
+
+export function areVariablesValid(variables: VariableData[]) {
+  return variables.every(
+    ({ variable, value, scope }) =>
+      Boolean(variable?.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) && Boolean(value) && Boolean(scope)
+  )
 }
 
 function AgenticWorkflowSection({
@@ -219,6 +227,8 @@ export function AgenticWorkflowConfiguration() {
   const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
   const outputsValid = values.outputs.every(isOutputComplete)
+  const variableValues = variablesForm.watch('variables')
+  const variablesValid = areVariablesValid(variableValues)
   const showNameError = Boolean(dirtyFields.name) && !values.name.trim()
   const showModelApiKeyError = Boolean(dirtyFields.modelApiKey) && !values.modelApiKey.trim()
   const sectionInvalid: Record<AgenticWorkflowConfigurationSection, boolean> = {
@@ -228,7 +238,7 @@ export function AgenticWorkflowConfiguration() {
     'git-repositories': !gitRepositoriesValid,
     governance: false,
     'docker-fragment': false,
-    variables: !variablesForm.formState.isValid,
+    variables: !variablesValid,
     outputs: !outputsValid || outputHeadersErrors.some(Boolean),
     'agent-prompt': !values.agentPrompt.trim(),
   }
@@ -240,7 +250,8 @@ export function AgenticWorkflowConfiguration() {
     outputsValid &&
     !mcpJsonError &&
     outputHeadersErrors.every((error) => !error) &&
-    !modelSettingsJsonError
+    !modelSettingsJsonError &&
+    variablesValid
 
   useEffect(() => {
     setCurrentStep(1)
@@ -582,7 +593,7 @@ export function AgenticWorkflowConfiguration() {
               ) : (
                 <p className="text-sm text-neutral-subtle">No environment variables configured.</p>
               )}
-              <ContinueButton disabled={!variablesForm.formState.isValid} onClick={goToNextSection} />
+              <ContinueButton disabled={!variablesValid} onClick={goToNextSection} />
             </FormProvider>
           </AgenticWorkflowSection>
 
@@ -683,10 +694,7 @@ export function AgenticWorkflowConfiguration() {
               label="Agent prompt"
               value={values.agentPrompt}
               textareaClassName="min-h-40"
-              variableKeys={variablesForm
-                .watch('variables')
-                .map((variable) => variable.variable ?? '')
-                .filter(Boolean)}
+              variableKeys={variableValues.map((variable) => variable.variable ?? '').filter(Boolean)}
               hint="Describe the workflow behavior. Example: review incoming webhook payloads, open a pull request when needed, then notify the team."
               onChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
             />

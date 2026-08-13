@@ -1,11 +1,14 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { type ReactNode, useEffect } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
 import { pluralize, prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useCreateService } from '../../hooks/use-create-service/use-create-service'
-import { isGitRepositoryComplete } from './agentic-workflow-configuration/agentic-workflow-configuration'
+import {
+  areVariablesValid,
+  isGitRepositoryComplete,
+} from './agentic-workflow-configuration/agentic-workflow-configuration'
 import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowFormData,
@@ -76,7 +79,10 @@ export function AgenticWorkflowSummary() {
   const { creationFlowUrl, form, setActiveSection, setCurrentStep, variablesForm } = useAgenticWorkflowCreateContext()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
   const { isLoading: isImportingVariables, mutateAsync: importVariables } = useImportVariables()
+  const createdServiceIdRef = useRef<string>()
   const values = form.watch()
+  const variableValues = variablesForm.watch('variables')
+  const variablesValid = areVariablesValid(variableValues)
 
   useEffect(() => {
     setCurrentStep(2)
@@ -88,11 +94,12 @@ export function AgenticWorkflowSummary() {
       !values.modelApiKey.trim() ||
       !values.agentPrompt.trim() ||
       hasIncompleteGitRepository(values) ||
-      hasIncompleteOutput(values)
+      hasIncompleteOutput(values) ||
+      !variablesValid
     ) {
       navigate({ to: `${creationFlowUrl}/configuration` })
     }
-  }, [creationFlowUrl, navigate, values])
+  }, [creationFlowUrl, navigate, values, variablesValid])
 
   const handleEditSection = (section: AgenticWorkflowConfigurationSection) => {
     setActiveSection(section)
@@ -100,28 +107,36 @@ export function AgenticWorkflowSummary() {
   }
 
   const handleCreate = async () => {
-    const service = await createService({
-      environmentId,
-      payload: {
-        serviceType: 'AGENTIC_WORKFLOW',
-        ...formatAgenticWorkflowRequest(form.getValues()),
-      },
-    })
-    const variableImportRequest = prepareVariableImportRequest(variablesForm.getValues('variables'))
-    if (variableImportRequest) {
-      await importVariables({
-        serviceId: service.id,
-        serviceType: 'AGENTIC_WORKFLOW',
-        variableImportRequest,
+    try {
+      if (!createdServiceIdRef.current) {
+        const service = await createService({
+          environmentId,
+          payload: {
+            serviceType: 'AGENTIC_WORKFLOW',
+            ...formatAgenticWorkflowRequest(form.getValues()),
+          },
+        })
+        createdServiceIdRef.current = service.id
+      }
+
+      const variableImportRequest = prepareVariableImportRequest(variableValues)
+      if (variableImportRequest) {
+        await importVariables({
+          serviceId: createdServiceIdRef.current,
+          serviceType: 'AGENTIC_WORKFLOW',
+          variableImportRequest,
+        })
+      }
+      posthog.capture('create-service', {
+        selectedServiceType: 'agentic-workflow',
       })
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        params: { organizationId, projectId, environmentId },
+      })
+    } catch {
+      // Errors are surfaced by mutation notifications. Keep the created service ID so an import retry does not duplicate it.
     }
-    posthog.capture('create-service', {
-      selectedServiceType: 'agentic-workflow',
-    })
-    navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
-      params: { organizationId, projectId, environmentId },
-    })
   }
 
   return (
@@ -175,10 +190,7 @@ export function AgenticWorkflowSummary() {
           </SummarySection>
 
           <SummarySection title="Environment variables" onEdit={() => handleEditSection('variables')}>
-            <SummaryValue
-              label="Variables"
-              value={formatCount(variablesForm.getValues('variables').length, 'variable')}
-            />
+            <SummaryValue label="Variables" value={formatCount(variableValues.length, 'variable')} />
           </SummarySection>
         </div>
 

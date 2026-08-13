@@ -115,6 +115,7 @@ describe('AgenticWorkflowSummary', () => {
     expect(screen.getByText('*')).toBeInTheDocument()
     expect(screen.getByText(validValues.mcpJson ?? '')).toBeInTheDocument()
     expect(screen.getByText('1 webhook')).toBeInTheDocument()
+    expect(mockNavigate).not.toHaveBeenCalledWith({ to: '/create/agentic-workflow/configuration' })
   })
 
   it('should navigate back to the edited section from summary', async () => {
@@ -177,6 +178,42 @@ describe('AgenticWorkflowSummary', () => {
         overwrite: true,
         vars: [{ name: 'API_URL', value: 'https://api.example.com', scope: 'APPLICATION', is_secret: false }],
       },
+    })
+  })
+
+  it('should retry importing variables without creating a duplicate agentic workflow', async () => {
+    function WithVariables() {
+      const { variablesForm } = useAgenticWorkflowCreateContext()
+
+      useLayoutEffect(() => {
+        variablesForm.reset({
+          variables: [{ variable: 'API_URL', value: 'https://api.example.com', scope: 'APPLICATION', isSecret: false }],
+          externalSecrets: [],
+        })
+      }, [variablesForm])
+
+      return null
+    }
+
+    mockImportVariables.mockRejectedValueOnce(new Error('Import failed')).mockResolvedValueOnce(undefined)
+
+    const { userEvent } = renderWithProviders(
+      <AgenticWorkflowCreationFlow creationFlowUrl="/create/agentic-workflow" onExit={jest.fn()}>
+        <WithVariables />
+        <WithFormValues>
+          <AgenticWorkflowSummary />
+        </WithFormValues>
+      </AgenticWorkflowCreationFlow>
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    expect(mockCreateService).toHaveBeenCalledTimes(1)
+    expect(mockImportVariables).toHaveBeenCalledTimes(2)
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: { organizationId: 'org-1', projectId: 'project-1', environmentId: 'environment-1' },
     })
   })
 })
