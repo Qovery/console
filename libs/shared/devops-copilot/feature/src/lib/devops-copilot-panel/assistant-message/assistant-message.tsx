@@ -1,7 +1,6 @@
 import clsx from 'clsx'
-import { marked } from 'marked'
 import { useThumbSurvey } from 'posthog-js/react/surveys'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { Button, Icon, Tooltip } from '@qovery/shared/ui'
 import { RenderMarkdown } from '../../devops-render-markdown/devops-render-markdown'
 import { getIconClass, getIconName } from '../../utils/icon-utils/icon-utils'
@@ -17,17 +16,17 @@ interface AssistantMessageProps {
   threadId?: string
 }
 
-function CopyRichTextButton({ text }: { text: string }) {
+function CopyRichTextButton({ text, contentRef }: { text: string; contentRef: React.RefObject<HTMLDivElement | null> }) {
   const [icon, setIcon] = useState<'copy' | 'check'>('copy')
 
   const handleCopy = useCallback(async () => {
-    const html = await marked.parse(text)
+    const html = contentRef.current?.innerHTML ?? text
     const htmlBlob = new Blob([html], { type: 'text/html' })
     const plainBlob = new Blob([text], { type: 'text/plain' })
     await navigator.clipboard.write([new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': plainBlob })])
     setIcon('check')
     setTimeout(() => setIcon('copy'), 1000)
-  }, [text])
+  }, [text, contentRef])
 
   return (
     <Tooltip content="Copy message">
@@ -44,10 +43,12 @@ function CopyRichTextButton({ text }: { text: string }) {
 function MessageActions({
   messageId,
   messageText,
+  contentRef,
   threadId,
 }: {
   messageId: string
   messageText: string
+  contentRef: React.RefObject<HTMLDivElement | null>
   threadId?: string
 }) {
   const { respond, response, triggerRef } = useThumbSurvey({
@@ -60,7 +61,7 @@ function MessageActions({
 
   return (
     <div ref={triggerRef} className="mt-2 flex gap-2 text-xs text-neutral-400">
-      <CopyRichTextButton text={messageText} />
+      <CopyRichTextButton text={messageText} contentRef={contentRef} />
       <Button
         type="button"
         variant="surface"
@@ -90,6 +91,7 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans, threa
   const hasPlan = messagePlans.length > 0
   const isPlanVisible = showPlans[message.id]
 
+  const contentRef = useRef<HTMLDivElement>(null)
   const renderedMarkdown = useMemo(() => <RenderMarkdown>{message.text}</RenderMarkdown>, [message.text])
 
   return (
@@ -122,8 +124,8 @@ export function AssistantMessage({ message, plan, showPlans, setShowPlans, threa
           ))}
         </div>
       )}
-      {renderedMarkdown}
-      <MessageActions messageId={message.id} messageText={message.text} threadId={threadId} />
+      <div ref={contentRef}>{renderedMarkdown}</div>
+      <MessageActions messageId={message.id} messageText={message.text} contentRef={contentRef} threadId={threadId} />
     </div>
   )
 }
