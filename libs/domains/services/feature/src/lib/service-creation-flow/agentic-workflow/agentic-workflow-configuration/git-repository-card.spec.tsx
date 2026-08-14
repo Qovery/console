@@ -15,6 +15,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   GitProviderSetting: ({ organizationId }: { organizationId: string }) => (
     <div data-testid="git-provider-setting">{organizationId}</div>
   ),
+  GitPublicRepositorySettings: () => <div data-testid="git-public-repository-settings" />,
   GitRepositorySetting: ({ organizationId, gitTokenId }: { organizationId: string; gitTokenId?: string }) => (
     <div data-testid="git-repository-setting">
       {organizationId}:{gitTokenId}
@@ -55,5 +56,24 @@ describe('GitRepositoryCard', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Remove' }))
 
     expect(onRemove).toHaveBeenCalledTimes(1)
+  })
+
+  it('should render editable public repository settings', () => {
+    renderWithProviders(
+      <GitRepositoryCard
+        index={0}
+        onChange={jest.fn()}
+        onRemove={jest.fn()}
+        repository={{
+          isPublicRepository: true,
+          repository: 'https://github.com/qovery/console.git',
+          branch: 'main',
+        }}
+      />
+    )
+
+    expect(screen.getByTestId('git-public-repository-settings')).toBeInTheDocument()
+    expect(screen.queryByTestId('git-repository-setting')).not.toBeInTheDocument()
+    expect(screen.queryByTestId('git-branch-settings')).not.toBeInTheDocument()
   })
 })
