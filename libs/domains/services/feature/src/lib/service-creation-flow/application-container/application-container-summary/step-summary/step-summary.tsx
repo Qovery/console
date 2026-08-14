@@ -124,7 +124,7 @@ export function ApplicationContainerStepSummary({
               variable_parent_id: match(scope)
                 .with('ENVIRONMENT', () => environmentId)
                 .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', 'TERRAFORM', () => service.id)
-                .with('PROJECT', 'BUILT_IN', () => {
+                .with('PROJECT', 'BUILT_IN', 'AGENTIC_WORKFLOW', () => {
                   throw new Error('Unsupported external secret scope for service creation')
                 })
                 .exhaustive(),

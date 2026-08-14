@@ -119,4 +119,22 @@ describe('ServiceVariablesCustomTab', () => {
       }),
     })
   })
+
+  it('should load agentic workflow variables with their service scope', () => {
+    useServiceMock.mockReturnValue({
+      data: { serviceType: 'AGENTIC_WORKFLOW' },
+    } as ReturnType<typeof useService>)
+    useRedeployServiceActionMock.mockReturnValue(undefined)
+    useVariablesMock.mockReturnValue({
+      data: [],
+      isLoading: false,
+    } as ReturnType<typeof useVariables>)
+
+    renderWithProviders(<ServiceVariablesCustomTab />)
+
+    expect(useVariablesMock).toHaveBeenCalledWith({
+      parentId: 'service-id',
+      scope: 'AGENTIC_WORKFLOW',
+    })
+  })
 })

@@ -586,7 +586,7 @@ export function StepSummary() {
                   .with('JOB', () => service.id)
                   .with('ENVIRONMENT', () => service.environment.id)
                   .with('PROJECT', () => projectId)
-                  .with('BUILT_IN', 'APPLICATION', 'CONTAINER', 'HELM', 'TERRAFORM', () => {
+                  .with('BUILT_IN', 'APPLICATION', 'CONTAINER', 'HELM', 'TERRAFORM', 'AGENTIC_WORKFLOW', () => {
                     throw new Error('Should not be possible')
                   })
                   .exhaustive(),

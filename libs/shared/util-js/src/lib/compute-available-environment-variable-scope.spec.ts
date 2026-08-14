@@ -38,12 +38,12 @@ describe('computeAvailableEnvironmentVariableScope', () => {
       expect(scopes).toEqual([APIVariableScopeEnum.PROJECT])
     })
 
-    it('should use the application scope for an agentic workflow', () => {
+    it('should use the agentic workflow scope for an agentic workflow', () => {
       const scopes = computeAvailableScope(undefined, false, 'AGENTIC_WORKFLOW')
       expect(scopes).toEqual([
         APIVariableScopeEnum.PROJECT,
         APIVariableScopeEnum.ENVIRONMENT,
-        APIVariableScopeEnum.APPLICATION,
+        APIVariableScopeEnum.AGENTIC_WORKFLOW,
       ])
     })
   })
@@ -84,5 +84,9 @@ describe('getScopeHierarchy', () => {
 describe('generateScopeLabel', () => {
   it('should return Service for terraform scope', () => {
     expect(generateScopeLabel(APIVariableScopeEnum.TERRAFORM)).toBe('Service')
+  })
+
+  it('should return Service for agentic workflow scope', () => {
+    expect(generateScopeLabel(APIVariableScopeEnum.AGENTIC_WORKFLOW)).toBe('Service')
   })
 })
