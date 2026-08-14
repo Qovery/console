@@ -1,6 +1,9 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
-import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
-import { Suspense } from 'react'
+import { Outlet, createFileRoute, useMatchRoute, useNavigate } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { Suspense, useEffect } from 'react'
+import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
+import { useService } from '@qovery/domains/services/feature'
 import { Badge, Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
@@ -53,7 +56,23 @@ function TabLabel({ label, isNew }: { label: string; isNew?: boolean }) {
 }
 
 function RouteComponent() {
+  const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
   const matchRoute = useMatchRoute()
+  const navigate = useNavigate()
+  const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const shouldRedirect = isAgenticWorkflow(service) && !isAgenticWorkflowEnabled
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+        params: { organizationId, projectId, environmentId, serviceId },
+      })
+    }
+  }, [environmentId, navigate, organizationId, projectId, serviceId, shouldRedirect])
+
+  if (shouldRedirect) return null
 
   const activeTabId = tabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
 

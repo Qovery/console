@@ -1,4 +1,9 @@
-import { getJsonError, isGitRepositoryComplete, isOutputComplete } from './agentic-workflow-configuration'
+import {
+  areVariablesValid,
+  getJsonError,
+  isGitRepositoryComplete,
+  isOutputComplete,
+} from './agentic-workflow-configuration'
 
 describe('AgenticWorkflowConfiguration validation', () => {
   it('should require valid JSON only when a required JSON field is empty or invalid', () => {
@@ -29,5 +34,16 @@ describe('AgenticWorkflowConfiguration validation', () => {
   it('should require a webhook URL for configured output webhooks', () => {
     expect(isOutputComplete({ url: 'https://hooks.example.com/workflow', headersJson: '{}', prompt: '' })).toBe(true)
     expect(isOutputComplete({ url: '', headersJson: '{}', prompt: 'Notify the team.' })).toBe(false)
+  })
+
+  it('should require complete environment variables', () => {
+    expect(areVariablesValid([])).toBe(true)
+    expect(areVariablesValid([{ variable: '', value: '', scope: 'AGENTIC_WORKFLOW', isSecret: false }])).toBe(false)
+    expect(areVariablesValid([{ variable: 'API URL', value: 'https://example.com', scope: 'AGENTIC_WORKFLOW' }])).toBe(
+      false
+    )
+    expect(areVariablesValid([{ variable: 'API_URL', value: 'https://example.com', scope: 'AGENTIC_WORKFLOW' }])).toBe(
+      true
+    )
   })
 })

@@ -11,13 +11,13 @@ export function useRedeployServiceAction(serviceType?: ServiceType) {
     environmentId,
   })
 
+  const deployableServiceType = getDeployableServiceType(serviceType)
+
+  if (!deployableServiceType) {
+    return undefined
+  }
+
   return () => {
-    const deployableServiceType = getDeployableServiceType(serviceType)
-
-    if (!deployableServiceType) {
-      return
-    }
-
     deployService({
       serviceId,
       serviceType: deployableServiceType,

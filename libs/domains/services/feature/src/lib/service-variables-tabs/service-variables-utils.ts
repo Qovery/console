@@ -1,7 +1,7 @@
 import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 
-export type ServiceVariableScope = 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM'
+export type ServiceVariableScope = 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM' | 'AGENTIC_WORKFLOW'
 
 export function getServiceVariableScope(serviceType?: ServiceType): ServiceVariableScope | undefined
 export function getServiceVariableScope(
@@ -18,5 +18,6 @@ export function getServiceVariableScope(
     .with('JOB', () => 'JOB' as const)
     .with('HELM', () => 'HELM' as const)
     .with('TERRAFORM', () => 'TERRAFORM' as const)
+    .with('AGENTIC_WORKFLOW', () => 'AGENTIC_WORKFLOW' as const)
     .otherwise(() => fallbackScope)
 }

@@ -226,6 +226,7 @@ export function VariableList({
       { scope: 'JOB' },
       { scope: 'HELM' },
       { scope: 'TERRAFORM' },
+      { scope: 'AGENTIC_WORKFLOW' },
       () => true
     )
     .otherwise(() => false)
@@ -383,7 +384,7 @@ export function VariableList({
           const variable = info.row.original
           const alreadyOverridden = variables.some(({ overridden_variable }) => variable.id === overridden_variable?.id)
           const disableOverride = match(variable.scope)
-            .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', () => true)
+            .with('APPLICATION', 'CONTAINER', 'JOB', 'HELM', 'AGENTIC_WORKFLOW', () => true)
             .otherwise(() => alreadyOverridden)
           const isDoppler = variable.owned_by === ExternalServiceEnum.DOPPLER
           const canEdit = isDoppler || variable.scope !== 'BUILT_IN'

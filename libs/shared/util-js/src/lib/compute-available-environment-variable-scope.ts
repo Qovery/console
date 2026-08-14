@@ -23,7 +23,7 @@ function scopeHierarchy(targetScope: APIVariableScopeEnum) {
     .with('BUILT_IN', () => baseHierarchy.slice(0, 1))
     .with('PROJECT', () => baseHierarchy.slice(0, 2))
     .with('ENVIRONMENT', () => baseHierarchy)
-    .with('APPLICATION', 'CONTAINER', 'HELM', 'JOB', 'TERRAFORM', (serviceScope) => [
+    .with('APPLICATION', 'CONTAINER', 'HELM', 'JOB', 'TERRAFORM', 'AGENTIC_WORKFLOW', (serviceScope) => [
       ...baseHierarchy,
       {
         name: serviceScope,
@@ -35,7 +35,8 @@ function scopeHierarchy(targetScope: APIVariableScopeEnum) {
 
 function targetToScope(target: keyof typeof APIVariableScopeEnum | keyof typeof ServiceTypeEnum): APIVariableScopeEnum {
   return match(target)
-    .with('APPLICATION', 'DATABASE', 'ARGOCD_APP', 'AGENTIC_WORKFLOW', () => APIVariableScopeEnum.APPLICATION)
+    .with('APPLICATION', 'DATABASE', 'ARGOCD_APP', () => APIVariableScopeEnum.APPLICATION)
+    .with('AGENTIC_WORKFLOW', () => APIVariableScopeEnum.AGENTIC_WORKFLOW)
     .with('CONTAINER', () => APIVariableScopeEnum.CONTAINER)
     .with('JOB', 'CRON_JOB', 'LIFECYCLE_JOB', () => APIVariableScopeEnum.JOB)
     .with('HELM', () => APIVariableScopeEnum.HELM)
@@ -86,7 +87,8 @@ export function generateScopeLabel(scope: APIVariableScopeEnum): string {
     scope === APIVariableScopeEnum.JOB ||
     scope === APIVariableScopeEnum.CONTAINER ||
     scope === APIVariableScopeEnum.HELM ||
-    scope === APIVariableScopeEnum.TERRAFORM
+    scope === APIVariableScopeEnum.TERRAFORM ||
+    scope === APIVariableScopeEnum.AGENTIC_WORKFLOW
   )
     return 'Service'
   return upperCaseFirstLetter(scope) as string

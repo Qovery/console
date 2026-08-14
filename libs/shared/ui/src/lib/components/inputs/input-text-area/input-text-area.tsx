@@ -7,6 +7,7 @@ export interface InputTextAreaProps {
   value?: string | null
   onChange?: (e: FormEvent<HTMLTextAreaElement>) => void
   className?: string
+  textareaClassName?: string
   disabled?: boolean
   hint?: ReactNode
   error?: string
@@ -15,7 +16,18 @@ export interface InputTextAreaProps {
 }
 
 export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>(function InputTextArea(props, ref) {
-  const { label, value = '', name, onChange, className, hint, error, dataTestId = 'input-textarea', maskValue } = props
+  const {
+    label,
+    value = '',
+    name,
+    onChange,
+    className,
+    textareaClassName,
+    hint,
+    error,
+    dataTestId = 'input-textarea',
+    maskValue,
+  } = props
 
   const [currentValue, setCurrentValue] = useState(value)
   const previousValueRef = useRef(value)
@@ -74,7 +86,8 @@ export const InputTextArea = forwardRef<HTMLTextAreaElement, InputTextAreaProps>
           id={label}
           className={twMerge(
             'mt-5 min-h-[52px] w-full appearance-none bg-transparent pr-3 text-sm text-neutral outline-0',
-            maskValue && '[-webkit-text-security:disc]'
+            maskValue && '[-webkit-text-security:disc]',
+            textareaClassName
           )}
           value={!currentValue ? undefined : currentValue}
           onChange={(e) => {
