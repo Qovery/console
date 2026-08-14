@@ -58,7 +58,7 @@ const TfvarItem = ({
       onMouseEnter={() => setHoveredRow(file.source)}
       onMouseLeave={() => setHoveredRow(undefined)}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex min-w-0 items-center gap-4">
         <Checkbox
           name={file.source}
           id={file.source}
@@ -66,8 +66,10 @@ const TfvarItem = ({
           onCheckedChange={onCheckedChange}
           className="ml-1 cursor-pointer"
         />
-        <label className="flex cursor-pointer flex-col gap-0.5 text-sm" htmlFor={file.source}>
-          <span className="text-neutral">{file.source}</span>
+        <label className="flex min-w-0 cursor-pointer flex-col gap-0.5 text-sm" htmlFor={file.source}>
+          <Tooltip content={file.source}>
+            <span className="truncate text-neutral">{file.source}</span>
+          </Tooltip>
           <span className="text-xs text-neutral-subtle">{Object.keys(file.variables).length} variables</span>
         </label>
       </div>
