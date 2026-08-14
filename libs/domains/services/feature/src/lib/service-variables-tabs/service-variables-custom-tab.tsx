@@ -1,5 +1,4 @@
 import { useParams } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   CreateUpdateVariableModal,
   ImportEnvironmentVariableModalFeature,
@@ -28,15 +27,13 @@ export function ServiceVariablesCustomTab() {
   const customVariables = variables.filter(
     (variable) => variable.scope !== 'BUILT_IN' && !isExternalSecretVariable(variable)
   )
+  const redeployDescription = redeployServiceAction
+    ? 'You need to redeploy your service for your changes to be applied.'
+    : undefined
+  const redeployLabel = redeployServiceAction ? 'Redeploy' : undefined
 
   const onCreateVariableToast = () =>
-    toast(
-      'success',
-      'Creation success',
-      'You need to redeploy your service for your changes to be applied.',
-      redeployServiceAction,
-      'Redeploy'
-    )
+    toast('success', 'Creation success', redeployDescription, redeployServiceAction, redeployLabel)
 
   if (!scope) {
     return null
@@ -143,22 +140,16 @@ export function ServiceVariablesCustomTab() {
       environmentId={environmentId}
       onCreateVariable={onCreateVariableToast}
       onEditVariable={() => {
-        toast(
-          'success',
-          'Edition success',
-          'You need to redeploy your service for your changes to be applied.',
-          redeployServiceAction,
-          'Redeploy'
-        )
+        toast('success', 'Edition success', redeployDescription, redeployServiceAction, redeployLabel)
       }}
       onDeleteVariable={(variable) => {
         const name = `${truncateText(variable.key, 30)}${variable.key.length > 30 ? '...' : ''}`
         toast(
           'success',
           'Deletion success',
-          `${name} has been deleted. You need to redeploy your service for your changes to be applied.`,
+          `${name} has been deleted.${redeployServiceAction ? ' You need to redeploy your service for your changes to be applied.' : ''}`,
           redeployServiceAction,
-          'Redeploy'
+          redeployLabel
         )
       }}
     />

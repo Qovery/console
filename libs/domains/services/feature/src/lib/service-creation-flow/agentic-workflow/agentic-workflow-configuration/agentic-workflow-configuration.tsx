@@ -542,7 +542,7 @@ export function AgenticWorkflowConfiguration() {
                     appendVariable({
                       variable: '',
                       value: '',
-                      scope: APIVariableScopeEnum.APPLICATION,
+                      scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
                       isSecret: true,
                     })
                   }
@@ -560,7 +560,7 @@ export function AgenticWorkflowConfiguration() {
                     appendVariable({
                       variable: '',
                       value: '',
-                      scope: APIVariableScopeEnum.APPLICATION,
+                      scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
                       isSecret: false,
                     })
                   }
@@ -584,7 +584,7 @@ export function AgenticWorkflowConfiguration() {
                     <VariableRow
                       key={variable.id}
                       index={index}
-                      availableScopes={[APIVariableScopeEnum.APPLICATION]}
+                      availableScopes={[APIVariableScopeEnum.AGENTIC_WORKFLOW]}
                       gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 112px 36px"
                       onDelete={removeVariable}
                     />

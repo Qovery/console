@@ -592,6 +592,7 @@ export function CreateUpdateVariableModal(props: CreateUpdateVariableModalProps)
           { scope: 'JOB' },
           { scope: 'HELM' },
           { scope: 'TERRAFORM' },
+          { scope: 'AGENTIC_WORKFLOW' },
           () => {
             if ('serviceId' in props) {
               return props.serviceId

@@ -38,8 +38,12 @@ describe('AgenticWorkflowConfiguration validation', () => {
 
   it('should require complete environment variables', () => {
     expect(areVariablesValid([])).toBe(true)
-    expect(areVariablesValid([{ variable: '', value: '', scope: 'APPLICATION', isSecret: false }])).toBe(false)
-    expect(areVariablesValid([{ variable: 'API URL', value: 'https://example.com', scope: 'APPLICATION' }])).toBe(false)
-    expect(areVariablesValid([{ variable: 'API_URL', value: 'https://example.com', scope: 'APPLICATION' }])).toBe(true)
+    expect(areVariablesValid([{ variable: '', value: '', scope: 'AGENTIC_WORKFLOW', isSecret: false }])).toBe(false)
+    expect(areVariablesValid([{ variable: 'API URL', value: 'https://example.com', scope: 'AGENTIC_WORKFLOW' }])).toBe(
+      false
+    )
+    expect(areVariablesValid([{ variable: 'API_URL', value: 'https://example.com', scope: 'AGENTIC_WORKFLOW' }])).toBe(
+      true
+    )
   })
 })

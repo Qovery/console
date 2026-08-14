@@ -10,15 +10,13 @@ export function ServiceVariablesBuiltInTab() {
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const redeployServiceAction = useRedeployServiceAction(service?.serviceType)
   const scope = getServiceVariableScope(service?.serviceType)
+  const redeployDescription = redeployServiceAction
+    ? 'You need to redeploy your service for your changes to be applied.'
+    : undefined
+  const redeployLabel = redeployServiceAction ? 'Redeploy' : undefined
 
   const onCreateVariableToast = () =>
-    toast(
-      'success',
-      'Creation success',
-      'You need to redeploy your service for your changes to be applied.',
-      redeployServiceAction,
-      'Redeploy'
-    )
+    toast('success', 'Creation success', redeployDescription, redeployServiceAction, redeployLabel)
 
   if (!scope) {
     return null
@@ -36,13 +34,7 @@ export function ServiceVariablesBuiltInTab() {
       environmentId={environmentId}
       onCreateVariable={onCreateVariableToast}
       onEditVariable={() => {
-        toast(
-          'success',
-          'Edition success',
-          'You need to redeploy your service for your changes to be applied.',
-          redeployServiceAction,
-          'Redeploy'
-        )
+        toast('success', 'Edition success', redeployDescription, redeployServiceAction, redeployLabel)
       }}
     />
   )

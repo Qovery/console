@@ -39,37 +39,23 @@ function ExternalSecretsRouteContent({ environmentId, serviceId }: { environment
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const redeployServiceAction = useRedeployServiceAction(service?.serviceType)
   const scope = getServiceVariableScope(service?.serviceType)
+  const redeployDescription = redeployServiceAction
+    ? 'You need to redeploy your service for your changes to be applied.'
+    : undefined
+  const redeployLabel = redeployServiceAction ? 'Redeploy' : undefined
 
   if (!scope) {
     return null
   }
 
   const onCreateSecret = () =>
-    toast(
-      'success',
-      'Creation success',
-      'You need to redeploy your service for your changes to be applied.',
-      redeployServiceAction,
-      'Redeploy'
-    )
+    toast('success', 'Creation success', redeployDescription, redeployServiceAction, redeployLabel)
 
   const onEditSecret = () =>
-    toast(
-      'success',
-      'Edition success',
-      'You need to redeploy your service for your changes to be applied.',
-      redeployServiceAction,
-      'Redeploy'
-    )
+    toast('success', 'Edition success', redeployDescription, redeployServiceAction, redeployLabel)
 
   const onDeleteSecret = () =>
-    toast(
-      'success',
-      'Deletion success',
-      'You need to redeploy your service for your changes to be applied.',
-      redeployServiceAction,
-      'Redeploy'
-    )
+    toast('success', 'Deletion success', redeployDescription, redeployServiceAction, redeployLabel)
 
   return (
     <ExternalSecretsTab

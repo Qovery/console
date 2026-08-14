@@ -152,7 +152,9 @@ describe('AgenticWorkflowSummary', () => {
 
       useLayoutEffect(() => {
         variablesForm.reset({
-          variables: [{ variable: 'API_URL', value: 'https://api.example.com', scope: 'APPLICATION', isSecret: false }],
+          variables: [
+            { variable: 'API_URL', value: 'https://api.example.com', scope: 'AGENTIC_WORKFLOW', isSecret: false },
+          ],
           externalSecrets: [],
         })
       }, [variablesForm])
@@ -176,7 +178,7 @@ describe('AgenticWorkflowSummary', () => {
       serviceType: 'AGENTIC_WORKFLOW',
       variableImportRequest: {
         overwrite: true,
-        vars: [{ name: 'API_URL', value: 'https://api.example.com', scope: 'APPLICATION', is_secret: false }],
+        vars: [{ name: 'API_URL', value: 'https://api.example.com', scope: 'AGENTIC_WORKFLOW', is_secret: false }],
       },
     })
   })
@@ -187,7 +189,9 @@ describe('AgenticWorkflowSummary', () => {
 
       useLayoutEffect(() => {
         variablesForm.reset({
-          variables: [{ variable: 'API_URL', value: 'https://api.example.com', scope: 'APPLICATION', isSecret: false }],
+          variables: [
+            { variable: 'API_URL', value: 'https://api.example.com', scope: 'AGENTIC_WORKFLOW', isSecret: false },
+          ],
           externalSecrets: [],
         })
       }, [variablesForm])
