@@ -87,7 +87,7 @@ function RouteComponent() {
   }
 
   const apiTokenLink = {
-    title: 'API token',
+    title: 'API tokens',
     to: `${pathSettings}/api-token`,
     icon: 'rectangle-api' as const,
   }
