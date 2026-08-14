@@ -149,7 +149,7 @@ function AgenticWorkflowSection({
   )
 }
 
-function CodeEditorField({
+export function AgenticWorkflowCodeEditorField({
   error,
   height = '180px',
   hint,
@@ -394,7 +394,7 @@ export function AgenticWorkflowConfiguration() {
               error={showModelApiKeyError ? 'Please enter an API key.' : undefined}
               onChange={(event) => form.setValue('modelApiKey', event.currentTarget.value, { shouldDirty: true })}
             />
-            <CodeEditorField
+            <AgenticWorkflowCodeEditorField
               name="model-settings"
               label="Model settings JSON"
               language="json"
@@ -423,7 +423,7 @@ export function AgenticWorkflowConfiguration() {
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection section="connectors" iconName="plug" invalid={sectionInvalid.connectors}>
-            <CodeEditorField
+            <AgenticWorkflowCodeEditorField
               name="mcp"
               label="MCP JSON"
               language="json"
@@ -515,7 +515,7 @@ export function AgenticWorkflowConfiguration() {
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection section="docker-fragment" iconName="box" invalid={sectionInvalid['docker-fragment']}>
-            <CodeEditorField
+            <AgenticWorkflowCodeEditorField
               name="docker-fragment"
               label="Dockerfile fragment"
               language="dockerfile"
@@ -647,7 +647,7 @@ export function AgenticWorkflowConfiguration() {
                       form.setValue('outputs', outputs, { shouldDirty: true })
                     }}
                   />
-                  <CodeEditorField
+                  <AgenticWorkflowCodeEditorField
                     name={`output-headers-${index}`}
                     label="Request headers JSON"
                     language="json"

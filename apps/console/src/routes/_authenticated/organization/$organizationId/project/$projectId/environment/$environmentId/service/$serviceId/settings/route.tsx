@@ -1,7 +1,7 @@
 import { Navigate, Outlet, createFileRoute, useParams } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { ServiceSettingsLayout } from '@qovery/domains/service-settings/feature'
-import { isEditableService } from '@qovery/domains/services/data-access'
+import { hasServiceSettings } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { ErrorBoundary, LoaderSpinner } from '@qovery/shared/ui'
 
@@ -36,7 +36,7 @@ function RouteContent() {
     return null
   }
 
-  if (!isEditableService(service)) {
+  if (!hasServiceSettings(service)) {
     return (
       <Navigate
         to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"

@@ -2,7 +2,12 @@ import { useParams } from '@tanstack/react-router'
 import { type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
+import {
+  GitBranchSettings,
+  GitProviderSetting,
+  GitPublicRepositorySettings,
+  GitRepositorySetting,
+} from '@qovery/domains/organizations/feature'
 import { Button } from '@qovery/shared/ui'
 import { type AgenticWorkflowGitRepository } from '../agentic-workflow-context'
 
@@ -70,7 +75,9 @@ export function GitRepositoryCard({
       <FormProvider {...methods}>
         <div className="flex flex-col gap-3">
           <GitProviderSetting organizationId={organizationId} />
-          {isPublicRepository ? null : (
+          {isPublicRepository ? (
+            <GitPublicRepositorySettings hideRootPath />
+          ) : (
             <>
               {provider && (
                 <GitRepositorySetting organizationId={organizationId} gitProvider={provider} gitTokenId={gitTokenId} />
