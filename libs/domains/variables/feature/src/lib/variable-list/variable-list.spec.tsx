@@ -284,6 +284,13 @@ describe('VariableList', () => {
     const menuItem = await screen.findByRole('menuitem', { name: /create alias/i })
     expect(menuItem).toBeInTheDocument()
   })
+  it('should display service actions for agentic workflow variables', () => {
+    renderWithProviders(<VariableList {...variableListProps} scope="AGENTIC_WORKFLOW" />)
+    const row = screen.getByText('grafana_config').closest('tr')
+    expect(row).toBeTruthy()
+    expect(within(row as HTMLElement).getByRole('button', { name: 'Edit' })).toBeInTheDocument()
+    expect(within(row as HTMLElement).getByRole('button', { name: 'Other actions' })).toBeInTheDocument()
+  })
   it('should search variables by name', async () => {
     const { userEvent } = renderWithProviders(<VariableList {...variableListProps} />)
     const customSection = screen.getByRole('heading', { name: /custom variables/i }).closest('section')
