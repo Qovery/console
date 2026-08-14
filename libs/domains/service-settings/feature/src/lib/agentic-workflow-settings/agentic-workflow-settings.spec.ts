@@ -1,6 +1,7 @@
 import {
   agenticWorkflowJsonValidation,
   agenticWorkflowOutputsValidation,
+  formatAgenticWorkflowRepositories,
   getGitRepositoryName,
 } from './agentic-workflow-settings'
 
@@ -20,5 +21,28 @@ describe('Agentic Workflow settings validation', () => {
     ['qovery/console', 'qovery/console'],
   ])('normalizes the repository value displayed by Git settings', (url, expected) => {
     expect(getGitRepositoryName(url)).toBe(expected)
+  })
+
+  it('uses the full repository URL in the edit payload', () => {
+    expect(
+      formatAgenticWorkflowRepositories([
+        {
+          repository: 'qovery/console',
+          branch: 'staging',
+          gitTokenId: 'token-1',
+          gitRepository: {
+            id: 'repo-1',
+            name: 'qovery/console',
+            url: 'https://github.com/qovery/console.git',
+          },
+        },
+      ])
+    ).toEqual([
+      {
+        url: 'https://github.com/qovery/console.git',
+        branch: 'staging',
+        git_token_id: 'token-1',
+      },
+    ])
   })
 })

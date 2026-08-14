@@ -74,6 +74,14 @@ export function getGitRepositoryName(url: string) {
   }
 }
 
+export function formatAgenticWorkflowRepositories(repositories: AgenticWorkflowGitRepository[]) {
+  return repositories.map(({ repository, gitRepository, branch, gitTokenId }) => ({
+    url: gitRepository?.url ?? repository,
+    branch,
+    git_token_id: gitTokenId,
+  }))
+}
+
 export function agenticWorkflowJsonValidation(value: string) {
   try {
     JSON.parse(value)
@@ -156,11 +164,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       enabled: data.enabled,
       model,
       agent_prompt: data.agentPrompt,
-      project_repositories: data.repositories.map(({ repository, branch, gitTokenId }) => ({
-        url: repository,
-        branch,
-        git_token_id: gitTokenId,
-      })),
+      project_repositories: formatAgenticWorkflowRepositories(data.repositories),
       mcp: data.mcp,
       docker_fragment: data.dockerFragment,
       outputs: parseJson(data.outputs),
