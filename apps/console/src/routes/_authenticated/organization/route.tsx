@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useClusters } from '@qovery/domains/clusters/feature'
@@ -253,13 +254,15 @@ function createRoutePatternRegex(routeIdPattern: string): RegExp {
   return new RegExp('^' + patternPath.replace(/\$(\w+)/g, '[^/]+') + '(/.*)?$')
 }
 
-function getServiceTabs(service?: AnyService, cluster?: Cluster) {
+function getServiceTabs(service?: AnyService, cluster?: Cluster, isAgenticWorkflowEnabled = false) {
   if (isArgoCd(service)) {
     return SERVICE_TABS.filter((tab) => ARGOCD_SERVICE_TAB_IDS.includes(tab.id))
   }
 
   if (isAgenticWorkflow(service)) {
-    return SERVICE_TABS.filter((tab) => AGENTIC_WORKFLOW_SERVICE_TAB_IDS.includes(tab.id))
+    return SERVICE_TABS.filter(
+      (tab) => AGENTIC_WORKFLOW_SERVICE_TAB_IDS.includes(tab.id) && (isAgenticWorkflowEnabled || tab.id !== 'variables')
+    )
   }
 
   const isDatabase = service?.serviceType === 'DATABASE'
@@ -332,6 +335,7 @@ function useNavigationContext(): NavigationContext | null {
   const params = useParams({ strict: false })
   const pathname = location.pathname
   const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
+  const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
@@ -368,7 +372,7 @@ function useNavigationContext(): NavigationContext | null {
       if (hasAllParams) {
         const tabs =
           context.type === 'service'
-            ? getServiceTabs(service, currentCluster)
+            ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled)
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
               : context.tabs
