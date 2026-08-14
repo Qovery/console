@@ -208,6 +208,7 @@ export type BlueprintService = AnyService & {
 }
 export type ReadOnlyService = ArgoCd
 export type EditableService = Exclude<AnyService, ReadOnlyService | AgenticWorkflow>
+export type SettingsService = Exclude<AnyService, ReadOnlyService>
 export type EditableServiceType = Exclude<ServiceType, ArgoCdType>
 export type DeployableServiceType = Exclude<EditableServiceType, 'CRON_JOB' | 'LIFECYCLE_JOB' | AgenticWorkflowType>
 export type AdvancedSettingsServiceType = Exclude<ServiceType, DatabaseType | ArgoCdType | AgenticWorkflowType>
@@ -253,6 +254,10 @@ export function isAgenticWorkflow(service?: AnyService): service is AgenticWorkf
 
 export function isEditableService(service: AnyService): service is EditableService {
   return !isArgoCd(service) && !isAgenticWorkflow(service)
+}
+
+export function hasServiceSettings(service: AnyService): service is SettingsService {
+  return !isArgoCd(service)
 }
 
 export function isEditableServiceType(serviceType?: ServiceType): serviceType is EditableServiceType {
@@ -848,6 +853,9 @@ type EditServiceRequest = {
     | ({
         serviceType: TerraformType
       } & TerraformRequest)
+    | ({
+        serviceType: AgenticWorkflowType
+      } & AgenticWorkflowRequest)
 }
 
 type DeployRequest =
@@ -1151,6 +1159,10 @@ export const mutations = {
       }))
       .with({ serviceType: 'TERRAFORM' }, ({ serviceType, ...payload }) => ({
         mutation: terraformMainCallsApi.editTerraform.bind(terraformMainCallsApi, serviceId, payload),
+        serviceType,
+      }))
+      .with({ serviceType: 'AGENTIC_WORKFLOW' }, ({ serviceType, ...payload }) => ({
+        mutation: agenticWorkflowsApi.editAgenticWorkflow.bind(agenticWorkflowsApi, serviceId, payload),
         serviceType,
       }))
       .exhaustive()

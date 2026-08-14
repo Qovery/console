@@ -32,6 +32,12 @@ export function useEditService({
           meta: {
             notifyOnSuccess(_: unknown, variables: unknown) {
               const { serviceId, payload } = variables as Parameters<typeof mutations.editService>[0]
+              if (payload.serviceType === 'AGENTIC_WORKFLOW') {
+                return {
+                  title: 'Service updated',
+                  description: 'Your agentic workflow settings were saved',
+                }
+              }
               return {
                 title: 'Service updated',
                 description: 'You must update to apply the settings',

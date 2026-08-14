@@ -2,7 +2,7 @@ import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-t
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
-import { isEditableService } from '@qovery/domains/services/data-access'
+import { isAgenticWorkflow, isEditableService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { Sidebar } from '@qovery/shared/ui'
@@ -116,60 +116,67 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
     'key'
   )
 
-  const linksSettings: SidebarSettingsItem[] = isEditableService(service)
-    ? match(service)
-        .with({ serviceType: 'APPLICATION' }, () => [
-          generalLink,
-          resourcesLink,
-          storageLink,
-          domainLink,
-          portLink,
-          healthchecksLink,
-          deploymentRestrictionsLink,
-          advancedSettingsLink,
-          dangerZoneLink,
-        ])
-        .with({ serviceType: 'CONTAINER' }, () => [
-          generalLink,
-          resourcesLink,
-          storageLink,
-          domainLink,
-          portLink,
-          healthchecksLink,
-          advancedSettingsLink,
-          dangerZoneLink,
-        ])
-        .with({ serviceType: 'HELM' }, (helm) => [
-          generalLink,
-          valuesOverrideLink,
-          networkingLink,
-          domainLink,
-          ...(isHelmGitSource(helm.source) ? [deploymentRestrictionsLink] : []),
-          advancedSettingsLink,
-          dangerZoneLink,
-        ])
-        .with({ serviceType: 'TERRAFORM' }, () => [
-          generalLink,
-          terraformConfigurationLink,
-          terraformVariablesLink,
-          terraformArgumentsLink,
-          resourcesLink,
-          deploymentRestrictionsLink,
-          advancedSettingsLink,
-          dangerZoneLink,
-        ])
-        .with({ serviceType: 'JOB' }, (job) => [
-          generalLink,
-          ...(job.job_type === 'LIFECYCLE' && isJobGitSource(job.source) ? [dockerfileLink] : []),
-          configureJobLink,
-          resourcesLink,
-          deploymentRestrictionsLink,
-          advancedSettingsLink,
-          dangerZoneLink,
-        ])
-        .with({ serviceType: 'DATABASE' }, () => [generalLink, resourcesLink, dangerZoneLink])
-        .exhaustive()
-    : []
+  const aiConfigurationLink = linkItem('AI configuration', toSettingsPath(pathSettings, '/ai-configuration'), 'brain')
+  const connectionsLink = linkItem('Connections', toSettingsPath(pathSettings, '/connections'), 'plug')
+  const outputsLink = linkItem('Outputs', toSettingsPath(pathSettings, '/outputs'), 'paper-plane')
+  const governanceLink = linkItem('Governance', toSettingsPath(pathSettings, '/governance'), 'shield-halved')
+
+  const linksSettings: SidebarSettingsItem[] = isAgenticWorkflow(service)
+    ? [generalLink, aiConfigurationLink, connectionsLink, outputsLink, governanceLink, dangerZoneLink]
+    : isEditableService(service)
+      ? match(service)
+          .with({ serviceType: 'APPLICATION' }, () => [
+            generalLink,
+            resourcesLink,
+            storageLink,
+            domainLink,
+            portLink,
+            healthchecksLink,
+            deploymentRestrictionsLink,
+            advancedSettingsLink,
+            dangerZoneLink,
+          ])
+          .with({ serviceType: 'CONTAINER' }, () => [
+            generalLink,
+            resourcesLink,
+            storageLink,
+            domainLink,
+            portLink,
+            healthchecksLink,
+            advancedSettingsLink,
+            dangerZoneLink,
+          ])
+          .with({ serviceType: 'HELM' }, (helm) => [
+            generalLink,
+            valuesOverrideLink,
+            networkingLink,
+            domainLink,
+            ...(isHelmGitSource(helm.source) ? [deploymentRestrictionsLink] : []),
+            advancedSettingsLink,
+            dangerZoneLink,
+          ])
+          .with({ serviceType: 'TERRAFORM' }, () => [
+            generalLink,
+            terraformConfigurationLink,
+            terraformVariablesLink,
+            terraformArgumentsLink,
+            resourcesLink,
+            deploymentRestrictionsLink,
+            advancedSettingsLink,
+            dangerZoneLink,
+          ])
+          .with({ serviceType: 'JOB' }, (job) => [
+            generalLink,
+            ...(job.job_type === 'LIFECYCLE' && isJobGitSource(job.source) ? [dockerfileLink] : []),
+            configureJobLink,
+            resourcesLink,
+            deploymentRestrictionsLink,
+            advancedSettingsLink,
+            dangerZoneLink,
+          ])
+          .with({ serviceType: 'DATABASE' }, () => [generalLink, resourcesLink, dangerZoneLink])
+          .exhaustive()
+      : []
 
   return (
     <div className="flex min-h-0 flex-1">
