@@ -24,13 +24,16 @@ function parseHeaders(headersJson: string): AgenticWorkflowHeader[] {
     .map(([name, value]) => ({ name, value }))
 }
 
-export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequest {
+export type AgenticWorkflowRequestWithMcpServers = AgenticWorkflowRequest & { mcp_server_ids: string[] }
+
+export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequestWithMcpServers {
   return {
     name: values.name,
     description: values.description,
     docker_fragment: values.dockerFragment,
     enabled: values.workflowEnabled,
     mcp: values.mcpJson.trim() || undefined,
+    mcp_server_ids: values.mcpServerIds,
     outputs: values.outputs.map((output, index) => ({
       name: `Output ${index + 1}`,
       url: output.url,

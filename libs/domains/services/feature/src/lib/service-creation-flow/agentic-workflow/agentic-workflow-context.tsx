@@ -94,6 +94,7 @@ export interface AgenticWorkflowFormData {
   workflowEnabled: boolean
   aiModel: AgenticWorkflowModelType
   webhookEnabled: boolean
+  mcpServerIds: string[]
   mcpJson: string
   gitRepositories: AgenticWorkflowGitRepository[]
   modelApiKey: string
@@ -148,6 +149,7 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
       workflowEnabled: true,
       aiModel: AgenticWorkflowModelType.CLAUDE,
       webhookEnabled: true,
+      mcpServerIds: [],
       mcpJson: MCP_CONNECTOR_JSON_EXAMPLE,
       gitRepositories: [],
       modelApiKey: '',

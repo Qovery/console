@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type AgenticWorkflowOutput, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
-import { useGitTokens } from '@qovery/domains/organizations/feature'
+import { useGitTokens, useMcpServers } from '@qovery/domains/organizations/feature'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   AgenticWorkflowCodeEditorField,
@@ -12,7 +12,7 @@ import {
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Icon, InputText, InputTextArea, InputToggle, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSelect, InputText, InputTextArea, InputToggle, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'outputs' | 'governance'
@@ -29,6 +29,7 @@ interface FormValues {
   modelSettings: string
   agentPrompt: string
   repositories: AgenticWorkflowGitRepository[]
+  mcpServerIds: string[]
   mcp: string
   dockerFragment: string
   outputs: string
@@ -114,6 +115,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   const { data: gitTokens = [] } = useGitTokens({ organizationId, enabled: page === 'connections' })
+  const { data: mcpServers = [], isLoading: areMcpServersLoading } = useMcpServers({
+    organizationId,
+    enabled: page === 'connections',
+  })
   const { mutate: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
@@ -146,6 +151,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
             })
           : [],
       mcp: service && isAgenticWorkflow(service) ? service.mcp : '',
+      mcpServerIds:
+        service && isAgenticWorkflow(service)
+          ? (service as typeof service & { mcp_server_ids?: string[] }).mcp_server_ids ?? []
+          : [],
       dockerFragment: service && isAgenticWorkflow(service) ? service.docker_fragment : '',
       outputs: formatJson(service && isAgenticWorkflow(service) ? service.outputs : []),
       hostAllowlist: service && isAgenticWorkflow(service) ? service.governance.host_allowlist.join(', ') : '',
@@ -169,7 +178,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       settings: data.modelSettings,
       ...(data.modelApiKey.trim() ? { api_key: data.modelApiKey.trim() } : {}),
     }
-    const payload: AgenticWorkflowRequest & { serviceType: 'AGENTIC_WORKFLOW' } = {
+    const payload: AgenticWorkflowRequest & { serviceType: 'AGENTIC_WORKFLOW'; mcp_server_ids: string[] } = {
       serviceType: 'AGENTIC_WORKFLOW',
       name: data.name,
       description: data.description,
@@ -178,6 +187,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       agent_prompt: data.agentPrompt,
       project_repositories: formatAgenticWorkflowRepositories(data.repositories),
       mcp: data.mcp,
+      mcp_server_ids: data.mcpServerIds,
       docker_fragment: data.dockerFragment,
       outputs: parseJson(data.outputs),
       governance: {
@@ -331,6 +341,35 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
                 Select a Git account, repository, and branch for each repository.
               </p>
             )}
+            <InputSelect
+              label="Organization MCP connectors"
+              value={values.mcpServerIds}
+              options={mcpServers.map(({ id, name, url }) => ({ value: id, label: name, description: url }))}
+              isMulti
+              isSearchable
+              isLoading={areMcpServersLoading}
+              placeholder="Select MCP connectors"
+              hint={
+                mcpServers.length === 0 && !areMcpServersLoading ? (
+                  <span>
+                    No connector is configured. Add one in{' '}
+                    <a
+                      className="font-medium text-brand hover:underline"
+                      href={`/organization/${organizationId}/settings/agents`}
+                    >
+                      AI settings → Agents
+                    </a>
+                    .
+                  </span>
+                ) : (
+                  'Select the organization connectors this workflow can use.'
+                )
+              }
+              onChange={(value) => form.setValue('mcpServerIds', value as string[], { shouldDirty: true })}
+            />
+            <Heading className="pt-4" weight="medium">
+              Advanced MCP configuration
+            </Heading>
             {jsonField('mcp', 'MCP JSON')}
             <AgenticWorkflowCodeEditorField
               name="docker-fragment"

@@ -11,6 +11,7 @@ import {
 } from './agentic-workflow-settings'
 
 const useGitTokensSpy = jest.spyOn(organizationsDomain, 'useGitTokens') as jest.Mock
+const useMcpServersSpy = jest.spyOn(organizationsDomain, 'useMcpServers') as jest.Mock
 const useEditServiceSpy = jest.spyOn(servicesDomain, 'useEditService') as jest.Mock
 const useServiceSpy = jest.spyOn(servicesDomain, 'useService') as jest.Mock
 const editService = jest.fn()
@@ -68,6 +69,7 @@ const service = {
     },
   ],
   mcp: '{"mcpServers":{}}',
+  mcp_server_ids: ['mcp-1'],
   docker_fragment: 'RUN apt-get update',
   outputs: [{ name: 'Audit log', url: null }],
   governance: { host_allowlist: ['api.github.com', 'status.example.com'] },
@@ -131,6 +133,10 @@ describe('AgenticWorkflowSettings views', () => {
     editService.mockReset()
     useServiceSpy.mockReturnValue({ data: service })
     useGitTokensSpy.mockReturnValue({ data: [{ id: 'token-1', type: 'GITHUB' }] })
+    useMcpServersSpy.mockReturnValue({
+      data: [{ id: 'mcp-1', name: 'Documentation', url: 'https://docs.example.com' }],
+      isLoading: false,
+    })
     useEditServiceSpy.mockReturnValue({ mutate: editService, isLoading: false })
   })
 
@@ -162,6 +168,7 @@ describe('AgenticWorkflowSettings views', () => {
           description: 'Updated description',
           model: { type: AgenticWorkflowModelType.BEDROCK, settings: '{"temperature":0.2}' },
           outputs: [{ name: 'Audit log', url: null }],
+          mcp_server_ids: ['mcp-1'],
         }),
       })
     )
@@ -184,7 +191,19 @@ describe('AgenticWorkflowSettings views', () => {
       'qovery/console:staging:https://github.com/qovery/console.git'
     )
     expect(screen.getByRole('textbox', { name: 'MCP JSON' })).toHaveValue('{"mcpServers":{}}')
+    expect(screen.getByText('Documentation')).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Dockerfile fragment' })).toHaveValue('RUN apt-get update')
+  })
+
+  it('links to organization Agent settings when no MCP connector exists', () => {
+    useMcpServersSpy.mockReturnValue({ data: [], isLoading: false })
+
+    renderWithProviders(<AgenticWorkflowSettings page="connections" />)
+
+    expect(screen.getByRole('link', { name: 'AI settings → Agents' })).toHaveAttribute(
+      'href',
+      '/organization/organization-1/settings/agents'
+    )
   })
 
   it('renders Outputs with the complete API value', () => {
