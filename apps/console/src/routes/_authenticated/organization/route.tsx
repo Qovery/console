@@ -12,7 +12,6 @@ import { useRecentServices, useServiceSummary } from '@qovery/domains/services/f
 import { AssistantPanelOutlet, AssistantProvider } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { DevopsCopilotTrigger } from '@qovery/shared/devops-copilot/feature'
-import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { ErrorBoundary, Icon, Link, LoaderSpinner, Navbar } from '@qovery/shared/ui'
 import { queries } from '@qovery/state/util-queries'
 import Header from '../../../app/components/header/header'
@@ -574,7 +573,7 @@ function OrganizationRoute() {
         name: service.name,
         description: 'description' in service ? service.description || '' : '',
         icon_uri: service.icon_uri,
-        service_type: isAgenticWorkflow(service) ? ServiceTypeEnum.AGENTIC_WORKFLOW : service.service_type,
+        service_type: service.service_type,
         project_id: project.id,
         project_name: project.name,
         environment_id: environment.id,
