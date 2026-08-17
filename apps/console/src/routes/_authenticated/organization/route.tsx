@@ -574,7 +574,7 @@ function OrganizationRoute() {
         name: service.name,
         description: 'description' in service ? service.description || '' : '',
         icon_uri: service.icon_uri,
-        service_type: isAgenticWorkflow(service) ? ServiceTypeEnum.ARGOCD_APP : service.service_type,
+        service_type: isAgenticWorkflow(service) ? ServiceTypeEnum.AGENTIC_WORKFLOW : service.service_type,
         project_id: project.id,
         project_name: project.name,
         environment_id: environment.id,

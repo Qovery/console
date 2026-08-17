@@ -107,9 +107,21 @@ export function Spotlight({ organizationId, open, onOpenChange }: SpotlightProps
   const inputRef = useRef<HTMLInputElement | null>(null)
   const listRef = useRef<HTMLDivElement | null>(null)
 
-  const recentServices = useMemo(() => getRecentServices(), [getRecentServices])
+  const recentServices = useMemo(
+    () =>
+      getRecentServices().map(
+        (recentService) => services.find((service) => service.id === recentService.id) ?? recentService
+      ),
+    [getRecentServices, services]
+  )
   const recentProjects = useMemo(() => getRecentProjects(), [getRecentProjects])
-  const favoriteServices = useMemo(() => getFavoriteServices(), [getFavoriteServices])
+  const favoriteServices = useMemo(
+    () =>
+      getFavoriteServices().map(
+        (favoriteService) => services.find((service) => service.id === favoriteService.id) ?? favoriteService
+      ),
+    [getFavoriteServices, services]
+  )
 
   const iconClassName = 'text-brand text-sm text-center w-6'
 
