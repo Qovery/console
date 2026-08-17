@@ -147,7 +147,10 @@ export function RowEvent(props: RowEventProps) {
     return <span className="truncate">{target_name}</span>
   }
 
-  const isEventTypeFailed = event.event_type?.toLowerCase().includes('fail')
+  // REJECTED carries no `fail` in its name but is one: a policy token whose policy refused the
+  // request. It gets the same negative icon, label colour and diff theme as STOP_FAILED and friends.
+  const isEventTypeFailed =
+    event.event_type?.toLowerCase().includes('fail') || event.event_type === OrganizationEventType.REJECTED
 
   const eventIcon = match(event.event_type)
     .with(

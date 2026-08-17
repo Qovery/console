@@ -1,4 +1,8 @@
-import { type OrganizationEventResponse, OrganizationEventTargetType } from 'qovery-typescript-axios'
+import {
+  type OrganizationEventResponse,
+  OrganizationEventTargetType,
+  OrganizationEventType,
+} from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { dateFullFormat } from '@qovery/shared/util-dates'
@@ -146,5 +150,25 @@ describe('RowEvent', () => {
     )
 
     expect(screen.getByText('target-name')).toHaveAttribute('href', href)
+  })
+
+  it.each([
+    [OrganizationEventType.STOP_FAILED, 'Stop Failed'],
+    [OrganizationEventType.DEPLOY_FAILED, 'Deploy Failed'],
+    // Rejected has no `fail` in its name but is a failure: a policy token refused by its policy.
+    [OrganizationEventType.REJECTED, 'Rejected'],
+  ])('should style %s as a failure', (eventType, label) => {
+    renderWithProviders(<RowEvent {...props} event={{ ...props.event, event_type: eventType }} />)
+
+    expect(screen.getByText(label)).toHaveClass('text-negative')
+  })
+
+  it.each([
+    [OrganizationEventType.DEPLOYED, 'Deployed'],
+    [OrganizationEventType.STOPPED, 'Stopped'],
+  ])('should not style %s as a failure', (eventType, label) => {
+    renderWithProviders(<RowEvent {...props} event={{ ...props.event, event_type: eventType }} />)
+
+    expect(screen.getByText(label)).toHaveClass('text-brand')
   })
 })
