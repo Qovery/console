@@ -37,3 +37,21 @@ export function useAttachClusterOperator() {
     },
   })
 }
+
+export function useUpdateClusterOperator() {
+  const queryClient = useQueryClient()
+
+  return useMutation(clusterOperatorMutations.update, {
+    onSuccess(_, { organizationId, clusterId }) {
+      queryClient.invalidateQueries({
+        queryKey: queries.clusterOperator.status({ organizationId, clusterId }).queryKey,
+      })
+    },
+    meta: {
+      notifyOnSuccess: {
+        title: 'Operator update started',
+      },
+      notifyOnError: true,
+    },
+  })
+}

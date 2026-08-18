@@ -30,4 +30,21 @@ export const clusterOperatorMutations = {
   async attach({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
     await clusterOperatorApi.attachClusterOperator(organizationId, clusterId)
   },
+  async update({
+    organizationId,
+    clusterId,
+    chartVersion,
+    imageVersion,
+  }: {
+    organizationId: string
+    clusterId: string
+    chartVersion: string
+    imageVersion?: string | null
+  }) {
+    const response = await clusterOperatorApi.updateClusterOperator(organizationId, clusterId, {
+      chart_version: chartVersion,
+      image_version: imageVersion,
+    })
+    return response.data
+  },
 }
