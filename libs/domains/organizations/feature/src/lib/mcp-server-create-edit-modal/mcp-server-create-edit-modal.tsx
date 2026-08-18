@@ -215,7 +215,7 @@ export function McpServerCreateEditModal({ organizationId, onClose, mcpServer }:
                       />
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="plain"
                         color="neutral"
                         size="md"
                         iconOnly
