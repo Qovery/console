@@ -2,7 +2,7 @@ import { type ClusterOperatorFleetStatus } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { Badge, Button, Callout, Heading, Icon, LoaderSpinner, StatusChip } from '@qovery/shared/ui'
 import { timeAgo } from '@qovery/shared/util-dates'
-import { useClusterOperatorStatus } from './hooks/use-cluster-operator'
+import { useClusterOperatorStatus, useUpdateClusterOperator } from './hooks/use-cluster-operator'
 
 interface ClusterOperatorStatusProps {
   clusterId: string
@@ -73,6 +73,7 @@ function Version({ installed, target }: { installed?: string | null; target?: st
 
 export function ClusterOperatorStatus({ clusterId, organizationId }: ClusterOperatorStatusProps) {
   const { data, isLoading, isError, refetch } = useClusterOperatorStatus({ organizationId, clusterId })
+  const { mutate: updateOperator, isLoading: isUpdating } = useUpdateClusterOperator()
 
   if (isLoading) {
     return (
@@ -108,10 +109,31 @@ export function ClusterOperatorStatus({ clusterId, organizationId }: ClusterOper
           <Heading level={2}>Qovery Operator</Heading>
           <p className="text-sm text-neutral-subtle">{display.description}</p>
         </div>
-        <Badge size="sm" variant="surface" color={display.color} className="shrink-0 gap-1.5">
-          <StatusChip status={display.chipStatus} disabledTooltip />
-          {display.label}
-        </Badge>
+        <div className="flex shrink-0 items-center gap-2">
+          <Badge size="sm" variant="surface" color={display.color} className="gap-1.5">
+            <StatusChip status={display.chipStatus} disabledTooltip />
+            {display.label}
+          </Badge>
+          {data?.operator_connected && (
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!data.desired_chart_version}
+              loading={isUpdating}
+              onClick={() => {
+                if (!data.desired_chart_version) return
+                updateOperator({
+                  organizationId,
+                  clusterId,
+                  chartVersion: data.desired_chart_version,
+                  imageVersion: data.desired_image_version,
+                })
+              }}
+            >
+              Update Operator
+            </Button>
+          )}
+        </div>
       </div>
 
       <dl className="grid gap-4 border-t border-neutral pt-4 text-sm sm:grid-cols-3">
