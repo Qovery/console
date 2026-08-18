@@ -1,9 +1,20 @@
 import { useParams } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import { type OrganizationApiToken, type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import { BlockContent, Button, Heading, Icon, Section, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
+import {
+  BlockContent,
+  Button,
+  ExternalLink,
+  Heading,
+  Icon,
+  Section,
+  Skeleton,
+  Tooltip,
+  Truncate,
+} from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -176,6 +187,9 @@ export function SettingsApiToken() {
               size="md"
               aria-label="Add new policy API token"
               onClick={() => {
+                posthog.capture('policy-api-token-add-clicked', {
+                  organization_id: organizationId,
+                })
                 openModal({
                   content: <PolicyApiTokenCrudModal organizationId={organizationId} onClose={closeModal} />,
                 })
@@ -188,7 +202,10 @@ export function SettingsApiToken() {
           <p className="mt-1 text-sm text-neutral-subtle">
             Policy API tokens are for autonomous agents. They carry no role: the Open Policy Agent (rego) policy
             attached to each one is evaluated on every request and is the only thing constraining it. It is useful when
-            you want fine grained policy to limit what your token can do and change.
+            you want fine grained policy to limit what your token can do and change.{' '}
+            <ExternalLink href="https://www.qovery.com/docs/configuration/organization/api-policy-token">
+              Learn more
+            </ExternalLink>
           </p>
 
           <BlockContent className="mt-4" title="Policy Token List" classNameContent="p-0">
