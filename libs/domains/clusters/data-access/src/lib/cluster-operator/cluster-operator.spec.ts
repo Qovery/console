@@ -55,4 +55,28 @@ describe('clusterOperator', () => {
 
     expect(attach).toHaveBeenCalledWith('org-123', 'cluster-123')
   })
+
+  it('updates the operator through the generated client', async () => {
+    const updateResponse = {
+      execution_id: 'execution-123',
+      image_version: 'v1.203.0',
+      chart_version: '0.2.1',
+    }
+    const update = jest
+      .spyOn(ClusterOperatorApi.prototype, 'updateClusterOperator')
+      .mockResolvedValue({ data: updateResponse } as never)
+
+    await expect(
+      clusterOperatorMutations.update({
+        organizationId: 'org-123',
+        clusterId: 'cluster-123',
+        imageVersion: 'v1.203.0',
+        chartVersion: '0.2.1',
+      })
+    ).resolves.toEqual(updateResponse)
+    expect(update).toHaveBeenCalledWith('org-123', 'cluster-123', {
+      image_version: 'v1.203.0',
+      chart_version: '0.2.1',
+    })
+  })
 })
