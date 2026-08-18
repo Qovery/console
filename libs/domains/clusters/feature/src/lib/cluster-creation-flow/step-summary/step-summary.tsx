@@ -1,5 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import {
+  type Cluster,
   type ClusterCloudProviderInfoRequest,
   type ClusterFeatureNatGatewayParameters,
   type ClusterFeatureNatGatewayTypeGcp,
@@ -8,7 +9,7 @@ import {
   type ClusterRequestFeaturesInner,
   type KubernetesEnum,
 } from 'qovery-typescript-axios'
-import { useCallback, useEffect } from 'react'
+import { useCallback, useEffect, useRef } from 'react'
 import { match } from 'ts-pattern'
 import { SCW_CONTROL_PLANE_FEATURE_ID, useCloudProviderInstanceTypes } from '@qovery/domains/cloud-providers/feature'
 import { FunnelFlowBody } from '@qovery/shared/ui'
@@ -16,6 +17,8 @@ import { useCreateCluster } from '../../hooks/use-create-cluster/use-create-clus
 import { useDeployCluster } from '../../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useEditCloudProviderInfo } from '../../hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info'
 import { useEditClusterKubeconfig } from '../../hooks/use-edit-cluster-kubeconfig/use-edit-cluster-kubeconfig'
+import { useAttachClusterOperator } from '../../platform-configuration/hooks/use-cluster-operator'
+import { useUpdatePlatformBinding } from '../../platform-configuration/hooks/use-update-platform-binding'
 import { steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 import { getValueByKey } from './get-value-by-key'
 import { StepSummaryPresentation } from './step-summary-presentation'
@@ -45,12 +48,25 @@ const buildGcpNatGatewayFeature = (
 
 export function StepSummary({ organizationId }: StepSummaryProps) {
   const navigate = useNavigate()
-  const { generalData, kubeconfigData, resourcesData, featuresData, addonsData, setCurrentStep, creationFlowUrl } =
-    useClusterContainerCreateContext()
+  const {
+    generalData,
+    kubeconfigData,
+    resourcesData,
+    featuresData,
+    addonsData,
+    platformConfigurationData,
+    isEngineV2SelfManaged,
+    setCurrentStep,
+    creationFlowUrl,
+  } = useClusterContainerCreateContext()
   const { mutateAsync: createCluster, isLoading: isCreateClusterLoading } = useCreateCluster()
   const { mutateAsync: editCloudProviderInfo } = useEditCloudProviderInfo({ silently: true })
   const { mutateAsync: editClusterKubeconfig } = useEditClusterKubeconfig()
   const { mutateAsync: deployCluster, isLoading: isDeployClusterLoading } = useDeployCluster()
+  const { mutateAsync: updatePlatformBinding, isLoading: isPlatformBindingLoading } = useUpdatePlatformBinding()
+  const { mutateAsync: attachClusterOperator, isLoading: isOperatorAttachLoading } = useAttachClusterOperator()
+  // Survives failed submit attempts so retries reuse the already-created cluster.
+  const createdClusterRef = useRef<Cluster>()
 
   const { data: cloudProviderInstanceTypes } = useCloudProviderInstanceTypes(
     match(generalData)
@@ -81,6 +97,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
     () => navigate({ to: `${creationFlowUrl}/kubeconfig` }),
     [navigate, creationFlowUrl]
   )
+  const goToPlatform = useCallback(() => navigate({ to: `${creationFlowUrl}/platform` }), [navigate, creationFlowUrl])
   const goToFeatures = useCallback(() => navigate({ to: `${creationFlowUrl}/features` }), [navigate, creationFlowUrl])
   const goToAddons = useCallback(() => navigate({ to: `${creationFlowUrl}/addons` }), [navigate, creationFlowUrl])
   const goToGeneral = () => navigate({ to: `${creationFlowUrl}/general` })
@@ -89,7 +106,11 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
 
   const onBack = () => {
     if (generalData?.installation_type === 'SELF_MANAGED') {
-      goToKubeconfig()
+      if (isEngineV2SelfManaged) {
+        goToPlatform()
+      } else {
+        goToKubeconfig()
+      }
       return
     }
     if (generalData?.installation_type === 'PARTIALLY_MANAGED') {
@@ -118,11 +139,13 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   const onSubmit = async (withDeploy: boolean) => {
     if (!generalData?.name) throw new Error('Invalid generalData')
 
-    const cloudProviderCredentials: ClusterCloudProviderInfoRequest = {
-      cloud_provider: generalData.cloud_provider,
-      credentials: { id: generalData.credentials, name: generalData.credentials_name },
-      region: generalData.region,
-    }
+    const cloudProviderCredentials: ClusterCloudProviderInfoRequest | undefined = generalData.credentials
+      ? {
+          cloud_provider: generalData.cloud_provider,
+          credentials: { id: generalData.credentials, name: generalData.credentials_name },
+          region: generalData.region,
+        }
+      : undefined
 
     const addonsPayload = {
       keda: {
@@ -143,28 +166,49 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           }
         : {}
 
-    if (generalData.installation_type === 'SELF_MANAGED' && kubeconfigData) {
+    if (generalData.installation_type === 'SELF_MANAGED' && (isEngineV2SelfManaged || kubeconfigData)) {
+      if (isEngineV2SelfManaged && !platformConfigurationData) {
+        // The platform step was skipped (deep link / legacy kubeconfig route): send the
+        // user there instead of failing silently.
+        navigate({ to: `${creationFlowUrl}/platform` })
+        return
+      }
       try {
-        const cluster = await createCluster({
-          organizationId,
-          clusterRequest: {
-            name: generalData.name,
-            description: generalData.description,
-            region: generalData.region,
-            cloud_provider: generalData.cloud_provider,
-            kubernetes: 'SELF_MANAGED',
-            production: generalData.production,
-            features: [],
-            cloud_provider_credentials: cloudProviderCredentials,
-            ...addonsPayload,
-            ...awsLabelsGroups,
-          },
-        })
-        await editCloudProviderInfo({
-          organizationId,
-          clusterId: cluster.id,
-          cloudProviderInfoRequest: cloudProviderCredentials,
-        })
+        // Keep the created cluster across attempts: if a follow-up call fails
+        // (binding, operator attach), retrying must not create a second cluster.
+        const cluster =
+          createdClusterRef.current ??
+          (await createCluster({
+            organizationId,
+            clusterRequest: {
+              name: generalData.name,
+              description: generalData.description,
+              region: generalData.region,
+              cloud_provider: generalData.cloud_provider,
+              kubernetes: 'SELF_MANAGED',
+              production: generalData.production,
+              features: [],
+              cloud_provider_credentials: cloudProviderCredentials,
+              ...addonsPayload,
+              ...awsLabelsGroups,
+            },
+          }))
+        createdClusterRef.current = cluster
+        if (cloudProviderCredentials) {
+          await editCloudProviderInfo({
+            organizationId,
+            clusterId: cluster.id,
+            cloudProviderInfoRequest: cloudProviderCredentials,
+          })
+        }
+        if (isEngineV2SelfManaged && platformConfigurationData) {
+          await updatePlatformBinding({
+            organizationId,
+            clusterId: cluster.id,
+            request: platformConfigurationData,
+          })
+          await attachClusterOperator({ organizationId, clusterId: cluster.id })
+        }
         navigate({
           to: '/organization/$organizationId/cluster/$clusterId/overview',
           params: { organizationId, clusterId: cluster.id },
@@ -421,6 +465,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       })
 
     try {
+      if (!cloudProviderCredentials) throw new Error('Cloud provider credentials are required for a managed cluster')
       const cluster = await createCluster({ organizationId, clusterRequest })
       await editCloudProviderInfo({
         organizationId,
@@ -437,16 +482,18 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
   }
 
   useEffect(() => {
-    const stepIndex = steps(generalData).findIndex((step) => step.key === 'summary') + 1
+    const stepIndex = steps(generalData, isEngineV2SelfManaged).findIndex((step) => step.key === 'summary') + 1
     setCurrentStep(stepIndex)
-  }, [setCurrentStep, generalData])
+  }, [setCurrentStep, generalData, isEngineV2SelfManaged])
 
   return (
     <FunnelFlowBody>
       {generalData && resourcesData && (
         <StepSummaryPresentation
           isLoadingCreate={isCreateClusterLoading}
-          isLoadingCreateAndDeploy={isCreateClusterLoading || isDeployClusterLoading}
+          isLoadingCreateAndDeploy={
+            isCreateClusterLoading || isDeployClusterLoading || isPlatformBindingLoading || isOperatorAttachLoading
+          }
           onSubmit={onSubmit}
           onPrevious={onBack}
           generalData={generalData}
@@ -454,12 +501,15 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           resourcesData={resourcesData}
           featuresData={featuresData}
           addonsData={addonsData}
+          platformConfigurationData={platformConfigurationData}
+          isEngineV2SelfManaged={isEngineV2SelfManaged}
           detailInstanceType={detailInstanceType}
           goToResources={goToResources}
           goToGeneral={goToGeneral}
           goToFeatures={goToFeatures}
           goToAddons={goToAddons}
           goToKubeconfig={goToKubeconfig}
+          goToPlatform={goToPlatform}
           goToEksConfig={goToEksConfig}
         />
       )}

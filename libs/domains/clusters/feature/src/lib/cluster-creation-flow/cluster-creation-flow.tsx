@@ -1,5 +1,10 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { CloudProviderEnum, type SecretManagerAccess } from 'qovery-typescript-axios'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
+import {
+  CloudProviderEnum,
+  type ClusterPlatformBindingRequest,
+  type SecretManagerAccess,
+} from 'qovery-typescript-axios'
 import {
   type Dispatch,
   type PropsWithChildren,
@@ -18,6 +23,7 @@ import {
 } from '@qovery/shared/interfaces'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { PLATFORM_CONFIGURATION_FEATURE_FLAG } from '../platform-configuration/platform-configuration-feature-flag'
 
 export interface ClusterContainerCreateContextInterface {
   currentStep: number
@@ -32,6 +38,9 @@ export interface ClusterContainerCreateContextInterface {
   setKubeconfigData: Dispatch<SetStateAction<ClusterKubeconfigData | undefined>>
   addonsData: ClusterAddonsData
   setAddonsData: Dispatch<SetStateAction<ClusterAddonsData>>
+  platformConfigurationData?: ClusterPlatformBindingRequest
+  setPlatformConfigurationData?: Dispatch<SetStateAction<ClusterPlatformBindingRequest | undefined>>
+  isEngineV2SelfManaged?: boolean
   creationFlowUrl: string
 }
 
@@ -54,7 +63,7 @@ export const useClusterContainerCreateContext = () => {
 
 export const useMaybeClusterContainerCreateContext = () => useContext(ClusterContainerCreateContext)
 
-export const steps = (clusterGeneralData?: ClusterGeneralData) => {
+export const steps = (clusterGeneralData?: ClusterGeneralData, isEngineV2SelfManaged = false) => {
   return match(clusterGeneralData)
     .with({ installation_type: 'PARTIALLY_MANAGED' }, () => [
       { title: 'Create new cluster', key: 'general' },
@@ -62,11 +71,19 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
       { title: 'EKS configuration', key: 'eks' },
       { title: 'Ready to install', key: 'summary' },
     ])
-    .with({ installation_type: 'SELF_MANAGED' }, () => [
-      { title: 'Create new cluster', key: 'general' },
-      { title: 'Kubeconfig', key: 'kubeconfig' },
-      { title: 'Ready to install', key: 'summary' },
-    ])
+    .with({ installation_type: 'SELF_MANAGED' }, () =>
+      isEngineV2SelfManaged
+        ? [
+            { title: 'Create new cluster', key: 'general' },
+            { title: 'Platform layers', key: 'platform' },
+            { title: 'Ready to install', key: 'summary' },
+          ]
+        : [
+            { title: 'Create new cluster', key: 'general' },
+            { title: 'Kubeconfig', key: 'kubeconfig' },
+            { title: 'Ready to install', key: 'summary' },
+          ]
+    )
     .with({ installation_type: 'MANAGED', cloud_provider: 'SCW' }, () => [
       { title: 'Create new cluster', key: 'general' },
       { title: 'Resources', key: 'resources' },
@@ -92,6 +109,10 @@ export const steps = (clusterGeneralData?: ClusterGeneralData) => {
       { title: 'Ready to install', key: 'summary' },
     ])
     .otherwise(() => [])
+}
+
+export function isEngineV2SelfManagedFlow(slug: string | undefined, featureEnabled: boolean) {
+  return featureEnabled && Boolean(slug?.endsWith('-self-managed'))
 }
 
 export const defaultResourcesData: ClusterResourcesData = {
@@ -140,17 +161,34 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
     kedaActivated: false,
     secretManagers: [],
   })
+  const [platformConfigurationData, setPlatformConfigurationData] = useState<
+    ClusterPlatformBindingRequest | undefined
+  >()
+  const isPlatformConfigurationEnabled = useFeatureFlagEnabled(PLATFORM_CONFIGURATION_FEATURE_FLAG)
+  const isEngineV2SelfManaged = isEngineV2SelfManagedFlow(slug, Boolean(isPlatformConfigurationEnabled))
 
   const navigate = useNavigate()
 
   useDocumentTitle('Creation - Cluster')
 
   const creationFlowUrl = `/organization/${organizationId}/cluster/create/${slug}`
-  const currentSteps = steps(generalData)
+  const currentSteps = steps(generalData, isEngineV2SelfManaged)
 
   useEffect(() => {
     if (slug) {
       const defaultOptions: Partial<ClusterGeneralData> | undefined = match(slug)
+        .when(
+          () => isEngineV2SelfManaged,
+          () => {
+            const provider = slug.replace(/-self-managed$/, '').toUpperCase()
+            if (!Object.values(CloudProviderEnum).includes(provider as CloudProviderEnum)) return undefined
+
+            return {
+              installation_type: 'SELF_MANAGED' as const,
+              cloud_provider: provider as CloudProviderEnum,
+            }
+          }
+        )
         .with('aws-eks-anywhere', () => ({
           installation_type: 'PARTIALLY_MANAGED' as ClusterGeneralData['installation_type'],
           cloud_provider: CloudProviderEnum.AWS,
@@ -179,7 +217,7 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
         })
       }
     }
-  }, [setGeneralData, slug])
+  }, [isEngineV2SelfManaged, setGeneralData, slug])
 
   return (
     <ClusterContainerCreateContext.Provider
@@ -196,6 +234,9 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
         setKubeconfigData,
         addonsData,
         setAddonsData,
+        platformConfigurationData,
+        setPlatformConfigurationData,
+        isEngineV2SelfManaged,
         creationFlowUrl,
       }}
     >
