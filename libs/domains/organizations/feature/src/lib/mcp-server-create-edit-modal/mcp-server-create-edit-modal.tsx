@@ -219,6 +219,7 @@ export function McpServerCreateEditModal({ organizationId, onClose, mcpServer }:
                         color="neutral"
                         size="md"
                         iconOnly
+                        className="h-9 w-9"
                         aria-label={`Remove header ${index + 1}`}
                         onClick={() => remove(index)}
                       >
