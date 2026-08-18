@@ -117,6 +117,24 @@ describe('useReactQueryWsSubscription', () => {
     unmount()
   })
 
+  it('should keep the current socket open when an event handler changes', async () => {
+    const initialOnMessage = jest.fn()
+    const updatedOnMessage = jest.fn()
+    const { rerender, unmount } = renderHook(
+      ({ onMessage }) => useReactQueryWsSubscription({ url: 'ws://localhost:1234', onMessage }),
+      { initialProps: { onMessage: initialOnMessage } }
+    )
+    const connection = await server.connected
+
+    rerender({ onMessage: updatedOnMessage })
+
+    expect(connection.readyState).toBe(WebSocket.OPEN)
+    server.send('message after handler update')
+    expect(updatedOnMessage).toHaveBeenCalledWith(useQueryClient(), 'message after handler update')
+    expect(initialOnMessage).not.toHaveBeenCalled()
+    unmount()
+  })
+
   it('should do nothing when not enabled', async () => {
     const onMessage = jest.fn()
     const { unmount } = renderHook(() =>
@@ -139,5 +157,16 @@ describe('useReactQueryWsSubscription', () => {
     unmount()
 
     expect([WebSocket.CLOSED, WebSocket.CLOSING]).toContain(connection.readyState)
+  })
+
+  it('should not call onClose when the component cleans up its own socket', async () => {
+    const onClose = jest.fn()
+    const { unmount } = renderHook(() => useReactQueryWsSubscription({ url: 'ws://localhost:1234', onClose }))
+    await server.connected
+
+    unmount()
+    await server.closed
+
+    expect(onClose).not.toHaveBeenCalled()
   })
 })

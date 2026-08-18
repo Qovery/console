@@ -52,16 +52,39 @@ jest.mock('@qovery/domains/services/feature', () => ({
   ...jest.requireActual('@qovery/domains/services/feature'),
   useFavoriteServices: () => ({
     getFavoriteServices: () => [],
+    isServiceFavorite: () => false,
   }),
   useRecentServices: () => ({
-    getRecentServices: () => [],
+    getRecentServices: () => [
+      {
+        id: 'agentic-workflow-1',
+        name: 'Agentic Workflow',
+        service_type: 'ARGOCD_APP',
+        icon_uri: '',
+        project_id: 'project-1',
+        project_name: 'Billing API',
+        environment_id: 'environment-1',
+        environment_name: 'Production',
+      },
+    ],
     addToRecentServices: jest.fn(),
   }),
 }))
 
 jest.mock('../hooks/use-services-search/use-services-search', () => ({
   useServicesSearch: () => ({
-    data: [],
+    data: [
+      {
+        id: 'agentic-workflow-1',
+        name: 'Agentic Workflow',
+        service_type: 'AGENTIC_WORKFLOW',
+        icon_uri: '',
+        project_id: 'project-1',
+        project_name: 'Billing API',
+        environment_id: 'environment-1',
+        environment_name: 'Production',
+      },
+    ],
     isLoading: false,
   }),
 }))
@@ -119,5 +142,16 @@ describe('Spotlight', () => {
         projectId: 'project-1',
       },
     })
+  })
+
+  it('should use the Agentic Workflow icon for agentic workflows', async () => {
+    const { baseElement, userEvent } = renderWithProviders(<Spotlight organizationId="organization-1" open={true} />)
+
+    expect(baseElement.querySelector('[data-value^="service-recent"] svg[viewBox="0 0 980 980"]')).toBeInTheDocument()
+
+    await userEvent.type(baseElement.querySelector('input') as HTMLInputElement, 'agentic')
+
+    expect(baseElement).toHaveTextContent('Agentic Workflow')
+    expect(baseElement.querySelector('svg[viewBox="0 0 980 980"]')).toBeInTheDocument()
   })
 })

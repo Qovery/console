@@ -78,42 +78,54 @@ export function useReactQueryWsSubscription({
   const searchParams = new URLSearchParams(_urlSearchParams)
   const searchParamsString = searchParams.toString()
   const reconnectCount = useRef<number>(0)
+  const queryClientRef = useRef(queryClient)
+  const getAccessTokenSilentlyRef = useRef(getAccessTokenSilently)
+  const callbacksRef = useRef({ onClose, onError, onMessage, onOpen, onQueryInvalidated })
+
+  queryClientRef.current = queryClient
+  getAccessTokenSilentlyRef.current = getAccessTokenSilently
+  callbacksRef.current = { onClose, onError, onMessage, onOpen, onQueryInvalidated }
 
   useEffect(() => {
     if (!enabled) {
       return
     }
+
     let timeout: ReturnType<typeof setTimeout> | undefined
     const controller = new AbortController()
     let canReconnect = shouldReconnect
 
     async function connect({ signal }: { signal: AbortSignal }) {
-      const token = await getAccessTokenSilently()
+      const token = await getAccessTokenSilentlyRef.current()
       if (signal.aborted) {
-        // signal already aborted do nothing
         return
       }
+
       const websocket = new WebSocket(`${url}?${searchParamsString}`, ['v1', 'auth.bearer.' + token])
 
       websocket.onopen = async (event) => {
-        onOpen?.(queryClient, event)
+        callbacksRef.current.onOpen?.(queryClientRef.current, event)
       }
       websocket.onmessage = async (event) => {
         const data = parseWebSocketMessageData(event.data)
 
         if (isInvalidateOperation(data)) {
           const queryKey = [...data.entity, data.id].filter(Boolean)
-          queryClient.invalidateQueries({ queryKey })
-          onQueryInvalidated?.(queryClient, data)
+          queryClientRef.current.invalidateQueries({ queryKey })
+          callbacksRef.current.onQueryInvalidated?.(queryClientRef.current, data)
         } else {
           // XXX: Don't know how to handle it, let the caller handle it
-          onMessage?.(queryClient, data)
+          callbacksRef.current.onMessage?.(queryClientRef.current, data)
         }
       }
       websocket.onerror = async (event) => {
-        onError?.(queryClient, event)
+        callbacksRef.current.onError?.(queryClientRef.current, event)
       }
       websocket.onclose = async (event) => {
+        if (signal.aborted) {
+          return
+        }
+
         if (canReconnect && reconnectCount.current < MAX_RECONNECT_ATTEMPTS) {
           timeout = setTimeout(
             function () {
@@ -125,7 +137,7 @@ export function useReactQueryWsSubscription({
             Math.min(Math.pow(2, reconnectCount.current) * 5000, 100_000)
           )
         } else {
-          onClose?.(queryClient, event)
+          callbacksRef.current.onClose?.(queryClientRef.current, event)
         }
       }
 
@@ -145,20 +157,7 @@ export function useReactQueryWsSubscription({
     return () => {
       controller.abort()
     }
-  }, [
-    queryClient,
-    getAccessTokenSilently,
-    onOpen,
-    onMessage,
-    onQueryInvalidated,
-    onError,
-    onClose,
-    shouldReconnect,
-    MAX_RECONNECT_ATTEMPTS,
-    url,
-    searchParamsString,
-    enabled,
-  ])
+  }, [shouldReconnect, MAX_RECONNECT_ATTEMPTS, url, searchParamsString, enabled])
 }
 
 export default useReactQueryWsSubscription
