@@ -505,7 +505,7 @@ export const services = createQueryKeys('services', {
 
           return {
             ...agenticWorkflow,
-            mcp_server_ids: Array.from(mcp_server_ids),
+            mcp_server_ids: Array.from(mcp_server_ids ?? []),
             serviceType: 'AGENTIC_WORKFLOW' as const,
           }
         })
