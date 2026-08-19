@@ -351,7 +351,7 @@ export function ApplicationSettingsResources({
                 ]
 
                 if ((cloudProvider === 'AWS' || cloudProvider === 'GCP') && isKedaCluster) {
-                  options.push({ label: 'KEDA (Event-driven autoscaling)', value: 'KEDA' })
+                  options.push({ label: 'Event-driven autoscaling (KEDA)', value: 'KEDA' })
                 }
 
                 return (
@@ -369,7 +369,21 @@ export function ApplicationSettingsResources({
                       }
                     }}
                     value={field.value || 'NONE'}
-                    hint="Choose how instances should scale"
+                    hint={
+                      field.value === 'KEDA' ? (
+                        <>
+                          Choose how instances should scale.{' '}
+                          <ExternalLink
+                            size="xs"
+                            href="https://www.qovery.com/docs/configuration/application#keda-event-driven"
+                          >
+                            Learn more about event-driven autoscaling
+                          </ExternalLink>
+                        </>
+                      ) : (
+                        'Choose how instances should scale'
+                      )
+                    }
                   />
                 )
               }}

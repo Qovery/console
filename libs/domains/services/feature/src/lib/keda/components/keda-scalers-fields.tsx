@@ -1,6 +1,6 @@
 import posthog from 'posthog-js'
 import { type Control, Controller, type UseFieldArrayReturn, useFormContext } from 'react-hook-form'
-import { Button, CodeEditor, InputText } from '@qovery/shared/ui'
+import { Button, CodeEditor, ExternalLink, InputText } from '@qovery/shared/ui'
 
 export interface KedaScalersFieldsProps {
   control: Control
@@ -83,6 +83,12 @@ export function KedaScalersFields({
             Add scaler
           </Button>
         </div>
+
+        <p className="text-xs text-neutral-subtle">
+          <ExternalLink size="xs" href="https://www.qovery.com/docs/configuration/application#scaler-configuration">
+            Learn more about scaler configuration
+          </ExternalLink>
+        </p>
 
         {scalers.length === 0 && (
           <p className="text-xs text-neutral-subtle">No scalers configured. Click "Add scaler" to get started.</p>
