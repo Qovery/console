@@ -1,29 +1,15 @@
 import { useParams } from '@tanstack/react-router'
-import posthog from 'posthog-js'
-import { type OrganizationApiToken, type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
+import { type OrganizationApiToken } from 'qovery-typescript-axios'
 import { Suspense } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { useModal, useModalConfirmation } from '@qovery/shared/ui'
-import {
-  BlockContent,
-  Button,
-  ExternalLink,
-  Heading,
-  Icon,
-  Section,
-  Skeleton,
-  Tooltip,
-  Truncate,
-} from '@qovery/shared/ui'
+import { BlockContent, Button, Icon, Section, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useApiTokens } from '../hooks/use-api-tokens/use-api-tokens'
 import { useDeleteApiToken } from '../hooks/use-delete-api-token/use-delete-api-token'
-import { useDeletePolicyApiToken } from '../hooks/use-delete-policy-api-token/use-delete-policy-api-token'
 import CrudModalFeature from './crud-modal-feature/crud-modal-feature'
-import { PolicyApiTokenCrudModal } from './policy-api-token/policy-api-token-crud-modal'
-import { PolicyApiTokenListContent, PolicyApiTokenListSkeleton } from './policy-api-token/policy-api-token-list'
 
 interface PageOrganizationApiProps {
   onDelete: (token: OrganizationApiToken) => void
@@ -127,7 +113,6 @@ export function SettingsApiToken() {
   useDocumentTitle('API - Organization settings')
 
   const { mutateAsync: deleteApiToken } = useDeleteApiToken()
-  const { mutateAsync: deletePolicyApiToken } = useDeletePolicyApiToken()
 
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
@@ -172,66 +157,6 @@ export function SettingsApiToken() {
             }}
           />
         </Suspense>
-
-        {/*
-          A sub-section of this page rather than a second page: SettingsHeading renders the h1 and
-          the bottom rule that mark the top of a settings page, so a second one reads as though the
-          page started over. Nesting a Section is what steps LevelContext down, so Heading resolves
-          to an h2 on its own and the sub-section stays in the same column as the block above.
-        */}
-        <Section className="mt-8 max-w-content-with-navigation-left">
-          <div className="flex items-center justify-between gap-4">
-            <Heading>Policy API Token (Beta)</Heading>
-
-            <Button
-              size="md"
-              aria-label="Add new policy API token"
-              onClick={() => {
-                posthog.capture('policy-api-token-add-clicked', {
-                  organization_id: organizationId,
-                })
-                openModal({
-                  content: <PolicyApiTokenCrudModal organizationId={organizationId} onClose={closeModal} />,
-                })
-              }}
-            >
-              <Icon iconName="circle-plus" iconStyle="regular" />
-              Add new
-            </Button>
-          </div>
-          <p className="mt-1 text-sm text-neutral-subtle">
-            Policy API tokens are for autonomous agents. Authorization is two gates, and both must open: the Open Policy
-            Agent (rego) policy attached to the token is asked first, on every request, and decides whether the request
-            proceeds at all; the role the token acts as bounds what it can do once it has. So a policy that allows
-            everything grants no more than its role allows &mdash; unlike a plain API token, which has only the second
-            gate. Useful when you want a fine grained policy to limit what your token can do and change.
-            <ExternalLink href="https://www.qovery.com/docs/configuration/organization/api-policy-token">
-              Learn more
-            </ExternalLink>
-          </p>
-
-          <BlockContent className="mt-4" title="Policy Token List" classNameContent="p-0">
-            <Suspense fallback={<PolicyApiTokenListSkeleton />}>
-              <PolicyApiTokenListContent
-                organizationId={organizationId}
-                onDelete={(token: OrganizationPolicyApiToken) => {
-                  openModalConfirmation({
-                    title: 'Delete Policy API token',
-                    confirmationMethod: 'action',
-                    name: token?.name,
-                    action: () => {
-                      try {
-                        deletePolicyApiToken({ organizationId, policyApiTokenId: token.id })
-                      } catch (error) {
-                        console.error(error)
-                      }
-                    },
-                  })
-                }}
-              />
-            </Suspense>
-          </BlockContent>
-        </Section>
       </Section>
     </div>
   )

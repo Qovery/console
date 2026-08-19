@@ -34,6 +34,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdAlertsIndexRouteImport 
 import { Route as AuthenticatedOrganizationOrganizationIdClusterIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/$clusterId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsWebhookRouteImport } from './routes/_authenticated/organization/$organizationId/settings/webhook'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsSkillsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/skills'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRouteImport } from './routes/_authenticated/organization/$organizationId/settings/policy-api-token'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport } from './routes/_authenticated/organization/$organizationId/settings/members'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsMcpServerRouteImport } from './routes/_authenticated/organization/$organizationId/settings/mcp-server'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/labels-annotations'
@@ -352,6 +353,15 @@ const AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute =
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
   } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRouteImport.update(
+    {
+      id: '/policy-api-token',
+      path: '/policy-api-token',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdSettingsMembersRoute =
   AuthenticatedOrganizationOrganizationIdSettingsMembersRouteImport.update({
     id: '/members',
@@ -1841,6 +1851,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  '/organization/$organizationId/settings/policy-api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute
   '/organization/$organizationId/settings/skills': typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
@@ -2031,6 +2042,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  '/organization/$organizationId/settings/policy-api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute
   '/organization/$organizationId/settings/skills': typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
   '/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/organization/$organizationId/$clusterId': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
@@ -2209,6 +2221,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/settings/labels-annotations': typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   '/_authenticated/organization/$organizationId/settings/mcp-server': typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   '/_authenticated/organization/$organizationId/settings/members': typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  '/_authenticated/organization/$organizationId/settings/policy-api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute
   '/_authenticated/organization/$organizationId/settings/skills': typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
   '/_authenticated/organization/$organizationId/settings/webhook': typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   '/_authenticated/organization/$organizationId/$clusterId/': typeof AuthenticatedOrganizationOrganizationIdClusterIdIndexRoute
@@ -2405,6 +2418,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
+    | '/organization/$organizationId/settings/policy-api-token'
     | '/organization/$organizationId/settings/skills'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
@@ -2595,6 +2609,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/settings/labels-annotations'
     | '/organization/$organizationId/settings/mcp-server'
     | '/organization/$organizationId/settings/members'
+    | '/organization/$organizationId/settings/policy-api-token'
     | '/organization/$organizationId/settings/skills'
     | '/organization/$organizationId/settings/webhook'
     | '/organization/$organizationId/$clusterId'
@@ -2772,6 +2787,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/settings/labels-annotations'
     | '/_authenticated/organization/$organizationId/settings/mcp-server'
     | '/_authenticated/organization/$organizationId/settings/members'
+    | '/_authenticated/organization/$organizationId/settings/policy-api-token'
     | '/_authenticated/organization/$organizationId/settings/skills'
     | '/_authenticated/organization/$organizationId/settings/webhook'
     | '/_authenticated/organization/$organizationId/$clusterId/'
@@ -3111,6 +3127,13 @@ declare module '@tanstack/react-router' {
       path: '/skills'
       fullPath: '/organization/$organizationId/settings/skills'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/policy-api-token': {
+      id: '/_authenticated/organization/$organizationId/settings/policy-api-token'
+      path: '/policy-api-token'
+      fullPath: '/organization/$organizationId/settings/policy-api-token'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/settings/members': {
@@ -4331,6 +4354,7 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsLabelsAnnotationsRoute
   AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute
   AuthenticatedOrganizationOrganizationIdSettingsMembersRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsMembersRoute
+  AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute
   AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute
   AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute
   AuthenticatedOrganizationOrganizationIdSettingsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsIndexRoute
@@ -4368,6 +4392,8 @@ const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: Authent
       AuthenticatedOrganizationOrganizationIdSettingsMcpServerRoute,
     AuthenticatedOrganizationOrganizationIdSettingsMembersRoute:
       AuthenticatedOrganizationOrganizationIdSettingsMembersRoute,
+    AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsPolicyApiTokenRoute,
     AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute:
       AuthenticatedOrganizationOrganizationIdSettingsSkillsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsWebhookRoute:

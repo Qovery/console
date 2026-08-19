@@ -117,10 +117,10 @@ function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudModalProp
       description="Give an autonomous agent programmatic access to your organization, constrained by a policy and a role."
       howItWorks={
         <p>
-          Authorization is two gates, and both must open. The Open Policy Agent (rego) policy you attach is asked first,
-          on every request, and decides whether the request proceeds at all; the role you pick is what the token then
-          acts as, and bounds what it can do once it has. So a policy that allows everything grants no more than its
-          role allows &mdash; unlike a plain API token, which has only the second gate. Write rule definitions only,
+          Authorization has two gates, and both must open. The Open Policy Agent (rego) policy you attach is asked
+          first, on every request, and decides whether the request proceeds at all; the role you pick is what the token
+          then acts as, and bounds what it can do once it has. So a policy that allows everything grants no more than
+          its role allows &mdash; unlike a plain API token, which has only the second gate. Write rule definitions only,
           without a <code>package</code> declaration: Qovery prepends a per-token package. The policy must define an{' '}
           <code>allow</code> rule. Once created, securely store the token value since it cannot be retrieved afterwards.
         </p>
@@ -248,8 +248,6 @@ export function PolicyApiTokenCrudModal({ organizationId, onClose }: PolicyApiTo
     setLoading(false)
   })
 
-  // The role select needs its options to set a default value, and a Controller keeps whatever
-  // defaultValue it saw on first render, so the form must not mount before the roles land.
   if (!isFetchedAvailableRoles) return null
 
   return (
