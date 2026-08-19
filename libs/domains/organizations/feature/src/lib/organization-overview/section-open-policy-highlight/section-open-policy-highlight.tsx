@@ -54,7 +54,7 @@ export function SectionOpenPolicyHighlight() {
 
           <Link
             as="button"
-            to="/organization/$organizationId/settings/api-token"
+            to="/organization/$organizationId/settings/policy-api-token"
             params={{ organizationId }}
             color="brand"
             variant="solid"
