@@ -13,8 +13,6 @@ export function mapCreationSpotToNodePools(
   spotEnabled: boolean,
   qoveryNodePools?: KarpenterNodePools
 ): KarpenterNodePools {
-  const cronjobOverride = qoveryNodePools?.cronjob_override
-
   return {
     ...qoveryNodePools,
     requirements: qoveryNodePools?.requirements ?? [],
@@ -26,9 +24,9 @@ export function mapCreationSpotToNodePools(
       ...qoveryNodePools?.stable_override,
       spot_enabled: false,
     },
-    ...(cronjobOverride && {
+    ...(qoveryNodePools?.cronjob_override && {
       cronjob_override: {
-        ...cronjobOverride,
+        ...qoveryNodePools.cronjob_override,
         spot_enabled: spotEnabled,
       },
     }),
