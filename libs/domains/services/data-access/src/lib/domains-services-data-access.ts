@@ -1,5 +1,6 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
+  type AgenticWorkflowRequest,
   AgenticWorkflowsApi,
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
@@ -77,7 +78,6 @@ import {
   type TerraformRequest,
   TerraformsApi,
   type AgenticWorkflowResponse as _AgenticWorkflow,
-  type AgenticWorkflowRequest as _AgenticWorkflowRequest,
   type Application as _Application,
   type ArgocdAppResponse as _ArgoCd,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -201,7 +201,7 @@ export type AgenticWorkflow = _AgenticWorkflow & {
   serviceType: AgenticWorkflowType
   icon_uri: string
 }
-export type AgenticWorkflowRequest = _AgenticWorkflowRequest
+export type { AgenticWorkflowRequest }
 
 export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd | AgenticWorkflow
 export type BlueprintService = AnyService & {
