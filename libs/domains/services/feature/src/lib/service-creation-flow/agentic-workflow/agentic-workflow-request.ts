@@ -1,4 +1,5 @@
-import { type AgenticWorkflowHeader, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
+import { type AgenticWorkflowHeader } from 'qovery-typescript-axios'
+import { type AgenticWorkflowRequest } from '@qovery/domains/services/data-access'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 
 function formatWhitelistHosts(value: string) {
@@ -24,9 +25,7 @@ function parseHeaders(headersJson: string): AgenticWorkflowHeader[] {
     .map(([name, value]) => ({ name, value }))
 }
 
-export type AgenticWorkflowRequestWithMcpServers = AgenticWorkflowRequest & { mcp_server_ids: string[] }
-
-export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequestWithMcpServers {
+export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequest {
   return {
     name: values.name,
     description: values.description,

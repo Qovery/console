@@ -1,6 +1,5 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
 import {
-  type AgenticWorkflowRequest,
   AgenticWorkflowsApi,
   ApplicationActionsApi,
   type ApplicationAdvancedSettings,
@@ -78,6 +77,7 @@ import {
   type TerraformRequest,
   TerraformsApi,
   type AgenticWorkflowResponse as _AgenticWorkflow,
+  type AgenticWorkflowRequest as _AgenticWorkflowRequest,
   type Application as _Application,
   type ArgocdAppResponse as _ArgoCd,
   type CloneServiceRequest as _CloneServiceRequest,
@@ -196,11 +196,21 @@ export type ArgoCd = _ArgoCd & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: ArgoCdType
 }
-export type AgenticWorkflow = _AgenticWorkflow & {
+export type AgenticWorkflow = Omit<_AgenticWorkflow, 'mcp_server_ids'> & {
   // @deprecated Prefer use `service_type` from API instead of `serviceType`
   serviceType: AgenticWorkflowType
   icon_uri: string
+  mcp_server_ids: string[]
 }
+export type AgenticWorkflowRequest = Omit<_AgenticWorkflowRequest, 'mcp_server_ids'> & {
+  mcp_server_ids?: string[]
+}
+
+// OpenAPI Generator represents arrays with `uniqueItems` as Set, while the HTTP payload is still a JSON array.
+function toAgenticWorkflowApiRequest(payload: AgenticWorkflowRequest): _AgenticWorkflowRequest {
+  return payload as unknown as _AgenticWorkflowRequest
+}
+
 export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd | AgenticWorkflow
 export type BlueprintService = AnyService & {
   blueprint_id: string
@@ -490,10 +500,15 @@ export const services = createQueryKeys('services', {
             serviceType: 'ARGOCD_APP' as const,
           }
         })
-        .with('AGENTIC_WORKFLOW', async () => ({
-          ...(await agenticWorkflowsApi.getAgenticWorkflow(serviceId)).data,
-          serviceType: 'AGENTIC_WORKFLOW' as const,
-        }))
+        .with('AGENTIC_WORKFLOW', async () => {
+          const { mcp_server_ids, ...agenticWorkflow } = (await agenticWorkflowsApi.getAgenticWorkflow(serviceId)).data
+
+          return {
+            ...agenticWorkflow,
+            mcp_server_ids: Array.from(mcp_server_ids),
+            serviceType: 'AGENTIC_WORKFLOW' as const,
+          }
+        })
         .exhaustive()
       return service
     },
@@ -1112,7 +1127,11 @@ export const mutations = {
         serviceType: 'TERRAFORM' as const,
       }))
       .with({ serviceType: 'AGENTIC_WORKFLOW' }, ({ serviceType, ...payload }) => ({
-        mutation: agenticWorkflowsApi.createAgenticWorkflow.bind(agenticWorkflowsApi, environmentId, payload),
+        mutation: agenticWorkflowsApi.createAgenticWorkflow.bind(
+          agenticWorkflowsApi,
+          environmentId,
+          toAgenticWorkflowApiRequest(payload)
+        ),
         serviceType,
       }))
       .exhaustive()
@@ -1162,7 +1181,11 @@ export const mutations = {
         serviceType,
       }))
       .with({ serviceType: 'AGENTIC_WORKFLOW' }, ({ serviceType, ...payload }) => ({
-        mutation: agenticWorkflowsApi.editAgenticWorkflow.bind(agenticWorkflowsApi, serviceId, payload),
+        mutation: agenticWorkflowsApi.editAgenticWorkflow.bind(
+          agenticWorkflowsApi,
+          serviceId,
+          toAgenticWorkflowApiRequest(payload)
+        ),
         serviceType,
       }))
       .exhaustive()

@@ -1,8 +1,8 @@
 import { useParams } from '@tanstack/react-router'
-import { type AgenticWorkflowOutput, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
+import { type AgenticWorkflowOutput } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
 import { useGitTokens, useMcpServers } from '@qovery/domains/organizations/feature'
-import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
+import { type AgenticWorkflowRequest, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   AgenticWorkflowCodeEditorField,
   type AgenticWorkflowGitRepository,
@@ -151,10 +151,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
             })
           : [],
       mcp: service && isAgenticWorkflow(service) ? service.mcp : '',
-      mcpServerIds:
-        service && isAgenticWorkflow(service)
-          ? (service as typeof service & { mcp_server_ids?: string[] }).mcp_server_ids ?? []
-          : [],
+      mcpServerIds: service && isAgenticWorkflow(service) ? service.mcp_server_ids : [],
       dockerFragment: service && isAgenticWorkflow(service) ? service.docker_fragment : '',
       outputs: formatJson(service && isAgenticWorkflow(service) ? service.outputs : []),
       hostAllowlist: service && isAgenticWorkflow(service) ? service.governance.host_allowlist.join(', ') : '',
@@ -178,7 +175,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       settings: data.modelSettings,
       ...(data.modelApiKey.trim() ? { api_key: data.modelApiKey.trim() } : {}),
     }
-    const payload: AgenticWorkflowRequest & { serviceType: 'AGENTIC_WORKFLOW'; mcp_server_ids: string[] } = {
+    const payload: AgenticWorkflowRequest & { serviceType: 'AGENTIC_WORKFLOW' } = {
       serviceType: 'AGENTIC_WORKFLOW',
       name: data.name,
       description: data.description,
