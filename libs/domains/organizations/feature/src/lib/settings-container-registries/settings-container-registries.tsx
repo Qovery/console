@@ -189,7 +189,6 @@ const ContainerRegistriesList = ({ organizationId }: ContainerRegistriesListProp
     suspense: true,
   })
 
-  // Registries tied to a cluster are managed from the cluster's own settings, not here.
   const organizationRegistries = useMemo(() => {
     return containerRegistries?.filter((registry) => !registry.cluster)
   }, [containerRegistries])
