@@ -272,7 +272,10 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
         start: startStable,
         end: endStable,
         onChange: (data) => {
-          setValue('karpenter.qovery_node_pools.stable_override', data.stable_override)
+          setValue('karpenter.qovery_node_pools.stable_override', {
+            ...watchStable,
+            ...data.stable_override,
+          })
         },
       },
       {
@@ -284,7 +287,10 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
         nodepool: watchDefault,
         alwaysOn: true,
         onChange: (data) => {
-          setValue('karpenter.qovery_node_pools.default_override', data.default_override)
+          setValue('karpenter.qovery_node_pools.default_override', {
+            ...watchDefault,
+            ...data.default_override,
+          })
         },
       },
     ])
@@ -301,8 +307,7 @@ export function NodepoolsResourcesSettings({ cluster, filter }: NodepoolsResourc
         onChange: (data) => {
           setValue('karpenter.qovery_node_pools.gpu_override', {
             ...watchGpu,
-            limits: data.gpu_override?.limits,
-            consolidation: data.gpu_override?.consolidation,
+            ...data.gpu_override,
           })
         },
       },
