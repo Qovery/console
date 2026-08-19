@@ -87,9 +87,13 @@ function RouteComponent() {
   }
 
   const apiTokenLink = {
+    type: 'group',
     title: 'API token',
-    to: `${pathSettings}/api-token`,
     icon: 'rectangle-api' as const,
+    children: [
+      { title: 'Token', to: `${pathSettings}/api-token` },
+      { title: 'Policy token (Beta)', to: `${pathSettings}/policy-api-token` },
+    ],
   }
 
   const aiLink = {
