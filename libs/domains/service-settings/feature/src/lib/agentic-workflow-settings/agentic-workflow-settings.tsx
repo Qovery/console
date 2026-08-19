@@ -345,7 +345,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
               value={values.mcpServerIds}
               onChange={(value) => form.setValue('mcpServerIds', value as string[], { shouldDirty: true })}
             />
-            <Heading className="pt-4" weight="medium">
+            <Heading level={3} className="pt-4" weight="medium">
               Advanced MCP configuration
             </Heading>
             {jsonField('mcp', 'MCP JSON')}
