@@ -201,8 +201,6 @@ export type AgenticWorkflow = _AgenticWorkflow & {
   serviceType: AgenticWorkflowType
   icon_uri: string
 }
-export type { AgenticWorkflowRequest }
-
 export type AnyService = Application | Database | Container | Job | Helm | Terraform | ArgoCd | AgenticWorkflow
 export type BlueprintService = AnyService & {
   blueprint_id: string

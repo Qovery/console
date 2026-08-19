@@ -1,8 +1,8 @@
 import { useParams } from '@tanstack/react-router'
-import { type AgenticWorkflowOutput } from 'qovery-typescript-axios'
+import { type AgenticWorkflowOutput, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
 import { McpServerSetting, useGitTokens, useMcpServers } from '@qovery/domains/organizations/feature'
-import { type AgenticWorkflowRequest, isAgenticWorkflow } from '@qovery/domains/services/data-access'
+import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   AgenticWorkflowCodeEditorField,
   type AgenticWorkflowGitRepository,

@@ -1,5 +1,4 @@
-import { type AgenticWorkflowHeader } from 'qovery-typescript-axios'
-import { type AgenticWorkflowRequest } from '@qovery/domains/services/data-access'
+import { type AgenticWorkflowHeader, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 
 function formatWhitelistHosts(value: string) {
