@@ -99,6 +99,7 @@ describe('StepSummary', () => {
       production: false,
     }
     mockContextValue.kubeconfigData = undefined
+    mockContextValue.resourcesData = defaultResourcesData
     useCloudProviderInstanceTypesMockSpy.mockReturnValue({
       data: [],
     })
@@ -424,5 +425,100 @@ describe('StepSummary', () => {
         })
       )
     })
+  })
+
+  it('should map the spot button to explicit per-nodepool values when enabled on create', async () => {
+    mockContextValue.generalData = {
+      name: 'test-cluster',
+      description: '',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'us-east-1',
+      installation_type: 'MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.resourcesData = {
+      ...defaultResourcesData,
+      karpenter: {
+        enabled: true,
+        spot_enabled: true,
+        disk_size_in_gib: 50,
+        default_service_architecture: 'AMD64',
+        qovery_node_pools: {
+          requirements: [{ key: 'Arch', operator: 'In', values: ['AMD64'] }],
+          cronjob_override: { consolidate_after: '1m' },
+        },
+      },
+    }
+
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditCloudProviderInfo.mockResolvedValue({})
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateCluster).toHaveBeenCalled()
+    })
+
+    const karpenterFeature = mockCreateCluster.mock.calls[0][0].clusterRequest.features.find(
+      (feature: { id: string }) => feature.id === 'KARPENTER'
+    )
+    expect(karpenterFeature.value.spot_enabled).toBe(true)
+    expect(karpenterFeature.value.qovery_node_pools).toEqual({
+      requirements: [{ key: 'Arch', operator: 'In', values: ['AMD64'] }],
+      default_override: { spot_enabled: true },
+      stable_override: { spot_enabled: false },
+      cronjob_override: { consolidate_after: '1m', spot_enabled: true },
+    })
+  })
+
+  it('should send spot disabled on every nodepool when the spot button is off on create', async () => {
+    mockContextValue.generalData = {
+      name: 'test-cluster',
+      description: '',
+      cloud_provider: CloudProviderEnum.AWS,
+      region: 'us-east-1',
+      installation_type: 'MANAGED',
+      production: false,
+      credentials: 'cred-id',
+      credentials_name: 'cred-name',
+    }
+    mockContextValue.resourcesData = {
+      ...defaultResourcesData,
+      karpenter: {
+        enabled: true,
+        spot_enabled: false,
+        disk_size_in_gib: 50,
+        default_service_architecture: 'AMD64',
+        qovery_node_pools: {
+          requirements: [{ key: 'Arch', operator: 'In', values: ['AMD64'] }],
+        },
+      },
+    }
+
+    mockCreateCluster.mockResolvedValue({ id: 'cluster-123' })
+    mockEditCloudProviderInfo.mockResolvedValue({})
+
+    const { userEvent } = renderWithProviders(<StepSummary {...defaultProps} />, { wrapper: Wrapper })
+
+    await userEvent.click(screen.getByTestId('button-create'))
+
+    await waitFor(() => {
+      expect(mockCreateCluster).toHaveBeenCalled()
+    })
+
+    const karpenterFeature = mockCreateCluster.mock.calls[0][0].clusterRequest.features.find(
+      (feature: { id: string }) => feature.id === 'KARPENTER'
+    )
+    expect(karpenterFeature.value.spot_enabled).toBe(false)
+    expect(karpenterFeature.value.qovery_node_pools).toEqual({
+      requirements: [{ key: 'Arch', operator: 'In', values: ['AMD64'] }],
+      default_override: { spot_enabled: false },
+      stable_override: { spot_enabled: false },
+    })
+    expect(karpenterFeature.value.qovery_node_pools).not.toHaveProperty('cronjob_override')
   })
 })
