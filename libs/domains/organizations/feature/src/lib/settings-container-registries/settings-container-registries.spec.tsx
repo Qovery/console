@@ -38,4 +38,17 @@ describe('SettingsContainerRegistries', () => {
     renderWithProviders(<SettingsContainerRegistries />)
     expect(screen.getByTestId(`registries-list-${mockContainerRegistries[0].id}`)).toBeInTheDocument()
   })
+
+  it('should hide registries linked to a cluster', () => {
+    const [orgRegistry] = containerRegistriesMock(1)
+    const clusterRegistry: ContainerRegistryResponse = {
+      ...containerRegistriesMock(1)[0],
+      id: 'cluster-registry',
+      cluster: { id: '1', name: 'my-cluster' },
+    }
+    mockContainerRegistries = [orgRegistry, clusterRegistry]
+    renderWithProviders(<SettingsContainerRegistries />)
+    expect(screen.getByTestId(`registries-list-${orgRegistry.id}`)).toBeInTheDocument()
+    expect(screen.queryByTestId(`registries-list-${clusterRegistry.id}`)).not.toBeInTheDocument()
+  })
 })
