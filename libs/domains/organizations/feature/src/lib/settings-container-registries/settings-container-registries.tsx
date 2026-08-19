@@ -189,21 +189,26 @@ const ContainerRegistriesList = ({ organizationId }: ContainerRegistriesListProp
     suspense: true,
   })
 
+  // Registries tied to a cluster are managed from the cluster's own settings, not here.
+  const organizationRegistries = useMemo(() => {
+    return containerRegistries?.filter((registry) => !registry.cluster)
+  }, [containerRegistries])
+
   const usedRegistries = useMemo(() => {
-    return containerRegistries
+    return organizationRegistries
       ?.filter((registry) => (registry.associated_services_count || 0) > 0)
       .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
-  }, [containerRegistries])
+  }, [organizationRegistries])
 
   const unusedRegistries = useMemo(() => {
-    return containerRegistries
+    return organizationRegistries
       ?.filter((registry) => (registry.associated_services_count || 0) === 0)
       .sort((a, b) => (a.name || '').localeCompare(b.name || ''))
-  }, [containerRegistries])
+  }, [organizationRegistries])
 
   const registriesCount = useMemo(() => {
-    return containerRegistries.length
-  }, [containerRegistries])
+    return organizationRegistries.length
+  }, [organizationRegistries])
 
   return registriesCount > 0 ? (
     <>
