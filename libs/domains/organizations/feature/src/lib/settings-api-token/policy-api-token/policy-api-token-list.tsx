@@ -1,6 +1,7 @@
 import { type OrganizationPolicyApiToken } from 'qovery-typescript-axios'
 import { Button, EmptyState, Icon, Skeleton, Tooltip, Truncate, useModal } from '@qovery/shared/ui'
 import { dateMediumLocalFormat, dateUTCString } from '@qovery/shared/util-dates'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { usePolicyApiTokens } from '../../hooks/use-policy-api-tokens/use-policy-api-tokens'
 import { PolicyApiTokenPolicyModal } from './policy-api-token-policy-modal'
 
@@ -22,7 +23,7 @@ export function PolicyApiTokenList({ policyApiTokens, onDelete }: PolicyApiToken
         icon="wave-pulse"
         iconStyle="regular"
         title="No Policy API Token found"
-        description="Add one to give an autonomous agent access constrained by a rego policy."
+        description="Add one to give an autonomous agent access constrained by a rego policy and a role."
       />
     )
   }
@@ -47,6 +48,9 @@ export function PolicyApiTokenList({ policyApiTokens, onDelete }: PolicyApiToken
               )}
             </h3>
             <p className="text-xs text-neutral-subtle">
+              {token.role_name && (
+                <span className="mr-3 inline-block">Role: {upperCaseFirstLetter(token.role_name)}</span>
+              )}
               {token.creator_name && <span className="mr-3 inline-block">Created by {token.creator_name}</span>}
               {token.created_at && (
                 <span className="inline-block" title={dateUTCString(token.created_at)}>

@@ -1,15 +1,19 @@
-import { type OrganizationPolicyApiTokenCreateRequest } from 'qovery-typescript-axios'
+import { type OrganizationAvailableRole, type OrganizationPolicyApiTokenCreateRequest } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import {
   Button,
   CodeEditor,
   CopyToClipboardButtonIcon,
+  InputSelect,
   InputText,
   InputTextArea,
+  LoaderSpinner,
   ModalCrud,
   useModal,
 } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { useAvailableRoles } from '../../hooks/use-available-roles/use-available-roles'
 import { useCreatePolicyApiToken } from '../../hooks/use-create-policy-api-token/use-create-policy-api-token'
 
 const DEFAULT_POLICY = `default allow := false
@@ -96,23 +100,29 @@ function ValueModal({ onClose, token }: ValueModalProps) {
 interface CrudModalProps {
   onSubmit: () => void
   onClose: () => void
+  availableRoles: OrganizationAvailableRole[]
   loading?: boolean
 }
 
-function CrudModal({ onClose, onSubmit, loading }: CrudModalProps) {
+function CrudModal({ onClose, onSubmit, availableRoles, loading }: CrudModalProps) {
   const { control } = useFormContext()
+  // The API defaults an omitted role to organization-admin, so the select starts there too. Found by
+  // name rather than by position: useAvailableRoles sorts alphabetically, so index 0 is whichever
+  // role happens to sort first and may well be a custom one.
+  const defaultRoleId = availableRoles.find(({ name }) => name === 'admin')?.id ?? availableRoles[0]?.id
 
   return (
     <ModalCrud
       title="Create new Policy API token"
-      description="Give an autonomous agent programmatic access to your organization, constrained by a policy."
+      description="Give an autonomous agent programmatic access to your organization, constrained by a policy and a role."
       howItWorks={
         <p>
-          A Policy API token carries no role. The Open Policy Agent (rego) policy you attach is evaluated on every
-          request and is the only thing constraining the token, so a policy that allows everything grants full
-          organization admin access. Write rule definitions only, without a <code>package</code> declaration: Qovery
-          prepends a per-token package. The policy must define an <code>allow</code> rule. Once created, securely store
-          the token value since it cannot be retrieved afterwards.
+          Authorization is two gates, and both must open. The Open Policy Agent (rego) policy you attach is asked first,
+          on every request, and decides whether the request proceeds at all; the role you pick is what the token then
+          acts as, and bounds what it can do once it has. So a policy that allows everything grants no more than its
+          role allows &mdash; unlike a plain API token, which has only the second gate. Write rule definitions only,
+          without a <code>package</code> declaration: Qovery prepends a per-token package. The policy must define an{' '}
+          <code>allow</code> rule. Once created, securely store the token value since it cannot be retrieved afterwards.
         </p>
       }
       onSubmit={onSubmit}
@@ -149,6 +159,35 @@ function CrudModal({ onClose, onSubmit, loading }: CrudModalProps) {
           />
         )}
       />
+      {availableRoles.length > 0 ? (
+        <Controller
+          name="role_id"
+          control={control}
+          defaultValue={defaultRoleId}
+          rules={{ required: 'Please enter a role.' }}
+          render={({ field, fieldState: { error } }) => (
+            <InputSelect
+              dataTestId="input-role"
+              className="mb-5 w-full"
+              label="Role"
+              options={availableRoles.map((availableRole: OrganizationAvailableRole) => ({
+                label: upperCaseFirstLetter(availableRole.name),
+                value: availableRole.id ?? '',
+              }))}
+              onChange={field.onChange}
+              value={field.value}
+              error={error?.message}
+              isSearchable
+              menuPlacement={availableRoles.length > 7 ? 'top' : 'bottom'}
+              portal={availableRoles.length > 7 ? false : true}
+            />
+          )}
+        />
+      ) : (
+        <div className="mb-5 flex justify-center">
+          <LoaderSpinner className="w-4" />
+        </div>
+      )}
       <Controller
         name="opa_policy"
         control={control}
@@ -181,6 +220,7 @@ export interface PolicyApiTokenCrudModalProps {
 
 export function PolicyApiTokenCrudModal({ organizationId, onClose }: PolicyApiTokenCrudModalProps) {
   const { mutateAsync: createPolicyApiToken } = useCreatePolicyApiToken()
+  const { data: availableRoles = [], isFetched: isFetchedAvailableRoles } = useAvailableRoles({ organizationId })
   const { openModal, closeModal, enableAlertClickOutside } = useModal()
   const [loading, setLoading] = useState(false)
 
@@ -208,9 +248,13 @@ export function PolicyApiTokenCrudModal({ organizationId, onClose }: PolicyApiTo
     setLoading(false)
   })
 
+  // The role select needs its options to set a default value, and a Controller keeps whatever
+  // defaultValue it saw on first render, so the form must not mount before the roles land.
+  if (!isFetchedAvailableRoles) return null
+
   return (
     <FormProvider {...methods}>
-      <CrudModal onSubmit={onSubmit} onClose={onClose} loading={loading} />
+      <CrudModal onSubmit={onSubmit} onClose={onClose} loading={loading} availableRoles={availableRoles} />
     </FormProvider>
   )
 }

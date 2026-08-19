@@ -1,4 +1,5 @@
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import * as useAvailableRolesModule from '../../hooks/use-available-roles/use-available-roles'
 import * as useCreatePolicyApiTokenModule from '../../hooks/use-create-policy-api-token/use-create-policy-api-token'
 import { PolicyApiTokenCrudModal, type PolicyApiTokenCrudModalProps } from './policy-api-token-crud-modal'
 
@@ -17,6 +18,7 @@ jest.mock('@qovery/shared/ui', () => ({
 }))
 
 const useCreatePolicyApiTokenMockSpy = jest.spyOn(useCreatePolicyApiTokenModule, 'useCreatePolicyApiToken') as jest.Mock
+const useAvailableRolesMockSpy = jest.spyOn(useAvailableRolesModule, 'useAvailableRoles') as jest.Mock
 
 const createPolicyApiTokenMock = jest.fn()
 
@@ -31,6 +33,13 @@ describe('PolicyApiTokenCrudModal', () => {
     }
     useCreatePolicyApiTokenMockSpy.mockReturnValue({
       mutateAsync: createPolicyApiTokenMock,
+    })
+    useAvailableRolesMockSpy.mockReturnValue({
+      data: [
+        { id: 'custom-role-id', name: 'a-custom-role' },
+        { id: 'admin-role-id', name: 'admin' },
+      ],
+      isFetched: true,
     })
   })
 
@@ -72,6 +81,44 @@ describe('PolicyApiTokenCrudModal', () => {
     const { getByDisplayValue } = renderWithProviders(content)
 
     expect(getByDisplayValue('sk-qov-01-abc-123')).toBeInTheDocument()
+  })
+
+  it('should default the role to organization-admin rather than the first sorted role', async () => {
+    // useAvailableRoles sorts alphabetically, so index 0 is whichever role sorts first — here a
+    // custom one. Defaulting to it would silently mint a token with the wrong role.
+    const { userEvent } = renderWithProviders(<PolicyApiTokenCrudModal {...props} />)
+
+    await userEvent.type(screen.getByRole('textbox', { name: /token name/i }), 'my-agent')
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    await waitFor(() => {
+      expect(createPolicyApiTokenMock).toHaveBeenCalledWith({
+        organizationId: '1',
+        policyApiTokenCreateRequest: expect.objectContaining({
+          role_id: 'admin-role-id',
+        }),
+      })
+    })
+  })
+
+  it('should submit the selected role', async () => {
+    const { userEvent } = renderWithProviders(<PolicyApiTokenCrudModal {...props} />)
+
+    await userEvent.type(screen.getByRole('textbox', { name: /token name/i }), 'my-agent')
+
+    await userEvent.click(screen.getByLabelText(/role/i))
+    await userEvent.click(screen.getByText('A-custom-role'))
+
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    await waitFor(() => {
+      expect(createPolicyApiTokenMock).toHaveBeenCalledWith({
+        organizationId: '1',
+        policyApiTokenCreateRequest: expect.objectContaining({
+          role_id: 'custom-role-id',
+        }),
+      })
+    })
   })
 
   it('should clear the dirty-form guard before showing the token', async () => {

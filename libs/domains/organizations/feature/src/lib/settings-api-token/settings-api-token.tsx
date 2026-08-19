@@ -200,9 +200,11 @@ export function SettingsApiToken() {
             </Button>
           </div>
           <p className="mt-1 text-sm text-neutral-subtle">
-            Policy API tokens are for autonomous agents. They carry no role: the Open Policy Agent (rego) policy
-            attached to each one is evaluated on every request and is the only thing constraining it. It is useful when
-            you want fine grained policy to limit what your token can do and change.{' '}
+            Policy API tokens are for autonomous agents. Authorization is two gates, and both must open: the Open Policy
+            Agent (rego) policy attached to the token is asked first, on every request, and decides whether the request
+            proceeds at all; the role the token acts as bounds what it can do once it has. So a policy that allows
+            everything grants no more than its role allows &mdash; unlike a plain API token, which has only the second
+            gate. Useful when you want a fine grained policy to limit what your token can do and change.
             <ExternalLink href="https://www.qovery.com/docs/configuration/organization/api-policy-token">
               Learn more
             </ExternalLink>
