@@ -178,8 +178,15 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
   }
 
   const handleCronjobEnabledChange = (value: boolean) => {
+    // The presence of the override is what enables the cronjob nodepool, so disabling removes it
     if (!value) {
       setValue('karpenter.qovery_node_pools.cronjob_override', undefined)
+    } else if (props.fromDetail) {
+      // Batch workloads follow the default nodepool spot choice until the user overrides it
+      setValue('karpenter.qovery_node_pools.cronjob_override', {
+        ...watchKarpenter?.qovery_node_pools?.cronjob_override,
+        spot_enabled: watchKarpenter?.qovery_node_pools?.default_override?.spot_enabled ?? false,
+      })
     } else {
       setValue('karpenter.qovery_node_pools.cronjob_override', {
         ...watchKarpenter?.qovery_node_pools?.cronjob_override,
@@ -338,42 +345,46 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                                 Edit <Icon iconName="pen" />
                               </Button>
                             </div>
-                            <div className="flex flex-col gap-4 border-t border-neutral p-4">
-                              <Controller
-                                name="karpenter.spot_enabled"
-                                control={control}
-                                render={({ field }) => (
-                                  <InputToggle
-                                    value={field.value}
-                                    onChange={field.onChange}
-                                    className="items-center"
-                                    title="Enable spot instances on your cluster"
-                                    small
-                                  />
+                            {!props.fromDetail && (
+                              <div className="flex flex-col gap-4 border-t border-neutral p-4">
+                                <Controller
+                                  name="karpenter.spot_enabled"
+                                  control={control}
+                                  render={({ field }) => (
+                                    <InputToggle
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      className="items-center"
+                                      title="Enable spot instances on your cluster"
+                                      small
+                                    />
+                                  )}
+                                />
+                                {props.isProduction && watchSpotEnabled && (
+                                  <Callout.Root color="yellow">
+                                    <Callout.Icon>
+                                      <Icon iconName="info-circle" iconStyle="regular" />
+                                    </Callout.Icon>
+                                    <Callout.Text>
+                                      <Callout.TextDescription>
+                                        Spot instances run on the default nodepool, and on the cronjob nodepool when you
+                                        enable it. The stable nodepool keeps on-demand instances, so single-instance
+                                        applications and containerized databases are not affected. AWS can reclaim a
+                                        spot node with a 2-minute notice, so services running on one may be interrupted
+                                        and rescheduled. You can force on-demand instances for a given service in its
+                                        advanced settings.{' '}
+                                        <ExternalLink
+                                          size="sm"
+                                          href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
+                                        >
+                                          See documentation
+                                        </ExternalLink>
+                                      </Callout.TextDescription>
+                                    </Callout.Text>
+                                  </Callout.Root>
                                 )}
-                              />
-                              {props.isProduction && watchSpotEnabled && (
-                                <Callout.Root color="yellow">
-                                  <Callout.Icon>
-                                    <Icon iconName="info-circle" iconStyle="regular" />
-                                  </Callout.Icon>
-                                  <Callout.Text>
-                                    <Callout.TextDescription>
-                                      Activating spot instances on a production cluster may lead to potential downtime
-                                      for applications deployed on the stable node pool. However, you can specify in the
-                                      advanced settings to force the use of on-demand instances for your service or
-                                      database to avoid this risk.{' '}
-                                      <ExternalLink
-                                        size="sm"
-                                        href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
-                                      >
-                                        See documentation
-                                      </ExternalLink>
-                                    </Callout.TextDescription>
-                                  </Callout.Text>
-                                </Callout.Root>
-                              )}
-                            </div>
+                              </div>
+                            )}
                             {props.fromDetail && (
                               <div className="flex flex-col gap-3 border-t border-neutral p-4">
                                 <Controller
@@ -464,43 +475,46 @@ export function ClusterResourcesSettings(props: ClusterResourcesSettingsProps) {
                   className="overflow-hidden"
                 >
                   <GpuResourcesSettings cluster={props.cluster} clusterRegion={props.clusterRegion} />
-                  <div className="flex flex-col gap-4 border-t border-neutral p-4">
-                    <Controller
-                      name="karpenter.qovery_node_pools.gpu_override.spot_enabled"
-                      control={control}
-                      render={({ field }) => (
-                        <>
-                          <InputToggle
-                            value={field.value}
-                            onChange={field.onChange}
-                            className="items-center"
-                            title="Enable spot instances on your GPU nodepools"
-                            small
-                          />
-                          {props.isProduction && field.value && (
-                            <Callout.Root color="yellow">
-                              <Callout.Icon>
-                                <Icon iconName="info-circle" iconStyle="regular" />
-                              </Callout.Icon>
-                              <Callout.Text>
-                                <Callout.TextDescription>
-                                  Activating spot instances on a production cluster may lead to potential downtime for
-                                  applications deployed to the GPU node pool. However, you can specify in the advanced
-                                  settings to force the use of on-demand instances for your service to avoid this.{' '}
-                                  <ExternalLink
-                                    size="sm"
-                                    href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
-                                  >
-                                    See documentation
-                                  </ExternalLink>
-                                </Callout.TextDescription>
-                              </Callout.Text>
-                            </Callout.Root>
-                          )}
-                        </>
-                      )}
-                    />
-                  </div>
+                  {/* In creation mode the nodepool modals are not available, so spot stays inline here */}
+                  {!props.fromDetail && (
+                    <div className="flex flex-col gap-4 border-t border-neutral p-4">
+                      <Controller
+                        name="karpenter.qovery_node_pools.gpu_override.spot_enabled"
+                        control={control}
+                        render={({ field }) => (
+                          <>
+                            <InputToggle
+                              value={field.value ?? false}
+                              onChange={field.onChange}
+                              className="items-center"
+                              title="Enable spot instances on your GPU nodepools"
+                              small
+                            />
+                            {props.isProduction && field.value && (
+                              <Callout.Root color="yellow">
+                                <Callout.Icon>
+                                  <Icon iconName="info-circle" iconStyle="regular" />
+                                </Callout.Icon>
+                                <Callout.Text>
+                                  <Callout.TextDescription>
+                                    Activating spot instances on a production cluster may lead to potential downtime for
+                                    applications deployed to the GPU node pool. However, you can specify in the advanced
+                                    settings to force the use of on-demand instances for your service to avoid this.{' '}
+                                    <ExternalLink
+                                      size="sm"
+                                      href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
+                                    >
+                                      See documentation
+                                    </ExternalLink>
+                                  </Callout.TextDescription>
+                                </Callout.Text>
+                              </Callout.Root>
+                            )}
+                          </>
+                        )}
+                      />
+                    </div>
+                  )}
                   {props.fromDetail && (
                     <div className="flex flex-col gap-3 border-t border-neutral p-4">
                       <Controller

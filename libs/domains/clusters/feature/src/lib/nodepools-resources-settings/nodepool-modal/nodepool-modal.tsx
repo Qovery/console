@@ -1,19 +1,25 @@
 import { differenceInMinutes, isValid } from 'date-fns'
-import {
-  type Cluster,
-  type KarpenterCronjobNodePoolOverride,
-  type KarpenterDefaultNodePoolOverride,
-  type KarpenterGpuNodePoolOverride,
-  type KarpenterNodePool,
-  type KarpenterStableNodePoolOverride,
-  WeekdayEnum,
-} from 'qovery-typescript-axios'
+import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { P, match } from 'ts-pattern'
-import { Callout, Icon, InputSelect, InputText, InputToggle, ModalCrud, Tooltip, useModal } from '@qovery/shared/ui'
+import { type KarpenterData } from '@qovery/shared/interfaces'
+import {
+  Callout,
+  ExternalLink,
+  Icon,
+  InputSelect,
+  InputText,
+  InputToggle,
+  ModalCrud,
+  Tooltip,
+  useModal,
+} from '@qovery/shared/ui'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 type OverridePrefix = 'stable_override' | 'default_override' | 'gpu_override' | 'cronjob_override'
+
+type KarpenterNodePools = KarpenterData['qovery_node_pools']
+type NodepoolOverrides = Omit<KarpenterNodePools, 'requirements'>
 
 function LimitsFields({ prefix }: { prefix: OverridePrefix }) {
   const { control, watch } = useFormContext()
@@ -113,12 +119,12 @@ function LimitsFields({ prefix }: { prefix: OverridePrefix }) {
 export interface NodepoolModalProps {
   type: 'stable' | 'default' | 'gpu' | 'cronjob'
   cluster: Cluster
-  onChange: (data: Omit<KarpenterNodePool, 'requirements'>) => void
+  onChange: (data: NodepoolOverrides) => void
   defaultValues?:
-    | KarpenterStableNodePoolOverride
-    | KarpenterDefaultNodePoolOverride
-    | KarpenterGpuNodePoolOverride
-    | KarpenterCronjobNodePoolOverride
+    | KarpenterNodePools['stable_override']
+    | KarpenterNodePools['default_override']
+    | KarpenterNodePools['gpu_override']
+    | KarpenterNodePools['cronjob_override']
 }
 
 const CPU_MIN = 6
@@ -128,15 +134,17 @@ const GPU_MIN = 0
 export function NodepoolModal({ type, cluster, onChange, defaultValues }: NodepoolModalProps) {
   const { closeModal } = useModal()
 
-  const methods = useForm<Omit<KarpenterNodePool, 'requirements'>>({
+  const methods = useForm<NodepoolOverrides>({
     mode: 'onChange',
     defaultValues: {
       default_override: {
         limits: defaultValues?.limits,
         consolidate_after: defaultValues?.consolidate_after,
+        spot_enabled: defaultValues?.spot_enabled ?? false,
       },
       stable_override: {
         ...defaultValues,
+        spot_enabled: defaultValues?.spot_enabled ?? false,
         ...{
           consolidation: match(defaultValues)
             .with({ consolidation: P.not(P.nullish) }, ({ consolidation }) => ({
@@ -153,9 +161,11 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
       gpu_override: {
         limits: defaultValues?.limits,
         consolidate_after: defaultValues?.consolidate_after,
+        spot_enabled: defaultValues?.spot_enabled ?? false,
       },
       cronjob_override: {
         ...defaultValues,
+        spot_enabled: defaultValues?.spot_enabled ?? false,
         ...{
           consolidation: match(defaultValues)
             .with({ consolidation: P.not(P.nullish) }, ({ consolidation }) => ({
@@ -182,8 +192,77 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
     `${prefix === 'default_override' ? 'stable_override' : prefix}.consolidation.enabled`
   )
 
+  const spotDescription = match(prefix)
+    .with(
+      'default_override',
+      () =>
+        'Run workloads on spot instances to reduce costs. Interrupted pods are automatically rescheduled on a new node.'
+    )
+    .with(
+      'stable_override',
+      () =>
+        'Run this nodepool on spot instances. Not recommended: it hosts single-instance applications and containerized databases that cannot tolerate interruptions.'
+    )
+    .with(
+      'cronjob_override',
+      () =>
+        'Run jobs on spot instances to reduce costs. A job interrupted by a spot reclaim is rescheduled on a new node.'
+    )
+    .with(
+      'gpu_override',
+      () =>
+        'Run GPU workloads on spot instances to reduce costs. Spot capacity for GPU instance types can be limited in some regions.'
+    )
+    .exhaustive()
+
+  const spotWarning = match(prefix)
+    .with('stable_override', () => (
+      <Callout.Root color="yellow">
+        <Callout.Icon>
+          <Icon iconName="info-circle" iconStyle="regular" />
+        </Callout.Icon>
+        <Callout.Text>
+          <Callout.TextDescription>
+            The stable nodepool hosts interruption-sensitive workloads, such as single-instance applications and
+            containerized databases. Spot instances can be reclaimed by AWS with only a 2-minute notice, which may cause
+            downtime. You can still force the use of on-demand instances for a given service in its advanced settings.{' '}
+            <ExternalLink
+              size="sm"
+              href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
+            >
+              See documentation
+            </ExternalLink>
+          </Callout.TextDescription>
+        </Callout.Text>
+      </Callout.Root>
+    ))
+    .with('gpu_override', () =>
+      cluster.production ? (
+        <Callout.Root color="yellow">
+          <Callout.Icon>
+            <Icon iconName="info-circle" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            <Callout.TextDescription>
+              Activating spot instances on a production cluster may lead to potential downtime for applications deployed
+              to the GPU node pool. However, you can specify in the advanced settings to force the use of on-demand
+              instances for your service to avoid this.{' '}
+              <ExternalLink
+                size="sm"
+                href="https://www.qovery.com/docs/configuration/integrations/kubernetes/eks/managed#define-if-your-service-can-run-on-an-on-demand-instance"
+              >
+                See documentation
+              </ExternalLink>
+            </Callout.TextDescription>
+          </Callout.Text>
+        </Callout.Root>
+      ) : null
+    )
+    .with('default_override', 'cronjob_override', () => null)
+    .exhaustive()
+
   const onSubmit = methods.handleSubmit(async (data) => {
-    const payload: Omit<KarpenterNodePool, 'requirements'> = match(type)
+    const payload: NodepoolOverrides = match(type)
       .with('default', () => ({
         default_override: {
           limits: {
@@ -193,6 +272,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             max_gpu: data.default_override?.limits?.max_gpu ?? GPU_MIN,
           },
           consolidate_after: data.default_override?.consolidate_after,
+          spot_enabled: data.default_override?.spot_enabled ?? false,
         },
       }))
       .with('stable', () => ({
@@ -214,6 +294,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               : '',
           },
           consolidate_after: data.stable_override?.consolidate_after,
+          spot_enabled: data.stable_override?.spot_enabled ?? false,
         },
       }))
       .with('gpu', () => ({
@@ -235,6 +316,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               : '',
           },
           consolidate_after: data.gpu_override?.consolidate_after,
+          spot_enabled: data.gpu_override?.spot_enabled ?? false,
         },
       }))
       .with('cronjob', () => ({
@@ -256,6 +338,7 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
               : '',
           },
           consolidate_after: data.cronjob_override?.consolidate_after,
+          spot_enabled: data.cronjob_override?.spot_enabled ?? false,
         },
       }))
       .exhaustive()
@@ -495,6 +578,25 @@ export function NodepoolModal({ type, cluster, onChange, defaultValues }: Nodepo
             </div>
           ))
           .exhaustive()}
+        <div className="mt-6 flex flex-col gap-4 rounded border border-neutral bg-surface-neutral p-4">
+          <Controller
+            name={`${prefix}.spot_enabled`}
+            control={methods.control}
+            render={({ field }) => (
+              <>
+                <InputToggle
+                  value={field.value ?? false}
+                  onChange={field.onChange}
+                  title="Enable spot instances"
+                  description={spotDescription}
+                  align="top"
+                  small
+                />
+                {field.value && spotWarning}
+              </>
+            )}
+          />
+        </div>
       </ModalCrud>
     </FormProvider>
   )
