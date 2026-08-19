@@ -3,7 +3,7 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useRef } from 'react'
 import { FormProvider, useFieldArray } from 'react-hook-form'
-import { useMcpServers } from '@qovery/domains/organizations/feature'
+import { McpServerSetting, useMcpServers } from '@qovery/domains/organizations/feature'
 import { TextAreaVariableSuggestion, VariableRow } from '@qovery/domains/variables/feature'
 import { type VariableData } from '@qovery/shared/interfaces'
 import {
@@ -12,7 +12,6 @@ import {
   FunnelFlowBody,
   Heading,
   Icon,
-  InputSelect,
   InputText,
   InputTextArea,
   InputToggle,
@@ -427,30 +426,11 @@ export function AgenticWorkflowConfiguration() {
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection section="connectors" iconName="plug" invalid={sectionInvalid.connectors}>
-            <InputSelect
-              label="Organization MCP connectors"
-              value={values.mcpServerIds}
-              options={mcpServers.map(({ id, name, url }) => ({ value: id, label: name, description: url }))}
-              isMulti
-              isSearchable
+            <McpServerSetting
               isLoading={areMcpServersLoading}
-              placeholder="Select MCP connectors"
-              hint={
-                mcpServers.length === 0 && !areMcpServersLoading ? (
-                  <span>
-                    No connector is configured. Add one in{' '}
-                    <a
-                      className="font-medium text-brand hover:underline"
-                      href={`/organization/${organizationId}/settings/agents`}
-                    >
-                      AI settings → Agents
-                    </a>
-                    .
-                  </span>
-                ) : (
-                  'Select the organization connectors this workflow can use.'
-                )
-              }
+              mcpServers={mcpServers}
+              organizationId={organizationId}
+              value={values.mcpServerIds}
               onChange={(value) => form.setValue('mcpServerIds', value as string[], { shouldDirty: true })}
             />
             <Heading className="pt-4" weight="medium">

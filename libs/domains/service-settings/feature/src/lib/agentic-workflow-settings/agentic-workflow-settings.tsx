@@ -1,7 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import { type AgenticWorkflowOutput } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
-import { useGitTokens, useMcpServers } from '@qovery/domains/organizations/feature'
+import { McpServerSetting, useGitTokens, useMcpServers } from '@qovery/domains/organizations/feature'
 import { type AgenticWorkflowRequest, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   AgenticWorkflowCodeEditorField,
@@ -12,7 +12,7 @@ import {
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Heading, Icon, InputSelect, InputText, InputTextArea, InputToggle, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputText, InputTextArea, InputToggle, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'outputs' | 'governance'
@@ -338,30 +338,11 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
                 Select a Git account, repository, and branch for each repository.
               </p>
             )}
-            <InputSelect
-              label="Organization MCP connectors"
-              value={values.mcpServerIds}
-              options={mcpServers.map(({ id, name, url }) => ({ value: id, label: name, description: url }))}
-              isMulti
-              isSearchable
+            <McpServerSetting
               isLoading={areMcpServersLoading}
-              placeholder="Select MCP connectors"
-              hint={
-                mcpServers.length === 0 && !areMcpServersLoading ? (
-                  <span>
-                    No connector is configured. Add one in{' '}
-                    <a
-                      className="font-medium text-brand hover:underline"
-                      href={`/organization/${organizationId}/settings/agents`}
-                    >
-                      AI settings → Agents
-                    </a>
-                    .
-                  </span>
-                ) : (
-                  'Select the organization connectors this workflow can use.'
-                )
-              }
+              mcpServers={mcpServers}
+              organizationId={organizationId}
+              value={values.mcpServerIds}
               onChange={(value) => form.setValue('mcpServerIds', value as string[], { shouldDirty: true })}
             />
             <Heading className="pt-4" weight="medium">
