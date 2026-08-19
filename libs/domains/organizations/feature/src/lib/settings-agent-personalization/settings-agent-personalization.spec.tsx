@@ -1,9 +1,18 @@
 import { type McpServerResponse } from 'qovery-typescript-axios'
+import * as sharedUi from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import * as useDeleteMcpServerHook from '../hooks/use-delete-mcp-server/use-delete-mcp-server'
 import * as useMcpServersHook from '../hooks/use-mcp-servers/use-mcp-servers'
 import { SettingsAgentPersonalization } from './settings-agent-personalization'
 
 const useMcpServersMock = jest.spyOn(useMcpServersHook, 'useMcpServers') as jest.Mock
+const useDeleteMcpServerMock = jest.spyOn(useDeleteMcpServerHook, 'useDeleteMcpServer') as jest.Mock
+const useModalMock = jest.spyOn(sharedUi, 'useModal') as jest.Mock
+const useModalConfirmationMock = jest.spyOn(sharedUi, 'useModalConfirmation') as jest.Mock
+const openModal = jest.fn()
+const closeModal = jest.fn()
+const openModalConfirmation = jest.fn()
+const deleteMcpServer = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -32,6 +41,18 @@ const mcpServers: McpServerResponse[] = [
 ]
 
 describe('SettingsAgentPersonalization', () => {
+  beforeEach(() => {
+    jest.useFakeTimers()
+    jest.clearAllMocks()
+    useModalMock.mockReturnValue({ openModal, closeModal })
+    useModalConfirmationMock.mockReturnValue({ openModalConfirmation })
+    useDeleteMcpServerMock.mockReturnValue({ mutateAsync: deleteMcpServer })
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   it('should render the empty state and organization scope', () => {
     useMcpServersMock.mockReturnValue({ data: [] })
 
@@ -57,5 +78,29 @@ describe('SettingsAgentPersonalization', () => {
     expect(screen.getByText('Authorization')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Edit Zulu' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Delete Zulu' })).toBeInTheDocument()
+  })
+
+  it('should open the create and edit modals', async () => {
+    useMcpServersMock.mockReturnValue({ data: mcpServers })
+    const { userEvent } = renderWithProviders(<SettingsAgentPersonalization />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add connector' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Zulu' }))
+
+    expect(openModal).toHaveBeenCalledTimes(2)
+    expect(openModal).toHaveBeenNthCalledWith(1, expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
+    expect(openModal).toHaveBeenNthCalledWith(2, expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
+  })
+
+  it('should confirm deletion with the connector name and organization scope', async () => {
+    useMcpServersMock.mockReturnValue({ data: mcpServers })
+    const { userEvent } = renderWithProviders(<SettingsAgentPersonalization />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete Zulu' }))
+    const confirmation = openModalConfirmation.mock.calls[0][0]
+    await confirmation.action()
+
+    expect(confirmation).toEqual(expect.objectContaining({ title: 'Delete MCP connector', name: 'Zulu' }))
+    expect(deleteMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1', mcpServerId: 'mcp-zulu' })
   })
 })
