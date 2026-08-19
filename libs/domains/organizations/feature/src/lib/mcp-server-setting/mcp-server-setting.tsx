@@ -23,7 +23,6 @@ export function McpServerSetting({ isLoading, mcpServers, organizationId, value,
     openModal({
       content: (
         <McpServerCreateEditModal
-          organizationId={organizationId}
           onClose={(response) => {
             if (response) {
               setCreatedMcpServer(response)

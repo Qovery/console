@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { type McpServerRequest, type McpServerResponse } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useFieldArray, useForm } from 'react-hook-form'
 import { Button, Callout, Icon, InputText, InputTextArea, InputTextSmall, ModalCrud, useModal } from '@qovery/shared/ui'
@@ -17,7 +18,6 @@ interface McpServerFormValues {
 }
 
 export interface McpServerCreateEditModalProps {
-  organizationId: string
   onClose: (response?: McpServerResponse) => void
   mcpServer?: McpServerResponse
 }
@@ -31,8 +31,9 @@ function isValidHttpsUrl(value: string) {
   }
 }
 
-export function McpServerCreateEditModal({ organizationId, onClose, mcpServer }: McpServerCreateEditModalProps) {
-  const isEdit = Boolean(mcpServer)
+export function McpServerCreateEditModal({ onClose, mcpServer }: McpServerCreateEditModalProps) {
+  const { organizationId = '' } = useParams({ strict: false })
+  const isEdit = mcpServer !== undefined
   const { enableAlertClickOutside } = useModal()
   const methods = useForm<McpServerFormValues>({
     mode: 'onChange',
@@ -66,7 +67,7 @@ export function McpServerCreateEditModal({ organizationId, onClose, mcpServer }:
     }
 
     try {
-      const response = mcpServer
+      const response = isEdit
         ? await editMcpServer({ organizationId, mcpServerId: mcpServer.id, mcpServerRequest })
         : await createMcpServer({ organizationId, mcpServerRequest })
       onClose(response)

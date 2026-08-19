@@ -8,9 +8,13 @@ const useCreateMcpServerMock = jest.spyOn(useCreateMcpServerHook, 'useCreateMcpS
 const useEditMcpServerMock = jest.spyOn(useEditMcpServerHook, 'useEditMcpServer') as jest.Mock
 
 const props: McpServerCreateEditModalProps = {
-  organizationId: 'org-1',
   onClose: jest.fn(),
 }
+
+jest.mock('@tanstack/react-router', () => ({
+  ...jest.requireActual('@tanstack/react-router'),
+  useParams: () => ({ organizationId: 'org-1' }),
+}))
 
 describe('McpServerCreateEditModal', () => {
   const createMcpServer = jest.fn()

@@ -29,11 +29,11 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteMcpServer } = useDeleteMcpServer()
-  const headerNames = Array.from(mcpServer.header_names ?? [])
+  const headerNames = Array.from(mcpServer.header_names ?? []).sort((a, b) => a.localeCompare(b))
 
   const onEdit = () => {
     openModal({
-      content: <McpServerCreateEditModal organizationId={organizationId} mcpServer={mcpServer} onClose={closeModal} />,
+      content: <McpServerCreateEditModal mcpServer={mcpServer} onClose={closeModal} />,
       options: {
         fakeModal: true,
         width: 680,
@@ -73,13 +73,11 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
           <p className="break-all font-mono text-xs text-neutral-subtle">{mcpServer.url}</p>
           {headerNames.length > 0 ? (
             <div className="flex flex-wrap gap-2 pt-1" aria-label="Configured headers">
-              {[...headerNames]
-                .sort((a, b) => a.localeCompare(b))
-                .map((headerName) => (
-                  <Badge key={headerName} size="sm" variant="surface" color="neutral" className="font-mono">
-                    {headerName}
-                  </Badge>
-                ))}
+              {headerNames.map((headerName) => (
+                <Badge key={headerName} size="sm" variant="surface" color="neutral" className="font-mono">
+                  {headerName}
+                </Badge>
+              ))}
             </div>
           ) : null}
           <p className="pt-1 text-xs text-neutral-subtle">
@@ -173,7 +171,7 @@ export function SettingsAgentPersonalization() {
 
   const onAdd = () => {
     openModal({
-      content: <McpServerCreateEditModal organizationId={organizationId} onClose={closeModal} />,
+      content: <McpServerCreateEditModal onClose={closeModal} />,
       options: {
         fakeModal: true,
         width: 680,
