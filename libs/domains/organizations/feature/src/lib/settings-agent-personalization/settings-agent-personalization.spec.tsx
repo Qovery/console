@@ -60,13 +60,11 @@ describe('SettingsAgentPersonalization', () => {
 
     expect(screen.getByRole('heading', { name: 'Agent personalization' })).toBeInTheDocument()
     expect(screen.getByText('Your personal settings for Qovery Agent')).toBeInTheDocument()
-    expect(
-      screen.getByText('MCP connectors are shared with every Qovery Agent in this organization.')
-    ).toBeInTheDocument()
-    expect(screen.getByText('No MCP connectors')).toBeInTheDocument()
+    expect(screen.getByText('MCPs are shared with every Qovery Agent in this organization.')).toBeInTheDocument()
+    expect(screen.getByText('No MCPs')).toBeInTheDocument()
   })
 
-  it('should render MCP connectors alphabetically with their metadata and actions', () => {
+  it('should render MCPs alphabetically with their URL, description tooltip, and actions', () => {
     useMcpServersMock.mockReturnValue({ data: mcpServers })
 
     renderWithProviders(<SettingsAgentPersonalization />)
@@ -75,7 +73,9 @@ describe('SettingsAgentPersonalization', () => {
     expect(rows[0]).toHaveAttribute('data-testid', 'mcp-server-mcp-alpha')
     expect(rows[1]).toHaveAttribute('data-testid', 'mcp-server-mcp-zulu')
     expect(screen.getByText('https://zulu.example.com/mcp')).toBeInTheDocument()
-    expect(screen.getByText('Authorization')).toBeInTheDocument()
+    expect(screen.queryByText('Authorization')).not.toBeInTheDocument()
+    expect(screen.queryByText('Second connector')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('About Zulu')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Edit Zulu' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Delete Zulu' })).toBeInTheDocument()
   })
@@ -84,7 +84,7 @@ describe('SettingsAgentPersonalization', () => {
     useMcpServersMock.mockReturnValue({ data: mcpServers })
     const { userEvent } = renderWithProviders(<SettingsAgentPersonalization />)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add connector' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
     await userEvent.click(screen.getByRole('button', { name: 'Edit Zulu' }))
 
     expect(openModal).toHaveBeenCalledTimes(2)
@@ -100,7 +100,7 @@ describe('SettingsAgentPersonalization', () => {
     const confirmation = openModalConfirmation.mock.calls[0][0]
     await confirmation.action()
 
-    expect(confirmation).toEqual(expect.objectContaining({ title: 'Delete MCP connector', name: 'Zulu' }))
+    expect(confirmation).toEqual(expect.objectContaining({ title: 'Delete MCP', name: 'Zulu' }))
     expect(deleteMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1', mcpServerId: 'mcp-zulu' })
   })
 })

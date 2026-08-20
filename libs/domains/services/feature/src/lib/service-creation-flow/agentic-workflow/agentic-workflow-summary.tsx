@@ -169,7 +169,7 @@ export function AgenticWorkflowSummary() {
 
           <SummarySection title="MCPs" onEdit={() => handleEditSection('connectors')}>
             <SummaryValue
-              label="Organization connectors"
+              label="Organization MCPs"
               value={
                 mcpServers
                   .filter(({ id }) => values.mcpServerIds.includes(id))

@@ -79,21 +79,21 @@ export function McpServerCreateEditModal({ onClose, mcpServer }: McpServerCreate
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title={isEdit ? 'Edit MCP connector' : 'Add MCP connector'}
+        title={isEdit ? 'Edit MCP' : 'Add MCP'}
         description="Connect a remote HTTPS MCP server to Qovery Agent."
         onClose={onClose}
         onSubmit={onSubmit}
         loading={isCreating || isEditing}
         isEdit={isEdit}
-        submitLabel={isEdit ? 'Save connector' : 'Add connector'}
+        submitLabel={isEdit ? 'Save MCP' : 'Add MCP'}
       >
         <div className="space-y-4">
           <Controller
             name="name"
             control={methods.control}
             rules={{
-              required: 'Please enter a connector name.',
-              validate: (value) => Boolean(value.trim()) || 'Please enter a connector name.',
+              required: 'Please enter an MCP name.',
+              validate: (value) => Boolean(value.trim()) || 'Please enter an MCP name.',
             }}
             render={({ field, fieldState: { error } }) => (
               <InputText

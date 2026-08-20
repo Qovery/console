@@ -28,7 +28,7 @@ describe('McpServerCreateEditModal', () => {
     useEditMcpServerMock.mockReturnValue({ mutateAsync: editMcpServer, isLoading: false })
   })
 
-  it('should create an MCP connector with headers', async () => {
+  it('should create an MCP with headers', async () => {
     const { userEvent } = renderWithProviders(<McpServerCreateEditModal {...props} />)
 
     await userEvent.type(screen.getByLabelText('Name'), 'GitHub')
@@ -37,7 +37,7 @@ describe('McpServerCreateEditModal', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add header' }))
     await userEvent.type(screen.getByLabelText('Header 1 name'), 'Authorization')
     await userEvent.type(screen.getByLabelText('Header 1 value'), 'Bearer secret')
-    await userEvent.click(screen.getByRole('button', { name: 'Add connector' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
 
     await waitFor(() =>
       expect(createMcpServer).toHaveBeenCalledWith({
@@ -60,7 +60,7 @@ describe('McpServerCreateEditModal', () => {
     await userEvent.tab()
 
     expect(await screen.findByText('Please enter a valid HTTPS URL.')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Add connector' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Add MCP' })).toBeDisabled()
   })
 
   it('should reject duplicate header names', async () => {
@@ -93,10 +93,10 @@ describe('McpServerCreateEditModal', () => {
 
     expect(screen.getByText('Re-enter every header value')).toBeInTheDocument()
     expect(screen.getByLabelText('Header 1 value')).toHaveAttribute('type', 'password')
-    expect(screen.getByRole('button', { name: 'Save connector' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Save MCP' })).toBeDisabled()
 
     await userEvent.type(screen.getByLabelText('Header 1 value'), 'Bearer new-secret')
-    await userEvent.click(screen.getByRole('button', { name: 'Save connector' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save MCP' }))
 
     await waitFor(() =>
       expect(editMcpServer).toHaveBeenCalledWith({

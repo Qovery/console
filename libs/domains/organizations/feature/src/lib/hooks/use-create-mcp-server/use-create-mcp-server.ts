@@ -13,7 +13,7 @@ export function useCreateMcpServer() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your MCP connector has been created',
+        title: 'Your MCP has been created',
       },
       notifyOnError: true,
     },
