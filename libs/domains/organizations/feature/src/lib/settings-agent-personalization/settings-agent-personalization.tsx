@@ -6,6 +6,7 @@ import {
   BlockContent,
   Button,
   EmptyState,
+  Heading,
   Icon,
   Section,
   Skeleton,
@@ -58,11 +59,11 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
       data-testid={`mcp-server-${mcpServer.id}`}
       className="flex items-start justify-between gap-4 border-b border-neutral p-4 last:border-0"
     >
-      <div className="min-w-0 space-y-1">
+      <Section className="min-w-0 space-y-1">
         <div className="flex items-center gap-2">
-          <h3 className="min-w-0 text-sm font-medium text-neutral">
+          <Heading level={3} className="min-w-0">
             <Truncate truncateLimit={60} text={mcpServer.name} />
-          </h3>
+          </Heading>
           {mcpServer.description ? (
             <Tooltip content={mcpServer.description}>
               <span className="cursor-pointer" aria-label={`About ${mcpServer.name}`}>
@@ -72,7 +73,7 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
           ) : null}
         </div>
         <p className="break-all font-mono text-xs text-neutral-subtle">{mcpServer.url}</p>
-      </div>
+      </Section>
       <div className="flex shrink-0 gap-2">
         <Button
           size="md"
