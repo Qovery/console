@@ -57,7 +57,7 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
   return (
     <li
       data-testid={`mcp-server-${mcpServer.id}`}
-      className="flex items-start justify-between gap-4 border-b border-neutral p-4 last:border-0"
+      className="flex items-center justify-between gap-4 border-b border-neutral p-4 last:border-0"
     >
       <Section className="min-w-0 space-y-1">
         <div className="flex items-center gap-2">
