@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
+import { AgenticWorkflowModelType } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useRef } from 'react'
 import { useMcpServers } from '@qovery/domains/organizations/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
@@ -31,6 +32,14 @@ function formatCount(count: number, singular: string) {
 
 function maskValue(value: string) {
   return value.trim() ? '********' : '-'
+}
+
+const modelProviderLabels: Partial<Record<AgenticWorkflowModelType, string>> = {
+  [AgenticWorkflowModelType.CLAUDE]: 'Anthropic',
+}
+
+function getModelProviderLabel(model: AgenticWorkflowModelType) {
+  return modelProviderLabels[model] ?? model
 }
 
 function hasIncompleteGitRepository(values: AgenticWorkflowFormData) {
@@ -162,7 +171,7 @@ export function AgenticWorkflowSummary() {
           </SummarySection>
 
           <SummarySection title="AI model" onEdit={() => handleEditSection('ai-model')}>
-            <SummaryValue label="Model" value={values.aiModel} />
+            <SummaryValue label="Model provider" value={getModelProviderLabel(values.aiModel)} />
             <SummaryValue label="API key" value={maskValue(values.modelApiKey)} />
             <SummaryValue label="Model settings" value={truncateSummary(values.modelSettingsJson)} />
           </SummarySection>
