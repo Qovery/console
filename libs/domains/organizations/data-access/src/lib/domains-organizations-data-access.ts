@@ -14,6 +14,8 @@ import {
   HelmRepositoriesApi,
   type HelmRepositoryRequest,
   type InviteMemberRequest,
+  MCPServersApi,
+  type McpServerRequest,
   type MemberRoleUpdateRequest,
   MembersApi,
   OrganizationAccountGitRepositoriesApi,
@@ -58,6 +60,7 @@ const webhookApi = new OrganizationWebhookApi()
 const billingApi = new BillingApi()
 const customRolesApi = new OrganizationCustomRoleApi()
 const membersApi = new MembersApi()
+const mcpServersApi = new MCPServersApi()
 const githubAppApi = new GithubAppApi()
 const argoCdApi = new ArgoCDApi()
 
@@ -108,6 +111,13 @@ export const organizations = createQueryKeys('organizations', {
     queryKey: [organizationId],
     async queryFn() {
       const response = await containerRegistriesApi.listContainerRegistry(organizationId)
+      return response.data.results
+    },
+  }),
+  mcpServers: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await mcpServersApi.listMcpServers(organizationId)
       return response.data.results
     },
   }),
@@ -626,6 +636,31 @@ export const mutations = {
     containerRegistryId: string
   }) {
     const response = await containerRegistriesApi.deleteContainerRegistry(organizationId, containerRegistryId)
+    return response.data
+  },
+  async createMcpServer({
+    organizationId,
+    mcpServerRequest,
+  }: {
+    organizationId: string
+    mcpServerRequest: McpServerRequest
+  }) {
+    const response = await mcpServersApi.createMcpServer(organizationId, mcpServerRequest)
+    return response.data
+  },
+  async editMcpServer({
+    mcpServerId,
+    mcpServerRequest,
+  }: {
+    organizationId: string
+    mcpServerId: string
+    mcpServerRequest: McpServerRequest
+  }) {
+    const response = await mcpServersApi.editMcpServer(mcpServerId, mcpServerRequest)
+    return response.data
+  },
+  async deleteMcpServer({ mcpServerId }: { organizationId: string; mcpServerId: string }) {
+    const response = await mcpServersApi.deleteMcpServer(mcpServerId)
     return response.data
   },
   async deleteGitToken({ organizationId, gitTokenId }: { organizationId: string; gitTokenId: string }) {

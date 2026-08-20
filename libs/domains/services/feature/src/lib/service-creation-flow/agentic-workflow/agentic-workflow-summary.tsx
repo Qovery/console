@@ -1,6 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type ReactNode, useEffect, useRef } from 'react'
+import { useMcpServers } from '@qovery/domains/organizations/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, truncateText } from '@qovery/shared/ui'
 import { pluralize, prepareVariableImportRequest } from '@qovery/shared/util-js'
@@ -78,6 +79,7 @@ export function AgenticWorkflowSummary() {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const { creationFlowUrl, form, setActiveSection, setCurrentStep, variablesForm } = useAgenticWorkflowCreateContext()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
+  const { data: mcpServers = [] } = useMcpServers({ organizationId })
   const { isLoading: isImportingVariables, mutateAsync: importVariables } = useImportVariables()
   const createdServiceIdRef = useRef<string>()
   const values = form.watch()
@@ -166,6 +168,15 @@ export function AgenticWorkflowSummary() {
           </SummarySection>
 
           <SummarySection title="MCPs" onEdit={() => handleEditSection('connectors')}>
+            <SummaryValue
+              label="Organization connectors"
+              value={
+                mcpServers
+                  .filter(({ id }) => values.mcpServerIds.includes(id))
+                  .map(({ name }) => name)
+                  .join(', ') || 'None'
+              }
+            />
             <SummaryValue label="Configuration" value={truncateSummary(values.mcpJson)} />
           </SummarySection>
 

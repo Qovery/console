@@ -11,6 +11,7 @@ const values: AgenticWorkflowFormData = {
   workflowEnabled: true,
   aiModel: AgenticWorkflowModelType.CLAUDE,
   webhookEnabled: true,
+  mcpServerIds: ['mcp-1', 'mcp-2'],
   mcpJson: '',
   gitRepositories: [],
   modelApiKey: 'api-key',
@@ -22,6 +23,10 @@ const values: AgenticWorkflowFormData = {
 }
 
 describe('formatAgenticWorkflowRequest', () => {
+  it('sends the selected organization MCP server IDs', () => {
+    expect(formatAgenticWorkflowRequest(values).mcp_server_ids).toEqual(['mcp-1', 'mcp-2'])
+  })
+
   it('uses the full URL of a selected Git repository', () => {
     const request = formatAgenticWorkflowRequest({
       ...values,

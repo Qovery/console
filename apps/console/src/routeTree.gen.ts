@@ -49,6 +49,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdSettingsBillingDetailsR
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRouteImport } from './routes/_authenticated/organization/$organizationId/settings/argocd-integration'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsApiTokenRouteImport } from './routes/_authenticated/organization/$organizationId/settings/api-token'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRouteImport } from './routes/_authenticated/organization/$organizationId/settings/ai-copilot'
+import { Route as AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteImport } from './routes/_authenticated/organization/$organizationId/settings/agents'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterNewRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/new'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsNotificationChannelRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/notification-channel'
 import { Route as AuthenticatedOrganizationOrganizationIdAlertsIssuesRouteImport } from './routes/_authenticated/organization/$organizationId/alerts/issues'
@@ -473,6 +474,13 @@ const AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute =
   AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRouteImport.update({
     id: '/ai-copilot',
     path: '/ai-copilot',
+    getParentRoute: () =>
+      AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
+  } as any)
+const AuthenticatedOrganizationOrganizationIdSettingsAgentsRoute =
+  AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteImport.update({
+    id: '/agents',
+    path: '/agents',
     getParentRoute: () =>
       AuthenticatedOrganizationOrganizationIdSettingsRouteRoute,
   } as any)
@@ -1837,6 +1845,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/alerts/issues': typeof AuthenticatedOrganizationOrganizationIdAlertsIssuesRoute
   '/organization/$organizationId/alerts/notification-channel': typeof AuthenticatedOrganizationOrganizationIdAlertsNotificationChannelRoute
   '/organization/$organizationId/cluster/new': typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
+  '/organization/$organizationId/settings/agents': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRoute
   '/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   '/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
   '/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
@@ -2028,6 +2037,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/alerts/issues': typeof AuthenticatedOrganizationOrganizationIdAlertsIssuesRoute
   '/organization/$organizationId/alerts/notification-channel': typeof AuthenticatedOrganizationOrganizationIdAlertsNotificationChannelRoute
   '/organization/$organizationId/cluster/new': typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
+  '/organization/$organizationId/settings/agents': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRoute
   '/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   '/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
   '/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
@@ -2207,6 +2217,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/alerts/issues': typeof AuthenticatedOrganizationOrganizationIdAlertsIssuesRoute
   '/_authenticated/organization/$organizationId/alerts/notification-channel': typeof AuthenticatedOrganizationOrganizationIdAlertsNotificationChannelRoute
   '/_authenticated/organization/$organizationId/cluster/new': typeof AuthenticatedOrganizationOrganizationIdClusterNewRoute
+  '/_authenticated/organization/$organizationId/settings/agents': typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRoute
   '/_authenticated/organization/$organizationId/settings/ai-copilot': typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   '/_authenticated/organization/$organizationId/settings/api-token': typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
   '/_authenticated/organization/$organizationId/settings/argocd-integration': typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
@@ -2404,6 +2415,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/alerts/issues'
     | '/organization/$organizationId/alerts/notification-channel'
     | '/organization/$organizationId/cluster/new'
+    | '/organization/$organizationId/settings/agents'
     | '/organization/$organizationId/settings/ai-copilot'
     | '/organization/$organizationId/settings/api-token'
     | '/organization/$organizationId/settings/argocd-integration'
@@ -2595,6 +2607,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/alerts/issues'
     | '/organization/$organizationId/alerts/notification-channel'
     | '/organization/$organizationId/cluster/new'
+    | '/organization/$organizationId/settings/agents'
     | '/organization/$organizationId/settings/ai-copilot'
     | '/organization/$organizationId/settings/api-token'
     | '/organization/$organizationId/settings/argocd-integration'
@@ -2773,6 +2786,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/alerts/issues'
     | '/_authenticated/organization/$organizationId/alerts/notification-channel'
     | '/_authenticated/organization/$organizationId/cluster/new'
+    | '/_authenticated/organization/$organizationId/settings/agents'
     | '/_authenticated/organization/$organizationId/settings/ai-copilot'
     | '/_authenticated/organization/$organizationId/settings/api-token'
     | '/_authenticated/organization/$organizationId/settings/argocd-integration'
@@ -3232,6 +3246,13 @@ declare module '@tanstack/react-router' {
       path: '/ai-copilot'
       fullPath: '/organization/$organizationId/settings/ai-copilot'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/settings/agents': {
+      id: '/_authenticated/organization/$organizationId/settings/agents'
+      path: '/agents'
+      fullPath: '/organization/$organizationId/settings/agents'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsRouteRoute
     }
     '/_authenticated/organization/$organizationId/cluster/new': {
@@ -4340,6 +4361,7 @@ const AuthenticatedOrganizationOrganizationIdAlertsRouteRouteWithChildren =
   )
 
 interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdSettingsAgentsRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAgentsRoute
   AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute
   AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute
   AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute: typeof AuthenticatedOrganizationOrganizationIdSettingsArgocdIntegrationRoute
@@ -4364,6 +4386,8 @@ interface AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren {
 
 const AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren: AuthenticatedOrganizationOrganizationIdSettingsRouteRouteChildren =
   {
+    AuthenticatedOrganizationOrganizationIdSettingsAgentsRoute:
+      AuthenticatedOrganizationOrganizationIdSettingsAgentsRoute,
     AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute:
       AuthenticatedOrganizationOrganizationIdSettingsAiCopilotRoute,
     AuthenticatedOrganizationOrganizationIdSettingsApiTokenRoute:
