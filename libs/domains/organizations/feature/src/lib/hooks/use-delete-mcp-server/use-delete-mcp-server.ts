@@ -13,7 +13,7 @@ export function useDeleteMcpServer() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your MCP connector has been deleted',
+        title: 'Your MCP has been deleted',
       },
       notifyOnError: true,
     },

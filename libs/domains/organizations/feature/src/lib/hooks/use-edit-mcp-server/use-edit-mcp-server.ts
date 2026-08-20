@@ -13,7 +13,7 @@ export function useEditMcpServer() {
     },
     meta: {
       notifyOnSuccess: {
-        title: 'Your MCP connector has been updated',
+        title: 'Your MCP has been updated',
       },
       notifyOnError: true,
     },

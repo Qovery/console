@@ -195,7 +195,7 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('textbox', { name: 'Dockerfile fragment' })).toHaveValue('RUN apt-get update')
   })
 
-  it('links to organization Agent settings when no MCP connector exists', () => {
+  it('links to organization Agent settings when no MCP exists', () => {
     useMcpServersSpy.mockReturnValue({ data: [], isLoading: false })
 
     renderWithProviders(<AgenticWorkflowSettings page="connections" />)
