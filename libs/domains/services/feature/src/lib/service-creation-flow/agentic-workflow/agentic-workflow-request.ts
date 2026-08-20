@@ -31,6 +31,7 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
     docker_fragment: values.dockerFragment,
     enabled: values.workflowEnabled,
     mcp: values.mcpJson.trim() || undefined,
+    mcp_server_ids: values.mcpServerIds,
     outputs: values.outputs.map((output, index) => ({
       name: `Output ${index + 1}`,
       url: output.url,

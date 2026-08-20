@@ -10,6 +10,8 @@ import { SCW_CONTROL_PLANE_FEATURE_ID } from '@qovery/domains/cloud-providers/fe
 import {
   ClusterMigrationModal,
   ClusterResourcesSettings,
+  deriveGlobalSpotEnabled,
+  normalizeKarpenterSpot,
   useCluster,
   useEditCluster,
 } from '@qovery/domains/clusters/feature'
@@ -33,6 +35,7 @@ const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
   }
 
   const hasKarpenterFeature = cluster.features?.some((f) => f.id === 'KARPENTER')
+  const qoveryNodePools = data['karpenter']?.qovery_node_pools
 
   if (data['karpenter']?.enabled && !hasKarpenterFeature) {
     payload.features = [
@@ -40,10 +43,10 @@ const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
       {
         id: 'KARPENTER',
         value: {
-          spot_enabled: data['karpenter'].spot_enabled ?? false,
+          spot_enabled: deriveGlobalSpotEnabled(qoveryNodePools),
           disk_size_in_gib: data['karpenter'].disk_size_in_gib,
           default_service_architecture: data['karpenter'].default_service_architecture,
-          qovery_node_pools: data['karpenter'].qovery_node_pools,
+          qovery_node_pools: qoveryNodePools,
         },
       } as ClusterRequestFeaturesInner,
     ]
@@ -53,10 +56,10 @@ const handleSubmit = (data: FieldValues, cluster: Cluster): Cluster => {
         return {
           ...feature,
           value: {
-            spot_enabled: data['karpenter'].spot_enabled ?? false,
+            spot_enabled: deriveGlobalSpotEnabled(qoveryNodePools),
             disk_size_in_gib: data['karpenter'].disk_size_in_gib,
             default_service_architecture: data['karpenter'].default_service_architecture,
-            qovery_node_pools: data['karpenter'].qovery_node_pools,
+            qovery_node_pools: qoveryNodePools,
           },
         }
       }
@@ -104,7 +107,7 @@ function ClusterResourcesSettingsForm({ cluster }: { cluster: Cluster }) {
             spot_enabled: karpenterFeature.value.spot_enabled,
             disk_size_in_gib: karpenterFeature.value.disk_size_in_gib,
             default_service_architecture: karpenterFeature.value.default_service_architecture,
-            qovery_node_pools: karpenterFeature.value.qovery_node_pools,
+            qovery_node_pools: normalizeKarpenterSpot(karpenterFeature.value),
           }
         : {
             enabled: false,

@@ -79,4 +79,7 @@ export * from './lib/hooks/use-secret-manager-provider-secrets/use-secret-manage
 export * from './lib/gpu-resources-settings/gpu-resources-settings'
 export * from './lib/utils/has-gpu-instance'
 export * from './lib/utils/karpenter-feature-value'
+export * from './lib/utils/derive-global-spot-enabled'
+export * from './lib/utils/map-creation-spot-to-node-pools'
+export * from './lib/utils/normalize-karpenter-spot'
 export * from './lib/cluster-resources-settings/cluster-resources-settings'

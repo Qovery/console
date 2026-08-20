@@ -3,6 +3,7 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect, useRef } from 'react'
 import { FormProvider, useFieldArray } from 'react-hook-form'
+import { McpServerSetting, useMcpServers } from '@qovery/domains/organizations/feature'
 import { TextAreaVariableSuggestion, VariableRow } from '@qovery/domains/variables/feature'
 import { type VariableData } from '@qovery/shared/interfaces'
 import {
@@ -205,6 +206,8 @@ export function AgenticWorkflowCodeEditorField({
 }
 
 export function AgenticWorkflowConfiguration() {
+  const { organizationId = '' } = useParams({ strict: false })
+  const { data: mcpServers = [], isLoading: areMcpServersLoading } = useMcpServers({ organizationId })
   const navigate = useNavigate()
   const { environmentId = '' } = useParams({ strict: false })
   const { activeSection, creationFlowUrl, form, setActiveSection, setCurrentStep, variablesForm } =
@@ -423,6 +426,16 @@ export function AgenticWorkflowConfiguration() {
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection section="connectors" iconName="plug" invalid={sectionInvalid.connectors}>
+            <McpServerSetting
+              isLoading={areMcpServersLoading}
+              mcpServers={mcpServers}
+              organizationId={organizationId}
+              value={values.mcpServerIds}
+              onChange={(value) => form.setValue('mcpServerIds', value as string[], { shouldDirty: true })}
+            />
+            <Heading level={3} className="pt-4" weight="medium">
+              Advanced MCP configuration
+            </Heading>
             <AgenticWorkflowCodeEditorField
               name="mcp"
               label="MCP JSON"
@@ -574,10 +587,9 @@ export function AgenticWorkflowConfiguration() {
             <FormProvider {...variablesForm}>
               {variables.length > 0 ? (
                 <div>
-                  <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_112px_36px] gap-3 text-xs font-medium text-neutral-subtle">
+                  <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_36px] gap-3 text-xs font-medium text-neutral-subtle">
                     <span>Variable</span>
                     <span>Value</span>
-                    <span>Scope</span>
                     <span className="sr-only">Actions</span>
                   </div>
                   {variables.map((variable, index) => (
@@ -585,7 +597,8 @@ export function AgenticWorkflowConfiguration() {
                       key={variable.id}
                       index={index}
                       availableScopes={[APIVariableScopeEnum.AGENTIC_WORKFLOW]}
-                      gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 112px 36px"
+                      gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 36px"
+                      showScope={false}
                       onDelete={removeVariable}
                     />
                   ))}

@@ -133,8 +133,112 @@ describe('NodepoolModal', () => {
             start_time: 'PT21:00',
             duration: 'PT8H00M',
           },
+          spot_enabled: false,
         },
       })
     })
+  })
+
+  it.each(['stable', 'default', 'gpu', 'cronjob'] as const)(
+    'should render the spot toggle for the %s nodepool',
+    (type) => {
+      renderWithProviders(<NodepoolModal {...defaultProps} type={type} />)
+
+      expect(screen.getByRole('switch', { name: 'Enable spot instances' })).toBeInTheDocument()
+    }
+  )
+
+  it.each([
+    [
+      'stable' as const,
+      'Run this nodepool on spot instances. Not recommended: it hosts single-instance applications and containerized databases that cannot tolerate interruptions.',
+    ],
+    [
+      'default' as const,
+      'Run workloads on spot instances to reduce costs. Interrupted pods are automatically rescheduled on a new node.',
+    ],
+    [
+      'gpu' as const,
+      'Run GPU workloads on spot instances to reduce costs. Spot capacity for GPU instance types can be limited in some regions.',
+    ],
+    [
+      'cronjob' as const,
+      'Run jobs on spot instances to reduce costs. A job interrupted by a spot reclaim is rescheduled on a new node.',
+    ],
+  ])('should describe what spot instances mean for the %s nodepool', (type, description) => {
+    renderWithProviders(<NodepoolModal {...defaultProps} type={type} />)
+
+    expect(screen.getByText(description)).toBeInTheDocument()
+  })
+
+  it('should seed the spot toggle from defaultValues', () => {
+    renderWithProviders(
+      <NodepoolModal
+        {...defaultProps}
+        type="default"
+        defaultValues={{ ...defaultProps.defaultValues, spot_enabled: true }}
+      />
+    )
+
+    expect(screen.getByRole('switch', { name: 'Enable spot instances' })).toBeChecked()
+  })
+
+  it('should render the spot toggle off when defaultValues carry no spot value', () => {
+    renderWithProviders(<NodepoolModal {...defaultProps} type="default" />)
+
+    expect(screen.getByRole('switch', { name: 'Enable spot instances' })).not.toBeChecked()
+  })
+
+  it('should emit spot_enabled on save', async () => {
+    const onChangeMock = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <NodepoolModal {...defaultProps} type="default" onChange={onChangeMock} />
+    )
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Enable spot instances' }))
+    await userEvent.click(screen.getByText('Confirm'))
+
+    await waitFor(() => {
+      expect(onChangeMock).toHaveBeenCalledWith({
+        default_override: expect.objectContaining({ spot_enabled: true }),
+      })
+    })
+  })
+
+  it('should warn about interruption-sensitive workloads when stable spot instances are enabled', async () => {
+    const { userEvent } = renderWithProviders(<NodepoolModal {...defaultProps} type="stable" />)
+
+    expect(screen.queryByText(/The stable nodepool hosts interruption-sensitive workloads/)).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Enable spot instances' }))
+
+    expect(screen.getByText(/The stable nodepool hosts interruption-sensitive workloads/)).toBeInTheDocument()
+  })
+
+  it('should not warn when default nodepool spot instances are enabled', async () => {
+    const { userEvent } = renderWithProviders(<NodepoolModal {...defaultProps} type="default" />)
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Enable spot instances' }))
+
+    expect(screen.queryByText(/The stable nodepool hosts interruption-sensitive workloads/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Activating spot instances on a production cluster/)).not.toBeInTheDocument()
+  })
+
+  it('should warn on the gpu nodepool only for a production cluster', async () => {
+    const { userEvent } = renderWithProviders(
+      <NodepoolModal {...defaultProps} type="gpu" cluster={{ ...mockCluster, production: true } as Cluster} />
+    )
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Enable spot instances' }))
+
+    expect(screen.getByText(/Activating spot instances on a production cluster/)).toBeInTheDocument()
+  })
+
+  it('should not warn on the gpu nodepool for a non-production cluster', async () => {
+    const { userEvent } = renderWithProviders(<NodepoolModal {...defaultProps} type="gpu" />)
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Enable spot instances' }))
+
+    expect(screen.queryByText(/Activating spot instances on a production cluster/)).not.toBeInTheDocument()
   })
 })

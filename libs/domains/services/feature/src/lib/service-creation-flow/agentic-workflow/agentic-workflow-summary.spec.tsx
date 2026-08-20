@@ -40,6 +40,15 @@ jest.mock('@qovery/domains/variables/feature', () => ({
   }),
 }))
 
+jest.mock('@qovery/domains/organizations/feature', () => ({
+  useMcpServers: () => ({
+    data: [
+      { id: 'mcp-1', name: 'Documentation' },
+      { id: 'mcp-2', name: 'Tickets' },
+    ],
+  }),
+}))
+
 const validValues: Partial<AgenticWorkflowFormData> = {
   name: 'review-agent',
   description: 'Reviews incoming changes',
@@ -47,6 +56,7 @@ const validValues: Partial<AgenticWorkflowFormData> = {
   agentPrompt: 'Review payloads and open pull requests.',
   whitelistHosts: '*',
   mcpJson: '{"mcpServers":{"costory":{"type":"http","url":"https://app-api.costory.io/mcp"}}}',
+  mcpServerIds: ['mcp-1', 'mcp-2'],
   outputs: [{ url: 'https://hooks.example.com/workflow', headersJson: '{}', prompt: 'Notify the team.' }],
 }
 
@@ -114,6 +124,7 @@ describe('AgenticWorkflowSummary', () => {
     expect(screen.getByText('********')).toBeInTheDocument()
     expect(screen.getByText('*')).toBeInTheDocument()
     expect(screen.getByText(validValues.mcpJson ?? '')).toBeInTheDocument()
+    expect(screen.getByText('Documentation, Tickets')).toBeInTheDocument()
     expect(screen.getByText('1 webhook')).toBeInTheDocument()
     expect(mockNavigate).not.toHaveBeenCalledWith({ to: '/create/agentic-workflow/configuration' })
   })
@@ -137,6 +148,7 @@ describe('AgenticWorkflowSummary', () => {
         serviceType: 'AGENTIC_WORKFLOW',
         name: 'review-agent',
         mcp: validValues.mcpJson,
+        mcp_server_ids: ['mcp-1', 'mcp-2'],
         outputs: [expect.objectContaining({ url: 'https://hooks.example.com/workflow' })],
       }),
     })

@@ -16,6 +16,7 @@ import { useCreateCluster } from '../../hooks/use-create-cluster/use-create-clus
 import { useDeployCluster } from '../../hooks/use-deploy-cluster/use-deploy-cluster'
 import { useEditCloudProviderInfo } from '../../hooks/use-edit-cloud-provider-info/use-edit-cloud-provider-info'
 import { useEditClusterKubeconfig } from '../../hooks/use-edit-cluster-kubeconfig/use-edit-cluster-kubeconfig'
+import { mapCreationSpotToNodePools } from '../../utils/map-creation-spot-to-node-pools'
 import { steps, useClusterContainerCreateContext } from '../cluster-creation-flow'
 import { getValueByKey } from './get-value-by-key'
 import { StepSummaryPresentation } from './step-summary-presentation'
@@ -326,7 +327,10 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           disk_iops: resourcesData.karpenter.disk_iops,
           disk_throughput: resourcesData.karpenter.disk_throughput,
           default_service_architecture: resourcesData.karpenter.default_service_architecture,
-          qovery_node_pools: resourcesData.karpenter.qovery_node_pools,
+          qovery_node_pools: mapCreationSpotToNodePools(
+            resourcesData.karpenter.spot_enabled,
+            resourcesData.karpenter.qovery_node_pools
+          ),
         } as unknown as ClusterRequestFeaturesInner['value'],
       })
     }

@@ -1,4 +1,5 @@
 import { Outlet, createFileRoute, useParams, useRouterState } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Sidebar } from '@qovery/shared/ui'
 
@@ -12,6 +13,7 @@ function RouteComponent() {
     location: { pathname },
   } = useRouterState()
   const { roles } = useUserRole()
+  const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
 
   const isOrganizationAdmin = roles.some((role) => role.includes(`organization:${organizationId}:admin`))
 
@@ -102,6 +104,7 @@ function RouteComponent() {
     icon: 'sparkles' as const,
     children: [
       { title: 'Copilot', to: `${pathSettings}/ai-copilot` },
+      ...(isAgenticWorkflowEnabled ? [{ title: 'Agents', to: `${pathSettings}/agents` }] : []),
       { title: 'Skills', to: `${pathSettings}/skills` },
       { title: 'MCP server', to: `${pathSettings}/mcp-server` },
     ],
