@@ -1,8 +1,5 @@
 import { type CatalogVariableField, type CatalogVariableValue } from '@qovery/shared/util-js'
-import { Checkbox } from '../checkbox/checkbox'
-import { InputSelect } from '../inputs/input-select/input-select'
-import { InputText } from '../inputs/input-text/input-text'
-import { InputToggle } from '../inputs/input-toggle/input-toggle'
+import { Checkbox, InputSelect, InputText, InputToggle } from '@qovery/shared/ui'
 
 export interface CatalogVariableInputProps {
   autoFocus?: boolean

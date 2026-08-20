@@ -1,5 +1,5 @@
 import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
-import { CatalogVariableInput } from '@qovery/shared/ui'
+import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { type BlueprintFieldValue, toCatalogVariableField } from '../blueprint-field-utils/blueprint-field-utils'
 
 export interface BlueprintManifestVariableInputProps {

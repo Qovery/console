@@ -5,7 +5,8 @@ import {
 } from 'qovery-typescript-axios'
 import { useRef } from 'react'
 import { match } from 'ts-pattern'
-import { Badge, Button, Callout, CatalogVariableInput, Heading, Icon } from '@qovery/shared/ui'
+import { CatalogVariableInput } from '@qovery/shared/console-shared'
+import { Badge, Button, Callout, Heading, Icon } from '@qovery/shared/ui'
 import { type CatalogVariableValue, formatCatalogKey, getCatalogVariableValue } from '@qovery/shared/util-js'
 import {
   getFieldViolation,
