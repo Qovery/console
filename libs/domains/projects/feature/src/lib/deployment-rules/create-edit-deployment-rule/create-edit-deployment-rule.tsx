@@ -66,7 +66,7 @@ export function CreateDeploymentRule() {
 
     try {
       await createDeploymentRule({ projectId, deploymentRuleRequest: fields })
-      navigate({ to: `/organization/${organizationId}/project/${projectId}/deployment-rules` })
+      navigate({ to: `/organization/${organizationId}/infrastructure/project/${projectId}/deployment-rules` })
     } catch (error) {
       console.error(error)
     }
@@ -138,7 +138,7 @@ export function EditDeploymentRule() {
         deploymentRuleId,
         deploymentRuleRequest: fields,
       })
-      navigate({ to: `/organization/${organizationId}/project/${projectId}/deployment-rules` })
+      navigate({ to: `/organization/${organizationId}/infrastructure/project/${projectId}/deployment-rules` })
     } catch (error) {
       console.error(error)
     }
@@ -202,7 +202,7 @@ export function CreateEditDeploymentRule(props: CreateEditDeploymentRuleProps) {
             <Link
               color="brand"
               size="xs"
-              to="/organization/$organizationId/project/$projectId/deployment-rules"
+              to="/organization/$organizationId/infrastructure/project/$projectId/deployment-rules"
               params={{ organizationId, projectId }}
               className="mb-2"
             >

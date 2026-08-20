@@ -172,7 +172,7 @@ export function DeploymentLogsContent({
           buttonIconRight="arrow-right"
           onClickButton={() =>
             navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+              to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
               params: {
                 organizationId: environment.organization.id,
                 projectId: environment.project.id,

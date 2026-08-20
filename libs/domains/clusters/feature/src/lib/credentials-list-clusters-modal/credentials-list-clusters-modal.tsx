@@ -30,7 +30,7 @@ export function CredentialsListClustersModal({
         {clusters.map((cluster) => (
           <Link
             key={cluster.id}
-            to="/organization/$organizationId/cluster/$clusterId/settings/credentials"
+            to="/organization/$organizationId/infrastructure/cluster/$clusterId/settings/credentials"
             params={{ organizationId, clusterId: cluster.id }}
             target="_blank"
             rel="noreferrer"

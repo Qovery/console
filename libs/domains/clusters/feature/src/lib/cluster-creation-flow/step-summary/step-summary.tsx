@@ -166,7 +166,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
           cloudProviderInfoRequest: cloudProviderCredentials,
         })
         navigate({
-          to: '/organization/$organizationId/cluster/$clusterId/overview',
+          to: '/organization/$organizationId/infrastructure/cluster/$clusterId/overview',
           params: { organizationId, clusterId: cluster.id },
           search: { 'show-self-managed-guide': true },
         })
@@ -205,7 +205,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
             console.error(error)
           }
         }
-        navigate({ to: `/organization/${organizationId}/clusters` })
+        navigate({ to: `/organization/${organizationId}/infrastructure/clusters` })
       } catch (error) {
         console.error(error)
       }
@@ -430,7 +430,7 @@ export function StepSummary({ organizationId }: StepSummaryProps) {
       if (withDeploy) {
         await deployCluster({ clusterId: cluster.id, organizationId })
       }
-      navigate({ to: `/organization/${organizationId}/clusters` })
+      navigate({ to: `/organization/${organizationId}/infrastructure/clusters` })
     } catch (error) {
       console.error(error)
     }

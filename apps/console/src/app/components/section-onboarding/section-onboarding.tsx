@@ -274,7 +274,10 @@ export function SectionOnboarding() {
               onClick={() => {
                 complete()
                 closeModal()
-                navigate({ to: '/organization/$organizationId/settings/members', params: { organizationId } })
+                navigate({
+                  to: '/organization/$organizationId/infrastructure/settings/members',
+                  params: { organizationId },
+                })
               }}
             >
               <Icon iconName="user-plus" />
@@ -475,7 +478,7 @@ export function SectionOnboarding() {
                 <span className="text-ssm font-normal text-neutral-subtle">Deployment queued...</span>
               ) : isClusterDeploying ? (
                 <Link
-                  to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+                  to="/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs"
                   params={{ organizationId, clusterId: deployingClusterStatus?.cluster_id ?? '' }}
                   color="brand"
                   underline
@@ -491,7 +494,7 @@ export function SectionOnboarding() {
                 </Link>
               ) : isClusterFailed ? (
                 <Link
-                  to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+                  to="/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs"
                   params={{ organizationId, clusterId: failedClusterStatus?.cluster_id ?? '' }}
                   color="red"
                   underline
@@ -515,7 +518,7 @@ export function SectionOnboarding() {
                     option.action === 'create-cluster' ? (
                       <RouterLink
                         key={option.title}
-                        to="/organization/$organizationId/cluster/new"
+                        to="/organization/$organizationId/infrastructure/cluster/new"
                         params={{ organizationId }}
                         data-action={option.dataAction}
                         className={getCardClass(option.highlight)}
@@ -583,7 +586,7 @@ export function SectionOnboarding() {
               <span className="text-ssm font-normal text-neutral-subtle">Deployment queued...</span>
             ) : isServiceDeploying ? (
               <Link
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                 params={{
                   organizationId,
                   projectId: firstProject?.id ?? '',
@@ -604,7 +607,7 @@ export function SectionOnboarding() {
               </Link>
             ) : isServiceFailed ? (
               <Link
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                 params={{
                   organizationId,
                   projectId: firstProject?.id ?? '',
@@ -620,7 +623,7 @@ export function SectionOnboarding() {
               </Link>
             ) : isServiceStopped ? (
               <Link
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId"
+                to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId"
                 params={{
                   organizationId,
                   projectId: firstProject?.id ?? '',
@@ -639,7 +642,7 @@ export function SectionOnboarding() {
                 size="sm"
                 color="neutral"
                 variant="solid"
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
+                to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview"
                 params={{
                   organizationId,
                   projectId: firstProject?.id ?? '',
@@ -675,7 +678,7 @@ export function SectionOnboarding() {
                   size="sm"
                   color="neutral"
                   variant="solid"
-                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/settings/preview-environments"
+                  to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/settings/preview-environments"
                   params={{
                     organizationId,
                     projectId: firstProject?.id ?? '',

@@ -66,7 +66,7 @@ export function ServiceLinksPopover({
           {serviceType !== 'HELM' && (
             <Popover.Close>
               <Link
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/domain"
+                to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/settings/domain"
                 params={{ organizationId, projectId, environmentId, serviceId }}
                 color="neutral"
                 className="text-ssm"

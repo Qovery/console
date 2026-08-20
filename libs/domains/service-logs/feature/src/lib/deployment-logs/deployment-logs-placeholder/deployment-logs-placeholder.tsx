@@ -193,7 +193,7 @@ export function DeploymentLogsPlaceholder({
           as="button"
           variant="surface"
           color="neutral"
-          to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs"
+          to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs"
           params={{
             organizationId: environment.organization.id,
             projectId: environment.project.id,
@@ -222,7 +222,7 @@ export function DeploymentLogsPlaceholder({
           as="button"
           variant="surface"
           color="neutral"
-          to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
+          to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId"
           params={{
             organizationId: environment.organization.id,
             projectId: environment.project.id,

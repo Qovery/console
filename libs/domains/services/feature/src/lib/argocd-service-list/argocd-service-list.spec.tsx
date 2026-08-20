@@ -105,7 +105,7 @@ describe('ArgoCdServiceList', () => {
     await userEvent.click(screen.getByRole('row', { name: /argo service/i }))
 
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview',
       params: {
         organizationId: 'org-1',
         projectId: 'project-1',

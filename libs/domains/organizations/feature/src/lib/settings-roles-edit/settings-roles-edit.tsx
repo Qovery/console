@@ -236,7 +236,7 @@ function SettingsRolesEditContent({
                   color="brand"
                   size="xs"
                   className="mb-1 gap-1"
-                  to="/organization/$organizationId/settings/roles"
+                  to="/organization/$organizationId/infrastructure/settings/roles"
                   params={{ organizationId }}
                 >
                   <Icon iconName="arrow-left" className="mr-1 text-xs" />
@@ -366,7 +366,7 @@ export function SettingsRolesEdit() {
 
   const redirectPageRoles = useCallback(() => {
     navigate({
-      to: '/organization/$organizationId/settings/roles',
+      to: '/organization/$organizationId/infrastructure/settings/roles',
       params: {
         organizationId,
       },

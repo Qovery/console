@@ -32,7 +32,7 @@ export function CreateModal(props: CreateModalProps) {
       // redirect to edit page
       if (response?.id) {
         navigate({
-          to: '/organization/$organizationId/settings/roles/edit/$roleId',
+          to: '/organization/$organizationId/infrastructure/settings/roles/edit/$roleId',
           params: {
             organizationId,
             roleId: response.id,

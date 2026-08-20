@@ -96,7 +96,7 @@ export function IssueOverview() {
                         color="neutral"
                         size="xs"
                         className="justify-center pl-0.5"
-                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
+                        to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
                         params={{
                           organizationId,
                           projectId: alert.target.service?.project_id ?? '',

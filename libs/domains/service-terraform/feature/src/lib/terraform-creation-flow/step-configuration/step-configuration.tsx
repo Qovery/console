@@ -15,7 +15,7 @@ export const TerraformStepConfiguration = () => {
 
   const onSubmit = () => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
       params: { organizationId, projectId, environmentId },
     })
   }
@@ -32,7 +32,7 @@ export const TerraformStepConfiguration = () => {
           color="neutral"
           onClick={() =>
             navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general',
+              to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform/general',
               params: { organizationId, projectId, environmentId },
             })
           }

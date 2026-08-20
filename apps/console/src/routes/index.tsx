@@ -30,7 +30,7 @@ function Index() {
   if (latestSelectedOrganization) {
     return (
       <Navigate
-        to="/organization/$organizationId/overview"
+        to="/organization/$organizationId/infrastructure/overview"
         params={{ organizationId: latestSelectedOrganization.id }}
       />
     )

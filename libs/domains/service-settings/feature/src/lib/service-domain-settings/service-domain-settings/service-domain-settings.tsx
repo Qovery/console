@@ -143,11 +143,11 @@ function ServiceDomainSettingsContent({
     service.serviceType === 'HELM'
       ? {
           label: 'Create public networking',
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/networking' as const,
+          to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/settings/networking' as const,
         }
       : {
           label: 'Create public port',
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/port' as const,
+          to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/settings/port' as const,
         }
 
   const onDeleteDomain = (customDomain: CustomDomain) => {

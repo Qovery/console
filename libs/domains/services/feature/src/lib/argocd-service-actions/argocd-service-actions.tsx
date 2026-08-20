@@ -27,7 +27,7 @@ export function ArgoCdServiceActions({
           <Link
             aria-label={`Service logs for ${service.name}`}
             as="button"
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
             params={{
               organizationId,
               projectId,
@@ -66,7 +66,7 @@ export function ArgoCdServiceActions({
           <DropdownMenu.Item icon={<Icon iconName="gear" />} asChild>
             <Link
               className="gap-0"
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest"
+              to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/manifest"
               params={{
                 organizationId,
                 projectId,

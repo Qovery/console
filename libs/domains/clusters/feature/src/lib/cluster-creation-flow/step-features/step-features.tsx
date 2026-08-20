@@ -73,8 +73,8 @@ function StepFeaturesForm({
   const canSubmit = cloudProvider === 'SCW' ? formState.isValid : formState.isValid && !!watchVpcMode
 
   const backTo = match(cloudProvider)
-    .with('GCP', () => '/organization/$organizationId/cluster/create/$slug/general' as const)
-    .otherwise(() => '/organization/$organizationId/cluster/create/$slug/resources' as const)
+    .with('GCP', () => '/organization/$organizationId/infrastructure/cluster/create/$slug/general' as const)
+    .otherwise(() => '/organization/$organizationId/infrastructure/cluster/create/$slug/resources' as const)
 
   const vpcModes = [
     {

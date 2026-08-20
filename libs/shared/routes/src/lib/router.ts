@@ -28,7 +28,7 @@ export const ORGANIZATION_PROJECT_URL = '/project'
 export const ORGANIZATION_AUDIT_LOGS_URL = '/audit-logs'
 
 export const OVERVIEW_URL = (organizationId = ':organizationId', projectId = ':projectId') =>
-  `/organization/${organizationId}/project/${projectId}/overview`
+  `/organization/${organizationId}/infrastructure/project/${projectId}/overview`
 export interface Route {
   component: ReactElement
   path: string

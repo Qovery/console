@@ -25,8 +25,8 @@ export function BlueprintUpdateBadge({
     navigate({
       to:
         step === 'preview'
-          ? '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
-          : '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+          ? '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview'
+          : '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
       params: { organizationId, projectId, environmentId: service.environment.id, serviceId: service.id },
     })
   }

@@ -56,7 +56,7 @@ export function EnvironmentStages({
       <div className="flex shrink-0 flex-col gap-6">
         <div className="flex flex-col items-start gap-3">
           <Link
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployments"
+            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployments"
             params={{ organizationId, projectId, environmentId }}
             color="neutral"
             className="gap-1.5 text-neutral-subtle hover:text-neutral"
@@ -91,7 +91,7 @@ export function EnvironmentStages({
                 >
                   <Link
                     className="flex w-full justify-between"
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
+                    to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId"
                     params={{
                       organizationId,
                       projectId,
@@ -155,7 +155,7 @@ export function EnvironmentStages({
                       {executionId && (
                         <div className="flex flex-col gap-1.5 bg-surface-neutral-subtle p-1.5">
                           <Link
-                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs"
+                            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs"
                             params={{ organizationId, projectId, environmentId, deploymentId: executionId }}
                             className="flex w-full items-center gap-2.5 rounded border border-neutral bg-surface-neutral px-2.5 py-2 text-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle hover:text-neutral"
                           >

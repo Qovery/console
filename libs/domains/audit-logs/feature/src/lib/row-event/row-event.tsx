@@ -48,18 +48,18 @@ export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
 }
 
 const serviceOverviewUrl = (organizationId: string, projectId: string, environmentId: string, serviceId: string) =>
-  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}/overview`
+  `/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}/service/${serviceId}/overview`
 
 const projectSettingsUrl = (organizationId: string, projectId: string) =>
-  `/organization/${organizationId}/project/${projectId}/settings/general`
+  `/organization/${organizationId}/infrastructure/project/${projectId}/settings/general`
 
 const environmentUrl = (organizationId: string, projectId: string, environmentId: string) =>
-  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}`
+  `/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}`
 
 const clusterSettingsUrl = (organizationId: string, clusterId: string) =>
-  `/organization/${organizationId}/cluster/${clusterId}/settings`
+  `/organization/${organizationId}/infrastructure/cluster/${clusterId}/settings`
 
-const organizationSettingsUrl = (organizationId: string) => `/organization/${organizationId}/settings`
+const organizationSettingsUrl = (organizationId: string) => `/organization/${organizationId}/infrastructure/settings`
 
 const membersSettingsUrl = (organizationId: string) => `${organizationSettingsUrl(organizationId)}/members`
 

@@ -210,7 +210,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
                     variant="outline"
                     size="md"
                     iconOnly
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                    to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                     params={{
                       organizationId: environment?.organization.id ?? '',
                       projectId: environment?.project.id ?? '',
@@ -513,7 +513,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
     if (!environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
 
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
       params: {
         organizationId: environment.organization.id,
         projectId: environment.project.id,
@@ -533,7 +533,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
     if (event.key !== 'Enter' || !environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
 
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
       params: {
         organizationId: environment.organization.id,
         projectId: environment.project.id,

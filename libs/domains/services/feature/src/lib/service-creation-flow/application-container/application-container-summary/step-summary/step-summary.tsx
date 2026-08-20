@@ -160,7 +160,7 @@ export function ApplicationContainerStepSummary({
       })
 
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
         params: {
           organizationId,
           projectId,

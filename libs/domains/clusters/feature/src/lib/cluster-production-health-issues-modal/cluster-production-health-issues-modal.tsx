@@ -76,7 +76,7 @@ export function ClusterProductionHealthIssuesModal({
                 {group.entries.map(({ cluster }) => (
                   <Link
                     key={cluster.id}
-                    to="/organization/$organizationId/cluster/$clusterId/overview"
+                    to="/organization/$organizationId/infrastructure/cluster/$clusterId/overview"
                     params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
                     onClick={onClose}
                     className="group flex items-center gap-2 rounded-lg border border-neutral bg-surface-neutral px-3 py-3.5 text-left text-ssm text-neutral transition-colors hover:bg-surface-neutral-subtle focus-visible:bg-surface-neutral-subtle focus-visible:outline-none"

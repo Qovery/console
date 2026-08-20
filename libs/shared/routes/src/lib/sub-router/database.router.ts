@@ -3,7 +3,8 @@ export const DATABASE_URL = (
   projectId = ':projectId',
   environmentId = ':environmentId',
   databaseId = ':databaseId'
-) => `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/database/${databaseId}`
+) =>
+  `/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}/database/${databaseId}`
 export const DATABASE_GENERAL_URL = '/general'
 export const DATABASE_DEPLOYMENTS_URL = '/deployments'
 export const DATABASE_MONITORING_URL = '/monitoring'

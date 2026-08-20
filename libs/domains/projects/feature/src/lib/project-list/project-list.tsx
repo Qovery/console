@@ -71,7 +71,7 @@ export function ProjectList() {
                 className="group relative rounded-lg border border-neutral bg-surface-neutral p-4 text-left text-sm text-neutral transition-colors focus-within:bg-surface-neutral-subtle hover:bg-surface-neutral-subtle"
               >
                 <Link
-                  to="/organization/$organizationId/project/$projectId/overview"
+                  to="/organization/$organizationId/infrastructure/project/$projectId/overview"
                   params={{ organizationId, projectId: project.id }}
                   aria-label={`Open project ${project.name}`}
                   data-action="org-overview__project-card"

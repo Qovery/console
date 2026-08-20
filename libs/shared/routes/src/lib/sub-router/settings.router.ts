@@ -1,4 +1,5 @@
-export const SETTINGS_URL = (organizationId = ':organizationId') => `/organization/${organizationId}/settings`
+export const SETTINGS_URL = (organizationId = ':organizationId') =>
+  `/organization/${organizationId}/infrastructure/settings`
 // organization settings
 export const SETTINGS_GENERAL_URL = '/general'
 export const SETTINGS_CONTAINER_REGISTRIES_URL = '/container-registries'

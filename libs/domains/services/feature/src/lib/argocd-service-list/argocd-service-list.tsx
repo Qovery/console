@@ -49,7 +49,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
 
   const handleNavigateToService = (serviceId: string) => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview',
       params: { organizationId, projectId, environmentId, serviceId },
     })
   }
@@ -115,7 +115,7 @@ export function ArgoCdServiceList({ environment }: ArgoCdServiceListProps) {
                     <div className="flex min-w-0 items-center gap-3 text-sm font-medium">
                       <Icon name={IconEnum.ARGOCD} width={20} />
                       <Link
-                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                        to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                         params={{
                           organizationId,
                           projectId,

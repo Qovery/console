@@ -36,7 +36,7 @@ export function useRestartService({
           undefined,
           () =>
             navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
+              to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
               params: {
                 organizationId,
                 projectId,

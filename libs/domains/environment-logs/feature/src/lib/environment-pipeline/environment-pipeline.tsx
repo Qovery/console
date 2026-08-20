@@ -160,7 +160,7 @@ function PipelineContent({
                         return (
                           <Link
                             key={service?.id}
-                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                             params={{
                               organizationId: environment.organization.id,
                               projectId: environment.project.id,
@@ -216,7 +216,7 @@ function Loading() {
   return (
     <div className="flex flex-col gap-3">
       <Link
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployments"
+        to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployments"
         params={{ organizationId, projectId, environmentId }}
         color="neutral"
         className="gap-1.5 text-neutral-subtle hover:text-neutral"

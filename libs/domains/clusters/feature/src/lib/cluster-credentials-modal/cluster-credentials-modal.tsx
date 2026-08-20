@@ -220,7 +220,7 @@ function CalloutEdit({
           {clusterId && (
             <ExternalLink
               className="items-center"
-              href={`/organization/${organizationId}/cluster/${clusterId}/settings/image-registry`}
+              href={`/organization/${organizationId}/infrastructure/cluster/${clusterId}/settings/image-registry`}
             >
               Go to mirroring registry section
             </ExternalLink>

@@ -44,7 +44,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) => (
       <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        to="/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs"
         params={{
           organizationId: cluster.organization.id,
           clusterId: cluster.id,
@@ -107,7 +107,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('INVALID_CREDENTIALS', () => (
       <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        to="/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs"
         params={{
           organizationId: cluster.organization.id,
           clusterId: cluster.id,
@@ -149,7 +149,7 @@ export function ClusterCard({ cluster, clusterDeploymentStatus }: ClusterCardPro
     <Link
       to={
         buildLocation({
-          to: '/organization/$organizationId/cluster/$clusterId/overview',
+          to: '/organization/$organizationId/infrastructure/cluster/$clusterId/overview',
           params: { organizationId: cluster.organization.id, clusterId: cluster.id },
         }).href
       }

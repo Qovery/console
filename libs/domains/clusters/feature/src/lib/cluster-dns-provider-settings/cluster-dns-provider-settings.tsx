@@ -387,7 +387,10 @@ export function ClusterDnsProviderSettings({
                   </Callout.TextHeading>
                   <Callout.TextDescription>
                     You can review the current configuration here or upgrade from{' '}
-                    <Link to="/organization/$organizationId/settings/billing-summary" params={{ organizationId }}>
+                    <Link
+                      to="/organization/$organizationId/infrastructure/settings/billing-summary"
+                      params={{ organizationId }}
+                    >
                       Billing & plans
                     </Link>
                     .

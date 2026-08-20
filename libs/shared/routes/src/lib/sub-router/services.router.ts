@@ -2,7 +2,7 @@ export const SERVICES_URL = (
   organizationId = ':organizationId',
   projectId = ':projectId',
   environmentId = ':environmentId'
-) => `/organization/${organizationId}/project/${projectId}/environment/${environmentId}`
+) => `/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}`
 // had to ad this prefix so that we just the environment id in the URL, we can reach this router and the correct redirections
 // without it our dx team can't just put `/organization/7b29c88a-a42c-4fe5-817f-038c1ef590e5/project/d83a2f1f-d90b-461f-9a45-5e8aa2fe2bc0/environment/857809d7-4e6e-4fa0-8f4e-aff1d8381028`
 // they need to add /services to the URL which is not trivial

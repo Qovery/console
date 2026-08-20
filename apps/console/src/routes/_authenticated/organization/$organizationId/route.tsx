@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { Outlet, createFileRoute, useMatches } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useLocation, useMatches, useParams } from '@tanstack/react-router'
 import { ClusterStateEnum as ClusterState, type ClusterStateEnum } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useMemo } from 'react'
 import { memo } from 'react'
@@ -13,8 +13,13 @@ import { type FileRouteTypes } from '../../../../routeTree.gen'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId')({
   component: RouteComponent,
-  loader: async ({ context, params }) => {
+  loader: async ({ context, location, params }) => {
     const { organizationId } = params
+
+    if (isAgentsSpacePath(location.pathname)) {
+      return
+    }
+
     // Preload data (organization, clusters and projects) without waiting for the queries to complete
     context.queryClient.prefetchQuery({
       ...queries.organizations.details({ organizationId }),
@@ -43,24 +48,46 @@ const isDeployingStatus = (status?: ClusterStateEnum): boolean =>
   status === ClusterState.DEPLOYMENT_QUEUED || status === ClusterState.DEPLOYING
 
 const hiddenProgressCardRouteIds: FileRouteTypes['id'][] = [
-  '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
-  '/_authenticated/organization/$organizationId/cluster/new',
-  '/_authenticated/organization/$organizationId/cluster/create/$slug',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+  '/_authenticated/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+  '/_authenticated/organization/$organizationId/infrastructure/cluster/new',
+  '/_authenticated/organization/$organizationId/infrastructure/cluster/create/$slug',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/$slug',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/cron-job',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/database',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/helm',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/lifecycle-job',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
 ]
 
+function isAgentsSpacePath(pathname: string): boolean {
+  return /^\/organization\/[^/]+\/agents(?:\/|$)/.test(pathname)
+}
+
 function RouteComponent() {
+  const { pathname } = useLocation()
+  const { organizationId = '' } = useParams({ strict: false })
+  const [, setCurrentOrganizationId] = useLocalStorage<string>('currentOrganizationId', '')
+
+  useEffect(() => {
+    if (organizationId) {
+      setCurrentOrganizationId(organizationId)
+    }
+  }, [organizationId, setCurrentOrganizationId])
+
+  if (isAgentsSpacePath(pathname)) {
+    return <Outlet />
+  }
+
+  return <InfrastructureRoute />
+}
+
+function InfrastructureRoute() {
   const matches = useMatches()
   const mergedParams = useMemo(() => {
     return matches.reduce<Record<string, string | undefined>>((acc, match) => {
@@ -72,7 +99,6 @@ function RouteComponent() {
   const projectId = mergedParams.projectId ?? ''
   const environmentId = mergedParams.environmentId ?? ''
   const versionId = mergedParams.versionId ?? ''
-  const [, setCurrentOrganizationId] = useLocalStorage<string>('currentOrganizationId', '')
 
   const { data: clusters } = useClusters({ organizationId })
   const { data: clusterStatuses } = useClusterStatuses({ organizationId, enabled: !!organizationId })
@@ -126,12 +152,6 @@ function RouteComponent() {
       ),
     [matches]
   )
-
-  useEffect(() => {
-    if (organizationId) {
-      setCurrentOrganizationId(organizationId)
-    }
-  }, [organizationId, setCurrentOrganizationId])
 
   return (
     <>

@@ -120,7 +120,7 @@ export function ContainerRegistryServicesListModal({
                             <Link
                               color="brand"
                               onClick={() => onClose()}
-                              to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+                              to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId"
                               params={{
                                 organizationId,
                                 environmentId: environment.environment_id,
@@ -138,7 +138,7 @@ export function ContainerRegistryServicesListModal({
                                   <Link
                                     color="brand"
                                     onClick={() => onClose()}
-                                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId"
+                                    to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId"
                                     params={{
                                       organizationId,
                                       environmentId: environment.environment_id,

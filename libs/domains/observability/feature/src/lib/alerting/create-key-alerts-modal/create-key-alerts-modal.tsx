@@ -87,7 +87,7 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
 
     onClose()
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric',
       params: {
         organizationId,
         projectId,

@@ -30,7 +30,7 @@ export function StepDockerfile() {
   }, [setCurrentStep])
 
   const onSubmit = dockerfileForm.handleSubmit(async (data) => {
-    const pathCreate = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/lifecycle-job/configure`
+    const pathCreate = `/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}/service/create/lifecycle-job/configure`
     if (data.dockerfile_raw) {
       navigate({
         to: pathCreate,
@@ -111,7 +111,7 @@ export function StepDockerfile() {
                 color="neutral"
                 onClick={() =>
                   navigate({
-                    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
+                    to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
                     params: { organizationId, projectId, environmentId },
                   })
                 }

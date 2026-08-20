@@ -89,7 +89,7 @@ const EnvironmentLastDeploymentContent = () => {
     : `${timeAgo(new Date(lastDeployment.auditing_data.created_at))} ago`
 
   const logsLink = useLinkProps({
-    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
+    to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployments',
     params: { organizationId, projectId, environmentId },
   })
 
@@ -127,7 +127,7 @@ const EnvironmentLastDeploymentContent = () => {
         <Heading>Last deployment</Heading>
         {lastDeployment && (
           <Link
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployments"
+            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployments"
             params={{ organizationId, projectId, environmentId }}
             color="neutral"
             size="ssm"
@@ -142,7 +142,7 @@ const EnvironmentLastDeploymentContent = () => {
       {lastDeployment ? (
         <div className="flex flex-col">
           <Link
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
+            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId"
             params={{ organizationId, environmentId, deploymentId: lastDeployment.identifier.execution_id }}
             className="relative flex rounded-lg border border-neutral bg-surface-neutral px-4 py-2 font-normal transition-colors hover:bg-surface-neutral-subtle"
           >

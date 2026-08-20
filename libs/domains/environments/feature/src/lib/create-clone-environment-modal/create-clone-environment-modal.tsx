@@ -62,7 +62,7 @@ export function CreateCloneEnvironmentModal({
       onSuccess(environmentId)
     } else {
       navigate({
-        to: `/organization/${organizationId}/project/${project_id}/environment/${environmentId}/overview`,
+        to: `/organization/${organizationId}/infrastructure/project/${project_id}/environment/${environmentId}/overview`,
       })
     }
   }

@@ -95,7 +95,7 @@ exports[`GitTokenServicesListModal should match snapshots 1`] = `
                   <a
                     class="cursor-pointer transition duration-100 font-medium inline-flex items-center gap-1 text-brand hover:text-brand-hover text-sm"
                     params="[object Object]"
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+                    to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId"
                   >
                     Development
                   </a>

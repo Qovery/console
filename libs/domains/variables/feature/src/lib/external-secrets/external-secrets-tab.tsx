@@ -298,7 +298,7 @@ export function ExternalSecretsTab({
         icon: 'lock-keyhole' as const,
         actions: (
           <Link
-            to="/organization/$organizationId/cluster/$clusterId/settings/addons"
+            to="/organization/$organizationId/infrastructure/cluster/$clusterId/settings/addons"
             params={{ organizationId, clusterId }}
           >
             <Button color="neutral" size="md" variant="solid" type="button">

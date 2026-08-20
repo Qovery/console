@@ -61,7 +61,9 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
   threads: ({ userId, organizationId }: { userId: string; organizationId: string }) => ({
     queryKey: [organizationId, userId],
     async queryFn() {
-      const response = await devopsCopilotAxios.get(`/owner/${userId}/organization/${organizationId}/thread`)
+      const response = await devopsCopilotAxios.get(
+        `/owner/${userId}/organization/${organizationId}/infrastructure/thread`
+      )
 
       return response.data?.threads ?? []
     },
@@ -71,7 +73,7 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
     queryKey: [organizationId, userId, threadId],
     async queryFn() {
       const response = await devopsCopilotAxios.get(
-        `/owner/${userId}/organization/${organizationId}/thread/${threadId}`
+        `/owner/${userId}/organization/${organizationId}/infrastructure/thread/${threadId}`
       )
 
       return response.data
@@ -80,7 +82,9 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
   config: ({ organizationId }: { organizationId: string }) => ({
     queryKey: [organizationId],
     async queryFn(): Promise<AICopilotConfigResponse> {
-      const response = await devopsCopilotAxios.get<AICopilotConfigResponse>(`/organization/${organizationId}/config`)
+      const response = await devopsCopilotAxios.get<AICopilotConfigResponse>(
+        `/organization/${organizationId}/infrastructure/config`
+      )
 
       return response.data
     },
@@ -89,7 +93,7 @@ export const devopsCopilot = createQueryKeys('devopsCopilot', {
     queryKey: [organizationId],
     async queryFn(): Promise<RecurringTasksResponse> {
       const response = await devopsCopilotAxios.get<RecurringTasksResponse>(
-        `/organization/${organizationId}/recurring-tasks`
+        `/organization/${organizationId}/infrastructure/recurring-tasks`
       )
 
       return response.data
@@ -121,7 +125,7 @@ export const mutations = {
     signal?: AbortSignal
   }) => {
     const response = await fetch(
-      `${DEVOPS_COPILOT_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/thread/${threadId}/text`,
+      `${DEVOPS_COPILOT_API_BASE_URL}/owner/${userSub}/organization/${organizationId}/infrastructure/thread/${threadId}/text`,
       {
         method: 'POST',
         headers: {
@@ -170,22 +174,29 @@ export const mutations = {
     message: string
     readOnly?: boolean
   }) => {
-    const response = await devopsCopilotAxios.post(`/owner/${userSub}/organization/${organizationId}/thread`, {
-      title: message,
-      read_only: readOnly,
-    })
+    const response = await devopsCopilotAxios.post(
+      `/owner/${userSub}/organization/${organizationId}/infrastructure/thread`,
+      {
+        title: message,
+        read_only: readOnly,
+      }
+    )
 
     return response
   },
 
   toggleRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
-    const response = await devopsCopilotAxios.post(`/organization/${organizationId}/recurring-tasks/${taskId}/toggle`)
+    const response = await devopsCopilotAxios.post(
+      `/organization/${organizationId}/infrastructure/recurring-tasks/${taskId}/toggle`
+    )
 
     return response.data
   },
 
   deleteRecurringTask: async ({ organizationId, taskId }: { organizationId: string; taskId: string }) => {
-    const response = await devopsCopilotAxios.delete(`/organization/${organizationId}/recurring-tasks/${taskId}`)
+    const response = await devopsCopilotAxios.delete(
+      `/organization/${organizationId}/infrastructure/recurring-tasks/${taskId}`
+    )
 
     return response.data
   },
@@ -205,7 +216,7 @@ export const mutations = {
     userEmail?: string
     tokenMode?: 'jwt' | 'role'
   }) => {
-    const response = await devopsCopilotAxios.put(`/organization/${organizationId}/config/org`, {
+    const response = await devopsCopilotAxios.put(`/organization/${organizationId}/infrastructure/config/org`, {
       enabled,
       read_only: readOnly,
       instructions: instructions || '',

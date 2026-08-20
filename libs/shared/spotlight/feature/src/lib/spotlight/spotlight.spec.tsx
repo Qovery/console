@@ -113,7 +113,7 @@ describe('Spotlight', () => {
       })
     )
     expect(navigateMock).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId',
+      to: '/organization/$organizationId/infrastructure/project/$projectId',
       params: {
         organizationId: 'organization-1',
         projectId: 'project-1',

@@ -66,7 +66,7 @@ export function ServiceCloneModal({ onClose, organizationId, projectId, serviceI
     })
 
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview',
       params: {
         organizationId,
         projectId,

@@ -59,7 +59,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
   const setQueryParams = useCallback(
     (searchParams: ServiceLogsParams) => {
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
         params: {
           organizationId,
           projectId,

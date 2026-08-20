@@ -68,7 +68,10 @@ function useRedirectIfLogged(connection?: string) {
         if (returnTo) {
           navigate({ to: returnTo })
         } else {
-          navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0]?.id } })
+          navigate({
+            to: '/organization/$organizationId/infrastructure/overview',
+            params: { organizationId: organizations[0]?.id },
+          })
         }
       } else {
         const { data: userSignUp } = await refetchUserSignUp()

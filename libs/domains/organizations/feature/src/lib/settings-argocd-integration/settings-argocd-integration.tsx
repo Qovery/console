@@ -173,7 +173,7 @@ function ArgoCdIntegrationCard({
           <div className="flex items-center gap-2">
             <span className="text-base font-medium text-neutral">ArgoCD running on</span>
             <Link
-              to="/organization/$organizationId/cluster/$clusterId/overview"
+              to="/organization/$organizationId/infrastructure/cluster/$clusterId/overview"
               params={{ organizationId, clusterId: integration.agent_cluster_id }}
               className="flex h-6 items-center gap-1 rounded-md border border-neutral bg-surface-neutral px-1.5 text-ssm font-normal text-neutral hover:bg-surface-neutral-subtle hover:text-neutral"
               data-testid="argocd-cluster-link"

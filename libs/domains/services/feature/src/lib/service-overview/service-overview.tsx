@@ -42,7 +42,7 @@ function ServiceLastDeploymentSection({
       <div className="flex items-center justify-between gap-2">
         <Heading>Last deployment</Heading>
         <Link
-          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+          to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
           params={{
             organizationId: environment.organization.id,
             projectId: environment.project.id,

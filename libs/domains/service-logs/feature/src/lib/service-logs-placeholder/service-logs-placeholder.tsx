@@ -99,7 +99,7 @@ export function ServiceLogsPlaceholder({
   const setQueryParams = useCallback(
     (searchParams: ServiceLogsParams) => {
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
         params: {
           organizationId,
           projectId,
@@ -190,7 +190,7 @@ export function ServiceLogsPlaceholder({
                 size="sm"
                 color="brand"
                 className="max-w-max"
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
                 params={{
                   organizationId: environment.organization.id,
                   projectId: environment.project.id,
@@ -287,7 +287,7 @@ export function ServiceLogsPlaceholder({
               size="sm"
               variant="surface"
               color="neutral"
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+              to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
               params={{
                 organizationId,
                 projectId,

@@ -132,7 +132,7 @@ export function ApplicationContainerCreationFlow({
         onExit={() => {
           if (window.confirm('Do you really want to leave?')) {
             navigate({
-              to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
+              to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/new',
               params: {
                 organizationId,
                 projectId,

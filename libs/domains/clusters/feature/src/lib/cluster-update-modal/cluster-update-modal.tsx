@@ -32,7 +32,7 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
       // Redirecting to cluster's logs page if dry-run was selected
       if (data['dryRun']) {
         navigate({
-          to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+          to: '/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs',
           params: {
             organizationId: cluster.organization.id,
             clusterId: cluster.id,

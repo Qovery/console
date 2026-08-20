@@ -33,7 +33,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
                 <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
                   <span className="flex min-w-0 items-center gap-1.5">
                     <Link
-                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                      to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                       params={serviceLinkParams}
                       onClick={stopRowNavigation}
                       onKeyDown={stopRowNavigation}
@@ -70,7 +70,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
                 <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
                   <span className="flex min-w-0 items-center gap-1.5">
                     <Link
-                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                      to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                       params={serviceLinkParams}
                       onClick={stopRowNavigation}
                       onKeyDown={stopRowNavigation}
@@ -92,7 +92,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
             .with({ serviceType: 'AGENTIC_WORKFLOW' }, (workflow) => (
               <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
                 <Link
-                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                  to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                   params={serviceLinkParams}
                   onClick={stopRowNavigation}
                   onKeyDown={stopRowNavigation}
@@ -110,7 +110,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
             .otherwise(() => (
               <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
                 <Link
-                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                  to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                   params={serviceLinkParams}
                   onClick={stopRowNavigation}
                   onKeyDown={stopRowNavigation}

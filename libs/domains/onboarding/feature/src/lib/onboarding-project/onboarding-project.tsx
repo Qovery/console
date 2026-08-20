@@ -79,7 +79,10 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
     }
 
     if (organizations.length > 0) {
-      navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organizations[0].id } })
+      navigate({
+        to: '/organization/$organizationId/infrastructure/overview',
+        params: { organizationId: organizations[0].id },
+      })
       return
     }
 
@@ -125,7 +128,10 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
       })
       await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
-      navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
+      navigate({
+        to: '/organization/$organizationId/infrastructure/overview',
+        params: { organizationId: organization.id },
+      })
       toast('success', 'Your organization and project have been created')
     } catch (error) {
       if ((error as SerializedError).code === '409') {

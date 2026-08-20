@@ -216,7 +216,7 @@ describe('ApplicationContainerStepSummary', () => {
       },
     })
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
       params: {
         organizationId: 'org-1',
         projectId: 'proj-1',
@@ -257,7 +257,7 @@ describe('ApplicationContainerStepSummary', () => {
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
         params: {
           organizationId: 'org-1',
           projectId: 'proj-1',
@@ -286,7 +286,7 @@ describe('ApplicationContainerStepSummary', () => {
 
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
         params: {
           organizationId: 'org-1',
           projectId: 'proj-1',

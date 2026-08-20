@@ -26,7 +26,7 @@ export const TerraformStepGeneral = () => {
     }
 
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
       params: { organizationId, projectId, environmentId },
     })
   })
@@ -142,7 +142,7 @@ export const TerraformStepGeneral = () => {
               variant="plain"
               onClick={() =>
                 navigate({
-                  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
+                  to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/new',
                   params: { organizationId, projectId, environmentId },
                 })
               }

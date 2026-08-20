@@ -613,7 +613,7 @@ export function StepSummary() {
 
         setLoadingCreate(false)
         navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+          to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
           params: { organizationId, projectId, environmentId },
         })
       } catch (error) {

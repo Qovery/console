@@ -19,7 +19,7 @@ import { NotificationChannelModal } from '../notification-channel-modal/notifica
 const { Table } = TablePrimitives
 
 export function NotificationChannelOverview() {
-  const { organizationId } = useParams({ from: '/_authenticated/organization/$organizationId/alerts' })
+  const { organizationId } = useParams({ from: '/_authenticated/organization/$organizationId/infrastructure/alerts' })
   useDocumentTitle('Notification channel - Alerting')
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()

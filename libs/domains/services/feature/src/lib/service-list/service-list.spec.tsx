@@ -499,7 +499,7 @@ describe('ServiceList', () => {
         projectId: 'cf021d82-2c5e-41de-96eb-eb69c022eddc',
         serviceId: '037c9e87-e098-4970-8b1f-9a5ffe9e4b89',
       },
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview',
     })
   })
 

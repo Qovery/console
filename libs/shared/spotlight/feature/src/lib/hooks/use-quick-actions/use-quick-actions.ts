@@ -16,19 +16,19 @@ export function useQuickActions(): QuickAction[] {
   const matchRoute = useMatchRoute()
 
   const serviceMatch = matchRoute({
-    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+    to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId',
     fuzzy: true,
   })
   const projectMatch = matchRoute({
-    to: '/organization/$organizationId/project/$projectId',
+    to: '/organization/$organizationId/infrastructure/project/$projectId',
     fuzzy: true,
   })
   const environmentMatch = matchRoute({
-    to: '/organization/$organizationId/project/$projectId/environment/$environmentId',
+    to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId',
     fuzzy: true,
   })
   const clusterMatch = matchRoute({
-    to: '/organization/$organizationId/cluster/$clusterId',
+    to: '/organization/$organizationId/infrastructure/cluster/$clusterId',
     fuzzy: true,
   })
   const serviceParams = serviceMatch || undefined

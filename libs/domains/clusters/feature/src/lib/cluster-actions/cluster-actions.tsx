@@ -342,7 +342,7 @@ function MenuOtherActions({
           icon={<Icon iconName="clock-rotate-left" />}
           onSelect={() =>
             navigate({
-              to: '/organization/$organizationId/audit-logs',
+              to: '/organization/$organizationId/infrastructure/audit-logs',
               params: {
                 organizationId: cluster.organization.id,
               },
@@ -503,7 +503,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
           iconOnly
           onClick={() =>
             navigate({
-              to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+              to: '/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs',
               params: {
                 organizationId: cluster.organization.id,
                 clusterId: cluster.id,

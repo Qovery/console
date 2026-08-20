@@ -71,7 +71,7 @@ describe('EnvironmentSection', () => {
     await userEvent.click(screen.getByRole('link', { name: /my environment/i }))
 
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId',
       params: { organizationId: 'org-1', projectId: 'project-1', environmentId: 'env-1' },
     })
   })

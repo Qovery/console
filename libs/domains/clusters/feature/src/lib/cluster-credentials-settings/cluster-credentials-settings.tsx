@@ -107,7 +107,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting }: Cluster
 
           <Link
             color="brand"
-            to="/organization/$organizationId/settings/cloud-credentials"
+            to="/organization/$organizationId/infrastructure/settings/cloud-credentials"
             params={{ organizationId }}
             className="flex gap-1"
           >
@@ -126,7 +126,7 @@ export function ClusterCredentialsSettings({ cloudProvider, isSetting }: Cluster
                   the credentials properly in this cluster's mirroring registry section.
                   <ExternalLink
                     className="items-center"
-                    href={`/organization/${organizationId}/cluster/${clusterId}/settings/image-registry`}
+                    href={`/organization/${organizationId}/infrastructure/cluster/${clusterId}/settings/image-registry`}
                   >
                     Go to mirroring registry section
                   </ExternalLink>

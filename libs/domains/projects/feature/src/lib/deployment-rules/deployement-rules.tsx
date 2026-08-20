@@ -105,7 +105,7 @@ function DeploymentRulesContent({ organizationId, projectId, linkNewRule }: Depl
   }
 
   const deploymentRuleEditPath = (ruleId: string) =>
-    `/organization/${organizationId}/project/${projectId}/deployment-rules/edit/${ruleId}`
+    `/organization/${organizationId}/infrastructure/project/${projectId}/deployment-rules/edit/${ruleId}`
 
   const renderRuleDays = (weekDays: string[]): ReactNode => {
     if (isWeekdays(weekDays) && weekDays.length < 7) {
@@ -203,7 +203,7 @@ function DeploymentRulesContent({ organizationId, projectId, linkNewRule }: Depl
         onClick={() =>
           hasClusters
             ? navigate({ to: linkNewRule })
-            : navigate({ to: '/organization/$organizationId/cluster/new', params: { organizationId } })
+            : navigate({ to: '/organization/$organizationId/infrastructure/cluster/new', params: { organizationId } })
         }
       >
         {hasClusters ? 'Add rule' : 'Create a Cluster'}
@@ -237,7 +237,7 @@ export function DeploymentRules() {
   const { projectId = '', organizationId = '' } = useParams({ strict: false })
   useDocumentTitle('Deployment rules - Qovery')
 
-  const linkNewRule = `/organization/${organizationId}/project/${projectId}/deployment-rules/create`
+  const linkNewRule = `/organization/${organizationId}/infrastructure/project/${projectId}/deployment-rules/create`
   const cachedDeploymentRules =
     queryClient.getQueryData<ProjectDeploymentRule[]>(queries.projects.listDeploymentRules({ projectId }).queryKey) ??
     []

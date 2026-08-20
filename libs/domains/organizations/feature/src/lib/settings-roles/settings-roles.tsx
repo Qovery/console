@@ -79,7 +79,7 @@ function RolesTable({ organizationId, onDeleteRole }: RolesTableProps) {
                   color="neutral"
                   iconOnly
                   size="md"
-                  to="/organization/$organizationId/settings/roles/edit/$roleId"
+                  to="/organization/$organizationId/infrastructure/settings/roles/edit/$roleId"
                   params={{
                     organizationId,
                     roleId: role.id,

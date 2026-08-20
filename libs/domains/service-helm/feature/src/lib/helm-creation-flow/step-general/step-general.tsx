@@ -192,7 +192,7 @@ export function HelmStepGeneral({ labelSetting, annotationSetting }: HelmStepGen
                 color="neutral"
                 onClick={() =>
                   navigate({
-                    to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
+                    to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/new',
                     params: {
                       organizationId,
                       projectId,

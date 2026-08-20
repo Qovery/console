@@ -204,7 +204,7 @@ export function AlertRulesOverview({
     }
 
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit',
       params,
     })
   }
@@ -394,7 +394,7 @@ export function AlertRulesOverview({
                       color="neutral"
                       size="xs"
                       className="justify-center pl-0.5"
-                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
+                      to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts"
                       params={{
                         organizationId,
                         projectId: alertRule.target?.service?.project_id ?? '',

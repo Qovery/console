@@ -50,31 +50,31 @@ const ORGANIZATION_TABS: NavigationTab[] = [
     id: 'overview',
     label: 'Overview',
     iconName: 'table-layout',
-    routeId: '/_authenticated/organization/$organizationId/overview',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/overview',
   },
   {
     id: 'clusters',
     label: 'Clusters',
     iconName: 'cube',
-    routeId: '/_authenticated/organization/$organizationId/clusters',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/clusters',
   },
   {
     id: 'audit-logs',
     label: 'Audit Logs',
     iconName: 'lock-keyhole',
-    routeId: '/_authenticated/organization/$organizationId/audit-logs',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/audit-logs',
   },
   {
     id: 'alerts',
     label: 'Alerts',
     iconName: 'light-emergency',
-    routeId: '/_authenticated/organization/$organizationId/alerts',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/alerts',
   },
   {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
-    routeId: '/_authenticated/organization/$organizationId/settings',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/settings',
   },
 ]
 
@@ -83,25 +83,25 @@ const CLUSTER_TABS: NavigationTab[] = [
     id: 'overview',
     label: 'Overview',
     iconName: 'table-layout',
-    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/cluster/$clusterId/overview',
   },
   {
     id: 'cluster-logs',
     label: 'Deployment Logs',
     iconName: 'scroll',
-    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs',
   },
   {
     id: 'cloud-shell',
     label: 'Cloud Shell',
     iconName: 'terminal',
-    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/cluster/$clusterId/cloud-shell',
   },
   {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
-    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/cluster/$clusterId/settings',
   },
 ]
 
@@ -110,25 +110,25 @@ const PROJECT_TABS: NavigationTab[] = [
     id: 'overview',
     label: 'Overview',
     iconName: 'table-layout',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/overview',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/overview',
   },
   {
     id: 'deployment-rules',
     label: 'Deployment Rules',
     iconName: 'ruler',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/deployment-rules',
   },
   {
     id: 'variables',
     label: 'Variables',
     iconName: 'key',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/variables',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/variables',
   },
   {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/settings',
+    routeId: '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/settings',
   },
 ]
 
@@ -137,25 +137,29 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     id: 'overview',
     label: 'Overview',
     iconName: 'table-layout',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+    routeId:
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
   },
   {
     id: 'deployments',
     label: 'Deployments',
     iconName: 'rocket',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
+    routeId:
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployments',
   },
   {
     id: 'variables',
     label: 'Variables',
     iconName: 'key',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables',
+    routeId:
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/variables',
   },
   {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
-    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
+    routeId:
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/settings',
   },
 ]
 
@@ -165,56 +169,56 @@ const SERVICE_TABS: NavigationTab[] = [
     label: 'Overview',
     iconName: 'table-layout',
     routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview',
   },
   {
     id: 'deployments',
     label: 'Deployments',
     iconName: 'rocket',
     routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments',
   },
   {
     id: 'service-logs',
     label: 'Service Logs',
     iconName: 'scroll',
     routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
   },
   {
     id: 'cloud-shell',
     label: 'Cloud Shell',
     iconName: 'terminal',
     routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
   },
   {
     id: 'manifest',
     label: 'Manifest',
     iconName: 'file-lines',
     routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/manifest',
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/manifest',
   },
   {
     id: 'monitoring',
     label: 'Monitoring',
     iconName: 'chart-column',
     routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
   },
   {
     id: 'variables',
     label: 'Variables',
     iconName: 'key',
     routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables',
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/variables',
   },
   {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
     routeId:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings',
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/settings',
   },
 ]
 
@@ -282,7 +286,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster) {
  * 1. Create a new tabs array (example: ENVIRONMENT_TABS) with routeId using the full route ID pattern
  * 2. Add a new entry to NAVIGATION_CONTEXTS with:
  *    - type: the context type (must match NavigationContext['type'])
- *    - routeIdPattern: the route ID pattern to match (example: '/_authenticated/organization/$organizationId/environment/$environmentId')
+ *    - routeIdPattern: the route ID pattern to match (example: '/_authenticated/organization/$organizationId/infrastructure/environment/$environmentId')
  *    - tabs: the tabs array for this context
  *    - paramNames: array of parameter names used in the route
  *
@@ -297,31 +301,32 @@ const NAVIGATION_CONTEXTS: Array<{
   {
     type: 'service',
     routeIdPattern:
-      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId',
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId',
     tabs: SERVICE_TABS,
     paramNames: ['organizationId', 'projectId', 'environmentId', 'serviceId'],
   },
   {
     type: 'environment',
-    routeIdPattern: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId',
+    routeIdPattern:
+      '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId',
     tabs: ENVIRONMENT_TABS,
     paramNames: ['organizationId', 'projectId', 'environmentId'],
   },
   {
     type: 'project',
-    routeIdPattern: '/_authenticated/organization/$organizationId/project/$projectId',
+    routeIdPattern: '/_authenticated/organization/$organizationId/infrastructure/project/$projectId',
     tabs: PROJECT_TABS,
     paramNames: ['organizationId', 'projectId'],
   },
   {
     type: 'cluster',
-    routeIdPattern: '/_authenticated/organization/$organizationId/cluster/$clusterId',
+    routeIdPattern: '/_authenticated/organization/$organizationId/infrastructure/cluster/$clusterId',
     tabs: CLUSTER_TABS,
     paramNames: ['organizationId', 'clusterId'],
   },
   {
     type: 'organization',
-    routeIdPattern: '/_authenticated/organization/$organizationId',
+    routeIdPattern: '/_authenticated/organization/$organizationId/infrastructure',
     tabs: ORGANIZATION_TABS,
     paramNames: ['organizationId'],
   },
@@ -346,6 +351,10 @@ function useNavigationContext(): NavigationContext | null {
   })
   const hasAlerting = clusters.some((cluster) => cluster.metrics_parameters?.configuration?.alerting?.enabled)
   const currentCluster = clusters.find((cluster) => cluster.id === environment?.cluster_id)
+
+  if (isAgentsSpacePath(pathname)) {
+    return null
+  }
 
   for (const context of NAVIGATION_CONTEXTS) {
     const patternRegex = createRoutePatternRegex(context.routeIdPattern)
@@ -391,6 +400,10 @@ function useNavigationContext(): NavigationContext | null {
   }
 
   return null
+}
+
+function isAgentsSpacePath(pathname: string): boolean {
+  return /^\/organization\/[^/]+\/agents(?:\/|$)/.test(pathname)
 }
 
 function getBaseRouteSegment(routePath: string): string | null {
@@ -465,20 +478,20 @@ function NavigationBar({ context }: { context: NavigationContext }) {
 }
 
 const fullWidthRouteIds: FileRouteTypes['id'][] = [
-  '/_authenticated/organization/$organizationId/alerts',
-  '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
-  '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
-  '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
-  '/_authenticated/organization/$organizationId/project/$projectId/settings',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
-  '/_authenticated/organization/$organizationId/settings',
-  '/_authenticated/organization/$organizationId/audit-logs',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs',
+  '/_authenticated/organization/$organizationId/infrastructure/alerts',
+  '/_authenticated/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs',
+  '/_authenticated/organization/$organizationId/infrastructure/cluster/$clusterId/cloud-shell',
+  '/_authenticated/organization/$organizationId/infrastructure/cluster/$clusterId/settings',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/settings',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/settings',
+  '/_authenticated/organization/$organizationId/infrastructure/settings',
+  '/_authenticated/organization/$organizationId/infrastructure/audit-logs',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/settings',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/cloud-shell',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs',
 ]
 
 function useFullWidthLayout(): boolean {
@@ -489,18 +502,18 @@ function useFullWidthLayout(): boolean {
 }
 
 const bypassLayoutRouteIds: FileRouteTypes['id'][] = [
-  '/_authenticated/organization/$organizationId/cluster/create/$slug',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/database',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/helm',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+  '/_authenticated/organization/$organizationId/infrastructure/cluster/create/$slug',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/$alertId/edit',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/$slug',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/database',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/agentic-workflow',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/helm',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/lifecycle-job',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/cron-job',
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
 ]
 
 function useBypassLayout(): boolean {
@@ -519,6 +532,42 @@ function MainLoader() {
 }
 
 function OrganizationRoute() {
+  const { pathname } = useLocation()
+  const { organizationId = '' } = useParams({ strict: false })
+
+  useEffect(() => {
+    if (!organizationId) {
+      return
+    }
+
+    posthog.group('organization_id', organizationId)
+    posthog.reloadFeatureFlags()
+  }, [organizationId])
+
+  return isAgentsSpacePath(pathname) ? <AgentsOrganizationRoute /> : <InfrastructureOrganizationRoute />
+}
+
+function AgentsOrganizationRoute() {
+  return (
+    <div className="flex h-dvh w-full flex-col bg-background-secondary">
+      <ErrorBoundary>
+        <div className="shrink-0">
+          <OrganizationBanners />
+        </div>
+        <div className="shrink-0">
+          <Header activeSpace="agents" />
+        </div>
+        <Suspense fallback={<MainLoader />}>
+          <div className="flex min-h-0 flex-1 overflow-hidden">
+            <Outlet />
+          </div>
+        </Suspense>
+      </ErrorBoundary>
+    </div>
+  )
+}
+
+function InfrastructureOrganizationRoute() {
   const navigationContext = useNavigationContext()
   const activeTabId = useActiveTabId(navigationContext)
   const needsFullWidth = useFullWidthLayout()
@@ -543,7 +592,7 @@ function OrganizationRoute() {
   const serviceNotFoundAction = (
     <Link
       as="button"
-      to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
+      to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview"
       params={{ organizationId, projectId, environmentId }}
       size="md"
       className="mt-6 gap-2"
@@ -551,16 +600,6 @@ function OrganizationRoute() {
       Go to environment
     </Link>
   )
-
-  // Keep group-scoped flags aligned with the active organization
-  useEffect(() => {
-    if (!organizationId) {
-      return
-    }
-
-    posthog.group('organization_id', organizationId)
-    posthog.reloadFeatureFlags()
-  }, [organizationId])
 
   // Add the service to the recent services list (necessary for the spotlight to work)
   useEffect(() => {
@@ -690,7 +729,7 @@ function OrganizationRoute() {
               <div ref={bannersRef}>
                 <OrganizationBanners />
               </div>
-              <Header />
+              <Header activeSpace="infrastructure" />
 
               <Suspense fallback={<MainLoader />}>
                 <>

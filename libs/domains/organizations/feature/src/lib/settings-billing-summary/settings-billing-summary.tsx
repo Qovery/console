@@ -214,7 +214,11 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                     )}
                   </div>
                 </div>
-                <Link to="/organization/$organizationId/settings/billing-details" params={{ organizationId }} size="xs">
+                <Link
+                  to="/organization/$organizationId/infrastructure/settings/billing-details"
+                  params={{ organizationId }}
+                  size="xs"
+                >
                   Edit payment
                 </Link>
               </div>
@@ -271,7 +275,7 @@ function SettingsBillingSummaryContent() {
   }
 
   const handleCancelTrialClick = () => {
-    navigate({ to: '/organization/$organizationId/settings/danger-zone', params: { organizationId } })
+    navigate({ to: '/organization/$organizationId/infrastructure/settings/danger-zone', params: { organizationId } })
   }
 
   const handleAddCreditCardClick = () => {

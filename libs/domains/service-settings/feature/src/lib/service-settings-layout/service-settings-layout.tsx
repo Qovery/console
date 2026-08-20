@@ -40,7 +40,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
   } = useParams({
     strict: false,
   })
-  const pathSettings = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}/settings`
+  const pathSettings = `/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}/service/${serviceId}/settings`
 
   const linkItem = (title: string, to: string, icon: IconName, iconStyle?: IconStyle): SidebarSettingsLinkItem => ({
     title,

@@ -45,7 +45,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
 
   const handleNavigate = () => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId',
       params: { organizationId, projectId, environmentId: overview.id },
     })
   }
@@ -68,7 +68,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
         <div className="flex h-full min-w-0 flex-col justify-center gap-1 px-4 py-2 xl:flex-row xl:items-center xl:justify-between xl:gap-2">
           <div className="flex min-w-0 items-center gap-1.5">
             <Link
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+              to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId"
               params={{ organizationId, projectId, environmentId: overview.id }}
               onClick={stopRowNavigation}
               onKeyDown={stopRowNavigation}
@@ -116,7 +116,7 @@ function EnvRow({ overview }: { overview: EnvironmentOverviewResponse }) {
         <div className="flex h-full items-center justify-between">
           {overview.cluster && (
             <Link
-              to="/organization/$organizationId/cluster/$clusterId/overview"
+              to="/organization/$organizationId/infrastructure/cluster/$clusterId/overview"
               params={{ organizationId, clusterId: overview.cluster.id }}
               onClick={stopRowNavigation}
               onKeyDown={stopRowNavigation}

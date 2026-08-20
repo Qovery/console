@@ -353,7 +353,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
           as="button"
           size="md"
           color="neutral"
-          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
+          to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/new"
           params={{ organizationId, projectId, environmentId }}
         >
           <Icon iconName="circle-plus" iconStyle="regular" />
@@ -365,7 +365,7 @@ export function ServiceList({ className, containerClassName, environment, ...pro
 
   const handleNavigateToService = (serviceId: string) => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview',
       params: { organizationId, projectId, environmentId, serviceId },
     })
   }

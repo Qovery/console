@@ -131,7 +131,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
               <Link
                 as="button"
                 color="current"
-                to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                to="/organization/$organizationId/infrastructure/cluster/$clusterId/settings/resources"
                 params={{ organizationId, clusterId }}
               >
                 <Icon iconName="gear" iconStyle="regular" className="text-base text-neutral-subtle" />

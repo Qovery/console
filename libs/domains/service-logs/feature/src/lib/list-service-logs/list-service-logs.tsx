@@ -20,7 +20,7 @@ import { ServiceLogsProvider } from './service-logs-context/service-logs-context
 const { Table } = TablePrimitives
 
 const route = getRouteApi(
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
+  '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs'
 )
 
 const MemoizedRowServiceLogs = memo(RowServiceLogs)

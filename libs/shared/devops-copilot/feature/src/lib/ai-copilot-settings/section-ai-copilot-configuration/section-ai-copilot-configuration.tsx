@@ -151,7 +151,7 @@ export function SectionAICopilotConfiguration({
                 <p className="mt-3 text-xs text-neutral-subtle">
                   Manage access permissions in{' '}
                   <Link
-                    to="/organization/$organizationId/settings/roles"
+                    to="/organization/$organizationId/infrastructure/settings/roles"
                     params={{ organizationId: organization?.id ?? '' }}
                     color="brand"
                     size="xs"

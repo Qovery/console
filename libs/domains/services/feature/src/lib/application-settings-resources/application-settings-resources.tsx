@@ -150,7 +150,7 @@ export function ApplicationSettingsResources({
               `Maximum value allowed based on the selected cluster instance type: ${service.maximum_cpu} milli vCPU. `}
             {clusterId && (
               <Link
-                to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                to="/organization/$organizationId/infrastructure/cluster/$clusterId/settings/resources"
                 params={{ organizationId, clusterId }}
                 size="xs"
               >
@@ -184,7 +184,7 @@ export function ApplicationSettingsResources({
               `Maximum value allowed based on the selected cluster instance type: ${service.maximum_memory} MiB. `}
             {clusterId && (
               <Link
-                to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                to="/organization/$organizationId/infrastructure/cluster/$clusterId/settings/resources"
                 params={{ organizationId, clusterId }}
                 size="xs"
               >
@@ -201,7 +201,7 @@ export function ApplicationSettingsResources({
       {!canSetGPU && 'GPUs not allowed on this cluster. '}
       {clusterId && (
         <Link
-          to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+          to="/organization/$organizationId/infrastructure/cluster/$clusterId/settings/resources"
           params={{ organizationId, clusterId }}
           size="xs"
         >

@@ -50,7 +50,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
 
   const handleNavigateToService = (serviceId: string) => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview',
       params: { organizationId, projectId, environmentId, serviceId },
     })
   }

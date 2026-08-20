@@ -23,7 +23,7 @@ export function SearchServiceLogs({
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const queryParams: ServiceLogsParams = useSearch({
-    from: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+    from: '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
   })
   const [options, setOptions] = useState<Option[]>(buildValueOptions(queryParams))
   const searchRef = useRef<MultipleSelectorRef>(null)
@@ -52,7 +52,7 @@ export function SearchServiceLogs({
   const setQueryParams = useCallback(
     (searchParams: ServiceLogsParams) => {
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
         params: {
           organizationId,
           projectId,

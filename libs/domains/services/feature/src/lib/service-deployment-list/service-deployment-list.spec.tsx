@@ -157,7 +157,7 @@ describe('ServiceDeploymentList', () => {
     await userEvent.click(screen.getByText('exec-123'))
 
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',
       params: {
         organizationId: 'org-123',
         projectId: 'proj-123',

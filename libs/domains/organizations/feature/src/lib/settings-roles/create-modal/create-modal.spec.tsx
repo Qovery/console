@@ -62,7 +62,7 @@ describe('CreateModal', () => {
 
     expect(props.onClose).toHaveBeenCalled()
     expect(navigateMock).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/settings/roles/edit/$roleId',
+      to: '/organization/$organizationId/infrastructure/settings/roles/edit/$roleId',
       params: {
         organizationId: '1',
         roleId: 'role-1',

@@ -140,7 +140,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
         <div className="flex shrink-0 items-center gap-1 text-ssm">
           <ClusterAvatar cluster={cluster} size="sm" />
           <Link
-            to="/organization/$organizationId/cluster/$clusterId/overview"
+            to="/organization/$organizationId/infrastructure/cluster/$clusterId/overview"
             params={{ organizationId, clusterId: environment.cluster_id }}
             className="hover:underline"
           >

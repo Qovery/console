@@ -53,7 +53,7 @@ function StepResourcesForm({
             type="button"
             variant="plain"
             color="neutral"
-            to="/organization/$organizationId/cluster/create/$slug/general"
+            to="/organization/$organizationId/infrastructure/cluster/create/$slug/general"
             params={{ organizationId }}
           >
             Back

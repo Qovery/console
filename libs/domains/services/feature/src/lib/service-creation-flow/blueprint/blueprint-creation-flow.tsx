@@ -61,7 +61,7 @@ export function BlueprintCreationFlow({ blueprint, children, onExit }: Blueprint
     projectId = '',
     provider = blueprint.provider,
   } = useParams({ strict: false })
-  const creationFlowUrl = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/blueprint/${encodeURIComponent(provider)}/${encodeURIComponent(serviceFamily)}`
+  const creationFlowUrl = `/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}/service/create/blueprint/${encodeURIComponent(provider)}/${encodeURIComponent(serviceFamily)}`
 
   return (
     <BlueprintCreateContext.Provider

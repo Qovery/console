@@ -43,7 +43,7 @@ exports[`EnvironmentActionToolbar should match manage deployment snapshot 1`] = 
         class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7"
         data-state="closed"
         params="[object Object]"
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+        to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
       >
         <i
           aria-hidden="true"
@@ -229,7 +229,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-neutral-strong text-ssm h-6 px-1.5 gap-x-1 rounded bg-surface-neutral border border-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle data-[state=open]:bg-surface-neutral-subtle text-neutral w-7"
         data-state="closed"
         params="[object Object]"
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+        to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
       >
         <i
           aria-hidden="true"
@@ -286,7 +286,7 @@ exports[`EnvironmentActionToolbar should match other actions snapshot 1`] = `
         role="menuitem"
         search="[object Object]"
         tabindex="-1"
-        to="/organization/$organizationId/audit-logs"
+        to="/organization/$organizationId/infrastructure/audit-logs"
       >
         <i
           aria-hidden="true"

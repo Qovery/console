@@ -1,11 +1,12 @@
-import { Link, useParams } from '@tanstack/react-router'
+import { useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { Suspense, useCallback } from 'react'
 import { AssistantTrigger } from '@qovery/shared/assistant/feature'
 import { DevopsCopilotButton } from '@qovery/shared/devops-copilot/feature'
 import { SpotlightTrigger } from '@qovery/shared/spotlight/feature'
-import { Button, LogoIcon } from '@qovery/shared/ui'
+import { Button } from '@qovery/shared/ui'
 import { Breadcrumbs } from './breadcrumbs/breadcrumbs'
+import { type AppSpace, SpaceSwitcher } from './space-switcher/space-switcher'
 import { UserMenu } from './user-menu/user-menu'
 
 export function Separator() {
@@ -21,7 +22,11 @@ export function Separator() {
   )
 }
 
-export function Header() {
+interface HeaderProps {
+  activeSpace?: AppSpace
+}
+
+export function Header({ activeSpace = 'infrastructure' }: HeaderProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const handleFeedbackClick = useCallback(() => {
     posthog.capture('feedback_button_clicked_new_navigation')
@@ -30,16 +35,11 @@ export function Header() {
   return (
     <header className="relative z-header w-full bg-background-secondary py-4 pl-3 pr-4">
       <div className="flex items-center gap-3 md:gap-4">
-        <div className="flex shrink-0 items-center gap-4">
-          <Link to="/organization/$organizationId/overview" params={{ organizationId }}>
-            <LogoIcon />
-          </Link>
-          <Separator />
-        </div>
+        <SpaceSwitcher activeSpace={activeSpace} organizationId={organizationId} />
         <Suspense fallback={<div className="h-8 flex-1" />}>
           <div className="flex min-w-0 flex-1 items-center gap-3">
             <div className="min-w-0 flex-1">
-              <Breadcrumbs />
+              <Breadcrumbs activeSpace={activeSpace} />
             </div>
             <div className="ml-auto flex shrink-0 items-center gap-2">
               <div className="hidden md:block">

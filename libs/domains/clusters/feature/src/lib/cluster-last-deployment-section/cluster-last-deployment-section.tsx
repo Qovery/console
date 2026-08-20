@@ -137,7 +137,7 @@ export function ClusterLastDeploymentSection({
       ) : clusterStatus && hasLastDeployment ? (
         <div className="flex flex-col">
           <Link
-            to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+            to="/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs"
             params={{ organizationId, clusterId }}
             className="relative flex rounded-lg border border-neutral bg-surface-neutral p-4 transition-colors hover:bg-surface-neutral-subtle"
           >

@@ -206,7 +206,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
   return (
     <div className="flex flex-col">
       <Link
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+        to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
         params={{ organizationId, environmentId, serviceId, executionId: lastDeployment.identifier.execution_id }}
         className="relative flex rounded-lg border border-neutral bg-surface-neutral p-4 transition-colors hover:bg-surface-neutral-subtle"
       >

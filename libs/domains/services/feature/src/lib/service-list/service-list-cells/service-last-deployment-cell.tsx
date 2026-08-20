@@ -25,7 +25,7 @@ export function ServiceLastDeploymentCell({ service, environment, isSkipped = fa
     ({ children }: PropsWithChildren) => {
       return (
         <Link
-          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+          to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
           params={{
             organizationId: environment.organization.id,
             projectId: environment.project.id,

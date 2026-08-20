@@ -60,7 +60,7 @@ export function AutoDeployBadge({ serviceId }: AutoDeployBadgeProps) {
         color="neutral"
         variant="outline"
         size="xs"
-        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/general"
+        to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/settings/general"
         params={{ organizationId, projectId, environmentId, serviceId: routeServiceId }}
       >
         <Icon className="text-neutral" iconName="arrows-rotate" />

@@ -147,7 +147,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
         </button>
       ) : (
         <Link
-          to="/organization/$organizationId/cluster/create/$slug"
+          to="/organization/$organizationId/infrastructure/cluster/create/$slug"
           params={{ organizationId, slug: selectedCloudProvider.toLowerCase() }}
           className={baseClassNames}
           onClick={() => handleAnalytics(selectedInstallationType)}
@@ -178,7 +178,7 @@ function CardOption({ icon, title, description, selectedCloudProvider, recommend
       if (isEksAnywhereEnabled) {
         return (
           <Link
-            to="/organization/$organizationId/cluster/create/$slug"
+            to="/organization/$organizationId/infrastructure/cluster/create/$slug"
             params={{ organizationId, slug: `${selectedCloudProvider.toLowerCase()}-eks-anywhere` }}
             className={baseClassNames}
             onClick={() => handleAnalytics(selectedInstallationType)}
@@ -654,7 +654,7 @@ export function ClusterNew() {
                     color="neutral"
                     variant="outline"
                     className="mt-2"
-                    to="/organization/$organizationId/settings/billing-summary"
+                    to="/organization/$organizationId/infrastructure/settings/billing-summary"
                     params={{ organizationId }}
                   >
                     Add credit card

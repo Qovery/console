@@ -4,7 +4,7 @@ import { Heading, InputSearch, Section } from '@qovery/shared/ui'
 import { AlertRulesOverview } from '../alert-rules-overview/alert-rules-overview'
 
 export function OrganizationAlerting() {
-  const { organizationId } = useParams({ from: '/_authenticated/organization/$organizationId/alerts' })
+  const { organizationId } = useParams({ from: '/_authenticated/organization/$organizationId/infrastructure/alerts' })
   const [filter, setFilter] = useState('')
 
   return (

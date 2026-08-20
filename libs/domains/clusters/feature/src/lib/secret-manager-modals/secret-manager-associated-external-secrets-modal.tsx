@@ -255,7 +255,7 @@ export function SecretManagerAssociatedExternalSecretsModal({
                                     <Link
                                       color="brand"
                                       onClick={() => onClose()}
-                                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/variables/external-secrets"
+                                      to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/variables/external-secrets"
                                       params={{
                                         organizationId,
                                         projectId: project.project_id,
@@ -273,7 +273,7 @@ export function SecretManagerAssociatedExternalSecretsModal({
                                           <Link
                                             color="brand"
                                             onClick={() => onClose()}
-                                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/variables/external-secrets"
+                                            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/variables/external-secrets"
                                             params={{
                                               organizationId,
                                               projectId: project.project_id,
@@ -329,7 +329,7 @@ export function SecretManagerAssociatedExternalSecretsModal({
                                     <Link
                                       color="brand"
                                       onClick={() => onClose()}
-                                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/variables/external-secrets"
+                                      to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/variables/external-secrets"
                                       params={{
                                         organizationId,
                                         projectId: project.project_id,
@@ -348,7 +348,7 @@ export function SecretManagerAssociatedExternalSecretsModal({
                                             <Link
                                               color="brand"
                                               onClick={() => onClose()}
-                                              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables/external-secrets"
+                                              to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/variables/external-secrets"
                                               params={{
                                                 organizationId,
                                                 projectId: project.project_id,
@@ -372,7 +372,7 @@ export function SecretManagerAssociatedExternalSecretsModal({
                                                   <Link
                                                     color="brand"
                                                     onClick={() => onClose()}
-                                                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables/external-secrets"
+                                                    to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/variables/external-secrets"
                                                     params={{
                                                       organizationId,
                                                       projectId: project.project_id,

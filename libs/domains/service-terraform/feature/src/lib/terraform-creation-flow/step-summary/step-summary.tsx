@@ -96,7 +96,7 @@ export const TerraformStepSummary = () => {
 
       setIsLoadingCreate(false)
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
         params: { organizationId, projectId, environmentId },
       })
     } catch (error) {
@@ -126,7 +126,7 @@ export const TerraformStepSummary = () => {
                   size="md"
                   onClick={() =>
                     navigate({
-                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general',
+                      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform/general',
                       params: { organizationId, projectId, environmentId },
                     })
                   }
@@ -163,7 +163,7 @@ export const TerraformStepSummary = () => {
                   size="md"
                   onClick={() =>
                     navigate({
-                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
+                      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
                       params: { organizationId, projectId, environmentId },
                     })
                   }
@@ -205,7 +205,7 @@ export const TerraformStepSummary = () => {
                   size="md"
                   onClick={() =>
                     navigate({
-                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
+                      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
                       params: { organizationId, projectId, environmentId },
                     })
                   }
@@ -245,7 +245,7 @@ export const TerraformStepSummary = () => {
               variant="plain"
               onClick={() =>
                 navigate({
-                  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
+                  to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
                   params: { organizationId, projectId, environmentId },
                 })
               }

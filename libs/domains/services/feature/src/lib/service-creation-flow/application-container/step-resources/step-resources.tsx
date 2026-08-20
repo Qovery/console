@@ -43,7 +43,7 @@ export function ApplicationContainerStepResources({ onSubmit }: ApplicationConta
                 type="button"
                 variant="plain"
                 color="neutral"
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/general"
+                to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/$slug/general"
                 params={{
                   organizationId,
                   projectId,

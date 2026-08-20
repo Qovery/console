@@ -286,7 +286,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                                   variant="surface"
                                   color="neutral"
                                   size="xs"
-                                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                                  to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
                                   params={{
                                     organizationId,
                                     projectId,
@@ -349,7 +349,7 @@ export function SidebarPodStatuses({ organizationId, projectId, service, childre
                                 variant="surface"
                                 color="neutral"
                                 size="xs"
-                                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+                                to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
                                 params={{
                                   organizationId,
                                   projectId,

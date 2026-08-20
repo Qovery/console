@@ -205,7 +205,7 @@ export function LabelAnnotationItemsListModal({
                             <Link
                               color="brand"
                               onClick={() => onClose()}
-                              to="/organization/$organizationId/cluster/$clusterId/overview"
+                              to="/organization/$organizationId/infrastructure/cluster/$clusterId/overview"
                               params={{ organizationId, clusterId }}
                               className="flex items-center py-2 text-sm"
                             >
@@ -243,7 +243,7 @@ export function LabelAnnotationItemsListModal({
                                     <Link
                                       color="brand"
                                       onClick={() => onClose()}
-                                      to="/organization/$organizationId/project/$projectId/environment/$environmentId"
+                                      to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId"
                                       params={{
                                         organizationId,
                                         environmentId: environment.environment_id,
@@ -261,7 +261,7 @@ export function LabelAnnotationItemsListModal({
                                           <Link
                                             color="brand"
                                             onClick={() => onClose()}
-                                            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId"
+                                            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId"
                                             params={{
                                               organizationId,
                                               environmentId: environment.environment_id,

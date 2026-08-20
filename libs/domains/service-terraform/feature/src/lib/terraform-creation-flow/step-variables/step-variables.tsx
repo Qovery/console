@@ -28,7 +28,7 @@ export const TerraformStepVariables = () => {
             color="neutral"
             onClick={() =>
               navigate({
-                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
+                to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
                 params: { organizationId, projectId, environmentId },
               })
             }
@@ -41,7 +41,7 @@ export const TerraformStepVariables = () => {
               size="lg"
               onClick={() =>
                 navigate({
-                  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary',
+                  to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/terraform/summary',
                   params: { organizationId, projectId, environmentId },
                 })
               }

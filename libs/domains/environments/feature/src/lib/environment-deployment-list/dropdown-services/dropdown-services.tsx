@@ -322,7 +322,7 @@ export function DropdownServices({ environment, deploymentHistory, stages, size 
                                 asChild
                               >
                                 <Link
-                                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                                  to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                                   params={{
                                     organizationId: environment.organization.id,
                                     projectId: environment.project.id,

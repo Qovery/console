@@ -2,7 +2,7 @@ import { match } from 'ts-pattern'
 import { type ServiceType } from '@qovery/domains/services/data-access'
 
 export const getEnvironmentBasePath = (organizationId: string, projectId: string, environmentId: string) =>
-  `/organization/${organizationId}/project/${projectId}/environment/${environmentId}`
+  `/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}`
 
 export const getServicesPath = (organizationId: string, projectId: string, environmentId: string, subPath: string) =>
   `${getEnvironmentBasePath(organizationId, projectId, environmentId)}${subPath}`

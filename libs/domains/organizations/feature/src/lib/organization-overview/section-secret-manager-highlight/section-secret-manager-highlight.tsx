@@ -85,7 +85,7 @@ export function SectionSecretManagerHighlight() {
           {isSecretManagerAvailable ? (
             <Link
               as="button"
-              to="/organization/$organizationId/cluster/$clusterId/settings/addons"
+              to="/organization/$organizationId/infrastructure/cluster/$clusterId/settings/addons"
               params={{ organizationId, clusterId: getSecretManagerClusterId ?? '' }}
               color="brand"
               variant="solid"

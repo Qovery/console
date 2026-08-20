@@ -235,7 +235,7 @@ function BlueprintDetailsPanelContent({
                     Cancel
                   </Button>
                   <Link
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
+                    to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
                     params={{
                       organizationId,
                       projectId,

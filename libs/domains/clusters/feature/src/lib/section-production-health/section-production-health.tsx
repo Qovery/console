@@ -21,7 +21,7 @@ export function SectionProductionHealth() {
       <div className="flex items-center justify-between gap-3">
         <Heading className="flex items-center gap-2">Production health</Heading>
         <Link
-          to="/organization/$organizationId/clusters"
+          to="/organization/$organizationId/infrastructure/clusters"
           params={{ organizationId }}
           color="neutral"
           size="ssm"
@@ -43,7 +43,7 @@ export function SectionProductionHealth() {
             color="neutral"
             size="md"
             data-action="org-overview__create-cluster"
-            to="/organization/$organizationId/cluster/new"
+            to="/organization/$organizationId/infrastructure/cluster/new"
             params={{ organizationId }}
           >
             <Icon iconName="circle-plus" />

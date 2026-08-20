@@ -1,7 +1,7 @@
 import { SERVICES_URL } from './services.router'
 
 export const INFRA_LOGS_URL = (organizationId = ':organizationId', clusterId = ':clusterId') =>
-  `/organization/${organizationId}/cluster/${clusterId}/logs`
+  `/organization/${organizationId}/infrastructure/cluster/${clusterId}/logs`
 
 export const ENVIRONMENT_LOGS_URL = (
   organizationId = ':organizationId',

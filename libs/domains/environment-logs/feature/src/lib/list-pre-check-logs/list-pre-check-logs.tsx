@@ -121,7 +121,7 @@ export function ListPreCheckLogs({ environment, environmentStatus, preCheckStage
                   >
                     <Link
                       className="flex w-full justify-between"
-                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs"
+                      to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs"
                       params={{
                         organizationId,
                         projectId,

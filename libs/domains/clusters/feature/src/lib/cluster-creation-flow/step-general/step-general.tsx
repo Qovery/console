@@ -287,7 +287,7 @@ export function StepGeneral({ organizationId, onSubmit, labelsSetting }: StepGen
                 type="button"
                 variant="plain"
                 color="neutral"
-                to="/organization/$organizationId/cluster/new"
+                to="/organization/$organizationId/infrastructure/cluster/new"
                 params={{ organizationId }}
               >
                 Cancel

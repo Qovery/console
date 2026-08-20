@@ -76,7 +76,7 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistoryEnv
 export function EnvironmentDeploymentList() {
   const navigate = useNavigate()
   const { environmentId = '' } = useParams({
-    from: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments',
+    from: '/_authenticated/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployments',
   })
   const { data: environment } = useEnvironment({ environmentId, suspense: true })
 
@@ -245,7 +245,7 @@ export function EnvironmentDeploymentList() {
                     variant="outline"
                     iconOnly
                     size="md"
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId"
+                    to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId"
                     params={{
                       organizationId: environment?.organization.id,
                       projectId: environment?.project.id,
@@ -448,7 +448,7 @@ export function EnvironmentDeploymentList() {
     if (!environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
 
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId',
       params: {
         organizationId: environment?.organization.id,
         projectId: environment?.project.id,
@@ -467,7 +467,7 @@ export function EnvironmentDeploymentList() {
     if (event.key !== 'Enter' || !environment || !executionId || shouldIgnoreRowNavigation(event.target)) return
 
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/deployment/$deploymentId',
       params: {
         organizationId: environment?.organization.id,
         projectId: environment?.project.id,

@@ -203,7 +203,7 @@ export function ApplicationContainerStepGeneral({
                 type="button"
                 variant="plain"
                 color="neutral"
-                to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/new"
+                to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/new"
                 params={{
                   organizationId,
                   projectId,

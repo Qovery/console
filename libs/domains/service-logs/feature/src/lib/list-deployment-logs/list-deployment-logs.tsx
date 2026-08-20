@@ -209,7 +209,7 @@ const DeploymentLogsHeader = memo(function DeploymentLogsHeader({
               >
                 <Link
                   className="flex w-full justify-between"
-                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
+                  to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId"
                   params={{
                     organizationId,
                     projectId,

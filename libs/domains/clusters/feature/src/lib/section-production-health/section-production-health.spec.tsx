@@ -66,7 +66,7 @@ describe('SectionProductionHealth', () => {
 
     const createLink = screen.getByText('Create cluster').closest('a')
     expect(createLink).toBeInTheDocument()
-    expect(createLink).toHaveAttribute('data-to', '/organization/$organizationId/cluster/new')
+    expect(createLink).toHaveAttribute('data-to', '/organization/$organizationId/infrastructure/cluster/new')
     expect(createLink).toHaveAttribute('data-params', JSON.stringify({ organizationId: 'test-org-id' }))
   })
 
@@ -75,7 +75,7 @@ describe('SectionProductionHealth', () => {
 
     const allClustersLink = screen.getByText('All clusters').closest('a')
     expect(allClustersLink).toBeInTheDocument()
-    expect(allClustersLink).toHaveAttribute('data-to', '/organization/$organizationId/clusters')
+    expect(allClustersLink).toHaveAttribute('data-to', '/organization/$organizationId/infrastructure/clusters')
     expect(allClustersLink).toHaveAttribute('data-params', JSON.stringify({ organizationId: 'test-org-id' }))
   })
 })

@@ -392,7 +392,7 @@ export function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
             className="gap-0"
-            to="/organization/$organizationId/audit-logs"
+            to="/organization/$organizationId/infrastructure/audit-logs"
             params={{
               organizationId: environment.organization.id,
             }}
@@ -502,7 +502,7 @@ export function EnvironmentActionToolbar({
           <Tooltip content="Pipeline">
             <Link
               as="button"
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
+              to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
               params={{
                 organizationId: environment.organization.id,
                 projectId: environment.project.id,

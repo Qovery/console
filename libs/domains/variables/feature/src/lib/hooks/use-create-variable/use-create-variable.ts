@@ -29,7 +29,7 @@ export function useCreateVariable() {
           } = error.response.data.existing_variable
           const url = serviceId
             ? buildLocation({
-                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables',
+                to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/variables',
                 params: {
                   organizationId: orgId,
                   projectId,
@@ -39,7 +39,7 @@ export function useCreateVariable() {
               }).href
             : envId
               ? buildLocation({
-                  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/variables',
+                  to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/variables',
                   params: {
                     organizationId: orgId,
                     projectId,
@@ -47,7 +47,7 @@ export function useCreateVariable() {
                   },
                 }).href
               : buildLocation({
-                  to: '/organization/$organizationId/project/$projectId/variables',
+                  to: '/organization/$organizationId/infrastructure/project/$projectId/variables',
                   params: {
                     organizationId: orgId,
                     projectId,

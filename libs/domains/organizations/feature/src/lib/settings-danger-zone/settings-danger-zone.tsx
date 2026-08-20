@@ -77,7 +77,7 @@ export function SettingsDangerZone() {
         await navigate({ to: '/onboarding/project' })
       } else {
         await navigate({
-          to: '/organization/$organizationId/overview',
+          to: '/organization/$organizationId/infrastructure/overview',
           params: { organizationId: remainingOrganizations[0].id },
         })
       }

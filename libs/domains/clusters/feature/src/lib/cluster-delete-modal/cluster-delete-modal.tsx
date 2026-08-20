@@ -35,7 +35,7 @@ export function ClusterDeleteModal({ cluster }: ClusterDeleteModalProps) {
           clusterId,
           clusterDeleteMode: cluster.kubernetes === 'SELF_MANAGED' ? 'DELETE_QOVERY_CONFIG' : clusterDeleteMode,
         })
-        navigate({ to: '/organization/$organizationId/clusters', params: { organizationId } })
+        navigate({ to: '/organization/$organizationId/infrastructure/clusters', params: { organizationId } })
       } catch (error) {
         console.error(error)
       }

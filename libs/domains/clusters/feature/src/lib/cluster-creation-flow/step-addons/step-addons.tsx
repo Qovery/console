@@ -35,7 +35,7 @@ export interface StepAddonsProps {
 interface StepAddonsFormProps {
   onSubmit: () => void
   organizationId: string
-  backTo: '/organization/$organizationId/cluster/create/$slug/features'
+  backTo: '/organization/$organizationId/infrastructure/cluster/create/$slug/features'
 }
 
 function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProps) {
@@ -231,7 +231,7 @@ export function StepAddons({ organizationId, onSubmit }: StepAddonsProps) {
     setCurrentStep(stepIndex)
   }, [setCurrentStep, generalData])
 
-  const backTo = '/organization/$organizationId/cluster/create/$slug/features' as const
+  const backTo = '/organization/$organizationId/infrastructure/cluster/create/$slug/features' as const
 
   return (
     <FunnelFlowBody>

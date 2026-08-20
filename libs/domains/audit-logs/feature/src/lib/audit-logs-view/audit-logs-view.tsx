@@ -11,7 +11,7 @@ import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { AuditLogs } from '../audit-logs/audit-logs'
 import { initializeSelectedItemsFromQueryParams } from '../utils/target-type-selection-utils'
 
-const route = getRouteApi('/_authenticated/organization/$organizationId/audit-logs')
+const route = getRouteApi('/_authenticated/organization/$organizationId/infrastructure/audit-logs')
 
 const AUDIT_LOG_FILTER_PARAMS = new Set<keyof AuditLogsParams>([
   'eventType',

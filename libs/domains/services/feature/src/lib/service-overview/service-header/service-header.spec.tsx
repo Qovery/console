@@ -520,7 +520,7 @@ describe('ServiceHeader', () => {
 
     expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
       params: {
         organizationId: 'org-id',
         projectId: 'project-id',
@@ -562,7 +562,7 @@ describe('ServiceHeader', () => {
     await userEvent.click(screen.getByRole('button', { name: /preview changes/i }))
 
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint/preview',
       params: {
         organizationId: 'org-id',
         projectId: 'project-id',

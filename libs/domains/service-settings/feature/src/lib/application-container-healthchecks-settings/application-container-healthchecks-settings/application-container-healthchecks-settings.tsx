@@ -113,7 +113,7 @@ function ApplicationContainerHealthchecksSettingsContent() {
               <Callout.Text className="text-neutral-subtle">
                 If you need higher availability during upgrades, review your{' '}
                 <Link
-                  to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/resources"
+                  to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/settings/resources"
                   params={{ organizationId, projectId, environmentId, serviceId }}
                 >
                   resources configuration

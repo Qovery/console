@@ -7,11 +7,94 @@ import { sortProjectsByFavorite, useFavoriteProjects, useProjects } from '@qover
 import { ServiceAvatar, ServiceStateChip, useServices } from '@qovery/domains/services/feature'
 import { Avatar } from '@qovery/shared/ui'
 import { Separator } from '../header'
+import { type AppSpace } from '../space-switcher/space-switcher'
 import { BreadcrumbItem, type BreadcrumbItemData, type BreadcrumbMenuAction } from './breadcrumb-item'
 
-export function Breadcrumbs() {
+interface BreadcrumbsProps {
+  activeSpace?: AppSpace
+}
+
+type BreadcrumbData = {
+  item: BreadcrumbItemData
+  items: BreadcrumbItemData[]
+}
+
+function useOrganizationBreadcrumb(activeSpace: AppSpace) {
   const { buildLocation } = useRouter()
   const location = useLocation()
+  const { organizationId = '' } = useParams({ strict: false })
+  const { data: organizations = [] } = useOrganizations({
+    enabled: true,
+    suspense: true,
+  })
+  const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId, suspense: true })
+
+  // Necessary to keep the organization from client by Qovery team
+  const allOrganizations =
+    organizations.find((org) => org.id !== organizationId) && organization
+      ? [...organizations.filter((org) => org.id !== organizationId), organization]
+      : organizations
+
+  const items: BreadcrumbItemData[] = [...allOrganizations]
+    .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
+    .map((organization) => ({
+      id: organization.id,
+      label: organization.name,
+      path:
+        activeSpace === 'agents'
+          ? buildLocation({
+              to: '/organization/$organizationId/agents',
+              params: { organizationId: organization.id },
+            }).href
+          : buildLocation({
+              to: '/organization/$organizationId/infrastructure/overview',
+              params: { organizationId: organization.id },
+            }).href,
+      logo_url: organization.logo_url ?? undefined,
+    }))
+
+  const currentOrganization = items.find((organization) => organization.id === organizationId)
+  const data: BreadcrumbData | undefined = currentOrganization
+    ? {
+        item: {
+          ...currentOrganization,
+          prefix: (
+            <Avatar
+              src={currentOrganization.logo_url}
+              fallback={currentOrganization.label.charAt(0).toUpperCase()}
+              size="sm"
+              border="solid"
+              className="mr-0.5"
+            />
+          ),
+        },
+        items,
+      }
+    : undefined
+
+  const footerAction: BreadcrumbMenuAction = {
+    label: 'Create organization',
+    path: '/onboarding/project',
+    search: {
+      previousUrl: location.href,
+    },
+  }
+
+  return { data, footerAction }
+}
+
+export function Breadcrumbs({ activeSpace = 'infrastructure' }: BreadcrumbsProps) {
+  return activeSpace === 'agents' ? <OrganizationBreadcrumbs /> : <InfrastructureBreadcrumbs />
+}
+
+function OrganizationBreadcrumbs() {
+  const { data, footerAction } = useOrganizationBreadcrumb('agents')
+
+  return <BreadcrumbTrail data={data ? [data] : []} footerAction={footerAction} />
+}
+
+function InfrastructureBreadcrumbs() {
+  const { buildLocation } = useRouter()
   const {
     organizationId = '',
     clusterId = '',
@@ -20,51 +103,18 @@ export function Breadcrumbs() {
     serviceId = '',
   } = useParams({ strict: false })
 
-  const { data: organizations = [] } = useOrganizations({
-    enabled: true,
-    suspense: true,
-  })
-  const { data: organization } = useOrganization({ organizationId, enabled: !!organizationId, suspense: true })
+  const { data: organizationBreadcrumb, footerAction } = useOrganizationBreadcrumb('infrastructure')
   const { data: clusters = [] } = useClusters({ organizationId, suspense: true })
   const { data: projects = [] } = useProjects({ organizationId, suspense: true })
   const { isProjectFavorite } = useFavoriteProjects({ organizationId })
   const { data: environments = [] } = useEnvironments({ projectId, suspense: true })
   const { data: services = [] } = useServices({ environmentId, suspense: true })
 
-  // Necessary to keep the organization from client by Qovery team
-  const allOrganizations =
-    organizations.find((org) => org.id !== organizationId) && organization
-      ? [...organizations.filter((org) => org.id !== organizationId), organization]
-      : organizations
-  const previousUrl = location.href
-
-  const orgItems: BreadcrumbItemData[] = allOrganizations
-    .sort((a, b) => a.name.trim().localeCompare(b.name.trim()))
-    .map((organization) => ({
-      id: organization.id,
-      label: organization.name,
-      path: buildLocation({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
-        .href,
-      logo_url: organization.logo_url ?? undefined,
-    }))
-  const createOrganizationAction: BreadcrumbMenuAction = {
-    label: 'Create organization',
-    path: '/onboarding/project',
-    search: {
-      previousUrl,
-    },
-  }
-
-  const currentOrg = useMemo(
-    () => orgItems.find((organization) => organization.id === organizationId),
-    [organizationId, orgItems]
-  )
-
   const clusterItems: BreadcrumbItemData[] = clusters.map((cluster) => ({
     id: cluster.id,
     label: cluster.name,
     path: buildLocation({
-      to: '/organization/$organizationId/cluster/$clusterId/overview',
+      to: '/organization/$organizationId/infrastructure/cluster/$clusterId/overview',
       params: { organizationId, clusterId: cluster.id },
     }).href,
   }))
@@ -73,7 +123,7 @@ export function Breadcrumbs() {
     id: project.id,
     label: project.name,
     path: buildLocation({
-      to: '/organization/$organizationId/project/$projectId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/overview',
       params: { organizationId, projectId: project.id },
     }).href,
   }))
@@ -85,7 +135,7 @@ export function Breadcrumbs() {
       label: environment.name,
       prefix: <EnvironmentMode mode={environment.mode} variant="shrink" />,
       path: buildLocation({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
         params: { organizationId, projectId: environment.project.id, environmentId: environment.id },
       }).href,
     }))
@@ -96,7 +146,7 @@ export function Breadcrumbs() {
       id: service.id,
       label: service.name,
       path: buildLocation({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/overview',
         params: { organizationId, projectId, environmentId, serviceId: service.id },
       }).href,
       prefix: (
@@ -125,25 +175,7 @@ export function Breadcrumbs() {
     [serviceId, serviceItems]
   )
 
-  const breadcrumbData: Array<{ item: BreadcrumbItemData; items: BreadcrumbItemData[] }> = []
-
-  if (currentOrg) {
-    breadcrumbData.push({
-      item: {
-        ...currentOrg,
-        prefix: (
-          <Avatar
-            src={currentOrg.logo_url}
-            fallback={currentOrg.label.charAt(0).toUpperCase()}
-            size="sm"
-            border="solid"
-            className="mr-0.5"
-          />
-        ),
-      },
-      items: orgItems,
-    })
-  }
+  const breadcrumbData: BreadcrumbData[] = organizationBreadcrumb ? [organizationBreadcrumb] : []
 
   if (currentCluster) {
     breadcrumbData.push({
@@ -151,7 +183,7 @@ export function Breadcrumbs() {
         id: 'clusters',
         label: 'Clusters',
         path: buildLocation({
-          to: '/organization/$organizationId/clusters',
+          to: '/organization/$organizationId/infrastructure/clusters',
           params: { organizationId },
         }).href,
       },
@@ -187,24 +219,31 @@ export function Breadcrumbs() {
     })
   }
 
+  return <BreadcrumbTrail data={breadcrumbData} footerAction={footerAction} />
+}
+
+interface BreadcrumbTrailProps {
+  data: BreadcrumbData[]
+  footerAction: BreadcrumbMenuAction
+}
+
+function BreadcrumbTrail({ data, footerAction }: BreadcrumbTrailProps) {
   return (
     <div className="no-scrollbar flex min-w-0 items-center gap-2 overflow-x-auto whitespace-nowrap">
-      {breadcrumbData.map((data, index) => (
+      {data.map((breadcrumb, index) => (
         <div
-          key={data.item.id}
+          key={breadcrumb.item.id}
           className={
-            index === breadcrumbData.length - 1
-              ? 'flex min-w-0 flex-1 items-center gap-2'
-              : 'flex shrink-0 items-center gap-2'
+            index === data.length - 1 ? 'flex min-w-0 flex-1 items-center gap-2' : 'flex shrink-0 items-center gap-2'
           }
         >
           <BreadcrumbItem
-            item={data.item}
-            items={data.items}
-            isCurrentScope={index === breadcrumbData.length - 1}
-            footerAction={index === 0 ? createOrganizationAction : undefined}
+            item={breadcrumb.item}
+            items={breadcrumb.items}
+            isCurrentScope={index === data.length - 1}
+            footerAction={index === 0 ? footerAction : undefined}
           />
-          {index < breadcrumbData.length - 1 && <Separator />}
+          {index < data.length - 1 && <Separator />}
         </div>
       ))}
     </div>

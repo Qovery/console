@@ -557,7 +557,7 @@ describe('BlueprintCreationFlow', () => {
       mockCreateBlueprint.mock.invocationCallOrder[0]
     )
     expect(mockNavigate).not.toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
       params: {
         organizationId: 'org-1',
         projectId: 'proj-1',
@@ -593,7 +593,7 @@ describe('BlueprintCreationFlow', () => {
 
     expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
       params: {
         organizationId: 'org-1',
         projectId: 'proj-1',
@@ -638,7 +638,7 @@ describe('BlueprintCreationFlow', () => {
 
     expect(mockToast).not.toHaveBeenCalled()
     expect(mockNavigate).not.toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
       params: {
         organizationId: 'org-1',
         projectId: 'proj-1',
@@ -652,7 +652,7 @@ describe('BlueprintCreationFlow', () => {
 
     expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
       params: {
         organizationId: 'org-1',
         projectId: 'proj-1',

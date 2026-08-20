@@ -31,7 +31,7 @@ export function BlueprintCard({
       <div className="mt-auto flex items-center gap-1">
         {blueprint.serviceFamily && (
           <Link
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
+            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/blueprint/$provider/$serviceFamily"
             params={{
               organizationId,
               projectId,

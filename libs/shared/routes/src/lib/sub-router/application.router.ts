@@ -3,7 +3,8 @@ export const APPLICATION_URL = (
   projectId = ':projectId',
   environmentId = ':environmentId',
   applicationId = ':applicationId'
-) => `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/application/${applicationId}`
+) =>
+  `/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}/application/${applicationId}`
 export const APPLICATION_GENERAL_URL = '/general'
 export const APPLICATION_DEPLOYMENTS_URL = '/deployments'
 export const APPLICATION_VARIABLES_URL = '/variables'

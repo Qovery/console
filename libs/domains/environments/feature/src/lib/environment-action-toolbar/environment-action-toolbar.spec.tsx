@@ -285,7 +285,7 @@ describe('EnvironmentActionToolbar', () => {
       })
     )
     expect(mockNavigate).toHaveBeenCalledWith({
-      to: `/organization/${mockEnvironment.organization.id}/project/${mockEnvironment.project.id}/overview`,
+      to: `/organization/${mockEnvironment.organization.id}/infrastructure/project/${mockEnvironment.project.id}/overview`,
     })
   })
 

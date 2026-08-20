@@ -110,14 +110,14 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
     .with(
       { serviceType: 'DATABASE' },
       (s) =>
-        `qovery port-forward -p ${s.port} https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${service.environment.id}/database/${service.id}`
+        `qovery port-forward -p ${s.port} https://console.qovery.com/organization/${organizationId}/infrastructure/project/${projectId}/environment/${service.environment.id}/database/${service.id}`
     )
     .otherwise(
       () =>
-        `qovery port-forward https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${service.environment.id}/application/${service.id} -p [local-port]:[target-port]`
+        `qovery port-forward https://console.qovery.com/organization/${organizationId}/infrastructure/project/${projectId}/environment/${service.environment.id}/application/${service.id} -p [local-port]:[target-port]`
     )
 
-  const connectShell = `qovery shell https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${service.environment.id}/application/${service.id}`
+  const connectShell = `qovery shell https://console.qovery.com/organization/${organizationId}/infrastructure/project/${projectId}/environment/${service.environment.id}/application/${service.id}`
 
   return (
     <Section className="p-5">
@@ -166,7 +166,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                       <span className="font-medium text-neutral-subtle">No ports declared yet.</span>
                       <Link
                         className="justify-center"
-                        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/port"
+                        to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/settings/port"
                         params={{
                           organizationId,
                           projectId,
@@ -212,7 +212,7 @@ export function ServiceAccessModal({ service, organizationId, projectId, onClose
                       <div className="flex h-14 items-center justify-center">
                         <Link
                           onClick={() => onClose()}
-                          to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/port"
+                          to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/settings/port"
                           params={{
                             organizationId,
                             projectId,

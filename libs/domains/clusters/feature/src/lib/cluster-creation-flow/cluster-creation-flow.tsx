@@ -145,7 +145,7 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
 
   useDocumentTitle('Creation - Cluster')
 
-  const creationFlowUrl = `/organization/${organizationId}/cluster/create/${slug}`
+  const creationFlowUrl = `/organization/${organizationId}/infrastructure/cluster/create/${slug}`
   const currentSteps = steps(generalData)
 
   useEffect(() => {
@@ -203,7 +203,7 @@ export function ClusterCreationFlow({ children }: PropsWithChildren) {
         onExit={() => {
           if (window.confirm('Do you really want to leave?')) {
             navigate({
-              to: '/organization/$organizationId/cluster/new',
+              to: '/organization/$organizationId/infrastructure/cluster/new',
               params: { organizationId },
             })
           }

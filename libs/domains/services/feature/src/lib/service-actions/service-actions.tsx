@@ -804,7 +804,7 @@ function MenuOtherActions({
                 skipDestroy,
               })
               navigate({
-                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+                to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
                 params: { organizationId, projectId, environmentId },
               })
             } catch (error) {
@@ -882,7 +882,7 @@ function MenuOtherActions({
         <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
           <Link
             className="gap-0"
-            to="/organization/$organizationId/audit-logs"
+            to="/organization/$organizationId/infrastructure/audit-logs"
             params={{ organizationId }}
             search={{
               targetId: service.id,
@@ -967,7 +967,7 @@ export function ServiceActions({
         <Tooltip content="Logs">
           <Link
             as="button"
-            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
+            to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs"
             params={{
               organizationId: environment.organization.id,
               projectId: environment.project.id,

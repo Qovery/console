@@ -67,7 +67,7 @@ describe('ClusterLastDeploymentSection', () => {
 
     expect(screen.getByText('Last deployment')).toBeInTheDocument()
     expect(screen.getByText('mocked-time ago')).toBeInTheDocument()
-    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/cluster-logs')
+    expect(link).toHaveAttribute('to', '/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs')
   })
 
   it('uses the deployment type when it is returned by the API payload', () => {

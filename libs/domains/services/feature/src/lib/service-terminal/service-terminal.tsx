@@ -112,14 +112,14 @@ export function ServiceTerminal({
         `qovery shell --ephemeral --mode clone`,
         `--cpu ${ephemeralConfig.cpu}m`,
         `--memory ${ephemeralConfig.memory}Mi`,
-        `https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}`
+        `https://console.qovery.com/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}/service/${serviceId}`
       )
     : buildCommand(
-        `qovery shell https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId}`,
+        `qovery shell https://console.qovery.com/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}/service/${serviceId}`,
         selectedOrDefaultPodName ? `--pod=${selectedOrDefaultPodName}` : undefined
       )
   const portForwardCommand = buildCommand(
-    `qovery port-forward https://console.qovery.com/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/${serviceId} --port local-port:target-port`
+    `qovery port-forward https://console.qovery.com/organization/${organizationId}/infrastructure/project/${projectId}/environment/${environmentId}/service/${serviceId} --port local-port:target-port`
   )
   // Keep it as a callback so the banner copy action resolves the latest command at click time, necesssary
   // to allow users to use those commands in their private terminal without having to go through the documentation

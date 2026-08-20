@@ -54,7 +54,7 @@ export function StepIntroduction() {
 
   const onSubmit = () => {
     navigate({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
+      to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/create/lifecycle-job/general',
       params: { organizationId, projectId, environmentId },
     })
   }

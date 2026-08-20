@@ -75,7 +75,7 @@ export function DatabaseStepSummary({ labelsGroup, annotationsGroup }: DatabaseS
       })
 
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/overview',
         params: {
           organizationId,
           projectId,

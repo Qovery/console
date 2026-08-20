@@ -214,6 +214,6 @@ describe('ClusterCard', () => {
 
     const link = screen.getByText('Invalid cloud credentials')
     expect(link).toBeInTheDocument()
-    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/cluster-logs')
+    expect(link).toHaveAttribute('to', '/organization/$organizationId/infrastructure/cluster/$clusterId/cluster-logs')
   })
 })

@@ -188,7 +188,7 @@ export const TerraformConfigurationSettings = ({
                   <span>
                     You will be able to define environment variables in{' '}
                     <Link
-                      to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables"
+                      to="/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/variables"
                       params={{ organizationId, projectId, environmentId, serviceId }}
                     >
                       the variables section

@@ -69,7 +69,7 @@ export function CardLogErrors({
       icon="scroll"
       onClick={() => {
         navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
+          to: '/organization/$organizationId/infrastructure/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
           params: {
             organizationId,
             projectId,

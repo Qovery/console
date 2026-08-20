@@ -184,7 +184,7 @@ export function DatabaseSettingsResources({
                         vCPU.{' '}
                         {clusterId && (
                           <Link
-                            to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                            to="/organization/$organizationId/infrastructure/cluster/$clusterId/settings/resources"
                             params={{ organizationId, clusterId }}
                             size="xs"
                           >
@@ -220,7 +220,7 @@ export function DatabaseSettingsResources({
                         MiB.{' '}
                         {clusterId && (
                           <Link
-                            to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                            to="/organization/$organizationId/infrastructure/cluster/$clusterId/settings/resources"
                             params={{ organizationId, clusterId }}
                             size="xs"
                           >
