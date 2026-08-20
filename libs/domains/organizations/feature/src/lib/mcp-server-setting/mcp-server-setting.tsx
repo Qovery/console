@@ -41,17 +41,17 @@ export function McpServerSetting({ isLoading, mcpServers, organizationId, value,
 
   return (
     <InputSelect
-      label="Organization MCP connectors"
+      label="Organization MCPs"
       value={value}
       options={availableMcpServers.map(({ id, name, url }) => ({ value: id, label: name, description: url }))}
       isMulti
       isSearchable
       isLoading={isLoading}
-      placeholder="Select MCP connectors"
+      placeholder="Select MCPs"
       hint={
         mcpServers.length === 0 && !isLoading ? (
           <span>
-            No connector is configured. Create one here or manage connectors in{' '}
+            No MCP is configured. Create one here or manage MCPs in{' '}
             <a
               className="font-medium text-brand hover:underline"
               href={`/organization/${organizationId}/settings/agents`}
@@ -61,12 +61,12 @@ export function McpServerSetting({ isLoading, mcpServers, organizationId, value,
             .
           </span>
         ) : (
-          'Select the organization connectors this workflow can use.'
+          'Select the organization MCPs this workflow can use.'
         )
       }
       menuListButton={{
-        title: 'Select connectors',
-        label: 'New MCP connector',
+        title: 'Select MCPs',
+        label: 'New MCP',
         onClick: openCreateModal,
       }}
       onChange={(nextValue) => onChange(nextValue as string[])}

@@ -166,7 +166,7 @@ export function ServiceNew({
         ? [
             {
               title: 'Agentic workflow',
-              description: 'Run an AI workflow with webhooks, MCP connectors, governance, and configured outputs.',
+              description: 'Run an AI workflow with webhooks, MCPs, governance, and configured outputs.',
               icon: <Icon name="AGENTIC_WORKFLOW" width={32} height={32} />,
               link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
               cloud_provider: cloudProvider,

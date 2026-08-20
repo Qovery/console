@@ -25,13 +25,13 @@ describe('McpServerSetting', () => {
     useModalMock.mockReturnValue({ openModal, closeModal })
   })
 
-  it('should create an organization connector and select it', () => {
+  it('should create an organization MCP and select it', () => {
     const onChange = jest.fn()
     renderWithProviders(
       <McpServerSetting mcpServers={[]} organizationId="organization-1" value={[]} onChange={onChange} />
     )
 
-    selectEvent.openMenu(screen.getByLabelText('Organization MCP connectors'))
+    selectEvent.openMenu(screen.getByLabelText('Organization MCPs'))
     screen.getByTestId('input-menu-list-button').click()
 
     expect(openModal).toHaveBeenCalledWith(expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
