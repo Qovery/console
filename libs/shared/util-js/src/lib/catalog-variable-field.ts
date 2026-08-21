@@ -1,9 +1,11 @@
 export type CatalogVariableValue = string | boolean
 
+export type CatalogVariableFieldType = 'string' | 'number' | 'bool'
+
 export interface CatalogVariableField {
   key: string
   label: string
-  type: string
+  type: CatalogVariableFieldType
   description?: string
   required?: boolean
   sensitive?: boolean
