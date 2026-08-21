@@ -14,6 +14,7 @@ describe('isBlueprintCompatibleWithCluster', () => {
   it.each([
     ['AWS', 'AWS', true],
     ['SCW', 'AWS', false],
+    ['EXTERNAL', 'AWS', true],
     ['HELM', 'AWS', true],
     ['SCW', undefined, true],
   ])('returns %s for a %s cluster as %s', (blueprintProvider, clusterCloudProvider, expected) => {
