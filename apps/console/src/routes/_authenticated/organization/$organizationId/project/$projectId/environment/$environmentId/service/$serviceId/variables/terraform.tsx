@@ -61,7 +61,7 @@ const TerraformVariablesForm = ({ service }: { service: Terraform }) => {
   return (
     <>
       <div className="bg-background">
-        <TerraformVariablesTable embedded />
+        <TerraformVariablesTable className="rounded-none border-0" />
       </div>
       {actionsContainer &&
         createPortal(
