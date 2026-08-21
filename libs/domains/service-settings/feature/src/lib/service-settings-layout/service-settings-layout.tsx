@@ -110,12 +110,6 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
     'play-circle',
     'regular'
   )
-  const terraformVariablesLink = linkItem(
-    'Terraform variables',
-    toSettingsPath(pathSettings, '/terraform-variables'),
-    'key'
-  )
-
   const aiConfigurationLink = linkItem('AI configuration', toSettingsPath(pathSettings, '/ai-configuration'), 'brain')
   const connectionsLink = linkItem('Connections', toSettingsPath(pathSettings, '/connections'), 'plug')
   const outputsLink = linkItem('Outputs', toSettingsPath(pathSettings, '/outputs'), 'paper-plane')
@@ -158,7 +152,6 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
           .with({ serviceType: 'TERRAFORM' }, () => [
             generalLink,
             terraformConfigurationLink,
-            terraformVariablesLink,
             terraformArgumentsLink,
             resourcesLink,
             deploymentRestrictionsLink,

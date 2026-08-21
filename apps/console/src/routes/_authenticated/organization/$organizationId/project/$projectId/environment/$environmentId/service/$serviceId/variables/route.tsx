@@ -36,6 +36,14 @@ const tabs = [
   },
 ]
 
+const terraformTab = {
+  id: 'terraform',
+  label: 'Terraform variables',
+  iconName: 'key' as IconName,
+  routeId:
+    '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables/terraform',
+}
+
 const OutletLoader = () => (
   <div className="flex h-64 items-center justify-center">
     <LoaderSpinner className="w-6" />
@@ -74,7 +82,8 @@ function RouteComponent() {
 
   if (shouldRedirect) return null
 
-  const activeTabId = tabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
+  const serviceTabs = service?.serviceType === 'TERRAFORM' ? [...tabs, terraformTab] : tabs
+  const activeTabId = serviceTabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
 
   return (
     <div className="container mx-auto flex min-h-page-container flex-col pb-16 pt-6">
@@ -90,7 +99,7 @@ function RouteComponent() {
           <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
             <div className="bg-surface-neutral-subtle px-4 pb-2">
               <Navbar.Root activeId={activeTabId} className="relative">
-                {tabs.map((tab) => (
+                {serviceTabs.map((tab) => (
                   <Navbar.Item key={tab.id} id={tab.id} to={tab.routeId}>
                     <Icon iconName={tab.iconName} iconStyle="regular" />
                     <TabLabel label={tab.label} isNew={tab.id === 'external-secrets'} />

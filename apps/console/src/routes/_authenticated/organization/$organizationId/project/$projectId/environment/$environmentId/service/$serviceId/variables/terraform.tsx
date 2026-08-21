@@ -1,4 +1,4 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { Suspense } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
@@ -9,39 +9,33 @@ import {
 } from '@qovery/domains/service-terraform/feature'
 import { type Terraform } from '@qovery/domains/services/data-access'
 import { type TerraformGeneralData, useEditService, useService } from '@qovery/domains/services/feature'
-import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, LoaderSpinner, Section } from '@qovery/shared/ui'
+import { Button, LoaderSpinner } from '@qovery/shared/ui'
+import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { buildEditServicePayload } from '@qovery/shared/util-services'
 
 export const Route = createFileRoute(
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/terraform-variables'
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/variables/terraform'
 )({
   component: RouteComponent,
 })
 
 const TerraformVariablesLoader = () => (
-  <div className="flex min-h-page-container items-center justify-center">
-    <LoaderSpinner />
+  <div className="flex h-64 items-center justify-center">
+    <LoaderSpinner className="w-6" />
   </div>
 )
 
-const TerraformVariablesSettingsForm = ({ service }: { service: Terraform }) => {
-  const { organizationId = '', projectId = '', environmentId = '' } = Route.useParams()
+const TerraformVariablesForm = ({ service }: { service: Terraform }) => {
+  const { organizationId, projectId, environmentId } = Route.useParams()
   const { handleSubmit } = useFormContext<TerraformGeneralData>()
   const { serializeForApi, tfVarFiles, errors } = useTerraformVariablesContext()
-
   const { mutate: editService, isLoading: isLoadingEditService } = useEditService({
     organizationId,
     projectId,
     environmentId,
   })
 
-  if (service?.serviceType !== 'TERRAFORM') {
-    return null
-  }
-
   const onSubmit = handleSubmit(() => {
-    // Edit the service with the updated variables and the updated order of tfvars files
     const payload = buildEditServicePayload({
       service,
       request: {
@@ -59,14 +53,14 @@ const TerraformVariablesSettingsForm = ({ service }: { service: Terraform }) => 
   })
 
   return (
-    <>
+    <div className="bg-background p-6">
       <TerraformVariablesTable />
-      <div className="mt-10 flex justify-end">
+      <div className="mt-6 flex justify-end">
         <Button type="submit" size="lg" onClick={onSubmit} loading={isLoadingEditService} disabled={errors.size > 0}>
           Save
         </Button>
       </div>
-    </>
+    </div>
   )
 }
 
@@ -74,42 +68,31 @@ const TerraformVariablesContent = ({ service }: { service: Terraform }) => {
   const methods = useForm<TerraformGeneralData>({
     mode: 'onChange',
     defaultValues: match(service)
-      .with({ serviceType: 'TERRAFORM' }, (s) => s)
+      .with({ serviceType: 'TERRAFORM' }, (terraformService) => terraformService)
       .otherwise(() => ({})),
   })
 
   return (
-    <Section className="px-8 pb-8 pt-6">
-      <SettingsHeading
-        title="Terraform variables"
-        description="Select .tfvars files and configure variable values for your Terraform deployment"
-      />
-      <div className="w-full">
-        <FormProvider {...methods}>
-          <TerraformVariablesProvider>
-            <TerraformVariablesSettingsForm service={service} />
-          </TerraformVariablesProvider>
-        </FormProvider>
-      </div>
-    </Section>
+    <FormProvider {...methods}>
+      <TerraformVariablesProvider>
+        <TerraformVariablesForm service={service} />
+      </TerraformVariablesProvider>
+    </FormProvider>
   )
 }
 
-const TerraformVariablesWrapper = () => {
-  const { serviceId } = useParams({ strict: false })
-  const { data: service } = useService({ serviceId })
+function RouteComponent() {
+  const { environmentId, serviceId } = Route.useParams()
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  useDocumentTitle('Terraform variables - Service')
 
   if (service?.serviceType !== 'TERRAFORM') {
     return null
   }
 
-  return <TerraformVariablesContent service={service} />
-}
-
-function RouteComponent() {
   return (
     <Suspense fallback={<TerraformVariablesLoader />}>
-      <TerraformVariablesWrapper />
+      <TerraformVariablesContent service={service} />
     </Suspense>
   )
 }
