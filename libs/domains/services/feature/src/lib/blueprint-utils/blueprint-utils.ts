@@ -8,7 +8,7 @@ const BLUEPRINT_NAME_PARTS: Record<string, string> = {
   s3: 'S3',
 }
 
-const CLUSTER_AGNOSTIC_BLUEPRINT_PROVIDERS = new Set(['HELM'])
+const CLUSTER_AGNOSTIC_BLUEPRINT_PROVIDERS = new Set(['EXTERNAL', 'HELM'])
 
 export function formatBlueprintName(name: string): string {
   return name
