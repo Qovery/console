@@ -63,6 +63,7 @@ const TerraformVariablesForm = ({ service }: { service: Terraform }) => {
       <div className="bg-background">
         <TerraformVariablesTable className="rounded-none border-0" />
       </div>
+      {/* Render the form action in the parent layout so it remains outside the bordered variables panel. */}
       {actionsContainer &&
         createPortal(
           <Button type="submit" size="lg" onClick={onSubmit} loading={isLoadingEditService} disabled={errors.size > 0}>
