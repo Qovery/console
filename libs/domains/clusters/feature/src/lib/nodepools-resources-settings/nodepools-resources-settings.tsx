@@ -89,6 +89,7 @@ interface NodepoolSummaryData {
   limits?: NodepoolLimits
   consolidation?: NodepoolConsolidation
   consolidate_after?: string
+  spot_enabled?: boolean | null
 }
 
 interface NodepoolCardConfig {
@@ -214,15 +215,19 @@ function NodepoolSummaryCard({
         </Button>
       </div>
       <div className="flex justify-between gap-4">
-        <div className="flex w-1/2 flex-col gap-1">
+        <div className="flex w-1/3 flex-col gap-1">
           <span className={SECTION_TITLE_CLASSNAME}>Consolidation</span>
           <div className="flex flex-col justify-between gap-4 text-sm text-neutral">
             <ConsolidationSummary region={region} nodepool={nodepool} start={start} end={end} alwaysOn={alwaysOn} />
           </div>
         </div>
-        <div className="flex w-1/2 flex-col gap-1">
+        <div className="flex w-1/3 flex-col gap-1">
           <span className={SECTION_TITLE_CLASSNAME}>Resources limit</span>
           <ResourceLimitsSummary limits={nodepool?.limits} showGpuLimit={showGpuLimit} />
+        </div>
+        <div className="flex w-1/3 flex-col gap-1">
+          <span className={SECTION_TITLE_CLASSNAME}>Spot instances</span>
+          <span>{nodepool?.spot_enabled ? 'Enabled' : 'Disabled'}</span>
         </div>
       </div>
     </div>

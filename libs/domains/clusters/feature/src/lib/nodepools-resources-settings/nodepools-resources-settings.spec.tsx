@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type Cluster, WeekdayEnum } from 'qovery-typescript-axios'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { NodepoolsResourcesSettings, formatTimeRange, formatWeekdays, shortenDay } from './nodepools-resources-settings'
 
 const mockCluster = {
@@ -109,6 +109,7 @@ describe('NodepoolsResourcesSettings', () => {
                     start_time: 'PT20:00',
                     duration: 'PT4H',
                   },
+                  spot_enabled: true,
                 },
               },
             },
@@ -125,6 +126,13 @@ describe('NodepoolsResourcesSettings', () => {
       // Check default nodepool values
       expect(screen.getByText('vCPU limit: 12 vCPU;')).toBeInTheDocument()
       expect(screen.getByText('Memory limit: 24 GiB')).toBeInTheDocument()
+
+      // Check spot instances summary (cards are rendered stable first, default second)
+      const [stableSpotSection, defaultSpotSection] = screen
+        .getAllByText('Spot instances')
+        .map((label) => label.parentElement as HTMLElement)
+      expect(within(stableSpotSection).getByText('Enabled')).toBeInTheDocument()
+      expect(within(defaultSpotSection).getByText('Disabled')).toBeInTheDocument()
     })
 
     it('should display cronjob nodepool values', () => {
