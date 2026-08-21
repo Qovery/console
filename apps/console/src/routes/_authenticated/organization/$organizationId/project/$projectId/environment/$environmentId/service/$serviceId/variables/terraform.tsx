@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Suspense, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { Suspense } from 'react'
 import { FormProvider, useForm, useFormContext } from 'react-hook-form'
 import { match } from 'ts-pattern'
 import {
@@ -35,12 +34,6 @@ const TerraformVariablesForm = ({ service }: { service: Terraform }) => {
     projectId,
     environmentId,
   })
-  const [actionsContainer, setActionsContainer] = useState<HTMLElement | null>(null)
-
-  useEffect(() => {
-    setActionsContainer(document.getElementById('service-variables-actions'))
-  }, [])
-
   const onSubmit = handleSubmit(() => {
     const payload = buildEditServicePayload({
       service,
@@ -59,19 +52,16 @@ const TerraformVariablesForm = ({ service }: { service: Terraform }) => {
   })
 
   return (
-    <>
-      <div className="bg-background">
-        <TerraformVariablesTable className="rounded-none border-0" />
-      </div>
-      {/* Render the form action in the parent layout so it remains outside the bordered variables panel. */}
-      {actionsContainer &&
-        createPortal(
-          <Button type="submit" size="lg" onClick={onSubmit} loading={isLoadingEditService} disabled={errors.size > 0}>
+    <div className="bg-background">
+      <TerraformVariablesTable
+        className="rounded-none border-0"
+        headerActions={
+          <Button type="submit" size="md" onClick={onSubmit} loading={isLoadingEditService} disabled={errors.size > 0}>
             Save
-          </Button>,
-          actionsContainer
-        )}
-    </>
+          </Button>
+        }
+      />
+    </div>
   )
 }
 

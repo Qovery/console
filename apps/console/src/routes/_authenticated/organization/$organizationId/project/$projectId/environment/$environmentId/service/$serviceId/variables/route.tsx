@@ -99,12 +99,21 @@ function RouteComponent() {
           <div className="relative overflow-hidden rounded-t-lg border-x border-t border-neutral bg-surface-neutral-subtle">
             <div className="bg-surface-neutral-subtle px-4 pb-2">
               <Navbar.Root activeId={activeTabId} className="relative">
-                {serviceTabs.map((tab) => (
+                {tabs.map((tab) => (
                   <Navbar.Item key={tab.id} id={tab.id} to={tab.routeId}>
                     <Icon iconName={tab.iconName} iconStyle="regular" />
                     <TabLabel label={tab.label} isNew={tab.id === 'external-secrets'} />
                   </Navbar.Item>
                 ))}
+                {service?.serviceType === 'TERRAFORM' && (
+                  <>
+                    <div aria-hidden className="mx-4 h-5 border-l border-neutral" />
+                    <Navbar.Item id={terraformTab.id} to={terraformTab.routeId}>
+                      <Icon iconName={terraformTab.iconName} iconStyle="regular" />
+                      <TabLabel label={terraformTab.label} />
+                    </Navbar.Item>
+                  </>
+                )}
               </Navbar.Root>
             </div>
           </div>
@@ -116,7 +125,6 @@ function RouteComponent() {
               </Suspense>
             </div>
           </div>
-          <div id="service-variables-actions" className="mt-6 flex justify-end empty:hidden" />
         </div>
       </Section>
     </div>

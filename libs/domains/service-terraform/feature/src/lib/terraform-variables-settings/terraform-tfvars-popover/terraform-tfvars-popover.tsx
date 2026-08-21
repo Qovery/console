@@ -164,7 +164,7 @@ export const TfvarsFilesPopover = () => {
               </Button>
             </Indicator>
           ) : (
-            <Button size="md" variant="solid" type="button" data-testid="open-tfvars-files-button">
+            <Button size="md" variant="outline" type="button" data-testid="open-tfvars-files-button">
               <Icon iconName="file-lines" iconStyle="regular" />
               .tfvars files
             </Button>

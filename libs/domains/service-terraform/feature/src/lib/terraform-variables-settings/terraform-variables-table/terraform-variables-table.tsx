@@ -1,6 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { clsx } from 'clsx'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { DropdownVariable } from '@qovery/domains/variables/feature'
 import { Badge, Button, Checkbox, Icon, LoaderSpinner, Tooltip, truncateText } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
@@ -375,7 +375,13 @@ const TerraformVariablesEmptyState = () => {
   )
 }
 
-export const TerraformVariablesTable = ({ className }: { className?: string }) => {
+export const TerraformVariablesTable = ({
+  className,
+  headerActions,
+}: {
+  className?: string
+  headerActions?: ReactNode
+}) => {
   const { addVariable, fetchTfVarsFiles, areTfVarsFilesLoading, vars, newPath, selectedRows, deleteSelectedRows } =
     useTerraformVariablesContext()
 
@@ -391,7 +397,10 @@ export const TerraformVariablesTable = ({ className }: { className?: string }) =
     <div className={twMerge('flex flex-col rounded-lg border border-neutral bg-surface-neutral', className)}>
       <div className="flex items-center justify-between px-4 py-2">
         <span className="text-sm font-medium text-neutral">Variable configuration</span>
-        <TfvarsFilesPopover />
+        <div className="flex items-center gap-2">
+          <TfvarsFilesPopover />
+          {headerActions}
+        </div>
       </div>
 
       {areTfVarsFilesLoading && newPath.length === 0 ? (
