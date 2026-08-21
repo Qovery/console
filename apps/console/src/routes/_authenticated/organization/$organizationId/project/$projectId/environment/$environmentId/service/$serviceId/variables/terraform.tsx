@@ -53,9 +53,9 @@ const TerraformVariablesForm = ({ service }: { service: Terraform }) => {
   })
 
   return (
-    <div className="bg-background p-6">
-      <TerraformVariablesTable />
-      <div className="mt-6 flex justify-end">
+    <div className="bg-background">
+      <TerraformVariablesTable className="rounded-none border-0" />
+      <div className="flex justify-end border-t border-neutral p-4">
         <Button type="submit" size="lg" onClick={onSubmit} loading={isLoadingEditService} disabled={errors.size > 0}>
           Save
         </Button>

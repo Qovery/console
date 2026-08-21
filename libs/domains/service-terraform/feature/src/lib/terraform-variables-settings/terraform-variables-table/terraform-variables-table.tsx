@@ -375,7 +375,7 @@ const TerraformVariablesEmptyState = () => {
   )
 }
 
-export const TerraformVariablesTable = () => {
+export const TerraformVariablesTable = ({ className }: { className?: string }) => {
   const { addVariable, fetchTfVarsFiles, areTfVarsFilesLoading, vars, newPath, selectedRows, deleteSelectedRows } =
     useTerraformVariablesContext()
 
@@ -388,7 +388,7 @@ export const TerraformVariablesTable = () => {
   }, [addVariable])
 
   return (
-    <div className="flex flex-col rounded-lg border border-neutral bg-surface-neutral">
+    <div className={twMerge('flex flex-col rounded-lg border border-neutral bg-surface-neutral', className)}>
       <div className="flex items-center justify-between px-4 py-3">
         <span className="text-sm font-medium text-neutral">Variable configuration</span>
         <TfvarsFilesPopover />
