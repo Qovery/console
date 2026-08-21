@@ -116,6 +116,7 @@ function RouteComponent() {
               </Suspense>
             </div>
           </div>
+          <div id="service-variables-actions" className="mt-6 flex justify-end empty:hidden" />
         </div>
       </Section>
     </div>
