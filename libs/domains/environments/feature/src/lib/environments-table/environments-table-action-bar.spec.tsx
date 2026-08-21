@@ -67,15 +67,12 @@ describe('EnvironmentsTableActionBar', () => {
     expect(screen.getByText('2 selected environments')).toBeInTheDocument()
   })
 
-  it('should disable stop action when no selected environment can be stopped', async () => {
-    const { userEvent } = renderWithProviders(
+  it('should disable stop action when no selected environment can be stopped', () => {
+    renderWithProviders(
       <EnvironmentsTableActionBar projectId="project-1" selectedRows={[rows[1]]} resetRowSelection={jest.fn()} />
     )
 
-    await userEvent.click(screen.getByRole('button', { name: /more/i }))
-
-    const stopSelectedItem = screen.getByText('Stop selected')
-    expect(stopSelectedItem.closest('[role="menuitem"]')).toHaveAttribute('aria-disabled', 'true')
+    expect(screen.getByRole('button', { name: /stop selected/i })).toBeDisabled()
 
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
   })
@@ -106,8 +103,7 @@ describe('EnvironmentsTableActionBar', () => {
       />
     )
 
-    await userEvent.click(screen.getByRole('button', { name: /more/i }))
-    await userEvent.click(screen.getByText('Stop selected'))
+    await userEvent.click(screen.getByRole('button', { name: /stop selected/i }))
 
     expect(mockOpenModalConfirmation).toHaveBeenCalledWith(
       expect.objectContaining({

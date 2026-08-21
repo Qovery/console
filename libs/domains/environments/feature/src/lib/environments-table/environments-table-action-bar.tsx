@@ -1,5 +1,5 @@
 import { type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
-import { Button, DropdownMenu, Icon, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, Icon, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
 import { isStopAvailable, pluralize, twMerge } from '@qovery/shared/util-js'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 
@@ -73,27 +73,22 @@ export function EnvironmentsTableActionBar({
           <span className="truncate">
             {selectedRows.length} selected {pluralize(selectedRows.length, 'environment')}
           </span>
-          <button className="h-8 px-3 underline" type="button" onClick={resetRowSelection}>
-            Deselect
-          </button>
-          <DropdownMenu.Root modal={false}>
-            <DropdownMenu.Trigger asChild>
-              <Button color="neutral" size="md" variant="surface" className="items-center">
-                More <Icon iconName="angle-down" />
+          <div className="ml-auto flex items-center gap-3">
+            <button className="h-8 px-3 underline" type="button" onClick={resetRowSelection}>
+              Deselect
+            </button>
+            <Tooltip content="No stoppable environments" disabled={stoppableEnvironments.length !== 0}>
+              <Button
+                color="brand"
+                size="md"
+                className="items-center"
+                onClick={handleStopEnvironments}
+                disabled={stoppableEnvironments.length === 0}
+              >
+                Stop selected <Icon iconName="circle-stop" />
               </Button>
-            </DropdownMenu.Trigger>
-            <DropdownMenu.Content>
-              <Tooltip content="No stoppable environments" disabled={stoppableEnvironments.length !== 0}>
-                <DropdownMenu.Item
-                  icon={<Icon iconName="circle-stop" />}
-                  onSelect={handleStopEnvironments}
-                  disabled={stoppableEnvironments.length === 0}
-                >
-                  Stop selected
-                </DropdownMenu.Item>
-              </Tooltip>
-            </DropdownMenu.Content>
-          </DropdownMenu.Root>
+            </Tooltip>
+          </div>
         </div>
       </div>
     </div>
