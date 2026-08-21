@@ -43,6 +43,17 @@ describe('useContextualDocLinks', () => {
     })
   })
 
+  it('should match the Terraform variables service route', () => {
+    setPathname('/organization/org-123/project/project-123/environment/env-123/service/service-123/variables/terraform')
+
+    const { result } = renderHook(() => useContextualDocLinks())
+
+    expect(result.current).toContainEqual({
+      link: 'https://developer.hashicorp.com/terraform/cli/commands',
+      label: 'Terraform CLI documentation',
+    })
+  })
+
   it('should react to navigation events driven by the browser history api', () => {
     setPathname('/organization/org-123/settings/general')
 
