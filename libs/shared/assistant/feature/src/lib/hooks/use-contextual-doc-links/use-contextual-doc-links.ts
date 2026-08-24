@@ -910,7 +910,7 @@ const tanstackRouteAliases: Array<{ pattern: string; target: MappingPath }> = [
   },
   {
     pattern:
-      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/settings/terraform-variables',
+      '/organization/:organizationId/project/:projectId/environment/:environmentId/service/:serviceId/variables/terraform',
     target:
       '/organization/:organizationId/project/:projectId/environment/:environmentId/application/:applicationId/settings/terraform-arguments',
   },
