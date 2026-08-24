@@ -10,10 +10,6 @@ interface TerraformCreateContextInterface {
   variablesForm: UseFormReturn<FlowVariableData>
   createdServiceId?: string
   setCreatedServiceId: (serviceId: string) => void
-  environmentVariablesImported: boolean
-  setEnvironmentVariablesImported: (imported: boolean) => void
-  planCompleted: boolean
-  setPlanCompleted: (completed: boolean) => void
   creationFlowUrl?: string
 }
 

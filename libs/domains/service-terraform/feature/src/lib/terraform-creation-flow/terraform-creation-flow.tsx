@@ -25,8 +25,6 @@ export const TerraformCreationFlow = ({ children, creationFlowUrl }: TerraformCr
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
   const [createdServiceId, setCreatedServiceId] = useState<string>()
-  const [environmentVariablesImported, setEnvironmentVariablesImported] = useState(false)
-  const [planCompleted, setPlanCompleted] = useState(false)
   const { template } = useSearch({ strict: false })
   const templateMatch = findTerraformTemplateMatch(template)
 
@@ -79,10 +77,6 @@ export const TerraformCreationFlow = ({ children, creationFlowUrl }: TerraformCr
         variablesForm,
         createdServiceId,
         setCreatedServiceId,
-        environmentVariablesImported,
-        setEnvironmentVariablesImported,
-        planCompleted,
-        setPlanCompleted,
         creationFlowUrl,
       }}
     >

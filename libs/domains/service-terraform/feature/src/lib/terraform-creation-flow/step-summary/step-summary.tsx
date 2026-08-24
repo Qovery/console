@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { TerraformAutoDeployConfigTerraformActionEnum, type TerraformRequest } from 'qovery-typescript-axios'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useCreateService, useDeployService, useEditService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
@@ -12,22 +12,12 @@ import { useTerraformCreateContext } from '../../hooks/use-terraform-create-cont
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
 import { buildDockerfileFragment } from '../../utils/build-dockerfile-fragment'
 import { TERRAFORM_ENGINES } from '../../utils/terraform-engines'
-import { getOrCreateTerraformServiceId } from '../get-or-create-terraform-service-id/get-or-create-terraform-service-id'
 
 export const TerraformStepSummary = () => {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  const {
-    setCurrentStep,
-    generalForm,
-    variablesForm,
-    createdServiceId,
-    setCreatedServiceId,
-    environmentVariablesImported,
-    setEnvironmentVariablesImported,
-    planCompleted,
-    setPlanCompleted,
-  } = useTerraformCreateContext()
+  const { setCurrentStep, generalForm, variablesForm, createdServiceId, setCreatedServiceId } =
+    useTerraformCreateContext()
   const generalData = generalForm.getValues()
   const environmentVariables = variablesForm.getValues('variables')
   const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
@@ -37,6 +27,12 @@ export const TerraformStepSummary = () => {
   }, [setCurrentStep])
 
   const { mutateAsync: createTerraformService } = useCreateService({ organizationId })
+  const { mutateAsync: editTerraformService } = useEditService({
+    organizationId,
+    projectId,
+    environmentId,
+    silently: true,
+  })
   const { mutateAsync: importVariables } = useImportVariables()
   const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
@@ -60,69 +56,65 @@ export const TerraformStepSummary = () => {
       setIsLoadingCreate(true)
     }
 
-    const payload: TerraformRequest = {
-      name: generalData.name,
-      description: generalData.description ?? '',
-      icon_uri: generalData.icon_uri,
-      timeout_sec: Number(generalData.timeout_sec),
-      auto_deploy_config: {
-        auto_deploy: generalData.auto_deploy ?? false,
-        terraform_action: generalData.terraform_action ?? TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
-      },
-      engine: generalData.engine,
-      backend: generalData.backend,
-      terraform_files_source: {
-        git_repository: {
-          url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
-          branch: generalData.branch ?? '',
-          root_path: generalData.root_path ?? '',
-          git_token_id: generalData.git_token_id ?? '',
-        },
-      },
-      terraform_variables_source: {
-        tf_var_file_paths: tfVarsFilePaths,
-        tf_vars: serializeForApi(),
-      },
-      provider_version: {
-        read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
-        explicit_version: generalData.provider_version.explicit_version,
-      },
-      job_resources: {
-        cpu_milli: generalData.job_resources.cpu_milli,
-        ram_mib: generalData.job_resources.ram_mib,
-        storage_gib: generalData.job_resources.storage_gib,
-        gpu: generalData.job_resources.gpu,
-      },
-      use_cluster_credentials: generalData.use_cluster_credentials,
-      dockerfile_fragment: buildDockerfileFragment(generalData),
-    }
-
     try {
-      const serviceId = await getOrCreateTerraformServiceId(createdServiceId, () =>
-        createTerraformService({
-          environmentId,
-          payload: {
-            serviceType: 'TERRAFORM',
-            ...payload,
+      const payload: TerraformRequest = {
+        name: generalData.name,
+        description: generalData.description ?? '',
+        icon_uri: generalData.icon_uri,
+        timeout_sec: Number(generalData.timeout_sec),
+        auto_deploy_config: {
+          auto_deploy: generalData.auto_deploy ?? false,
+          terraform_action: generalData.terraform_action ?? TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
+        },
+        engine: generalData.engine,
+        backend: generalData.backend,
+        terraform_files_source: {
+          git_repository: {
+            url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
+            branch: generalData.branch ?? '',
+            root_path: generalData.root_path ?? '',
+            git_token_id: generalData.git_token_id ?? '',
           },
-        })
-      )
+        },
+        terraform_variables_source: {
+          tf_var_file_paths: tfVarsFilePaths,
+          tf_vars: serializeForApi(),
+        },
+        provider_version: {
+          read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
+          explicit_version: generalData.provider_version.explicit_version,
+        },
+        job_resources: {
+          cpu_milli: generalData.job_resources.cpu_milli,
+          ram_mib: generalData.job_resources.ram_mib,
+          storage_gib: generalData.job_resources.storage_gib,
+          gpu: generalData.job_resources.gpu,
+        },
+        use_cluster_credentials: generalData.use_cluster_credentials,
+        dockerfile_fragment: buildDockerfileFragment(generalData),
+      }
+      const servicePayload = { serviceType: ServiceTypeEnum.TERRAFORM, ...payload }
+      let serviceId = createdServiceId
 
-      setCreatedServiceId(serviceId)
-
-      const variableImportRequest = prepareVariableImportRequest(environmentVariables)
-      if (variableImportRequest && !environmentVariablesImported) {
-        await importVariables({
-          serviceType: ServiceTypeEnum.TERRAFORM,
-          serviceId,
-          variableImportRequest,
+      if (serviceId) {
+        await editTerraformService({ serviceId, payload: servicePayload })
+      } else {
+        const service = await createTerraformService({
+          environmentId,
+          payload: servicePayload,
         })
-        setEnvironmentVariablesImported(true)
+        serviceId = service.id
+        setCreatedServiceId(serviceId)
       }
 
-      if (withPlan && !planCompleted) {
+      await importVariables({
+        serviceType: ServiceTypeEnum.TERRAFORM,
+        serviceId,
+        variableImportRequest: prepareVariableImportRequest(environmentVariables) ?? { overwrite: true, vars: [] },
+      })
+
+      if (withPlan) {
         await deployService({ serviceId, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
-        setPlanCompleted(true)
       }
 
       posthog.capture('create-service', {
@@ -163,7 +155,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
-                  disabled={Boolean(createdServiceId)}
+                  disabled={isSubmitting}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general',
@@ -201,7 +193,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
-                  disabled={Boolean(createdServiceId)}
+                  disabled={isSubmitting}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
@@ -244,7 +236,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
-                  disabled={environmentVariablesImported}
+                  disabled={isSubmitting}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables',
@@ -277,7 +269,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
-                  disabled={Boolean(createdServiceId)}
+                  disabled={isSubmitting}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
@@ -318,7 +310,7 @@ export const TerraformStepSummary = () => {
               type="button"
               size="lg"
               variant="plain"
-              disabled={Boolean(createdServiceId)}
+              disabled={isSubmitting}
               onClick={() =>
                 navigate({
                   to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
