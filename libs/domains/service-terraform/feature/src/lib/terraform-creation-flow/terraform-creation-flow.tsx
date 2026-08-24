@@ -24,6 +24,7 @@ export const TerraformCreationFlow = ({ children, creationFlowUrl }: TerraformCr
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
+  const [createdServiceId, setCreatedServiceId] = useState<string>()
   const { template } = useSearch({ strict: false })
   const templateMatch = findTerraformTemplateMatch(template)
 
@@ -69,7 +70,15 @@ export const TerraformCreationFlow = ({ children, creationFlowUrl }: TerraformCr
 
   return (
     <TerraformCreateContext.Provider
-      value={{ currentStep, setCurrentStep, generalForm, variablesForm, creationFlowUrl }}
+      value={{
+        currentStep,
+        setCurrentStep,
+        generalForm,
+        variablesForm,
+        createdServiceId,
+        setCreatedServiceId,
+        creationFlowUrl,
+      }}
     >
       <FunnelFlow
         onExit={() => {

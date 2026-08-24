@@ -12,11 +12,13 @@ import { useTerraformCreateContext } from '../../hooks/use-terraform-create-cont
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
 import { buildDockerfileFragment } from '../../utils/build-dockerfile-fragment'
 import { TERRAFORM_ENGINES } from '../../utils/terraform-engines'
+import { getOrCreateTerraformServiceId } from '../get-or-create-terraform-service-id/get-or-create-terraform-service-id'
 
 export const TerraformStepSummary = () => {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  const { setCurrentStep, generalForm, variablesForm } = useTerraformCreateContext()
+  const { setCurrentStep, generalForm, variablesForm, createdServiceId, setCreatedServiceId } =
+    useTerraformCreateContext()
   const generalData = generalForm.getValues()
   const environmentVariables = variablesForm.getValues('variables')
   const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
@@ -80,25 +82,29 @@ export const TerraformStepSummary = () => {
     }
 
     try {
-      const response = await createTerraformService({
-        environmentId,
-        payload: {
-          serviceType: 'TERRAFORM',
-          ...payload,
-        },
-      })
+      const serviceId = await getOrCreateTerraformServiceId(createdServiceId, () =>
+        createTerraformService({
+          environmentId,
+          payload: {
+            serviceType: 'TERRAFORM',
+            ...payload,
+          },
+        })
+      )
+
+      setCreatedServiceId(serviceId)
 
       const variableImportRequest = prepareVariableImportRequest(environmentVariables)
       if (variableImportRequest) {
         await importVariables({
           serviceType: ServiceTypeEnum.TERRAFORM,
-          serviceId: response.id,
+          serviceId,
           variableImportRequest,
         })
       }
 
       if (withPlan) {
-        await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
+        await deployService({ serviceId, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
         setIsLoadingCreateAndPlan(false)
       }
 

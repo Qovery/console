@@ -8,6 +8,8 @@ interface TerraformCreateContextInterface {
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<TerraformGeneralData>
   variablesForm: UseFormReturn<FlowVariableData>
+  createdServiceId?: string
+  setCreatedServiceId: (serviceId: string) => void
   creationFlowUrl?: string
 }
 
