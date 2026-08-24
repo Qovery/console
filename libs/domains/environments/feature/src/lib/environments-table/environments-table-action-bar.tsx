@@ -1,5 +1,5 @@
 import { type EnvironmentOverviewResponse } from 'qovery-typescript-axios'
-import { Button, Icon, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
+import { Button, Icon, Tooltip, toast, useModalConfirmation } from '@qovery/shared/ui'
 import { isStopAvailable, pluralize, twMerge } from '@qovery/shared/util-js'
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 
@@ -16,7 +16,7 @@ export function EnvironmentsTableActionBar({
 }: EnvironmentsTableActionBarProps) {
   const hasSelection = Boolean(selectedRows.length)
   const { openModalConfirmation } = useModalConfirmation()
-  const { mutateAsync: stopEnvironment } = useStopEnvironment({ projectId })
+  const { mutateAsync: stopEnvironment } = useStopEnvironment({ projectId, notifyOnSuccess: false })
 
   const stoppableEnvironments = selectedRows.filter(
     ({ deployment_status }) =>
@@ -51,6 +51,7 @@ export function EnvironmentsTableActionBar({
       confirmationAction: 'stop',
       action: async () => {
         await Promise.all(stoppableEnvironments.map(({ id }) => stopEnvironment({ environmentId: id })))
+        toast('success', `Your ${pluralize(count, 'environment')} ${count === 1 ? 'is' : 'are'} being stopped`)
         resetRowSelection()
       },
     })

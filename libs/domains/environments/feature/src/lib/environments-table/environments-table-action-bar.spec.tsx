@@ -4,18 +4,24 @@ import { EnvironmentsTableActionBar } from './environments-table-action-bar'
 
 const mockStopEnvironment = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
+const mockToast = jest.fn()
+const mockUseStopEnvironment = jest.fn()
 
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
   useModalConfirmation: () => ({
     openModalConfirmation: mockOpenModalConfirmation,
   }),
+  toast: (status: string, title: string) => mockToast(status, title),
 }))
 
 jest.mock('../hooks/use-stop-environment/use-stop-environment', () => ({
-  useStopEnvironment: () => ({
-    mutateAsync: mockStopEnvironment,
-  }),
+  useStopEnvironment: (props: unknown) => {
+    mockUseStopEnvironment(props)
+    return {
+      mutateAsync: mockStopEnvironment,
+    }
+  },
 }))
 
 const rows: EnvironmentOverviewResponse[] = [
@@ -47,9 +53,16 @@ const rows: EnvironmentOverviewResponse[] = [
 
 describe('EnvironmentsTableActionBar', () => {
   beforeEach(() => {
+    jest.useFakeTimers()
     mockStopEnvironment.mockReset()
     mockOpenModalConfirmation.mockReset()
+    mockToast.mockReset()
+    mockUseStopEnvironment.mockReset()
     mockStopEnvironment.mockResolvedValue(undefined)
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
   })
 
   it('should render successfully', () => {
@@ -126,6 +139,9 @@ describe('EnvironmentsTableActionBar', () => {
     expect(mockStopEnvironment).toHaveBeenCalledTimes(2)
     expect(mockStopEnvironment).toHaveBeenCalledWith({ environmentId: 'env-1' })
     expect(mockStopEnvironment).toHaveBeenCalledWith({ environmentId: 'env-3' })
+    expect(mockUseStopEnvironment).toHaveBeenCalledWith({ projectId: 'project-1', notifyOnSuccess: false })
+    expect(mockToast).toHaveBeenCalledTimes(1)
+    expect(mockToast).toHaveBeenCalledWith('success', 'Your environments are being stopped')
     expect(resetRowSelection).toHaveBeenCalledTimes(1)
   })
 })
