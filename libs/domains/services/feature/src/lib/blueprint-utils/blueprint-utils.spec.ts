@@ -14,6 +14,7 @@ describe('isBlueprintCompatibleWithCluster', () => {
   it.each([
     ['AWS', 'AWS', true],
     ['SCW', 'AWS', false],
+    ['AGENTIC_WORKFLOW', 'AWS', true],
     ['EXTERNAL', 'AWS', true],
     ['HELM', 'AWS', true],
     ['SCW', undefined, true],
