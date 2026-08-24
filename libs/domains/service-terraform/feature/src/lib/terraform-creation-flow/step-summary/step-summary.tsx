@@ -6,7 +6,7 @@ import { match } from 'ts-pattern'
 import { useCreateService, useDeployService, useEditService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
 import { ServiceTypeEnum } from '@qovery/shared/enums'
-import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
+import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, toastError } from '@qovery/shared/ui'
 import { buildGitRepoUrl, generateScopeLabel, prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
@@ -97,7 +97,12 @@ export const TerraformStepSummary = () => {
       let serviceId = createdServiceId
 
       if (serviceId) {
-        await editTerraformService({ serviceId, payload: servicePayload })
+        try {
+          await editTerraformService({ serviceId, payload: servicePayload })
+        } catch (error) {
+          toastError(error as Error)
+          throw error
+        }
       } else {
         const service = await createTerraformService({
           environmentId,
