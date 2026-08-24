@@ -7,7 +7,9 @@ const mockUseEnvironmentsOverview = jest.fn()
 
 interface EnvironmentSectionMockProps {
   type: string
-  items: Array<{ name?: string }>
+  items: Array<{ id: string; name?: string }>
+  selectedEnvironmentIds?: string[]
+  onEnvironmentSelectionChange?: (environmentId: string, checked: boolean) => void
 }
 
 jest.mock('@tanstack/react-router', () => ({
@@ -32,15 +34,36 @@ jest.mock('./environments-table-action-bar', () => ({
 
 jest.mock('./environment-section/environment-section', () => ({
   __esModule: true,
-  EnvironmentSection: ({ type, items }: EnvironmentSectionMockProps) => (
-    <div data-testid="environment-section">{`section:${type}:${items.map(({ name }) => name).join(',')}`}</div>
+  EnvironmentSection: ({
+    type,
+    items,
+    selectedEnvironmentIds = [],
+    onEnvironmentSelectionChange,
+  }: EnvironmentSectionMockProps) => (
+    <div data-testid="environment-section">
+      {`section:${type}:${items.map(({ name }) => name).join(',')}`}
+      {items.map(({ id, name }) => (
+        <input
+          key={id}
+          type="checkbox"
+          aria-label={`Select ${name}`}
+          checked={selectedEnvironmentIds.includes(id)}
+          onChange={(event) => onEnvironmentSelectionChange?.(id, event.target.checked)}
+        />
+      ))}
+    </div>
   ),
 }))
 
 describe('EnvironmentsTable', () => {
   beforeEach(() => {
+    jest.useFakeTimers()
     mockUseProject.mockReset()
     mockUseEnvironmentsOverview.mockReset()
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
   })
 
   it('should render project name and environment sections', () => {
@@ -67,5 +90,19 @@ describe('EnvironmentsTable', () => {
       'section:STAGING:',
       'section:PREVIEW:',
     ])
+  })
+
+  it('should preserve checkbox focus when selecting an environment', async () => {
+    mockUseProject.mockReturnValue({ data: { name: 'Project Alpha' } })
+    mockUseEnvironmentsOverview.mockReturnValue({
+      data: [{ id: 'env-1', mode: EnvironmentModeEnum.PRODUCTION, name: 'Production environment' }],
+    })
+    const { userEvent } = renderWithProviders(<EnvironmentsTable />)
+    const checkbox = screen.getByRole('checkbox', { name: 'Select Production environment' })
+
+    await userEvent.click(checkbox)
+
+    expect(checkbox).toBeChecked()
+    expect(checkbox).toHaveFocus()
   })
 })

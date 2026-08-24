@@ -201,31 +201,8 @@ function EnvironmentsTableContent() {
     return environmentsOverview.filter(({ id }) => selectedEnvironmentIdsSet.has(id))
   }, [environmentsOverview, selectedEnvironmentIds])
 
-  const Sections = useCallback(() => {
-    const filledSections = SECTIONS.filter((section) => groupedEnvs?.has(section))
-    const emptySections = SECTIONS.filter((section) => !groupedEnvs?.has(section))
-    return (
-      <>
-        {[...filledSections, ...emptySections].map((section) => (
-          <EnvironmentSection
-            key={section}
-            type={section}
-            items={groupedEnvs?.get(section) || []}
-            onCreateEnvClicked={() => onCreateEnvClicked(section)}
-            selectedEnvironmentIds={selectedEnvironmentIds}
-            onEnvironmentSelectionChange={handleEnvironmentSelectionChange}
-            onSectionSelectionChange={handleSectionSelectionChange}
-          />
-        ))}
-      </>
-    )
-  }, [
-    groupedEnvs,
-    handleEnvironmentSelectionChange,
-    handleSectionSelectionChange,
-    onCreateEnvClicked,
-    selectedEnvironmentIds,
-  ])
+  const filledSections = SECTIONS.filter((section) => groupedEnvs?.has(section))
+  const emptySections = SECTIONS.filter((section) => !groupedEnvs?.has(section))
 
   return (
     <div className="container mx-auto mt-6 pb-10">
@@ -247,7 +224,17 @@ function EnvironmentsTableContent() {
           <hr className="w-full border-neutral" />
         </div>
         <div className="flex flex-col gap-8">
-          <Sections />
+          {[...filledSections, ...emptySections].map((section) => (
+            <EnvironmentSection
+              key={section}
+              type={section}
+              items={groupedEnvs?.get(section) || []}
+              onCreateEnvClicked={() => onCreateEnvClicked(section)}
+              selectedEnvironmentIds={selectedEnvironmentIds}
+              onEnvironmentSelectionChange={handleEnvironmentSelectionChange}
+              onSectionSelectionChange={handleSectionSelectionChange}
+            />
+          ))}
         </div>
       </Section>
       <EnvironmentsTableActionBar
