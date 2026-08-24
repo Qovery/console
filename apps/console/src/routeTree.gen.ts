@@ -140,6 +140,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
+import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources'
@@ -1247,6 +1248,15 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRoute =
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRouteImport.update(
+    {
+      id: '/environment-variables',
+      path: '/environment-variables',
+      getParentRoute: () =>
+        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobVariablesRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobVariablesRouteImport.update(
     {
@@ -1990,6 +2000,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobVariablesRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRoute
@@ -2165,6 +2176,7 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobResourcesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobVariablesRoute
+  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRoute
@@ -2362,6 +2374,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobResourcesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobSummaryRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateLifecycleJobVariablesRoute
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRoute
@@ -2560,6 +2573,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary'
@@ -2735,6 +2749,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables'
+    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary'
@@ -2931,6 +2946,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/resources'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/summary'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables'
+    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/summary'
@@ -3883,6 +3899,13 @@ declare module '@tanstack/react-router' {
       path: '/general'
       fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables': {
+      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables'
+      path: '/environment-variables'
+      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/lifecycle-job/variables': {
@@ -4913,6 +4936,7 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
   )
 
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteChildren {
+  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformSummaryRoute
@@ -4922,6 +4946,8 @@ interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvi
 
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteChildren: AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformRouteRouteChildren =
   {
+    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRoute:
+      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformEnvironmentVariablesRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformGeneralRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateTerraformInputVariablesRoute:

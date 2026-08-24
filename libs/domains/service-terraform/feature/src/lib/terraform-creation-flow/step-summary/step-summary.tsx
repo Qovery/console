@@ -4,8 +4,10 @@ import { TerraformAutoDeployConfigTerraformActionEnum, type TerraformRequest } f
 import { useEffect, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
+import { useImportVariables } from '@qovery/domains/variables/feature'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { buildGitRepoUrl, generateScopeLabel, prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
 import { buildDockerfileFragment } from '../../utils/build-dockerfile-fragment'
@@ -14,15 +16,17 @@ import { TERRAFORM_ENGINES } from '../../utils/terraform-engines'
 export const TerraformStepSummary = () => {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  const { setCurrentStep, generalForm } = useTerraformCreateContext()
+  const { setCurrentStep, generalForm, variablesForm } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
+  const environmentVariables = variablesForm.getValues('variables')
   const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
 
   useEffect(() => {
-    setCurrentStep(4)
+    setCurrentStep(5)
   }, [setCurrentStep])
 
   const { mutateAsync: createTerraformService } = useCreateService({ organizationId })
+  const { mutateAsync: importVariables } = useImportVariables()
   const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndPlan, setIsLoadingCreateAndPlan] = useState(false)
@@ -83,6 +87,15 @@ export const TerraformStepSummary = () => {
           ...payload,
         },
       })
+
+      const variableImportRequest = prepareVariableImportRequest(environmentVariables)
+      if (variableImportRequest) {
+        await importVariables({
+          serviceType: ServiceTypeEnum.TERRAFORM,
+          serviceId: response.id,
+          variableImportRequest,
+        })
+      }
 
       if (withPlan) {
         await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
@@ -194,6 +207,38 @@ export const TerraformStepSummary = () => {
                 <SummaryValue label="RAM" value={`${generalData.job_resources.ram_mib}mb`} />
                 <SummaryValue label="Storage" value={`${generalData.job_resources.storage_gib}gb`} />
               </ul>
+            </Section>
+
+            <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
+              <div className="flex justify-between">
+                <Heading>Environment variables</Heading>
+                <Button
+                  type="button"
+                  variant="plain"
+                  size="md"
+                  onClick={() =>
+                    navigate({
+                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables',
+                      params: { organizationId, projectId, environmentId },
+                    })
+                  }
+                >
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </div>
+              {environmentVariables.length > 0 ? (
+                <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                  {environmentVariables.map(({ variable, value, isSecret, scope }) => (
+                    <SummaryValue
+                      key={`${scope}-${variable}`}
+                      label={`${variable} (${scope ? generateScopeLabel(scope) : 'Service'})`}
+                      value={isSecret ? '********' : value}
+                    />
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-neutral-subtle">No environment variables configured</p>
+              )}
             </Section>
 
             <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
