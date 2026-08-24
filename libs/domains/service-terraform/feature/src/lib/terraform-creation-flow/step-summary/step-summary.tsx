@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { TerraformAutoDeployConfigTerraformActionEnum, type TerraformRequest } from 'qovery-typescript-axios'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
 import { useImportVariables } from '@qovery/domains/variables/feature'
@@ -17,8 +17,17 @@ import { getOrCreateTerraformServiceId } from '../get-or-create-terraform-servic
 export const TerraformStepSummary = () => {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  const { setCurrentStep, generalForm, variablesForm, createdServiceId, setCreatedServiceId } =
-    useTerraformCreateContext()
+  const {
+    setCurrentStep,
+    generalForm,
+    variablesForm,
+    createdServiceId,
+    setCreatedServiceId,
+    environmentVariablesImported,
+    setEnvironmentVariablesImported,
+    planCompleted,
+    setPlanCompleted,
+  } = useTerraformCreateContext()
   const generalData = generalForm.getValues()
   const environmentVariables = variablesForm.getValues('variables')
   const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
@@ -32,12 +41,19 @@ export const TerraformStepSummary = () => {
   const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndPlan, setIsLoadingCreateAndPlan] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const submissionInFlightRef = useRef(false)
 
   const tfVarsFilePaths = useMemo(() => {
     return [...tfVarFiles.filter((file) => file.enabled)].reverse().map((file) => file.source)
   }, [tfVarFiles])
 
   const onSubmit = async (withPlan: boolean) => {
+    if (submissionInFlightRef.current) return
+
+    submissionInFlightRef.current = true
+    setIsSubmitting(true)
+
     if (withPlan) {
       setIsLoadingCreateAndPlan(true)
     } else {
@@ -95,17 +111,18 @@ export const TerraformStepSummary = () => {
       setCreatedServiceId(serviceId)
 
       const variableImportRequest = prepareVariableImportRequest(environmentVariables)
-      if (variableImportRequest) {
+      if (variableImportRequest && !environmentVariablesImported) {
         await importVariables({
           serviceType: ServiceTypeEnum.TERRAFORM,
           serviceId,
           variableImportRequest,
         })
+        setEnvironmentVariablesImported(true)
       }
 
-      if (withPlan) {
+      if (withPlan && !planCompleted) {
         await deployService({ serviceId, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
-        setIsLoadingCreateAndPlan(false)
+        setPlanCompleted(true)
       }
 
       posthog.capture('create-service', {
@@ -113,12 +130,15 @@ export const TerraformStepSummary = () => {
         selectedServiceSubType: 'current',
       })
 
-      setIsLoadingCreate(false)
       navigate({
         to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
         params: { organizationId, projectId, environmentId },
       })
     } catch (error) {
+      // Errors are surfaced by the mutation hooks.
+    } finally {
+      submissionInFlightRef.current = false
+      setIsSubmitting(false)
       setIsLoadingCreateAndPlan(false)
       setIsLoadingCreate(false)
     }
@@ -143,6 +163,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
+                  disabled={Boolean(createdServiceId)}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general',
@@ -180,6 +201,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
+                  disabled={Boolean(createdServiceId)}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
@@ -222,6 +244,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
+                  disabled={environmentVariablesImported}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables',
@@ -254,6 +277,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
+                  disabled={Boolean(createdServiceId)}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
@@ -294,6 +318,7 @@ export const TerraformStepSummary = () => {
               type="button"
               size="lg"
               variant="plain"
+              disabled={Boolean(createdServiceId)}
               onClick={() =>
                 navigate({
                   to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
@@ -311,10 +336,17 @@ export const TerraformStepSummary = () => {
                 color="neutral"
                 onClick={() => onSubmit(false)}
                 loading={isLoadingCreate}
+                disabled={isSubmitting}
               >
                 Create
               </Button>
-              <Button type="button" size="lg" onClick={() => onSubmit(true)} loading={isLoadingCreateAndPlan}>
+              <Button
+                type="button"
+                size="lg"
+                onClick={() => onSubmit(true)}
+                loading={isLoadingCreateAndPlan}
+                disabled={isSubmitting}
+              >
                 Create and run plan
               </Button>
             </div>
