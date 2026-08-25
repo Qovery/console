@@ -45,6 +45,10 @@ describe('BlueprintUpdatePreviewStep', () => {
     jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-id' })
   })
 
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   it('requests a preview and keeps confirmation disabled while output is pending', () => {
     const requestPreview = jest.fn()
     const handleUpdate = jest.fn()
@@ -136,6 +140,5 @@ describe('BlueprintUpdatePreviewStep', () => {
     })
 
     expect(screen.getByText('Analyzing the planned changes')).toBeInTheDocument()
-    jest.useRealTimers()
   })
 })

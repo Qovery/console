@@ -135,13 +135,13 @@ function BlueprintUpdatePreviewContent({
         <Section className="gap-2">
           <Heading level={3}>Raw output</Heading>
           <div
-            className={`${rawOutputContainerHeightClassName} overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
+            className={`${rawOutputContainerHeightClassName} flex flex-col overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
           >
             {match(outcome)
               .with({ type: 'pending' }, () => <BlueprintUpdateRawOutputSkeleton />)
               .with({ type: 'diff' }, ({ rawOutput }) => <BlueprintUpdateRawOutput rawOutput={rawOutput} />)
               .with({ type: 'no-changes' }, () => (
-                <div className="flex h-full items-center justify-center font-sans text-sm text-neutral-subtle">
+                <div className="flex flex-1 items-center justify-center font-sans text-sm text-neutral-subtle">
                   No infrastructure changes detected.
                 </div>
               ))
@@ -193,8 +193,11 @@ function BlueprintUpdatePreviewFailure({
   summary: string
 }) {
   return (
-    <div role="alert" className="flex h-full flex-col items-center justify-center gap-3 text-sm text-neutral-subtle">
-      <span className="font-sans">{summary}</span>
+    <div
+      role="alert"
+      className="flex flex-1 flex-col items-center justify-center gap-3 font-sans text-sm text-neutral-subtle"
+    >
+      <span>{summary}</span>
       {reason ? <span className="max-w-full whitespace-pre-wrap text-center text-xs">{reason}</span> : null}
       <Button type="button" variant="outline" color="neutral" size="md" onClick={() => void onRetry()}>
         <Icon iconName="arrow-rotate-right" iconStyle="regular" />

@@ -32,6 +32,10 @@ describe('useBlueprintUpdatePreviewSocket', () => {
     jest.clearAllMocks()
   })
 
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   it('should subscribe to the blueprint preview endpoint with organization, cluster and preview id', () => {
     renderPreviewSocket()
 
@@ -133,7 +137,6 @@ describe('useBlueprintUpdatePreviewSocket', () => {
     })
 
     expect(result.current.outcome).toEqual({ type: 'timeout' })
-    jest.useRealTimers()
   })
 
   it('should reset to pending when preview id changes', () => {
