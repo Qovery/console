@@ -20,7 +20,7 @@ const defaultContext: DefaultContextProps = {
   organization_name: '',
   project_name: '',
   admin_email: '',
-  selectedPlan: PlanEnum.TEAM_2025,
+  selectedPlan: PlanEnum.BUSINESS_2025,
   phone: undefined,
   cardToken: null,
   cardLast4: null,

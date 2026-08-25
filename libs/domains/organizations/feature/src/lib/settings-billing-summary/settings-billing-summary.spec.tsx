@@ -123,6 +123,7 @@ describe('SettingsBillingSummary', () => {
     } as unknown as ReturnType<typeof useUserRole>)
     useSupportChatMock.mockReturnValue({
       showChat: jest.fn(),
+      showPylonForm: jest.fn(),
     } as unknown as ReturnType<typeof useSupportChat>)
     useDocumentTitleMock.mockImplementation(() => undefined)
     useModalSpy.mockReturnValue({

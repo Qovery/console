@@ -13,9 +13,6 @@ export function useClusterCreationRestriction({ organizationId }: UseClusterCrea
   const { data: currentCost, isFetched: isFetchedCurrentCost } = useQuery({
     ...queries.organizations.currentCost({ organizationId }),
   })
-  const { data: creditCards = [], isFetched: isFetchedCreditCards } = useQuery({
-    ...queries.organizations.creditCards({ organizationId }),
-  })
 
   const remainingTrialDays = currentCost?.remaining_trial_day
   const billingDeploymentRestriction = organization?.billing_deployment_restriction
@@ -27,18 +24,17 @@ export function useClusterCreationRestriction({ organizationId }: UseClusterCrea
   )
 
   const isClusterCreationRestricted = useMemo(
-    () => isFetchedOrganization && billingDeploymentRestriction != null,
+    () =>
+      isFetchedOrganization &&
+      billingDeploymentRestriction != null &&
+      billingDeploymentRestriction !== 'NO_CREDIT_CARD',
     [isFetchedOrganization, billingDeploymentRestriction]
   )
 
-  const isNoCreditCardRestriction = billingDeploymentRestriction === 'NO_CREDIT_CARD'
-  const hasNoCreditCard = isFetchedCreditCards && creditCards.length === 0
   const isLoading = !isFetchedOrganization || !isFetchedCurrentCost
 
   return {
     isClusterCreationRestricted,
-    isNoCreditCardRestriction,
-    hasNoCreditCard,
     isLoading,
     isInActiveFreeTrial,
     billingDeploymentRestriction,

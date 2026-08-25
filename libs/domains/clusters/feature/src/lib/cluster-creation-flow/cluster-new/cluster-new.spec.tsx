@@ -13,7 +13,6 @@ jest.mock('posthog-js/react', () => ({
 const mockShowPylonForm = jest.fn()
 const mockUseClusterCreationRestriction = jest.fn(() => ({
   isClusterCreationRestricted: false,
-  isNoCreditCardRestriction: false,
 }))
 
 jest.mock('../../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction', () => ({
@@ -69,7 +68,6 @@ describe('ClusterNew', () => {
     mockUseParams.mockReturnValue({ organizationId: 'test-org-id' })
     mockUseClusterCreationRestriction.mockReturnValue({
       isClusterCreationRestricted: false,
-      isNoCreditCardRestriction: false,
     })
   })
 
@@ -161,73 +159,31 @@ describe('ClusterNew', () => {
     })
   })
 
-  it('should show the free-trial callout and keep providers expandable when credit card is missing', async () => {
+  it('should not restrict managed cluster creation during a free trial', async () => {
     mockUseClusterCreationRestriction.mockReturnValue({
-      isClusterCreationRestricted: true,
-      isNoCreditCardRestriction: true,
+      isClusterCreationRestricted: false,
     })
     const { userEvent } = renderWithProviders(<ClusterNew />)
 
-    expect(screen.getByText('Add a credit card to create a cluster')).toBeInTheDocument()
-
-    const awsCard = getProviderCard('Amazon Web Services')
-    expect(awsCard).toBeInTheDocument()
-
-    await userEvent.click(awsCard as Element)
-
-    expect(screen.getByText('Qovery Managed')).toBeInTheDocument()
-  })
-
-  it('should open the add credit card modal when clicking a restricted cloud option', async () => {
-    mockUseClusterCreationRestriction.mockReturnValue({
-      isClusterCreationRestricted: true,
-      isNoCreditCardRestriction: true,
-    })
-    const { userEvent } = renderWithProviders(<ClusterNew />)
+    expect(screen.queryByText('Cluster creation is restricted')).not.toBeInTheDocument()
 
     await userEvent.click(getProviderCard('Amazon Web Services') as Element)
 
-    const managedButton = screen.getByText('Qovery Managed').closest('button')
-    expect(managedButton).toBeInTheDocument()
+    const managedLink = screen.getByText('Qovery Managed').closest('a')
+    expect(managedLink).toBeInTheDocument()
 
-    await userEvent.click(managedButton as Element)
+    await userEvent.click(managedLink as Element)
 
-    expect(mockOpenModal).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: expect.objectContaining({
-          props: expect.objectContaining({ organizationId: 'test-org-id' }),
-        }),
-      })
-    )
-    expect(posthog.capture).not.toHaveBeenCalled()
-  })
-
-  it('should open the add credit card modal when clicking a restricted self-managed standalone card', async () => {
-    mockUseClusterCreationRestriction.mockReturnValue({
-      isClusterCreationRestricted: true,
-      isNoCreditCardRestriction: true,
+    expect(mockOpenModal).not.toHaveBeenCalled()
+    expect(posthog.capture).toHaveBeenCalledWith('select-cluster', {
+      selectedCloudProvider: 'AWS',
+      selectedInstallationType: 'managed',
     })
-    const { userEvent } = renderWithProviders(<ClusterNew />)
-
-    const ovhCard = getProviderCard('OVH Cloud')
-    expect(ovhCard).toBeInTheDocument()
-
-    await userEvent.click(ovhCard as Element)
-
-    expect(mockOpenModal).toHaveBeenCalledWith(
-      expect.objectContaining({
-        content: expect.objectContaining({
-          props: expect.objectContaining({ organizationId: 'test-org-id' }),
-        }),
-      })
-    )
-    expect(posthog.capture).not.toHaveBeenCalled()
   })
 
-  it('should keep the demo card active during free trial restriction', async () => {
+  it('should keep the demo card active during a billing restriction', async () => {
     mockUseClusterCreationRestriction.mockReturnValue({
       isClusterCreationRestricted: true,
-      isNoCreditCardRestriction: true,
     })
     const { userEvent } = renderWithProviders(<ClusterNew />)
 
@@ -248,7 +204,6 @@ describe('ClusterNew', () => {
   it('should show the billing restriction callout and keep restricted cards inactive without modal', async () => {
     mockUseClusterCreationRestriction.mockReturnValue({
       isClusterCreationRestricted: true,
-      isNoCreditCardRestriction: false,
     })
     const { userEvent } = renderWithProviders(<ClusterNew />)
 
