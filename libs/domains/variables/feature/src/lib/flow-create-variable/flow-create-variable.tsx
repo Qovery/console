@@ -31,8 +31,8 @@ export function FlowCreateVariable({
 
   return (
     <Section>
-      <div className="flex justify-between">
-        <Heading className="mb-2">Environment variables</Heading>
+      <div className="mb-2 flex justify-between">
+        <Heading>Environment variables</Heading>
         <div className="flex items-center gap-2">
           <Button size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
             <Icon iconName="lock-keyhole" iconStyle="regular" />
@@ -98,7 +98,12 @@ export function FlowCreateVariable({
           <Button onClick={onBack} type="button" size="lg" variant="plain">
             Back
           </Button>
-          <Button data-testid="button-submit" type="submit" disabled={!formState.isValid} size="lg">
+          <Button
+            data-testid="button-submit"
+            type="submit"
+            disabled={variables.length > 0 && !formState.isValid}
+            size="lg"
+          >
             Continue
           </Button>
         </div>
