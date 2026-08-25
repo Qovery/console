@@ -34,31 +34,33 @@ export function FlowCreateVariable({
   return (
     <Section>
       <form className="space-y-10" onSubmit={onSubmit}>
-        <div className="flex justify-between">
-          <Heading>Environment variables</Heading>
-          <div className="flex items-center gap-2">
-            <Button type="button" size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
-              <Icon iconName="lock-keyhole" iconStyle="regular" />
-              Add secret
-            </Button>
-            <Button type="button" size="md" onClick={() => onAdd(false)}>
-              <Icon iconName="key" />
-              Add variable
-            </Button>
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Heading>Environment variables</Heading>
+            <div className="flex items-center gap-2">
+              <Button type="button" size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
+                <Icon iconName="lock-keyhole" iconStyle="regular" />
+                Add secret
+              </Button>
+              <Button type="button" size="md" onClick={() => onAdd(false)}>
+                <Icon iconName="key" />
+                Add variable
+              </Button>
+            </div>
           </div>
-        </div>
 
-        <p className="mr-36 text-sm text-neutral-subtle">
-          {match(templateType)
-            .with(
-              'CLOUDFORMATION',
-              'TERRAFORM',
-              (templateType) =>
-                `Fill the parameters required to execute the ${upperCaseFirstLetter(templateType)} commands. These will be stored as environment variables, you can reuse in the field “Value” any existing variable via the macro {{VARIABLE_NAME}}`
-            )
-            .with('GENERIC', undefined, () => 'Define here the variables required by your service.')
-            .exhaustive()}
-        </p>
+          <p className="mr-36 text-sm text-neutral-subtle">
+            {match(templateType)
+              .with(
+                'CLOUDFORMATION',
+                'TERRAFORM',
+                (templateType) =>
+                  `Fill the parameters required to execute the ${upperCaseFirstLetter(templateType)} commands. These will be stored as environment variables, you can reuse in the field “Value” any existing variable via the macro {{VARIABLE_NAME}}`
+              )
+              .with('GENERIC', undefined, () => 'Define here the variables required by your service.')
+              .exhaustive()}
+          </p>
+        </div>
         {match(templateType)
           .with('CLOUDFORMATION', 'TERRAFORM', () => (
             <Callout.Root color="sky">
