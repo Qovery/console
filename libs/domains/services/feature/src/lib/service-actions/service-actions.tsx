@@ -673,11 +673,13 @@ function MenuManageDeployment({
 
 function MenuOtherActions({
   state,
+  serviceDeploymentStatus,
   environment,
   service,
   variant,
 }: {
   state: StateEnum
+  serviceDeploymentStatus: ServiceDeploymentStatusEnum
   environment: Environment
   service: AnyService
   variant?: ActionToolbarVariant
@@ -688,6 +690,7 @@ function MenuOtherActions({
     organization: { id: organizationId },
   } = environment
   const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
   const { openServiceRemoveModal } = useServiceRemoveModal()
   const navigate = useNavigate()
   const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
@@ -716,7 +719,37 @@ function MenuOtherActions({
     )
     .otherwise(() => null)
 
-  const mutationRemove = async () => {
+  const mutationDelete = async (skipDestroy?: boolean) => {
+    if (!isEditableService(service)) {
+      return
+    }
+
+    try {
+      await deleteService({
+        serviceId: service.id,
+        serviceType: service.serviceType,
+        ...(skipDestroy !== undefined && { skipDestroy }),
+      })
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        params: { organizationId, projectId, environmentId },
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const mutationRemove = () => {
+    if (serviceDeploymentStatus === ServiceDeploymentStatusEnum.NEVER_DEPLOYED) {
+      openModalConfirmation({
+        title: 'Delete service',
+        name: service.name,
+        confirmationMethod: 'action',
+        action: mutationDelete,
+      })
+      return
+    }
+
     openServiceRemoveModal({
       title: 'Remove service',
       name: service.name,
@@ -794,22 +827,7 @@ function MenuOtherActions({
           icon: 'trash-can',
           color: 'red',
           callback: async ({ skipDestroy }) => {
-            if (!isEditableService(service)) {
-              return
-            }
-            try {
-              await deleteService({
-                serviceId: service.id,
-                serviceType: service.serviceType,
-                skipDestroy,
-              })
-              navigate({
-                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
-                params: { organizationId, projectId, environmentId },
-              })
-            } catch (error) {
-              console.error(error)
-            }
+            await mutationDelete(skipDestroy)
           },
         },
       ],
@@ -987,6 +1005,7 @@ export function ServiceActions({
       {variant !== 'deploy-dropdown-only' && (
         <MenuOtherActions
           state={deploymentStatus.state}
+          serviceDeploymentStatus={deploymentStatus.service_deployment_status}
           environment={environment}
           service={service}
           variant={variant}
