@@ -269,7 +269,7 @@ export const TerraformStepSummary = () => {
 
             <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
-                <Heading>Input variables</Heading>
+                <Heading>Terraform variables</Heading>
                 <Button
                   type="button"
                   variant="plain"
