@@ -4,9 +4,10 @@ import { TerraformAutoDeployConfigTerraformActionEnum, type TerraformRequest } f
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import { useCreateService, useDeployService, useEditService } from '@qovery/domains/services/feature'
-import { useCreateVariable } from '@qovery/domains/variables/feature'
+import { useImportVariables } from '@qovery/domains/variables/feature'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, toastError } from '@qovery/shared/ui'
-import { buildGitRepoUrl, generateScopeLabel } from '@qovery/shared/util-js'
+import { buildGitRepoUrl, generateScopeLabel, prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
 import { buildDockerfileFragment } from '../../utils/build-dockerfile-fragment'
@@ -32,13 +33,12 @@ export const TerraformStepSummary = () => {
     environmentId,
     silently: true,
   })
-  const { mutateAsync: createVariable } = useCreateVariable()
+  const { mutateAsync: importVariables } = useImportVariables()
   const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndPlan, setIsLoadingCreateAndPlan] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const submissionInFlightRef = useRef(false)
-  const createdVariableKeysRef = useRef(new Set<string>())
 
   const tfVarsFilePaths = useMemo(() => {
     return [...tfVarFiles.filter((file) => file.enabled)].reverse().map((file) => file.source)
@@ -108,33 +108,21 @@ export const TerraformStepSummary = () => {
           environmentId,
           payload: servicePayload,
         })
+        if (!service.id) throw new Error('The created Terraform service has no ID')
+
         serviceId = service.id
-        setCreatedServiceId(serviceId)
+        setCreatedServiceId(service.id)
       }
 
-      for (const { variable = '', value = '', scope, isSecret } of environmentVariables) {
-        if (!scope) continue
+      if (!serviceId) throw new Error('The Terraform service ID is missing')
 
-        const variableKey = `${scope}:${variable}`
-        if (createdVariableKeysRef.current.has(variableKey)) continue
-
-        await createVariable({
-          variableRequest: {
-            key: variable,
-            value,
-            variable_scope: scope,
-            variable_parent_id: match(scope)
-              .with('PROJECT', () => projectId)
-              .with('ENVIRONMENT', () => environmentId)
-              .with('TERRAFORM', () => serviceId)
-              .with('BUILT_IN', 'APPLICATION', 'CONTAINER', 'JOB', 'HELM', 'AGENTIC_WORKFLOW', () => {
-                throw new Error('Unsupported variable scope for Terraform creation')
-              })
-              .exhaustive(),
-            is_secret: isSecret,
-          },
+      const variableImportRequest = prepareVariableImportRequest(environmentVariables)
+      if (variableImportRequest) {
+        await importVariables({
+          serviceType: ServiceTypeEnum.TERRAFORM,
+          serviceId,
+          variableImportRequest,
         })
-        createdVariableKeysRef.current.add(variableKey)
       }
 
       if (withPlan) {
