@@ -95,7 +95,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
   const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
-  const showTrialCallout = remainingTrialDay !== undefined && remainingTrialDay > 0
+  const showTrialCallout = remainingTrialDay > 0 && remainingTrialDay <= 90
   const showErrorCallout = props.hasCreditCard ?? Boolean(props.creditCard)
 
   // This function is used to get the trial start date based on the remaining trial days from the API
