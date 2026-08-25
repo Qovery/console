@@ -156,15 +156,16 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                   <>Activate your plan to avoid service interruption at the end of your trial.</>
                 )}
               </Callout.Text>
-              {showErrorCallout ? (
-                <Button size="sm" variant="solid" color="yellow" onClick={() => props.onCancelTrialClick?.()}>
-                  Cancel free trial
-                </Button>
-              ) : (
+              <div className="flex gap-2">
                 <Button size="sm" variant="solid" color="red" onClick={() => props.onActivateAccountClick?.()}>
                   Activate my plan
                 </Button>
-              )}
+                {showErrorCallout && (
+                  <Button size="sm" variant="solid" color="yellow" onClick={() => props.onCancelTrialClick?.()}>
+                    Cancel free trial
+                  </Button>
+                )}
+              </div>
             </Callout.Root>
           )}
           <div className="mb-3 flex gap-2">

@@ -89,6 +89,46 @@ describe('PageOrganizationBillingSummary', () => {
     expect(pageProps.onPromoCodeClick).toHaveBeenCalled()
   })
 
+  it('should always show Activate my plan during an active trial, even when a credit card exists', async () => {
+    const onActivateAccountClick = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <PageOrganizationBillingSummary
+        {...pageProps}
+        currentCost={{ ...currentCostMock, remaining_trial_day: 5 }}
+        hasCreditCard
+        onActivateAccountClick={onActivateAccountClick}
+      />
+    )
+
+    await userEvent.click(screen.getByText('Activate my plan'))
+    expect(onActivateAccountClick).toHaveBeenCalled()
+  })
+
+  it('should only show Cancel free trial when a credit card exists during an active trial', async () => {
+    const onCancelTrialClick = jest.fn()
+    const { userEvent, rerender } = renderWithProviders(
+      <PageOrganizationBillingSummary
+        {...pageProps}
+        currentCost={{ ...currentCostMock, remaining_trial_day: 5 }}
+        hasCreditCard
+        onCancelTrialClick={onCancelTrialClick}
+      />
+    )
+
+    await userEvent.click(screen.getByText('Cancel free trial'))
+    expect(onCancelTrialClick).toHaveBeenCalled()
+
+    rerender(
+      <PageOrganizationBillingSummary
+        {...pageProps}
+        currentCost={{ ...currentCostMock, remaining_trial_day: 5 }}
+        hasCreditCard={false}
+        creditCard={undefined}
+      />
+    )
+    expect(screen.queryByText('Cancel free trial')).not.toBeInTheDocument()
+  })
+
   it('should not display the payment method box for free plan', () => {
     renderWithProviders(
       <PageOrganizationBillingSummary

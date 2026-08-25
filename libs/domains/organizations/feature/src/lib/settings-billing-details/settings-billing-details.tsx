@@ -31,7 +31,8 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
   const { mutateAsync: addCreditCard } = useAddCreditCard()
   const { showPylonForm } = useSupportChat()
 
-  const isInActiveFreeTrial = (currentCost?.remaining_trial_day ?? 0) > 0
+  const remainingTrialDay = currentCost?.remaining_trial_day
+  const isInActiveFreeTrial = remainingTrialDay !== undefined && remainingTrialDay > 0 && remainingTrialDay <= 90
 
   const [showAddCard, setShowAddCard] = useState(false)
   const [editInProcess, setEditInProcess] = useState(false)

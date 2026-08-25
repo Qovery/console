@@ -179,13 +179,31 @@ describe('SettingsBillingDetails', () => {
     expect(screen.getByTestId('placeholder-credit-card')).toBeInTheDocument()
   })
 
-  it('should show a plan activation banner during an active free trial while still allowing self-service card management', () => {
+  it('should show a plan activation banner during an active free trial while still allowing self-service card management', async () => {
     useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 5 } })
+
+    const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+    expect(screen.getByText(/You are on the Business plan during your free trial/)).toBeInTheDocument()
+    expect(screen.getAllByTestId('credit-card-row')).toHaveLength(3)
+
+    await userEvent.click(screen.getByText('Activate my plan'))
+    expect(mockShowPylonForm).toHaveBeenCalledWith('ask-for-activation')
+  })
+
+  it('should not show the plan activation banner once the free trial is over', () => {
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 0 } })
 
     renderWithProviders(<SettingsBillingDetails />)
 
-    expect(screen.getByText(/You are on the Business plan during your free trial/)).toBeInTheDocument()
-    expect(screen.getByText('Activate my plan')).toBeInTheDocument()
-    expect(screen.getAllByTestId('credit-card-row')).toHaveLength(3)
+    expect(screen.queryByText(/You are on the Business plan during your free trial/)).not.toBeInTheDocument()
+  })
+
+  it('should not show the plan activation banner beyond the 90-day trial window', () => {
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 91 } })
+
+    renderWithProviders(<SettingsBillingDetails />)
+
+    expect(screen.queryByText(/You are on the Business plan during your free trial/)).not.toBeInTheDocument()
   })
 })
