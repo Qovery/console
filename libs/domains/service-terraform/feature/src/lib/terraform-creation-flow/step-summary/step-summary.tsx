@@ -325,27 +325,34 @@ export const TerraformStepSummary = () => {
             >
               Back
             </Button>
-            <div className="flex gap-2">
-              <Button
-                type="button"
-                size="lg"
-                variant="surface"
-                color="neutral"
-                onClick={() => onSubmit(false)}
-                loading={isLoadingCreate}
-                disabled={isSubmitting}
-              >
-                Create
-              </Button>
-              <Button
-                type="button"
-                size="lg"
-                onClick={() => onSubmit(true)}
-                loading={isLoadingCreateAndPlan}
-                disabled={isSubmitting}
-              >
-                Create and run plan
-              </Button>
+            <div className="flex items-center gap-3">
+              {isSubmitting && (
+                <span role="status" className="text-sm text-neutral-subtle">
+                  {isLoadingCreateAndPlan ? 'Creating service and running plan…' : 'Creating service…'}
+                </span>
+              )}
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  size="lg"
+                  variant="surface"
+                  color="neutral"
+                  onClick={() => onSubmit(false)}
+                  loading={isLoadingCreate}
+                  disabled={isSubmitting}
+                >
+                  Create
+                </Button>
+                <Button
+                  type="button"
+                  size="lg"
+                  onClick={() => onSubmit(true)}
+                  loading={isLoadingCreateAndPlan}
+                  disabled={isSubmitting}
+                >
+                  Create and run plan
+                </Button>
+              </div>
             </div>
           </div>
         </form>
