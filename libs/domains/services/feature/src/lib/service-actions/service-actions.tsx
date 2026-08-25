@@ -724,19 +724,15 @@ function MenuOtherActions({
       return
     }
 
-    try {
-      await deleteService({
-        serviceId: service.id,
-        serviceType: service.serviceType,
-        ...(skipDestroy !== undefined && { skipDestroy }),
-      })
-      navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
-        params: { organizationId, projectId, environmentId },
-      })
-    } catch (error) {
-      console.error(error)
-    }
+    await deleteService({
+      serviceId: service.id,
+      serviceType: service.serviceType,
+      ...(skipDestroy !== undefined && { skipDestroy }),
+    })
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: { organizationId, projectId, environmentId },
+    })
   }
 
   const mutationRemove = () => {
@@ -827,7 +823,11 @@ function MenuOtherActions({
           icon: 'trash-can',
           color: 'red',
           callback: async ({ skipDestroy }) => {
-            await mutationDelete(skipDestroy)
+            try {
+              await mutationDelete(skipDestroy)
+            } catch (error) {
+              console.error(error)
+            }
           },
         },
       ],

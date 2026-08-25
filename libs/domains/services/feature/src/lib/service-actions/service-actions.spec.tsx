@@ -283,6 +283,30 @@ describe('ServiceActions', () => {
     })
   })
 
+  it('should propagate deletion errors from the confirmation modal action', async () => {
+    const error = new Error('Deletion failed')
+    mockDeleteService.mockRejectedValueOnce(error)
+    mockDeploymentStatus = {
+      state: 'READY',
+      service_deployment_status: 'NEVER_DEPLOYED',
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /remove service/i }))
+
+    const { action } = mockOpenModalConfirmation.mock.calls[0][0]
+
+    await expect(action()).rejects.toBe(error)
+    expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
   it('should keep the remove modal when the service has already been deployed', async () => {
     const { userEvent } = renderWithProviders(
       <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
@@ -296,5 +320,32 @@ describe('ServiceActions', () => {
 
     expect(mockOpenServiceRemoveModal).toHaveBeenCalledWith(expect.objectContaining({ title: 'Remove service' }))
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+  })
+
+  it('should handle deletion errors after the remove modal has closed', async () => {
+    const error = new Error('Deletion failed')
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    mockDeleteService.mockRejectedValueOnce(error)
+
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /remove service/i }))
+
+    const { actions } = mockOpenServiceRemoveModal.mock.calls[0][0]
+    const deleteAction = actions.find(({ id }: { id: string }) => id === 'delete')
+
+    await expect(
+      deleteAction.callback({ action: 'delete', name: 'delete', skipDestroy: false })
+    ).resolves.toBeUndefined()
+    expect(consoleErrorSpy).toHaveBeenCalledWith(error)
+    expect(mockNavigate).not.toHaveBeenCalled()
+
+    consoleErrorSpy.mockRestore()
   })
 })
