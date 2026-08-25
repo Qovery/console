@@ -180,7 +180,7 @@ describe('SettingsBillingDetails', () => {
   })
 
   it('should show a plan activation banner during an active free trial while still allowing self-service card management', () => {
-    useCurrentCostMock.mockReturnValue({ data: { plan: 'TEAM_2025', remaining_trial_day: 5 } })
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 5 } })
 
     renderWithProviders(<SettingsBillingDetails />)
 

@@ -10,6 +10,7 @@ import { countries } from '@qovery/shared/enums'
 import { Callout, IconFlag, toastError, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, InputCreditCard, InputText, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
+import { formatPlanDisplay } from '@qovery/shared/util-js'
 import { fieldCardStyles, loadChargebee } from '@qovery/shared/util-payment'
 import { type SerializedError } from '@qovery/shared/utils'
 import { useAddCreditCard } from '../hooks/use-add-credit-card/use-add-credit-card'
@@ -140,7 +141,9 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
                   <Icon iconName="circle-info" iconStyle="regular" />
                 </Callout.Icon>
                 <Callout.Text>
-                  <Callout.TextHeading>You are on the Business plan during your free trial</Callout.TextHeading>
+                  <Callout.TextHeading>
+                    You are on the {formatPlanDisplay(currentCost?.plan)} during your free trial
+                  </Callout.TextHeading>
                   <Callout.TextDescription>
                     Activate your plan to keep this level of access after your trial ends.
                   </Callout.TextDescription>
