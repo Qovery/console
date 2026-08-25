@@ -112,11 +112,14 @@ export const TerraformStepSummary = () => {
         setCreatedServiceId(serviceId)
       }
 
-      await importVariables({
-        serviceType: ServiceTypeEnum.TERRAFORM,
-        serviceId,
-        variableImportRequest: prepareVariableImportRequest(environmentVariables) ?? { overwrite: true, vars: [] },
-      })
+      const variableImportRequest = prepareVariableImportRequest(environmentVariables)
+      if (variableImportRequest) {
+        await importVariables({
+          serviceType: ServiceTypeEnum.TERRAFORM,
+          serviceId,
+          variableImportRequest,
+        })
+      }
 
       if (withPlan) {
         await deployService({ serviceId, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
