@@ -44,7 +44,7 @@ export const TerraformStepEnvironmentVariables = () => {
   })
 
   return (
-    <FunnelFlowBody>
+    <FunnelFlowBody customContentWidth="max-w-[1024px]">
       <FormProvider {...variablesForm}>
         <FlowCreateVariable
           availableScopes={availableScopes}
@@ -59,6 +59,7 @@ export const TerraformStepEnvironmentVariables = () => {
           onRemove={onRemove}
           variables={variables}
           templateType="TERRAFORM"
+          allowEmpty
         />
       </FormProvider>
     </FunnelFlowBody>

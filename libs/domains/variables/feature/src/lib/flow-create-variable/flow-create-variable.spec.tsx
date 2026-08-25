@@ -28,7 +28,7 @@ describe('FlowCreateVariable', () => {
 
   it('should allow submitting without variables', () => {
     renderWithProviders(
-      wrapWithReactHookForm<FlowVariableData>(<FlowCreateVariable {...props} />, {
+      wrapWithReactHookForm<FlowVariableData>(<FlowCreateVariable {...props} allowEmpty />, {
         defaultValues: {
           variables: [],
           externalSecrets: [],
@@ -37,5 +37,18 @@ describe('FlowCreateVariable', () => {
     )
 
     expect(screen.getByTestId('button-submit')).toBeEnabled()
+  })
+
+  it('should require variables by default', () => {
+    renderWithProviders(
+      wrapWithReactHookForm<FlowVariableData>(<FlowCreateVariable {...props} />, {
+        defaultValues: {
+          variables: [],
+          externalSecrets: [],
+        },
+      })
+    )
+
+    expect(screen.getByTestId('button-submit')).toBeDisabled()
   })
 })

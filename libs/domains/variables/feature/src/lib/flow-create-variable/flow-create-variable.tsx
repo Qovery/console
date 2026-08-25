@@ -15,6 +15,7 @@ export interface FlowCreateVariableProps {
   variables: VariableData[]
   availableScopes: APIVariableScopeEnum[]
   templateType?: JobLifecycleTypeEnum
+  allowEmpty?: boolean
 }
 
 export function FlowCreateVariable({
@@ -25,14 +26,15 @@ export function FlowCreateVariable({
   templateType,
   variables,
   availableScopes,
+  allowEmpty = false,
 }: FlowCreateVariableProps) {
   const { formState } = useFormContext<FlowVariableData>()
   const gridTemplateColumns = '1fr 1fr 1fr 32px'
 
   return (
     <Section>
-      <div className="mb-2 flex justify-between">
-        <Heading>Environment variables</Heading>
+      <div className="flex justify-between">
+        <Heading className="mb-2">Environment variables</Heading>
         <div className="flex items-center gap-2">
           <Button size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
             <Icon iconName="lock-keyhole" iconStyle="regular" />
@@ -101,7 +103,7 @@ export function FlowCreateVariable({
           <Button
             data-testid="button-submit"
             type="submit"
-            disabled={variables.length > 0 && !formState.isValid}
+            disabled={variables.length === 0 ? !allowEmpty : !formState.isValid}
             size="lg"
           >
             Continue
