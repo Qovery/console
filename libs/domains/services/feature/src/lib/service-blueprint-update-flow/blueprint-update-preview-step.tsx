@@ -1,7 +1,11 @@
 import { useParams } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
+import { match } from 'ts-pattern'
 import { Button, FunnelFlowBody, Heading, Icon, Section, Skeleton } from '@qovery/shared/ui'
-import { useBlueprintUpdatePreviewSocket } from '../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
+import {
+  type BlueprintUpdatePreviewOutcome,
+  useBlueprintUpdatePreviewSocket,
+} from '../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import { getRawOutputLineClassName } from './blueprint-update-utils'
 
@@ -54,14 +58,11 @@ function BlueprintUpdatePreview({
   if (!clusterId || !previewId) {
     return (
       <BlueprintUpdatePreviewContent
-        hasReceivedPreviewMessage={false}
-        isPreviewOutputLoading
         loading={loading}
         onBack={onBack}
         onConfirm={onConfirm}
         onRetry={onRetry}
-        previewError={previewError}
-        rawOutput=""
+        outcome={previewError ? { type: 'error' } : { type: 'pending' }}
       />
     )
   }
@@ -97,48 +98,35 @@ function BlueprintUpdatePreviewWithSocket({
   previewId: string
 }) {
   const { organizationId = '' } = useParams({ strict: false })
-  const {
-    rawOutput,
-    isLoading: isPreviewOutputLoading,
-    hasReceivedMessage: hasReceivedPreviewMessage,
-  } = useBlueprintUpdatePreviewSocket({ organizationId, clusterId, previewId })
+  const { outcome } = useBlueprintUpdatePreviewSocket({ organizationId, clusterId, previewId })
 
   return (
     <BlueprintUpdatePreviewContent
-      hasReceivedPreviewMessage={hasReceivedPreviewMessage}
-      isPreviewOutputLoading={isPreviewOutputLoading}
       loading={loading}
       onBack={onBack}
       onConfirm={onConfirm}
       onRetry={onRetry}
-      previewError={previewError}
-      rawOutput={rawOutput}
+      outcome={previewError ? { type: 'error' } : outcome}
     />
   )
 }
 
 function BlueprintUpdatePreviewContent({
-  hasReceivedPreviewMessage,
-  isPreviewOutputLoading,
   loading,
   onBack,
   onConfirm,
   onRetry,
-  previewError,
-  rawOutput,
+  outcome,
 }: {
-  hasReceivedPreviewMessage: boolean
-  isPreviewOutputLoading: boolean
   loading: boolean
   onBack: () => void
   onConfirm: () => Promise<void>
   onRetry: () => Promise<void>
-  previewError: boolean
-  rawOutput: string
+  outcome: BlueprintUpdatePreviewOutcome
 }) {
-  const rawOutputContainerHeightClassName = rawOutput
-    ? 'h-[min(75vh,calc(100vh-320px))] min-h-[260px]'
-    : 'min-h-[180px]'
+  const canConfirm = outcome.type === 'diff' || outcome.type === 'no-changes'
+  const rawOutputContainerHeightClassName =
+    outcome.type === 'diff' ? 'h-[min(75vh,calc(100vh-320px))] min-h-[260px]' : 'min-h-[180px]'
 
   return (
     <FunnelFlowBody customContentWidth="max-w-[684px]">
@@ -147,24 +135,30 @@ function BlueprintUpdatePreviewContent({
         <Section className="gap-2">
           <Heading level={3}>Raw output</Heading>
           <div
-            className={`${rawOutputContainerHeightClassName} overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
+            className={`${rawOutputContainerHeightClassName} flex flex-col overflow-auto rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
           >
-            {previewError ? (
-              <div
-                role="alert"
-                className="flex h-full flex-col items-center justify-center gap-3 text-sm text-neutral-subtle"
-              >
-                <span>Unable to generate the preview.</span>
-                <Button type="button" variant="outline" color="neutral" size="md" onClick={() => void onRetry()}>
-                  <Icon iconName="arrow-rotate-right" iconStyle="regular" />
-                  Retry preview
-                </Button>
-              </div>
-            ) : rawOutput ? (
-              <BlueprintUpdateRawOutput rawOutput={rawOutput} />
-            ) : (
-              <BlueprintUpdateRawOutputSkeleton />
-            )}
+            {match(outcome)
+              .with({ type: 'pending' }, () => <BlueprintUpdateRawOutputSkeleton />)
+              .with({ type: 'diff' }, ({ rawOutput }) => <BlueprintUpdateRawOutput rawOutput={rawOutput} />)
+              .with({ type: 'no-changes' }, () => (
+                <div className="flex flex-1 items-center justify-center font-sans text-sm text-neutral-subtle">
+                  No infrastructure changes detected.
+                </div>
+              ))
+              .with({ type: 'error' }, ({ message }) => (
+                <BlueprintUpdatePreviewFailure
+                  onRetry={onRetry}
+                  reason={message}
+                  summary="Unable to generate the preview."
+                />
+              ))
+              .with({ type: 'cancelled' }, () => (
+                <BlueprintUpdatePreviewFailure onRetry={onRetry} summary="The preview was cancelled." />
+              ))
+              .with({ type: 'timeout' }, () => (
+                <BlueprintUpdatePreviewFailure onRetry={onRetry} summary="The preview timed out before completing." />
+              ))
+              .exhaustive()}
           </div>
         </Section>
       </Section>
@@ -177,7 +171,7 @@ function BlueprintUpdatePreviewContent({
           type="button"
           size="lg"
           className="flex-1 justify-center"
-          disabled={!hasReceivedPreviewMessage || isPreviewOutputLoading || loading || previewError}
+          disabled={!canConfirm || loading}
           loading={loading}
           onClick={onConfirm}
         >
@@ -186,6 +180,30 @@ function BlueprintUpdatePreviewContent({
         </Button>
       </footer>
     </FunnelFlowBody>
+  )
+}
+
+function BlueprintUpdatePreviewFailure({
+  onRetry,
+  reason,
+  summary,
+}: {
+  onRetry: () => Promise<void>
+  reason?: string
+  summary: string
+}) {
+  return (
+    <div
+      role="alert"
+      className="flex flex-1 flex-col items-center justify-center gap-3 font-sans text-sm text-neutral-subtle"
+    >
+      <span>{summary}</span>
+      {reason ? <span className="max-w-full whitespace-pre-wrap text-center text-xs">{reason}</span> : null}
+      <Button type="button" variant="outline" color="neutral" size="md" onClick={() => void onRetry()}>
+        <Icon iconName="arrow-rotate-right" iconStyle="regular" />
+        Retry preview
+      </Button>
+    </div>
   )
 }
 

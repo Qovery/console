@@ -1,7 +1,10 @@
 import { useParams } from '@tanstack/react-router'
 import { act } from '@testing-library/react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { useBlueprintUpdatePreviewSocket } from '../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
+import {
+  type BlueprintUpdatePreviewOutcome,
+  useBlueprintUpdatePreviewSocket,
+} from '../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
 import { BlueprintUpdatePreviewStep } from './blueprint-update-preview-step'
 
@@ -17,35 +20,45 @@ jest.mock('./blueprint-update-context', () => ({
   useBlueprintUpdateFlowContext: jest.fn(),
 }))
 
+function mockPreview({
+  outcome,
+  ...context
+}: { outcome: BlueprintUpdatePreviewOutcome } & Partial<ReturnType<typeof useBlueprintUpdateFlowContext>>) {
+  jest.mocked(useBlueprintUpdateFlowContext).mockReturnValue({
+    clusterId: 'cluster-id',
+    handleUpdate: jest.fn(),
+    isUpdateLoading: false,
+    previewId: 'preview-id',
+    requestPreview: jest.fn(),
+    retryPreview: jest.fn(),
+    service: { name: 'AWS S3 Bucket' },
+    ...context,
+  } as ReturnType<typeof useBlueprintUpdateFlowContext>)
+  jest.mocked(useBlueprintUpdatePreviewSocket).mockReturnValue({ outcome })
+}
+
+const confirmButton = () => screen.getByRole('button', { name: /Confirm & deploy update/i })
+
 describe('BlueprintUpdatePreviewStep', () => {
   beforeEach(() => {
+    jest.clearAllMocks()
     jest.mocked(useParams).mockReturnValue({ organizationId: 'organization-id' })
   })
 
-  it('requests a preview and keeps confirmation disabled while output is loading', () => {
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('requests a preview and keeps confirmation disabled while output is pending', () => {
     const requestPreview = jest.fn()
     const handleUpdate = jest.fn()
-    const context = {
-      clusterId: 'cluster-id',
-      handleUpdate,
-      isUpdateLoading: false,
-      previewId: 'preview-id',
-      requestPreview,
-      service: { name: 'AWS S3 Bucket' },
-    } as ReturnType<typeof useBlueprintUpdateFlowContext>
-
-    jest.mocked(useBlueprintUpdateFlowContext).mockReturnValue(context)
-    jest.mocked(useBlueprintUpdatePreviewSocket).mockReturnValue({
-      hasReceivedMessage: false,
-      isLoading: true,
-      rawOutput: undefined,
-    })
+    mockPreview({ outcome: { type: 'pending' }, requestPreview, handleUpdate })
 
     renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
 
     expect(screen.getByRole('heading', { name: 'Preview changes' })).toBeInTheDocument()
     expect(screen.getByLabelText('Waiting for preview output')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /Confirm & deploy update/i })).toBeDisabled()
+    expect(confirmButton()).toBeDisabled()
     expect(requestPreview).toHaveBeenCalledTimes(1)
     expect(useBlueprintUpdatePreviewSocket).toHaveBeenCalledWith({
       clusterId: 'cluster-id',
@@ -56,41 +69,53 @@ describe('BlueprintUpdatePreviewStep', () => {
   })
 
   it('renders received output and enables confirmation', () => {
-    jest.mocked(useBlueprintUpdateFlowContext).mockReturnValue({
-      clusterId: 'cluster-id',
-      handleUpdate: jest.fn(),
-      isUpdateLoading: false,
-      previewId: 'preview-id',
-      requestPreview: jest.fn(),
-      service: { name: 'AWS S3 Bucket' },
-    } as ReturnType<typeof useBlueprintUpdateFlowContext>)
-    jest.mocked(useBlueprintUpdatePreviewSocket).mockReturnValue({
-      hasReceivedMessage: true,
-      isLoading: false,
-      rawOutput: '+ created\n- removed\n~ changed',
-    })
+    mockPreview({ outcome: { type: 'diff', rawOutput: '+ created\n- removed\n~ changed' } })
 
     renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
 
     expect(screen.getByText('+ created')).toHaveClass('text-positive')
     expect(screen.getByText('- removed')).toHaveClass('text-negative')
     expect(screen.getByText('~ changed')).toHaveClass('text-info')
-    expect(screen.getByRole('button', { name: /Confirm & deploy update/i })).toBeEnabled()
+    expect(confirmButton()).toBeEnabled()
   })
 
-  it('shows an explicit retry action when preview generation fails', async () => {
-    const retryPreview = jest.fn()
+  it('states that nothing changed instead of spinning forever, and still allows confirmation', () => {
+    mockPreview({ outcome: { type: 'no-changes' } })
 
-    jest.mocked(useBlueprintUpdateFlowContext).mockReturnValue({
-      clusterId: 'cluster-id',
-      handleUpdate: jest.fn(),
-      isUpdateLoading: false,
-      previewError: true,
-      previewId: undefined,
-      requestPreview: jest.fn(),
-      retryPreview,
-      service: { name: 'AWS S3 Bucket' },
-    } as ReturnType<typeof useBlueprintUpdateFlowContext>)
+    renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
+
+    expect(screen.getByText('No infrastructure changes detected.')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Waiting for preview output')).not.toBeInTheDocument()
+    expect(confirmButton()).toBeEnabled()
+  })
+
+  it('surfaces the engine error message and blocks confirmation', () => {
+    mockPreview({ outcome: { type: 'error', message: 'terraform init failed' } })
+
+    renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Unable to generate the preview.')
+    expect(screen.getByText('terraform init failed')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Waiting for preview output')).not.toBeInTheDocument()
+    expect(confirmButton()).toBeDisabled()
+  })
+
+  it.each([
+    [{ type: 'cancelled' } as const, 'The preview was cancelled.'],
+    [{ type: 'timeout' } as const, 'The preview timed out before completing.'],
+  ])('reports the %s outcome and blocks confirmation', (outcome, summary) => {
+    mockPreview({ outcome })
+
+    renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent(summary)
+    expect(screen.queryByLabelText('Waiting for preview output')).not.toBeInTheDocument()
+    expect(confirmButton()).toBeDisabled()
+  })
+
+  it('shows an explicit retry action when the preview request itself fails', async () => {
+    const retryPreview = jest.fn()
+    mockPreview({ outcome: { type: 'pending' }, previewError: true, previewId: undefined, retryPreview })
 
     const { userEvent } = renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
 
@@ -99,24 +124,12 @@ describe('BlueprintUpdatePreviewStep', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Retry preview' }))
 
     expect(retryPreview).toHaveBeenCalledTimes(1)
-    expect(screen.getByRole('button', { name: /Confirm & deploy update/i })).toBeDisabled()
+    expect(confirmButton()).toBeDisabled()
   })
 
   it('updates the loading message while waiting for preview output', () => {
     jest.useFakeTimers()
-    jest.mocked(useBlueprintUpdateFlowContext).mockReturnValue({
-      clusterId: 'cluster-id',
-      handleUpdate: jest.fn(),
-      isUpdateLoading: false,
-      previewId: 'preview-id',
-      requestPreview: jest.fn(),
-      service: { name: 'AWS S3 Bucket' },
-    } as ReturnType<typeof useBlueprintUpdateFlowContext>)
-    jest.mocked(useBlueprintUpdatePreviewSocket).mockReturnValue({
-      hasReceivedMessage: false,
-      isLoading: true,
-      rawOutput: undefined,
-    })
+    mockPreview({ outcome: { type: 'pending' } })
 
     renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
 
@@ -127,6 +140,5 @@ describe('BlueprintUpdatePreviewStep', () => {
     })
 
     expect(screen.getByText('Analyzing the planned changes')).toBeInTheDocument()
-    jest.useRealTimers()
   })
 })
