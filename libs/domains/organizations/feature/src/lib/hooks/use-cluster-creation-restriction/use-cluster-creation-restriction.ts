@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { isActiveFreeTrial } from '@qovery/shared/util-js'
 import useCurrentCost from '../use-current-cost/use-current-cost'
 import useOrganization from '../use-organization/use-organization'
 
@@ -23,8 +24,7 @@ export function useClusterCreationRestriction({ organizationId }: UseClusterCrea
 
   // Check if user is in active free trial (used by free-trial-banner)
   const isInActiveFreeTrial = useMemo(
-    () =>
-      isFetchedCurrentCost && remainingTrialDays !== undefined && remainingTrialDays > 0 && remainingTrialDays <= 90,
+    () => isFetchedCurrentCost && isActiveFreeTrial(remainingTrialDays),
     [isFetchedCurrentCost, remainingTrialDays]
   )
 

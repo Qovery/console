@@ -9,7 +9,7 @@ import { useModal } from '@qovery/shared/ui'
 import { Button, Callout, ExternalLink, Icon, Link, Section, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
-import { costToHuman, formatPlanDisplay, pluralize } from '@qovery/shared/util-js'
+import { costToHuman, formatPlanDisplay, isActiveFreeTrial, pluralize } from '@qovery/shared/util-js'
 import { useCreditCards } from '../hooks/use-credit-cards/use-credit-cards'
 import { useCurrentCost } from '../hooks/use-current-cost/use-current-cost'
 import InvoicesListFeature from './invoices-list-feature/invoices-list-feature'
@@ -95,7 +95,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
   const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
-  const showTrialCallout = remainingTrialDay > 0 && remainingTrialDay <= 90
+  const showTrialCallout = isActiveFreeTrial(props.currentCost?.remaining_trial_day)
   const showErrorCallout = props.hasCreditCard ?? Boolean(props.creditCard)
 
   // This function is used to get the trial start date based on the remaining trial days from the API

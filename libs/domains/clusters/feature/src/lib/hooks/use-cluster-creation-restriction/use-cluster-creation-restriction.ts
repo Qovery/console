@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { isActiveFreeTrial } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseClusterCreationRestrictionProps {
@@ -18,8 +19,7 @@ export function useClusterCreationRestriction({ organizationId }: UseClusterCrea
   const billingDeploymentRestriction = organization?.billing_deployment_restriction
 
   const isInActiveFreeTrial = useMemo(
-    () =>
-      isFetchedCurrentCost && remainingTrialDays !== undefined && remainingTrialDays > 0 && remainingTrialDays <= 90,
+    () => isFetchedCurrentCost && isActiveFreeTrial(remainingTrialDays),
     [isFetchedCurrentCost, remainingTrialDays]
   )
 

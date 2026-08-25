@@ -10,7 +10,7 @@ import { countries } from '@qovery/shared/enums'
 import { Callout, IconFlag, toastError, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, InputCreditCard, InputText, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
-import { formatPlanDisplay } from '@qovery/shared/util-js'
+import { formatPlanDisplay, isActiveFreeTrial } from '@qovery/shared/util-js'
 import { fieldCardStyles, loadChargebee } from '@qovery/shared/util-payment'
 import { type SerializedError } from '@qovery/shared/utils'
 import { useAddCreditCard } from '../hooks/use-add-credit-card/use-add-credit-card'
@@ -31,8 +31,7 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
   const { mutateAsync: addCreditCard } = useAddCreditCard()
   const { showPylonForm } = useSupportChat()
 
-  const remainingTrialDay = currentCost?.remaining_trial_day
-  const isInActiveFreeTrial = remainingTrialDay !== undefined && remainingTrialDay > 0 && remainingTrialDay <= 90
+  const isInActiveFreeTrial = isActiveFreeTrial(currentCost?.remaining_trial_day)
 
   const [showAddCard, setShowAddCard] = useState(false)
   const [editInProcess, setEditInProcess] = useState(false)
