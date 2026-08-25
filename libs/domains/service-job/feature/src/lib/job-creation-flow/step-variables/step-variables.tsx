@@ -86,6 +86,7 @@ export function StepVariables() {
           onRemove={removePort}
           variables={variables}
           templateType={templateType}
+          allowEmpty
         />
       </FormProvider>
     </FunnelFlowBody>
