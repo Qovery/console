@@ -86,6 +86,37 @@ describe('EnvironmentSection', () => {
     expect(mockNavigate).not.toHaveBeenCalled()
   })
 
+  it('should select an environment row without navigating', async () => {
+    const onEnvironmentSelectionChange = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <EnvironmentSection
+        type={EnvironmentModeEnum.DEVELOPMENT}
+        items={[overview]}
+        onEnvironmentSelectionChange={onEnvironmentSelectionChange}
+      />
+    )
+
+    await userEvent.click(screen.getAllByRole('checkbox')[1])
+
+    expect(onEnvironmentSelectionChange).toHaveBeenCalledWith('env-1', true)
+    expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
+  it('should select all environments in a section', async () => {
+    const onSectionSelectionChange = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <EnvironmentSection
+        type={EnvironmentModeEnum.DEVELOPMENT}
+        items={[overview]}
+        onSectionSelectionChange={onSectionSelectionChange}
+      />
+    )
+
+    await userEvent.click(screen.getAllByRole('checkbox')[0])
+
+    expect(onSectionSelectionChange).toHaveBeenCalledWith(['env-1'], true)
+  })
+
   it('should display both action buttons when there are no services', async () => {
     const noServiceOverview = {
       ...overview,
