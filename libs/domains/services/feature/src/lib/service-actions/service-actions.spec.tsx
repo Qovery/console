@@ -103,6 +103,10 @@ describe('ServiceActions', () => {
     }
   })
 
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
   it('should match manage deployment snapshot', async () => {
     const { userEvent, baseElement } = renderWithProviders(
       <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
@@ -345,7 +349,5 @@ describe('ServiceActions', () => {
     ).resolves.toBeUndefined()
     expect(consoleErrorSpy).toHaveBeenCalledWith(error)
     expect(mockNavigate).not.toHaveBeenCalled()
-
-    consoleErrorSpy.mockRestore()
   })
 })
