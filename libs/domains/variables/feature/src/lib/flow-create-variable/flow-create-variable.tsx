@@ -33,21 +33,21 @@ export function FlowCreateVariable({
 
   return (
     <Section>
-      <div className="flex justify-between">
-        <Heading className="mb-2">Environment variables</Heading>
-        <div className="flex items-center gap-2">
-          <Button size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
-            <Icon iconName="lock-keyhole" iconStyle="regular" />
-            Add secret
-          </Button>
-          <Button size="md" onClick={() => onAdd(false)}>
-            <Icon iconName="key" />
-            Add variable
-          </Button>
-        </div>
-      </div>
-
       <form className="space-y-10" onSubmit={onSubmit}>
+        <div className="flex justify-between">
+          <Heading>Environment variables</Heading>
+          <div className="flex items-center gap-2">
+            <Button type="button" size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
+              <Icon iconName="lock-keyhole" iconStyle="regular" />
+              Add secret
+            </Button>
+            <Button type="button" size="md" onClick={() => onAdd(false)}>
+              <Icon iconName="key" />
+              Add variable
+            </Button>
+          </div>
+        </div>
+
         <p className="mr-36 text-sm text-neutral-subtle">
           {match(templateType)
             .with(
