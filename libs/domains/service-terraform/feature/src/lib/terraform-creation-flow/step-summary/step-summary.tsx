@@ -93,7 +93,7 @@ export const TerraformStepSummary = () => {
         use_cluster_credentials: generalData.use_cluster_credentials,
         dockerfile_fragment: buildDockerfileFragment(generalData),
       }
-      const servicePayload = { serviceType: ServiceTypeEnum.TERRAFORM, ...payload }
+      const servicePayload = { serviceType: 'TERRAFORM' as const, ...payload }
       let serviceId = createdServiceId
 
       if (serviceId) {
