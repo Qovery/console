@@ -7,14 +7,16 @@ import { Suspense, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { countries } from '@qovery/shared/enums'
-import { IconFlag, toastError, useModalConfirmation } from '@qovery/shared/ui'
+import { Callout, IconFlag, toastError, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, InputCreditCard, InputText, Section, Skeleton } from '@qovery/shared/ui'
-import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
+import { formatPlanDisplay, isActiveFreeTrial } from '@qovery/shared/util-js'
 import { fieldCardStyles, loadChargebee } from '@qovery/shared/util-payment'
 import { type SerializedError } from '@qovery/shared/utils'
 import { useAddCreditCard } from '../hooks/use-add-credit-card/use-add-credit-card'
 import { useBillingInfo } from '../hooks/use-billing-info/use-billing-info'
 import { useCreditCards } from '../hooks/use-credit-cards/use-credit-cards'
+import { useCurrentCost } from '../hooks/use-current-cost/use-current-cost'
 import { useDeleteCreditCard } from '../hooks/use-delete-credit-card/use-delete-credit-card'
 import { useEditBillingInfo } from '../hooks/use-edit-billing-info/use-edit-billing-info'
 import BillingDetails from './billing-details/billing-details'
@@ -24,8 +26,12 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
   const { data: creditCards = [] } = useCreditCards({ organizationId, suspense: true })
   const { mutateAsync: deleteCreditCard } = useDeleteCreditCard()
   const { data: billingInfo } = useBillingInfo({ organizationId, suspense: true })
+  const { data: currentCost } = useCurrentCost({ organizationId, suspense: true })
   const { mutateAsync: editBillingInfo } = useEditBillingInfo()
   const { mutateAsync: addCreditCard } = useAddCreditCard()
+  const { showPylonForm } = useSupportChat()
+
+  const isInActiveFreeTrial = isActiveFreeTrial(currentCost?.remaining_trial_day)
 
   const [showAddCard, setShowAddCard] = useState(false)
   const [editInProcess, setEditInProcess] = useState(false)
@@ -129,6 +135,24 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
           <SettingsHeading title="Payment method" showNeedHelp={false} />
 
           <div className="max-w-content-with-navigation-left">
+            {isInActiveFreeTrial && (
+              <Callout.Root color="sky" className="mb-6 items-start">
+                <Callout.Icon>
+                  <Icon iconName="circle-info" iconStyle="regular" />
+                </Callout.Icon>
+                <Callout.Text>
+                  <Callout.TextHeading>
+                    You are on the {formatPlanDisplay(currentCost?.plan)} during your free trial
+                  </Callout.TextHeading>
+                  <Callout.TextDescription>
+                    Activate your plan to keep this level of access after your trial ends.
+                  </Callout.TextDescription>
+                </Callout.Text>
+                <Button size="sm" variant="solid" onClick={() => showPylonForm('ask-for-activation')}>
+                  Activate my plan
+                </Button>
+              </Callout.Root>
+            )}
             <BlockContent title="Billing details">
               <div className="mb-6" data-credit-card-section>
                 <div className="mb-4">

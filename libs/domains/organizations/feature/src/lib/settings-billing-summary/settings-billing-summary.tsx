@@ -9,8 +9,7 @@ import { useModal } from '@qovery/shared/ui'
 import { Button, Callout, ExternalLink, Icon, Link, Section, Skeleton, imagesCreditCart } from '@qovery/shared/ui'
 import { dateToFormat } from '@qovery/shared/util-dates'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
-import { costToHuman, formatPlanDisplay, pluralize } from '@qovery/shared/util-js'
-import { AddCreditCardModal } from '../add-credit-card-modal/add-credit-card-modal'
+import { costToHuman, formatPlanDisplay, isActiveFreeTrial, pluralize } from '@qovery/shared/util-js'
 import { useCreditCards } from '../hooks/use-credit-cards/use-credit-cards'
 import { useCurrentCost } from '../hooks/use-current-cost/use-current-cost'
 import InvoicesListFeature from './invoices-list-feature/invoices-list-feature'
@@ -26,7 +25,7 @@ export interface PageOrganizationBillingSummaryProps {
   onShowUsageClick?: () => void
   onChangePlanClick?: () => void
   onCancelTrialClick?: () => void
-  onAddCreditCardClick?: () => void
+  onActivateAccountClick?: () => void
 }
 
 // This function is used to get the billing recurrence word to display based on the renewal date.
@@ -96,7 +95,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
   // It's not so accurate, but it's a good enough approximation for now
   const billingRecurrence = getBillingRecurrenceStr(props.currentCost?.renewal_at)
   const remainingTrialDay = props.currentCost?.remaining_trial_day ?? 0
-  const showTrialCallout = remainingTrialDay !== undefined && remainingTrialDay > 0
+  const showTrialCallout = isActiveFreeTrial(props.currentCost?.remaining_trial_day)
   const showErrorCallout = props.hasCreditCard ?? Boolean(props.creditCard)
 
   // This function is used to get the trial start date based on the remaining trial days from the API
@@ -145,7 +144,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                   {/* Add + 1 because Chargebee return 0 when the trial is ending today */}
                   {showErrorCallout
                     ? `Your free trial plan expires ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')} from now`
-                    : `No credit card registered, your account will be blocked at the end your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`}
+                    : `Your account will be blocked at the end of your trial in ${remainingTrialDay + 1} ${pluralize(remainingTrialDay + 1, 'day')}`}
                 </Callout.TextHeading>
                 {showErrorCallout ? (
                   <>
@@ -154,17 +153,19 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
                     subscription will start. You cancel your trial by deleting your organization.
                   </>
                 ) : (
-                  <>Add a payment method to avoid service interruption at the end of your trial.</>
+                  <>Activate your plan to avoid service interruption at the end of your trial.</>
                 )}
               </Callout.Text>
-              <Button
-                size="sm"
-                variant="solid"
-                color={showErrorCallout ? 'yellow' : 'red'}
-                onClick={() => (showErrorCallout ? props.onCancelTrialClick?.() : props.onAddCreditCardClick?.())}
-              >
-                {showErrorCallout ? 'Cancel free trial' : 'Add credit card'}
-              </Button>
+              <div className="flex gap-2">
+                <Button size="sm" variant="solid" color="red" onClick={() => props.onActivateAccountClick?.()}>
+                  Activate my plan
+                </Button>
+                {showErrorCallout && (
+                  <Button size="sm" variant="solid" color="yellow" onClick={() => props.onCancelTrialClick?.()}>
+                    Cancel free trial
+                  </Button>
+                )}
+              </div>
             </Callout.Root>
           )}
           <div className="mb-3 flex gap-2">
@@ -235,7 +236,7 @@ function SettingsBillingSummaryContent() {
 
   const { data: creditCards = [] } = useCreditCards({ organizationId, suspense: true })
   const { data: currentCost } = useCurrentCost({ organizationId, suspense: true })
-  const { showChat } = useSupportChat()
+  const { showChat, showPylonForm } = useSupportChat()
   const { isQoveryAdminUser } = useUserRole()
 
   const openPromoCodeModal = () => {
@@ -274,10 +275,8 @@ function SettingsBillingSummaryContent() {
     navigate({ to: '/organization/$organizationId/settings/danger-zone', params: { organizationId } })
   }
 
-  const handleAddCreditCardClick = () => {
-    openModal({
-      content: <AddCreditCardModal organizationId={organizationId} />,
-    })
+  const handleActivateAccountClick = () => {
+    showPylonForm('ask-for-activation')
   }
 
   return (
@@ -289,7 +288,7 @@ function SettingsBillingSummaryContent() {
       onShowUsageClick={openShowUsageModal}
       onChangePlanClick={handleChangePlanClick}
       onCancelTrialClick={handleCancelTrialClick}
-      onAddCreditCardClick={handleAddCreditCardClick}
+      onActivateAccountClick={handleActivateAccountClick}
     />
   )
 }

@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import useCreditCards from '../use-credit-cards/use-credit-cards'
+import { isActiveFreeTrial } from '@qovery/shared/util-js'
 import useCurrentCost from '../use-current-cost/use-current-cost'
 import useOrganization from '../use-organization/use-organization'
 
@@ -11,14 +11,12 @@ export interface UseClusterCreationRestrictionProps {
  * Hook to determine if cluster creation should be restricted.
  *
  * Uses the backend-provided `billing_deployment_restriction` field on the organization:
- * - null → no restriction
- * - 'NO_CREDIT_CARD' → free trial restriction (blocks managed cluster creation, allows demo)
+ * - null or 'NO_CREDIT_CARD' → no restriction (free trial gives full product access, credit card not required)
  * - any other string → blocks all deployments
  */
 export function useClusterCreationRestriction({ organizationId }: UseClusterCreationRestrictionProps) {
   const { data: organization, isFetched: isFetchedOrganization } = useOrganization({ organizationId })
   const { data: currentCost, isFetched: isFetchedCurrentCost } = useCurrentCost({ organizationId })
-  const { data: creditCards = [], isFetched: isFetchedCreditCards } = useCreditCards({ organizationId })
 
   const remainingTrialDays = currentCost?.remaining_trial_day
 
@@ -26,27 +24,23 @@ export function useClusterCreationRestriction({ organizationId }: UseClusterCrea
 
   // Check if user is in active free trial (used by free-trial-banner)
   const isInActiveFreeTrial = useMemo(
-    () =>
-      isFetchedCurrentCost && remainingTrialDays !== undefined && remainingTrialDays > 0 && remainingTrialDays <= 90,
+    () => isFetchedCurrentCost && isActiveFreeTrial(remainingTrialDays),
     [isFetchedCurrentCost, remainingTrialDays]
   )
 
   // Cluster creation is restricted when the backend sets a billing deployment restriction
   const isClusterCreationRestricted = useMemo(
-    () => isFetchedOrganization && billingDeploymentRestriction != null,
+    () =>
+      isFetchedOrganization &&
+      billingDeploymentRestriction != null &&
+      billingDeploymentRestriction !== 'NO_CREDIT_CARD',
     [isFetchedOrganization, billingDeploymentRestriction]
   )
-
-  const isNoCreditCardRestriction = billingDeploymentRestriction === 'NO_CREDIT_CARD'
-
-  const hasNoCreditCard = isFetchedCreditCards && creditCards.length === 0
 
   const isLoading = !isFetchedOrganization || !isFetchedCurrentCost
 
   return {
     isClusterCreationRestricted,
-    isNoCreditCardRestriction,
-    hasNoCreditCard,
     isLoading,
     isInActiveFreeTrial,
     billingDeploymentRestriction,
