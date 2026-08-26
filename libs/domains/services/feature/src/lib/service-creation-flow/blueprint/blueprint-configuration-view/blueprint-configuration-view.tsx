@@ -4,7 +4,6 @@ import { type Value } from '@qovery/shared/interfaces'
 import { Button, FunnelFlowBody, Icon, InputSelect, InputText } from '@qovery/shared/ui'
 import {
   type BlueprintFieldValue,
-  formatFieldLabel,
   getBlueprintFieldPath,
   getFieldValidationError,
   getStringFieldValue,
@@ -16,6 +15,7 @@ import { usePrefetchBlueprintCatalogServiceManifest } from '../../../hooks/use-b
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
 import { sortBlueprintMajorVersions } from '../blueprint-creation-utils/blueprint-creation-utils'
 import { useBlueprintManifestFields } from '../blueprint-manifest-context/blueprint-manifest-context'
+import { BlueprintOverridableFieldInput } from './blueprint-creation-components/blueprint-overridable-field-input/blueprint-overridable-field-input'
 import { BlueprintSection } from './blueprint-creation-components/blueprint-section/blueprint-section'
 import { OverridesSectionCard } from './blueprint-creation-components/overrides-section-card/overrides-section-card'
 
@@ -217,6 +217,7 @@ function BlueprintOverridesSection({ currentSection, onClick }: BlueprintOverrid
 
 function OverridesSectionContent() {
   const { form } = useBlueprintCreateContext()
+  const { environmentId = '' } = useParams({ strict: false })
   const { optionalBlueprintFields, overridableContextBlueprintFields } = useBlueprintManifestFields()
   const blueprintFieldValues = form.watch('fields')
   const updateFieldValue = (name: string, value: BlueprintFieldValue) => {
@@ -236,14 +237,13 @@ function OverridesSectionContent() {
         />
       ))}
       {overridableContextBlueprintFields.map((field, index) => (
-        <InputText
+        <BlueprintOverridableFieldInput
           key={field.name}
-          name={field.name}
-          label={formatFieldLabel(field.name)}
+          field={field}
+          environmentId={environmentId}
           value={getStringFieldValue(blueprintFieldValues[field.name])}
-          hint={field.source ? `Automatically sourced from ${field.source}` : undefined}
           autoFocus={optionalBlueprintFields.length === 0 && index === 0}
-          onChange={(event) => updateFieldValue(field.name, event.currentTarget.value)}
+          onChange={(value) => updateFieldValue(field.name, value)}
         />
       ))}
     </>
