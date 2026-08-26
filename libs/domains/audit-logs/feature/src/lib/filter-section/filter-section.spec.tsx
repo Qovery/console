@@ -1,3 +1,4 @@
+import { OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type DecodedValueMap } from 'use-query-params'
 import { type AuditLogsParams } from '@qovery/shared/router'
 import { type SelectedItem } from '@qovery/shared/ui'
@@ -72,6 +73,30 @@ describe('FilterSection', () => {
 
     screen.getByText(/Target Type:/)
     screen.getByText(/Application/)
+  })
+
+  it('should render Agent task in target type and target badges', () => {
+    const queryParamsWithTarget = {
+      targetId: 'target-123',
+      targetType: OrganizationEventTargetType.AGENTIC_WORKFLOW,
+    }
+    const selectedItems: SelectedItem[] = [
+      {
+        filterKey: 'target_id',
+        item: { value: 'target-123', name: 'Review pull requests' },
+      },
+    ]
+
+    renderWithProviders(
+      <FilterSection
+        {...props}
+        queryParams={queryParamsWithTarget as DecodedValueMap<AuditLogsParams>}
+        targetTypeSelectedItems={selectedItems}
+      />
+    )
+
+    expect(screen.getByRole('button', { name: /Target Type: Agent task/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /Agent task: Review pull requests/ })).toBeInTheDocument()
   })
 
   it('should render user badge when triggeredBy is set', () => {

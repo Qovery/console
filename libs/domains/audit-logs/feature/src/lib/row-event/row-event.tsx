@@ -13,6 +13,7 @@ import { IconEnum } from '@qovery/shared/enums'
 import { CodeDiffEditor, CodeEditor, type DiffStats, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { getTargetTypeLabel } from '../utils/target-type-selection-utils'
 
 export interface RowEventProps {
   event: OrganizationEventResponse
@@ -312,7 +313,7 @@ export function RowEvent(props: RowEventProps) {
         </div>
         <div className="min-w-0 px-4 text-neutral-subtle">
           <Skeleton height={10} width={80} show={isPlaceholder}>
-            <>{upperCaseFirstLetter(event.target_type ?? '')?.replace(/_/g, ' ')}</>
+            <>{getTargetTypeLabel(event.target_type ?? '')}</>
           </Skeleton>
         </div>
         <div className="min-w-0 px-4">
