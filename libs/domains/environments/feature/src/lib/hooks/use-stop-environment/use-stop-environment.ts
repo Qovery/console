@@ -3,7 +3,15 @@ import { useNavigate } from '@tanstack/react-router'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useStopEnvironment({ projectId, logsLink }: { projectId: string; logsLink?: string }) {
+export function useStopEnvironment({
+  projectId,
+  logsLink,
+  notifyOnSuccess = true,
+}: {
+  projectId: string
+  logsLink?: string
+  notifyOnSuccess?: boolean
+}) {
   const queryClient = useQueryClient()
   const navigate = useNavigate()
 
@@ -21,15 +29,17 @@ export function useStopEnvironment({ projectId, logsLink }: { projectId: string;
       })
     },
     meta: {
-      notifyOnSuccess: {
-        title: 'Your environment is being stopped',
-        ...(logsLink
-          ? {
-              labelAction: 'See deployment logs',
-              callback: () => navigate({ to: logsLink }),
-            }
-          : {}),
-      },
+      notifyOnSuccess: notifyOnSuccess
+        ? {
+            title: 'Your environment is being stopped',
+            ...(logsLink
+              ? {
+                  labelAction: 'See deployment logs',
+                  callback: () => navigate({ to: logsLink }),
+                }
+              : {}),
+          }
+        : false,
       notifyOnError: true,
     },
   })

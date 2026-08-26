@@ -10,10 +10,9 @@ import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CloudProviderEnum } from 'qovery-typescript-axios'
 import { type MutableRefObject, type ReactElement, cloneElement, useState } from 'react'
 import { match } from 'ts-pattern'
-import { Button, Link as ButtonLink, Callout, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
+import { Button, Callout, Heading, Icon, Section, useModal } from '@qovery/shared/ui'
 import { useClickAway, useSupportChat } from '@qovery/shared/util-hooks'
 import { twMerge } from '@qovery/shared/util-js'
-import { AddCreditCardModalFeature } from '../../add-credit-card-modal-feature/add-credit-card-modal-feature'
 import { ClusterInstallationGuideModal } from '../../cluster-installation-guide-modal/cluster-installation-guide-modal'
 import { useClusterCreationRestriction } from '../../hooks/use-cluster-creation-restriction/use-cluster-creation-restriction'
 
@@ -409,7 +408,7 @@ function CardCluster({ title, description, icon, index = 1, ...props }: CardClus
 export function ClusterNew() {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
-  const { isClusterCreationRestricted, isNoCreditCardRestriction } = useClusterCreationRestriction({
+  const { isClusterCreationRestricted } = useClusterCreationRestriction({
     organizationId,
   })
 
@@ -430,17 +429,7 @@ export function ClusterNew() {
       ),
     })
 
-  const openCreditCardModal = () =>
-    openModal({
-      content: <AddCreditCardModalFeature organizationId={organizationId} />,
-    })
-
-  const disabledCloudProviderProps: RestrictedActionProps = isClusterCreationRestricted
-    ? {
-        disabled: true,
-        onDisabledClick: isNoCreditCardRestriction ? openCreditCardModal : undefined,
-      }
-    : {}
+  const disabledCloudProviderProps: RestrictedActionProps = isClusterCreationRestricted ? { disabled: true } : {}
 
   const cloudProviders: CardClusterProps[] = [
     {
@@ -637,46 +626,20 @@ export function ClusterNew() {
           <Heading>Or choose your hosting mode</Heading>
           <p className="text-sm text-neutral-subtle">Manage your infrastructure across different hosting mode.</p>
         </div>
-        {isClusterCreationRestricted &&
-          (isNoCreditCardRestriction ? (
-            <Callout.Root color="sky" className="mb-5 items-start">
-              <Callout.Icon>
-                <Icon iconName="circle-info" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Add a credit card to create a cluster</Callout.TextHeading>
-                <Callout.TextDescription>
-                  You need to add a credit card to your account before creating a cluster on a cloud provider. You
-                  won&apos;t be charged until your trial ends.
-                  <br />
-                  <ButtonLink
-                    as="button"
-                    color="neutral"
-                    variant="outline"
-                    className="mt-2"
-                    to="/organization/$organizationId/settings/billing-summary"
-                    params={{ organizationId }}
-                  >
-                    Add credit card
-                    <Icon iconName="arrow-right" iconStyle="regular" />
-                  </ButtonLink>
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
-          ) : (
-            <Callout.Root color="red" className="mb-5">
-              <Callout.Icon>
-                <Icon iconName="circle-exclamation" iconStyle="regular" />
-              </Callout.Icon>
-              <Callout.Text>
-                <Callout.TextHeading>Cluster creation is restricted</Callout.TextHeading>
-                <Callout.TextDescription>
-                  Your organization has a billing restriction that prevents cluster creation. Please contact support to
-                  resolve this issue.
-                </Callout.TextDescription>
-              </Callout.Text>
-            </Callout.Root>
-          ))}
+        {isClusterCreationRestricted && (
+          <Callout.Root color="red" className="mb-5">
+            <Callout.Icon>
+              <Icon iconName="circle-exclamation" iconStyle="regular" />
+            </Callout.Icon>
+            <Callout.Text>
+              <Callout.TextHeading>Cluster creation is restricted</Callout.TextHeading>
+              <Callout.TextDescription>
+                Your organization has a billing restriction that prevents cluster creation. Please contact support to
+                resolve this issue.
+              </Callout.TextDescription>
+            </Callout.Text>
+          </Callout.Root>
+        )}
         <div className="flex w-[calc(100%+16px)] flex-wrap gap-4">
           {cloudProviders.slice(1).map((props, index) => (
             <CardCluster key={props.title} index={index} {...props} />

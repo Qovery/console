@@ -7,6 +7,7 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useAddCreditCardHook from '../hooks/use-add-credit-card/use-add-credit-card'
 import * as useBillingInfoHook from '../hooks/use-billing-info/use-billing-info'
 import * as useCreditCardsHook from '../hooks/use-credit-cards/use-credit-cards'
+import * as useCurrentCostHook from '../hooks/use-current-cost/use-current-cost'
 import * as useDeleteCreditCardHook from '../hooks/use-delete-credit-card/use-delete-credit-card'
 import * as useEditBillingInfoHook from '../hooks/use-edit-billing-info/use-edit-billing-info'
 import { SettingsBillingDetails } from './settings-billing-details'
@@ -15,6 +16,7 @@ const mockOpenModalConfirmation = jest.fn()
 const mockDeleteCreditCard = jest.fn().mockResolvedValue(undefined)
 const mockEditBillingInfo = jest.fn().mockResolvedValue(undefined)
 const mockAddCreditCard = jest.fn().mockResolvedValue(undefined)
+const mockShowPylonForm = jest.fn()
 
 const defaultBillingInfo: BillingInfoRequest = {
   first_name: 'John',
@@ -34,6 +36,7 @@ const mockCreditCards = creditCardsFactoryMock(3)
 const useAddCreditCardMock = jest.spyOn(useAddCreditCardHook, 'useAddCreditCard') as jest.Mock
 const useBillingInfoMock = jest.spyOn(useBillingInfoHook, 'useBillingInfo') as jest.Mock
 const useCreditCardsMock = jest.spyOn(useCreditCardsHook, 'useCreditCards') as jest.Mock
+const useCurrentCostMock = jest.spyOn(useCurrentCostHook, 'useCurrentCost') as jest.Mock
 const useDeleteCreditCardMock = jest.spyOn(useDeleteCreditCardHook, 'useDeleteCreditCard') as jest.Mock
 const useEditBillingInfoMock = jest.spyOn(useEditBillingInfoHook, 'useEditBillingInfo') as jest.Mock
 const fieldCardStylesSpy = jest.spyOn(chargebeeUtils, 'fieldCardStyles')
@@ -45,6 +48,7 @@ jest.mock('@tanstack/react-router', () => ({
 
 jest.mock('@qovery/shared/util-hooks', () => ({
   useDocumentTitle: jest.fn(),
+  useSupportChat: () => ({ showPylonForm: mockShowPylonForm }),
 }))
 
 jest.mock('@qovery/shared/ui', () => ({
@@ -84,6 +88,7 @@ describe('SettingsBillingDetails', () => {
     jest.clearAllMocks()
     useCreditCardsMock.mockReturnValue({ data: mockCreditCards })
     useBillingInfoMock.mockReturnValue({ data: defaultBillingInfo })
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 0 } })
     useDeleteCreditCardMock.mockReturnValue({ mutateAsync: mockDeleteCreditCard })
     useEditBillingInfoMock.mockReturnValue({ mutateAsync: mockEditBillingInfo })
     useAddCreditCardMock.mockReturnValue({ mutateAsync: mockAddCreditCard })
@@ -172,5 +177,33 @@ describe('SettingsBillingDetails', () => {
     renderWithProviders(<SettingsBillingDetails />)
 
     expect(screen.getByTestId('placeholder-credit-card')).toBeInTheDocument()
+  })
+
+  it('should show a plan activation banner during an active free trial while still allowing self-service card management', async () => {
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 5 } })
+
+    const { userEvent } = renderWithProviders(<SettingsBillingDetails />)
+
+    expect(screen.getByText(/You are on the Business plan during your free trial/)).toBeInTheDocument()
+    expect(screen.getAllByTestId('credit-card-row')).toHaveLength(3)
+
+    await userEvent.click(screen.getByText('Activate my plan'))
+    expect(mockShowPylonForm).toHaveBeenCalledWith('ask-for-activation')
+  })
+
+  it('should not show the plan activation banner once the free trial is over', () => {
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 0 } })
+
+    renderWithProviders(<SettingsBillingDetails />)
+
+    expect(screen.queryByText(/You are on the Business plan during your free trial/)).not.toBeInTheDocument()
+  })
+
+  it('should not show the plan activation banner beyond the 90-day trial window', () => {
+    useCurrentCostMock.mockReturnValue({ data: { plan: 'BUSINESS_2025', remaining_trial_day: 91 } })
+
+    renderWithProviders(<SettingsBillingDetails />)
+
+    expect(screen.queryByText(/You are on the Business plan during your free trial/)).not.toBeInTheDocument()
   })
 })

@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
+import { isActiveFreeTrial } from '@qovery/shared/util-js'
 import { queries } from '@qovery/state/util-queries'
 
 export interface UseClusterCreationRestrictionProps {
@@ -13,32 +14,27 @@ export function useClusterCreationRestriction({ organizationId }: UseClusterCrea
   const { data: currentCost, isFetched: isFetchedCurrentCost } = useQuery({
     ...queries.organizations.currentCost({ organizationId }),
   })
-  const { data: creditCards = [], isFetched: isFetchedCreditCards } = useQuery({
-    ...queries.organizations.creditCards({ organizationId }),
-  })
 
   const remainingTrialDays = currentCost?.remaining_trial_day
   const billingDeploymentRestriction = organization?.billing_deployment_restriction
 
   const isInActiveFreeTrial = useMemo(
-    () =>
-      isFetchedCurrentCost && remainingTrialDays !== undefined && remainingTrialDays > 0 && remainingTrialDays <= 90,
+    () => isFetchedCurrentCost && isActiveFreeTrial(remainingTrialDays),
     [isFetchedCurrentCost, remainingTrialDays]
   )
 
   const isClusterCreationRestricted = useMemo(
-    () => isFetchedOrganization && billingDeploymentRestriction != null,
+    () =>
+      isFetchedOrganization &&
+      billingDeploymentRestriction != null &&
+      billingDeploymentRestriction !== 'NO_CREDIT_CARD',
     [isFetchedOrganization, billingDeploymentRestriction]
   )
 
-  const isNoCreditCardRestriction = billingDeploymentRestriction === 'NO_CREDIT_CARD'
-  const hasNoCreditCard = isFetchedCreditCards && creditCards.length === 0
   const isLoading = !isFetchedOrganization || !isFetchedCurrentCost
 
   return {
     isClusterCreationRestricted,
-    isNoCreditCardRestriction,
-    hasNoCreditCard,
     isLoading,
     isInActiveFreeTrial,
     billingDeploymentRestriction,

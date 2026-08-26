@@ -7,8 +7,10 @@ let mockService = helmFactoryMock(1)[0]
 const mockEnvironment = environmentFactoryMock(1)[0]
 const mockNavigate = jest.fn()
 const mockDeployService = jest.fn()
+const mockDeleteService = jest.fn()
 const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
+const mockOpenServiceRemoveModal = jest.fn()
 const mockCopyToClipboard = jest.fn()
 
 let mockDeploymentStatus = {
@@ -74,6 +76,19 @@ jest.mock('../hooks/use-deploy-service/use-deploy-service', () => ({
   }),
 }))
 
+jest.mock('../hooks/use-delete-service/use-delete-service', () => ({
+  useDeleteService: () => ({
+    mutateAsync: mockDeleteService,
+  }),
+}))
+
+jest.mock('../service-remove-modal/use-service-remove-modal/use-service-remove-modal', () => ({
+  __esModule: true,
+  default: () => ({
+    openServiceRemoveModal: mockOpenServiceRemoveModal,
+  }),
+}))
+
 describe('ServiceActions', () => {
   beforeEach(() => {
     jest.clearAllMocks()
@@ -86,6 +101,10 @@ describe('ServiceActions', () => {
     mockRunningState = {
       state: 'RUNNING',
     }
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
   })
 
   it('should match manage deployment snapshot', async () => {
@@ -224,5 +243,111 @@ describe('ServiceActions', () => {
         name: mockService.name,
       })
     )
+  })
+
+  it('should use a simple delete confirmation when the service has never been deployed', async () => {
+    mockDeploymentStatus = {
+      state: 'READY',
+      service_deployment_status: 'NEVER_DEPLOYED',
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /remove service/i }))
+
+    expect(mockOpenModalConfirmation).toHaveBeenCalledWith(
+      expect.objectContaining({
+        title: 'Delete service',
+        name: mockService.name,
+        confirmationMethod: 'action',
+      })
+    )
+    expect(mockOpenServiceRemoveModal).not.toHaveBeenCalled()
+
+    const { action } = mockOpenModalConfirmation.mock.calls[0][0]
+    await action()
+
+    expect(mockDeleteService).toHaveBeenCalledWith({
+      serviceId: mockService.id,
+      serviceType: mockService.serviceType,
+    })
+    expect(mockNavigate).toHaveBeenCalledWith({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+      params: {
+        organizationId: mockEnvironment.organization.id,
+        projectId: mockEnvironment.project.id,
+        environmentId: mockEnvironment.id,
+      },
+    })
+  })
+
+  it('should propagate deletion errors from the confirmation modal action', async () => {
+    const error = new Error('Deletion failed')
+    mockDeleteService.mockRejectedValueOnce(error)
+    mockDeploymentStatus = {
+      state: 'READY',
+      service_deployment_status: 'NEVER_DEPLOYED',
+    }
+
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /remove service/i }))
+
+    const { action } = mockOpenModalConfirmation.mock.calls[0][0]
+
+    await expect(action()).rejects.toBe(error)
+    expect(mockNavigate).not.toHaveBeenCalled()
+  })
+
+  it('should keep the remove modal when the service has already been deployed', async () => {
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /remove service/i }))
+
+    expect(mockOpenServiceRemoveModal).toHaveBeenCalledWith(expect.objectContaining({ title: 'Remove service' }))
+    expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
+  })
+
+  it('should handle deletion errors after the remove modal has closed', async () => {
+    const error = new Error('Deletion failed')
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    mockDeleteService.mockRejectedValueOnce(error)
+
+    const { userEvent } = renderWithProviders(
+      <ServiceActions serviceId={mockService.id} environment={mockEnvironment} />,
+      {
+        container: document.body,
+      }
+    )
+
+    await userEvent.click(screen.getByLabelText(/other actions/i))
+    await userEvent.click(screen.getByRole('menuitem', { name: /remove service/i }))
+
+    const { actions } = mockOpenServiceRemoveModal.mock.calls[0][0]
+    const deleteAction = actions.find(({ id }: { id: string }) => id === 'delete')
+
+    await expect(
+      deleteAction.callback({ action: 'delete', name: 'delete', skipDestroy: false })
+    ).resolves.toBeUndefined()
+    expect(consoleErrorSpy).toHaveBeenCalledWith(error)
+    expect(mockNavigate).not.toHaveBeenCalled()
   })
 })
