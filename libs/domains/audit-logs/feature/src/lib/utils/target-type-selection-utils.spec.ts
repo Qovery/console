@@ -1,6 +1,6 @@
 import { OrganizationEventApi, OrganizationEventTargetType } from 'qovery-typescript-axios'
 import { type SelectedItem } from '@qovery/shared/ui'
-import { computeMenusToDisplay } from './target-type-selection-utils'
+import { computeMenusToDisplay, getTargetTypeLabel } from './target-type-selection-utils'
 
 const mockGetOrganizationEventTargets = jest.spyOn(OrganizationEventApi.prototype, 'getOrganizationEventTargets')
 
@@ -8,7 +8,7 @@ const targetTypeItem: SelectedItem = {
   filterKey: 'target_type',
   item: {
     value: OrganizationEventTargetType.AGENTIC_WORKFLOW,
-    name: 'Agentic workflow',
+    name: 'Agent task',
   },
 }
 
@@ -83,5 +83,15 @@ describe('computeMenusToDisplay', () => {
       'environment-1',
       undefined
     )
+  })
+})
+
+describe('getTargetTypeLabel', () => {
+  it('uses the Agent task product name for the agentic workflow API type', () => {
+    expect(getTargetTypeLabel(OrganizationEventTargetType.AGENTIC_WORKFLOW)).toBe('Agent task')
+  })
+
+  it('formats other API target types', () => {
+    expect(getTargetTypeLabel(OrganizationEventTargetType.CONTAINER_REGISTRY)).toBe('Container registry')
   })
 })

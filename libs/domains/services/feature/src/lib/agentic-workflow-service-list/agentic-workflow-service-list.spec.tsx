@@ -70,7 +70,7 @@ describe('AgenticWorkflowServiceList', () => {
     })
     renderWithProviders(<AgenticWorkflowServiceList environment={environment} />)
 
-    expect(screen.getByRole('heading', { name: 'Agentic workflows' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Agent tasks' })).toBeInTheDocument()
     expect(screen.getByText('Review pull requests')).toBeInTheDocument()
     expect(screen.getByText('Triage incidents')).toBeInTheDocument()
     expect(screen.getByText('Enabled')).toBeInTheDocument()
