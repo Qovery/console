@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams } from '@tanstack/react-router'
 import { EnvironmentModeEnum, type EnvironmentOverviewResponse, StateEnum } from 'qovery-typescript-axios'
-import { type KeyboardEvent, type MouseEvent } from 'react'
+import { type KeyboardEvent, type MouseEvent, useMemo } from 'react'
 import { match } from 'ts-pattern'
 import { ClusterAvatar } from '@qovery/domains/clusters/feature'
 import { Button, Checkbox, DeploymentAction, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
@@ -187,6 +187,11 @@ function EnvRow({
   )
 }
 
+function lastOperationTimestamp(overview: EnvironmentOverviewResponse) {
+  const lastDeploymentDate = overview.deployment_status?.last_deployment_date
+  return lastDeploymentDate ? new Date(lastDeploymentDate).getTime() : 0
+}
+
 export function EnvironmentSection({
   type,
   items,
@@ -208,6 +213,16 @@ export function EnvironmentSection({
     .with('DEVELOPMENT', () => 'Development')
     .with('PREVIEW', () => 'Ephemeral')
     .exhaustive()
+
+  const sortedItems = useMemo(() => {
+    if (type !== EnvironmentModeEnum.PREVIEW) {
+      return items
+    }
+
+    return [...items].sort(
+      (environmentA, environmentB) => lastOperationTimestamp(environmentB) - lastOperationTimestamp(environmentA)
+    )
+  }, [items, type])
 
   const EmptyState = () =>
     match(type)
@@ -295,7 +310,7 @@ export function EnvironmentSection({
           </Table.Header>
 
           <Table.Body className="divide-y divide-neutral">
-            {items.map((environmentOverview) => (
+            {sortedItems.map((environmentOverview) => (
               <EnvRow
                 key={environmentOverview.id}
                 overview={environmentOverview}

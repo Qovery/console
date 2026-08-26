@@ -39,7 +39,12 @@ jest.mock('./environments-table-action-bar', () => ({
   EnvironmentsTableActionBar: () => <div data-testid="environments-table-action-bar" />,
 }))
 
-function environmentOverview(id: string, mode: EnvironmentModeEnum, name: string): EnvironmentOverviewResponse {
+function environmentOverview(
+  id: string,
+  mode: EnvironmentModeEnum,
+  name: string,
+  lastDeploymentDate?: string
+): EnvironmentOverviewResponse {
   return {
     id,
     mode,
@@ -48,6 +53,7 @@ function environmentOverview(id: string, mode: EnvironmentModeEnum, name: string
       service_count: 0,
       managed_by: 'QOVERY',
     },
+    ...(lastDeploymentDate ? { deployment_status: { last_deployment_date: lastDeploymentDate } } : {}),
   } as EnvironmentOverviewResponse
 }
 
@@ -91,6 +97,25 @@ describe('EnvironmentsTable', () => {
       'Alpha',
       'Zulu',
       'Beta',
+    ])
+  })
+
+  it('should sort ephemeral environments by last operation with newer environments first', () => {
+    mockUseProject.mockReturnValue({ data: { name: 'Project Alpha' } })
+    mockUseEnvironmentsOverview.mockReturnValue({
+      data: [
+        environmentOverview('env-1', EnvironmentModeEnum.PREVIEW, 'Bravo', '2024-03-01T00:00:00Z'),
+        environmentOverview('env-2', EnvironmentModeEnum.PREVIEW, 'Alpha', '2024-01-01T00:00:00Z'),
+        environmentOverview('env-3', EnvironmentModeEnum.PREVIEW, 'Charlie', '2024-02-01T00:00:00Z'),
+      ],
+    })
+
+    renderWithProviders(<EnvironmentsTable />)
+
+    expect(screen.getAllByRole('link', { name: /^(Alpha|Bravo|Charlie)$/ }).map((link) => link.textContent)).toEqual([
+      'Bravo',
+      'Charlie',
+      'Alpha',
     ])
   })
 
