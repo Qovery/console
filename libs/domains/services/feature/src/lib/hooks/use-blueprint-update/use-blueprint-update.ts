@@ -6,20 +6,22 @@ export interface UseBlueprintUpdateProps {
   blueprintId: string
   enabled?: boolean
   suspense?: boolean
-  useErrorBoundary?: boolean
+  // Whether a failure is thrown to the nearest error boundary. `suspense` turns this on by default
+  // in react-query v4; pass false to keep the failure local to the caller.
+  throwOnError?: boolean
 }
 
 export function useBlueprintUpdate({
   blueprintId,
   enabled = true,
   suspense = false,
-  useErrorBoundary,
+  throwOnError,
 }: UseBlueprintUpdateProps) {
   return useQuery({
     ...queries.services.blueprintUpdate({ blueprintId }),
     enabled,
     suspense,
-    useErrorBoundary,
+    useErrorBoundary: throwOnError,
     // A 404 means the catalog does not publish this service's tag (prerelease or retired major).
     // That is deterministic, and retrying it only holds the overview on its suspense fallback.
     // Every other failure can be transient, so it gets one quick retry — the default exponential

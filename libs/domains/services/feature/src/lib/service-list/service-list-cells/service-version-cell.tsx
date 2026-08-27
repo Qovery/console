@@ -25,33 +25,16 @@ import {
 import { Badge, ExternalLink, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
-import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
+import { useBlueprintUpdateState } from '../../hooks/use-blueprint-update-state/use-blueprint-update-state'
 import LastCommit from '../../last-commit/last-commit'
 import LastVersion from '../../last-version/last-version'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
 import { BlueprintRcBadge } from '../../service-blueprint-update-flow/blueprint-rc-badge'
 import { BlueprintUpdateBadge } from '../../service-blueprint-update-flow/blueprint-update-badge'
-import {
-  getBlueprintServiceVersion,
-  isBlueprintRcTag,
-} from '../../service-blueprint-update-flow/blueprint-update-utils'
+import { getBlueprintServiceVersion } from '../../service-blueprint-update-flow/blueprint-update-utils'
 
 type ServiceVersionCellProps = {
   service: AnyService
-}
-
-// The update check is the only endpoint that reports a blueprint's tag, and it answers 404 for any
-// tag the catalog does not publish — a prerelease, but a retired major too. `localTag` is the tag
-// read off the service itself, so a prerelease stays recognisable when the check cannot answer.
-function useBlueprintUpdateState(blueprintId: string, localTag?: string) {
-  const { data: blueprintUpdate, isLoading, isError } = useBlueprintUpdate({ blueprintId })
-
-  return {
-    blueprintUpdate,
-    isLoading,
-    isError,
-    isRc: isBlueprintRcTag(blueprintUpdate?.current_tag ?? localTag),
-  }
 }
 
 function BlueprintVersionInfo({
@@ -63,7 +46,10 @@ function BlueprintVersionInfo({
 }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false }) ?? {}
   // The engine pins the generated service to the blueprint tag as its git branch.
-  const { blueprintUpdate, isLoading, isRc } = useBlueprintUpdateState(service.blueprint_id, gitRepository.branch)
+  const { blueprintUpdate, isLoading, isRc } = useBlueprintUpdateState({
+    blueprintId: service.blueprint_id,
+    localTag: gitRepository.branch,
+  })
   const version = blueprintUpdate?.current_tag ? getBlueprintServiceVersion(blueprintUpdate.current_tag) : undefined
 
   return (
@@ -118,17 +104,21 @@ function BlueprintVersionInfo({
   )
 }
 
-// A HELM blueprint's linked service has no git source, so it renders through `helmInfo` and never
-// reaches `BlueprintVersionInfo` — and has nowhere to carry its tag either, leaving the update
-// check as the only source. Until it answers — and if it never does — the chart version stays
-// visible but without its "deploy another version" action: the service may well be on a prerelease
-// pin whose tag is gone once its pull request closes, and there is no way from here to tell that
-// apart. In flight the console knows exactly as little as it does on failure, and this endpoint
-// reads catalog.json plus two manifests from GitHub, so that is not a brief window.
+// Any blueprint whose manifest declares a helm engine produces a Helm service, whatever provider
+// directory it sits in — q-core picks the service type off the engine spec, not the tag. Those
+// services have no git source, so they render through `helmInfo` and never reach
+// `BlueprintVersionInfo`, and nothing on them carries the blueprint tag either: the update check is
+// the only source.
+//
+// Until it answers — and if it never does — the chart version stays visible but without its "deploy
+// another version" action: the service may well be on a prerelease pin whose tag is gone once its
+// pull request closes, and there is no way from here to tell that apart. In flight the console
+// knows exactly as little as it does on failure, and this endpoint reads catalog.json plus two
+// manifests from GitHub, so that is not a brief window.
 //
 // The chart version itself comes off the service, so it renders straight away: waiting on the
-// request would put a skeleton in front of data the console already holds, on every helm row.
-function BlueprintHelmVersionSlot({
+// request would put a skeleton in front of data the console already holds, on every such row.
+function BlueprintChartVersionSlot({
   service,
   version,
   organizationId,
@@ -139,7 +129,7 @@ function BlueprintHelmVersionSlot({
   organizationId: string
   projectId: string
 }) {
-  const { isError, isLoading, isRc } = useBlueprintUpdateState(service.blueprint_id)
+  const { isError, isLoading, isRc } = useBlueprintUpdateState({ blueprintId: service.blueprint_id })
 
   if (isRc) return <BlueprintRcBadge />
 
@@ -310,7 +300,7 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
         {service.serviceType === 'HELM' && (
           <div className="shrink-0">
             {isBlueprintService(service) ? (
-              <BlueprintHelmVersionSlot
+              <BlueprintChartVersionSlot
                 service={service}
                 version={helmRepository.chart_version}
                 organizationId={organizationId}

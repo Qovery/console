@@ -458,7 +458,7 @@ describe('ServiceHeader', () => {
     expect(mockUseBlueprintUpdate).toHaveBeenCalledWith({
       blueprintId: 'blueprint-id',
       suspense: true,
-      useErrorBoundary: false,
+      throwOnError: false,
     })
     expect(screen.getByText('v8')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /qovery-blueprints/ })).toHaveAttribute(
