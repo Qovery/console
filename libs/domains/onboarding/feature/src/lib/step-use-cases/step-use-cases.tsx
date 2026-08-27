@@ -35,12 +35,11 @@ interface UseCaseCardProps {
   value: string
   label: string
   iconName: IconName
-  colSpan: string
   selected: boolean
   onToggle: (value: string) => void
 }
 
-function UseCaseCard({ value, label, iconName, colSpan, selected, onToggle }: UseCaseCardProps) {
+function UseCaseCard({ value, label, iconName, selected, onToggle }: UseCaseCardProps) {
   return (
     <div
       role="checkbox"
@@ -54,8 +53,7 @@ function UseCaseCard({ value, label, iconName, colSpan, selected, onToggle }: Us
         }
       }}
       className={twMerge(
-        'focus-visible:outline-brand-11 flex cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
-        colSpan,
+        'focus-visible:outline-brand-11 flex w-[calc((100%-1.5rem)/3)] cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         selected
           ? 'border-brand-component bg-surface-brand-subtle'
           : 'border-neutral bg-background hover:border-neutral-component hover:bg-surface-neutral-subtle'
@@ -83,14 +81,13 @@ export function StepUseCases({ onSubmit, onBack }: StepUseCasesProps) {
     <div className="mx-auto max-w-content-with-navigation-left pb-10">
       <h1 className="h3 mb-3 text-neutral">What are you looking to do?</h1>
       <p className="mb-10 text-sm text-neutral">Select all that apply.</p>
-      <div className="grid grid-cols-6 gap-3">
+      <div className="flex flex-wrap justify-center gap-3">
         {USE_CASES.map((useCase) => (
           <UseCaseCard
             key={useCase.value}
             value={useCase.value}
             label={useCase.label}
             iconName={useCase.iconName}
-            colSpan="col-span-2"
             selected={selected.includes(useCase.value)}
             onToggle={toggle}
           />
