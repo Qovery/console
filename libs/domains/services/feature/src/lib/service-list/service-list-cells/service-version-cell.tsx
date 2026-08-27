@@ -22,13 +22,14 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { ExternalLink, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Badge, ExternalLink, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
-import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
+import { useBlueprintUpdateState } from '../../hooks/use-blueprint-update-state/use-blueprint-update-state'
 import LastCommit from '../../last-commit/last-commit'
 import LastVersion from '../../last-version/last-version'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
+import { BlueprintRcBadge } from '../../service-blueprint-update-flow/blueprint-rc-badge'
 import { BlueprintUpdateBadge } from '../../service-blueprint-update-flow/blueprint-update-badge'
 import { getBlueprintServiceVersion } from '../../service-blueprint-update-flow/blueprint-update-utils'
 
@@ -44,8 +45,12 @@ function BlueprintVersionInfo({
   gitRepository: ApplicationGitRepository
 }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false }) ?? {}
-  const { data: blueprintUpdate, isLoading } = useBlueprintUpdate({ blueprintId: service.blueprint_id })
-  const version = blueprintUpdate?.current_tag ? getBlueprintServiceVersion(blueprintUpdate.current_tag) : undefined
+  // The engine pins the generated service to the blueprint tag as its git branch.
+  const { blueprintUpdate, isLoading, isRc, tag } = useBlueprintUpdateState({
+    blueprintId: service.blueprint_id,
+    localTag: gitRepository.branch,
+  })
+  const version = tag ? getBlueprintServiceVersion(tag) : undefined
 
   return (
     <div className="flex w-full min-w-0 items-center justify-between gap-6">
@@ -66,7 +71,7 @@ function BlueprintVersionInfo({
             </span>
           </ExternalLink>
         </div>
-        {version && version !== 'default' && (
+        {!isRc && version && version !== 'default' && (
           <div className="flex min-w-0 items-center gap-2 text-neutral">
             <ServiceAvatar
               service={service}
@@ -83,6 +88,8 @@ function BlueprintVersionInfo({
       </div>
       {isLoading ? (
         <Skeleton width={119} height={24} />
+      ) : isRc ? (
+        <BlueprintRcBadge />
       ) : blueprintUpdate ? (
         <div onClick={(event) => event.stopPropagation()}>
           <BlueprintUpdateBadge
@@ -95,6 +102,47 @@ function BlueprintVersionInfo({
       ) : null}
     </div>
   )
+}
+
+// Any blueprint whose manifest declares a helm engine produces a Helm service, whatever provider
+// directory it sits in — q-core picks the service type off the engine spec, not the tag. Those
+// services have no git source, so they render through `helmInfo` and never reach
+// `BlueprintVersionInfo`, and nothing on them carries the blueprint tag either: the update check is
+// the only source.
+//
+// Until it answers — and if it never does — the chart version stays visible but without its "deploy
+// another version" action: the service may well be on a prerelease pin whose tag is gone once its
+// pull request closes, and there is no way from here to tell that apart. In flight the console
+// knows exactly as little as it does on failure, and this endpoint reads catalog.json plus two
+// manifests from GitHub, so that is not a brief window.
+//
+// The chart version itself comes off the service, so it renders straight away: waiting on the
+// request would put a skeleton in front of data the console already holds, on every such row.
+function BlueprintChartVersionSlot({
+  service,
+  version,
+  organizationId,
+  projectId,
+}: {
+  service: BlueprintService & Helm
+  version: string
+  organizationId: string
+  projectId: string
+}) {
+  const { isError, isLoading, isRc } = useBlueprintUpdateState({ blueprintId: service.blueprint_id })
+
+  if (isRc) return <BlueprintRcBadge />
+
+  if (isLoading || isError) {
+    return (
+      <Badge variant="surface" className="gap-1 whitespace-nowrap">
+        <Icon iconName="tag" className="w-3" />
+        <Truncate text={version} truncateLimit={8} />
+      </Badge>
+    )
+  }
+
+  return <LastVersion organizationId={organizationId} projectId={projectId} service={service} version={version} />
 }
 
 export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
@@ -251,12 +299,21 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
         </div>
         {service.serviceType === 'HELM' && (
           <div className="shrink-0">
-            <LastVersion
-              organizationId={organizationId}
-              projectId={projectId}
-              service={service}
-              version={helmRepository.chart_version}
-            />
+            {isBlueprintService(service) ? (
+              <BlueprintChartVersionSlot
+                service={service}
+                version={helmRepository.chart_version}
+                organizationId={organizationId}
+                projectId={projectId}
+              />
+            ) : (
+              <LastVersion
+                organizationId={organizationId}
+                projectId={projectId}
+                service={service}
+                version={helmRepository.chart_version}
+              />
+            )}
           </div>
         )}
       </div>

@@ -1,4 +1,4 @@
-import { type Terraform } from '@qovery/domains/services/data-access'
+import { type Helm, type Terraform } from '@qovery/domains/services/data-access'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
 import { ServiceVersionCell } from './service-version-cell'
@@ -27,6 +27,32 @@ const blueprintService = {
   },
 } as Terraform
 
+const helmBlueprintService = {
+  id: 'helm-service-id',
+  name: 'Redis',
+  service_type: 'HELM',
+  serviceType: 'HELM',
+  icon_uri: 'app://qovery-console/redis',
+  environment: { id: 'environment-id' },
+  blueprint_id: 'blueprint-id',
+  source: {
+    repository: {
+      repository: { name: 'bitnami', url: 'https://charts.bitnami.com/bitnami' },
+      chart_name: 'redis',
+      chart_version: '25.3.11',
+    },
+  },
+} as Helm
+
+// The engine pins a terraform blueprint's generated service to the blueprint tag as its git branch.
+const withBlueprintTag = (service: Terraform, tag: string) =>
+  ({
+    ...service,
+    terraform_files_source: {
+      git: { git_repository: { ...service.terraform_files_source?.git?.git_repository, branch: tag } },
+    },
+  }) as Terraform
+
 describe('ServiceVersionCell', () => {
   it.each([
     { isUpToDate: true, status: 'Up to date' },
@@ -54,6 +80,148 @@ describe('ServiceVersionCell', () => {
     renderWithProviders(<ServiceVersionCell service={blueprintService} />)
 
     expect(screen.queryByText('vdefault')).not.toBeInTheDocument()
+  })
+
+  it('flags a blueprint service pinned to a prerelease tag', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: { is_up_to_date: false, current_tag: 'AWS/mysql/8/2.4.0-pr45.a1b2c3d-rc' },
+      isLoading: false,
+      isError: false,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={blueprintService} />)
+
+    expect(screen.getByText('RC test')).toBeInTheDocument()
+    expect(screen.queryByText('v8')).not.toBeInTheDocument()
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+  })
+
+  it('falls back to the pinned git branch when the update check cannot resolve the tag', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(
+      <ServiceVersionCell service={withBlueprintTag(blueprintService, 'AWS/s3/default/1.3.0-pr45.a1b2c3d-rc')} />
+    )
+
+    expect(screen.getByText('RC test')).toBeInTheDocument()
+  })
+
+  // react-query keeps the last successful data when a refetch fails, and `update-service-rc`
+  // repoints a live service onto a tag the catalog cannot resolve.
+  it('ignores a cached update once the check starts failing', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: { is_up_to_date: false, current_tag: 'AWS/s3/default/1.2.3', latest_tag: 'AWS/s3/default/1.3.0' },
+      isLoading: false,
+      isError: true,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(
+      <ServiceVersionCell service={withBlueprintTag(blueprintService, 'AWS/s3/default/1.3.0-pr45.a1b2c3d-rc')} />
+    )
+
+    expect(screen.getByText('RC test')).toBeInTheDocument()
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+  })
+
+  it('drops a stale update action for a released tag the check can no longer resolve', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: { is_up_to_date: false, current_tag: 'AWS/mysql/8/2.3.4', latest_tag: 'AWS/mysql/8/2.4.0' },
+      isLoading: false,
+      isError: true,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={withBlueprintTag(blueprintService, 'AWS/mysql/8/2.3.4')} />)
+
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+    expect(screen.queryByText('RC test')).not.toBeInTheDocument()
+    // The major still comes off the pinned branch, so it survives the check failing.
+    expect(screen.getByText('v8')).toBeInTheDocument()
+  })
+
+  it('shows no version when the check fails and the pinned branch is not a blueprint tag', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={withBlueprintTag(blueprintService, 'AWS/s3/1.2.3')} />)
+
+    // Reading that by position would render "vs3".
+    expect(screen.queryByText('vs3')).not.toBeInTheDocument()
+    expect(screen.getByText('qovery-blueprints/s3')).toBeInTheDocument()
+  })
+
+  it('does not flag a released blueprint the catalog no longer publishes', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={withBlueprintTag(blueprintService, 'AWS/s3/default/1.2.3')} />)
+
+    expect(screen.getByText('qovery-blueprints/s3')).toBeInTheDocument()
+    expect(screen.queryByText('RC test')).not.toBeInTheDocument()
+  })
+
+  it('shows a helm blueprint chart version read-only when the update check cannot answer', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={helmBlueprintService} />)
+
+    expect(screen.getByText('25.3.11')).toBeInTheDocument()
+    expect(screen.queryByText('RC test')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Deploy from another version' })).not.toBeInTheDocument()
+  })
+
+  it('replaces the chart version actions of a helm blueprint service on a prerelease tag', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: { is_up_to_date: false, current_tag: 'HELM/redis/7/1.1.0-pr45.a1b2c3d-rc' },
+      isLoading: false,
+      isError: false,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={helmBlueprintService} />)
+
+    expect(screen.getByText('RC test')).toBeInTheDocument()
+    expect(screen.queryByText('25.3.11')).not.toBeInTheDocument()
+  })
+
+  it('keeps the chart version actions of a helm blueprint service on a released tag', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: { is_up_to_date: true, current_tag: 'HELM/redis/8/1.1.0' },
+      isLoading: false,
+      isError: false,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={helmBlueprintService} />)
+
+    expect(screen.getByText('25.3.11')).toBeInTheDocument()
+    expect(screen.queryByText('RC test')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploy from another version' })).toBeInTheDocument()
+  })
+
+  it('renders a helm blueprint chart version without waiting on the update check', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={helmBlueprintService} />)
+
+    expect(screen.getByText('25.3.11')).toBeInTheDocument()
+    // The check may still come back saying this is a prerelease pin.
+    expect(screen.queryByRole('button', { name: 'Deploy from another version' })).not.toBeInTheDocument()
   })
 
   it('opens the blueprint update confirmation modal when no input is required', async () => {

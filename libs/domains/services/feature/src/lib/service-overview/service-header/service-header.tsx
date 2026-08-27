@@ -35,7 +35,7 @@ import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/share
 import { AgenticWorkflowServiceActions } from '../../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-service-actions'
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
-import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
+import { useBlueprintUpdateState } from '../../hooks/use-blueprint-update-state/use-blueprint-update-state'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
@@ -211,10 +211,16 @@ function BlueprintMetadata({
   service: AnyService
 }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
-  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
-  const currentVersion = blueprintUpdate?.current_tag
-    ? getBlueprintServiceVersion(blueprintUpdate.current_tag)
-    : undefined
+  // `throwOnError: false` because react-query v4 makes suspense queries throw by default, and there
+  // is no boundary between here and the organization layout: a blueprint pinned to a tag the
+  // catalog cannot resolve would replace the whole overview with the generic error page.
+  const { blueprintUpdate, tag } = useBlueprintUpdateState({
+    blueprintId,
+    localTag: gitRepository?.branch,
+    suspense: true,
+    throwOnError: false,
+  })
+  const currentVersion = tag ? getBlueprintServiceVersion(tag) : undefined
 
   return (
     <>
