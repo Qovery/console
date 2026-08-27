@@ -9,6 +9,7 @@ import {
   getFirstAvailableUpdateSection,
   getRawOutputLineClassName,
   hasBlueprintUpdateReviewSections,
+  isBlueprintRcTag,
 } from './blueprint-update-utils'
 
 function createBlueprintUpdate(overrides: Partial<BlueprintUpdateResponse> = {}): BlueprintUpdateResponse {
@@ -33,6 +34,15 @@ describe('blueprint update utils', () => {
 
   it('extracts the service version from a blueprint tag', () => {
     expect(getBlueprintServiceVersion('AWS/mysql/7.8/1.2.5/')).toBe('7.8')
+  })
+
+  it.each([
+    { tag: 'AWS/postgres/17/3.1.0-pr45.a1b2c3d-rc', expected: true },
+    { tag: 'AWS/postgres/17/3.1.0', expected: false },
+    { tag: 'AWS/postgres/17-rc/3.1.0', expected: false },
+    { tag: undefined, expected: false },
+  ])('detects the prerelease tag $tag as $expected', ({ tag, expected }) => {
+    expect(isBlueprintRcTag(tag)).toBe(expected)
   })
 
   it('formats a blueprint update title with the current and latest versions', () => {

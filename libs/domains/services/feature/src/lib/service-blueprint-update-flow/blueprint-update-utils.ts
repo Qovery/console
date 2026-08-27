@@ -74,6 +74,13 @@ export function getBlueprintServiceVersion(tag: string) {
   return tag.split('/').filter(Boolean).at(-2)
 }
 
+// Prerelease tags built by the service-catalog CI for an open pull request
+// (`{PROVIDER}/{service}/{major}/{version}-pr{PR}.{sha}-rc`). They are never published in
+// catalog.json, so the update check cannot resolve them.
+export function isBlueprintRcTag(tag?: string) {
+  return Boolean(tag && getBlueprintUpdateVersion(tag)?.endsWith('-rc'))
+}
+
 export function getBlueprintUpdateTitle({
   currentTag,
   latestTag,

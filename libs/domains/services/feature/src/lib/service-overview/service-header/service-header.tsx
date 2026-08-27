@@ -211,7 +211,10 @@ function BlueprintMetadata({
   service: AnyService
 }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false })
-  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true })
+  // `useErrorBoundary: false` because react-query v4 makes suspense queries throw by default, and
+  // there is no boundary between here and the organization layout: a blueprint pinned to a tag the
+  // catalog cannot resolve would replace the whole overview with the generic error page.
+  const { data: blueprintUpdate } = useBlueprintUpdate({ blueprintId, suspense: true, useErrorBoundary: false })
   const currentVersion = blueprintUpdate?.current_tag
     ? getBlueprintServiceVersion(blueprintUpdate.current_tag)
     : undefined

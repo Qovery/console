@@ -29,11 +29,28 @@ import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-bluepri
 import LastCommit from '../../last-commit/last-commit'
 import LastVersion from '../../last-version/last-version'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
+import { BlueprintRcBadge } from '../../service-blueprint-update-flow/blueprint-rc-badge'
 import { BlueprintUpdateBadge } from '../../service-blueprint-update-flow/blueprint-update-badge'
-import { getBlueprintServiceVersion } from '../../service-blueprint-update-flow/blueprint-update-utils'
+import {
+  getBlueprintServiceVersion,
+  isBlueprintRcTag,
+} from '../../service-blueprint-update-flow/blueprint-update-utils'
 
 type ServiceVersionCellProps = {
   service: AnyService
+}
+
+// The update check is the only endpoint that reports a blueprint's tag, and it answers 404 for any
+// tag the catalog does not publish — a prerelease, but a retired major too. `localTag` is the tag
+// read off the service itself, so a prerelease stays recognisable when the check cannot answer.
+function useBlueprintUpdateState(blueprintId: string, localTag?: string) {
+  const { data: blueprintUpdate, isLoading } = useBlueprintUpdate({ blueprintId })
+
+  return {
+    blueprintUpdate,
+    isLoading,
+    isRc: isBlueprintRcTag(blueprintUpdate?.current_tag ?? localTag),
+  }
 }
 
 function BlueprintVersionInfo({
@@ -44,7 +61,8 @@ function BlueprintVersionInfo({
   gitRepository: ApplicationGitRepository
 }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false }) ?? {}
-  const { data: blueprintUpdate, isLoading } = useBlueprintUpdate({ blueprintId: service.blueprint_id })
+  // The engine pins the generated service to the blueprint tag as its git branch.
+  const { blueprintUpdate, isLoading, isRc } = useBlueprintUpdateState(service.blueprint_id, gitRepository.branch)
   const version = blueprintUpdate?.current_tag ? getBlueprintServiceVersion(blueprintUpdate.current_tag) : undefined
 
   return (
@@ -66,7 +84,7 @@ function BlueprintVersionInfo({
             </span>
           </ExternalLink>
         </div>
-        {version && version !== 'default' && (
+        {!isRc && version && version !== 'default' && (
           <div className="flex min-w-0 items-center gap-2 text-neutral">
             <ServiceAvatar
               service={service}
@@ -83,6 +101,8 @@ function BlueprintVersionInfo({
       </div>
       {isLoading ? (
         <Skeleton width={119} height={24} />
+      ) : isRc ? (
+        <BlueprintRcBadge />
       ) : blueprintUpdate ? (
         <div onClick={(event) => event.stopPropagation()}>
           <BlueprintUpdateBadge
@@ -95,6 +115,29 @@ function BlueprintVersionInfo({
       ) : null}
     </div>
   )
+}
+
+// A HELM blueprint's linked service has no git source, so it renders through `helmInfo` and never
+// reaches `BlueprintVersionInfo` — and has nowhere to carry its tag either, leaving the update
+// check as the only source. Offering "deploy another version" on a prerelease pin is wrong: the tag
+// disappears when its pull request closes.
+function BlueprintHelmVersionSlot({
+  service,
+  version,
+  organizationId,
+  projectId,
+}: {
+  service: BlueprintService & Helm
+  version: string
+  organizationId: string
+  projectId: string
+}) {
+  const { isLoading, isRc } = useBlueprintUpdateState(service.blueprint_id)
+
+  if (isLoading) return <Skeleton width={119} height={24} />
+  if (isRc) return <BlueprintRcBadge />
+
+  return <LastVersion organizationId={organizationId} projectId={projectId} service={service} version={version} />
 }
 
 export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
@@ -251,12 +294,21 @@ export function ServiceVersionCell({ service }: ServiceVersionCellProps) {
         </div>
         {service.serviceType === 'HELM' && (
           <div className="shrink-0">
-            <LastVersion
-              organizationId={organizationId}
-              projectId={projectId}
-              service={service}
-              version={helmRepository.chart_version}
-            />
+            {isBlueprintService(service) ? (
+              <BlueprintHelmVersionSlot
+                service={service}
+                version={helmRepository.chart_version}
+                organizationId={organizationId}
+                projectId={projectId}
+              />
+            ) : (
+              <LastVersion
+                organizationId={organizationId}
+                projectId={projectId}
+                service={service}
+                version={helmRepository.chart_version}
+              />
+            )}
           </div>
         )}
       </div>
