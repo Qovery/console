@@ -106,7 +106,7 @@ export function StepUseCases({ onSubmit, onBack }: StepUseCasesProps) {
           <Icon iconName="arrow-left" />
           Back
         </Button>
-        <Button type="button" size="lg" onClick={() => onSubmit(selected)}>
+        <Button type="button" size="lg" disabled={selected.length === 0} onClick={() => onSubmit(selected)}>
           Continue
         </Button>
       </div>
