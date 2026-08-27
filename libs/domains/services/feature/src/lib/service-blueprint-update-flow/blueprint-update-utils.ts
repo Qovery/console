@@ -74,6 +74,20 @@ export function getBlueprintServiceVersion(tag: string) {
   return tag.split('/').filter(Boolean).at(-2)
 }
 
+// `{PROVIDER}/{service}/{major}/{version}`, the shape q-core enforces before it will read a tag.
+// Both accessors above are positional, so a string of any other shape silently yields a wrong
+// answer rather than nothing — worth checking before reading a tag the API did not hand us.
+const BLUEPRINT_TAG_SEGMENT = /^[A-Za-z0-9_.-]+$/
+
+export function isBlueprintTag(tag?: string) {
+  const segments = tag?.split('/')
+
+  return (
+    segments?.length === 4 &&
+    segments.every((segment) => segment !== '.' && segment !== '..' && BLUEPRINT_TAG_SEGMENT.test(segment))
+  )
+}
+
 // Prerelease tags built by the service-catalog CI for an open pull request, from the pull request
 // number and the head sha: `{PROVIDER}/{service}/{major}/{version}-pr{PR}.{short_sha}-rc`. Matching
 // the whole marker rather than the `-rc` ending matters — the catalog releases whatever version a

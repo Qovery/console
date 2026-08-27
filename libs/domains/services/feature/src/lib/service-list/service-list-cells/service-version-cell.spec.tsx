@@ -142,6 +142,20 @@ describe('ServiceVersionCell', () => {
     expect(screen.getByText('v8')).toBeInTheDocument()
   })
 
+  it('shows no version when the check fails and the pinned branch is not a blueprint tag', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={withBlueprintTag(blueprintService, 'AWS/s3/1.2.3')} />)
+
+    // Reading that by position would render "vs3".
+    expect(screen.queryByText('vs3')).not.toBeInTheDocument()
+    expect(screen.getByText('qovery-blueprints/s3')).toBeInTheDocument()
+  })
+
   it('does not flag a released blueprint the catalog no longer publishes', () => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({
       data: undefined,

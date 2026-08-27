@@ -10,6 +10,7 @@ import {
   getRawOutputLineClassName,
   hasBlueprintUpdateReviewSections,
   isBlueprintRcTag,
+  isBlueprintTag,
 } from './blueprint-update-utils'
 
 function createBlueprintUpdate(overrides: Partial<BlueprintUpdateResponse> = {}): BlueprintUpdateResponse {
@@ -46,6 +47,21 @@ describe('blueprint update utils', () => {
     { tag: undefined, expected: false },
   ])('detects the prerelease tag $tag as $expected', ({ tag, expected }) => {
     expect(isBlueprintRcTag(tag)).toBe(expected)
+  })
+
+  it.each([
+    { tag: 'AWS/postgres/17/3.1.0', expected: true },
+    { tag: 'AWS/s3/default/1.3.0-pr45.a1b2c3d-rc', expected: true },
+    // Not a tag: reading these by position yields a wrong answer rather than none.
+    { tag: 'AWS/s3/1.2.3', expected: false },
+    { tag: 'main', expected: false },
+    { tag: 'AWS/postgres/17/3.1.0/extra', expected: false },
+    { tag: 'AWS//17/3.1.0', expected: false },
+    { tag: 'AWS/../17/3.1.0', expected: false },
+    { tag: 'AWS/pg res/17/3.1.0', expected: false },
+    { tag: undefined, expected: false },
+  ])('recognises the blueprint tag shape of $tag as $expected', ({ tag, expected }) => {
+    expect(isBlueprintTag(tag)).toBe(expected)
   })
 
   it('formats a blueprint update title with the current and latest versions', () => {

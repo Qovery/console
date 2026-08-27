@@ -1,4 +1,4 @@
-import { isBlueprintRcTag } from '../../service-blueprint-update-flow/blueprint-update-utils'
+import { isBlueprintRcTag, isBlueprintTag } from '../../service-blueprint-update-flow/blueprint-update-utils'
 import { useBlueprintUpdate } from '../use-blueprint-update/use-blueprint-update'
 
 export interface UseBlueprintUpdateStateProps {
@@ -25,7 +25,10 @@ export function useBlueprintUpdateState({
   // would keep answering from the tag it used to be on: a stale update action, and no prerelease
   // recognised. Dropping it hands the question back to `localTag`, the only current answer left.
   const blueprintUpdate = isError ? undefined : data
-  const tag = blueprintUpdate?.current_tag ?? localTag
+  // `localTag` is read off the service rather than handed over by the API, so it is only trusted
+  // once it looks like a tag: everything downstream reads a tag by position and would otherwise
+  // report something confidently wrong.
+  const tag = blueprintUpdate?.current_tag ?? (isBlueprintTag(localTag) ? localTag : undefined)
 
   return {
     blueprintUpdate,
