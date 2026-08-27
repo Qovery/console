@@ -9,6 +9,11 @@ import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 // that dies without ever delivering one, so the UI can never wait forever.
 const PREVIEW_WATCHDOG_MS = 12 * 60 * 1000
 
+// A timeout frame carries the reason it timed out — which terraform step ran out of time and after
+// how long. The pinned qovery-ws-typescript-axios predates the field, so read it structurally;
+// drop this once the ws client is regenerated.
+type TimeoutFrame = { message?: string | null }
+
 /**
  * The backend sends exactly one frame then closes, so the preview always settles on a single
  * terminal outcome. `pending` is the only state that may render a spinner.
@@ -19,7 +24,8 @@ export type BlueprintUpdatePreviewOutcome =
   | { type: 'no-changes' }
   | { type: 'error'; message?: string }
   | { type: 'cancelled' }
-  | { type: 'timeout' }
+  // `message` is absent when nothing reported a reason: the watchdog below, or a gateway frame.
+  | { type: 'timeout'; message?: string }
 
 export interface BlueprintUpdatePreviewSocketData {
   outcome: BlueprintUpdatePreviewOutcome
@@ -71,7 +77,10 @@ export function useBlueprintUpdatePreviewSocket({
           )
           .with({ type: 'error' }, ({ message: reason }) => ({ type: 'error', message: reason }))
           .with({ type: 'cancelled' }, () => ({ type: 'cancelled' }))
-          .with({ type: 'timeout' }, () => ({ type: 'timeout' }))
+          .with({ type: 'timeout' }, (frame) => ({
+            type: 'timeout',
+            message: (frame as TimeoutFrame).message ?? undefined,
+          }))
           .exhaustive()
       )
     },
