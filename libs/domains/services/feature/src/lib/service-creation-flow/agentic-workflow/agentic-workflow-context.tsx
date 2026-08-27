@@ -60,7 +60,6 @@ export const agenticWorkflowCreationSteps: { title: string }[] = [{ title: 'Conf
 
 export type AgenticWorkflowConfigurationSection =
   | 'service-information'
-  | 'schedule'
   | 'ai-model'
   | 'connectors'
   | 'git-repositories'

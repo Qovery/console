@@ -3,18 +3,21 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowScheduleFields, isAgenticWorkflowScheduleValid } from './agentic-workflow-schedule-fields'
 
 describe('AgenticWorkflowScheduleFields', () => {
-  it('focuses the schedule toggle when requested', () => {
+  it('links to the CRON expression builder when scheduling is enabled', () => {
     renderWithProviders(
-      wrapWithReactHookForm(<AgenticWorkflowScheduleFields autoFocus />, {
+      wrapWithReactHookForm(<AgenticWorkflowScheduleFields />, {
         defaultValues: {
-          scheduleEnabled: false,
+          scheduleEnabled: true,
           scheduleCronExpression: '0 8 * * 1-5',
           timezone: 'Etc/UTC',
         },
       })
     )
 
-    expect(screen.getByRole('switch', { name: 'Schedule agent task' })).toHaveFocus()
+    expect(screen.getByRole('link', { name: 'CRON expression builder' })).toHaveAttribute(
+      'href',
+      'https://crontab.guru/'
+    )
   })
 
   it('requires a valid cron expression only when scheduling is enabled', () => {

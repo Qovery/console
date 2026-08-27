@@ -29,7 +29,6 @@ import { GitRepositoryCard } from './git-repository-card'
 
 const sectionOrder: AgenticWorkflowConfigurationSection[] = [
   'service-information',
-  'schedule',
   'ai-model',
   'connectors',
   'git-repositories',
@@ -61,7 +60,6 @@ function isSectionCompleted(
 function getSectionTitle(section: AgenticWorkflowConfigurationSection) {
   const titles: Record<AgenticWorkflowConfigurationSection, string> = {
     'service-information': 'Service information',
-    schedule: 'Schedule',
     'ai-model': 'AI model',
     connectors: 'MCPs',
     'git-repositories': 'Git repositories',
@@ -238,8 +236,7 @@ export function AgenticWorkflowConfiguration() {
   const showNameError = Boolean(dirtyFields.name) && !values.name.trim()
   const showModelApiKeyError = Boolean(dirtyFields.modelApiKey) && !values.modelApiKey.trim()
   const sectionInvalid: Record<AgenticWorkflowConfigurationSection, boolean> = {
-    'service-information': !values.name.trim(),
-    schedule: !isAgenticWorkflowScheduleValid(values),
+    'service-information': !values.name.trim() || !isAgenticWorkflowScheduleValid(values),
     'ai-model': !values.modelApiKey.trim() || Boolean(modelSettingsJsonError),
     connectors: Boolean(mcpJsonError),
     'git-repositories': !gitRepositoriesValid,
@@ -383,12 +380,11 @@ export function AgenticWorkflowConfiguration() {
               description="Start listening and executing this agent task as soon as it is created."
               onChange={(value) => form.setValue('workflowEnabled', value, { shouldDirty: true })}
             />
-            <ContinueButton disabled={!values.name.trim()} onClick={goToNextSection} />
-          </AgenticWorkflowSection>
-
-          <AgenticWorkflowSection section="schedule" iconName="clock" invalid={sectionInvalid.schedule}>
-            <AgenticWorkflowScheduleFields autoFocus />
-            <ContinueButton disabled={!isAgenticWorkflowScheduleValid(values)} onClick={goToNextSection} />
+            <AgenticWorkflowScheduleFields />
+            <ContinueButton
+              disabled={!values.name.trim() || !isAgenticWorkflowScheduleValid(values)}
+              onClick={goToNextSection}
+            />
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection

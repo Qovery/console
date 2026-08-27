@@ -126,6 +126,7 @@ describe('AgenticWorkflowSummary', () => {
     expect(screen.getByText(validValues.mcpJson ?? '')).toBeInTheDocument()
     expect(screen.getByText('Documentation, Tickets')).toBeInTheDocument()
     expect(screen.getByText('1 webhook')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Edit Schedule' })).not.toBeInTheDocument()
     expect(mockNavigate).not.toHaveBeenCalledWith({ to: '/create/agentic-workflow/configuration' })
   })
 

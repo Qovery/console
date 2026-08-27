@@ -170,9 +170,6 @@ export function AgenticWorkflowSummary() {
             <SummaryValue label="Memory" value={values.memory ? `${values.memory} MB` : undefined} />
             <SummaryValue label="Storage" value={values.storage ? `${values.storage} GB` : undefined} />
             <SummaryValue label="Enabled" value={values.workflowEnabled ? 'Yes' : 'No'} />
-          </SummarySection>
-
-          <SummarySection title="Schedule" onEdit={() => handleEditSection('schedule')}>
             <SummaryValue label="Scheduled" value={values.scheduleEnabled ? 'Yes' : 'No'} />
             {values.scheduleEnabled ? (
               <>
