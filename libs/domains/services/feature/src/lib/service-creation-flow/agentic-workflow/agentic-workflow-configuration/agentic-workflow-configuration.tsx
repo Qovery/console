@@ -321,9 +321,9 @@ export function AgenticWorkflowConfiguration() {
     <FunnelFlowBody customContentWidth="max-w-[620px]">
       <Section>
         <header className="mb-5">
-          <Heading level={1}>Create agentic workflow</Heading>
+          <Heading level={1}>Create agent task</Heading>
           <p className="mt-1 text-sm leading-5 text-neutral-subtle">
-            Configure the inputs, tools, model, governance, and outputs used by your workflow.
+            Configure the inputs, tools, model, governance, and outputs used by your agent task.
           </p>
         </header>
 
@@ -338,7 +338,7 @@ export function AgenticWorkflowConfiguration() {
               label="Name"
               value={values.name}
               autoFocus
-              error={showNameError ? 'Please enter a workflow name.' : undefined}
+              error={showNameError ? 'Please enter an agent task name.' : undefined}
               onChange={(event) => form.setValue('name', event.currentTarget.value, { shouldDirty: true })}
             />
             <InputTextArea
@@ -374,8 +374,8 @@ export function AgenticWorkflowConfiguration() {
               small
               align="top"
               value={values.workflowEnabled}
-              title="Enable workflow"
-              description="Start listening and executing this workflow as soon as it is created."
+              title="Enable agent task"
+              description="Start listening and executing this agent task as soon as it is created."
               onChange={(value) => form.setValue('workflowEnabled', value, { shouldDirty: true })}
             />
             <ContinueButton disabled={!values.name.trim()} onClick={goToNextSection} />
@@ -708,7 +708,7 @@ export function AgenticWorkflowConfiguration() {
               value={values.agentPrompt}
               textareaClassName="min-h-40"
               variableKeys={variableValues.map((variable) => variable.variable ?? '').filter(Boolean)}
-              hint="Describe the workflow behavior. Example: review incoming webhook payloads, open a pull request when needed, then notify the team."
+              hint="Describe the agent task behavior. Example: review incoming webhook payloads, open a pull request when needed, then notify the team."
               onChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
             />
             <ContinueButton disabled={!values.agentPrompt.trim()} onClick={goToNextSection} />

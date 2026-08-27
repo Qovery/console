@@ -114,6 +114,20 @@ describe('RowEvent', () => {
     expect(screen.getByText('unsupported-target')).not.toHaveAttribute('href')
   })
 
+  it('should render Agent task for the agentic workflow target type', () => {
+    renderWithProviders(
+      <RowEvent
+        {...props}
+        event={{
+          ...props.event,
+          target_type: OrganizationEventTargetType.AGENTIC_WORKFLOW,
+        }}
+      />
+    )
+
+    expect(screen.getByText('Agent task')).toBeInTheDocument()
+  })
+
   it.each([
     [OrganizationEventTargetType.ORGANIZATION, '/organization/1/settings'],
     [OrganizationEventTargetType.MEMBERS_AND_ROLES, '/organization/1/settings/members'],
