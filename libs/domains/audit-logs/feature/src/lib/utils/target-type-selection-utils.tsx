@@ -6,6 +6,7 @@ import {
   type NavigationLevel,
   type SelectedItem,
 } from '@qovery/shared/ui'
+import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 const SERVICE_TARGET_TYPES: ReadonlySet<OrganizationEventTargetType> = new Set([
   OrganizationEventTargetType.AGENTIC_WORKFLOW,
@@ -16,6 +17,12 @@ const SERVICE_TARGET_TYPES: ReadonlySet<OrganizationEventTargetType> = new Set([
   OrganizationEventTargetType.JOB,
   OrganizationEventTargetType.TERRAFORM,
 ])
+
+export function getTargetTypeLabel(targetType: string) {
+  return targetType === OrganizationEventTargetType.AGENTIC_WORKFLOW
+    ? 'Agent task'
+    : upperCaseFirstLetter(targetType).replace(/_/g, ' ')
+}
 
 function getTargetTypeSelected(selectedItems: SelectedItem[]): OrganizationEventTargetType | undefined {
   const selectedTargetType = selectedItems.find((selectedItem) => {

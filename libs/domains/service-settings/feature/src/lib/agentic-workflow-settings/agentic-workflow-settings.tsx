@@ -42,19 +42,19 @@ interface FormValues {
 }
 
 const PAGE_CONTENT: Record<SettingsPage, { title: string; description: string }> = {
-  general: { title: 'General settings', description: 'Configure the workflow name, description, and availability.' },
+  general: { title: 'General settings', description: 'Configure the agent task name, description, and availability.' },
   'ai-configuration': {
     title: 'AI configuration',
-    description: 'Configure the model and instructions used by this workflow.',
+    description: 'Configure the model and instructions used by this agent task.',
   },
   connections: {
     title: 'Connections',
-    description: 'Configure the Git repositories, MCP servers, and Dockerfile fragment available to the workflow.',
+    description: 'Configure the Git repositories, MCP servers, and Dockerfile fragment available to the agent task.',
   },
-  outputs: { title: 'Outputs', description: 'Configure the webhooks called when the workflow produces an output.' },
+  outputs: { title: 'Outputs', description: 'Configure the webhooks called when the agent task produces an output.' },
   governance: {
     title: 'Governance',
-    description: 'Control the hosts and webhook source addresses allowed for this workflow.',
+    description: 'Control the hosts and webhook source addresses allowed for this agent task.',
   },
 }
 
@@ -241,7 +241,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
               name="name"
               label="Name"
               value={values.name}
-              error={!values.name.trim() ? 'Please enter a workflow name.' : undefined}
+              error={!values.name.trim() ? 'Please enter an agent task name.' : undefined}
               onChange={(event) => form.setValue('name', event.currentTarget.value, { shouldDirty: true })}
             />
             <InputTextArea
@@ -254,14 +254,14 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
               small
               align="top"
               value={values.enabled}
-              title="Enable workflow"
-              description="Allow this workflow to listen for and process incoming requests."
+              title="Enable agent task"
+              description="Allow this agent task to listen for and process incoming requests."
               onChange={(value) => form.setValue('enabled', value, { shouldDirty: true })}
             />
             <div className="pt-6">
               <h2 className="mb-1 text-base font-medium text-neutral">Resources</h2>
               <p className="mb-4 text-sm text-neutral-subtle">
-                Configure the compute resources allocated to the workflow.
+                Configure the compute resources allocated to the agent task.
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 {(['cpu', 'ram', 'gpu', 'storage'] as const).map((name) => (
@@ -303,7 +303,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
               <div>
                 <h2 className="text-base font-medium text-neutral">Git repositories</h2>
                 <p className="mt-1 text-sm text-neutral-subtle">
-                  Select the repositories and branches the workflow can access.
+                  Select the repositories and branches the agent task can access.
                 </p>
               </div>
               <Button type="button" variant="outline" color="neutral" size="sm" onClick={addRepository}>

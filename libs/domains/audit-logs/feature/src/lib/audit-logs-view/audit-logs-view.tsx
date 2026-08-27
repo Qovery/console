@@ -7,9 +7,8 @@ import { eventsFactoryMock } from '@qovery/shared/factories'
 import { type AuditLogsParams, DEFAULT_PAGE_SIZE } from '@qovery/shared/router'
 import { ALL, type NavigationLevel, type SelectedItem, type TableFilterProps } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
-import { upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { AuditLogs } from '../audit-logs/audit-logs'
-import { initializeSelectedItemsFromQueryParams } from '../utils/target-type-selection-utils'
+import { getTargetTypeLabel, initializeSelectedItemsFromQueryParams } from '../utils/target-type-selection-utils'
 
 const route = getRouteApi('/_authenticated/organization/$organizationId/audit-logs')
 
@@ -107,7 +106,7 @@ export function AuditLogsView() {
 
     const organizationEventTargetTypes = Object.keys(OrganizationEventTargetType).map((item) => ({
       value: item,
-      name: upperCaseFirstLetter(item).replace(/_/g, ' '),
+      name: getTargetTypeLabel(item),
     }))
 
     initializeSelectedItemsFromQueryParams(organizationId, organizationEventTargetTypes, 'target_type', urlParams)

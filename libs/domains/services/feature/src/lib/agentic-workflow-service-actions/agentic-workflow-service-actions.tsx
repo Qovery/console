@@ -44,8 +44,7 @@ export function AgenticWorkflowServiceActions({
   const deleteAgenticWorkflow = () => {
     openModalConfirmation({
       title: `Delete ${service.name}?`,
-      description:
-        'This will permanently delete the agentic workflow and its associated data. This action cannot be undone.',
+      description: 'This will permanently delete the agent task and its associated data. This action cannot be undone.',
       name: service.name,
       action: async () => {
         await deleteService({ serviceId: service.id, serviceType: service.serviceType })

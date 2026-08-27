@@ -22,7 +22,7 @@ export function AIModelCards() {
           <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-5 w-5" />
           Anthropic
         </span>
-        <span className="text-xs text-neutral-subtle">Claude models used by the workflow agent.</span>
+        <span className="text-xs text-neutral-subtle">Claude models used by the agent task.</span>
       </button>
       <button
         type="button"

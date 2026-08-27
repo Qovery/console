@@ -4,6 +4,7 @@ import { type AuditLogsParams } from '@qovery/shared/router'
 import { Button, Icon, type SelectedItem, type TableFilterProps, Truncate } from '@qovery/shared/ui'
 import { dateYearMonthDayHourMinuteSecond } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { getTargetTypeLabel } from '../utils/target-type-selection-utils'
 
 export interface CustomFilterProps {
   clearFilter: () => void
@@ -55,7 +56,7 @@ function buildBadges(queryParams: AuditLogsParams, selectedItemsTargetType: Sele
     badges.push({
       key: 'target_type',
       displayedName: 'Target Type',
-      value: upperCaseFirstLetter(queryParams.targetType).split('_').join(' '),
+      value: getTargetTypeLabel(queryParams.targetType),
       isDeletable: true,
     })
   }
@@ -105,9 +106,7 @@ function buildBadges(queryParams: AuditLogsParams, selectedItemsTargetType: Sele
     const selectedItem = selectedItemsTargetType.find((selectedItem) => selectedItem.filterKey === 'target_id')
     if (selectedItem) {
       const targetName = selectedItem?.item?.name ?? '...'
-      const targetType = upperCaseFirstLetter(queryParams.targetType ?? '...')
-        .split('_')
-        .join(' ')
+      const targetType = getTargetTypeLabel(queryParams.targetType ?? '...')
       badges.push({
         key: 'target_id',
         displayedName: targetType,

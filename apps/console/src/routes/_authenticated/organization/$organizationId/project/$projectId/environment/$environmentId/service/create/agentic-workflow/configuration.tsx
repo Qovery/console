@@ -9,7 +9,7 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  useDocumentTitle('Agentic workflow configuration')
+  useDocumentTitle('Agent task configuration')
 
   return <AgenticWorkflowConfiguration />
 }

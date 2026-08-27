@@ -35,7 +35,7 @@ export function useEditService({
               if (payload.serviceType === 'AGENTIC_WORKFLOW') {
                 return {
                   title: 'Service updated',
-                  description: 'Your agentic workflow settings were saved',
+                  description: 'Your agent task settings were saved',
                 }
               }
               return {
