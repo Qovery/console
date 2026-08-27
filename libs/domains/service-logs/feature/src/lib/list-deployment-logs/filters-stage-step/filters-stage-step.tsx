@@ -9,17 +9,13 @@ import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { type FilterType } from '../list-deployment-logs'
 
-type ServiceStepMetricWithLifecycle = Omit<ServiceStepMetric, 'status'> & {
-  status?: ServiceStepMetric['status'] | 'ONGOING'
-  started_at?: string | null
-}
 type StepMetricType = {
-  build: ServiceStepMetricWithLifecycle[]
-  deploy: ServiceStepMetricWithLifecycle[]
-  executing: ServiceStepMetricWithLifecycle[]
+  build: ServiceStepMetric[]
+  deploy: ServiceStepMetric[]
+  executing: ServiceStepMetric[]
 }
 
-const getStepDurationSec = (step: ServiceStepMetricWithLifecycle, nowMs: number) => {
+const getStepDurationSec = (step: ServiceStepMetric, nowMs: number) => {
   if (step.status !== 'ONGOING' || !step.started_at) return step.duration_sec || 0
 
   const startedAtMs = Date.parse(step.started_at)
@@ -29,7 +25,7 @@ const getStepDurationSec = (step: ServiceStepMetricWithLifecycle, nowMs: number)
 interface StageStepProps {
   type: Extract<FilterType, 'BUILD' | 'DEPLOY' | 'EXECUTING'>
   state: StateEnum
-  steps: ServiceStepMetricWithLifecycle[]
+  steps: ServiceStepMetric[]
   toggleColumnFilter: (type: FilterType) => void
   isFilterActive: (type: FilterType) => boolean
 }
@@ -169,7 +165,7 @@ export function FiltersStageStep({
 }: FiltersStageStepProps) {
   if (!steps?.details) return <div />
 
-  const categorizedSteps = (steps.details as ServiceStepMetricWithLifecycle[]).reduce(
+  const categorizedSteps = steps.details.reduce<StepMetricType>(
     (acc, step) => {
       if (!step.step_name) return acc
 
@@ -181,7 +177,7 @@ export function FiltersStageStep({
 
       return acc
     },
-    { build: [], deploy: [], executing: [] } as StepMetricType
+    { build: [], deploy: [], executing: [] }
   )
 
   return (
