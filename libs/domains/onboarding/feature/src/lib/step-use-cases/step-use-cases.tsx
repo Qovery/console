@@ -10,16 +10,6 @@ const USE_CASES: Array<{ value: string; label: string; iconName: IconName }> = [
     iconName: 'microchip-ai',
   },
   {
-    value: 'rde',
-    label: 'Enable my non-tech team to ship apps',
-    iconName: 'users',
-  },
-  {
-    value: 'spec-to-prod',
-    label: 'Go from spec to production with AI coding agents',
-    iconName: 'diagram-project',
-  },
-  {
     value: 'automate-deployments',
     label: 'Automate deployments without manual steps',
     iconName: 'rocket',
@@ -88,7 +78,7 @@ export function StepUseCases({ onSubmit, onBack }: StepUseCasesProps) {
     <div className="mx-auto max-w-content-with-navigation-left pb-10">
       <h1 className="h3 mb-3 text-neutral">What are you looking to do?</h1>
       <p className="mb-10 text-sm text-neutral">Select all that apply.</p>
-      <div className="grid grid-cols-6 gap-3">
+      <div className="grid grid-cols-4 gap-3">
         {USE_CASES.map((useCase) => (
           <UseCaseCard
             key={useCase.value}
