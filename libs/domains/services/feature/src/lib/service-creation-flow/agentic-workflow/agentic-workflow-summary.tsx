@@ -17,6 +17,7 @@ import {
   useAgenticWorkflowCreateContext,
 } from './agentic-workflow-context'
 import { formatAgenticWorkflowRequest } from './agentic-workflow-request'
+import { isAgenticWorkflowScheduleValid } from './agentic-workflow-schedule-fields'
 
 function truncateSummary(value: string) {
   if (!value.trim()) return '-'
@@ -106,6 +107,7 @@ export function AgenticWorkflowSummary() {
       !values.agentPrompt.trim() ||
       hasIncompleteGitRepository(values) ||
       hasIncompleteOutput(values) ||
+      !isAgenticWorkflowScheduleValid(values) ||
       !variablesValid
     ) {
       navigate({ to: `${creationFlowUrl}/configuration` })

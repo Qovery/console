@@ -17,14 +17,13 @@ import {
   InputToggle,
   Section,
 } from '@qovery/shared/ui'
-import { formatCronExpression } from '@qovery/shared/util-js'
 import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
-import { AgenticWorkflowScheduleFields } from '../agentic-workflow-schedule-fields'
+import { AgenticWorkflowScheduleFields, isAgenticWorkflowScheduleValid } from '../agentic-workflow-schedule-fields'
 import { AIModelCards } from './ai-model-cards'
 import { GitRepositoryCard } from './git-repository-card'
 
@@ -240,9 +239,7 @@ export function AgenticWorkflowConfiguration() {
   const showModelApiKeyError = Boolean(dirtyFields.modelApiKey) && !values.modelApiKey.trim()
   const sectionInvalid: Record<AgenticWorkflowConfigurationSection, boolean> = {
     'service-information': !values.name.trim(),
-    schedule:
-      values.scheduleEnabled &&
-      (!values.scheduleCronExpression.trim() || !formatCronExpression(values.scheduleCronExpression)),
+    schedule: !isAgenticWorkflowScheduleValid(values),
     'ai-model': !values.modelApiKey.trim() || Boolean(modelSettingsJsonError),
     connectors: Boolean(mcpJsonError),
     'git-repositories': !gitRepositoriesValid,
@@ -262,7 +259,7 @@ export function AgenticWorkflowConfiguration() {
     outputHeadersErrors.every((error) => !error) &&
     !modelSettingsJsonError &&
     variablesValid &&
-    (!values.scheduleEnabled || Boolean(formatCronExpression(values.scheduleCronExpression)))
+    isAgenticWorkflowScheduleValid(values)
 
   useEffect(() => {
     setCurrentStep(1)
@@ -390,14 +387,8 @@ export function AgenticWorkflowConfiguration() {
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection section="schedule" iconName="clock" invalid={sectionInvalid.schedule}>
-            <AgenticWorkflowScheduleFields />
-            <ContinueButton
-              disabled={
-                values.scheduleEnabled &&
-                (!values.scheduleCronExpression.trim() || !formatCronExpression(values.scheduleCronExpression))
-              }
-              onClick={goToNextSection}
-            />
+            <AgenticWorkflowScheduleFields autoFocus />
+            <ContinueButton disabled={!isAgenticWorkflowScheduleValid(values)} onClick={goToNextSection} />
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection

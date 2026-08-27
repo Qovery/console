@@ -137,6 +137,15 @@ describe('AgenticWorkflowSummary', () => {
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/create/agentic-workflow/configuration' })
   })
 
+  it('should redirect an invalid enabled schedule back to configuration', () => {
+    renderSummary({
+      scheduleEnabled: true,
+      scheduleCronExpression: 'invalid',
+    })
+
+    expect(mockNavigate).toHaveBeenCalledWith({ to: '/create/agentic-workflow/configuration' })
+  })
+
   it('should create the agentic workflow and navigate back to the environment overview', async () => {
     const { userEvent } = renderSummary()
 

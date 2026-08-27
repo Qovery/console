@@ -9,7 +9,11 @@ export interface AgenticWorkflowScheduleFormValues {
   timezone: string
 }
 
-export function AgenticWorkflowScheduleFields() {
+export function isAgenticWorkflowScheduleValid(values: AgenticWorkflowScheduleFormValues) {
+  return !values.scheduleEnabled || Boolean(formatCronExpression(values.scheduleCronExpression))
+}
+
+export function AgenticWorkflowScheduleFields({ autoFocus = false }: { autoFocus?: boolean }) {
   const { control, setValue, watch } = useFormContext<AgenticWorkflowScheduleFormValues>()
   const scheduleEnabled = watch('scheduleEnabled')
   const scheduleCronExpression = watch('scheduleCronExpression')
@@ -19,6 +23,7 @@ export function AgenticWorkflowScheduleFields() {
   return (
     <div className="flex flex-col gap-4">
       <InputToggle
+        autoFocus={autoFocus}
         small
         align="top"
         value={scheduleEnabled}

@@ -186,6 +186,25 @@ describe('AgenticWorkflowSettings views', () => {
     )
   })
 
+  it('hides the saved next run when scheduling is disabled in the form', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+    expect(screen.getByText(/^Next run:/)).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Schedule agent task' }))
+
+    expect(screen.queryByText(/^Next run:/)).not.toBeInTheDocument()
+  })
+
+  it('hides the saved next run when the schedule no longer matches the saved value', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Cron expression' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Cron expression' }), '0 9 * * 1-5')
+
+    expect(screen.queryByText(/^Next run:/)).not.toBeInTheDocument()
+  })
+
   it('renders AI configuration without exposing the write-only API key', () => {
     renderWithProviders(<AgenticWorkflowSettings page="ai-configuration" />)
 

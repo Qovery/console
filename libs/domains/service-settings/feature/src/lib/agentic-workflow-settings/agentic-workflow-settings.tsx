@@ -8,6 +8,7 @@ import {
   type AgenticWorkflowGitRepository,
   AgenticWorkflowScheduleFields,
   GitRepositoryCard,
+  isAgenticWorkflowScheduleValid,
   isGitRepositoryComplete,
   useEditService,
   useService,
@@ -15,7 +16,6 @@ import {
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Heading, Icon, InputText, InputTextArea, InputToggle, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { formatCronExpression } from '@qovery/shared/util-js'
 
 type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'outputs' | 'governance'
 
@@ -178,6 +178,14 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   if (!service || !isAgenticWorkflow(service)) return null
 
   const values = form.watch()
+  const savedSchedule = service.schedule
+  const nextRunAt =
+    values.scheduleEnabled &&
+    savedSchedule &&
+    values.scheduleCronExpression === savedSchedule.cron_expression &&
+    values.timezone === savedSchedule.timezone
+      ? savedSchedule.next_run_at
+      : null
   const submit = form.handleSubmit((data) => {
     const model: AgenticWorkflowRequest['model'] = {
       type: service.model.type,
@@ -237,7 +245,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const repositoriesValid = values.repositories.every(isGitRepositoryComplete)
   const pageValid =
     page === 'general'
-      ? !values.scheduleEnabled || Boolean(formatCronExpression(values.scheduleCronExpression))
+      ? isAgenticWorkflowScheduleValid(values)
       : page === 'ai-configuration'
         ? agenticWorkflowJsonValidation(values.modelSettings) === true
         : page === 'connections'
@@ -283,9 +291,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
               <FormProvider {...form}>
                 <AgenticWorkflowScheduleFields />
               </FormProvider>
-              {service.schedule?.next_run_at ? (
+              {nextRunAt ? (
                 <p className="mt-2 text-xs text-neutral-subtle">
-                  Next run: {new Date(service.schedule.next_run_at).toLocaleString()}
+                  Next run: {new Date(nextRunAt).toLocaleString(undefined, { timeZone: values.timezone })}
                 </p>
               ) : null}
             </div>
