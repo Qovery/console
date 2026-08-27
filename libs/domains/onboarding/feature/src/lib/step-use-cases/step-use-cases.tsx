@@ -53,7 +53,7 @@ function UseCaseCard({ value, label, iconName, selected, onToggle }: UseCaseCard
         }
       }}
       className={twMerge(
-'focus-visible:outline-brand-11 flex w-[calc((100%_-_1.5rem)/3)] cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+        'focus-visible:outline-brand-11 flex w-[calc((100%_-_1.5rem)/3)] cursor-pointer items-center gap-3 rounded-lg border p-4 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
         selected
           ? 'border-brand-component bg-surface-brand-subtle'
           : 'border-neutral bg-background hover:border-neutral-component hover:bg-surface-neutral-subtle'
