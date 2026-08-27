@@ -23,6 +23,7 @@ import {
   type AgenticWorkflowOutput,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
+import { AgenticWorkflowScheduleFields, isAgenticWorkflowScheduleValid } from '../agentic-workflow-schedule-fields'
 import { AIModelCards } from './ai-model-cards'
 import { GitRepositoryCard } from './git-repository-card'
 
@@ -235,7 +236,7 @@ export function AgenticWorkflowConfiguration() {
   const showNameError = Boolean(dirtyFields.name) && !values.name.trim()
   const showModelApiKeyError = Boolean(dirtyFields.modelApiKey) && !values.modelApiKey.trim()
   const sectionInvalid: Record<AgenticWorkflowConfigurationSection, boolean> = {
-    'service-information': !values.name.trim(),
+    'service-information': !values.name.trim() || !isAgenticWorkflowScheduleValid(values),
     'ai-model': !values.modelApiKey.trim() || Boolean(modelSettingsJsonError),
     connectors: Boolean(mcpJsonError),
     'git-repositories': !gitRepositoriesValid,
@@ -254,7 +255,8 @@ export function AgenticWorkflowConfiguration() {
     !mcpJsonError &&
     outputHeadersErrors.every((error) => !error) &&
     !modelSettingsJsonError &&
-    variablesValid
+    variablesValid &&
+    isAgenticWorkflowScheduleValid(values)
 
   useEffect(() => {
     setCurrentStep(1)
@@ -378,7 +380,11 @@ export function AgenticWorkflowConfiguration() {
               description="Start listening and executing this agent task as soon as it is created."
               onChange={(value) => form.setValue('workflowEnabled', value, { shouldDirty: true })}
             />
-            <ContinueButton disabled={!values.name.trim()} onClick={goToNextSection} />
+            <AgenticWorkflowScheduleFields />
+            <ContinueButton
+              disabled={!values.name.trim() || !isAgenticWorkflowScheduleValid(values)}
+              onClick={goToNextSection}
+            />
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection

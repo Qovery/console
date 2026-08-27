@@ -126,6 +126,7 @@ describe('AgenticWorkflowSummary', () => {
     expect(screen.getByText(validValues.mcpJson ?? '')).toBeInTheDocument()
     expect(screen.getByText('Documentation, Tickets')).toBeInTheDocument()
     expect(screen.getByText('1 webhook')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Edit Schedule' })).not.toBeInTheDocument()
     expect(mockNavigate).not.toHaveBeenCalledWith({ to: '/create/agentic-workflow/configuration' })
   })
 
@@ -133,6 +134,15 @@ describe('AgenticWorkflowSummary', () => {
     const { userEvent } = renderSummary()
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit AI model' }))
+
+    expect(mockNavigate).toHaveBeenCalledWith({ to: '/create/agentic-workflow/configuration' })
+  })
+
+  it('should redirect an invalid enabled schedule back to configuration', () => {
+    renderSummary({
+      scheduleEnabled: true,
+      scheduleCronExpression: 'invalid',
+    })
 
     expect(mockNavigate).toHaveBeenCalledWith({ to: '/create/agentic-workflow/configuration' })
   })
