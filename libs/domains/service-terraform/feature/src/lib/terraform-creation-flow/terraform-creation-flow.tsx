@@ -1,6 +1,7 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { type PropsWithChildren, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
+import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { FunnelFlow } from '@qovery/shared/ui'
 import { TerraformCreateContext } from '../hooks/use-terraform-create-context/use-terraform-create-context'
 import { type TerraformGeneralData } from '../terraform-general-data/terraform-general-data'
@@ -14,6 +15,7 @@ export interface TerraformCreationFlowProps extends PropsWithChildren {
 export const terraformCreationSteps: { title: string }[] = [
   { title: 'General information' },
   { title: 'Terraform configuration' },
+  { title: 'Environment variables' },
   { title: 'Terraform variables' },
   { title: 'Summary' },
 ]
@@ -22,6 +24,7 @@ export const TerraformCreationFlow = ({ children, creationFlowUrl }: TerraformCr
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const navigate = useNavigate()
   const [currentStep, setCurrentStep] = useState(1)
+  const [createdServiceId, setCreatedServiceId] = useState<string>()
   const { template } = useSearch({ strict: false })
   const templateMatch = findTerraformTemplateMatch(template)
 
@@ -57,9 +60,26 @@ export const TerraformCreationFlow = ({ children, creationFlowUrl }: TerraformCr
     },
     mode: 'onChange',
   })
+  const variablesForm = useForm<FlowVariableData>({
+    defaultValues: {
+      variables: [],
+      externalSecrets: [],
+    },
+    mode: 'onChange',
+  })
 
   return (
-    <TerraformCreateContext.Provider value={{ currentStep, setCurrentStep, generalForm, creationFlowUrl }}>
+    <TerraformCreateContext.Provider
+      value={{
+        currentStep,
+        setCurrentStep,
+        generalForm,
+        variablesForm,
+        createdServiceId,
+        setCreatedServiceId,
+        creationFlowUrl,
+      }}
+    >
       <FunnelFlow
         onExit={() => {
           if (window.confirm('Do you really want to leave?')) {
