@@ -120,13 +120,14 @@ function BlueprintVersionInfo({
 
 // A HELM blueprint's linked service has no git source, so it renders through `helmInfo` and never
 // reaches `BlueprintVersionInfo` — and has nowhere to carry its tag either, leaving the update
-// check as the only source. When it cannot answer, the chart version stays visible but loses its
-// "deploy another version" action: the service may well be on a prerelease pin whose tag is gone
-// once its pull request closes, and there is no way from here to tell that apart.
+// check as the only source. Until it answers — and if it never does — the chart version stays
+// visible but without its "deploy another version" action: the service may well be on a prerelease
+// pin whose tag is gone once its pull request closes, and there is no way from here to tell that
+// apart. In flight the console knows exactly as little as it does on failure, and this endpoint
+// reads catalog.json plus two manifests from GitHub, so that is not a brief window.
 //
-// The chart version comes off the service itself, so it renders straight away and the check only
-// ever downgrades it. Waiting on the request instead would put a skeleton in front of data the
-// console already holds, on every helm blueprint row.
+// The chart version itself comes off the service, so it renders straight away: waiting on the
+// request would put a skeleton in front of data the console already holds, on every helm row.
 function BlueprintHelmVersionSlot({
   service,
   version,
@@ -138,11 +139,11 @@ function BlueprintHelmVersionSlot({
   organizationId: string
   projectId: string
 }) {
-  const { isError, isRc } = useBlueprintUpdateState(service.blueprint_id)
+  const { isError, isLoading, isRc } = useBlueprintUpdateState(service.blueprint_id)
 
   if (isRc) return <BlueprintRcBadge />
 
-  if (isError) {
+  if (isLoading || isError) {
     return (
       <Badge variant="surface" className="gap-1 whitespace-nowrap">
         <Icon iconName="tag" className="w-3" />

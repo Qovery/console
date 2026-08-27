@@ -174,6 +174,8 @@ describe('ServiceVersionCell', () => {
     renderWithProviders(<ServiceVersionCell service={helmBlueprintService} />)
 
     expect(screen.getByText('25.3.11')).toBeInTheDocument()
+    // The check may still come back saying this is a prerelease pin.
+    expect(screen.queryByRole('button', { name: 'Deploy from another version' })).not.toBeInTheDocument()
   })
 
   it('opens the blueprint update confirmation modal when no input is required', async () => {
