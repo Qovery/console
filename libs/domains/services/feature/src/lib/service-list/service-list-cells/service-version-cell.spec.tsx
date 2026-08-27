@@ -110,6 +110,38 @@ describe('ServiceVersionCell', () => {
     expect(screen.getByText('RC test')).toBeInTheDocument()
   })
 
+  // react-query keeps the last successful data when a refetch fails, and `update-service-rc`
+  // repoints a live service onto a tag the catalog cannot resolve.
+  it('ignores a cached update once the check starts failing', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: { is_up_to_date: false, current_tag: 'AWS/s3/default/1.2.3', latest_tag: 'AWS/s3/default/1.3.0' },
+      isLoading: false,
+      isError: true,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(
+      <ServiceVersionCell service={withBlueprintTag(blueprintService, 'AWS/s3/default/1.3.0-pr45.a1b2c3d-rc')} />
+    )
+
+    expect(screen.getByText('RC test')).toBeInTheDocument()
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+  })
+
+  it('drops a stale update action for a released tag the check can no longer resolve', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: { is_up_to_date: false, current_tag: 'AWS/mysql/8/2.3.4', latest_tag: 'AWS/mysql/8/2.4.0' },
+      isLoading: false,
+      isError: true,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={withBlueprintTag(blueprintService, 'AWS/mysql/8/2.3.4')} />)
+
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+    expect(screen.queryByText('RC test')).not.toBeInTheDocument()
+    // The major still comes off the pinned branch, so it survives the check failing.
+    expect(screen.getByText('v8')).toBeInTheDocument()
+  })
+
   it('does not flag a released blueprint the catalog no longer publishes', () => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({
       data: undefined,

@@ -471,6 +471,28 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
   })
 
+  it('drops a cached update once the blueprint update check starts failing', () => {
+    mockUseBlueprintUpdate.mockReturnValue({
+      data: {
+        is_up_to_date: false,
+        current_tag: 'AWS/mysql/8/1.0.0',
+        latest_tag: 'AWS/mysql/8/2.0.0',
+        new_required_values: [],
+        new_optional_values: [],
+        now_required_values: [],
+        updated_values: [],
+        removed_values: [],
+        engine_diff: { updated_values: [] },
+      },
+      isError: true,
+    })
+
+    renderServiceHeader('terraform-mock')
+
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+  })
+
   it('still renders the header when the blueprint update check fails', () => {
     mockUseBlueprintUpdate.mockReturnValue({ data: undefined, isError: true })
 

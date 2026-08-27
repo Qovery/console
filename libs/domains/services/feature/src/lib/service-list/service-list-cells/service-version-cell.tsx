@@ -46,11 +46,11 @@ function BlueprintVersionInfo({
 }) {
   const { organizationId = '', projectId = '' } = useParams({ strict: false }) ?? {}
   // The engine pins the generated service to the blueprint tag as its git branch.
-  const { blueprintUpdate, isLoading, isRc } = useBlueprintUpdateState({
+  const { blueprintUpdate, isLoading, isRc, tag } = useBlueprintUpdateState({
     blueprintId: service.blueprint_id,
     localTag: gitRepository.branch,
   })
-  const version = blueprintUpdate?.current_tag ? getBlueprintServiceVersion(blueprintUpdate.current_tag) : undefined
+  const version = tag ? getBlueprintServiceVersion(tag) : undefined
 
   return (
     <div className="flex w-full min-w-0 items-center justify-between gap-6">
