@@ -170,6 +170,16 @@ export function AgenticWorkflowSummary() {
             <SummaryValue label="Enabled" value={values.workflowEnabled ? 'Yes' : 'No'} />
           </SummarySection>
 
+          <SummarySection title="Schedule" onEdit={() => handleEditSection('schedule')}>
+            <SummaryValue label="Scheduled" value={values.scheduleEnabled ? 'Yes' : 'No'} />
+            {values.scheduleEnabled ? (
+              <>
+                <SummaryValue label="Cron expression" value={values.scheduleCronExpression} />
+                <SummaryValue label="Timezone" value={values.timezone} />
+              </>
+            ) : null}
+          </SummarySection>
+
           <SummarySection title="AI model" onEdit={() => handleEditSection('ai-model')}>
             <SummaryValue label="Model provider" value={getModelProviderLabel(values.aiModel)} />
             <SummaryValue label="API key" value={maskValue(values.modelApiKey)} />

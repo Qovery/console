@@ -56,6 +56,11 @@ const service = {
   name: 'Incident assistant',
   description: 'Investigates production incidents',
   enabled: true,
+  schedule: {
+    cron_expression: '0 8 * * 1-5',
+    timezone: 'Europe/Paris',
+    next_run_at: '2026-08-28T06:00:00Z',
+  },
   model: {
     type: AgenticWorkflowModelType.BEDROCK,
     settings: '{"temperature":0.2}',
@@ -154,6 +159,9 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('spinbutton', { name: 'Memory (MiB)' })).toHaveValue(1024)
     expect(screen.getByRole('spinbutton', { name: 'GPU' })).toHaveValue(0)
     expect(screen.getByRole('spinbutton', { name: 'Storage (GiB)' })).toHaveValue(20)
+    expect(screen.getByText('Schedule agent task')).toBeInTheDocument()
+    expect(screen.getByRole('textbox', { name: 'Cron expression' })).toHaveValue('0 8 * * 1-5')
+    expect(screen.getByText('Europe/Paris')).toBeInTheDocument()
 
     await userEvent.clear(screen.getByRole('textbox', { name: 'Description' }))
     await userEvent.type(screen.getByRole('textbox', { name: 'Description' }), 'Updated description')
@@ -169,6 +177,10 @@ describe('AgenticWorkflowSettings views', () => {
           model: { type: AgenticWorkflowModelType.BEDROCK, settings: '{"temperature":0.2}' },
           outputs: [{ name: 'Audit log', url: null }],
           mcp_server_ids: ['mcp-1'],
+          schedule: {
+            cron_expression: '0 8 * * 1-5',
+            timezone: 'Europe/Paris',
+          },
         }),
       })
     )

@@ -1,11 +1,12 @@
 import { useParams } from '@tanstack/react-router'
 import { type AgenticWorkflowOutput, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 import { McpServerSetting, useGitTokens, useMcpServers } from '@qovery/domains/organizations/feature'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   AgenticWorkflowCodeEditorField,
   type AgenticWorkflowGitRepository,
+  AgenticWorkflowScheduleFields,
   GitRepositoryCard,
   isGitRepositoryComplete,
   useEditService,
@@ -14,6 +15,7 @@ import {
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Heading, Icon, InputText, InputTextArea, InputToggle, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { formatCronExpression } from '@qovery/shared/util-js'
 
 type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'outputs' | 'governance'
 
@@ -25,6 +27,9 @@ interface FormValues {
   name: string
   description: string
   enabled: boolean
+  scheduleEnabled: boolean
+  scheduleCronExpression: string
+  timezone: string
   modelApiKey: string
   modelSettings: string
   agentPrompt: string
@@ -129,6 +134,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       name: service?.name ?? '',
       description: service && isAgenticWorkflow(service) ? service.description : '',
       enabled: service && isAgenticWorkflow(service) ? service.enabled : false,
+      scheduleEnabled: Boolean(service && isAgenticWorkflow(service) && service.schedule),
+      scheduleCronExpression:
+        service && isAgenticWorkflow(service) ? service.schedule?.cron_expression ?? '0 8 * * 1-5' : '0 8 * * 1-5',
+      timezone: service && isAgenticWorkflow(service) ? service.schedule?.timezone ?? 'Etc/UTC' : 'Etc/UTC',
       modelApiKey: '',
       modelSettings: service && isAgenticWorkflow(service) ? service.model.settings : '',
       agentPrompt: service && isAgenticWorkflow(service) ? service.agent_prompt : '',
@@ -180,6 +189,12 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       name: data.name,
       description: data.description,
       enabled: data.enabled,
+      schedule: data.scheduleEnabled
+        ? {
+            cron_expression: data.scheduleCronExpression,
+            timezone: data.timezone,
+          }
+        : null,
       model,
       agent_prompt: data.agentPrompt,
       project_repositories: formatAgenticWorkflowRepositories(data.repositories),
@@ -221,13 +236,15 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
 
   const repositoriesValid = values.repositories.every(isGitRepositoryComplete)
   const pageValid =
-    page === 'ai-configuration'
-      ? agenticWorkflowJsonValidation(values.modelSettings) === true
-      : page === 'connections'
-        ? repositoriesValid && (!values.mcp.trim() || agenticWorkflowJsonValidation(values.mcp) === true)
-        : page === 'outputs'
-          ? agenticWorkflowOutputsValidation(values.outputs) === true
-          : true
+    page === 'general'
+      ? !values.scheduleEnabled || Boolean(formatCronExpression(values.scheduleCronExpression))
+      : page === 'ai-configuration'
+        ? agenticWorkflowJsonValidation(values.modelSettings) === true
+        : page === 'connections'
+          ? repositoriesValid && (!values.mcp.trim() || agenticWorkflowJsonValidation(values.mcp) === true)
+          : page === 'outputs'
+            ? agenticWorkflowOutputsValidation(values.outputs) === true
+            : true
   const addRepository = () =>
     form.setValue('repositories', [...values.repositories, { repository: '', branch: '' }], { shouldDirty: true })
 
@@ -258,6 +275,20 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
               description="Allow this agent task to listen for and process incoming requests."
               onChange={(value) => form.setValue('enabled', value, { shouldDirty: true })}
             />
+            <div className="pt-6">
+              <h2 className="mb-1 text-base font-medium text-neutral">Schedule</h2>
+              <p className="mb-4 text-sm text-neutral-subtle">
+                Configure when this agent task runs automatically in addition to webhook requests.
+              </p>
+              <FormProvider {...form}>
+                <AgenticWorkflowScheduleFields />
+              </FormProvider>
+              {service.schedule?.next_run_at ? (
+                <p className="mt-2 text-xs text-neutral-subtle">
+                  Next run: {new Date(service.schedule.next_run_at).toLocaleString()}
+                </p>
+              ) : null}
+            </div>
             <div className="pt-6">
               <h2 className="mb-1 text-base font-medium text-neutral">Resources</h2>
               <p className="mb-4 text-sm text-neutral-subtle">

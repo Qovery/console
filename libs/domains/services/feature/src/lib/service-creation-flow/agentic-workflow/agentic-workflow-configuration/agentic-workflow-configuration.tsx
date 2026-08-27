@@ -17,17 +17,20 @@ import {
   InputToggle,
   Section,
 } from '@qovery/shared/ui'
+import { formatCronExpression } from '@qovery/shared/util-js'
 import {
   type AgenticWorkflowConfigurationSection,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
+import { AgenticWorkflowScheduleFields } from '../agentic-workflow-schedule-fields'
 import { AIModelCards } from './ai-model-cards'
 import { GitRepositoryCard } from './git-repository-card'
 
 const sectionOrder: AgenticWorkflowConfigurationSection[] = [
   'service-information',
+  'schedule',
   'ai-model',
   'connectors',
   'git-repositories',
@@ -59,6 +62,7 @@ function isSectionCompleted(
 function getSectionTitle(section: AgenticWorkflowConfigurationSection) {
   const titles: Record<AgenticWorkflowConfigurationSection, string> = {
     'service-information': 'Service information',
+    schedule: 'Schedule',
     'ai-model': 'AI model',
     connectors: 'MCPs',
     'git-repositories': 'Git repositories',
@@ -236,6 +240,9 @@ export function AgenticWorkflowConfiguration() {
   const showModelApiKeyError = Boolean(dirtyFields.modelApiKey) && !values.modelApiKey.trim()
   const sectionInvalid: Record<AgenticWorkflowConfigurationSection, boolean> = {
     'service-information': !values.name.trim(),
+    schedule:
+      values.scheduleEnabled &&
+      (!values.scheduleCronExpression.trim() || !formatCronExpression(values.scheduleCronExpression)),
     'ai-model': !values.modelApiKey.trim() || Boolean(modelSettingsJsonError),
     connectors: Boolean(mcpJsonError),
     'git-repositories': !gitRepositoriesValid,
@@ -254,7 +261,8 @@ export function AgenticWorkflowConfiguration() {
     !mcpJsonError &&
     outputHeadersErrors.every((error) => !error) &&
     !modelSettingsJsonError &&
-    variablesValid
+    variablesValid &&
+    (!values.scheduleEnabled || Boolean(formatCronExpression(values.scheduleCronExpression)))
 
   useEffect(() => {
     setCurrentStep(1)
@@ -379,6 +387,17 @@ export function AgenticWorkflowConfiguration() {
               onChange={(value) => form.setValue('workflowEnabled', value, { shouldDirty: true })}
             />
             <ContinueButton disabled={!values.name.trim()} onClick={goToNextSection} />
+          </AgenticWorkflowSection>
+
+          <AgenticWorkflowSection section="schedule" iconName="clock" invalid={sectionInvalid.schedule}>
+            <AgenticWorkflowScheduleFields />
+            <ContinueButton
+              disabled={
+                values.scheduleEnabled &&
+                (!values.scheduleCronExpression.trim() || !formatCronExpression(values.scheduleCronExpression))
+              }
+              onClick={goToNextSection}
+            />
           </AgenticWorkflowSection>
 
           <AgenticWorkflowSection

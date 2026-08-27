@@ -60,6 +60,7 @@ export const agenticWorkflowCreationSteps: { title: string }[] = [{ title: 'Conf
 
 export type AgenticWorkflowConfigurationSection =
   | 'service-information'
+  | 'schedule'
   | 'ai-model'
   | 'connectors'
   | 'git-repositories'
@@ -92,6 +93,9 @@ export interface AgenticWorkflowFormData {
   memory: string
   storage: string
   workflowEnabled: boolean
+  scheduleEnabled: boolean
+  scheduleCronExpression: string
+  timezone: string
   aiModel: AgenticWorkflowModelType
   webhookEnabled: boolean
   mcpServerIds: string[]
@@ -147,6 +151,9 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
       memory: '2048',
       storage: '10',
       workflowEnabled: true,
+      scheduleEnabled: false,
+      scheduleCronExpression: '0 8 * * 1-5',
+      timezone: 'Etc/UTC',
       aiModel: AgenticWorkflowModelType.CLAUDE,
       webhookEnabled: true,
       mcpServerIds: [],
