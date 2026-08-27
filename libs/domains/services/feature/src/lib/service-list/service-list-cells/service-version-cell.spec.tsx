@@ -164,6 +164,18 @@ describe('ServiceVersionCell', () => {
     expect(screen.getByRole('button', { name: 'Deploy from another version' })).toBeInTheDocument()
   })
 
+  it('renders a helm blueprint chart version without waiting on the update check', () => {
+    jest.mocked(useBlueprintUpdate).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+    } as ReturnType<typeof useBlueprintUpdate>)
+
+    renderWithProviders(<ServiceVersionCell service={helmBlueprintService} />)
+
+    expect(screen.getByText('25.3.11')).toBeInTheDocument()
+  })
+
   it('opens the blueprint update confirmation modal when no input is required', async () => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({
       data: {

@@ -22,8 +22,10 @@ export function useBlueprintUpdate({
     useErrorBoundary,
     // A 404 means the catalog does not publish this service's tag (prerelease or retired major).
     // That is deterministic, and retrying it only holds the overview on its suspense fallback.
-    // Every other failure can be transient, so it keeps a bounded retry.
-    retry: (failureCount, error) => (isAxiosError(error) && error.response?.status === 404 ? false : failureCount < 2),
+    // Every other failure can be transient, so it gets one quick retry — the default exponential
+    // backoff would stall the overview for seconds before it settles on an error.
+    retry: (failureCount, error) => (isAxiosError(error) && error.response?.status === 404 ? false : failureCount < 1),
+    retryDelay: 500,
   })
 }
 

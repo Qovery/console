@@ -44,11 +44,12 @@ type ServiceVersionCellProps = {
 // tag the catalog does not publish — a prerelease, but a retired major too. `localTag` is the tag
 // read off the service itself, so a prerelease stays recognisable when the check cannot answer.
 function useBlueprintUpdateState(blueprintId: string, localTag?: string) {
-  const { data: blueprintUpdate, isLoading } = useBlueprintUpdate({ blueprintId })
+  const { data: blueprintUpdate, isLoading, isError } = useBlueprintUpdate({ blueprintId })
 
   return {
     blueprintUpdate,
     isLoading,
+    isError,
     isRc: isBlueprintRcTag(blueprintUpdate?.current_tag ?? localTag),
   }
 }
@@ -122,6 +123,10 @@ function BlueprintVersionInfo({
 // check as the only source. When it cannot answer, the chart version stays visible but loses its
 // "deploy another version" action: the service may well be on a prerelease pin whose tag is gone
 // once its pull request closes, and there is no way from here to tell that apart.
+//
+// The chart version comes off the service itself, so it renders straight away and the check only
+// ever downgrades it. Waiting on the request instead would put a skeleton in front of data the
+// console already holds, on every helm blueprint row.
 function BlueprintHelmVersionSlot({
   service,
   version,
@@ -133,12 +138,11 @@ function BlueprintHelmVersionSlot({
   organizationId: string
   projectId: string
 }) {
-  const { blueprintUpdate, isLoading, isRc } = useBlueprintUpdateState(service.blueprint_id)
+  const { isError, isRc } = useBlueprintUpdateState(service.blueprint_id)
 
-  if (isLoading) return <Skeleton width={119} height={24} />
   if (isRc) return <BlueprintRcBadge />
 
-  if (!blueprintUpdate) {
+  if (isError) {
     return (
       <Badge variant="surface" className="gap-1 whitespace-nowrap">
         <Icon iconName="tag" className="w-3" />
