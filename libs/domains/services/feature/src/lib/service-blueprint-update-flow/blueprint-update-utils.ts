@@ -74,11 +74,15 @@ export function getBlueprintServiceVersion(tag: string) {
   return tag.split('/').filter(Boolean).at(-2)
 }
 
-// Prerelease tags built by the service-catalog CI for an open pull request
-// (`{PROVIDER}/{service}/{major}/{version}-pr{PR}.{sha}-rc`). They are never published in
-// catalog.json, so the update check cannot resolve them.
+// Prerelease tags built by the service-catalog CI for an open pull request, from the pull request
+// number and the head sha: `{PROVIDER}/{service}/{major}/{version}-pr{PR}.{short_sha}-rc`. Matching
+// the whole marker rather than the `-rc` ending matters — the catalog releases whatever version a
+// manifest declares, so a published `1.2.3-rc` is a release and must keep its update badge.
+const BLUEPRINT_RC_VERSION = /-pr\d+\.[0-9a-f]{7,40}-rc$/
+
 export function isBlueprintRcTag(tag?: string) {
-  return Boolean(tag && getBlueprintUpdateVersion(tag)?.endsWith('-rc'))
+  const version = tag ? getBlueprintUpdateVersion(tag) : undefined
+  return Boolean(version && BLUEPRINT_RC_VERSION.test(version))
 }
 
 export function getBlueprintUpdateTitle({

@@ -40,6 +40,9 @@ describe('blueprint update utils', () => {
     { tag: 'AWS/postgres/17/3.1.0-pr45.a1b2c3d-rc', expected: true },
     { tag: 'AWS/postgres/17/3.1.0', expected: false },
     { tag: 'AWS/postgres/17-rc/3.1.0', expected: false },
+    // catalog-gen releases whatever version a manifest declares, so these are published releases.
+    { tag: 'AWS/postgres/17/3.1.0-rc', expected: false },
+    { tag: 'AWS/postgres/17/3.1.0-pr45-rc', expected: false },
     { tag: undefined, expected: false },
   ])('detects the prerelease tag $tag as $expected', ({ tag, expected }) => {
     expect(isBlueprintRcTag(tag)).toBe(expected)

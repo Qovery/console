@@ -123,7 +123,7 @@ describe('ServiceVersionCell', () => {
     expect(screen.queryByText('RC test')).not.toBeInTheDocument()
   })
 
-  it('does not flag a helm blueprint the catalog no longer publishes', () => {
+  it('shows a helm blueprint chart version read-only when the update check cannot answer', () => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -134,6 +134,7 @@ describe('ServiceVersionCell', () => {
 
     expect(screen.getByText('25.3.11')).toBeInTheDocument()
     expect(screen.queryByText('RC test')).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Deploy from another version' })).not.toBeInTheDocument()
   })
 
   it('replaces the chart version actions of a helm blueprint service on a prerelease tag', () => {
@@ -160,6 +161,7 @@ describe('ServiceVersionCell', () => {
 
     expect(screen.getByText('25.3.11')).toBeInTheDocument()
     expect(screen.queryByText('RC test')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Deploy from another version' })).toBeInTheDocument()
   })
 
   it('opens the blueprint update confirmation modal when no input is required', async () => {

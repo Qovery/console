@@ -22,7 +22,7 @@ import {
   isJobContainerSource,
   isJobGitSource,
 } from '@qovery/shared/enums'
-import { ExternalLink, Icon, Skeleton, Tooltip } from '@qovery/shared/ui'
+import { Badge, ExternalLink, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { buildGitProviderUrl } from '@qovery/shared/util-git'
 import { containerRegistryKindToIcon } from '@qovery/shared/util-js'
 import { useBlueprintUpdate } from '../../hooks/use-blueprint-update/use-blueprint-update'
@@ -119,8 +119,9 @@ function BlueprintVersionInfo({
 
 // A HELM blueprint's linked service has no git source, so it renders through `helmInfo` and never
 // reaches `BlueprintVersionInfo` — and has nowhere to carry its tag either, leaving the update
-// check as the only source. Offering "deploy another version" on a prerelease pin is wrong: the tag
-// disappears when its pull request closes.
+// check as the only source. When it cannot answer, the chart version stays visible but loses its
+// "deploy another version" action: the service may well be on a prerelease pin whose tag is gone
+// once its pull request closes, and there is no way from here to tell that apart.
 function BlueprintHelmVersionSlot({
   service,
   version,
@@ -132,10 +133,19 @@ function BlueprintHelmVersionSlot({
   organizationId: string
   projectId: string
 }) {
-  const { isLoading, isRc } = useBlueprintUpdateState(service.blueprint_id)
+  const { blueprintUpdate, isLoading, isRc } = useBlueprintUpdateState(service.blueprint_id)
 
   if (isLoading) return <Skeleton width={119} height={24} />
   if (isRc) return <BlueprintRcBadge />
+
+  if (!blueprintUpdate) {
+    return (
+      <Badge variant="surface" className="gap-1 whitespace-nowrap">
+        <Icon iconName="tag" className="w-3" />
+        <Truncate text={version} truncateLimit={8} />
+      </Badge>
+    )
+  }
 
   return <LastVersion organizationId={organizationId} projectId={projectId} service={service} version={version} />
 }
