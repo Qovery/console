@@ -15,8 +15,8 @@ const USE_CASES: Array<{ value: string; label: string; iconName: IconName }> = [
     iconName: 'rocket',
   },
   {
-    value: 'migrate-to-qovery',
-    label: 'Migrate to Qovery from Heroku, Render or another PaaS',
+    value: 'migrate-cloud-provider',
+    label: 'Migrate to another cloud provider from Heroku, Render or another PaaS',
     iconName: 'right-left',
   },
   {
