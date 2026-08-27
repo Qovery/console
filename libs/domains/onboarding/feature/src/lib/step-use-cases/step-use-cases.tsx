@@ -15,6 +15,11 @@ const USE_CASES: Array<{ value: string; label: string; iconName: IconName }> = [
     iconName: 'rocket',
   },
   {
+    value: 'migrate-to-qovery',
+    label: 'Migrate to Qovery from Heroku, Render or another PaaS',
+    iconName: 'right-left',
+  },
+  {
     value: 'ephemeral-environments',
     label: 'Create environments on demand (testing/dev/QA)',
     iconName: 'flask',
@@ -78,7 +83,7 @@ export function StepUseCases({ onSubmit, onBack }: StepUseCasesProps) {
     <div className="mx-auto max-w-content-with-navigation-left pb-10">
       <h1 className="h3 mb-3 text-neutral">What are you looking to do?</h1>
       <p className="mb-10 text-sm text-neutral">Select all that apply.</p>
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-6 gap-3">
         {USE_CASES.map((useCase) => (
           <UseCaseCard
             key={useCase.value}
