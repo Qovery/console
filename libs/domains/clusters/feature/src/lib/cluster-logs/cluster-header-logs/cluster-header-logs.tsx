@@ -95,30 +95,32 @@ export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, da
             Launch diagnostic for this error
           </Button>
         )}
-        <Button
-          data-testid="scroll-up-button"
-          className="rounded-br-none rounded-tr-none border-r-0"
-          type="button"
-          variant="outline"
-          color="neutral"
-          size="sm"
-          iconOnly
-          onClick={() => forcedScroll()}
-        >
-          <Icon iconName="arrow-up-to-line" />
-        </Button>
-        <Button
-          data-testid="scroll-down-button"
-          className="mr-2 rounded-bl-none rounded-tl-none"
-          variant="outline"
-          type="button"
-          color="neutral"
-          size="sm"
-          iconOnly
-          onClick={() => forcedScroll(true)}
-        >
-          <Icon iconName="arrow-down-to-line" />
-        </Button>
+        <div className="flex items-center gap-0">
+          <Button
+            data-testid="scroll-up-button"
+            className="rounded-br-none rounded-tr-none border-r-0"
+            type="button"
+            variant="outline"
+            color="neutral"
+            size="sm"
+            iconOnly
+            onClick={() => forcedScroll()}
+          >
+            <Icon iconName="arrow-up-to-line" />
+          </Button>
+          <Button
+            data-testid="scroll-down-button"
+            className="rounded-bl-none rounded-tl-none"
+            variant="outline"
+            type="button"
+            color="neutral"
+            size="sm"
+            iconOnly
+            onClick={() => forcedScroll(true)}
+          >
+            <Icon iconName="arrow-down-to-line" />
+          </Button>
+        </div>
         <Button
           type="button"
           variant="outline"

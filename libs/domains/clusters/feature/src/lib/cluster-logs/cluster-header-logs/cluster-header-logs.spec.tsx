@@ -53,6 +53,13 @@ describe('ClusterHeaderLogs', () => {
     expect(refScrollSection?.current?.scroll).toHaveBeenCalledWith(0, refScrollSection?.current?.scrollHeight)
   })
 
+  it('should render scroll controls without a gap', () => {
+    renderWithProviders(<ClusterHeaderLogs {...props} />)
+
+    expect(screen.getByTestId('scroll-up-button').parentElement).toHaveClass('gap-0')
+    expect(screen.getByTestId('scroll-down-button')).not.toHaveClass('mr-2')
+  })
+
   it('should trigger download on click', async () => {
     const { userEvent } = renderWithProviders(<ClusterHeaderLogs {...props} />)
     const buttons = screen.getAllByRole('button')
