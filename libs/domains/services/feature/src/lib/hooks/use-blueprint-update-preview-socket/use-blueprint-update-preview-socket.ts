@@ -9,9 +9,8 @@ import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 // that dies without ever delivering one, so the UI can never wait forever.
 const PREVIEW_WATCHDOG_MS = 12 * 60 * 1000
 
-// A timeout frame carries the reason it timed out — which terraform step ran out of time and after
-// how long. The pinned qovery-ws-typescript-axios predates the field, so read it structurally;
-// drop this once the ws client is regenerated.
+// The pinned qovery-ws-typescript-axios predates `message` on timeout frames, so read it
+// structurally. Drop once the ws client is regenerated.
 type TimeoutFrame = { message?: string | null }
 
 /**
