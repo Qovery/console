@@ -7,12 +7,20 @@ const props: StickyActionFormToasterProps = {
   resetLabel: 'Reset',
   submitLabel: 'Save modifications',
   description: 'Warning, there are still unsaved changes!',
+  visible: true,
 }
 
 describe('StickyActionFormToaster', () => {
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(<StickyActionFormToaster {...props} />)
-    expect(baseElement).toBeTruthy()
+    renderWithProviders(<StickyActionFormToaster {...props} />)
+
+    expect(screen.getByTestId('sticky-action-form-toaster')).toBeVisible()
+  })
+
+  it.each([false, true])('should render above other floating elements when fixed is %s', (fixed) => {
+    renderWithProviders(<StickyActionFormToaster {...props} fixed={fixed} />)
+
+    expect(screen.getByTestId('sticky-action-form-toaster').parentElement).toHaveClass('z-toast')
   })
 
   it('should handle reset on click', async () => {
@@ -49,5 +57,18 @@ describe('StickyActionFormToaster', () => {
     renderWithProviders(<StickyActionFormToaster {...props} submitButtonColor="red" />)
 
     expect(screen.getByTestId('submit-button')).toHaveClass('bg-surface-negative-solid')
+  })
+
+  it('should immediately follow the visible prop without animation classes', () => {
+    const { rerender } = renderWithProviders(<StickyActionFormToaster {...props} visible={false} />)
+
+    expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
+
+    rerender(<StickyActionFormToaster {...props} visible />)
+
+    const toaster = screen.getByTestId('sticky-action-form-toaster')
+    expect(toaster).toBeVisible()
+    expect(toaster).not.toHaveClass('animate-action-bar-fade-in')
+    expect(toaster).not.toHaveClass('animate-action-bar-fade-out')
   })
 })

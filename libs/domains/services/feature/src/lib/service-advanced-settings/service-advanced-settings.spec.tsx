@@ -98,6 +98,11 @@ describe('AdvancedSettings', () => {
       await userEvent.type(input, '79')
       await userEvent.clear(input)
     }
+    const changedInput = container.querySelector('textarea[name="cronjob.success_jobs_history_limit"]')
+    if (changedInput) {
+      await userEvent.clear(changedInput)
+      await userEvent.type(changedInput, '4')
+    }
     expect(screen.getByTestId('submit-button')).toBeEnabled()
   })
 
@@ -169,7 +174,7 @@ describe('AdvancedSettings', () => {
     await userEvent.click(screen.getByTestId('submit-button'))
 
     await waitFor(() => {
-      expect(screen.getByTestId('sticky-action-form-toaster')).not.toHaveClass('animate-action-bar-fade-in')
+      expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
     })
   })
 })

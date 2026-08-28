@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Button, { type ButtonProps } from '../button/button'
 
@@ -29,34 +28,21 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     fixed = false,
   } = props
 
-  const [visibleState, setVisibleState] = useState(visible)
-
-  useEffect(() => {
-    if (visible) {
-      setVisibleState(true)
-    } else {
-      // we want to give the animation the time to play before removing the bloc from the flow with a display none
-      setTimeout(() => {
-        setVisibleState(false)
-      }, 500)
-    }
-  }, [visible])
-
   const submitButtonColorValue = submitButtonColor ?? 'green'
+
+  if (!visible) return null
 
   return (
     <div
       className={twMerge(
-        'flex justify-center',
-        fixed ? twMerge('fixed inset-x-0 bottom-14 z-30', !visibleState && 'hidden') : 'sticky bottom-4',
+        'z-toast flex justify-center',
+        fixed ? 'fixed inset-x-0 bottom-14' : 'sticky bottom-4',
         className
       )}
     >
       <div
         data-testid="sticky-action-form-toaster"
-        className={`inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl ${
-          visible ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
-        } ${visibleState ? 'visible' : 'hidden'}`}
+        className="inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl"
       >
         {description && <span className="text-sm font-medium text-neutralInvert">{description}</span>}
         <div className="flex gap-5">
