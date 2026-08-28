@@ -14,6 +14,7 @@ import { dateUTCString } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { pluralize, trimId } from '@qovery/shared/util-js'
 import { PodHealthChips } from '../pod-health-chips/pod-health-chips'
+import { getServiceStepsDurationSec } from '../service-step-metrics'
 
 export interface HeaderLogsProps extends PropsWithChildren {
   type: 'DEPLOYMENT' | 'SERVICE'
@@ -54,10 +55,9 @@ export function HeaderLogs({
 
   useIntervalTick(isOngoing)
 
-  const totalDurationSec =
-    isOngoing && serviceStatus?.last_deployment_date
-      ? Math.floor((Date.now() - new Date(serviceStatus.last_deployment_date).getTime()) / 1000)
-      : serviceStatus?.steps?.total_computing_duration_sec ?? 0
+  const totalDurationSec = isOngoing
+    ? getServiceStepsDurationSec(serviceStatus.steps?.details ?? [], Date.now())
+    : serviceStatus.steps?.total_duration_sec ?? serviceStatus.steps?.total_computing_duration_sec ?? 0
 
   if (!service) return null
 

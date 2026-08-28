@@ -1,6 +1,6 @@
 import { type ReactNode } from 'react'
 import { useLinks, useService } from '@qovery/domains/services/feature'
-import { renderWithProviders, screen, within } from '@qovery/shared/util-tests'
+import { act, renderWithProviders, screen, within } from '@qovery/shared/util-tests'
 import { HeaderLogs, type HeaderLogsProps } from './header-logs'
 
 jest.mock('@tanstack/react-router', () => ({
@@ -25,6 +25,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
   useLinks: jest.fn(),
   ServiceAvatar: () => <div data-testid="service-avatar" />,
   ServiceLinksPopover: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  ServiceActions: () => <div />,
 }))
 
 const mockProps: HeaderLogsProps = {
@@ -47,6 +48,10 @@ const mockProps: HeaderLogsProps = {
 }
 
 describe('HeaderLogs', () => {
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   beforeEach(() => {
     useService.mockReturnValue({
       data: {
@@ -98,5 +103,55 @@ describe('HeaderLogs', () => {
       </HeaderLogs>
     )
     expect(screen.getByTestId('child-content')).toBeInTheDocument()
+  })
+
+  it('displays the total duration for a completed deployment', () => {
+    renderWithProviders(
+      <HeaderLogs
+        {...mockProps}
+        serviceStatus={{
+          ...mockProps.serviceStatus,
+          status_details: { action: 'DEPLOY', status: 'SUCCESS', sub_action: 'NONE' },
+          steps: { total_computing_duration_sec: 125, total_duration_sec: 130, details: [] },
+        }}
+      />
+    )
+
+    expect(screen.getByText('2m : 10s')).toBeInTheDocument()
+  })
+
+  it('adds the elapsed ongoing step duration to the completed step durations', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2026-08-28T13:30:00Z'))
+
+    renderWithProviders(
+      <HeaderLogs
+        {...mockProps}
+        serviceStatus={{
+          ...mockProps.serviceStatus,
+          status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
+          steps: {
+            total_computing_duration_sec: 17,
+            total_duration_sec: null,
+            details: [
+              { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 2 },
+              { step_name: 'BUILD', status: 'SUCCESS', duration_sec: 15 },
+              {
+                step_name: 'DEPLOYMENT',
+                status: 'ONGOING',
+                duration_sec: 0,
+                started_at: '2026-08-28T13:29:30Z',
+              },
+            ],
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('0m : 47s')).toBeInTheDocument()
+
+    act(() => jest.advanceTimersByTime(1_000))
+
+    expect(screen.getByText('0m : 48s')).toBeInTheDocument()
   })
 })

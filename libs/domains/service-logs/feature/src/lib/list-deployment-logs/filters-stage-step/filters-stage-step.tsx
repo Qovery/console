@@ -7,19 +7,13 @@ import { type AnyService } from '@qovery/domains/services/data-access'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { getServiceStepDurationSec, getServiceStepsDurationSec } from '../../service-step-metrics'
 import { type FilterType } from '../list-deployment-logs'
 
 type StepMetricType = {
   build: ServiceStepMetric[]
   deploy: ServiceStepMetric[]
   executing: ServiceStepMetric[]
-}
-
-const getStepDurationSec = (step: ServiceStepMetric, nowMs: number) => {
-  if (step.status !== 'ONGOING' || !step.started_at) return step.duration_sec || 0
-
-  const startedAtMs = Date.parse(step.started_at)
-  return Number.isFinite(startedAtMs) ? Math.max(0, Math.floor((nowMs - startedAtMs) / 1_000)) : 0
 }
 
 interface StageStepProps {
@@ -33,7 +27,7 @@ interface StageStepProps {
 function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: StageStepProps) {
   const { hash } = useLocation()
   const nowMs = Date.now()
-  const totalDurationSec = steps.reduce((acc, step) => acc + getStepDurationSec(step, nowMs), 0)
+  const totalDurationSec = getServiceStepsDurationSec(steps, nowMs)
   const hasLiveDuration = steps.some(
     (step) =>
       step.status === 'ONGOING' && Boolean(step.started_at) && Number.isFinite(Date.parse(step.started_at ?? ''))
@@ -120,7 +114,7 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
           <span className="flex flex-col gap-0.5">
             {steps.length > 0 ? (
               steps.map((step, index) => {
-                const durationSec = getStepDurationSec(step, nowMs)
+                const durationSec = getServiceStepDurationSec(step, nowMs)
 
                 return (
                   <span key={`${step.step_name}-${index}`} className="font-medium">
