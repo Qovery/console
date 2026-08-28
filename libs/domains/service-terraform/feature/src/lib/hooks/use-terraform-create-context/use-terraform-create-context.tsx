@@ -1,11 +1,15 @@
 import { createContext, useContext } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
+import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { type TerraformGeneralData } from '../../terraform-general-data/terraform-general-data'
 
 interface TerraformCreateContextInterface {
   currentStep: number
   setCurrentStep: (step: number) => void
   generalForm: UseFormReturn<TerraformGeneralData>
+  variablesForm: UseFormReturn<FlowVariableData>
+  createdServiceId?: string
+  setCreatedServiceId: (serviceId: string) => void
   creationFlowUrl?: string
 }
 

@@ -30,6 +30,12 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
     description: values.description,
     docker_fragment: values.dockerFragment,
     enabled: values.workflowEnabled,
+    schedule: values.scheduleEnabled
+      ? {
+          cron_expression: values.scheduleCronExpression,
+          timezone: values.timezone,
+        }
+      : null,
     mcp: values.mcpJson.trim() || undefined,
     mcp_server_ids: values.mcpServerIds,
     outputs: values.outputs.map((output, index) => ({

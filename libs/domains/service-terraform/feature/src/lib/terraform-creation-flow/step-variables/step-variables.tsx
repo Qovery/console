@@ -12,7 +12,7 @@ export const TerraformStepVariables = () => {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
 
   useEffect(() => {
-    setCurrentStep(3)
+    setCurrentStep(4)
   }, [setCurrentStep])
 
   return (
@@ -28,7 +28,7 @@ export const TerraformStepVariables = () => {
             color="neutral"
             onClick={() =>
               navigate({
-                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
+                to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables',
                 params: { organizationId, projectId, environmentId },
               })
             }

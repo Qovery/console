@@ -17,6 +17,7 @@ import {
   useAgenticWorkflowCreateContext,
 } from './agentic-workflow-context'
 import { formatAgenticWorkflowRequest } from './agentic-workflow-request'
+import { isAgenticWorkflowScheduleValid } from './agentic-workflow-schedule-fields'
 
 function truncateSummary(value: string) {
   if (!value.trim()) return '-'
@@ -106,6 +107,7 @@ export function AgenticWorkflowSummary() {
       !values.agentPrompt.trim() ||
       hasIncompleteGitRepository(values) ||
       hasIncompleteOutput(values) ||
+      !isAgenticWorkflowScheduleValid(values) ||
       !variablesValid
     ) {
       navigate({ to: `${creationFlowUrl}/configuration` })
@@ -168,6 +170,13 @@ export function AgenticWorkflowSummary() {
             <SummaryValue label="Memory" value={values.memory ? `${values.memory} MB` : undefined} />
             <SummaryValue label="Storage" value={values.storage ? `${values.storage} GB` : undefined} />
             <SummaryValue label="Enabled" value={values.workflowEnabled ? 'Yes' : 'No'} />
+            <SummaryValue label="Scheduled" value={values.scheduleEnabled ? 'Yes' : 'No'} />
+            {values.scheduleEnabled ? (
+              <>
+                <SummaryValue label="Cron expression" value={values.scheduleCronExpression} />
+                <SummaryValue label="Timezone" value={values.timezone} />
+              </>
+            ) : null}
           </SummarySection>
 
           <SummarySection title="AI model" onEdit={() => handleEditSection('ai-model')}>

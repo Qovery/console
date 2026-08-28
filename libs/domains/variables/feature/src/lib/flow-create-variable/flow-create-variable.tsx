@@ -15,6 +15,7 @@ export interface FlowCreateVariableProps {
   variables: VariableData[]
   availableScopes: APIVariableScopeEnum[]
   templateType?: JobLifecycleTypeEnum
+  allowEmpty?: boolean
 }
 
 export function FlowCreateVariable({
@@ -25,38 +26,41 @@ export function FlowCreateVariable({
   templateType,
   variables,
   availableScopes,
+  allowEmpty = false,
 }: FlowCreateVariableProps) {
   const { formState } = useFormContext<FlowVariableData>()
   const gridTemplateColumns = '1fr 1fr 1fr 32px'
 
   return (
     <Section>
-      <div className="flex justify-between">
-        <Heading className="mb-2">Environment variables</Heading>
-        <div className="flex items-center gap-2">
-          <Button size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
-            <Icon iconName="lock-keyhole" iconStyle="regular" />
-            Add secret
-          </Button>
-          <Button size="md" onClick={() => onAdd(false)}>
-            <Icon iconName="key" />
-            Add variable
-          </Button>
-        </div>
-      </div>
-
       <form className="space-y-10" onSubmit={onSubmit}>
-        <p className="mr-36 text-sm text-neutral-subtle">
-          {match(templateType)
-            .with(
-              'CLOUDFORMATION',
-              'TERRAFORM',
-              (templateType) =>
-                `Fill the parameters required to execute the ${upperCaseFirstLetter(templateType)} commands. These will be stored as environment variables, you can reuse in the field “Value” any existing variable via the macro {{VARIABLE_NAME}}`
-            )
-            .with('GENERIC', undefined, () => 'Define here the variables required by your service.')
-            .exhaustive()}
-        </p>
+        <div className="space-y-2">
+          <div className="flex justify-between">
+            <Heading>Environment variables</Heading>
+            <div className="flex items-center gap-2">
+              <Button type="button" size="md" color="neutral" variant="outline" onClick={() => onAdd(true)}>
+                <Icon iconName="lock-keyhole" iconStyle="regular" />
+                Add secret
+              </Button>
+              <Button type="button" size="md" onClick={() => onAdd(false)}>
+                <Icon iconName="key" />
+                Add variable
+              </Button>
+            </div>
+          </div>
+
+          <p className="mr-36 text-sm text-neutral-subtle">
+            {match(templateType)
+              .with(
+                'CLOUDFORMATION',
+                'TERRAFORM',
+                (templateType) =>
+                  `Fill the parameters required to execute the ${upperCaseFirstLetter(templateType)} commands. These will be stored as environment variables, you can reuse in the field “Value” any existing variable via the macro {{VARIABLE_NAME}}`
+              )
+              .with('GENERIC', undefined, () => 'Define here the variables required by your service.')
+              .exhaustive()}
+          </p>
+        </div>
         {match(templateType)
           .with('CLOUDFORMATION', 'TERRAFORM', () => (
             <Callout.Root color="sky">
@@ -98,7 +102,12 @@ export function FlowCreateVariable({
           <Button onClick={onBack} type="button" size="lg" variant="plain">
             Back
           </Button>
-          <Button data-testid="button-submit" type="submit" disabled={!formState.isValid} size="lg">
+          <Button
+            data-testid="button-submit"
+            type="submit"
+            disabled={variables.length === 0 ? !allowEmpty : !formState.isValid}
+            size="lg"
+          >
             Continue
           </Button>
         </div>
