@@ -9,10 +9,6 @@ import { useReactQueryWsSubscription } from '@qovery/state/util-queries'
 // that dies without ever delivering one, so the UI can never wait forever.
 const PREVIEW_WATCHDOG_MS = 12 * 60 * 1000
 
-// The pinned qovery-ws-typescript-axios predates `message` on timeout frames, so read it
-// structurally. Drop once the ws client is regenerated.
-type TimeoutFrame = { message?: string | null }
-
 /**
  * The backend sends exactly one frame then closes, so the preview always settles on a single
  * terminal outcome. `pending` is the only state that may render a spinner.
@@ -76,10 +72,7 @@ export function useBlueprintUpdatePreviewSocket({
           )
           .with({ type: 'error' }, ({ message: reason }) => ({ type: 'error', message: reason }))
           .with({ type: 'cancelled' }, () => ({ type: 'cancelled' }))
-          .with({ type: 'timeout' }, (frame) => ({
-            type: 'timeout',
-            message: (frame as TimeoutFrame).message ?? undefined,
-          }))
+          .with({ type: 'timeout' }, ({ message }) => ({ type: 'timeout', message: message ?? undefined }))
           .exhaustive()
       )
     },
