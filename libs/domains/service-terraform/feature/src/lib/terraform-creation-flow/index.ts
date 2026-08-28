@@ -1,5 +1,6 @@
 export * from './step-general/step-general'
 export * from './step-configuration/step-configuration'
 export * from './step-variables/step-variables'
+export * from './step-environment-variables/step-environment-variables'
 export * from './terraform-creation-flow'
 export * from './step-summary/step-summary'

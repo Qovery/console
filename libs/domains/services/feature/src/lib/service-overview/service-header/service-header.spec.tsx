@@ -455,7 +455,11 @@ describe('ServiceHeader', () => {
 
     renderServiceHeader('terraform-mock')
 
-    expect(mockUseBlueprintUpdate).toHaveBeenCalledWith({ blueprintId: 'blueprint-id', suspense: true })
+    expect(mockUseBlueprintUpdate).toHaveBeenCalledWith({
+      blueprintId: 'blueprint-id',
+      suspense: true,
+      throwOnError: false,
+    })
     expect(screen.getByText('v8')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /qovery-blueprints/ })).toHaveAttribute(
       'href',
@@ -464,6 +468,39 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText('GitHub')).not.toBeInTheDocument()
     expect(screen.queryByText('main')).not.toBeInTheDocument()
     expect(screen.getByText('Up to date')).toBeInTheDocument()
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+  })
+
+  it('drops a cached update once the blueprint update check starts failing', () => {
+    mockUseBlueprintUpdate.mockReturnValue({
+      data: {
+        is_up_to_date: false,
+        current_tag: 'AWS/mysql/8/1.0.0',
+        latest_tag: 'AWS/mysql/8/2.0.0',
+        new_required_values: [],
+        new_optional_values: [],
+        now_required_values: [],
+        updated_values: [],
+        removed_values: [],
+        engine_diff: { updated_values: [] },
+      },
+      isError: true,
+    })
+
+    renderServiceHeader('terraform-mock')
+
+    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+  })
+
+  it('still renders the header when the blueprint update check fails', () => {
+    mockUseBlueprintUpdate.mockReturnValue({ data: undefined, isError: true })
+
+    renderServiceHeader('terraform-mock')
+
+    expect(screen.getByRole('heading', { name: 'aws-s3-bucket' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /qovery-blueprints/ })).toBeInTheDocument()
+    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
   })
 

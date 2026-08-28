@@ -9,6 +9,9 @@ const values: AgenticWorkflowFormData = {
   memory: '2048',
   storage: '10',
   workflowEnabled: true,
+  scheduleEnabled: false,
+  scheduleCronExpression: '0 8 * * 1-5',
+  timezone: 'Europe/Paris',
   aiModel: AgenticWorkflowModelType.CLAUDE,
   webhookEnabled: true,
   mcpServerIds: ['mcp-1', 'mcp-2'],
@@ -25,6 +28,14 @@ const values: AgenticWorkflowFormData = {
 describe('formatAgenticWorkflowRequest', () => {
   it('sends the selected organization MCP server IDs', () => {
     expect(formatAgenticWorkflowRequest(values).mcp_server_ids).toEqual(['mcp-1', 'mcp-2'])
+  })
+
+  it('sends an optional schedule', () => {
+    expect(formatAgenticWorkflowRequest(values).schedule).toBeNull()
+    expect(formatAgenticWorkflowRequest({ ...values, scheduleEnabled: true }).schedule).toEqual({
+      cron_expression: '0 8 * * 1-5',
+      timezone: 'Europe/Paris',
+    })
   })
 
   it('uses the full URL of a selected Git repository', () => {

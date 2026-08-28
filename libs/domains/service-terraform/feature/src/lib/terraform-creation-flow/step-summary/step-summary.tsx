@@ -1,11 +1,13 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { TerraformAutoDeployConfigTerraformActionEnum, type TerraformRequest } from 'qovery-typescript-axios'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
-import { useCreateService, useDeployService } from '@qovery/domains/services/feature'
-import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue } from '@qovery/shared/ui'
-import { buildGitRepoUrl } from '@qovery/shared/util-js'
+import { useCreateService, useDeployService, useEditService } from '@qovery/domains/services/feature'
+import { useImportVariables } from '@qovery/domains/variables/feature'
+import { ServiceTypeEnum } from '@qovery/shared/enums'
+import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, toastError } from '@qovery/shared/ui'
+import { buildGitRepoUrl, generateScopeLabel, prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useTerraformCreateContext } from '../../hooks/use-terraform-create-context/use-terraform-create-context'
 import { useTerraformVariablesContext } from '../../terraform-variables-context'
 import { buildDockerfileFragment } from '../../utils/build-dockerfile-fragment'
@@ -14,79 +16,117 @@ import { TERRAFORM_ENGINES } from '../../utils/terraform-engines'
 export const TerraformStepSummary = () => {
   const navigate = useNavigate()
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
-  const { setCurrentStep, generalForm } = useTerraformCreateContext()
+  const { setCurrentStep, generalForm, variablesForm, createdServiceId, setCreatedServiceId } =
+    useTerraformCreateContext()
   const generalData = generalForm.getValues()
+  const environmentVariables = variablesForm.getValues('variables')
   const { serializeForApi, tfVarFiles } = useTerraformVariablesContext()
 
   useEffect(() => {
-    setCurrentStep(4)
+    setCurrentStep(5)
   }, [setCurrentStep])
 
   const { mutateAsync: createTerraformService } = useCreateService({ organizationId })
+  const { mutateAsync: editTerraformService } = useEditService({
+    organizationId,
+    projectId,
+    environmentId,
+    silently: true,
+  })
+  const { mutateAsync: importVariables } = useImportVariables()
   const { mutateAsync: deployService } = useDeployService({ organizationId, projectId, environmentId })
   const [isLoadingCreate, setIsLoadingCreate] = useState(false)
   const [isLoadingCreateAndPlan, setIsLoadingCreateAndPlan] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const submissionInFlightRef = useRef(false)
 
   const tfVarsFilePaths = useMemo(() => {
     return [...tfVarFiles.filter((file) => file.enabled)].reverse().map((file) => file.source)
   }, [tfVarFiles])
 
   const onSubmit = async (withPlan: boolean) => {
+    if (submissionInFlightRef.current) return
+
+    submissionInFlightRef.current = true
+    setIsSubmitting(true)
+
     if (withPlan) {
       setIsLoadingCreateAndPlan(true)
     } else {
       setIsLoadingCreate(true)
     }
 
-    const payload: TerraformRequest = {
-      name: generalData.name,
-      description: generalData.description ?? '',
-      icon_uri: generalData.icon_uri,
-      timeout_sec: Number(generalData.timeout_sec),
-      auto_deploy_config: {
-        auto_deploy: generalData.auto_deploy ?? false,
-        terraform_action: generalData.terraform_action ?? TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
-      },
-      engine: generalData.engine,
-      backend: generalData.backend,
-      terraform_files_source: {
-        git_repository: {
-          url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
-          branch: generalData.branch ?? '',
-          root_path: generalData.root_path ?? '',
-          git_token_id: generalData.git_token_id ?? '',
-        },
-      },
-      terraform_variables_source: {
-        tf_var_file_paths: tfVarsFilePaths,
-        tf_vars: serializeForApi(),
-      },
-      provider_version: {
-        read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
-        explicit_version: generalData.provider_version.explicit_version,
-      },
-      job_resources: {
-        cpu_milli: generalData.job_resources.cpu_milli,
-        ram_mib: generalData.job_resources.ram_mib,
-        storage_gib: generalData.job_resources.storage_gib,
-        gpu: generalData.job_resources.gpu,
-      },
-      use_cluster_credentials: generalData.use_cluster_credentials,
-      dockerfile_fragment: buildDockerfileFragment(generalData),
-    }
-
     try {
-      const response = await createTerraformService({
-        environmentId,
-        payload: {
-          serviceType: 'TERRAFORM',
-          ...payload,
+      const payload: TerraformRequest = {
+        name: generalData.name,
+        description: generalData.description ?? '',
+        icon_uri: generalData.icon_uri,
+        timeout_sec: Number(generalData.timeout_sec),
+        auto_deploy_config: {
+          auto_deploy: generalData.auto_deploy ?? false,
+          terraform_action: generalData.terraform_action ?? TerraformAutoDeployConfigTerraformActionEnum.DEFAULT,
         },
-      })
+        engine: generalData.engine,
+        backend: generalData.backend,
+        terraform_files_source: {
+          git_repository: {
+            url: buildGitRepoUrl(generalData.provider ?? '', generalData.repository),
+            branch: generalData.branch ?? '',
+            root_path: generalData.root_path ?? '',
+            git_token_id: generalData.git_token_id ?? '',
+          },
+        },
+        terraform_variables_source: {
+          tf_var_file_paths: tfVarsFilePaths,
+          tf_vars: serializeForApi(),
+        },
+        provider_version: {
+          read_from_terraform_block: generalData.provider_version.read_from_terraform_block,
+          explicit_version: generalData.provider_version.explicit_version,
+        },
+        job_resources: {
+          cpu_milli: generalData.job_resources.cpu_milli,
+          ram_mib: generalData.job_resources.ram_mib,
+          storage_gib: generalData.job_resources.storage_gib,
+          gpu: generalData.job_resources.gpu,
+        },
+        use_cluster_credentials: generalData.use_cluster_credentials,
+        dockerfile_fragment: buildDockerfileFragment(generalData),
+      }
+      const servicePayload = { serviceType: 'TERRAFORM' as const, ...payload }
+      let serviceId = createdServiceId
+
+      if (serviceId) {
+        try {
+          await editTerraformService({ serviceId, payload: servicePayload })
+        } catch (error) {
+          toastError(error as Error)
+          throw error
+        }
+      } else {
+        const service = await createTerraformService({
+          environmentId,
+          payload: servicePayload,
+        })
+        if (!service.id) throw new Error('The created Terraform service has no ID')
+
+        serviceId = service.id
+        setCreatedServiceId(service.id)
+      }
+
+      if (!serviceId) throw new Error('The Terraform service ID is missing')
+
+      const variableImportRequest = prepareVariableImportRequest(environmentVariables)
+      if (variableImportRequest) {
+        await importVariables({
+          serviceType: ServiceTypeEnum.TERRAFORM,
+          serviceId,
+          variableImportRequest,
+        })
+      }
 
       if (withPlan) {
-        await deployService({ serviceId: response.id, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
-        setIsLoadingCreateAndPlan(false)
+        await deployService({ serviceId, serviceType: 'TERRAFORM', request: { action: 'PLAN' } })
       }
 
       posthog.capture('create-service', {
@@ -94,12 +134,15 @@ export const TerraformStepSummary = () => {
         selectedServiceSubType: 'current',
       })
 
-      setIsLoadingCreate(false)
       navigate({
         to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
         params: { organizationId, projectId, environmentId },
       })
     } catch (error) {
+      // Errors are surfaced by the mutation hooks.
+    } finally {
+      submissionInFlightRef.current = false
+      setIsSubmitting(false)
       setIsLoadingCreateAndPlan(false)
       setIsLoadingCreate(false)
     }
@@ -124,6 +167,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
+                  disabled={isSubmitting}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/general',
@@ -161,6 +205,7 @@ export const TerraformStepSummary = () => {
                   type="button"
                   variant="plain"
                   size="md"
+                  disabled={isSubmitting}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/terraform-configuration',
@@ -198,11 +243,45 @@ export const TerraformStepSummary = () => {
 
             <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
               <div className="flex justify-between">
-                <Heading>Input variables</Heading>
+                <Heading>Environment variables</Heading>
                 <Button
                   type="button"
                   variant="plain"
                   size="md"
+                  disabled={isSubmitting}
+                  onClick={() =>
+                    navigate({
+                      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/environment-variables',
+                      params: { organizationId, projectId, environmentId },
+                    })
+                  }
+                >
+                  <Icon className="text-base" iconName="gear-complex" />
+                </Button>
+              </div>
+              {environmentVariables.length > 0 ? (
+                <ul className="list-none space-y-2 text-sm text-neutral-subtle">
+                  {environmentVariables.map(({ variable, value, isSecret, scope }) => (
+                    <SummaryValue
+                      key={`${scope}-${variable}`}
+                      label={`${variable} (${scope ? generateScopeLabel(scope) : 'Service'})`}
+                      value={isSecret ? '********' : value}
+                    />
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-neutral-subtle">No environment variables configured</p>
+              )}
+            </Section>
+
+            <Section className="rounded border border-neutral bg-surface-neutral-subtle p-4">
+              <div className="flex justify-between">
+                <Heading>Terraform variables</Heading>
+                <Button
+                  type="button"
+                  variant="plain"
+                  size="md"
+                  disabled={isSubmitting}
                   onClick={() =>
                     navigate({
                       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
@@ -243,6 +322,7 @@ export const TerraformStepSummary = () => {
               type="button"
               size="lg"
               variant="plain"
+              disabled={isSubmitting}
               onClick={() =>
                 navigate({
                   to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/terraform/input-variables',
@@ -260,10 +340,17 @@ export const TerraformStepSummary = () => {
                 color="neutral"
                 onClick={() => onSubmit(false)}
                 loading={isLoadingCreate}
+                disabled={isSubmitting}
               >
                 Create
               </Button>
-              <Button type="button" size="lg" onClick={() => onSubmit(true)} loading={isLoadingCreateAndPlan}>
+              <Button
+                type="button"
+                size="lg"
+                onClick={() => onSubmit(true)}
+                loading={isLoadingCreateAndPlan}
+                disabled={isSubmitting}
+              >
                 Create and run plan
               </Button>
             </div>

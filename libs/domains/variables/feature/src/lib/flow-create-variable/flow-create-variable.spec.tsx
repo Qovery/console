@@ -1,7 +1,7 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
-import { renderWithProviders } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import FlowCreateVariable, { type FlowCreateVariableProps } from './flow-create-variable'
 
 const props: FlowCreateVariableProps = {
@@ -24,5 +24,31 @@ describe('FlowCreateVariable', () => {
       })
     )
     expect(baseElement).toBeTruthy()
+  })
+
+  it('should allow submitting without variables', () => {
+    renderWithProviders(
+      wrapWithReactHookForm<FlowVariableData>(<FlowCreateVariable {...props} allowEmpty />, {
+        defaultValues: {
+          variables: [],
+          externalSecrets: [],
+        },
+      })
+    )
+
+    expect(screen.getByTestId('button-submit')).toBeEnabled()
+  })
+
+  it('should require variables by default', () => {
+    renderWithProviders(
+      wrapWithReactHookForm<FlowVariableData>(<FlowCreateVariable {...props} />, {
+        defaultValues: {
+          variables: [],
+          externalSecrets: [],
+        },
+      })
+    )
+
+    expect(screen.getByTestId('button-submit')).toBeDisabled()
   })
 })
