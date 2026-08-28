@@ -6,6 +6,7 @@ import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { getServiceStepDurationSec, getServiceStepsDurationSec } from '../../service-step-metrics'
 import { type FilterType } from '../list-deployment-logs'
@@ -74,14 +75,7 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
     (type === 'BUILD' && status === 'BUILDING') ||
     (type === 'DEPLOY' && status === 'DEPLOYING') ||
     (type === 'EXECUTING' && status === 'EXECUTING')
-  const [, setTick] = useState(0)
-
-  useEffect(() => {
-    if (!hasLiveDuration) return
-
-    const intervalId = window.setInterval(() => setTick((tick) => tick + 1), 1_000)
-    return () => window.clearInterval(intervalId)
-  }, [hasLiveDuration])
+  useIntervalTick(hasLiveDuration)
 
   const shouldDisplayDuration = hasLiveDuration || totalDurationSec > 0
 
