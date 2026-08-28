@@ -100,6 +100,17 @@ describe('BlueprintUpdatePreviewStep', () => {
     expect(confirmButton()).toBeDisabled()
   })
 
+  it('surfaces the reason a timeout happened and blocks confirmation', () => {
+    const reason = 'Terraform command (`terraform plan -no-color`) ran out of time and was stopped after 480s.'
+    mockPreview({ outcome: { type: 'timeout', message: reason } })
+
+    renderWithProviders(<BlueprintUpdatePreviewStep onBack={jest.fn()} />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('The preview timed out before completing.')
+    expect(screen.getByText(reason)).toBeInTheDocument()
+    expect(confirmButton()).toBeDisabled()
+  })
+
   it.each([
     [{ type: 'cancelled' } as const, 'The preview was cancelled.'],
     [{ type: 'timeout' } as const, 'The preview timed out before completing.'],

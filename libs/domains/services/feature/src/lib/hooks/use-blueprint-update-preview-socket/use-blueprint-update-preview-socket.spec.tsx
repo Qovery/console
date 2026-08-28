@@ -95,6 +95,28 @@ describe('useBlueprintUpdatePreviewSocket', () => {
     expect(result.current.outcome).toEqual({ type: 'error', message: 'terraform init failed' })
   })
 
+  it('should surface the reason of a timeout result', () => {
+    const { result, config } = renderPreviewSocket()
+    const reason = 'Terraform command (`terraform plan -no-color`) ran out of time and was stopped after 480s.'
+
+    act(() => {
+      config()?.onMessage?.({} as QueryClient, { type: 'timeout', message: reason })
+    })
+
+    expect(result.current.outcome).toEqual({ type: 'timeout', message: reason })
+  })
+
+  it('should settle on a timeout with no reason when the frame carries none', () => {
+    const { result, config } = renderPreviewSocket()
+
+    // The gateway sends its own reason-less timeout frame when no result reaches it.
+    act(() => {
+      config()?.onMessage?.({} as QueryClient, { type: 'timeout', message: null })
+    })
+
+    expect(result.current.outcome).toEqual({ type: 'timeout' })
+  })
+
   it.each([{ type: 'cancelled' }, { type: 'timeout' }] as const)('should settle on the $type outcome', ({ type }) => {
     const { result, config } = renderPreviewSocket()
 
