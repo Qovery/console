@@ -29,6 +29,14 @@ First use
 
     yarn && yarn setup
 
+### Environment variables
+
+By default, the Console loads its environment variables from the repository's `.env` file. To share one environment configuration across Git worktrees, move the file to a stable directory and pass that directory when starting the Console:
+
+    QOVERY_CONSOLE_ENV_DIR="$HOME/.config/qovery-console" yarn start
+
+Vite loads `.env`, `.env.local`, and mode-specific environment files from that directory. When `QOVERY_CONSOLE_ENV_DIR` is not set, the repository root remains the default.
+
 Start the project on http://localhost:4200
 
     yarn start
