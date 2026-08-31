@@ -1,7 +1,22 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { buildClusterAdvancedSettingsPayload } from './build-cluster-advanced-settings-payload'
 import { ClusterAdvancedSettings as ClusterAdvancedSettingsComponent } from './cluster-advanced-settings'
+
+jest.mock('./build-cluster-advanced-settings-payload', () => {
+  const actualModule = jest.requireActual('./build-cluster-advanced-settings-payload')
+
+  return {
+    ...actualModule,
+    buildClusterAdvancedSettingsPayload: jest.fn(actualModule.buildClusterAdvancedSettingsPayload),
+  }
+})
+
+const mockedBuildClusterAdvancedSettingsPayload = jest.mocked(buildClusterAdvancedSettingsPayload)
+const actualBuildClusterAdvancedSettingsPayload = jest.requireActual(
+  './build-cluster-advanced-settings-payload'
+).buildClusterAdvancedSettingsPayload
 
 const mockClusterAdvancedSettings = {
   key1: 'value1',
@@ -18,6 +33,7 @@ describe('ClusterAdvancedSettings', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    mockedBuildClusterAdvancedSettingsPayload.mockImplementation(actualBuildClusterAdvancedSettingsPayload)
   })
 
   it('should render correctly', () => {
@@ -267,5 +283,32 @@ describe('ClusterAdvancedSettings', () => {
     )
 
     expect(screen.getByText('Show only overridden settings')).toBeInTheDocument()
+  })
+
+  it('should not rebuild the form payload when filtering overridden settings', async () => {
+    const { userEvent } = renderWithProviders(
+      wrapWithReactHookForm(
+        <ClusterAdvancedSettingsComponent
+          onSubmit={mockOnSubmit}
+          loading={false}
+          clusterAdvancedSettings={mockClusterAdvancedSettings}
+          defaultAdvancedSettings={mockDefaultAdvancedSettings}
+          formBaseline={mockClusterAdvancedSettings}
+        />,
+        {
+          defaultValues: {
+            key1: 'value1',
+            key2: 'value2',
+          },
+        }
+      )
+    )
+
+    await waitFor(() => expect(mockedBuildClusterAdvancedSettingsPayload).toHaveBeenCalled())
+    const callCount = mockedBuildClusterAdvancedSettingsPayload.mock.calls.length
+
+    await userEvent.click(screen.getByTestId('show-overriden-only-toggle'))
+
+    expect(mockedBuildClusterAdvancedSettingsPayload).toHaveBeenCalledTimes(callCount)
   })
 })

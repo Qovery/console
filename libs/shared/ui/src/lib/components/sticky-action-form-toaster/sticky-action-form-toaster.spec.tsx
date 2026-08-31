@@ -17,11 +17,21 @@ describe('StickyActionFormToaster', () => {
     expect(screen.getByTestId('sticky-action-form-toaster')).toBeVisible()
   })
 
-  it.each([false, true])('should render above other floating elements when fixed is %s', (fixed) => {
-    renderWithProviders(<StickyActionFormToaster {...props} fixed={fixed} />)
+  it.each([
+    { fixed: false, positionClass: 'sticky', bottomClass: 'bottom-4' },
+    { fixed: true, positionClass: 'fixed', bottomClass: 'bottom-14' },
+  ])(
+    'should render above other floating elements with $positionClass positioning',
+    ({ fixed, positionClass, bottomClass }) => {
+      renderWithProviders(<StickyActionFormToaster {...props} fixed={fixed} />)
 
-    expect(screen.getByTestId('sticky-action-form-toaster').parentElement).toHaveClass('z-toast')
-  })
+      expect(screen.getByTestId('sticky-action-form-toaster').parentElement).toHaveClass(
+        'z-toast',
+        positionClass,
+        bottomClass
+      )
+    }
+  )
 
   it('should handle reset on click', async () => {
     const spy = jest.fn()

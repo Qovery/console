@@ -53,14 +53,14 @@ function ClusterAdvancedSettingsSaveAction({
       formBaseline === undefined ? undefined : normalizeClusterAdvancedSettings(formBaseline, defaultAdvancedSettings),
     [defaultAdvancedSettings, formBaseline]
   )
-
-  const hasChanged =
-    isDirty &&
-    normalizedBaseline !== undefined &&
-    !equal(
-      buildClusterAdvancedSettingsPayload(formValues as Record<string, unknown>, defaultAdvancedSettings),
-      normalizedBaseline
-    )
+  const currentPayload = useMemo(
+    () => buildClusterAdvancedSettingsPayload(formValues as Record<string, unknown>, defaultAdvancedSettings),
+    [defaultAdvancedSettings, formValues]
+  )
+  const hasChanged = useMemo(
+    () => isDirty && normalizedBaseline !== undefined && !equal(currentPayload, normalizedBaseline),
+    [currentPayload, isDirty, normalizedBaseline]
+  )
 
   return (
     <StickyActionFormToaster
