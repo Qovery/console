@@ -31,15 +31,12 @@ export function buildClusterAdvancedSettingsPayload(
   data: Record<string, unknown>,
   defaultAdvancedSettings?: ClusterAdvancedSettings
 ): ClusterAdvancedSettings {
-  const dataWithoutFlatKeys = { ...data }
-
-  Object.keys(dataWithoutFlatKeys).forEach((key) => {
-    if (key.includes('.')) {
-      delete dataWithoutFlatKeys[key]
-    }
-  })
-
-  const dataFormatted = objectFlattener(dataWithoutFlatKeys)
+  const flatData = Object.fromEntries(Object.entries(data).filter(([key]) => key.includes('.')))
+  const nestedData = Object.fromEntries(Object.entries(data).filter(([key]) => !key.includes('.')))
+  const dataFormatted = {
+    ...flatData,
+    ...objectFlattener(nestedData),
+  }
 
   return normalizeClusterAdvancedSettings(dataFormatted, defaultAdvancedSettings)
 }
