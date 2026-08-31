@@ -2,15 +2,18 @@
 import { nxCopyAssetsPlugin } from '@nx/vite/plugins/nx-copy-assets.plugin'
 import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import { join } from 'path'
+import { join, resolve } from 'path'
 import { defineConfig, loadEnv } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineConfig(({ mode }) => {
-  const clientEnv = loadEnv(mode, process.cwd(), '')
+  const envDir = resolve(process.env.QOVERY_CONSOLE_ENV_DIR ?? process.cwd())
+  const clientEnv = loadEnv(mode, envDir, '')
+  delete clientEnv.QOVERY_CONSOLE_ENV_DIR
 
   return {
     root: __dirname,
+    envDir,
     cacheDir: '../../node_modules/.vite/apps/console',
     server: {
       port: 4200,
