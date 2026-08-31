@@ -20,6 +20,7 @@ const mockPrefetchBlueprintManifestFields = jest.fn()
 const mockUseBlueprintCatalogServiceReadme = jest.fn()
 const mockUseBlueprintServiceCreatedSocket = jest.fn()
 const mockUseBlueprintCreationLogs = jest.fn()
+const mockUseBlueprint = jest.fn()
 const mockUseEnvironment = jest.fn()
 const mockCreateBlueprint = jest.fn()
 const mockToast = jest.fn()
@@ -61,6 +62,10 @@ jest.mock('../../hooks/use-blueprint-service-created-socket/use-blueprint-servic
 
 jest.mock('../../hooks/use-blueprint-creation-logs/use-blueprint-creation-logs', () => ({
   useBlueprintCreationLogs: (props: unknown) => mockUseBlueprintCreationLogs(props) ?? { logs: [] },
+}))
+
+jest.mock('../../hooks/use-blueprint/use-blueprint', () => ({
+  useBlueprint: (props: unknown) => mockUseBlueprint(props) ?? { data: undefined },
 }))
 
 jest.mock('../../hooks/use-environment/use-environment', () => ({
@@ -162,6 +167,17 @@ function WithBlueprintManifestFields({ children }: { children: JSX.Element }) {
   return <BlueprintManifestFieldsProvider>{children}</BlueprintManifestFieldsProvider>
 }
 
+const BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS = 30_000
+const BLUEPRINT_STATUS_POLL_TIMEOUT_MS = 300_000
+const ENVIRONMENT_OVERVIEW_NAVIGATION = {
+  to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+  params: {
+    organizationId: 'org-1',
+    projectId: 'proj-1',
+    environmentId: 'env-1',
+  },
+}
+
 type BlueprintRouteStep = 'service-information' | 'blueprint-setup' | 'overrides' | 'summary'
 
 function BlueprintFlowRouteHarness({ flowBlueprint = blueprint }: { flowBlueprint?: BlueprintItem }) {
@@ -230,6 +246,7 @@ describe('BlueprintCreationFlow', () => {
     })
     mockUseEnvironment.mockReturnValue({ data: { cluster_id: 'cluster-1' } })
     mockCreateBlueprint.mockResolvedValue({ id: 'blueprint-1', environment_id: 'env-1' })
+    mockUseBlueprint.mockReturnValue({ data: undefined })
   })
 
   it('should open the blueprint details drawer from the configuration header', async () => {
@@ -607,57 +624,121 @@ describe('BlueprintCreationFlow', () => {
     expect(mockToast).toHaveBeenCalledTimes(1)
   })
 
-  it('should complete the blueprint creation flow after a fallback timeout when the websocket event is missed', async () => {
-    jest.useFakeTimers()
-    let resolveCreateBlueprint: (value: { id: string; environment_id: string }) => void = jest.fn()
-    mockCreateBlueprint.mockImplementationOnce(
-      () =>
-        new Promise<{ id: string; environment_id: string }>((resolve) => {
-          resolveCreateBlueprint = resolve
+  describe('when the service-created websocket event never arrives', () => {
+    async function createBlueprintAndReachFallback() {
+      const { userEvent } = renderBlueprintFlow(
+        <WithBlueprintManifestFields>
+          <FillFormValues>
+            <BlueprintStepSummary />
+          </FillFormValues>
+        </WithBlueprintManifestFields>
+      )
+
+      await screen.findByText(/custom-postgres/)
+      await userEvent.click(screen.getByTestId('button-create'))
+
+      await waitFor(() =>
+        expect(mockUseBlueprintCreationLogs).toHaveBeenCalledWith(
+          expect.objectContaining({ blueprintId: 'blueprint-1' })
+        )
+      )
+      expect(mockToast).not.toHaveBeenCalled()
+
+      act(() => {
+        jest.advanceTimersByTime(BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS)
+      })
+    }
+
+    it('should ask the API about the blueprint instead of assuming the service was created', async () => {
+      jest.useFakeTimers()
+
+      await createBlueprintAndReachFallback()
+
+      expect(mockUseBlueprint).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          blueprintId: 'blueprint-1',
+          enabled: true,
+          refetchInterval: 5_000,
         })
+      )
+    })
+
+    it('should complete the flow once the blueprint reports its service', async () => {
+      jest.useFakeTimers()
+      mockUseBlueprint.mockReturnValue({ data: { id: 'blueprint-1', service_id: 'service-1' } })
+
+      await createBlueprintAndReachFallback()
+
+      expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')
+      expect(mockNavigate).toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
+    })
+
+    it.each(['FAILED', 'INTERNAL_ERROR', 'CANCELED'])(
+      'should surface the engine error message when the deployment is %s',
+      async (status) => {
+        jest.useFakeTimers()
+        mockUseBlueprint.mockReturnValue({
+          data: {
+            id: 'blueprint-1',
+            service_id: null,
+            latest_deployment: {
+              status,
+              error_message: 'terraform apply failed: invalid instance class',
+            },
+          },
+        })
+
+        await createBlueprintAndReachFallback()
+
+        expect(mockToast).not.toHaveBeenCalled()
+        expect(mockNavigate).not.toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
+        expect(screen.getByText('terraform apply failed: invalid instance class')).toBeVisible()
+        expect(screen.getByRole('button', { name: 'Retry' })).toBeVisible()
+        expect(screen.getByRole('button', { name: 'Edit config' })).toBeVisible()
+      }
     )
 
-    const { userEvent } = renderBlueprintFlow(
-      <WithBlueprintManifestFields>
-        <FillFormValues>
-          <BlueprintStepSummary />
-        </FillFormValues>
-      </WithBlueprintManifestFields>
+    it.each(['WAITING_RUNNING', 'DEPLOYING'])(
+      'should keep waiting while the deployment is still %s',
+      async (status) => {
+        jest.useFakeTimers()
+        mockUseBlueprint.mockReturnValue({
+          data: { id: 'blueprint-1', service_id: null, latest_deployment: { status } },
+        })
+
+        await createBlueprintAndReachFallback()
+
+        act(() => {
+          jest.advanceTimersByTime(60_000)
+        })
+
+        expect(mockToast).not.toHaveBeenCalled()
+        expect(mockNavigate).not.toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
+        expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
+        expect(mockUseBlueprint).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: true }))
+      }
     )
 
-    await screen.findByText(/custom-postgres/)
-    await userEvent.click(screen.getByTestId('button-create'))
+    it('should fail instead of reporting success when the blueprint never reaches an outcome', async () => {
+      jest.useFakeTimers()
+      mockUseBlueprint.mockReturnValue({
+        data: { id: 'blueprint-1', service_id: null, latest_deployment: { status: 'DEPLOYING' } },
+      })
 
-    await waitFor(() => {
-      expect(mockCreateBlueprint).toHaveBeenCalled()
-    })
+      await createBlueprintAndReachFallback()
 
-    await act(async () => {
-      resolveCreateBlueprint({ id: 'blueprint-1', environment_id: 'env-1' })
-    })
+      act(() => {
+        jest.advanceTimersByTime(BLUEPRINT_STATUS_POLL_TIMEOUT_MS)
+      })
 
-    expect(mockToast).not.toHaveBeenCalled()
-    expect(mockNavigate).not.toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
-      params: {
-        organizationId: 'org-1',
-        projectId: 'proj-1',
-        environmentId: 'env-1',
-      },
-    })
-
-    act(() => {
-      jest.advanceTimersByTime(30_000)
-    })
-
-    expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')
-    expect(mockNavigate).toHaveBeenCalledWith({
-      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
-      params: {
-        organizationId: 'org-1',
-        projectId: 'proj-1',
-        environmentId: 'env-1',
-      },
+      expect(mockToast).not.toHaveBeenCalled()
+      expect(mockNavigate).not.toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
+      expect(
+        screen.getByText(
+          'Timed out while waiting for this blueprint to report its status. Check the environment before retrying.'
+        )
+      ).toBeVisible()
+      expect(mockUseBlueprint).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: false }))
     })
   })
 

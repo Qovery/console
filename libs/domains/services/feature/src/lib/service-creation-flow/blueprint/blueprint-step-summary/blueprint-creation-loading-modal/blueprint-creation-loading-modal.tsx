@@ -6,6 +6,9 @@ import { Ansi, Button, Heading, Icon } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 
 export interface BlueprintCreationLoadingModalProps {
+  // Set when the failure was reported by the API rather than by the deployment logs, which a
+  // failed dispatch never emits
+  errorMessage?: string
   logs: EnvironmentLogs[]
   onEditConfig: () => void
   onRetry: () => void
@@ -14,21 +17,22 @@ export interface BlueprintCreationLoadingModalProps {
 }
 
 export function BlueprintCreationLoadingModal({
+  errorMessage,
   logs,
   onEditConfig,
   onRetry,
   open,
   serviceName,
 }: BlueprintCreationLoadingModalProps) {
-  const hasError = logs.some((log) => log.type === LogsType.ERROR)
+  const hasError = Boolean(errorMessage) || logs.some((log) => log.type === LogsType.ERROR)
   const logsContainerRef = useRef<HTMLDivElement>(null)
 
   useLayoutEffect(() => {
     const logsContainer = logsContainerRef.current
-    if (!logsContainer || logs.length === 0) return
+    if (!logsContainer || (logs.length === 0 && !errorMessage)) return
 
     logsContainer.scrollTop = logsContainer.scrollHeight
-  }, [logs])
+  }, [logs, errorMessage])
 
   return (
     <Dialog.Root open={open} onOpenChange={() => undefined}>
@@ -89,6 +93,11 @@ export function BlueprintCreationLoadingModal({
                   </div>
                 )
               })}
+              {errorMessage && (
+                <div className="bg-surface-negative-subtle px-5 text-negative">
+                  <Ansi>{errorMessage}</Ansi>
+                </div>
+              )}
             </div>
           </div>
         </Dialog.Content>

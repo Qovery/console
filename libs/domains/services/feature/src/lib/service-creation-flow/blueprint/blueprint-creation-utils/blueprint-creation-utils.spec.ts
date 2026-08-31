@@ -23,7 +23,11 @@ import {
   isRequiredVariableField,
   isVariableField,
 } from '../../../blueprint-field-utils/blueprint-field-utils'
-import { buildBlueprintVariables, sortBlueprintMajorVersions } from './blueprint-creation-utils'
+import {
+  buildBlueprintVariables,
+  resolveBlueprintCreationOutcome,
+  sortBlueprintMajorVersions,
+} from './blueprint-creation-utils'
 
 function createVariableField(overrides: Partial<BlueprintManifestVariableField> = {}): BlueprintManifestVariableField {
   return {
@@ -370,6 +374,61 @@ describe('blueprint-creation-utils', () => {
           is_secret: false,
         },
       ])
+    })
+  })
+
+  describe('resolveBlueprintCreationOutcome', () => {
+    it('should report a created service when the blueprint carries a service id', () => {
+      expect(
+        resolveBlueprintCreationOutcome({
+          id: 'blueprint-1',
+          service_id: 'service-1',
+          latest_deployment: { status: 'DEPLOYING' },
+        })
+      ).toEqual({ status: 'created' })
+    })
+
+    it.each(['FAILED', 'INTERNAL_ERROR', 'CANCELED'] as const)(
+      'should report a failure with the engine error message for %s',
+      (status) => {
+        expect(
+          resolveBlueprintCreationOutcome({
+            id: 'blueprint-1',
+            service_id: null,
+            latest_deployment: { status, error_message: 'terraform apply failed: invalid instance class' },
+          })
+        ).toEqual({
+          status: 'failed',
+          errorMessage: 'terraform apply failed: invalid instance class',
+        })
+      }
+    )
+
+    it('should report a failure without a message when the deployment did not provide one', () => {
+      expect(
+        resolveBlueprintCreationOutcome({
+          id: 'blueprint-1',
+          service_id: null,
+          latest_deployment: { status: 'FAILED', error_message: null },
+        })
+      ).toEqual({ status: 'failed', errorMessage: undefined })
+    })
+
+    it.each(['WAITING_RUNNING', 'DEPLOYING', 'CANCELING', 'RUNNING'] as const)(
+      'should stay pending for %s so the caller keeps waiting',
+      (status) => {
+        expect(
+          resolveBlueprintCreationOutcome({
+            id: 'blueprint-1',
+            service_id: null,
+            latest_deployment: { status },
+          })
+        ).toEqual({ status: 'pending' })
+      }
+    )
+
+    it('should stay pending when the blueprint has no deployment yet', () => {
+      expect(resolveBlueprintCreationOutcome({ id: 'blueprint-1' })).toEqual({ status: 'pending' })
     })
   })
 })

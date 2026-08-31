@@ -1,4 +1,5 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
+import axios from 'axios'
 import {
   type AgenticWorkflowRequest,
   AgenticWorkflowsApi,
@@ -206,6 +207,29 @@ export type BlueprintService = AnyService & {
   blueprint_id: string
   tag?: string
 }
+export type BlueprintDeploymentStatus =
+  | 'WAITING_RUNNING'
+  | 'DEPLOYING'
+  | 'RUNNING'
+  | 'FAILED'
+  | 'CANCELING'
+  | 'CANCELED'
+  | 'INTERNAL_ERROR'
+
+export interface BlueprintLatestDeployment {
+  status: BlueprintDeploymentStatus
+  error_message?: string | null
+  started_at?: string | null
+  terminated_at?: string | null
+}
+
+export interface BlueprintDetailsResponse {
+  id: string
+  // Non-null once the engine has actually materialized the service
+  service_id?: string | null
+  latest_deployment?: BlueprintLatestDeployment | null
+}
+
 export type ReadOnlyService = ArgoCd
 export type EditableService = Exclude<AnyService, ReadOnlyService | AgenticWorkflow>
 export type SettingsService = Exclude<AnyService, ReadOnlyService>
@@ -328,6 +352,15 @@ export const services = createQueryKeys('services', {
         environmentId
       )
       return response.data.results
+    },
+  }),
+  blueprint: ({ blueprintId }: { blueprintId: string }) => ({
+    queryKey: [blueprintId],
+    async queryFn() {
+      // Hand-rolled because `GET /blueprint/{blueprintId}` is not in the generated client yet.
+      // Swap for `blueprintApi.getBlueprint` once it is regenerated.
+      const response = await axios.get<BlueprintDetailsResponse>(`/blueprint/${blueprintId}`)
+      return response.data
     },
   }),
   blueprintUpdate: ({ blueprintId }: { blueprintId: string }) => ({
