@@ -48,6 +48,21 @@ describe('ClusterAdvancedSettingsFeature', () => {
     await waitFor(() => expect(screen.getByTestId('sticky-action-form-toaster')).toBeVisible())
   })
 
+  it('should keep the save banner hidden for a payload-equivalent edit', async () => {
+    const { userEvent } = renderWithProviders(<ClusterAdvancedSettingsFeature />)
+
+    const textarea = await screen.findByRole('textbox')
+    await waitFor(() => expect(textarea).toHaveValue('1'))
+
+    await userEvent.clear(textarea)
+    await userEvent.type(textarea, '1.0')
+
+    await waitFor(() => {
+      expect(textarea).toHaveValue('1.0')
+      expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
+    })
+  })
+
   it('should hide the save banner after the settings are saved', async () => {
     mockEditClusterAdvancedSettings.mockImplementation((_variables: unknown, options?: { onSuccess?: () => void }) =>
       options?.onSuccess?.()
