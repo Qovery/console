@@ -180,8 +180,6 @@ export function BlueprintStepSummary() {
   }, [failBlueprintCreation, hasBlueprintCreationError])
 
   useEffect(() => {
-    // Retrying mints a new blueprint, so a result for the previous one must not be read as this
-    // one's outcome.
     if (!isWaitingForServiceCreated || !isReadingBlueprintOutcome) {
       return
     }

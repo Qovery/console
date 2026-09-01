@@ -438,6 +438,19 @@ describe('blueprint-creation-utils', () => {
       }
     )
 
+    it.each([
+      ['null', null],
+      ['blank', '   '],
+    ])('should fall back when the engine message is %s', (_case, message) => {
+      expect(
+        resolveBlueprintCreationOutcome(
+          createBlueprintDetails({
+            latest_deployment: createDeployment({ status: 'FAILED', error_message: message }),
+          })
+        )
+      ).toEqual({ status: 'failed', errorMessage: undefined })
+    })
+
     it('should report a failure without a message when the deployment did not provide one', () => {
       expect(
         resolveBlueprintCreationOutcome(
