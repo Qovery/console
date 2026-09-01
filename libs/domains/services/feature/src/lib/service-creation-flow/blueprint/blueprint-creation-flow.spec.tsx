@@ -756,7 +756,7 @@ describe('BlueprintCreationFlow', () => {
       expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
     })
 
-    it('should fail instead of reporting success when the blueprint never reaches an outcome', async () => {
+    it('should not report success when the blueprint never reaches an outcome', async () => {
       jest.useFakeTimers()
       mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ latest_deployment: deployment() }) })
 
@@ -768,12 +768,24 @@ describe('BlueprintCreationFlow', () => {
 
       expect(mockToast).not.toHaveBeenCalled()
       expect(mockNavigate).not.toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
-      expect(
-        screen.getByText(
-          'Timed out while waiting for this blueprint to report its status. Check the environment before retrying.'
-        )
-      ).toBeVisible()
       expect(mockUseBlueprint).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: false }))
+    })
+
+    it('should not offer to retry a dispatch that may still be running', async () => {
+      jest.useFakeTimers()
+      mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ latest_deployment: deployment() }) })
+
+      await createBlueprintAndDispatch()
+
+      act(() => {
+        jest.advanceTimersByTime(BLUEPRINT_STATUS_POLL_TIMEOUT_MS)
+      })
+
+      // Reaching the deadline is not a failure, so it must not claim one — and retrying a dispatch
+      // that is still running would create a second service alongside it
+      expect(screen.getByText(/taking longer than expected/)).toBeVisible()
+      expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Edit config' })).toBeVisible()
     })
   })
 

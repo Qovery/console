@@ -6,6 +6,9 @@ import { Ansi, Button, Heading, Icon } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 
 export interface BlueprintCreationLoadingModalProps {
+  // False when the dispatch never reported an outcome and may still be running, so retrying would
+  // risk a second service
+  canRetry?: boolean
   // Set when the failure was reported by the API rather than by the deployment logs, which a
   // failed dispatch never emits
   errorMessage?: string
@@ -17,6 +20,7 @@ export interface BlueprintCreationLoadingModalProps {
 }
 
 export function BlueprintCreationLoadingModal({
+  canRetry = true,
   errorMessage,
   logs,
   onEditConfig,
@@ -58,10 +62,12 @@ export function BlueprintCreationLoadingModal({
                   <Icon iconName="pen" iconStyle="regular" />
                   Edit config
                 </Button>
-                <Button type="button" size="md" onClick={onRetry}>
-                  <Icon iconName="arrow-rotate-right" iconStyle="regular" />
-                  Retry
-                </Button>
+                {canRetry && (
+                  <Button type="button" size="md" onClick={onRetry}>
+                    <Icon iconName="arrow-rotate-right" iconStyle="regular" />
+                    Retry
+                  </Button>
+                )}
               </div>
             )}
             <Dialog.Description id="blueprint-creation-loading-description" className="sr-only">

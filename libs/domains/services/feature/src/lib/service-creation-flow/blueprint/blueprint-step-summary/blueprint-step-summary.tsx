@@ -32,8 +32,8 @@ type PendingBlueprintCreation = {
 
 const BLUEPRINT_STATUS_POLL_INTERVAL_MS = 5_000
 const BLUEPRINT_STATUS_POLL_TIMEOUT_MS = 300_000
-const BLUEPRINT_STATUS_POLL_TIMEOUT_MESSAGE =
-  'Timed out while waiting for this blueprint to report its status. Check the environment before retrying.'
+const BLUEPRINT_STATUS_UNRESOLVED_MESSAGE =
+  'This is taking longer than expected. The dispatch may still be running — check the environment for its status before creating this service again.'
 
 export function BlueprintStepSummary() {
   const navigate = useNavigate()
@@ -45,6 +45,7 @@ export function BlueprintStepSummary() {
   const [isWaitingForServiceCreated, setIsWaitingForServiceCreated] = useState(false)
   const [isBlueprintCreationFailed, setIsBlueprintCreationFailed] = useState(false)
   const [blueprintCreationErrorMessage, setBlueprintCreationErrorMessage] = useState<string>()
+  const [canRetryBlueprintCreation, setCanRetryBlueprintCreation] = useState(true)
   const [createdBlueprintId, setCreatedBlueprintId] = useState<string>()
   const [createdDeploymentId, setCreatedDeploymentId] = useState<string>()
   const [pendingBlueprintCreation, setPendingBlueprintCreation] = useState<PendingBlueprintCreation | null>(null)
@@ -118,7 +119,9 @@ export function BlueprintStepSummary() {
   }, [clearBlueprintStatusPollTimeout, navigateToEnvironmentOverview])
 
   const failBlueprintCreation = useCallback(
-    (errorMessage?: string) => {
+    // `canRetry` is false when the dispatch never reported an outcome: it may still be running, so
+    // offering Retry would invite a second service alongside the first.
+    (errorMessage?: string, canRetry = true) => {
       if (hasHandledServiceCreatedRef.current) {
         return
       }
@@ -129,6 +132,7 @@ export function BlueprintStepSummary() {
       setIsWaitingForServiceCreated(false)
       setIsBlueprintCreationFailed(true)
       setBlueprintCreationErrorMessage(errorMessage)
+      setCanRetryBlueprintCreation(canRetry)
       setSubmitMode(null)
     },
     [clearBlueprintStatusPollTimeout]
@@ -141,7 +145,9 @@ export function BlueprintStepSummary() {
 
     clearBlueprintStatusPollTimeout()
     blueprintStatusPollTimeoutRef.current = setTimeout(() => {
-      failBlueprintCreation(BLUEPRINT_STATUS_POLL_TIMEOUT_MESSAGE)
+      // Reaching the deadline means the dispatch never reached a terminal state, not that it
+      // failed — a still-running dispatch must not be reported as a failure.
+      failBlueprintCreation(BLUEPRINT_STATUS_UNRESOLVED_MESSAGE, false)
     }, BLUEPRINT_STATUS_POLL_TIMEOUT_MS)
   }, [clearBlueprintStatusPollTimeout, failBlueprintCreation])
 
@@ -277,6 +283,7 @@ export function BlueprintStepSummary() {
     setCreatedDeploymentId(undefined)
     setIsBlueprintCreationFailed(false)
     setBlueprintCreationErrorMessage(undefined)
+    setCanRetryBlueprintCreation(true)
     setLastBlueprintCreation(blueprintCreation)
     setIsWaitingForServiceCreated(true)
 
@@ -294,6 +301,7 @@ export function BlueprintStepSummary() {
     setCreatedDeploymentId(undefined)
     setIsBlueprintCreationFailed(false)
     setBlueprintCreationErrorMessage(undefined)
+    setCanRetryBlueprintCreation(true)
     setSubmitMode(lastBlueprintCreation.deploy ? 'create-and-deploy' : 'create')
     setIsWaitingForServiceCreated(true)
 
@@ -306,6 +314,7 @@ export function BlueprintStepSummary() {
     setIsWaitingForServiceCreated(false)
     setIsBlueprintCreationFailed(false)
     setBlueprintCreationErrorMessage(undefined)
+    setCanRetryBlueprintCreation(true)
     setSubmitMode(null)
     navigate({ to: `${creationFlowUrl}/service-information` })
   }
@@ -437,6 +446,7 @@ export function BlueprintStepSummary() {
         </Section>
       </FunnelFlowBody>
       <BlueprintCreationLoadingModal
+        canRetry={canRetryBlueprintCreation}
         errorMessage={blueprintCreationErrorMessage}
         logs={blueprintCreationLogs}
         onEditConfig={handleEditConfig}
