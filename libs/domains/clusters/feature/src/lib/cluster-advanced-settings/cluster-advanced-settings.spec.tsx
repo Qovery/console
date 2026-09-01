@@ -1,6 +1,6 @@
 import { wrapWithReactHookForm } from '__tests__/utils/wrap-with-react-hook-form'
 import { type ClusterAdvancedSettings } from 'qovery-typescript-axios'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { buildClusterAdvancedSettingsPayload } from './build-cluster-advanced-settings-payload'
 import { ClusterAdvancedSettings as ClusterAdvancedSettingsComponent } from './cluster-advanced-settings'
 
@@ -200,7 +200,10 @@ describe('ClusterAdvancedSettings', () => {
     await userEvent.clear(textarea)
     await userEvent.type(textarea, 'value1')
 
-    await waitFor(() => expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument())
+    const toaster = screen.getByTestId('sticky-action-form-toaster')
+    await waitFor(() => expect(toaster).toHaveClass('animate-action-bar-fade-out'))
+    fireEvent.animationEnd(toaster)
+    expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
   })
 
   it('should compare current and saved values using the same normalization', async () => {

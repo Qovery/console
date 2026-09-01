@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Button, { type ButtonProps } from '../button/button'
 
@@ -28,21 +29,39 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     fixed = false,
   } = props
 
+  const [shouldRender, setShouldRender] = useState(visible)
+
+  useEffect(() => {
+    if (visible) {
+      setShouldRender(true)
+    }
+  }, [visible])
+
   const submitButtonColorValue = submitButtonColor ?? 'green'
 
-  if (!visible) return null
+  if (!shouldRender) return null
 
   return (
     <div
       className={twMerge(
         'z-toast flex justify-center',
         fixed ? 'fixed inset-x-0 bottom-14' : 'sticky bottom-4',
+        !visible && 'pointer-events-none',
         className
       )}
+      aria-hidden={!visible}
     >
       <div
         data-testid="sticky-action-form-toaster"
-        className="inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl"
+        className={twMerge(
+          'inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl',
+          visible ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
+        )}
+        onAnimationEnd={(event) => {
+          if (!visible && event.currentTarget === event.target) {
+            setShouldRender(false)
+          }
+        }}
       >
         {description && <span className="text-sm font-medium text-neutralInvert">{description}</span>}
         <div className="flex gap-5">

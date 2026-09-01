@@ -1,4 +1,5 @@
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useState } from 'react'
+import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
 import StickyActionFormToaster, { type StickyActionFormToasterProps } from './sticky-action-form-toaster'
 
 const props: StickyActionFormToasterProps = {
@@ -8,6 +9,22 @@ const props: StickyActionFormToasterProps = {
   submitLabel: 'Save modifications',
   description: 'Warning, there are still unsaved changes!',
   visible: true,
+}
+
+function StickyActionFormToasterHarness() {
+  const [visible, setVisible] = useState(false)
+
+  return (
+    <>
+      <button type="button" onClick={() => setVisible(true)}>
+        Show toaster
+      </button>
+      <button type="button" onClick={() => setVisible(false)}>
+        Hide toaster
+      </button>
+      <StickyActionFormToaster {...props} visible={visible} />
+    </>
+  )
 }
 
 describe('StickyActionFormToaster', () => {
@@ -69,16 +86,38 @@ describe('StickyActionFormToaster', () => {
     expect(screen.getByTestId('submit-button')).toHaveClass('bg-surface-negative-solid')
   })
 
-  it('should immediately follow the visible prop without animation classes', () => {
-    const { rerender } = renderWithProviders(<StickyActionFormToaster {...props} visible={false} />)
+  it('should animate in and out before unmounting', async () => {
+    const { userEvent } = renderWithProviders(<StickyActionFormToasterHarness />)
 
     expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
 
-    rerender(<StickyActionFormToaster {...props} visible />)
+    await userEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
 
     const toaster = screen.getByTestId('sticky-action-form-toaster')
     expect(toaster).toBeVisible()
-    expect(toaster).not.toHaveClass('animate-action-bar-fade-in')
-    expect(toaster).not.toHaveClass('animate-action-bar-fade-out')
+    expect(toaster).toHaveClass('animate-action-bar-fade-in')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Hide toaster' }))
+
+    const exitingToaster = screen.getByTestId('sticky-action-form-toaster')
+    expect(exitingToaster).toHaveClass('animate-action-bar-fade-out')
+    fireEvent.animationEnd(exitingToaster)
+    expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
+  })
+
+  it('should stay mounted when shown again during the exit animation', async () => {
+    const { userEvent } = renderWithProviders(<StickyActionFormToasterHarness />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Hide toaster' }))
+
+    expect(screen.getByTestId('sticky-action-form-toaster')).toHaveClass('animate-action-bar-fade-out')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
+
+    const toaster = screen.getByTestId('sticky-action-form-toaster')
+    expect(toaster).toHaveClass('animate-action-bar-fade-in')
+    fireEvent.animationEnd(toaster)
+    expect(toaster).toBeInTheDocument()
   })
 })
