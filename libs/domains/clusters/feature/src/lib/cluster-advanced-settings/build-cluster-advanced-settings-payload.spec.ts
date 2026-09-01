@@ -11,6 +11,16 @@ describe('buildClusterAdvancedSettingsPayload', () => {
     })
   })
 
+  it('should normalize a trailing decimal point as a number', () => {
+    expect(
+      buildClusterAdvancedSettingsPayload({
+        'cluster.setting': '1.',
+      })
+    ).toEqual({
+      'cluster.setting': 1,
+    })
+  })
+
   it.each(['1.0', 'true', 'null', '1e3'])(
     'should preserve the JSON-parseable value %s when the setting default is a string',
     (value) => {

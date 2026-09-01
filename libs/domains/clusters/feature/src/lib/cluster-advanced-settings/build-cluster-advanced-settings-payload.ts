@@ -13,6 +13,11 @@ function normalizeClusterAdvancedSettingValue(value: unknown, defaultValue: unkn
       if (value === '') {
         return typeof defaultValue === 'object' ? defaultValue : defaultValue ?? ''
       }
+
+      const numericValue = Number(value)
+      if (Number.isFinite(numericValue)) {
+        return numericValue
+      }
     }
   }
 

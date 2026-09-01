@@ -55,7 +55,14 @@ describe('ClusterAdvancedSettingsFeature', () => {
     await waitFor(() => expect(textarea).toHaveValue('1'))
 
     await userEvent.clear(textarea)
-    await userEvent.type(textarea, '1.0')
+    await userEvent.type(textarea, '1.')
+
+    await waitFor(() => {
+      expect(textarea).toHaveValue('1.')
+      expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
+    })
+
+    await userEvent.type(textarea, '0')
 
     await waitFor(() => {
       expect(textarea).toHaveValue('1.0')
