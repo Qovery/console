@@ -1,4 +1,4 @@
-import { fireEvent, renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved } from '@qovery/shared/util-tests'
 import { ClusterAdvancedSettingsFeature } from './cluster-advanced-settings-feature'
 
 const mockUseClusterAdvancedSettings = jest.fn()
@@ -82,9 +82,6 @@ describe('ClusterAdvancedSettingsFeature', () => {
     await userEvent.type(textarea, '2')
     await userEvent.click(await screen.findByTestId('submit-button'))
 
-    const toaster = screen.getByTestId('sticky-action-form-toaster')
-    await waitFor(() => expect(toaster).toHaveClass('animate-action-bar-fade-out'))
-    fireEvent.animationEnd(toaster)
-    expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
+    await waitForElementToBeRemoved(() => screen.queryByTestId('sticky-action-form-toaster'))
   })
 })

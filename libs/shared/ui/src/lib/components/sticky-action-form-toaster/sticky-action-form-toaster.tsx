@@ -1,6 +1,36 @@
-import { useEffect, useState } from 'react'
+import { AnimatePresence, type MotionProps, motion, useReducedMotion } from 'framer-motion'
 import { twMerge } from '@qovery/shared/util-js'
 import Button, { type ButtonProps } from '../button/button'
+
+const TOASTER_MOTION = {
+  initial: { opacity: 0.5, y: '50%', scale: 0.6 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.35, ease: [0.165, 0.84, 0.44, 1] },
+  },
+  exit: {
+    opacity: 0,
+    y: '50%',
+    scale: 0.8,
+    pointerEvents: 'none',
+    transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+} satisfies Pick<MotionProps, 'initial' | 'animate' | 'exit'>
+
+const REDUCED_TOASTER_MOTION = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+  exit: {
+    opacity: 0,
+    pointerEvents: 'none',
+    transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+} satisfies Pick<MotionProps, 'initial' | 'animate' | 'exit'>
 
 export interface StickyActionFormToasterProps {
   visible?: boolean
@@ -28,64 +58,51 @@ export function StickyActionFormToaster(props: StickyActionFormToasterProps) {
     submitButtonColor,
     fixed = false,
   } = props
-
-  const [shouldRender, setShouldRender] = useState(visible)
-
-  useEffect(() => {
-    if (visible) {
-      setShouldRender(true)
-    }
-  }, [visible])
+  const reducedMotion = useReducedMotion()
 
   const submitButtonColorValue = submitButtonColor ?? 'green'
 
-  if (!shouldRender) return null
-
   return (
-    <div
-      className={twMerge(
-        'z-toast flex justify-center',
-        fixed ? 'fixed inset-x-0 bottom-14' : 'sticky bottom-4',
-        !visible && 'pointer-events-none',
-        className
-      )}
-      aria-hidden={!visible}
-    >
-      <div
-        data-testid="sticky-action-form-toaster"
-        className={twMerge(
-          'inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl',
-          visible ? 'animate-action-bar-fade-in' : 'animate-action-bar-fade-out'
-        )}
-        onAnimationEnd={(event) => {
-          if (!visible && event.currentTarget === event.target) {
-            setShouldRender(false)
-          }
-        }}
-      >
-        {description && <span className="text-sm font-medium text-neutralInvert">{description}</span>}
-        <div className="flex gap-5">
-          {resetLabel && onReset && (
-            <button type="button" className="text-ssm font-medium underline" onClick={() => onReset()}>
-              {resetLabel}
-            </button>
+    <AnimatePresence>
+      {visible ? (
+        <div
+          key="sticky-action-form-toaster"
+          className={twMerge(
+            'z-toast flex justify-center',
+            fixed ? 'fixed inset-x-0 bottom-14' : 'sticky bottom-4',
+            className
           )}
-          {submitLabel && onSubmit && (
-            <Button
-              color={submitButtonColorValue}
-              size="md"
-              data-testid="submit-button"
-              onClick={() => onSubmit()}
-              loading={props.loading}
-              disabled={props.disabledValidation}
-              type="button"
-            >
-              {submitLabel}
-            </Button>
-          )}
+        >
+          <motion.div
+            data-testid="sticky-action-form-toaster"
+            className="inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl"
+            {...(reducedMotion ? REDUCED_TOASTER_MOTION : TOASTER_MOTION)}
+          >
+            {description && <span className="text-sm font-medium text-neutralInvert">{description}</span>}
+            <div className="flex gap-5">
+              {resetLabel && onReset && (
+                <button type="button" className="text-ssm font-medium underline" onClick={() => onReset()}>
+                  {resetLabel}
+                </button>
+              )}
+              {submitLabel && onSubmit && (
+                <Button
+                  color={submitButtonColorValue}
+                  size="md"
+                  data-testid="submit-button"
+                  onClick={() => onSubmit()}
+                  loading={props.loading}
+                  disabled={props.disabledValidation}
+                  type="button"
+                >
+                  {submitLabel}
+                </Button>
+              )}
+            </div>
+          </motion.div>
         </div>
-      </div>
-    </div>
+      ) : null}
+    </AnimatePresence>
   )
 }
 
