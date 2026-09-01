@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { fireEvent, renderWithProviders, screen, waitFor, waitForElementToBeRemoved } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, waitForElementToBeRemoved } from '@qovery/shared/util-tests'
 import StickyActionFormToaster, { type StickyActionFormToasterProps } from './sticky-action-form-toaster'
 
 const props: StickyActionFormToasterProps = {
@@ -87,16 +87,16 @@ describe('StickyActionFormToaster', () => {
   })
 
   it('should animate in and out before unmounting', async () => {
-    renderWithProviders(<StickyActionFormToasterHarness />)
+    const { userEvent } = renderWithProviders(<StickyActionFormToasterHarness />)
 
     expect(screen.queryByTestId('sticky-action-form-toaster')).not.toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
 
     const toaster = screen.getByTestId('sticky-action-form-toaster')
     expect(toaster).toBeVisible()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Hide toaster' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Hide toaster' }))
 
     expect(screen.getByTestId('sticky-action-form-toaster')).toBeInTheDocument()
     await waitForElementToBeRemoved(() => screen.queryByTestId('sticky-action-form-toaster'))
@@ -106,12 +106,12 @@ describe('StickyActionFormToaster', () => {
     const onReset = jest.fn()
     const { userEvent } = renderWithProviders(<StickyActionFormToasterHarness onReset={onReset} />)
 
-    fireEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
-    fireEvent.click(screen.getByRole('button', { name: 'Hide toaster' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Hide toaster' }))
 
     expect(screen.getByTestId('sticky-action-form-toaster')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
 
     await waitFor(() => expect(screen.getByTestId('sticky-action-form-toaster')).toHaveStyle('pointer-events: auto'))
     await userEvent.click(screen.getByRole('button', { name: 'Reset' }))

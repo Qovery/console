@@ -56,7 +56,8 @@ Reference these guidelines when:
 ### Testing
 
 - `renderWithProviders` from `@qovery/shared/util-tests`
-- `userEvent` over `fireEvent`, Arrange-Act-Assert pattern
+- Await `userEvent` interactions; treat `fireEvent` as deprecated unless `userEvent` cannot represent the event and the exception is documented
+- Arrange-Act-Assert pattern
 - Cover success, error, and edge states
 
 ### Naming
