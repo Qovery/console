@@ -87,12 +87,29 @@ export function RowMember(props: RowMemberProps) {
   const [roleOverrideId, setRoleOverrideId] = useState<string | null>(null)
   const displayedRoleValue = roleOverrideId && roleOverrideId !== selectedRoleValue ? roleOverrideId : selectedRoleValue
   const selectedRoleLabel = roleOptions.find((role) => role.value === displayedRoleValue)?.label ?? 'Select role'
+  const displayedRoleLabel = isOwner ? 'Owner' : selectedRoleLabel
 
   const handleRoleChange = (roleId: string | undefined) => {
     if (!roleId) return
     setRoleOverrideId(roleId)
     editMemberRole?.(member.id, roleId)
   }
+
+  const roleButton = (
+    <Button
+      type="button"
+      data-testid="input"
+      aria-label="Member role"
+      variant="outline"
+      color="neutral"
+      size="md"
+      className="h-9 w-44 justify-between"
+      disabled={!canEditRole || loadingUpdateRole}
+    >
+      <span className="truncate">{displayedRoleLabel}</span>
+      {!isOwner && <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />}
+    </Button>
+  )
 
   return (
     <Table.Row>
@@ -238,19 +255,13 @@ export function RowMember(props: RowMemberProps) {
         <div data-testid="row-member-menu" className="flex items-center">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button
-                type="button"
-                data-testid="input"
-                aria-label="Member role"
-                variant="outline"
-                color="neutral"
-                size="md"
-                className="h-9 w-44 justify-between"
-                disabled={!canEditRole || loadingUpdateRole}
-              >
-                <span className="truncate">{selectedRoleLabel}</span>
-                <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
-              </Button>
+              {isOwner ? (
+                <Tooltip content="There can only be one owner. Only the owner can transfer ownership to another member via the action menu.">
+                  <span>{roleButton}</span>
+                </Tooltip>
+              ) : (
+                roleButton
+              )}
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="start">
               {roleOptions.map((role) => (
