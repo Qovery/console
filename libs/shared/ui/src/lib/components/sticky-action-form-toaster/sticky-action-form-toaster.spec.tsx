@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { act, fireEvent, renderWithProviders, screen, waitForElementToBeRemoved } from '@qovery/shared/util-tests'
+import { fireEvent, renderWithProviders, screen, waitFor, waitForElementToBeRemoved } from '@qovery/shared/util-tests'
 import StickyActionFormToaster, { type StickyActionFormToasterProps } from './sticky-action-form-toaster'
 
 const props: StickyActionFormToasterProps = {
@@ -11,7 +11,7 @@ const props: StickyActionFormToasterProps = {
   visible: true,
 }
 
-function StickyActionFormToasterHarness() {
+function StickyActionFormToasterHarness({ onReset = props.onReset }: Pick<StickyActionFormToasterProps, 'onReset'>) {
   const [visible, setVisible] = useState(false)
 
   return (
@@ -22,7 +22,7 @@ function StickyActionFormToasterHarness() {
       <button type="button" onClick={() => setVisible(false)}>
         Hide toaster
       </button>
-      <StickyActionFormToaster {...props} visible={visible} />
+      <StickyActionFormToaster {...props} visible={visible} onReset={onReset} />
     </>
   )
 }
@@ -102,8 +102,9 @@ describe('StickyActionFormToaster', () => {
     await waitForElementToBeRemoved(() => screen.queryByTestId('sticky-action-form-toaster'))
   })
 
-  it('should stay mounted when shown again during the exit animation', async () => {
-    renderWithProviders(<StickyActionFormToasterHarness />)
+  it('should remain interactive when shown again during the exit animation', async () => {
+    const onReset = jest.fn()
+    const { userEvent } = renderWithProviders(<StickyActionFormToasterHarness onReset={onReset} />)
 
     fireEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
     fireEvent.click(screen.getByRole('button', { name: 'Hide toaster' }))
@@ -112,10 +113,9 @@ describe('StickyActionFormToaster', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Show toaster' }))
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 250))
-    })
+    await waitFor(() => expect(screen.getByTestId('sticky-action-form-toaster')).toHaveStyle('pointer-events: auto'))
+    await userEvent.click(screen.getByRole('button', { name: 'Reset' }))
 
-    expect(screen.getByTestId('sticky-action-form-toaster')).toBeVisible()
+    expect(onReset).toHaveBeenCalledTimes(1)
   })
 })
