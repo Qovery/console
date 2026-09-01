@@ -163,19 +163,28 @@ describe('useBlueprintServiceCreatedSocket', () => {
     expect(onDispatchFailed).not.toHaveBeenCalled()
   })
 
-  it('should still treat the older payload, which carries no type, as a creation', () => {
+  // q-core deletes the legacy publisher when it ships the dispatch event, so this socket's payload
+  // changes from `{blueprint_id}` to `{type: 'created', blueprint_id}` on their deploy, with no
+  // console deploy to correlate a regression to. Both shapes must complete the flow.
+  it.each([
+    ['the older payload, which carries no type', { blueprint_id: 'blueprint-1' }],
+    ['an explicit created frame', { type: 'created', blueprint_id: 'blueprint-1' }],
+  ])('should treat %s as a creation', (_case, frame) => {
     const onServiceCreated = jest.fn()
+    const onDispatchFailed = jest.fn()
     const queryClient = renderUseBlueprintServiceCreatedSocket({
       organizationId: 'org-1',
       projectId: 'proj-1',
       environmentId: 'env-1',
       blueprintId: 'blueprint-1',
       onServiceCreated,
+      onDispatchFailed,
     })
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
-    subscriptionConfig?.onMessage?.(queryClient, { blueprint_id: 'blueprint-1' })
+    subscriptionConfig?.onMessage?.(queryClient, frame)
 
     expect(onServiceCreated).toHaveBeenCalledTimes(1)
+    expect(onDispatchFailed).not.toHaveBeenCalled()
   })
 })
