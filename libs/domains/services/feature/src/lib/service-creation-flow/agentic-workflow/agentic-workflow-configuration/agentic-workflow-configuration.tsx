@@ -146,19 +146,22 @@ function ConfigurationRow({ children, label }: { children: ReactNode; label: str
 }
 
 function McpServerPicker({
+  createdMcpServers,
   isLoading,
   mcpServers,
   onChange,
+  onMcpServerCreated,
   value,
 }: {
+  createdMcpServers: McpServerResponse[]
   isLoading: boolean
   mcpServers: McpServerResponse[]
   onChange: (value: string[]) => void
+  onMcpServerCreated: (mcpServer: McpServerResponse) => void
   value: string[]
 }) {
   const { closeModal, openModal } = useModal()
   const [search, setSearch] = useState('')
-  const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
@@ -174,7 +177,7 @@ function McpServerPicker({
         <McpServerCreateEditModal
           onClose={(mcpServer) => {
             if (mcpServer) {
-              setCreatedMcpServers((servers) => [...servers, mcpServer])
+              onMcpServerCreated(mcpServer)
               onChange([...new Set([...value, mcpServer.id])])
             }
             closeModal()
@@ -217,7 +220,15 @@ function McpServerPicker({
             <Heading level={3} weight="medium">
               Connected ({connectedMcpServers.length})
             </Heading>
-            <Button type="button" size="sm" color="neutral" variant="plain" onClick={() => onChange([])}>
+            <Button
+              type="button"
+              size="sm"
+              color="neutral"
+              variant="plain"
+              onClick={() =>
+                onChange(value.filter((id) => !connectedMcpServers.some(({ id: connectedId }) => id === connectedId)))
+              }
+            >
               Remove all
             </Button>
           </div>
@@ -324,6 +335,7 @@ export function AgenticWorkflowConfiguration() {
   const [contextModalOpen, setContextModalOpen] = useState(false)
   const [providerModalOpen, setProviderModalOpen] = useState(false)
   const [mcpModalOpen, setMcpModalOpen] = useState(false)
+  const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
@@ -349,13 +361,9 @@ export function AgenticWorkflowConfiguration() {
     outputs: !outputsValid || outputHeadersErrors.some(Boolean),
     advanced: Boolean(mcpJsonError),
   }
-  const canSubmit =
-    Boolean(values.name.trim()) &&
-    Boolean(values.agentPrompt.trim()) &&
-    !providerConfigurationInvalid &&
-    isAgenticWorkflowScheduleValid(values) &&
-    gitRepositoriesValid &&
-    !Object.values(settingsGroupsInvalid).some(Boolean)
+  const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
+    (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
+  )
   const addRepository = () =>
     form.setValue(
       'gitRepositories',
@@ -743,7 +751,6 @@ export function AgenticWorkflowConfiguration() {
         data-testid="button-create"
         type="button"
         variant="outline"
-        disabled={!canSubmit}
         loading={isCreating || isImportingVariables}
         onClick={() => handleSubmit(false)}
       >
@@ -752,7 +759,6 @@ export function AgenticWorkflowConfiguration() {
       <Button
         data-testid="button-create-deploy"
         type="button"
-        disabled={!canSubmit}
         loading={isCreating || isImportingVariables || isDeploying}
         onClick={() => handleSubmit(true)}
       >
@@ -850,7 +856,7 @@ export function AgenticWorkflowConfiguration() {
                 ) : null}
               </ConfigurationRow>
               <ConfigurationRow label="MCP">
-                {mcpServers
+                {availableMcpServers
                   .filter(({ id }) => values.mcpServerIds.includes(id))
                   .map(({ id, name }) => (
                     <div
@@ -1059,8 +1065,14 @@ export function AgenticWorkflowConfiguration() {
             <McpServerPicker
               isLoading={areMcpServersLoading}
               mcpServers={mcpServers}
+              createdMcpServers={createdMcpServers}
               value={values.mcpServerIds}
               onChange={(value) => form.setValue('mcpServerIds', value as string[], { shouldDirty: true })}
+              onMcpServerCreated={(mcpServer) =>
+                setCreatedMcpServers((servers) =>
+                  servers.some(({ id }) => id === mcpServer.id) ? servers : [...servers, mcpServer]
+                )
+              }
             />
           </ConfigurationModalContent>
         </Modal>

@@ -63,7 +63,7 @@ export const AgenticWorkflowPromptEditor = forwardRef<
           name="name"
           value={name}
           placeholder="New agent task"
-          className="w-full bg-transparent text-2xl font-medium text-neutral outline-none placeholder:text-neutral-subtle"
+          className="w-full bg-transparent text-2xl font-medium text-neutral outline-none placeholder:text-neutral-subtle focus-visible:outline focus-visible:outline-1 focus-visible:outline-neutral-component"
           onChange={(event: ChangeEvent<HTMLInputElement>) => onNameChange(event.currentTarget.value)}
         />
         {nameError ? <p className="mt-1 text-xs font-medium text-negative">{nameError}</p> : null}
@@ -77,7 +77,7 @@ export const AgenticWorkflowPromptEditor = forwardRef<
         value={prompt}
         error={promptError}
         className="mt-3 [&_.cm-content]:min-h-80"
-        editorClassName="rounded-none border-0 bg-transparent focus-within:!border-0 focus-within:!outline-none [&_.cm-content]:px-0 [&_.cm-content]:pt-0 [&_.cm-line]:px-0"
+        editorClassName="rounded-none border-0 bg-transparent focus-within:!border-0 focus-within:!outline focus-within:!outline-1 focus-within:!outline-neutral-component [&_.cm-content]:px-0 [&_.cm-content]:pt-0 [&_.cm-line]:px-0"
         placeholder="Describe the agent task behavior."
         showVariablePicker={false}
         variableKeys={variableKeys}

@@ -25,9 +25,7 @@ export const TextAreaVariableSuggestion = forwardRef<PromptEditorHandle, TextAre
     const handleChange = (nextValue: string, { cursor }: { cursor: number }) => {
       onChange(nextValue)
 
-      if (nextValue.slice(Math.max(0, cursor - 2), cursor) === '{{') {
-        replaceOpeningBracesRef.current = true
-      }
+      replaceOpeningBracesRef.current = nextValue.slice(Math.max(0, cursor - 2), cursor) === '{{'
     }
 
     const handleInsertVariable = (variableKey: string) => {
@@ -66,9 +64,6 @@ export const TextAreaVariableSuggestion = forwardRef<PromptEditorHandle, TextAre
                 variant="surface"
                 iconOnly
                 className="absolute right-2 top-2 h-8 w-8 justify-center"
-                onPointerDown={() => {
-                  replaceOpeningBracesRef.current = false
-                }}
               >
                 <Icon className="text-sm" iconName="wand-magic-sparkles" />
               </Button>

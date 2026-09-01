@@ -299,6 +299,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
               </Heading>
               <p className="mb-4 text-sm text-neutral-subtle">Choose how each agent task execution is isolated.</p>
               <RadioGroup.Root
+                aria-label="Execution mode"
                 value={values.executionMode}
                 onValueChange={(value) =>
                   form.setValue('executionMode', value as AgenticWorkflowExecutionMode, { shouldDirty: true })

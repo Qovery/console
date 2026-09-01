@@ -31,6 +31,7 @@ jest.mock('../../../hooks/use-deploy-environment/use-deploy-environment', () => 
 }))
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
+  McpServerCreateEditModal: () => <div>Create MCP server</div>,
   McpServerSetting: () => <div>Organization MCP connectors</div>,
   useMcpServers: () => ({ data: [], isLoading: false }),
 }))
@@ -183,17 +184,19 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByText('Schedule')).toBeInTheDocument()
   })
 
-  it('should enable creation actions only when mandatory configuration is complete', async () => {
+  it('should surface validation feedback when a creation action is clicked with incomplete configuration', async () => {
     const { userEvent } = renderConfiguration()
     const createButton = screen.getByRole('button', { name: 'Create' })
     const createAndDeployButton = screen.getByRole('button', { name: 'Create and deploy' })
 
-    expect(createButton).toBeDisabled()
-    expect(createAndDeployButton).toBeDisabled()
+    expect(createButton).toBeEnabled()
+    expect(createAndDeployButton).toBeEnabled()
+
+    await userEvent.click(createButton)
+    expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
     await userEvent.type(screen.getByRole('textbox', { name: /Instructions/ }), 'Review incoming payloads.')
-    expect(createButton).toBeDisabled()
 
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')

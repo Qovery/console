@@ -1,9 +1,9 @@
 import { type Completion, type CompletionContext, autocompletion } from '@codemirror/autocomplete'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
-import { EditorState } from '@codemirror/state'
+import { Compartment, EditorState, Transaction } from '@codemirror/state'
 import { EditorView, placeholder as editorPlaceholder, keymap } from '@codemirror/view'
 import clsx from 'clsx'
-import { type ReactNode, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
+import { type ReactNode, forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 
 export interface PromptEditorSuggestion {
@@ -74,7 +74,11 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
   const initialValueRef = useRef(value)
   const onChangeRef = useRef(onChange)
   const suggestionsRef = useRef(suggestions)
-  const describedBy = `${name}-${error ? 'error' : 'hint'}`
+  const controlledUpdate = useMemo(() => Transaction.userEvent.of('input.controlled'), [])
+  const editableCompartment = useMemo(() => new Compartment(), [])
+  const attributesCompartment = useMemo(() => new Compartment(), [])
+  const placeholderCompartment = useMemo(() => new Compartment(), [])
+  const feedbackId = error ? `${name}-error` : hint ? `${name}-hint` : undefined
 
   onChangeRef.current = onChange
   suggestionsRef.current = suggestions
@@ -106,14 +110,15 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
           history(),
           keymap.of([...defaultKeymap, ...historyKeymap]),
           EditorView.lineWrapping,
-          EditorState.readOnly.of(Boolean(disabled)),
-          EditorView.editable.of(!disabled),
-          EditorView.contentAttributes.of({
-            'aria-describedby': describedBy,
-            'aria-invalid': String(Boolean(error)),
-            'aria-label': label,
-            'data-testid': name,
-          }),
+          editableCompartment.of([EditorState.readOnly.of(Boolean(disabled)), EditorView.editable.of(!disabled)]),
+          attributesCompartment.of(
+            EditorView.contentAttributes.of({
+              ...(feedbackId ? { 'aria-describedby': feedbackId } : {}),
+              'aria-invalid': String(Boolean(error)),
+              'aria-label': label,
+              'data-testid': name,
+            })
+          ),
           EditorView.theme({
             '&': { backgroundColor: 'transparent', color: 'inherit', height: '100%' },
             '&.cm-focused': { outline: 'none' },
@@ -134,10 +139,13 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
             },
             '.cm-completionIcon-variable': { color: 'var(--brand-11)' },
           }),
-          editorPlaceholder(placeholder ?? ''),
+          placeholderCompartment.of(editorPlaceholder(placeholder ?? '')),
           autocompletion({ override: [variableCompletions(() => suggestionsRef.current)] }),
           EditorView.updateListener.of((update) => {
-            if (update.docChanged) {
+            if (
+              update.docChanged &&
+              !update.transactions.some((transaction) => transaction.annotation(controlledUpdate))
+            ) {
               onChangeRef.current(update.state.doc.toString(), { cursor: update.state.selection.main.head })
             }
           }),
@@ -150,7 +158,35 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
       editor.destroy()
       editorRef.current = undefined
     }
-  }, [describedBy, disabled, error, label, name, placeholder])
+    // The remaining editor configuration is synchronized by the effects below without recreating CodeMirror.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attributesCompartment, controlledUpdate, editableCompartment, placeholderCompartment])
+
+  useEffect(() => {
+    editorRef.current?.dispatch({
+      effects: editableCompartment.reconfigure([
+        EditorState.readOnly.of(Boolean(disabled)),
+        EditorView.editable.of(!disabled),
+      ]),
+    })
+  }, [disabled, editableCompartment])
+
+  useEffect(() => {
+    editorRef.current?.dispatch({
+      effects: attributesCompartment.reconfigure(
+        EditorView.contentAttributes.of({
+          ...(feedbackId ? { 'aria-describedby': feedbackId } : {}),
+          'aria-invalid': String(Boolean(error)),
+          'aria-label': label,
+          'data-testid': name,
+        })
+      ),
+    })
+  }, [attributesCompartment, error, feedbackId, label, name])
+
+  useEffect(() => {
+    editorRef.current?.dispatch({ effects: placeholderCompartment.reconfigure(editorPlaceholder(placeholder ?? '')) })
+  }, [placeholder, placeholderCompartment])
 
   useEffect(() => {
     const editor = editorRef.current
@@ -159,8 +195,11 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
     const currentValue = editor.state.doc.toString()
     if (currentValue === value) return
 
-    editor.dispatch({ changes: { from: 0, insert: value, to: currentValue.length } })
-  }, [value])
+    editor.dispatch({
+      annotations: controlledUpdate,
+      changes: { from: 0, insert: value, to: currentValue.length },
+    })
+  }, [controlledUpdate, value])
 
   return (
     <div className={className}>
@@ -170,7 +209,8 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
             'relative min-h-40 overflow-hidden rounded border border-neutral bg-surface-neutral text-sm text-neutral focus-within:border-brand-strong focus-within:outline focus-within:outline-1 focus-within:outline-brand-strong',
             error && 'border-negative focus-within:border-negative focus-within:outline-negative',
             disabled && 'cursor-not-allowed border-neutral bg-surface-neutral-subtle text-neutral-disabled',
-            '[&_.cm-content]:min-h-40 [&_.cm-content]:px-3 [&_.cm-content]:pb-3 [&_.cm-content]:pt-9 [&_.cm-placeholder]:text-neutral-subtle',
+            '[&_.cm-content]:min-h-40 [&_.cm-content]:px-3 [&_.cm-content]:pb-3 [&_.cm-placeholder]:text-neutral-subtle',
+            hideLabel ? '[&_.cm-content]:pt-3' : '[&_.cm-content]:pt-9',
             editorClassName
           )
         )}
@@ -188,12 +228,12 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
         {actions}
       </div>
       {hint && !error ? (
-        <div id={describedBy} className="mt-0.5 px-3 text-xs text-neutral-subtle">
+        <div id={feedbackId} className="mt-0.5 px-3 text-xs text-neutral-subtle">
           {hint}
         </div>
       ) : null}
       {error ? (
-        <p id={describedBy} className="mt-1 px-3 text-xs font-medium text-negative">
+        <p id={feedbackId} className="mt-1 px-3 text-xs font-medium text-negative">
           {error}
         </p>
       ) : null}
