@@ -167,8 +167,42 @@ function WithBlueprintManifestFields({ children }: { children: JSX.Element }) {
   return <BlueprintManifestFieldsProvider>{children}</BlueprintManifestFieldsProvider>
 }
 
-const BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS = 30_000
+const BLUEPRINT_STATUS_POLL_INTERVAL_MS = 5_000
 const BLUEPRINT_STATUS_POLL_TIMEOUT_MS = 300_000
+const blueprintCreationResponse = {
+  id: 'blueprint-1',
+  catalog_url: 'https://github.com/Qovery/service-catalog/aws/postgres',
+  tag: 'aws/postgres/17/1.0.0',
+  environment_id: 'env-1',
+  deployment_id: 'deployment-1',
+  execution_id: 'exec-abc-123',
+}
+
+function blueprintDetails(overrides: Record<string, unknown> = {}) {
+  return {
+    id: 'blueprint-1',
+    name: 'custom-postgres',
+    catalog_url: blueprintCreationResponse.catalog_url,
+    tag: blueprintCreationResponse.tag,
+    environment_id: 'env-1',
+    service_type: 'TERRAFORM',
+    service_id: null,
+    latest_deployment: null,
+    ...overrides,
+  }
+}
+
+function deployment(overrides: Record<string, unknown> = {}) {
+  return {
+    id: 'deployment-1',
+    execution_id: 'exec-abc-123',
+    status: 'DEPLOYING',
+    started_at: '2026-09-01T12:00:00.000Z',
+    terminated_at: null,
+    error_message: null,
+    ...overrides,
+  }
+}
 const ENVIRONMENT_OVERVIEW_NAVIGATION = {
   to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
   params: {
@@ -245,7 +279,7 @@ describe('BlueprintCreationFlow', () => {
       },
     })
     mockUseEnvironment.mockReturnValue({ data: { cluster_id: 'cluster-1' } })
-    mockCreateBlueprint.mockResolvedValue({ id: 'blueprint-1', environment_id: 'env-1' })
+    mockCreateBlueprint.mockResolvedValue(blueprintCreationResponse)
     mockUseBlueprint.mockReturnValue({ data: undefined })
   })
 
@@ -528,10 +562,10 @@ describe('BlueprintCreationFlow', () => {
 
   it('should start listening for the blueprint service-created event before creating the blueprint', async () => {
     jest.useFakeTimers()
-    let resolveCreateBlueprint: (value: { id: string; environment_id: string }) => void = jest.fn()
+    let resolveCreateBlueprint: (value: typeof blueprintCreationResponse) => void = jest.fn()
     mockCreateBlueprint.mockImplementationOnce(
       () =>
-        new Promise<{ id: string; environment_id: string }>((resolve) => {
+        new Promise<typeof blueprintCreationResponse>((resolve) => {
           resolveCreateBlueprint = resolve
         })
     )
@@ -583,7 +617,7 @@ describe('BlueprintCreationFlow', () => {
     })
 
     await act(async () => {
-      resolveCreateBlueprint({ id: 'blueprint-1', environment_id: 'env-1' })
+      resolveCreateBlueprint(blueprintCreationResponse)
     })
     await waitFor(() =>
       expect(mockUseBlueprintCreationLogs).toHaveBeenCalledWith(
@@ -594,11 +628,6 @@ describe('BlueprintCreationFlow', () => {
         })
       )
     )
-    expect(mockToast).not.toHaveBeenCalled()
-
-    act(() => {
-      jest.advanceTimersByTime(29_999)
-    })
     expect(mockToast).not.toHaveBeenCalled()
 
     const socketProps = mockUseBlueprintServiceCreatedSocket.mock.calls.at(-1)?.[0] as {
@@ -625,7 +654,7 @@ describe('BlueprintCreationFlow', () => {
   })
 
   describe('when the service-created websocket event never arrives', () => {
-    async function createBlueprintAndReachFallback() {
+    async function createBlueprintAndDispatch() {
       const { userEvent } = renderBlueprintFlow(
         <WithBlueprintManifestFields>
           <FillFormValues>
@@ -642,32 +671,32 @@ describe('BlueprintCreationFlow', () => {
           expect.objectContaining({ blueprintId: 'blueprint-1' })
         )
       )
-      expect(mockToast).not.toHaveBeenCalled()
 
+      // let the poll's first result reach the reconcile effect
       act(() => {
-        jest.advanceTimersByTime(BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS)
+        jest.advanceTimersByTime(BLUEPRINT_STATUS_POLL_INTERVAL_MS)
       })
     }
 
-    it('should ask the API about the blueprint instead of assuming the service was created', async () => {
+    it('should read the blueprint from the dispatch rather than after a fallback delay', async () => {
       jest.useFakeTimers()
 
-      await createBlueprintAndReachFallback()
+      await createBlueprintAndDispatch()
 
       expect(mockUseBlueprint).toHaveBeenLastCalledWith(
         expect.objectContaining({
           blueprintId: 'blueprint-1',
           enabled: true,
-          refetchInterval: 5_000,
+          refetchInterval: BLUEPRINT_STATUS_POLL_INTERVAL_MS,
         })
       )
     })
 
     it('should complete the flow once the blueprint reports its service', async () => {
       jest.useFakeTimers()
-      mockUseBlueprint.mockReturnValue({ data: { id: 'blueprint-1', service_id: 'service-1' } })
+      mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ service_id: 'service-1' }) })
 
-      await createBlueprintAndReachFallback()
+      await createBlueprintAndDispatch()
 
       expect(mockToast).toHaveBeenCalledWith('success', 'Your service has been created')
       expect(mockNavigate).toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
@@ -678,21 +707,16 @@ describe('BlueprintCreationFlow', () => {
       async (status) => {
         jest.useFakeTimers()
         mockUseBlueprint.mockReturnValue({
-          data: {
-            id: 'blueprint-1',
-            service_id: null,
-            latest_deployment: {
-              status,
-              error_message: 'terraform apply failed: invalid instance class',
-            },
-          },
+          data: blueprintDetails({
+            latest_deployment: deployment({ status, error_message: 'variable value is required' }),
+          }),
         })
 
-        await createBlueprintAndReachFallback()
+        await createBlueprintAndDispatch()
 
         expect(mockToast).not.toHaveBeenCalled()
         expect(mockNavigate).not.toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
-        expect(screen.getByText('terraform apply failed: invalid instance class')).toBeVisible()
+        expect(screen.getByText('variable value is required')).toBeVisible()
         expect(screen.getByRole('button', { name: 'Retry' })).toBeVisible()
         expect(screen.getByRole('button', { name: 'Edit config' })).toBeVisible()
       }
@@ -702,11 +726,9 @@ describe('BlueprintCreationFlow', () => {
       'should keep waiting while the deployment is still %s',
       async (status) => {
         jest.useFakeTimers()
-        mockUseBlueprint.mockReturnValue({
-          data: { id: 'blueprint-1', service_id: null, latest_deployment: { status } },
-        })
+        mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ latest_deployment: deployment({ status }) }) })
 
-        await createBlueprintAndReachFallback()
+        await createBlueprintAndDispatch()
 
         act(() => {
           jest.advanceTimersByTime(60_000)
@@ -719,13 +741,26 @@ describe('BlueprintCreationFlow', () => {
       }
     )
 
-    it('should fail instead of reporting success when the blueprint never reaches an outcome', async () => {
+    it('should ignore the failure of a dispatch that is not the one it started', async () => {
       jest.useFakeTimers()
       mockUseBlueprint.mockReturnValue({
-        data: { id: 'blueprint-1', service_id: null, latest_deployment: { status: 'DEPLOYING' } },
+        data: blueprintDetails({
+          latest_deployment: deployment({ id: 'deployment-2', status: 'FAILED', error_message: 'not ours' }),
+        }),
       })
 
-      await createBlueprintAndReachFallback()
+      await createBlueprintAndDispatch()
+
+      expect(mockToast).not.toHaveBeenCalled()
+      expect(screen.queryByText('not ours')).not.toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
+    })
+
+    it('should fail instead of reporting success when the blueprint never reaches an outcome', async () => {
+      jest.useFakeTimers()
+      mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ latest_deployment: deployment() }) })
+
+      await createBlueprintAndDispatch()
 
       act(() => {
         jest.advanceTimersByTime(BLUEPRINT_STATUS_POLL_TIMEOUT_MS)

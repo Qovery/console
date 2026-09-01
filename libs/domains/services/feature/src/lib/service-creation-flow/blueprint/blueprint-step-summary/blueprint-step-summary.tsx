@@ -30,7 +30,6 @@ type PendingBlueprintCreation = {
   payload: BlueprintCreateRequest
 }
 
-const BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS = 30_000
 const BLUEPRINT_STATUS_POLL_INTERVAL_MS = 5_000
 const BLUEPRINT_STATUS_POLL_TIMEOUT_MS = 300_000
 const BLUEPRINT_STATUS_POLL_TIMEOUT_MESSAGE =
@@ -44,16 +43,15 @@ export function BlueprintStepSummary() {
     useBlueprintManifestFields()
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)
   const [isWaitingForServiceCreated, setIsWaitingForServiceCreated] = useState(false)
-  const [isCheckingBlueprintStatus, setIsCheckingBlueprintStatus] = useState(false)
   const [isBlueprintCreationFailed, setIsBlueprintCreationFailed] = useState(false)
   const [blueprintCreationErrorMessage, setBlueprintCreationErrorMessage] = useState<string>()
   const [createdBlueprintId, setCreatedBlueprintId] = useState<string>()
+  const [createdDeploymentId, setCreatedDeploymentId] = useState<string>()
   const [pendingBlueprintCreation, setPendingBlueprintCreation] = useState<PendingBlueprintCreation | null>(null)
   const [lastBlueprintCreation, setLastBlueprintCreation] = useState<PendingBlueprintCreation | null>(null)
   const hasHandledServiceCreatedRef = useRef(false)
   const hasBlueprintCreationErrorRef = useRef(false)
   const hasStartedBlueprintCreationRef = useRef(false)
-  const serviceCreatedFallbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const blueprintStatusPollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { mutateAsync: createBlueprint } = useCreateBlueprint()
   const { data: environment } = useEnvironment({ environmentId })
@@ -70,9 +68,13 @@ export function BlueprintStepSummary() {
     projectId,
     enabled: isWaitingForServiceCreated && !isBlueprintCreationFailed,
   })
+  // Subscribe *and* fetch-current: the websocket only reports success, and it cannot cover a
+  // reload, a dropped connection, or a dispatch that fails before the subscription lands. The
+  // blueprint is the authoritative read, so it is polled from the dispatch rather than as a
+  // fallback after one.
   const { data: blueprintDetails } = useBlueprint({
     blueprintId: createdBlueprintId ?? '',
-    enabled: isCheckingBlueprintStatus,
+    enabled: isWaitingForServiceCreated && !isBlueprintCreationFailed,
     refetchInterval: BLUEPRINT_STATUS_POLL_INTERVAL_MS,
   })
   const hasBlueprintCreationError =
@@ -93,15 +95,6 @@ export function BlueprintStepSummary() {
     })
   }, [environmentId, navigate, organizationId, projectId])
 
-  const clearServiceCreatedFallbackTimeout = useCallback(() => {
-    if (!serviceCreatedFallbackTimeoutRef.current) {
-      return
-    }
-
-    clearTimeout(serviceCreatedFallbackTimeoutRef.current)
-    serviceCreatedFallbackTimeoutRef.current = null
-  }, [])
-
   const clearBlueprintStatusPollTimeout = useCallback(() => {
     if (!blueprintStatusPollTimeoutRef.current) {
       return
@@ -111,24 +104,18 @@ export function BlueprintStepSummary() {
     blueprintStatusPollTimeoutRef.current = null
   }, [])
 
-  const clearBlueprintCreationTimeouts = useCallback(() => {
-    clearServiceCreatedFallbackTimeout()
-    clearBlueprintStatusPollTimeout()
-  }, [clearBlueprintStatusPollTimeout, clearServiceCreatedFallbackTimeout])
-
   const handleBlueprintServiceCreated = useCallback(() => {
     if (hasHandledServiceCreatedRef.current || hasBlueprintCreationErrorRef.current) {
       return
     }
 
     hasHandledServiceCreatedRef.current = true
-    clearBlueprintCreationTimeouts()
+    clearBlueprintStatusPollTimeout()
     setIsWaitingForServiceCreated(false)
-    setIsCheckingBlueprintStatus(false)
     setSubmitMode(null)
     toast('success', 'Your service has been created')
     navigateToEnvironmentOverview()
-  }, [clearBlueprintCreationTimeouts, navigateToEnvironmentOverview])
+  }, [clearBlueprintStatusPollTimeout, navigateToEnvironmentOverview])
 
   const failBlueprintCreation = useCallback(
     (errorMessage?: string) => {
@@ -137,32 +124,26 @@ export function BlueprintStepSummary() {
       }
 
       hasBlueprintCreationErrorRef.current = true
-      clearBlueprintCreationTimeouts()
+      clearBlueprintStatusPollTimeout()
       setPendingBlueprintCreation(null)
       setIsWaitingForServiceCreated(false)
-      setIsCheckingBlueprintStatus(false)
       setIsBlueprintCreationFailed(true)
       setBlueprintCreationErrorMessage(errorMessage)
       setSubmitMode(null)
     },
-    [clearBlueprintCreationTimeouts]
+    [clearBlueprintStatusPollTimeout]
   )
 
-  const startServiceCreatedFallbackTimeout = useCallback(() => {
+  const startBlueprintStatusDeadline = useCallback(() => {
     if (hasHandledServiceCreatedRef.current) {
       return
     }
 
-    clearBlueprintCreationTimeouts()
-    serviceCreatedFallbackTimeoutRef.current = setTimeout(() => {
-      // A failed dispatch never emits `service-created`, so silence is not success: ask the API
-      // what actually happened instead of assuming it worked.
-      setIsCheckingBlueprintStatus(true)
-      blueprintStatusPollTimeoutRef.current = setTimeout(() => {
-        failBlueprintCreation(BLUEPRINT_STATUS_POLL_TIMEOUT_MESSAGE)
-      }, BLUEPRINT_STATUS_POLL_TIMEOUT_MS)
-    }, BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS)
-  }, [clearBlueprintCreationTimeouts, failBlueprintCreation])
+    clearBlueprintStatusPollTimeout()
+    blueprintStatusPollTimeoutRef.current = setTimeout(() => {
+      failBlueprintCreation(BLUEPRINT_STATUS_POLL_TIMEOUT_MESSAGE)
+    }, BLUEPRINT_STATUS_POLL_TIMEOUT_MS)
+  }, [clearBlueprintStatusPollTimeout, failBlueprintCreation])
 
   useBlueprintServiceCreatedSocket({
     organizationId,
@@ -176,7 +157,7 @@ export function BlueprintStepSummary() {
     setCurrentStep(2)
   }, [setCurrentStep])
 
-  useEffect(() => () => clearBlueprintCreationTimeouts(), [clearBlueprintCreationTimeouts])
+  useEffect(() => () => clearBlueprintStatusPollTimeout(), [clearBlueprintStatusPollTimeout])
 
   useEffect(() => {
     if (!hasBlueprintCreationError) {
@@ -188,19 +169,26 @@ export function BlueprintStepSummary() {
   }, [failBlueprintCreation, hasBlueprintCreationError])
 
   useEffect(() => {
-    if (!isCheckingBlueprintStatus || !blueprintDetails) {
+    // Retrying mints a new blueprint, so a result for the previous one must not be read as this
+    // one's outcome.
+    if (!isWaitingForServiceCreated || !blueprintDetails || blueprintDetails.id !== createdBlueprintId) {
       return
     }
 
-    const outcome = resolveBlueprintCreationOutcome(blueprintDetails)
-
-    match(outcome)
+    match(resolveBlueprintCreationOutcome(blueprintDetails, createdDeploymentId))
       .with({ status: 'created' }, () => handleBlueprintServiceCreated())
       .with({ status: 'failed' }, ({ errorMessage }) => failBlueprintCreation(errorMessage))
       // Still WAITING_RUNNING or DEPLOYING: the poll keeps asking rather than guessing an outcome
       .with({ status: 'pending' }, () => undefined)
       .exhaustive()
-  }, [blueprintDetails, failBlueprintCreation, handleBlueprintServiceCreated, isCheckingBlueprintStatus])
+  }, [
+    blueprintDetails,
+    createdBlueprintId,
+    createdDeploymentId,
+    failBlueprintCreation,
+    handleBlueprintServiceCreated,
+    isWaitingForServiceCreated,
+  ])
 
   useEffect(() => {
     if (!serviceName.trim() || !isBlueprintSetupValid) {
@@ -231,19 +219,20 @@ export function BlueprintStepSummary() {
         }
 
         setCreatedBlueprintId(createdBlueprint.id)
+        setCreatedDeploymentId(createdBlueprint.deployment_id)
         posthog.capture('create-service', {
           selectedServiceType: 'blueprint',
           selectedServiceSubType: blueprint.serviceFamily ?? blueprint.provider,
         })
         setPendingBlueprintCreation(null)
-        startServiceCreatedFallbackTimeout()
+        startBlueprintStatusDeadline()
       } catch {
         if (!shouldUpdateState) {
           return
         }
 
         // errors are surfaced by mutation notifications
-        clearBlueprintCreationTimeouts()
+        clearBlueprintStatusPollTimeout()
         hasStartedBlueprintCreationRef.current = false
         setPendingBlueprintCreation(null)
         setIsWaitingForServiceCreated(false)
@@ -259,12 +248,12 @@ export function BlueprintStepSummary() {
   }, [
     blueprint.provider,
     blueprint.serviceFamily,
-    clearBlueprintCreationTimeouts,
+    clearBlueprintStatusPollTimeout,
     createBlueprint,
     environmentId,
     isWaitingForServiceCreated,
     pendingBlueprintCreation,
-    startServiceCreatedFallbackTimeout,
+    startBlueprintStatusDeadline,
   ])
 
   const handleSubmit = (withDeploy: boolean) => {
@@ -280,12 +269,12 @@ export function BlueprintStepSummary() {
     }
 
     setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')
-    clearBlueprintCreationTimeouts()
+    clearBlueprintStatusPollTimeout()
     hasHandledServiceCreatedRef.current = false
     hasBlueprintCreationErrorRef.current = false
     hasStartedBlueprintCreationRef.current = false
     setCreatedBlueprintId(undefined)
-    setIsCheckingBlueprintStatus(false)
+    setCreatedDeploymentId(undefined)
     setIsBlueprintCreationFailed(false)
     setBlueprintCreationErrorMessage(undefined)
     setLastBlueprintCreation(blueprintCreation)
@@ -297,12 +286,12 @@ export function BlueprintStepSummary() {
   const handleRetry = () => {
     if (!lastBlueprintCreation) return
 
-    clearBlueprintCreationTimeouts()
+    clearBlueprintStatusPollTimeout()
     hasHandledServiceCreatedRef.current = false
     hasBlueprintCreationErrorRef.current = false
     hasStartedBlueprintCreationRef.current = false
     setCreatedBlueprintId(undefined)
-    setIsCheckingBlueprintStatus(false)
+    setCreatedDeploymentId(undefined)
     setIsBlueprintCreationFailed(false)
     setBlueprintCreationErrorMessage(undefined)
     setSubmitMode(lastBlueprintCreation.deploy ? 'create-and-deploy' : 'create')
@@ -312,10 +301,9 @@ export function BlueprintStepSummary() {
   }
 
   const handleEditConfig = () => {
-    clearBlueprintCreationTimeouts()
+    clearBlueprintStatusPollTimeout()
     hasBlueprintCreationErrorRef.current = false
     setIsWaitingForServiceCreated(false)
-    setIsCheckingBlueprintStatus(false)
     setIsBlueprintCreationFailed(false)
     setBlueprintCreationErrorMessage(undefined)
     setSubmitMode(null)

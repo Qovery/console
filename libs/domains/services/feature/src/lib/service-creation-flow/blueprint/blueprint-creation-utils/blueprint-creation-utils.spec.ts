@@ -5,6 +5,10 @@ import {
   type BlueprintManifestVariableField,
 } from 'qovery-typescript-axios'
 import {
+  type BlueprintDeploymentStatusResponse,
+  type BlueprintDetailsResponse,
+} from '@qovery/domains/services/data-access'
+import {
   type OverridableBlueprintManifestContextVariableField,
   formatFieldLabel,
   getBlueprintFieldPath,
@@ -28,6 +32,34 @@ import {
   resolveBlueprintCreationOutcome,
   sortBlueprintMajorVersions,
 } from './blueprint-creation-utils'
+
+function createDeployment(
+  overrides: Partial<BlueprintDeploymentStatusResponse> = {}
+): BlueprintDeploymentStatusResponse {
+  return {
+    id: 'deployment-1',
+    execution_id: 'exec-abc-123',
+    status: 'DEPLOYING',
+    started_at: '2026-09-01T12:00:00.000Z',
+    terminated_at: null,
+    error_message: null,
+    ...overrides,
+  }
+}
+
+function createBlueprintDetails(overrides: Partial<BlueprintDetailsResponse> = {}): BlueprintDetailsResponse {
+  return {
+    id: 'blueprint-1',
+    name: 'custom-postgres',
+    catalog_url: 'https://github.com/Qovery/service-catalog/aws/postgres',
+    tag: 'aws/postgres/17/1.0.0',
+    environment_id: 'env-1',
+    service_type: 'TERRAFORM',
+    service_id: null,
+    latest_deployment: null,
+    ...overrides,
+  }
+}
 
 function createVariableField(overrides: Partial<BlueprintManifestVariableField> = {}): BlueprintManifestVariableField {
   return {
@@ -380,11 +412,12 @@ describe('blueprint-creation-utils', () => {
   describe('resolveBlueprintCreationOutcome', () => {
     it('should report a created service when the blueprint carries a service id', () => {
       expect(
-        resolveBlueprintCreationOutcome({
-          id: 'blueprint-1',
-          service_id: 'service-1',
-          latest_deployment: { status: 'DEPLOYING' },
-        })
+        resolveBlueprintCreationOutcome(
+          createBlueprintDetails({
+            service_id: 'service-1',
+            latest_deployment: createDeployment({ status: 'DEPLOYING' }),
+          })
+        )
       ).toEqual({ status: 'created' })
     })
 
@@ -392,25 +425,26 @@ describe('blueprint-creation-utils', () => {
       'should report a failure with the engine error message for %s',
       (status) => {
         expect(
-          resolveBlueprintCreationOutcome({
-            id: 'blueprint-1',
-            service_id: null,
-            latest_deployment: { status, error_message: 'terraform apply failed: invalid instance class' },
-          })
+          resolveBlueprintCreationOutcome(
+            createBlueprintDetails({
+              latest_deployment: createDeployment({
+                status,
+                error_message: 'variable value is required',
+              }),
+            })
+          )
         ).toEqual({
           status: 'failed',
-          errorMessage: 'terraform apply failed: invalid instance class',
+          errorMessage: 'variable value is required',
         })
       }
     )
 
     it('should report a failure without a message when the deployment did not provide one', () => {
       expect(
-        resolveBlueprintCreationOutcome({
-          id: 'blueprint-1',
-          service_id: null,
-          latest_deployment: { status: 'FAILED', error_message: null },
-        })
+        resolveBlueprintCreationOutcome(
+          createBlueprintDetails({ latest_deployment: createDeployment({ status: 'FAILED' }) })
+        )
       ).toEqual({ status: 'failed', errorMessage: undefined })
     })
 
@@ -418,17 +452,55 @@ describe('blueprint-creation-utils', () => {
       'should stay pending for %s so the caller keeps waiting',
       (status) => {
         expect(
-          resolveBlueprintCreationOutcome({
-            id: 'blueprint-1',
-            service_id: null,
-            latest_deployment: { status },
-          })
+          resolveBlueprintCreationOutcome(createBlueprintDetails({ latest_deployment: createDeployment({ status }) }))
         ).toEqual({ status: 'pending' })
       }
     )
 
     it('should stay pending when the blueprint has no deployment yet', () => {
-      expect(resolveBlueprintCreationOutcome({ id: 'blueprint-1' })).toEqual({ status: 'pending' })
+      expect(resolveBlueprintCreationOutcome(createBlueprintDetails())).toEqual({ status: 'pending' })
+    })
+
+    it('should report the failure of the dispatch it was given', () => {
+      expect(
+        resolveBlueprintCreationOutcome(
+          createBlueprintDetails({
+            latest_deployment: createDeployment({
+              id: 'deployment-1',
+              status: 'FAILED',
+              error_message: 'variable value is required',
+            }),
+          }),
+          'deployment-1'
+        )
+      ).toEqual({ status: 'failed', errorMessage: 'variable value is required' })
+    })
+
+    it('should not report a later re-dispatch failure as the outcome of ours', () => {
+      expect(
+        resolveBlueprintCreationOutcome(
+          createBlueprintDetails({
+            latest_deployment: createDeployment({
+              id: 'deployment-2',
+              status: 'FAILED',
+              error_message: 'a different dispatch failed',
+            }),
+          }),
+          'deployment-1'
+        )
+      ).toEqual({ status: 'pending' })
+    })
+
+    it('should still report a created service when a later dispatch is the one reported', () => {
+      expect(
+        resolveBlueprintCreationOutcome(
+          createBlueprintDetails({
+            service_id: 'service-1',
+            latest_deployment: createDeployment({ id: 'deployment-2', status: 'FAILED' }),
+          }),
+          'deployment-1'
+        )
+      ).toEqual({ status: 'created' })
     })
   })
 })

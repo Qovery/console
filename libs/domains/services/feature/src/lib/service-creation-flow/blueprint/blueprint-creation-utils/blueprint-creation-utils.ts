@@ -47,21 +47,34 @@ export function buildBlueprintVariables(
 /**
  * A blueprint dispatch that fails emits no `service-created` event, so the absence of one proves
  * nothing. Only the blueprint itself can say whether the service exists — and anything that is
- * neither a materialized service nor a terminal deployment failure stays `pending`, never success.
+ * neither a materialized service nor a terminal failure of *our* dispatch stays `pending`, never
+ * success.
+ *
+ * `deploymentId` is the `deployment_id` the creation returned. The blueprint reports whichever
+ * dispatch ran last, so without pinning it a later re-dispatch's failure would be read as ours.
  */
-export function resolveBlueprintCreationOutcome(blueprint: BlueprintDetailsResponse): BlueprintCreationOutcome {
+export function resolveBlueprintCreationOutcome(
+  blueprint: BlueprintDetailsResponse,
+  deploymentId?: string
+): BlueprintCreationOutcome {
   if (blueprint.service_id) {
     return { status: 'created' }
   }
 
-  return match(blueprint.latest_deployment?.status)
+  const deployment = blueprint.latest_deployment
+
+  if (!deployment || (deploymentId && deployment.id !== deploymentId)) {
+    return { status: 'pending' }
+  }
+
+  return match(deployment.status)
     .with(
       'FAILED',
       'INTERNAL_ERROR',
       'CANCELED',
       (): BlueprintCreationOutcome => ({
         status: 'failed',
-        errorMessage: blueprint.latest_deployment?.error_message ?? undefined,
+        errorMessage: deployment.error_message ?? undefined,
       })
     )
     .otherwise((): BlueprintCreationOutcome => ({ status: 'pending' }))

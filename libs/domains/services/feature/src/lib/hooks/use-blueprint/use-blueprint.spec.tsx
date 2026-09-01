@@ -31,8 +31,20 @@ describe('useBlueprint', () => {
   it('should return what the API says happened to the blueprint', async () => {
     const blueprint = {
       id: 'blueprint-1',
+      name: 'custom-postgres',
+      catalog_url: 'https://github.com/Qovery/service-catalog/aws/postgres',
+      tag: 'aws/postgres/17/1.0.0',
+      environment_id: 'env-1',
+      service_type: 'TERRAFORM',
       service_id: null,
-      latest_deployment: { status: 'FAILED', error_message: 'terraform apply failed' },
+      latest_deployment: {
+        id: 'deployment-1',
+        execution_id: 'exec-abc-123',
+        status: 'FAILED',
+        started_at: '2026-09-01T12:00:00.000Z',
+        terminated_at: '2026-09-01T12:01:00.000Z',
+        error_message: 'variable value is required',
+      },
     }
     mockAxiosGet.mockResolvedValue({ data: blueprint })
 

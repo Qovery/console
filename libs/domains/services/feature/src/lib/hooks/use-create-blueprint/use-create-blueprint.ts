@@ -5,7 +5,7 @@ import { queries } from '@qovery/state/util-queries'
 export function useCreateBlueprint() {
   const queryClient = useQueryClient()
 
-  return useMutation(mutations.createBlueprint, {
+  return useMutation(mutations.createBlueprintDeployment, {
     onSuccess(response) {
       queryClient.invalidateQueries({
         queryKey: queries.services.list(response.environment_id).queryKey,

@@ -216,18 +216,34 @@ export type BlueprintDeploymentStatus =
   | 'CANCELED'
   | 'INTERNAL_ERROR'
 
-export interface BlueprintLatestDeployment {
+export interface BlueprintDeploymentStatusResponse {
+  id: string
+  execution_id: string
   status: BlueprintDeploymentStatus
-  error_message?: string | null
-  started_at?: string | null
-  terminated_at?: string | null
+  started_at: string
+  terminated_at: string | null
+  error_message: string | null
 }
 
 export interface BlueprintDetailsResponse {
   id: string
-  // Non-null once the engine has actually materialized the service
-  service_id?: string | null
-  latest_deployment?: BlueprintLatestDeployment | null
+  name: string
+  catalog_url: string
+  tag: string
+  environment_id: string
+  service_type: 'HELM' | 'TERRAFORM'
+  // The service the dispatch produced. Null while it is still running, and null if it failed.
+  service_id: string | null
+  latest_deployment: BlueprintDeploymentStatusResponse | null
+}
+
+export interface BlueprintCreationResponse {
+  id: string
+  catalog_url: string
+  tag: string
+  environment_id: string
+  deployment_id: string
+  execution_id: string
 }
 
 export type ReadOnlyService = ArgoCd
@@ -1152,8 +1168,16 @@ export const mutations = {
     const response = await mutation()
     return response.data
   },
-  async createBlueprint({ environmentId, payload, deploy }: CreateBlueprintRequest) {
-    const response = await blueprintApi.createBlueprint(environmentId, payload, deploy)
+  async createBlueprintDeployment({ environmentId, payload, deploy }: CreateBlueprintRequest) {
+    // Hand-rolled because `POST /environment/{environmentId}/blueprintDeployment` is not in the
+    // generated client yet. Swap for `blueprintApi.createBlueprintDeployment` once it is
+    // regenerated. Unlike the older `POST .../blueprint`, this answers 202 and reports the ids of
+    // the dispatch it started instead of claiming a service that does not exist yet.
+    const response = await axios.post<BlueprintCreationResponse>(
+      `/environment/${environmentId}/blueprintDeployment`,
+      payload,
+      { params: { deploy } }
+    )
     return response.data
   },
   async previewBlueprintUpdate({ blueprintId, payload }: PreviewBlueprintUpdateRequest) {
