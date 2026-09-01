@@ -239,19 +239,39 @@ export function RowMember(props: RowMemberProps) {
         <div data-testid="row-member-menu" className="flex items-center">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger asChild>
-              <Button
-                type="button"
-                data-testid="input"
-                aria-label="Member role"
-                variant="outline"
-                color="neutral"
-                size="md"
-                className="h-9 w-44 justify-between"
-                disabled={!canEditRole || loadingUpdateRole}
-              >
-                <span className="truncate">{displayedRoleLabel}</span>
-                <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
-              </Button>
+              {isOwner ? (
+                <Tooltip content="There can only be one owner. Only the owner can transfer ownership to another member via the action menu.">
+                  <span>
+                    <Button
+                      type="button"
+                      data-testid="input"
+                      aria-label="Member role"
+                      variant="outline"
+                      color="neutral"
+                      size="md"
+                      className="h-9 w-44 justify-between"
+                      disabled={!canEditRole || loadingUpdateRole}
+                    >
+                      <span className="truncate">{displayedRoleLabel}</span>
+                      <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
+                    </Button>
+                  </span>
+                </Tooltip>
+              ) : (
+                <Button
+                  type="button"
+                  data-testid="input"
+                  aria-label="Member role"
+                  variant="outline"
+                  color="neutral"
+                  size="md"
+                  className="h-9 w-44 justify-between"
+                  disabled={!canEditRole || loadingUpdateRole}
+                >
+                  <span className="truncate">{displayedRoleLabel}</span>
+                  <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
+                </Button>
+              )}
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="start">
               {roleOptions.map((role) => (
