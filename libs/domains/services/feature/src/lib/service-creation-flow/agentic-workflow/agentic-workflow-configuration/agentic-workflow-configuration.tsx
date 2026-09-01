@@ -220,15 +220,7 @@ function McpServerPicker({
             <Heading level={3} weight="medium">
               Connected ({connectedMcpServers.length})
             </Heading>
-            <Button
-              type="button"
-              size="sm"
-              color="neutral"
-              variant="plain"
-              onClick={() =>
-                onChange(value.filter((id) => !connectedMcpServers.some(({ id: connectedId }) => id === connectedId)))
-              }
-            >
+            <Button type="button" size="sm" color="neutral" variant="plain" onClick={() => onChange([])}>
               Remove all
             </Button>
           </div>

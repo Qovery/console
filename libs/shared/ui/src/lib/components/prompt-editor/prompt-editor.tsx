@@ -14,7 +14,7 @@ export interface PromptEditorSuggestion {
 
 export interface PromptEditorHandle {
   focus: () => void
-  insertText: (text: string, options?: { deleteBefore?: number }) => void
+  insertText: (text: string, options?: { replaceBefore?: string }) => void
 }
 
 export interface PromptEditorProps {
@@ -90,7 +90,13 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
       if (!editor) return
 
       const { from, to } = editor.state.selection.main
-      const insertionStart = Math.max(0, from - (options?.deleteBefore ?? 0))
+      const replaceBefore = options?.replaceBefore ?? ''
+      // Decide whether to consume the preceding characters from the live editor state,
+      // so a moved cursor never causes an unrelated deletion.
+      const hasReplaceBefore =
+        replaceBefore.length > 0 &&
+        editor.state.sliceDoc(Math.max(0, from - replaceBefore.length), from) === replaceBefore
+      const insertionStart = hasReplaceBefore ? from - replaceBefore.length : from
       editor.dispatch({
         changes: { from: insertionStart, insert: text, to },
         selection: { anchor: insertionStart + text.length },

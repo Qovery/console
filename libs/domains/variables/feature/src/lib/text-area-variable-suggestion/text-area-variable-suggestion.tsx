@@ -17,22 +17,12 @@ export const TextAreaVariableSuggestion = forwardRef<PromptEditorHandle, TextAre
     ref
   ) {
     const editorRef = useRef<PromptEditorHandle | null>(null)
-    const replaceOpeningBracesRef = useRef(false)
     const [open, setOpen] = useState(false)
     const { data: environmentVariables = [] } = useVariables({ parentId: environmentId, scope: 'ENVIRONMENT' })
     const autocompleteKeys = Array.from(new Set([...variableKeys, ...environmentVariables.map(({ key }) => key)]))
 
-    const handleChange = (nextValue: string, { cursor }: { cursor: number }) => {
-      onChange(nextValue)
-
-      replaceOpeningBracesRef.current = nextValue.slice(Math.max(0, cursor - 2), cursor) === '{{'
-    }
-
     const handleInsertVariable = (variableKey: string) => {
-      editorRef.current?.insertText(`{{${variableKey}}}`, {
-        deleteBefore: replaceOpeningBracesRef.current ? 2 : 0,
-      })
-      replaceOpeningBracesRef.current = false
+      editorRef.current?.insertText(`{{${variableKey}}}`, { replaceBefore: '{{' })
       setOpen(false)
     }
 
@@ -46,7 +36,7 @@ export const TextAreaVariableSuggestion = forwardRef<PromptEditorHandle, TextAre
         }}
         value={value}
         suggestions={autocompleteKeys.map((key) => ({ label: key }))}
-        onChange={handleChange}
+        onChange={(nextValue) => onChange(nextValue)}
         actions={
           showVariablePicker ? (
             <DropdownVariable

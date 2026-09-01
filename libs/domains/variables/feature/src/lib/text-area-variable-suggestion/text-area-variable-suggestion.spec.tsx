@@ -57,7 +57,7 @@ describe('TextAreaVariableSuggestion', () => {
     const { userEvent } = renderWithProviders(<ControlledTextArea />)
 
     await userEvent.click(screen.getByRole('textbox'))
-    await userEvent.keyboard('{{')
+    await userEvent.keyboard('{{{{')
 
     expect(screen.getByTestId('dropdown-open')).toHaveTextContent('false')
     expect(screen.getByTestId('variable-keys')).toHaveTextContent('LOCAL_TOKEN,ENV_TOKEN')
