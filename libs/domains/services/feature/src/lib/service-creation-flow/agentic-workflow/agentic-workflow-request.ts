@@ -30,6 +30,7 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
     description: values.description,
     docker_fragment: values.dockerFragment,
     enabled: values.workflowEnabled,
+    execution_mode: values.executionMode,
     schedule: values.scheduleEnabled
       ? {
           cron_expression: values.scheduleCronExpression,

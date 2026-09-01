@@ -1,5 +1,9 @@
 import { useParams } from '@tanstack/react-router'
-import { type AgenticWorkflowOutput, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
+import {
+  AgenticWorkflowExecutionMode,
+  type AgenticWorkflowOutput,
+  type AgenticWorkflowRequest,
+} from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { McpServerSetting, useGitTokens, useMcpServers } from '@qovery/domains/organizations/feature'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
@@ -14,7 +18,7 @@ import {
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Heading, Icon, InputText, InputTextArea, InputToggle, Section } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputText, InputTextArea, InputToggle, RadioGroup, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 
 type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'outputs' | 'governance'
@@ -27,6 +31,7 @@ interface FormValues {
   name: string
   description: string
   enabled: boolean
+  executionMode: AgenticWorkflowExecutionMode
   scheduleEnabled: boolean
   scheduleCronExpression: string
   timezone: string
@@ -134,6 +139,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       name: service?.name ?? '',
       description: service && isAgenticWorkflow(service) ? service.description : '',
       enabled: service && isAgenticWorkflow(service) ? service.enabled : false,
+      executionMode:
+        service && isAgenticWorkflow(service)
+          ? service.execution_mode ?? AgenticWorkflowExecutionMode.IN_PLACE
+          : AgenticWorkflowExecutionMode.IN_PLACE,
       scheduleEnabled: Boolean(service && isAgenticWorkflow(service) && service.schedule),
       scheduleCronExpression:
         service && isAgenticWorkflow(service) ? service.schedule?.cron_expression ?? '0 8 * * 1-5' : '0 8 * * 1-5',
@@ -197,6 +206,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       name: data.name,
       description: data.description,
       enabled: data.enabled,
+      execution_mode: data.executionMode,
       schedule: data.scheduleEnabled
         ? {
             cron_expression: data.scheduleCronExpression,
@@ -283,6 +293,50 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
               description="Allow this agent task to listen for and process incoming requests."
               onChange={(value) => form.setValue('enabled', value, { shouldDirty: true })}
             />
+            <div className="pt-6">
+              <h2 className="mb-1 text-base font-medium text-neutral">Execution mode</h2>
+              <p className="mb-4 text-sm text-neutral-subtle">Choose how each agent task execution is isolated.</p>
+              <RadioGroup.Root
+                value={values.executionMode}
+                onValueChange={(value) =>
+                  form.setValue('executionMode', value as AgenticWorkflowExecutionMode, { shouldDirty: true })
+                }
+                className="grid gap-4 sm:grid-cols-2"
+              >
+                <label
+                  htmlFor="execution-mode-in-place"
+                  className="flex cursor-pointer items-start gap-3 rounded border border-neutral bg-surface-neutral p-4"
+                >
+                  <RadioGroup.Item
+                    id="execution-mode-in-place"
+                    value={AgenticWorkflowExecutionMode.IN_PLACE}
+                    className="mt-px shrink-0"
+                  />
+                  <span className="flex flex-col gap-1">
+                    <span className="text-sm font-medium text-neutral">In place</span>
+                    <span className="text-xs text-neutral-subtle">
+                      Run in the current environment. Concurrent runs share the same environment.
+                    </span>
+                  </span>
+                </label>
+                <label
+                  htmlFor="execution-mode-clone-environment"
+                  className="flex cursor-pointer items-start gap-3 rounded border border-neutral bg-surface-neutral p-4"
+                >
+                  <RadioGroup.Item
+                    id="execution-mode-clone-environment"
+                    value={AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT}
+                    className="mt-px shrink-0"
+                  />
+                  <span className="flex flex-col gap-1">
+                    <span className="text-sm font-medium text-neutral">Clone environment</span>
+                    <span className="text-xs text-neutral-subtle">
+                      Create a temporary environment for every run to isolate concurrent executions.
+                    </span>
+                  </span>
+                </label>
+              </RadioGroup.Root>
+            </div>
             <div className="pt-6">
               <h2 className="mb-1 text-base font-medium text-neutral">Schedule</h2>
               <p className="mb-4 text-sm text-neutral-subtle">

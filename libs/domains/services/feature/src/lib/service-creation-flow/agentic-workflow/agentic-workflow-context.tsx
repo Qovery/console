@@ -1,8 +1,12 @@
-import { AgenticWorkflowModelType, type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
-import { type PropsWithChildren, createContext, useContext, useState } from 'react'
+import {
+  AgenticWorkflowExecutionMode,
+  AgenticWorkflowModelType,
+  type GitProviderEnum,
+  type GitRepository,
+} from 'qovery-typescript-axios'
+import { type PropsWithChildren, createContext, useContext } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
-import { FunnelFlow } from '@qovery/shared/ui'
 
 const DEFAULT_MODEL_SETTINGS = `{
   "provider": "anthropic",
@@ -56,19 +60,6 @@ export const MCP_CONNECTOR_JSON_EXAMPLE = `{
   }
 }`
 
-export const agenticWorkflowCreationSteps: { title: string }[] = [{ title: 'Configuration' }, { title: 'Summary' }]
-
-export type AgenticWorkflowConfigurationSection =
-  | 'service-information'
-  | 'ai-model'
-  | 'connectors'
-  | 'git-repositories'
-  | 'governance'
-  | 'docker-fragment'
-  | 'variables'
-  | 'outputs'
-  | 'agent-prompt'
-
 export interface AgenticWorkflowOutput {
   url: string
   headersJson: string
@@ -92,6 +83,7 @@ export interface AgenticWorkflowFormData {
   memory: string
   storage: string
   workflowEnabled: boolean
+  executionMode: AgenticWorkflowExecutionMode
   scheduleEnabled: boolean
   scheduleCronExpression: string
   timezone: string
@@ -109,13 +101,9 @@ export interface AgenticWorkflowFormData {
 }
 
 export interface AgenticWorkflowCreateContextInterface {
-  activeSection: AgenticWorkflowConfigurationSection
-  creationFlowUrl: string
-  currentStep: number
   form: UseFormReturn<AgenticWorkflowFormData>
+  onExit: () => void
   variablesForm: UseFormReturn<FlowVariableData>
-  setActiveSection: (section: AgenticWorkflowConfigurationSection) => void
-  setCurrentStep: (step: number) => void
 }
 
 const AgenticWorkflowCreateContext = createContext<AgenticWorkflowCreateContextInterface | undefined>(undefined)
@@ -131,13 +119,10 @@ export function useAgenticWorkflowCreateContext() {
 }
 
 export interface AgenticWorkflowCreationFlowProps extends PropsWithChildren {
-  creationFlowUrl: string
   onExit: () => void
 }
 
-export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit }: AgenticWorkflowCreationFlowProps) {
-  const [currentStep, setCurrentStep] = useState(1)
-  const [activeSection, setActiveSection] = useState<AgenticWorkflowConfigurationSection>('service-information')
+export function AgenticWorkflowCreationFlow({ children, onExit }: AgenticWorkflowCreationFlowProps) {
   const variablesForm = useForm<FlowVariableData>({
     defaultValues: { variables: [], externalSecrets: [] },
     mode: 'onChange',
@@ -150,6 +135,7 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
       memory: '2048',
       storage: '10',
       workflowEnabled: true,
+      executionMode: AgenticWorkflowExecutionMode.IN_PLACE,
       scheduleEnabled: false,
       scheduleCronExpression: '0 8 * * 1-5',
       timezone: 'Etc/UTC',
@@ -171,24 +157,13 @@ export function AgenticWorkflowCreationFlow({ children, creationFlowUrl, onExit 
   return (
     <AgenticWorkflowCreateContext.Provider
       value={{
-        activeSection,
-        creationFlowUrl,
-        currentStep,
         form,
+        onExit,
         variablesForm,
-        setActiveSection,
-        setCurrentStep,
       }}
     >
       <FormProvider {...form}>
-        <FunnelFlow
-          totalSteps={agenticWorkflowCreationSteps.length}
-          currentStep={currentStep}
-          currentTitle={agenticWorkflowCreationSteps[currentStep - 1]?.title}
-          onExit={onExit}
-        >
-          {children}
-        </FunnelFlow>
+        <div className="absolute inset-0 flex min-h-0 bg-background">{children}</div>
       </FormProvider>
     </AgenticWorkflowCreateContext.Provider>
   )

@@ -13,7 +13,7 @@ export function isAgenticWorkflowScheduleValid(values: AgenticWorkflowScheduleFo
   return !values.scheduleEnabled || Boolean(formatCronExpression(values.scheduleCronExpression))
 }
 
-export function AgenticWorkflowScheduleFields() {
+export function AgenticWorkflowScheduleFields({ showCronBuilderLink = true }: { showCronBuilderLink?: boolean }) {
   const { control, setValue, watch } = useFormContext<AgenticWorkflowScheduleFormValues>()
   const scheduleEnabled = watch('scheduleEnabled')
   const scheduleCronExpression = watch('scheduleCronExpression')
@@ -32,11 +32,13 @@ export function AgenticWorkflowScheduleFields() {
       />
       {scheduleEnabled ? (
         <div className="flex flex-col gap-3">
-          <div className="flex justify-end">
-            <ExternalLink href="https://crontab.guru/" size="sm">
-              CRON expression builder
-            </ExternalLink>
-          </div>
+          {showCronBuilderLink ? (
+            <div className="flex justify-end">
+              <ExternalLink href="https://crontab.guru/" size="sm">
+                CRON expression builder
+              </ExternalLink>
+            </div>
+          ) : null}
           <div className="grid gap-4 sm:grid-cols-2">
             <Controller
               name="scheduleCronExpression"

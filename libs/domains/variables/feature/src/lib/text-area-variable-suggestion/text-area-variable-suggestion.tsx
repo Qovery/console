@@ -1,92 +1,81 @@
-import { type FormEvent, forwardRef, useImperativeHandle, useRef, useState } from 'react'
-import { Button, Icon, InputTextArea, type InputTextAreaProps } from '@qovery/shared/ui'
+import { forwardRef, useRef, useState } from 'react'
+import { Button, Icon, PromptEditor, type PromptEditorHandle, type PromptEditorProps } from '@qovery/shared/ui'
 import DropdownVariable from '../dropdown-variable/dropdown-variable'
+import { useVariables } from '../hooks/use-variables/use-variables'
 
-export interface TextAreaVariableSuggestionProps extends Omit<InputTextAreaProps, 'onChange'> {
+export interface TextAreaVariableSuggestionProps
+  extends Omit<PromptEditorProps, 'actions' | 'onChange' | 'suggestions'> {
   environmentId: string
   onChange: (value: string) => void
+  showVariablePicker?: boolean
   variableKeys?: string[]
 }
 
-export const TextAreaVariableSuggestion = forwardRef<HTMLTextAreaElement, TextAreaVariableSuggestionProps>(
-  function TextAreaVariableSuggestion({ environmentId, onChange, value = '', variableKeys, ...inputProps }, ref) {
-    const inputRef = useRef<HTMLTextAreaElement | null>(null)
-    const currentValue = value ?? ''
-    const selectionRef = useRef({ start: 0, end: 0 })
+export const TextAreaVariableSuggestion = forwardRef<PromptEditorHandle, TextAreaVariableSuggestionProps>(
+  function TextAreaVariableSuggestion(
+    { environmentId, onChange, showVariablePicker = true, value, variableKeys = [], ...inputProps },
+    ref
+  ) {
+    const editorRef = useRef<PromptEditorHandle | null>(null)
+    const replaceOpeningBracesRef = useRef(false)
     const [open, setOpen] = useState(false)
+    const { data: environmentVariables = [] } = useVariables({ parentId: environmentId, scope: 'ENVIRONMENT' })
+    const autocompleteKeys = Array.from(new Set([...variableKeys, ...environmentVariables.map(({ key }) => key)]))
 
-    useImperativeHandle(ref, () => inputRef.current as HTMLTextAreaElement)
-
-    const rememberSelection = () => {
-      const input = inputRef.current
-      if (!input) return
-
-      selectionRef.current = {
-        start: input.selectionStart ?? currentValue.length,
-        end: input.selectionEnd ?? currentValue.length,
-      }
-    }
-
-    const handleChange = (event: FormEvent<HTMLTextAreaElement>) => {
-      const nextValue = event.currentTarget.value
-      const cursor = event.currentTarget.selectionStart ?? nextValue.length
-      selectionRef.current = { start: cursor, end: event.currentTarget.selectionEnd ?? cursor }
+    const handleChange = (nextValue: string, { cursor }: { cursor: number }) => {
       onChange(nextValue)
 
       if (nextValue.slice(Math.max(0, cursor - 2), cursor) === '{{') {
-        setOpen(true)
+        replaceOpeningBracesRef.current = true
       }
     }
 
     const handleInsertVariable = (variableKey: string) => {
-      const { start, end } = selectionRef.current
-      const hasOpeningBraces = currentValue.slice(Math.max(0, start - 2), start) === '{{'
-      const insertionStart = hasOpeningBraces ? start - 2 : start
-      const nextValue = `${currentValue.slice(0, insertionStart)}{{${variableKey}}}${currentValue.slice(end)}`
-      const nextCursor = insertionStart + variableKey.length + 4
-
-      onChange(nextValue)
-      setOpen(false)
-      requestAnimationFrame(() => {
-        inputRef.current?.focus()
-        inputRef.current?.setSelectionRange(nextCursor, nextCursor)
-        selectionRef.current = { start: nextCursor, end: nextCursor }
+      editorRef.current?.insertText(`{{${variableKey}}}`, {
+        deleteBefore: replaceOpeningBracesRef.current ? 2 : 0,
       })
+      replaceOpeningBracesRef.current = false
+      setOpen(false)
     }
 
     return (
-      <div className="relative">
-        <InputTextArea
-          ref={inputRef}
-          {...inputProps}
-          value={currentValue}
-          onChange={handleChange}
-          className={inputProps.className}
-        />
-        <DropdownVariable
-          environmentId={environmentId}
-          variableKeys={variableKeys}
-          open={open}
-          onOpenChange={(nextOpen) => {
-            rememberSelection()
-            setOpen(nextOpen)
-          }}
-          onChange={handleInsertVariable}
-        >
-          <Button
-            aria-label="Insert environment variable"
-            size="md"
-            type="button"
-            color="neutral"
-            variant="surface"
-            iconOnly
-            className="absolute right-2 top-2 h-8 w-8 justify-center"
-            onPointerDown={rememberSelection}
-          >
-            <Icon className="text-sm" iconName="wand-magic-sparkles" />
-          </Button>
-        </DropdownVariable>
-      </div>
+      <PromptEditor
+        {...inputProps}
+        ref={(editor) => {
+          editorRef.current = editor
+          if (typeof ref === 'function') ref(editor)
+          else if (ref) ref.current = editor
+        }}
+        value={value}
+        suggestions={autocompleteKeys.map((key) => ({ label: key }))}
+        onChange={handleChange}
+        actions={
+          showVariablePicker ? (
+            <DropdownVariable
+              environmentId={environmentId}
+              variableKeys={autocompleteKeys}
+              open={open}
+              onOpenChange={setOpen}
+              onChange={handleInsertVariable}
+            >
+              <Button
+                aria-label="Insert environment variable"
+                size="md"
+                type="button"
+                color="neutral"
+                variant="surface"
+                iconOnly
+                className="absolute right-2 top-2 h-8 w-8 justify-center"
+                onPointerDown={() => {
+                  replaceOpeningBracesRef.current = false
+                }}
+              >
+                <Icon className="text-sm" iconName="wand-magic-sparkles" />
+              </Button>
+            </DropdownVariable>
+          ) : null
+        }
+      />
     )
   }
 )

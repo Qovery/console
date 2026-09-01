@@ -1,4 +1,4 @@
-import { AgenticWorkflowModelType } from 'qovery-typescript-axios'
+import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 import { formatAgenticWorkflowRequest } from './agentic-workflow-request'
 
@@ -9,6 +9,7 @@ const values: AgenticWorkflowFormData = {
   memory: '2048',
   storage: '10',
   workflowEnabled: true,
+  executionMode: AgenticWorkflowExecutionMode.IN_PLACE,
   scheduleEnabled: false,
   scheduleCronExpression: '0 8 * * 1-5',
   timezone: 'Europe/Paris',
@@ -36,6 +37,16 @@ describe('formatAgenticWorkflowRequest', () => {
       cron_expression: '0 8 * * 1-5',
       timezone: 'Europe/Paris',
     })
+  })
+
+  it('sends the selected execution mode', () => {
+    expect(formatAgenticWorkflowRequest(values).execution_mode).toBe(AgenticWorkflowExecutionMode.IN_PLACE)
+    expect(
+      formatAgenticWorkflowRequest({
+        ...values,
+        executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
+      }).execution_mode
+    ).toBe(AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT)
   })
 
   it('uses the full URL of a selected Git repository', () => {

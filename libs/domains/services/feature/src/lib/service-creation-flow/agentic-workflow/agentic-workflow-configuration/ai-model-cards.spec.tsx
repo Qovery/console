@@ -19,7 +19,7 @@ describe('AIModelCards', () => {
 
   it('should keep Claude selectable and Bedrock disabled', async () => {
     const { userEvent } = renderWithProviders(
-      <AgenticWorkflowCreationFlow creationFlowUrl="/create/agentic-workflow" onExit={jest.fn()}>
+      <AgenticWorkflowCreationFlow onExit={jest.fn()}>
         <>
           <AIModelCards />
           <SelectedModel />

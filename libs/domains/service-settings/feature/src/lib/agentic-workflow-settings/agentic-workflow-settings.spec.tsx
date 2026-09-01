@@ -1,4 +1,4 @@
-import { AgenticWorkflowModelType } from 'qovery-typescript-axios'
+import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import * as servicesDomain from '@qovery/domains/services/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -56,6 +56,7 @@ const service = {
   name: 'Incident assistant',
   description: 'Investigates production incidents',
   enabled: true,
+  execution_mode: AgenticWorkflowExecutionMode.IN_PLACE,
   schedule: {
     cron_expression: '0 8 * * 1-5',
     timezone: 'Europe/Paris',
@@ -160,6 +161,8 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('spinbutton', { name: 'GPU' })).toHaveValue(0)
     expect(screen.getByRole('spinbutton', { name: 'Storage (GiB)' })).toHaveValue(20)
     expect(screen.getByText('Schedule agent task')).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /In place/ })).toBeChecked()
+    expect(screen.getByRole('radio', { name: /Clone environment/ })).not.toBeChecked()
     expect(screen.getByRole('textbox', { name: 'Cron expression' })).toHaveValue('0 8 * * 1-5')
     expect(screen.getByText('Europe/Paris')).toBeInTheDocument()
 
@@ -174,6 +177,7 @@ describe('AgenticWorkflowSettings views', () => {
         serviceId: 'workflow-1',
         payload: expect.objectContaining({
           description: 'Updated description',
+          execution_mode: AgenticWorkflowExecutionMode.IN_PLACE,
           model: { type: AgenticWorkflowModelType.BEDROCK, settings: '{"temperature":0.2}' },
           outputs: [{ name: 'Audit log', url: null }],
           mcp_server_ids: ['mcp-1'],
@@ -182,6 +186,20 @@ describe('AgenticWorkflowSettings views', () => {
             timezone: 'Europe/Paris',
           },
         }),
+      })
+    )
+  })
+
+  it('updates the execution mode', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+    await userEvent.click(screen.getByRole('radio', { name: /Clone environment/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({ execution_mode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT }),
       })
     )
   })
