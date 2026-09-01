@@ -1525,38 +1525,6 @@ exports[`VariableList should match snapshot 1`] = `
         </div>
       </div>
     </section>
-    <div
-      class="flex justify-center sticky bottom-4"
-    >
-      <div
-        class="inline-flex items-center gap-10 rounded-md border border-neutral bg-surface-neutralInvert-component p-2 pl-4 text-neutralInvert shadow-xl animate-action-bar-fade-out hidden"
-        data-testid="sticky-action-form-toaster"
-      >
-        <span
-          class="text-sm font-medium text-neutralInvert"
-        >
-          0 selected variable
-        </span>
-        <div
-          class="flex gap-5"
-        >
-          <button
-            class="text-ssm font-medium underline"
-            type="button"
-          >
-            Deselect
-          </button>
-          <button
-            class="inline-flex items-center shrink-0 font-medium transition-[background-color,transform] active:scale-[0.97] disabled:scale-100 disabled:pointer-events-none disabled:border disabled:border-neutral disabled:text-neutral-disabled disabled:bg-surface-neutral-component focus-visible:[&:not(:active)]:outline-2 outline-0 select-none outline-negative-strong text-sm h-8 px-2.5 gap-x-1.5 rounded-md bg-surface-negative-solid hover:bg-surface-negative-solidHover border border-negative-component text-neutral-contrasted"
-            data-testid="submit-button"
-            disabled=""
-            type="button"
-          >
-            Delete selected
-          </button>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
 `;

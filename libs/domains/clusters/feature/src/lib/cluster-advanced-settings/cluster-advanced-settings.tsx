@@ -2,7 +2,7 @@ import clsx from 'clsx'
 import equal from 'fast-deep-equal'
 import { type ClusterAdvancedSettings as ClusterAdvancedSettingsType } from 'qovery-typescript-axios'
 import { useMemo, useState } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
+import { Controller, useFormContext, useFormState, useWatch } from 'react-hook-form'
 import {
   CopyToClipboardButtonIcon,
   Icon,
@@ -13,12 +13,17 @@ import {
   Tooltip,
 } from '@qovery/shared/ui'
 import { generateAdvancedSettingDocUrl, twMerge } from '@qovery/shared/util-js'
+import {
+  buildClusterAdvancedSettingsPayload,
+  normalizeClusterAdvancedSettings,
+} from './build-cluster-advanced-settings-payload'
 
 export interface ClusterAdvancedSettingsProps {
   onSubmit: () => void
   loading: boolean
   clusterAdvancedSettings?: ClusterAdvancedSettingsType
   defaultAdvancedSettings?: ClusterAdvancedSettingsType
+  formBaseline?: ClusterAdvancedSettingsType
 }
 
 function formatValue(value: unknown) {
@@ -27,13 +32,55 @@ function formatValue(value: unknown) {
 
 const { Table } = TablePrimitives
 
+interface ClusterAdvancedSettingsSaveActionProps {
+  onSubmit: () => void
+  loading: boolean
+  defaultAdvancedSettings?: ClusterAdvancedSettingsType
+  formBaseline?: ClusterAdvancedSettingsType
+}
+
+function ClusterAdvancedSettingsSaveAction({
+  onSubmit,
+  loading,
+  defaultAdvancedSettings,
+  formBaseline,
+}: ClusterAdvancedSettingsSaveActionProps) {
+  const { control, reset } = useFormContext<{ [key: string]: string }>()
+  const { isDirty, isValid } = useFormState({ control })
+  const formValues = useWatch({ control })
+  const normalizedBaseline = useMemo(
+    () =>
+      formBaseline === undefined ? undefined : normalizeClusterAdvancedSettings(formBaseline, defaultAdvancedSettings),
+    [defaultAdvancedSettings, formBaseline]
+  )
+  const currentPayload = useMemo(
+    () => buildClusterAdvancedSettingsPayload(formValues as Record<string, unknown>, defaultAdvancedSettings),
+    [defaultAdvancedSettings, formValues]
+  )
+  const hasChanged = useMemo(
+    () => isDirty && normalizedBaseline !== undefined && !equal(currentPayload, normalizedBaseline),
+    [currentPayload, isDirty, normalizedBaseline]
+  )
+
+  return (
+    <StickyActionFormToaster
+      visible={hasChanged}
+      onSubmit={onSubmit}
+      onReset={reset}
+      disabledValidation={!isValid}
+      loading={loading}
+    />
+  )
+}
+
 export function ClusterAdvancedSettings({
   onSubmit,
   loading,
   clusterAdvancedSettings,
   defaultAdvancedSettings,
+  formBaseline,
 }: ClusterAdvancedSettingsProps) {
-  const { control, formState, reset } = useFormContext<{ [key: string]: string }>()
+  const { control } = useFormContext<{ [key: string]: string }>()
   const [showOverriddenOnly, toggleShowOverriddenOnly] = useState(false)
 
   const keys = useMemo(() => {
@@ -169,12 +216,11 @@ export function ClusterAdvancedSettings({
               </Table.Root>
             </div>
           )}
-          <StickyActionFormToaster
-            visible={formState.isDirty}
+          <ClusterAdvancedSettingsSaveAction
             onSubmit={onSubmit}
-            onReset={reset}
-            disabledValidation={!formState.isValid}
             loading={loading}
+            defaultAdvancedSettings={defaultAdvancedSettings}
+            formBaseline={formBaseline}
           />
         </div>
       </form>

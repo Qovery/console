@@ -1,6 +1,6 @@
 import { type Application } from '@qovery/domains/services/data-access'
 import { applicationFactoryMock } from '@qovery/shared/factories'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitForElementToBeRemoved } from '@qovery/shared/util-tests'
 import { AdvancedSettings } from './service-advanced-settings'
 
 const mockMutateEdit = jest.fn()
@@ -98,6 +98,11 @@ describe('AdvancedSettings', () => {
       await userEvent.type(input, '79')
       await userEvent.clear(input)
     }
+    const changedInput = container.querySelector('textarea[name="cronjob.success_jobs_history_limit"]')
+    if (changedInput) {
+      await userEvent.clear(changedInput)
+      await userEvent.type(changedInput, '4')
+    }
     expect(screen.getByTestId('submit-button')).toBeEnabled()
   })
 
@@ -168,8 +173,6 @@ describe('AdvancedSettings', () => {
 
     await userEvent.click(screen.getByTestId('submit-button'))
 
-    await waitFor(() => {
-      expect(screen.getByTestId('sticky-action-form-toaster')).not.toHaveClass('animate-action-bar-fade-in')
-    })
+    await waitForElementToBeRemoved(() => screen.queryByTestId('sticky-action-form-toaster'))
   })
 })
