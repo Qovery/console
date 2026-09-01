@@ -117,7 +117,7 @@ export function ContainerRegistryForm({
               name={field.name}
               value={registry?.id}
               error={error?.message}
-              disabled
+              readOnly
               hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
             />
           )}
