@@ -39,9 +39,12 @@ export function useBlueprintServiceCreatedSocket({
         return
       }
 
-      // Every dispatch in the environment lands here, including ones this flow did not start
-      const frameBlueprintId = frame?.blueprint_id
-      if (frameBlueprintId && blueprintId && frameBlueprintId !== blueprintId) {
+      // Every dispatch in the environment lands here, including ones this flow did not start, so
+      // a frame counts only when it names the blueprint being waited on. Both the older
+      // service-created payload and the dispatch frame carry `blueprint_id`, so anything that
+      // cannot be correlated — including a frame arriving before the create response supplies the
+      // id — is left for the outcome read rather than guessed at.
+      if (!blueprintId || frame?.blueprint_id !== blueprintId) {
         return
       }
 
@@ -69,7 +72,5 @@ export function useBlueprintServiceCreatedSocket({
     },
     enabled: enabled && Boolean(organizationId) && Boolean(projectId) && Boolean(environmentId),
     onMessage: (_, frame) => handleMessage(frame),
-    // An invalidate operation carries no dispatch frame, so it keeps meaning "the service exists"
-    onQueryInvalidated: () => handleMessage(undefined),
   })
 }

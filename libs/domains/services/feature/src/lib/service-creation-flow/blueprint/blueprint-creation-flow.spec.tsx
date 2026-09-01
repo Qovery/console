@@ -279,7 +279,7 @@ describe('BlueprintCreationFlow', () => {
     })
     mockUseEnvironment.mockReturnValue({ data: { cluster_id: 'cluster-1' } })
     mockCreateBlueprint.mockResolvedValue(blueprintCreationResponse)
-    mockUseBlueprint.mockReturnValue({ data: undefined })
+    mockUseBlueprint.mockImplementation(() => ({ data: undefined }))
   })
 
   it('should open the blueprint details drawer from the configuration header', async () => {
@@ -675,6 +675,8 @@ describe('BlueprintCreationFlow', () => {
       act(() => {
         jest.advanceTimersByTime(BLUEPRINT_OUTCOME_READ_DELAY_MS)
       })
+
+      return { userEvent }
     }
 
     it('should read the blueprint instead of assuming the service was created', async () => {
@@ -690,7 +692,9 @@ describe('BlueprintCreationFlow', () => {
 
     it('should complete the flow once the blueprint reports its service', async () => {
       jest.useFakeTimers()
-      mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ service_id: 'service-1' }) })
+      mockUseBlueprint.mockImplementation(({ enabled }) => ({
+        data: enabled ? blueprintDetails({ service_id: 'service-1' }) : undefined,
+      }))
 
       await createBlueprintAndDispatch()
 
@@ -702,11 +706,13 @@ describe('BlueprintCreationFlow', () => {
       'should surface the engine error message when the deployment is %s',
       async (status) => {
         jest.useFakeTimers()
-        mockUseBlueprint.mockReturnValue({
-          data: blueprintDetails({
-            latest_deployment: deployment({ status, error_message: 'variable value is required' }),
-          }),
-        })
+        mockUseBlueprint.mockImplementation(({ enabled }) => ({
+          data: enabled
+            ? blueprintDetails({
+                latest_deployment: deployment({ status, error_message: 'variable value is required' }),
+              })
+            : undefined,
+        }))
 
         await createBlueprintAndDispatch()
 
@@ -720,9 +726,11 @@ describe('BlueprintCreationFlow', () => {
 
     it('should still surface a failure the engine gave no reason for', async () => {
       jest.useFakeTimers()
-      mockUseBlueprint.mockReturnValue({
-        data: blueprintDetails({ latest_deployment: deployment({ status: 'FAILED', error_message: null }) }),
-      })
+      mockUseBlueprint.mockImplementation(({ enabled }) => ({
+        data: enabled
+          ? blueprintDetails({ latest_deployment: deployment({ status: 'FAILED', error_message: null }) })
+          : undefined,
+      }))
 
       await createBlueprintAndDispatch()
 
@@ -737,7 +745,9 @@ describe('BlueprintCreationFlow', () => {
       'should neither claim success nor failure while the dispatch is still %s',
       async (status) => {
         jest.useFakeTimers()
-        mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ latest_deployment: deployment({ status }) }) })
+        mockUseBlueprint.mockImplementation(({ enabled }) => ({
+          data: enabled ? blueprintDetails({ latest_deployment: deployment({ status }) }) : undefined,
+        }))
 
         await createBlueprintAndDispatch()
 
@@ -750,13 +760,41 @@ describe('BlueprintCreationFlow', () => {
       }
     )
 
+    it('should not wait forever when the outcome read itself fails', async () => {
+      jest.useFakeTimers()
+      mockUseBlueprint.mockImplementation(({ enabled }) => ({ data: undefined, isError: enabled }))
+
+      await createBlueprintAndDispatch()
+
+      expect(mockToast).not.toHaveBeenCalled()
+      expect(mockNavigate).not.toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
+      expect(screen.getByText(/Could not read this blueprint/)).toBeVisible()
+    })
+
+    it('should offer a way out when the outcome is unknown', async () => {
+      jest.useFakeTimers()
+      mockUseBlueprint.mockImplementation(({ enabled }) => ({
+        data: enabled ? blueprintDetails({ latest_deployment: deployment() }) : undefined,
+      }))
+
+      const { userEvent } = await createBlueprintAndDispatch()
+
+      // Without this the modal is a dead end: no Retry, no dismiss, and no further read
+      await userEvent.click(screen.getByRole('button', { name: 'Go to environment' }))
+
+      expect(mockNavigate).toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
+      expect(mockToast).not.toHaveBeenCalled()
+    })
+
     it('should ignore the failure of a dispatch that is not the one it started', async () => {
       jest.useFakeTimers()
-      mockUseBlueprint.mockReturnValue({
-        data: blueprintDetails({
-          latest_deployment: deployment({ id: 'deployment-2', status: 'FAILED', error_message: 'not ours' }),
-        }),
-      })
+      mockUseBlueprint.mockImplementation(({ enabled }) => ({
+        data: enabled
+          ? blueprintDetails({
+              latest_deployment: deployment({ id: 'deployment-2', status: 'FAILED', error_message: 'not ours' }),
+            })
+          : undefined,
+      }))
 
       await createBlueprintAndDispatch()
 

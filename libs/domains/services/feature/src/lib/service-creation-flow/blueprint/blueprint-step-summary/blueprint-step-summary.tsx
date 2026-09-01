@@ -35,6 +35,8 @@ const BLUEPRINT_OUTCOME_READ_DELAY_MS = 30_000
 // and the failure passes silently, which is the bug this flow exists to prevent.
 const BLUEPRINT_DISPATCH_FAILED_MESSAGE =
   'The dispatch failed without reporting a reason. Check the environment for details.'
+const BLUEPRINT_STATUS_UNREADABLE_MESSAGE =
+  'Could not read this blueprint to find out what happened. Check the environment for its state before creating this service again.'
 const BLUEPRINT_STATUS_UNRESOLVED_MESSAGE =
   'This is taking longer than expected. The dispatch may still be running — check the environment for its status before creating this service again.'
 
@@ -75,7 +77,7 @@ export function BlueprintStepSummary() {
   })
   // The websocket reports success only. When it stays silent, the blueprint itself is the
   // authoritative read on what the dispatch actually did — silence is not an outcome.
-  const { data: blueprintDetails } = useBlueprint({
+  const { data: blueprintDetails, isError: hasBlueprintReadFailed } = useBlueprint({
     blueprintId: createdBlueprintId ?? '',
     enabled: isReadingBlueprintOutcome,
   })
@@ -180,7 +182,20 @@ export function BlueprintStepSummary() {
   useEffect(() => {
     // Retrying mints a new blueprint, so a result for the previous one must not be read as this
     // one's outcome.
-    if (!isWaitingForServiceCreated || !blueprintDetails || blueprintDetails.id !== createdBlueprintId) {
+    if (!isWaitingForServiceCreated || !isReadingBlueprintOutcome) {
+      return
+    }
+
+    // The read is the only thing that can answer this, so a read that failed leaves the outcome
+    // unknown — which is not success, and not something to keep waiting on.
+    if (hasBlueprintReadFailed) {
+      failBlueprintCreation(BLUEPRINT_STATUS_UNREADABLE_MESSAGE, false)
+      return
+    }
+
+    // Retrying mints a new blueprint, so a result for the previous one must not be read as this
+    // one's outcome.
+    if (!blueprintDetails || blueprintDetails.id !== createdBlueprintId) {
       return
     }
 
@@ -199,6 +214,8 @@ export function BlueprintStepSummary() {
     createdDeploymentId,
     failBlueprintCreation,
     handleBlueprintServiceCreated,
+    hasBlueprintReadFailed,
+    isReadingBlueprintOutcome,
     isWaitingForServiceCreated,
   ])
 
@@ -459,6 +476,7 @@ export function BlueprintStepSummary() {
         errorMessage={blueprintCreationErrorMessage}
         logs={blueprintCreationLogs}
         onEditConfig={handleEditConfig}
+        onGoToEnvironment={navigateToEnvironmentOverview}
         onRetry={handleRetry}
         open={
           (blueprintCreationLogs.length > 0 || Boolean(blueprintCreationErrorMessage)) &&

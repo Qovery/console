@@ -72,30 +72,53 @@ describe('useBlueprintServiceCreatedSocket', () => {
       organizationId: 'org-1',
       projectId: 'proj-1',
       environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
     })
     const invalidateQueries = jest.spyOn(queryClient, 'invalidateQueries')
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
-    subscriptionConfig?.onMessage?.(queryClient, {})
+    subscriptionConfig?.onMessage?.(queryClient, { blueprint_id: 'blueprint-1' })
 
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: queries.services.list('env-1').queryKey,
     })
   })
 
-  it('should notify the caller when a query invalidation event is processed', () => {
+  it('should not report a creation from an event it cannot correlate', () => {
     const onServiceCreated = jest.fn()
     const queryClient = renderUseBlueprintServiceCreatedSocket({
       organizationId: 'org-1',
       projectId: 'proj-1',
       environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
       onServiceCreated,
     })
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
+    // An invalidation from any other service in the environment names no blueprint
     subscriptionConfig?.onQueryInvalidated?.(queryClient, { entity: ['services'], id: 'service-1' })
+    subscriptionConfig?.onMessage?.(queryClient, {})
 
-    expect(onServiceCreated).toHaveBeenCalledTimes(1)
+    expect(onServiceCreated).not.toHaveBeenCalled()
+  })
+
+  it('should ignore a frame that arrives before the create response supplies the blueprint id', () => {
+    const onServiceCreated = jest.fn()
+    const onDispatchFailed = jest.fn()
+    const queryClient = renderUseBlueprintServiceCreatedSocket({
+      organizationId: 'org-1',
+      projectId: 'proj-1',
+      environmentId: 'env-1',
+      onServiceCreated,
+      onDispatchFailed,
+    })
+    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
+
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'created', blueprint_id: 'blueprint-2' })
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'failed', blueprint_id: 'blueprint-2' })
+
+    expect(onServiceCreated).not.toHaveBeenCalled()
+    expect(onDispatchFailed).not.toHaveBeenCalled()
   })
 
   it.each([
@@ -140,7 +163,7 @@ describe('useBlueprintServiceCreatedSocket', () => {
     expect(onDispatchFailed).not.toHaveBeenCalled()
   })
 
-  it('should still treat a payload without a type as a creation', () => {
+  it('should still treat the older payload, which carries no type, as a creation', () => {
     const onServiceCreated = jest.fn()
     const queryClient = renderUseBlueprintServiceCreatedSocket({
       organizationId: 'org-1',
@@ -151,7 +174,7 @@ describe('useBlueprintServiceCreatedSocket', () => {
     })
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
-    subscriptionConfig?.onMessage?.(queryClient, {})
+    subscriptionConfig?.onMessage?.(queryClient, { blueprint_id: 'blueprint-1' })
 
     expect(onServiceCreated).toHaveBeenCalledTimes(1)
   })

@@ -14,6 +14,8 @@ export interface BlueprintCreationLoadingModalProps {
   errorMessage?: string
   logs: EnvironmentLogs[]
   onEditConfig: () => void
+  /** Offered when the outcome is unknown, so the user is never left with no way forward */
+  onGoToEnvironment: () => void
   onRetry: () => void
   open: boolean
   serviceName: string
@@ -24,6 +26,7 @@ export function BlueprintCreationLoadingModal({
   errorMessage,
   logs,
   onEditConfig,
+  onGoToEnvironment,
   onRetry,
   open,
   serviceName,
@@ -62,10 +65,15 @@ export function BlueprintCreationLoadingModal({
                   <Icon iconName="pen" iconStyle="regular" />
                   Edit config
                 </Button>
-                {canRetry && (
+                {canRetry ? (
                   <Button type="button" size="md" onClick={onRetry}>
                     <Icon iconName="arrow-rotate-right" iconStyle="regular" />
                     Retry
+                  </Button>
+                ) : (
+                  <Button type="button" size="md" onClick={onGoToEnvironment}>
+                    <Icon iconName="arrow-right" iconStyle="regular" />
+                    Go to environment
                   </Button>
                 )}
               </div>

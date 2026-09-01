@@ -74,7 +74,8 @@ export function resolveBlueprintCreationOutcome(
       'CANCELED',
       (): BlueprintCreationOutcome => ({
         status: 'failed',
-        errorMessage: deployment.error_message ?? undefined,
+        // A blank message is as good as none — left as-is it renders nothing and the failure passes silently
+        errorMessage: deployment.error_message?.trim() || undefined,
       })
     )
     .otherwise((): BlueprintCreationOutcome => ({ status: 'pending' }))
