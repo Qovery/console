@@ -105,19 +105,27 @@ describe('HeaderLogs', () => {
     expect(screen.getByTestId('child-content')).toBeInTheDocument()
   })
 
-  it('displays the total duration for a completed deployment', () => {
+  it('excludes non-computing overhead from a completed deployment duration', () => {
     renderWithProviders(
       <HeaderLogs
         {...mockProps}
         serviceStatus={{
           ...mockProps.serviceStatus,
           status_details: { action: 'DEPLOY', status: 'SUCCESS', sub_action: 'NONE' },
-          steps: { total_computing_duration_sec: 125, total_duration_sec: 130, details: [] },
+          steps: {
+            total_computing_duration_sec: 47,
+            total_duration_sec: 53,
+            details: [
+              { step_name: 'BUILD', status: 'SUCCESS', duration_sec: 4 },
+              { step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 43 },
+            ],
+          },
         }}
       />
     )
 
-    expect(screen.getByText('2m : 10s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 47s')).toBeInTheDocument()
+    expect(screen.queryByText('0m : 53s')).not.toBeInTheDocument()
   })
 
   it('adds the elapsed ongoing step duration to the completed step durations', () => {
@@ -155,7 +163,7 @@ describe('HeaderLogs', () => {
     expect(screen.getByText('0m : 48s')).toBeInTheDocument()
   })
 
-  it('falls back to the deployment elapsed time when step details are empty', () => {
+  it('does not use the last deployment date as computing time when step details are empty', () => {
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2026-08-28T13:30:00Z'))
 
@@ -171,14 +179,14 @@ describe('HeaderLogs', () => {
       />
     )
 
-    expect(screen.getByText('0m : 30s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 0s')).toBeInTheDocument()
 
     act(() => jest.advanceTimersByTime(1_000))
 
-    expect(screen.getByText('0m : 31s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 0s')).toBeInTheDocument()
   })
 
-  it('falls back to the deployment elapsed time when no step has a live start time', () => {
+  it('uses recorded computing time when no step has a live start time', () => {
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2026-08-28T13:30:00Z'))
 
@@ -202,11 +210,11 @@ describe('HeaderLogs', () => {
       />
     )
 
-    expect(screen.getByText('0m : 30s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 17s')).toBeInTheDocument()
 
     act(() => jest.advanceTimersByTime(1_000))
 
-    expect(screen.getByText('0m : 31s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 17s')).toBeInTheDocument()
   })
 
   it('does not decrease when step timing becomes available', () => {
@@ -225,7 +233,7 @@ describe('HeaderLogs', () => {
       />
     )
 
-    expect(screen.getByText('0m : 30s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 0s')).toBeInTheDocument()
 
     rerender(
       <HeaderLogs
@@ -250,11 +258,11 @@ describe('HeaderLogs', () => {
       />
     )
 
-    expect(screen.getByText('0m : 30s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 0s')).toBeInTheDocument()
 
     act(() => jest.advanceTimersByTime(1_000))
 
-    expect(screen.getByText('0m : 31s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 1s')).toBeInTheDocument()
   })
 
   it('falls back to the recorded computing duration without timing data', () => {
