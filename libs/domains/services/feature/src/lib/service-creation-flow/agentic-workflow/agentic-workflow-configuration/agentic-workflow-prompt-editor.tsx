@@ -35,7 +35,7 @@ export const AgenticWorkflowPromptEditor = forwardRef<
 
   return (
     <div className="flex flex-col">
-      <div className="mb-4 flex items-center gap-1.5 text-sm font-medium text-neutral-subtle">
+      <div className="mb-4 flex items-center gap-1 text-sm font-medium text-neutral-subtle">
         <span>Instructions</span>
         <Tooltip
           content={

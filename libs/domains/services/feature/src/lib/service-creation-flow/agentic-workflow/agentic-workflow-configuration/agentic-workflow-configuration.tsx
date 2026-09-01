@@ -136,9 +136,9 @@ function ConfigurationModalContent({
 
 function ConfigurationRow({ children, label }: { children: ReactNode; label: string }) {
   return (
-    <div className="grid min-h-8 grid-cols-1 items-center gap-1 py-2 sm:grid-cols-[112px_minmax(0,1fr)] sm:gap-4">
+    <div className="grid min-h-11 grid-cols-1 items-center gap-1 sm:grid-cols-[112px_minmax(0,1fr)] sm:gap-4">
       <span className="text-sm font-medium text-neutral-subtle">{label}</span>
-      <div className="group flex min-h-8 min-w-0 flex-wrap items-center gap-2 rounded px-1 hover:bg-surface-neutral-subtle">
+      <div className="group flex min-h-9 min-w-0 flex-wrap items-center gap-2 rounded px-1 hover:bg-surface-neutral-subtle">
         {children}
       </div>
     </div>
@@ -807,7 +807,7 @@ export function AgenticWorkflowConfiguration() {
                     <Button
                       key={`${repository.repository}-${index}`}
                       type="button"
-                      size="xs"
+                      size="sm"
                       color="neutral"
                       variant="outline"
                       className="max-w-full"
@@ -820,7 +820,7 @@ export function AgenticWorkflowConfiguration() {
                 )}
                 <Button
                   type="button"
-                  size="xs"
+                  size="sm"
                   color="neutral"
                   variant="plain"
                   className="border border-transparent group-hover:border-neutral group-hover:bg-surface-neutral"
@@ -833,7 +833,7 @@ export function AgenticWorkflowConfiguration() {
               <ConfigurationRow label="Provider">
                 <Button
                   type="button"
-                  size="xs"
+                  size="sm"
                   color="neutral"
                   variant="outline"
                   onClick={() => setProviderModalOpen(true)}
@@ -860,7 +860,7 @@ export function AgenticWorkflowConfiguration() {
                       <span className="truncate">{name}</span>
                       <Button
                         type="button"
-                        size="xs"
+                        size="sm"
                         color="neutral"
                         variant="plain"
                         iconOnly
@@ -880,7 +880,7 @@ export function AgenticWorkflowConfiguration() {
                   ))}
                 <Button
                   type="button"
-                  size="xs"
+                  size="sm"
                   color="neutral"
                   variant="plain"
                   className="border border-transparent group-hover:border-neutral group-hover:bg-surface-neutral"
@@ -894,7 +894,7 @@ export function AgenticWorkflowConfiguration() {
                 {values.scheduleEnabled ? (
                   <Button
                     type="button"
-                    size="xs"
+                    size="sm"
                     color="neutral"
                     variant="outline"
                     onClick={() => setScheduleModalOpen(true)}
@@ -905,7 +905,7 @@ export function AgenticWorkflowConfiguration() {
                 ) : (
                   <Button
                     type="button"
-                    size="xs"
+                    size="sm"
                     color="neutral"
                     variant="plain"
                     className="border border-transparent group-hover:border-neutral group-hover:bg-surface-neutral"
