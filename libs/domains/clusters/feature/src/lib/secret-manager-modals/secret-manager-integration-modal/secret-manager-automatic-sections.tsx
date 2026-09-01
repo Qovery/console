@@ -5,17 +5,24 @@ import { Callout, Icon } from '@qovery/shared/ui'
 import { type SecretManagerOption } from '../secret-manager-integration.types'
 import {
   GcpProjectIdField,
+  SecretManagerIdField,
   SecretManagerNameField,
   SecretManagerRegionField,
 } from './secret-manager-integration-fields'
 
 interface SecretManagerAutomaticSectionsProps {
+  isEdit: boolean
   methods: UseFormReturn<SecretManagerAccess>
   option: SecretManagerOption
   regions: Value[]
 }
 
-export function SecretManagerAutomaticSections({ methods, option, regions }: SecretManagerAutomaticSectionsProps) {
+export function SecretManagerAutomaticSections({
+  isEdit,
+  methods,
+  option,
+  regions,
+}: SecretManagerAutomaticSectionsProps) {
   return (
     <div className="flex flex-col gap-4">
       <div>
@@ -25,6 +32,7 @@ export function SecretManagerAutomaticSections({ methods, option, regions }: Sec
         </p>
       </div>
       <div className="flex flex-col gap-4">
+        {isEdit && <SecretManagerIdField methods={methods} />}
         {option.icon === 'GCP' && <GcpProjectIdField methods={methods} />}
         <SecretManagerRegionField methods={methods} regions={regions} />
         <SecretManagerNameField methods={methods} />

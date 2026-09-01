@@ -5,11 +5,16 @@ import { type Value } from '@qovery/shared/interfaces'
 import { ExternalLink, Heading, InputSelect, InputText, Section, Tooltip } from '@qovery/shared/ui'
 import { type AwsManualAuthenticationTypeSelect } from '../secret-manager-integration-constraints'
 import { type SecretManagerOption } from '../secret-manager-integration.types'
-import { SecretManagerNameField, SecretManagerRegionField } from './secret-manager-integration-fields'
+import {
+  SecretManagerIdField,
+  SecretManagerNameField,
+  SecretManagerRegionField,
+} from './secret-manager-integration-fields'
 
 interface AwsSecretManagerManualSectionsProps {
   authenticationTypeSelect?: AwsManualAuthenticationTypeSelect
   cluster?: Cluster
+  isEdit: boolean
   isManualOnlyIntegration: boolean
   methods: UseFormReturn<SecretManagerAccess>
   option: SecretManagerOption
@@ -19,6 +24,7 @@ interface AwsSecretManagerManualSectionsProps {
 export function AwsSecretManagerManualSections({
   authenticationTypeSelect,
   cluster,
+  isEdit,
   isManualOnlyIntegration,
   methods,
   option,
@@ -27,7 +33,7 @@ export function AwsSecretManagerManualSections({
   if (isManualOnlyIntegration) {
     return (
       <div className="flex flex-col gap-4">
-        <AwsStaticCredentialsSections methods={methods} regions={regions} />
+        <AwsStaticCredentialsSections isEdit={isEdit} methods={methods} regions={regions} />
       </div>
     )
   }
@@ -35,7 +41,13 @@ export function AwsSecretManagerManualSections({
   return (
     <div className="flex flex-col gap-4">
       <AwsAuthenticationTypeSelect authenticationTypeSelect={authenticationTypeSelect} methods={methods} />
-      <AwsManualAuthenticationModeSections cluster={cluster} methods={methods} option={option} regions={regions} />
+      <AwsManualAuthenticationModeSections
+        cluster={cluster}
+        isEdit={isEdit}
+        methods={methods}
+        option={option}
+        regions={regions}
+      />
     </div>
   )
 }
@@ -55,12 +67,14 @@ function AwsCredentialsInstructions() {
 }
 
 interface AwsStaticCredentialsSectionsProps {
+  isEdit: boolean
   methods: UseFormReturn<SecretManagerAccess>
   regions: Value[]
   syncAuthenticationRegion?: boolean
 }
 
 function AwsStaticCredentialsSections({
+  isEdit,
   methods,
   regions,
   syncAuthenticationRegion = false,
@@ -72,6 +86,7 @@ function AwsStaticCredentialsSections({
         <Heading level={3} className="text-sm font-medium text-neutral">
           2. Fill in these information
         </Heading>
+        {isEdit && <SecretManagerIdField methods={methods} />}
         <SecretManagerRegionField
           methods={methods}
           regions={regions}
@@ -156,6 +171,7 @@ function AwsAuthenticationTypeSelect({ authenticationTypeSelect, methods }: AwsA
 
 interface AwsManualAuthenticationModeSectionsProps {
   cluster?: Cluster
+  isEdit: boolean
   methods: UseFormReturn<SecretManagerAccess>
   option: SecretManagerOption
   regions: Value[]
@@ -163,6 +179,7 @@ interface AwsManualAuthenticationModeSectionsProps {
 
 function AwsManualAuthenticationModeSections({
   cluster,
+  isEdit,
   methods,
   option,
   regions,
@@ -174,13 +191,19 @@ function AwsManualAuthenticationModeSections({
   }
 
   if (authenticationMode === 'AWS_STATIC_CREDENTIALS') {
-    return <AwsStaticCredentialsSections methods={methods} regions={regions} syncAuthenticationRegion />
+    return <AwsStaticCredentialsSections isEdit={isEdit} methods={methods} regions={regions} syncAuthenticationRegion />
   }
 
-  return <AwsAssumeRoleSections cluster={cluster} methods={methods} option={option} regions={regions} />
+  return <AwsAssumeRoleSections cluster={cluster} isEdit={isEdit} methods={methods} option={option} regions={regions} />
 }
 
-function AwsAssumeRoleSections({ cluster, methods, option, regions }: AwsManualAuthenticationModeSectionsProps) {
+function AwsAssumeRoleSections({
+  cluster,
+  isEdit,
+  methods,
+  option,
+  regions,
+}: AwsManualAuthenticationModeSectionsProps) {
   const templateURL =
     option.value === 'AWS_PARAMETER_STORE'
       ? 'https://s3.amazonaws.com/cloudformation-aws-parameter-store-role/template.json'
@@ -220,6 +243,7 @@ function AwsAssumeRoleSections({ cluster, methods, option, regions }: AwsManualA
         <Heading level={3} className="text-sm font-medium text-neutral">
           3. Provide your credentials info
         </Heading>
+        {isEdit && <SecretManagerIdField methods={methods} />}
         <SecretManagerRegionField methods={methods} regions={regions} />
         <Controller
           name="authentication.role_arn"
