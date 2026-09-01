@@ -95,6 +95,22 @@ export function RowMember(props: RowMemberProps) {
     editMemberRole?.(member.id, roleId)
   }
 
+  const roleButton = (
+    <Button
+      type="button"
+      data-testid="input"
+      aria-label="Member role"
+      variant="outline"
+      color="neutral"
+      size="md"
+      className="h-9 w-44 justify-between"
+      disabled={!canEditRole || loadingUpdateRole}
+    >
+      <span className="truncate">{displayedRoleLabel}</span>
+      {!isOwner && <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />}
+    </Button>
+  )
+
   return (
     <Table.Row>
       <Table.Cell className="border-r border-neutral px-0" style={{ width: `${columnSizes[0]}%` }}>
@@ -241,36 +257,10 @@ export function RowMember(props: RowMemberProps) {
             <DropdownMenu.Trigger asChild>
               {isOwner ? (
                 <Tooltip content="There can only be one owner. Only the owner can transfer ownership to another member via the action menu.">
-                  <span>
-                    <Button
-                      type="button"
-                      data-testid="input"
-                      aria-label="Member role"
-                      variant="outline"
-                      color="neutral"
-                      size="md"
-                      className="h-9 w-44 justify-between"
-                      disabled={!canEditRole || loadingUpdateRole}
-                    >
-                      <span className="truncate">{displayedRoleLabel}</span>
-                      <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
-                    </Button>
-                  </span>
+                  <span>{roleButton}</span>
                 </Tooltip>
               ) : (
-                <Button
-                  type="button"
-                  data-testid="input"
-                  aria-label="Member role"
-                  variant="outline"
-                  color="neutral"
-                  size="md"
-                  className="h-9 w-44 justify-between"
-                  disabled={!canEditRole || loadingUpdateRole}
-                >
-                  <span className="truncate">{displayedRoleLabel}</span>
-                  <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
-                </Button>
+                roleButton
               )}
             </DropdownMenu.Trigger>
             <DropdownMenu.Content align="start">
