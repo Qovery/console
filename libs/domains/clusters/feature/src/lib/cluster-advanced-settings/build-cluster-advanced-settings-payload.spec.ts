@@ -39,6 +39,21 @@ describe('buildClusterAdvancedSettingsPayload', () => {
     }
   )
 
+  it('should fall back to the default when a string setting is empty', () => {
+    expect(
+      buildClusterAdvancedSettingsPayload(
+        {
+          'load_balancer.size': '',
+        },
+        {
+          'load_balancer.size': 'lb-s',
+        }
+      )
+    ).toEqual({
+      'load_balancer.size': 'lb-s',
+    })
+  })
+
   it('should prefer nested form values over stale flattened values', () => {
     expect(
       buildClusterAdvancedSettingsPayload({

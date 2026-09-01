@@ -3,6 +3,10 @@ import { objectFlattener } from '@qovery/shared/util-js'
 
 function normalizeClusterAdvancedSettingValue(value: unknown, defaultValue: unknown): unknown {
   if (typeof value === 'string') {
+    if (value === '') {
+      return typeof defaultValue === 'object' ? defaultValue : defaultValue ?? ''
+    }
+
     if (typeof defaultValue === 'string') {
       return value
     }
@@ -10,10 +14,6 @@ function normalizeClusterAdvancedSettingValue(value: unknown, defaultValue: unkn
     try {
       return JSON.parse(value)
     } catch {
-      if (value === '') {
-        return typeof defaultValue === 'object' ? defaultValue : defaultValue ?? ''
-      }
-
       const numericValue = Number(value)
       if (Number.isFinite(numericValue)) {
         return numericValue
