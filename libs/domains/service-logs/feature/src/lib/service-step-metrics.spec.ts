@@ -1,6 +1,24 @@
-import { getServiceStepDurationSec, getServiceStepsDurationSec } from './service-step-metrics'
+import {
+  getServiceStepDurationSec,
+  getServiceStepsDurationSec,
+  isServiceStepDurationLive,
+} from './service-step-metrics'
 
 const nowMs = Date.parse('2026-08-28T13:30:00Z')
+
+describe('isServiceStepDurationLive', () => {
+  it('returns true for an ongoing step with a valid start time', () => {
+    expect(isServiceStepDurationLive({ status: 'ONGOING', started_at: '2026-08-28T13:29:30Z' })).toBe(true)
+  })
+
+  it.each([
+    { status: 'ONGOING', started_at: 'invalid' },
+    { status: 'ONGOING' },
+    { status: 'SUCCESS', started_at: '2026-08-28T13:29:30Z' },
+  ])('returns false without both ongoing status and a valid start time', (step) => {
+    expect(isServiceStepDurationLive(step)).toBe(false)
+  })
+})
 
 describe('getServiceStepDurationSec', () => {
   it('returns the recorded duration for a completed step', () => {

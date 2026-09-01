@@ -8,7 +8,11 @@ import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enu
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
-import { getServiceStepDurationSec, getServiceStepsDurationSec } from '../../service-step-metrics'
+import {
+  getServiceStepDurationSec,
+  getServiceStepsDurationSec,
+  isServiceStepDurationLive,
+} from '../../service-step-metrics'
 import { type FilterType } from '../list-deployment-logs'
 
 type StepMetricType = {
@@ -29,10 +33,7 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
   const { hash } = useLocation()
   const nowMs = Date.now()
   const totalDurationSec = getServiceStepsDurationSec(steps, nowMs)
-  const hasLiveDuration = steps.some(
-    (step) =>
-      step.status === 'ONGOING' && Boolean(step.started_at) && Number.isFinite(Date.parse(step.started_at ?? ''))
-  )
+  const hasLiveDuration = steps.some(isServiceStepDurationLive)
 
   const buildStep = steps.find((s) => s.step_name === 'BUILD')
   const deployStep = steps.find((s) => s.step_name === 'DEPLOYMENT')

@@ -208,4 +208,67 @@ describe('HeaderLogs', () => {
 
     expect(screen.getByText('0m : 31s')).toBeInTheDocument()
   })
+
+  it('does not decrease when step timing becomes available', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2026-08-28T13:30:00Z'))
+
+    const { rerender } = renderWithProviders(
+      <HeaderLogs
+        {...mockProps}
+        serviceStatus={{
+          ...mockProps.serviceStatus,
+          last_deployment_date: '2026-08-28T13:29:30Z',
+          status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
+          steps: { total_computing_duration_sec: 0, total_duration_sec: null, details: [] },
+        }}
+      />
+    )
+
+    expect(screen.getByText('0m : 30s')).toBeInTheDocument()
+
+    rerender(
+      <HeaderLogs
+        {...mockProps}
+        serviceStatus={{
+          ...mockProps.serviceStatus,
+          last_deployment_date: '2026-08-28T13:29:30Z',
+          status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
+          steps: {
+            total_computing_duration_sec: 0,
+            total_duration_sec: null,
+            details: [
+              {
+                step_name: 'DEPLOYMENT',
+                status: 'ONGOING',
+                duration_sec: 0,
+                started_at: '2026-08-28T13:30:00Z',
+              },
+            ],
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('0m : 30s')).toBeInTheDocument()
+
+    act(() => jest.advanceTimersByTime(1_000))
+
+    expect(screen.getByText('0m : 31s')).toBeInTheDocument()
+  })
+
+  it('falls back to the recorded computing duration without timing data', () => {
+    renderWithProviders(
+      <HeaderLogs
+        {...mockProps}
+        serviceStatus={{
+          ...mockProps.serviceStatus,
+          status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
+          steps: { total_computing_duration_sec: 17, total_duration_sec: null, details: [] },
+        }}
+      />
+    )
+
+    expect(screen.getByText('0m : 17s')).toBeInTheDocument()
+  })
 })

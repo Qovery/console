@@ -27,20 +27,14 @@ export interface HeaderLogsProps extends PropsWithChildren {
 function getOngoingDeploymentDurationSec(serviceStatus: Status, nowMs: number) {
   const steps = serviceStatus.steps?.details ?? []
   const stepsDurationSec = getServiceStepsDurationSec(steps, nowMs)
-  const hasLiveStepDuration = steps.some((step) => {
-    if (step.status !== 'ONGOING' || !step.started_at) return false
-
-    return Number.isFinite(Date.parse(step.started_at))
-  })
-
-  if (hasLiveStepDuration) return stepsDurationSec
 
   const deploymentStartedAtMs = Date.parse(serviceStatus.last_deployment_date ?? '')
   const deploymentDurationSec = Number.isFinite(deploymentStartedAtMs)
     ? Math.max(0, Math.floor((nowMs - deploymentStartedAtMs) / 1_000))
     : 0
+  const recordedComputingDurationSec = serviceStatus.steps?.total_computing_duration_sec ?? 0
 
-  return Math.max(stepsDurationSec, deploymentDurationSec)
+  return Math.max(stepsDurationSec, deploymentDurationSec, recordedComputingDurationSec)
 }
 
 export function HeaderLogs({
