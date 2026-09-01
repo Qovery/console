@@ -33,7 +33,8 @@ type PendingBlueprintCreation = {
 const BLUEPRINT_OUTCOME_READ_DELAY_MS = 30_000
 // The engine does not always attach a reason. Without a fallback the modal has nothing to render
 // and the failure passes silently, which is the bug this flow exists to prevent.
-const BLUEPRINT_DISPATCH_FAILED_MESSAGE = 'The dispatch failed without reporting a reason. Check the environment logs.'
+const BLUEPRINT_DISPATCH_FAILED_MESSAGE =
+  'The dispatch failed without reporting a reason. Check the environment for details.'
 const BLUEPRINT_STATUS_UNRESOLVED_MESSAGE =
   'This is taking longer than expected. The dispatch may still be running — check the environment for its status before creating this service again.'
 
