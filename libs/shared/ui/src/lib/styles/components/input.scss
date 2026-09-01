@@ -103,6 +103,25 @@
   }
 }
 
+// Same look as .input--disabled, but keeps pointer-events on so the value stays selectable/copyable.
+// Firefox (unlike Chrome) refuses to let users select text inside a pointer-events-none element.
+.input--readonly {
+  @apply border-neutral bg-surface-neutral-subtle;
+  box-shadow: none !important;
+
+  label {
+    @apply text-neutral-subtle;
+  }
+
+  .input__value {
+    @apply text-neutral-subtle;
+  }
+}
+
+.input--readonly.input--focused {
+  outline: none;
+}
+
 .input--error,
 .input--error .input__button {
   @apply border-negative-strong;

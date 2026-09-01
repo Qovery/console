@@ -20,6 +20,7 @@ export interface InputTextProps {
   hint?: ReactNode
   error?: string
   disabled?: boolean
+  readOnly?: boolean
   dataTestId?: string
   rightElement?: ReactNode
   placeholder?: string
@@ -38,6 +39,7 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
     error,
     className = '',
     disabled,
+    readOnly,
     rightElement,
     dataTestId,
     placeholder,
@@ -74,8 +76,13 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
   const hasValue = Boolean(currentValue?.toString().length)
   const hasLabelUp = hasFocus || hasValue || Boolean(placeholder) ? 'input--label-up' : ''
   const hasError = error && error.length > 0 ? 'input--error' : ''
-  const inputActions = hasFocus ? 'input--focused' : disabled ? 'input--disabled' : ''
-  const isDisabled = disabled ? 'input--disabled !border-neutral' : ''
+  const disabledClass = disabled ? 'input--disabled' : readOnly ? 'input--readonly' : ''
+  const inputActions = hasFocus ? 'input--focused' : disabledClass
+  const isDisabled = disabled
+    ? 'input--disabled !border-neutral'
+    : readOnly
+      ? 'input--readonly !border-neutral hover:!border-neutral !cursor-default'
+      : ''
 
   const displayPicker = () => {
     const input = inputRef.current?.querySelector('input')
@@ -117,9 +124,14 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
               ref={ref}
               name={name}
               id={label}
-              className={twMerge('input__value', rightElement && '!pr-9')}
+              className={twMerge(
+                'input__value',
+                rightElement && '!pr-9',
+                readOnly && '!cursor-default caret-transparent'
+              )}
               type={currentType}
               disabled={disabled}
+              readOnly={readOnly}
               value={currentValue}
               placeholder={placeholder}
               autoFocus={autoFocus}

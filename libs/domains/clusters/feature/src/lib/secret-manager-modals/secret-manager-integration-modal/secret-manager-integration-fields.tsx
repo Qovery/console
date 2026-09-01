@@ -18,7 +18,7 @@ export function SecretManagerIdField({ methods }: SecretManagerIntegrationFields
           name={field.name}
           value={field.value}
           error={error?.message}
-          disabled
+          readOnly
           hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
         />
       )}
