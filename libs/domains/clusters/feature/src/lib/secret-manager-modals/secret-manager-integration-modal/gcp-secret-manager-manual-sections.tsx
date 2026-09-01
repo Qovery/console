@@ -6,16 +6,18 @@ import { type Value } from '@qovery/shared/interfaces'
 import { Button, CopyButton, Dropzone, ExternalLink, Heading, Icon, Section } from '@qovery/shared/ui'
 import {
   GcpProjectIdField,
+  SecretManagerIdField,
   SecretManagerNameField,
   SecretManagerRegionField,
 } from './secret-manager-integration-fields'
 
 interface GcpSecretManagerManualSectionsProps {
+  isEdit: boolean
   methods: UseFormReturn<SecretManagerAccess>
   regions: Value[]
 }
 
-export function GcpSecretManagerManualSections({ methods, regions }: GcpSecretManagerManualSectionsProps) {
+export function GcpSecretManagerManualSections({ isEdit, methods, regions }: GcpSecretManagerManualSectionsProps) {
   const [fileDetails, setFileDetails] = useState<{ name: string; size: number }>()
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     maxFiles: 1,
@@ -112,6 +114,7 @@ export function GcpSecretManagerManualSections({ methods, regions }: GcpSecretMa
             return <div />
           }}
         />
+        {isEdit && <SecretManagerIdField methods={methods} />}
         <GcpProjectIdField methods={methods} />
         <SecretManagerRegionField methods={methods} regions={regions} />
         <SecretManagerNameField methods={methods} />

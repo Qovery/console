@@ -41,6 +41,7 @@ export function SecretManagerIntegrationModal({
   )
   const { navigation, layout, aws, defaultAuthenticationMode } = constraints
   const { isManualOnlyGcpIntegration, isManualOnlyAwsIntegration } = layout
+  const isEdit = mode === 'edit'
   const providerTabs = getActiveProviderConstraints(constraints)
   const automaticTab = providerTabs?.automatic
 
@@ -126,12 +127,13 @@ export function SecretManagerIntegrationModal({
 
   const manualSections = isGcpManualTabOnGcpSecretManager ? (
     <div className="flex flex-col gap-3">
-      <GcpSecretManagerManualSections methods={methods} regions={gcpRegions} />
+      <GcpSecretManagerManualSections isEdit={isEdit} methods={methods} regions={gcpRegions} />
     </div>
   ) : (
     <AwsSecretManagerManualSections
       authenticationTypeSelect={aws?.manual.authenticationTypeSelect}
       cluster={cluster}
+      isEdit={isEdit}
       isManualOnlyIntegration={isManualOnlyAwsIntegration}
       methods={methods}
       option={option}
@@ -151,7 +153,7 @@ export function SecretManagerIntegrationModal({
       >
         <div className={`flex flex-col ${isManualOnlyGcpIntegration ? 'gap-3' : 'gap-4'} px-5 pb-6 pt-4`}>
           {isManualOnlyGcpIntegration ? (
-            <GcpSecretManagerManualSections methods={methods} regions={gcpRegions} />
+            <GcpSecretManagerManualSections isEdit={isEdit} methods={methods} regions={gcpRegions} />
           ) : (
             manualSections
           )}
@@ -208,7 +210,7 @@ export function SecretManagerIntegrationModal({
       </div>
       <div className="p-5">
         {activeTab === 'automatic' ? (
-          <SecretManagerAutomaticSections methods={methods} option={option} regions={regions} />
+          <SecretManagerAutomaticSections isEdit={isEdit} methods={methods} option={option} regions={regions} />
         ) : (
           manualSections
         )}
