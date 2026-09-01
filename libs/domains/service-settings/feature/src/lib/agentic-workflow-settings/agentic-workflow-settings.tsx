@@ -293,8 +293,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
               description="Allow this agent task to listen for and process incoming requests."
               onChange={(value) => form.setValue('enabled', value, { shouldDirty: true })}
             />
-            <div className="pt-6">
-              <h2 className="mb-1 text-base font-medium text-neutral">Execution mode</h2>
+            <Section className="pt-6">
+              <Heading level={2} className="mb-1">
+                Execution mode
+              </Heading>
               <p className="mb-4 text-sm text-neutral-subtle">Choose how each agent task execution is isolated.</p>
               <RadioGroup.Root
                 value={values.executionMode}
@@ -336,9 +338,11 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
                   </span>
                 </label>
               </RadioGroup.Root>
-            </div>
-            <div className="pt-6">
-              <h2 className="mb-1 text-base font-medium text-neutral">Schedule</h2>
+            </Section>
+            <Section className="pt-6">
+              <Heading level={2} className="mb-1">
+                Schedule
+              </Heading>
               <p className="mb-4 text-sm text-neutral-subtle">
                 Configure when this agent task runs automatically in addition to webhook requests.
               </p>
@@ -350,9 +354,11 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
                   Next run: {new Date(nextRunAt).toLocaleString(undefined, { timeZone: values.timezone })}
                 </p>
               ) : null}
-            </div>
-            <div className="pt-6">
-              <h2 className="mb-1 text-base font-medium text-neutral">Resources</h2>
+            </Section>
+            <Section className="pt-6">
+              <Heading level={2} className="mb-1">
+                Resources
+              </Heading>
               <p className="mb-4 text-sm text-neutral-subtle">
                 Configure the compute resources allocated to the agent task.
               </p>
@@ -368,7 +374,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
                   />
                 ))}
               </div>
-            </div>
+            </Section>
           </>
         )}
         {page === 'ai-configuration' && (
@@ -392,9 +398,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         )}
         {page === 'connections' && (
           <>
-            <div className="flex items-center justify-between pt-2">
+            <Section className="flex-row items-center justify-between pt-2">
               <div>
-                <h2 className="text-base font-medium text-neutral">Git repositories</h2>
+                <Heading level={2}>Git repositories</Heading>
                 <p className="mt-1 text-sm text-neutral-subtle">
                   Select the repositories and branches the agent task can access.
                 </p>
@@ -403,7 +409,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
                 <Icon iconName="plus" />
                 Add repository
               </Button>
-            </div>
+            </Section>
             {values.repositories.map((repository, index) => (
               <GitRepositoryCard
                 key={`${index}-${repository.provider ?? gitTokens.find(({ id }) => id === repository.gitTokenId)?.type ?? ''}`}
