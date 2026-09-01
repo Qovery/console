@@ -15,13 +15,11 @@ export interface UseBlueprintServiceCreatedSocketProps {
 }
 
 // The socket carries the older bare notification and the newer dispatch frame, on either the
-// original route or `/blueprint/dispatch`. Producers spell the fields both ways, so read both.
+// original route or `/blueprint/dispatch`. `error_message` is null when the engine gave no reason.
 interface BlueprintDispatchFrame {
   type?: 'created' | 'failed'
   blueprint_id?: string
-  blueprintId?: string
-  error_message?: string
-  errorMessage?: string
+  error_message?: string | null
 }
 
 export function useBlueprintServiceCreatedSocket({
@@ -42,7 +40,7 @@ export function useBlueprintServiceCreatedSocket({
       }
 
       // Every dispatch in the environment lands here, including ones this flow did not start
-      const frameBlueprintId = frame?.blueprint_id ?? frame?.blueprintId
+      const frameBlueprintId = frame?.blueprint_id
       if (frameBlueprintId && blueprintId && frameBlueprintId !== blueprintId) {
         return
       }
@@ -50,7 +48,7 @@ export function useBlueprintServiceCreatedSocket({
       // A failure frame must not be read as a creation. Only an explicit failure is treated as
       // one, so the older payload — which carries no `type` — still means the service exists.
       if (frame?.type === 'failed') {
-        onDispatchFailed?.(frame.error_message ?? frame.errorMessage)
+        onDispatchFailed?.(frame.error_message ?? undefined)
         return
       }
 

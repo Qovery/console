@@ -31,6 +31,9 @@ type PendingBlueprintCreation = {
 }
 
 const BLUEPRINT_OUTCOME_READ_DELAY_MS = 30_000
+// The engine does not always attach a reason. Without a fallback the modal has nothing to render
+// and the failure passes silently, which is the bug this flow exists to prevent.
+const BLUEPRINT_DISPATCH_FAILED_MESSAGE = 'The dispatch failed without reporting a reason. Check the environment logs.'
 const BLUEPRINT_STATUS_UNRESOLVED_MESSAGE =
   'This is taking longer than expected. The dispatch may still be running — check the environment for its status before creating this service again.'
 
@@ -155,7 +158,7 @@ export function BlueprintStepSummary() {
     blueprintId: createdBlueprintId,
     enabled: isWaitingForServiceCreated && !isBlueprintCreationFailed,
     onServiceCreated: handleBlueprintServiceCreated,
-    onDispatchFailed: failBlueprintCreation,
+    onDispatchFailed: (errorMessage) => failBlueprintCreation(errorMessage ?? BLUEPRINT_DISPATCH_FAILED_MESSAGE),
   })
 
   useEffect(() => {
@@ -182,7 +185,9 @@ export function BlueprintStepSummary() {
 
     match(resolveBlueprintCreationOutcome(blueprintDetails, createdDeploymentId))
       .with({ status: 'created' }, () => handleBlueprintServiceCreated())
-      .with({ status: 'failed' }, ({ errorMessage }) => failBlueprintCreation(errorMessage))
+      .with({ status: 'failed' }, ({ errorMessage }) =>
+        failBlueprintCreation(errorMessage ?? BLUEPRINT_DISPATCH_FAILED_MESSAGE)
+      )
       // Still WAITING_RUNNING or DEPLOYING. Not a failure, so it must not claim one — and not a
       // success either, so say what is actually known and let the user go look.
       .with({ status: 'pending' }, () => failBlueprintCreation(BLUEPRINT_STATUS_UNRESOLVED_MESSAGE, false))

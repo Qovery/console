@@ -718,6 +718,21 @@ describe('BlueprintCreationFlow', () => {
       }
     )
 
+    it('should still surface a failure the engine gave no reason for', async () => {
+      jest.useFakeTimers()
+      mockUseBlueprint.mockReturnValue({
+        data: blueprintDetails({ latest_deployment: deployment({ status: 'FAILED', error_message: null }) }),
+      })
+
+      await createBlueprintAndDispatch()
+
+      expect(mockToast).not.toHaveBeenCalled()
+      expect(mockNavigate).not.toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
+      // Without a fallback the modal has nothing to render and the failure passes silently
+      expect(screen.getByText(/failed without reporting a reason/)).toBeVisible()
+      expect(screen.getByRole('button', { name: 'Retry' })).toBeVisible()
+    })
+
     it.each(['WAITING_RUNNING', 'DEPLOYING'])(
       'should neither claim success nor failure while the dispatch is still %s',
       async (status) => {

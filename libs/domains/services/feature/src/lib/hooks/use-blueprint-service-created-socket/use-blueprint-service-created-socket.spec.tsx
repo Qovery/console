@@ -99,9 +99,9 @@ describe('useBlueprintServiceCreatedSocket', () => {
   })
 
   it.each([
-    ['snake_case', { type: 'failed', blueprint_id: 'blueprint-1', error_message: 'variable value is required' }],
-    ['camelCase', { type: 'failed', blueprintId: 'blueprint-1', errorMessage: 'variable value is required' }],
-  ])('should report a %s failure frame as a failure, not a creation', (_casing, frame) => {
+    ['with the engine message', { error_message: 'variable value is required' }, 'variable value is required'],
+    ['when the engine gave no reason', { error_message: null }, undefined],
+  ])('should report a failure frame as a failure, not a creation, %s', (_case, extra, expected) => {
     const onServiceCreated = jest.fn()
     const onDispatchFailed = jest.fn()
     const queryClient = renderUseBlueprintServiceCreatedSocket({
@@ -114,10 +114,10 @@ describe('useBlueprintServiceCreatedSocket', () => {
     })
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
-    subscriptionConfig?.onMessage?.(queryClient, frame)
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'failed', blueprint_id: 'blueprint-1', ...extra })
 
     expect(onServiceCreated).not.toHaveBeenCalled()
-    expect(onDispatchFailed).toHaveBeenCalledWith('variable value is required')
+    expect(onDispatchFailed).toHaveBeenCalledWith(expected)
   })
 
   it('should ignore a frame for another blueprint in the same environment', () => {
