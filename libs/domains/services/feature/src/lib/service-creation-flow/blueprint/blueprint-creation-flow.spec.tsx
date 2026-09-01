@@ -167,8 +167,7 @@ function WithBlueprintManifestFields({ children }: { children: JSX.Element }) {
   return <BlueprintManifestFieldsProvider>{children}</BlueprintManifestFieldsProvider>
 }
 
-const BLUEPRINT_STATUS_POLL_INTERVAL_MS = 5_000
-const BLUEPRINT_STATUS_POLL_TIMEOUT_MS = 300_000
+const BLUEPRINT_OUTCOME_READ_DELAY_MS = 30_000
 const blueprintCreationResponse = {
   id: 'blueprint-1',
   catalog_url: 'https://github.com/Qovery/service-catalog/aws/postgres',
@@ -672,24 +671,21 @@ describe('BlueprintCreationFlow', () => {
         )
       )
 
-      // let the poll's first result reach the reconcile effect
+      // the websocket stayed silent, so the flow reads the blueprint
       act(() => {
-        jest.advanceTimersByTime(BLUEPRINT_STATUS_POLL_INTERVAL_MS)
+        jest.advanceTimersByTime(BLUEPRINT_OUTCOME_READ_DELAY_MS)
       })
     }
 
-    it('should read the blueprint from the dispatch rather than after a fallback delay', async () => {
+    it('should read the blueprint instead of assuming the service was created', async () => {
       jest.useFakeTimers()
 
       await createBlueprintAndDispatch()
 
       expect(mockUseBlueprint).toHaveBeenLastCalledWith(
-        expect.objectContaining({
-          blueprintId: 'blueprint-1',
-          enabled: true,
-          refetchInterval: BLUEPRINT_STATUS_POLL_INTERVAL_MS,
-        })
+        expect.objectContaining({ blueprintId: 'blueprint-1', enabled: true })
       )
+      expect(mockToast).not.toHaveBeenCalled()
     })
 
     it('should complete the flow once the blueprint reports its service', async () => {
@@ -723,21 +719,19 @@ describe('BlueprintCreationFlow', () => {
     )
 
     it.each(['WAITING_RUNNING', 'DEPLOYING'])(
-      'should keep waiting while the deployment is still %s',
+      'should neither claim success nor failure while the dispatch is still %s',
       async (status) => {
         jest.useFakeTimers()
         mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ latest_deployment: deployment({ status }) }) })
 
         await createBlueprintAndDispatch()
 
-        act(() => {
-          jest.advanceTimersByTime(60_000)
-        })
-
         expect(mockToast).not.toHaveBeenCalled()
         expect(mockNavigate).not.toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
+        // Retrying something still in flight would create a second service beside it
+        expect(screen.getByText(/taking longer than expected/)).toBeVisible()
         expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
-        expect(mockUseBlueprint).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: true }))
+        expect(screen.getByRole('button', { name: 'Edit config' })).toBeVisible()
       }
     )
 
@@ -753,39 +747,6 @@ describe('BlueprintCreationFlow', () => {
 
       expect(mockToast).not.toHaveBeenCalled()
       expect(screen.queryByText('not ours')).not.toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
-    })
-
-    it('should not report success when the blueprint never reaches an outcome', async () => {
-      jest.useFakeTimers()
-      mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ latest_deployment: deployment() }) })
-
-      await createBlueprintAndDispatch()
-
-      act(() => {
-        jest.advanceTimersByTime(BLUEPRINT_STATUS_POLL_TIMEOUT_MS)
-      })
-
-      expect(mockToast).not.toHaveBeenCalled()
-      expect(mockNavigate).not.toHaveBeenCalledWith(ENVIRONMENT_OVERVIEW_NAVIGATION)
-      expect(mockUseBlueprint).toHaveBeenLastCalledWith(expect.objectContaining({ enabled: false }))
-    })
-
-    it('should not offer to retry a dispatch that may still be running', async () => {
-      jest.useFakeTimers()
-      mockUseBlueprint.mockReturnValue({ data: blueprintDetails({ latest_deployment: deployment() }) })
-
-      await createBlueprintAndDispatch()
-
-      act(() => {
-        jest.advanceTimersByTime(BLUEPRINT_STATUS_POLL_TIMEOUT_MS)
-      })
-
-      // Reaching the deadline is not a failure, so it must not claim one — and retrying a dispatch
-      // that is still running would create a second service alongside it
-      expect(screen.getByText(/taking longer than expected/)).toBeVisible()
-      expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
-      expect(screen.getByRole('button', { name: 'Edit config' })).toBeVisible()
     })
   })
 
