@@ -5,7 +5,8 @@ import { renderHook, waitFor } from '@qovery/shared/util-tests'
 import { queries } from '@qovery/state/util-queries'
 import { useBlueprint } from './use-blueprint'
 
-const mockAxiosGet = jest.spyOn(axios, 'get')
+// The generated client dispatches every call through `axios.request`
+const mockAxiosRequest = jest.spyOn(axios, 'request')
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
@@ -21,7 +22,7 @@ const createWrapper = () => {
 describe('useBlueprint', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockAxiosGet.mockResolvedValue({ data: { id: 'blueprint-1' } })
+    mockAxiosRequest.mockResolvedValue({ data: { id: 'blueprint-1' } })
   })
 
   it('should build the query key from the blueprint id', () => {
@@ -46,23 +47,25 @@ describe('useBlueprint', () => {
         error_message: 'variable value is required',
       },
     }
-    mockAxiosGet.mockResolvedValue({ data: blueprint })
+    mockAxiosRequest.mockResolvedValue({ data: blueprint })
 
     const { result } = renderHook(() => useBlueprint({ blueprintId: 'blueprint-1' }), { wrapper: createWrapper() })
 
     await waitFor(() => expect(result.current.data).toEqual(blueprint))
-    expect(mockAxiosGet).toHaveBeenCalledWith('/blueprint/blueprint-1')
+    expect(mockAxiosRequest).toHaveBeenCalledWith(
+      expect.objectContaining({ method: 'GET', url: expect.stringContaining('/blueprint/blueprint-1') })
+    )
   })
 
   it('should not query without a blueprint id', () => {
     renderHook(() => useBlueprint({ blueprintId: '' }), { wrapper: createWrapper() })
 
-    expect(mockAxiosGet).not.toHaveBeenCalled()
+    expect(mockAxiosRequest).not.toHaveBeenCalled()
   })
 
   it('should not query while disabled', () => {
     renderHook(() => useBlueprint({ blueprintId: 'blueprint-1', enabled: false }), { wrapper: createWrapper() })
 
-    expect(mockAxiosGet).not.toHaveBeenCalled()
+    expect(mockAxiosRequest).not.toHaveBeenCalled()
   })
 })

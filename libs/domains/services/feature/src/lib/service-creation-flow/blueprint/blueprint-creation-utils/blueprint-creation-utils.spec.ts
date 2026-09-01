@@ -1,13 +1,11 @@
 import {
+  type BlueprintDeploymentStatusResponse,
+  type BlueprintDetailsResponse,
   type BlueprintMajorVersion,
   type BlueprintManifestContextVariableField,
   type BlueprintManifestResponseResultsInner,
   type BlueprintManifestVariableField,
 } from 'qovery-typescript-axios'
-import {
-  type BlueprintDeploymentStatusResponse,
-  type BlueprintDetailsResponse,
-} from '@qovery/domains/services/data-access'
 import {
   type OverridableBlueprintManifestContextVariableField,
   formatFieldLabel,

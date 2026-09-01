@@ -1,5 +1,4 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
-import axios from 'axios'
 import {
   type AgenticWorkflowRequest,
   AgenticWorkflowsApi,
@@ -207,45 +206,6 @@ export type BlueprintService = AnyService & {
   blueprint_id: string
   tag?: string
 }
-export type BlueprintDeploymentStatus =
-  | 'WAITING_RUNNING'
-  | 'DEPLOYING'
-  | 'RUNNING'
-  | 'FAILED'
-  | 'CANCELING'
-  | 'CANCELED'
-  | 'INTERNAL_ERROR'
-
-export interface BlueprintDeploymentStatusResponse {
-  id: string
-  execution_id: string
-  status: BlueprintDeploymentStatus
-  started_at: string
-  terminated_at: string | null
-  error_message: string | null
-}
-
-export interface BlueprintDetailsResponse {
-  id: string
-  name: string
-  catalog_url: string
-  tag: string
-  environment_id: string
-  service_type: 'HELM' | 'TERRAFORM'
-  // The service the dispatch produced. Null while it is still running, and null if it failed.
-  service_id: string | null
-  latest_deployment: BlueprintDeploymentStatusResponse | null
-}
-
-export interface BlueprintCreationResponse {
-  id: string
-  catalog_url: string
-  tag: string
-  environment_id: string
-  deployment_id: string
-  execution_id: string
-}
-
 export type ReadOnlyService = ArgoCd
 export type EditableService = Exclude<AnyService, ReadOnlyService | AgenticWorkflow>
 export type SettingsService = Exclude<AnyService, ReadOnlyService>
@@ -373,9 +333,7 @@ export const services = createQueryKeys('services', {
   blueprint: ({ blueprintId }: { blueprintId: string }) => ({
     queryKey: [blueprintId],
     async queryFn() {
-      // Hand-rolled because `GET /blueprint/{blueprintId}` is not in the generated client yet.
-      // Swap for `blueprintApi.getBlueprint` once it is regenerated.
-      const response = await axios.get<BlueprintDetailsResponse>(`/blueprint/${blueprintId}`)
+      const response = await blueprintApi.getBlueprint(blueprintId)
       return response.data
     },
   }),
@@ -1169,15 +1127,7 @@ export const mutations = {
     return response.data
   },
   async createBlueprintDeployment({ environmentId, payload, deploy }: CreateBlueprintRequest) {
-    // Hand-rolled because `POST /environment/{environmentId}/blueprintDeployment` is not in the
-    // generated client yet. Swap for `blueprintApi.createBlueprintDeployment` once it is
-    // regenerated. Unlike the older `POST .../blueprint`, this answers 202 and reports the ids of
-    // the dispatch it started instead of claiming a service that does not exist yet.
-    const response = await axios.post<BlueprintCreationResponse>(
-      `/environment/${environmentId}/blueprintDeployment`,
-      payload,
-      { params: { deploy } }
-    )
+    const response = await blueprintApi.createBlueprintDeployment(environmentId, payload, deploy)
     return response.data
   },
   async previewBlueprintUpdate({ blueprintId, payload }: PreviewBlueprintUpdateRequest) {

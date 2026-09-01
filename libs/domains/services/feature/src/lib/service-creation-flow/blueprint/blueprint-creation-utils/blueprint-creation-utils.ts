@@ -1,10 +1,10 @@
 import {
+  type BlueprintDetailsResponse,
   type BlueprintMajorVersion,
   type BlueprintManifestVariableField,
   type BlueprintVariableRequest,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type BlueprintDetailsResponse } from '@qovery/domains/services/data-access'
 import {
   type BlueprintFieldValues,
   type OverridableBlueprintManifestContextVariableField,

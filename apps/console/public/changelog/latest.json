@@ -1,8 +1,8 @@
 [
   {
-    "name": "Qovery Blueprints, Builders Portal improvements",
-    "summary": "Hey Team, AI agents are provisioning infrastructure now, not just writing code, spinning up a database or a full environment in seconds, faster than any ticket queue or manual review was built for. That leaves platform teams with the same old choice, hand-build every request or hand out raw access ...",
-    "url": "https://www.qovery.com/changelog/2026-07-29",
-    "firstPublishedAt": "2026-07-29T00:00:00.000Z"
+    "name": "API Policy Tokens, More Agent CLI Commands, Expanded Blueprint Catalog",
+    "summary": "Hey Team, This release ships API Policy Tokens, which let you define exactly what a token can do, action by action, instead of handing it a bundle of permissions and trusting it to only use the ones it needs. We are also extending the CLI with more agent-facing commands and adding a wave of new bl ...",
+    "url": "https://www.qovery.com/changelog/2026-08-26",
+    "firstPublishedAt": "2026-08-26T00:00:00.000Z"
   }
 ]
