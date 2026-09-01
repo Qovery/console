@@ -23,6 +23,7 @@ export interface PromptEditorProps {
   disabled?: boolean
   editorClassName?: string
   error?: string
+  hideLabel?: boolean
   hint?: ReactNode
   label: string
   labelAction?: ReactNode
@@ -56,6 +57,7 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
     disabled,
     editorClassName,
     error,
+    hideLabel = false,
     hint,
     label,
     labelAction,
@@ -173,7 +175,10 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
           )
         )}
       >
-        <div data-prompt-label className="absolute left-3 top-3 z-10 flex items-center gap-0.5">
+        <div
+          data-prompt-label
+          className={hideLabel ? 'sr-only' : 'absolute left-3 top-3 z-10 flex items-center gap-0.5'}
+        >
           <label className="pointer-events-none text-xs font-medium text-neutral" htmlFor={name}>
             {label}
           </label>

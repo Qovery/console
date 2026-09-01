@@ -34,8 +34,26 @@ export const AgenticWorkflowPromptEditor = forwardRef<
   }))
 
   return (
-    <div className="overflow-hidden rounded border border-neutral bg-surface-neutral focus-within:border-neutral-component hover:border-neutral-component">
-      <div className="px-6 pt-6">
+    <div className="flex flex-col">
+      <div className="mb-4 flex items-center gap-1.5 text-sm font-medium text-neutral-subtle">
+        <span>Instructions</span>
+        <Tooltip
+          content={
+            <span>
+              Type <code className="font-mono">{'{{'}</code> to select an environment variable.
+            </span>
+          }
+        >
+          <button
+            type="button"
+            aria-label="Environment variable help"
+            className="flex h-4 w-4 items-center justify-center hover:text-neutral"
+          >
+            <Icon iconName="circle-info" className="text-xs" />
+          </button>
+        </Tooltip>
+      </div>
+      <div>
         <label className="sr-only" htmlFor="agent-task-name">
           Name
         </label>
@@ -50,33 +68,16 @@ export const AgenticWorkflowPromptEditor = forwardRef<
         />
         {nameError ? <p className="mt-1 text-xs font-medium text-negative">{nameError}</p> : null}
       </div>
-
       <TextAreaVariableSuggestion
         ref={promptRef}
         environmentId={environmentId}
         name="agent-prompt"
         label="Instructions"
-        labelAction={
-          <Tooltip
-            content={
-              <span>
-                Type <code className="font-mono">{'{{'}</code> to select an environment variable.
-              </span>
-            }
-          >
-            <button
-              type="button"
-              aria-label="Environment variable help"
-              className="flex h-4 w-4 items-center justify-center text-neutral-subtle hover:text-neutral"
-            >
-              <Icon iconName="circle-info" className="text-xs" />
-            </button>
-          </Tooltip>
-        }
+        hideLabel
         value={prompt}
         error={promptError}
-        className="mt-4 [&_.cm-content]:min-h-[420px]"
-        editorClassName="rounded-none border-0 bg-transparent focus-within:!border-0 focus-within:!outline-none [&_[data-prompt-label]]:left-6 [&_.cm-content]:px-6 [&_.cm-line]:px-0"
+        className="mt-3 [&_.cm-content]:min-h-80"
+        editorClassName="rounded-none border-0 bg-transparent focus-within:!border-0 focus-within:!outline-none [&_.cm-content]:px-0 [&_.cm-content]:pt-0 [&_.cm-line]:px-0"
         placeholder="Describe the agent task behavior."
         showVariablePicker={false}
         variableKeys={variableKeys}
