@@ -34,6 +34,12 @@ describe('getServiceStepDurationSec', () => {
     expect(durationSec).toBe(0)
   })
 
+  it('returns the recorded duration when the start time is invalid', () => {
+    const durationSec = getServiceStepDurationSec({ status: 'ONGOING', duration_sec: 12, started_at: 'invalid' }, nowMs)
+
+    expect(durationSec).toBe(12)
+  })
+
   it('does not return a negative duration for a future start time', () => {
     const durationSec = getServiceStepDurationSec({ status: 'ONGOING', started_at: '2026-08-28T13:31:00Z' }, nowMs)
 

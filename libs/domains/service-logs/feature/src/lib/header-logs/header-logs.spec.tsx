@@ -154,4 +154,58 @@ describe('HeaderLogs', () => {
 
     expect(screen.getByText('0m : 48s')).toBeInTheDocument()
   })
+
+  it('falls back to the deployment elapsed time when step details are empty', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2026-08-28T13:30:00Z'))
+
+    renderWithProviders(
+      <HeaderLogs
+        {...mockProps}
+        serviceStatus={{
+          ...mockProps.serviceStatus,
+          last_deployment_date: '2026-08-28T13:29:30Z',
+          status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
+          steps: { total_computing_duration_sec: 0, total_duration_sec: null, details: [] },
+        }}
+      />
+    )
+
+    expect(screen.getByText('0m : 30s')).toBeInTheDocument()
+
+    act(() => jest.advanceTimersByTime(1_000))
+
+    expect(screen.getByText('0m : 31s')).toBeInTheDocument()
+  })
+
+  it('falls back to the deployment elapsed time when no step has a live start time', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2026-08-28T13:30:00Z'))
+
+    renderWithProviders(
+      <HeaderLogs
+        {...mockProps}
+        serviceStatus={{
+          ...mockProps.serviceStatus,
+          last_deployment_date: '2026-08-28T13:29:30Z',
+          status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
+          steps: {
+            total_computing_duration_sec: 17,
+            total_duration_sec: null,
+            details: [
+              { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 2 },
+              { step_name: 'BUILD', status: 'SUCCESS', duration_sec: 15 },
+              { step_name: 'DEPLOYMENT', status: 'ONGOING', duration_sec: 0 },
+            ],
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('0m : 30s')).toBeInTheDocument()
+
+    act(() => jest.advanceTimersByTime(1_000))
+
+    expect(screen.getByText('0m : 31s')).toBeInTheDocument()
+  })
 })

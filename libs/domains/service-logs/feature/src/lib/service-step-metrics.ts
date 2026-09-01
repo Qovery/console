@@ -4,7 +4,7 @@ export function getServiceStepDurationSec(step: ServiceStepMetric, nowMs: number
   if (step.status !== 'ONGOING' || !step.started_at) return step.duration_sec || 0
 
   const startedAtMs = Date.parse(step.started_at)
-  return Number.isFinite(startedAtMs) ? Math.max(0, Math.floor((nowMs - startedAtMs) / 1_000)) : 0
+  return Number.isFinite(startedAtMs) ? Math.max(0, Math.floor((nowMs - startedAtMs) / 1_000)) : step.duration_sec || 0
 }
 
 export function getServiceStepsDurationSec(steps: ServiceStepMetric[], nowMs: number) {
