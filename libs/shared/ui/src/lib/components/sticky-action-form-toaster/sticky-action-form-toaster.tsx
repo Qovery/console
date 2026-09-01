@@ -22,17 +22,10 @@ const TOASTER_MOTION = {
 
 const REDUCED_TOASTER_MOTION = {
   initial: { opacity: 0 },
-  animate: {
-    opacity: 1,
-    pointerEvents: 'auto',
-    transition: { duration: 0.35, ease: [0.25, 0.46, 0.45, 0.94] },
-  },
-  exit: {
-    opacity: 0,
-    pointerEvents: 'none',
-    transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] },
-  },
-} satisfies Pick<MotionProps, 'initial' | 'animate' | 'exit'>
+  animate: { opacity: 1, pointerEvents: 'auto' },
+  exit: { opacity: 0, pointerEvents: 'none' },
+  transition: { duration: 0.2, ease: [0.25, 0.46, 0.45, 0.94] },
+} satisfies Pick<MotionProps, 'initial' | 'animate' | 'exit' | 'transition'>
 
 export interface StickyActionFormToasterProps {
   visible?: boolean
