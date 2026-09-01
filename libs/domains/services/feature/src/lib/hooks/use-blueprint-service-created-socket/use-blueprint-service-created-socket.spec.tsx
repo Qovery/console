@@ -97,4 +97,62 @@ describe('useBlueprintServiceCreatedSocket', () => {
 
     expect(onServiceCreated).toHaveBeenCalledTimes(1)
   })
+
+  it.each([
+    ['snake_case', { type: 'failed', blueprint_id: 'blueprint-1', error_message: 'variable value is required' }],
+    ['camelCase', { type: 'failed', blueprintId: 'blueprint-1', errorMessage: 'variable value is required' }],
+  ])('should report a %s failure frame as a failure, not a creation', (_casing, frame) => {
+    const onServiceCreated = jest.fn()
+    const onDispatchFailed = jest.fn()
+    const queryClient = renderUseBlueprintServiceCreatedSocket({
+      organizationId: 'org-1',
+      projectId: 'proj-1',
+      environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
+      onServiceCreated,
+      onDispatchFailed,
+    })
+    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
+
+    subscriptionConfig?.onMessage?.(queryClient, frame)
+
+    expect(onServiceCreated).not.toHaveBeenCalled()
+    expect(onDispatchFailed).toHaveBeenCalledWith('variable value is required')
+  })
+
+  it('should ignore a frame for another blueprint in the same environment', () => {
+    const onServiceCreated = jest.fn()
+    const onDispatchFailed = jest.fn()
+    const queryClient = renderUseBlueprintServiceCreatedSocket({
+      organizationId: 'org-1',
+      projectId: 'proj-1',
+      environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
+      onServiceCreated,
+      onDispatchFailed,
+    })
+    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
+
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'created', blueprint_id: 'blueprint-2' })
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'failed', blueprint_id: 'blueprint-2' })
+
+    expect(onServiceCreated).not.toHaveBeenCalled()
+    expect(onDispatchFailed).not.toHaveBeenCalled()
+  })
+
+  it('should still treat a payload without a type as a creation', () => {
+    const onServiceCreated = jest.fn()
+    const queryClient = renderUseBlueprintServiceCreatedSocket({
+      organizationId: 'org-1',
+      projectId: 'proj-1',
+      environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
+      onServiceCreated,
+    })
+    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
+
+    subscriptionConfig?.onMessage?.(queryClient, {})
+
+    expect(onServiceCreated).toHaveBeenCalledTimes(1)
+  })
 })

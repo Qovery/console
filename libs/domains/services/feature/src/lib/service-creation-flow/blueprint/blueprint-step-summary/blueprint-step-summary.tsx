@@ -152,8 +152,10 @@ export function BlueprintStepSummary() {
     organizationId,
     projectId,
     environmentId,
+    blueprintId: createdBlueprintId,
     enabled: isWaitingForServiceCreated && !isBlueprintCreationFailed,
     onServiceCreated: handleBlueprintServiceCreated,
+    onDispatchFailed: failBlueprintCreation,
   })
 
   useEffect(() => {
