@@ -23,6 +23,11 @@ Symlinks: `.cursor/skills/` and `.claude/skills/` point to `.agents/skills/`.
 - `ts-pattern` for branching logic. React Query for server state.
 - Shared utilities live in `@qovery/shared/util-js`.
 
+## Testing
+
+- In React tests, do not use `fireEvent`; treat it as deprecated in this repository. Use awaited `userEvent` interactions instead.
+- Allow exceptions only when `userEvent` cannot represent the browser event, and document why.
+
 ## Agent Behavior
 
 - Do not revert changes you did not author.

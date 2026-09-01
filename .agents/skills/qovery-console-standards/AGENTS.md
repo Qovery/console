@@ -117,7 +117,8 @@ libs/
 ### Test Setup
 
 - Use `renderWithProviders` from `@qovery/shared/util-tests`.
-- Prefer `userEvent` over `fireEvent`.
+- In React tests, do not use `fireEvent`; treat it as deprecated in this repository. Use awaited `userEvent` interactions instead.
+- Allow exceptions only when `userEvent` cannot represent the browser event, and document why.
 - Unit tests are mandatory for business logic.
 - Snapshots for complex UI components.
 
