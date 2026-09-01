@@ -87,6 +87,7 @@ export function RowMember(props: RowMemberProps) {
   const [roleOverrideId, setRoleOverrideId] = useState<string | null>(null)
   const displayedRoleValue = roleOverrideId && roleOverrideId !== selectedRoleValue ? roleOverrideId : selectedRoleValue
   const selectedRoleLabel = roleOptions.find((role) => role.value === displayedRoleValue)?.label ?? 'Select role'
+  const displayedRoleLabel = isOwner ? 'Owner' : selectedRoleLabel
 
   const handleRoleChange = (roleId: string | undefined) => {
     if (!roleId) return
@@ -248,7 +249,7 @@ export function RowMember(props: RowMemberProps) {
                 className="h-9 w-44 justify-between"
                 disabled={!canEditRole || loadingUpdateRole}
               >
-                <span className="truncate">{selectedRoleLabel}</span>
+                <span className="truncate">{displayedRoleLabel}</span>
                 <Icon iconName="angle-down" iconStyle="solid" className="text-sm text-neutral-subtle" />
               </Button>
             </DropdownMenu.Trigger>
