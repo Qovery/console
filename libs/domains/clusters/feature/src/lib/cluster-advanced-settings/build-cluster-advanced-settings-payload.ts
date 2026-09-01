@@ -3,6 +3,10 @@ import { objectFlattener } from '@qovery/shared/util-js'
 
 function normalizeClusterAdvancedSettingValue(value: unknown, defaultValue: unknown): unknown {
   if (typeof value === 'string') {
+    if (typeof defaultValue === 'string') {
+      return value
+    }
+
     try {
       return JSON.parse(value)
     } catch {
