@@ -2,7 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
 import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
-import { Button } from '@qovery/shared/ui'
+import { Button, Heading, Section } from '@qovery/shared/ui'
 import { type AgenticWorkflowGitRepository } from '../../agentic-workflow-context'
 
 interface GitContextForm {
@@ -46,11 +46,11 @@ export function GitContextModal({
 
   return (
     <FormProvider {...methods}>
-      <div className="flex flex-col gap-5 p-5">
+      <Section className="gap-5 p-5">
         <div className="flex flex-col gap-1 pr-8">
-          <h2 className="text-xl font-medium leading-7 text-neutral">
+          <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
             {context ? 'Edit Git repository' : 'Add from Git repository'}
-          </h2>
+          </Heading>
           <p className="text-sm leading-5 text-neutral-subtle">
             Link a repository so the agent can use its code and documentation as context.
           </p>
@@ -107,7 +107,7 @@ export function GitContextModal({
             </Button>
           </div>
         </div>
-      </div>
+      </Section>
     </FormProvider>
   )
 }

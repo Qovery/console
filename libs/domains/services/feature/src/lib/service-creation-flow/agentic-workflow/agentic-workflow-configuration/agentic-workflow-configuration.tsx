@@ -26,7 +26,6 @@ import {
 import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
 import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-deploy-environment'
-import { ServiceAvatar } from '../../../service-avatar/service-avatar'
 import {
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
@@ -37,6 +36,7 @@ import { AgenticWorkflowScheduleFields, isAgenticWorkflowScheduleValid } from '.
 import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } from './agentic-workflow-prompt-editor'
 import { AIModelCards } from './ai-model-cards'
 import { GitContextCard, GitContextCompactCard, GitContextModal } from './context'
+import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header'
 
 type SettingsGroup = 'general' | 'resources' | 'variables' | 'outputs' | 'advanced'
 
@@ -369,6 +369,7 @@ export function AgenticWorkflowConfiguration() {
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
+  const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
   const createdServiceIdRef = useRef<string>()
   const values = form.watch()
@@ -473,7 +474,7 @@ export function AgenticWorkflowConfiguration() {
     setShowValidationErrors(true)
 
     if (!values.name.trim()) {
-      promptEditorRef.current?.focusName()
+      headerRef.current?.focusName()
       return false
     }
 
@@ -880,22 +881,14 @@ export function AgenticWorkflowConfiguration() {
 
       <div className="flex min-h-0 flex-1">
         <main className="min-w-0 flex-1 overflow-y-auto">
-          <Section className="mx-auto flex max-w-[920px] flex-col gap-8 px-6 py-8 sm:px-10 sm:py-10">
-            <div className="flex items-center gap-4">
-              <ServiceAvatar
-                size="custom"
-                border="solid"
-                className="h-12 w-12 shrink-0 bg-surface-neutral p-1.5"
-                service={{ icon_uri: '', serviceType: 'AGENTIC_WORKFLOW' }}
-              />
-              <div>
-                <Heading level={1}>Create agent task</Heading>
-                <p className="mt-1 text-sm leading-5 text-neutral-subtle">
-                  Describe what your agent task should do, then adjust its configuration when needed.
-                </p>
-              </div>
-            </div>
-            <section aria-label="Context" className="flex flex-col gap-3 border-t border-neutral py-6">
+          <Section className="mx-auto flex max-w-[920px] flex-col px-6 py-8 sm:px-10 sm:py-10">
+            <AgenticWorkflowHeader
+              ref={headerRef}
+              name={values.name}
+              nameError={showNameError ? 'Please enter an agent task name.' : undefined}
+              onNameChange={(value) => form.setValue('name', value, { shouldDirty: true })}
+            />
+            <section aria-label="Context" className="flex flex-col gap-2 py-6">
               <h2 className="text-sm font-medium text-neutral-subtle">Context</h2>
               {values.gitRepositories.some(isGitRepositoryComplete) ? (
                 <>
@@ -922,7 +915,7 @@ export function AgenticWorkflowConfiguration() {
                 <GitContextCard onClick={() => openGitContext()} />
               )}
             </section>
-            <section aria-label="Agent task capabilities" className="border-y border-neutral py-1">
+            <section aria-label="Agent task capabilities" className="border-t border-neutral py-3">
               <ConfigurationRow label="Provider">
                 <Button
                   type="button"
@@ -971,14 +964,7 @@ export function AgenticWorkflowConfiguration() {
                       </Button>
                     </div>
                   ))}
-                <Button
-                  type="button"
-                  size="sm"
-                  color="neutral"
-                  variant="plain"
-                  className="border border-transparent group-hover:border-neutral group-hover:bg-surface-neutral"
-                  onClick={() => setMcpModalOpen(true)}
-                >
+                <Button type="button" size="sm" color="neutral" variant="outline" onClick={() => setMcpModalOpen(true)}>
                   <Icon iconName="circle-plus" iconStyle="regular" />
                   Add MCP
                 </Button>
@@ -1000,8 +986,7 @@ export function AgenticWorkflowConfiguration() {
                     type="button"
                     size="sm"
                     color="neutral"
-                    variant="plain"
-                    className="border border-transparent group-hover:border-neutral group-hover:bg-surface-neutral"
+                    variant="outline"
                     onClick={() => setScheduleModalOpen(true)}
                   >
                     <Icon iconName="circle-plus" iconStyle="regular" />
@@ -1010,17 +995,16 @@ export function AgenticWorkflowConfiguration() {
                 )}
               </ConfigurationRow>
             </section>
-            <AgenticWorkflowPromptEditor
-              ref={promptEditorRef}
-              environmentId={environmentId}
-              name={values.name}
-              nameError={showNameError ? 'Please enter an agent task name.' : undefined}
-              prompt={values.agentPrompt}
-              promptError={showPromptError ? 'Please describe what the agent task should do.' : undefined}
-              variableKeys={variableValues.map((variable) => variable.variable ?? '').filter(Boolean)}
-              onNameChange={(value) => form.setValue('name', value, { shouldDirty: true })}
-              onPromptChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
-            />
+            <section aria-label="Instructions" className="border-t border-neutral pt-6">
+              <AgenticWorkflowPromptEditor
+                ref={promptEditorRef}
+                environmentId={environmentId}
+                prompt={values.agentPrompt}
+                promptError={showPromptError ? 'Please describe what the agent task should do.' : undefined}
+                variableKeys={variableValues.map((variable) => variable.variable ?? '').filter(Boolean)}
+                onPromptChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
+              />
+            </section>
           </Section>
         </main>
 
