@@ -107,30 +107,37 @@ function SettingsAccordionItem({
 
 function ConfigurationModalContent({
   children,
+  confirmLabel = 'Done',
   description,
   doneDisabled = false,
   setOpen,
   title,
 }: {
   children: ReactNode
+  confirmLabel?: string
   description: ReactNode
   doneDisabled?: boolean
   setOpen?: (open: boolean) => void
   title: string
 }) {
   return (
-    <div className="flex flex-col">
-      <div className="border-b border-neutral px-5 py-4 pr-12">
-        <Heading level={2}>{title}</Heading>
-        <p className="mt-1 text-sm text-neutral-subtle">{description}</p>
+    <Section className="gap-5 p-5">
+      <div className="flex flex-col gap-1 pr-8">
+        <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
+          {title}
+        </Heading>
+        <p className="text-sm leading-5 text-neutral-subtle">{description}</p>
       </div>
-      <div className="flex flex-col gap-4 p-5">{children}</div>
-      <div className="flex justify-end border-t border-neutral p-5">
+      <div className="flex flex-col gap-4">{children}</div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
+          Cancel
+        </Button>
         <Button type="button" size="md" disabled={doneDisabled} onClick={() => setOpen?.(false)}>
-          Done
+          {confirmLabel}
         </Button>
       </div>
-    </div>
+    </Section>
   )
 }
 
@@ -312,11 +319,11 @@ function DockerFragmentModal({ setOpen }: { setOpen?: (open: boolean) => void })
   const [value, setValue] = useState(dockerFragment)
 
   return (
-    <div className="flex flex-col gap-5 p-5">
+    <Section className="gap-5 p-5">
       <div className="flex flex-col gap-1 pr-8">
-        <h2 className="text-xl font-medium leading-7 text-neutral">
+        <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
           {dockerFragment ? 'Edit Dockerfile fragment' : 'Add Dockerfile fragment'}
-        </h2>
+        </Heading>
         <p className="text-sm leading-5 text-neutral-subtle">Add setup commands that run before the agent starts.</p>
       </div>
       <div className="overflow-hidden rounded-md border border-neutral">
@@ -328,18 +335,66 @@ function DockerFragmentModal({ setOpen }: { setOpen?: (open: boolean) => void })
           options={{ scrollBeyondLastLine: false, wordWrap: 'on' }}
         />
       </div>
-      <Button
-        type="button"
-        size="lg"
-        className="w-fit"
-        onClick={() => {
-          form.setValue('dockerFragment', value, { shouldDirty: true })
-          setOpen?.(false)
-        }}
-      >
-        Save fragment
-      </Button>
-    </div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          size="md"
+          onClick={() => {
+            form.setValue('dockerFragment', value, { shouldDirty: true })
+            setOpen?.(false)
+          }}
+        >
+          Save fragment
+        </Button>
+      </div>
+    </Section>
+  )
+}
+
+function McpJsonModal({ setOpen }: { setOpen?: (open: boolean) => void }) {
+  const { form } = useAgenticWorkflowCreateContext()
+  const mcpJson = form.watch('mcpJson')
+  const [value, setValue] = useState(mcpJson)
+  const error = getJsonError(value)
+
+  return (
+    <Section className="gap-5 p-5">
+      <div className="flex flex-col gap-1 pr-8">
+        <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
+          {mcpJson ? 'Edit MCP configuration' : 'Add MCP configuration'}
+        </Heading>
+        <p className="text-sm leading-5 text-neutral-subtle">Configure additional MCP servers with JSON.</p>
+      </div>
+      <div className={`overflow-hidden rounded-md border ${error ? 'border-negative' : 'border-neutral'}`}>
+        <CodeEditor
+          height="320px"
+          language="json"
+          value={value}
+          onChange={(nextValue) => setValue(nextValue ?? '')}
+          options={{ scrollBeyondLastLine: false, wordWrap: 'on' }}
+        />
+      </div>
+      {error ? <p className="text-xs font-medium text-negative">{error}</p> : null}
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          size="md"
+          disabled={Boolean(error)}
+          onClick={() => {
+            form.setValue('mcpJson', value, { shouldDirty: true })
+            setOpen?.(false)
+          }}
+        >
+          Save configuration
+        </Button>
+      </div>
+    </Section>
   )
 }
 
@@ -367,6 +422,7 @@ export function AgenticWorkflowConfiguration() {
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false)
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
+  const [mcpJsonModalOpen, setMcpJsonModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
@@ -820,15 +876,46 @@ export function AgenticWorkflowConfiguration() {
               </Heading>
               <p className="mt-1 text-xs text-neutral-subtle">Configure additional MCP servers with JSON.</p>
             </div>
-            <AgenticWorkflowCodeEditorField
-              name={`mcp-${panel}`}
-              label="MCP JSON"
-              hideLabel
-              language="json"
-              value={values.mcpJson}
-              error={mcpJsonError}
-              onChange={(value) => form.setValue('mcpJson', value, { shouldDirty: true })}
-            />
+            {values.mcpJson ? (
+              <div className="flex items-center gap-3 rounded-lg border border-neutral bg-surface-neutral p-3">
+                <Icon iconName="file-lines" iconStyle="regular" className="shrink-0 text-[13px] text-neutral-subtle" />
+                <span className="min-w-0 flex-1 truncate text-ssm leading-[18px] text-neutral">MCP configuration</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="xs"
+                  onClick={() => setMcpJsonModalOpen(true)}
+                >
+                  <Icon iconName="pen" iconStyle="regular" />
+                  Edit
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="xs"
+                  iconOnly
+                  aria-label="Delete MCP configuration"
+                  onClick={() => form.setValue('mcpJson', '', { shouldDirty: true })}
+                >
+                  <Icon iconName="trash-can" iconStyle="regular" />
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="sm"
+                  onClick={() => setMcpJsonModalOpen(true)}
+                >
+                  <Icon iconName="code" iconStyle="regular" />
+                  Add raw
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </SettingsAccordionItem>
@@ -1045,6 +1132,7 @@ export function AgenticWorkflowConfiguration() {
           <ConfigurationModalContent
             title="Configure provider"
             description="Choose the AI provider and configure its credentials and cloud settings."
+            confirmLabel="Save provider"
             setOpen={setProviderModalOpen}
           >
             <AIModelCards />
@@ -1089,6 +1177,7 @@ export function AgenticWorkflowConfiguration() {
           <ConfigurationModalContent
             title="Configure MCP"
             description="Select the organization MCPs this agent task can use."
+            confirmLabel="Save MCP"
             setOpen={setMcpModalOpen}
           >
             <McpServerPicker
@@ -1111,6 +1200,7 @@ export function AgenticWorkflowConfiguration() {
         <Modal externalOpen={scheduleModalOpen} setExternalOpen={setScheduleModalOpen} width={520}>
           <ConfigurationModalContent
             title="Configure automation"
+            confirmLabel="Save automation"
             setOpen={setScheduleModalOpen}
             description={
               <>
@@ -1130,6 +1220,12 @@ export function AgenticWorkflowConfiguration() {
       {dockerModalOpen ? (
         <Modal externalOpen={dockerModalOpen} setExternalOpen={setDockerModalOpen} width={720}>
           <DockerFragmentModal setOpen={setDockerModalOpen} />
+        </Modal>
+      ) : null}
+
+      {mcpJsonModalOpen ? (
+        <Modal externalOpen={mcpJsonModalOpen} setExternalOpen={setMcpJsonModalOpen} width={720}>
+          <McpJsonModal setOpen={setMcpJsonModalOpen} />
         </Modal>
       ) : null}
     </div>

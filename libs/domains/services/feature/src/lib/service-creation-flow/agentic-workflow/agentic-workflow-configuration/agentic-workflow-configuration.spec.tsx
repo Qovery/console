@@ -180,7 +180,7 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
     expect(screen.getByLabelText('API key')).toBeInTheDocument()
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
     expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
@@ -203,7 +203,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
-    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     expect(createButton).toBeEnabled()
     expect(createAndDeployButton).toBeEnabled()
@@ -216,7 +216,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.type(screen.getByRole('textbox', { name: 'Instructions' }), 'Review incoming payloads.')
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
-    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
     await waitFor(() => expect(mockCreateService).toHaveBeenCalledTimes(1))
@@ -235,7 +235,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.type(screen.getByRole('textbox', { name: 'Instructions' }), 'Review incoming payloads.')
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
-    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
     await userEvent.click(screen.getByRole('button', { name: 'Create and deploy' }))
 
     await waitFor(() => expect(mockDeployEnvironment).toHaveBeenCalledWith({ environmentId: 'environment-1' }))
