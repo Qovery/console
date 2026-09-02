@@ -36,7 +36,7 @@ import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
 import { AgenticWorkflowScheduleFields, isAgenticWorkflowScheduleValid } from '../agentic-workflow-schedule-fields'
 import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } from './agentic-workflow-prompt-editor'
 import { AIModelCards } from './ai-model-cards'
-import { GitRepositoryCard } from './git-repository-card'
+import { GitContextCard, GitContextCompactCard, GitContextModal } from './context'
 
 type SettingsGroup = 'general' | 'resources' | 'variables' | 'outputs' | 'advanced'
 
@@ -347,6 +347,7 @@ export function AgenticWorkflowConfiguration() {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: mcpServers = [], isLoading: areMcpServersLoading } = useMcpServers({ organizationId })
   const navigate = useNavigate()
+  const { closeModal, openModal } = useModal()
   const { form, onExit, variablesForm } = useAgenticWorkflowCreateContext()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
   const { isLoading: isDeploying, mutateAsync: deployEnvironment } = useDeployEnvironment({ projectId })
@@ -361,7 +362,6 @@ export function AgenticWorkflowConfiguration() {
   })
   const [openSettingsGroups, setOpenSettingsGroups] = useState<SettingsGroup[]>(['general'])
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [contextModalOpen, setContextModalOpen] = useState(false)
   const [providerModalOpen, setProviderModalOpen] = useState(false)
   const [mcpModalOpen, setMcpModalOpen] = useState(false)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
@@ -394,23 +394,47 @@ export function AgenticWorkflowConfiguration() {
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
-  const addRepository = () =>
-    form.setValue(
-      'gitRepositories',
-      [
-        ...values.gitRepositories,
-        {
-          provider: undefined,
-          gitTokenId: undefined,
-          gitTokenName: undefined,
-          isPublicRepository: false,
-          repository: '',
-          gitRepository: undefined,
-          branch: '',
-        },
-      ],
-      { shouldDirty: true }
-    )
+  const openGitContext = (index?: number) => {
+    const editingContext = typeof index === 'number' ? values.gitRepositories[index] : undefined
+
+    openModal({
+      content: (
+        <GitContextModal
+          context={editingContext}
+          setOpen={(open) => {
+            if (!open) closeModal()
+          }}
+          onRemove={
+            typeof index === 'number'
+              ? () => {
+                  form.setValue(
+                    'gitRepositories',
+                    values.gitRepositories.filter((_, repositoryIndex) => repositoryIndex !== index),
+                    { shouldDirty: true }
+                  )
+                  closeModal()
+                }
+              : undefined
+          }
+          onSave={(context) =>
+            form.setValue(
+              'gitRepositories',
+              typeof index === 'number'
+                ? values.gitRepositories.map((current, repositoryIndex) =>
+                    repositoryIndex === index ? context : current
+                  )
+                : [...values.gitRepositories, context],
+              { shouldDirty: true }
+            )
+          }
+        />
+      ),
+      options: {
+        width: 488,
+        fakeModal: true,
+      },
+    })
+  }
 
   const addOutput = () =>
     form.setValue(
@@ -472,7 +496,8 @@ export function AgenticWorkflowConfiguration() {
     }
 
     if (!gitRepositoriesValid) {
-      setContextModalOpen(true)
+      const invalidIndex = values.gitRepositories.findIndex((repository) => !isGitRepositoryComplete(repository))
+      openGitContext(invalidIndex >= 0 ? invalidIndex : undefined)
       return false
     }
 
@@ -870,36 +895,34 @@ export function AgenticWorkflowConfiguration() {
                 </p>
               </div>
             </div>
-            <section aria-label="Agent task capabilities" className="border-y border-neutral py-1">
-              <ConfigurationRow label="Context">
-                {values.gitRepositories.map((repository, index) =>
-                  isGitRepositoryComplete(repository) ? (
-                    <Button
-                      key={`${repository.repository}-${index}`}
-                      type="button"
-                      size="sm"
-                      color="neutral"
-                      variant="outline"
-                      className="max-w-full"
-                      onClick={() => setContextModalOpen(true)}
-                    >
-                      <Icon iconName="github" iconStyle="brands" />
-                      <span className="truncate">{repository.gitRepository?.name || repository.repository}</span>
+            <section aria-label="Context" className="flex flex-col gap-3 border-t border-neutral py-6">
+              <h2 className="text-sm font-medium text-neutral-subtle">Context</h2>
+              {values.gitRepositories.some(isGitRepositoryComplete) ? (
+                <>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {values.gitRepositories.map((repository, index) =>
+                      isGitRepositoryComplete(repository) ? (
+                        <GitContextCompactCard
+                          key={`${repository.repository}-${index}`}
+                          provider={repository.provider}
+                          repository={repository.gitRepository?.name || repository.repository}
+                          onClick={() => openGitContext(index)}
+                        />
+                      ) : null
+                    )}
+                  </div>
+                  <div className="flex">
+                    <Button type="button" variant="outline" color="neutral" size="sm" onClick={() => openGitContext()}>
+                      <Icon iconName="circle-plus" iconStyle="regular" />
+                      Add repository
                     </Button>
-                  ) : null
-                )}
-                <Button
-                  type="button"
-                  size="sm"
-                  color="neutral"
-                  variant="plain"
-                  className="border border-transparent group-hover:border-neutral group-hover:bg-surface-neutral"
-                  onClick={() => setContextModalOpen(true)}
-                >
-                  <Icon iconName="circle-plus" iconStyle="regular" />
-                  Add repository
-                </Button>
-              </ConfigurationRow>
+                  </div>
+                </>
+              ) : (
+                <GitContextCard onClick={() => openGitContext()} />
+              )}
+            </section>
+            <section aria-label="Agent task capabilities" className="border-y border-neutral py-1">
               <ConfigurationRow label="Provider">
                 <Button
                   type="button"
@@ -1032,48 +1055,6 @@ export function AgenticWorkflowConfiguration() {
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-
-      {contextModalOpen ? (
-        <Modal externalOpen={contextModalOpen} setExternalOpen={setContextModalOpen} width={640}>
-          <ConfigurationModalContent
-            title="Configure Git repositories"
-            description="Add the Git repositories the agent task can use as context."
-            doneDisabled={!gitRepositoriesValid}
-            setOpen={setContextModalOpen}
-          >
-            <div className="flex">
-              <Button type="button" variant="outline" color="neutral" size="sm" onClick={addRepository}>
-                <Icon iconName="plus" />
-                Add repository
-              </Button>
-            </div>
-            {values.gitRepositories.map((repository, index) => (
-              <GitRepositoryCard
-                key={index}
-                index={index}
-                repository={repository}
-                onChange={(nextRepository) => {
-                  const gitRepositories = [...values.gitRepositories]
-                  gitRepositories[index] = nextRepository
-                  form.setValue('gitRepositories', gitRepositories, { shouldDirty: true })
-                }}
-                onRemove={() =>
-                  form.setValue(
-                    'gitRepositories',
-                    values.gitRepositories.filter((_, repositoryIndex) => repositoryIndex !== index),
-                    { shouldDirty: true }
-                  )
-                }
-              />
-            ))}
-            {!gitRepositoriesValid ? (
-              <p className="text-xs font-medium text-negative">
-                Select a Git account, repository, and branch for each repository.
-              </p>
-            ) : null}
-          </ConfigurationModalContent>
-        </Modal>
-      ) : null}
 
       {providerModalOpen ? (
         <Modal externalOpen={providerModalOpen} setExternalOpen={setProviderModalOpen} width={520}>

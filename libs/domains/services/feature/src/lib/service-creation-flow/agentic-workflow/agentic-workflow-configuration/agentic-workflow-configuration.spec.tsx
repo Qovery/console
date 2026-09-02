@@ -31,6 +31,9 @@ jest.mock('../../../hooks/use-deploy-environment/use-deploy-environment', () => 
 }))
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
+  GitBranchSettings: () => <div>Git branch</div>,
+  GitProviderSetting: () => <div>Git provider</div>,
+  GitRepositorySetting: () => <div>Git repository</div>,
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
   McpServerSetting: () => <div>Organization MCP connectors</div>,
   useMcpServers: () => ({ data: [], isLoading: false }),
@@ -169,9 +172,9 @@ describe('AgenticWorkflowConfiguration', () => {
   it('should configure context, provider, and automations from the main canvas', async () => {
     const { userEvent } = renderConfiguration()
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add repository' }))
-    expect(screen.getByRole('heading', { name: 'Configure Git repositories' })).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
+    await userEvent.click(screen.getByRole('button', { name: /Add from Git repository/ }))
+    expect(screen.getByRole('heading', { name: 'Add from Git repository' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
