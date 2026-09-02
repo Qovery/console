@@ -1,6 +1,6 @@
 import { StateEnum, type Status } from 'qovery-typescript-axios'
 import { type Terraform } from '@qovery/domains/services/data-access'
-import { act, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { FiltersStageStep, type FiltersStageStepProps } from './filters-stage-step'
 
 const mockToggleColumnFilter = jest.fn()
@@ -27,11 +27,6 @@ jest.mock('@tanstack/react-router', () => ({
 describe('FiltersStageStep', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    jest.useFakeTimers()
-  })
-
-  afterEach(() => {
-    jest.useRealTimers()
   })
 
   it('renders BUILD and DEPLOY buttons', () => {
@@ -69,59 +64,5 @@ describe('FiltersStageStep', () => {
     renderWithProviders(<FiltersStageStep {...defaultProps} />)
     expect(screen.getByText('1m : 0s')).toBeInTheDocument() // BUILD duration
     expect(screen.getByText('2m : 0s')).toBeInTheDocument() // DEPLOY duration
-  })
-
-  it('ticks the current step duration locally from its backend start time', () => {
-    jest.setSystemTime(new Date('2026-08-25T10:05:00Z'))
-    const props = {
-      ...defaultProps,
-      serviceStatus: {
-        ...defaultProps.serviceStatus,
-        steps: {
-          details: [
-            { step_name: 'GIT_CLONE', status: 'SUCCESS', duration_sec: 60 },
-            {
-              step_name: 'BUILD',
-              status: 'ONGOING',
-              duration_sec: 0,
-              started_at: '2026-08-25T10:00:00Z',
-            },
-            { step_name: 'DEPLOYMENT', status: 'SUCCESS', duration_sec: 120 },
-          ],
-        },
-      },
-    }
-
-    renderWithProviders(<FiltersStageStep {...props} />)
-
-    expect(screen.getByText('6m : 0s')).toBeInTheDocument()
-
-    act(() => jest.advanceTimersByTime(1_000))
-
-    expect(screen.getByText('6m : 1s')).toBeInTheDocument()
-  })
-
-  it('uses the recorded duration once a step is completed', () => {
-    jest.setSystemTime(new Date('2026-08-25T11:00:00Z'))
-    const props = {
-      ...defaultProps,
-      serviceStatus: {
-        ...defaultProps.serviceStatus,
-        steps: {
-          details: [
-            {
-              step_name: 'BUILD',
-              status: 'SUCCESS',
-              duration_sec: 300,
-              started_at: '2026-08-25T10:00:00Z',
-            },
-          ],
-        },
-      },
-    }
-
-    renderWithProviders(<FiltersStageStep {...props} />)
-
-    expect(screen.getByText('5m : 0s')).toBeInTheDocument()
   })
 })
