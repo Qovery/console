@@ -150,7 +150,7 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
           EditorView.updateListener.of((update) => {
             if (
               update.docChanged &&
-              !update.transactions.some((transaction) => transaction.annotation(controlledUpdate))
+              !update.transactions.some((transaction) => transaction.isUserEvent('input.controlled'))
             ) {
               onChangeRef.current(update.state.doc.toString(), { cursor: update.state.selection.main.head })
             }
