@@ -306,6 +306,43 @@ export function AgenticWorkflowCodeEditorField({
   )
 }
 
+function DockerFragmentModal({ setOpen }: { setOpen?: (open: boolean) => void }) {
+  const { form } = useAgenticWorkflowCreateContext()
+  const dockerFragment = form.watch('dockerFragment')
+  const [value, setValue] = useState(dockerFragment)
+
+  return (
+    <div className="flex flex-col gap-5 p-5">
+      <div className="flex flex-col gap-1 pr-8">
+        <h2 className="text-xl font-medium leading-7 text-neutral">
+          {dockerFragment ? 'Edit Dockerfile fragment' : 'Add Dockerfile fragment'}
+        </h2>
+        <p className="text-sm leading-5 text-neutral-subtle">Add setup commands that run before the agent starts.</p>
+      </div>
+      <div className="overflow-hidden rounded-md border border-neutral">
+        <CodeEditor
+          height="320px"
+          language="dockerfile"
+          value={value}
+          onChange={(nextValue) => setValue(nextValue ?? '')}
+          options={{ scrollBeyondLastLine: false, wordWrap: 'on' }}
+        />
+      </div>
+      <Button
+        type="button"
+        size="lg"
+        className="w-fit"
+        onClick={() => {
+          form.setValue('dockerFragment', value, { shouldDirty: true })
+          setOpen?.(false)
+        }}
+      >
+        Save fragment
+      </Button>
+    </div>
+  )
+}
+
 export function AgenticWorkflowConfiguration() {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: mcpServers = [], isLoading: areMcpServersLoading } = useMcpServers({ organizationId })
@@ -329,6 +366,7 @@ export function AgenticWorkflowConfiguration() {
   const [mcpModalOpen, setMcpModalOpen] = useState(false)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [scheduleModalOpen, setScheduleModalOpen] = useState(false)
+  const [dockerModalOpen, setDockerModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
@@ -689,14 +727,48 @@ export function AgenticWorkflowConfiguration() {
                 Install additional CLIs or binaries in the agent runtime.
               </p>
             </div>
-            <AgenticWorkflowCodeEditorField
-              name={`docker-fragment-${panel}`}
-              label="Dockerfile fragment"
-              hideLabel
-              language="dockerfile"
-              value={values.dockerFragment}
-              onChange={(value) => form.setValue('dockerFragment', value, { shouldDirty: true })}
-            />
+            {values.dockerFragment ? (
+              <div className="flex items-center gap-3 rounded-lg border border-neutral bg-surface-neutral p-3">
+                <Icon iconName="file-lines" iconStyle="regular" className="shrink-0 text-[13px] text-neutral-subtle" />
+                <span className="min-w-0 flex-1 truncate text-ssm leading-[18px] text-neutral">
+                  Dockerfile fragment
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="xs"
+                  onClick={() => setDockerModalOpen(true)}
+                >
+                  <Icon iconName="pen" iconStyle="regular" />
+                  Edit
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="xs"
+                  iconOnly
+                  aria-label="Delete Dockerfile fragment"
+                  onClick={() => form.setValue('dockerFragment', '', { shouldDirty: true })}
+                >
+                  <Icon iconName="trash-can" iconStyle="regular" />
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="sm"
+                  onClick={() => setDockerModalOpen(true)}
+                >
+                  <Icon iconName="code" iconStyle="regular" />
+                  Add raw
+                </Button>
+              </div>
+            )}
           </div>
           <div className="flex flex-col gap-3">
             <div>
@@ -1087,6 +1159,12 @@ export function AgenticWorkflowConfiguration() {
           >
             <AgenticWorkflowScheduleFields showCronBuilderLink={false} />
           </ConfigurationModalContent>
+        </Modal>
+      ) : null}
+
+      {dockerModalOpen ? (
+        <Modal externalOpen={dockerModalOpen} setExternalOpen={setDockerModalOpen} width={720}>
+          <DockerFragmentModal setOpen={setDockerModalOpen} />
         </Modal>
       ) : null}
     </div>
