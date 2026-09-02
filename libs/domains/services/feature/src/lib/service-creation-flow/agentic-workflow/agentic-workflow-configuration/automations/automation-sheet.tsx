@@ -257,12 +257,11 @@ export function AutomationSheet({
     () =>
       automation ?? {
         id: crypto.randomUUID(),
-        name: 'New automation',
         triggers: [],
         output: undefined,
       }
   )
-  const canSave = Boolean(draft.name.trim() && draft.triggers.length)
+  const canSave = draft.triggers.length > 0
 
   const saveTrigger = (trigger: AgenticWorkflowAutomationTrigger) => {
     setDraft((current) => ({
@@ -312,12 +311,6 @@ export function AutomationSheet({
     <OverlaySheet onClose={onClose}>
       <SheetHeader title={automation ? 'Edit automation' : 'Add automation'} onClose={onClose} />
       <div className="flex flex-1 flex-col gap-4 overflow-auto px-5 pb-5">
-        <InputText
-          name="automation-name"
-          label="Automation name"
-          value={draft.name}
-          onChange={(event) => setDraft((current) => ({ ...current, name: event.currentTarget.value }))}
-        />
         <AutomationSection
           title="Triggers"
           description="At least one trigger is required. A trigger can be a schedule or a webhook."
@@ -401,7 +394,7 @@ export function AutomationSheet({
           size="md"
           disabled={!canSave}
           onClick={() => {
-            onSave({ ...draft, name: draft.name.trim() })
+            onSave(draft)
             onClose()
           }}
         >

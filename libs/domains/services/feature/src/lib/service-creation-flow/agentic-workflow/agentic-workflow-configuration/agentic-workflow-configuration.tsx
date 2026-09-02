@@ -32,7 +32,6 @@ import {
 } from '../agentic-workflow-context'
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
 import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } from './agentic-workflow-prompt-editor'
-import { AIModelCards } from './ai-model-cards'
 import { AutomationSheet } from './automations'
 import { GitContextCard, GitContextCompactCard, GitContextModal } from './context'
 import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header'
@@ -876,11 +875,7 @@ export function AgenticWorkflowConfiguration() {
                     onClick={() => openAutomationSheet(automation.id)}
                   >
                     <Icon iconName="bolt" iconStyle="regular" />
-                    <span className="truncate">
-                      {automation.name.trim() && automation.name.trim() !== 'New automation'
-                        ? automation.name
-                        : summarizeAutomation(automation)}
-                    </span>
+                    <span className="truncate">{summarizeAutomation(automation)}</span>
                   </Button>
                 ))}
                 <Button type="button" size="sm" color="neutral" variant="outline" onClick={() => openAutomationSheet()}>
@@ -938,11 +933,10 @@ export function AgenticWorkflowConfiguration() {
         <Modal externalOpen={providerModalOpen} setExternalOpen={setProviderModalOpen} width={520}>
           <ConfigurationModalContent
             title="Configure provider"
-            description="Choose the AI provider and configure its credentials and cloud settings."
+            description="Configure the Anthropic credentials and cloud settings for the agent task."
             confirmLabel="Save provider"
             setOpen={setProviderModalOpen}
           >
-            <AIModelCards />
             <InputText
               ref={modelApiKeyInputRef}
               name="model-api-key-provider"

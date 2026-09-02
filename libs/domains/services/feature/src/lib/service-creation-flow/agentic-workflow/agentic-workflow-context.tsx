@@ -77,7 +77,6 @@ export interface AgenticWorkflowAutomationTrigger {
 
 export interface AgenticWorkflowAutomation {
   id: string
-  name: string
   triggers: AgenticWorkflowAutomationTrigger[]
   output?: AgenticWorkflowOutput
 }

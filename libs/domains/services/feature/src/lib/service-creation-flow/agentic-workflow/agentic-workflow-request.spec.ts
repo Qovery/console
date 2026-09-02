@@ -36,7 +36,6 @@ describe('formatAgenticWorkflowRequest', () => {
         automations: [
           {
             id: 'automation-1',
-            name: 'Daily run',
             triggers: [{ id: 'trigger-1', type: 'schedule', cronExpression: '0 8 * * 1-5', timezone: 'Europe/Paris' }],
           },
         ],
@@ -53,7 +52,6 @@ describe('formatAgenticWorkflowRequest', () => {
       automations: [
         {
           id: 'automation-1',
-          name: 'Notify',
           triggers: [{ id: 'trigger-1', type: 'webhook' }],
           output: { url: 'https://hooks.example.com/workflow', headersJson: '{}', prompt: 'Notify the team.' },
         },
