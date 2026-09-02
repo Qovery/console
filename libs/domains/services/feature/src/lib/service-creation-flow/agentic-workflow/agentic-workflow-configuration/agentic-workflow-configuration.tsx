@@ -84,7 +84,7 @@ function SettingsAccordionItem({
   value: SettingsGroup
 }) {
   return (
-    <Accordion.Item value={value} className="border-b border-neutral">
+    <Accordion.Item value={value} className="border-b border-neutral last:rounded-b-none">
       <Accordion.Trigger
         data-settings-group={value}
         className="w-full cursor-pointer justify-between gap-3 bg-background-secondary px-4 py-4 text-left focus-visible:bg-surface-neutral-subtle focus-visible:outline-none"
