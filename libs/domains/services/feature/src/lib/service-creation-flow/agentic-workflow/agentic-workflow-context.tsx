@@ -81,13 +81,12 @@ export interface AgenticWorkflowAutomation {
   outputs: AgenticWorkflowOutput[]
 }
 
-// Every agent task always has a built-in webhook trigger; the schedule and
-// outputs are configured on top of it. The API only supports a single such
-// automation, so we keep exactly one.
+// The API only supports a single automation, so we keep exactly one. It starts
+// empty — the user adds its triggers (schedule or webhook) and outputs.
 export function createDefaultAutomation(): AgenticWorkflowAutomation {
   return {
     id: crypto.randomUUID(),
-    triggers: [{ id: crypto.randomUUID(), type: 'webhook' }],
+    triggers: [],
     outputs: [],
   }
 }
@@ -168,7 +167,7 @@ export function AgenticWorkflowCreationFlow({ children, onExit }: AgenticWorkflo
       modelSettingsJson: DEFAULT_MODEL_SETTINGS,
       whitelistHosts: '*',
       dockerFragment: '',
-      automations: [createDefaultAutomation()],
+      automations: [],
       agentPrompt: '',
     },
     mode: 'onChange',
