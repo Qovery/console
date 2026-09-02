@@ -1,4 +1,10 @@
-import { type Completion, type CompletionContext, autocompletion } from '@codemirror/autocomplete'
+import {
+  type Completion,
+  type CompletionContext,
+  autocompletion,
+  completionStatus,
+  startCompletion,
+} from '@codemirror/autocomplete'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { Compartment, EditorState, Transaction } from '@codemirror/state'
 import {
@@ -114,6 +120,9 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
 
   onChangeRef.current = onChange
   suggestionsRef.current = suggestions
+  const suggestionsSignature = suggestions
+    .map((suggestion) => `${suggestion.label}:${suggestion.value ?? ''}`)
+    .join('|')
 
   useImperativeHandle(ref, () => ({
     focus: () => editorRef.current?.focus(),
@@ -246,6 +255,15 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
       changes: { from: 0, insert: value, to: currentValue.length },
     })
   }, [controlledUpdate, value])
+
+  // Suggestions can resolve asynchronously; refresh an already-open completion
+  // so the picker updates instead of staying empty until the next keystroke.
+  useEffect(() => {
+    const editor = editorRef.current
+    if (editor && completionStatus(editor.state) !== null) {
+      startCompletion(editor)
+    }
+  }, [suggestionsSignature])
 
   return (
     <div className={className}>
