@@ -1,6 +1,6 @@
 import { forwardRef, useImperativeHandle, useRef } from 'react'
-import { TextAreaVariableSuggestion } from '@qovery/domains/variables/feature'
-import { Icon, type PromptEditorHandle, Tooltip } from '@qovery/shared/ui'
+import { useVariables } from '@qovery/domains/variables/feature'
+import { Icon, PromptEditor, type PromptEditorHandle, Tooltip } from '@qovery/shared/ui'
 
 export interface AgenticWorkflowPromptEditorHandle {
   focusPrompt: () => void
@@ -19,6 +19,10 @@ export const AgenticWorkflowPromptEditor = forwardRef<
   AgenticWorkflowPromptEditorProps
 >(function AgenticWorkflowPromptEditor({ environmentId, onPromptChange, prompt, promptError, variableKeys }, ref) {
   const promptRef = useRef<PromptEditorHandle>(null)
+  const { data: environmentVariables = [] } = useVariables({ parentId: environmentId, scope: 'ENVIRONMENT' })
+  const suggestions = Array.from(new Set([...variableKeys, ...environmentVariables.map(({ key }) => key)])).map(
+    (key) => ({ label: key })
+  )
 
   useImperativeHandle(ref, () => ({
     focusPrompt: () => promptRef.current?.focus(),
@@ -44,9 +48,8 @@ export const AgenticWorkflowPromptEditor = forwardRef<
           </button>
         </Tooltip>
       </div>
-      <TextAreaVariableSuggestion
+      <PromptEditor
         ref={promptRef}
-        environmentId={environmentId}
         name="agent-prompt"
         label="Instructions"
         hideLabel
@@ -55,9 +58,8 @@ export const AgenticWorkflowPromptEditor = forwardRef<
         className="[&_.cm-content]:min-h-80"
         editorClassName="rounded-none border-0 bg-transparent focus-within:!border-0 focus-within:!outline-none [&_.cm-content]:px-0 [&_.cm-content]:pt-0 [&_.cm-line]:px-0"
         placeholder="Type your instructions here…"
-        showVariablePicker={false}
-        variableKeys={variableKeys}
-        onChange={onPromptChange}
+        suggestions={suggestions}
+        onChange={(value) => onPromptChange(value)}
       />
     </div>
   )

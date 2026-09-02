@@ -40,36 +40,27 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
-  TextAreaVariableSuggestion: jest.requireActual('react').forwardRef<
-    HTMLTextAreaElement,
-    {
-      autoFocus?: boolean
-      error?: string
-      label: string
-      name: string
-      onChange: (value: string) => void
-      placeholder?: string
-      value: string
-    }
-  >(function TextAreaVariableSuggestion({ autoFocus, error, label, name, onChange, placeholder, value }, ref) {
-    return (
-      <label>
-        {label}
-        <textarea
-          ref={ref}
-          autoFocus={autoFocus}
-          aria-invalid={Boolean(error)}
-          name={name}
-          placeholder={placeholder}
-          value={value}
-          onChange={(event) => onChange(event.currentTarget.value)}
-        />
-        {error}
-      </label>
-    )
-  }),
   VariableRow: () => <div>Variable</div>,
   useImportVariables: () => ({ isLoading: false, mutateAsync: mockImportVariables }),
+}))
+
+jest.mock('./agentic-workflow-prompt-editor', () => ({
+  AgenticWorkflowPromptEditor: jest
+    .requireActual('react')
+    .forwardRef<
+      { focusPrompt: () => void },
+      { onPromptChange: (value: string) => void; prompt: string }
+    >(function AgenticWorkflowPromptEditor({ onPromptChange, prompt }, ref) {
+      jest.requireActual('react').useImperativeHandle(ref, () => ({ focusPrompt: () => undefined }))
+      return (
+        <textarea
+          aria-label="Instructions"
+          placeholder="Type your instructions here…"
+          value={prompt}
+          onChange={(event: { currentTarget: { value: string } }) => onPromptChange(event.currentTarget.value)}
+        />
+      )
+    }),
 }))
 
 jest.mock('../agentic-workflow-schedule-fields', () => ({

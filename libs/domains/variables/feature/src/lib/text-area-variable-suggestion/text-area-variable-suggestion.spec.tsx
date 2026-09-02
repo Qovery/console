@@ -2,10 +2,6 @@ import { useState } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { TextAreaVariableSuggestion } from './text-area-variable-suggestion'
 
-jest.mock('../hooks/use-variables/use-variables', () => ({
-  useVariables: () => ({ data: [{ key: 'ENV_TOKEN' }] }),
-}))
-
 jest.mock('../dropdown-variable/dropdown-variable', () => ({
   __esModule: true,
   default: ({
@@ -31,7 +27,7 @@ jest.mock('../dropdown-variable/dropdown-variable', () => ({
 }))
 
 function ControlledTextArea() {
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState('Call ')
 
   return (
     <>
@@ -49,18 +45,14 @@ function ControlledTextArea() {
 }
 
 describe('TextAreaVariableSuggestion', () => {
-  beforeAll(() => {
-    jest.spyOn(window, 'requestAnimationFrame').mockImplementation(() => 0)
-  })
-
-  it('keeps the manual dropdown closed when inline autocomplete is triggered', async () => {
+  it('opens suggestions after typing opening braces and exposes local variables', async () => {
     const { userEvent } = renderWithProviders(<ControlledTextArea />)
 
     await userEvent.click(screen.getByRole('textbox'))
     await userEvent.keyboard('{{{{')
 
-    expect(screen.getByTestId('dropdown-open')).toHaveTextContent('false')
-    expect(screen.getByTestId('variable-keys')).toHaveTextContent('LOCAL_TOKEN,ENV_TOKEN')
+    expect(screen.getByTestId('dropdown-open')).toHaveTextContent('true')
+    expect(screen.getByTestId('variable-keys')).toHaveTextContent('LOCAL_TOKEN')
   })
 
   it('replaces opening braces with the selected variable macro', async () => {
@@ -70,6 +62,6 @@ describe('TextAreaVariableSuggestion', () => {
     await userEvent.keyboard('{{{{')
     await userEvent.click(screen.getByRole('button', { name: 'Select API_URL' }))
 
-    expect(screen.getByTestId('value')).toHaveTextContent(/^\{\{API_URL\}\}$/)
+    expect(screen.getByTestId('value')).toHaveTextContent('Call {{API_URL}}')
   })
 })
