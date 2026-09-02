@@ -23,6 +23,7 @@ import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
 import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-deploy-environment'
 import {
+  type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
   createDefaultAutomation,
@@ -59,6 +60,14 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
 
 export function isOutputComplete(output: AgenticWorkflowOutput) {
   return Boolean(output.url.trim())
+}
+
+export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
+  const summary = automation.triggers
+    .map((trigger) => (trigger.type === 'schedule' ? 'Schedule' : 'Webhook'))
+    .join(' + ')
+  const outputCount = automation.outputs.length
+  return outputCount ? `${summary} → ${outputCount} output${outputCount > 1 ? 's' : ''}` : summary
 }
 
 export function areVariablesValid(variables: VariableData[]) {
@@ -842,8 +851,10 @@ export function AgenticWorkflowConfiguration() {
                   className="max-w-full"
                   onClick={() => setActiveSheet('automation')}
                 >
-                  <Icon iconName="circle-plus" iconStyle="regular" />
-                  Add automation
+                  <Icon iconName={automation.triggers.length ? 'bolt' : 'circle-plus'} iconStyle="regular" />
+                  <span className="truncate">
+                    {automation.triggers.length ? summarizeAutomation(automation) : 'Add automation'}
+                  </span>
                 </Button>
               </ConfigurationRow>
             </section>

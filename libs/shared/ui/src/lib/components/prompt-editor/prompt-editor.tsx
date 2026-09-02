@@ -1,7 +1,16 @@
 import { type Completion, type CompletionContext, autocompletion } from '@codemirror/autocomplete'
 import { defaultKeymap, history, historyKeymap } from '@codemirror/commands'
 import { Compartment, EditorState, Transaction } from '@codemirror/state'
-import { EditorView, placeholder as editorPlaceholder, keymap } from '@codemirror/view'
+import {
+  Decoration,
+  type DecorationSet,
+  EditorView,
+  MatchDecorator,
+  ViewPlugin,
+  type ViewUpdate,
+  placeholder as editorPlaceholder,
+  keymap,
+} from '@codemirror/view'
 import clsx from 'clsx'
 import { type ReactNode, forwardRef, useEffect, useImperativeHandle, useMemo, useRef } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
@@ -49,6 +58,29 @@ function variableCompletions(getSuggestions: () => PromptEditorSuggestion[]) {
     return { from: token.from + 2, options }
   }
 }
+
+// Highlight {{VARIABLE}} tokens in the editor.
+const variableMatcher = new MatchDecorator({
+  regexp: /\{\{[\w.-]+\}\}/g,
+  decoration: Decoration.mark({ class: 'cm-prompt-variable' }),
+})
+
+const variableHighlighter = ViewPlugin.fromClass(
+  class {
+    decorations: DecorationSet
+
+    constructor(view: EditorView) {
+      this.decorations = variableMatcher.createDeco(view)
+    }
+
+    update(update: ViewUpdate) {
+      if (update.docChanged || update.viewportChanged) {
+        this.decorations = variableMatcher.updateDeco(update, this.decorations)
+      }
+    }
+  },
+  { decorations: (plugin) => plugin.decorations }
+)
 
 export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(function PromptEditor(
   {
@@ -144,8 +176,16 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
               color: 'var(--brand-12)',
             },
             '.cm-completionIcon-variable': { color: 'var(--brand-11)' },
+            '.cm-prompt-variable': {
+              backgroundColor: 'var(--brand-3)',
+              borderRadius: '0.25rem',
+              color: 'var(--brand-11)',
+              fontWeight: '500',
+              padding: '0 2px',
+            },
           }),
           placeholderCompartment.of(editorPlaceholder(placeholder ?? '')),
+          variableHighlighter,
           autocompletion({ override: [variableCompletions(() => suggestionsRef.current)] }),
           EditorView.updateListener.of((update) => {
             if (
