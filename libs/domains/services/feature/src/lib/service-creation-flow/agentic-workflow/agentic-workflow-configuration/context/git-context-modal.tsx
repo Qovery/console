@@ -1,7 +1,12 @@
 import { useParams } from '@tanstack/react-router'
 import { type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
 import { FormProvider, useForm } from 'react-hook-form'
-import { GitBranchSettings, GitProviderSetting, GitRepositorySetting } from '@qovery/domains/organizations/feature'
+import {
+  GitBranchSettings,
+  GitProviderSetting,
+  GitPublicRepositorySettings,
+  GitRepositorySetting,
+} from '@qovery/domains/organizations/feature'
 import { Button, Heading, Section } from '@qovery/shared/ui'
 import { type AgenticWorkflowGitRepository } from '../../agentic-workflow-context'
 
@@ -42,6 +47,7 @@ export function GitContextModal({
   const provider = methods.watch('provider') as keyof typeof GitProviderEnum | undefined
   const gitTokenId = methods.watch('git_token_id') ?? undefined
   const repository = methods.watch('repository')
+  const isPublicRepository = methods.watch('is_public_repository')
   const close = () => setOpen?.(false)
 
   return (
@@ -57,23 +63,29 @@ export function GitContextModal({
         </div>
         <div className="flex flex-col gap-3">
           <GitProviderSetting organizationId={organizationId} portal />
-          {provider ? (
-            <GitRepositorySetting
-              organizationId={organizationId}
-              gitProvider={provider}
-              gitTokenId={gitTokenId}
-              portal
-            />
-          ) : null}
-          {provider && repository ? (
-            <GitBranchSettings
-              organizationId={organizationId}
-              gitProvider={provider}
-              gitTokenId={gitTokenId}
-              hideRootPath
-              portal
-            />
-          ) : null}
+          {isPublicRepository ? (
+            <GitPublicRepositorySettings hideRootPath />
+          ) : (
+            <>
+              {provider ? (
+                <GitRepositorySetting
+                  organizationId={organizationId}
+                  gitProvider={provider}
+                  gitTokenId={gitTokenId}
+                  portal
+                />
+              ) : null}
+              {provider && repository ? (
+                <GitBranchSettings
+                  organizationId={organizationId}
+                  gitProvider={provider}
+                  gitTokenId={gitTokenId}
+                  hideRootPath
+                  portal
+                />
+              ) : null}
+            </>
+          )}
         </div>
         <div className="flex items-center justify-between">
           <div>

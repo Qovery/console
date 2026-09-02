@@ -947,13 +947,23 @@ export function AgenticWorkflowConfiguration() {
       ) : null}
 
       {dockerModalOpen ? (
-        <Modal externalOpen={dockerModalOpen} setExternalOpen={setDockerModalOpen} width={720}>
+        <Modal
+          externalOpen={dockerModalOpen}
+          setExternalOpen={setDockerModalOpen}
+          width={720}
+          className="max-w-[calc(100vw-2rem)]"
+        >
           <DockerFragmentModal setOpen={setDockerModalOpen} />
         </Modal>
       ) : null}
 
       {mcpJsonModalOpen ? (
-        <Modal externalOpen={mcpJsonModalOpen} setExternalOpen={setMcpJsonModalOpen} width={720}>
+        <Modal
+          externalOpen={mcpJsonModalOpen}
+          setExternalOpen={setMcpJsonModalOpen}
+          width={720}
+          className="max-w-[calc(100vw-2rem)]"
+        >
           <McpJsonModal setOpen={setMcpJsonModalOpen} />
         </Modal>
       ) : null}

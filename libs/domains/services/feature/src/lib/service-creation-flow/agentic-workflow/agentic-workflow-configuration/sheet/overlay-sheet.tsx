@@ -1,12 +1,27 @@
-import { type ReactNode } from 'react'
+import { type ReactNode, useEffect } from 'react'
 import { Button, Heading, Icon, Section, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 export function OverlaySheet({ children, onClose }: { children: ReactNode; onClose: () => void }) {
+  // Lock the page scroll while the sheet is open.
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.body.style.overflow = previousOverflow
+    }
+  }, [])
+
   return (
     <div className="fixed inset-0 z-modal flex justify-end bg-background-overlay" onClick={onClose}>
       <div className="h-full" onClick={(event) => event.stopPropagation()}>
-        <Sheet open className="w-[520px] max-w-[calc(100vw-24px)] shadow-none" onClose={onClose}>
+        <Sheet
+          open
+          role="dialog"
+          aria-modal
+          className="w-[520px] max-w-[calc(100vw-24px)] shadow-none"
+          onClose={onClose}
+        >
           {children}
         </Sheet>
       </div>

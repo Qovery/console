@@ -38,10 +38,16 @@ export const AgenticWorkflowHeader = forwardRef<AgenticWorkflowHeaderHandle, Age
             name="name"
             value={name}
             placeholder="New agent task"
+            aria-invalid={Boolean(nameError)}
+            aria-describedby={nameError ? 'agent-task-name-error' : undefined}
             className="w-full max-w-[760px] bg-transparent text-[36px] font-medium leading-[48px] text-neutral outline-none placeholder:text-neutral-subtle"
             onChange={(event: ChangeEvent<HTMLInputElement>) => onNameChange(event.currentTarget.value)}
           />
-          {nameError ? <p className="mt-1 text-xs font-medium text-negative">{nameError}</p> : null}
+          {nameError ? (
+            <p id="agent-task-name-error" className="mt-1 text-xs font-medium text-negative">
+              {nameError}
+            </p>
+          ) : null}
         </div>
       </div>
     )

@@ -10,14 +10,21 @@ import {
 } from '../../agentic-workflow-context'
 import { OverlaySheet, SheetHeader } from '../sheet/overlay-sheet'
 
-function getJsonError(value: string) {
+function getHeadersError(value: string) {
   if (!value.trim()) return undefined
+  let parsed: unknown
   try {
-    JSON.parse(value)
-    return undefined
+    parsed = JSON.parse(value)
   } catch {
     return 'Invalid JSON format.'
   }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return 'Headers must be a JSON object.'
+  }
+  if (!Object.values(parsed).every((headerValue) => typeof headerValue === 'string')) {
+    return 'Header values must be strings.'
+  }
+  return undefined
 }
 
 function isValidUrl(value: string) {
@@ -180,7 +187,7 @@ function WebhookOutputModal({
   const [url, setUrl] = useState(output?.url ?? '')
   const [headersJson, setHeadersJson] = useState(output?.headersJson ?? '{}')
   const [prompt, setPrompt] = useState(output?.prompt ?? '')
-  const headersError = getJsonError(headersJson)
+  const headersError = getHeadersError(headersJson)
   const urlError = url.trim() && !isValidUrl(url) ? 'Please enter a valid URL.' : undefined
   const invalid = !url.trim() || Boolean(urlError) || Boolean(headersError)
 
