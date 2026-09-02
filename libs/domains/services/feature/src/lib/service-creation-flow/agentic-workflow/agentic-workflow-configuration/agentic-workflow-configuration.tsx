@@ -879,8 +879,8 @@ export function AgenticWorkflowConfiguration() {
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1 overflow-y-auto">
-        <main className="min-w-0 flex-1">
+      <div className="flex min-h-0 flex-1">
+        <main className="min-w-0 flex-1 overflow-y-auto">
           <Section className="mx-auto flex max-w-[920px] flex-col px-6 py-8 sm:px-10 sm:py-10">
             <AgenticWorkflowHeader
               ref={headerRef}
@@ -1010,7 +1010,7 @@ export function AgenticWorkflowConfiguration() {
 
         <aside
           aria-label="Agent task settings"
-          className="hidden w-[380px] shrink-0 border-l border-neutral bg-background-secondary lg:block"
+          className="hidden h-full w-[380px] shrink-0 overflow-y-auto border-l border-neutral bg-background-secondary lg:block"
         >
           {settingsContent('desktop')}
         </aside>
