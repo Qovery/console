@@ -58,7 +58,7 @@ export function AgenticWorkflowScheduleFields({ showCronBuilderLink = true }: { 
                 />
               )}
             />
-            <TimezoneSetting />
+            <TimezoneSetting portal />
           </div>
         </div>
       ) : null}

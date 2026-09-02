@@ -691,6 +691,7 @@ export function AgenticWorkflowConfiguration() {
             variant="solid"
             color="neutral"
             size="sm"
+            className="border border-neutralInvert"
             onClick={() =>
               appendVariable({
                 variable: '',
@@ -1028,7 +1029,7 @@ export function AgenticWorkflowConfiguration() {
                   .map(({ id, name }) => (
                     <div
                       key={id}
-                      className="flex h-6 max-w-full items-center rounded border border-neutral bg-surface-neutral pl-2 text-ssm font-medium text-neutral"
+                      className="flex h-7 max-w-full items-center rounded border border-neutral bg-surface-neutral pl-2 pr-1 text-ssm font-medium text-neutral"
                     >
                       <span className="truncate">{name}</span>
                       <Button
