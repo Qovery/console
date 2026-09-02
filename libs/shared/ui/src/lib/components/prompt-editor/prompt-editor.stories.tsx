@@ -19,7 +19,7 @@ export const Primary = {
     name: 'prompt',
     placeholder: 'Type your instructions here…',
     value: 'Review the pull request and notify {{SLACK_CHANNEL}} using {{SECRET}}.',
-    onChange: () => {},
+    onChange: () => undefined,
   },
 }
 
