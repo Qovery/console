@@ -2,6 +2,10 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/environments/data-access'
 import { queries } from '@qovery/state/util-queries'
 
+// A `useDeployEnvironment` hook already exists in `@qovery/domains/environments/feature`,
+// but importing it here would create a circular dependency
+// (services-feature -> environments-feature -> services-feature).
+// This local copy only depends on `environments/data-access`, keeping the graph acyclic.
 export function useDeployEnvironment({ projectId }: { projectId: string }) {
   const queryClient = useQueryClient()
 
