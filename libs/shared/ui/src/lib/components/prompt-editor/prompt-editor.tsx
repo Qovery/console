@@ -120,9 +120,7 @@ export const PromptEditor = forwardRef<PromptEditorHandle, PromptEditorProps>(fu
 
   onChangeRef.current = onChange
   suggestionsRef.current = suggestions
-  const suggestionsSignature = suggestions
-    .map((suggestion) => `${suggestion.label}:${suggestion.value ?? ''}`)
-    .join('|')
+  const suggestionsSignature = JSON.stringify(suggestions)
 
   useImperativeHandle(ref, () => ({
     focus: () => editorRef.current?.focus(),
