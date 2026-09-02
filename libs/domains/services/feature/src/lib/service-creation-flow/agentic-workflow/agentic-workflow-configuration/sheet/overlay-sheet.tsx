@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react'
-import { Button, Icon, Sheet } from '@qovery/shared/ui'
+import { Button, Heading, Icon, Section, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
 export function OverlaySheet({ children, onClose }: { children: ReactNode; onClose: () => void }) {
@@ -27,10 +27,12 @@ export function SheetHeader({
 }) {
   return (
     <div className={twMerge('flex items-start justify-between gap-4 px-5 pb-4 pt-5', className)}>
-      <div className="flex min-w-0 flex-col gap-1">
-        <h2 className="text-xl font-medium leading-7 text-neutral">{title}</h2>
+      <Section className="min-w-0 gap-1">
+        <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
+          {title}
+        </Heading>
         {description ? <p className="max-w-[440px] text-sm leading-5 text-neutral-subtle">{description}</p> : null}
-      </div>
+      </Section>
       <Button type="button" variant="plain" color="neutral" size="xs" iconOnly aria-label="Close" onClick={onClose}>
         <Icon iconName="xmark" />
       </Button>

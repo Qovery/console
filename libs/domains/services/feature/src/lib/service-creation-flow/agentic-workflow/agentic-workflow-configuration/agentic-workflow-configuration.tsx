@@ -1,4 +1,3 @@
-import * as Dialog from '@radix-ui/react-dialog'
 import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { APIVariableScopeEnum, type McpServerResponse } from 'qovery-typescript-axios'
@@ -18,14 +17,12 @@ import {
   InputToggle,
   Modal,
   Section,
-  Sheet,
   useModal,
 } from '@qovery/shared/ui'
 import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
 import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-deploy-environment'
 import {
-  type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
   createDefaultAutomation,
@@ -62,13 +59,6 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
 
 export function isOutputComplete(output: AgenticWorkflowOutput) {
   return Boolean(output.url.trim())
-}
-
-export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
-  const triggers = automation.triggers.map((trigger) => (trigger.type === 'schedule' ? 'Schedule' : 'Webhook'))
-  const summary = triggers.length ? triggers.join(' + ') : 'Webhook'
-  const outputCount = automation.outputs.length
-  return outputCount ? `${summary} → ${outputCount} output${outputCount > 1 ? 's' : ''}` : summary
 }
 
 export function areVariablesValid(variables: VariableData[]) {
@@ -320,7 +310,6 @@ export function AgenticWorkflowConfiguration() {
     name: 'variables',
   })
   const [openSettingsGroups, setOpenSettingsGroups] = useState<SettingsGroup[]>(['general'])
-  const [settingsOpen, setSettingsOpen] = useState(false)
   const [providerModalOpen, setProviderModalOpen] = useState(false)
   const [activeSheet, setActiveSheet] = useState<'mcp' | 'automation' | null>(null)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
@@ -397,14 +386,11 @@ export function AgenticWorkflowConfiguration() {
 
   const focusSettingsGroup = (group: SettingsGroup) => {
     setOpenSettingsGroups((groups) => (groups.includes(group) ? groups : [...groups, group]))
-    const isDesktop = window.matchMedia?.('(min-width: 1024px)').matches ?? true
-    if (!isDesktop) setSettingsOpen(true)
 
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
-        const panel = isDesktop ? 'desktop' : 'mobile'
         document
-          .querySelector<HTMLElement>(`[data-settings-panel="${panel}"] [data-settings-group="${group}"]`)
+          .querySelector<HTMLElement>(`[data-settings-panel="desktop"] [data-settings-group="${group}"]`)
           ?.focus({ preventScroll: true })
       })
     })
@@ -754,24 +740,11 @@ export function AgenticWorkflowConfiguration() {
         <Button type="button" color="neutral" variant="plain" aria-label="Back" iconOnly onClick={onExit}>
           <Icon iconName="arrow-left" />
         </Button>
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            color="neutral"
-            variant="outline"
-            className="lg:hidden"
-            aria-label="Settings"
-            onClick={() => setSettingsOpen(true)}
-          >
-            <Icon iconName="gear" />
-            <span className="hidden md:inline">Settings</span>
-          </Button>
-          {creationActions()}
-        </div>
+        <div className="flex items-center gap-2">{creationActions()}</div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        <main className="min-w-0 flex-1 overflow-y-auto">
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
+        <main className="min-w-0 flex-1 lg:overflow-y-auto">
           <Section className="mx-auto flex max-w-[920px] flex-col px-6 py-8 sm:px-10 sm:py-10">
             <AgenticWorkflowHeader
               ref={headerRef}
@@ -869,8 +842,8 @@ export function AgenticWorkflowConfiguration() {
                   className="max-w-full"
                   onClick={() => setActiveSheet('automation')}
                 >
-                  <Icon iconName="bolt" iconStyle="regular" />
-                  <span className="truncate">{summarizeAutomation(automation)}</span>
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                  Add automation
                 </Button>
               </ConfigurationRow>
             </section>
@@ -889,35 +862,11 @@ export function AgenticWorkflowConfiguration() {
 
         <aside
           aria-label="Agent task settings"
-          className="hidden h-full w-[380px] shrink-0 overflow-y-auto border-l border-neutral bg-background-secondary lg:block"
+          className="shrink-0 border-t border-neutral bg-background-secondary lg:h-full lg:w-[380px] lg:overflow-y-auto lg:border-l lg:border-t-0"
         >
           {settingsContent('desktop')}
         </aside>
       </div>
-
-      <Dialog.Root open={settingsOpen} onOpenChange={setSettingsOpen}>
-        <Dialog.Portal>
-          <Dialog.Overlay className="fixed inset-0 z-overlay bg-background-overlay lg:hidden" />
-          <Dialog.Content asChild>
-            <Sheet className="fixed bottom-0 right-0 top-0 z-modal w-[min(400px,calc(100vw-24px))] overscroll-contain lg:hidden">
-              <div className="flex items-center justify-between border-b border-neutral px-5 py-4">
-                <div>
-                  <Dialog.Title className="font-medium text-neutral">Settings</Dialog.Title>
-                  <Dialog.Description className="mt-1 text-xs text-neutral-subtle">
-                    Configure how this agent task runs and connects.
-                  </Dialog.Description>
-                </div>
-                <Dialog.Close asChild>
-                  <Button aria-label="Close settings" type="button" color="neutral" variant="plain" iconOnly>
-                    <Icon iconName="xmark" />
-                  </Button>
-                </Dialog.Close>
-              </div>
-              <div className="min-h-0 flex-1 overflow-y-auto">{settingsContent('mobile')}</div>
-            </Sheet>
-          </Dialog.Content>
-        </Dialog.Portal>
-      </Dialog.Root>
 
       {providerModalOpen ? (
         <Modal externalOpen={providerModalOpen} setExternalOpen={setProviderModalOpen} width={520}>
