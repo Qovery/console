@@ -623,16 +623,16 @@ export function AgenticWorkflowConfiguration() {
                 variable: '',
                 value: '',
                 scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
-                isSecret: true,
+                isSecret: false,
               })
             }
           >
-            <Icon iconName="lock-keyhole" iconStyle="regular" />
-            Add secret
+            <Icon iconName="circle-plus" iconStyle="regular" />
+            Add variable
           </Button>
           <Button
             type="button"
-            variant="outline"
+            variant="solid"
             color="neutral"
             size="sm"
             onClick={() =>
@@ -640,12 +640,12 @@ export function AgenticWorkflowConfiguration() {
                 variable: '',
                 value: '',
                 scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
-                isSecret: false,
+                isSecret: true,
               })
             }
           >
-            <Icon iconName="circle-plus" iconStyle="regular" />
-            Add variable
+            <Icon iconName="lock-keyhole" iconStyle="regular" />
+            Add secret
           </Button>
         </div>
         <FormProvider {...variablesForm}>
