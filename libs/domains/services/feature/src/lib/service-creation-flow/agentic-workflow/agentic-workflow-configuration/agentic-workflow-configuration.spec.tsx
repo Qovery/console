@@ -136,16 +136,17 @@ describe('AgenticWorkflowConfiguration', () => {
     mockImportVariables.mockResolvedValue(undefined)
   })
 
-  it('should place the name before the prompt without forcing initial focus', () => {
+  it('should place the name before the prompt and focus the name on mount', () => {
     renderConfiguration()
 
     const name = screen.getByRole('textbox', { name: 'Name' })
     const prompt = screen.getByRole('textbox', { name: 'Instructions' })
 
     expect(name.compareDocumentPosition(prompt) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy()
+    expect(name).toHaveFocus()
     expect(prompt).not.toHaveFocus()
     expect(screen.getByPlaceholderText('New agent task')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('Describe the agent task behavior.')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Type your instructions here…')).toBeInTheDocument()
     expect(screen.queryByTestId('progress-bar-wrapper')).not.toBeInTheDocument()
   })
 

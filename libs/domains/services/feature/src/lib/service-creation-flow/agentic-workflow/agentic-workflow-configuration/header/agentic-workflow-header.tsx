@@ -1,4 +1,4 @@
-import { type ChangeEvent, forwardRef, useImperativeHandle, useRef } from 'react'
+import { type ChangeEvent, forwardRef, useEffect, useImperativeHandle, useRef } from 'react'
 import { IconEnum } from '@qovery/shared/enums'
 import { Icon } from '@qovery/shared/ui'
 
@@ -19,6 +19,11 @@ export const AgenticWorkflowHeader = forwardRef<AgenticWorkflowHeaderHandle, Age
     useImperativeHandle(ref, () => ({
       focusName: () => nameRef.current?.focus(),
     }))
+
+    // Focus the name on mount so it is clear the title is editable.
+    useEffect(() => {
+      nameRef.current?.focus()
+    }, [])
 
     return (
       <div className="flex flex-col items-start gap-3">
