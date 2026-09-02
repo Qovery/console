@@ -330,6 +330,13 @@ export const services = createQueryKeys('services', {
       return response.data.results
     },
   }),
+  blueprint: ({ blueprintId }: { blueprintId: string }) => ({
+    queryKey: [blueprintId],
+    async queryFn() {
+      const response = await blueprintApi.getBlueprint(blueprintId)
+      return response.data
+    },
+  }),
   blueprintUpdate: ({ blueprintId }: { blueprintId: string }) => ({
     queryKey: [blueprintId],
     async queryFn() {
@@ -1119,8 +1126,8 @@ export const mutations = {
     const response = await mutation()
     return response.data
   },
-  async createBlueprint({ environmentId, payload, deploy }: CreateBlueprintRequest) {
-    const response = await blueprintApi.createBlueprint(environmentId, payload, deploy)
+  async createBlueprintDeployment({ environmentId, payload, deploy }: CreateBlueprintRequest) {
+    const response = await blueprintApi.createBlueprintDeployment(environmentId, payload, deploy)
     return response.data
   },
   async previewBlueprintUpdate({ blueprintId, payload }: PreviewBlueprintUpdateRequest) {

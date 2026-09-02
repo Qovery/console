@@ -2,6 +2,7 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type BlueprintCreateRequest } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { match } from 'ts-pattern'
 import { LogsType } from '@qovery/shared/enums'
 import { Button, FunnelFlowBody, Heading, Icon, Section, SummaryValue, toast } from '@qovery/shared/ui'
 import {
@@ -12,10 +13,14 @@ import {
 import { formatBlueprintName } from '../../../blueprint-utils/blueprint-utils'
 import { useBlueprintCreationLogs } from '../../../hooks/use-blueprint-creation-logs/use-blueprint-creation-logs'
 import { useBlueprintServiceCreatedSocket } from '../../../hooks/use-blueprint-service-created-socket/use-blueprint-service-created-socket'
+import { useBlueprint } from '../../../hooks/use-blueprint/use-blueprint'
 import { useCreateBlueprint } from '../../../hooks/use-create-blueprint/use-create-blueprint'
 import { useEnvironment } from '../../../hooks/use-environment/use-environment'
 import { useBlueprintCreateContext } from '../blueprint-create-context/blueprint-create-context'
-import { buildBlueprintVariables } from '../blueprint-creation-utils/blueprint-creation-utils'
+import {
+  buildBlueprintVariables,
+  resolveBlueprintCreationOutcome,
+} from '../blueprint-creation-utils/blueprint-creation-utils'
 import { useBlueprintManifestFields } from '../blueprint-manifest-context/blueprint-manifest-context'
 import { BlueprintCreationLoadingModal } from './blueprint-creation-loading-modal/blueprint-creation-loading-modal'
 
@@ -25,7 +30,15 @@ type PendingBlueprintCreation = {
   payload: BlueprintCreateRequest
 }
 
-const BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS = 30_000
+const BLUEPRINT_OUTCOME_READ_DELAY_MS = 30_000
+// The engine does not always attach a reason. Without a fallback the modal has nothing to render
+// and the failure passes silently, which is the bug this flow exists to prevent.
+const BLUEPRINT_DISPATCH_FAILED_MESSAGE =
+  'The dispatch failed without reporting a reason. Check the environment for details.'
+const BLUEPRINT_STATUS_UNREADABLE_MESSAGE =
+  'Could not read this blueprint to find out what happened. Check the environment for its state before creating this service again.'
+const BLUEPRINT_STATUS_UNRESOLVED_MESSAGE =
+  'This is taking longer than expected. The dispatch may still be running — check the environment for its status before creating this service again.'
 
 export function BlueprintStepSummary() {
   const navigate = useNavigate()
@@ -36,13 +49,17 @@ export function BlueprintStepSummary() {
   const [submitMode, setSubmitMode] = useState<'create' | 'create-and-deploy' | null>(null)
   const [isWaitingForServiceCreated, setIsWaitingForServiceCreated] = useState(false)
   const [isBlueprintCreationFailed, setIsBlueprintCreationFailed] = useState(false)
+  const [blueprintCreationErrorMessage, setBlueprintCreationErrorMessage] = useState<string>()
+  const [canRetryBlueprintCreation, setCanRetryBlueprintCreation] = useState(true)
+  const [isReadingBlueprintOutcome, setIsReadingBlueprintOutcome] = useState(false)
   const [createdBlueprintId, setCreatedBlueprintId] = useState<string>()
+  const [createdDeploymentId, setCreatedDeploymentId] = useState<string>()
   const [pendingBlueprintCreation, setPendingBlueprintCreation] = useState<PendingBlueprintCreation | null>(null)
   const [lastBlueprintCreation, setLastBlueprintCreation] = useState<PendingBlueprintCreation | null>(null)
   const hasHandledServiceCreatedRef = useRef(false)
   const hasBlueprintCreationErrorRef = useRef(false)
   const hasStartedBlueprintCreationRef = useRef(false)
-  const serviceCreatedFallbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const blueprintOutcomeReadTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const { mutateAsync: createBlueprint } = useCreateBlueprint()
   const { data: environment } = useEnvironment({ environmentId })
   const { fields, serviceName } = form.watch()
@@ -57,6 +74,12 @@ export function BlueprintStepSummary() {
     organizationId,
     projectId,
     enabled: isWaitingForServiceCreated && !isBlueprintCreationFailed,
+  })
+  // The websocket reports success only. When it stays silent, the blueprint itself is the
+  // authoritative read on what the dispatch actually did — silence is not an outcome.
+  const { data: blueprintDetails, isError: hasBlueprintReadFailed } = useBlueprint({
+    blueprintId: createdBlueprintId ?? '',
+    enabled: isReadingBlueprintOutcome,
   })
   const hasBlueprintCreationError =
     Boolean(createdBlueprintId) && blueprintCreationLogs.some((log) => log.type === LogsType.ERROR)
@@ -76,13 +99,13 @@ export function BlueprintStepSummary() {
     })
   }, [environmentId, navigate, organizationId, projectId])
 
-  const clearServiceCreatedFallbackTimeout = useCallback(() => {
-    if (!serviceCreatedFallbackTimeoutRef.current) {
+  const clearBlueprintOutcomeReadTimeout = useCallback(() => {
+    if (!blueprintOutcomeReadTimeoutRef.current) {
       return
     }
 
-    clearTimeout(serviceCreatedFallbackTimeoutRef.current)
-    serviceCreatedFallbackTimeoutRef.current = null
+    clearTimeout(blueprintOutcomeReadTimeoutRef.current)
+    blueprintOutcomeReadTimeoutRef.current = null
   }, [])
 
   const handleBlueprintServiceCreated = useCallback(() => {
@@ -91,50 +114,108 @@ export function BlueprintStepSummary() {
     }
 
     hasHandledServiceCreatedRef.current = true
-    clearServiceCreatedFallbackTimeout()
+    clearBlueprintOutcomeReadTimeout()
     setIsWaitingForServiceCreated(false)
+    setIsReadingBlueprintOutcome(false)
     setSubmitMode(null)
     toast('success', 'Your service has been created')
     navigateToEnvironmentOverview()
-  }, [clearServiceCreatedFallbackTimeout, navigateToEnvironmentOverview])
+  }, [clearBlueprintOutcomeReadTimeout, navigateToEnvironmentOverview])
 
-  const startServiceCreatedFallbackTimeout = useCallback(() => {
+  const failBlueprintCreation = useCallback(
+    // `canRetry` is false when the dispatch never reported an outcome: it may still be running, so
+    // offering Retry would invite a second service alongside the first.
+    (errorMessage?: string, canRetry = true) => {
+      if (hasHandledServiceCreatedRef.current) {
+        return
+      }
+
+      hasBlueprintCreationErrorRef.current = true
+      clearBlueprintOutcomeReadTimeout()
+      setPendingBlueprintCreation(null)
+      setIsWaitingForServiceCreated(false)
+      setIsReadingBlueprintOutcome(false)
+      setIsBlueprintCreationFailed(true)
+      setBlueprintCreationErrorMessage(errorMessage)
+      setCanRetryBlueprintCreation(canRetry)
+      setSubmitMode(null)
+    },
+    [clearBlueprintOutcomeReadTimeout]
+  )
+
+  const startBlueprintOutcomeRead = useCallback(() => {
     if (hasHandledServiceCreatedRef.current) {
       return
     }
 
-    clearServiceCreatedFallbackTimeout()
-    serviceCreatedFallbackTimeoutRef.current = setTimeout(() => {
-      handleBlueprintServiceCreated()
-    }, BLUEPRINT_SERVICE_CREATED_FALLBACK_TIMEOUT_MS)
-  }, [clearServiceCreatedFallbackTimeout, handleBlueprintServiceCreated])
+    clearBlueprintOutcomeReadTimeout()
+    blueprintOutcomeReadTimeoutRef.current = setTimeout(() => {
+      setIsReadingBlueprintOutcome(true)
+    }, BLUEPRINT_OUTCOME_READ_DELAY_MS)
+  }, [clearBlueprintOutcomeReadTimeout])
 
   useBlueprintServiceCreatedSocket({
     organizationId,
     projectId,
     environmentId,
+    blueprintId: createdBlueprintId,
     enabled: isWaitingForServiceCreated && !isBlueprintCreationFailed,
     onServiceCreated: handleBlueprintServiceCreated,
+    onDispatchFailed: (errorMessage) => failBlueprintCreation(errorMessage ?? BLUEPRINT_DISPATCH_FAILED_MESSAGE),
   })
 
   useEffect(() => {
     setCurrentStep(2)
   }, [setCurrentStep])
 
-  useEffect(() => () => clearServiceCreatedFallbackTimeout(), [clearServiceCreatedFallbackTimeout])
+  useEffect(() => () => clearBlueprintOutcomeReadTimeout(), [clearBlueprintOutcomeReadTimeout])
 
   useEffect(() => {
     if (!hasBlueprintCreationError) {
       return
     }
 
-    hasBlueprintCreationErrorRef.current = true
-    clearServiceCreatedFallbackTimeout()
-    setPendingBlueprintCreation(null)
-    setIsWaitingForServiceCreated(false)
-    setIsBlueprintCreationFailed(true)
-    setSubmitMode(null)
-  }, [clearServiceCreatedFallbackTimeout, hasBlueprintCreationError])
+    // The logs already spell out the failure, so no extra message to surface
+    failBlueprintCreation()
+  }, [failBlueprintCreation, hasBlueprintCreationError])
+
+  useEffect(() => {
+    if (!isWaitingForServiceCreated || !isReadingBlueprintOutcome) {
+      return
+    }
+
+    // The read is the only thing that can answer this, so a read that failed leaves the outcome
+    // unknown — which is not success, and not something to keep waiting on.
+    if (hasBlueprintReadFailed) {
+      failBlueprintCreation(BLUEPRINT_STATUS_UNREADABLE_MESSAGE, false)
+      return
+    }
+
+    // Retrying mints a new blueprint, so a result for the previous one must not be read as this
+    // one's outcome.
+    if (!blueprintDetails || blueprintDetails.id !== createdBlueprintId) {
+      return
+    }
+
+    match(resolveBlueprintCreationOutcome(blueprintDetails, createdDeploymentId))
+      .with({ status: 'created' }, () => handleBlueprintServiceCreated())
+      .with({ status: 'failed' }, ({ errorMessage }) =>
+        failBlueprintCreation(errorMessage ?? BLUEPRINT_DISPATCH_FAILED_MESSAGE)
+      )
+      // Still WAITING_RUNNING or DEPLOYING. Not a failure, so it must not claim one — and not a
+      // success either, so say what is actually known and let the user go look.
+      .with({ status: 'pending' }, () => failBlueprintCreation(BLUEPRINT_STATUS_UNRESOLVED_MESSAGE, false))
+      .exhaustive()
+  }, [
+    blueprintDetails,
+    createdBlueprintId,
+    createdDeploymentId,
+    failBlueprintCreation,
+    handleBlueprintServiceCreated,
+    hasBlueprintReadFailed,
+    isReadingBlueprintOutcome,
+    isWaitingForServiceCreated,
+  ])
 
   useEffect(() => {
     if (!serviceName.trim() || !isBlueprintSetupValid) {
@@ -165,19 +246,20 @@ export function BlueprintStepSummary() {
         }
 
         setCreatedBlueprintId(createdBlueprint.id)
+        setCreatedDeploymentId(createdBlueprint.deployment_id)
         posthog.capture('create-service', {
           selectedServiceType: 'blueprint',
           selectedServiceSubType: blueprint.serviceFamily ?? blueprint.provider,
         })
         setPendingBlueprintCreation(null)
-        startServiceCreatedFallbackTimeout()
+        startBlueprintOutcomeRead()
       } catch {
         if (!shouldUpdateState) {
           return
         }
 
         // errors are surfaced by mutation notifications
-        clearServiceCreatedFallbackTimeout()
+        clearBlueprintOutcomeReadTimeout()
         hasStartedBlueprintCreationRef.current = false
         setPendingBlueprintCreation(null)
         setIsWaitingForServiceCreated(false)
@@ -193,12 +275,12 @@ export function BlueprintStepSummary() {
   }, [
     blueprint.provider,
     blueprint.serviceFamily,
-    clearServiceCreatedFallbackTimeout,
+    clearBlueprintOutcomeReadTimeout,
     createBlueprint,
     environmentId,
     isWaitingForServiceCreated,
     pendingBlueprintCreation,
-    startServiceCreatedFallbackTimeout,
+    startBlueprintOutcomeRead,
   ])
 
   const handleSubmit = (withDeploy: boolean) => {
@@ -214,12 +296,16 @@ export function BlueprintStepSummary() {
     }
 
     setSubmitMode(withDeploy ? 'create-and-deploy' : 'create')
-    clearServiceCreatedFallbackTimeout()
+    clearBlueprintOutcomeReadTimeout()
     hasHandledServiceCreatedRef.current = false
     hasBlueprintCreationErrorRef.current = false
     hasStartedBlueprintCreationRef.current = false
     setCreatedBlueprintId(undefined)
+    setCreatedDeploymentId(undefined)
     setIsBlueprintCreationFailed(false)
+    setBlueprintCreationErrorMessage(undefined)
+    setCanRetryBlueprintCreation(true)
+    setIsReadingBlueprintOutcome(false)
     setLastBlueprintCreation(blueprintCreation)
     setIsWaitingForServiceCreated(true)
 
@@ -229,12 +315,16 @@ export function BlueprintStepSummary() {
   const handleRetry = () => {
     if (!lastBlueprintCreation) return
 
-    clearServiceCreatedFallbackTimeout()
+    clearBlueprintOutcomeReadTimeout()
     hasHandledServiceCreatedRef.current = false
     hasBlueprintCreationErrorRef.current = false
     hasStartedBlueprintCreationRef.current = false
     setCreatedBlueprintId(undefined)
+    setCreatedDeploymentId(undefined)
     setIsBlueprintCreationFailed(false)
+    setBlueprintCreationErrorMessage(undefined)
+    setCanRetryBlueprintCreation(true)
+    setIsReadingBlueprintOutcome(false)
     setSubmitMode(lastBlueprintCreation.deploy ? 'create-and-deploy' : 'create')
     setIsWaitingForServiceCreated(true)
 
@@ -242,10 +332,13 @@ export function BlueprintStepSummary() {
   }
 
   const handleEditConfig = () => {
-    clearServiceCreatedFallbackTimeout()
+    clearBlueprintOutcomeReadTimeout()
     hasBlueprintCreationErrorRef.current = false
     setIsWaitingForServiceCreated(false)
     setIsBlueprintCreationFailed(false)
+    setBlueprintCreationErrorMessage(undefined)
+    setCanRetryBlueprintCreation(true)
+    setIsReadingBlueprintOutcome(false)
     setSubmitMode(null)
     navigate({ to: `${creationFlowUrl}/service-information` })
   }
@@ -377,10 +470,16 @@ export function BlueprintStepSummary() {
         </Section>
       </FunnelFlowBody>
       <BlueprintCreationLoadingModal
+        canRetry={canRetryBlueprintCreation}
+        errorMessage={blueprintCreationErrorMessage}
         logs={blueprintCreationLogs}
         onEditConfig={handleEditConfig}
+        onGoToEnvironment={navigateToEnvironmentOverview}
         onRetry={handleRetry}
-        open={blueprintCreationLogs.length > 0 && (isWaitingForServiceCreated || isBlueprintCreationFailed)}
+        open={
+          (blueprintCreationLogs.length > 0 || Boolean(blueprintCreationErrorMessage)) &&
+          (isWaitingForServiceCreated || isBlueprintCreationFailed)
+        }
         serviceName={serviceName}
       />
     </>
