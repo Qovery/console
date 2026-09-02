@@ -4,17 +4,15 @@ import posthog from 'posthog-js'
 import { APIVariableScopeEnum, type McpServerResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useRef, useState } from 'react'
 import { FormProvider, useFieldArray } from 'react-hook-form'
-import { McpServerCreateEditModal, useMcpServers } from '@qovery/domains/organizations/feature'
+import { useMcpServers } from '@qovery/domains/organizations/feature'
 import { VariableRow, useImportVariables } from '@qovery/domains/variables/feature'
 import { type VariableData } from '@qovery/shared/interfaces'
 import {
   Accordion,
   Button,
   CodeEditor,
-  ExternalLink,
   Heading,
   Icon,
-  InputSearch,
   InputText,
   InputTextArea,
   InputToggle,
@@ -27,18 +25,20 @@ import { prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
 import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-deploy-environment'
 import {
+  type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
-import { AgenticWorkflowScheduleFields, isAgenticWorkflowScheduleValid } from '../agentic-workflow-schedule-fields'
 import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } from './agentic-workflow-prompt-editor'
 import { AIModelCards } from './ai-model-cards'
+import { AutomationSheet } from './automations'
 import { GitContextCard, GitContextCompactCard, GitContextModal } from './context'
 import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header'
+import { McpSheet } from './mcp'
 
-type SettingsGroup = 'general' | 'resources' | 'variables' | 'outputs' | 'advanced'
+type SettingsGroup = 'general' | 'resources' | 'governance' | 'variables' | 'advanced'
 
 export function getJsonError(value: string, required = false) {
   if (!value.trim()) return required ? 'Please enter a valid JSON configuration.' : undefined
@@ -61,6 +61,12 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
 
 export function isOutputComplete(output: AgenticWorkflowOutput) {
   return Boolean(output.url.trim())
+}
+
+export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
+  const triggers = automation.triggers.map((trigger) => (trigger.type === 'schedule' ? 'Schedule' : 'Webhook'))
+  const summary = triggers.length ? triggers.join(' + ') : 'No trigger'
+  return automation.output ? `${summary} → Output` : summary
 }
 
 export function areVariablesValid(variables: VariableData[]) {
@@ -148,110 +154,6 @@ function ConfigurationRow({ children, label }: { children: ReactNode; label: str
       <div className="group flex min-h-9 min-w-0 flex-wrap items-center gap-2 rounded px-1 hover:bg-surface-neutral-subtle">
         {children}
       </div>
-    </div>
-  )
-}
-
-function McpServerPicker({
-  createdMcpServers,
-  isLoading,
-  mcpServers,
-  onChange,
-  onMcpServerCreated,
-  value,
-}: {
-  createdMcpServers: McpServerResponse[]
-  isLoading: boolean
-  mcpServers: McpServerResponse[]
-  onChange: (value: string[]) => void
-  onMcpServerCreated: (mcpServer: McpServerResponse) => void
-  value: string[]
-}) {
-  const { closeModal, openModal } = useModal()
-  const [search, setSearch] = useState('')
-  const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
-    (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
-  )
-  const matchingMcpServers = availableMcpServers.filter(({ name, url }) =>
-    `${name} ${url}`.toLowerCase().includes(search.trim().toLowerCase())
-  )
-  const connectedMcpServers = matchingMcpServers.filter(({ id }) => value.includes(id))
-  const disconnectedMcpServers = matchingMcpServers.filter(({ id }) => !value.includes(id))
-
-  const createMcpServer = () => {
-    openModal({
-      content: (
-        <McpServerCreateEditModal
-          onClose={(mcpServer) => {
-            if (mcpServer) {
-              onMcpServerCreated(mcpServer)
-              onChange([...new Set([...value, mcpServer.id])])
-            }
-            closeModal()
-          }}
-        />
-      ),
-      options: { fakeModal: true, width: 680 },
-    })
-  }
-
-  const mcpServerRow = (mcpServer: McpServerResponse, connected: boolean) => (
-    <button
-      key={mcpServer.id}
-      type="button"
-      className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong"
-      aria-label={connected ? `Remove ${mcpServer.name}` : `Add ${mcpServer.name}`}
-      onClick={() =>
-        onChange(connected ? value.filter((mcpServerId) => mcpServerId !== mcpServer.id) : [...value, mcpServer.id])
-      }
-    >
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral">
-        <Icon iconName="plug" iconStyle="regular" className="text-neutral-subtle" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-neutral">{mcpServer.name}</p>
-        <p className="truncate text-xs text-neutral-subtle">{mcpServer.url}</p>
-      </div>
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center">
-        <Icon iconName={connected ? 'circle-check' : 'plus'} className={connected ? 'text-positive' : undefined} />
-      </span>
-    </button>
-  )
-
-  return (
-    <div className="flex flex-col gap-5">
-      <InputSearch placeholder="Search MCP" autofocus onChange={setSearch} />
-      {connectedMcpServers.length > 0 ? (
-        <section className="flex flex-col gap-2">
-          <div className="flex items-center justify-between px-2">
-            <Heading level={3} weight="medium">
-              Connected ({connectedMcpServers.length})
-            </Heading>
-            <Button type="button" size="sm" color="neutral" variant="plain" onClick={() => onChange([])}>
-              Remove all
-            </Button>
-          </div>
-          <div>{connectedMcpServers.map((mcpServer) => mcpServerRow(mcpServer, true))}</div>
-        </section>
-      ) : null}
-      <section className="flex flex-col gap-2">
-        <div className="flex items-center justify-between px-2">
-          <Heading level={3} weight="medium">
-            Available MCPs
-          </Heading>
-          <Button type="button" size="sm" color="neutral" variant="outline" onClick={createMcpServer}>
-            <Icon iconName="circle-plus" iconStyle="regular" />
-            New MCP
-          </Button>
-        </div>
-        {isLoading ? (
-          <p className="px-2 text-sm text-neutral-subtle">Loading MCPs...</p>
-        ) : disconnectedMcpServers.length > 0 ? (
-          <div>{disconnectedMcpServers.map((mcpServer) => mcpServerRow(mcpServer, false))}</div>
-        ) : search.trim() ? (
-          <p className="px-2 text-sm text-neutral-subtle">No MCP matches this search.</p>
-        ) : null}
-      </section>
     </div>
   )
 }
@@ -418,9 +320,9 @@ export function AgenticWorkflowConfiguration() {
   const [openSettingsGroups, setOpenSettingsGroups] = useState<SettingsGroup[]>(['general'])
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [providerModalOpen, setProviderModalOpen] = useState(false)
-  const [mcpModalOpen, setMcpModalOpen] = useState(false)
+  const [activeSheet, setActiveSheet] = useState<'mcp' | 'automation' | null>(null)
+  const [editingAutomationId, setEditingAutomationId] = useState<string | null>(null)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
-  const [scheduleModalOpen, setScheduleModalOpen] = useState(false)
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
   const [mcpJsonModalOpen, setMcpJsonModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
@@ -431,10 +333,8 @@ export function AgenticWorkflowConfiguration() {
   const values = form.watch()
   const { dirtyFields } = form.formState
   const mcpJsonError = getJsonError(values.mcpJson)
-  const outputHeadersErrors = values.outputs.map((output) => getJsonError(output.headersJson))
   const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
-  const outputsValid = values.outputs.every(isOutputComplete)
   const variableValues = variablesForm.watch('variables')
   const variablesValid = areVariablesValid(variableValues)
   const showNameError = (showValidationErrors || Boolean(dirtyFields.name)) && !values.name.trim()
@@ -444,10 +344,11 @@ export function AgenticWorkflowConfiguration() {
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
     resources: false,
+    governance: false,
     variables: !variablesValid,
-    outputs: !outputsValid || outputHeadersErrors.some(Boolean),
     advanced: Boolean(mcpJsonError),
   }
+  const editingAutomation = values.automations.find((automation) => automation.id === editingAutomationId)
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
@@ -493,23 +394,10 @@ export function AgenticWorkflowConfiguration() {
     })
   }
 
-  const addOutput = () =>
-    form.setValue(
-      'outputs',
-      [
-        ...values.outputs,
-        {
-          url: '',
-          headersJson: `{
-  "Authorization": "Bearer {{TOKEN}}"
-}`,
-          prompt: '',
-        },
-      ],
-      {
-        shouldDirty: true,
-      }
-    )
+  const openAutomationSheet = (automationId?: string) => {
+    setEditingAutomationId(automationId ?? null)
+    setActiveSheet('automation')
+  }
 
   const focusSettingsGroup = (group: SettingsGroup) => {
     setOpenSettingsGroups((groups) => (groups.includes(group) ? groups : [...groups, group]))
@@ -547,18 +435,13 @@ export function AgenticWorkflowConfiguration() {
       return false
     }
 
-    if (!isAgenticWorkflowScheduleValid(values)) {
-      setScheduleModalOpen(true)
-      return false
-    }
-
     if (!gitRepositoriesValid) {
       const invalidIndex = values.gitRepositories.findIndex((repository) => !isGitRepositoryComplete(repository))
       openGitContext(invalidIndex >= 0 ? invalidIndex : undefined)
       return false
     }
 
-    const firstInvalidGroup = (['general', 'resources', 'variables', 'outputs', 'advanced'] as const).find(
+    const firstInvalidGroup = (['general', 'resources', 'variables', 'advanced'] as const).find(
       (group) => settingsGroupsInvalid[group]
     )
 
@@ -662,6 +545,19 @@ export function AgenticWorkflowConfiguration() {
         </div>
       </SettingsAccordionItem>
 
+      <SettingsAccordionItem value="governance" title="Governance" invalid={false}>
+        <div className="flex flex-col gap-3">
+          <p className="text-xs text-neutral-subtle">Control which external domains the agent task can access.</p>
+          <InputTextArea
+            name={`whitelist-hosts-${panel}`}
+            label="Domain allowlist"
+            value={values.whitelistHosts}
+            hint="Use * to allow all domains, or enter hostnames separated by commas."
+            onChange={(event) => form.setValue('whitelistHosts', event.currentTarget.value, { shouldDirty: true })}
+          />
+        </div>
+      </SettingsAccordionItem>
+
       <SettingsAccordionItem
         value="variables"
         title="Environment variables"
@@ -724,78 +620,6 @@ export function AgenticWorkflowConfiguration() {
       </SettingsAccordionItem>
 
       <SettingsAccordionItem
-        value="outputs"
-        title="Outputs"
-        summary={values.outputs.length > 0 ? `${values.outputs.length} configured` : undefined}
-        invalid={showValidationErrors && settingsGroupsInvalid.outputs}
-      >
-        <div className="flex">
-          <Button type="button" variant="outline" color="neutral" size="sm" onClick={addOutput}>
-            <Icon iconName="circle-plus" iconStyle="regular" />
-            Add webhook
-          </Button>
-        </div>
-        {values.outputs.map((output, index) => (
-          <div key={index} className="rounded border border-neutral bg-surface-neutral p-4">
-            <div className="mb-3 flex items-center justify-between">
-              <span className="text-sm font-medium text-neutral">Webhook {index + 1}</span>
-              <Button
-                type="button"
-                variant="plain"
-                color="neutral"
-                size="sm"
-                onClick={() =>
-                  form.setValue(
-                    'outputs',
-                    values.outputs.filter((_, outputIndex) => outputIndex !== index),
-                    { shouldDirty: true }
-                  )
-                }
-              >
-                Remove
-              </Button>
-            </div>
-            <div className="flex flex-col gap-3">
-              <InputText
-                name={`output-url-${panel}-${index}`}
-                label="Webhook URL"
-                value={output.url}
-                error={!output.url.trim() ? 'Please enter the output webhook URL.' : undefined}
-                onChange={(event) => {
-                  const outputs = [...values.outputs]
-                  outputs[index] = { ...output, url: event.currentTarget.value }
-                  form.setValue('outputs', outputs, { shouldDirty: true })
-                }}
-              />
-              <AgenticWorkflowCodeEditorField
-                name={`output-headers-${panel}-${index}`}
-                label="Request headers JSON"
-                language="json"
-                height="120px"
-                value={output.headersJson}
-                error={outputHeadersErrors[index]}
-                onChange={(value) => {
-                  const outputs = [...values.outputs]
-                  outputs[index] = { ...output, headersJson: value }
-                  form.setValue('outputs', outputs, { shouldDirty: true })
-                }}
-              />
-              <InputTextArea
-                name={`output-prompt-${panel}-${index}`}
-                label="Prompt"
-                value={output.prompt}
-                onChange={(event) => {
-                  const outputs = [...values.outputs]
-                  outputs[index] = { ...output, prompt: event.currentTarget.value }
-                  form.setValue('outputs', outputs, { shouldDirty: true })
-                }}
-              />
-            </div>
-          </div>
-        ))}
-      </SettingsAccordionItem>
-
-      <SettingsAccordionItem
         value="advanced"
         title="Advanced settings"
         invalid={showValidationErrors && settingsGroupsInvalid.advanced}
@@ -852,23 +676,6 @@ export function AgenticWorkflowConfiguration() {
                 </Button>
               </div>
             )}
-          </div>
-          <div className="flex flex-col gap-3">
-            <div>
-              <Heading level={3} weight="medium">
-                Governance
-              </Heading>
-              <p className="mt-1 text-xs text-neutral-subtle">
-                Control which external domains the agent task can access.
-              </p>
-            </div>
-            <InputTextArea
-              name={`whitelist-hosts-${panel}`}
-              label="Domain allowlist"
-              value={values.whitelistHosts}
-              hint="Use * to allow all domains, or enter hostnames separated by commas."
-              onChange={(event) => form.setValue('whitelistHosts', event.currentTarget.value, { shouldDirty: true })}
-            />
           </div>
           <div className="flex flex-col gap-3">
             <div>
@@ -1052,35 +859,34 @@ export function AgenticWorkflowConfiguration() {
                       </Button>
                     </div>
                   ))}
-                <Button type="button" size="sm" color="neutral" variant="outline" onClick={() => setMcpModalOpen(true)}>
+                <Button type="button" size="sm" color="neutral" variant="outline" onClick={() => setActiveSheet('mcp')}>
                   <Icon iconName="circle-plus" iconStyle="regular" />
                   Add MCP
                 </Button>
               </ConfigurationRow>
               <ConfigurationRow label="Automations">
-                {values.scheduleEnabled ? (
+                {values.automations.map((automation) => (
                   <Button
+                    key={automation.id}
                     type="button"
                     size="sm"
                     color="neutral"
                     variant="outline"
-                    onClick={() => setScheduleModalOpen(true)}
+                    className="max-w-full"
+                    onClick={() => openAutomationSheet(automation.id)}
                   >
-                    <Icon iconName="clock" iconStyle="regular" />
-                    {values.scheduleCronExpression}
+                    <Icon iconName="bolt" iconStyle="regular" />
+                    <span className="truncate">
+                      {automation.name.trim() && automation.name.trim() !== 'New automation'
+                        ? automation.name
+                        : summarizeAutomation(automation)}
+                    </span>
                   </Button>
-                ) : (
-                  <Button
-                    type="button"
-                    size="sm"
-                    color="neutral"
-                    variant="outline"
-                    onClick={() => setScheduleModalOpen(true)}
-                  >
-                    <Icon iconName="circle-plus" iconStyle="regular" />
-                    Add automation
-                  </Button>
-                )}
+                ))}
+                <Button type="button" size="sm" color="neutral" variant="outline" onClick={() => openAutomationSheet()}>
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                  Add automation
+                </Button>
               </ConfigurationRow>
             </section>
             <section aria-label="Instructions" className="border-t border-neutral pt-6">
@@ -1173,49 +979,48 @@ export function AgenticWorkflowConfiguration() {
         </Modal>
       ) : null}
 
-      {mcpModalOpen ? (
-        <Modal externalOpen={mcpModalOpen} setExternalOpen={setMcpModalOpen} width={520}>
-          <ConfigurationModalContent
-            title="Configure MCP"
-            description="Select the organization MCPs this agent task can use."
-            confirmLabel="Save MCP"
-            setOpen={setMcpModalOpen}
-          >
-            <McpServerPicker
-              isLoading={areMcpServersLoading}
-              mcpServers={mcpServers}
-              createdMcpServers={createdMcpServers}
-              value={values.mcpServerIds}
-              onChange={(value) => form.setValue('mcpServerIds', value as string[], { shouldDirty: true })}
-              onMcpServerCreated={(mcpServer) =>
-                setCreatedMcpServers((servers) =>
-                  servers.some(({ id }) => id === mcpServer.id) ? servers : [...servers, mcpServer]
-                )
-              }
-            />
-          </ConfigurationModalContent>
-        </Modal>
+      {activeSheet === 'mcp' ? (
+        <McpSheet
+          isLoading={areMcpServersLoading}
+          mcpServers={mcpServers}
+          createdMcpServers={createdMcpServers}
+          value={values.mcpServerIds}
+          onChange={(value) => form.setValue('mcpServerIds', value, { shouldDirty: true })}
+          onClose={() => setActiveSheet(null)}
+          onMcpServerCreated={(mcpServer) =>
+            setCreatedMcpServers((servers) =>
+              servers.some(({ id }) => id === mcpServer.id) ? servers : [...servers, mcpServer]
+            )
+          }
+        />
       ) : null}
 
-      {scheduleModalOpen ? (
-        <Modal externalOpen={scheduleModalOpen} setExternalOpen={setScheduleModalOpen} width={520}>
-          <ConfigurationModalContent
-            title="Configure automation"
-            confirmLabel="Save automation"
-            setOpen={setScheduleModalOpen}
-            description={
-              <>
-                Schedule this agent task to run automatically in addition to webhook requests. Use the{' '}
-                <ExternalLink href="https://crontab.guru/" size="sm">
-                  CRON expression builder
-                </ExternalLink>
-                .
-              </>
-            }
-          >
-            <AgenticWorkflowScheduleFields showCronBuilderLink={false} />
-          </ConfigurationModalContent>
-        </Modal>
+      {activeSheet === 'automation' ? (
+        <AutomationSheet
+          automation={editingAutomation}
+          onClose={() => setActiveSheet(null)}
+          onRemove={
+            editingAutomation
+              ? () => {
+                  form.setValue(
+                    'automations',
+                    values.automations.filter((automation) => automation.id !== editingAutomation.id),
+                    { shouldDirty: true }
+                  )
+                  setActiveSheet(null)
+                }
+              : undefined
+          }
+          onSave={(automation) =>
+            form.setValue(
+              'automations',
+              editingAutomation
+                ? values.automations.map((item) => (item.id === automation.id ? automation : item))
+                : [...values.automations, automation],
+              { shouldDirty: true }
+            )
+          }
+        />
       ) : null}
 
       {dockerModalOpen ? (

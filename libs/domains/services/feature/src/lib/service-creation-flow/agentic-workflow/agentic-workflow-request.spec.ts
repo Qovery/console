@@ -10,9 +10,6 @@ const values: AgenticWorkflowFormData = {
   storage: '10',
   workflowEnabled: true,
   executionMode: AgenticWorkflowExecutionMode.IN_PLACE,
-  scheduleEnabled: false,
-  scheduleCronExpression: '0 8 * * 1-5',
-  timezone: 'Europe/Paris',
   aiModel: AgenticWorkflowModelType.CLAUDE,
   webhookEnabled: true,
   mcpServerIds: ['mcp-1', 'mcp-2'],
@@ -22,7 +19,7 @@ const values: AgenticWorkflowFormData = {
   modelSettingsJson: '{}',
   whitelistHosts: '*',
   dockerFragment: '',
-  outputs: [],
+  automations: [],
   agentPrompt: 'Review the pull request',
 }
 
@@ -31,12 +28,46 @@ describe('formatAgenticWorkflowRequest', () => {
     expect(formatAgenticWorkflowRequest(values).mcp_server_ids).toEqual(['mcp-1', 'mcp-2'])
   })
 
-  it('sends an optional schedule', () => {
+  it('derives the schedule from an automation schedule trigger', () => {
     expect(formatAgenticWorkflowRequest(values).schedule).toBeNull()
-    expect(formatAgenticWorkflowRequest({ ...values, scheduleEnabled: true }).schedule).toEqual({
+    expect(
+      formatAgenticWorkflowRequest({
+        ...values,
+        automations: [
+          {
+            id: 'automation-1',
+            name: 'Daily run',
+            triggers: [{ id: 'trigger-1', type: 'schedule', cronExpression: '0 8 * * 1-5', timezone: 'Europe/Paris' }],
+          },
+        ],
+      }).schedule
+    ).toEqual({
       cron_expression: '0 8 * * 1-5',
       timezone: 'Europe/Paris',
     })
+  })
+
+  it('derives outputs from automation outputs', () => {
+    const request = formatAgenticWorkflowRequest({
+      ...values,
+      automations: [
+        {
+          id: 'automation-1',
+          name: 'Notify',
+          triggers: [{ id: 'trigger-1', type: 'webhook' }],
+          output: { url: 'https://hooks.example.com/workflow', headersJson: '{}', prompt: 'Notify the team.' },
+        },
+      ],
+    })
+
+    expect(request.outputs).toEqual([
+      {
+        name: 'Output 1',
+        url: 'https://hooks.example.com/workflow',
+        headers: [],
+        instructions: 'Notify the team.',
+      },
+    ])
   })
 
   it('sends the selected execution mode', () => {

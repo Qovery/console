@@ -66,6 +66,22 @@ export interface AgenticWorkflowOutput {
   prompt: string
 }
 
+export type AgenticWorkflowAutomationTriggerType = 'schedule' | 'webhook'
+
+export interface AgenticWorkflowAutomationTrigger {
+  id: string
+  type: AgenticWorkflowAutomationTriggerType
+  cronExpression?: string
+  timezone?: string
+}
+
+export interface AgenticWorkflowAutomation {
+  id: string
+  name: string
+  triggers: AgenticWorkflowAutomationTrigger[]
+  output?: AgenticWorkflowOutput
+}
+
 export interface AgenticWorkflowGitRepository {
   provider?: keyof typeof GitProviderEnum | string | null
   gitTokenId?: string | null
@@ -84,9 +100,6 @@ export interface AgenticWorkflowFormData {
   storage: string
   workflowEnabled: boolean
   executionMode: AgenticWorkflowExecutionMode
-  scheduleEnabled: boolean
-  scheduleCronExpression: string
-  timezone: string
   aiModel: AgenticWorkflowModelType
   webhookEnabled: boolean
   mcpServerIds: string[]
@@ -96,7 +109,7 @@ export interface AgenticWorkflowFormData {
   modelSettingsJson: string
   whitelistHosts: string
   dockerFragment: string
-  outputs: AgenticWorkflowOutput[]
+  automations: AgenticWorkflowAutomation[]
   agentPrompt: string
 }
 
@@ -136,9 +149,6 @@ export function AgenticWorkflowCreationFlow({ children, onExit }: AgenticWorkflo
       storage: '10',
       workflowEnabled: true,
       executionMode: AgenticWorkflowExecutionMode.IN_PLACE,
-      scheduleEnabled: false,
-      scheduleCronExpression: '0 8 * * 1-5',
-      timezone: 'Etc/UTC',
       aiModel: AgenticWorkflowModelType.CLAUDE,
       webhookEnabled: true,
       mcpServerIds: [],
@@ -148,7 +158,7 @@ export function AgenticWorkflowCreationFlow({ children, onExit }: AgenticWorkflo
       modelSettingsJson: DEFAULT_MODEL_SETTINGS,
       whitelistHosts: '*',
       dockerFragment: '',
-      outputs: [],
+      automations: [],
       agentPrompt: '',
     },
     mode: 'onChange',

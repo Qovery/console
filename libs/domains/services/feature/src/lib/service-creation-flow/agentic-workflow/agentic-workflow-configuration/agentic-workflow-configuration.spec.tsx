@@ -158,15 +158,20 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(onExit).toHaveBeenCalledTimes(1)
   })
 
-  it('should group the Dockerfile fragment and governance under advanced settings', async () => {
+  it('should expose governance as its own section with a domain allowlist', async () => {
+    const { userEvent } = renderConfiguration()
+
+    await userEvent.click(screen.getByRole('button', { name: /Governance/ }))
+
+    expect(screen.getByRole('textbox', { name: 'Domain allowlist' })).toBeInTheDocument()
+  })
+
+  it('should group the Dockerfile fragment under advanced settings', async () => {
     const { userEvent } = renderConfiguration()
 
     await userEvent.click(screen.getByRole('button', { name: /Advanced settings/ }))
 
     expect(screen.getByRole('heading', { name: 'Dockerfile fragment' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Governance' })).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'Domain allowlist' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /^Governance/ })).not.toBeInTheDocument()
   })
 
   it('should configure context, provider, and automations from the main canvas', async () => {
@@ -183,8 +188,15 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
-    expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
-    expect(screen.getByText('Schedule')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Add automation' })).toBeInTheDocument()
+    expect(screen.getByText('Triggers')).toBeInTheDocument()
+  })
+
+  it('should manage MCP from a side panel', async () => {
+    const { userEvent } = renderConfiguration()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
+    expect(screen.getByRole('heading', { name: 'Manage MCP' })).toBeInTheDocument()
   })
 
   it('should surface validation feedback when a creation action is clicked with incomplete configuration', async () => {
