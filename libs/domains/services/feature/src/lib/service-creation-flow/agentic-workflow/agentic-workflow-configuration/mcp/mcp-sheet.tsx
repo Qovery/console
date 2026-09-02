@@ -2,7 +2,7 @@ import { type McpServerResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { McpServerCreateEditModal } from '@qovery/domains/organizations/feature'
 import { Button, Heading, Icon, InputSearch, useModal } from '@qovery/shared/ui'
-import { OverlaySheet, SheetHeader } from '../sheet'
+import { OverlaySheet, SheetHeader } from '../sheet/overlay-sheet'
 
 function McpServerPicker({
   createdMcpServers,

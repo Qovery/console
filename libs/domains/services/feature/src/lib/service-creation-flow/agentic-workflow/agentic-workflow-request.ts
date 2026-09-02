@@ -28,7 +28,7 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
   const scheduleTrigger = values.automations
     .flatMap((automation) => automation.triggers)
     .find((trigger) => trigger.type === 'schedule')
-  const automationOutputs = values.automations.flatMap((automation) => (automation.output ? [automation.output] : []))
+  const automationOutputs = values.automations.flatMap((automation) => automation.outputs)
 
   return {
     name: values.name,

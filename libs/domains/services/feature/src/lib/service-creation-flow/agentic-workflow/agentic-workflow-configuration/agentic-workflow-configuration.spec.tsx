@@ -188,8 +188,8 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
-    expect(screen.getByRole('heading', { name: 'Add automation' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Webhook' }))
+    expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
     expect(screen.getByText('Triggers')).toBeInTheDocument()
   })
 

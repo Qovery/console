@@ -28,14 +28,16 @@ import {
   type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
+  createDefaultAutomation,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
 import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } from './agentic-workflow-prompt-editor'
-import { AutomationSheet } from './automations'
-import { GitContextCard, GitContextCompactCard, GitContextModal } from './context'
-import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header'
-import { McpSheet } from './mcp'
+import { AutomationSheet } from './automations/automation-sheet'
+import { GitContextCard, GitContextCompactCard } from './context/git-context-card'
+import { GitContextModal } from './context/git-context-modal'
+import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header/agentic-workflow-header'
+import { McpSheet } from './mcp/mcp-sheet'
 
 type SettingsGroup = 'general' | 'resources' | 'governance' | 'variables' | 'advanced'
 
@@ -64,8 +66,9 @@ export function isOutputComplete(output: AgenticWorkflowOutput) {
 
 export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
   const triggers = automation.triggers.map((trigger) => (trigger.type === 'schedule' ? 'Schedule' : 'Webhook'))
-  const summary = triggers.length ? triggers.join(' + ') : 'No trigger'
-  return automation.output ? `${summary} → Output` : summary
+  const summary = triggers.length ? triggers.join(' + ') : 'Webhook'
+  const outputCount = automation.outputs.length
+  return outputCount ? `${summary} → ${outputCount} output${outputCount > 1 ? 's' : ''}` : summary
 }
 
 export function areVariablesValid(variables: VariableData[]) {
@@ -320,7 +323,6 @@ export function AgenticWorkflowConfiguration() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [providerModalOpen, setProviderModalOpen] = useState(false)
   const [activeSheet, setActiveSheet] = useState<'mcp' | 'automation' | null>(null)
-  const [editingAutomationId, setEditingAutomationId] = useState<string | null>(null)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
   const [mcpJsonModalOpen, setMcpJsonModalOpen] = useState(false)
@@ -347,7 +349,7 @@ export function AgenticWorkflowConfiguration() {
     variables: !variablesValid,
     advanced: Boolean(mcpJsonError),
   }
-  const editingAutomation = values.automations.find((automation) => automation.id === editingAutomationId)
+  const automation = values.automations[0] ?? createDefaultAutomation()
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
@@ -391,11 +393,6 @@ export function AgenticWorkflowConfiguration() {
         fakeModal: true,
       },
     })
-  }
-
-  const openAutomationSheet = (automationId?: string) => {
-    setEditingAutomationId(automationId ?? null)
-    setActiveSheet('automation')
   }
 
   const focusSettingsGroup = (group: SettingsGroup) => {
@@ -864,23 +861,16 @@ export function AgenticWorkflowConfiguration() {
                 </Button>
               </ConfigurationRow>
               <ConfigurationRow label="Automations">
-                {values.automations.map((automation) => (
-                  <Button
-                    key={automation.id}
-                    type="button"
-                    size="sm"
-                    color="neutral"
-                    variant="outline"
-                    className="max-w-full"
-                    onClick={() => openAutomationSheet(automation.id)}
-                  >
-                    <Icon iconName="bolt" iconStyle="regular" />
-                    <span className="truncate">{summarizeAutomation(automation)}</span>
-                  </Button>
-                ))}
-                <Button type="button" size="sm" color="neutral" variant="outline" onClick={() => openAutomationSheet()}>
-                  <Icon iconName="circle-plus" iconStyle="regular" />
-                  Add automation
+                <Button
+                  type="button"
+                  size="sm"
+                  color="neutral"
+                  variant="outline"
+                  className="max-w-full"
+                  onClick={() => setActiveSheet('automation')}
+                >
+                  <Icon iconName="bolt" iconStyle="regular" />
+                  <span className="truncate">{summarizeAutomation(automation)}</span>
                 </Button>
               </ConfigurationRow>
             </section>
@@ -990,29 +980,9 @@ export function AgenticWorkflowConfiguration() {
 
       {activeSheet === 'automation' ? (
         <AutomationSheet
-          automation={editingAutomation}
+          automation={automation}
           onClose={() => setActiveSheet(null)}
-          onRemove={
-            editingAutomation
-              ? () => {
-                  form.setValue(
-                    'automations',
-                    values.automations.filter((automation) => automation.id !== editingAutomation.id),
-                    { shouldDirty: true }
-                  )
-                  setActiveSheet(null)
-                }
-              : undefined
-          }
-          onSave={(automation) =>
-            form.setValue(
-              'automations',
-              editingAutomation
-                ? values.automations.map((item) => (item.id === automation.id ? automation : item))
-                : [...values.automations, automation],
-              { shouldDirty: true }
-            )
-          }
+          onSave={(nextAutomation) => form.setValue('automations', [nextAutomation], { shouldDirty: true })}
         />
       ) : null}
 
