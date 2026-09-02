@@ -2045,15 +2045,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codemirror/state@npm:^6.0.0, @codemirror/state@npm:^6.7.0":
-  version: 6.7.2
-  resolution: "@codemirror/state@npm:6.7.2"
-  dependencies:
-    "@marijn/find-cluster-break": ^1.0.0
-  checksum: 2bfdc76d2669fb66b99cf44e7a0f8475547a19b608b5b56d280c512525e1f589cf2e1272d82fe6d035d64044d81d3e64617e62a970cc493ff4b1ef3214f7c99a
-  languageName: node
-  linkType: hard
-
 "@codemirror/view@npm:6.43.9":
   version: 6.43.9
   resolution: "@codemirror/view@npm:6.43.9"
@@ -2063,18 +2054,6 @@ __metadata:
     style-mod: ^4.1.0
     w3c-keyname: ^2.2.4
   checksum: 95d8a259abcfde9809d955e968e5a9ae76456c0d6f1f5f62f6c78b1909f6befe430db3e5d9c93827212428c9c3736c26348a2bc8a81e18a6614496564a34f1f4
-  languageName: node
-  linkType: hard
-
-"@codemirror/view@npm:^6.17.0, @codemirror/view@npm:^6.23.0, @codemirror/view@npm:^6.27.0":
-  version: 6.43.10
-  resolution: "@codemirror/view@npm:6.43.10"
-  dependencies:
-    "@codemirror/state": ^6.7.0
-    crelt: ^1.0.6
-    style-mod: ^4.1.0
-    w3c-keyname: ^2.2.4
-  checksum: 737253bcf1e30ddc00e311a28602e7bd7f6710e8654c1f33c84d251c921164c65bebd9de686da831e2e8c9fe6cb1838719a765215b23c6d80ace5aeffccb473f
   languageName: node
   linkType: hard
 
