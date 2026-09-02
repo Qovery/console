@@ -91,6 +91,12 @@ describe('HeaderLogs', () => {
     expect(screen.queryByText('2m : 5s')).not.toBeInTheDocument()
   })
 
+  it('renders service logs when the service status is not available', () => {
+    renderWithProviders(<HeaderLogs {...mockProps} type="SERVICE" serviceStatus={null} />)
+
+    expect(screen.getByText('Test Service')).toBeInTheDocument()
+  })
+
   it('displays correct number of links', () => {
     renderWithProviders(<HeaderLogs {...mockProps} type="SERVICE" />)
     expect(screen.getByText('Link')).toBeInTheDocument()

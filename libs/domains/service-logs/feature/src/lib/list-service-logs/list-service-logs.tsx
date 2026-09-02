@@ -335,7 +335,7 @@ function ListServiceLogsContent({ cluster, environment }: { cluster: Cluster; en
 
 export interface ListServiceLogsProps {
   environment: Environment
-  serviceStatus: Status
+  serviceStatus: Status | null
   cluster: Cluster
   environmentStatus?: EnvironmentStatus
 }
