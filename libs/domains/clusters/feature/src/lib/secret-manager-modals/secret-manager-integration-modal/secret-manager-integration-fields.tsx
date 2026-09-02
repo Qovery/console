@@ -7,6 +7,25 @@ interface SecretManagerIntegrationFieldsProps {
   methods: UseFormReturn<SecretManagerAccess>
 }
 
+export function SecretManagerIdField({ methods }: SecretManagerIntegrationFieldsProps) {
+  return (
+    <Controller
+      name="id"
+      control={methods.control}
+      render={({ field, fieldState: { error } }) => (
+        <InputText
+          label="Qovery ID"
+          name={field.name}
+          value={field.value}
+          error={error?.message}
+          readOnly
+          hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
+        />
+      )}
+    />
+  )
+}
+
 export function SecretManagerNameField({ methods }: SecretManagerIntegrationFieldsProps) {
   return (
     <Controller

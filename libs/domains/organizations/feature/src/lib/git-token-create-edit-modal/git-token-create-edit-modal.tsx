@@ -134,7 +134,7 @@ export function GitTokenCreateEditModal({ isEdit, gitToken, organizationId, onCl
                 name={field.name}
                 value={field.value}
                 error={error?.message}
-                disabled
+                readOnly
                 hint="This is the ID to be used to interact with Qovery via the API, CLI or Terraform"
               />
             )}

@@ -155,8 +155,12 @@ function BlueprintUpdatePreviewContent({
               .with({ type: 'cancelled' }, () => (
                 <BlueprintUpdatePreviewFailure onRetry={onRetry} summary="The preview was cancelled." />
               ))
-              .with({ type: 'timeout' }, () => (
-                <BlueprintUpdatePreviewFailure onRetry={onRetry} summary="The preview timed out before completing." />
+              .with({ type: 'timeout' }, ({ message }) => (
+                <BlueprintUpdatePreviewFailure
+                  onRetry={onRetry}
+                  reason={message}
+                  summary="The preview timed out before completing."
+                />
               ))
               .exhaustive()}
           </div>

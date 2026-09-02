@@ -6,10 +6,20 @@ import { P, match } from 'ts-pattern'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { isHelmRepositorySource, isJobContainerSource } from '@qovery/shared/enums'
 import { Icon, StatusChip, Tooltip } from '@qovery/shared/ui'
+import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
+import {
+  getServiceStepDurationSec,
+  getServiceStepsDurationSec,
+  isServiceStepDurationLive,
+} from '../../service-step-metrics'
 import { type FilterType } from '../list-deployment-logs'
 
-type StepMetricType = { build: ServiceStepMetric[]; deploy: ServiceStepMetric[]; executing: ServiceStepMetric[] }
+type StepMetricType = {
+  build: ServiceStepMetric[]
+  deploy: ServiceStepMetric[]
+  executing: ServiceStepMetric[]
+}
 
 interface StageStepProps {
   type: Extract<FilterType, 'BUILD' | 'DEPLOY' | 'EXECUTING'>
@@ -21,7 +31,9 @@ interface StageStepProps {
 
 function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: StageStepProps) {
   const { hash } = useLocation()
-  const totalDurationSec = steps.reduce((acc, step) => acc + (step.duration_sec || 0), 0)
+  const nowMs = Date.now()
+  const totalDurationSec = getServiceStepsDurationSec(steps, nowMs)
+  const hasLiveDuration = steps.some(isServiceStepDurationLive)
 
   const buildStep = steps.find((s) => s.step_name === 'BUILD')
   const deployStep = steps.find((s) => s.step_name === 'DEPLOYMENT')
@@ -29,16 +41,16 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
 
   const status = match({ type, state, buildStep, deployStep })
     .with({ type: 'BUILD' }, () => {
-      if (state === 'BUILDING') return 'BUILDING'
+      if (state === 'BUILDING' || hasLiveDuration) return 'BUILDING'
       return buildStep?.status
     })
     .with({ type: 'DEPLOY' }, () => {
       if (state === 'BUILDING') return 'READY'
-      if (state === 'DEPLOYING') return 'DEPLOYING'
+      if (state === 'DEPLOYING' || hasLiveDuration) return 'DEPLOYING'
       return deployStep?.status
     })
     .with({ type: 'EXECUTING' }, () => {
-      if (state === 'EXECUTING') return 'EXECUTING'
+      if (state === 'EXECUTING' || hasLiveDuration) return 'EXECUTING'
       return executingStep?.status
     })
     .exhaustive()
@@ -58,16 +70,21 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
     }
     // On the first load, if status is 'ERROR', the column filter is toggled
     // For all subsequent renders, the column filter is toggled only if the status is 'ERROR'
-  }, [status, toggleColumnFilter, isFirstLoad, hash])
+  }, [status, toggleColumnFilter, isFirstLoad, hash, type])
 
-  const isBuildingOrDeploying =
-    (type === 'BUILD' && status === 'BUILDING') || (type === 'DEPLOY' && status === 'DEPLOYING')
+  const isStepRunning =
+    (type === 'BUILD' && status === 'BUILDING') ||
+    (type === 'DEPLOY' && status === 'DEPLOYING') ||
+    (type === 'EXECUTING' && status === 'EXECUTING')
+  useIntervalTick(hasLiveDuration)
+
+  const shouldDisplayDuration = hasLiveDuration || totalDurationSec > 0
 
   const buttonClasses = clsx(
     'flex h-8 items-center gap-1.5 rounded-lg border border-neutral bg-surface-neutral px-2.5 text-sm font-medium text-neutral-subtle transition hover:border-neutral-subtle hover:bg-surface-neutral-component',
     {
       'border-neutral-strong bg-surface-neutral-subtle text-neutral': isFilterActive(type),
-      'border-brand-component bg-surface-brand-subtle': isBuildingOrDeploying && isFilterActive(type),
+      'border-brand-component bg-surface-brand-subtle': isStepRunning && isFilterActive(type),
       'border-positive-strong bg-surface-positive-subtle': status === 'SUCCESS' && isFilterActive(type),
       'border-negative-strong bg-surface-negative-subtle': status === 'ERROR' && isFilterActive(type),
     }
@@ -77,7 +94,7 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
     <button className={twMerge(buttonClasses)} onClick={() => toggleColumnFilter(type)}>
       <StatusChip status={status} />
       {upperCaseFirstLetter(type.toLowerCase())}
-      {totalDurationSec > 0 ? (
+      {shouldDisplayDuration ? (
         <>
           <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
             <circle cx="2.5" cy="3" r="2.5" fill="#383E50" />
@@ -91,18 +108,22 @@ function StageStep({ type, state, steps, toggleColumnFilter, isFilterActive }: S
         content={
           <span className="flex flex-col gap-0.5">
             {steps.length > 0 ? (
-              steps.map((step) => (
-                <span key={step.step_name} className="font-medium">
-                  {upperCaseFirstLetter(step.step_name)?.replace(/_/g, ' ')}:{' '}
-                  {step.duration_sec ? (
-                    <>
-                      {Math.floor(step.duration_sec / 60)}m {step.duration_sec % 60}s
-                    </>
-                  ) : (
-                    '0s'
-                  )}
-                </span>
-              ))
+              steps.map((step, index) => {
+                const durationSec = getServiceStepDurationSec(step, nowMs)
+
+                return (
+                  <span key={`${step.step_name}-${index}`} className="font-medium">
+                    {upperCaseFirstLetter(step.step_name)?.replace(/_/g, ' ')}:{' '}
+                    {durationSec ? (
+                      <>
+                        {Math.floor(durationSec / 60)}m {durationSec % 60}s
+                      </>
+                    ) : (
+                      '0s'
+                    )}
+                  </span>
+                )
+              })
             ) : (
               <span>No detail available</span>
             )}
@@ -133,7 +154,7 @@ export function FiltersStageStep({
 }: FiltersStageStepProps) {
   if (!steps?.details) return <div />
 
-  const categorizedSteps = steps.details.reduce(
+  const categorizedSteps = steps.details.reduce<StepMetricType>(
     (acc, step) => {
       if (!step.step_name) return acc
 
@@ -145,7 +166,7 @@ export function FiltersStageStep({
 
       return acc
     },
-    { build: [], deploy: [], executing: [] } as StepMetricType
+    { build: [], deploy: [], executing: [] }
   )
 
   return (

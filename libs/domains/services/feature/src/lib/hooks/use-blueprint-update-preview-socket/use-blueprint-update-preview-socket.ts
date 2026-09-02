@@ -19,7 +19,8 @@ export type BlueprintUpdatePreviewOutcome =
   | { type: 'no-changes' }
   | { type: 'error'; message?: string }
   | { type: 'cancelled' }
-  | { type: 'timeout' }
+  // `message` is absent when nothing reported a reason: the watchdog below, or a gateway frame.
+  | { type: 'timeout'; message?: string }
 
 export interface BlueprintUpdatePreviewSocketData {
   outcome: BlueprintUpdatePreviewOutcome
@@ -71,7 +72,7 @@ export function useBlueprintUpdatePreviewSocket({
           )
           .with({ type: 'error' }, ({ message: reason }) => ({ type: 'error', message: reason }))
           .with({ type: 'cancelled' }, () => ({ type: 'cancelled' }))
-          .with({ type: 'timeout' }, () => ({ type: 'timeout' }))
+          .with({ type: 'timeout' }, ({ message }) => ({ type: 'timeout', message: message ?? undefined }))
           .exhaustive()
       )
     },
