@@ -72,29 +72,119 @@ describe('useBlueprintServiceCreatedSocket', () => {
       organizationId: 'org-1',
       projectId: 'proj-1',
       environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
     })
     const invalidateQueries = jest.spyOn(queryClient, 'invalidateQueries')
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
-    subscriptionConfig?.onMessage?.(queryClient, {})
+    subscriptionConfig?.onMessage?.(queryClient, { blueprint_id: 'blueprint-1' })
 
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: queries.services.list('env-1').queryKey,
     })
   })
 
-  it('should notify the caller when a query invalidation event is processed', () => {
+  it('should not report a creation from an event it cannot correlate', () => {
     const onServiceCreated = jest.fn()
     const queryClient = renderUseBlueprintServiceCreatedSocket({
       organizationId: 'org-1',
       projectId: 'proj-1',
       environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
       onServiceCreated,
     })
     const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
 
+    // An invalidation from any other service in the environment names no blueprint
     subscriptionConfig?.onQueryInvalidated?.(queryClient, { entity: ['services'], id: 'service-1' })
+    subscriptionConfig?.onMessage?.(queryClient, {})
+
+    expect(onServiceCreated).not.toHaveBeenCalled()
+  })
+
+  it('should ignore a frame that arrives before the create response supplies the blueprint id', () => {
+    const onServiceCreated = jest.fn()
+    const onDispatchFailed = jest.fn()
+    const queryClient = renderUseBlueprintServiceCreatedSocket({
+      organizationId: 'org-1',
+      projectId: 'proj-1',
+      environmentId: 'env-1',
+      onServiceCreated,
+      onDispatchFailed,
+    })
+    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
+
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'created', blueprint_id: 'blueprint-2' })
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'failed', blueprint_id: 'blueprint-2' })
+
+    expect(onServiceCreated).not.toHaveBeenCalled()
+    expect(onDispatchFailed).not.toHaveBeenCalled()
+  })
+
+  it.each([
+    ['with the engine message', { error_message: 'variable value is required' }, 'variable value is required'],
+    ['when the engine gave no reason', { error_message: null }, undefined],
+  ])('should report a failure frame as a failure, not a creation, %s', (_case, extra, expected) => {
+    const onServiceCreated = jest.fn()
+    const onDispatchFailed = jest.fn()
+    const queryClient = renderUseBlueprintServiceCreatedSocket({
+      organizationId: 'org-1',
+      projectId: 'proj-1',
+      environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
+      onServiceCreated,
+      onDispatchFailed,
+    })
+    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
+
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'failed', blueprint_id: 'blueprint-1', ...extra })
+
+    expect(onServiceCreated).not.toHaveBeenCalled()
+    expect(onDispatchFailed).toHaveBeenCalledWith(expected)
+  })
+
+  it('should ignore a frame for another blueprint in the same environment', () => {
+    const onServiceCreated = jest.fn()
+    const onDispatchFailed = jest.fn()
+    const queryClient = renderUseBlueprintServiceCreatedSocket({
+      organizationId: 'org-1',
+      projectId: 'proj-1',
+      environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
+      onServiceCreated,
+      onDispatchFailed,
+    })
+    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
+
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'created', blueprint_id: 'blueprint-2' })
+    subscriptionConfig?.onMessage?.(queryClient, { type: 'failed', blueprint_id: 'blueprint-2' })
+
+    expect(onServiceCreated).not.toHaveBeenCalled()
+    expect(onDispatchFailed).not.toHaveBeenCalled()
+  })
+
+  // q-core deletes the legacy publisher when it ships the dispatch event, so this socket's payload
+  // changes from `{blueprint_id}` to `{type: 'created', blueprint_id}` on their deploy, with no
+  // console deploy to correlate a regression to. Both shapes must complete the flow.
+  it.each([
+    ['the older payload, which carries no type', { blueprint_id: 'blueprint-1' }],
+    ['an explicit created frame', { type: 'created', blueprint_id: 'blueprint-1' }],
+  ])('should treat %s as a creation', (_case, frame) => {
+    const onServiceCreated = jest.fn()
+    const onDispatchFailed = jest.fn()
+    const queryClient = renderUseBlueprintServiceCreatedSocket({
+      organizationId: 'org-1',
+      projectId: 'proj-1',
+      environmentId: 'env-1',
+      blueprintId: 'blueprint-1',
+      onServiceCreated,
+      onDispatchFailed,
+    })
+    const subscriptionConfig = useReactQueryWsSubscriptionMock.mock.calls[0]?.[0]
+
+    subscriptionConfig?.onMessage?.(queryClient, frame)
 
     expect(onServiceCreated).toHaveBeenCalledTimes(1)
+    expect(onDispatchFailed).not.toHaveBeenCalled()
   })
 })
