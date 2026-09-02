@@ -163,6 +163,42 @@ describe('HeaderLogs', () => {
     expect(screen.getByText('0m : 48s')).toBeInTheDocument()
   })
 
+  it('excludes queueing steps from an ongoing deployment computing duration', () => {
+    jest.useFakeTimers()
+    jest.setSystemTime(new Date('2026-08-28T13:30:00Z'))
+
+    renderWithProviders(
+      <HeaderLogs
+        {...mockProps}
+        serviceStatus={{
+          ...mockProps.serviceStatus,
+          status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
+          steps: {
+            total_computing_duration_sec: 17,
+            total_duration_sec: null,
+            details: [
+              { step_name: 'BUILD', status: 'SUCCESS', duration_sec: 17 },
+              { step_name: 'DEPLOYMENT_QUEUEING', status: 'SUCCESS', duration_sec: 12 },
+              {
+                step_name: 'DEPLOYMENT',
+                status: 'ONGOING',
+                duration_sec: 0,
+                started_at: '2026-08-28T13:29:30Z',
+              },
+            ],
+          },
+        }}
+      />
+    )
+
+    expect(screen.getByText('0m : 47s')).toBeInTheDocument()
+
+    act(() => jest.advanceTimersByTime(1_000))
+
+    expect(screen.getByText('0m : 48s')).toBeInTheDocument()
+    expect(screen.queryByText('1m : 0s')).not.toBeInTheDocument()
+  })
+
   it('does not use the last deployment date as computing time when step details are empty', () => {
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2026-08-28T13:30:00Z'))
@@ -217,7 +253,7 @@ describe('HeaderLogs', () => {
     expect(screen.getByText('0m : 17s')).toBeInTheDocument()
   })
 
-  it('does not decrease when step timing becomes available', () => {
+  it('starts ticking when a computing step follows queueing', () => {
     jest.useFakeTimers()
     jest.setSystemTime(new Date('2026-08-28T13:30:00Z'))
 
@@ -228,12 +264,28 @@ describe('HeaderLogs', () => {
           ...mockProps.serviceStatus,
           last_deployment_date: '2026-08-28T13:29:30Z',
           status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
-          steps: { total_computing_duration_sec: 0, total_duration_sec: null, details: [] },
+          steps: {
+            total_computing_duration_sec: 17,
+            total_duration_sec: null,
+            details: [
+              { step_name: 'BUILD', status: 'SUCCESS', duration_sec: 17 },
+              {
+                step_name: 'DEPLOYMENT_QUEUEING',
+                status: 'ONGOING',
+                duration_sec: 0,
+                started_at: '2026-08-28T13:29:30Z',
+              },
+            ],
+          },
         }}
       />
     )
 
-    expect(screen.getByText('0m : 0s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 17s')).toBeInTheDocument()
+
+    act(() => jest.advanceTimersByTime(1_000))
+
+    expect(screen.getByText('0m : 17s')).toBeInTheDocument()
 
     rerender(
       <HeaderLogs
@@ -243,14 +295,16 @@ describe('HeaderLogs', () => {
           last_deployment_date: '2026-08-28T13:29:30Z',
           status_details: { action: 'DEPLOY', status: 'ONGOING', sub_action: 'NONE' },
           steps: {
-            total_computing_duration_sec: 0,
+            total_computing_duration_sec: 17,
             total_duration_sec: null,
             details: [
+              { step_name: 'BUILD', status: 'SUCCESS', duration_sec: 17 },
+              { step_name: 'DEPLOYMENT_QUEUEING', status: 'SUCCESS', duration_sec: 31 },
               {
                 step_name: 'DEPLOYMENT',
                 status: 'ONGOING',
                 duration_sec: 0,
-                started_at: '2026-08-28T13:30:00Z',
+                started_at: '2026-08-28T13:30:01Z',
               },
             ],
           },
@@ -258,11 +312,11 @@ describe('HeaderLogs', () => {
       />
     )
 
-    expect(screen.getByText('0m : 0s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 17s')).toBeInTheDocument()
 
     act(() => jest.advanceTimersByTime(1_000))
 
-    expect(screen.getByText('0m : 1s')).toBeInTheDocument()
+    expect(screen.getByText('0m : 18s')).toBeInTheDocument()
   })
 
   it('falls back to the recorded computing duration without timing data', () => {

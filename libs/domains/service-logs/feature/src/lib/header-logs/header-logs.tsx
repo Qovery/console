@@ -14,7 +14,7 @@ import { dateUTCString } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { pluralize, trimId } from '@qovery/shared/util-js'
 import { PodHealthChips } from '../pod-health-chips/pod-health-chips'
-import { getServiceStepsDurationSec } from '../service-step-metrics'
+import { getServiceStepsComputingDurationSec, hasLiveServiceStepComputingDuration } from '../service-step-metrics'
 
 export interface HeaderLogsProps extends PropsWithChildren {
   type: 'DEPLOYMENT' | 'SERVICE'
@@ -24,12 +24,12 @@ export interface HeaderLogsProps extends PropsWithChildren {
   environmentStatus?: EnvironmentStatus
 }
 
-function getOngoingDeploymentDurationSec(serviceStatus: Status, nowMs: number) {
+function getOngoingDeploymentComputingDurationSec(serviceStatus: Status, nowMs: number) {
   const steps = serviceStatus.steps?.details ?? []
-  const stepsDurationSec = getServiceStepsDurationSec(steps, nowMs)
+  const stepsComputingDurationSec = getServiceStepsComputingDurationSec(steps, nowMs)
   const recordedComputingDurationSec = serviceStatus.steps?.total_computing_duration_sec ?? 0
 
-  return Math.max(stepsDurationSec, recordedComputingDurationSec)
+  return Math.max(stepsComputingDurationSec, recordedComputingDurationSec)
 }
 
 export function HeaderLogs({
@@ -60,11 +60,12 @@ export function HeaderLogs({
   const isOngoing = match(serviceStatus?.status_details?.status)
     .with('ONGOING', 'CANCELING', () => true)
     .otherwise(() => false)
+  const hasLiveComputingDuration = hasLiveServiceStepComputingDuration(serviceStatus.steps?.details ?? [])
 
-  useIntervalTick(isOngoing)
+  useIntervalTick(isOngoing && hasLiveComputingDuration)
 
-  const totalDurationSec = isOngoing
-    ? getOngoingDeploymentDurationSec(serviceStatus, Date.now())
+  const computingDurationSec = isOngoing
+    ? getOngoingDeploymentComputingDurationSec(serviceStatus, Date.now())
     : serviceStatus.steps?.total_computing_duration_sec ?? 0
 
   if (!service) return null
@@ -128,7 +129,7 @@ export function HeaderLogs({
                     title={dateUTCString(serviceStatus.last_deployment_date ?? '')}
                   >
                     <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-subtle" />
-                    {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
+                    {Math.floor(computingDurationSec / 60)}m : {computingDurationSec % 60}s
                   </span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                     <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
