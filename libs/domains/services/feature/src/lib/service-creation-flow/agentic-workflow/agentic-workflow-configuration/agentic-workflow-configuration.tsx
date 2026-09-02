@@ -943,7 +943,6 @@ export function AgenticWorkflowConfiguration() {
               label="API key"
               type="password"
               value={values.modelApiKey}
-              hint="API key used to call the selected cloud model."
               error={showModelApiKeyError ? 'Please enter an API key.' : undefined}
               onChange={(event) => form.setValue('modelApiKey', event.currentTarget.value, { shouldDirty: true })}
             />
