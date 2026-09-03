@@ -153,7 +153,7 @@ describe('ServiceNew', () => {
     const baseServices = screen.getByRole('heading', { name: 'Base services' }).closest('section')
     expect(within(baseServices as HTMLElement).queryByText(/Agent task/i)).not.toBeInTheDocument()
 
-    expect(screen.getByRole('link', { name: /Agent task from scratch/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Start from scratch/i })).toHaveAttribute(
       'href',
       '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow'
     )

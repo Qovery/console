@@ -236,14 +236,6 @@ export function ServiceNew({
 
   const agentUseCases: ServiceBlock[] = useMemo(
     () => [
-      {
-        title: 'Agent task from scratch',
-        description: 'Start with a blank agent task and configure everything yourself.',
-        icon: <Icon name="AGENTIC_WORKFLOW" width={20} height={20} />,
-        link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
-        onClick: () => posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' }),
-        cloud_provider: cloudProvider,
-      },
       ...AGENTIC_WORKFLOW_TEMPLATES.map((template) => ({
         title: template.title,
         description: template.description,
@@ -259,6 +251,14 @@ export function ServiceNew({
         onClick: () => posthog.capture('select-agent-use-case', { agentUseCase: template.id }),
         cloud_provider: cloudProvider,
       })),
+      {
+        title: 'Start from scratch',
+        description: 'Start with a blank agent task and configure everything yourself.',
+        icon: <Icon name="AGENTIC_WORKFLOW" width={20} height={20} />,
+        link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
+        onClick: () => posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' }),
+        cloud_provider: cloudProvider,
+      },
       {
         title: 'Need a specific agent? Contact us',
         description: 'Tell us which agent use case you need and we will help you set it up.',
