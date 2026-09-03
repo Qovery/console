@@ -46,6 +46,15 @@ export function BaseServiceCard({ title, description, icon, link, search, onClic
     </>
   )
 
+  if (link) {
+    return (
+      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+      <Link to={link} search={search} onClick={onClick} className={className}>
+        {content}
+      </Link>
+    )
+  }
+
   if (onClick) {
     return (
       <button type="button" onClick={onClick} className={className}>
@@ -54,16 +63,7 @@ export function BaseServiceCard({ title, description, icon, link, search, onClic
     )
   }
 
-  if (!link) {
-    return <div className={className}>{content}</div>
-  }
-
-  return (
-    // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
-    <Link to={link} search={search} className={className}>
-      {content}
-    </Link>
-  )
+  return <div className={className}>{content}</div>
 }
 
 export function Card({ title, description, icon, link, onClick, disabledCTA, badge }: ServiceBlock) {

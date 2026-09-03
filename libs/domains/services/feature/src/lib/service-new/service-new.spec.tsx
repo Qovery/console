@@ -1,4 +1,5 @@
 import { within } from '@testing-library/react'
+import posthog from 'posthog-js'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -103,6 +104,7 @@ describe('ServiceNew', () => {
   beforeEach(() => {
     mockUseFeatureFlagEnabled.mockReturnValue(false)
     mockShowPylonForm.mockClear()
+    ;(posthog.capture as jest.Mock).mockClear()
     mockUseBlueprintCatalog.mockReturnValue({ data: undefined })
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({
       data: blueprintReadmeResponse,
@@ -166,6 +168,18 @@ describe('ServiceNew', () => {
       'href',
       '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=incident-analyser'
     )
+  })
+
+  it('should capture a PostHog event when an agent use case is selected', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    await userEvent.click(screen.getByRole('link', { name: /Incident Analyser/i }))
+
+    expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'incident-analyser' })
   })
 
   it('should open the Pylon contact form from the Agent use cases CTA card', async () => {

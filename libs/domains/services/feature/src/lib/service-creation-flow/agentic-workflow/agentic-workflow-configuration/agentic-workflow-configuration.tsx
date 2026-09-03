@@ -318,7 +318,16 @@ export function AgenticWorkflowConfiguration() {
     control: variablesForm.control,
     name: 'variables',
   })
-  const [openSettingsGroups, setOpenSettingsGroups] = useState<SettingsGroup[]>(['general'])
+  const [openSettingsGroups, setOpenSettingsGroups] = useState<SettingsGroup[]>(() => {
+    const groups: SettingsGroup[] = ['general']
+    // When a template pre-fills a section but leaves it incomplete (e.g. seeded
+    // secrets with empty values), open it so the user sees what to fill in.
+    const initialVariables = variablesForm.getValues('variables')
+    if (initialVariables.length > 0 && !areVariablesValid(initialVariables)) {
+      groups.push('variables')
+    }
+    return groups
+  })
   const [providerModalOpen, setProviderModalOpen] = useState(false)
   const [activeSheet, setActiveSheet] = useState<'mcp' | 'automation' | null>(null)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])

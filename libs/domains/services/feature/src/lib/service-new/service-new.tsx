@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type BlueprintItem,
@@ -267,6 +268,7 @@ export function ServiceNew({
         ),
         link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
         search: { template: template.id },
+        onClick: () => posthog.capture('select-agent-use-case', { agentUseCase: template.id }),
         cloud_provider: cloudProvider,
       })),
       {
