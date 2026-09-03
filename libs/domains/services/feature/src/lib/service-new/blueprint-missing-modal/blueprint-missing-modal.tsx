@@ -46,7 +46,7 @@ export function BlueprintMissingModal({
         <Controller
           name="message"
           control={methods.control}
-          rules={{ required: 'Please describe the blueprint you need.' }}
+          rules={{ validate: (v: string) => v.trim().length > 0 || 'Please describe the blueprint you need.' }}
           render={({ field, fieldState: { error } }) => (
             <InputTextArea
               className="w-full"
