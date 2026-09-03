@@ -7,6 +7,9 @@ describe('agentic-workflow-templates', () => {
     expect(template?.title).toBe('Incident Analyser')
     expect(template?.seed.name).toBe('Incident Analyser')
     expect(template?.seed.agentPrompt).toBeTruthy()
+    // The prompt must reference the seeded credentials so the agent actually uses them.
+    expect(template?.seed.agentPrompt).toContain('INCIDENT_IO_API_KEY')
+    expect(template?.seed.agentPrompt).toContain('SLACK_WEBHOOK_URL')
     expect(template?.seed.cpu).toBe('200')
     expect(template?.seed.memory).toBe('256')
     expect(template?.variables?.map((variable) => variable.variable)).toEqual([
@@ -25,6 +28,9 @@ describe('agentic-workflow-templates', () => {
     expect(template?.seed.memory).toBe('256')
     // Runs on Qovery, so it needs no user-provided credential.
     expect(template?.variables).toBeUndefined()
+    // Least-privilege: must not inherit the wildcard host allowlist.
+    expect(template?.seed.whitelistHosts).toBeTruthy()
+    expect(template?.seed.whitelistHosts).not.toBe('*')
   })
 
   it('returns undefined for an unknown template id', () => {

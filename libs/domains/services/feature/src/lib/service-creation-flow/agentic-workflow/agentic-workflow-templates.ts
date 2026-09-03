@@ -19,11 +19,13 @@ export interface AgenticWorkflowTemplate {
 // DRAFT — first-pass prompt, to be refined with product before release.
 const INCIDENT_ANALYSER_PROMPT = `You are an on-call incident analyser. When an incident fires, investigate it and hand a clear summary back to the human on-call.
 
-1. Read the incident payload (id, title, severity, affected services) from the trigger.
+Credentials are provided as environment variables: authenticate incident.io calls with INCIDENT_IO_API_KEY, and post to Slack using the incoming webhook in SLACK_WEBHOOK_URL.
+
+1. Read the incident payload (id, title, severity, affected services) from the trigger, fetching any missing details from incident.io with INCIDENT_IO_API_KEY.
 2. Correlate with recent change context: the latest deployments, config changes, and merged PRs for the affected services around the incident start time.
 3. Pull the relevant signals: application logs, metrics, and any runbooks for the affected services.
 4. Determine the most likely root cause and the blast radius. Be explicit about your confidence and what you could not verify.
-5. Post your findings to Slack for the on-call human: a short summary, the suspected root cause, and a recommended next step.
+5. Post your findings to the SLACK_WEBHOOK_URL webhook for the on-call human: a short summary, the suspected root cause, and a recommended next step.
 6. If the fix is small and well-understood, open a PR with the proposed change and link it in the Slack message. Never merge — always leave the human as the gate.`
 
 // DRAFT — first-pass prompt, to be refined with product before release.
@@ -77,6 +79,10 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       agentPrompt: BUILD_OPTIMIZER_PROMPT,
       cpu: '200',
       memory: '256',
+      // Least-privilege allowlist: this use case only reaches the git providers to
+      // open a PR (build config changes in Qovery go through the platform context).
+      // Draft list — confirm the exact hosts with product/security before release.
+      whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
     // No credential placeholder: the agent runs on Qovery and reaches the build
     // configuration through the platform context, not a user-provided API token.
