@@ -42,18 +42,18 @@ describe('AgenticWorkflowCreationFlow', () => {
     renderWithProviders(
       <AgenticWorkflowCreationFlow
         onExit={jest.fn()}
-        seed={{ name: 'Jira to spec', agentPrompt: 'Turn a ticket into a spec', whitelistHosts: '*.atlassian.net' }}
-        variablesSeed={[{ variable: 'JIRA_API_TOKEN', value: '', isSecret: true }]}
+        seed={{ name: 'Incident Analyser', agentPrompt: 'Investigate the incident', whitelistHosts: 'api.incident.io' }}
+        variablesSeed={[{ variable: 'INCIDENT_IO_API_KEY', value: '', isSecret: true }]}
       >
         <FormDefaults />
       </AgenticWorkflowCreationFlow>
     )
 
     // Seeded fields are applied…
-    expect(screen.getByTestId('name')).toHaveTextContent('Jira to spec')
-    expect(screen.getByTestId('agent-prompt')).toHaveTextContent('Turn a ticket into a spec')
-    expect(screen.getByTestId('whitelist-hosts')).toHaveTextContent('*.atlassian.net')
-    expect(screen.getByTestId('variables')).toHaveTextContent('JIRA_API_TOKEN')
+    expect(screen.getByTestId('name')).toHaveTextContent('Incident Analyser')
+    expect(screen.getByTestId('agent-prompt')).toHaveTextContent('Investigate the incident')
+    expect(screen.getByTestId('whitelist-hosts')).toHaveTextContent('api.incident.io')
+    expect(screen.getByTestId('variables')).toHaveTextContent('INCIDENT_IO_API_KEY')
     // …while untouched fields keep their defaults.
     expect(screen.getByTestId('cpu')).toHaveTextContent('2000')
     expect(screen.getByTestId('workflow-enabled')).toHaveTextContent('true')

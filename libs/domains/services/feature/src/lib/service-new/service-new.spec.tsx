@@ -160,9 +160,9 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Agent use cases' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Jira to spec/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Incident Analyser/i })).toHaveAttribute(
       'href',
-      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=jira-to-spec'
+      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=incident-analyser'
     )
   })
 
@@ -172,7 +172,7 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.queryByRole('heading', { name: 'Agent use cases' })).not.toBeInTheDocument()
-    expect(screen.queryByText('Jira to spec')).not.toBeInTheDocument()
+    expect(screen.queryByText('Incident Analyser')).not.toBeInTheDocument()
   })
 
   it('should show base service descriptions in info tooltips', async () => {

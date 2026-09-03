@@ -1,3 +1,4 @@
+import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { APIVariableScopeEnum } from 'qovery-typescript-axios'
 import { type VariableData } from '@qovery/shared/interfaces'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
@@ -7,57 +8,83 @@ export interface AgenticWorkflowTemplate {
   id: string
   title: string
   description: string
-  iconUri: string
+  // Font Awesome icon name rendered through the shared <Icon iconName />.
+  iconName: IconName
   // Pre-fills part of the main creation form.
   seed: Partial<AgenticWorkflowFormData>
   // Pre-fills the separate variables form (secret/config placeholders).
   variables?: VariableData[]
 }
 
-const JIRA_TO_SPEC_PROMPT = `You turn a Jira ticket into a clear technical specification.
+// DRAFT — first-pass prompt, to be refined with product before release.
+const INCIDENT_ANALYSER_PROMPT = `You are an on-call incident analyser. When an incident fires, investigate it and hand a clear summary back to the human on-call.
 
-1. Read the Jira ticket referenced in the incoming request (use the JIRA_* credentials to fetch its summary, description, comments, and linked issues).
-2. Produce a structured technical spec with these sections:
-   - Context: the problem and why it matters.
-   - Scope: what is and is not included.
-   - Proposed approach: the implementation plan, key components, and data changes.
-   - Risks & open questions.
-   - Acceptance criteria: testable outcomes.
-3. Keep it concise and actionable. Post the spec back as a comment on the ticket.`
+1. Read the incident payload (id, title, severity, affected services) from the trigger.
+2. Correlate with recent change context: the latest deployments, config changes, and merged PRs for the affected services around the incident start time.
+3. Pull the relevant signals: application logs, metrics, and any runbooks for the affected services.
+4. Determine the most likely root cause and the blast radius. Be explicit about your confidence and what you could not verify.
+5. Post your findings to Slack for the on-call human: a short summary, the suspected root cause, and a recommended next step.
+6. If the fix is small and well-understood, open a PR with the proposed change and link it in the Slack message. Never merge — always leave the human as the gate.`
+
+// DRAFT — first-pass prompt, to be refined with product before release.
+const BUILD_OPTIMIZER_PROMPT = `You are a build and deployment optimizer. Find concrete ways to make builds and deployments faster and cheaper, and propose them.
+
+1. Inspect the service's build setup: Dockerfile, dependency installation, layer caching, image size, and the build/deploy configuration in Qovery.
+2. Identify optimization levers (e.g. better layer ordering and caching, multi-stage builds, smaller base images, pruning unused dependencies, parallelisable steps).
+3. For each lever, estimate the expected gain (build time, image size, or cost) and the risk.
+4. Open a PR with the proposed changes to the build configuration, and/or update the build configuration in Qovery.
+5. Summarise what you changed, the expected gain, and anything that needs a human decision. Never merge — leave the human as the gate.`
 
 export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
   {
-    id: 'jira-to-spec',
-    title: 'Jira to spec',
-    description: 'Turn a Jira ticket into a technical specification.',
-    iconUri: '/assets/ai-tools/jira.svg',
+    id: 'incident-analyser',
+    title: 'Incident Analyser',
+    description: 'Correlate a firing incident with recent changes, logs and metrics, then report and open a PR.',
+    iconName: 'triangle-exclamation',
     seed: {
-      name: 'Jira to spec',
-      description: 'Turn a Jira ticket into a technical specification.',
-      agentPrompt: JIRA_TO_SPEC_PROMPT,
-      whitelistHosts: '*.atlassian.net',
+      name: 'Incident Analyser',
+      description: 'Correlate a firing incident with recent changes, logs and metrics, then report and open a PR.',
+      agentPrompt: INCIDENT_ANALYSER_PROMPT,
+      cpu: '200',
+      memory: '256',
+      whitelistHosts: 'api.incident.io,hooks.slack.com',
     },
     variables: [
       {
-        variable: 'JIRA_BASE_URL',
-        value: '',
-        isSecret: false,
-        scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
-        description: 'Your Jira instance URL, e.g. https://your-org.atlassian.net',
-      },
-      {
-        variable: 'JIRA_EMAIL',
-        value: '',
-        isSecret: false,
-        scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
-        description: 'The account email used to authenticate against Jira.',
-      },
-      {
-        variable: 'JIRA_API_TOKEN',
+        variable: 'INCIDENT_IO_API_KEY',
         value: '',
         isSecret: true,
         scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
-        description: 'A Jira API token for the account above.',
+        description: 'API key used to read incident details from incident.io.',
+      },
+      {
+        variable: 'SLACK_WEBHOOK_URL',
+        value: '',
+        isSecret: true,
+        scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
+        description: 'Slack incoming webhook the agent posts its findings to.',
+      },
+    ],
+  },
+  {
+    id: 'build-optimizer',
+    title: 'Build & deployment optimizer',
+    description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
+    iconName: 'gauge-high',
+    seed: {
+      name: 'Build & deployment optimizer',
+      description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
+      agentPrompt: BUILD_OPTIMIZER_PROMPT,
+      cpu: '200',
+      memory: '256',
+    },
+    variables: [
+      {
+        variable: 'QOVERY_API_TOKEN',
+        value: '',
+        isSecret: true,
+        scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
+        description: 'Qovery API token used to read and update the build configuration.',
       },
     ],
   },

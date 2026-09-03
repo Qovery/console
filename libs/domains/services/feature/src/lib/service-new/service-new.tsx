@@ -258,7 +258,13 @@ export function ServiceNew({
       AGENTIC_WORKFLOW_TEMPLATES.map((template) => ({
         title: template.title,
         description: template.description,
-        icon: <img src={template.iconUri} alt="" />,
+        // BaseServiceCard overrides the icon className with a 20x20 box, so center
+        // the glyph via inline style (not overridden) and size/color the inner Icon.
+        icon: (
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon iconName={template.iconName} iconStyle="regular" className="text-base text-brand" />
+          </span>
+        ),
         link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
         search: { template: template.id },
         cloud_provider: cloudProvider,
