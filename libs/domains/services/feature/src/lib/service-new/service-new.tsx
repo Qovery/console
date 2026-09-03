@@ -277,7 +277,7 @@ export function ServiceNew({
             <Icon iconName="paper-plane" iconStyle="regular" className="text-base text-brand" />
           </span>
         ),
-        onClick: () => showPylonForm('request-agent-template'),
+        onClick: () => showPylonForm('request-ai-builder-portal'),
       },
     ],
     [cloudProvider, environmentId, organizationId, projectId, showPylonForm]

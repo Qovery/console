@@ -177,7 +177,7 @@ describe('ServiceNew', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /Need a specific agent/i }))
 
-    expect(mockShowPylonForm).toHaveBeenCalledWith('request-agent-template')
+    expect(mockShowPylonForm).toHaveBeenCalledWith('request-ai-builder-portal')
   })
 
   it('should hide the Agent use cases section when the agentic workflow flag is disabled', () => {
