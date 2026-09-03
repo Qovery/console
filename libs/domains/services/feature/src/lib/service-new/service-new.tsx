@@ -243,7 +243,7 @@ export function ServiceNew({
         // the glyph via inline style (not overridden) and size/color the inner Icon.
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon iconName={template.iconName} iconStyle="regular" className="text-base text-[#807DC1]" />
+            <Icon iconName={template.iconName} iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
           </span>
         ),
         link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
@@ -254,7 +254,15 @@ export function ServiceNew({
       {
         title: 'Start from scratch',
         description: 'Start with a blank agent task and configure everything yourself.',
-        icon: <Icon name="AGENTIC_WORKFLOW" width={20} height={20} />,
+        icon: (
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon
+              iconName="wand-magic-sparkles"
+              iconStyle="regular"
+              className="text-base text-[color:var(--brand-9)]"
+            />
+          </span>
+        ),
         link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
         onClick: () => posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' }),
         cloud_provider: cloudProvider,
@@ -264,7 +272,7 @@ export function ServiceNew({
         description: 'Tell us which agent use case you need and we will help you set it up.',
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon iconName="paper-plane" iconStyle="regular" className="text-base text-[#807DC1]" />
+            <Icon iconName="paper-plane" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
           </span>
         ),
         onClick: () => showPylonForm('request-ai-builder-portal'),
