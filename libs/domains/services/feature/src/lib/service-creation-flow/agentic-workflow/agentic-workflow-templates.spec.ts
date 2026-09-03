@@ -23,7 +23,8 @@ describe('agentic-workflow-templates', () => {
     expect(template?.seed.agentPrompt).toBeTruthy()
     expect(template?.seed.cpu).toBe('200')
     expect(template?.seed.memory).toBe('256')
-    expect(template?.variables?.map((variable) => variable.variable)).toEqual(['QOVERY_API_TOKEN'])
+    // Runs on Qovery, so it needs no user-provided credential.
+    expect(template?.variables).toBeUndefined()
   })
 
   it('returns undefined for an unknown template id', () => {

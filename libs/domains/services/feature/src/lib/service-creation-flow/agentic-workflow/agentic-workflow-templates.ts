@@ -78,15 +78,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       cpu: '200',
       memory: '256',
     },
-    variables: [
-      {
-        variable: 'QOVERY_API_TOKEN',
-        value: '',
-        isSecret: true,
-        scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
-        description: 'Qovery API token used to read and update the build configuration.',
-      },
-    ],
+    // No credential placeholder: the agent runs on Qovery and reaches the build
+    // configuration through the platform context, not a user-provided API token.
   },
 ]
 
