@@ -1,3 +1,4 @@
+import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowCreationFlow, useAgenticWorkflowCreateContext } from './agentic-workflow-context'
 
@@ -12,6 +13,7 @@ function FormDefaults() {
       <span data-testid="storage">{values.storage}</span>
       <span data-testid="whitelist-hosts">{values.whitelistHosts}</span>
       <span data-testid="workflow-enabled">{String(values.workflowEnabled)}</span>
+      <span data-testid="execution-mode">{values.executionMode}</span>
     </>
   )
 }
@@ -19,7 +21,7 @@ function FormDefaults() {
 describe('AgenticWorkflowCreationFlow', () => {
   it('should initialize the form with MVP defaults', () => {
     renderWithProviders(
-      <AgenticWorkflowCreationFlow creationFlowUrl="/create/agentic-workflow" onExit={jest.fn()}>
+      <AgenticWorkflowCreationFlow onExit={jest.fn()}>
         <FormDefaults />
       </AgenticWorkflowCreationFlow>
     )
@@ -29,5 +31,6 @@ describe('AgenticWorkflowCreationFlow', () => {
     expect(screen.getByTestId('storage')).toHaveTextContent('10')
     expect(screen.getByTestId('whitelist-hosts')).toHaveTextContent('*')
     expect(screen.getByTestId('workflow-enabled')).toHaveTextContent('true')
+    expect(screen.getByTestId('execution-mode')).toHaveTextContent(AgenticWorkflowExecutionMode.IN_PLACE)
   })
 })

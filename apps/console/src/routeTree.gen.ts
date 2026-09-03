@@ -160,7 +160,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugVariablesRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugSummaryRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary'
@@ -1428,15 +1427,6 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute,
     } as any,
   )
-const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRoute =
-  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRouteImport.update(
-    {
-      id: '/summary',
-      path: '/summary',
-      getParentRoute: () =>
-        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowRouteRoute,
-    } as any,
-  )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRoute =
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRouteImport.update(
     {
@@ -1980,7 +1970,6 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRoute
-  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute
@@ -2156,7 +2145,6 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugVariablesRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRoute
-  '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute
@@ -2354,7 +2342,6 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugSummaryRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateSlugVariablesRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRoute
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobGeneralRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobResourcesRoute
@@ -2553,7 +2540,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration'
-    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
@@ -2729,7 +2715,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration'
-    | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
@@ -2926,7 +2911,6 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/summary'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/$slug/variables'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration'
-    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/configure'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/general'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/cron-job/resources'
@@ -4041,13 +4025,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobConfigureRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateCronJobRouteRoute
     }
-    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary': {
-      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary'
-      path: '/summary'
-      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/summary'
-      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowRouteRoute
-    }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration'
       path: '/configuration'
@@ -4799,7 +4776,6 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
 
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRoute
-  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowIndexRoute
 }
 
@@ -4807,8 +4783,6 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
   {
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowConfigurationRoute,
-    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRoute:
-      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowSummaryRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowIndexRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateAgenticWorkflowIndexRoute,
   }

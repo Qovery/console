@@ -15,8 +15,6 @@ function RouteComponent() {
   const { organizationId, projectId, environmentId } = Route.useParams()
   const navigate = useNavigate()
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
-  const creationFlowUrl = `/organization/${organizationId}/project/${projectId}/environment/${environmentId}/service/create/agentic-workflow`
-
   useEffect(() => {
     if (!isAgenticWorkflowEnabled) {
       navigate({
@@ -30,7 +28,6 @@ function RouteComponent() {
 
   return (
     <AgenticWorkflowCreationFlow
-      creationFlowUrl={creationFlowUrl}
       onExit={() =>
         navigate({
           to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',

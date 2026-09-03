@@ -25,20 +25,26 @@ function parseHeaders(headersJson: string): AgenticWorkflowHeader[] {
 }
 
 export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequest {
+  const scheduleTrigger = values.automations
+    .flatMap((automation) => automation.triggers)
+    .find((trigger) => trigger.type === 'schedule')
+  const automationOutputs = values.automations.flatMap((automation) => automation.outputs)
+
   return {
     name: values.name,
     description: values.description,
     docker_fragment: values.dockerFragment,
     enabled: values.workflowEnabled,
-    schedule: values.scheduleEnabled
+    execution_mode: values.executionMode,
+    schedule: scheduleTrigger
       ? {
-          cron_expression: values.scheduleCronExpression,
-          timezone: values.timezone,
+          cron_expression: scheduleTrigger.cronExpression ?? '',
+          timezone: scheduleTrigger.timezone ?? 'Etc/UTC',
         }
       : null,
     mcp: values.mcpJson.trim() || undefined,
     mcp_server_ids: values.mcpServerIds,
-    outputs: values.outputs.map((output, index) => ({
+    outputs: automationOutputs.map((output, index) => ({
       name: `Output ${index + 1}`,
       url: output.url,
       headers: parseHeaders(output.headersJson),
