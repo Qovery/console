@@ -1,43 +1,43 @@
-import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useNavigate, useParams } from '@tanstack/react-router'
-import { APIVariableScopeEnum } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useRef } from 'react'
-import { FormProvider, useFieldArray } from 'react-hook-form'
-import { McpServerSetting, useMcpServers } from '@qovery/domains/organizations/feature'
-import { TextAreaVariableSuggestion, VariableRow } from '@qovery/domains/variables/feature'
+import posthog from 'posthog-js'
+import { APIVariableScopeEnum, type McpServerResponse } from 'qovery-typescript-axios'
+import { type ReactNode, useRef, useState } from 'react'
+import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
+import { useMcpServers } from '@qovery/domains/organizations/feature'
+import { VariableRow, useImportVariables } from '@qovery/domains/variables/feature'
 import { type VariableData } from '@qovery/shared/interfaces'
 import {
+  Accordion,
   Button,
   CodeEditor,
-  FunnelFlowBody,
   Heading,
   Icon,
   InputText,
   InputTextArea,
   InputToggle,
+  Modal,
   Section,
+  useModal,
 } from '@qovery/shared/ui'
+import { prepareVariableImportRequest } from '@qovery/shared/util-js'
+import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
+import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-deploy-environment'
 import {
-  type AgenticWorkflowConfigurationSection,
+  type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
   type AgenticWorkflowOutput,
+  createDefaultAutomation,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
-import { AgenticWorkflowScheduleFields, isAgenticWorkflowScheduleValid } from '../agentic-workflow-schedule-fields'
-import { AIModelCards } from './ai-model-cards'
-import { GitRepositoryCard } from './git-repository-card'
+import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
+import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } from './agentic-workflow-prompt-editor'
+import { AutomationSheet } from './automations/automation-sheet'
+import { GitContextCard, GitContextCompactCard } from './context/git-context-card'
+import { GitContextModal } from './context/git-context-modal'
+import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header/agentic-workflow-header'
+import { McpSheet } from './mcp/mcp-sheet'
 
-const sectionOrder: AgenticWorkflowConfigurationSection[] = [
-  'service-information',
-  'ai-model',
-  'connectors',
-  'git-repositories',
-  'governance',
-  'docker-fragment',
-  'variables',
-  'outputs',
-  'agent-prompt',
-]
+type SettingsGroup = 'general' | 'resources' | 'governance' | 'variables' | 'advanced'
 
 export function getJsonError(value: string, required = false) {
   if (!value.trim()) return required ? 'Please enter a valid JSON configuration.' : undefined
@@ -48,29 +48,6 @@ export function getJsonError(value: string, required = false) {
   } catch {
     return 'Invalid JSON format.'
   }
-}
-
-function isSectionCompleted(
-  section: AgenticWorkflowConfigurationSection,
-  activeSection: AgenticWorkflowConfigurationSection
-) {
-  return sectionOrder.indexOf(section) < sectionOrder.indexOf(activeSection)
-}
-
-function getSectionTitle(section: AgenticWorkflowConfigurationSection) {
-  const titles: Record<AgenticWorkflowConfigurationSection, string> = {
-    'service-information': 'Service information',
-    'ai-model': 'AI model',
-    connectors: 'MCPs',
-    'git-repositories': 'Git repositories',
-    governance: 'Governance',
-    'docker-fragment': 'Docker fragment',
-    variables: 'Environment variables',
-    outputs: 'Output webhooks',
-    'agent-prompt': 'Agent prompt',
-  }
-
-  return titles[section]
 }
 
 export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository) {
@@ -85,6 +62,14 @@ export function isOutputComplete(output: AgenticWorkflowOutput) {
   return Boolean(output.url.trim())
 }
 
+export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
+  const summary = automation.triggers
+    .map((trigger) => (trigger.type === 'schedule' ? 'Schedule' : 'Webhook'))
+    .join(' + ')
+  const outputCount = automation.outputs.length
+  return outputCount ? `${summary} → ${outputCount} output${outputCount > 1 ? 's' : ''}` : summary
+}
+
 export function areVariablesValid(variables: VariableData[]) {
   return variables.every(
     ({ variable, value, scope }) =>
@@ -92,68 +77,92 @@ export function areVariablesValid(variables: VariableData[]) {
   )
 }
 
-function AgenticWorkflowSection({
+function SettingsAccordionItem({
   children,
-  headerAction,
-  icon,
-  iconName,
   invalid,
-  section,
+  summary,
+  title,
+  value,
 }: {
   children: ReactNode
-  headerAction?: ReactNode
-  icon?: ReactNode
-  iconName?: IconName
-  invalid?: boolean
-  section: AgenticWorkflowConfigurationSection
+  invalid: boolean
+  summary?: string
+  title: string
+  value: SettingsGroup
 }) {
-  const { activeSection, setActiveSection } = useAgenticWorkflowCreateContext()
-  const active = activeSection === section
-  const completed = isSectionCompleted(section, activeSection)
-  const showStatus = completed && !active
-  const title = getSectionTitle(section)
-  const headerContent = (
-    <>
-      <div className="flex items-center gap-2">
-        {icon ?? (iconName ? <Icon iconName={iconName} className="text-sm text-neutral-subtle" /> : null)}
-        <Heading level={2}>{title}</Heading>
-      </div>
-      <div className="flex items-center gap-3">
-        {showStatus &&
-          (invalid ? (
-            <Icon iconName="circle-xmark" className="text-sm text-negative" />
-          ) : (
-            <Icon iconName="circle-check" className="text-sm text-positive" />
-          ))}
-      </div>
-    </>
-  )
-
   return (
-    <Section className="rounded-xl border border-neutral bg-surface-neutral shadow-sm">
-      {active ? (
-        <div className="relative flex min-h-[56px] items-center justify-between gap-3 px-4 py-4 pr-40">
-          {headerContent}
-          {headerAction && <div className="absolute right-4 top-1/2 -translate-y-1/2">{headerAction}</div>}
+    <Accordion.Item value={value} className="border-b border-neutral last:rounded-b-none">
+      <Accordion.Trigger
+        data-settings-group={value}
+        className="w-full cursor-pointer justify-between gap-3 bg-background-secondary px-4 py-4 text-left focus-visible:bg-surface-neutral-subtle focus-visible:outline-none"
+        iconClassName="order-2 ml-auto"
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-3">
+          <span className="flex items-center gap-2 font-medium text-neutral">
+            {title}
+            {invalid ? <Icon iconName="circle-xmark" className="text-xs text-negative" /> : null}
+          </span>
+          {summary ? <span className="ml-auto truncate text-xs font-normal text-neutral-subtle">{summary}</span> : null}
         </div>
-      ) : (
-        <button
-          type="button"
-          className="flex w-full items-center justify-between gap-3 rounded-t-xl px-4 py-4 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand-strong"
-          aria-expanded={active}
-          onClick={() => setActiveSection(section)}
-        >
-          {headerContent}
-        </button>
-      )}
-      {active && <div className="flex flex-col gap-3 px-4 pb-4">{children}</div>}
+      </Accordion.Trigger>
+      <Accordion.Content className="bg-background-secondary">
+        <div className="flex flex-col gap-4 px-4 pb-5">{children}</div>
+      </Accordion.Content>
+    </Accordion.Item>
+  )
+}
+
+function ConfigurationModalContent({
+  children,
+  confirmLabel = 'Done',
+  description,
+  doneDisabled = false,
+  setOpen,
+  title,
+}: {
+  children: ReactNode
+  confirmLabel?: string
+  description: ReactNode
+  doneDisabled?: boolean
+  setOpen?: (open: boolean) => void
+  title: string
+}) {
+  return (
+    <Section className="gap-5 p-5">
+      <div className="flex flex-col gap-1 pr-8">
+        <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
+          {title}
+        </Heading>
+        <p className="text-sm leading-5 text-neutral-subtle">{description}</p>
+      </div>
+      <div className="flex flex-col gap-4">{children}</div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
+          Cancel
+        </Button>
+        <Button type="button" size="md" disabled={doneDisabled} onClick={() => setOpen?.(false)}>
+          {confirmLabel}
+        </Button>
+      </div>
     </Section>
+  )
+}
+
+function ConfigurationRow({ children, label }: { children: ReactNode; label: string }) {
+  return (
+    <div className="grid min-h-11 grid-cols-1 items-center gap-1 sm:grid-cols-[112px_minmax(0,1fr)] sm:gap-4">
+      <span className="text-sm font-medium text-neutral-subtle">{label}</span>
+      <div className="group flex min-h-9 min-w-0 flex-wrap items-center gap-2 rounded px-1 hover:bg-surface-neutral-subtle">
+        {children}
+      </div>
+    </div>
   )
 }
 
 export function AgenticWorkflowCodeEditorField({
   error,
   height = '180px',
+  hideLabel = false,
   hint,
   label,
   language,
@@ -164,6 +173,7 @@ export function AgenticWorkflowCodeEditorField({
 }: {
   error?: string
   height?: string
+  hideLabel?: boolean
   hint?: ReactNode
   label: string
   language: string
@@ -174,7 +184,7 @@ export function AgenticWorkflowCodeEditorField({
 }) {
   return (
     <div data-testid={`code-editor-field-${name}`} className="flex flex-col gap-1">
-      <label className="px-3 text-xs font-medium text-neutral" htmlFor={name}>
+      <label className={hideLabel ? 'sr-only' : 'px-3 text-xs font-medium text-neutral'} htmlFor={name}>
         {label}
       </label>
       <div
@@ -206,13 +216,100 @@ export function AgenticWorkflowCodeEditorField({
   )
 }
 
+function DockerFragmentModal({ setOpen }: { setOpen?: (open: boolean) => void }) {
+  const { form } = useAgenticWorkflowCreateContext()
+  const dockerFragment = form.watch('dockerFragment')
+  const [value, setValue] = useState(dockerFragment)
+
+  return (
+    <Section className="gap-5 p-5">
+      <div className="flex flex-col gap-1 pr-8">
+        <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
+          {dockerFragment ? 'Edit Dockerfile fragment' : 'Add Dockerfile fragment'}
+        </Heading>
+        <p className="text-sm leading-5 text-neutral-subtle">Add setup commands that run before the agent starts.</p>
+      </div>
+      <div className="overflow-hidden rounded-md border border-neutral">
+        <CodeEditor
+          height="320px"
+          language="dockerfile"
+          value={value}
+          onChange={(nextValue) => setValue(nextValue ?? '')}
+          options={{ scrollBeyondLastLine: false, wordWrap: 'on' }}
+        />
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          size="md"
+          onClick={() => {
+            form.setValue('dockerFragment', value, { shouldDirty: true })
+            setOpen?.(false)
+          }}
+        >
+          Save fragment
+        </Button>
+      </div>
+    </Section>
+  )
+}
+
+function McpJsonModal({ setOpen }: { setOpen?: (open: boolean) => void }) {
+  const { form } = useAgenticWorkflowCreateContext()
+  const mcpJson = form.watch('mcpJson')
+  const [value, setValue] = useState(mcpJson)
+  const error = getJsonError(value)
+
+  return (
+    <Section className="gap-5 p-5">
+      <div className="flex flex-col gap-1 pr-8">
+        <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
+          {mcpJson ? 'Edit MCP configuration' : 'Add MCP configuration'}
+        </Heading>
+        <p className="text-sm leading-5 text-neutral-subtle">Configure additional MCP servers with JSON.</p>
+      </div>
+      <div className={`overflow-hidden rounded-md border ${error ? 'border-negative' : 'border-neutral'}`}>
+        <CodeEditor
+          height="320px"
+          language="json"
+          value={value}
+          onChange={(nextValue) => setValue(nextValue ?? '')}
+          options={{ scrollBeyondLastLine: false, wordWrap: 'on' }}
+        />
+      </div>
+      {error ? <p className="text-xs font-medium text-negative">{error}</p> : null}
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
+          Cancel
+        </Button>
+        <Button
+          type="button"
+          size="md"
+          disabled={Boolean(error)}
+          onClick={() => {
+            form.setValue('mcpJson', value, { shouldDirty: true })
+            setOpen?.(false)
+          }}
+        >
+          Save configuration
+        </Button>
+      </div>
+    </Section>
+  )
+}
+
 export function AgenticWorkflowConfiguration() {
-  const { organizationId = '' } = useParams({ strict: false })
+  const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: mcpServers = [], isLoading: areMcpServersLoading } = useMcpServers({ organizationId })
   const navigate = useNavigate()
-  const { environmentId = '' } = useParams({ strict: false })
-  const { activeSection, creationFlowUrl, form, setActiveSection, setCurrentStep, variablesForm } =
-    useAgenticWorkflowCreateContext()
+  const { closeModal, openModal } = useModal()
+  const { form, onExit, variablesForm } = useAgenticWorkflowCreateContext()
+  const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
+  const { isLoading: isDeploying, mutateAsync: deployEnvironment } = useDeployEnvironment({ projectId })
+  const { isLoading: isImportingVariables, mutateAsync: importVariables } = useImportVariables()
   const {
     fields: variables,
     append: appendVariable,
@@ -221,530 +318,698 @@ export function AgenticWorkflowConfiguration() {
     control: variablesForm.control,
     name: 'variables',
   })
+  const [openSettingsGroups, setOpenSettingsGroups] = useState<SettingsGroup[]>(['general'])
+  const [providerModalOpen, setProviderModalOpen] = useState(false)
+  const [activeSheet, setActiveSheet] = useState<'mcp' | 'automation' | null>(null)
+  const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
+  const [dockerModalOpen, setDockerModalOpen] = useState(false)
+  const [mcpJsonModalOpen, setMcpJsonModalOpen] = useState(false)
+  const [showValidationErrors, setShowValidationErrors] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
-  const whitelistHostsTextareaRef = useRef<HTMLTextAreaElement>(null)
-  const agentPromptTextareaRef = useRef<HTMLTextAreaElement>(null)
+  const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
+  const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
+  const createdServiceIdRef = useRef<string>()
   const values = form.watch()
   const { dirtyFields } = form.formState
   const mcpJsonError = getJsonError(values.mcpJson)
-  const outputHeadersErrors = values.outputs.map((output) => getJsonError(output.headersJson))
   const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
-  const outputsValid = values.outputs.every(isOutputComplete)
   const variableValues = variablesForm.watch('variables')
   const variablesValid = areVariablesValid(variableValues)
-  const showNameError = Boolean(dirtyFields.name) && !values.name.trim()
-  const showModelApiKeyError = Boolean(dirtyFields.modelApiKey) && !values.modelApiKey.trim()
-  const sectionInvalid: Record<AgenticWorkflowConfigurationSection, boolean> = {
-    'service-information': !values.name.trim() || !isAgenticWorkflowScheduleValid(values),
-    'ai-model': !values.modelApiKey.trim() || Boolean(modelSettingsJsonError),
-    connectors: Boolean(mcpJsonError),
-    'git-repositories': !gitRepositoriesValid,
+  const showNameError = (showValidationErrors || Boolean(dirtyFields.name)) && !values.name.trim()
+  const showPromptError = (showValidationErrors || Boolean(dirtyFields.agentPrompt)) && !values.agentPrompt.trim()
+  const showModelApiKeyError = (showValidationErrors || Boolean(dirtyFields.modelApiKey)) && !values.modelApiKey.trim()
+  const providerConfigurationInvalid = !values.modelApiKey.trim() || Boolean(modelSettingsJsonError)
+  const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
+    general: false,
+    resources: false,
     governance: false,
-    'docker-fragment': false,
     variables: !variablesValid,
-    outputs: !outputsValid || outputHeadersErrors.some(Boolean),
-    'agent-prompt': !values.agentPrompt.trim(),
+    advanced: Boolean(mcpJsonError),
   }
-  const isValid =
-    Boolean(values.name.trim()) &&
-    Boolean(values.modelApiKey.trim()) &&
-    Boolean(values.agentPrompt.trim()) &&
-    gitRepositoriesValid &&
-    outputsValid &&
-    !mcpJsonError &&
-    outputHeadersErrors.every((error) => !error) &&
-    !modelSettingsJsonError &&
-    variablesValid &&
-    isAgenticWorkflowScheduleValid(values)
+  const automation = values.automations[0] ?? createDefaultAutomation()
+  const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
+    (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
+  )
+  const openGitContext = (index?: number) => {
+    const editingContext = typeof index === 'number' ? values.gitRepositories[index] : undefined
 
-  useEffect(() => {
-    setCurrentStep(1)
-  }, [setCurrentStep])
-
-  useEffect(() => {
-    const inputBySection: Partial<Record<AgenticWorkflowConfigurationSection, HTMLElement | null>> = {
-      'ai-model': modelApiKeyInputRef.current,
-      governance: whitelistHostsTextareaRef.current,
-      'agent-prompt': agentPromptTextareaRef.current,
-    }
-
-    window.requestAnimationFrame(() => inputBySection[activeSection]?.focus())
-  }, [activeSection])
-
-  const goToNextSection = () => {
-    const nextSection = sectionOrder[sectionOrder.indexOf(activeSection) + 1]
-
-    if (nextSection) {
-      setActiveSection(nextSection)
-      return
-    }
-
-    navigate({ to: `${creationFlowUrl}/summary` })
-  }
-
-  const addRepository = () =>
-    form.setValue(
-      'gitRepositories',
-      [
-        ...values.gitRepositories,
-        {
-          provider: undefined,
-          gitTokenId: undefined,
-          gitTokenName: undefined,
-          isPublicRepository: false,
-          repository: '',
-          gitRepository: undefined,
-          branch: '',
-        },
-      ],
-      { shouldDirty: true }
-    )
-
-  const addOutput = () =>
-    form.setValue(
-      'outputs',
-      [
-        ...values.outputs,
-        {
-          url: '',
-          headersJson: `{
-  "Authorization": "Bearer {{TOKEN}}"
-}`,
-          prompt: '',
-        },
-      ],
-      {
-        shouldDirty: true,
-      }
-    )
-
-  return (
-    <FunnelFlowBody customContentWidth="max-w-[620px]">
-      <Section>
-        <header className="mb-5">
-          <Heading level={1}>Create agent task</Heading>
-          <p className="mt-1 text-sm leading-5 text-neutral-subtle">
-            Configure the inputs, tools, model, governance, and outputs used by your agent task.
-          </p>
-        </header>
-
-        <div className="flex flex-col gap-3 pb-20">
-          <AgenticWorkflowSection
-            section="service-information"
-            iconName="circle-info"
-            invalid={sectionInvalid['service-information']}
-          >
-            <InputText
-              name="name"
-              label="Name"
-              value={values.name}
-              autoFocus
-              error={showNameError ? 'Please enter an agent task name.' : undefined}
-              onChange={(event) => form.setValue('name', event.currentTarget.value, { shouldDirty: true })}
-            />
-            <InputTextArea
-              name="description"
-              label="Description"
-              value={values.description}
-              onChange={(event) => form.setValue('description', event.currentTarget.value, { shouldDirty: true })}
-            />
-            <div className="grid gap-3 sm:grid-cols-3">
-              <InputText
-                name="cpu"
-                label="CPU (mCPU)"
-                type="number"
-                value={values.cpu}
-                onChange={(event) => form.setValue('cpu', event.currentTarget.value, { shouldDirty: true })}
-              />
-              <InputText
-                name="memory"
-                label="Memory (MB)"
-                type="number"
-                value={values.memory}
-                onChange={(event) => form.setValue('memory', event.currentTarget.value, { shouldDirty: true })}
-              />
-              <InputText
-                name="storage"
-                label="Storage (GB)"
-                type="number"
-                value={values.storage}
-                onChange={(event) => form.setValue('storage', event.currentTarget.value, { shouldDirty: true })}
-              />
-            </div>
-            <InputToggle
-              small
-              align="top"
-              value={values.workflowEnabled}
-              title="Enable agent task"
-              description="Start listening and executing this agent task as soon as it is created."
-              onChange={(value) => form.setValue('workflowEnabled', value, { shouldDirty: true })}
-            />
-            <AgenticWorkflowScheduleFields />
-            <ContinueButton
-              disabled={!values.name.trim() || !isAgenticWorkflowScheduleValid(values)}
-              onClick={goToNextSection}
-            />
-          </AgenticWorkflowSection>
-
-          <AgenticWorkflowSection
-            section="ai-model"
-            icon={<Icon iconName="brain" className="h-4 w-4 text-neutral-subtle" />}
-            invalid={sectionInvalid['ai-model']}
-          >
-            <AIModelCards />
-            <InputText
-              ref={modelApiKeyInputRef}
-              name="model-api-key"
-              label="API key"
-              type="password"
-              value={values.modelApiKey}
-              hint="API key used to call the selected cloud model."
-              error={showModelApiKeyError ? 'Please enter an API key.' : undefined}
-              onChange={(event) => form.setValue('modelApiKey', event.currentTarget.value, { shouldDirty: true })}
-            />
-            <AgenticWorkflowCodeEditorField
-              name="model-settings"
-              label="Model settings JSON"
-              language="json"
-              value={values.modelSettingsJson}
-              error={modelSettingsJsonError}
-              hint={
-                <>
-                  Need help configuring Claude Code settings? Read the{' '}
-                  <a
-                    href="https://code.claude.com/docs/en/settings"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-medium text-brand hover:underline"
-                  >
-                    Claude Code settings documentation
-                  </a>
-                  .
-                </>
-              }
-              onChange={(value) => form.setValue('modelSettingsJson', value, { shouldDirty: true })}
-            />
-            <ContinueButton
-              disabled={!values.modelApiKey.trim() || Boolean(modelSettingsJsonError)}
-              onClick={goToNextSection}
-            />
-          </AgenticWorkflowSection>
-
-          <AgenticWorkflowSection section="connectors" iconName="plug" invalid={sectionInvalid.connectors}>
-            <McpServerSetting
-              isLoading={areMcpServersLoading}
-              mcpServers={mcpServers}
-              organizationId={organizationId}
-              value={values.mcpServerIds}
-              onChange={(value) => form.setValue('mcpServerIds', value as string[], { shouldDirty: true })}
-            />
-            <Heading level={3} className="pt-4" weight="medium">
-              Advanced MCP configuration
-            </Heading>
-            <AgenticWorkflowCodeEditorField
-              name="mcp"
-              label="MCP JSON"
-              language="json"
-              value={values.mcpJson}
-              error={mcpJsonError}
-              hint={
-                <span>
-                  See Claude Code docs for{' '}
-                  <a
-                    href="https://code.claude.com/docs/fr/mcp#option-1-add-a-remote-http-server"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-medium text-brand hover:underline"
-                  >
-                    remote HTTP
-                  </a>{' '}
-                  and{' '}
-                  <a
-                    href="https://code.claude.com/docs/fr/mcp#option-3-add-a-local-stdio-server"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-medium text-brand hover:underline"
-                  >
-                    local stdio
-                  </a>{' '}
-                  servers.
-                </span>
-              }
-              onChange={(value) => form.setValue('mcpJson', value, { shouldDirty: true })}
-            />
-            <ContinueButton disabled={Boolean(mcpJsonError)} onClick={goToNextSection} />
-          </AgenticWorkflowSection>
-
-          <AgenticWorkflowSection
-            section="git-repositories"
-            iconName="code-branch"
-            invalid={sectionInvalid['git-repositories']}
-            headerAction={
-              <Button
-                type="button"
-                variant="outline"
-                color="neutral"
-                size="sm"
-                className="h-8 w-fit whitespace-nowrap"
-                onClick={addRepository}
-              >
-                <Icon iconName="plus" />
-                Add repository
-              </Button>
-            }
-          >
-            {values.gitRepositories.map((repository, index) => (
-              <GitRepositoryCard
-                key={index}
-                index={index}
-                repository={repository}
-                onChange={(nextRepository) => {
-                  const gitRepositories = [...values.gitRepositories]
-                  gitRepositories[index] = nextRepository
-                  form.setValue('gitRepositories', gitRepositories, { shouldDirty: true })
-                }}
-                onRemove={() =>
+    openModal({
+      content: (
+        <GitContextModal
+          context={editingContext}
+          setOpen={(open) => {
+            if (!open) closeModal()
+          }}
+          onRemove={
+            typeof index === 'number'
+              ? () => {
                   form.setValue(
                     'gitRepositories',
                     values.gitRepositories.filter((_, repositoryIndex) => repositoryIndex !== index),
                     { shouldDirty: true }
                   )
+                  closeModal()
                 }
+              : undefined
+          }
+          onSave={(context) =>
+            form.setValue(
+              'gitRepositories',
+              typeof index === 'number'
+                ? values.gitRepositories.map((current, repositoryIndex) =>
+                    repositoryIndex === index ? context : current
+                  )
+                : [...values.gitRepositories, context],
+              { shouldDirty: true }
+            )
+          }
+        />
+      ),
+      options: {
+        width: 488,
+        fakeModal: true,
+      },
+    })
+  }
+
+  const focusSettingsGroup = (group: SettingsGroup) => {
+    setOpenSettingsGroups((groups) => (groups.includes(group) ? groups : [...groups, group]))
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        document
+          .querySelector<HTMLElement>(`[data-settings-panel="desktop"] [data-settings-group="${group}"]`)
+          ?.focus({ preventScroll: true })
+      })
+    })
+  }
+
+  const validateConfiguration = () => {
+    setShowValidationErrors(true)
+
+    if (!values.name.trim()) {
+      headerRef.current?.focusName()
+      return false
+    }
+
+    if (!values.agentPrompt.trim()) {
+      promptEditorRef.current?.focusPrompt()
+      return false
+    }
+
+    if (providerConfigurationInvalid) {
+      setProviderModalOpen(true)
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => modelApiKeyInputRef.current?.focus())
+      })
+      return false
+    }
+
+    if (!gitRepositoriesValid) {
+      const invalidIndex = values.gitRepositories.findIndex((repository) => !isGitRepositoryComplete(repository))
+      openGitContext(invalidIndex >= 0 ? invalidIndex : undefined)
+      return false
+    }
+
+    const firstInvalidGroup = (['general', 'resources', 'variables', 'advanced'] as const).find(
+      (group) => settingsGroupsInvalid[group]
+    )
+
+    if (firstInvalidGroup) {
+      focusSettingsGroup(firstInvalidGroup)
+      return false
+    }
+
+    return true
+  }
+
+  const handleSubmit = async (withDeploy: boolean) => {
+    if (!validateConfiguration()) return
+
+    try {
+      if (!createdServiceIdRef.current) {
+        const service = await createService({
+          environmentId,
+          payload: {
+            serviceType: 'AGENTIC_WORKFLOW',
+            ...formatAgenticWorkflowRequest(form.getValues()),
+          },
+        })
+        createdServiceIdRef.current = service.id
+      }
+
+      const variableImportRequest = prepareVariableImportRequest(variableValues)
+      if (variableImportRequest) {
+        await importVariables({
+          serviceId: createdServiceIdRef.current,
+          serviceType: 'AGENTIC_WORKFLOW',
+          variableImportRequest,
+        })
+      }
+
+      if (withDeploy) {
+        await deployEnvironment({ environmentId })
+      }
+
+      posthog.capture('create-service', { selectedServiceType: 'agentic-workflow' })
+      navigate({
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        params: { organizationId, projectId, environmentId },
+      })
+    } catch {
+      // Errors are surfaced by mutation notifications. Keep the created service ID so a retry does not duplicate it.
+    }
+  }
+
+  const settingsContent = (
+    <Accordion.Root
+      data-settings-panel="desktop"
+      type="multiple"
+      value={openSettingsGroups}
+      onValueChange={(groups) => setOpenSettingsGroups(groups as SettingsGroup[])}
+    >
+      <SettingsAccordionItem
+        value="general"
+        title="General settings"
+        invalid={showValidationErrors && settingsGroupsInvalid.general}
+      >
+        <Controller
+          name="description"
+          control={form.control}
+          render={({ field }) => (
+            <InputTextArea name={field.name} label="Description" value={field.value} onChange={field.onChange} />
+          )}
+        />
+        <Controller
+          name="workflowEnabled"
+          control={form.control}
+          render={({ field }) => (
+            <InputToggle
+              small
+              align="top"
+              value={field.value}
+              title="Enable agent task"
+              description="Start listening and executing this agent task as soon as it is created."
+              onChange={field.onChange}
+            />
+          )}
+        />
+      </SettingsAccordionItem>
+
+      <SettingsAccordionItem value="resources" title="Resources" invalid={false}>
+        <div className="grid gap-3">
+          <Controller
+            name="cpu"
+            control={form.control}
+            render={({ field }) => (
+              <InputText
+                name={field.name}
+                label="CPU (mCPU)"
+                type="number"
+                value={field.value}
+                onChange={field.onChange}
               />
-            ))}
-            {!gitRepositoriesValid && (
-              <p className="px-3 text-xs font-medium text-negative">
-                Select a Git account, repository, and branch for each repository.
-              </p>
             )}
-            <ContinueButton disabled={!gitRepositoriesValid} onClick={goToNextSection} />
-          </AgenticWorkflowSection>
-
-          <AgenticWorkflowSection section="governance" iconName="shield-halved" invalid={sectionInvalid.governance}>
-            <InputTextArea
-              ref={whitelistHostsTextareaRef}
-              name="whitelist-hosts"
-              label="Domain allowlist"
-              value={values.whitelistHosts}
-              hint="Use * to allow all domains, or enter hostnames separated by commas. Example: api.github.com, jira.company.com."
-              onChange={(event) => form.setValue('whitelistHosts', event.currentTarget.value, { shouldDirty: true })}
-            />
-            <ContinueButton onClick={goToNextSection} />
-          </AgenticWorkflowSection>
-
-          <AgenticWorkflowSection section="docker-fragment" iconName="box" invalid={sectionInvalid['docker-fragment']}>
-            <AgenticWorkflowCodeEditorField
-              name="docker-fragment"
-              label="Dockerfile fragment"
-              language="dockerfile"
-              value={values.dockerFragment}
-              hint="Use this to install CLI or binary. Example: RUN npm install -g @modelcontextprotocol/server-github."
-              onChange={(value) => form.setValue('dockerFragment', value, { shouldDirty: true })}
-            />
-            <ContinueButton onClick={goToNextSection} />
-          </AgenticWorkflowSection>
-
-          <AgenticWorkflowSection
-            section="variables"
-            iconName="key"
-            invalid={sectionInvalid.variables}
-            headerAction={
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  color="neutral"
-                  size="sm"
-                  className="h-8 w-fit whitespace-nowrap"
-                  onClick={() =>
-                    appendVariable({
-                      variable: '',
-                      value: '',
-                      scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
-                      isSecret: true,
-                    })
-                  }
-                >
-                  <Icon iconName="lock-keyhole" iconStyle="regular" />
-                  Add secret
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  color="neutral"
-                  size="sm"
-                  className="h-8 w-fit whitespace-nowrap"
-                  onClick={() =>
-                    appendVariable({
-                      variable: '',
-                      value: '',
-                      scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
-                      isSecret: false,
-                    })
-                  }
-                >
-                  <Icon iconName="plus" />
-                  Add variable
-                </Button>
-              </div>
-            }
-          >
-            <FormProvider {...variablesForm}>
-              {variables.length > 0 ? (
-                <div>
-                  <div className="mb-3 grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_36px] gap-3 text-xs font-medium text-neutral-subtle">
-                    <span>Variable</span>
-                    <span>Value</span>
-                    <span className="sr-only">Actions</span>
-                  </div>
-                  {variables.map((variable, index) => (
-                    <VariableRow
-                      key={variable.id}
-                      index={index}
-                      availableScopes={[APIVariableScopeEnum.AGENTIC_WORKFLOW]}
-                      gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 36px"
-                      showScope={false}
-                      onDelete={removeVariable}
-                    />
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-neutral-subtle">No environment variables configured.</p>
-              )}
-              <ContinueButton disabled={!variablesValid} onClick={goToNextSection} />
-            </FormProvider>
-          </AgenticWorkflowSection>
-
-          <AgenticWorkflowSection
-            section="outputs"
-            iconName="paper-plane"
-            invalid={sectionInvalid.outputs}
-            headerAction={
-              <Button
-                type="button"
-                variant="outline"
-                color="neutral"
-                size="sm"
-                className="h-8 w-fit whitespace-nowrap"
-                onClick={addOutput}
-              >
-                <Icon iconName="plus" />
-                Add webhook
-              </Button>
-            }
-          >
-            {values.outputs.map((output, index) => (
-              <div key={index} className="rounded-lg border border-neutral bg-surface-neutral p-4">
-                <div className="mb-3 flex items-center justify-between">
-                  <span className="text-sm font-medium text-neutral">Webhook {index + 1}</span>
-                  <Button
-                    type="button"
-                    variant="plain"
-                    color="neutral"
-                    size="md"
-                    onClick={() =>
-                      form.setValue(
-                        'outputs',
-                        values.outputs.filter((_, outputIndex) => outputIndex !== index),
-                        { shouldDirty: true }
-                      )
-                    }
-                  >
-                    Remove
-                  </Button>
-                </div>
-                <div className="flex flex-col gap-3">
-                  <InputText
-                    name={`output-url-${index}`}
-                    label="Webhook URL"
-                    value={output.url}
-                    error={!output.url.trim() ? 'Please enter the output webhook URL.' : undefined}
-                    onChange={(event) => {
-                      const outputs = [...values.outputs]
-                      outputs[index] = { ...output, url: event.currentTarget.value }
-                      form.setValue('outputs', outputs, { shouldDirty: true })
-                    }}
-                  />
-                  <AgenticWorkflowCodeEditorField
-                    name={`output-headers-${index}`}
-                    label="Request headers JSON"
-                    language="json"
-                    height="120px"
-                    value={output.headersJson}
-                    error={outputHeadersErrors[index]}
-                    hint='Optional request headers. Example: { "Authorization": "Bearer {{TOKEN}}" }'
-                    onChange={(value) => {
-                      const outputs = [...values.outputs]
-                      outputs[index] = { ...output, headersJson: value }
-                      form.setValue('outputs', outputs, { shouldDirty: true })
-                    }}
-                  />
-                  <InputTextArea
-                    name={`output-prompt-${index}`}
-                    label="Prompt"
-                    value={output.prompt}
-                    onChange={(event) => {
-                      const outputs = [...values.outputs]
-                      outputs[index] = { ...output, prompt: event.currentTarget.value }
-                      form.setValue('outputs', outputs, { shouldDirty: true })
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-            {!outputsValid && (
-              <p className="px-3 text-xs font-medium text-negative">
-                Enter a webhook URL for each configured output webhook.
-              </p>
+          />
+          <Controller
+            name="memory"
+            control={form.control}
+            render={({ field }) => (
+              <InputText
+                name={field.name}
+                label="Memory (MB)"
+                type="number"
+                value={field.value}
+                onChange={field.onChange}
+              />
             )}
-            <ContinueButton disabled={!outputsValid || outputHeadersErrors.some(Boolean)} onClick={goToNextSection} />
-          </AgenticWorkflowSection>
-
-          <AgenticWorkflowSection
-            section="agent-prompt"
-            iconName="message-lines"
-            invalid={sectionInvalid['agent-prompt']}
-          >
-            <TextAreaVariableSuggestion
-              ref={agentPromptTextareaRef}
-              environmentId={environmentId}
-              name="agent-prompt"
-              label="Agent prompt"
-              value={values.agentPrompt}
-              textareaClassName="min-h-40"
-              variableKeys={variableValues.map((variable) => variable.variable ?? '').filter(Boolean)}
-              hint="Describe the agent task behavior. Example: review incoming webhook payloads, open a pull request when needed, then notify the team."
-              onChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
-            />
-            <ContinueButton disabled={!values.agentPrompt.trim()} onClick={goToNextSection} />
-          </AgenticWorkflowSection>
+          />
+          <Controller
+            name="storage"
+            control={form.control}
+            render={({ field }) => (
+              <InputText
+                name={field.name}
+                label="Storage (GB)"
+                type="number"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
+          />
         </div>
+      </SettingsAccordionItem>
 
-        <footer className="fixed bottom-0 left-1/2 z-header w-full max-w-[620px] -translate-x-1/2 bg-background px-8 pb-4">
-          <div className="border-t border-neutral pt-4">
-            <Button
-              type="button"
-              size="lg"
-              className="w-full justify-center"
-              disabled={!isValid}
-              onClick={() => navigate({ to: `${creationFlowUrl}/summary` })}
-            >
-              Confirm configuration
-              <Icon iconName="arrow-right" />
-            </Button>
+      <SettingsAccordionItem value="governance" title="Governance" invalid={false}>
+        <div className="flex flex-col gap-3">
+          <p className="text-xs text-neutral-subtle">Control which external domains the agent task can access.</p>
+          <Controller
+            name="whitelistHosts"
+            control={form.control}
+            render={({ field }) => (
+              <InputTextArea
+                name={field.name}
+                label="Domain allowlist"
+                value={field.value}
+                hint="Use * to allow all domains, or enter hostnames separated by commas."
+                onChange={field.onChange}
+              />
+            )}
+          />
+        </div>
+      </SettingsAccordionItem>
+
+      <SettingsAccordionItem
+        value="variables"
+        title="Environment variables"
+        summary={variables.length > 0 ? `${variables.length} configured` : undefined}
+        invalid={showValidationErrors && settingsGroupsInvalid.variables}
+      >
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            color="neutral"
+            size="sm"
+            onClick={() =>
+              appendVariable({
+                variable: '',
+                value: '',
+                scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
+                isSecret: false,
+              })
+            }
+          >
+            <Icon iconName="circle-plus" iconStyle="regular" />
+            Add variable
+          </Button>
+          <Button
+            type="button"
+            variant="solid"
+            color="neutral"
+            size="sm"
+            className="border border-neutralInvert"
+            onClick={() =>
+              appendVariable({
+                variable: '',
+                value: '',
+                scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
+                isSecret: true,
+              })
+            }
+          >
+            <Icon iconName="lock-keyhole" iconStyle="regular" />
+            Add secret
+          </Button>
+        </div>
+        <FormProvider {...variablesForm}>
+          {variables.length > 0 ? (
+            <div className="flex flex-col gap-3">
+              {variables.map((variable, index) => (
+                <VariableRow
+                  key={variable.id}
+                  index={index}
+                  availableScopes={[APIVariableScopeEnum.AGENTIC_WORKFLOW]}
+                  gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 36px"
+                  showScope={false}
+                  onDelete={removeVariable}
+                />
+              ))}
+            </div>
+          ) : null}
+        </FormProvider>
+      </SettingsAccordionItem>
+
+      <SettingsAccordionItem
+        value="advanced"
+        title="Advanced settings"
+        invalid={showValidationErrors && settingsGroupsInvalid.advanced}
+      >
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-3">
+            <div>
+              <Heading level={3} weight="medium">
+                Dockerfile fragment
+              </Heading>
+              <p className="mt-1 text-xs text-neutral-subtle">
+                Install additional CLIs or binaries in the agent runtime.
+              </p>
+            </div>
+            {values.dockerFragment ? (
+              <div className="flex items-center gap-3 rounded-lg border border-neutral bg-surface-neutral p-3">
+                <Icon iconName="file-lines" iconStyle="regular" className="shrink-0 text-[13px] text-neutral-subtle" />
+                <span className="min-w-0 flex-1 truncate text-ssm leading-[18px] text-neutral">
+                  Dockerfile fragment
+                </span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="xs"
+                  onClick={() => setDockerModalOpen(true)}
+                >
+                  <Icon iconName="pen" iconStyle="regular" />
+                  Edit
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="xs"
+                  iconOnly
+                  aria-label="Delete Dockerfile fragment"
+                  onClick={() => form.setValue('dockerFragment', '', { shouldDirty: true })}
+                >
+                  <Icon iconName="trash-can" iconStyle="regular" />
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="sm"
+                  onClick={() => setDockerModalOpen(true)}
+                >
+                  <Icon iconName="code" iconStyle="regular" />
+                  Add raw
+                </Button>
+              </div>
+            )}
           </div>
-        </footer>
-      </Section>
-    </FunnelFlowBody>
+          <div className="flex flex-col gap-3">
+            <div>
+              <Heading level={3} weight="medium">
+                Advanced MCP configuration
+              </Heading>
+              <p className="mt-1 text-xs text-neutral-subtle">Configure additional MCP servers with JSON.</p>
+            </div>
+            {values.mcpJson ? (
+              <div className="flex items-center gap-3 rounded-lg border border-neutral bg-surface-neutral p-3">
+                <Icon iconName="file-lines" iconStyle="regular" className="shrink-0 text-[13px] text-neutral-subtle" />
+                <span className="min-w-0 flex-1 truncate text-ssm leading-[18px] text-neutral">MCP configuration</span>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="xs"
+                  onClick={() => setMcpJsonModalOpen(true)}
+                >
+                  <Icon iconName="pen" iconStyle="regular" />
+                  Edit
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="xs"
+                  iconOnly
+                  aria-label="Delete MCP configuration"
+                  onClick={() => form.setValue('mcpJson', '', { shouldDirty: true })}
+                >
+                  <Icon iconName="trash-can" iconStyle="regular" />
+                </Button>
+              </div>
+            ) : (
+              <div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="sm"
+                  onClick={() => setMcpJsonModalOpen(true)}
+                >
+                  <Icon iconName="code" iconStyle="regular" />
+                  Add raw
+                </Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </SettingsAccordionItem>
+    </Accordion.Root>
   )
-}
 
-function ContinueButton({ disabled, onClick }: { disabled?: boolean; onClick: () => void }) {
+  const creationActions = () => (
+    <div className="flex gap-2">
+      <Button
+        data-testid="button-create"
+        type="button"
+        variant="outline"
+        loading={isCreating || isImportingVariables}
+        onClick={() => handleSubmit(false)}
+      >
+        Create
+      </Button>
+      <Button
+        data-testid="button-create-deploy"
+        type="button"
+        loading={isCreating || isImportingVariables || isDeploying}
+        onClick={() => handleSubmit(true)}
+      >
+        Create and deploy
+      </Button>
+    </div>
+  )
+
   return (
-    <Button type="button" size="md" color="neutral" className="w-fit" disabled={disabled} onClick={onClick}>
-      Continue
-      <Icon iconName="arrow-right" />
-    </Button>
+    <div className="flex min-h-0 w-full flex-col overflow-hidden bg-background">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-neutral px-4 sm:px-6">
+        <Button type="button" color="neutral" variant="plain" aria-label="Back" iconOnly onClick={onExit}>
+          <Icon iconName="arrow-left" />
+        </Button>
+        <div className="flex items-center gap-2">{creationActions()}</div>
+      </header>
+
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
+        <main className="min-w-0 flex-1 lg:overflow-y-auto">
+          <Section className="mx-auto flex max-w-[920px] flex-col px-6 py-8 sm:px-10 sm:py-10">
+            <AgenticWorkflowHeader
+              ref={headerRef}
+              name={values.name}
+              nameError={showNameError ? 'Please enter an agent task name.' : undefined}
+              onNameChange={(value) => form.setValue('name', value, { shouldDirty: true })}
+            />
+            <section aria-label="Context" className="flex flex-col gap-2 py-6">
+              <h2 className="text-sm font-medium text-neutral-subtle">Context</h2>
+              {values.gitRepositories.some(isGitRepositoryComplete) ? (
+                <>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    {values.gitRepositories.map((repository, index) =>
+                      isGitRepositoryComplete(repository) ? (
+                        <GitContextCompactCard
+                          key={`${repository.repository}-${index}`}
+                          provider={repository.provider}
+                          repository={repository.gitRepository?.name || repository.repository}
+                          onClick={() => openGitContext(index)}
+                        />
+                      ) : null
+                    )}
+                  </div>
+                  <div className="flex">
+                    <Button type="button" variant="outline" color="neutral" size="sm" onClick={() => openGitContext()}>
+                      <Icon iconName="circle-plus" iconStyle="regular" />
+                      Add repository
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                <GitContextCard onClick={() => openGitContext()} />
+              )}
+            </section>
+            <section aria-label="Agent task capabilities" className="border-t border-neutral py-3">
+              <ConfigurationRow label="Provider">
+                <Button
+                  type="button"
+                  size="sm"
+                  color="neutral"
+                  variant="outline"
+                  onClick={() => setProviderModalOpen(true)}
+                >
+                  <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-4 w-4" />
+                  Anthropic
+                </Button>
+                {!values.modelApiKey.trim() ? (
+                  <span
+                    className={`text-xs ${showValidationErrors ? 'font-medium text-negative' : 'text-neutral-subtle'}`}
+                  >
+                    API key required
+                  </span>
+                ) : null}
+              </ConfigurationRow>
+              <ConfigurationRow label="MCP">
+                {availableMcpServers
+                  .filter(({ id }) => values.mcpServerIds.includes(id))
+                  .map(({ id, name }) => (
+                    <div
+                      key={id}
+                      className="flex h-7 max-w-full items-center rounded border border-neutral bg-surface-neutral pl-2 pr-1 text-ssm font-medium text-neutral"
+                    >
+                      <span className="truncate">{name}</span>
+                      <Button
+                        type="button"
+                        size="sm"
+                        color="neutral"
+                        variant="plain"
+                        iconOnly
+                        className="h-5 w-5 hover:bg-transparent"
+                        aria-label={`Remove ${name}`}
+                        onClick={() =>
+                          form.setValue(
+                            'mcpServerIds',
+                            values.mcpServerIds.filter((mcpServerId) => mcpServerId !== id),
+                            { shouldDirty: true }
+                          )
+                        }
+                      >
+                        <Icon iconName="xmark" className="text-xs" />
+                      </Button>
+                    </div>
+                  ))}
+                <Button type="button" size="sm" color="neutral" variant="outline" onClick={() => setActiveSheet('mcp')}>
+                  <Icon iconName="circle-plus" iconStyle="regular" />
+                  Add MCP
+                </Button>
+              </ConfigurationRow>
+              <ConfigurationRow label="Automations">
+                <Button
+                  type="button"
+                  size="sm"
+                  color="neutral"
+                  variant="outline"
+                  className="max-w-full"
+                  onClick={() => setActiveSheet('automation')}
+                >
+                  <Icon iconName={automation.triggers.length ? 'bolt' : 'circle-plus'} iconStyle="regular" />
+                  <span className="truncate">
+                    {automation.triggers.length ? summarizeAutomation(automation) : 'Add automation'}
+                  </span>
+                </Button>
+              </ConfigurationRow>
+            </section>
+            <section aria-label="Instructions" className="border-t border-neutral pt-6">
+              <AgenticWorkflowPromptEditor
+                ref={promptEditorRef}
+                environmentId={environmentId}
+                prompt={values.agentPrompt}
+                promptError={showPromptError ? 'Please describe what the agent task should do.' : undefined}
+                variableKeys={variableValues.map((variable) => variable.variable ?? '').filter(Boolean)}
+                onPromptChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
+              />
+            </section>
+          </Section>
+        </main>
+
+        <aside
+          aria-label="Agent task settings"
+          className="shrink-0 border-t border-neutral bg-background-secondary lg:h-full lg:w-[380px] lg:overflow-y-auto lg:border-l lg:border-t-0"
+        >
+          {settingsContent}
+        </aside>
+      </div>
+
+      {providerModalOpen ? (
+        <Modal externalOpen={providerModalOpen} setExternalOpen={setProviderModalOpen} width={520}>
+          <ConfigurationModalContent
+            title="Configure provider"
+            description="Configure the Anthropic credentials and cloud settings for the agent task."
+            confirmLabel="Save provider"
+            setOpen={setProviderModalOpen}
+          >
+            <Controller
+              name="modelApiKey"
+              control={form.control}
+              render={({ field }) => (
+                <InputText
+                  ref={modelApiKeyInputRef}
+                  name={field.name}
+                  label="API key"
+                  type="password"
+                  value={field.value}
+                  error={showModelApiKeyError ? 'Please enter an API key.' : undefined}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+            <Controller
+              name="modelSettingsJson"
+              control={form.control}
+              render={({ field }) => (
+                <AgenticWorkflowCodeEditorField
+                  name={field.name}
+                  label="Cloud settings JSON"
+                  language="json"
+                  value={field.value}
+                  error={modelSettingsJsonError}
+                  hint={
+                    <>
+                      Configure the cloud model runtime. Read the{' '}
+                      <a
+                        href="https://code.claude.com/docs/en/settings"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-brand hover:underline"
+                      >
+                        Claude Code settings documentation
+                      </a>
+                      .
+                    </>
+                  }
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </ConfigurationModalContent>
+        </Modal>
+      ) : null}
+
+      {activeSheet === 'mcp' ? (
+        <McpSheet
+          isLoading={areMcpServersLoading}
+          mcpServers={mcpServers}
+          createdMcpServers={createdMcpServers}
+          value={values.mcpServerIds}
+          onChange={(value) => form.setValue('mcpServerIds', value, { shouldDirty: true })}
+          onClose={() => setActiveSheet(null)}
+          onMcpServerCreated={(mcpServer) =>
+            setCreatedMcpServers((servers) =>
+              servers.some(({ id }) => id === mcpServer.id) ? servers : [...servers, mcpServer]
+            )
+          }
+        />
+      ) : null}
+
+      {activeSheet === 'automation' ? (
+        <AutomationSheet
+          automation={automation}
+          onClose={() => setActiveSheet(null)}
+          onSave={(nextAutomation) => form.setValue('automations', [nextAutomation], { shouldDirty: true })}
+        />
+      ) : null}
+
+      {dockerModalOpen ? (
+        <Modal
+          externalOpen={dockerModalOpen}
+          setExternalOpen={setDockerModalOpen}
+          width={720}
+          className="max-w-[calc(100vw-2rem)]"
+        >
+          <DockerFragmentModal setOpen={setDockerModalOpen} />
+        </Modal>
+      ) : null}
+
+      {mcpJsonModalOpen ? (
+        <Modal
+          externalOpen={mcpJsonModalOpen}
+          setExternalOpen={setMcpJsonModalOpen}
+          width={720}
+          className="max-w-[calc(100vw-2rem)]"
+        >
+          <McpJsonModal setOpen={setMcpJsonModalOpen} />
+        </Modal>
+      ) : null}
+    </div>
   )
 }

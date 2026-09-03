@@ -2,7 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form'
 import { InputSelect } from '@qovery/shared/ui'
 import { useListTimezone } from '../hooks/use-list-timezone/use-list-timezone'
 
-export function TimezoneSetting({ className = '' }: { className?: string }) {
+export function TimezoneSetting({ className = '', portal }: { className?: string; portal?: boolean }) {
   const { control } = useFormContext()
   const { data = [] } = useListTimezone()
 
@@ -26,6 +26,7 @@ export function TimezoneSetting({ className = '' }: { className?: string }) {
             }))}
             value={field.value}
             error={error?.message}
+            portal={portal}
           />
         )}
       />
