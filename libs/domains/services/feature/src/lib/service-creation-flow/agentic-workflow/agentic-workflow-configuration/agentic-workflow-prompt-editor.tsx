@@ -57,7 +57,7 @@ export const AgenticWorkflowPromptEditor = forwardRef<
         error={promptError}
         className="[&_.cm-content]:min-h-80"
         editorClassName="rounded-none border-0 bg-transparent focus-within:!border-0 focus-within:!outline-none [&_.cm-content]:px-0 [&_.cm-content]:pt-0 [&_.cm-line]:px-0"
-        placeholder="Type your instructions here…"
+        placeholder="Tell your agent what to do…"
         suggestions={suggestions}
         onChange={(value) => onPromptChange(value)}
       />

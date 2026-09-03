@@ -55,7 +55,7 @@ jest.mock('./agentic-workflow-prompt-editor', () => ({
       return (
         <textarea
           aria-label="Instructions"
-          placeholder="Type your instructions here…"
+          placeholder="Tell your agent what to do…"
           value={prompt}
           onChange={(event: { currentTarget: { value: string } }) => onPromptChange(event.currentTarget.value)}
         />
@@ -137,7 +137,7 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(name).toHaveFocus()
     expect(prompt).not.toHaveFocus()
     expect(screen.getByPlaceholderText('New agent task')).toBeInTheDocument()
-    expect(screen.getByPlaceholderText('Type your instructions here…')).toBeInTheDocument()
+    expect(screen.getByPlaceholderText('Tell your agent what to do…')).toBeInTheDocument()
     expect(screen.queryByTestId('progress-bar-wrapper')).not.toBeInTheDocument()
   })
 

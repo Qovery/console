@@ -17,7 +17,7 @@ export const Primary = {
   args: {
     label: 'Instructions',
     name: 'prompt',
-    placeholder: 'Type your instructions here…',
+    placeholder: 'Tell your agent what to do…',
     value: 'Review the pull request and notify {{SLACK_CHANNEL}} using {{SECRET}}.',
     onChange: () => undefined,
   },
