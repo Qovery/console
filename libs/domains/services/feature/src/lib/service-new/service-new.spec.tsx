@@ -142,15 +142,18 @@ describe('ServiceNew', () => {
     expect(screen.queryByText('Agent task')).not.toBeInTheDocument()
   })
 
-  it('should render agentic workflow entry when feature flag is enabled', () => {
+  it('should render the from-scratch agent task entry in Agent use cases when the flag is enabled', () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
 
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
 
-    expect(screen.getByText('Agent task')).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Agent task/i })).toHaveAttribute(
+    // The blank agent task entry lives in Agent use cases, not Base services.
+    const baseServices = screen.getByRole('heading', { name: 'Base services' }).closest('section')
+    expect(within(baseServices as HTMLElement).queryByText(/Agent task/i)).not.toBeInTheDocument()
+
+    expect(screen.getByRole('link', { name: /Agent task from scratch/i })).toHaveAttribute(
       'href',
       '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow'
     )

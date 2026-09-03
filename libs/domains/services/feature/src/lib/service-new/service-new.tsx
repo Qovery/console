@@ -164,18 +164,6 @@ export function ServiceNew({
 
   const serviceEmpty: ServiceBlock[] = useMemo(
     () => [
-      ...(isAgenticWorkflowEnabled
-        ? [
-            {
-              title: 'Agent task',
-              description: 'Delegate a one-time task to an AI agent with access to repositories, MCPs, and webhooks.',
-              icon: <Icon name="AGENTIC_WORKFLOW" width={32} height={32} />,
-              link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
-              cloud_provider: cloudProvider,
-              badge: 'BETA',
-            },
-          ]
-        : []),
       {
         title: 'Application',
         description: 'Deploy a long running service running from Git or a Container Registry.',
@@ -243,19 +231,19 @@ export function ServiceNew({
             },
           ]),
     ],
-    [
-      cloudProvider,
-      environmentId,
-      isAgenticWorkflowEnabled,
-      isTerraformFeatureFlag,
-      organizationId,
-      projectId,
-      showPylonForm,
-    ]
+    [cloudProvider, environmentId, isTerraformFeatureFlag, organizationId, projectId, showPylonForm]
   )
 
   const agentUseCases: ServiceBlock[] = useMemo(
     () => [
+      {
+        title: 'Agent task from scratch',
+        description: 'Start with a blank agent task and configure everything yourself.',
+        icon: <Icon name="AGENTIC_WORKFLOW" width={20} height={20} />,
+        link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
+        onClick: () => posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' }),
+        cloud_provider: cloudProvider,
+      },
       ...AGENTIC_WORKFLOW_TEMPLATES.map((template) => ({
         title: template.title,
         description: template.description,
