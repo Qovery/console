@@ -1,7 +1,7 @@
 import { Outlet, createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useEffect } from 'react'
-import { AgenticWorkflowCreationFlow } from '@qovery/domains/services/feature'
+import { AgenticWorkflowCreationFlow, getAgenticWorkflowTemplate } from '@qovery/domains/services/feature'
 import { serviceCreateParamsSchema } from '@qovery/shared/router'
 
 export const Route = createFileRoute(
@@ -13,6 +13,8 @@ export const Route = createFileRoute(
 
 function RouteComponent() {
   const { organizationId, projectId, environmentId } = Route.useParams()
+  const { template } = Route.useSearch()
+  const selectedTemplate = getAgenticWorkflowTemplate(template)
   const navigate = useNavigate()
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
   useEffect(() => {
@@ -28,6 +30,8 @@ function RouteComponent() {
 
   return (
     <AgenticWorkflowCreationFlow
+      seed={selectedTemplate?.seed}
+      variablesSeed={selectedTemplate?.variables}
       onExit={() =>
         navigate({
           to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',

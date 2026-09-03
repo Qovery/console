@@ -34,21 +34,25 @@ jest.mock('@qovery/shared/ui', () => {
     Link: ({
       children,
       params,
+      search,
       to,
       ...props
     }: {
       children: ReactNode
       params?: Record<string, string>
+      search?: Record<string, string>
       to?: string
       [key: string]: unknown
-    }) =>
-      typeof to === 'string' ? (
-        <a href={mockGetLinkHref(to, params)} {...props}>
+    }) => {
+      const query = search ? `?${new URLSearchParams(search).toString()}` : ''
+      return typeof to === 'string' ? (
+        <a href={`${mockGetLinkHref(to, params)}${query}`} {...props}>
           {children}
         </a>
       ) : (
         <span {...props}>{children}</span>
-      ),
+      )
+    },
   }
 })
 
@@ -146,6 +150,29 @@ describe('ServiceNew', () => {
       'href',
       '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow'
     )
+  })
+
+  it('should render the Agent use cases section behind the agentic workflow flag', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.getByRole('heading', { name: 'Agent use cases' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Jira to spec/i })).toHaveAttribute(
+      'href',
+      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=jira-to-spec'
+    )
+  })
+
+  it('should hide the Agent use cases section when the agentic workflow flag is disabled', () => {
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.queryByRole('heading', { name: 'Agent use cases' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Jira to spec')).not.toBeInTheDocument()
   })
 
   it('should show base service descriptions in info tooltips', async () => {

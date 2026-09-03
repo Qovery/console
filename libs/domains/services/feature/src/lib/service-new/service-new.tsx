@@ -12,6 +12,7 @@ import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-deta
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 import { isBlueprintCompatibleWithCluster } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
+import { AGENTIC_WORKFLOW_TEMPLATES } from '../service-creation-flow/agentic-workflow/agentic-workflow-templates'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { BaseServiceCard, Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
 import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
@@ -252,6 +253,19 @@ export function ServiceNew({
     ]
   )
 
+  const agentUseCases: ServiceBlock[] = useMemo(
+    () =>
+      AGENTIC_WORKFLOW_TEMPLATES.map((template) => ({
+        title: template.title,
+        description: template.description,
+        icon: <img src={template.iconUri} alt="" />,
+        link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
+        search: { template: template.id },
+        cloud_provider: cloudProvider,
+      })),
+    [cloudProvider, environmentId, organizationId, projectId]
+  )
+
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
   const [selectedBlueprint, setSelectedBlueprint] = useState<BlueprintItem | null>(null)
   const [isBlueprintDetailsOpen, setIsBlueprintDetailsOpen] = useState(false)
@@ -277,6 +291,22 @@ export function ServiceNew({
             ))}
           </div>
         </Section>
+
+        {isAgenticWorkflowEnabled && agentUseCases.length > 0 && (
+          <Section className="gap-4">
+            <div className="flex flex-col gap-1">
+              <Heading>Agent use cases</Heading>
+              <p className="text-sm leading-5 text-neutral-subtle">
+                Start from a ready-made agent configuration and adjust it to your needs.
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {agentUseCases.map((useCase) => (
+                <BaseServiceCard key={useCase.title} {...useCase} />
+              ))}
+            </div>
+          </Section>
+        )}
         {isServiceCatalogEnabled && (
           <BlueprintQueryBoundary
             errorFallback={BlueprintSectionErrorFallback}
