@@ -5,6 +5,7 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { ServiceNew } from './service-new'
 
 const mockUseFeatureFlagEnabled = jest.fn(() => false)
+const mockShowPylonForm = jest.fn()
 const mockUseBlueprintCatalog = jest.fn(() => ({ data: undefined }))
 const blueprintReadmeResponse = {
   content: '# AWS S3 Bucket\n\nBlueprint documentation',
@@ -58,7 +59,7 @@ jest.mock('@qovery/shared/ui', () => {
 
 jest.mock('@qovery/shared/util-hooks', () => ({
   ...jest.requireActual('@qovery/shared/util-hooks'),
-  useSupportChat: () => ({ showPylonForm: jest.fn() }),
+  useSupportChat: () => ({ showPylonForm: mockShowPylonForm }),
 }))
 
 const mockUseBlueprintCatalogServiceReadme = jest.fn(() => ({
@@ -101,6 +102,7 @@ const blueprints: BlueprintItem[] = [
 describe('ServiceNew', () => {
   beforeEach(() => {
     mockUseFeatureFlagEnabled.mockReturnValue(false)
+    mockShowPylonForm.mockClear()
     mockUseBlueprintCatalog.mockReturnValue({ data: undefined })
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({
       data: blueprintReadmeResponse,
@@ -164,6 +166,18 @@ describe('ServiceNew', () => {
       'href',
       '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=incident-analyser'
     )
+  })
+
+  it('should open the Pylon contact form from the Agent use cases CTA card', async () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
+
+    const { userEvent } = renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /Need a specific agent/i }))
+
+    expect(mockShowPylonForm).toHaveBeenCalledWith('request-agent-template')
   })
 
   it('should hide the Agent use cases section when the agentic workflow flag is disabled', () => {

@@ -254,8 +254,8 @@ export function ServiceNew({
   )
 
   const agentUseCases: ServiceBlock[] = useMemo(
-    () =>
-      AGENTIC_WORKFLOW_TEMPLATES.map((template) => ({
+    () => [
+      ...AGENTIC_WORKFLOW_TEMPLATES.map((template) => ({
         title: template.title,
         description: template.description,
         // BaseServiceCard overrides the icon className with a 20x20 box, so center
@@ -269,7 +269,18 @@ export function ServiceNew({
         search: { template: template.id },
         cloud_provider: cloudProvider,
       })),
-    [cloudProvider, environmentId, organizationId, projectId]
+      {
+        title: 'Need a specific agent? Contact us',
+        description: 'Tell us which agent use case you need and we will help you set it up.',
+        icon: (
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon iconName="paper-plane" iconStyle="regular" className="text-base text-brand" />
+          </span>
+        ),
+        onClick: () => showPylonForm('request-agent-template'),
+      },
+    ],
+    [cloudProvider, environmentId, organizationId, projectId, showPylonForm]
   )
 
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
