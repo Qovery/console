@@ -19,6 +19,7 @@ import {
   AddonToggleCard,
   SECRET_MANAGER_OPTIONS,
   SecretManagerList,
+  SecretManagerMissingModal,
   getSecretManagerOption,
 } from '../../cluster-addons'
 import {
@@ -71,6 +72,13 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
       secretManagers,
     }))
   }
+
+  const openSecretManagerMissingModal = () =>
+    openModal({
+      content: (
+        <SecretManagerMissingModal organizationId={organizationId} source="creation-flow" onClose={closeModal} />
+      ),
+    })
 
   const openSecretManagerModal = (option: SecretManagerOption, integration?: SecretManagerAccess) => {
     openModal({
@@ -142,42 +150,54 @@ function StepAddonsForm({ onSubmit, organizationId, backTo }: StepAddonsFormProp
                 </p>
               </div>
               <div className="flex flex-col items-start gap-3">
-                <DropdownMenu.Root
-                  onOpenChange={(open) => {
-                    if (open) {
-                      posthog.capture('cluster-secret-manager-add-clicked', {
-                        organization_id: organizationId,
-                        source: 'creation-flow',
-                      })
-                    }
-                  }}
-                >
-                  <DropdownMenu.Trigger asChild>
-                    <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
-                      <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
-                      Add secret manager
-                      <Icon iconName="chevron-down" className="text-[10px]" />
-                    </Button>
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content align="start">
-                    {secretManagerDropdownOptions.map((option) => (
-                      <DropdownMenu.Item
-                        key={option.value}
-                        color="neutral"
-                        icon={<Icon name={option.icon} width={16} height={16} />}
-                        onSelect={() => {
-                          posthog.capture('cluster-secret-manager-type-selected', {
-                            organization_id: organizationId,
-                            secret_manager_type: option.value,
-                          })
-                          openSecretManagerModal(option)
-                        }}
-                      >
-                        {option.label}
-                      </DropdownMenu.Item>
-                    ))}
-                  </DropdownMenu.Content>
-                </DropdownMenu.Root>
+                <div className="flex items-center gap-2">
+                  <DropdownMenu.Root
+                    onOpenChange={(open) => {
+                      if (open) {
+                        posthog.capture('cluster-secret-manager-add-clicked', {
+                          organization_id: organizationId,
+                          source: 'creation-flow',
+                        })
+                      }
+                    }}
+                  >
+                    <DropdownMenu.Trigger asChild>
+                      <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
+                        <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
+                        Add secret manager
+                        <Icon iconName="chevron-down" className="text-[10px]" />
+                      </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content align="start">
+                      {secretManagerDropdownOptions.map((option) => (
+                        <DropdownMenu.Item
+                          key={option.value}
+                          color="neutral"
+                          icon={<Icon name={option.icon} width={16} height={16} />}
+                          onSelect={() => {
+                            posthog.capture('cluster-secret-manager-type-selected', {
+                              organization_id: organizationId,
+                              secret_manager_type: option.value,
+                            })
+                            openSecretManagerModal(option)
+                          }}
+                        >
+                          {option.label}
+                        </DropdownMenu.Item>
+                      ))}
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    color="neutral"
+                    size="md"
+                    className="h-8"
+                    onClick={openSecretManagerMissingModal}
+                  >
+                    Request integration
+                  </Button>
+                </div>
                 <SecretManagerList
                   secretManagers={addonsData.secretManagers}
                   onEdit={(manager) => openSecretManagerModal(getSecretManagerOption(manager.endpoint.mode), manager)}

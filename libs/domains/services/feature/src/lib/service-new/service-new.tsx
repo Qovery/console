@@ -6,13 +6,14 @@ import {
   type LifecycleTemplateListResponseResultsInner,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
-import { Button, Heading, Icon, InputSearch, Section, Skeleton } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 import { isBlueprintCompatibleWithCluster } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
+import { BlueprintMissingModal } from './blueprint-missing-modal/blueprint-missing-modal'
 import { BaseServiceCard, Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
 import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
 import { serviceTemplates } from './service-templates'
@@ -106,6 +107,7 @@ function BlueprintSection({
     organizationId,
     suspense: true,
   })
+  const { openModal, closeModal } = useModal()
   const blueprints = blueprintCatalog?.blueprints ?? []
   const filterBlueprint = ({ name, description, categories }: BlueprintItem) =>
     `${name} ${description} ${categories?.join(' ')}`.toLowerCase().includes(blueprintSearchInput.toLowerCase())
@@ -114,18 +116,42 @@ function BlueprintSection({
   )
   const filteredBlueprints = compatibleBlueprints.filter(filterBlueprint)
 
+  const openBlueprintMissingModal = () =>
+    openModal({
+      content: (
+        <BlueprintMissingModal
+          organizationId={organizationId}
+          cloudProvider={cloudProvider}
+          searchInput={blueprintSearchInput}
+          onClose={closeModal}
+        />
+      ),
+    })
+
   if (compatibleBlueprints.length === 0) return null
 
   return (
     <Section className="gap-4">
       <BlueprintSectionHeader
         action={
-          <InputSearch
-            placeholder="Search blueprints..."
-            className="w-60"
-            customSize="h-9 text-sm"
-            onChange={onBlueprintSearchInputChange}
-          />
+          <div className="flex items-center gap-2">
+            <InputSearch
+              placeholder="Search blueprints..."
+              className="w-60"
+              customSize="h-9 text-sm"
+              onChange={onBlueprintSearchInputChange}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              color="neutral"
+              size="md"
+              className="h-9"
+              onClick={openBlueprintMissingModal}
+            >
+              Request blueprint
+            </Button>
+          </div>
         }
       />
       {filteredBlueprints.length > 0 ? (
@@ -139,9 +165,14 @@ function BlueprintSection({
           ))}
         </div>
       ) : (
-        <div className="flex min-h-[186px] flex-col items-center justify-center rounded border border-neutral bg-surface-neutral px-3 py-6 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-          <p className="mt-1 text-xs font-medium text-neutral-subtle">No blueprints found</p>
+        <div className="flex min-h-[186px] flex-col items-center justify-center gap-3 rounded border border-neutral bg-surface-neutral px-3 py-6 text-center">
+          <div className="flex flex-col items-center gap-1">
+            <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+            <p className="mt-1 text-xs font-medium text-neutral-subtle">No blueprints found</p>
+          </div>
+          <Button type="button" variant="outline" color="neutral" size="sm" onClick={openBlueprintMissingModal}>
+            Request blueprint
+          </Button>
         </div>
       )}
     </Section>
