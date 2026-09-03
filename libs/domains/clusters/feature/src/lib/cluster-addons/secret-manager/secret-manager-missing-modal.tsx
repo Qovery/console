@@ -47,7 +47,7 @@ export function SecretManagerMissingModal({
         <Controller
           name="message"
           control={methods.control}
-          rules={{ required: 'Please describe the secret manager you need.' }}
+          rules={{ validate: (value) => Boolean(value.trim()) || 'Please describe the secret manager you need.' }}
           render={({ field, fieldState: { error } }) => (
             <InputTextArea
               className="w-full"
