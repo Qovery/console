@@ -2,7 +2,7 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { APIVariableScopeEnum, type McpServerResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useRef, useState } from 'react'
-import { FormProvider, useFieldArray } from 'react-hook-form'
+import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
 import { useMcpServers } from '@qovery/domains/organizations/feature'
 import { VariableRow, useImportVariables } from '@qovery/domains/variables/feature'
 import { type VariableData } from '@qovery/shared/interfaces'
@@ -482,9 +482,9 @@ export function AgenticWorkflowConfiguration() {
     }
   }
 
-  const settingsContent = (panel: 'desktop' | 'mobile') => (
+  const settingsContent = (
     <Accordion.Root
-      data-settings-panel={panel}
+      data-settings-panel="desktop"
       type="multiple"
       value={openSettingsGroups}
       onValueChange={(groups) => setOpenSettingsGroups(groups as SettingsGroup[])}
@@ -494,44 +494,69 @@ export function AgenticWorkflowConfiguration() {
         title="General settings"
         invalid={showValidationErrors && settingsGroupsInvalid.general}
       >
-        <InputTextArea
-          name={`description-${panel}`}
-          label="Description"
-          value={values.description}
-          onChange={(event) => form.setValue('description', event.currentTarget.value, { shouldDirty: true })}
+        <Controller
+          name="description"
+          control={form.control}
+          render={({ field }) => (
+            <InputTextArea name={field.name} label="Description" value={field.value} onChange={field.onChange} />
+          )}
         />
-        <InputToggle
-          small
-          align="top"
-          value={values.workflowEnabled}
-          title="Enable agent task"
-          description="Start listening and executing this agent task as soon as it is created."
-          onChange={(value) => form.setValue('workflowEnabled', value, { shouldDirty: true })}
+        <Controller
+          name="workflowEnabled"
+          control={form.control}
+          render={({ field }) => (
+            <InputToggle
+              small
+              align="top"
+              value={field.value}
+              title="Enable agent task"
+              description="Start listening and executing this agent task as soon as it is created."
+              onChange={field.onChange}
+            />
+          )}
         />
       </SettingsAccordionItem>
 
       <SettingsAccordionItem value="resources" title="Resources" invalid={false}>
         <div className="grid gap-3">
-          <InputText
-            name={`cpu-${panel}`}
-            label="CPU (mCPU)"
-            type="number"
-            value={values.cpu}
-            onChange={(event) => form.setValue('cpu', event.currentTarget.value, { shouldDirty: true })}
+          <Controller
+            name="cpu"
+            control={form.control}
+            render={({ field }) => (
+              <InputText
+                name={field.name}
+                label="CPU (mCPU)"
+                type="number"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
           />
-          <InputText
-            name={`memory-${panel}`}
-            label="Memory (MB)"
-            type="number"
-            value={values.memory}
-            onChange={(event) => form.setValue('memory', event.currentTarget.value, { shouldDirty: true })}
+          <Controller
+            name="memory"
+            control={form.control}
+            render={({ field }) => (
+              <InputText
+                name={field.name}
+                label="Memory (MB)"
+                type="number"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
           />
-          <InputText
-            name={`storage-${panel}`}
-            label="Storage (GB)"
-            type="number"
-            value={values.storage}
-            onChange={(event) => form.setValue('storage', event.currentTarget.value, { shouldDirty: true })}
+          <Controller
+            name="storage"
+            control={form.control}
+            render={({ field }) => (
+              <InputText
+                name={field.name}
+                label="Storage (GB)"
+                type="number"
+                value={field.value}
+                onChange={field.onChange}
+              />
+            )}
           />
         </div>
       </SettingsAccordionItem>
@@ -539,12 +564,18 @@ export function AgenticWorkflowConfiguration() {
       <SettingsAccordionItem value="governance" title="Governance" invalid={false}>
         <div className="flex flex-col gap-3">
           <p className="text-xs text-neutral-subtle">Control which external domains the agent task can access.</p>
-          <InputTextArea
-            name={`whitelist-hosts-${panel}`}
-            label="Domain allowlist"
-            value={values.whitelistHosts}
-            hint="Use * to allow all domains, or enter hostnames separated by commas."
-            onChange={(event) => form.setValue('whitelistHosts', event.currentTarget.value, { shouldDirty: true })}
+          <Controller
+            name="whitelistHosts"
+            control={form.control}
+            render={({ field }) => (
+              <InputTextArea
+                name={field.name}
+                label="Domain allowlist"
+                value={field.value}
+                hint="Use * to allow all domains, or enter hostnames separated by commas."
+                onChange={field.onChange}
+              />
+            )}
           />
         </div>
       </SettingsAccordionItem>
@@ -875,7 +906,7 @@ export function AgenticWorkflowConfiguration() {
           aria-label="Agent task settings"
           className="shrink-0 border-t border-neutral bg-background-secondary lg:h-full lg:w-[380px] lg:overflow-y-auto lg:border-l lg:border-t-0"
         >
-          {settingsContent('desktop')}
+          {settingsContent}
         </aside>
       </div>
 
@@ -887,36 +918,48 @@ export function AgenticWorkflowConfiguration() {
             confirmLabel="Save provider"
             setOpen={setProviderModalOpen}
           >
-            <InputText
-              ref={modelApiKeyInputRef}
-              name="model-api-key-provider"
-              label="API key"
-              type="password"
-              value={values.modelApiKey}
-              error={showModelApiKeyError ? 'Please enter an API key.' : undefined}
-              onChange={(event) => form.setValue('modelApiKey', event.currentTarget.value, { shouldDirty: true })}
+            <Controller
+              name="modelApiKey"
+              control={form.control}
+              render={({ field }) => (
+                <InputText
+                  ref={modelApiKeyInputRef}
+                  name={field.name}
+                  label="API key"
+                  type="password"
+                  value={field.value}
+                  error={showModelApiKeyError ? 'Please enter an API key.' : undefined}
+                  onChange={field.onChange}
+                />
+              )}
             />
-            <AgenticWorkflowCodeEditorField
-              name="model-settings-provider"
-              label="Cloud settings JSON"
-              language="json"
-              value={values.modelSettingsJson}
-              error={modelSettingsJsonError}
-              hint={
-                <>
-                  Configure the cloud model runtime. Read the{' '}
-                  <a
-                    href="https://code.claude.com/docs/en/settings"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-medium text-brand hover:underline"
-                  >
-                    Claude Code settings documentation
-                  </a>
-                  .
-                </>
-              }
-              onChange={(value) => form.setValue('modelSettingsJson', value, { shouldDirty: true })}
+            <Controller
+              name="modelSettingsJson"
+              control={form.control}
+              render={({ field }) => (
+                <AgenticWorkflowCodeEditorField
+                  name={field.name}
+                  label="Cloud settings JSON"
+                  language="json"
+                  value={field.value}
+                  error={modelSettingsJsonError}
+                  hint={
+                    <>
+                      Configure the cloud model runtime. Read the{' '}
+                      <a
+                        href="https://code.claude.com/docs/en/settings"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="font-medium text-brand hover:underline"
+                      >
+                        Claude Code settings documentation
+                      </a>
+                      .
+                    </>
+                  }
+                  onChange={field.onChange}
+                />
+              )}
             />
           </ConfigurationModalContent>
         </Modal>
