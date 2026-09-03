@@ -13,7 +13,7 @@ interface ServiceLogsContextType {
   // Service info
   environment: Environment
   serviceId: string
-  serviceStatus: Status
+  serviceStatus: Status | null
   environmentStatus?: EnvironmentStatus
 
   // Time format preferences
@@ -46,7 +46,7 @@ export const ServiceLogsContext = createContext<ServiceLogsContextType | undefin
 interface ServiceLogsProviderProps extends PropsWithChildren {
   environment: Environment
   serviceId: string
-  serviceStatus: Status
+  serviceStatus: Status | null
   environmentStatus?: EnvironmentStatus
 }
 
