@@ -128,8 +128,6 @@ function BlueprintSection({
       ),
     })
 
-  if (compatibleBlueprints.length === 0) return null
-
   return (
     <Section className="gap-4">
       <BlueprintSectionHeader

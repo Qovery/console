@@ -1,4 +1,5 @@
 import posthog from 'posthog-js'
+import { useEffect } from 'react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { InputTextArea, ModalCrud, toast } from '@qovery/shared/ui'
 
@@ -23,6 +24,11 @@ export function BlueprintMissingModal({
     defaultValues: { message: searchInput ?? '' },
     mode: 'onChange',
   })
+
+  useEffect(() => {
+    methods.trigger()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleSubmit = methods.handleSubmit((data) => {
     posthog.capture('blueprint-missing-feedback', {
