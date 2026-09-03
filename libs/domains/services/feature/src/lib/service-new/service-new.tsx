@@ -256,11 +256,7 @@ export function ServiceNew({
         description: 'Start with a blank agent task and configure everything yourself.',
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon
-              iconName="wand-magic-sparkles"
-              iconStyle="regular"
-              className="text-base text-[color:var(--brand-9)]"
-            />
+            <Icon iconName="circle-plus" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
           </span>
         ),
         link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
