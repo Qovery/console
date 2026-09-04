@@ -1,27 +1,12 @@
-import { type AgenticWorkflowHeader, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
+import { type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
+import { parseAgenticWorkflowHeaders } from './agentic-workflow-headers'
 
 function formatWhitelistHosts(value: string) {
   return value
     .split(',')
     .map((host) => host.trim())
     .filter(Boolean)
-}
-
-function parseHeaders(headersJson: string): AgenticWorkflowHeader[] {
-  if (!headersJson.trim()) {
-    return []
-  }
-
-  const parsedValue = JSON.parse(headersJson)
-
-  if (!parsedValue || typeof parsedValue !== 'object' || Array.isArray(parsedValue)) {
-    return []
-  }
-
-  return Object.entries(parsedValue)
-    .filter((entry): entry is [string, string] => typeof entry[1] === 'string')
-    .map(([name, value]) => ({ name, value }))
 }
 
 export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequest {
@@ -47,7 +32,7 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
     outputs: automationOutputs.map((output, index) => ({
       name: output.name?.trim() || `Output ${index + 1}`,
       url: output.url,
-      headers: parseHeaders(output.headersJson),
+      headers: parseAgenticWorkflowHeaders(output.headersJson),
       instructions: output.prompt,
     })),
     model: {

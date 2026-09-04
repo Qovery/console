@@ -52,4 +52,16 @@ describe('agentic workflow automation adapters', () => {
       },
     ])
   })
+
+  it('ignores malformed and invalid header values when serializing settings outputs', () => {
+    expect(
+      formatAgenticWorkflowAutomationOutputs([
+        { name: 'Malformed', url: null, headersJson: '{invalid', prompt: '' },
+        { name: 'Invalid values', url: null, headersJson: '{"valid":"value","invalid":42}', prompt: '' },
+      ])
+    ).toEqual([
+      { name: 'Malformed', url: null },
+      { name: 'Invalid values', url: null, headers: [{ name: 'valid', value: 'value' }] },
+    ])
+  })
 })
