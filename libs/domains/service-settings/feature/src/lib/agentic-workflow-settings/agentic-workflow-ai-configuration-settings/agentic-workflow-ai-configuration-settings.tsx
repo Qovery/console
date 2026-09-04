@@ -54,6 +54,7 @@ export function AgenticWorkflowAiConfigurationSettings({
           compact
           environmentId={environmentId}
           prompt={agentPrompt}
+          promptError={!agentPrompt.trim() ? 'Please enter instructions.' : undefined}
           variableKeys={[]}
           onPromptChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
         />

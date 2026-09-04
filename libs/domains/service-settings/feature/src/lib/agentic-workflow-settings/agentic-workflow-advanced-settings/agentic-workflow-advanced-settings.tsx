@@ -88,7 +88,7 @@ export function AgenticWorkflowAdvancedSettings({ form }: { form: UseFormReturn<
         </div>
       </AgenticWorkflowSettingsCard>
       {codeModalOpen ? (
-        <Modal externalOpen setExternalOpen={setCodeModalOpen} width={720}>
+        <Modal externalOpen setExternalOpen={setCodeModalOpen} width={720} className="max-w-[calc(100vw-2rem)]">
           <CodeConfigurationModal
             title="Configure Dockerfile fragment"
             description="Add setup commands that run before the agent starts."

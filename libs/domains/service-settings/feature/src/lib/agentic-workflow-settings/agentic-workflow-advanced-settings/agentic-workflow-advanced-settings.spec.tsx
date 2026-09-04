@@ -15,5 +15,6 @@ describe('AgenticWorkflowAdvancedSettings', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Edit' }))
     expect(screen.getByRole('button', { name: 'Apply changes' })).toBeInTheDocument()
+    expect(screen.getByRole('dialog')).toHaveClass('max-w-[calc(100vw-2rem)]')
   })
 })

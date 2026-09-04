@@ -15,6 +15,6 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
     expect(screen.queryByRole('heading', { name: 'Instructions' })).not.toBeInTheDocument()
     const instructions = screen.getByRole('textbox', { name: 'Instructions' })
     expect(instructions).toBeInTheDocument()
-    expect(instructions.closest('.min-h-0')).toBeInTheDocument()
+    expect(instructions).toHaveAttribute('aria-invalid', 'false')
   })
 })

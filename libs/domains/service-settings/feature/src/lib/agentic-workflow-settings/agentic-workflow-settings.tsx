@@ -1,9 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import {
-  AgenticWorkflowExecutionMode,
-  type AgenticWorkflowOutput,
-  type AgenticWorkflowRequest,
-} from 'qovery-typescript-axios'
+import { AgenticWorkflowExecutionMode, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
@@ -79,10 +75,6 @@ const PAGE_CONTENT: Record<SettingsPage, { title: string; description: string }>
   },
 }
 
-function parseJson<T>(value: string): T {
-  return JSON.parse(value) as T
-}
-
 export function getGitRepositoryName(url: string) {
   try {
     return new URL(url).pathname.replace(/^\//, '').replace(/\.git$/, '')
@@ -106,25 +98,6 @@ export function agenticWorkflowJsonValidation(value: string) {
   } catch {
     return 'Invalid JSON format.'
   }
-}
-
-export function agenticWorkflowOutputsValidation(value: string) {
-  const jsonError = agenticWorkflowJsonValidation(value)
-  if (jsonError !== true) return jsonError
-  const outputs = parseJson<unknown>(value)
-  return (
-    (Array.isArray(outputs) &&
-      outputs.every(
-        (output): output is AgenticWorkflowOutput =>
-          typeof output === 'object' &&
-          output !== null &&
-          'name' in output &&
-          typeof output.name === 'string' &&
-          Boolean(output.name.trim()) &&
-          (!('url' in output) || output.url === null || (typeof output.url === 'string' && Boolean(output.url.trim())))
-      )) ||
-    'Each output must have a name and, when provided, a valid webhook URL.'
-  )
 }
 
 export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) {
@@ -176,10 +149,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const schedule = values.automation.triggers.find((trigger) => trigger.type === 'schedule')
   const pageValid =
     Boolean(values.name.trim()) &&
-    (page !== 'ai-configuration' || agenticWorkflowJsonValidation(values.modelSettings) === true) &&
-    (page !== 'connections' ||
-      (values.repositories.every(isGitRepositoryComplete) &&
-        (!values.mcp.trim() || agenticWorkflowJsonValidation(values.mcp) === true)))
+    (page !== 'ai-configuration' ||
+      (Boolean(values.agentPrompt.trim()) && agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
+    (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
   const submit = form.handleSubmit((data) => {
     const model: AgenticWorkflowRequest['model'] = {
       type: workflow.model.type,

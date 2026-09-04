@@ -5,7 +5,6 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   AgenticWorkflowSettings,
   agenticWorkflowJsonValidation,
-  agenticWorkflowOutputsValidation,
   formatAgenticWorkflowRepositories,
   getGitRepositoryName,
 } from './agentic-workflow-settings'
@@ -91,14 +90,6 @@ const service = {
 describe('Agentic Workflow settings validation', () => {
   it('rejects malformed JSON', () => {
     expect(agenticWorkflowJsonValidation('{')).toBe('Invalid JSON format.')
-  })
-
-  it('accepts an output without a URL and rejects invalid array entries', () => {
-    expect(agenticWorkflowOutputsValidation('[{"name":"Output 1"}]')).toBe(true)
-    expect(agenticWorkflowOutputsValidation('[{"name":"Output 1","url":null}]')).toBe(true)
-    expect(agenticWorkflowOutputsValidation('[null]')).toBe(
-      'Each output must have a name and, when provided, a valid webhook URL.'
-    )
   })
 
   it.each([
@@ -212,12 +203,38 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('textbox', { name: 'Instructions' })).toBeInTheDocument()
   })
 
+  it('prevents saving empty instructions', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="ai-configuration" />)
+
+    const instructions = screen.getByRole('textbox', { name: 'Instructions' })
+    await userEvent.click(instructions)
+    await userEvent.keyboard('{Control>}a{/Control}{Backspace}')
+
+    await waitFor(() => expect(screen.getByText('Please enter instructions.')).toBeInTheDocument())
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+  })
+
   it('renders Connections with the repository base URL and MCP', () => {
     renderWithProviders(<AgenticWorkflowSettings page="connections" />)
 
     expect(screen.getByRole('heading', { name: 'Connections' })).toBeInTheDocument()
     expect(screen.getByText('qovery/console')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
+  })
+
+  it('preserves malformed legacy MCP JSON without blocking Connections changes', async () => {
+    useServiceSpy.mockReturnValue({ data: { ...service, mcp: '{invalid' } })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="connections" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Remove Documentation' }))
+    const saveButton = screen.getByRole('button', { name: 'Save' })
+    expect(saveButton).toBeEnabled()
+    await userEvent.click(saveButton)
+
+    expect(editService).toHaveBeenCalledWith({
+      serviceId: 'workflow-1',
+      payload: expect.objectContaining({ mcp: '{invalid', mcp_server_ids: [] }),
+    })
   })
 
   it('opens the MCP manager when no MCP exists', async () => {
