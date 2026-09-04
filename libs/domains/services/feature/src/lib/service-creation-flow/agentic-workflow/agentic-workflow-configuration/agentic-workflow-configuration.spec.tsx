@@ -216,8 +216,8 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(createButton)
 
-    expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeDisabled()
+    expect(screen.getByText('Add at least one trigger.')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Configure automation' })).not.toBeInTheDocument()
     expect(mockCreateService).not.toHaveBeenCalled()
   })
 

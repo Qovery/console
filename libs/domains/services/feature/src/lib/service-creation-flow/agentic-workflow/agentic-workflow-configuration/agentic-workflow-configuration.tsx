@@ -142,12 +142,15 @@ function ConfigurationModalContent({
   )
 }
 
-function ConfigurationRow({ children, label }: { children: ReactNode; label: string }) {
+function ConfigurationRow({ children, error, label }: { children: ReactNode; error?: string; label: string }) {
   return (
     <div className="grid min-h-11 grid-cols-1 items-center gap-1 sm:grid-cols-[112px_minmax(0,1fr)] sm:gap-4">
       <span className="text-sm font-medium text-neutral-subtle">{label}</span>
-      <div className="group flex min-h-9 min-w-0 flex-wrap items-center gap-2 rounded px-1 hover:bg-surface-neutral-subtle">
-        {children}
+      <div className="min-w-0">
+        <div className="group flex min-h-9 min-w-0 flex-wrap items-center gap-2 rounded px-1 hover:bg-surface-neutral-subtle">
+          {children}
+        </div>
+        {error ? <p className="mt-1 px-1 text-xs font-medium text-negative">{error}</p> : null}
       </div>
     </div>
   )
@@ -306,6 +309,7 @@ export function AgenticWorkflowConfiguration() {
   }
   const automation = values.automations[0] ?? createDefaultAutomation()
   const automationValid = automation.triggers.length > 0
+  const showAutomationError = showValidationErrors && !automationValid
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
@@ -391,7 +395,6 @@ export function AgenticWorkflowConfiguration() {
     }
 
     if (!automationValid) {
-      setActiveSheet('automation')
       return false
     }
 
@@ -774,7 +777,10 @@ export function AgenticWorkflowConfiguration() {
                   Add MCP
                 </Button>
               </ConfigurationRow>
-              <ConfigurationRow label="Automations">
+              <ConfigurationRow
+                label="Automations"
+                error={showAutomationError ? 'Add at least one trigger.' : undefined}
+              >
                 <Button
                   type="button"
                   size="sm"
