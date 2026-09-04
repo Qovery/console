@@ -1,8 +1,8 @@
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { Icon, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
-import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings.types'
 
 export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<AgenticWorkflowSettingsFormValues> }) {
   const executionMode = form.watch('executionMode')

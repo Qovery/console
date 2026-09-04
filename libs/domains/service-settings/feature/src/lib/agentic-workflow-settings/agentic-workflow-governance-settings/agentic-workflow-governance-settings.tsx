@@ -1,7 +1,7 @@
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { InputTextArea } from '@qovery/shared/ui'
+import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
-import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings.types'
 
 export function AgenticWorkflowGovernanceSettings({
   form,

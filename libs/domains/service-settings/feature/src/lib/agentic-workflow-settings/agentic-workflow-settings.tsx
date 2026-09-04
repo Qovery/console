@@ -7,6 +7,7 @@ import {
 import { useForm } from 'react-hook-form'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
+  type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
   createAgenticWorkflowAutomation,
   formatAgenticWorkflowAutomationOutputs,
@@ -23,7 +24,27 @@ import { AgenticWorkflowAutomationsSettings } from './agentic-workflow-automatio
 import { AgenticWorkflowConnectionsSettings } from './agentic-workflow-connections-settings/agentic-workflow-connections-settings'
 import { AgenticWorkflowGeneralSettings } from './agentic-workflow-general-settings/agentic-workflow-general-settings'
 import { AgenticWorkflowGovernanceSettings } from './agentic-workflow-governance-settings/agentic-workflow-governance-settings'
-import { type AgenticWorkflowSettingsFormValues } from './agentic-workflow-settings.types'
+
+export interface AgenticWorkflowSettingsFormValues {
+  name: string
+  description: string
+  enabled: boolean
+  executionMode: AgenticWorkflowExecutionMode
+  modelApiKey: string
+  modelSettings: string
+  agentPrompt: string
+  repositories: AgenticWorkflowGitRepository[]
+  mcpServerIds: string[]
+  mcp: string
+  dockerFragment: string
+  automation: AgenticWorkflowAutomation
+  hostAllowlist: string
+  webhookIpAllowlist: string
+  cpu: string
+  ram: string
+  gpu: string
+  storage: string
+}
 
 type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'automations' | 'governance' | 'advanced-settings'
 

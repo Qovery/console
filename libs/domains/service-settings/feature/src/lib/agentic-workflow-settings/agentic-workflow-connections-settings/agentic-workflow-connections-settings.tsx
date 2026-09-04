@@ -11,8 +11,8 @@ import {
   isGitRepositoryComplete,
 } from '@qovery/domains/services/feature'
 import { Button, Icon, useModal } from '@qovery/shared/ui'
+import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
-import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings.types'
 
 export function AgenticWorkflowConnectionsSettings({
   form,

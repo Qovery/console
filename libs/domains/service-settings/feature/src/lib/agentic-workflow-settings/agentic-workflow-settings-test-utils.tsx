@@ -1,7 +1,7 @@
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
-import { type AgenticWorkflowSettingsFormValues } from './agentic-workflow-settings.types'
+import { type AgenticWorkflowSettingsFormValues } from './agentic-workflow-settings'
 
 export const SETTINGS_FORM_VALUES: AgenticWorkflowSettingsFormValues = {
   name: 'Incident assistant',

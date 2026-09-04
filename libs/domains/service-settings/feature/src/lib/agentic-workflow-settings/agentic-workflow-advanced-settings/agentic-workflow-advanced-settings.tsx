@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
 import { Button, CodeEditor, Heading, Icon, Modal, Section } from '@qovery/shared/ui'
+import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
-import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings.types'
 
 function CodeConfigurationModal({
   description,
