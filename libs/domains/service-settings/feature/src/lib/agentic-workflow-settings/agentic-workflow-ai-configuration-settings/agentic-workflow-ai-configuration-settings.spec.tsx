@@ -12,6 +12,7 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
 
     expect(screen.getByLabelText('API key')).toHaveValue('')
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Instructions' })).not.toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Instructions' })).toBeInTheDocument()
   })
 })

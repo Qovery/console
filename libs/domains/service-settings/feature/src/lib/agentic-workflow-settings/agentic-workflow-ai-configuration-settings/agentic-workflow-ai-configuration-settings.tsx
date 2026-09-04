@@ -49,14 +49,14 @@ export function AgenticWorkflowAiConfigurationSettings({
           )}
         />
       </AgenticWorkflowSettingsCard>
-      <AgenticWorkflowSettingsCard title="Instructions">
+      <section className="px-5">
         <AgenticWorkflowPromptEditor
           environmentId={environmentId}
           prompt={agentPrompt}
           variableKeys={[]}
           onPromptChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
         />
-      </AgenticWorkflowSettingsCard>
+      </section>
     </>
   )
 }
