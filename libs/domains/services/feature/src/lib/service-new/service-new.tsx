@@ -11,7 +11,7 @@ import { Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from 
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
-import { isBlueprintCompatibleWithCluster } from '../blueprint-utils/blueprint-utils'
+import { getBlueprintDisplayName, isBlueprintCompatibleWithCluster } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
 import { AGENTIC_WORKFLOW_TEMPLATES } from '../service-creation-flow/agentic-workflow/agentic-workflow-templates'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
@@ -111,8 +111,10 @@ function BlueprintSection({
   })
   const { openModal, closeModal } = useModal()
   const blueprints = blueprintCatalog?.blueprints ?? []
-  const filterBlueprint = ({ name, description, categories }: BlueprintItem) =>
-    `${name} ${description} ${categories?.join(' ')}`.toLowerCase().includes(blueprintSearchInput.toLowerCase())
+  const filterBlueprint = (blueprint: BlueprintItem) =>
+    `${blueprint.name} ${getBlueprintDisplayName(blueprint)} ${blueprint.description} ${blueprint.categories?.join(' ')}`
+      .toLowerCase()
+      .includes(blueprintSearchInput.toLowerCase())
   const compatibleBlueprints = blueprints.filter((blueprint) =>
     isBlueprintCompatibleWithCluster(blueprint.provider, cloudProvider)
   )
