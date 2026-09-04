@@ -4,6 +4,7 @@ import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
+import { getSeriesKeys } from '../../../util-chart/get-series-keys'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
@@ -44,7 +45,11 @@ export function PrivateNetworkRequestSizeChart({
     setLegendSelectedKeys(new Set())
   }
 
-  const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
+  const {
+    data: metricsResponseSize,
+    isLoading: isLoadingMetricsResponseSize,
+    isError: isErrorMetricsResponseSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -54,7 +59,11 @@ export function PrivateNetworkRequestSizeChart({
     metricShortName: 'private_network_resp_size',
   })
 
-  const { data: metricsRequestSize, isLoading: isLoadingMetricsRequestSize } = useMetrics({
+  const {
+    data: metricsRequestSize,
+    isLoading: isLoadingMetricsRequestSize,
+    isError: isErrorMetricsRequestSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -63,6 +72,8 @@ export function PrivateNetworkRequestSizeChart({
     boardShortName: 'service_overview',
     metricShortName: 'private_network_req_size',
   })
+
+  const hasError = isErrorMetricsResponseSize || isErrorMetricsRequestSize
 
   const chartData = useMemo(() => {
     if (!metricsResponseSize?.data?.result) {
@@ -94,7 +105,9 @@ export function PrivateNetworkRequestSizeChart({
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
+    // Fill gaps with 0 rather than null — a gap in a request-size series almost
+    // always just means "no traffic in that stretch", not a monitoring outage.
+    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime, getSeriesKeys(baseChartData))
   }, [metricsResponseSize, metricsRequestSize, useLocalTime, startTimestamp, endTimestamp])
 
   return (
@@ -102,6 +115,8 @@ export function PrivateNetworkRequestSizeChart({
       data={chartData}
       isLoading={isLoadingMetricsResponseSize || isLoadingMetricsRequestSize}
       isEmpty={chartData.length === 0}
+      hasError={hasError}
+      emptyLabel="No traffic in this period"
       label="Network request size (bytes/s)"
       description="Large sizes can increase latency and bandwidth costs"
       unit="bytes"
