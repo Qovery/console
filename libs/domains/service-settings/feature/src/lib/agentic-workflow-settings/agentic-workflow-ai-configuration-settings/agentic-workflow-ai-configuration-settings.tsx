@@ -51,6 +51,7 @@ export function AgenticWorkflowAiConfigurationSettings({
       </AgenticWorkflowSettingsCard>
       <section className="px-5">
         <AgenticWorkflowPromptEditor
+          compact
           environmentId={environmentId}
           prompt={agentPrompt}
           variableKeys={[]}
