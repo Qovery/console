@@ -4,6 +4,15 @@ import { InputText } from '@qovery/shared/ui'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
+function getJsonError(value: string) {
+  try {
+    JSON.parse(value)
+    return undefined
+  } catch {
+    return 'Invalid JSON format.'
+  }
+}
+
 export function AgenticWorkflowAiConfigurationSettings({
   environmentId,
   form,
@@ -11,17 +20,6 @@ export function AgenticWorkflowAiConfigurationSettings({
   environmentId: string
   form: UseFormReturn<AgenticWorkflowSettingsFormValues>
 }) {
-  const agentPrompt = form.watch('agentPrompt')
-  const modelSettings = form.watch('modelSettings')
-  const showPromptError = Boolean(form.formState.dirtyFields.agentPrompt) && !agentPrompt.trim()
-  let modelSettingsError: string | undefined
-
-  try {
-    JSON.parse(modelSettings)
-  } catch {
-    modelSettingsError = 'Invalid JSON format.'
-  }
-
   return (
     <>
       <AgenticWorkflowSettingsCard
@@ -44,20 +42,26 @@ export function AgenticWorkflowAiConfigurationSettings({
               label="Cloud settings JSON"
               language="json"
               value={field.value}
-              error={modelSettingsError}
+              error={getJsonError(field.value)}
               onChange={field.onChange}
             />
           )}
         />
       </AgenticWorkflowSettingsCard>
       <section className="px-5">
-        <AgenticWorkflowPromptEditor
-          compact
-          environmentId={environmentId}
-          prompt={agentPrompt}
-          promptError={showPromptError ? 'Please enter instructions.' : undefined}
-          variableKeys={[]}
-          onPromptChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
+        <Controller
+          name="agentPrompt"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <AgenticWorkflowPromptEditor
+              compact
+              environmentId={environmentId}
+              prompt={field.value}
+              promptError={fieldState.isDirty && !field.value.trim() ? 'Please enter instructions.' : undefined}
+              variableKeys={[]}
+              onPromptChange={field.onChange}
+            />
+          )}
         />
       </section>
     </>
