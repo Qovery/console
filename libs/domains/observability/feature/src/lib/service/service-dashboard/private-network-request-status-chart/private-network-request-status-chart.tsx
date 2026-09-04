@@ -4,6 +4,7 @@ import { Chart } from '@qovery/shared/ui'
 import { getColorByPod } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
+import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
@@ -47,7 +48,7 @@ export function PrivateNetworkRequestStatusChart({
   const {
     data: metrics,
     isLoading: isLoadingMetrics,
-    isError: hasError,
+    isError: isErrorMetrics,
   } = useMetrics({
     clusterId,
     startTimestamp,
@@ -87,6 +88,14 @@ export function PrivateNetworkRequestStatusChart({
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metrics, useLocalTime, startTimestamp, endTimestamp])
 
+  // Only fully blank the chart when there's nothing to show AND the query
+  // errored. `useMetrics` uses `keepPreviousData`, so a failed refetch can
+  // leave stale data in place (chartData non-empty) while isError is still
+  // true — that should surface as partial/stale data, not blank a chart that
+  // still has something to display.
+  const hasError = chartData.length === 0 && isErrorMetrics
+  const hasPartialError = chartData.length > 0 && isErrorMetrics
+
   const seriesNames = useMemo(() => {
     if (!metrics?.data?.result) return []
     return metrics.data.result.map((_: unknown, index: number) =>
@@ -103,6 +112,7 @@ export function PrivateNetworkRequestStatusChart({
       emptyLabel="No traffic in this period"
       label="Network request status (req/s)"
       description="Sudden drops or spikes may signal service instability"
+      descriptionRight={hasPartialError ? <PartialErrorBadge /> : undefined}
       unit="req/s"
       serviceId={serviceId}
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}

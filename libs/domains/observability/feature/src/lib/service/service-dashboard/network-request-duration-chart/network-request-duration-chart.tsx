@@ -275,15 +275,14 @@ export function NetworkRequestDurationChart({
     isLoadingMetricsEnvoy95,
   ])
 
-  // When there's real data to show, a single failing percentile shouldn't blank
-  // it (that's what the partial-error indicator below is for). But once
-  // chartData is genuinely empty, ANY relevant query erroring — not just p99,
-  // the one chartData itself gates on — means we can't trust "empty" as
-  // confirmed idle traffic; p50/p95 failing on their own could just as well be
-  // why nothing rendered, and treating it as "No traffic in this period" would
-  // hide that failure.
-  const hasError = useMemo(() => {
-    if (chartData.length > 0) return false
+  // hasError and hasPartialError share the same underlying condition (any
+  // relevant query erroring) and only differ on whether chartData has anything
+  // to show. Splitting them by data presence — rather than by which query is
+  // "the gating one" — matters because `useMetrics` uses `keepPreviousData`: a
+  // failed refetch on p99 still leaves stale p99 data in place (chartData
+  // non-empty) while isErrorMetrics99 is true, so p99 must stay included here
+  // too, not just p50/p95, or that failure would go silently unflagged.
+  const anyError = useMemo(() => {
     const shouldWaitForEnvoy = !!httpRouteName
     return (
       isErrorMetrics99 ||
@@ -292,7 +291,6 @@ export function NetworkRequestDurationChart({
       (shouldWaitForEnvoy && (isErrorMetricsEnvoy99 || isErrorMetricsEnvoy50 || isErrorMetricsEnvoy95))
     )
   }, [
-    chartData,
     isErrorMetrics99,
     isErrorMetrics50,
     isErrorMetrics95,
@@ -301,15 +299,8 @@ export function NetworkRequestDurationChart({
     isErrorMetricsEnvoy95,
     httpRouteName,
   ])
-
-  // p50/p95 (either side) failing while the chart still has other data to
-  // render doesn't blank it above, but it shouldn't look identical to those
-  // percentiles being genuinely idle either — surface it as partial data
-  // instead of staying silent.
-  const hasPartialError = useMemo(
-    () => !hasError && (isErrorMetrics50 || isErrorMetrics95 || isErrorMetricsEnvoy50 || isErrorMetricsEnvoy95),
-    [hasError, isErrorMetrics50, isErrorMetrics95, isErrorMetricsEnvoy50, isErrorMetricsEnvoy95]
-  )
+  const hasError = chartData.length === 0 && anyError
+  const hasPartialError = chartData.length > 0 && anyError
 
   return (
     <LocalChart

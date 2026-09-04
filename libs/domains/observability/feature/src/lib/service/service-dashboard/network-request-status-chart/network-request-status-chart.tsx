@@ -5,6 +5,7 @@ import { getColorByPod } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { type MetricData } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
+import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
@@ -160,16 +161,22 @@ export function NetworkRequestStatusChart({
     return loading
   }, [isLoadingMetrics, isLoadingMetricsEnvoy, httpRouteName])
 
-  // Only show the broken state when there's actually no data to render AND that
-  // emptiness is caused by a real query failure. Gating purely on isError (as
-  // opposed to `!isEmpty && isError`) would hide a real envoy failure whenever
-  // nginx merely succeeds with an empty result — as it typically does once a
-  // service has fully migrated to envoy — leaving the chart to silently render
-  // "No traffic in this period" for what is actually a broken pipeline.
-  const hasError = useMemo(() => {
+  // hasError and hasPartialError share the same underlying condition (either
+  // source erroring) and only differ on whether chartData has anything to show.
+  // Splitting them by data presence — rather than requiring both sources to
+  // fail — matters for two reasons: gating purely on "both erroring" would hide
+  // a real envoy failure whenever nginx merely succeeds with an empty result
+  // (as it typically does once a service has fully migrated to envoy); and
+  // `useMetrics` uses `keepPreviousData`, so a failed refetch on either source
+  // can leave stale data in place (chartData non-empty) while that source's
+  // isError is still true, which should surface as partial data rather than
+  // stay silent.
+  const anyError = useMemo(() => {
     const shouldWaitForEnvoy = !!httpRouteName
-    return chartData.length === 0 && (isErrorMetrics || (shouldWaitForEnvoy && isErrorMetricsEnvoy))
-  }, [chartData, isErrorMetrics, isErrorMetricsEnvoy, httpRouteName])
+    return isErrorMetrics || (shouldWaitForEnvoy && isErrorMetricsEnvoy)
+  }, [isErrorMetrics, isErrorMetricsEnvoy, httpRouteName])
+  const hasError = chartData.length === 0 && anyError
+  const hasPartialError = chartData.length > 0 && anyError
 
   return (
     <LocalChart
@@ -180,6 +187,7 @@ export function NetworkRequestStatusChart({
       emptyLabel="No traffic in this period"
       label="Network request status (req/s)"
       description="Sudden drops or spikes may signal service instability"
+      descriptionRight={hasPartialError ? <PartialErrorBadge /> : undefined}
       unit="req/s"
       serviceId={serviceId}
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}

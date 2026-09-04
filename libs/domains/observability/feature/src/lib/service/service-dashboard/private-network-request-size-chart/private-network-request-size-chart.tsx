@@ -111,18 +111,17 @@ export function PrivateNetworkRequestSizeChart({
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metricsResponseSize, metricsRequestSize, useLocalTime, startTimestamp, endTimestamp])
 
-  // When there's real data to show, a single failing source shouldn't blank it
-  // (that's what the partial-error indicator below is for). But once chartData
-  // is genuinely empty, "request size" erroring too — not just "response size",
-  // the one chartData itself gates on — means we can't trust "empty" as
-  // confirmed idle traffic.
-  const hasError = chartData.length === 0 && (isErrorMetricsResponseSize || isErrorMetricsRequestSize)
-
-  // "Request size" failing while the chart still has other data to render
-  // doesn't blank it above, but it shouldn't look identical to that series
-  // being genuinely idle either — surface it as partial data instead of
-  // staying silent.
-  const hasPartialError = !hasError && isErrorMetricsRequestSize
+  // hasError and hasPartialError share the same underlying condition (either
+  // source erroring) and only differ on whether chartData has anything to show.
+  // Splitting them by data presence — rather than by which query is "the
+  // gating one" — matters because `useMetrics` uses `keepPreviousData`: a
+  // failed refetch on "response size" still leaves stale data in place
+  // (chartData non-empty) while isErrorMetricsResponseSize is true, so it must
+  // stay included here too, not just "request size", or that failure would go
+  // silently unflagged.
+  const anyError = isErrorMetricsResponseSize || isErrorMetricsRequestSize
+  const hasError = chartData.length === 0 && anyError
+  const hasPartialError = chartData.length > 0 && anyError
 
   return (
     <LocalChart
