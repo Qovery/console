@@ -26,9 +26,11 @@ export function BlueprintMissingModal({
   })
 
   useEffect(() => {
-    methods.trigger()
+    if (searchInput) {
+      methods.trigger()
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [searchInput])
 
   const handleSubmit = methods.handleSubmit((data) => {
     posthog.capture('blueprint-missing-feedback', {
