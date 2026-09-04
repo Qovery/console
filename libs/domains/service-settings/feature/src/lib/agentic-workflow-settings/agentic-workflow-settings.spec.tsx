@@ -210,14 +210,12 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('textbox', { name: 'Instructions' })).toBeInTheDocument()
   })
 
-  it('renders Connections with the repository base URL, MCP and Docker fragment', () => {
+  it('renders Connections with the repository base URL and MCP', () => {
     renderWithProviders(<AgenticWorkflowSettings page="connections" />)
 
     expect(screen.getByRole('heading', { name: 'Connections' })).toBeInTheDocument()
     expect(screen.getByText('qovery/console')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Delete Advanced MCP configuration' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Delete Dockerfile fragment' })).toBeInTheDocument()
   })
 
   it('opens the MCP manager when no MCP exists', async () => {

@@ -18,7 +18,7 @@ describe('AgenticWorkflowConnectionsSettings', () => {
     })
   })
 
-  it('renders Git context, MCPs, and advanced settings', () => {
+  it('renders Git context and MCPs', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness
         values={{
@@ -46,7 +46,5 @@ describe('AgenticWorkflowConnectionsSettings', () => {
 
     expect(screen.getByText('qovery/console')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Delete Advanced MCP configuration' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Delete Dockerfile fragment' })).toBeInTheDocument()
   })
 })

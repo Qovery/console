@@ -17,6 +17,7 @@ import {
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { AgenticWorkflowAdvancedSettings } from './agentic-workflow-advanced-settings/agentic-workflow-advanced-settings'
 import { AgenticWorkflowAiConfigurationSettings } from './agentic-workflow-ai-configuration-settings/agentic-workflow-ai-configuration-settings'
 import { AgenticWorkflowAutomationsSettings } from './agentic-workflow-automations-settings/agentic-workflow-automations-settings'
 import { AgenticWorkflowConnectionsSettings } from './agentic-workflow-connections-settings/agentic-workflow-connections-settings'
@@ -24,7 +25,7 @@ import { AgenticWorkflowGeneralSettings } from './agentic-workflow-general-setti
 import { AgenticWorkflowGovernanceSettings } from './agentic-workflow-governance-settings/agentic-workflow-governance-settings'
 import { type AgenticWorkflowSettingsFormValues } from './agentic-workflow-settings.types'
 
-type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'automations' | 'governance'
+type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'automations' | 'governance' | 'advanced-settings'
 
 interface AgenticWorkflowSettingsProps {
   page: SettingsPage
@@ -50,6 +51,10 @@ const PAGE_CONTENT: Record<SettingsPage, { title: string; description: string }>
   governance: {
     title: 'Governance',
     description: 'Control the hosts and webhook source addresses allowed for this agent task.',
+  },
+  'advanced-settings': {
+    title: 'Advanced settings',
+    description: 'Configure optional runtime customization for this agent task.',
   },
 }
 
@@ -210,6 +215,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         {page === 'connections' ? <AgenticWorkflowConnectionsSettings form={form} /> : null}
         {page === 'automations' ? <AgenticWorkflowAutomationsSettings form={form} /> : null}
         {page === 'governance' ? <AgenticWorkflowGovernanceSettings form={form} /> : null}
+        {page === 'advanced-settings' ? <AgenticWorkflowAdvancedSettings form={form} /> : null}
         <div className="flex justify-end pt-2">
           <Button type="submit" size="lg" loading={isLoading} disabled={!form.formState.isDirty || !pageValid}>
             Save

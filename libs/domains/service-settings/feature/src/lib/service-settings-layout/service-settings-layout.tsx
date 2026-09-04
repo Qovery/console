@@ -116,7 +116,15 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
   const governanceLink = linkItem('Governance', toSettingsPath(pathSettings, '/governance'), 'shield-halved')
 
   const linksSettings: SidebarSettingsItem[] = isAgenticWorkflow(service)
-    ? [generalLink, aiConfigurationLink, connectionsLink, automationsLink, governanceLink, dangerZoneLink]
+    ? [
+        generalLink,
+        aiConfigurationLink,
+        connectionsLink,
+        automationsLink,
+        governanceLink,
+        advancedSettingsLink,
+        dangerZoneLink,
+      ]
     : isEditableService(service)
       ? match(service)
           .with({ serviceType: 'APPLICATION' }, () => [
