@@ -61,7 +61,8 @@ export const MCP_CONNECTOR_JSON_EXAMPLE = `{
 }`
 
 export interface AgenticWorkflowOutput {
-  url: string
+  name?: string
+  url: string | null
   headersJson: string
   prompt: string
 }

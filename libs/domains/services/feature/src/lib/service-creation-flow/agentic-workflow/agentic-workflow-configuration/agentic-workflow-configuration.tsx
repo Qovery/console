@@ -59,7 +59,7 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
 }
 
 export function isOutputComplete(output: AgenticWorkflowOutput) {
-  return Boolean(output.url.trim())
+  return Boolean(output.url?.trim())
 }
 
 export function summarizeAutomation(automation: AgenticWorkflowAutomation) {

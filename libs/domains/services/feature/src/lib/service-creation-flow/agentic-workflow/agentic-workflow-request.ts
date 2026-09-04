@@ -45,7 +45,7 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
     mcp: values.mcpJson.trim() || undefined,
     mcp_server_ids: values.mcpServerIds,
     outputs: automationOutputs.map((output, index) => ({
-      name: `Output ${index + 1}`,
+      name: output.name?.trim() || `Output ${index + 1}`,
       url: output.url,
       headers: parseHeaders(output.headersJson),
       instructions: output.prompt,

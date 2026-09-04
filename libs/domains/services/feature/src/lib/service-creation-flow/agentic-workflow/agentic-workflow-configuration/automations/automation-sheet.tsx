@@ -176,20 +176,23 @@ function ScheduledTriggerModal({
 }
 
 function WebhookOutputModal({
+  allowEmptyUrl,
   onSave,
   output,
   setOpen,
 }: {
+  allowEmptyUrl?: boolean
   onSave: (output: AgenticWorkflowOutput) => void
   output?: AgenticWorkflowOutput
   setOpen?: (open: boolean) => void
 }) {
+  const [name, setName] = useState(output?.name ?? '')
   const [url, setUrl] = useState(output?.url ?? '')
   const [headersJson, setHeadersJson] = useState(output?.headersJson ?? '{}')
   const [prompt, setPrompt] = useState(output?.prompt ?? '')
   const headersError = getHeadersError(headersJson)
   const urlError = url.trim() && !isValidUrl(url) ? 'Please enter a valid URL.' : undefined
-  const invalid = !url.trim() || Boolean(urlError) || Boolean(headersError)
+  const invalid = (!allowEmptyUrl && !url.trim()) || Boolean(urlError) || Boolean(headersError)
 
   return (
     <Section className="gap-5 p-5">
@@ -200,6 +203,15 @@ function WebhookOutputModal({
         <p className="text-sm leading-5 text-neutral-subtle">Send the automation result to a webhook.</p>
       </div>
       <div className="flex flex-col gap-4">
+        {allowEmptyUrl ? (
+          <InputText
+            name="output-name"
+            label="Name"
+            value={name}
+            error={!name.trim() ? 'Please enter an output name.' : undefined}
+            onChange={(event) => setName(event.currentTarget.value)}
+          />
+        ) : null}
         <InputText
           name="output-url"
           label="Webhook URL"
@@ -228,9 +240,9 @@ function WebhookOutputModal({
         <Button
           type="button"
           size="md"
-          disabled={invalid}
+          disabled={invalid || (allowEmptyUrl && !name.trim())}
           onClick={() => {
-            onSave({ url, headersJson, prompt })
+            onSave({ name: name.trim() || output?.name, url: url.trim() || null, headersJson, prompt })
             setOpen?.(false)
           }}
         >
@@ -242,11 +254,15 @@ function WebhookOutputModal({
 }
 
 export function AutomationSheet({
+  allowEmptyOutputUrl = false,
   automation,
+  lockWebhookTrigger = false,
   onClose,
   onSave,
 }: {
+  allowEmptyOutputUrl?: boolean
   automation: AgenticWorkflowAutomation
+  lockWebhookTrigger?: boolean
   onClose: () => void
   onSave: (automation: AgenticWorkflowAutomation) => void
 }) {
@@ -292,6 +308,7 @@ export function AutomationSheet({
     openModal({
       content: (
         <WebhookOutputModal
+          allowEmptyUrl={allowEmptyOutputUrl}
           output={typeof index === 'number' ? draft.outputs[index] : undefined}
           onSave={(output) =>
             setDraft((current) => ({
@@ -353,7 +370,7 @@ export function AutomationSheet({
                     key={trigger.id}
                     icon={<Icon iconName="webhook" iconStyle="regular" />}
                     title="Webhook"
-                    onRemove={() => removeTrigger(trigger.id)}
+                    onRemove={lockWebhookTrigger ? undefined : () => removeTrigger(trigger.id)}
                   >
                     Runs when the agent task webhook is called.
                   </AutomationItemCard>
@@ -397,7 +414,7 @@ export function AutomationSheet({
                     }))
                   }
                 >
-                  {output.url}
+                  {output.url || output.name || 'No webhook URL'}
                 </AutomationItemCard>
               ))}
             </div>
