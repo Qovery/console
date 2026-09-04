@@ -1,6 +1,6 @@
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { Icon, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings.types'
 
@@ -37,13 +37,19 @@ export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<A
       >
         <div className="grid gap-3 sm:grid-cols-2">
           {[
-            [AgenticWorkflowExecutionMode.IN_PLACE, 'In place', 'Concurrent runs share the current environment.'],
-            [
-              AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
-              'Clone environment',
-              'Create an isolated temporary environment for every run.',
-            ],
-          ].map(([mode, label, description]) => (
+            {
+              mode: AgenticWorkflowExecutionMode.IN_PLACE,
+              label: 'In place',
+              description: 'Concurrent runs share the current environment.',
+              iconName: 'server' as const,
+            },
+            {
+              mode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
+              label: 'Clone environment',
+              description: 'Create an isolated temporary environment for every run.',
+              iconName: 'clone' as const,
+            },
+          ].map(({ mode, label, description, iconName }) => (
             <button
               key={mode}
               type="button"
@@ -53,8 +59,18 @@ export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<A
                 form.setValue('executionMode', mode as AgenticWorkflowExecutionMode, { shouldDirty: true })
               }
             >
-              <span className="block text-sm font-medium text-neutral">{label}</span>
-              <span className="mt-1 block text-xs text-neutral-subtle">{description}</span>
+              <span className="flex items-start gap-3">
+                <span
+                  aria-hidden="true"
+                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded border ${executionMode === mode ? 'border-brand bg-surface-neutral text-brand' : 'border-neutral bg-surface-neutral-subtle text-neutral-subtle'}`}
+                >
+                  <Icon iconName={iconName} iconStyle="regular" />
+                </span>
+                <span>
+                  <span className="block text-sm font-medium text-neutral">{label}</span>
+                  <span className="mt-1 block text-xs text-neutral-subtle">{description}</span>
+                </span>
+              </span>
             </button>
           ))}
         </div>
