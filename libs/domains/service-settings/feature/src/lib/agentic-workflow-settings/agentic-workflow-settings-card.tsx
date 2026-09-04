@@ -11,7 +11,7 @@ export function AgenticWorkflowSettingsCard({
   title: string
 }) {
   return (
-    <section className="flex flex-col gap-4 rounded-lg border border-neutral bg-background-secondary p-5">
+    <section className="flex flex-col gap-4 rounded-lg border border-neutral p-5">
       <div className="flex flex-col gap-1">
         <Heading level={2} weight="medium">
           {title}
