@@ -176,6 +176,7 @@ describe('AgenticWorkflowSettings views', () => {
           description: 'Updated description',
           execution_mode: AgenticWorkflowExecutionMode.IN_PLACE,
           model: { type: AgenticWorkflowModelType.BEDROCK, settings: '{"temperature":0.2}' },
+          mcp: '{"mcpServers":{}}',
           outputs: [{ name: 'Audit log', url: null }],
           mcp_server_ids: ['mcp-1'],
           schedule: {

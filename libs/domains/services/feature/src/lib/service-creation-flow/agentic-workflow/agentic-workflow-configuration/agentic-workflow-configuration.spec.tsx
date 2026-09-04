@@ -164,6 +164,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: /Advanced settings/ }))
 
     expect(screen.getByRole('heading', { name: 'Dockerfile fragment' })).toBeInTheDocument()
+    expect(screen.queryByText('Advanced MCP configuration')).not.toBeInTheDocument()
   })
 
   it('should configure context, provider, and automations from the main canvas', async () => {
