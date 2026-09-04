@@ -275,13 +275,15 @@ export function NetworkRequestDurationChart({
     isLoadingMetricsEnvoy95,
   ])
 
-  // hasError and hasPartialError share the same underlying condition (any
-  // relevant query erroring) and only differ on whether chartData has anything
-  // to show. Splitting them by data presence — rather than by which query is
-  // "the gating one" — matters because `useMetrics` uses `keepPreviousData`: a
-  // failed refetch on p99 still leaves stale p99 data in place (chartData
-  // non-empty) while isErrorMetrics99 is true, so p99 must stay included here
-  // too, not just p50/p95, or that failure would go silently unflagged.
+  // isEmpty && anyError catches "nothing to show, and it's a real failure"
+  // (any relevant query, not just p99, since a failing p50/p95 could just as
+  // well be why nothing rendered). Once chartData has something to show —
+  // including stale data kept around by `keepPreviousData` during a failed
+  // refetch — a single failing percentile is downgraded to the partial-data
+  // badge rather than blanking the chart. But if EVERY relevant query is
+  // currently erroring, none of what's on screen reflects a successful fetch,
+  // so that still escalates to the full broken state even though stale data
+  // technically exists.
   const anyError = useMemo(() => {
     const shouldWaitForEnvoy = !!httpRouteName
     return (
@@ -299,8 +301,25 @@ export function NetworkRequestDurationChart({
     isErrorMetricsEnvoy95,
     httpRouteName,
   ])
-  const hasError = chartData.length === 0 && anyError
-  const hasPartialError = chartData.length > 0 && anyError
+  const allError = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return (
+      isErrorMetrics99 &&
+      isErrorMetrics50 &&
+      isErrorMetrics95 &&
+      (!shouldWaitForEnvoy || (isErrorMetricsEnvoy99 && isErrorMetricsEnvoy50 && isErrorMetricsEnvoy95))
+    )
+  }, [
+    isErrorMetrics99,
+    isErrorMetrics50,
+    isErrorMetrics95,
+    isErrorMetricsEnvoy99,
+    isErrorMetricsEnvoy50,
+    isErrorMetricsEnvoy95,
+    httpRouteName,
+  ])
+  const hasError = chartData.length === 0 ? anyError : allError
+  const hasPartialError = chartData.length > 0 && anyError && !allError
 
   return (
     <LocalChart
