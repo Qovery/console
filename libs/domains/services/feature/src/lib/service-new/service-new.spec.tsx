@@ -303,6 +303,20 @@ describe('ServiceNew', () => {
     expect(screen.getByText('AWS RDS MySQL')).toBeInTheDocument()
   })
 
+  it('should prefer a blueprint display name from the catalog', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: { blueprints: [{ ...blueprints[0], name: 'aws-rds-mysql', displayName: 'Amazon RDS for MySQL' }] },
+    })
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.getByText('Amazon RDS for MySQL')).toBeInTheDocument()
+    expect(screen.queryByText('AWS RDS MySQL')).not.toBeInTheDocument()
+  })
+
   it('should only display blueprints compatible with the environment cluster', () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({
