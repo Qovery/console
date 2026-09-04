@@ -24,7 +24,6 @@ import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-
 import {
   type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
-  type AgenticWorkflowOutput,
   createDefaultAutomation,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
@@ -55,10 +54,6 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
       repository.repository.trim() &&
       repository.branch.trim()
   )
-}
-
-export function isOutputComplete(output: AgenticWorkflowOutput) {
-  return Boolean(output.url?.trim())
 }
 
 export function summarizeAutomation(automation: AgenticWorkflowAutomation) {

@@ -6,7 +6,6 @@ import {
   areVariablesValid,
   getJsonError,
   isGitRepositoryComplete,
-  isOutputComplete,
 } from './agentic-workflow-configuration'
 
 const mockNavigate = jest.fn()
@@ -100,11 +99,6 @@ describe('AgenticWorkflowConfiguration validation', () => {
         branch: '',
       })
     ).toBe(false)
-  })
-
-  it('should require a webhook URL for configured output webhooks', () => {
-    expect(isOutputComplete({ url: 'https://hooks.example.com/workflow', headersJson: '{}', prompt: '' })).toBe(true)
-    expect(isOutputComplete({ url: '', headersJson: '{}', prompt: 'Notify the team.' })).toBe(false)
   })
 
   it('should require complete environment variables', () => {
