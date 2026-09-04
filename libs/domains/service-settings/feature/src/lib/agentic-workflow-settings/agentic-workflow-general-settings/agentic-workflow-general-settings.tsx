@@ -4,6 +4,16 @@ import { Icon, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
+const RESOURCE_FIELDS = [
+  { name: 'cpu', label: 'CPU (mCPU)' },
+  { name: 'ram', label: 'Memory (MiB)' },
+  { name: 'gpu', label: 'GPU' },
+  { name: 'storage', label: 'Storage (GiB)' },
+] as const satisfies ReadonlyArray<{
+  name: keyof Pick<AgenticWorkflowSettingsFormValues, 'cpu' | 'ram' | 'gpu' | 'storage'>
+  label: string
+}>
+
 export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<AgenticWorkflowSettingsFormValues> }) {
   const executionMode = form.watch('executionMode')
 
@@ -80,18 +90,12 @@ export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<A
         description="Configure the compute resources allocated to the agent task."
       >
         <div className="grid gap-3 sm:grid-cols-2">
-          {(['cpu', 'ram', 'gpu', 'storage'] as const).map((name) => (
+          {RESOURCE_FIELDS.map(({ name, label }) => (
             <Controller
               key={name}
               name={name}
               control={form.control}
-              render={({ field }) => (
-                <InputText
-                  {...field}
-                  type="number"
-                  label={{ cpu: 'CPU (mCPU)', ram: 'Memory (MiB)', gpu: 'GPU', storage: 'Storage (GiB)' }[name]}
-                />
-              )}
+              render={({ field }) => <InputText {...field} type="number" label={label} />}
             />
           ))}
         </div>
