@@ -33,6 +33,7 @@ const TerraformVariablesForm = ({ service }: { service: Terraform }) => {
     organizationId,
     projectId,
     environmentId,
+    planTerraformChanges: Boolean(service.blueprint_id),
   })
   const onSubmit = handleSubmit(() => {
     const payload = buildEditServicePayload({

@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { TerraformDeployRequestActionEnum } from 'qovery-typescript-axios'
 import { mutations } from '@qovery/domains/services/data-access'
 import { queries } from '@qovery/state/util-queries'
 import { useDeployService } from '../use-deploy-service/use-deploy-service'
@@ -7,11 +8,13 @@ export function useEditService({
   organizationId,
   projectId,
   environmentId,
+  planTerraformChanges = false,
   silently = false,
 }: {
   organizationId: string
   projectId: string
   environmentId: string
+  planTerraformChanges?: boolean
   silently?: boolean
 }) {
   const queryClient = useQueryClient()
@@ -38,13 +41,25 @@ export function useEditService({
                   description: 'Your agent task settings were saved',
                 }
               }
+              const shouldPlanTerraformChanges = planTerraformChanges && payload.serviceType === 'TERRAFORM'
+
               return {
                 title: 'Service updated',
-                description: 'You must update to apply the settings',
+                description: shouldPlanTerraformChanges
+                  ? 'Run a plan to preview these changes before applying them'
+                  : 'You must update to apply the settings',
                 callback() {
-                  deployService({ serviceId, serviceType: payload.serviceType })
+                  if (shouldPlanTerraformChanges) {
+                    deployService({
+                      serviceId,
+                      serviceType: payload.serviceType,
+                      request: { action: TerraformDeployRequestActionEnum.PLAN },
+                    })
+                  } else {
+                    deployService({ serviceId, serviceType: payload.serviceType })
+                  }
                 },
-                labelAction: 'Update',
+                labelAction: shouldPlanTerraformChanges ? 'Plan' : 'Update',
               }
             },
             notifyOnError: true,
