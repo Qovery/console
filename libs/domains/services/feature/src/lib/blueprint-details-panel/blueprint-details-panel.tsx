@@ -7,7 +7,7 @@ import { formatCloudProvider } from '@qovery/domains/clusters/data-access'
 import { Badge, Button, ExternalLink, Heading, Icon, Link, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
-import { formatBlueprintName } from '../blueprint-utils/blueprint-utils'
+import { getBlueprintDisplayName } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalogServiceReadme } from '../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-service-readme'
 import { ServiceAvatar } from '../service-avatar/service-avatar'
 
@@ -161,7 +161,7 @@ function BlueprintDetailsPanelContent({
   const canDeploy = footerMode === 'deploy' && Boolean(blueprint.serviceFamily)
 
   const provider = formatCloudProvider(blueprint.provider)
-  const blueprintName = formatBlueprintName(blueprint.name)
+  const blueprintName = getBlueprintDisplayName(blueprint)
 
   return (
     <Dialog.Root open={open} onOpenChange={onOpenChange}>

@@ -272,6 +272,26 @@ describe('ServiceNew', () => {
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
   })
 
+  it('should group blueprint cards by the primary categories returned by the catalog', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: {
+        blueprints: [
+          { ...blueprints[0], primaryCategory: 'Storage' },
+          { ...blueprints[1], primaryCategory: 'Custom Platform' },
+        ],
+      },
+    })
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.getByRole('heading', { name: 'Custom Platform' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Storage' })).toBeInTheDocument()
+    expect(screen.queryByRole('heading', { name: 'Other' })).not.toBeInTheDocument()
+  })
+
   it('should show an empty state when the blueprint search has no results', async () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
@@ -301,6 +321,20 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.getByText('AWS RDS MySQL')).toBeInTheDocument()
+  })
+
+  it('should prefer a blueprint display name from the catalog', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: { blueprints: [{ ...blueprints[0], name: 'aws-rds-mysql', displayName: 'Amazon RDS for MySQL' }] },
+    })
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.getByText('Amazon RDS for MySQL')).toBeInTheDocument()
+    expect(screen.queryByText('AWS RDS MySQL')).not.toBeInTheDocument()
   })
 
   it('should only display blueprints compatible with the environment cluster', () => {
