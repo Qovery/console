@@ -6,6 +6,7 @@ import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { AuthEnum, useAuth } from '@qovery/shared/auth'
 import { IconEnum } from '@qovery/shared/enums'
+import { SESSION_EXPIRED_REASON, getSafeRedirect, shouldRedirectAuthenticatedUser } from '@qovery/shared/routes'
 import { Badge, Button, Icon, InputTextSmall, Link } from '@qovery/shared/ui'
 import { useLocalStorage } from '@qovery/shared/util-hooks'
 
@@ -120,15 +121,9 @@ const TESTIMONIALS = [
 
 const loginSearchParamsSchema = z.object({
   redirect: z.string().optional(),
+  // .catch keeps an unrecognised reason from failing search validation and breaking the page
+  reason: z.literal(SESSION_EXPIRED_REASON).optional().catch(undefined),
 })
-
-function getSafeRedirect(redirectPath?: string) {
-  if (!redirectPath || redirectPath.startsWith('/login')) {
-    return '/'
-  }
-
-  return redirectPath
-}
 
 function shuffleArray<T>(values: T[]) {
   const shuffled = [...values]
@@ -180,7 +175,7 @@ function useAuth0Error() {
 export const Route = createFileRoute('/login/')({
   validateSearch: loginSearchParamsSchema,
   beforeLoad: ({ context, search }) => {
-    if (context.auth.isAuthenticated) {
+    if (shouldRedirectAuthenticatedUser({ isAuthenticated: context.auth.isAuthenticated, reason: search.reason })) {
       throw redirect({ to: getSafeRedirect(search.redirect) })
     }
   },
@@ -491,6 +486,13 @@ function RouteComponent() {
                   </motion.div>
                 )}
               </AnimatePresence>
+
+              {search.reason === SESSION_EXPIRED_REASON && (
+                <div className="mt-4 rounded-md border border-warning-component bg-surface-warning-subtle p-3">
+                  <p className="text-sm font-medium text-warning">Your session has expired</p>
+                  <p className="mt-1 text-sm text-neutral-subtle">Please log in again to continue.</p>
+                </div>
+              )}
 
               {auth0Error && (
                 <div className="mt-4 rounded-md border border-negative-component bg-surface-negative-subtle p-3">
