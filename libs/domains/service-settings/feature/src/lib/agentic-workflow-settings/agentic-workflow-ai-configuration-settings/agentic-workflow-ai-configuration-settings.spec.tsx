@@ -17,4 +17,15 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
     expect(instructions).toBeInTheDocument()
     expect(instructions).toHaveAttribute('aria-invalid', 'false')
   })
+
+  it('does not show an instructions error before the field is modified', () => {
+    renderWithProviders(
+      <AgenticWorkflowSettingsFormHarness values={{ agentPrompt: '' }}>
+        {(form) => <AgenticWorkflowAiConfigurationSettings environmentId="environment-1" form={form} />}
+      </AgenticWorkflowSettingsFormHarness>
+    )
+
+    expect(screen.getByRole('textbox', { name: 'Instructions' })).toHaveAttribute('aria-invalid', 'false')
+    expect(screen.queryByText('Please enter instructions.')).not.toBeInTheDocument()
+  })
 })

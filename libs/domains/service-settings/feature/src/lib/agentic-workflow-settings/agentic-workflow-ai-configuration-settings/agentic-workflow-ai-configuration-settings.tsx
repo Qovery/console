@@ -13,6 +13,7 @@ export function AgenticWorkflowAiConfigurationSettings({
 }) {
   const agentPrompt = form.watch('agentPrompt')
   const modelSettings = form.watch('modelSettings')
+  const showPromptError = Boolean(form.formState.dirtyFields.agentPrompt) && !agentPrompt.trim()
   let modelSettingsError: string | undefined
 
   try {
@@ -54,7 +55,7 @@ export function AgenticWorkflowAiConfigurationSettings({
           compact
           environmentId={environmentId}
           prompt={agentPrompt}
-          promptError={!agentPrompt.trim() ? 'Please enter instructions.' : undefined}
+          promptError={showPromptError ? 'Please enter instructions.' : undefined}
           variableKeys={[]}
           onPromptChange={(value) => form.setValue('agentPrompt', value, { shouldDirty: true })}
         />
