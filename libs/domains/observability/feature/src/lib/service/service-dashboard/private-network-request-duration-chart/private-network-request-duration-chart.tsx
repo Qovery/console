@@ -4,7 +4,6 @@ import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
-import { getSeriesKeys } from '../../../util-chart/get-series-keys'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
@@ -58,11 +57,7 @@ export function PrivateNetworkRequestDurationChart({
     setLegendSelectedKeys(new Set())
   }
 
-  const {
-    data: metrics50,
-    isLoading: isLoadingMetrics50,
-    isError: isErrorMetrics50,
-  } = useMetrics({
+  const { data: metrics50, isLoading: isLoadingMetrics50 } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -72,11 +67,7 @@ export function PrivateNetworkRequestDurationChart({
     metricShortName: 'private_network_p50',
   })
 
-  const {
-    data: metrics99,
-    isLoading: isLoadingMetrics99,
-    isError: isErrorMetrics99,
-  } = useMetrics({
+  const { data: metrics99, isLoading: isLoadingMetrics99 } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -100,7 +91,10 @@ export function PrivateNetworkRequestDurationChart({
     metricShortName: 'private_network_p95',
   })
 
-  const hasError = isErrorMetrics50 || isErrorMetrics99 || isErrorMetrics95
+  // Only fail the whole chart when p95 — the series chartData itself gates on
+  // below — errors. A failing p50/p99 query alone shouldn't blank a series the
+  // other ones rendered fine.
+  const hasError = isErrorMetrics95
 
   const chartData = useMemo(() => {
     if (!metrics95?.data?.result) {
@@ -141,9 +135,12 @@ export function PrivateNetworkRequestDurationChart({
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
-    // Fill gaps with 0 rather than null — a gap in a duration/percentile series
-    // almost always just means "no traffic in that stretch", not a monitoring outage.
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime, getSeriesKeys(baseChartData))
+    // Keep null padding for gaps — a missing sample (as opposed to an explicit
+    // NaN/zero sample, already normalized in processMetricsData) usually means a
+    // scrape or recording-rule gap, not confirmed zero traffic. useMetrics only
+    // flags isError on a failed request, so a "successful" but sparse query would
+    // otherwise render as a false idle flatline instead of a visible gap.
+    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metrics95, metrics99, metrics50, useLocalTime, startTimestamp, endTimestamp])
 
   return (

@@ -4,7 +4,6 @@ import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
-import { getSeriesKeys } from '../../../util-chart/get-series-keys'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
@@ -75,11 +74,7 @@ export function NetworkRequestSizeChart({
     metricShortName: 'network_resp_size',
   })
 
-  const {
-    data: metricsRequestSize,
-    isLoading: isLoadingMetricsRequestSize,
-    isError: isErrorMetricsRequestSize,
-  } = useMetrics({
+  const { data: metricsRequestSize, isLoading: isLoadingMetricsRequestSize } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -105,11 +100,7 @@ export function NetworkRequestSizeChart({
     enabled: !!httpRouteName,
   })
 
-  const {
-    data: metricsEnvoyRequestSize,
-    isLoading: isLoadingMetricsEnvoyRequestSize,
-    isError: isErrorMetricsEnvoyRequestSize,
-  } = useMetrics({
+  const { data: metricsEnvoyRequestSize, isLoading: isLoadingMetricsEnvoyRequestSize } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -175,9 +166,12 @@ export function NetworkRequestSizeChart({
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
-    // Fill gaps with 0 rather than null — a gap in a request-size series almost
-    // always just means "no traffic in that stretch", not a monitoring outage.
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime, getSeriesKeys(baseChartData))
+    // Keep null padding for gaps — a missing sample (as opposed to an explicit
+    // NaN/zero sample, already normalized in processMetricsData) usually means a
+    // scrape or recording-rule gap, not confirmed zero traffic. useMetrics only
+    // flags isError on a failed request, so a "successful" but sparse query would
+    // otherwise render as a false idle flatline instead of a visible gap.
+    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [
     metricsResponseSize,
     metricsRequestSize,
@@ -203,20 +197,14 @@ export function NetworkRequestSizeChart({
     httpRouteName,
   ])
 
+  // Only fail the whole chart when every configured "response size" source is
+  // erroring — this mirrors the chartData emptiness check above. A failing
+  // "request size" query, or one side of an nginx/envoy pair, shouldn't blank a
+  // series the other source rendered fine.
   const hasError = useMemo(() => {
     const shouldWaitForEnvoy = !!httpRouteName
-    return (
-      isErrorMetricsResponseSize ||
-      isErrorMetricsRequestSize ||
-      (shouldWaitForEnvoy && (isErrorMetricsEnvoyResponseSize || isErrorMetricsEnvoyRequestSize))
-    )
-  }, [
-    isErrorMetricsResponseSize,
-    isErrorMetricsRequestSize,
-    isErrorMetricsEnvoyResponseSize,
-    isErrorMetricsEnvoyRequestSize,
-    httpRouteName,
-  ])
+    return isErrorMetricsResponseSize && (!shouldWaitForEnvoy || isErrorMetricsEnvoyResponseSize)
+  }, [isErrorMetricsResponseSize, isErrorMetricsEnvoyResponseSize, httpRouteName])
 
   return (
     <LocalChart
