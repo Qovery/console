@@ -1,6 +1,16 @@
 import { type ReactNode, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Button, DropdownMenu, Heading, Icon, InputText, InputTextArea, Section, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  DropdownMenu,
+  Heading,
+  Icon,
+  InputText,
+  InputTextArea,
+  InputToggle,
+  Section,
+  useModal,
+} from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
 import { TimezoneSetting } from '../../../../timezone-setting/timezone-setting'
 import {
@@ -167,7 +177,7 @@ function ScheduledTriggerModal({
               setOpen?.(false)
             }}
           >
-            {trigger ? 'Save trigger' : 'Add trigger'}
+            {trigger ? 'Update trigger' : 'Add trigger'}
           </Button>
         </div>
       </Section>
@@ -176,20 +186,23 @@ function ScheduledTriggerModal({
 }
 
 function WebhookOutputModal({
+  allowEmptyUrl,
   onSave,
   output,
   setOpen,
 }: {
+  allowEmptyUrl?: boolean
   onSave: (output: AgenticWorkflowOutput) => void
   output?: AgenticWorkflowOutput
   setOpen?: (open: boolean) => void
 }) {
+  const [name, setName] = useState(output?.name ?? '')
   const [url, setUrl] = useState(output?.url ?? '')
   const [headersJson, setHeadersJson] = useState(output?.headersJson ?? '{}')
   const [prompt, setPrompt] = useState(output?.prompt ?? '')
   const headersError = getHeadersError(headersJson)
   const urlError = url.trim() && !isValidUrl(url) ? 'Please enter a valid URL.' : undefined
-  const invalid = !url.trim() || Boolean(urlError) || Boolean(headersError)
+  const invalid = (!allowEmptyUrl && !url.trim()) || Boolean(urlError) || Boolean(headersError)
 
   return (
     <Section className="gap-5 p-5">
@@ -200,6 +213,15 @@ function WebhookOutputModal({
         <p className="text-sm leading-5 text-neutral-subtle">Send the automation result to a webhook.</p>
       </div>
       <div className="flex flex-col gap-4">
+        {allowEmptyUrl ? (
+          <InputText
+            name="output-name"
+            label="Name"
+            value={name}
+            error={!name.trim() ? 'Please enter an output name.' : undefined}
+            onChange={(event) => setName(event.currentTarget.value)}
+          />
+        ) : null}
         <InputText
           name="output-url"
           label="Webhook URL"
@@ -228,13 +250,13 @@ function WebhookOutputModal({
         <Button
           type="button"
           size="md"
-          disabled={invalid}
+          disabled={invalid || (allowEmptyUrl && !name.trim())}
           onClick={() => {
-            onSave({ url, headersJson, prompt })
+            onSave({ name: name.trim() || output?.name, url: url.trim() || null, headersJson, prompt })
             setOpen?.(false)
           }}
         >
-          {output ? 'Save output' : 'Add output'}
+          {output ? 'Update output' : 'Add output'}
         </Button>
       </div>
     </Section>
@@ -242,16 +264,23 @@ function WebhookOutputModal({
 }
 
 export function AutomationSheet({
+  allowEmptyOutputUrl = false,
   automation,
+  enabled,
+  lockWebhookTrigger = false,
   onClose,
   onSave,
 }: {
+  allowEmptyOutputUrl?: boolean
   automation: AgenticWorkflowAutomation
+  enabled?: boolean
+  lockWebhookTrigger?: boolean
   onClose: () => void
-  onSave: (automation: AgenticWorkflowAutomation) => void
+  onSave: (automation: AgenticWorkflowAutomation, enabled?: boolean) => void
 }) {
   const { closeModal, openModal } = useModal()
   const [draft, setDraft] = useState<AgenticWorkflowAutomation>(automation)
+  const [enabledDraft, setEnabledDraft] = useState(enabled)
   const scheduleTrigger = draft.triggers.find((trigger) => trigger.type === 'schedule')
   const webhookTrigger = draft.triggers.find((trigger) => trigger.type === 'webhook')
 
@@ -292,6 +321,7 @@ export function AutomationSheet({
     openModal({
       content: (
         <WebhookOutputModal
+          allowEmptyUrl={allowEmptyOutputUrl}
           output={typeof index === 'number' ? draft.outputs[index] : undefined}
           onSave={(output) =>
             setDraft((current) => ({
@@ -345,15 +375,25 @@ export function AutomationSheet({
             </DropdownMenu.Root>
           }
         >
-          {draft.triggers.length ? (
-            <div className="flex flex-col gap-2">
+          {enabledDraft !== undefined || draft.triggers.length ? (
+            <div className="flex flex-col gap-3">
+              {enabledDraft !== undefined ? (
+                <InputToggle
+                  small
+                  align="top"
+                  value={enabledDraft}
+                  title="Enable agent task"
+                  description="When disabled, triggers cannot start runs, so external webhook integrations can remain configured."
+                  onChange={setEnabledDraft}
+                />
+              ) : null}
               {draft.triggers.map((trigger) =>
                 trigger.type === 'webhook' ? (
                   <AutomationItemCard
                     key={trigger.id}
                     icon={<Icon iconName="webhook" iconStyle="regular" />}
                     title="Webhook"
-                    onRemove={() => removeTrigger(trigger.id)}
+                    onRemove={lockWebhookTrigger ? undefined : () => removeTrigger(trigger.id)}
                   >
                     Runs when the agent task webhook is called.
                   </AutomationItemCard>
@@ -397,7 +437,7 @@ export function AutomationSheet({
                     }))
                   }
                 >
-                  {output.url}
+                  {output.url || output.name || 'No webhook URL'}
                 </AutomationItemCard>
               ))}
             </div>
@@ -413,11 +453,11 @@ export function AutomationSheet({
           size="md"
           disabled={draft.triggers.length === 0}
           onClick={() => {
-            onSave(draft)
+            enabledDraft === undefined ? onSave(draft) : onSave(draft, enabledDraft)
             onClose()
           }}
         >
-          Save automation
+          Apply changes
         </Button>
       </div>
     </OverlaySheet>

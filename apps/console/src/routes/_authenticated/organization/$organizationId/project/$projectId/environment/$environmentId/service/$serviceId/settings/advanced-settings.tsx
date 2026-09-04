@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Suspense } from 'react'
-import { ServiceAdvancedSettings, ServiceAdvancedSettingsLoader } from '@qovery/domains/services/feature'
+import { AgenticWorkflowSettings } from '@qovery/domains/service-settings/feature'
+import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
+import { ServiceAdvancedSettings, ServiceAdvancedSettingsLoader, useService } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -12,7 +14,13 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
+  const { environmentId, serviceId } = Route.useParams()
+  const { data: service } = useService({ environmentId, serviceId, suspense: true })
   useDocumentTitle('Advanced settings - Service settings')
+
+  if (service && isAgenticWorkflow(service)) {
+    return <AgenticWorkflowSettings page="advanced-settings" />
+  }
 
   return (
     <div className="flex w-full flex-col justify-between">

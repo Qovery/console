@@ -14,7 +14,6 @@ import {
   Icon,
   InputText,
   InputTextArea,
-  InputToggle,
   Modal,
   Section,
   useModal,
@@ -25,7 +24,6 @@ import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-
 import {
   type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
-  type AgenticWorkflowOutput,
   createDefaultAutomation,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
@@ -56,10 +54,6 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
       repository.repository.trim() &&
       repository.branch.trim()
   )
-}
-
-export function isOutputComplete(output: AgenticWorkflowOutput) {
-  return Boolean(output.url.trim())
 }
 
 export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
@@ -257,50 +251,6 @@ function DockerFragmentModal({ setOpen }: { setOpen?: (open: boolean) => void })
   )
 }
 
-function McpJsonModal({ setOpen }: { setOpen?: (open: boolean) => void }) {
-  const { form } = useAgenticWorkflowCreateContext()
-  const mcpJson = form.watch('mcpJson')
-  const [value, setValue] = useState(mcpJson)
-  const error = getJsonError(value)
-
-  return (
-    <Section className="gap-5 p-5">
-      <div className="flex flex-col gap-1 pr-8">
-        <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
-          {mcpJson ? 'Edit MCP configuration' : 'Add MCP configuration'}
-        </Heading>
-        <p className="text-sm leading-5 text-neutral-subtle">Configure additional MCP servers with JSON.</p>
-      </div>
-      <div className={`overflow-hidden rounded-md border ${error ? 'border-negative' : 'border-neutral'}`}>
-        <CodeEditor
-          height="320px"
-          language="json"
-          value={value}
-          onChange={(nextValue) => setValue(nextValue ?? '')}
-          options={{ scrollBeyondLastLine: false, wordWrap: 'on' }}
-        />
-      </div>
-      {error ? <p className="text-xs font-medium text-negative">{error}</p> : null}
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
-          Cancel
-        </Button>
-        <Button
-          type="button"
-          size="md"
-          disabled={Boolean(error)}
-          onClick={() => {
-            form.setValue('mcpJson', value, { shouldDirty: true })
-            setOpen?.(false)
-          }}
-        >
-          Save configuration
-        </Button>
-      </div>
-    </Section>
-  )
-}
-
 export function AgenticWorkflowConfiguration() {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: mcpServers = [], isLoading: areMcpServersLoading } = useMcpServers({ organizationId })
@@ -332,7 +282,6 @@ export function AgenticWorkflowConfiguration() {
   const [activeSheet, setActiveSheet] = useState<'mcp' | 'automation' | null>(null)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
-  const [mcpJsonModalOpen, setMcpJsonModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
@@ -340,7 +289,6 @@ export function AgenticWorkflowConfiguration() {
   const createdServiceIdRef = useRef<string>()
   const values = form.watch()
   const { dirtyFields } = form.formState
-  const mcpJsonError = getJsonError(values.mcpJson)
   const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
   const variableValues = variablesForm.watch('variables')
@@ -354,7 +302,7 @@ export function AgenticWorkflowConfiguration() {
     resources: false,
     governance: false,
     variables: !variablesValid,
-    advanced: Boolean(mcpJsonError),
+    advanced: false,
   }
   const automation = values.automations[0] ?? createDefaultAutomation()
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
@@ -508,20 +456,6 @@ export function AgenticWorkflowConfiguration() {
           control={form.control}
           render={({ field }) => (
             <InputTextArea name={field.name} label="Description" value={field.value} onChange={field.onChange} />
-          )}
-        />
-        <Controller
-          name="workflowEnabled"
-          control={form.control}
-          render={({ field }) => (
-            <InputToggle
-              small
-              align="top"
-              value={field.value}
-              title="Enable agent task"
-              description="Start listening and executing this agent task as soon as it is created."
-              onChange={field.onChange}
-            />
           )}
         />
       </SettingsAccordionItem>
@@ -708,54 +642,6 @@ export function AgenticWorkflowConfiguration() {
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-3">
-            <div>
-              <Heading level={3} weight="medium">
-                Advanced MCP configuration
-              </Heading>
-              <p className="mt-1 text-xs text-neutral-subtle">Configure additional MCP servers with JSON.</p>
-            </div>
-            {values.mcpJson ? (
-              <div className="flex items-center gap-3 rounded-lg border border-neutral bg-surface-neutral p-3">
-                <Icon iconName="file-lines" iconStyle="regular" className="shrink-0 text-[13px] text-neutral-subtle" />
-                <span className="min-w-0 flex-1 truncate text-ssm leading-[18px] text-neutral">MCP configuration</span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  color="neutral"
-                  size="xs"
-                  onClick={() => setMcpJsonModalOpen(true)}
-                >
-                  <Icon iconName="pen" iconStyle="regular" />
-                  Edit
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  color="neutral"
-                  size="xs"
-                  iconOnly
-                  aria-label="Delete MCP configuration"
-                  onClick={() => form.setValue('mcpJson', '', { shouldDirty: true })}
-                >
-                  <Icon iconName="trash-can" iconStyle="regular" />
-                </Button>
-              </div>
-            ) : (
-              <div>
-                <Button
-                  type="button"
-                  variant="outline"
-                  color="neutral"
-                  size="sm"
-                  onClick={() => setMcpJsonModalOpen(true)}
-                >
-                  <Icon iconName="code" iconStyle="regular" />
-                  Add raw
-                </Button>
-              </div>
-            )}
-          </div>
         </div>
       </SettingsAccordionItem>
     </Accordion.Root>
@@ -891,7 +777,7 @@ export function AgenticWorkflowConfiguration() {
                   className="max-w-full"
                   onClick={() => setActiveSheet('automation')}
                 >
-                  <Icon iconName={automation.triggers.length ? 'bolt' : 'circle-plus'} iconStyle="regular" />
+                  <Icon iconName="stopwatch" iconStyle="regular" />
                   <span className="truncate">
                     {automation.triggers.length ? summarizeAutomation(automation) : 'Add automation'}
                   </span>
@@ -993,8 +879,14 @@ export function AgenticWorkflowConfiguration() {
       {activeSheet === 'automation' ? (
         <AutomationSheet
           automation={automation}
+          enabled={values.workflowEnabled}
           onClose={() => setActiveSheet(null)}
-          onSave={(nextAutomation) => form.setValue('automations', [nextAutomation], { shouldDirty: true })}
+          onSave={(nextAutomation, enabled) => {
+            form.setValue('automations', [nextAutomation], { shouldDirty: true })
+            if (enabled !== undefined) {
+              form.setValue('workflowEnabled', enabled, { shouldDirty: true })
+            }
+          }}
         />
       ) : null}
 
@@ -1006,17 +898,6 @@ export function AgenticWorkflowConfiguration() {
           className="max-w-[calc(100vw-2rem)]"
         >
           <DockerFragmentModal setOpen={setDockerModalOpen} />
-        </Modal>
-      ) : null}
-
-      {mcpJsonModalOpen ? (
-        <Modal
-          externalOpen={mcpJsonModalOpen}
-          setExternalOpen={setMcpJsonModalOpen}
-          width={720}
-          className="max-w-[calc(100vw-2rem)]"
-        >
-          <McpJsonModal setOpen={setMcpJsonModalOpen} />
         </Modal>
       ) : null}
     </div>

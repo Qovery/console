@@ -7,6 +7,7 @@ export interface AgenticWorkflowPromptEditorHandle {
 }
 
 export interface AgenticWorkflowPromptEditorProps {
+  compact?: boolean
   environmentId: string
   onPromptChange: (value: string) => void
   prompt: string
@@ -17,7 +18,10 @@ export interface AgenticWorkflowPromptEditorProps {
 export const AgenticWorkflowPromptEditor = forwardRef<
   AgenticWorkflowPromptEditorHandle,
   AgenticWorkflowPromptEditorProps
->(function AgenticWorkflowPromptEditor({ environmentId, onPromptChange, prompt, promptError, variableKeys }, ref) {
+>(function AgenticWorkflowPromptEditor(
+  { compact = false, environmentId, onPromptChange, prompt, promptError, variableKeys },
+  ref
+) {
   const promptRef = useRef<PromptEditorHandle>(null)
   const { data: environmentVariables = [] } = useVariables({ parentId: environmentId, scope: 'ENVIRONMENT' })
   const suggestions = Array.from(new Set([...variableKeys, ...environmentVariables.map(({ key }) => key)])).map(
@@ -55,8 +59,8 @@ export const AgenticWorkflowPromptEditor = forwardRef<
         hideLabel
         value={prompt}
         error={promptError}
-        className="[&_.cm-content]:min-h-80"
-        editorClassName="rounded-none border-0 bg-transparent focus-within:!border-0 focus-within:!outline-none [&_.cm-content]:px-0 [&_.cm-content]:pt-0 [&_.cm-line]:px-0"
+        className={compact ? undefined : '[&_.cm-content]:min-h-80'}
+        editorClassName={`rounded-none border-0 bg-transparent focus-within:!border-0 focus-within:!outline-none [&_.cm-content]:px-0 [&_.cm-content]:pt-0 [&_.cm-line]:px-0 ${compact ? 'min-h-0 [&_.cm-content]:min-h-0' : ''}`}
         placeholder="Type your instructions here…"
         suggestions={suggestions}
         onChange={(value) => onPromptChange(value)}

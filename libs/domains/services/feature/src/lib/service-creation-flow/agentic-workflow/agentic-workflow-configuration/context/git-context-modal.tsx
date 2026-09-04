@@ -115,7 +115,7 @@ export function GitContextModal({
                 close()
               })}
             >
-              {context ? 'Save' : 'Add repository'}
+              {context ? 'Apply changes' : 'Add repository'}
             </Button>
           </div>
         </div>

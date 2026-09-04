@@ -6,7 +6,6 @@ import {
   areVariablesValid,
   getJsonError,
   isGitRepositoryComplete,
-  isOutputComplete,
 } from './agentic-workflow-configuration'
 
 const mockNavigate = jest.fn()
@@ -102,11 +101,6 @@ describe('AgenticWorkflowConfiguration validation', () => {
     ).toBe(false)
   })
 
-  it('should require a webhook URL for configured output webhooks', () => {
-    expect(isOutputComplete({ url: 'https://hooks.example.com/workflow', headersJson: '{}', prompt: '' })).toBe(true)
-    expect(isOutputComplete({ url: '', headersJson: '{}', prompt: 'Notify the team.' })).toBe(false)
-  })
-
   it('should require complete environment variables', () => {
     expect(areVariablesValid([])).toBe(true)
     expect(areVariablesValid([{ variable: '', value: '', scope: 'AGENTIC_WORKFLOW', isSecret: false }])).toBe(false)
@@ -164,6 +158,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: /Advanced settings/ }))
 
     expect(screen.getByRole('heading', { name: 'Dockerfile fragment' })).toBeInTheDocument()
+    expect(screen.queryByText('Advanced MCP configuration')).not.toBeInTheDocument()
   })
 
   it('should configure context, provider, and automations from the main canvas', async () => {
@@ -182,6 +177,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
     expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
     expect(screen.getByText('Triggers')).toBeInTheDocument()
+    expect(screen.getByText('Enable agent task')).toBeInTheDocument()
   })
 
   it('should manage MCP from a side panel', async () => {

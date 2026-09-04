@@ -5,7 +5,6 @@ import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   AgenticWorkflowSettings,
   agenticWorkflowJsonValidation,
-  agenticWorkflowOutputsValidation,
   formatAgenticWorkflowRepositories,
   getGitRepositoryName,
 } from './agentic-workflow-settings'
@@ -93,14 +92,6 @@ describe('Agentic Workflow settings validation', () => {
     expect(agenticWorkflowJsonValidation('{')).toBe('Invalid JSON format.')
   })
 
-  it('accepts an output without a URL and rejects invalid array entries', () => {
-    expect(agenticWorkflowOutputsValidation('[{"name":"Output 1"}]')).toBe(true)
-    expect(agenticWorkflowOutputsValidation('[{"name":"Output 1","url":null}]')).toBe(true)
-    expect(agenticWorkflowOutputsValidation('[null]')).toBe(
-      'Each output must have a name and, when provided, a valid webhook URL.'
-    )
-  })
-
   it.each([
     ['https://github.com/qovery/console.git', 'qovery/console'],
     ['https://gitlab.com/qovery/backend', 'qovery/backend'],
@@ -160,11 +151,8 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('spinbutton', { name: 'Memory (MiB)' })).toHaveValue(1024)
     expect(screen.getByRole('spinbutton', { name: 'GPU' })).toHaveValue(0)
     expect(screen.getByRole('spinbutton', { name: 'Storage (GiB)' })).toHaveValue(20)
-    expect(screen.getByText('Schedule agent task')).toBeInTheDocument()
-    expect(screen.getByRole('radio', { name: /In place/ })).toBeChecked()
-    expect(screen.getByRole('radio', { name: /Clone environment/ })).not.toBeChecked()
-    expect(screen.getByRole('textbox', { name: 'Cron expression' })).toHaveValue('0 8 * * 1-5')
-    expect(screen.getByText('Europe/Paris')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /In place/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /Clone environment/ })).toHaveAttribute('aria-pressed', 'false')
 
     await userEvent.clear(screen.getByRole('textbox', { name: 'Description' }))
     await userEvent.type(screen.getByRole('textbox', { name: 'Description' }), 'Updated description')
@@ -179,8 +167,10 @@ describe('AgenticWorkflowSettings views', () => {
           description: 'Updated description',
           execution_mode: AgenticWorkflowExecutionMode.IN_PLACE,
           model: { type: AgenticWorkflowModelType.BEDROCK, settings: '{"temperature":0.2}' },
+          mcp: '{"mcpServers":{}}',
           outputs: [{ name: 'Audit log', url: null }],
           mcp_server_ids: ['mcp-1'],
+          webhook_ip_allowlist: ['10.0.0.0/8'],
           schedule: {
             cron_expression: '0 8 * * 1-5',
             timezone: 'Europe/Paris',
@@ -193,7 +183,7 @@ describe('AgenticWorkflowSettings views', () => {
   it('updates the execution mode', async () => {
     const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
 
-    await userEvent.click(screen.getByRole('radio', { name: /Clone environment/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Clone environment/ }))
     await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     await waitFor(() =>
@@ -204,64 +194,67 @@ describe('AgenticWorkflowSettings views', () => {
     )
   })
 
-  it('hides the saved next run when scheduling is disabled in the form', async () => {
-    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
-
-    expect(screen.getByText(/^Next run:/)).toBeInTheDocument()
-
-    await userEvent.click(screen.getByRole('switch', { name: 'Schedule agent task' }))
-
-    expect(screen.queryByText(/^Next run:/)).not.toBeInTheDocument()
-  })
-
-  it('hides the saved next run when the schedule no longer matches the saved value', async () => {
-    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
-
-    await userEvent.clear(screen.getByRole('textbox', { name: 'Cron expression' }))
-    await userEvent.type(screen.getByRole('textbox', { name: 'Cron expression' }), '0 9 * * 1-5')
-
-    expect(screen.queryByText(/^Next run:/)).not.toBeInTheDocument()
-  })
-
   it('renders AI configuration without exposing the write-only API key', () => {
     renderWithProviders(<AgenticWorkflowSettings page="ai-configuration" />)
 
     expect(screen.getByRole('heading', { name: 'AI configuration' })).toBeInTheDocument()
     expect(screen.getByLabelText('API key')).toHaveValue('')
-    expect(screen.getByRole('textbox', { name: 'Model settings JSON' })).toHaveValue('{"temperature":0.2}')
-    expect(screen.getByRole('textbox', { name: 'Agent prompt' })).toHaveValue('Investigate the alert.')
+    expect(screen.getByRole('textbox', { name: 'Cloud settings JSON' })).toHaveValue('{"temperature":0.2}')
+    expect(screen.getByRole('textbox', { name: 'Instructions' })).toBeInTheDocument()
   })
 
-  it('renders Connections with the repository base URL, MCP and Docker fragment', () => {
+  it('prevents saving empty instructions', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="ai-configuration" />)
+
+    const instructions = screen.getByRole('textbox', { name: 'Instructions' })
+    await userEvent.click(instructions)
+    await userEvent.keyboard('{Control>}a{/Control}{Backspace}')
+
+    await waitFor(() => expect(screen.getByText('Please enter instructions.')).toBeInTheDocument())
+    expect(screen.getByRole('button', { name: 'Save' })).toBeDisabled()
+  })
+
+  it('renders Connections with the repository base URL and MCP', () => {
     renderWithProviders(<AgenticWorkflowSettings page="connections" />)
 
     expect(screen.getByRole('heading', { name: 'Connections' })).toBeInTheDocument()
-    expect(screen.getByTestId('repository-0')).toHaveTextContent(
-      'qovery/console:staging:https://github.com/qovery/console.git'
-    )
-    expect(screen.getByRole('textbox', { name: 'MCP JSON' })).toHaveValue('{"mcpServers":{}}')
-    expect(screen.getByText('Documentation')).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'Dockerfile fragment' })).toHaveValue('RUN apt-get update')
+    expect(screen.getByText('qovery/console')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
   })
 
-  it('links to organization Agent settings when no MCP exists', () => {
+  it('preserves malformed legacy MCP JSON without blocking Connections changes', async () => {
+    useServiceSpy.mockReturnValue({ data: { ...service, mcp: '{invalid' } })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="connections" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Remove Documentation' }))
+    const saveButton = screen.getByRole('button', { name: 'Save' })
+    expect(saveButton).toBeEnabled()
+    await userEvent.click(saveButton)
+
+    expect(editService).toHaveBeenCalledWith({
+      serviceId: 'workflow-1',
+      payload: expect.objectContaining({ mcp: '{invalid', mcp_server_ids: [] }),
+    })
+  })
+
+  it('opens the MCP manager when no MCP exists', async () => {
     useMcpServersSpy.mockReturnValue({ data: [], isLoading: false })
 
-    renderWithProviders(<AgenticWorkflowSettings page="connections" />)
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="connections" />)
 
-    expect(screen.getByRole('link', { name: 'AI settings → Agents' })).toHaveAttribute(
-      'href',
-      '/organization/organization-1/settings/agents'
-    )
+    await userEvent.click(screen.getByRole('button', { name: 'Manage MCP' }))
+
+    expect(screen.getByRole('heading', { name: 'Manage MCP' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'New MCP' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument()
   })
 
-  it('renders Outputs with the complete API value', () => {
-    renderWithProviders(<AgenticWorkflowSettings page="outputs" />)
+  it('renders Automations with the schedule and complete output count', () => {
+    renderWithProviders(<AgenticWorkflowSettings page="automations" />)
 
-    expect(screen.getByRole('heading', { name: 'Outputs' })).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'Output webhooks JSON' })).toHaveValue(
-      JSON.stringify(service.outputs, null, 2)
-    )
+    expect(screen.getByRole('heading', { name: 'Automations' })).toBeInTheDocument()
+    expect(screen.getByText('Webhook + schedule')).toBeInTheDocument()
+    expect(screen.getByText('1 output configured')).toBeInTheDocument()
   })
 
   it('renders Governance allowlists', () => {
@@ -269,6 +262,6 @@ describe('AgenticWorkflowSettings views', () => {
 
     expect(screen.getByRole('heading', { name: 'Governance' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Domain allowlist' })).toHaveValue('api.github.com, status.example.com')
-    expect(screen.getByRole('textbox', { name: 'Webhook IP allowlist' })).toHaveValue('10.0.0.0/8')
+    expect(screen.queryByRole('textbox', { name: 'Webhook IP allowlist' })).not.toBeInTheDocument()
   })
 })

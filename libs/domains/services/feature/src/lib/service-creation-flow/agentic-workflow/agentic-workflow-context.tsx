@@ -40,28 +40,9 @@ const DEFAULT_MODEL_SETTINGS = `{
   ]
 }`
 
-export const MCP_CONNECTOR_JSON_EXAMPLE = `{
-  "mcpServers": {
-    "investigator": {
-      "type": "stdio",
-      "command": "target/debug/mcp_server_example",
-      "args": [],
-      "env": {
-        "INVESTIGATOR_TOKEN": "{{INVESTIGATOR_TOKEN}}"
-      }
-    },
-    "costory": {
-      "type": "http",
-      "url": "https://app-api.costory.io/mcp",
-      "headers": {
-        "Authorization": "Bearer {{COSTORY_TOKEN}}"
-      }
-    }
-  }
-}`
-
 export interface AgenticWorkflowOutput {
-  url: string
+  name?: string
+  url: string | null
   headersJson: string
   prompt: string
 }
@@ -152,7 +133,7 @@ export function getAgenticWorkflowDefaults(): AgenticWorkflowFormData {
     aiModel: AgenticWorkflowModelType.CLAUDE,
     webhookEnabled: true,
     mcpServerIds: [],
-    mcpJson: MCP_CONNECTOR_JSON_EXAMPLE,
+    mcpJson: '',
     gitRepositories: [],
     modelApiKey: '',
     modelSettingsJson: DEFAULT_MODEL_SETTINGS,

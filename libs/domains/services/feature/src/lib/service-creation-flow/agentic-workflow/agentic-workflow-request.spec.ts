@@ -69,6 +69,21 @@ describe('formatAgenticWorkflowRequest', () => {
     ])
   })
 
+  it('ignores malformed output headers instead of throwing at submit time', () => {
+    const request = formatAgenticWorkflowRequest({
+      ...values,
+      automations: [
+        {
+          id: 'automation-1',
+          triggers: [{ id: 'trigger-1', type: 'webhook' }],
+          outputs: [{ url: null, headersJson: '{invalid', prompt: '' }],
+        },
+      ],
+    })
+
+    expect(request.outputs?.[0]?.headers).toEqual([])
+  })
+
   it('sends the selected execution mode', () => {
     expect(formatAgenticWorkflowRequest(values).execution_mode).toBe(AgenticWorkflowExecutionMode.IN_PLACE)
     expect(
