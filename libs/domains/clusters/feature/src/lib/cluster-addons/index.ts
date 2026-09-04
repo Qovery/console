@@ -4,4 +4,6 @@ export {
   type SecretManagerListProps,
   SECRET_MANAGER_OPTIONS,
   getSecretManagerOption,
+  SecretManagerMissingModal,
+  type SecretManagerMissingModalProps,
 } from './secret-manager'
