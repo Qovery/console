@@ -1,5 +1,10 @@
 import type { BlueprintItem } from 'qovery-typescript-axios'
-import { formatBlueprintName, getBlueprintDisplayName, isBlueprintCompatibleWithCluster } from './blueprint-utils'
+import {
+  formatBlueprintName,
+  getBlueprintDisplayName,
+  getBlueprintPrimaryCategory,
+  isBlueprintCompatibleWithCluster,
+} from './blueprint-utils'
 
 describe('formatBlueprintName', () => {
   it.each([
@@ -24,6 +29,20 @@ describe('getBlueprintDisplayName', () => {
 
   it('formats the catalog name when the display name is missing', () => {
     expect(getBlueprintDisplayName(blueprint)).toBe('AWS RDS MySQL')
+  })
+})
+
+describe('getBlueprintPrimaryCategory', () => {
+  const blueprint = {
+    name: 'aws-s3',
+  } as BlueprintItem
+
+  it('returns the catalog category', () => {
+    expect(getBlueprintPrimaryCategory({ ...blueprint, primaryCategory: 'Storage' } as BlueprintItem)).toBe('Storage')
+  })
+
+  it('falls back for catalog entries without a category', () => {
+    expect(getBlueprintPrimaryCategory(blueprint)).toBe('Other')
   })
 })
 

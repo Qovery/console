@@ -34,6 +34,12 @@ export function getBlueprintDisplayName(blueprint: BlueprintItem): string {
   return displayName || formatBlueprintName(blueprint.name)
 }
 
+export function getBlueprintPrimaryCategory(blueprint: BlueprintItem): string {
+  const { primaryCategory } = blueprint as BlueprintItem & { primaryCategory?: string }
+
+  return primaryCategory || 'Other'
+}
+
 export function isBlueprintCompatibleWithCluster(blueprintProvider: string, clusterCloudProvider?: string): boolean {
   if (!clusterCloudProvider) return true
 

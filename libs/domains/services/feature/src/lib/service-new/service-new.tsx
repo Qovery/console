@@ -11,7 +11,11 @@ import { Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from 
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
-import { getBlueprintDisplayName, isBlueprintCompatibleWithCluster } from '../blueprint-utils/blueprint-utils'
+import {
+  getBlueprintDisplayName,
+  getBlueprintPrimaryCategory,
+  isBlueprintCompatibleWithCluster,
+} from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
 import { AGENTIC_WORKFLOW_TEMPLATES } from '../service-creation-flow/agentic-workflow/agentic-workflow-templates'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
@@ -119,6 +123,16 @@ function BlueprintSection({
     isBlueprintCompatibleWithCluster(blueprint.provider, cloudProvider)
   )
   const filteredBlueprints = compatibleBlueprints.filter(filterBlueprint)
+  const categorizedBlueprints = Array.from(
+    filteredBlueprints.reduce((categories, blueprint) => {
+      const category = getBlueprintPrimaryCategory(blueprint)
+      const blueprints = categories.get(category) ?? []
+      blueprints.push(blueprint)
+      categories.set(category, blueprints)
+
+      return categories
+    }, new Map<string, BlueprintItem[]>())
+  )
 
   const openBlueprintMissingModal = () =>
     openModal({
@@ -157,13 +171,22 @@ function BlueprintSection({
         }
       />
       {filteredBlueprints.length > 0 ? (
-        <div className="grid grid-cols-3 gap-3">
-          {filteredBlueprints.map((blueprint) => (
-            <BlueprintCard
-              key={`${blueprint.provider}-${blueprint.serviceFamily}`}
-              blueprint={blueprint}
-              onViewDetails={onViewDetails}
-            />
+        <div className="flex flex-col gap-8">
+          {categorizedBlueprints.map(([category, blueprints], index) => (
+            <section key={category} className="flex flex-col gap-3" aria-labelledby={`blueprint-category-${index}`}>
+              <Heading id={`blueprint-category-${index}`} level={2}>
+                {category}
+              </Heading>
+              <div className="grid grid-cols-3 gap-3">
+                {blueprints.map((blueprint) => (
+                  <BlueprintCard
+                    key={`${blueprint.provider}-${blueprint.serviceFamily}`}
+                    blueprint={blueprint}
+                    onViewDetails={onViewDetails}
+                  />
+                ))}
+              </div>
+            </section>
           ))}
         </div>
       ) : (
