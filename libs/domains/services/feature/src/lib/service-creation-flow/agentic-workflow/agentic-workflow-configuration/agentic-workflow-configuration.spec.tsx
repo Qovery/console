@@ -183,6 +183,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
     expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
     expect(screen.getByText('Triggers')).toBeInTheDocument()
+    expect(screen.getByText('Enable agent task')).toBeInTheDocument()
   })
 
   it('should manage MCP from a side panel', async () => {

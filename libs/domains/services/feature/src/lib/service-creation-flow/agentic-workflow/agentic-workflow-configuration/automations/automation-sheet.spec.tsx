@@ -39,4 +39,21 @@ describe('AutomationSheet', () => {
     expect(screen.getByText('Schedule')).toBeInTheDocument()
     expect(screen.getByText('https://hooks.example.com')).toBeInTheDocument()
   })
+
+  it('saves the agent task enabled state with the automation', async () => {
+    const onSave = jest.fn()
+    const automation: AgenticWorkflowAutomation = {
+      id: 'automation-1',
+      triggers: [{ id: 'trigger-1', type: 'webhook' }],
+      outputs: [],
+    }
+    const { userEvent } = renderWithProviders(
+      <AutomationSheet enabled automation={automation} onClose={jest.fn()} onSave={onSave} />
+    )
+
+    await userEvent.click(screen.getByRole('switch', { name: 'Enable agent task' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save automation' }))
+
+    expect(onSave).toHaveBeenCalledWith(automation, false)
+  })
 })

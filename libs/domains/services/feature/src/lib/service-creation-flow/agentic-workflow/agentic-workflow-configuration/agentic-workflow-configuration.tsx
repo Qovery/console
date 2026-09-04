@@ -14,7 +14,6 @@ import {
   Icon,
   InputText,
   InputTextArea,
-  InputToggle,
   Modal,
   Section,
   useModal,
@@ -464,20 +463,6 @@ export function AgenticWorkflowConfiguration() {
             <InputTextArea name={field.name} label="Description" value={field.value} onChange={field.onChange} />
           )}
         />
-        <Controller
-          name="workflowEnabled"
-          control={form.control}
-          render={({ field }) => (
-            <InputToggle
-              small
-              align="top"
-              value={field.value}
-              title="Enable agent task"
-              description="Start listening and executing this agent task as soon as it is created."
-              onChange={field.onChange}
-            />
-          )}
-        />
       </SettingsAccordionItem>
 
       <SettingsAccordionItem value="resources" title="Resources" invalid={false}>
@@ -899,8 +884,14 @@ export function AgenticWorkflowConfiguration() {
       {activeSheet === 'automation' ? (
         <AutomationSheet
           automation={automation}
+          enabled={values.workflowEnabled}
           onClose={() => setActiveSheet(null)}
-          onSave={(nextAutomation) => form.setValue('automations', [nextAutomation], { shouldDirty: true })}
+          onSave={(nextAutomation, enabled) => {
+            form.setValue('automations', [nextAutomation], { shouldDirty: true })
+            if (enabled !== undefined) {
+              form.setValue('workflowEnabled', enabled, { shouldDirty: true })
+            }
+          }}
         />
       ) : null}
 

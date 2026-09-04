@@ -1,6 +1,16 @@
 import { type ReactNode, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { Button, DropdownMenu, Heading, Icon, InputText, InputTextArea, Section, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  DropdownMenu,
+  Heading,
+  Icon,
+  InputText,
+  InputTextArea,
+  InputToggle,
+  Section,
+  useModal,
+} from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
 import { TimezoneSetting } from '../../../../timezone-setting/timezone-setting'
 import {
@@ -256,18 +266,21 @@ function WebhookOutputModal({
 export function AutomationSheet({
   allowEmptyOutputUrl = false,
   automation,
+  enabled,
   lockWebhookTrigger = false,
   onClose,
   onSave,
 }: {
   allowEmptyOutputUrl?: boolean
   automation: AgenticWorkflowAutomation
+  enabled?: boolean
   lockWebhookTrigger?: boolean
   onClose: () => void
-  onSave: (automation: AgenticWorkflowAutomation) => void
+  onSave: (automation: AgenticWorkflowAutomation, enabled?: boolean) => void
 }) {
   const { closeModal, openModal } = useModal()
   const [draft, setDraft] = useState<AgenticWorkflowAutomation>(automation)
+  const [enabledDraft, setEnabledDraft] = useState(enabled)
   const scheduleTrigger = draft.triggers.find((trigger) => trigger.type === 'schedule')
   const webhookTrigger = draft.triggers.find((trigger) => trigger.type === 'webhook')
 
@@ -362,8 +375,18 @@ export function AutomationSheet({
             </DropdownMenu.Root>
           }
         >
-          {draft.triggers.length ? (
-            <div className="flex flex-col gap-2">
+          {enabledDraft !== undefined || draft.triggers.length ? (
+            <div className="flex flex-col gap-3">
+              {enabledDraft !== undefined ? (
+                <InputToggle
+                  small
+                  align="top"
+                  value={enabledDraft}
+                  title="Enable agent task"
+                  description="When disabled, triggers cannot start runs, so external webhook integrations can remain configured."
+                  onChange={setEnabledDraft}
+                />
+              ) : null}
               {draft.triggers.map((trigger) =>
                 trigger.type === 'webhook' ? (
                   <AutomationItemCard
@@ -430,7 +453,7 @@ export function AutomationSheet({
           size="md"
           disabled={draft.triggers.length === 0}
           onClick={() => {
-            onSave(draft)
+            enabledDraft === undefined ? onSave(draft) : onSave(draft, enabledDraft)
             onClose()
           }}
         >
