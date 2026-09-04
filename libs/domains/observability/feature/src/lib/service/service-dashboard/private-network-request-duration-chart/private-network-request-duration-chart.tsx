@@ -3,6 +3,7 @@ import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
+import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
@@ -57,7 +58,11 @@ export function PrivateNetworkRequestDurationChart({
     setLegendSelectedKeys(new Set())
   }
 
-  const { data: metrics50, isLoading: isLoadingMetrics50 } = useMetrics({
+  const {
+    data: metrics50,
+    isLoading: isLoadingMetrics50,
+    isError: isErrorMetrics50,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -67,7 +72,11 @@ export function PrivateNetworkRequestDurationChart({
     metricShortName: 'private_network_p50',
   })
 
-  const { data: metrics99, isLoading: isLoadingMetrics99 } = useMetrics({
+  const {
+    data: metrics99,
+    isLoading: isLoadingMetrics99,
+    isError: isErrorMetrics99,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -90,11 +99,6 @@ export function PrivateNetworkRequestDurationChart({
     boardShortName: 'service_overview',
     metricShortName: 'private_network_p95',
   })
-
-  // Only fail the whole chart when p95 — the series chartData itself gates on
-  // below — errors. A failing p50/p99 query alone shouldn't blank a series the
-  // other ones rendered fine.
-  const hasError = isErrorMetrics95
 
   const chartData = useMemo(() => {
     if (!metrics95?.data?.result) {
@@ -143,6 +147,18 @@ export function PrivateNetworkRequestDurationChart({
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metrics95, metrics99, metrics50, useLocalTime, startTimestamp, endTimestamp])
 
+  // When there's real data to show, a single failing percentile shouldn't blank
+  // it (that's what the partial-error indicator below is for). But once
+  // chartData is genuinely empty, ANY of p50/p95/p99 erroring — not just p95,
+  // the one chartData itself gates on — means we can't trust "empty" as
+  // confirmed idle traffic.
+  const hasError = chartData.length === 0 && (isErrorMetrics50 || isErrorMetrics95 || isErrorMetrics99)
+
+  // p50/p99 failing while the chart still has other data to render doesn't
+  // blank it above, but it shouldn't look identical to those percentiles being
+  // genuinely idle either — surface it as partial data instead of staying silent.
+  const hasPartialError = !hasError && (isErrorMetrics50 || isErrorMetrics99)
+
   return (
     <LocalChart
       data={chartData}
@@ -153,6 +169,7 @@ export function PrivateNetworkRequestDurationChart({
       emptyLabel="No traffic in this period"
       label={!isFullscreen ? 'Network request duration (ms)' : undefined}
       description="How long requests take to complete. Lower values mean faster responses"
+      descriptionRight={hasPartialError ? <PartialErrorBadge /> : undefined}
       unit="ms"
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >

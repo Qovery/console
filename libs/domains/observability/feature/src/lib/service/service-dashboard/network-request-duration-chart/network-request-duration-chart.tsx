@@ -3,6 +3,7 @@ import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
+import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
@@ -75,7 +76,11 @@ export function NetworkRequestDurationChart({
   }
 
   // NGINX: Fetch nginx metrics (to remove when migrating to envoy)
-  const { data: metricsP50InSeconds, isLoading: isLoadingMetrics50 } = useMetrics({
+  const {
+    data: metricsP50InSeconds,
+    isLoading: isLoadingMetrics50,
+    isError: isErrorMetrics50,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -99,7 +104,11 @@ export function NetworkRequestDurationChart({
     metricShortName: 'network_p99',
   })
 
-  const { data: metricsP95InSeconds, isLoading: isLoadingMetrics95 } = useMetrics({
+  const {
+    data: metricsP95InSeconds,
+    isLoading: isLoadingMetrics95,
+    isError: isErrorMetrics95,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -110,7 +119,11 @@ export function NetworkRequestDurationChart({
   })
 
   // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
-  const { data: metricsEnvoyP50InMs, isLoading: isLoadingMetricsEnvoy50 } = useMetrics({
+  const {
+    data: metricsEnvoyP50InMs,
+    isLoading: isLoadingMetricsEnvoy50,
+    isError: isErrorMetricsEnvoy50,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -136,7 +149,11 @@ export function NetworkRequestDurationChart({
     enabled: !!httpRouteName,
   })
 
-  const { data: metricsEnvoyP95InMs, isLoading: isLoadingMetricsEnvoy95 } = useMetrics({
+  const {
+    data: metricsEnvoyP95InMs,
+    isLoading: isLoadingMetricsEnvoy95,
+    isError: isErrorMetricsEnvoy95,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -258,15 +275,41 @@ export function NetworkRequestDurationChart({
     isLoadingMetricsEnvoy95,
   ])
 
-  // Only fail the whole chart when p99 — the series chartData itself gates on
-  // above — is unavailable from every configured source. p50/p95 (or one side of
-  // an nginx/envoy pair) erroring on their own shouldn't blank data the other
-  // series rendered fine; that degraded-but-partial state is exactly what the
-  // per-series `if (metrics?.data?.result)` guards above already handle.
+  // When there's real data to show, a single failing percentile shouldn't blank
+  // it (that's what the partial-error indicator below is for). But once
+  // chartData is genuinely empty, ANY relevant query erroring — not just p99,
+  // the one chartData itself gates on — means we can't trust "empty" as
+  // confirmed idle traffic; p50/p95 failing on their own could just as well be
+  // why nothing rendered, and treating it as "No traffic in this period" would
+  // hide that failure.
   const hasError = useMemo(() => {
+    if (chartData.length > 0) return false
     const shouldWaitForEnvoy = !!httpRouteName
-    return isErrorMetrics99 && (!shouldWaitForEnvoy || isErrorMetricsEnvoy99)
-  }, [isErrorMetrics99, isErrorMetricsEnvoy99, httpRouteName])
+    return (
+      isErrorMetrics99 ||
+      isErrorMetrics50 ||
+      isErrorMetrics95 ||
+      (shouldWaitForEnvoy && (isErrorMetricsEnvoy99 || isErrorMetricsEnvoy50 || isErrorMetricsEnvoy95))
+    )
+  }, [
+    chartData,
+    isErrorMetrics99,
+    isErrorMetrics50,
+    isErrorMetrics95,
+    isErrorMetricsEnvoy99,
+    isErrorMetricsEnvoy50,
+    isErrorMetricsEnvoy95,
+    httpRouteName,
+  ])
+
+  // p50/p95 (either side) failing while the chart still has other data to
+  // render doesn't blank it above, but it shouldn't look identical to those
+  // percentiles being genuinely idle either — surface it as partial data
+  // instead of staying silent.
+  const hasPartialError = useMemo(
+    () => !hasError && (isErrorMetrics50 || isErrorMetrics95 || isErrorMetricsEnvoy50 || isErrorMetricsEnvoy95),
+    [hasError, isErrorMetrics50, isErrorMetrics95, isErrorMetricsEnvoy50, isErrorMetricsEnvoy95]
+  )
 
   return (
     <LocalChart
@@ -278,6 +321,7 @@ export function NetworkRequestDurationChart({
       emptyLabel="No traffic in this period"
       label={!isFullscreen ? 'Network request duration (ms)' : undefined}
       description="How long requests take to complete. Lower values mean faster responses"
+      descriptionRight={hasPartialError ? <PartialErrorBadge /> : undefined}
       unit="ms"
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >

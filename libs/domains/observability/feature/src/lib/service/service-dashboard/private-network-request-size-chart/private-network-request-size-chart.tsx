@@ -3,6 +3,7 @@ import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
+import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
@@ -58,7 +59,11 @@ export function PrivateNetworkRequestSizeChart({
     metricShortName: 'private_network_resp_size',
   })
 
-  const { data: metricsRequestSize, isLoading: isLoadingMetricsRequestSize } = useMetrics({
+  const {
+    data: metricsRequestSize,
+    isLoading: isLoadingMetricsRequestSize,
+    isError: isErrorMetricsRequestSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -67,11 +72,6 @@ export function PrivateNetworkRequestSizeChart({
     boardShortName: 'service_overview',
     metricShortName: 'private_network_req_size',
   })
-
-  // Only fail the whole chart when "response size" — the series chartData
-  // itself gates on above — errors. A failing "request size" query alone
-  // shouldn't blank a series the other one rendered fine.
-  const hasError = isErrorMetricsResponseSize
 
   const chartData = useMemo(() => {
     if (!metricsResponseSize?.data?.result) {
@@ -111,6 +111,19 @@ export function PrivateNetworkRequestSizeChart({
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metricsResponseSize, metricsRequestSize, useLocalTime, startTimestamp, endTimestamp])
 
+  // When there's real data to show, a single failing source shouldn't blank it
+  // (that's what the partial-error indicator below is for). But once chartData
+  // is genuinely empty, "request size" erroring too — not just "response size",
+  // the one chartData itself gates on — means we can't trust "empty" as
+  // confirmed idle traffic.
+  const hasError = chartData.length === 0 && (isErrorMetricsResponseSize || isErrorMetricsRequestSize)
+
+  // "Request size" failing while the chart still has other data to render
+  // doesn't blank it above, but it shouldn't look identical to that series
+  // being genuinely idle either — surface it as partial data instead of
+  // staying silent.
+  const hasPartialError = !hasError && isErrorMetricsRequestSize
+
   return (
     <LocalChart
       data={chartData}
@@ -120,6 +133,7 @@ export function PrivateNetworkRequestSizeChart({
       emptyLabel="No traffic in this period"
       label="Network request size (bytes/s)"
       description="Large sizes can increase latency and bandwidth costs"
+      descriptionRight={hasPartialError ? <PartialErrorBadge /> : undefined}
       unit="bytes"
       serviceId={serviceId}
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}

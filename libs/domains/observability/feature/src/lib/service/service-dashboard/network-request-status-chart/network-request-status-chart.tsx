@@ -160,13 +160,16 @@ export function NetworkRequestStatusChart({
     return loading
   }, [isLoadingMetrics, isLoadingMetricsEnvoy, httpRouteName])
 
-  // Only fail the whole chart when every configured source is erroring — this
-  // mirrors the chartData emptiness check above. A single failing source (nginx
-  // or envoy) shouldn't blank a series the other source rendered fine.
+  // Only show the broken state when there's actually no data to render AND that
+  // emptiness is caused by a real query failure. Gating purely on isError (as
+  // opposed to `!isEmpty && isError`) would hide a real envoy failure whenever
+  // nginx merely succeeds with an empty result — as it typically does once a
+  // service has fully migrated to envoy — leaving the chart to silently render
+  // "No traffic in this period" for what is actually a broken pipeline.
   const hasError = useMemo(() => {
     const shouldWaitForEnvoy = !!httpRouteName
-    return isErrorMetrics && (!shouldWaitForEnvoy || isErrorMetricsEnvoy)
-  }, [isErrorMetrics, isErrorMetricsEnvoy, httpRouteName])
+    return chartData.length === 0 && (isErrorMetrics || (shouldWaitForEnvoy && isErrorMetricsEnvoy))
+  }, [chartData, isErrorMetrics, isErrorMetricsEnvoy, httpRouteName])
 
   return (
     <LocalChart
