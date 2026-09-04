@@ -782,7 +782,7 @@ export function AgenticWorkflowConfiguration() {
                   className="max-w-full"
                   onClick={() => setActiveSheet('automation')}
                 >
-                  <Icon iconName={automation.triggers.length ? 'bolt' : 'circle-plus'} iconStyle="regular" />
+                  <Icon iconName="stopwatch" iconStyle="regular" />
                   <span className="truncate">
                     {automation.triggers.length ? summarizeAutomation(automation) : 'Add automation'}
                   </span>
