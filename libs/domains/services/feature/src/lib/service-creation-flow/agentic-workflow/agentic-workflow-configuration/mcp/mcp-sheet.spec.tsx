@@ -43,11 +43,11 @@ describe('McpSheet', () => {
     expect(onChange).toHaveBeenCalledWith(['m1'])
   })
 
-  it('closes from the Save button', async () => {
+  it('closes from the Done button', async () => {
     const onClose = jest.fn()
     const { userEvent } = setup(['m1'], jest.fn(), onClose)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Done' }))
 
     expect(onClose).toHaveBeenCalled()
   })

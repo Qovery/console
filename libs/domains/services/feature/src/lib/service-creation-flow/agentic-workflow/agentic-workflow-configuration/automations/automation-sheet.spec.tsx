@@ -11,7 +11,7 @@ describe('AutomationSheet', () => {
       <AutomationSheet automation={emptyAutomation} onClose={jest.fn()} onSave={onSave} />
     )
 
-    const save = screen.getByRole('button', { name: 'Save automation' })
+    const save = screen.getByRole('button', { name: 'Apply changes' })
     expect(save).toBeDisabled()
 
     // The Triggers section "Add" is the first one (Outputs also has an "Add").
@@ -52,7 +52,7 @@ describe('AutomationSheet', () => {
     )
 
     await userEvent.click(screen.getByRole('switch', { name: 'Enable agent task' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Save automation' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
 
     expect(onSave).toHaveBeenCalledWith(automation, false)
   })

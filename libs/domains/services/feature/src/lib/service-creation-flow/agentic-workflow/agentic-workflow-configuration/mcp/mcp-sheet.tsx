@@ -109,7 +109,6 @@ function McpServerPicker({
 }
 
 export function McpSheet({
-  confirmLabel = 'Save',
   createdMcpServers,
   isLoading,
   mcpServers,
@@ -118,7 +117,6 @@ export function McpSheet({
   onMcpServerCreated,
   value,
 }: {
-  confirmLabel?: string
   createdMcpServers: McpServerResponse[]
   isLoading: boolean
   mcpServers: McpServerResponse[]
@@ -146,7 +144,7 @@ export function McpSheet({
       </div>
       <div className="border-t border-neutral p-4">
         <Button type="button" className="w-full justify-center" size="lg" onClick={onClose}>
-          {confirmLabel}
+          Done
         </Button>
       </div>
     </OverlaySheet>

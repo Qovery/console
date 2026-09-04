@@ -37,10 +37,7 @@ export function AgenticWorkflowAutomationsSettings({
         <AutomationSheet
           allowEmptyOutputUrl
           automation={automation}
-          confirmLabel="Apply changes"
           lockWebhookTrigger
-          updateOutputLabel="Update output"
-          updateTriggerLabel="Update trigger"
           onClose={() => setOpen(false)}
           onSave={(value) => form.setValue('automation', value, { shouldDirty: true })}
         />
