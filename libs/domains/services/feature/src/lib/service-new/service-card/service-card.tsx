@@ -20,12 +20,13 @@ export type ServiceBlock = {
   icon: ReactElement
   cloud_provider?: CloudProviderEnum | string
   link?: string
+  search?: Record<string, string>
   onClick?: () => void
   disabledCTA?: ReactElement
   badge?: string
 }
 
-export function BaseServiceCard({ title, description, icon, link, onClick }: ServiceBlock) {
+export function BaseServiceCard({ title, description, icon, link, search, onClick }: ServiceBlock) {
   const className =
     'flex h-14 w-full items-center justify-between gap-3 rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)] hover:bg-surface-neutral-subtle'
   const content = (
@@ -45,6 +46,15 @@ export function BaseServiceCard({ title, description, icon, link, onClick }: Ser
     </>
   )
 
+  if (link) {
+    return (
+      // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
+      <Link to={link} search={search} onClick={onClick} className={className}>
+        {content}
+      </Link>
+    )
+  }
+
   if (onClick) {
     return (
       <button type="button" onClick={onClick} className={className}>
@@ -53,16 +63,7 @@ export function BaseServiceCard({ title, description, icon, link, onClick }: Ser
     )
   }
 
-  if (!link) {
-    return <div className={className}>{content}</div>
-  }
-
-  return (
-    // @ts-expect-error-next-line TODO new-nav : Route strings need to be updated using the next typed routes
-    <Link to={link} className={className}>
-      {content}
-    </Link>
-  )
+  return <div className={className}>{content}</div>
 }
 
 export function Card({ title, description, icon, link, onClick, disabledCTA, badge }: ServiceBlock) {

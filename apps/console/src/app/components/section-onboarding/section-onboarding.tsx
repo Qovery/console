@@ -262,7 +262,7 @@ export function SectionOnboarding() {
                 className="gap-2"
               >
                 <Icon iconName="wand-magic-sparkles" />
-                AI portal access
+                Agent Tasks access
               </Button>
             )}
             <Button

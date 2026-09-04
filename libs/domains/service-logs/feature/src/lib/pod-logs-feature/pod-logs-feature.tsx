@@ -3,7 +3,6 @@ import {
   type DeploymentStageWithServicesStatuses,
   type Environment,
   type EnvironmentStatus,
-  type Status,
 } from 'qovery-typescript-axios'
 import { memo } from 'react'
 import { useCluster } from '@qovery/domains/clusters/feature'
@@ -33,7 +32,8 @@ export function PodLogsFeature({ environment, deploymentStages, environmentStatu
 
   useDocumentTitle(`Service logs ${service ? `- ${service.name}` : '- Loading...'}`)
 
-  const serviceStatus = getServiceStatusesById(deploymentStages, serviceId) as Status
+  const serviceStatusResult = getServiceStatusesById(deploymentStages, serviceId)
+  const serviceStatus = serviceStatusResult && 'state' in serviceStatusResult ? serviceStatusResult : null
 
   if (!cluster) return null
 

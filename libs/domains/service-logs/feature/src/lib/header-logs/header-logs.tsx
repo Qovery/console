@@ -14,13 +14,22 @@ import { dateUTCString } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { pluralize, trimId } from '@qovery/shared/util-js'
 import { PodHealthChips } from '../pod-health-chips/pod-health-chips'
+import { getServiceStepsComputingDurationSec, hasLiveServiceStepComputingDuration } from '../service-step-metrics'
 
 export interface HeaderLogsProps extends PropsWithChildren {
   type: 'DEPLOYMENT' | 'SERVICE'
   serviceId: string
   environment: Environment
-  serviceStatus: Status
+  serviceStatus: Status | null
   environmentStatus?: EnvironmentStatus
+}
+
+function getOngoingDeploymentComputingDurationSec(serviceStatus: Status | null, nowMs: number) {
+  const steps = serviceStatus?.steps?.details ?? []
+  const stepsComputingDurationSec = getServiceStepsComputingDurationSec(steps, nowMs)
+  const recordedComputingDurationSec = serviceStatus?.steps?.total_computing_duration_sec ?? 0
+
+  return Math.max(stepsComputingDurationSec, recordedComputingDurationSec)
 }
 
 export function HeaderLogs({
@@ -51,13 +60,13 @@ export function HeaderLogs({
   const isOngoing = match(serviceStatus?.status_details?.status)
     .with('ONGOING', 'CANCELING', () => true)
     .otherwise(() => false)
+  const hasLiveComputingDuration = hasLiveServiceStepComputingDuration(serviceStatus?.steps?.details ?? [])
 
-  useIntervalTick(isOngoing)
+  useIntervalTick(isOngoing && hasLiveComputingDuration)
 
-  const totalDurationSec =
-    isOngoing && serviceStatus?.last_deployment_date
-      ? Math.floor((Date.now() - new Date(serviceStatus.last_deployment_date).getTime()) / 1000)
-      : serviceStatus?.steps?.total_computing_duration_sec ?? 0
+  const computingDurationSec = isOngoing
+    ? getOngoingDeploymentComputingDurationSec(serviceStatus, Date.now())
+    : serviceStatus?.steps?.total_computing_duration_sec ?? 0
 
   if (!service) return null
 
@@ -72,9 +81,9 @@ export function HeaderLogs({
         <div className="flex h-full items-center gap-3 py-2.5 pl-4 pr-0.5 text-sm font-medium text-neutral">
           {match(type)
             .with('DEPLOYMENT', () => {
-              const subAction = serviceStatus.status_details?.sub_action
-              const triggerAction = subAction !== 'NONE' ? subAction : serviceStatus.status_details?.action
-              const actionStatus = serviceStatus.status_details?.status
+              const subAction = serviceStatus?.status_details?.sub_action
+              const triggerAction = subAction !== 'NONE' ? subAction : serviceStatus?.status_details?.action
+              const actionStatus = serviceStatus?.status_details?.status
 
               return (
                 <div className="flex items-center gap-3">
@@ -117,10 +126,10 @@ export function HeaderLogs({
                   </svg>
                   <span
                     className="flex items-center gap-1.5 truncate font-normal"
-                    title={dateUTCString(serviceStatus.last_deployment_date ?? '')}
+                    title={dateUTCString(serviceStatus?.last_deployment_date ?? '')}
                   >
                     <Icon iconName="stopwatch" iconStyle="regular" className="text-base text-neutral-subtle" />
-                    {Math.floor(totalDurationSec / 60)}m : {totalDurationSec % 60}s
+                    {Math.floor(computingDurationSec / 60)}m : {computingDurationSec % 60}s
                   </span>
                   <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
                     <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>

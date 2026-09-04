@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type BlueprintItem,
@@ -6,13 +7,15 @@ import {
   type LifecycleTemplateListResponseResultsInner,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
-import { Button, Heading, Icon, InputSearch, Section, Skeleton } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 import { isBlueprintCompatibleWithCluster } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
+import { AGENTIC_WORKFLOW_TEMPLATES } from '../service-creation-flow/agentic-workflow/agentic-workflow-templates'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
+import { BlueprintMissingModal } from './blueprint-missing-modal/blueprint-missing-modal'
 import { BaseServiceCard, Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
 import { buildCreateFlowPathForType, getCreateFlowPath, getServicesPath } from './service-new-utils/service-new-utils'
 import { serviceTemplates } from './service-templates'
@@ -106,6 +109,7 @@ function BlueprintSection({
     organizationId,
     suspense: true,
   })
+  const { openModal, closeModal } = useModal()
   const blueprints = blueprintCatalog?.blueprints ?? []
   const filterBlueprint = ({ name, description, categories }: BlueprintItem) =>
     `${name} ${description} ${categories?.join(' ')}`.toLowerCase().includes(blueprintSearchInput.toLowerCase())
@@ -114,18 +118,40 @@ function BlueprintSection({
   )
   const filteredBlueprints = compatibleBlueprints.filter(filterBlueprint)
 
-  if (compatibleBlueprints.length === 0) return null
+  const openBlueprintMissingModal = () =>
+    openModal({
+      content: (
+        <BlueprintMissingModal
+          organizationId={organizationId}
+          cloudProvider={cloudProvider}
+          searchInput={blueprintSearchInput}
+          onClose={closeModal}
+        />
+      ),
+    })
 
   return (
     <Section className="gap-4">
       <BlueprintSectionHeader
         action={
-          <InputSearch
-            placeholder="Search blueprints..."
-            className="w-60"
-            customSize="h-9 text-sm"
-            onChange={onBlueprintSearchInputChange}
-          />
+          <div className="flex items-center gap-2">
+            <InputSearch
+              placeholder="Search blueprints..."
+              className="w-60"
+              customSize="h-9 text-sm"
+              onChange={onBlueprintSearchInputChange}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              color="neutral"
+              size="md"
+              className="h-9"
+              onClick={openBlueprintMissingModal}
+            >
+              Request blueprint
+            </Button>
+          </div>
         }
       />
       {filteredBlueprints.length > 0 ? (
@@ -139,9 +165,14 @@ function BlueprintSection({
           ))}
         </div>
       ) : (
-        <div className="flex min-h-[186px] flex-col items-center justify-center rounded border border-neutral bg-surface-neutral px-3 py-6 text-center">
-          <Icon iconName="wave-pulse" className="text-neutral-subtle" />
-          <p className="mt-1 text-xs font-medium text-neutral-subtle">No blueprints found</p>
+        <div className="flex min-h-[186px] flex-col items-center justify-center gap-3 rounded border border-neutral bg-surface-neutral px-3 py-6 text-center">
+          <div className="flex flex-col items-center gap-1">
+            <Icon iconName="wave-pulse" className="text-neutral-subtle" />
+            <p className="mt-1 text-xs font-medium text-neutral-subtle">No blueprints found</p>
+          </div>
+          <Button type="button" variant="outline" color="neutral" size="sm" onClick={openBlueprintMissingModal}>
+            Request blueprint
+          </Button>
         </div>
       )}
     </Section>
@@ -162,18 +193,6 @@ export function ServiceNew({
 
   const serviceEmpty: ServiceBlock[] = useMemo(
     () => [
-      ...(isAgenticWorkflowEnabled
-        ? [
-            {
-              title: 'Agent task',
-              description: 'Delegate a one-time task to an AI agent with access to repositories, MCPs, and webhooks.',
-              icon: <Icon name="AGENTIC_WORKFLOW" width={32} height={32} />,
-              link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
-              cloud_provider: cloudProvider,
-              badge: 'BETA',
-            },
-          ]
-        : []),
       {
         title: 'Application',
         description: 'Deploy a long running service running from Git or a Container Registry.',
@@ -241,15 +260,50 @@ export function ServiceNew({
             },
           ]),
     ],
-    [
-      cloudProvider,
-      environmentId,
-      isAgenticWorkflowEnabled,
-      isTerraformFeatureFlag,
-      organizationId,
-      projectId,
-      showPylonForm,
-    ]
+    [cloudProvider, environmentId, isTerraformFeatureFlag, organizationId, projectId, showPylonForm]
+  )
+
+  const agentUseCases: ServiceBlock[] = useMemo(
+    () => [
+      ...AGENTIC_WORKFLOW_TEMPLATES.map((template) => ({
+        title: template.title,
+        description: template.description,
+        // BaseServiceCard overrides the icon className with a 20x20 box, so center
+        // the glyph via inline style (not overridden) and size/color the inner Icon.
+        icon: (
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon iconName={template.iconName} iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
+          </span>
+        ),
+        link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
+        search: { template: template.id },
+        onClick: () => posthog.capture('select-agent-use-case', { agentUseCase: template.id }),
+        cloud_provider: cloudProvider,
+      })),
+      {
+        title: 'Start from scratch',
+        description: 'Start with a blank agent task and configure everything yourself.',
+        icon: (
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon iconName="circle-plus" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
+          </span>
+        ),
+        link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
+        onClick: () => posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' }),
+        cloud_provider: cloudProvider,
+      },
+      {
+        title: 'Need a specific agent? Contact us',
+        description: 'Tell us which agent use case you need and we will help you set it up.',
+        icon: (
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <Icon iconName="paper-plane" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
+          </span>
+        ),
+        onClick: () => showPylonForm('request-ai-builder-portal'),
+      },
+    ],
+    [cloudProvider, environmentId, organizationId, projectId, showPylonForm]
   )
 
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
@@ -277,6 +331,22 @@ export function ServiceNew({
             ))}
           </div>
         </Section>
+
+        {isAgenticWorkflowEnabled && agentUseCases.length > 0 && (
+          <Section className="gap-4">
+            <div className="flex flex-col gap-1">
+              <Heading>Agent use cases</Heading>
+              <p className="text-sm leading-5 text-neutral-subtle">
+                Start from a ready-made agent configuration and adjust it to your needs.
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {agentUseCases.map((useCase) => (
+                <BaseServiceCard key={useCase.title} {...useCase} />
+              ))}
+            </div>
+          </Section>
+        )}
         {isServiceCatalogEnabled && (
           <BlueprintQueryBoundary
             errorFallback={BlueprintSectionErrorFallback}

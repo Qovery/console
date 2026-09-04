@@ -4,7 +4,7 @@ import {
   type GitProviderEnum,
   type GitRepository,
 } from 'qovery-typescript-axios'
-import { type PropsWithChildren, createContext, useContext } from 'react'
+import { type PropsWithChildren, createContext, useContext, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
 
@@ -140,36 +140,56 @@ export function useAgenticWorkflowCreateContext() {
   return context
 }
 
-export interface AgenticWorkflowCreationFlowProps extends PropsWithChildren {
-  onExit: () => void
+export function getAgenticWorkflowDefaults(): AgenticWorkflowFormData {
+  return {
+    name: '',
+    description: '',
+    cpu: '2000',
+    memory: '2048',
+    storage: '10',
+    workflowEnabled: true,
+    executionMode: AgenticWorkflowExecutionMode.IN_PLACE,
+    aiModel: AgenticWorkflowModelType.CLAUDE,
+    webhookEnabled: true,
+    mcpServerIds: [],
+    mcpJson: MCP_CONNECTOR_JSON_EXAMPLE,
+    gitRepositories: [],
+    modelApiKey: '',
+    modelSettingsJson: DEFAULT_MODEL_SETTINGS,
+    whitelistHosts: '*',
+    dockerFragment: '',
+    automations: [],
+    agentPrompt: '',
+  }
 }
 
-export function AgenticWorkflowCreationFlow({ children, onExit }: AgenticWorkflowCreationFlowProps) {
+export interface AgenticWorkflowCreationFlowProps extends PropsWithChildren {
+  onExit: () => void
+  // A template use case pre-fills part of the form and its variables when the
+  // flow is entered with a `?template=` param (see agentic-workflow-templates.ts).
+  seed?: Partial<AgenticWorkflowFormData>
+  variablesSeed?: FlowVariableData['variables']
+}
+
+export function AgenticWorkflowCreationFlow({
+  children,
+  onExit,
+  seed,
+  variablesSeed,
+}: AgenticWorkflowCreationFlowProps) {
+  // useForm reads defaultValues once at mount, so freeze the seeded values to
+  // stay stable even if the seed prop reference changes on a later re-render.
+  const [defaultValues] = useState<AgenticWorkflowFormData>(() => ({ ...getAgenticWorkflowDefaults(), ...seed }))
+  const [variablesDefaultValues] = useState<FlowVariableData>(() => ({
+    variables: variablesSeed ?? [],
+    externalSecrets: [],
+  }))
   const variablesForm = useForm<FlowVariableData>({
-    defaultValues: { variables: [], externalSecrets: [] },
+    defaultValues: variablesDefaultValues,
     mode: 'onChange',
   })
   const form = useForm<AgenticWorkflowFormData>({
-    defaultValues: {
-      name: '',
-      description: '',
-      cpu: '2000',
-      memory: '2048',
-      storage: '10',
-      workflowEnabled: true,
-      executionMode: AgenticWorkflowExecutionMode.IN_PLACE,
-      aiModel: AgenticWorkflowModelType.CLAUDE,
-      webhookEnabled: true,
-      mcpServerIds: [],
-      mcpJson: MCP_CONNECTOR_JSON_EXAMPLE,
-      gitRepositories: [],
-      modelApiKey: '',
-      modelSettingsJson: DEFAULT_MODEL_SETTINGS,
-      whitelistHosts: '*',
-      dockerFragment: '',
-      automations: [],
-      agentPrompt: '',
-    },
+    defaultValues,
     mode: 'onChange',
   })
 

@@ -10,6 +10,7 @@ import {
   SecretManagerAssociatedExternalSecretsModal,
   SecretManagerIntegrationModal,
   SecretManagerList,
+  SecretManagerMissingModal,
   getSecretManagerOption,
   useCluster,
   useEditCluster,
@@ -112,6 +113,18 @@ function RouteComponent() {
     })
   }
 
+  const openSecretManagerMissingModal = () =>
+    openModal({
+      content: (
+        <SecretManagerMissingModal
+          organizationId={organizationId}
+          clusterId={clusterId}
+          source="settings"
+          onClose={closeModal}
+        />
+      ),
+    })
+
   const handleDeleteSecretManager = (integration: SecretManagerAccess) => {
     openModalConfirmation({
       title: 'Delete secret manager',
@@ -202,44 +215,56 @@ function RouteComponent() {
                     </p>
                   </div>
                   <div className="flex flex-col items-start gap-3">
-                    <DropdownMenu.Root
-                      onOpenChange={(open) => {
-                        if (open) {
-                          posthog.capture('cluster-secret-manager-add-clicked', {
-                            cluster_id: clusterId,
-                            organization_id: organizationId,
-                            source: 'settings',
-                          })
-                        }
-                      }}
-                    >
-                      <DropdownMenu.Trigger asChild>
-                        <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
-                          <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
-                          Add secret manager
-                          <Icon iconName="chevron-down" className="text-[10px]" />
-                        </Button>
-                      </DropdownMenu.Trigger>
-                      <DropdownMenu.Content align="start">
-                        {secretManagerDropdownOptions.map((option) => (
-                          <DropdownMenu.Item
-                            key={option.value}
-                            color="neutral"
-                            icon={<Icon name={option.icon} width={16} height={16} />}
-                            onSelect={() => {
-                              posthog.capture('cluster-secret-manager-type-selected', {
-                                cluster_id: clusterId,
-                                organization_id: organizationId,
-                                secret_manager_type: option.value,
-                              })
-                              openSecretManagerModal(option)
-                            }}
-                          >
-                            {option.label}
-                          </DropdownMenu.Item>
-                        ))}
-                      </DropdownMenu.Content>
-                    </DropdownMenu.Root>
+                    <div className="flex items-center gap-2">
+                      <DropdownMenu.Root
+                        onOpenChange={(open) => {
+                          if (open) {
+                            posthog.capture('cluster-secret-manager-add-clicked', {
+                              cluster_id: clusterId,
+                              organization_id: organizationId,
+                              source: 'settings',
+                            })
+                          }
+                        }}
+                      >
+                        <DropdownMenu.Trigger asChild>
+                          <Button color="neutral" variant="solid" size="md" className="gap-2" type="button">
+                            <Icon iconName="circle-plus" iconStyle="regular" className="text-xs" />
+                            Add secret manager
+                            <Icon iconName="chevron-down" className="text-[10px]" />
+                          </Button>
+                        </DropdownMenu.Trigger>
+                        <DropdownMenu.Content align="start">
+                          {secretManagerDropdownOptions.map((option) => (
+                            <DropdownMenu.Item
+                              key={option.value}
+                              color="neutral"
+                              icon={<Icon name={option.icon} width={16} height={16} />}
+                              onSelect={() => {
+                                posthog.capture('cluster-secret-manager-type-selected', {
+                                  cluster_id: clusterId,
+                                  organization_id: organizationId,
+                                  secret_manager_type: option.value,
+                                })
+                                openSecretManagerModal(option)
+                              }}
+                            >
+                              {option.label}
+                            </DropdownMenu.Item>
+                          ))}
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Root>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        color="neutral"
+                        size="md"
+                        className="h-8"
+                        onClick={openSecretManagerMissingModal}
+                      >
+                        Request integration
+                      </Button>
+                    </div>
                     <SecretManagerList
                       secretManagers={secretManagers}
                       onEdit={(manager) =>
