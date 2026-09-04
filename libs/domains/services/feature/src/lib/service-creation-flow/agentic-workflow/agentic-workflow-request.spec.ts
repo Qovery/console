@@ -8,10 +8,8 @@ const values: AgenticWorkflowFormData = {
   cpu: '2000',
   memory: '2048',
   storage: '10',
-  workflowEnabled: true,
   executionMode: AgenticWorkflowExecutionMode.IN_PLACE,
   aiModel: AgenticWorkflowModelType.CLAUDE,
-  webhookEnabled: true,
   mcpServerIds: ['mcp-1', 'mcp-2'],
   mcpJson: '',
   gitRepositories: [],
@@ -24,6 +22,10 @@ const values: AgenticWorkflowFormData = {
 }
 
 describe('formatAgenticWorkflowRequest', () => {
+  it('enables newly created agent tasks', () => {
+    expect(formatAgenticWorkflowRequest(values).enabled).toBe(true)
+  })
+
   it('sends the selected organization MCP server IDs', () => {
     expect(formatAgenticWorkflowRequest(values).mcp_server_ids).toEqual(['mcp-1', 'mcp-2'])
   })

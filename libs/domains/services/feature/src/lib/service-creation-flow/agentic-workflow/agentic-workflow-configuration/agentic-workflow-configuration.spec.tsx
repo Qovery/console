@@ -177,7 +177,13 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
     expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
     expect(screen.getByText('Triggers')).toBeInTheDocument()
-    expect(screen.getByText('Enable agent task')).toBeInTheDocument()
+    expect(screen.queryByRole('switch', { name: 'Enable agent task' })).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
+    await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+
+    expect(screen.getByRole('button', { name: 'Webhook' })).toBeInTheDocument()
   })
 
   it('should manage MCP from a side panel', async () => {
@@ -207,6 +213,12 @@ describe('AgenticWorkflowConfiguration', () => {
 
     expect(createButton).toBeEnabled()
     expect(createAndDeployButton).toBeEnabled()
+
+    await userEvent.click(createButton)
+
+    expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeDisabled()
+    expect(mockCreateService).not.toHaveBeenCalled()
   })
 
   it('should create without deploying when Create is clicked', async () => {
@@ -217,12 +229,16 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
+    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
+    await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
     await waitFor(() => expect(mockCreateService).toHaveBeenCalledTimes(1))
     expect(mockCreateService).toHaveBeenCalledWith(
       expect.objectContaining({
-        payload: expect.objectContaining({ execution_mode: AgenticWorkflowExecutionMode.IN_PLACE }),
+        payload: expect.objectContaining({ enabled: true, execution_mode: AgenticWorkflowExecutionMode.IN_PLACE }),
       })
     )
     expect(mockDeployEnvironment).not.toHaveBeenCalled()
@@ -236,6 +252,10 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
+    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
+    await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
     await userEvent.click(screen.getByRole('button', { name: 'Create and deploy' }))
 
     await waitFor(() => expect(mockDeployEnvironment).toHaveBeenCalledWith({ environmentId: 'environment-1' }))

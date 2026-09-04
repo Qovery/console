@@ -19,7 +19,7 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
     name: values.name,
     description: values.description,
     docker_fragment: values.dockerFragment,
-    enabled: values.workflowEnabled,
+    enabled: true,
     execution_mode: values.executionMode,
     schedule: scheduleTrigger
       ? {

@@ -15,7 +15,6 @@ function FormDefaults() {
       <span data-testid="memory">{values.memory}</span>
       <span data-testid="storage">{values.storage}</span>
       <span data-testid="whitelist-hosts">{values.whitelistHosts}</span>
-      <span data-testid="workflow-enabled">{String(values.workflowEnabled)}</span>
       <span data-testid="execution-mode">{values.executionMode}</span>
       <span data-testid="variables">{variables.map((variable) => variable.variable).join(',')}</span>
     </>
@@ -34,7 +33,6 @@ describe('AgenticWorkflowCreationFlow', () => {
     expect(screen.getByTestId('memory')).toHaveTextContent('2048')
     expect(screen.getByTestId('storage')).toHaveTextContent('10')
     expect(screen.getByTestId('whitelist-hosts')).toHaveTextContent('*')
-    expect(screen.getByTestId('workflow-enabled')).toHaveTextContent('true')
     expect(screen.getByTestId('execution-mode')).toHaveTextContent(AgenticWorkflowExecutionMode.IN_PLACE)
   })
 
@@ -56,6 +54,5 @@ describe('AgenticWorkflowCreationFlow', () => {
     expect(screen.getByTestId('variables')).toHaveTextContent('INCIDENT_IO_API_KEY')
     // …while untouched fields keep their defaults.
     expect(screen.getByTestId('cpu')).toHaveTextContent('2000')
-    expect(screen.getByTestId('workflow-enabled')).toHaveTextContent('true')
   })
 })
