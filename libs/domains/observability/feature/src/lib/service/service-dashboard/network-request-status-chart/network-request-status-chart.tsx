@@ -5,18 +5,22 @@ import { getColorByPod } from '@qovery/shared/util-hooks'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { type MetricData } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
+import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NGINX: Query for nginx metrics (to remove when migrating to envoy)
+// NOTE: no `> 0` filter here — at zero request rate that filter drops the series
+// entirely instead of rendering a real 0, making an idle service look identical
+// to a broken metrics pipeline.
 const query = (ingressName: string) => `
-   sum by(path,status)(nginx:req_rate:5m_by_path_status{ingress="${ingressName}"}) > 0
+   sum by(path,status)(nginx:req_rate:5m_by_path_status{ingress="${ingressName}"})
 `
 
 // ENVOY: Query for envoy metrics
 const queryEnvoy = (httpRouteName: string) => `
-   sum by(envoy_response_code)(envoy_proxy:req_rate:5m_by_status{httproute_name="${httpRouteName}"}) > 0
+   sum by(envoy_response_code)(envoy_proxy:req_rate:5m_by_status{httproute_name="${httpRouteName}"})
 `
 
 export function NetworkRequestStatusChart({
@@ -51,7 +55,11 @@ export function NetworkRequestStatusChart({
   }
 
   // NGINX: Fetch nginx metrics (to remove when migrating to envoy)
-  const { data: metrics, isLoading: isLoadingMetrics } = useMetrics({
+  const {
+    data: metrics,
+    isLoading: isLoadingMetrics,
+    isError: isErrorMetrics,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -62,7 +70,11 @@ export function NetworkRequestStatusChart({
   })
 
   // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
-  const { data: metricsEnvoy, isLoading: isLoadingMetricsEnvoy } = useMetrics({
+  const {
+    data: metricsEnvoy,
+    isLoading: isLoadingMetricsEnvoy,
+    isError: isErrorMetricsEnvoy,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -108,6 +120,11 @@ export function NetworkRequestStatusChart({
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
+    // Keep null padding for gaps — a missing sample (as opposed to an explicit
+    // NaN/zero sample, already normalized in processMetricsData) usually means a
+    // scrape or recording-rule gap, not confirmed zero traffic. useMetrics only
+    // flags isError on a failed request, so a "successful" but sparse query would
+    // otherwise render as a false idle flatline instead of a visible gap.
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metrics, metricsEnvoy, useLocalTime, startTimestamp, endTimestamp])
 
@@ -144,13 +161,37 @@ export function NetworkRequestStatusChart({
     return loading
   }, [isLoadingMetrics, isLoadingMetricsEnvoy, httpRouteName])
 
+  // isEmpty && anyError catches the "nothing to show, and it's because of a
+  // real failure" case (gating on "both erroring" would hide a real envoy
+  // failure whenever nginx merely succeeds with an empty result, as it
+  // typically does once a service has fully migrated to envoy). Once chartData
+  // has something to show — including stale data kept around by
+  // `keepPreviousData` during a failed refetch — a single failing source is
+  // downgraded to the partial-data badge rather than blanking the chart. But
+  // if EVERY relevant source is currently erroring, none of what's on screen
+  // reflects a successful fetch, so that still escalates to the full broken
+  // state even though stale data technically exists.
+  const anyError = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return isErrorMetrics || (shouldWaitForEnvoy && isErrorMetricsEnvoy)
+  }, [isErrorMetrics, isErrorMetricsEnvoy, httpRouteName])
+  const allError = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return isErrorMetrics && (!shouldWaitForEnvoy || isErrorMetricsEnvoy)
+  }, [isErrorMetrics, isErrorMetricsEnvoy, httpRouteName])
+  const hasError = chartData.length === 0 ? anyError : allError
+  const hasPartialError = chartData.length > 0 && anyError && !allError
+
   return (
     <LocalChart
       data={chartData}
       isLoading={isLoading}
       isEmpty={chartData.length === 0}
+      hasError={hasError}
+      emptyLabel="No traffic in this period"
       label="Network request status (req/s)"
       description="Sudden drops or spikes may signal service instability"
+      descriptionRight={hasPartialError ? <PartialErrorBadge /> : undefined}
       unit="req/s"
       serviceId={serviceId}
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}

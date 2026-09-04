@@ -3,6 +3,7 @@ import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
+import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
@@ -44,7 +45,11 @@ export function PrivateNetworkRequestSizeChart({
     setLegendSelectedKeys(new Set())
   }
 
-  const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
+  const {
+    data: metricsResponseSize,
+    isLoading: isLoadingMetricsResponseSize,
+    isError: isErrorMetricsResponseSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -54,7 +59,11 @@ export function PrivateNetworkRequestSizeChart({
     metricShortName: 'private_network_resp_size',
   })
 
-  const { data: metricsRequestSize, isLoading: isLoadingMetricsRequestSize } = useMetrics({
+  const {
+    data: metricsRequestSize,
+    isLoading: isLoadingMetricsRequestSize,
+    isError: isErrorMetricsRequestSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -94,16 +103,38 @@ export function PrivateNetworkRequestSizeChart({
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
+    // Keep null padding for gaps — a missing sample (as opposed to an explicit
+    // NaN/zero sample, already normalized in processMetricsData) usually means a
+    // scrape or recording-rule gap, not confirmed zero traffic. useMetrics only
+    // flags isError on a failed request, so a "successful" but sparse query would
+    // otherwise render as a false idle flatline instead of a visible gap.
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [metricsResponseSize, metricsRequestSize, useLocalTime, startTimestamp, endTimestamp])
+
+  // isEmpty && anyError catches "nothing to show, and it's a real failure"
+  // (either source, not just "response size", since a failing "request size"
+  // could just as well be why nothing rendered). Once chartData has something
+  // to show — including stale data kept around by `keepPreviousData` during a
+  // failed refetch — a single failing source is downgraded to the partial-data
+  // badge rather than blanking the chart. But if both are currently erroring,
+  // none of what's on screen reflects a successful fetch, so that still
+  // escalates to the full broken state even though stale data technically
+  // exists.
+  const anyError = isErrorMetricsResponseSize || isErrorMetricsRequestSize
+  const allError = isErrorMetricsResponseSize && isErrorMetricsRequestSize
+  const hasError = chartData.length === 0 ? anyError : allError
+  const hasPartialError = chartData.length > 0 && anyError && !allError
 
   return (
     <LocalChart
       data={chartData}
       isLoading={isLoadingMetricsResponseSize || isLoadingMetricsRequestSize}
       isEmpty={chartData.length === 0}
+      hasError={hasError}
+      emptyLabel="No traffic in this period"
       label="Network request size (bytes/s)"
       description="Large sizes can increase latency and bandwidth costs"
+      descriptionRight={hasPartialError ? <PartialErrorBadge /> : undefined}
       unit="bytes"
       serviceId={serviceId}
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}

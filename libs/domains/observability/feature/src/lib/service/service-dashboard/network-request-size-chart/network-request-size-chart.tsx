@@ -3,26 +3,30 @@ import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
+import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NGINX: Queries for nginx metrics (to remove when migrating to envoy)
+// NOTE: no `> 0` filter here — at zero traffic that filter drops the series
+// entirely instead of rendering a real 0, making an idle service look identical
+// to a broken metrics pipeline.
 const queryResponseSize = (ingressName: string) => `
-  sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"}) > 0
+  sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"})
 `
 
 const queryRequestSize = (ingressName: string) => `
-   sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"}) > 0
+   sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"})
 `
 
 // ENVOY: Queries for envoy metrics
 const queryEnvoyResponseSize = (httpRouteName: string) => `
-  sum(envoy_proxy:resp_bytes_rate:5m{httproute_name="${httpRouteName}"}) > 0
+  sum(envoy_proxy:resp_bytes_rate:5m{httproute_name="${httpRouteName}"})
 `
 
 const queryEnvoyRequestSize = (httpRouteName: string) => `
-   sum(envoy_proxy:req_bytes_rate:5m{httproute_name="${httpRouteName}"}) > 0
+   sum(envoy_proxy:req_bytes_rate:5m{httproute_name="${httpRouteName}"})
 `
 
 export function NetworkRequestSizeChart({
@@ -57,7 +61,11 @@ export function NetworkRequestSizeChart({
   }
 
   // NGINX: Fetch nginx metrics (to remove when migrating to envoy)
-  const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
+  const {
+    data: metricsResponseSize,
+    isLoading: isLoadingMetricsResponseSize,
+    isError: isErrorMetricsResponseSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -67,7 +75,11 @@ export function NetworkRequestSizeChart({
     metricShortName: 'network_resp_size',
   })
 
-  const { data: metricsRequestSize, isLoading: isLoadingMetricsRequestSize } = useMetrics({
+  const {
+    data: metricsRequestSize,
+    isLoading: isLoadingMetricsRequestSize,
+    isError: isErrorMetricsRequestSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -78,7 +90,11 @@ export function NetworkRequestSizeChart({
   })
 
   // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
-  const { data: metricsEnvoyResponseSize, isLoading: isLoadingMetricsEnvoyResponseSize } = useMetrics({
+  const {
+    data: metricsEnvoyResponseSize,
+    isLoading: isLoadingMetricsEnvoyResponseSize,
+    isError: isErrorMetricsEnvoyResponseSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -89,7 +105,11 @@ export function NetworkRequestSizeChart({
     enabled: !!httpRouteName,
   })
 
-  const { data: metricsEnvoyRequestSize, isLoading: isLoadingMetricsEnvoyRequestSize } = useMetrics({
+  const {
+    data: metricsEnvoyRequestSize,
+    isLoading: isLoadingMetricsEnvoyRequestSize,
+    isError: isErrorMetricsEnvoyRequestSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -155,6 +175,11 @@ export function NetworkRequestSizeChart({
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
+    // Keep null padding for gaps — a missing sample (as opposed to an explicit
+    // NaN/zero sample, already normalized in processMetricsData) usually means a
+    // scrape or recording-rule gap, not confirmed zero traffic. useMetrics only
+    // flags isError on a failed request, so a "successful" but sparse query would
+    // otherwise render as a false idle flatline instead of a visible gap.
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [
     metricsResponseSize,
@@ -181,13 +206,56 @@ export function NetworkRequestSizeChart({
     httpRouteName,
   ])
 
+  // isEmpty && anyError catches "nothing to show, and it's a real failure"
+  // (any relevant query, not just response-size, since a failing request-size
+  // could just as well be why nothing rendered). Once chartData has something
+  // to show — including stale data kept around by `keepPreviousData` during a
+  // failed refetch — a single failing query is downgraded to the partial-data
+  // badge rather than blanking the chart. But if EVERY relevant query is
+  // currently erroring, none of what's on screen reflects a successful fetch,
+  // so that still escalates to the full broken state even though stale data
+  // technically exists.
+  const anyError = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return (
+      isErrorMetricsResponseSize ||
+      isErrorMetricsRequestSize ||
+      (shouldWaitForEnvoy && (isErrorMetricsEnvoyResponseSize || isErrorMetricsEnvoyRequestSize))
+    )
+  }, [
+    isErrorMetricsResponseSize,
+    isErrorMetricsRequestSize,
+    isErrorMetricsEnvoyResponseSize,
+    isErrorMetricsEnvoyRequestSize,
+    httpRouteName,
+  ])
+  const allError = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return (
+      isErrorMetricsResponseSize &&
+      isErrorMetricsRequestSize &&
+      (!shouldWaitForEnvoy || (isErrorMetricsEnvoyResponseSize && isErrorMetricsEnvoyRequestSize))
+    )
+  }, [
+    isErrorMetricsResponseSize,
+    isErrorMetricsRequestSize,
+    isErrorMetricsEnvoyResponseSize,
+    isErrorMetricsEnvoyRequestSize,
+    httpRouteName,
+  ])
+  const hasError = chartData.length === 0 ? anyError : allError
+  const hasPartialError = chartData.length > 0 && anyError && !allError
+
   return (
     <LocalChart
       data={chartData}
       isLoading={isLoadingMetrics}
       isEmpty={chartData.length === 0}
+      hasError={hasError}
+      emptyLabel="No traffic in this period"
       label="Network request size (bytes/s)"
       description="Large sizes can increase latency and bandwidth costs"
+      descriptionRight={hasPartialError ? <PartialErrorBadge /> : undefined}
       unit="bytes"
       serviceId={serviceId}
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}

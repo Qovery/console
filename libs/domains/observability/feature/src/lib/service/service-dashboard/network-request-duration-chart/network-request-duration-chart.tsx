@@ -3,11 +3,20 @@ import { type LegendPayload, Line } from 'recharts'
 import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
+import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NGINX: Queries for nginx metrics (to remove when migrating to envoy)
+// NOTE: the p50/p95/p99 recording rules are a histogram_quantile over a 5m rate
+// window, which evaluates to NaN (not an absent series) when there were zero
+// observations in that window. No query-level guard needed: process-metrics-data.ts
+// already converts a NaN sample to 0 before it reaches the chart. (Do not wrap
+// these in `... or vector(0)` — that idiom only suppresses the fallback for
+// label sets identical to the unlabeled vector(0), so it ends up adding a second,
+// unlabeled 0-valued series alongside the real one at every step instead of only
+// when data is missing.)
 const queryDuration50 = (ingressName: string) => `
   nginx:request_p50:5m{ingress="${ingressName}"}
 `
@@ -67,7 +76,11 @@ export function NetworkRequestDurationChart({
   }
 
   // NGINX: Fetch nginx metrics (to remove when migrating to envoy)
-  const { data: metricsP50InSeconds, isLoading: isLoadingMetrics50 } = useMetrics({
+  const {
+    data: metricsP50InSeconds,
+    isLoading: isLoadingMetrics50,
+    isError: isErrorMetrics50,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -77,7 +90,11 @@ export function NetworkRequestDurationChart({
     metricShortName: 'network_p50',
   })
 
-  const { data: metricsP99InSeconds, isLoading: isLoadingMetrics99 } = useMetrics({
+  const {
+    data: metricsP99InSeconds,
+    isLoading: isLoadingMetrics99,
+    isError: isErrorMetrics99,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -87,7 +104,11 @@ export function NetworkRequestDurationChart({
     metricShortName: 'network_p99',
   })
 
-  const { data: metricsP95InSeconds, isLoading: isLoadingMetrics95 } = useMetrics({
+  const {
+    data: metricsP95InSeconds,
+    isLoading: isLoadingMetrics95,
+    isError: isErrorMetrics95,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -98,7 +119,11 @@ export function NetworkRequestDurationChart({
   })
 
   // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
-  const { data: metricsEnvoyP50InMs, isLoading: isLoadingMetricsEnvoy50 } = useMetrics({
+  const {
+    data: metricsEnvoyP50InMs,
+    isLoading: isLoadingMetricsEnvoy50,
+    isError: isErrorMetricsEnvoy50,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -109,7 +134,11 @@ export function NetworkRequestDurationChart({
     enabled: !!httpRouteName,
   })
 
-  const { data: metricsEnvoyP99InMs, isLoading: isLoadingMetricsEnvoy99 } = useMetrics({
+  const {
+    data: metricsEnvoyP99InMs,
+    isLoading: isLoadingMetricsEnvoy99,
+    isError: isErrorMetricsEnvoy99,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -120,7 +149,11 @@ export function NetworkRequestDurationChart({
     enabled: !!httpRouteName,
   })
 
-  const { data: metricsEnvoyP95InMs, isLoading: isLoadingMetricsEnvoy95 } = useMetrics({
+  const {
+    data: metricsEnvoyP95InMs,
+    isLoading: isLoadingMetricsEnvoy95,
+    isError: isErrorMetricsEnvoy95,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -206,6 +239,11 @@ export function NetworkRequestDurationChart({
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
+    // Keep null padding for gaps — a missing sample (as opposed to an explicit
+    // NaN/zero sample, already normalized in processMetricsData) usually means a
+    // scrape or recording-rule gap, not confirmed zero traffic. useMetrics only
+    // flags isError on a failed request, so a "successful" but sparse query would
+    // otherwise render as a false idle flatline instead of a visible gap.
     return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
   }, [
     metricsP99InSeconds,
@@ -237,14 +275,63 @@ export function NetworkRequestDurationChart({
     isLoadingMetricsEnvoy95,
   ])
 
+  // isEmpty && anyError catches "nothing to show, and it's a real failure"
+  // (any relevant query, not just p99, since a failing p50/p95 could just as
+  // well be why nothing rendered). Once chartData has something to show —
+  // including stale data kept around by `keepPreviousData` during a failed
+  // refetch — a single failing percentile is downgraded to the partial-data
+  // badge rather than blanking the chart. But if EVERY relevant query is
+  // currently erroring, none of what's on screen reflects a successful fetch,
+  // so that still escalates to the full broken state even though stale data
+  // technically exists.
+  const anyError = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return (
+      isErrorMetrics99 ||
+      isErrorMetrics50 ||
+      isErrorMetrics95 ||
+      (shouldWaitForEnvoy && (isErrorMetricsEnvoy99 || isErrorMetricsEnvoy50 || isErrorMetricsEnvoy95))
+    )
+  }, [
+    isErrorMetrics99,
+    isErrorMetrics50,
+    isErrorMetrics95,
+    isErrorMetricsEnvoy99,
+    isErrorMetricsEnvoy50,
+    isErrorMetricsEnvoy95,
+    httpRouteName,
+  ])
+  const allError = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return (
+      isErrorMetrics99 &&
+      isErrorMetrics50 &&
+      isErrorMetrics95 &&
+      (!shouldWaitForEnvoy || (isErrorMetricsEnvoy99 && isErrorMetricsEnvoy50 && isErrorMetricsEnvoy95))
+    )
+  }, [
+    isErrorMetrics99,
+    isErrorMetrics50,
+    isErrorMetrics95,
+    isErrorMetricsEnvoy99,
+    isErrorMetricsEnvoy50,
+    isErrorMetricsEnvoy95,
+    httpRouteName,
+  ])
+  const hasError = chartData.length === 0 ? anyError : allError
+  const hasPartialError = chartData.length > 0 && anyError && !allError
+
   return (
     <LocalChart
       data={chartData}
       serviceId={serviceId}
       isLoading={isLoadingMetrics}
       isEmpty={chartData.length === 0}
+      hasError={hasError}
+      emptyLabel="No traffic in this period"
       label={!isFullscreen ? 'Network request duration (ms)' : undefined}
       description="How long requests take to complete. Lower values mean faster responses"
+      descriptionRight={hasPartialError ? <PartialErrorBadge /> : undefined}
       unit="ms"
       handleResetLegend={legendSelectedKeys.size > 0 ? handleResetLegend : undefined}
     >
