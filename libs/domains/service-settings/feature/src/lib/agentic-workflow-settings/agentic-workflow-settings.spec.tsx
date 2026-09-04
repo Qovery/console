@@ -179,6 +179,7 @@ describe('AgenticWorkflowSettings views', () => {
           mcp: '{"mcpServers":{}}',
           outputs: [{ name: 'Audit log', url: null }],
           mcp_server_ids: ['mcp-1'],
+          webhook_ip_allowlist: ['10.0.0.0/8'],
           schedule: {
             cron_expression: '0 8 * * 1-5',
             timezone: 'Europe/Paris',
@@ -243,6 +244,6 @@ describe('AgenticWorkflowSettings views', () => {
 
     expect(screen.getByRole('heading', { name: 'Governance' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Domain allowlist' })).toHaveValue('api.github.com, status.example.com')
-    expect(screen.getByRole('textbox', { name: 'Webhook IP allowlist' })).toHaveValue('10.0.0.0/8')
+    expect(screen.queryByRole('textbox', { name: 'Webhook IP allowlist' })).not.toBeInTheDocument()
   })
 })

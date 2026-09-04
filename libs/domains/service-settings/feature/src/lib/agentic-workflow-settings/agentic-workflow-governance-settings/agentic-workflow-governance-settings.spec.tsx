@@ -3,7 +3,7 @@ import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings
 import { AgenticWorkflowGovernanceSettings } from './agentic-workflow-governance-settings'
 
 describe('AgenticWorkflowGovernanceSettings', () => {
-  it('renders both network allowlists', () => {
+  it('renders the domain allowlist', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness>
         {(form) => <AgenticWorkflowGovernanceSettings form={form} />}
@@ -11,6 +11,6 @@ describe('AgenticWorkflowGovernanceSettings', () => {
     )
 
     expect(screen.getByRole('textbox', { name: 'Domain allowlist' })).toHaveValue('*')
-    expect(screen.getByRole('textbox', { name: 'Webhook IP allowlist' })).toHaveValue('10.0.0.0/8')
+    expect(screen.queryByRole('textbox', { name: 'Webhook IP allowlist' })).not.toBeInTheDocument()
   })
 })

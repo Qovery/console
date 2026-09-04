@@ -9,10 +9,7 @@ export function AgenticWorkflowGovernanceSettings({
   form: UseFormReturn<AgenticWorkflowSettingsFormValues>
 }) {
   return (
-    <AgenticWorkflowSettingsCard
-      title="Network access"
-      description="Restrict outbound hosts and incoming webhook source addresses."
-    >
+    <AgenticWorkflowSettingsCard title="Network access" description="Restrict the hosts the agent task can access.">
       <Controller
         name="hostAllowlist"
         control={form.control}
@@ -22,13 +19,6 @@ export function AgenticWorkflowGovernanceSettings({
             label="Domain allowlist"
             hint="Use * to allow all domains, or enter hostnames separated by commas."
           />
-        )}
-      />
-      <Controller
-        name="webhookIpAllowlist"
-        control={form.control}
-        render={({ field }) => (
-          <InputTextArea {...field} label="Webhook IP allowlist" hint="Enter CIDR ranges separated by commas." />
         )}
       />
     </AgenticWorkflowSettingsCard>
