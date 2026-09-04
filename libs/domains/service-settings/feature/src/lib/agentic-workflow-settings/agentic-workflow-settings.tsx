@@ -1,40 +1,31 @@
 import { useParams } from '@tanstack/react-router'
-import {
-  AgenticWorkflowExecutionMode,
-  type AgenticWorkflowOutput,
-  type AgenticWorkflowRequest,
-} from 'qovery-typescript-axios'
-import { FormProvider, useForm } from 'react-hook-form'
-import { McpServerSetting, useGitTokens, useMcpServers } from '@qovery/domains/organizations/feature'
+import { AgenticWorkflowExecutionMode, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
+import { useForm } from 'react-hook-form'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
-  AgenticWorkflowCodeEditorField,
+  type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
-  AgenticWorkflowScheduleFields,
-  GitRepositoryCard,
-  isAgenticWorkflowScheduleValid,
+  createAgenticWorkflowAutomation,
+  formatAgenticWorkflowAutomationOutputs,
   isGitRepositoryComplete,
   useEditService,
   useService,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, Heading, Icon, InputText, InputTextArea, InputToggle, RadioGroup, Section } from '@qovery/shared/ui'
+import { Button, Section } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { AgenticWorkflowAdvancedSettings } from './agentic-workflow-advanced-settings/agentic-workflow-advanced-settings'
+import { AgenticWorkflowAiConfigurationSettings } from './agentic-workflow-ai-configuration-settings/agentic-workflow-ai-configuration-settings'
+import { AgenticWorkflowAutomationsSettings } from './agentic-workflow-automations-settings/agentic-workflow-automations-settings'
+import { AgenticWorkflowConnectionsSettings } from './agentic-workflow-connections-settings/agentic-workflow-connections-settings'
+import { AgenticWorkflowGeneralSettings } from './agentic-workflow-general-settings/agentic-workflow-general-settings'
+import { AgenticWorkflowGovernanceSettings } from './agentic-workflow-governance-settings/agentic-workflow-governance-settings'
 
-type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'outputs' | 'governance'
-
-interface AgenticWorkflowSettingsProps {
-  page: SettingsPage
-}
-
-interface FormValues {
+export interface AgenticWorkflowSettingsFormValues {
   name: string
   description: string
   enabled: boolean
   executionMode: AgenticWorkflowExecutionMode
-  scheduleEnabled: boolean
-  scheduleCronExpression: string
-  timezone: string
   modelApiKey: string
   modelSettings: string
   agentPrompt: string
@@ -42,7 +33,7 @@ interface FormValues {
   mcpServerIds: string[]
   mcp: string
   dockerFragment: string
-  outputs: string
+  automation: AgenticWorkflowAutomation
   hostAllowlist: string
   webhookIpAllowlist: string
   cpu: string
@@ -51,35 +42,42 @@ interface FormValues {
   storage: string
 }
 
+type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'automations' | 'governance' | 'advanced-settings'
+
+interface AgenticWorkflowSettingsProps {
+  page: SettingsPage
+}
+
 const PAGE_CONTENT: Record<SettingsPage, { title: string; description: string }> = {
-  general: { title: 'General settings', description: 'Configure the agent task name, description, and availability.' },
+  general: {
+    title: 'General settings',
+    description: 'Configure the agent task identity, availability, and resources.',
+  },
   'ai-configuration': {
     title: 'AI configuration',
-    description: 'Configure the model and instructions used by this agent task.',
+    description: 'Configure the provider and instructions used by this agent task.',
   },
   connections: {
     title: 'Connections',
-    description: 'Configure the Git repositories, MCP servers, and Dockerfile fragment available to the agent task.',
+    description: 'Manage the Git repositories, MCP servers, and runtime configuration available to the agent task.',
   },
-  outputs: { title: 'Outputs', description: 'Configure the webhooks called when the agent task produces an output.' },
+  automations: {
+    title: 'Automations',
+    description: 'Configure when the agent task runs and where it sends its results.',
+  },
   governance: {
     title: 'Governance',
     description: 'Control the hosts and webhook source addresses allowed for this agent task.',
   },
-}
-
-function formatJson(value: unknown) {
-  return JSON.stringify(value, null, 2)
-}
-
-function parseJson<T>(value: string): T {
-  return JSON.parse(value) as T
+  'advanced-settings': {
+    title: 'Advanced settings',
+    description: 'Configure optional runtime customization for this agent task.',
+  },
 }
 
 export function getGitRepositoryName(url: string) {
   try {
-    const pathname = new URL(url).pathname
-    return pathname.replace(/^\//, '').replace(/\.git$/, '')
+    return new URL(url).pathname.replace(/^\//, '').replace(/\.git$/, '')
   } catch {
     return url.replace(/\.git$/, '')
   }
@@ -102,390 +100,117 @@ export function agenticWorkflowJsonValidation(value: string) {
   }
 }
 
-export function agenticWorkflowOutputsValidation(value: string) {
-  const jsonError = agenticWorkflowJsonValidation(value)
-  if (jsonError !== true) return jsonError
-  const outputs = parseJson<unknown>(value)
-  return (
-    (Array.isArray(outputs) &&
-      outputs.every(
-        (output): output is AgenticWorkflowOutput =>
-          typeof output === 'object' &&
-          output !== null &&
-          'name' in output &&
-          typeof output.name === 'string' &&
-          Boolean(output.name.trim()) &&
-          (!('url' in output) || output.url === null || (typeof output.url === 'string' && Boolean(output.url.trim())))
-      )) ||
-    'Each output must have a name and, when provided, a valid webhook URL.'
-  )
-}
-
 export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { data: gitTokens = [] } = useGitTokens({ organizationId, enabled: page === 'connections' })
-  const { data: mcpServers = [], isLoading: areMcpServersLoading } = useMcpServers({
-    organizationId,
-    enabled: page === 'connections',
-  })
   const { mutate: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
-
-  const form = useForm<FormValues>({
+  const workflow = service && isAgenticWorkflow(service) ? service : undefined
+  const form = useForm<AgenticWorkflowSettingsFormValues>({
     mode: 'onChange',
-    defaultValues: {
-      name: service?.name ?? '',
-      description: service && isAgenticWorkflow(service) ? service.description : '',
-      enabled: service && isAgenticWorkflow(service) ? service.enabled : false,
-      executionMode:
-        service && isAgenticWorkflow(service)
-          ? service.execution_mode ?? AgenticWorkflowExecutionMode.IN_PLACE
-          : AgenticWorkflowExecutionMode.IN_PLACE,
-      scheduleEnabled: Boolean(service && isAgenticWorkflow(service) && service.schedule),
-      scheduleCronExpression:
-        service && isAgenticWorkflow(service) ? service.schedule?.cron_expression ?? '0 8 * * 1-5' : '0 8 * * 1-5',
-      timezone: service && isAgenticWorkflow(service) ? service.schedule?.timezone ?? 'Etc/UTC' : 'Etc/UTC',
-      modelApiKey: '',
-      modelSettings: service && isAgenticWorkflow(service) ? service.model.settings : '',
-      agentPrompt: service && isAgenticWorkflow(service) ? service.agent_prompt : '',
-      repositories:
-        service && isAgenticWorkflow(service)
-          ? service.project_repositories.map(({ url, branch, git_token_id }) => {
-              const name = getGitRepositoryName(url)
-              return {
-                repository: name,
-                branch,
-                gitTokenId: git_token_id,
-                isPublicRepository: !git_token_id,
-                gitRepository: {
-                  id: url,
-                  name,
-                  url,
-                  default_branch: branch,
-                },
-              }
-            })
-          : [],
-      mcp: service && isAgenticWorkflow(service) ? service.mcp : '',
-      mcpServerIds: service && isAgenticWorkflow(service) ? service.mcp_server_ids : [],
-      dockerFragment: service && isAgenticWorkflow(service) ? service.docker_fragment : '',
-      outputs: formatJson(service && isAgenticWorkflow(service) ? service.outputs : []),
-      hostAllowlist: service && isAgenticWorkflow(service) ? service.governance.host_allowlist.join(', ') : '',
-      webhookIpAllowlist: service && isAgenticWorkflow(service) ? service.webhook_ip_allowlist.join(', ') : '',
-      cpu: String(service && isAgenticWorkflow(service) ? service.resources.cpu_milli : 0),
-      ram: String(service && isAgenticWorkflow(service) ? service.resources.ram_mib : 0),
-      gpu: String(service && isAgenticWorkflow(service) ? service.resources.gpu : 0),
-      storage: String(service && isAgenticWorkflow(service) ? service.resources.storage_gib : 0),
-    },
+    values: workflow
+      ? {
+          name: workflow.name,
+          description: workflow.description,
+          enabled: workflow.enabled,
+          executionMode: workflow.execution_mode ?? AgenticWorkflowExecutionMode.IN_PLACE,
+          modelApiKey: '',
+          modelSettings: workflow.model.settings,
+          agentPrompt: workflow.agent_prompt,
+          repositories: workflow.project_repositories.map(({ url, branch, git_token_id }) => {
+            const name = getGitRepositoryName(url)
+            return {
+              repository: name,
+              branch,
+              gitTokenId: git_token_id,
+              isPublicRepository: !git_token_id,
+              gitRepository: { id: url, name, url, default_branch: branch },
+            }
+          }),
+          mcp: workflow.mcp,
+          mcpServerIds: workflow.mcp_server_ids,
+          dockerFragment: workflow.docker_fragment,
+          automation: createAgenticWorkflowAutomation(workflow.schedule, workflow.outputs),
+          hostAllowlist: workflow.governance.host_allowlist.join(', '),
+          webhookIpAllowlist: workflow.webhook_ip_allowlist.join(', '),
+          cpu: String(workflow.resources.cpu_milli),
+          ram: String(workflow.resources.ram_mib),
+          gpu: String(workflow.resources.gpu),
+          storage: String(workflow.resources.storage_gib),
+        }
+      : undefined,
+    resetOptions: { keepDirtyValues: true },
   })
-  form.register('modelSettings', { validate: agenticWorkflowJsonValidation })
-  form.register('mcp', { validate: (value) => !value.trim() || agenticWorkflowJsonValidation(value) })
-  form.register('outputs', { validate: agenticWorkflowOutputsValidation })
 
-  if (!service || !isAgenticWorkflow(service)) return null
+  if (!workflow) return null
 
   const values = form.watch()
-  const savedSchedule = service.schedule
-  const nextRunAt =
-    values.scheduleEnabled &&
-    savedSchedule &&
-    values.scheduleCronExpression === savedSchedule.cron_expression &&
-    values.timezone === savedSchedule.timezone
-      ? savedSchedule.next_run_at
-      : null
+  const schedule = values.automation.triggers.find((trigger) => trigger.type === 'schedule')
+  const pageValid =
+    Boolean(values.name.trim()) &&
+    (page !== 'ai-configuration' ||
+      (Boolean(values.agentPrompt.trim()) && agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
+    (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
   const submit = form.handleSubmit((data) => {
     const model: AgenticWorkflowRequest['model'] = {
-      type: service.model.type,
+      type: workflow.model.type,
       settings: data.modelSettings,
       ...(data.modelApiKey.trim() ? { api_key: data.modelApiKey.trim() } : {}),
     }
-    const payload: AgenticWorkflowRequest & { serviceType: 'AGENTIC_WORKFLOW' } = {
-      serviceType: 'AGENTIC_WORKFLOW',
-      name: data.name,
-      description: data.description,
-      enabled: data.enabled,
-      execution_mode: data.executionMode,
-      schedule: data.scheduleEnabled
-        ? {
-            cron_expression: data.scheduleCronExpression,
-            timezone: data.timezone,
-          }
-        : null,
-      model,
-      agent_prompt: data.agentPrompt,
-      project_repositories: formatAgenticWorkflowRepositories(data.repositories),
-      mcp: data.mcp,
-      mcp_server_ids: data.mcpServerIds,
-      docker_fragment: data.dockerFragment,
-      outputs: parseJson(data.outputs),
-      governance: {
-        host_allowlist: data.hostAllowlist
+
+    editService({
+      serviceId,
+      payload: {
+        serviceType: 'AGENTIC_WORKFLOW',
+        name: data.name,
+        description: data.description,
+        enabled: data.enabled,
+        execution_mode: data.executionMode,
+        schedule: schedule
+          ? { cron_expression: schedule.cronExpression ?? '', timezone: schedule.timezone ?? 'Etc/UTC' }
+          : null,
+        model,
+        agent_prompt: data.agentPrompt,
+        project_repositories: formatAgenticWorkflowRepositories(data.repositories),
+        mcp: data.mcp,
+        mcp_server_ids: data.mcpServerIds,
+        docker_fragment: data.dockerFragment,
+        outputs: formatAgenticWorkflowAutomationOutputs(data.automation.outputs),
+        governance: {
+          host_allowlist: data.hostAllowlist
+            .split(',')
+            .map((value) => value.trim())
+            .filter(Boolean),
+        },
+        webhook_ip_allowlist: data.webhookIpAllowlist
           .split(',')
           .map((value) => value.trim())
           .filter(Boolean),
+        resources: {
+          cpu_milli: Number(data.cpu),
+          ram_mib: Number(data.ram),
+          gpu: Number(data.gpu),
+          storage_gib: Number(data.storage),
+        },
       },
-      webhook_ip_allowlist: data.webhookIpAllowlist
-        .split(',')
-        .map((value) => value.trim())
-        .filter(Boolean),
-      resources: {
-        cpu_milli: Number(data.cpu),
-        ram_mib: Number(data.ram),
-        gpu: Number(data.gpu),
-        storage_gib: Number(data.storage),
-      },
-    }
-    editService({ serviceId, payload })
+    })
   })
-
-  const jsonField = (name: 'modelSettings' | 'mcp' | 'outputs', label: string, hint?: string) => (
-    <AgenticWorkflowCodeEditorField
-      name={name}
-      label={label}
-      language="json"
-      value={values[name]}
-      hint={hint}
-      error={form.formState.errors[name]?.message}
-      onChange={(value) => form.setValue(name, value, { shouldDirty: true, shouldValidate: true })}
-    />
-  )
-
-  const repositoriesValid = values.repositories.every(isGitRepositoryComplete)
-  const pageValid =
-    page === 'general'
-      ? isAgenticWorkflowScheduleValid(values)
-      : page === 'ai-configuration'
-        ? agenticWorkflowJsonValidation(values.modelSettings) === true
-        : page === 'connections'
-          ? repositoriesValid && (!values.mcp.trim() || agenticWorkflowJsonValidation(values.mcp) === true)
-          : page === 'outputs'
-            ? agenticWorkflowOutputsValidation(values.outputs) === true
-            : true
-  const addRepository = () =>
-    form.setValue('repositories', [...values.repositories, { repository: '', branch: '' }], { shouldDirty: true })
 
   return (
     <Section className="px-8 pb-8 pt-6">
       <SettingsHeading title={content.title} description={content.description} />
       <form onSubmit={submit} className="max-w-content-with-navigation-left space-y-4">
-        {page === 'general' && (
-          <>
-            <InputText
-              name="name"
-              label="Name"
-              value={values.name}
-              error={!values.name.trim() ? 'Please enter an agent task name.' : undefined}
-              onChange={(event) => form.setValue('name', event.currentTarget.value, { shouldDirty: true })}
-            />
-            <InputTextArea
-              name="description"
-              label="Description"
-              value={values.description}
-              onChange={(event) => form.setValue('description', event.currentTarget.value, { shouldDirty: true })}
-            />
-            <InputToggle
-              small
-              align="top"
-              value={values.enabled}
-              title="Enable agent task"
-              description="Allow this agent task to listen for and process incoming requests."
-              onChange={(value) => form.setValue('enabled', value, { shouldDirty: true })}
-            />
-            <Section className="pt-6">
-              <Heading level={2} className="mb-1">
-                Execution mode
-              </Heading>
-              <p className="mb-4 text-sm text-neutral-subtle">Choose how each agent task execution is isolated.</p>
-              <RadioGroup.Root
-                aria-label="Execution mode"
-                value={values.executionMode}
-                onValueChange={(value) =>
-                  form.setValue('executionMode', value as AgenticWorkflowExecutionMode, { shouldDirty: true })
-                }
-                className="grid gap-4 sm:grid-cols-2"
-              >
-                <label
-                  htmlFor="execution-mode-in-place"
-                  className="flex cursor-pointer items-start gap-3 rounded border border-neutral bg-surface-neutral p-4"
-                >
-                  <RadioGroup.Item
-                    id="execution-mode-in-place"
-                    value={AgenticWorkflowExecutionMode.IN_PLACE}
-                    className="mt-px shrink-0"
-                  />
-                  <span className="flex flex-col gap-1">
-                    <span className="text-sm font-medium text-neutral">In place</span>
-                    <span className="text-xs text-neutral-subtle">
-                      Run in the current environment. Concurrent runs share the same environment.
-                    </span>
-                  </span>
-                </label>
-                <label
-                  htmlFor="execution-mode-clone-environment"
-                  className="flex cursor-pointer items-start gap-3 rounded border border-neutral bg-surface-neutral p-4"
-                >
-                  <RadioGroup.Item
-                    id="execution-mode-clone-environment"
-                    value={AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT}
-                    className="mt-px shrink-0"
-                  />
-                  <span className="flex flex-col gap-1">
-                    <span className="text-sm font-medium text-neutral">Clone environment</span>
-                    <span className="text-xs text-neutral-subtle">
-                      Create a temporary environment for every run to isolate concurrent executions.
-                    </span>
-                  </span>
-                </label>
-              </RadioGroup.Root>
-            </Section>
-            <Section className="pt-6">
-              <Heading level={2} className="mb-1">
-                Schedule
-              </Heading>
-              <p className="mb-4 text-sm text-neutral-subtle">
-                Configure when this agent task runs automatically in addition to webhook requests.
-              </p>
-              <FormProvider {...form}>
-                <AgenticWorkflowScheduleFields />
-              </FormProvider>
-              {nextRunAt ? (
-                <p className="mt-2 text-xs text-neutral-subtle">
-                  Next run: {new Date(nextRunAt).toLocaleString(undefined, { timeZone: values.timezone })}
-                </p>
-              ) : null}
-            </Section>
-            <Section className="pt-6">
-              <Heading level={2} className="mb-1">
-                Resources
-              </Heading>
-              <p className="mb-4 text-sm text-neutral-subtle">
-                Configure the compute resources allocated to the agent task.
-              </p>
-              <div className="grid gap-4 sm:grid-cols-2">
-                {(['cpu', 'ram', 'gpu', 'storage'] as const).map((name) => (
-                  <InputText
-                    key={name}
-                    name={name}
-                    type="number"
-                    label={{ cpu: 'CPU (mCPU)', ram: 'Memory (MiB)', gpu: 'GPU', storage: 'Storage (GiB)' }[name]}
-                    value={values[name]}
-                    onChange={(event) => form.setValue(name, event.currentTarget.value, { shouldDirty: true })}
-                  />
-                ))}
-              </div>
-            </Section>
-          </>
-        )}
-        {page === 'ai-configuration' && (
-          <>
-            <InputText
-              name="model-api-key"
-              type="password"
-              label="API key"
-              hint="Leave empty to keep the current API key."
-              value={values.modelApiKey}
-              onChange={(event) => form.setValue('modelApiKey', event.currentTarget.value, { shouldDirty: true })}
-            />
-            {jsonField('modelSettings', 'Model settings JSON')}
-            <InputTextArea
-              name="agent-prompt"
-              label="Agent prompt"
-              value={values.agentPrompt}
-              onChange={(event) => form.setValue('agentPrompt', event.currentTarget.value, { shouldDirty: true })}
-            />
-          </>
-        )}
-        {page === 'connections' && (
-          <>
-            <Section className="flex-row items-center justify-between pt-2">
-              <div>
-                <Heading level={2}>Git repositories</Heading>
-                <p className="mt-1 text-sm text-neutral-subtle">
-                  Select the repositories and branches the agent task can access.
-                </p>
-              </div>
-              <Button type="button" variant="outline" color="neutral" size="sm" onClick={addRepository}>
-                <Icon iconName="plus" />
-                Add repository
-              </Button>
-            </Section>
-            {values.repositories.map((repository, index) => (
-              <GitRepositoryCard
-                key={`${index}-${repository.provider ?? gitTokens.find(({ id }) => id === repository.gitTokenId)?.type ?? ''}`}
-                index={index}
-                repository={{
-                  ...repository,
-                  provider: repository.provider ?? gitTokens.find(({ id }) => id === repository.gitTokenId)?.type,
-                }}
-                onChange={(nextRepository) => {
-                  const repositories = [...values.repositories]
-                  repositories[index] = nextRepository
-                  form.setValue('repositories', repositories, { shouldDirty: true })
-                }}
-                onRemove={() =>
-                  form.setValue(
-                    'repositories',
-                    values.repositories.filter((_, repositoryIndex) => repositoryIndex !== index),
-                    { shouldDirty: true }
-                  )
-                }
-              />
-            ))}
-            {!repositoriesValid && (
-              <p className="px-3 text-xs font-medium text-negative">
-                Select a Git account, repository, and branch for each repository.
-              </p>
-            )}
-            <McpServerSetting
-              isLoading={areMcpServersLoading}
-              mcpServers={mcpServers}
-              organizationId={organizationId}
-              value={values.mcpServerIds}
-              onChange={(value) => form.setValue('mcpServerIds', value as string[], { shouldDirty: true })}
-            />
-            <Heading level={3} className="pt-4" weight="medium">
-              Advanced MCP configuration
-            </Heading>
-            {jsonField('mcp', 'MCP JSON')}
-            <AgenticWorkflowCodeEditorField
-              name="docker-fragment"
-              label="Dockerfile fragment"
-              language="dockerfile"
-              value={values.dockerFragment}
-              onChange={(value) => form.setValue('dockerFragment', value, { shouldDirty: true })}
-            />
-          </>
-        )}
-        {page === 'outputs' && jsonField('outputs', 'Output webhooks JSON')}
-        {page === 'governance' && (
-          <>
-            <InputTextArea
-              name="host-allowlist"
-              label="Domain allowlist"
-              hint="Enter hostnames separated by commas. Use * to allow all domains."
-              value={values.hostAllowlist}
-              onChange={(event) => form.setValue('hostAllowlist', event.currentTarget.value, { shouldDirty: true })}
-            />
-            <InputTextArea
-              name="webhook-ip-allowlist"
-              label="Webhook IP allowlist"
-              hint="Enter CIDR ranges separated by commas."
-              value={values.webhookIpAllowlist}
-              onChange={(event) =>
-                form.setValue('webhookIpAllowlist', event.currentTarget.value, { shouldDirty: true })
-              }
-            />
-          </>
-        )}
-        <div className="flex justify-end pt-6">
-          <Button
-            type="submit"
-            size="lg"
-            loading={isLoading}
-            disabled={!form.formState.isDirty || !values.name.trim() || !pageValid}
-          >
+        {page === 'general' ? <AgenticWorkflowGeneralSettings form={form} /> : null}
+        {page === 'ai-configuration' ? (
+          <AgenticWorkflowAiConfigurationSettings environmentId={environmentId} form={form} />
+        ) : null}
+        {page === 'connections' ? <AgenticWorkflowConnectionsSettings form={form} /> : null}
+        {page === 'automations' ? <AgenticWorkflowAutomationsSettings form={form} /> : null}
+        {page === 'governance' ? <AgenticWorkflowGovernanceSettings form={form} /> : null}
+        {page === 'advanced-settings' ? <AgenticWorkflowAdvancedSettings form={form} /> : null}
+        <div className="flex justify-end pt-2">
+          <Button type="submit" size="lg" loading={isLoading} disabled={!form.formState.isDirty || !pageValid}>
             Save
           </Button>
         </div>

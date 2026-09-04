@@ -144,7 +144,7 @@ export function McpSheet({
       </div>
       <div className="border-t border-neutral p-4">
         <Button type="button" className="w-full justify-center" size="lg" onClick={onClose}>
-          Save
+          Done
         </Button>
       </div>
     </OverlaySheet>
