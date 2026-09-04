@@ -229,6 +229,7 @@ describe('AgenticWorkflowSettings views', () => {
 
     expect(screen.getByRole('heading', { name: 'Manage MCP' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'New MCP' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument()
   })
 
   it('renders Automations with the schedule and complete output count', () => {

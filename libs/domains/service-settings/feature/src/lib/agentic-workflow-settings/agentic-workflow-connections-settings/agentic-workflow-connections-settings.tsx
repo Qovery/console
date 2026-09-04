@@ -38,6 +38,7 @@ export function AgenticWorkflowConnectionsSettings({
       content: (
         <GitContextModal
           context={repository}
+          editLabel="Apply changes"
           setOpen={(open) => !open && closeModal()}
           onRemove={
             typeof index === 'number'
@@ -134,6 +135,7 @@ export function AgenticWorkflowConnectionsSettings({
 
       {mcpSheetOpen ? (
         <McpSheet
+          confirmLabel="Done"
           isLoading={isLoading}
           mcpServers={mcpServers}
           createdMcpServers={createdMcpServers}

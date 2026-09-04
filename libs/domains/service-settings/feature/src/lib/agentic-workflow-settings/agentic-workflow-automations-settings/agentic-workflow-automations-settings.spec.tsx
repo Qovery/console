@@ -28,5 +28,6 @@ describe('AgenticWorkflowAutomationsSettings', () => {
 
     expect(screen.getByText('Configure automation')).toBeInTheDocument()
     expect(screen.getByText('Audit log')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeInTheDocument()
   })
 })

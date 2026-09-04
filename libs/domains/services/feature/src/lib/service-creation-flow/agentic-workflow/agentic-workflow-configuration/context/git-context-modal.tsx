@@ -21,12 +21,14 @@ interface GitContextForm {
 }
 
 export function GitContextModal({
+  editLabel = 'Save',
   context,
   onRemove,
   onSave,
   setOpen,
 }: {
   context?: AgenticWorkflowGitRepository
+  editLabel?: string
   onRemove?: () => void
   onSave: (context: AgenticWorkflowGitRepository) => void
   setOpen?: (open: boolean) => void
@@ -115,7 +117,7 @@ export function GitContextModal({
                 close()
               })}
             >
-              {context ? 'Save' : 'Add repository'}
+              {context ? editLabel : 'Add repository'}
             </Button>
           </div>
         </div>

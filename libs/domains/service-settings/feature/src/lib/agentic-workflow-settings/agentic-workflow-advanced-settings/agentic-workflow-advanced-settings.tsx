@@ -48,7 +48,7 @@ function CodeConfigurationModal({
             setOpen(false)
           }}
         >
-          Save
+          Apply changes
         </Button>
       </div>
     </Section>

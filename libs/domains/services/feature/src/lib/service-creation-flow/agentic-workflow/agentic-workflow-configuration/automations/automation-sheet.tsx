@@ -124,10 +124,12 @@ function ScheduledTriggerModal({
   onSave,
   setOpen,
   trigger,
+  updateLabel,
 }: {
   onSave: (trigger: AgenticWorkflowAutomationTrigger) => void
   setOpen?: (open: boolean) => void
   trigger?: AgenticWorkflowAutomationTrigger
+  updateLabel: string
 }) {
   const [cronExpression, setCronExpression] = useState(trigger?.cronExpression ?? '0 8 * * 1-5')
   const methods = useForm<{ timezone: string }>({
@@ -177,7 +179,7 @@ function ScheduledTriggerModal({
               setOpen?.(false)
             }}
           >
-            {trigger ? 'Save trigger' : 'Add trigger'}
+            {trigger ? updateLabel : 'Add trigger'}
           </Button>
         </div>
       </Section>
@@ -190,11 +192,13 @@ function WebhookOutputModal({
   onSave,
   output,
   setOpen,
+  updateLabel,
 }: {
   allowEmptyUrl?: boolean
   onSave: (output: AgenticWorkflowOutput) => void
   output?: AgenticWorkflowOutput
   setOpen?: (open: boolean) => void
+  updateLabel: string
 }) {
   const [name, setName] = useState(output?.name ?? '')
   const [url, setUrl] = useState(output?.url ?? '')
@@ -256,7 +260,7 @@ function WebhookOutputModal({
             setOpen?.(false)
           }}
         >
-          {output ? 'Save output' : 'Add output'}
+          {output ? updateLabel : 'Add output'}
         </Button>
       </div>
     </Section>
@@ -266,17 +270,23 @@ function WebhookOutputModal({
 export function AutomationSheet({
   allowEmptyOutputUrl = false,
   automation,
+  confirmLabel = 'Save automation',
   enabled,
   lockWebhookTrigger = false,
   onClose,
   onSave,
+  updateOutputLabel = 'Save output',
+  updateTriggerLabel = 'Save trigger',
 }: {
   allowEmptyOutputUrl?: boolean
   automation: AgenticWorkflowAutomation
+  confirmLabel?: string
   enabled?: boolean
   lockWebhookTrigger?: boolean
   onClose: () => void
   onSave: (automation: AgenticWorkflowAutomation, enabled?: boolean) => void
+  updateOutputLabel?: string
+  updateTriggerLabel?: string
 }) {
   const { closeModal, openModal } = useModal()
   const [draft, setDraft] = useState<AgenticWorkflowAutomation>(automation)
@@ -307,6 +317,7 @@ export function AutomationSheet({
       content: (
         <ScheduledTriggerModal
           trigger={trigger}
+          updateLabel={updateTriggerLabel}
           onSave={saveTrigger}
           setOpen={(open) => {
             if (!open) closeModal()
@@ -335,6 +346,7 @@ export function AutomationSheet({
           setOpen={(open) => {
             if (!open) closeModal()
           }}
+          updateLabel={updateOutputLabel}
         />
       ),
       options: { width: 488 },
@@ -457,7 +469,7 @@ export function AutomationSheet({
             onClose()
           }}
         >
-          Save automation
+          {confirmLabel}
         </Button>
       </div>
     </OverlaySheet>

@@ -18,8 +18,8 @@ describe('AgenticWorkflowConnectionsSettings', () => {
     })
   })
 
-  it('renders Git context and MCPs', () => {
-    renderWithProviders(
+  it('renders Git context and MCPs with settings-specific confirmation labels', async () => {
+    const { userEvent } = renderWithProviders(
       <AgenticWorkflowSettingsFormHarness
         values={{
           repositories: [
@@ -46,5 +46,8 @@ describe('AgenticWorkflowConnectionsSettings', () => {
 
     expect(screen.getByText('qovery/console')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Manage context' }))
+    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeInTheDocument()
   })
 })
