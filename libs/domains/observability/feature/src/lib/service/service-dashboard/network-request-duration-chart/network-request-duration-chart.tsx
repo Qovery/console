@@ -4,10 +4,19 @@ import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
+import { getSeriesKeys } from '../../../util-chart/get-series-keys'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NGINX: Queries for nginx metrics (to remove when migrating to envoy)
+// NOTE: the p50/p95/p99 recording rules are a histogram_quantile over a 5m rate
+// window, which evaluates to NaN (not an absent series) when there were zero
+// observations in that window. No query-level guard needed: process-metrics-data.ts
+// already converts a NaN sample to 0 before it reaches the chart. (Do not wrap
+// these in `... or vector(0)` — that idiom only suppresses the fallback for
+// label sets identical to the unlabeled vector(0), so it ends up adding a second,
+// unlabeled 0-valued series alongside the real one at every step instead of only
+// when data is missing.)
 const queryDuration50 = (ingressName: string) => `
   nginx:request_p50:5m{ingress="${ingressName}"}
 `
@@ -67,7 +76,11 @@ export function NetworkRequestDurationChart({
   }
 
   // NGINX: Fetch nginx metrics (to remove when migrating to envoy)
-  const { data: metricsP50InSeconds, isLoading: isLoadingMetrics50 } = useMetrics({
+  const {
+    data: metricsP50InSeconds,
+    isLoading: isLoadingMetrics50,
+    isError: isErrorMetrics50,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -77,7 +90,11 @@ export function NetworkRequestDurationChart({
     metricShortName: 'network_p50',
   })
 
-  const { data: metricsP99InSeconds, isLoading: isLoadingMetrics99 } = useMetrics({
+  const {
+    data: metricsP99InSeconds,
+    isLoading: isLoadingMetrics99,
+    isError: isErrorMetrics99,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -87,7 +104,11 @@ export function NetworkRequestDurationChart({
     metricShortName: 'network_p99',
   })
 
-  const { data: metricsP95InSeconds, isLoading: isLoadingMetrics95 } = useMetrics({
+  const {
+    data: metricsP95InSeconds,
+    isLoading: isLoadingMetrics95,
+    isError: isErrorMetrics95,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -98,7 +119,11 @@ export function NetworkRequestDurationChart({
   })
 
   // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
-  const { data: metricsEnvoyP50InMs, isLoading: isLoadingMetricsEnvoy50 } = useMetrics({
+  const {
+    data: metricsEnvoyP50InMs,
+    isLoading: isLoadingMetricsEnvoy50,
+    isError: isErrorMetricsEnvoy50,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -109,7 +134,11 @@ export function NetworkRequestDurationChart({
     enabled: !!httpRouteName,
   })
 
-  const { data: metricsEnvoyP99InMs, isLoading: isLoadingMetricsEnvoy99 } = useMetrics({
+  const {
+    data: metricsEnvoyP99InMs,
+    isLoading: isLoadingMetricsEnvoy99,
+    isError: isErrorMetricsEnvoy99,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -120,7 +149,11 @@ export function NetworkRequestDurationChart({
     enabled: !!httpRouteName,
   })
 
-  const { data: metricsEnvoyP95InMs, isLoading: isLoadingMetricsEnvoy95 } = useMetrics({
+  const {
+    data: metricsEnvoyP95InMs,
+    isLoading: isLoadingMetricsEnvoy95,
+    isError: isErrorMetricsEnvoy95,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -206,7 +239,9 @@ export function NetworkRequestDurationChart({
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
+    // Fill gaps with 0 rather than null — a gap in a duration/percentile series
+    // almost always just means "no traffic in that stretch", not a monitoring outage.
+    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime, getSeriesKeys(baseChartData))
   }, [
     metricsP99InSeconds,
     metricsP95InSeconds,
@@ -237,12 +272,32 @@ export function NetworkRequestDurationChart({
     isLoadingMetricsEnvoy95,
   ])
 
+  const hasError = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return (
+      isErrorMetrics99 ||
+      isErrorMetrics50 ||
+      isErrorMetrics95 ||
+      (shouldWaitForEnvoy && (isErrorMetricsEnvoy99 || isErrorMetricsEnvoy50 || isErrorMetricsEnvoy95))
+    )
+  }, [
+    isErrorMetrics99,
+    isErrorMetrics50,
+    isErrorMetrics95,
+    isErrorMetricsEnvoy99,
+    httpRouteName,
+    isErrorMetricsEnvoy50,
+    isErrorMetricsEnvoy95,
+  ])
+
   return (
     <LocalChart
       data={chartData}
       serviceId={serviceId}
       isLoading={isLoadingMetrics}
       isEmpty={chartData.length === 0}
+      hasError={hasError}
+      emptyLabel="No traffic in this period"
       label={!isFullscreen ? 'Network request duration (ms)' : undefined}
       description="How long requests take to complete. Lower values mean faster responses"
       unit="ms"

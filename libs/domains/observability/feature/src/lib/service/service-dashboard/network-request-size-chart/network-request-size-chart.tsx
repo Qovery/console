@@ -4,25 +4,29 @@ import { Chart } from '@qovery/shared/ui'
 import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
+import { getSeriesKeys } from '../../../util-chart/get-series-keys'
 import { processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NGINX: Queries for nginx metrics (to remove when migrating to envoy)
+// NOTE: no `> 0` filter here — at zero traffic that filter drops the series
+// entirely instead of rendering a real 0, making an idle service look identical
+// to a broken metrics pipeline.
 const queryResponseSize = (ingressName: string) => `
-  sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"}) > 0
+  sum(nginx:resp_bytes_rate:5m{ingress="${ingressName}"})
 `
 
 const queryRequestSize = (ingressName: string) => `
-   sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"}) > 0
+   sum(nginx:req_bytes_rate:5m{ingress="${ingressName}"})
 `
 
 // ENVOY: Queries for envoy metrics
 const queryEnvoyResponseSize = (httpRouteName: string) => `
-  sum(envoy_proxy:resp_bytes_rate:5m{httproute_name="${httpRouteName}"}) > 0
+  sum(envoy_proxy:resp_bytes_rate:5m{httproute_name="${httpRouteName}"})
 `
 
 const queryEnvoyRequestSize = (httpRouteName: string) => `
-   sum(envoy_proxy:req_bytes_rate:5m{httproute_name="${httpRouteName}"}) > 0
+   sum(envoy_proxy:req_bytes_rate:5m{httproute_name="${httpRouteName}"})
 `
 
 export function NetworkRequestSizeChart({
@@ -57,7 +61,11 @@ export function NetworkRequestSizeChart({
   }
 
   // NGINX: Fetch nginx metrics (to remove when migrating to envoy)
-  const { data: metricsResponseSize, isLoading: isLoadingMetricsResponseSize } = useMetrics({
+  const {
+    data: metricsResponseSize,
+    isLoading: isLoadingMetricsResponseSize,
+    isError: isErrorMetricsResponseSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -67,7 +75,11 @@ export function NetworkRequestSizeChart({
     metricShortName: 'network_resp_size',
   })
 
-  const { data: metricsRequestSize, isLoading: isLoadingMetricsRequestSize } = useMetrics({
+  const {
+    data: metricsRequestSize,
+    isLoading: isLoadingMetricsRequestSize,
+    isError: isErrorMetricsRequestSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -78,7 +90,11 @@ export function NetworkRequestSizeChart({
   })
 
   // ENVOY: Fetch envoy metrics (only if httpRouteName is configured)
-  const { data: metricsEnvoyResponseSize, isLoading: isLoadingMetricsEnvoyResponseSize } = useMetrics({
+  const {
+    data: metricsEnvoyResponseSize,
+    isLoading: isLoadingMetricsEnvoyResponseSize,
+    isError: isErrorMetricsEnvoyResponseSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -89,7 +105,11 @@ export function NetworkRequestSizeChart({
     enabled: !!httpRouteName,
   })
 
-  const { data: metricsEnvoyRequestSize, isLoading: isLoadingMetricsEnvoyRequestSize } = useMetrics({
+  const {
+    data: metricsEnvoyRequestSize,
+    isLoading: isLoadingMetricsEnvoyRequestSize,
+    isError: isErrorMetricsEnvoyRequestSize,
+  } = useMetrics({
     clusterId,
     startTimestamp,
     endTimestamp,
@@ -155,7 +175,9 @@ export function NetworkRequestSizeChart({
 
     const baseChartData = Array.from(timeSeriesMap.values()).sort((a, b) => a.timestamp - b.timestamp)
 
-    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime)
+    // Fill gaps with 0 rather than null — a gap in a request-size series almost
+    // always just means "no traffic in that stretch", not a monitoring outage.
+    return addTimeRangePadding(baseChartData, startTimestamp, endTimestamp, useLocalTime, getSeriesKeys(baseChartData))
   }, [
     metricsResponseSize,
     metricsRequestSize,
@@ -181,11 +203,28 @@ export function NetworkRequestSizeChart({
     httpRouteName,
   ])
 
+  const hasError = useMemo(() => {
+    const shouldWaitForEnvoy = !!httpRouteName
+    return (
+      isErrorMetricsResponseSize ||
+      isErrorMetricsRequestSize ||
+      (shouldWaitForEnvoy && (isErrorMetricsEnvoyResponseSize || isErrorMetricsEnvoyRequestSize))
+    )
+  }, [
+    isErrorMetricsResponseSize,
+    isErrorMetricsRequestSize,
+    isErrorMetricsEnvoyResponseSize,
+    isErrorMetricsEnvoyRequestSize,
+    httpRouteName,
+  ])
+
   return (
     <LocalChart
       data={chartData}
       isLoading={isLoadingMetrics}
       isEmpty={chartData.length === 0}
+      hasError={hasError}
+      emptyLabel="No traffic in this period"
       label="Network request size (bytes/s)"
       description="Large sizes can increase latency and bandwidth costs"
       unit="bytes"
