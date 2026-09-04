@@ -305,6 +305,7 @@ export function AgenticWorkflowConfiguration() {
     advanced: false,
   }
   const automation = values.automations[0] ?? createDefaultAutomation()
+  const automationValid = automation.triggers.length > 0
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
@@ -386,6 +387,11 @@ export function AgenticWorkflowConfiguration() {
     if (!gitRepositoriesValid) {
       const invalidIndex = values.gitRepositories.findIndex((repository) => !isGitRepositoryComplete(repository))
       openGitContext(invalidIndex >= 0 ? invalidIndex : undefined)
+      return false
+    }
+
+    if (!automationValid) {
+      setActiveSheet('automation')
       return false
     }
 
@@ -879,13 +885,9 @@ export function AgenticWorkflowConfiguration() {
       {activeSheet === 'automation' ? (
         <AutomationSheet
           automation={automation}
-          enabled={values.workflowEnabled}
           onClose={() => setActiveSheet(null)}
-          onSave={(nextAutomation, enabled) => {
+          onSave={(nextAutomation) => {
             form.setValue('automations', [nextAutomation], { shouldDirty: true })
-            if (enabled !== undefined) {
-              form.setValue('workflowEnabled', enabled, { shouldDirty: true })
-            }
           }}
         />
       ) : null}
