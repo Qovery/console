@@ -54,7 +54,7 @@ export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<A
               key={mode}
               type="button"
               aria-pressed={executionMode === mode}
-              className={`rounded-lg border p-4 text-left focus-visible:outline-2 ${executionMode === mode ? 'border-brand bg-surface-brand-subtle' : 'border-neutral bg-surface-neutral'}`}
+              className={`rounded-lg border p-4 text-left transition-colors focus-visible:outline-2 ${executionMode === mode ? 'border-brand bg-surface-brand-subtle hover:border-brand-strong' : 'border-neutral bg-surface-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle'}`}
               onClick={() =>
                 form.setValue('executionMode', mode as AgenticWorkflowExecutionMode, { shouldDirty: true })
               }
@@ -62,7 +62,7 @@ export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<A
               <span className="flex items-start gap-3">
                 <span
                   aria-hidden="true"
-                  className={`flex h-9 w-9 shrink-0 items-center justify-center rounded border ${executionMode === mode ? 'border-brand bg-surface-neutral text-brand' : 'border-neutral bg-surface-neutral-subtle text-neutral-subtle'}`}
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral-subtle text-neutral-subtle"
                 >
                   <Icon iconName={iconName} iconStyle="regular" />
                 </span>
