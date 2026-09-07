@@ -1,5 +1,6 @@
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import {
+  OTHER_BLUEPRINT_CATEGORY,
   formatBlueprintName,
   getBlueprintDisplayName,
   getBlueprintPrimaryCategory,
@@ -42,7 +43,7 @@ describe('getBlueprintPrimaryCategory', () => {
   })
 
   it('falls back for catalog entries without a category', () => {
-    expect(getBlueprintPrimaryCategory(blueprint)).toBe('Other')
+    expect(getBlueprintPrimaryCategory(blueprint)).toBe(OTHER_BLUEPRINT_CATEGORY)
   })
 })
 

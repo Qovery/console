@@ -3,6 +3,7 @@ import posthog from 'posthog-js'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { OTHER_BLUEPRINT_CATEGORY } from '../blueprint-utils/blueprint-utils'
 import { ServiceNew } from './service-new'
 
 const mockUseFeatureFlagEnabled = jest.fn(() => false)
@@ -292,12 +293,12 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Custom Platform', level: 3 })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Other', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: OTHER_BLUEPRINT_CATEGORY, level: 3 })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'AWS S3 Bucket', level: 4 })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Redis', level: 4 })).toBeInTheDocument()
     expect(screen.getAllByRole('heading', { level: 3 }).map(({ textContent }) => textContent)).toEqual([
       'Custom Platform',
-      'Other',
+      OTHER_BLUEPRINT_CATEGORY,
     ])
   })
 

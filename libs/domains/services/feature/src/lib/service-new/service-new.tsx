@@ -12,6 +12,7 @@ import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
 import {
+  OTHER_BLUEPRINT_CATEGORY,
   getBlueprintDisplayName,
   getBlueprintPrimaryCategory,
   isBlueprintCompatibleWithCluster,
@@ -126,15 +127,15 @@ function BlueprintSection({
   const categorizedBlueprints = Array.from(
     filteredBlueprints.reduce((categories, blueprint) => {
       const category = getBlueprintPrimaryCategory(blueprint)
-      const blueprints = categories.get(category) ?? []
-      blueprints.push(blueprint)
-      categories.set(category, blueprints)
+      const categoryBlueprints = categories.get(category) ?? []
+      categoryBlueprints.push(blueprint)
+      categories.set(category, categoryBlueprints)
 
       return categories
     }, new Map<string, BlueprintItem[]>())
   ).sort(([leftCategory], [rightCategory]) => {
-    if (leftCategory === 'Other') return 1
-    if (rightCategory === 'Other') return -1
+    if (leftCategory === OTHER_BLUEPRINT_CATEGORY) return 1
+    if (rightCategory === OTHER_BLUEPRINT_CATEGORY) return -1
 
     return 0
   })

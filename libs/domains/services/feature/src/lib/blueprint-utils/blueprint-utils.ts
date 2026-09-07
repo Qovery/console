@@ -12,6 +12,8 @@ const BLUEPRINT_NAME_PARTS: Record<string, string> = {
 
 const CLUSTER_AGNOSTIC_BLUEPRINT_PROVIDERS = new Set(['EXTERNAL', 'HELM'])
 
+export const OTHER_BLUEPRINT_CATEGORY = 'Other'
+
 export function formatBlueprintName(name: string): string {
   return name
     .split(/[-_]/)
@@ -33,7 +35,7 @@ export function getBlueprintDisplayName(blueprint: BlueprintItem): string {
 }
 
 export function getBlueprintPrimaryCategory(blueprint: BlueprintItem): string {
-  return blueprint.primaryCategory || 'Other'
+  return blueprint.primaryCategory || OTHER_BLUEPRINT_CATEGORY
 }
 
 export function isBlueprintCompatibleWithCluster(blueprintProvider: string, clusterCloudProvider?: string): boolean {
