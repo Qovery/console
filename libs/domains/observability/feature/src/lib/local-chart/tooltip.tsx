@@ -64,7 +64,10 @@ function getDisplayName(seriesKey: string): string {
 // Formats a value for display in the tooltip
 function formatValue(value: number | string | null, unit: UnitType): string {
   const numValue = Math.abs(parseFloat(value?.toString() || '0'))
-  return isNaN(numValue) ? 'N/A' : unit === 'instance' ? `${Math.round(numValue)}` : `${numValue.toFixed(2)} ${unit}`
+  if (isNaN(numValue)) return 'N/A'
+  if (unit === 'instance') return `${Math.round(numValue)}`
+  if (unit === 'req/s' && numValue > 0 && numValue < 0.01) return `< 0.01 ${unit}`
+  return `${numValue.toFixed(2)} ${unit}`
 }
 
 // Groups tooltip entries by type (request, limit, others)

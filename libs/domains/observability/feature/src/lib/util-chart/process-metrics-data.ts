@@ -1,16 +1,23 @@
 import { type MetricData } from '../hooks/use-metrics/use-metrics'
 import { formatTimestamp } from './format-timestamp'
 
+type ChartDataPoint = {
+  timestamp: number
+  time: string
+  fullTime: string
+  [key: string]: string | number | null
+}
+
+const CHART_METADATA_KEYS = new Set(['timestamp', 'time', 'fullTime'])
+
 // Generic helper function to process metrics data
 export function processMetricsData(
   metricsData: { data?: { result: MetricData[] } } | undefined,
-  timeSeriesMap: Map<
-    number,
-    { timestamp: number; time: string; fullTime: string; [key: string]: string | number | null }
-  >,
+  timeSeriesMap: Map<number, ChartDataPoint>,
   getSeriesName: (series: MetricData, index: number) => string,
   transformValue: (value: string) => number,
-  useLocalTime: boolean
+  useLocalTime: boolean,
+  invalidValue: number | null = 0
 ) {
   if (!metricsData?.data?.result) return
 
@@ -32,8 +39,16 @@ export function processMetricsData(
       const dataPoint = timeSeriesMap.get(timestampNum)
       if (dataPoint) {
         const transformed = transformValue(value)
-        dataPoint[seriesName] = isNaN(transformed) ? 0 : transformed
+        dataPoint[seriesName] = isNaN(transformed) ? invalidValue : transformed
       }
     })
   })
+}
+
+export function hasMetricData(chartData: ChartDataPoint[]): boolean {
+  return chartData.some((dataPoint) =>
+    Object.entries(dataPoint).some(
+      ([key, value]) => !CHART_METADATA_KEYS.has(key) && typeof value === 'number' && Number.isFinite(value)
+    )
+  )
 }

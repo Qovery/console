@@ -1,5 +1,5 @@
 import { type MetricData } from '../../../hooks/use-metrics/use-metrics'
-import { processMetricsData } from './process-metrics-data'
+import { hasMetricData, processMetricsData } from './process-metrics-data'
 
 describe('processMetricsData', () => {
   const mockMetricData: MetricData = {
@@ -137,6 +137,30 @@ describe('processMetricsData', () => {
     expect(dataPoint?.['test-series']).toBe(0)
   })
 
+  it('should preserve an explicit invalid value fallback', () => {
+    const dataWithNaN = {
+      data: {
+        result: [
+          {
+            ...mockMetricData,
+            values: [[1704067200, 'NaN']],
+          },
+        ],
+      },
+    }
+
+    processMetricsData(
+      dataWithNaN,
+      timeSeriesMap,
+      () => 'test-series',
+      (value) => parseFloat(value),
+      false,
+      null
+    )
+
+    expect(timeSeriesMap.get(1704067200000)?.['test-series']).toBeNull()
+  })
+
   it('should handle undefined metricsData', () => {
     processMetricsData(
       undefined,
@@ -197,5 +221,21 @@ describe('processMetricsData', () => {
 
     const dataPoint = timeSeriesMap.get(1704067200000)
     expect(dataPoint?.fullTime).not.toContain('UTC')
+  })
+})
+
+describe('hasMetricData', () => {
+  const baseDataPoint = {
+    timestamp: 1704067200000,
+    time: '00:00:00',
+    fullTime: 'Jan 1, 2024, 00:00:00 UTC',
+  }
+
+  it('should return true for an explicit zero value', () => {
+    expect(hasMetricData([{ ...baseDataPoint, p50: 0 }])).toBe(true)
+  })
+
+  it('should return false when all metric values are null', () => {
+    expect(hasMetricData([{ ...baseDataPoint, p50: null, p95: null, p99: null }])).toBe(false)
   })
 })
