@@ -281,7 +281,7 @@ describe('ServiceNew', () => {
     mockUseBlueprintCatalog.mockReturnValue({
       data: {
         blueprints: [
-          { ...blueprints[0], primaryCategory: 'Storage' },
+          { ...blueprints[0], primaryCategory: '' },
           { ...blueprints[1], primaryCategory: 'Custom Platform' },
         ],
       },
@@ -292,8 +292,13 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Custom Platform', level: 3 })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Storage', level: 3 })).toBeInTheDocument()
-    expect(screen.queryByRole('heading', { name: 'Other' })).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Other', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'AWS S3 Bucket', level: 4 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Redis', level: 4 })).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 3 }).map(({ textContent }) => textContent)).toEqual([
+      'Custom Platform',
+      'Other',
+    ])
   })
 
   it('should show an empty state when the blueprint search has no results', async () => {

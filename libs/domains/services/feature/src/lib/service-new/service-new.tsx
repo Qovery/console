@@ -132,7 +132,12 @@ function BlueprintSection({
 
       return categories
     }, new Map<string, BlueprintItem[]>())
-  )
+  ).sort(([leftCategory], [rightCategory]) => {
+    if (leftCategory === 'Other') return 1
+    if (rightCategory === 'Other') return -1
+
+    return 0
+  })
 
   const openBlueprintMissingModal = () =>
     openModal({
