@@ -287,8 +287,8 @@ describe('ServiceNew', () => {
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
 
-    expect(screen.getByRole('heading', { name: 'Custom Platform' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Storage' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Custom Platform', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Storage', level: 3 })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Other' })).not.toBeInTheDocument()
   })
 

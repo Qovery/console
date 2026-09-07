@@ -173,8 +173,8 @@ function BlueprintSection({
       {filteredBlueprints.length > 0 ? (
         <div className="flex flex-col gap-8">
           {categorizedBlueprints.map(([category, blueprints], index) => (
-            <section key={category} className="flex flex-col gap-3" aria-labelledby={`blueprint-category-${index}`}>
-              <Heading id={`blueprint-category-${index}`} level={2}>
+            <section key={category} className="flex flex-col gap-2" aria-labelledby={`blueprint-category-${index}`}>
+              <Heading id={`blueprint-category-${index}`} level={3}>
                 {category}
               </Heading>
               <div className="grid grid-cols-3 gap-3">
