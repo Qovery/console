@@ -5,7 +5,7 @@ import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
-import { processMetricsData } from '../../../util-chart/process-metrics-data'
+import { hasPositiveMetricData, processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NGINX: Queries for nginx metrics (to remove when migrating to envoy)
@@ -243,14 +243,15 @@ export function NetworkRequestSizeChart({
     isErrorMetricsEnvoyRequestSize,
     httpRouteName,
   ])
-  const hasError = chartData.length === 0 ? anyError : allError
-  const hasPartialError = chartData.length > 0 && anyError && !allError
+  const hasTraffic = hasPositiveMetricData(chartData)
+  const hasError = hasTraffic ? allError : anyError
+  const hasPartialError = hasTraffic && anyError && !allError
 
   return (
     <LocalChart
       data={chartData}
       isLoading={isLoadingMetrics}
-      isEmpty={chartData.length === 0}
+      isEmpty={!hasTraffic}
       hasError={hasError}
       emptyLabel="No traffic in this period"
       label="Network request size (bytes/s)"

@@ -7,7 +7,7 @@ import { type MetricData } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
-import { processMetricsData } from '../../../util-chart/process-metrics-data'
+import { hasPositiveMetricData, processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NGINX: Query for nginx metrics (to remove when migrating to envoy)
@@ -179,14 +179,15 @@ export function NetworkRequestStatusChart({
     const shouldWaitForEnvoy = !!httpRouteName
     return isErrorMetrics && (!shouldWaitForEnvoy || isErrorMetricsEnvoy)
   }, [isErrorMetrics, isErrorMetricsEnvoy, httpRouteName])
-  const hasError = chartData.length === 0 ? anyError : allError
-  const hasPartialError = chartData.length > 0 && anyError && !allError
+  const hasTraffic = hasPositiveMetricData(chartData)
+  const hasError = hasTraffic ? allError : anyError
+  const hasPartialError = hasTraffic && anyError && !allError
 
   return (
     <LocalChart
       data={chartData}
       isLoading={isLoading}
-      isEmpty={chartData.length === 0}
+      isEmpty={!hasTraffic}
       hasError={hasError}
       emptyLabel="No traffic in this period"
       label="Network request status (req/s)"

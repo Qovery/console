@@ -6,7 +6,7 @@ import { useMetrics } from '../../../hooks/use-metrics/use-metrics'
 import { LocalChart } from '../../../local-chart/local-chart'
 import { PartialErrorBadge } from '../../../local-chart/partial-error-badge'
 import { addTimeRangePadding } from '../../../util-chart/add-time-range-padding'
-import { processMetricsData } from '../../../util-chart/process-metrics-data'
+import { hasPositiveMetricData, processMetricsData } from '../../../util-chart/process-metrics-data'
 import { useDashboardContext } from '../../../util-filter/dashboard-context'
 
 // NOTE: no `> 0` filter here — at zero request rate that filter drops the series
@@ -93,8 +93,9 @@ export function PrivateNetworkRequestStatusChart({
   // leave stale data in place (chartData non-empty) while isError is still
   // true — that should surface as partial/stale data, not blank a chart that
   // still has something to display.
-  const hasError = chartData.length === 0 && isErrorMetrics
-  const hasPartialError = chartData.length > 0 && isErrorMetrics
+  const hasTraffic = hasPositiveMetricData(chartData)
+  const hasError = !hasTraffic && isErrorMetrics
+  const hasPartialError = hasTraffic && isErrorMetrics
 
   const seriesNames = useMemo(() => {
     if (!metrics?.data?.result) return []
@@ -107,7 +108,7 @@ export function PrivateNetworkRequestStatusChart({
     <LocalChart
       data={chartData}
       isLoading={isLoadingMetrics}
-      isEmpty={chartData.length === 0}
+      isEmpty={!hasTraffic}
       hasError={hasError}
       emptyLabel="No traffic in this period"
       label="Network request status (req/s)"

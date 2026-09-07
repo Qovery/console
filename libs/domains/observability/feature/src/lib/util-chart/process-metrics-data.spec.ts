@@ -1,5 +1,5 @@
 import { type MetricData } from '../../../hooks/use-metrics/use-metrics'
-import { hasMetricData, processMetricsData } from './process-metrics-data'
+import { hasMetricData, hasPositiveMetricData, processMetricsData } from './process-metrics-data'
 
 describe('processMetricsData', () => {
   const mockMetricData: MetricData = {
@@ -237,5 +237,21 @@ describe('hasMetricData', () => {
 
   it('should return false when all metric values are null', () => {
     expect(hasMetricData([{ ...baseDataPoint, p50: null, p95: null, p99: null }])).toBe(false)
+  })
+})
+
+describe('hasPositiveMetricData', () => {
+  const baseDataPoint = {
+    timestamp: 1704067200000,
+    time: '00:00:00',
+    fullTime: 'Jan 1, 2024, 00:00:00 UTC',
+  }
+
+  it('should return false when all metric values are zero', () => {
+    expect(hasPositiveMetricData([{ ...baseDataPoint, request: 0, response: 0 }])).toBe(false)
+  })
+
+  it('should preserve a positive value below the tooltip display threshold', () => {
+    expect(hasPositiveMetricData([{ ...baseDataPoint, request: 1 / 300 }])).toBe(true)
   })
 })

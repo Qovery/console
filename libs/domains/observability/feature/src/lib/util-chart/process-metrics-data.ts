@@ -52,3 +52,12 @@ export function hasMetricData(chartData: ChartDataPoint[]): boolean {
     )
   )
 }
+
+export function hasPositiveMetricData(chartData: ChartDataPoint[]): boolean {
+  return chartData.some((dataPoint) =>
+    Object.entries(dataPoint).some(
+      ([key, value]) =>
+        !CHART_METADATA_KEYS.has(key) && typeof value === 'number' && Number.isFinite(value) && value > 0
+    )
+  )
+}
