@@ -25,19 +25,15 @@ export function formatBlueprintName(name: string): string {
 }
 
 /**
- * The catalog's stable name is an identifier. Prefer its optional display name
- * when available, while preserving the label generated for older catalog entries.
+ * The catalog's stable name is an identifier. Prefer its customer-facing display name,
+ * while preserving the label generated for stale cached catalog entries.
  */
 export function getBlueprintDisplayName(blueprint: BlueprintItem): string {
-  const { displayName } = blueprint as BlueprintItem & { displayName?: string }
-
-  return displayName || formatBlueprintName(blueprint.name)
+  return blueprint.displayName || formatBlueprintName(blueprint.name)
 }
 
 export function getBlueprintPrimaryCategory(blueprint: BlueprintItem): string {
-  const { primaryCategory } = blueprint as BlueprintItem & { primaryCategory?: string }
-
-  return primaryCategory || 'Other'
+  return blueprint.primaryCategory || 'Other'
 }
 
 export function isBlueprintCompatibleWithCluster(blueprintProvider: string, clusterCloudProvider?: string): boolean {

@@ -80,20 +80,24 @@ jest.mock('../hooks/use-blueprint-catalog/use-blueprint-catalog', () => ({
 const blueprints: BlueprintItem[] = [
   {
     name: 'AWS S3 Bucket',
+    displayName: 'AWS S3 Bucket',
     kind: 'ServiceBlueprint',
     description: 'Object storage with server-side encryption, versioning, and configurable lifecycle policies.',
     icon: 'app://qovery-console/s3',
     categories: ['storage'],
+    primaryCategory: 'Storage',
     provider: 'aws',
     serviceFamily: 's3',
     majorVersions: [{ serviceVersion: '1', latestTag: 'aws/s3/1/1.0.0' }],
   },
   {
     name: 'Redis',
+    displayName: 'Redis',
     kind: 'ServiceBlueprint',
     description: 'In-memory key-value store deployed via the Bitnami Helm chart with configurable replicas.',
     icon: 'https://cdn.qovery.com/icons/redis.svg',
     categories: ['cache'],
+    primaryCategory: 'Databases & Caches',
     provider: 'aws',
     serviceFamily: 'redis',
     majorVersions: [{ serviceVersion: '7', latestTag: 'aws/redis/7/1.0.0' }],
@@ -313,7 +317,7 @@ describe('ServiceNew', () => {
   it('should format slug blueprint names', () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({
-      data: { blueprints: [{ ...blueprints[0], name: 'aws-rds-mysql' }] },
+      data: { blueprints: [{ ...blueprints[0], name: 'aws-rds-mysql', displayName: '' }] },
     })
 
     renderWithProviders(
@@ -342,9 +346,14 @@ describe('ServiceNew', () => {
     mockUseBlueprintCatalog.mockReturnValue({
       data: {
         blueprints: [
-          { ...blueprints[0], name: 'AWS S3', provider: 'AWS' },
-          { ...blueprints[0], name: 'Scaleway Object Storage', provider: 'SCW' },
-          { ...blueprints[1], name: 'Helm Redis', provider: 'HELM' },
+          { ...blueprints[0], name: 'AWS S3', displayName: 'AWS S3', provider: 'AWS' },
+          {
+            ...blueprints[0],
+            name: 'Scaleway Object Storage',
+            displayName: 'Scaleway Object Storage',
+            provider: 'SCW',
+          },
+          { ...blueprints[1], name: 'Helm Redis', displayName: 'Helm Redis', provider: 'HELM' },
         ],
       },
     })
