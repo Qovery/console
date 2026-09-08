@@ -84,10 +84,12 @@ jest.mock('posthog-js', () => ({
 
 const blueprint: BlueprintItem = {
   name: 'AWS RDS PostgreSQL',
+  displayName: 'AWS RDS PostgreSQL',
   kind: 'ServiceBlueprint',
   description: 'Managed PostgreSQL database.',
   icon: 'https://cdn.qovery.com/icons/postgresql.svg',
   categories: ['database'],
+  primaryCategory: 'Databases & Caches',
   provider: 'AWS',
   serviceFamily: 'postgres',
   majorVersions: [{ serviceVersion: '17', latestTag: 'aws/postgres/17/1.0.0' }],

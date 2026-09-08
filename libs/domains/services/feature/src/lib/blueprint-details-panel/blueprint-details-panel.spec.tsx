@@ -45,10 +45,12 @@ jest.mock('../hooks/use-blueprint-catalog-service-readme/use-blueprint-catalog-s
 
 const blueprint: BlueprintItem = {
   name: 'AWS S3 Bucket',
+  displayName: 'AWS S3 Bucket',
   kind: 'ServiceBlueprint',
   description: 'Object storage with server-side encryption.',
   icon: 'app://qovery-console/s3',
   categories: ['storage'],
+  primaryCategory: 'Storage',
   provider: 'aws',
   serviceFamily: 's3',
   majorVersions: [{ serviceVersion: '1', latestTag: 'aws/s3/1/1.0.0' }],
