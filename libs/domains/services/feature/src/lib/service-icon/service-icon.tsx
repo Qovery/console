@@ -55,7 +55,11 @@ const CloudFormation = '/assets/devicon/cloudformation.svg'
 const Scaleway = '/assets/devicon/scaleway.svg'
 const Clickhouse = '/assets/devicon/clickhouse.svg'
 const Airbyte = '/assets/devicon/airbyte.svg'
+const AmazonMsk = '/assets/devicon/amazon-msk.svg'
+const Aiven = '/assets/devicon/aiven.svg'
+const Confluent = '/assets/devicon/confluent.svg'
 const EC2 = '/assets/devicon/ec2.svg'
+const Redpanda = '/assets/devicon/redpanda.svg'
 const Lambda = '/assets/devicon/lambda.svg'
 const S3 = '/assets/devicon/s3.svg'
 const Bedrock = '/assets/devicon/bedrock.svg'
@@ -125,10 +129,13 @@ const serviceIcons = {
 
   // Others
   'app://qovery-console/airbyte': { icon: Airbyte, title: 'Airbyte' },
+  'app://qovery-console/amazon-msk': { icon: AmazonMsk, title: 'Amazon MSK' },
+  'app://qovery-console/aiven': { icon: Aiven, title: 'Aiven' },
   'app://qovery-console/bedrock': { icon: Bedrock, title: 'AWS Bedrock' },
   'app://qovery-console/bigquery': { icon: BigQuery, title: 'BigQuery' },
   'app://qovery-console/clickhouse': { icon: Clickhouse, title: 'Clickhouse' },
   'app://qovery-console/cloudformation': { icon: CloudFormation, title: 'CloudFormation' },
+  'app://qovery-console/confluent': { icon: Confluent, title: 'Confluent' },
   'app://qovery-console/crossplane': { icon: Crossplane, title: 'Crossplane' },
   'app://qovery-console/datadog': { icon: Datadog, title: 'Datadog' },
   'app://qovery-console/ec2': { icon: EC2, title: 'EC2' },
@@ -138,6 +145,7 @@ const serviceIcons = {
   'app://qovery-console/newrelic': { icon: NewRelic, title: 'New Relic' },
   'app://qovery-console/planetscale': { icon: PlanetScale, title: 'PlanetScale', className: 'dark:invert' },
   'app://qovery-console/qovery': { icon: Qovery, title: 'Qovery' },
+  'app://qovery-console/redpanda': { icon: Redpanda, title: 'Redpanda' },
   'app://qovery-console/scaleway': { icon: Scaleway, title: 'Scaleway' },
   'app://qovery-console/snowflake': { icon: Snowflake, title: 'Snowflake' },
   'app://qovery-console/temporal': { icon: Temporal, title: 'Temporal', className: 'dark:invert' },
