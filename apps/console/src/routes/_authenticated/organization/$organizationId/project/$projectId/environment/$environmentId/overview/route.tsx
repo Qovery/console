@@ -134,11 +134,11 @@ function RouteComponent() {
                   <Link
                     size="xs"
                     color="neutral"
-                    className="whitespace-nowrap uppercase hover:underline"
+                    className="whitespace-nowrap hover:underline"
                     to="/organization/$organizationId/project/$projectId/environment/$environmentId/automations/"
                     params={{ organizationId, projectId, environmentId }}
                   >
-                    {agentTasksCount} agent {agentTasksCount === 1 ? 'task' : 'tasks'}
+                    {agentTasksCount} Agent {agentTasksCount === 1 ? 'Task' : 'Tasks'} set up
                   </Link>
                 </>
               )}
