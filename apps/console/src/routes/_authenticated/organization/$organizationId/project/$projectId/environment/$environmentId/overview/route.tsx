@@ -23,7 +23,7 @@ import {
 import { useEnvironmentsOverview } from '@qovery/domains/projects/feature'
 import { isAgenticWorkflow, isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
 import { ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
-import { Badge, Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
+import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
@@ -129,9 +129,20 @@ function RouteComponent() {
                 {cluster && <ClusterRunningStatusIndicator cluster={cluster} type="dot" />}
               </div>
               {agentTasksCount > 0 && (
-                <Badge size="sm" variant="surface" color="neutral" className="ml-1 whitespace-nowrap">
-                  {agentTasksCount} agent {agentTasksCount === 1 ? 'task' : 'tasks'}
-                </Badge>
+                <>
+                  <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
+                  <Link
+                    as="button"
+                    size="sm"
+                    variant="outline"
+                    color="neutral"
+                    className="whitespace-nowrap"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/automations/"
+                    params={{ organizationId, projectId, environmentId }}
+                  >
+                    {agentTasksCount} agent {agentTasksCount === 1 ? 'task' : 'tasks'}
+                  </Link>
+                </>
               )}
             </div>
 
