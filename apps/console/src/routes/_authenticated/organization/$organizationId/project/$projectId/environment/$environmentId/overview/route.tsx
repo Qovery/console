@@ -137,7 +137,7 @@ function RouteComponent() {
                     variant="outline"
                     color="neutral"
                     className="whitespace-nowrap"
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/automations/"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/automations"
                     params={{ organizationId, projectId, environmentId }}
                   >
                     {agentTasksCount} Agent {agentTasksCount === 1 ? 'Task' : 'Tasks'}
