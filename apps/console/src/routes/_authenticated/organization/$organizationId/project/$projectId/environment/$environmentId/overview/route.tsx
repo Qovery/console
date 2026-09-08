@@ -132,11 +132,9 @@ function RouteComponent() {
                 <>
                   <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
                   <Link
-                    as="button"
                     size="xs"
-                    variant="outline"
                     color="neutral"
-                    className="whitespace-nowrap uppercase"
+                    className="whitespace-nowrap uppercase hover:underline"
                     to="/organization/$organizationId/project/$projectId/environment/$environmentId/automations/"
                     params={{ organizationId, projectId, environmentId }}
                   >
