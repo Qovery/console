@@ -20,7 +20,7 @@ function RouteComponent() {
   useEffect(() => {
     if (!isAgenticWorkflowEnabled) {
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automations',
         params: { organizationId, projectId, environmentId },
       })
     }
@@ -34,7 +34,7 @@ function RouteComponent() {
       variablesSeed={selectedTemplate?.variables}
       onExit={() =>
         navigate({
-          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
+          to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automations',
           params: { organizationId, projectId, environmentId },
         })
       }

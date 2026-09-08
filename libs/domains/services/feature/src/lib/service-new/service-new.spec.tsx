@@ -1,5 +1,4 @@
 import { within } from '@testing-library/react'
-import posthog from 'posthog-js'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
@@ -18,10 +17,6 @@ const mockGetLinkHref = (to?: string, params?: Record<string, string>) =>
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-1', projectId: 'project-1', environmentId: 'env-1' }),
-}))
-
-jest.mock('posthog-js', () => ({
-  capture: jest.fn(),
 }))
 
 jest.mock('posthog-js/react', () => ({
@@ -104,7 +99,6 @@ describe('ServiceNew', () => {
   beforeEach(() => {
     mockUseFeatureFlagEnabled.mockReturnValue(false)
     mockShowPylonForm.mockClear()
-    ;(posthog.capture as jest.Mock).mockClear()
     mockUseBlueprintCatalog.mockReturnValue({ data: undefined })
     mockUseBlueprintCatalogServiceReadme.mockReturnValue({
       data: blueprintReadmeResponse,
@@ -142,68 +136,16 @@ describe('ServiceNew', () => {
     expect(screen.queryByText('Agent task')).not.toBeInTheDocument()
   })
 
-  it('should render the from-scratch agent task entry in Agent use cases when the flag is enabled', () => {
+  it('should not render agent task entries when the feature flag is enabled', () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
 
-    renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-
-    // The blank agent task entry lives in Agent use cases, not Base services.
-    const baseServices = screen.getByRole('heading', { name: 'Base services' }).closest('section')
-    expect(within(baseServices as HTMLElement).queryByText(/Agent task/i)).not.toBeInTheDocument()
-
-    expect(screen.getByRole('link', { name: /Start from scratch/i })).toHaveAttribute(
-      'href',
-      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow'
-    )
-  })
-
-  it('should render the Agent use cases section behind the agentic workflow flag', () => {
-    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
-
-    renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-
-    expect(screen.getByRole('heading', { name: 'Agent use cases' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Incident Analyser/i })).toHaveAttribute(
-      'href',
-      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=incident-analyser'
-    )
-  })
-
-  it('should capture a PostHog event when an agent use case is selected', async () => {
-    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
-
-    const { userEvent } = renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-
-    await userEvent.click(screen.getByRole('link', { name: /Incident Analyser/i }))
-
-    expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'incident-analyser' })
-  })
-
-  it('should open the Pylon contact form from the Agent use cases CTA card', async () => {
-    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
-
-    const { userEvent } = renderWithProviders(
-      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
-    )
-
-    await userEvent.click(screen.getByRole('button', { name: /Need a specific agent/i }))
-
-    expect(mockShowPylonForm).toHaveBeenCalledWith('request-ai-builder-portal')
-  })
-
-  it('should hide the Agent use cases section when the agentic workflow flag is disabled', () => {
     renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
 
     expect(screen.queryByRole('heading', { name: 'Agent use cases' })).not.toBeInTheDocument()
     expect(screen.queryByText('Incident Analyser')).not.toBeInTheDocument()
+    expect(screen.queryByText('Start from scratch')).not.toBeInTheDocument()
   })
 
   it('should show base service descriptions in info tooltips', async () => {

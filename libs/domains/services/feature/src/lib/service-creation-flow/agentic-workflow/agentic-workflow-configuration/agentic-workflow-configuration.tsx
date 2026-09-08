@@ -437,7 +437,7 @@ export function AgenticWorkflowConfiguration() {
 
       posthog.capture('create-service', { selectedServiceType: 'agentic-workflow' })
       navigate({
-        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
+        to: '/organization/$organizationId/project/$projectId/environment/$environmentId/automations',
         params: { organizationId, projectId, environmentId },
       })
     } catch {

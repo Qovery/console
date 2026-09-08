@@ -152,6 +152,12 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables',
   },
   {
+    id: 'automations',
+    label: 'Automations',
+    iconName: 'stopwatch',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations',
+  },
+  {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
@@ -372,9 +378,11 @@ function useNavigationContext(): NavigationContext | null {
         const tabs =
           context.type === 'service'
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled)
-            : context.type === 'organization'
-              ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
-              : context.tabs
+            : context.type === 'environment'
+              ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automations')
+              : context.type === 'organization'
+                ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
+                : context.tabs
 
         return {
           type: context.type,
@@ -474,6 +482,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations',
   '/_authenticated/organization/$organizationId/settings',
   '/_authenticated/organization/$organizationId/audit-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',

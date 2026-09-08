@@ -83,10 +83,8 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
   return (
     <Section className="flex flex-col gap-3.5">
       <div className="flex flex-col gap-1">
-        <Heading level={3} className="font-medium text-neutral-subtle">
-          Agent tasks
-        </Heading>
-        <p className="text-sm text-neutral-subtle">One-time tasks delegated to AI agents.</p>
+        <Heading level={2}>Agent tasks</Heading>
+        <p className="text-sm leading-5 text-neutral-subtle">One-time tasks delegated to AI agents.</p>
       </div>
 
       <div className="flex flex-col overflow-hidden rounded-lg border border-neutral">

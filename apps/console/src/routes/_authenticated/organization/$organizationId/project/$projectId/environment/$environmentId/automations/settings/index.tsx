@@ -1,10 +1,8 @@
 import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
 
 export const Route = createFileRoute(
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/deployment-rules'
-)({
-  component: RouteComponent,
-})
+  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings/'
+)({ component: RouteComponent })
 
 function RouteComponent() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })

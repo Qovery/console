@@ -124,6 +124,7 @@ export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-con
 export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-configuration/mcp/mcp-sheet'
 export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-configuration/git-repository-card'
 export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-request'
+export * from './lib/agentic-workflow-use-cases/agentic-workflow-use-cases'
 export * from './lib/application-container-healthchecks/application-container-healthchecks-form/application-container-healthchecks-form'
 export * from './lib/application-container-healthchecks/healthchecks-utils'
 export * from './lib/application-container-healthchecks/step-healthchecks/step-healthchecks'
