@@ -21,9 +21,9 @@ import {
   useEnvironment,
 } from '@qovery/domains/environments/feature'
 import { useEnvironmentsOverview } from '@qovery/domains/projects/feature'
-import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
+import { isAgenticWorkflow, isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
 import { ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
-import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
+import { Badge, Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
@@ -68,6 +68,7 @@ function RouteComponent() {
   const isServicesListTab = activeTabId === 'services'
   const qoveryServicesCount = useMemo(() => services.filter(isEditableService).length, [services])
   const argoCdServicesCount = useMemo(() => services.filter(isArgoCd).length, [services])
+  const agentTasksCount = useMemo(() => services.filter(isAgenticWorkflow).length, [services])
   const hasQoveryServices = qoveryServicesCount > 0
   const hasArgoCdServices = argoCdServicesCount > 0
   const shouldDisplayQoveryServicesSubtitle = isServicesListTab && hasArgoCdServices
@@ -127,6 +128,11 @@ function RouteComponent() {
                 </RouterLink>
                 {cluster && <ClusterRunningStatusIndicator cluster={cluster} type="dot" />}
               </div>
+              {agentTasksCount > 0 && (
+                <Badge size="sm" variant="surface" color="neutral" className="ml-1 whitespace-nowrap">
+                  {agentTasksCount} agent {agentTasksCount === 1 ? 'task' : 'tasks'}
+                </Badge>
+              )}
             </div>
 
             <div className="flex shrink-0 gap-2">
