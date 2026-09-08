@@ -2,6 +2,7 @@ import { type ClusterLogs } from 'qovery-typescript-axios'
 import { type RefObject, useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Icon } from '@qovery/shared/ui'
 import { ClusterLogRow } from '../cluster-log-row/cluster-log-row'
+import { getClusterLogStepLabel } from '../cluster-log-step-label'
 
 const MAX_VISIBLE_CLUSTER_LOGS = 500
 const SCROLL_BOTTOM_PADDING = 40
@@ -25,6 +26,10 @@ export function ClusterLogsList({ logs, firstDate, refScrollSection }: ClusterLo
   const previousLogCountRef = useRef(0)
   const firstLogTimestamp = logs[0]?.timestamp
 
+  const stepColumnWidth = useMemo(
+    () => logs.reduce((width, log) => Math.max(width, getClusterLogStepLabel(log.step).length), 0),
+    [logs]
+  )
   const visibleStartIndex = showPreviousLogs ? 0 : Math.max(logs.length - MAX_VISIBLE_CLUSTER_LOGS, 0)
   const visibleLogs = useMemo(
     () => (visibleStartIndex === 0 ? logs : logs.slice(visibleStartIndex)),
@@ -87,6 +92,7 @@ export function ClusterLogsList({ logs, firstDate, refScrollSection }: ClusterLo
               data={log}
               index={visibleStartIndex + index}
               firstDate={firstDate}
+              stepColumnWidth={stepColumnWidth}
             />
           ))}
         </div>

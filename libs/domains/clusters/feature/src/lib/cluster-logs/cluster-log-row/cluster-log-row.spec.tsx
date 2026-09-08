@@ -132,6 +132,23 @@ describe('ClusterLogRow', () => {
     expect(screen.getByTestId('cell-msg')).toHaveTextContent('error occurred')
   })
 
+  it('preserves the legacy step and message while aligning the separator', () => {
+    const data = { ...baseData, step: ClusterLogsStepEnum.CREATE, message: { safe_message: 'Legacy deployment log' } }
+    renderWithProviders(<ClusterLogRow data={data} index={1} firstDate={firstDate} stepColumnWidth={10} />)
+
+    expect(screen.getByTestId('cell-step')).toHaveTextContent('Create     - ', { normalizeWhitespace: false })
+    expect(screen.getByText('Legacy deployment log')).toBeInTheDocument()
+  })
+
+  it('updates an existing row when a longer step arrives', () => {
+    const data = { ...baseData, step: ClusterLogsStepEnum.CREATE }
+    const { rerender } = renderWithProviders(<ClusterLogRow data={data} index={1} stepColumnWidth={6} />)
+
+    rerender(<ClusterLogRow data={data} index={1} stepColumnWidth={12} />)
+
+    expect(screen.getByTestId('cell-step')).toHaveTextContent('Create       - ', { normalizeWhitespace: false })
+  })
+
   it('should render without firstDate', () => {
     renderWithProviders(<ClusterLogRow data={baseData} index={1} />)
     expect(screen.getByTestId('cell-date')).toBeInTheDocument()
