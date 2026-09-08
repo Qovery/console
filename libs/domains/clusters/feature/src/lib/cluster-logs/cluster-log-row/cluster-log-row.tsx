@@ -10,11 +10,13 @@ import {
   copySelectedLogMessages,
   twMerge,
 } from '@qovery/shared/util-js'
+import { getClusterLogStepLabel } from '../cluster-log-step-label'
 
 export interface ClusterLogRowProps {
   data: ClusterLogs
   index: number
   firstDate?: Date
+  stepColumnWidth?: number
 }
 
 interface RenderedClusterLogRowState {
@@ -25,11 +27,18 @@ interface RenderedClusterLogRowState {
   type?: ClusterLogs['type']
   safeMessage?: string
   errorMessage?: string
+  stepColumnWidth?: number
 }
 
-function getRenderedClusterLogRowState({ data, index, firstDate }: ClusterLogRowProps): RenderedClusterLogRowState {
+function getRenderedClusterLogRowState({
+  data,
+  index,
+  firstDate,
+  stepColumnWidth,
+}: ClusterLogRowProps): RenderedClusterLogRowState {
   return {
     index,
+    stepColumnWidth,
     firstDateTimestamp: firstDate?.getTime(),
     logTimestamp: data.timestamp,
     step: data.step,
@@ -39,7 +48,8 @@ function getRenderedClusterLogRowState({ data, index, firstDate }: ClusterLogRow
   }
 }
 
-function ClusterLogRowRoot({ index, data, firstDate }: ClusterLogRowProps) {
+function ClusterLogRowRoot({ index, data, firstDate, stepColumnWidth = 0 }: ClusterLogRowProps) {
+  const stepLabel = getClusterLogStepLabel(data.step)
   const type = data.type
   const success = data.step === ClusterLogsStepEnum.CREATED
   const realError =
@@ -88,9 +98,11 @@ function ClusterLogRowRoot({ index, data, firstDate }: ClusterLogRowProps) {
             {firstDate && dateDifference(new Date(data.timestamp as string), firstDate)}
           </span>
         </div>
-        <div data-testid="cell-msg" className={twMerge('w-11/12 py-1', colorsCellClassName)}>
-          <span className="font-bold">{data.step} - </span>
-          <span className="whitespace-pre-wrap" {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}>
+        <div data-testid="cell-msg" className={twMerge('flex w-11/12 py-1', colorsCellClassName)}>
+          <span className="shrink-0 whitespace-pre font-bold" data-testid="cell-step">
+            {stepLabel.padEnd(stepColumnWidth)} -{' '}
+          </span>
+          <span className="min-w-0 whitespace-pre-wrap" {...{ [LOG_MESSAGE_DATA_ATTRIBUTE]: 'true' }}>
             {message}
           </span>
         </div>
@@ -121,6 +133,7 @@ function areClusterLogRowPropsEqual(previousProps: ClusterLogRowProps, nextProps
 
   return (
     previousState.index === nextState.index &&
+    previousState.stepColumnWidth === nextState.stepColumnWidth &&
     previousState.firstDateTimestamp === nextState.firstDateTimestamp &&
     previousState.logTimestamp === nextState.logTimestamp &&
     previousState.step === nextState.step &&
