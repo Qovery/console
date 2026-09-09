@@ -3,6 +3,7 @@ import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { Badge, Heading, Link, Section, TablePrimitives } from '@qovery/shared/ui'
+import { MOCK_RUNS } from '../agent-task-runs/agent-task-runs.mock'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
 import { ServiceNameCell } from '../service-list/service-list-cells'
@@ -67,10 +68,10 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                 Trigger
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Last run
+                Runs
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Agent status
+                Last triggered
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
                 Actions
@@ -110,7 +111,17 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                   </Link>
                 </Table.Cell>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <span>{service.enabled ? 'Enabled' : 'Disabled'}</span>
+                  <div className="flex flex-col gap-1">
+                    <time dateTime={MOCK_RUNS[0].created_at}>
+                      {new Intl.DateTimeFormat('en-GB', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                        timeZone: 'UTC',
+                      }).format(new Date(MOCK_RUNS[0].created_at))}{' '}
+                      UTC
+                    </time>
+                    <span className="text-neutral-subtle">Demo data</span>
+                  </div>
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center">
                   <AgenticWorkflowServiceActions
