@@ -109,7 +109,6 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/new'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewPipelineRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline'
-import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceCreateIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/index'
@@ -993,15 +992,6 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
       path: '/pipeline',
       getParentRoute: () =>
         AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRoute,
-    } as any,
-  )
-const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRoute =
-  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRouteImport.update(
-    {
-      id: '/runs',
-      path: '/runs',
-      getParentRoute: () =>
-        AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRouteRoute,
     } as any,
   )
 const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsSettingsRouteRoute =
@@ -1998,7 +1988,6 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsSettingsRouteRouteWithChildren
-  '/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewPipelineRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsDangerZoneRoute
@@ -2191,7 +2180,6 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
-  '/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewPipelineRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsDangerZoneRoute
@@ -2386,7 +2374,6 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsSettingsRouteRouteWithChildren
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewPipelineRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/new': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceNewRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsDangerZoneRoute
@@ -2593,7 +2580,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings'
-    | '/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone'
@@ -2786,7 +2772,6 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId'
-    | '/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone'
@@ -2980,7 +2965,6 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings'
-    | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/new'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/danger-zone'
@@ -3805,13 +3789,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview/pipeline'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewPipelineRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRoute
-    }
-    '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs': {
-      id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs'
-      path: '/runs'
-      fullPath: '/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs'
-      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRouteImport
-      parentRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings': {
       id: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings'
@@ -4761,7 +4738,6 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
 
 interface AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsSettingsRouteRouteWithChildren
-  AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsIndexRoute
 }
 
@@ -4769,8 +4745,6 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
   {
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsSettingsRouteRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsSettingsRouteRouteWithChildren,
-    AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRoute:
-      AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsRunsRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsIndexRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdAutomationsIndexRoute,
   }

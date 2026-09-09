@@ -7,7 +7,7 @@ import {
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { AgenticWorkflowServiceList, AgenticWorkflowUseCases, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Heading, Link, Section } from '@qovery/shared/ui'
+import { Heading, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations/'
@@ -41,14 +41,6 @@ function RouteComponent() {
           actions={<AgenticWorkflowUseCases {...useCasesProps} display="menu" />}
         />
         {!hasAgentTasks ? <AgenticWorkflowUseCases {...useCasesProps} /> : null}
-      </div>
-      <div className="mt-4 flex justify-end">
-        <Link
-          to="/organization/$organizationId/project/$projectId/environment/$environmentId/automations/runs"
-          params={{ organizationId, projectId, environmentId }}
-        >
-          View all runs →
-        </Link>
       </div>
       <Section className="mt-8 gap-4 border-t border-neutral pt-8">
         <div className="flex flex-col gap-1">

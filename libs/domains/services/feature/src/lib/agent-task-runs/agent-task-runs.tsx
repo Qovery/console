@@ -46,12 +46,10 @@ function RunState({ status }: { status: RunStatus }) {
 export function AgentTaskRuns({
   agentTaskId,
   agentTaskName,
-  grouped = false,
   limit,
 }: {
   agentTaskId?: string
   agentTaskName?: string
-  grouped?: boolean
   limit?: number
 }) {
   const [selected, setSelected] = useState<AgentTaskRun | null>(null)
@@ -59,19 +57,7 @@ export function AgentTaskRuns({
     agentTaskId && agentTaskName
       ? MOCK_RUNS.map((run) => ({ ...run, agent_task_id: agentTaskId, agent_task_name: agentTaskName }))
       : MOCK_RUNS.filter((run) => !agentTaskId || run.agent_task_id === agentTaskId)
-  const agents = [...new Map(scoped.map((run) => [run.agent_task_id, run.agent_task_name])).entries()]
   const runs = [...scoped].sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)).slice(0, limit)
-  if (grouped)
-    return (
-      <Section className="gap-8">
-        {agents.map(([id, name]) => (
-          <Section key={id} className="gap-3">
-            <Heading level={2}>{name}</Heading>
-            <AgentTaskRuns agentTaskId={id} />
-          </Section>
-        ))}
-      </Section>
-    )
 
   return (
     <Section className="gap-4">
