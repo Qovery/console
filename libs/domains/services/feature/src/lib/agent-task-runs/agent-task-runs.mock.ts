@@ -14,6 +14,7 @@ export interface AgentTaskRun {
   duration_ms: number | null
   prompt: string | null
   result: string | null
+  output_url: string | null
   error: string | null
 }
 
@@ -37,6 +38,7 @@ export const MOCK_RUNS: AgentTaskRun[] = (['QUEUED', 'RUNNING', 'COMPLETED', 'FA
       status === 'COMPLETED'
         ? 'Deployment completed successfully. No new errors were detected. All health checks passed. No action is required.'
         : null,
+    output_url: status === 'COMPLETED' ? 'https://example.com/agent-output' : null,
     error:
       status === 'FAILED'
         ? 'The configured monitoring integration could not be reached. The execution stopped before analysis completed.'

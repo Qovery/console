@@ -4,6 +4,7 @@ import { type KeyboardEvent, type MouseEvent, type ReactNode } from 'react'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { Badge, Heading, Section, TablePrimitives } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
+import { RunState } from '../agent-task-runs/agent-task-runs'
 import { MOCK_RUNS } from '../agent-task-runs/agent-task-runs.mock'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
@@ -109,6 +110,7 @@ export function AgenticWorkflowServiceList({ environment, actions }: AgenticWork
                 </Table.Cell>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral text-sm">
                   <div className="flex flex-col gap-1">
+                    <RunState status={MOCK_RUNS[0].status} />
                     <time dateTime={MOCK_RUNS[0].created_at}>
                       {new Intl.DateTimeFormat('en-GB', {
                         dateStyle: 'medium',

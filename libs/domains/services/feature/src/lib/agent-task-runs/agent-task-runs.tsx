@@ -1,6 +1,15 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
-import { Accordion, Button, CopyToClipboardButtonIcon, Heading, Section, Sheet, StatusChip } from '@qovery/shared/ui'
+import {
+  Accordion,
+  Button,
+  CopyToClipboardButtonIcon,
+  ExternalLink,
+  Heading,
+  Section,
+  Sheet,
+  StatusChip,
+} from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
 import { type AgentTaskRun, MOCK_RUNS, type RunStatus } from './agent-task-runs.mock'
 
@@ -34,7 +43,7 @@ const duration = (value: number | null) =>
       ? `${Math.floor(value / 1000)}s`
       : `${Math.floor(value / 60000)}m ${Math.floor((value % 60000) / 1000)}s`
 
-function RunState({ status }: { status: RunStatus }) {
+export function RunState({ status }: { status: RunStatus }) {
   return (
     <span className="inline-flex items-center gap-2">
       <StatusChip status={STATUS_ICONS[status]} disabledTooltip />
@@ -155,7 +164,7 @@ export function AgentTaskRuns({
                     </p>
                   </section>
                   <section className="flex flex-col gap-2">
-                    <Heading level={3}>{selected.error ? 'Error' : 'Result'}</Heading>
+                    <Heading level={3}>{selected.error ? 'Error' : 'Output'}</Heading>
                     <p className="whitespace-pre-wrap rounded border border-neutral p-4">
                       {selected.error ??
                         selected.result ??
@@ -167,6 +176,9 @@ export function AgentTaskRuns({
                               ? 'This run was cancelled.'
                               : 'No result available.')}
                     </p>
+                    {selected.output_url && /^https?:\/\//i.test(selected.output_url) && (
+                      <ExternalLink href={selected.output_url}>View output</ExternalLink>
+                    )}
                   </section>
                   <Accordion.Root type="single" collapsible className="rounded border border-neutral">
                     <Accordion.Item value="logs">
