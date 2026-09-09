@@ -10,7 +10,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   return (
-    <Section className="px-8 pb-8 pt-6">
+    <Section className="pb-8 pt-6">
       <Link
         className="mb-2 gap-1"
         color="brand"

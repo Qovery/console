@@ -490,7 +490,6 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
-  '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations',
   '/_authenticated/organization/$organizationId/settings',
   '/_authenticated/organization/$organizationId/audit-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring',

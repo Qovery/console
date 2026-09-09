@@ -29,7 +29,7 @@ function RouteComponent() {
   }
 
   return (
-    <Section className="px-8 pb-8 pt-6">
+    <Section className="pb-8 pt-6">
       <SettingsHeading title="Automations" description="Create and monitor AI-powered environment automations.">
         {hasAgentTasks ? (
           <div className="flex shrink-0 items-center pb-6">
