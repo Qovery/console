@@ -55,7 +55,7 @@ function RouteComponent() {
         }
       />
       {service?.serviceType === 'AGENTIC_WORKFLOW' && (
-        <Section className="container mx-auto gap-4 pb-8">
+        <Section id="runs" className="container mx-auto scroll-mt-24 gap-4 pb-8">
           <Heading level={2}>Runs</Heading>
           <AgentTaskRuns agentTaskId={service.id} agentTaskName={service.name} />
         </Section>

@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { Badge, Heading, Link, Section, TablePrimitives } from '@qovery/shared/ui'
+import { Badge, Heading, Section, TablePrimitives } from '@qovery/shared/ui'
 import { MOCK_RUNS } from '../agent-task-runs/agent-task-runs.mock'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
@@ -10,8 +10,7 @@ import { ServiceNameCell } from '../service-list/service-list-cells'
 
 const { Table } = TablePrimitives
 
-const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(240px,1.2fr)_minmax(180px,1fr)_minmax(200px,1fr)_minmax(120px,0.7fr)_100px]'
+const tableGridLayoutClassName = 'grid w-full grid-cols-[minmax(240px,1.2fr)_minmax(180px,1fr)_minmax(200px,1fr)_100px]'
 
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
@@ -68,9 +67,6 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                 Trigger
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Runs
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Last triggered
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
@@ -100,15 +96,6 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                       .filter(Boolean)
                       .join(' · ') || 'Manual'}
                   </span>
-                </Table.Cell>
-                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <Link
-                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
-                    params={{ organizationId, projectId, environmentId, serviceId: service.id }}
-                    onClick={stopRowNavigation}
-                  >
-                    View demo runs
-                  </Link>
                 </Table.Cell>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
                   <div className="flex flex-col gap-1">
