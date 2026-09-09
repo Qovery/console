@@ -9,9 +9,12 @@ import {
   Section,
   Sheet,
   StatusChip,
+  TablePrimitives,
 } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
 import { type AgentTaskRun, MOCK_RUNS, type RunStatus } from './agent-task-runs.mock'
+
+const { Table } = TablePrimitives
 
 const STATUS_ICONS = {
   QUEUED: 'QUEUED',
@@ -70,10 +73,10 @@ export function AgentTaskRuns({
 
   return (
     <Section className="gap-4">
-      <div className="overflow-x-auto rounded-lg border border-neutral">
-        <table className="w-full text-left text-sm">
-          <thead className="border-b border-neutral bg-surface-neutral-subtle font-mono text-xs text-neutral-subtle">
-            <tr>
+      <div className="flex grow flex-col">
+        <Table.Root className="w-full min-w-[1080px] table-fixed overflow-x-scroll text-ssm">
+          <Table.Header>
+            <Table.Row className="divide-x divide-neutral">
               {[
                 'Run ID',
                 ...(!agentTaskId ? ['Agent Task'] : []),
@@ -83,20 +86,24 @@ export function AgentTaskRuns({
                 'Duration',
                 'Output',
               ].map((title) => (
-                <th key={title} className="whitespace-nowrap px-4 py-3 font-normal">
+                <Table.ColumnHeaderCell key={title} className="font-medium">
                   {title}
-                </th>
+                </Table.ColumnHeaderCell>
               ))}
-            </tr>
-          </thead>
-          <tbody>
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>
             {runs.map((run) => (
-              <tr
+              <Table.Row
                 key={run.deployment_id}
-                className="cursor-pointer border-b border-neutral last:border-0 hover:bg-surface-neutral-subtle"
+                className="h-[68px] cursor-pointer divide-x divide-neutral border-neutral hover:bg-surface-neutral-subtle focus:bg-surface-neutral-subtle"
+                tabIndex={0}
+                onKeyDown={(event) => {
+                  if (event.target === event.currentTarget && event.key === 'Enter') setSelected(run)
+                }}
                 onClick={() => setSelected(run)}
               >
-                <td className="px-4 py-4">
+                <Table.Cell>
                   <button
                     type="button"
                     className="font-mono text-xs hover:underline"
@@ -105,15 +112,15 @@ export function AgentTaskRuns({
                   >
                     {run.deployment_id.slice(0, 8)}
                   </button>
-                </td>
-                {!agentTaskId && <td className="px-4 py-4 font-medium">{run.agent_task_name}</td>}
-                <td className="whitespace-nowrap px-4 py-4">
+                </Table.Cell>
+                {!agentTaskId && <Table.Cell className="font-medium">{run.agent_task_name}</Table.Cell>}
+                <Table.Cell className="whitespace-nowrap">
                   <RunState status={run.status} />
-                </td>
-                <td className="px-4 py-4">{triggerLabel(run)}</td>
-                <td className="whitespace-nowrap px-4 py-4">{date(run.started_at)}</td>
-                <td className="whitespace-nowrap px-4 py-4 font-mono text-xs">{duration(run.duration_ms)}</td>
-                <td className="px-4 py-4">
+                </Table.Cell>
+                <Table.Cell>{triggerLabel(run)}</Table.Cell>
+                <Table.Cell className="whitespace-nowrap">{date(run.started_at)}</Table.Cell>
+                <Table.Cell className="whitespace-nowrap">{duration(run.duration_ms)}</Table.Cell>
+                <Table.Cell>
                   {run.output_url && /^https?:\/\//i.test(run.output_url) ? (
                     <ExternalLink
                       href={run.output_url}
@@ -127,11 +134,11 @@ export function AgentTaskRuns({
                       {run.result ?? '—'}
                     </span>
                   )}
-                </td>
-              </tr>
+                </Table.Cell>
+              </Table.Row>
             ))}
-          </tbody>
-        </table>
+          </Table.Body>
+        </Table.Root>
         {runs.length === 0 && <div className="p-8 text-center text-sm text-neutral-subtle">No runs yet</div>}
       </div>
       {selected && (
