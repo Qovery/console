@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, CopyToClipboardButtonIcon, Heading, Section, Sheet, StatusChip } from '@qovery/shared/ui'
+import { Accordion, Button, CopyToClipboardButtonIcon, Heading, Section, Sheet, StatusChip } from '@qovery/shared/ui'
 import { type AgentTaskRun, MOCK_RUNS, type RunStatus } from './agent-task-runs.mock'
 
 const STATUS_ICONS = {
@@ -168,10 +168,16 @@ export function AgentTaskRuns({
                         : 'No result available.')}
               </p>
             </section>
-            <details className="rounded border border-neutral p-4">
-              <summary className="cursor-pointer font-medium">Sample logs</summary>
-              <pre className="mt-3 whitespace-pre-wrap font-mono text-xs text-neutral-subtle">{`[demo] Execution requested via ${selected.trigger.toLowerCase()}.\n[demo] Status: ${label(selected.status)}.\n${selected.error ? `[demo] ${selected.error}` : '[demo] Live logs will be available when the Runs API is connected.'}`}</pre>
-            </details>
+            <Accordion.Root type="single" collapsible className="rounded border border-neutral">
+              <Accordion.Item value="logs">
+                <Accordion.Trigger className="w-full cursor-pointer flex-row-reverse justify-between px-4 font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong">
+                  Sample logs
+                </Accordion.Trigger>
+                <Accordion.Content>
+                  <pre className="whitespace-pre-wrap px-4 pb-4 font-mono text-xs text-neutral-subtle">{`[demo] Execution requested via ${selected.trigger.toLowerCase()}.\n[demo] Status: ${label(selected.status)}.\n${selected.error ? `[demo] ${selected.error}` : '[demo] Live logs will be available when the Runs API is connected.'}`}</pre>
+                </Accordion.Content>
+              </Accordion.Item>
+            </Accordion.Root>
           </div>
         </Sheet>
       )}
