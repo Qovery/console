@@ -74,13 +74,19 @@ export function AgentTaskRuns({
         <table className="w-full text-left text-sm">
           <thead className="border-b border-neutral bg-surface-neutral-subtle font-mono text-xs text-neutral-subtle">
             <tr>
-              {['Run ID', ...(!agentTaskId ? ['Agent Task'] : []), 'Status', 'Trigger', 'Started', 'Duration'].map(
-                (title) => (
-                  <th key={title} className="whitespace-nowrap px-4 py-3 font-normal">
-                    {title}
-                  </th>
-                )
-              )}
+              {[
+                'Run ID',
+                ...(!agentTaskId ? ['Agent Task'] : []),
+                'Status',
+                'Trigger',
+                'Started',
+                'Duration',
+                'Output',
+              ].map((title) => (
+                <th key={title} className="whitespace-nowrap px-4 py-3 font-normal">
+                  {title}
+                </th>
+              ))}
             </tr>
           </thead>
           <tbody>
@@ -107,6 +113,21 @@ export function AgentTaskRuns({
                 <td className="px-4 py-4">{triggerLabel(run)}</td>
                 <td className="whitespace-nowrap px-4 py-4">{date(run.started_at)}</td>
                 <td className="whitespace-nowrap px-4 py-4 font-mono text-xs">{duration(run.duration_ms)}</td>
+                <td className="px-4 py-4">
+                  {run.output_url && /^https?:\/\//i.test(run.output_url) ? (
+                    <ExternalLink
+                      href={run.output_url}
+                      className="whitespace-nowrap"
+                      onClick={(event) => event.stopPropagation()}
+                    >
+                      View output
+                    </ExternalLink>
+                  ) : (
+                    <span className="block max-w-64 truncate" title={run.result ?? undefined}>
+                      {run.result ?? '—'}
+                    </span>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>
