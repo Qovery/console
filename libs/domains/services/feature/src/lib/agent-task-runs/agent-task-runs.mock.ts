@@ -7,6 +7,7 @@ export interface AgentTaskRun {
   agent_task_name: string
   status: RunStatus
   trigger: 'MANUAL' | 'SCHEDULE' | 'WEBHOOK'
+  schedule: { cron_expression: string; timezone: string } | null
   created_at: string
   started_at: string | null
   finished_at: string | null
@@ -26,6 +27,7 @@ export const MOCK_RUNS: AgentTaskRun[] = (['QUEUED', 'RUNNING', 'COMPLETED', 'FA
     agent_task_name: index % 2 === 0 ? 'Incident Analyser' : 'Deployment review',
     status,
     trigger: index % 3 === 0 ? 'WEBHOOK' : index % 3 === 1 ? 'MANUAL' : 'SCHEDULE',
+    schedule: index % 3 === 2 ? { cron_expression: '0 8 * * 1-5', timezone: 'UTC' } : null,
     created_at: `2026-09-09T09:${50 - index * 10}:00Z`,
     started_at: status === 'QUEUED' ? null : `2026-09-09T09:${50 - index * 10}:02Z`,
     finished_at: status === 'QUEUED' || status === 'RUNNING' ? null : `2026-09-09T09:${50 - index * 10}:36Z`,

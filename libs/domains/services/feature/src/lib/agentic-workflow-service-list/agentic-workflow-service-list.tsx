@@ -92,7 +92,12 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center border-r border-neutral">
                   <span>
-                    {[service.schedule ? 'Schedule' : null, service.webhook?.url ? 'Webhook' : null]
+                    {[
+                      service.schedule
+                        ? `Schedule · ${service.schedule.cron_expression} (${service.schedule.timezone})`
+                        : null,
+                      service.webhook?.url ? 'Webhook' : null,
+                    ]
                       .filter(Boolean)
                       .join(' · ') || 'Manual'}
                   </span>

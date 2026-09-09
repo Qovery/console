@@ -11,6 +11,10 @@ const STATUS_ICONS = {
   CANCELLED: 'CANCELED',
 } as const
 const label = (value: string) => value.charAt(0) + value.slice(1).toLowerCase()
+const triggerLabel = (run: AgentTaskRun) =>
+  run.trigger === 'SCHEDULE' && run.schedule
+    ? `Schedule · ${run.schedule.cron_expression} (${run.schedule.timezone})`
+    : label(run.trigger)
 const date = (value: string | null) =>
   value
     ? new Intl.DateTimeFormat('en-GB', {
@@ -102,7 +106,7 @@ export function AgentTaskRuns({
                 <td className="whitespace-nowrap px-4 py-4">
                   <RunState status={run.status} />
                 </td>
-                <td className="px-4 py-4">{label(run.trigger)}</td>
+                <td className="px-4 py-4">{triggerLabel(run)}</td>
                 <td className="whitespace-nowrap px-4 py-4">{date(run.started_at)}</td>
                 <td className="whitespace-nowrap px-4 py-4 font-mono text-xs">{duration(run.duration_ms)}</td>
               </tr>
@@ -143,7 +147,7 @@ export function AgentTaskRuns({
                     {Object.entries({
                       'Agent Task': selected.agent_task_name,
                       'Agent Task ID': selected.agent_task_id,
-                      Trigger: label(selected.trigger),
+                      Trigger: triggerLabel(selected),
                       'Created (UTC)': date(selected.created_at),
                       'Started (UTC)': date(selected.started_at),
                       'Finished (UTC)': date(selected.finished_at),
