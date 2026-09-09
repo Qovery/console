@@ -108,7 +108,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
                     aria-label={workflow.enabled ? 'Enabled' : 'Disabled'}
                     className={`shrink-0 ${workflow.enabled ? 'text-positive' : 'text-neutral-subtle'}`}
                   >
-                    <Icon iconName={workflow.enabled ? 'circle-check' : 'circle-stop'} iconStyle="regular" />
+                    <Icon iconName={workflow.enabled ? 'circle-check' : 'circle-xmark'} iconStyle="regular" />
                   </span>
                 </Tooltip>
               </span>
