@@ -107,7 +107,6 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                       }).format(new Date(MOCK_RUNS[0].created_at))}{' '}
                       UTC
                     </time>
-                    <span className="text-neutral-subtle">Demo data</span>
                   </div>
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center">
