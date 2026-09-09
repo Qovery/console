@@ -95,7 +95,7 @@ export function AgenticWorkflowServiceList({ environment, actions }: AgenticWork
                     <ServiceNameCell service={service} environment={environment} />
                   </div>
                 </Table.Cell>
-                <Table.Cell className="flex h-full items-center border-r border-neutral">
+                <Table.Cell className="flex h-full items-center border-r border-neutral text-sm">
                   <span>
                     {[
                       service.schedule
@@ -107,7 +107,7 @@ export function AgenticWorkflowServiceList({ environment, actions }: AgenticWork
                       .join(' · ') || 'Manual'}
                   </span>
                 </Table.Cell>
-                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
+                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral text-sm">
                   <div className="flex flex-col gap-1">
                     <time dateTime={MOCK_RUNS[0].created_at}>
                       {new Intl.DateTimeFormat('en-GB', {
