@@ -229,8 +229,25 @@ function ServiceOverviewContent({
             {isAgenticWorkflow(service) && <AgenticWorkflowWebhookSection webhookUrl={service.webhook.url} />}
             {isAgenticWorkflow(service) && (
               <Section id="runs" className="scroll-mt-24 gap-4">
-                <Heading>Runs</Heading>
-                <AgentTaskRuns agentTaskId={service.id} agentTaskName={service.name} />
+                <div className="flex items-center justify-between gap-4">
+                  <Heading>Last 5 runs</Heading>
+                  <Link
+                    as="button"
+                    color="neutral"
+                    variant="outline"
+                    size="sm"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/runs"
+                    params={{
+                      organizationId: environment.organization.id,
+                      projectId: environment.project.id,
+                      environmentId: environment.id,
+                      serviceId: service.id,
+                    }}
+                  >
+                    View all runs
+                  </Link>
+                </div>
+                <AgentTaskRuns agentTaskId={service.id} agentTaskName={service.name} limit={5} />
               </Section>
             )}
             {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
