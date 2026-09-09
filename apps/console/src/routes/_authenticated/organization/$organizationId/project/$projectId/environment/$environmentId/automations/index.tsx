@@ -1,5 +1,9 @@
 import { createFileRoute, useParams } from '@tanstack/react-router'
-import { useEnvironment } from '@qovery/domains/environments/feature'
+import {
+  PageSettingsPreviewEnvironmentsFeature,
+  SettingsDeploymentRules,
+  useEnvironment,
+} from '@qovery/domains/environments/feature'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { AgenticWorkflowServiceList, AgenticWorkflowUseCases, useServices } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
@@ -54,39 +58,15 @@ function RouteComponent() {
           <Heading level={2}>Environment automations</Heading>
           <p className="text-sm text-neutral-subtle">Control when environments run and how previews are created.</p>
         </div>
-        <div className="divide-y divide-neutral rounded-lg border border-neutral">
-          <div className="flex items-center justify-between gap-4 p-4">
-            <div>
-              <Heading level={3}>Deployment rules</Heading>
-              <p className="mt-1 text-sm text-neutral-subtle">Schedule when this environment starts and stops.</p>
-            </div>
-            <Link
-              as="button"
-              color="neutral"
-              variant="outline"
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings/deployment-rules"
-              params={{ organizationId, projectId, environmentId }}
-            >
-              Configure
-            </Link>
-          </div>
-          <div className="flex items-center justify-between gap-4 p-4">
-            <div>
-              <Heading level={3}>Preview environments</Heading>
-              <p className="mt-1 text-sm text-neutral-subtle">
-                Manage automatic preview environments for pull requests.
-              </p>
-            </div>
-            <Link
-              as="button"
-              color="neutral"
-              variant="outline"
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/automations/settings/preview-environments"
-              params={{ organizationId, projectId, environmentId }}
-            >
-              Configure
-            </Link>
-          </div>
+        <div className="flex max-w-content-with-navigation-left flex-col gap-6">
+          <Section id="deployment-rules" className="scroll-mt-24 gap-3">
+            <Heading level={3}>Deployment rules</Heading>
+            <SettingsDeploymentRules embedded />
+          </Section>
+          <Section id="preview-environments" className="scroll-mt-24 gap-3">
+            <Heading level={3}>Preview environments</Heading>
+            <PageSettingsPreviewEnvironmentsFeature embedded />
+          </Section>
         </div>
       </Section>
     </Section>
