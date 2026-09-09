@@ -78,9 +78,8 @@ export function AgenticWorkflowServiceActions({
           <DropdownMenu.Item icon={<Icon iconName="list-check" />} asChild>
             <Link
               className="gap-0"
-              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/runs"
               params={{ organizationId, projectId, environmentId, serviceId: service.id }}
-              hash="runs"
             >
               Runs
             </Link>

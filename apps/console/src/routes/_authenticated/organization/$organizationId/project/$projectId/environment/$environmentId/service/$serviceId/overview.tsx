@@ -6,8 +6,7 @@ import { useEnvironment } from '@qovery/domains/environments/feature'
 import { EnableObservabilityModal } from '@qovery/domains/observability/feature'
 import { JobStatusesCallout } from '@qovery/domains/service-job/feature'
 import { TerraformResourcesSection } from '@qovery/domains/service-terraform/feature'
-import { AgentTaskRuns, ObservabilityCallout, ServiceOverview, useService } from '@qovery/domains/services/feature'
-import { Heading, Section } from '@qovery/shared/ui'
+import { ObservabilityCallout, ServiceOverview, useService } from '@qovery/domains/services/feature'
 import { MetricsWebSocketListener } from '@qovery/shared/util-web-sockets'
 
 export const Route = createFileRoute(
@@ -54,12 +53,6 @@ function RouteComponent() {
           environment && <JobStatusesCallout environmentId={environment.id} serviceId={service.id} />
         }
       />
-      {service?.serviceType === 'AGENTIC_WORKFLOW' && (
-        <Section id="runs" className="container mx-auto scroll-mt-24 gap-4 pb-8">
-          <Heading level={2}>Runs</Heading>
-          <AgentTaskRuns agentTaskId={service.id} agentTaskName={service.name} />
-        </Section>
-      )}
       {environment && service?.serviceType && (
         <WebSocketListenerMemo
           organizationId={environment.organization.id}
