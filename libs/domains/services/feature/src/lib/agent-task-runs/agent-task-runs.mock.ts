@@ -15,7 +15,6 @@ export interface AgentTaskRun {
   prompt: string | null
   result: string | null
   error: string | null
-  logs_url: string | null
 }
 
 // Fixed timestamps keep the preview reproducible. These records never represent real services.
@@ -42,6 +41,5 @@ export const MOCK_RUNS: AgentTaskRun[] = (['QUEUED', 'RUNNING', 'COMPLETED', 'FA
       status === 'FAILED'
         ? 'The configured monitoring integration could not be reached. The execution stopped before analysis completed.'
         : null,
-    logs_url: null,
   })
 )
