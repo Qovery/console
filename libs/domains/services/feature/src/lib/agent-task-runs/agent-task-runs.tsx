@@ -1,6 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 import { Accordion, Button, CopyToClipboardButtonIcon, Heading, Section, Sheet, StatusChip } from '@qovery/shared/ui'
+import { formatCronExpression } from '@qovery/shared/util-js'
 import { type AgentTaskRun, MOCK_RUNS, type RunStatus } from './agent-task-runs.mock'
 
 const STATUS_ICONS = {
@@ -13,7 +14,7 @@ const STATUS_ICONS = {
 const label = (value: string) => value.charAt(0) + value.slice(1).toLowerCase()
 const triggerLabel = (run: AgentTaskRun) =>
   run.trigger === 'SCHEDULE' && run.schedule
-    ? `Schedule · ${run.schedule.cron_expression} (${run.schedule.timezone})`
+    ? `${formatCronExpression(run.schedule.cron_expression) || run.schedule.cron_expression} (${run.schedule.timezone})`
     : label(run.trigger)
 const date = (value: string | null) =>
   value

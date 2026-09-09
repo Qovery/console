@@ -3,6 +3,7 @@ import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { Badge, Heading, Section, TablePrimitives } from '@qovery/shared/ui'
+import { formatCronExpression } from '@qovery/shared/util-js'
 import { MOCK_RUNS } from '../agent-task-runs/agent-task-runs.mock'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
@@ -94,7 +95,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                   <span>
                     {[
                       service.schedule
-                        ? `Schedule · ${service.schedule.cron_expression} (${service.schedule.timezone})`
+                        ? `${formatCronExpression(service.schedule.cron_expression) || service.schedule.cron_expression} (${service.schedule.timezone})`
                         : null,
                       service.webhook?.url ? 'Webhook' : null,
                     ]
