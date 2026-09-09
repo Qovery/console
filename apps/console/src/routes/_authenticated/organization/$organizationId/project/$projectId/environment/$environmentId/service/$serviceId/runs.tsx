@@ -14,7 +14,7 @@ function RouteComponent() {
   if (!service || !isAgenticWorkflow(service)) return null
   return (
     <Section className="py-6">
-      <SettingsHeading title="Runs" description={`Execution history for ${service.name}.`} />
+      <SettingsHeading title="Runs" showNeedHelp={false} />
       <AgentTaskRuns agentTaskId={service.id} agentTaskName={service.name} />
     </Section>
   )
