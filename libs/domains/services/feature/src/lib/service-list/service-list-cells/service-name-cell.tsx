@@ -90,7 +90,7 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
               )
             })
             .with({ serviceType: 'AGENTIC_WORKFLOW' }, (workflow) => (
-              <span className="flex min-w-0 flex-1 flex-col overflow-hidden">
+              <span className="flex min-w-0 flex-1 items-center gap-2 overflow-hidden">
                 <Link
                   to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
                   params={serviceLinkParams}
@@ -102,9 +102,15 @@ export function ServiceNameCell({ service, environment }: { service: AnyService;
                     <span className="block min-w-0 truncate group-hover:underline">{workflow.name}</span>
                   </Tooltip>
                 </Link>
-                <span className="text-ssm font-normal text-neutral-subtle">
-                  {workflow.enabled ? 'Enabled' : 'Disabled'}
-                </span>
+                <Tooltip content={workflow.enabled ? 'Enabled' : 'Disabled'}>
+                  <span
+                    role="img"
+                    aria-label={workflow.enabled ? 'Enabled' : 'Disabled'}
+                    className={`shrink-0 ${workflow.enabled ? 'text-positive' : 'text-neutral-subtle'}`}
+                  >
+                    <Icon iconName={workflow.enabled ? 'circle-check' : 'circle-stop'} iconStyle="regular" />
+                  </span>
+                </Tooltip>
               </span>
             ))
             .otherwise(() => (
