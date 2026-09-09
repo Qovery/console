@@ -1,60 +1,19 @@
 import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
-import { match } from 'ts-pattern'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { IconEnum } from '@qovery/shared/enums'
-import { Badge, CopyToClipboardButtonIcon, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Badge, Heading, Link, Section, TablePrimitives } from '@qovery/shared/ui'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
-import { ServiceLastDeploymentCell, ServiceNameCell } from '../service-list/service-list-cells'
-import { ServiceStateChip } from '../service-state-chip/service-state-chip'
+import { ServiceNameCell } from '../service-list/service-list-cells'
 
 const { Table } = TablePrimitives
 
 const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(280px,1.1fr)_minmax(260px,1fr)_minmax(180px,0.7fr)_minmax(280px,1fr)_130px]'
+  'grid w-full grid-cols-[minmax(240px,1.2fr)_minmax(180px,1fr)_minmax(200px,1fr)_minmax(120px,0.7fr)_100px]'
 
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
-}
-
-function ModelCell({ service }: { service: AgenticWorkflow }) {
-  return match(service.model?.type)
-    .with('CLAUDE', () => (
-      <span className="flex items-center gap-2 text-sm text-neutral">
-        <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-5 w-5" />
-        Claude
-      </span>
-    ))
-    .with('BEDROCK', () => (
-      <span className="flex items-center gap-2 text-sm text-neutral">
-        <Icon name={IconEnum.AWS_GRAY} className="h-5 w-5" />
-        Bedrock
-      </span>
-    ))
-    .otherwise((model) => <span className="text-sm text-neutral-subtle">{model ?? 'Not configured'}</span>)
-}
-
-function WebhookCell({
-  service,
-  onAction,
-}: {
-  service: AgenticWorkflow
-  onAction: (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
-}) {
-  return (
-    <div className="flex min-w-0 flex-1 items-center gap-2" onClick={onAction} onKeyDown={onAction}>
-      <Tooltip content={service.webhook.url}>
-        <span className="min-w-0 flex-1 truncate font-mono text-xs text-neutral">{service.webhook.url}</span>
-      </Tooltip>
-      <CopyToClipboardButtonIcon
-        content={service.webhook.url}
-        tooltipContent="Copy webhook URL"
-        className="shrink-0 text-neutral-subtle hover:text-neutral"
-      />
-    </div>
-  )
 }
 
 export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServiceListProps) {
@@ -84,7 +43,9 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
     <Section className="flex flex-col gap-3.5">
       <div className="flex flex-col gap-1">
         <Heading level={2}>Agent tasks</Heading>
-        <p className="text-sm leading-5 text-neutral-subtle">One-time tasks delegated to AI agents.</p>
+        <p className="text-sm leading-5 text-neutral-subtle">
+          Run AI agents on demand, on a schedule, or from a webhook.
+        </p>
       </div>
 
       <div className="flex flex-col overflow-hidden rounded-lg border border-neutral">
@@ -95,21 +56,21 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
         </div>
         <Table.Root
           containerClassName="rounded-none border-x-0 border-b-0 border-t"
-          className="w-full min-w-[1320px] overflow-x-scroll text-xs xl:overflow-auto"
+          className="w-full min-w-[900px] overflow-x-scroll text-xs xl:overflow-auto"
         >
           <Table.Header className="border-neutral">
             <Table.Row className={`h-9 w-full ${tableGridLayoutClassName}`}>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Service
+                Agent Task
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Last operation
+                Trigger
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Model
+                Last run
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Webhook
+                Agent status
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
                 Actions
@@ -131,16 +92,25 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                   <div className="min-w-0 flex-1">
                     <ServiceNameCell service={service} environment={environment} />
                   </div>
-                  <ServiceStateChip mode="running" environmentId={environmentId} serviceId={service.id} />
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center border-r border-neutral">
-                  <ServiceLastDeploymentCell service={service} environment={environment} />
+                  <span>
+                    {[service.schedule ? 'Schedule' : null, service.webhook?.url ? 'Webhook' : null]
+                      .filter(Boolean)
+                      .join(' · ') || 'Manual'}
+                  </span>
                 </Table.Cell>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <ModelCell service={service} />
+                  <Link
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+                    params={{ organizationId, projectId, environmentId, serviceId: service.id }}
+                    onClick={stopRowNavigation}
+                  >
+                    View demo runs
+                  </Link>
                 </Table.Cell>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <WebhookCell service={service} onAction={stopRowNavigation} />
+                  <span>{service.enabled ? 'Enabled' : 'Disabled'}</span>
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center">
                   <AgenticWorkflowServiceActions

@@ -37,13 +37,35 @@ function RunState({ status }: { status: RunStatus }) {
   )
 }
 
-export function AgentTaskRuns({ agentTaskId }: { agentTaskId?: string }) {
+export function AgentTaskRuns({
+  agentTaskId,
+  agentTaskName,
+  grouped = false,
+}: {
+  agentTaskId?: string
+  agentTaskName?: string
+  grouped?: boolean
+}) {
   const [agent, setAgent] = useState('')
   const [status, setStatus] = useState('')
   const [selected, setSelected] = useState<AgentTaskRun | null>(null)
-  const scoped = MOCK_RUNS.filter((run) => !agentTaskId || run.agent_task_id === agentTaskId)
+  const scoped =
+    agentTaskId && agentTaskName
+      ? MOCK_RUNS.map((run) => ({ ...run, agent_task_id: agentTaskId, agent_task_name: agentTaskName }))
+      : MOCK_RUNS.filter((run) => !agentTaskId || run.agent_task_id === agentTaskId)
   const agents = [...new Map(scoped.map((run) => [run.agent_task_id, run.agent_task_name])).entries()]
   const runs = scoped.filter((run) => (!agent || run.agent_task_id === agent) && (!status || run.status === status))
+  if (grouped)
+    return (
+      <Section className="gap-8">
+        {agents.map(([id, name]) => (
+          <Section key={id} className="gap-3">
+            <Heading level={2}>{name}</Heading>
+            <AgentTaskRuns agentTaskId={id} />
+          </Section>
+        ))}
+      </Section>
+    )
   const selectClass = 'rounded border border-neutral bg-surface-neutral px-3 py-2 text-sm text-neutral'
 
   return (
