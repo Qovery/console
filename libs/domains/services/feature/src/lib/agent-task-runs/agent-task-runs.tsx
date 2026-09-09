@@ -1,3 +1,4 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { useState } from 'react'
 import { Accordion, Button, CopyToClipboardButtonIcon, Heading, Section, Sheet, StatusChip } from '@qovery/shared/ui'
 import { type AgentTaskRun, MOCK_RUNS, type RunStatus } from './agent-task-runs.mock'
@@ -111,75 +112,84 @@ export function AgentTaskRuns({
         {runs.length === 0 && <div className="p-8 text-center text-sm text-neutral-subtle">No runs yet</div>}
       </div>
       {selected && (
-        <Sheet
-          className="fixed bottom-0 right-0 top-0 z-50 w-full max-w-2xl"
-          onClose={() => setSelected(null)}
-          role="region"
-          aria-label="Run details"
+        <Dialog.Root
+          open
+          onOpenChange={(open) => {
+            if (!open) setSelected(null)
+          }}
         >
-          <div className="flex items-center justify-between border-b border-neutral p-6">
-            <Heading level={2}>Run {selected.deployment_id.slice(0, 8)}</Heading>
-            <Button color="neutral" variant="outline" onClick={() => setSelected(null)}>
-              Close
-            </Button>
-          </div>
-          <div className="flex flex-col gap-6 overflow-y-auto p-6 text-sm">
-            <div className="flex items-center gap-3">
-              <RunState status={selected.status} />
-            </div>
-            <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
-              <dt className="text-neutral-subtle">Deployment ID</dt>
-              <dd className="flex min-w-0 items-center gap-2">
-                <span className="break-all font-mono text-xs">{selected.deployment_id}</span>
-                <CopyToClipboardButtonIcon content={selected.deployment_id} />
-              </dd>
-              {Object.entries({
-                'Agent Task': selected.agent_task_name,
-                'Agent Task ID': selected.agent_task_id,
-                Trigger: label(selected.trigger),
-                'Created (UTC)': date(selected.created_at),
-                'Started (UTC)': date(selected.started_at),
-                'Finished (UTC)': date(selected.finished_at),
-                Duration: duration(selected.duration_ms),
-              }).map(([key, value]) => (
-                <div key={key} className="contents">
-                  <dt className="text-neutral-subtle">{key}</dt>
-                  <dd>{value}</dd>
+          <Dialog.Portal>
+            <Dialog.Overlay className="fixed inset-0 z-overlay bg-background-overlay" />
+            <Dialog.Content asChild aria-describedby={undefined}>
+              <Sheet className="fixed bottom-0 right-0 top-0 z-modal w-full max-w-2xl" aria-label="Run details">
+                <div className="flex items-center justify-between border-b border-neutral p-6">
+                  <Dialog.Title asChild>
+                    <Heading level={2}>Run {selected.deployment_id.slice(0, 8)}</Heading>
+                  </Dialog.Title>
+                  <Button color="neutral" variant="outline" onClick={() => setSelected(null)}>
+                    Close
+                  </Button>
                 </div>
-              ))}
-            </dl>
-            <section className="flex flex-col gap-2">
-              <Heading level={3}>Prompt</Heading>
-              <p className="whitespace-pre-wrap rounded border border-neutral p-4">
-                {selected.prompt ?? 'Prompt unavailable.'}
-              </p>
-            </section>
-            <section className="flex flex-col gap-2">
-              <Heading level={3}>{selected.error ? 'Error' : 'Result'}</Heading>
-              <p className="whitespace-pre-wrap rounded border border-neutral p-4">
-                {selected.error ??
-                  selected.result ??
-                  (selected.status === 'QUEUED'
-                    ? 'Waiting to start.'
-                    : selected.status === 'RUNNING'
-                      ? 'Execution in progress.'
-                      : selected.status === 'CANCELLED'
-                        ? 'This run was cancelled.'
-                        : 'No result available.')}
-              </p>
-            </section>
-            <Accordion.Root type="single" collapsible className="rounded border border-neutral">
-              <Accordion.Item value="logs">
-                <Accordion.Trigger className="w-full cursor-pointer flex-row-reverse justify-between px-4 font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong">
-                  Sample logs
-                </Accordion.Trigger>
-                <Accordion.Content>
-                  <pre className="whitespace-pre-wrap px-4 pb-4 font-mono text-xs text-neutral-subtle">{`[demo] Execution requested via ${selected.trigger.toLowerCase()}.\n[demo] Status: ${label(selected.status)}.\n${selected.error ? `[demo] ${selected.error}` : '[demo] Live logs will be available when the Runs API is connected.'}`}</pre>
-                </Accordion.Content>
-              </Accordion.Item>
-            </Accordion.Root>
-          </div>
-        </Sheet>
+                <div className="flex flex-col gap-6 overflow-y-auto p-6 text-sm">
+                  <div className="flex items-center gap-3">
+                    <RunState status={selected.status} />
+                  </div>
+                  <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
+                    <dt className="text-neutral-subtle">Deployment ID</dt>
+                    <dd className="flex min-w-0 items-center gap-2">
+                      <span className="break-all font-mono text-xs">{selected.deployment_id}</span>
+                      <CopyToClipboardButtonIcon content={selected.deployment_id} />
+                    </dd>
+                    {Object.entries({
+                      'Agent Task': selected.agent_task_name,
+                      'Agent Task ID': selected.agent_task_id,
+                      Trigger: label(selected.trigger),
+                      'Created (UTC)': date(selected.created_at),
+                      'Started (UTC)': date(selected.started_at),
+                      'Finished (UTC)': date(selected.finished_at),
+                      Duration: duration(selected.duration_ms),
+                    }).map(([key, value]) => (
+                      <div key={key} className="contents">
+                        <dt className="text-neutral-subtle">{key}</dt>
+                        <dd>{value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  <section className="flex flex-col gap-2">
+                    <Heading level={3}>Prompt</Heading>
+                    <p className="whitespace-pre-wrap rounded border border-neutral p-4">
+                      {selected.prompt ?? 'Prompt unavailable.'}
+                    </p>
+                  </section>
+                  <section className="flex flex-col gap-2">
+                    <Heading level={3}>{selected.error ? 'Error' : 'Result'}</Heading>
+                    <p className="whitespace-pre-wrap rounded border border-neutral p-4">
+                      {selected.error ??
+                        selected.result ??
+                        (selected.status === 'QUEUED'
+                          ? 'Waiting to start.'
+                          : selected.status === 'RUNNING'
+                            ? 'Execution in progress.'
+                            : selected.status === 'CANCELLED'
+                              ? 'This run was cancelled.'
+                              : 'No result available.')}
+                    </p>
+                  </section>
+                  <Accordion.Root type="single" collapsible className="rounded border border-neutral">
+                    <Accordion.Item value="logs">
+                      <Accordion.Trigger className="w-full cursor-pointer flex-row-reverse justify-between px-4 font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-neutral-strong">
+                        Sample logs
+                      </Accordion.Trigger>
+                      <Accordion.Content>
+                        <pre className="whitespace-pre-wrap px-4 pb-4 font-mono text-xs text-neutral-subtle">{`[demo] Execution requested via ${selected.trigger.toLowerCase()}.\n[demo] Status: ${label(selected.status)}.\n${selected.error ? `[demo] ${selected.error}` : '[demo] Live logs will be available when the Runs API is connected.'}`}</pre>
+                      </Accordion.Content>
+                    </Accordion.Item>
+                  </Accordion.Root>
+                </div>
+              </Sheet>
+            </Dialog.Content>
+          </Dialog.Portal>
+        </Dialog.Root>
       )}
     </Section>
   )

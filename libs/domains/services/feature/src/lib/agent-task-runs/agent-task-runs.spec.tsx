@@ -7,12 +7,12 @@ describe('AgentTaskRuns', () => {
     expect(screen.queryByRole('combobox')).not.toBeInTheDocument()
     expect(screen.getAllByRole('row')).toHaveLength(6)
     await userEvent.click(screen.getByRole('button', { name: 'Open run a83f1203-a121-4000-8000-000000000003' }))
-    expect(screen.getByRole('region', { name: 'Run details' })).toBeInTheDocument()
+    expect(screen.getByRole('dialog', { name: 'Run a83f1203' })).toBeInTheDocument()
     expect(
       screen.getByText(/The configured monitoring integration could not be reached/, { selector: 'p' })
     ).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Close' }))
-    expect(screen.queryByRole('region', { name: 'Run details' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
   })
 
   it('shows an empty state for an agent without runs', () => {
