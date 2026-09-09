@@ -130,10 +130,13 @@ export function AgenticWorkflowServiceList({ environment, actions }: AgenticWork
                   {latestOutput?.output_url && /^https?:\/\//i.test(latestOutput.output_url) ? (
                     <ExternalLink
                       href={latestOutput.output_url}
+                      className="min-w-0 max-w-full"
                       onClick={stopRowNavigation}
                       onKeyDown={stopRowNavigation}
                     >
-                      View output
+                      <span className="truncate" title={latestOutput.output_url}>
+                        {latestOutput.output_url}
+                      </span>
                     </ExternalLink>
                   ) : (
                     <span className="truncate" title={latestOutput?.result ?? undefined}>
