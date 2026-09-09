@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, type ReactNode } from 'react'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { Badge, ExternalLink, Heading, Section, TablePrimitives } from '@qovery/shared/ui'
+import { Badge, Heading, Section, TablePrimitives } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
 import { RunState } from '../agent-task-runs/agent-task-runs'
 import { MOCK_RUNS } from '../agent-task-runs/agent-task-runs.mock'
@@ -128,16 +128,9 @@ export function AgenticWorkflowServiceList({ environment, actions }: AgenticWork
                 </Table.Cell>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral text-sm">
                   {latestOutput?.output_url && /^https?:\/\//i.test(latestOutput.output_url) ? (
-                    <ExternalLink
-                      href={latestOutput.output_url}
-                      className="min-w-0 max-w-full"
-                      onClick={stopRowNavigation}
-                      onKeyDown={stopRowNavigation}
-                    >
-                      <span className="truncate" title={latestOutput.output_url}>
-                        {latestOutput.output_url}
-                      </span>
-                    </ExternalLink>
+                    <span className="cursor-text truncate" title={latestOutput.output_url} onClick={stopRowNavigation}>
+                      {latestOutput.output_url}
+                    </span>
                   ) : (
                     <span className="truncate" title={latestOutput?.result ?? undefined}>
                       {latestOutput?.result ?? '—'}
