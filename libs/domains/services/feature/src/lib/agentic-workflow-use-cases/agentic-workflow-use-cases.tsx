@@ -102,6 +102,11 @@ export function AgenticWorkflowUseCases({
 
     return (
       <div className="flex shrink-0 items-center gap-2">
+        {customUseCase ? (
+          <Button size="md" color="neutral" variant="outline" onClick={customUseCase.onClick}>
+            Need a specific agent?
+          </Button>
+        ) : null}
         <DropdownMenu.Root>
           <DropdownMenu.Trigger asChild>
             <Button size="md">
@@ -127,11 +132,6 @@ export function AgenticWorkflowUseCases({
             )}
           </DropdownMenu.Content>
         </DropdownMenu.Root>
-        {customUseCase ? (
-          <Button size="md" color="neutral" variant="outline" onClick={customUseCase.onClick}>
-            Need a specific agent?
-          </Button>
-        ) : null}
       </div>
     )
   }
