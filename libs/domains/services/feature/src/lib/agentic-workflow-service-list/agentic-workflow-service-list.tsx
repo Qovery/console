@@ -1,6 +1,6 @@
 import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
-import { type KeyboardEvent, type MouseEvent } from 'react'
+import { type KeyboardEvent, type MouseEvent, type ReactNode } from 'react'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { Badge, Heading, Section, TablePrimitives } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
@@ -15,9 +15,10 @@ const tableGridLayoutClassName = 'grid w-full grid-cols-[minmax(240px,1.2fr)_min
 
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
+  actions?: ReactNode
 }
 
-export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServiceListProps) {
+export function AgenticWorkflowServiceList({ environment, actions }: AgenticWorkflowServiceListProps) {
   const environmentId = environment.id
   const organizationId = environment.organization.id
   const projectId = environment.project.id
@@ -42,11 +43,14 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
 
   return (
     <Section className="flex flex-col gap-3.5">
-      <div className="flex flex-col gap-1">
-        <Heading level={2}>Agent tasks</Heading>
-        <p className="text-sm leading-5 text-neutral-subtle">
-          Run AI agents on demand, on a schedule, or from a webhook.
-        </p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <Heading level={2}>Agent tasks</Heading>
+          <p className="text-sm leading-5 text-neutral-subtle">
+            Run AI agents on demand, on a schedule, or from a webhook.
+          </p>
+        </div>
+        {actions}
       </div>
 
       <div className="flex flex-col overflow-hidden rounded-lg border border-neutral">
