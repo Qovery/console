@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Badge, Button, CopyToClipboardButtonIcon, Heading, Section, Sheet, StatusChip } from '@qovery/shared/ui'
+import { Button, CopyToClipboardButtonIcon, Heading, Section, Sheet, StatusChip } from '@qovery/shared/ui'
 import { type AgentTaskRun, MOCK_RUNS, type RunStatus } from './agent-task-runs.mock'
 
 const STATUS_ICONS = {
@@ -67,7 +67,6 @@ export function AgentTaskRuns({
 
   return (
     <Section className="gap-4">
-      <p className="text-right text-xs text-neutral-subtle">{runs.length} runs · Times in UTC</p>
       <div className="overflow-x-auto rounded-lg border border-neutral">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-neutral bg-surface-neutral-subtle font-mono text-xs text-neutral-subtle">
@@ -127,9 +126,6 @@ export function AgentTaskRuns({
           <div className="flex flex-col gap-6 overflow-y-auto p-6 text-sm">
             <div className="flex items-center gap-3">
               <RunState status={selected.status} />
-              <Badge color="neutral" variant="surface">
-                Demo data
-              </Badge>
             </div>
             <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3">
               <dt className="text-neutral-subtle">Deployment ID</dt>
