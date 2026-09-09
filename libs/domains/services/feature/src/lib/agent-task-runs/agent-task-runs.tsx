@@ -46,15 +46,13 @@ export function AgentTaskRuns({
   agentTaskName?: string
   grouped?: boolean
 }) {
-  const [agent, setAgent] = useState('')
-  const [status, setStatus] = useState('')
   const [selected, setSelected] = useState<AgentTaskRun | null>(null)
   const scoped =
     agentTaskId && agentTaskName
       ? MOCK_RUNS.map((run) => ({ ...run, agent_task_id: agentTaskId, agent_task_name: agentTaskName }))
       : MOCK_RUNS.filter((run) => !agentTaskId || run.agent_task_id === agentTaskId)
   const agents = [...new Map(scoped.map((run) => [run.agent_task_id, run.agent_task_name])).entries()]
-  const runs = scoped.filter((run) => (!agent || run.agent_task_id === agent) && (!status || run.status === status))
+  const runs = scoped
   if (grouped)
     return (
       <Section className="gap-8">
@@ -66,61 +64,10 @@ export function AgentTaskRuns({
         ))}
       </Section>
     )
-  const selectClass = 'rounded border border-neutral bg-surface-neutral px-3 py-2 text-sm text-neutral'
 
   return (
     <Section className="gap-4">
-      <div className="flex flex-wrap items-center gap-2 text-sm text-neutral-subtle">
-        <Badge color="neutral" variant="surface">
-          Demo data
-        </Badge>
-        These runs are sample data. Live execution history is not available yet.
-      </div>
-      <div className="flex flex-wrap items-center gap-3">
-        {!agentTaskId && (
-          <select
-            aria-label="Agent Task"
-            className={selectClass}
-            value={agent}
-            onChange={(event) => setAgent(event.target.value)}
-          >
-            <option value="">All Agent Tasks</option>
-            {agents.map(([id, name]) => (
-              <option key={id} value={id}>
-                {name}
-              </option>
-            ))}
-          </select>
-        )}
-        <select
-          aria-label="Status"
-          className={selectClass}
-          value={status}
-          onChange={(event) => setStatus(event.target.value)}
-        >
-          <option value="">All statuses</option>
-          {Object.keys(STATUS_ICONS).map((value) => (
-            <option key={value} value={value}>
-              {label(value)}
-            </option>
-          ))}
-        </select>
-        {(agent || status) && (
-          <Button
-            variant="plain"
-            color="neutral"
-            onClick={() => {
-              setAgent('')
-              setStatus('')
-            }}
-          >
-            Clear filters
-          </Button>
-        )}
-        <span className="ml-auto text-xs text-neutral-subtle">
-          {runs.length} runs · Times in UTC · Snapshot: Sep 9, 2026
-        </span>
-      </div>
+      <p className="text-right text-xs text-neutral-subtle">{runs.length} runs · Times in UTC</p>
       <div className="overflow-x-auto rounded-lg border border-neutral">
         <table className="w-full text-left text-sm">
           <thead className="border-b border-neutral bg-surface-neutral-subtle font-mono text-xs text-neutral-subtle">
@@ -162,11 +109,7 @@ export function AgentTaskRuns({
             ))}
           </tbody>
         </table>
-        {runs.length === 0 && (
-          <div className="p-8 text-center text-sm text-neutral-subtle">
-            {scoped.length ? 'No matching runs' : 'No runs yet'}
-          </div>
-        )}
+        {runs.length === 0 && <div className="p-8 text-center text-sm text-neutral-subtle">No runs yet</div>}
       </div>
       {selected && (
         <Sheet
