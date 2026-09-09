@@ -2,7 +2,7 @@ import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, type ReactNode } from 'react'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { Badge, Heading, Section, TablePrimitives } from '@qovery/shared/ui'
+import { Badge, ExternalLink, Heading, Section, TablePrimitives } from '@qovery/shared/ui'
 import { formatCronExpression } from '@qovery/shared/util-js'
 import { RunState } from '../agent-task-runs/agent-task-runs'
 import { MOCK_RUNS } from '../agent-task-runs/agent-task-runs.mock'
@@ -12,7 +12,9 @@ import { ServiceNameCell } from '../service-list/service-list-cells'
 
 const { Table } = TablePrimitives
 
-const tableGridLayoutClassName = 'grid w-full grid-cols-[minmax(240px,1.2fr)_minmax(180px,1fr)_minmax(200px,1fr)_100px]'
+const tableGridLayoutClassName =
+  'grid w-full grid-cols-[minmax(240px,1.2fr)_minmax(180px,1fr)_minmax(200px,1fr)_minmax(160px,0.8fr)_100px]'
+const latestOutput = MOCK_RUNS.find((run) => run.output_url || run.result)
 
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
@@ -75,6 +77,9 @@ export function AgenticWorkflowServiceList({ environment, actions }: AgenticWork
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Last triggered
               </Table.ColumnHeaderCell>
+              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
+                Output
+              </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
                 Actions
               </Table.ColumnHeaderCell>
@@ -120,6 +125,21 @@ export function AgenticWorkflowServiceList({ environment, actions }: AgenticWork
                       UTC
                     </time>
                   </div>
+                </Table.Cell>
+                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral text-sm">
+                  {latestOutput?.output_url && /^https?:\/\//i.test(latestOutput.output_url) ? (
+                    <ExternalLink
+                      href={latestOutput.output_url}
+                      onClick={stopRowNavigation}
+                      onKeyDown={stopRowNavigation}
+                    >
+                      View output
+                    </ExternalLink>
+                  ) : (
+                    <span className="truncate" title={latestOutput?.result ?? undefined}>
+                      {latestOutput?.result ?? '—'}
+                    </span>
+                  )}
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center">
                   <AgenticWorkflowServiceActions
