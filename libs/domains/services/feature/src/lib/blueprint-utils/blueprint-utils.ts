@@ -10,7 +10,8 @@ const BLUEPRINT_NAME_PARTS: Record<string, string> = {
   s3: 'S3',
 }
 
-const CLUSTER_AGNOSTIC_BLUEPRINT_PROVIDERS = new Set(['EXTERNAL', 'HELM'])
+// Providers not tied to a specific cloud: their blueprints (e.g. agentic workflows) run on any cluster.
+const CLUSTER_AGNOSTIC_BLUEPRINT_PROVIDERS = new Set(['AGENTIC_WORKFLOW', 'EXTERNAL', 'HELM'])
 
 export const OTHER_BLUEPRINT_CATEGORY = 'Other'
 
