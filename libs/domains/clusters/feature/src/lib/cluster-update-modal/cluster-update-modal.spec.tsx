@@ -1,8 +1,15 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useDeployCluster from '../hooks/use-deploy-cluster/use-deploy-cluster'
 import { ClusterUpdateModal } from './cluster-update-modal'
 
 const useDeployClusterMockSpy = jest.spyOn(useDeployCluster, 'useDeployCluster') as jest.Mock
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
+}))
+
+const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.Mock
 
 const mockNavigate = jest.fn()
 const mockDeployCluster = jest.fn()
@@ -27,6 +34,7 @@ describe('ClusterUpdateModal', () => {
     })
     mockDeployCluster.mockReset()
     mockNavigate.mockReset()
+    useFeatureFlagEnabledMock.mockReturnValue(true)
   })
   it('should render the modal with cluster name', () => {
     renderWithProviders(<ClusterUpdateModal cluster={mockCluster} />)
@@ -84,6 +92,31 @@ describe('ClusterUpdateModal', () => {
     await waitFor(() =>
       expect(mockNavigate).toHaveBeenCalledWith({
         to: '/organization/$organizationId/cluster/$clusterId/deployments',
+        params: {
+          organizationId: mockCluster.organization.id,
+          clusterId: mockCluster.id,
+        },
+      })
+    )
+  })
+
+  it('should redirect to the legacy cluster logs page when dry-run is selected and the cluster-deployment-history feature flag is off', async () => {
+    useFeatureFlagEnabledMock.mockReturnValue(false)
+
+    const { userEvent } = renderWithProviders(<ClusterUpdateModal cluster={mockCluster} />)
+
+    const input = screen.getByTestId('input-value')
+    await userEvent.type(input, 'Test Cluster')
+
+    const checkbox = screen.getByRole('checkbox', { name: /dry-run/i })
+    await userEvent.click(checkbox)
+
+    const submitButton = screen.getByTestId('submit-button')
+    await userEvent.click(submitButton)
+
+    await waitFor(() =>
+      expect(mockNavigate).toHaveBeenCalledWith({
+        to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
         params: {
           organizationId: mockCluster.organization.id,
           clusterId: mockCluster.id,

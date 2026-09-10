@@ -85,6 +85,13 @@ export const clusters = createQueryKeys('clusters', {
       return response.data
     },
   },
+  logs: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      const response = await clusterApi.listClusterLogs(organizationId, clusterId)
+      return response.data.results
+    },
+  }),
   deploymentHistory: ({
     organizationId,
     clusterId,

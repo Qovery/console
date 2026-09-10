@@ -6,6 +6,7 @@ export interface UseClusterDeploymentLogsProps {
   clusterId: string
   deploymentId: string
   refetchInterval?: number
+  enabled?: boolean
 }
 
 export function useClusterDeploymentLogs({
@@ -13,10 +14,11 @@ export function useClusterDeploymentLogs({
   clusterId,
   deploymentId,
   refetchInterval = 3000,
+  enabled = true,
 }: UseClusterDeploymentLogsProps) {
   return useQuery({
     ...queries.clusters.deploymentLogs({ organizationId, clusterId, deploymentId }),
-    enabled: Boolean(organizationId) && Boolean(clusterId) && Boolean(deploymentId),
+    enabled: enabled && Boolean(organizationId) && Boolean(clusterId) && Boolean(deploymentId),
     refetchInterval,
   })
 }

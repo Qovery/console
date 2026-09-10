@@ -20,6 +20,10 @@ let mockClusterStatus: ClusterStatus = {
   is_deployed: true,
 }
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
+}))
+
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useNavigate: () => jest.fn(),

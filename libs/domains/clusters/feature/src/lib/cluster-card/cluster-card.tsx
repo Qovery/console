@@ -1,4 +1,5 @@
 import { Link, useRouter } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type ClusterStatus } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import {
@@ -20,13 +21,17 @@ import { ClusterRunningStatusIndicator } from '../cluster-running-status-indicat
 import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket'
 
 function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clusterDeploymentStatus?: ClusterStatus }) {
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
+  const clusterLogsLinkTarget = isClusterDeploymentHistoryEnabled
+    ? ('/organization/$organizationId/cluster/$clusterId/deployments' as const)
+    : ('/organization/$organizationId/cluster/$clusterId/cluster-logs' as const)
   return match(clusterDeploymentStatus?.status)
     .with('DEPLOYMENT_QUEUED', 'DELETE_QUEUED', 'STOP_QUEUED', 'RESTART_QUEUED', (s) => (
       <span className="text-ssm font-normal text-neutral-subtle">{upperCaseFirstLetter(s).replace('_', ' ')}...</span>
     ))
     .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) => (
       <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/deployments"
+        to={clusterLogsLinkTarget}
         params={{
           organizationId: cluster.organization.id,
           clusterId: cluster.id,
@@ -47,7 +52,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('BUILD_ERROR', 'DELETE_ERROR', 'DEPLOYMENT_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
       <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/deployments"
+        to={clusterLogsLinkTarget}
         params={{
           organizationId: cluster.organization.id,
           clusterId: cluster.id,
@@ -64,7 +69,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('INVALID_CREDENTIALS', () => (
       <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/deployments"
+        to={clusterLogsLinkTarget}
         params={{
           organizationId: cluster.organization.id,
           clusterId: cluster.id,

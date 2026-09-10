@@ -1,4 +1,5 @@
 import posthog from 'posthog-js'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type ClusterStateEnum,
   type ClusterStatus,
@@ -96,7 +97,13 @@ export function ClusterLastDeploymentSection({
   isLoading = false,
 }: ClusterLastDeploymentSectionProps) {
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
-  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({ organizationId, clusterId })
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
+  // The deployment-history endpoint is only queried when the feature flag is on
+  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
+    organizationId,
+    clusterId,
+    enabled: isClusterDeploymentHistoryEnabled,
+  })
   const lastDeployment = deploymentHistory[0]
   const hasLastDeployment = Boolean(clusterStatus?.last_deployment_date || clusterStatus?.last_execution_id)
   const isOngoing = match(clusterStatus?.status)
@@ -137,31 +144,38 @@ export function ClusterLastDeploymentSection({
     <Section className="gap-3">
       <div className="flex items-center justify-between gap-2">
         <Heading>Last deployment</Heading>
-        <Link
-          to="/organization/$organizationId/cluster/$clusterId/deployments"
-          params={{ organizationId, clusterId }}
-          color="neutral"
-          size="ssm"
-          className="gap-0.5 text-neutral-subtle hover:text-neutral"
-        >
-          See all deployments
-          <Icon iconName="angle-right" className="text-ssm" />
-        </Link>
+        {isClusterDeploymentHistoryEnabled && (
+          <Link
+            to="/organization/$organizationId/cluster/$clusterId/deployments"
+            params={{ organizationId, clusterId }}
+            color="neutral"
+            size="ssm"
+            className="gap-0.5 text-neutral-subtle hover:text-neutral"
+          >
+            See all deployments
+            <Icon iconName="angle-right" className="text-ssm" />
+          </Link>
+        )}
       </div>
       {isLoading ? (
         <ClusterLastDeploymentSkeleton />
       ) : clusterStatus && hasLastDeployment ? (
         <div className="flex flex-col">
           <Link
-            {...(lastDeployment
+            {...(!isClusterDeploymentHistoryEnabled
               ? {
-                  to: '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId' as const,
-                  params: { organizationId, clusterId, deploymentId: lastDeployment.identifier.deployment_id },
-                }
-              : {
-                  to: '/organization/$organizationId/cluster/$clusterId/deployments' as const,
+                  to: '/organization/$organizationId/cluster/$clusterId/cluster-logs' as const,
                   params: { organizationId, clusterId },
-                })}
+                }
+              : lastDeployment
+                ? {
+                    to: '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId' as const,
+                    params: { organizationId, clusterId, deploymentId: lastDeployment.identifier.deployment_id },
+                  }
+                : {
+                    to: '/organization/$organizationId/cluster/$clusterId/deployments' as const,
+                    params: { organizationId, clusterId },
+                  })}
             className="relative flex rounded-lg border border-neutral bg-surface-neutral p-4 transition-colors hover:bg-surface-neutral-subtle"
           >
             <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">

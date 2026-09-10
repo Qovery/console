@@ -1,5 +1,6 @@
 import { TooltipProvider } from '@radix-ui/react-tooltip'
 import posthog from 'posthog-js'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   ClusterStateEnum,
   type ClusterStatus,
@@ -10,6 +11,10 @@ import type { ReactNode } from 'react'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterLastDeploymentSection } from './cluster-last-deployment-section'
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
+}))
 
 jest.mock('posthog-js', () => ({
   __esModule: true,
@@ -52,6 +57,8 @@ jest.mock('../hooks/use-cluster-deployment-history/use-cluster-deployment-histor
   }),
 }))
 
+const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.Mock
+
 const baseClusterStatus: ClusterStatus = {
   cluster_id: 'cluster-1',
   status: ClusterStateEnum.DEPLOYED,
@@ -79,6 +86,7 @@ const wrapper = ({ children }: { children: ReactNode }) => (
 describe('ClusterLastDeploymentSection', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    useFeatureFlagEnabledMock.mockReturnValue(true)
   })
 
   it('renders the latest cluster deployment row linked to its deployment logs', () => {
@@ -104,6 +112,30 @@ describe('ClusterLastDeploymentSection', () => {
     const link = screen.getByText('See all deployments').closest('a')
 
     expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/deployments')
+  })
+
+  describe('when the cluster-deployment-history feature flag is off', () => {
+    beforeEach(() => {
+      useFeatureFlagEnabledMock.mockReturnValue(false)
+    })
+
+    it('links the deployment card to the legacy cluster logs page', () => {
+      renderWithProviders(
+        <ClusterLastDeploymentSection organizationId="org-1" clusterId="cluster-1" clusterStatus={baseClusterStatus} />
+      )
+
+      const link = screen.getByText('Deploy').closest('a')
+
+      expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/cluster-logs')
+    })
+
+    it('does not render the "See all deployments" link', () => {
+      renderWithProviders(
+        <ClusterLastDeploymentSection organizationId="org-1" clusterId="cluster-1" clusterStatus={baseClusterStatus} />
+      )
+
+      expect(screen.queryByText('See all deployments')).not.toBeInTheDocument()
+    })
   })
 
   it('uses the deployment type when it is returned by the API payload', () => {

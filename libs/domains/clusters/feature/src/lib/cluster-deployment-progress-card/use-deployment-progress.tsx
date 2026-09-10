@@ -1,6 +1,8 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useMemo } from 'react'
 import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
 import { useClusterDeploymentLogs } from '../hooks/use-cluster-deployment-logs/use-cluster-deployment-logs'
+import { useClusterLogs } from '../hooks/use-cluster-logs/use-cluster-logs'
 
 // XXX: This code need to be refactored and improved
 // From https://github.com/Qovery/console/pull/2176
@@ -29,17 +31,28 @@ export function useDeploymentProgress({ organizationId, clusterId, cloudProvider
   currentStepLabel: string
   state: LifecycleState
 } {
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
+  // Only one of the two log sources is queried at a time, depending on the feature flag
   const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
     organizationId,
     clusterId,
+    enabled: isClusterDeploymentHistoryEnabled,
   })
   const latestDeploymentId = deploymentHistory[0]?.identifier.deployment_id ?? ''
-  const { data: clusterLogs } = useClusterDeploymentLogs({
+  const { data: deploymentLogs } = useClusterDeploymentLogs({
     organizationId,
     clusterId,
     deploymentId: latestDeploymentId,
     refetchInterval: 3000,
+    enabled: isClusterDeploymentHistoryEnabled,
   })
+  const { data: legacyClusterLogs } = useClusterLogs({
+    organizationId,
+    clusterId,
+    refetchInterval: 3000,
+    enabled: !isClusterDeploymentHistoryEnabled,
+  })
+  const clusterLogs = isClusterDeploymentHistoryEnabled ? deploymentLogs : legacyClusterLogs
 
   const providerCode = useMemo(() => {
     switch (cloudProvider) {

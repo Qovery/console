@@ -1,4 +1,5 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense } from 'react'
 import {
   ClusterActions,
@@ -15,6 +16,28 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function RouteComponent() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
+
+  // When the feature flag is off, fall back to the legacy cluster logs page
+  // without mounting the deployment-history queries
+  if (!isClusterDeploymentHistoryEnabled) {
+    if (!organizationId || !clusterId) {
+      return null
+    }
+
+    return (
+      <Navigate
+        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        params={{ organizationId, clusterId }}
+        replace
+      />
+    )
+  }
+
+  return <ClusterDeploymentsPage organizationId={organizationId} clusterId={clusterId} />
+}
+
+function ClusterDeploymentsPage({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId })
 

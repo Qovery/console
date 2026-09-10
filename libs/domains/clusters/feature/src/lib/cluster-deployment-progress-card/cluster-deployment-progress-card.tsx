@@ -1,5 +1,6 @@
 import * as AccordionPrimitive from '@radix-ui/react-accordion'
 import clsx from 'clsx'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type ClusterStatus, type Project } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
 import { useProjects } from '@qovery/domains/projects/feature'
@@ -46,6 +47,10 @@ function Item({
   clusterStatus?: ClusterStatus
   project: Project
 }) {
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
+  const clusterLogsLinkTarget = isClusterDeploymentHistoryEnabled
+    ? ('/organization/$organizationId/cluster/$clusterId/deployments' as const)
+    : ('/organization/$organizationId/cluster/$clusterId/cluster-logs' as const)
   const { steps, progressValue, currentStepLabel, state } = useDeploymentProgress({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
@@ -182,7 +187,7 @@ function Item({
           </ul>
           <div className="mt-3">
             <Link
-              to="/organization/$organizationId/cluster/$clusterId/deployments"
+              to={clusterLogsLinkTarget}
               params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
               size="ssm"
               className="inline-flex items-center gap-1 font-medium text-neutral-subtle hover:text-neutral"
@@ -212,7 +217,7 @@ function Item({
         <div className="flex min-w-0 items-center gap-3">
           {isFailed && (
             <Link
-              to="/organization/$organizationId/cluster/$clusterId/deployments"
+              to={clusterLogsLinkTarget}
               params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
               size="ssm"
               className="text-neutral-subtle hover:text-neutral"

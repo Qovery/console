@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type Cluster,
   type ClusterStatus,
@@ -415,6 +416,10 @@ export interface ClusterActionsProps {
 
 export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: ClusterActionsProps) {
   const navigate = useNavigate()
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
+  const clusterLogsLinkTarget = isClusterDeploymentHistoryEnabled
+    ? ('/organization/$organizationId/cluster/$clusterId/deployments' as const)
+    : ('/organization/$organizationId/cluster/$clusterId/cluster-logs' as const)
   const location = useLocation()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
   const { openModal, closeModal } = useModal()
@@ -503,7 +508,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
           iconOnly
           onClick={() =>
             navigate({
-              to: '/organization/$organizationId/cluster/$clusterId/deployments',
+              to: clusterLogsLinkTarget,
               params: {
                 organizationId: cluster.organization.id,
                 clusterId: cluster.id,

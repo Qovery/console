@@ -1061,6 +1061,11 @@ const tanstackRouteAliases: Array<{ pattern: string; target: MappingPath }> = [
     target: '/organization/:organizationId/clusters/general',
   },
   {
+    // Legacy route (`cluster-deployment-history` feature flag off)
+    pattern: '/organization/:organizationId/cluster/:clusterId/cluster-logs',
+    target: '/organization/:organizationId/clusters/general',
+  },
+  {
     pattern: '/organization/:organizationId/cluster/:clusterId/deployments',
     target: '/organization/:organizationId/clusters/general',
   },
