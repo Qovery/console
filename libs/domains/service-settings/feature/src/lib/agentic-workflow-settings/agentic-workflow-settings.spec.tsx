@@ -145,7 +145,7 @@ describe('AgenticWorkflowSettings views', () => {
     jest.useFakeTimers()
     editService.mockReset()
     useServiceSpy.mockReturnValue({ data: service })
-    useGitTokensSpy.mockReturnValue({ data: [{ id: 'token-1', type: 'GITHUB' }] })
+    useGitTokensSpy.mockReturnValue({ data: [{ id: 'token-1', type: 'GITHUB' }], isLoading: false })
     useMcpServersSpy.mockReturnValue({
       data: [{ id: 'mcp-1', name: 'Documentation', url: 'https://docs.example.com' }],
       isLoading: false,
@@ -236,6 +236,26 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('heading', { name: 'Connections' })).toBeInTheDocument()
     expect(screen.getByText('qovery/console')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
+  })
+
+  it('prevents editing a private self-hosted repository until its provider is resolved', () => {
+    useServiceSpy.mockReturnValue({
+      data: {
+        ...service,
+        project_repositories: [
+          {
+            url: 'https://gitlab.company.com/qovery/backend.git',
+            branch: 'main',
+            git_token_id: 'token-1',
+          },
+        ],
+      },
+    })
+    useGitTokensSpy.mockReturnValue({ data: undefined, isLoading: true })
+
+    renderWithProviders(<AgenticWorkflowSettings page="connections" />)
+
+    expect(screen.getByRole('button', { name: 'Manage context' })).toBeDisabled()
   })
 
   it('preserves malformed legacy MCP JSON without blocking Connections changes', async () => {

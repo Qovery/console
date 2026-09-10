@@ -121,7 +121,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
   const workflow = service && isAgenticWorkflow(service) ? service : undefined
-  const { data: gitTokens = [] } = useGitTokens({
+  const { data: gitTokens = [], isLoading: gitTokensLoading } = useGitTokens({
     organizationId,
     enabled: page === 'connections' && workflow?.project_repositories.some(({ git_token_id }) => git_token_id != null),
   })
@@ -224,7 +224,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         {page === 'ai-configuration' ? (
           <AgenticWorkflowAiConfigurationSettings environmentId={environmentId} form={form} />
         ) : null}
-        {page === 'connections' ? <AgenticWorkflowConnectionsSettings form={form} /> : null}
+        {page === 'connections' ? (
+          <AgenticWorkflowConnectionsSettings form={form} gitTokensLoading={gitTokensLoading} />
+        ) : null}
         {page === 'automations' ? <AgenticWorkflowAutomationsSettings form={form} /> : null}
         {page === 'governance' ? <AgenticWorkflowGovernanceSettings form={form} /> : null}
         {page === 'advanced-settings' ? <AgenticWorkflowAdvancedSettings form={form} /> : null}
