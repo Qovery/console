@@ -1,4 +1,4 @@
-import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
+import { Navigate, createFileRoute, useParams, useRouter } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useMemo, useRef } from 'react'
 import {
@@ -59,6 +59,7 @@ function ClusterDeploymentLogsPage({
     clusterId,
     deploymentId,
   })
+  const router = useRouter()
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId })
   const { data: deploymentHistory = [] } = useClusterDeploymentHistory({ organizationId, clusterId })
@@ -90,6 +91,11 @@ function ClusterDeploymentLogsPage({
               data={logs}
               refScrollSection={refScrollSection}
               executionId={deployment?.identifier.execution_id ?? deploymentId}
+              onBack={() => router.history.back()}
+              createdAt={deployment?.auditing_data.created_at}
+              triggeredBy={deployment?.auditing_data.triggered_by}
+              actionStatus={deployment?.action_status}
+              totalDuration={deployment?.total_duration}
             />
           </div>
           {deployment?.action_status === 'ONGOING' && deployment?.reason === 'MAINTENANCE' && (
