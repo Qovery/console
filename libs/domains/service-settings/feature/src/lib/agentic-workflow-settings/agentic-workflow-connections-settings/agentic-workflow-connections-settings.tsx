@@ -16,8 +16,10 @@ import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
 export function AgenticWorkflowConnectionsSettings({
   form,
+  gitTokensLoading,
 }: {
   form: UseFormReturn<AgenticWorkflowSettingsFormValues>
+  gitTokensLoading: boolean
 }) {
   const { organizationId = '' } = useParams({ strict: false })
   const { data: mcpServers = [], isLoading } = useMcpServers({ organizationId })
@@ -76,6 +78,7 @@ export function AgenticWorkflowConnectionsSettings({
                 key={`${repository.repository}-${index}`}
                 provider={repository.provider}
                 repository={repository.gitRepository?.name ?? repository.repository}
+                disabled={gitTokensLoading && Boolean(repository.gitTokenId) && !repository.provider}
                 onClick={() => openGitContext(index)}
               />
             ))}

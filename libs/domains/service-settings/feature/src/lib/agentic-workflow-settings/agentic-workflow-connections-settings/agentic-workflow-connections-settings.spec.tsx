@@ -40,7 +40,7 @@ describe('AgenticWorkflowConnectionsSettings', () => {
           dockerFragment: 'RUN apt-get update',
         }}
       >
-        {(form) => <AgenticWorkflowConnectionsSettings form={form} />}
+        {(form) => <AgenticWorkflowConnectionsSettings form={form} gitTokensLoading={false} />}
       </AgenticWorkflowSettingsFormHarness>
     )
 

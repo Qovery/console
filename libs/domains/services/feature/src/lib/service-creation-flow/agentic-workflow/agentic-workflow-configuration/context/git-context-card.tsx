@@ -28,10 +28,12 @@ export function GitContextCard({ onClick }: { onClick: () => void }) {
 }
 
 export function GitContextCompactCard({
+  disabled = false,
   onClick,
   provider,
   repository,
 }: {
+  disabled?: boolean
   onClick: () => void
   provider?: string | null
   repository: string
@@ -51,6 +53,7 @@ export function GitContextCompactCard({
         iconOnly
         aria-label="Manage context"
         className="absolute right-3 top-1/2 -translate-y-1/2"
+        disabled={disabled}
         onClick={onClick}
       >
         <Icon iconName="gear" />

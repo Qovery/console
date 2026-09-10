@@ -37,4 +37,15 @@ describe('GitContextCompactCard', () => {
 
     expect(onClick).toHaveBeenCalled()
   })
+
+  it('prevents managing the context when disabled', async () => {
+    const onClick = jest.fn()
+    const { userEvent } = renderWithProviders(<GitContextCompactCard disabled repository="my-repo" onClick={onClick} />)
+
+    const manageButton = screen.getByRole('button', { name: 'Manage context' })
+    expect(manageButton).toBeDisabled()
+    await userEvent.click(manageButton)
+
+    expect(onClick).not.toHaveBeenCalled()
+  })
 })
