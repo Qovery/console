@@ -15,14 +15,12 @@ import posthog from 'posthog-js'
 import { StrictMode, useEffect, useRef } from 'react'
 import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
-import { IntercomProvider } from 'react-use-intercom'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { LoaderSpinner, type ToastStatus, toast, toastError } from '@qovery/shared/ui'
 import {
   DEVOPS_COPILOT_API_BASE_URL,
   GIT_SHA,
   GTM,
-  INTERCOM,
   NODE_ENV,
   POSTHOG,
   POSTHOG_APIHOST,
@@ -222,7 +220,6 @@ root.render(
           TooltipProvider,
           Auth0Wrapper,
           makeProvider(QueryClientProvider, { client: queryClient }),
-          makeProvider(IntercomProvider, { appId: INTERCOM }),
         ]}
       >
         <App />

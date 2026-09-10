@@ -212,7 +212,7 @@ export function AuditLogsView() {
       setFilter={setFilter}
       organization={organization}
       organizationId={organizationId}
-      showIntercom={showChat}
+      showChat={showChat}
       queryParams={urlParams}
       targetTypeSelectedItems={targetTypeSelectedItems}
       setTargetTypeSelectedItems={setTargetTypeSelectedItems}

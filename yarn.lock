@@ -6456,7 +6456,6 @@ __metadata:
     react-select: 5.7.3
     react-select-event: 5.5.1
     react-syntax-highlighter: 15.6.1
-    react-use-intercom: 5.3.0
     react-xtermjs: 1.0.10
     recharts: 3.1.2
     remark-gfm: 4.0.1
@@ -26491,16 +26490,6 @@ __metadata:
     react: ">=16.8.0"
     react-dom: ">=16.8.0"
   checksum: 4ca616583cd12825706be94886cf1512e0995170709435971787c7d5adf3d95d6349df17f45d74e805453e338a220e2ebe1b54a5d696bcad4617a71e24e02c59
-  languageName: node
-  linkType: hard
-
-"react-use-intercom@npm:5.3.0":
-  version: 5.3.0
-  resolution: "react-use-intercom@npm:5.3.0"
-  peerDependencies:
-    react: ">=16.8.0"
-    react-dom: ">=16.8.0"
-  checksum: b08e1aa92b93ebeea01aa89f799eaed51d27887026a5983458800e13a7cf20fc267b59b3d12e78eb04335428f3000ceb779c92b4cbd4348cd70811c733d12d8c
   languageName: node
   linkType: hard
 
