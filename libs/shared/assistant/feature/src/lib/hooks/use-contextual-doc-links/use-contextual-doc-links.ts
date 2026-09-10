@@ -1061,7 +1061,7 @@ const tanstackRouteAliases: Array<{ pattern: string; target: MappingPath }> = [
     target: '/organization/:organizationId/clusters/general',
   },
   {
-    pattern: '/organization/:organizationId/cluster/:clusterId/cluster-logs',
+    pattern: '/organization/:organizationId/cluster/:clusterId/deployments',
     target: '/organization/:organizationId/clusters/general',
   },
   {

@@ -26,7 +26,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('BUILDING', 'DEPLOYING', 'CANCELING', 'DELETING', 'RESTARTING', 'STOPPING', 'DRY_RUN', (s) => (
       <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        to="/organization/$organizationId/cluster/$clusterId/deployments"
         params={{
           organizationId: cluster.organization.id,
           clusterId: cluster.id,
@@ -47,7 +47,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('BUILD_ERROR', 'DELETE_ERROR', 'DEPLOYMENT_ERROR', 'STOP_ERROR', 'RESTART_ERROR', () => (
       <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        to="/organization/$organizationId/cluster/$clusterId/deployments"
         params={{
           organizationId: cluster.organization.id,
           clusterId: cluster.id,
@@ -64,7 +64,7 @@ function Subtitle({ cluster, clusterDeploymentStatus }: { cluster: Cluster; clus
     ))
     .with('INVALID_CREDENTIALS', () => (
       <LinkUI
-        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        to="/organization/$organizationId/cluster/$clusterId/deployments"
         params={{
           organizationId: cluster.organization.id,
           clusterId: cluster.id,

@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
-import { useClusterLogs } from '../hooks/use-cluster-logs/use-cluster-logs'
+import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
+import { useClusterDeploymentLogs } from '../hooks/use-cluster-deployment-logs/use-cluster-deployment-logs'
 
 // XXX: This code need to be refactored and improved
 // From https://github.com/Qovery/console/pull/2176
@@ -28,9 +29,15 @@ export function useDeploymentProgress({ organizationId, clusterId, cloudProvider
   currentStepLabel: string
   state: LifecycleState
 } {
-  const { data: clusterLogs } = useClusterLogs({
+  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
     organizationId,
     clusterId,
+  })
+  const latestDeploymentId = deploymentHistory[0]?.identifier.deployment_id ?? ''
+  const { data: clusterLogs } = useClusterDeploymentLogs({
+    organizationId,
+    clusterId,
+    deploymentId: latestDeploymentId,
     refetchInterval: 3000,
   })
 

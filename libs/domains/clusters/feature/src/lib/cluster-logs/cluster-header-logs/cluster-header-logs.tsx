@@ -11,9 +11,16 @@ export interface ClusterHeaderLogsProps {
   clusterStatus: ClusterStatus
   refScrollSection: RefObject<HTMLDivElement>
   data: ClusterLogs[]
+  executionId?: string
 }
 
-export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, data }: ClusterHeaderLogsProps) {
+export function ClusterHeaderLogs({
+  cluster,
+  clusterStatus,
+  refScrollSection,
+  data,
+  executionId,
+}: ClusterHeaderLogsProps) {
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
 
   const hasDeploymentError = [
@@ -40,7 +47,7 @@ export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, da
     }
   }
 
-  const lastExecutionId = clusterStatus.last_execution_id ?? ''
+  const lastExecutionId = executionId ?? clusterStatus.last_execution_id ?? ''
 
   return (
     <div className="flex w-full items-center justify-between gap-2 pl-5 pr-3 text-sm">

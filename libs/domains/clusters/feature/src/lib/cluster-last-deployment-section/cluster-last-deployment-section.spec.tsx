@@ -29,6 +29,29 @@ jest.mock('@qovery/shared/ui', () => ({
   Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
+jest.mock('../hooks/use-cluster-deployment-history/use-cluster-deployment-history', () => ({
+  useClusterDeploymentHistory: () => ({
+    data: [
+      {
+        identifier: {
+          deployment_id: 'deployment-1',
+          execution_id: 'execution-1',
+          cluster_id: 'cluster-1',
+        },
+        auditing_data: {
+          created_at: '2026-08-10T12:30:00Z',
+        },
+        status: 'DEPLOYED',
+        action_status: 'SUCCESS',
+        trigger_action: 'DEPLOY',
+        reason: 'UNSPECIFIED',
+        total_duration: 'PT1M',
+      },
+    ],
+    isFetched: true,
+  }),
+}))
+
 const baseClusterStatus: ClusterStatus = {
   cluster_id: 'cluster-1',
   status: ClusterStateEnum.DEPLOYED,
@@ -58,7 +81,7 @@ describe('ClusterLastDeploymentSection', () => {
     jest.clearAllMocks()
   })
 
-  it('renders the latest cluster deployment row linked to cluster logs', () => {
+  it('renders the latest cluster deployment row linked to its deployment logs', () => {
     renderWithProviders(
       <ClusterLastDeploymentSection organizationId="org-1" clusterId="cluster-1" clusterStatus={baseClusterStatus} />
     )
@@ -67,7 +90,20 @@ describe('ClusterLastDeploymentSection', () => {
 
     expect(screen.getByText('Last deployment')).toBeInTheDocument()
     expect(screen.getByText('mocked-time ago')).toBeInTheDocument()
-    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/cluster-logs')
+    expect(link).toHaveAttribute(
+      'to',
+      '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
+    )
+  })
+
+  it('renders a link to the deployments tab', () => {
+    renderWithProviders(
+      <ClusterLastDeploymentSection organizationId="org-1" clusterId="cluster-1" clusterStatus={baseClusterStatus} />
+    )
+
+    const link = screen.getByText('See all deployments').closest('a')
+
+    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/deployments')
   })
 
   it('uses the deployment type when it is returned by the API payload', () => {

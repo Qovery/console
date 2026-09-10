@@ -475,7 +475,7 @@ export function SectionOnboarding() {
                 <span className="text-ssm font-normal text-neutral-subtle">Deployment queued...</span>
               ) : isClusterDeploying ? (
                 <Link
-                  to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+                  to="/organization/$organizationId/cluster/$clusterId/deployments"
                   params={{ organizationId, clusterId: deployingClusterStatus?.cluster_id ?? '' }}
                   color="brand"
                   underline
@@ -491,7 +491,7 @@ export function SectionOnboarding() {
                 </Link>
               ) : isClusterFailed ? (
                 <Link
-                  to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+                  to="/organization/$organizationId/cluster/$clusterId/deployments"
                   params={{ organizationId, clusterId: failedClusterStatus?.cluster_id ?? '' }}
                   color="red"
                   underline

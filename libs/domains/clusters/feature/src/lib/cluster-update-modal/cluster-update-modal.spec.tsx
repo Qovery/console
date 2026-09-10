@@ -83,7 +83,7 @@ describe('ClusterUpdateModal', () => {
 
     await waitFor(() =>
       expect(mockNavigate).toHaveBeenCalledWith({
-        to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+        to: '/organization/$organizationId/cluster/$clusterId/deployments',
         params: {
           organizationId: mockCluster.organization.id,
           clusterId: mockCluster.id,

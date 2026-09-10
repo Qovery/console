@@ -182,7 +182,7 @@ function Item({
           </ul>
           <div className="mt-3">
             <Link
-              to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+              to="/organization/$organizationId/cluster/$clusterId/deployments"
               params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
               size="ssm"
               className="inline-flex items-center gap-1 font-medium text-neutral-subtle hover:text-neutral"
@@ -212,7 +212,7 @@ function Item({
         <div className="flex min-w-0 items-center gap-3">
           {isFailed && (
             <Link
-              to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+              to="/organization/$organizationId/cluster/$clusterId/deployments"
               params={{ organizationId: cluster.organization.id, clusterId: cluster.id }}
               size="ssm"
               className="text-neutral-subtle hover:text-neutral"

@@ -43,7 +43,7 @@ const isDeployingStatus = (status?: ClusterStateEnum): boolean =>
   status === ClusterState.DEPLOYMENT_QUEUED || status === ClusterState.DEPLOYING
 
 const hiddenProgressCardRouteIds: FileRouteTypes['id'][] = [
-  '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployment/$deploymentId/pre-check-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/service-logs',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments/logs/$executionId',

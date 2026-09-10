@@ -86,10 +86,10 @@ const CLUSTER_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview',
   },
   {
-    id: 'cluster-logs',
-    label: 'Deployment Logs',
-    iconName: 'scroll',
-    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+    id: 'deployments',
+    label: 'Deployments',
+    iconName: 'rocket',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments',
   },
   {
     id: 'cloud-shell',
@@ -469,7 +469,7 @@ function NavigationBar({ context }: { context: NavigationContext }) {
 
 const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/alerts',
-  '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',

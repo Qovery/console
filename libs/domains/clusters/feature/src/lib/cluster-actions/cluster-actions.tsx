@@ -503,7 +503,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
           iconOnly
           onClick={() =>
             navigate({
-              to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+              to: '/organization/$organizationId/cluster/$clusterId/deployments',
               params: {
                 organizationId: cluster.organization.id,
                 clusterId: cluster.id,

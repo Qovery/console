@@ -23,6 +23,7 @@ import {
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
 
 const DotSeparator = () => (
   <svg
@@ -95,6 +96,8 @@ export function ClusterLastDeploymentSection({
   isLoading = false,
 }: ClusterLastDeploymentSectionProps) {
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
+  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({ organizationId, clusterId })
+  const lastDeployment = deploymentHistory[0]
   const hasLastDeployment = Boolean(clusterStatus?.last_deployment_date || clusterStatus?.last_execution_id)
   const isOngoing = match(clusterStatus?.status)
     .with(
@@ -132,14 +135,33 @@ export function ClusterLastDeploymentSection({
 
   return (
     <Section className="gap-3">
-      <Heading>Last deployment</Heading>
+      <div className="flex items-center justify-between gap-2">
+        <Heading>Last deployment</Heading>
+        <Link
+          to="/organization/$organizationId/cluster/$clusterId/deployments"
+          params={{ organizationId, clusterId }}
+          color="neutral"
+          size="ssm"
+          className="gap-0.5 text-neutral-subtle hover:text-neutral"
+        >
+          See all deployments
+          <Icon iconName="angle-right" className="text-ssm" />
+        </Link>
+      </div>
       {isLoading ? (
         <ClusterLastDeploymentSkeleton />
       ) : clusterStatus && hasLastDeployment ? (
         <div className="flex flex-col">
           <Link
-            to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
-            params={{ organizationId, clusterId }}
+            {...(lastDeployment
+              ? {
+                  to: '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId' as const,
+                  params: { organizationId, clusterId, deploymentId: lastDeployment.identifier.deployment_id },
+                }
+              : {
+                  to: '/organization/$organizationId/cluster/$clusterId/deployments' as const,
+                  params: { organizationId, clusterId },
+                })}
             className="relative flex rounded-lg border border-neutral bg-surface-neutral p-4 transition-colors hover:bg-surface-neutral-subtle"
           >
             <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">
