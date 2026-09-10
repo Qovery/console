@@ -18,6 +18,7 @@ import { useDeploymentRule } from '../hooks/use-deployment-rule/use-deployment-r
 import { useEditDeploymentRule } from '../hooks/use-edit-deployment-rule/use-edit-deployment-rule'
 
 interface PageSettingsPreviewEnvironmentsProps {
+  embedded?: boolean
   onSubmit: () => void
   services?: AnyService[]
   loading: boolean
@@ -26,7 +27,7 @@ interface PageSettingsPreviewEnvironmentsProps {
 }
 
 export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnvironmentsProps) {
-  const { onSubmit, services, loading, toggleAll, toggleEnablePreview } = props
+  const { onSubmit, services, loading, toggleAll, toggleEnablePreview, embedded = false } = props
   const { control, formState } = useFormContext()
   const hasArgoCdServices = services?.some(isArgoCd)
   const hasQoveryServices = services?.some(isEditableService)
@@ -41,8 +42,8 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
-        <SettingsHeading title="Preview environments" />
+      <Section className={embedded ? 'gap-0' : 'px-8 pb-8 pt-6'}>
+        {!embedded && <SettingsHeading title="Preview environments" />}
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           {shouldDisplayArgoCdPreviewWarning && (
             <Callout.Root className="mb-6" color="yellow">
@@ -135,7 +136,13 @@ export function PageSettingsPreviewEnvironments(props: PageSettingsPreviewEnviro
   )
 }
 
-export function SettingsPreviewEnvironmentsFeature({ services }: { services: AnyService[] }) {
+export function SettingsPreviewEnvironmentsFeature({
+  services,
+  embedded = false,
+}: {
+  services: AnyService[]
+  embedded?: boolean
+}) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
   const [loading, setLoading] = useState(false)
 
@@ -239,6 +246,7 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
   return (
     <FormProvider {...methods}>
       <PageSettingsPreviewEnvironments
+        embedded={embedded}
         onSubmit={onSubmit}
         services={services}
         loading={loading}
@@ -249,9 +257,9 @@ export function SettingsPreviewEnvironmentsFeature({ services }: { services: Any
   )
 }
 
-export function PageSettingsPreviewEnvironmentsFeature() {
+export function PageSettingsPreviewEnvironmentsFeature({ embedded = false }: { embedded?: boolean }) {
   const { environmentId = '' } = useParams({ strict: false })
   const { data: services } = useServices({ environmentId })
 
-  return <SettingsPreviewEnvironmentsFeature services={services} />
+  return <SettingsPreviewEnvironmentsFeature services={services} embedded={embedded} />
 }

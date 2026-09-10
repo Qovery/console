@@ -152,6 +152,12 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables',
   },
   {
+    id: 'automations',
+    label: 'Automations',
+    iconName: 'stopwatch',
+    routeId: '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/automations',
+  },
+  {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
@@ -160,6 +166,13 @@ const ENVIRONMENT_TABS: NavigationTab[] = [
 ]
 
 const SERVICE_TABS: NavigationTab[] = [
+  {
+    id: 'runs',
+    label: 'Runs',
+    iconName: 'list-check',
+    routeId:
+      '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/runs',
+  },
   {
     id: 'overview',
     label: 'Overview',
@@ -219,7 +232,7 @@ const SERVICE_TABS: NavigationTab[] = [
 ]
 
 const ARGOCD_SERVICE_TAB_IDS = ['overview', 'service-logs', 'cloud-shell', 'manifest']
-const AGENTIC_WORKFLOW_SERVICE_TAB_IDS = ['overview', 'deployments', 'service-logs', 'variables', 'settings']
+const AGENTIC_WORKFLOW_SERVICE_TAB_IDS = ['overview', 'runs', 'deployments', 'service-logs', 'variables', 'settings']
 
 function hasServiceMonitoringTab(service?: AnyService, cluster?: Cluster) {
   if (!service) return false
@@ -261,7 +274,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster, isAgenticWorkfl
   if (isAgenticWorkflow(service)) {
     return SERVICE_TABS.filter(
       (tab) => AGENTIC_WORKFLOW_SERVICE_TAB_IDS.includes(tab.id) && (isAgenticWorkflowEnabled || tab.id !== 'variables')
-    )
+    ).sort((a, b) => AGENTIC_WORKFLOW_SERVICE_TAB_IDS.indexOf(a.id) - AGENTIC_WORKFLOW_SERVICE_TAB_IDS.indexOf(b.id))
   }
 
   const isDatabase = service?.serviceType === 'DATABASE'
@@ -275,6 +288,7 @@ function getServiceTabs(service?: AnyService, cluster?: Cluster, isAgenticWorkfl
       !(isDatabase && tab.id === 'variables') &&
       !(isManagedDatabaseService && tab.id === 'cloud-shell') &&
       tab.id !== 'manifest' &&
+      tab.id !== 'runs' &&
       !(tab.id === 'monitoring' && !hasMonitoring)
   )
 }
@@ -372,9 +386,11 @@ function useNavigationContext(): NavigationContext | null {
         const tabs =
           context.type === 'service'
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled)
-            : context.type === 'organization'
-              ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
-              : context.tabs
+            : context.type === 'environment'
+              ? context.tabs.filter((tab) => isAgenticWorkflowEnabled || tab.id !== 'automations')
+              : context.type === 'organization'
+                ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
+                : context.tabs
 
         return {
           type: context.type,

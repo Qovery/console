@@ -75,6 +75,15 @@ export function AgenticWorkflowServiceActions({
           </Button>
         </DropdownMenu.Trigger>
         <DropdownMenu.Content>
+          <DropdownMenu.Item icon={<Icon iconName="list-check" />} asChild>
+            <Link
+              className="gap-0"
+              to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/runs"
+              params={{ organizationId, projectId, environmentId, serviceId: service.id }}
+            >
+              Runs
+            </Link>
+          </DropdownMenu.Item>
           <DropdownMenu.Item icon={<Icon iconName="clock-rotate-left" />} asChild>
             <Link
               className="gap-0"

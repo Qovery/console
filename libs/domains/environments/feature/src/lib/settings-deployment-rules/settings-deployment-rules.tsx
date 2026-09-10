@@ -19,7 +19,7 @@ export const handleSubmit = (data: FieldValues, environmentDeploymentRules?: Env
   return cloneEnvironmentDeploymentRules
 }
 
-export const SettingsDeploymentRules = () => {
+export const SettingsDeploymentRules = ({ embedded = false }: { embedded?: boolean }) => {
   const { environmentId = '' } = useParams({ strict: false })
   const [loading, setLoading] = useState(false)
 
@@ -59,8 +59,8 @@ export const SettingsDeploymentRules = () => {
 
   return (
     <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
-        <SettingsHeading title="Deployment rules" />
+      <Section className={embedded ? 'gap-0' : 'px-8 pb-8 pt-6'}>
+        {!embedded && <SettingsHeading title="Deployment rules" />}
         <form onSubmit={onSubmit} className="max-w-content-with-navigation-left">
           <BlockContent title="Start & stop">
             <div className="flex items-center gap-3">

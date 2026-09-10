@@ -2,7 +2,6 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Outlet, createFileRoute, useMatchRoute } from '@tanstack/react-router'
 import { Link as RouterLink } from '@tanstack/react-router'
 import posthog from 'posthog-js'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useEffect, useMemo } from 'react'
 import {
   ClusterAvatar,
@@ -22,8 +21,8 @@ import {
   useEnvironment,
 } from '@qovery/domains/environments/feature'
 import { useEnvironmentsOverview } from '@qovery/domains/projects/feature'
-import { isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
-import { AgenticWorkflowServiceList, ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
+import { isAgenticWorkflow, isArgoCd, isEditableService } from '@qovery/domains/services/data-access'
+import { ArgoCdServiceList, useServices } from '@qovery/domains/services/feature'
 import { Heading, Icon, Link, Navbar, Section, Tooltip } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
@@ -45,7 +44,6 @@ function RouteComponent() {
   const { data: deploymentStatus } = useDeploymentStatus({ environmentId })
   const { data: cluster } = useCluster({ organizationId, clusterId: environment?.cluster_id, suspense: true })
   const { data: services = [] } = useServices({ environmentId, suspense: true })
-  const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
 
   useClusterRunningStatusSocket({
     organizationId,
@@ -70,6 +68,7 @@ function RouteComponent() {
   const isServicesListTab = activeTabId === 'services'
   const qoveryServicesCount = useMemo(() => services.filter(isEditableService).length, [services])
   const argoCdServicesCount = useMemo(() => services.filter(isArgoCd).length, [services])
+  const agentTasksCount = useMemo(() => services.filter(isAgenticWorkflow).length, [services])
   const hasQoveryServices = qoveryServicesCount > 0
   const hasArgoCdServices = argoCdServicesCount > 0
   const shouldDisplayQoveryServicesSubtitle = isServicesListTab && hasArgoCdServices
@@ -129,6 +128,22 @@ function RouteComponent() {
                 </RouterLink>
                 {cluster && <ClusterRunningStatusIndicator cluster={cluster} type="dot" />}
               </div>
+              {agentTasksCount > 0 && (
+                <>
+                  <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
+                  <Link
+                    as="button"
+                    size="xs"
+                    variant="outline"
+                    color="neutral"
+                    className="whitespace-nowrap"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/automations"
+                    params={{ organizationId, projectId, environmentId }}
+                  >
+                    {agentTasksCount} Agent {agentTasksCount === 1 ? 'Task' : 'Tasks'}
+                  </Link>
+                </>
+              )}
             </div>
 
             <div className="flex shrink-0 gap-2">
@@ -197,9 +212,6 @@ function RouteComponent() {
                 )}
               </div>
               {shouldDisplayArgoCdServicesBelowQovery && <ArgoCdServiceList environment={environment} />}
-              {isServicesListTab && isAgenticWorkflowEnabled && (
-                <AgenticWorkflowServiceList environment={environment} />
-              )}
             </div>
           </Section>
         </div>

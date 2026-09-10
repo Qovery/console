@@ -12,6 +12,7 @@ import {
 } from '@qovery/domains/services/data-access'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { CopyToClipboardButtonIcon, Heading, Icon, InputText, Link, Navbar, Section } from '@qovery/shared/ui'
+import { AgentTaskRuns } from '../agent-task-runs/agent-task-runs'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
@@ -226,6 +227,29 @@ function ServiceOverviewContent({
             <ServiceHeader environment={environment} service={service} />
             {hasNoMetrics && observabilityCallout}
             {isAgenticWorkflow(service) && <AgenticWorkflowWebhookSection webhookUrl={service.webhook.url} />}
+            {isAgenticWorkflow(service) && (
+              <Section id="runs" className="scroll-mt-24 gap-4">
+                <div className="flex items-center justify-between gap-4">
+                  <Heading>Last 5 runs</Heading>
+                  <Link
+                    as="button"
+                    color="neutral"
+                    variant="outline"
+                    size="sm"
+                    to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/runs"
+                    params={{
+                      organizationId: environment.organization.id,
+                      projectId: environment.project.id,
+                      environmentId: environment.id,
+                      serviceId: service.id,
+                    }}
+                  >
+                    View all runs
+                  </Link>
+                </div>
+                <AgentTaskRuns agentTaskId={service.id} agentTaskName={service.name} limit={5} />
+              </Section>
+            )}
             {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
             {!isTerraformService && (isEditableService(service) || isAgenticWorkflow(service)) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />

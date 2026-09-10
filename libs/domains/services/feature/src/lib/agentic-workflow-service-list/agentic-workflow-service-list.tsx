@@ -1,63 +1,27 @@
 import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
-import { type KeyboardEvent, type MouseEvent } from 'react'
-import { match } from 'ts-pattern'
+import { type KeyboardEvent, type MouseEvent, type ReactNode } from 'react'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { IconEnum } from '@qovery/shared/enums'
-import { Badge, CopyToClipboardButtonIcon, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Badge, Heading, Section, TablePrimitives } from '@qovery/shared/ui'
+import { formatCronExpression } from '@qovery/shared/util-js'
+import { RunState } from '../agent-task-runs/agent-task-runs'
+import { MOCK_RUNS } from '../agent-task-runs/agent-task-runs.mock'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
-import { ServiceLastDeploymentCell, ServiceNameCell } from '../service-list/service-list-cells'
-import { ServiceStateChip } from '../service-state-chip/service-state-chip'
+import { ServiceNameCell } from '../service-list/service-list-cells'
 
 const { Table } = TablePrimitives
 
 const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(280px,1.1fr)_minmax(260px,1fr)_minmax(180px,0.7fr)_minmax(280px,1fr)_130px]'
+  'grid w-full grid-cols-[minmax(240px,1.2fr)_minmax(180px,1fr)_minmax(200px,1fr)_minmax(160px,0.8fr)_100px]'
+const latestOutput = MOCK_RUNS.find((run) => run.output_url || run.result)
 
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
+  actions?: ReactNode
 }
 
-function ModelCell({ service }: { service: AgenticWorkflow }) {
-  return match(service.model?.type)
-    .with('CLAUDE', () => (
-      <span className="flex items-center gap-2 text-sm text-neutral">
-        <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-5 w-5" />
-        Claude
-      </span>
-    ))
-    .with('BEDROCK', () => (
-      <span className="flex items-center gap-2 text-sm text-neutral">
-        <Icon name={IconEnum.AWS_GRAY} className="h-5 w-5" />
-        Bedrock
-      </span>
-    ))
-    .otherwise((model) => <span className="text-sm text-neutral-subtle">{model ?? 'Not configured'}</span>)
-}
-
-function WebhookCell({
-  service,
-  onAction,
-}: {
-  service: AgenticWorkflow
-  onAction: (event: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>) => void
-}) {
-  return (
-    <div className="flex min-w-0 flex-1 items-center gap-2" onClick={onAction} onKeyDown={onAction}>
-      <Tooltip content={service.webhook.url}>
-        <span className="min-w-0 flex-1 truncate font-mono text-xs text-neutral">{service.webhook.url}</span>
-      </Tooltip>
-      <CopyToClipboardButtonIcon
-        content={service.webhook.url}
-        tooltipContent="Copy webhook URL"
-        className="shrink-0 text-neutral-subtle hover:text-neutral"
-      />
-    </div>
-  )
-}
-
-export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServiceListProps) {
+export function AgenticWorkflowServiceList({ environment, actions }: AgenticWorkflowServiceListProps) {
   const environmentId = environment.id
   const organizationId = environment.organization.id
   const projectId = environment.project.id
@@ -82,11 +46,14 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
 
   return (
     <Section className="flex flex-col gap-3.5">
-      <div className="flex flex-col gap-1">
-        <Heading level={3} className="font-medium text-neutral-subtle">
-          Agent tasks
-        </Heading>
-        <p className="text-sm text-neutral-subtle">One-time tasks delegated to AI agents.</p>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <Heading level={2}>Agent tasks</Heading>
+          <p className="text-sm leading-5 text-neutral-subtle">
+            Run AI agents on demand, on a schedule, or from a webhook.
+          </p>
+        </div>
+        {actions}
       </div>
 
       <div className="flex flex-col overflow-hidden rounded-lg border border-neutral">
@@ -97,21 +64,21 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
         </div>
         <Table.Root
           containerClassName="rounded-none border-x-0 border-b-0 border-t"
-          className="w-full min-w-[1320px] overflow-x-scroll text-xs xl:overflow-auto"
+          className="w-full min-w-[900px] overflow-x-scroll text-xs xl:overflow-auto"
         >
           <Table.Header className="border-neutral">
             <Table.Row className={`h-9 w-full ${tableGridLayoutClassName}`}>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Service
+                Agent Task
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Last operation
+                Trigger
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Model
+                Last triggered
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Webhook
+                Output
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
                 Actions
@@ -133,16 +100,42 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                   <div className="min-w-0 flex-1">
                     <ServiceNameCell service={service} environment={environment} />
                   </div>
-                  <ServiceStateChip mode="running" environmentId={environmentId} serviceId={service.id} />
                 </Table.Cell>
-                <Table.Cell className="flex h-full items-center border-r border-neutral">
-                  <ServiceLastDeploymentCell service={service} environment={environment} />
+                <Table.Cell className="flex h-full items-center border-r border-neutral text-sm">
+                  <span>
+                    {[
+                      service.schedule
+                        ? `${formatCronExpression(service.schedule.cron_expression) || service.schedule.cron_expression} (${service.schedule.timezone})`
+                        : null,
+                      service.webhook?.url ? 'Webhook' : null,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ') || 'Manual'}
+                  </span>
                 </Table.Cell>
-                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <ModelCell service={service} />
+                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral text-sm">
+                  <div className="flex flex-col gap-1">
+                    <RunState status={MOCK_RUNS[0].status} />
+                    <time dateTime={MOCK_RUNS[0].created_at}>
+                      {new Intl.DateTimeFormat('en-GB', {
+                        dateStyle: 'medium',
+                        timeStyle: 'short',
+                        timeZone: 'UTC',
+                      }).format(new Date(MOCK_RUNS[0].created_at))}{' '}
+                      UTC
+                    </time>
+                  </div>
                 </Table.Cell>
-                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <WebhookCell service={service} onAction={stopRowNavigation} />
+                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral text-sm">
+                  {latestOutput?.output_url && /^https?:\/\//i.test(latestOutput.output_url) ? (
+                    <span className="cursor-text truncate" title={latestOutput.output_url} onClick={stopRowNavigation}>
+                      {latestOutput.output_url}
+                    </span>
+                  ) : (
+                    <span className="truncate" title={latestOutput?.result ?? undefined}>
+                      {latestOutput?.result ?? '—'}
+                    </span>
+                  )}
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center">
                   <AgenticWorkflowServiceActions
