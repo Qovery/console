@@ -13,6 +13,7 @@ import {
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, Section } from '@qovery/shared/ui'
+import { guessGitProvider } from '@qovery/shared/util-git'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { AgenticWorkflowAdvancedSettings } from './agentic-workflow-advanced-settings/agentic-workflow-advanced-settings'
 import { AgenticWorkflowAiConfigurationSettings } from './agentic-workflow-ai-configuration-settings/agentic-workflow-ai-configuration-settings'
@@ -121,6 +122,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           repositories: workflow.project_repositories.map(({ url, branch, git_token_id }) => {
             const name = getGitRepositoryName(url)
             return {
+              provider: guessGitProvider(url),
               repository: name,
               branch,
               gitTokenId: git_token_id,
