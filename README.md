@@ -15,38 +15,17 @@ See [package.json](./package.json) for the versions and available scripts.
 
 ## Getting started
 
-### Prerequisites
-
-- **Node.js 23**, matching the repository's development guidelines and CI. With nvm, run `nvm install 23` and `nvm use 23`.
-- **Yarn Berry**. Enable Yarn with `corepack enable`; the repository pins its Yarn release in [.yarnrc.yml](./.yarnrc.yml). Use Yarn for dependency management and commands.
-- Access to the package registry configured in `.yarnrc.yml` (`https://npm-registry.qovery.com`). If dependency installation fails with an access error, ask the maintainers about registry access.
-
-### Install and run
+First use
 
 ```sh
-git clone https://github.com/Qovery/console.git
-cd console
-git switch staging
-yarn install
-yarn setup
+yarn && yarn setup
+```
+
+Start the project on [localhost:4200](http://localhost:4200)
+
+```sh
 yarn start
 ```
-
-Open [localhost:4200](http://localhost:4200).
-
-`yarn setup` runs [s.sh](./s.sh), which appends default configuration to a root `.env` file. Run it once for a fresh checkout; review an existing `.env` before rerunning it to avoid duplicate entries. The defaults point to the production Qovery API and authentication service, so you need a Qovery account to use authenticated pages. Local development does not start a backend.
-
-### Environment configuration
-
-The Console reads `.env` files from the repository root by default. The setup script provides the initial `NX_PUBLIC_*` values for API, WebSocket, authentication, and integrations. Review these values when targeting a different environment. Values loaded by the [Vite configuration](./apps/console/vite.config.ts) are exposed to the browser; do not put server-side secrets in these files.
-
-To reuse an existing environment configuration across Git worktrees, place the `.env` file in a stable directory and start the Console with:
-
-```sh
-QOVERY_CONSOLE_ENV_DIR="$HOME/.config/qovery-console" yarn start
-```
-
-That directory must already contain your configuration. Vite loads `.env`, `.env.local`, and mode-specific environment files from it. Without `QOVERY_CONSOLE_ENV_DIR`, the repository root remains the default. `yarn setup` always writes to the current directory's `.env`, regardless of this setting.
 
 ## Development commands
 
