@@ -126,7 +126,6 @@ Bug reports and improvements are welcome through [GitHub issues](https://github.
 
 ## Community and support
 
-- [Qovery forum](https://discuss.qovery.com/) — questions and discussions.
 - [GitHub issues](https://github.com/Qovery/console/issues) — bug reports and feature requests.
 - [Qovery website](https://www.qovery.com) — product information.
 
