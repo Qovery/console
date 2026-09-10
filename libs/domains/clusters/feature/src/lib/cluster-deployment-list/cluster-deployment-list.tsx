@@ -203,6 +203,19 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
           const origin = info.row.original.auditing_data.origin
           const triggeredBy = info.row.original.auditing_data.triggered_by
 
+          if (!origin && !triggeredBy) {
+            return (
+              <Tooltip content="This deployment was made before initiator tracking was introduced, so this information is not available.">
+                <div className="flex w-fit items-center gap-3">
+                  <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-surface-neutral-component text-neutral-subtle">
+                    <Icon iconName="circle-question" iconStyle="regular" />
+                  </div>
+                  <span className="text-ssm text-neutral-subtle">Unknown</span>
+                </div>
+              </Tooltip>
+            )
+          }
+
           return (
             <div className="flex items-center gap-3">
               <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-surface-neutral-component text-neutral-subtle">

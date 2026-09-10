@@ -65,6 +65,23 @@ describe('ClusterDeploymentList', () => {
     expect(screen.getByText('Maintenance')).toBeInTheDocument()
   })
 
+  it('should render Unknown when the initiator was not recorded', () => {
+    mockDeploymentHistory = [
+      {
+        ...defaultDeploymentHistory[0],
+        auditing_data: {
+          created_at: '2025-01-23T08:55:20.092474Z',
+          updated_at: '2025-01-23T08:55:42.898794Z',
+          origin: null,
+          triggered_by: null,
+        },
+      },
+    ]
+    renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
+
+    expect(screen.getByText('Unknown')).toBeInTheDocument()
+  })
+
   it('should render an empty state when there is no deployment', () => {
     mockDeploymentHistory = []
     renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
