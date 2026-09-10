@@ -1,3 +1,5 @@
+import { type BlueprintItem } from 'qovery-typescript-axios'
+
 const BLUEPRINT_NAME_PARTS: Record<string, string> = {
   aws: 'AWS',
   gcp: 'GCP',
@@ -10,6 +12,8 @@ const BLUEPRINT_NAME_PARTS: Record<string, string> = {
 
 const CLUSTER_AGNOSTIC_BLUEPRINT_PROVIDERS = new Set(['EXTERNAL', 'HELM'])
 
+export const OTHER_BLUEPRINT_CATEGORY = 'Other'
+
 export function formatBlueprintName(name: string): string {
   return name
     .split(/[-_]/)
@@ -20,6 +24,18 @@ export function formatBlueprintName(name: string): string {
       return BLUEPRINT_NAME_PARTS[normalizedPart] ?? `${part.charAt(0).toUpperCase()}${part.slice(1)}`
     })
     .join(' ')
+}
+
+/**
+ * The catalog's stable name is an identifier. Prefer its customer-facing display name,
+ * while preserving the label generated for stale cached catalog entries.
+ */
+export function getBlueprintDisplayName(blueprint: BlueprintItem): string {
+  return blueprint.displayName || formatBlueprintName(blueprint.name)
+}
+
+export function getBlueprintPrimaryCategory(blueprint: BlueprintItem): string {
+  return blueprint.primaryCategory || OTHER_BLUEPRINT_CATEGORY
 }
 
 export function isBlueprintCompatibleWithCluster(blueprintProvider: string, clusterCloudProvider?: string): boolean {

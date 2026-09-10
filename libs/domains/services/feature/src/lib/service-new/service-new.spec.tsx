@@ -3,6 +3,7 @@ import posthog from 'posthog-js'
 import type { BlueprintItem } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { OTHER_BLUEPRINT_CATEGORY } from '../blueprint-utils/blueprint-utils'
 import { ServiceNew } from './service-new'
 
 const mockUseFeatureFlagEnabled = jest.fn(() => false)
@@ -80,20 +81,24 @@ jest.mock('../hooks/use-blueprint-catalog/use-blueprint-catalog', () => ({
 const blueprints: BlueprintItem[] = [
   {
     name: 'AWS S3 Bucket',
+    displayName: 'AWS S3 Bucket',
     kind: 'ServiceBlueprint',
     description: 'Object storage with server-side encryption, versioning, and configurable lifecycle policies.',
     icon: 'app://qovery-console/s3',
     categories: ['storage'],
+    primaryCategory: 'Storage',
     provider: 'aws',
     serviceFamily: 's3',
     majorVersions: [{ serviceVersion: '1', latestTag: 'aws/s3/1/1.0.0' }],
   },
   {
     name: 'Redis',
+    displayName: 'Redis',
     kind: 'ServiceBlueprint',
     description: 'In-memory key-value store deployed via the Bitnami Helm chart with configurable replicas.',
     icon: 'https://cdn.qovery.com/icons/redis.svg',
     categories: ['cache'],
+    primaryCategory: 'Databases & Caches',
     provider: 'aws',
     serviceFamily: 'redis',
     majorVersions: [{ serviceVersion: '7', latestTag: 'aws/redis/7/1.0.0' }],
@@ -272,6 +277,31 @@ describe('ServiceNew', () => {
     expect(blueprintsSectionScreen.getByText('Redis')).toBeInTheDocument()
   })
 
+  it('should group blueprint cards by the primary categories returned by the catalog', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: {
+        blueprints: [
+          { ...blueprints[0], primaryCategory: '' },
+          { ...blueprints[1], primaryCategory: 'Custom Platform' },
+        ],
+      },
+    })
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.getByRole('heading', { name: 'Custom Platform', level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: OTHER_BLUEPRINT_CATEGORY, level: 3 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'AWS S3 Bucket', level: 4 })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Redis', level: 4 })).toBeInTheDocument()
+    expect(screen.getAllByRole('heading', { level: 3 }).map(({ textContent }) => textContent)).toEqual([
+      'Custom Platform',
+      OTHER_BLUEPRINT_CATEGORY,
+    ])
+  })
+
   it('should show an empty state when the blueprint search has no results', async () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({ data: { blueprints } })
@@ -293,7 +323,7 @@ describe('ServiceNew', () => {
   it('should format slug blueprint names', () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({
-      data: { blueprints: [{ ...blueprints[0], name: 'aws-rds-mysql' }] },
+      data: { blueprints: [{ ...blueprints[0], name: 'aws-rds-mysql', displayName: '' }] },
     })
 
     renderWithProviders(
@@ -303,14 +333,33 @@ describe('ServiceNew', () => {
     expect(screen.getByText('AWS RDS MySQL')).toBeInTheDocument()
   })
 
+  it('should prefer a blueprint display name from the catalog', () => {
+    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
+    mockUseBlueprintCatalog.mockReturnValue({
+      data: { blueprints: [{ ...blueprints[0], name: 'aws-rds-mysql', displayName: 'Amazon RDS for MySQL' }] },
+    })
+
+    renderWithProviders(
+      <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
+    )
+
+    expect(screen.getByText('Amazon RDS for MySQL')).toBeInTheDocument()
+    expect(screen.queryByText('AWS RDS MySQL')).not.toBeInTheDocument()
+  })
+
   it('should only display blueprints compatible with the environment cluster', () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'service-catalog')
     mockUseBlueprintCatalog.mockReturnValue({
       data: {
         blueprints: [
-          { ...blueprints[0], name: 'AWS S3', provider: 'AWS' },
-          { ...blueprints[0], name: 'Scaleway Object Storage', provider: 'SCW' },
-          { ...blueprints[1], name: 'Helm Redis', provider: 'HELM' },
+          { ...blueprints[0], name: 'AWS S3', displayName: 'AWS S3', provider: 'AWS' },
+          {
+            ...blueprints[0],
+            name: 'Scaleway Object Storage',
+            displayName: 'Scaleway Object Storage',
+            provider: 'SCW',
+          },
+          { ...blueprints[1], name: 'Helm Redis', displayName: 'Helm Redis', provider: 'HELM' },
         ],
       },
     })
