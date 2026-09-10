@@ -7,6 +7,7 @@ import {
   agenticWorkflowJsonValidation,
   formatAgenticWorkflowRepositories,
   getGitRepositoryName,
+  getGitRepositoryProvider,
 } from './agentic-workflow-settings'
 
 const useGitTokensSpy = jest.spyOn(organizationsDomain, 'useGitTokens') as jest.Mock
@@ -98,6 +99,21 @@ describe('Agentic Workflow settings validation', () => {
     ['qovery/console', 'qovery/console'],
   ])('normalizes the repository value displayed by Git settings', (url, expected) => {
     expect(getGitRepositoryName(url)).toBe(expected)
+  })
+
+  it('uses the Git token provider for a self-hosted repository', () => {
+    expect(
+      getGitRepositoryProvider('https://gitlab.company.com/qovery/backend.git', 'token-1', [
+        {
+          id: 'token-1',
+          name: 'Company GitLab',
+          type: 'GITLAB',
+          created_at: '2026-09-10T00:00:00Z',
+          associated_services_count: 1,
+          git_api_url: 'https://gitlab.company.com/api/v4',
+        },
+      ])
+    ).toBe('GITLAB')
   })
 
   it('uses the full repository URL in the edit payload', () => {

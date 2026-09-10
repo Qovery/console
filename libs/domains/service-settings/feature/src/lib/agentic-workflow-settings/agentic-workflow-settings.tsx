@@ -1,6 +1,11 @@
 import { useParams } from '@tanstack/react-router'
-import { AgenticWorkflowExecutionMode, type AgenticWorkflowRequest } from 'qovery-typescript-axios'
+import {
+  AgenticWorkflowExecutionMode,
+  type AgenticWorkflowRequest,
+  type GitTokenResponse,
+} from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
+import { useGitTokens } from '@qovery/domains/organizations/feature'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   type AgenticWorkflowAutomation,
@@ -84,6 +89,14 @@ export function getGitRepositoryName(url: string) {
   }
 }
 
+export function getGitRepositoryProvider(
+  url: string,
+  gitTokenId: string | null | undefined,
+  gitTokens: GitTokenResponse[]
+) {
+  return gitTokens.find(({ id }) => id === gitTokenId)?.type ?? guessGitProvider(url)
+}
+
 export function formatAgenticWorkflowRepositories(repositories: AgenticWorkflowGitRepository[]) {
   return repositories.map(({ repository, gitRepository, branch, gitTokenId }) => ({
     url: gitRepository?.url ?? repository,
@@ -108,6 +121,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
   const workflow = service && isAgenticWorkflow(service) ? service : undefined
+  const { data: gitTokens = [] } = useGitTokens({
+    organizationId,
+    enabled: page === 'connections' && workflow?.project_repositories.some(({ git_token_id }) => git_token_id != null),
+  })
   const form = useForm<AgenticWorkflowSettingsFormValues>({
     mode: 'onChange',
     values: workflow
@@ -122,7 +139,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           repositories: workflow.project_repositories.map(({ url, branch, git_token_id }) => {
             const name = getGitRepositoryName(url)
             return {
-              provider: guessGitProvider(url),
+              provider: getGitRepositoryProvider(url, git_token_id, gitTokens),
               repository: name,
               branch,
               gitTokenId: git_token_id,
