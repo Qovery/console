@@ -82,6 +82,12 @@ describe('useSupportChat', () => {
 
     result.current.updateUserInfo({ name: 'Override Name' })
 
-    expect(window.pylon?.chat_settings).toMatchObject({ name: 'Override Name' })
+    expect(window.pylon?.chat_settings).toEqual({
+      app_id: process.env.NX_PUBLIC_PYLON_APP_ID,
+      email: 'user@qovery.com',
+      name: 'Override Name',
+      email_hash: 'secure-hash',
+      avatar_url: 'https://example.com/avatar.png',
+    })
   })
 })
