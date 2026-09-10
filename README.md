@@ -95,21 +95,33 @@ Set `E2E_BASE_URL` to target another running Console instance. The test runner d
 
 ```text
 apps/
-├── console/
-│   └── src/routes/         # File-based application routes
-└── console-e2e/            # Playwright smoke tests
+├── console/                    # Main application, entry point, and integrations
+│   └── src/
+│       ├── app/                # Application shell and providers
+│       ├── auth/               # Application authentication
+│       └── routes/             # File-based pages and layouts (TanStack Router)
+└── console-e2e/                # Playwright end-to-end smoke tests
 
 libs/
-├── domains/                # Domain features and data access
-├── shared/                 # Shared UI, authentication, routing, and utilities
-│   ├── ui/                 # Reusable components and Storybook
-│   ├── util-js/            # Shared JavaScript utilities
-│   └── util-tests/         # Test helpers and providers
+├── domains/                    # Business domains: services, environments, clusters, etc.
+│   └── [domain-name]/
+│       ├── data-access/        # Domain API access, types, and data hooks
+│       ├── feature/            # Business logic and feature components
+│       └── util/               # Domain-specific helpers, where needed
+├── shared/                     # Reusable components and cross-domain functionality
+│   ├── ui/                     # Shared UI components, styles, assets, and Storybook
+│   ├── auth/                   # Shared authentication logic
+│   ├── router/                 # Shared routing helpers
+│   ├── util-js/                # General JavaScript utilities
+│   ├── util-tests/             # Test helpers and providers
+│   └── util-[name]/            # Other focused utilities (dates, hooks, types, etc.)
 └── state/
-    └── util-queries/       # Shared query state and API access
+    └── util-queries/           # Shared query state and API access
 
-adr/                        # Architecture decision records
+adr/                            # Architecture decision records
 ```
+
+The tree shows the main layers; each domain only includes the libraries it needs. Route pages and layouts compose domain features and shared components.
 
 Nx manages project dependencies and provides project-level build, test, lint, and generation commands. Use `yarn nx graph` to inspect the relationships between libraries.
 
