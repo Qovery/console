@@ -1,6 +1,5 @@
 import { mockUseQueryResult } from '__tests__/utils/mock-use-query-result'
 import { type OrganizationEventResponseList } from 'qovery-typescript-axios'
-import { IntercomProvider } from 'react-use-intercom'
 import { eventsFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { AuditLogsView } from './audit-logs-view'
@@ -19,31 +18,18 @@ describe.skip('AuditLogsView', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    const { baseElement } = renderWithProviders(<AuditLogsView />)
     expect(baseElement).toBeTruthy()
   })
 
   it('should fetch the event with correct payload', () => {
-    renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    renderWithProviders(<AuditLogsView />)
     expect(mockUseFetchEvents).toHaveBeenCalledWith('0', { pageSize: 30 })
   })
 
   it('should change query params on click on next', async () => {
-    const { userEvent } = renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    const { userEvent } = renderWithProviders(<AuditLogsView />)
 
-    // `waitFor` is necessary because `IntercomProvider` provides somes rendering
     waitFor(async () => {
       const button = screen.getByTestId('button-next-page')
       await userEvent.click(button)
@@ -56,13 +42,8 @@ describe.skip('AuditLogsView', () => {
   })
 
   it('should change query params on click on previous', async () => {
-    const { userEvent } = renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    const { userEvent } = renderWithProviders(<AuditLogsView />)
 
-    // `waitFor` is necessary because `IntercomProvider` provides somes rendering
     waitFor(async () => {
       const button = screen.getByTestId('button-previous-page')
       await userEvent.click(button)
@@ -75,13 +56,8 @@ describe.skip('AuditLogsView', () => {
   })
 
   it('should change query params on click on pageSize', async () => {
-    const { userEvent } = renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    const { userEvent } = renderWithProviders(<AuditLogsView />)
 
-    // `waitFor` is necessary because `IntercomProvider` provides somes rendering
     waitFor(async () => {
       const select = screen.getByTestId('select-page-size')
       await userEvent.selectOptions(select, '50')
@@ -93,11 +69,7 @@ describe.skip('AuditLogsView', () => {
   })
 
   it('should handle clear filter action', async () => {
-    const { userEvent } = renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    const { userEvent } = renderWithProviders(<AuditLogsView />)
 
     waitFor(async () => {
       // First set a filter by clicking on Event filter
@@ -123,11 +95,7 @@ describe.skip('AuditLogsView', () => {
       })
     )
 
-    renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    renderWithProviders(<AuditLogsView />)
 
     waitFor(() => {
       screen.getByText(/days limit reached/i)
@@ -135,11 +103,7 @@ describe.skip('AuditLogsView', () => {
   })
 
   it('should fetch with default pageSize when not specified', () => {
-    renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    renderWithProviders(<AuditLogsView />)
 
     expect(mockUseFetchEvents).toHaveBeenCalledWith('0', expect.objectContaining({ pageSize: 30 }))
   })
@@ -152,11 +116,7 @@ describe.skip('AuditLogsView', () => {
       })
     )
 
-    renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    renderWithProviders(<AuditLogsView />)
 
     waitFor(() => {
       screen.getByTestId('empty-result')
@@ -173,11 +133,7 @@ describe.skip('AuditLogsView', () => {
       })
     )
 
-    renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    renderWithProviders(<AuditLogsView />)
 
     waitFor(() => {
       const nextButton = screen.getByTestId('button-next-page')
@@ -195,11 +151,7 @@ describe.skip('AuditLogsView', () => {
       })
     )
 
-    renderWithProviders(
-      <IntercomProvider appId="__test__app__id__">
-        <AuditLogsView />
-      </IntercomProvider>
-    )
+    renderWithProviders(<AuditLogsView />)
 
     waitFor(() => {
       const prevButton = screen.getByTestId('button-previous-page')

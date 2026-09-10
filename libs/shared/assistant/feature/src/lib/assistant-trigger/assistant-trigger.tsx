@@ -13,8 +13,6 @@ export function AssistantTrigger() {
   const toggleAssistantOpen = useToggleAssistantOpen()
 
   useEffect(() => {
-    // Initialize support chat (either Pylon or Intercom depending on the route:
-    // Intercom for onboarding views, Pylon for the rest of the Console).
     initChat()
   }, [initChat])
 

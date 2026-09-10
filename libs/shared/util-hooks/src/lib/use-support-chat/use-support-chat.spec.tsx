@@ -1,28 +1,13 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useMatches } from '@tanstack/react-router'
 import { renderHook } from '@testing-library/react'
-import { useIntercom } from 'react-use-intercom'
 import { useSupportChat } from './use-support-chat'
 
 jest.mock('@auth0/auth0-react', () => ({
   useAuth0: jest.fn(),
 }))
 
-jest.mock('@tanstack/react-router', () => ({
-  useMatches: jest.fn(),
-}))
-
-jest.mock('react-use-intercom', () => ({
-  useIntercom: jest.fn(),
-}))
-
 describe('useSupportChat', () => {
   const mockUseAuth0 = jest.mocked(useAuth0)
-  const mockUseMatches = jest.mocked(useMatches)
-  const mockUseIntercom = jest.mocked(useIntercom)
-  const mockUpdateIntercom = jest.fn()
-  const mockShutdownIntercom = jest.fn()
-  const mockShowIntercomMessenger = jest.fn()
 
   beforeEach(() => {
     mockUseAuth0.mockReturnValue({
@@ -32,18 +17,8 @@ describe('useSupportChat', () => {
         picture: 'https://example.com/avatar.png',
         sub: 'auth0|user-123',
         'https://qovery.com/pylon_hash': 'secure-hash',
-        'https://qovery.com/intercom_hash': 'intercom-hash',
       },
     } as ReturnType<typeof useAuth0>)
-
-    mockUseMatches.mockReturnValue([{ routeId: '/_authenticated/organization/$organizationId' }] as ReturnType<
-      typeof useMatches
-    >)
-    mockUseIntercom.mockReturnValue({
-      update: mockUpdateIntercom,
-      shutdown: mockShutdownIntercom,
-      showMessages: mockShowIntercomMessenger,
-    } as ReturnType<typeof useIntercom>)
 
     document.body.innerHTML = '<script id="main-script"></script>'
     delete window.pylon

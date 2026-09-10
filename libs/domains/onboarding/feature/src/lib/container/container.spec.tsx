@@ -1,5 +1,4 @@
 import { createElement } from 'react'
-import { IntercomProvider } from 'react-use-intercom'
 import { useOrganizations } from '@qovery/domains/organizations/feature'
 import { useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { renderWithProviders } from '@qovery/shared/util-tests'
@@ -42,11 +41,7 @@ describe('Container', () => {
   })
 
   it('should render successfully', () => {
-    const { baseElement } = renderWithProviders(
-      <IntercomProvider appId="__test__app__id__" autoBoot={false}>
-        <Container {...props} />
-      </IntercomProvider>
-    )
+    const { baseElement } = renderWithProviders(<Container {...props} />)
     expect(baseElement).toBeTruthy()
   })
 })
