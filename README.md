@@ -1,121 +1,125 @@
-<br  />
-
-<p  align="center">
-
-<a  href="https://qovery.com"  target="_blank">
-
-<img  style="display: block; margin: auto; width: 350px;"  src="https://console.qovery.com/assets/logos/logo-white-on-brand.svg">
-</a>
-</p>
-
-<h3 align="center"><a href="https://console.qovery.com">Web Console</a></h3>
-<p align="center">Website: <a href="https://www.qovery.com">https://www.qovery.com</a></p>
-
 <p align="center">
-<a href="https://opensource.org/licenses"><img alt="GPLv3 License" src="https://img.shields.io/badge/License-GPL%20v3-yellow.svg"></a>
-<a href="https://codecov.io/github/Qovery/console" >
-<img src="https://codecov.io/github/Qovery/console/branch/feat/ci-codecov/graph/badge.svg?token=O8SMO6PEQV"/>
-</a>
+  <a href="https://qovery.com">
+    <img width="350" src="https://console.qovery.com/assets/logos/logo-white-on-brand.svg" alt="Qovery" />
+  </a>
 </p>
 
-<p align="center">
-    At Qovery for our Console, we use a couple of technologies, like <a href="https://nx.dev" target="_blank">Nx</a>, <a href="https://reactjs.org" target="_blank">React</a>, <a href="https://tanstack.com/query/v3/" target="_blank">React Query</a>, <a href="https://tailwindcss.com" target="_blank">Tailwind</a>, and <a href="https://storybook.js.org" target="_blank">Storybook</a>.
-</p>
-<br />
+<h3 align="center"><a href="https://console.qovery.com">Qovery Console</a></h3>
+<p align="center">The web interface for managing your infrastructure, applications, and deployments with Qovery.</p>
 
-## Getting Started
+## Development stack
+
+The Console is a TypeScript and React application in an Nx monorepo. It uses Vite for development and builds, TanStack Router for file-based routing, TanStack Query (React Query) for server state, and Tailwind CSS with Radix UI for the interface. Shared UI components are developed in Storybook; Jest and Playwright cover unit and end-to-end tests.
+
+See [package.json](./package.json) for the versions and available scripts.
+
+## Getting started
 
 First use
 
-    yarn && yarn setup
+```sh
+yarn && yarn setup
+```
 
-### Environment variables
+Start the project on [localhost:4200](http://localhost:4200)
 
-By default, the Console loads its environment variables from the repository's `.env` file. To share one environment configuration across Git worktrees, move the file to a stable directory and pass that directory when starting the Console:
+```sh
+yarn start
+```
 
-    QOVERY_CONSOLE_ENV_DIR="$HOME/.config/qovery-console" yarn start
+## Development commands
 
-Vite loads `.env`, `.env.local`, and mode-specific environment files from that directory. When `QOVERY_CONSOLE_ENV_DIR` is not set, the repository root remains the default.
+Run commands from the repository root.
 
-Start the project on http://localhost:4200
+| Command                | Purpose                                              |
+| ---------------------- | ---------------------------------------------------- |
+| `yarn start`           | Start the Console at `http://localhost:4200`         |
+| `yarn storybook`       | Start shared UI Storybook at `http://localhost:4400` |
+| `yarn build:console`   | Build the Console into `dist/apps/console`           |
+| `yarn build-storybook` | Build Storybook into `dist/storybook/design-system`  |
+| `yarn test`            | Run unit tests across all projects                   |
+| `yarn lint`            | Lint all projects                                    |
+| `yarn format:check`    | Check formatting with Nx                             |
+| `yarn format`          | Apply formatting with Nx                             |
+| `yarn nx graph`        | Explore project dependencies                         |
 
-    yarn start
+For a focused change, target a project or only projects affected by your branch:
 
-Start Storybook on http://localhost:4400
+```sh
+yarn nx test shared-ui
+yarn nx lint shared-ui
+yarn nx affected -t test --base=origin/staging
+yarn nx affected -t lint --base=origin/staging
+```
 
-    yarn storybook
+Generate libraries and components with the local Nx CLI:
 
-Run tests
+```sh
+yarn nx generate @nx/react:library --help
+yarn nx generate @nx/react:component --help
+```
 
-    yarn test
+### End-to-end tests
 
-Generate a library
+The Playwright smoke test runs against [Console staging](https://console-staging.qovery.com) by default. It requires `E2E_AUTH_TOKEN`, `E2E_PROJECT_ID`, and `E2E_ENVIRONMENT_ID` in the shell environment, with access to the target project and environment. Ask the maintainers for the test environment configuration.
 
-    nx g @nx/react:lib my-lib
+```sh
+yarn playwright install chromium
+yarn e2e:staging
+```
 
-Generate a component
+Set `E2E_BASE_URL` to target another running Console instance. The test runner does not start a local server. See the [Playwright configuration](./apps/console-e2e/playwright.config.ts) and [smoke test](./apps/console-e2e/src/staging-smoke.spec.ts) for details.
 
-    nx g @nx/react:component my-component
+## Project structure
 
-Run unit tests with Jest
+```text
+apps/
+├── console/                    # Main application, entry point, and integrations
+│   └── src/
+│       ├── app/                # Application shell and providers
+│       ├── auth/               # Application authentication
+│       └── routes/             # File-based pages and layouts (TanStack Router)
+└── console-e2e/                # Playwright end-to-end smoke tests
 
-    nx affected:test
+libs/
+├── domains/                    # Business domains: services, environments, clusters, etc.
+│   └── [domain-name]/
+│       ├── data-access/        # Domain API access, types, and data hooks
+│       ├── feature/            # Business logic and feature components
+│       └── util/               # Domain-specific helpers, where needed
+├── shared/                     # Reusable components and cross-domain functionality
+│   ├── ui/                     # Shared UI components, styles, assets, and Storybook
+│   ├── auth/                   # Shared authentication logic
+│   ├── router/                 # Shared routing helpers
+│   ├── util-js/                # General JavaScript utilities
+│   ├── util-tests/             # Test helpers and providers
+│   └── util-[name]/            # Other focused utilities (dates, hooks, types, etc.)
+└── state/
+    └── util-queries/           # Shared query state and API access
 
-Run end-to-end tests with Playwright
+adr/                            # Architecture decision records
+```
 
-    nx affected:e2e
+The tree shows the main layers; each domain only includes the libraries it needs. Route pages and layouts compose domain features and shared components.
+
+Nx manages project dependencies and provides project-level build, test, lint, and generation commands. Use `yarn nx graph` to inspect the relationships between libraries.
+
+Architecture decisions live in [adr/](./adr). Read the relevant decisions and [contribution guidelines](./.agents/skills/qovery-console-standards/SKILL.md) before changing project boundaries or shared patterns.
 
 ## Contributing
 
-Qovery Console is actively developed and we need some help, you are welcome to contribute! You can propose improvements directly from the [issues](https://github.com/Qovery/console/issues) page or include them in your pull request for changes.
+Bug reports and improvements are welcome through [GitHub issues](https://github.com/Qovery/console/issues) and pull requests.
 
-## Architecture Decision Records
+1. Create your branch from the latest `staging` and keep changes focused.
+2. Follow the [repository guide](./AGENTS.md) and relevant skills in [.agents/skills/](./.agents/skills/).
+3. Format your changes, run the relevant tests, review any snapshot changes, and lint the affected projects.
+4. Open a pull request targeting `staging`, using the [PR template](./pull_request_template.md). Use a Conventional Commit title such as `fix(service): correct deployment status`.
 
-We try to document our architecture decisions using [Architecture Decision Record](https://github.com/joelparkerhenderson/architecture-decision-record) principle.
-You can find our [ADR documents here](https://github.com/Qovery/console/tree/staging/adr) and the template used follows [this one](https://github.com/joelparkerhenderson/architecture-decision-record/tree/ab49e5ecad09b0e80c6ebeaf4f41c7958a2ad291/locales/en/templates/decision-record-template-by-michael-nygard)
+## Community and support
 
-## Community support
+- [GitHub issues](https://github.com/Qovery/console/issues) — bug reports and feature requests.
+- [Qovery website](https://www.qovery.com) — product information.
 
-For help, you can use one of the channels to ask a question:
+## License
 
-- [Forum](https://discuss.qovery.com/): (Bug reports, Questions)
-- [GitHub](https://github.com/Qovery/console): (Bug reports, Contributions)
-- [Twitter](https://twitter.com/qovery_): (Get the news fast)
-
-## FAQ
-
-### Why does Qovery exist?
-
-At Qovery, we believe that the Cloud must be simpler than what it is today. Our goal is to consolidate the Cloud ecosystem and makes it accessible to any developer, DevOps, and company. Qovery helps people to focus on what they build instead of wasting time doing plumbing stuff.
-
-### Why do we use Nx?
-
-- Nx acts as a robust framework, providing significant benefits for React applications.
-- It supports mono-repo architecture, allowing us to divide our application into multiple reusable entities/libraries.
-- It offers tools to generate components, libraries, applications, and to check the health of our applications (e.g., circular dependencies).
-- By using [Nx Cloud](https://cloud.nx.app/orgs/62aaef82e814d400050ea393/workspaces/635932a66ecea758758f0563/overview), we can cache deployments, run tests, and build only the modified parts of the application.
-- It provides a framework for unit tests with [Jest](https://jestjs.io/) and end-to-end tests with [Playwright](https://playwright.dev/).
-
-### How is the project structured?
-
-To help you navigate through the project, here is a brief overview of its structure.
-
-```
-apps/
-└── console/                # General application with main router and tools like PostHog, Sentry, etc.
-
-libs/
-├── domains/                # Domain-specific by features
-│   └── [feature-name]/
-│       ├── data-access/    # Data access layer for the feature
-│       └── feature/        # Core logic and components for the feature
-│       ...
-├── pages/                  # Page components for routing and layout, calling features from domain and common shared utilities and components
-└── shared/                 # Shared utilities and components across the application
-    ├── ui/                 # Storybook - UI components for reusable user interface elements
-    ├── util-[name]/        # Utility functions and helpers
-    └── util-queries/       # Shared utility functions for queries
-    ...
-```
-
-This organization aims to make the codebase more maintainable and understandable, based on our structure and Nx recommendations. For more information about it, read this article: [Organizing and Structuring a React Project with Nx](https://www.qovery.com/blog/nx-architecture-part-1-organizing-and-structuring-a-react-project-with-nx/).
+See [LICENSE](./LICENSE) for the GNU General Public License v3 terms.
