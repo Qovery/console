@@ -317,4 +317,13 @@ describe('ClusterActions', () => {
     expect(screen.getByRole('button', { name: 'Deployments' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Logs' })).not.toBeInTheDocument()
   })
+
+  it('labels the card action as logs when deployment history is disabled', () => {
+    useFeatureFlagEnabledMock.mockReturnValue(false)
+
+    renderWithProviders(<ClusterActions cluster={mockCluster} clusterStatus={mockClusterStatus} variant="card" />)
+
+    expect(screen.getByRole('button', { name: 'Logs' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Deployments' })).not.toBeInTheDocument()
+  })
 })
