@@ -96,7 +96,7 @@ describe('SettingsAgentPersonalization', () => {
     expect(rows[2]).toHaveAttribute('data-testid', 'mcp-server-mcp-bravo')
     expect(screen.getByText('Personal MCPs')).toBeInTheDocument()
     expect(screen.getByText('Organization MCPs')).toBeInTheDocument()
-    expect(screen.getByText('Owner: Rémi Bonnet')).toBeInTheDocument()
+    expect(screen.getByText('Owner: Rémi Bonnet')).toHaveClass('min-w-0', 'truncate')
     expect(screen.getByText('https://zulu.example.com/mcp')).toBeInTheDocument()
     expect(screen.queryByText('Authorization')).not.toBeInTheDocument()
     expect(screen.queryByText('Second connector')).not.toBeInTheDocument()

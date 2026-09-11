@@ -80,6 +80,7 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
             <>
               <svg
                 aria-hidden="true"
+                className="shrink-0"
                 xmlns="http://www.w3.org/2000/svg"
                 width="5"
                 height="6"
@@ -88,7 +89,9 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
               >
                 <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)" />
               </svg>
-              <span className="shrink-0">{owner}</span>
+              <Tooltip content={owner}>
+                <span className="min-w-0 truncate">{owner}</span>
+              </Tooltip>
             </>
           ) : null}
         </div>
