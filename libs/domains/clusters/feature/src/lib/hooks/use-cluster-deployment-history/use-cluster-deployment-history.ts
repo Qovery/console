@@ -1,5 +1,8 @@
 import { useQuery } from '@tanstack/react-query'
+import { type ClusterDeploymentHistory } from 'qovery-typescript-axios'
 import { queries } from '@qovery/state/util-queries'
+
+type RefetchInterval = number | false | ((data: ClusterDeploymentHistory[] | undefined) => number | false)
 
 export interface UseClusterDeploymentHistoryProps {
   organizationId: string
@@ -7,7 +10,7 @@ export interface UseClusterDeploymentHistoryProps {
   pageSize?: number
   suspense?: boolean
   enabled?: boolean
-  refetchInterval?: number
+  refetchInterval?: RefetchInterval
 }
 
 export function useClusterDeploymentHistory({

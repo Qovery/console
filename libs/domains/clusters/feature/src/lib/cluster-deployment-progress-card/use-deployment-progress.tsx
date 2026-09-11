@@ -1,7 +1,10 @@
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useMemo } from 'react'
 import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
-import { useClusterDeploymentLogs } from '../hooks/use-cluster-deployment-logs/use-cluster-deployment-logs'
+import {
+  getClusterDeploymentLogsRefetchInterval,
+  useClusterDeploymentLogs,
+} from '../hooks/use-cluster-deployment-logs/use-cluster-deployment-logs'
 import { useClusterLogs } from '../hooks/use-cluster-logs/use-cluster-logs'
 
 // XXX: This code need to be refactored and improved
@@ -44,7 +47,7 @@ export function useDeploymentProgress({ organizationId, clusterId, cloudProvider
     organizationId,
     clusterId,
     deploymentId: latestDeploymentId,
-    refetchInterval: 3000,
+    refetchInterval: getClusterDeploymentLogsRefetchInterval(deploymentHistory[0]?.action_status),
     enabled: isClusterDeploymentHistoryEnabled,
   })
   const { data: legacyClusterLogs } = useClusterLogs({

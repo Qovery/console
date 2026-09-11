@@ -4,6 +4,7 @@ import { useMemo, useRef } from 'react'
 import {
   ClusterHeaderLogs,
   ClusterLogsList,
+  getClusterDeploymentLogsRefetchInterval,
   useCluster,
   useClusterDeploymentHistory,
   useClusterDeploymentLogs,
@@ -50,6 +51,16 @@ function ClusterDeploymentLogsPage({
   clusterId: string
   deploymentId: string
 }) {
+  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
+    organizationId,
+    clusterId,
+    refetchInterval: (history) => {
+      const deployment = history?.find(({ identifier }) => identifier.deployment_id === deploymentId)
+      return getClusterDeploymentLogsRefetchInterval(deployment?.action_status)
+    },
+  })
+  const deployment = deploymentHistory.find(({ identifier }) => identifier.deployment_id === deploymentId)
+  const refetchInterval = getClusterDeploymentLogsRefetchInterval(deployment?.action_status)
   const {
     data: logs = [],
     isLoading: isLogsLoading,
@@ -58,12 +69,11 @@ function ClusterDeploymentLogsPage({
     organizationId,
     clusterId,
     deploymentId,
+    refetchInterval,
   })
   const router = useRouter()
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId })
-  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({ organizationId, clusterId })
-  const deployment = deploymentHistory.find(({ identifier }) => identifier.deployment_id === deploymentId)
 
   const refScrollSection = useRef<HTMLDivElement>(null)
   const firstLogTimestamp = logs[0]?.timestamp

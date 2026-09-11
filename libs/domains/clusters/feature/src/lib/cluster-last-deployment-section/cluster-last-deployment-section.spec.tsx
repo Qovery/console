@@ -32,7 +32,21 @@ jest.mock('@qovery/shared/util-dates', () => ({
 
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
-  Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
+  Link: ({
+    children,
+    params,
+    to,
+    ...props
+  }: {
+    children?: ReactNode
+    params: Record<string, string>
+    to: string
+    [key: string]: unknown
+  }) => (
+    <a {...props} href={Object.entries(params).reduce((path, [key, value]) => path.replace(`$${key}`, value), to)}>
+      {children}
+    </a>
+  ),
 }))
 
 let mockClusterDeploymentHistoryProps: UseClusterDeploymentHistoryProps | undefined
@@ -106,10 +120,7 @@ describe('ClusterLastDeploymentSection', () => {
 
     expect(screen.getByText('Last deployment')).toBeInTheDocument()
     expect(screen.getByText('mocked-time ago')).toBeInTheDocument()
-    expect(link).toHaveAttribute(
-      'to',
-      '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
-    )
+    expect(link).toHaveAttribute('href', '/organization/org-1/cluster/cluster-1/deployments/logs/deployment-1')
   })
 
   it('renders a link to the deployments tab', () => {
@@ -119,7 +130,7 @@ describe('ClusterLastDeploymentSection', () => {
 
     const link = screen.getByText('See all deployments').closest('a')
 
-    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/deployments')
+    expect(link).toHaveAttribute('href', '/organization/org-1/cluster/cluster-1/deployments')
   })
 
   it('does not poll deployment history when the cluster is not deploying', () => {
@@ -159,7 +170,7 @@ describe('ClusterLastDeploymentSection', () => {
 
       const link = screen.getByText('Deploy').closest('a')
 
-      expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/cluster-logs')
+      expect(link).toHaveAttribute('href', '/organization/org-1/cluster/cluster-1/cluster-logs')
     })
 
     it('does not render the "See all deployments" link', () => {
