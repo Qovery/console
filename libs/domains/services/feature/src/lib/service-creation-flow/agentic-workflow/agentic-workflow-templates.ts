@@ -124,7 +124,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     id: 'linear-coding-agent',
     title: 'Linear Coding Agent',
     description: 'Turn a Linear issue into an implementation and a ready-to-review pull request.',
-    logoPath: '/assets/agent-templates/linear.svg',
+    logoPath: '/assets/agent-templates/linear.png',
     seed: {
       name: 'Linear Coding Agent',
       description: 'Turn a Linear issue into an implementation and a ready-to-review pull request.',
