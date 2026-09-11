@@ -4,7 +4,7 @@ import { type KeyboardEvent, type MouseEvent } from 'react'
 import { match } from 'ts-pattern'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, CopyToClipboardButtonIcon, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Badge, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
@@ -60,11 +60,6 @@ function TriggerCell({
           </span>
         </>
       )}
-      <CopyToClipboardButtonIcon
-        content={service.webhook.url}
-        tooltipContent="Copy webhook URL"
-        className="shrink-0 text-neutral-subtle hover:text-neutral"
-      />
     </div>
   )
 }
