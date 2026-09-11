@@ -12,12 +12,11 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import { OrganizationEventOrigin } from 'qovery-typescript-axios'
 import { type ClusterDeploymentHistory } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
+import { EventOriginIcon } from '@qovery/shared/console-shared'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
-import { IconEnum } from '@qovery/shared/enums'
 import {
   Badge,
   CopyToClipboardButtonIcon,
@@ -199,6 +198,28 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
         enableSorting: false,
         filterFn: 'arrIncludesSome',
         size: 250,
+        meta: {
+          customFacetEntry({ value, count }) {
+            return (
+              <>
+                <span className="text-sm font-medium">
+                  {upperCaseFirstLetter(String(value).toLowerCase().replace('_', ' '))}
+                </span>
+                <span className="text-xs text-neutral-subtle">{count}</span>
+              </>
+            )
+          },
+          customFilterValue({ filterValue }) {
+            return (
+              <Truncate
+                text={filterValue
+                  .map((value) => upperCaseFirstLetter(value.toLowerCase().replace('_', ' ')))
+                  .join(', ')}
+                truncateLimit={18}
+              />
+            )
+          },
+        },
         cell: (info) => {
           const origin = info.row.original.auditing_data.origin
           const triggeredBy = info.row.original.auditing_data.triggered_by
@@ -219,14 +240,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
           return (
             <div className="flex items-center gap-3">
               <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-surface-neutral-component text-neutral-subtle">
-                {match(origin)
-                  .with(OrganizationEventOrigin.GIT, () => <Icon iconName="code-branch" />)
-                  .with(OrganizationEventOrigin.CONSOLE, () => <Icon iconName="browser" />)
-                  .with(OrganizationEventOrigin.QOVERY_INTERNAL, () => <Icon iconName="wave-pulse" />)
-                  .with(OrganizationEventOrigin.API, () => <Icon iconName="cloud-arrow-up" />)
-                  .with(OrganizationEventOrigin.CLI, () => <Icon iconName="terminal" />)
-                  .with(OrganizationEventOrigin.TERRAFORM_PROVIDER, () => <Icon name={IconEnum.TERRAFORM} width="12" />)
-                  .otherwise(() => null)}
+                <EventOriginIcon origin={origin} />
               </div>
               <div className="flex flex-col gap-0.5 text-ssm">
                 <span className="whitespace-nowrap text-neutral">

@@ -12,12 +12,12 @@ import {
   useReactTable,
 } from '@tanstack/react-table'
 import clsx from 'clsx'
-import { type DeploymentHistoryService, type Environment, OrganizationEventOrigin } from 'qovery-typescript-axios'
+import { type DeploymentHistoryService, type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { isEditableServiceType } from '@qovery/domains/services/data-access'
+import { EventOriginIcon } from '@qovery/shared/console-shared'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
-import { IconEnum } from '@qovery/shared/enums'
 import {
   Button,
   CopyToClipboard,
@@ -432,14 +432,7 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
           return (
             <div className="flex items-center gap-3">
               <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-surface-neutral-component text-neutral-subtle">
-                {match(origin)
-                  .with(OrganizationEventOrigin.GIT, () => <Icon iconName="code-branch" />)
-                  .with(OrganizationEventOrigin.CONSOLE, () => <Icon iconName="browser" />)
-                  .with(OrganizationEventOrigin.QOVERY_INTERNAL, () => <Icon iconName="wave-pulse" />)
-                  .with(OrganizationEventOrigin.API, () => <Icon iconName="cloud-arrow-up" />)
-                  .with(OrganizationEventOrigin.CLI, () => <Icon iconName="terminal" />)
-                  .with(OrganizationEventOrigin.TERRAFORM_PROVIDER, () => <Icon name={IconEnum.TERRAFORM} width="12" />)
-                  .otherwise(() => null)}
+                <EventOriginIcon origin={origin} />
               </div>
               <div className="flex flex-col gap-0.5 text-ssm">
                 <span className="whitespace-nowrap text-neutral">

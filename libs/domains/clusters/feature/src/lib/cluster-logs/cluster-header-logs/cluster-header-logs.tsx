@@ -5,13 +5,23 @@ import {
   type ClusterLogs,
   type ClusterStatus,
   type DeploymentHistoryActionStatus,
+  OrganizationEventOrigin,
 } from 'qovery-typescript-axios'
 import { type RefObject, useContext } from 'react'
+import { EventOriginIcon } from '@qovery/shared/console-shared'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
 import { Button, Icon, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateDifference, dateFullFormat, dateUTCString, formatDuration } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
-import { trimId } from '@qovery/shared/util-js'
+import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
+
+function getOriginLabel(origin?: OrganizationEventOrigin | null) {
+  if (!origin) return undefined
+
+  return origin === OrganizationEventOrigin.API || origin === OrganizationEventOrigin.CLI
+    ? origin
+    : upperCaseFirstLetter(origin.toLowerCase().replace('_', ' '))
+}
 
 export interface ClusterHeaderLogsProps {
   cluster: Cluster
@@ -21,6 +31,7 @@ export interface ClusterHeaderLogsProps {
   executionId?: string
   onBack?: () => void
   createdAt?: string
+  origin?: OrganizationEventOrigin | null
   triggeredBy?: string | null
   actionStatus?: DeploymentHistoryActionStatus
   totalDuration?: string | null
@@ -34,6 +45,7 @@ export function ClusterHeaderLogs({
   executionId,
   onBack,
   createdAt,
+  origin,
   triggeredBy,
   actionStatus,
   totalDuration,
@@ -125,14 +137,18 @@ export function ClusterHeaderLogs({
         >
           <span className="whitespace-nowrap font-normal text-neutral">{cluster.version}</span>
         </Tooltip>
-        {triggeredBy && (
+        {(origin || triggeredBy) && (
           <>
             <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
               <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
             </svg>
             <span className="flex items-center gap-1.5 truncate whitespace-nowrap font-normal text-neutral">
-              <Icon iconName="user" iconStyle="regular" className="text-sm text-neutral-subtle" />
-              <Truncate text={triggeredBy} truncateLimit={25} />
+              <span className="text-sm text-neutral-subtle">
+                {origin ? <EventOriginIcon origin={origin} /> : <Icon iconName="user" iconStyle="regular" />}
+              </span>
+              {origin && <span>{getOriginLabel(origin)}</span>}
+              {triggeredBy && <span className="text-neutral-subtle">deployed by</span>}
+              {triggeredBy && <Truncate text={triggeredBy} truncateLimit={25} />}
             </span>
           </>
         )}

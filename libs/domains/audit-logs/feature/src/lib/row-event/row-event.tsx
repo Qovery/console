@@ -1,7 +1,6 @@
 import { Link, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import {
-  OrganizationEventOrigin,
   type OrganizationEventResponse,
   OrganizationEventTargetType,
   OrganizationEventType,
@@ -9,7 +8,7 @@ import {
 import { useState } from 'react'
 import { match } from 'ts-pattern'
 import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
-import { IconEnum } from '@qovery/shared/enums'
+import { EventOriginIcon } from '@qovery/shared/console-shared'
 import { CodeDiffEditor, CodeEditor, type DiffStats, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
@@ -26,25 +25,6 @@ export interface RowEventProps {
 
 const formatEventName = (eventName: string) => {
   return eventName.split('_').map(upperCaseFirstLetter).join(' ')
-}
-
-export const getSourceIcon = (origin?: OrganizationEventOrigin) => {
-  switch (origin) {
-    case OrganizationEventOrigin.GIT:
-      return <Icon iconName="code-branch" />
-    case OrganizationEventOrigin.CONSOLE:
-      return <Icon iconName="browser" />
-    case OrganizationEventOrigin.QOVERY_INTERNAL:
-      return <Icon iconName="wave-pulse" />
-    case OrganizationEventOrigin.API:
-      return <Icon iconName="cloud-arrow-up" />
-    case OrganizationEventOrigin.CLI:
-      return <Icon iconName="terminal" />
-    case OrganizationEventOrigin.TERRAFORM_PROVIDER:
-      return <Icon name={IconEnum.TERRAFORM} width="12" />
-    default:
-      return null
-  }
 }
 
 const serviceOverviewUrl = (organizationId: string, projectId: string, environmentId: string, serviceId: string) =>
@@ -327,7 +307,9 @@ export function RowEvent(props: RowEventProps) {
               <div className="truncate text-neutral-subtle">
                 {upperCaseFirstLetter(event.origin)?.replace('_', ' ')}
                 {event.user_agent && <Icon iconName="info-circle" iconStyle="regular" className="ml-1.5" />}
-                <span className="ml-1.5 inline-block">{getSourceIcon(event.origin)}</span>
+                <span className="ml-1.5 inline-block">
+                  <EventOriginIcon origin={event.origin} />
+                </span>
               </div>
             </Tooltip>
           </Skeleton>

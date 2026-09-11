@@ -103,6 +103,7 @@ function ClusterDeploymentLogsPage({
               executionId={deployment?.identifier.execution_id ?? deploymentId}
               onBack={() => router.history.back()}
               createdAt={deployment?.auditing_data.created_at}
+              origin={deployment?.auditing_data.origin}
               triggeredBy={deployment?.auditing_data.triggered_by}
               actionStatus={deployment?.action_status}
               totalDuration={deployment?.total_duration}

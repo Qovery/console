@@ -65,6 +65,17 @@ describe('ClusterDeploymentList', () => {
     expect(screen.getByText('Maintenance')).toBeInTheDocument()
   })
 
+  it('should display trigger filters in title case', async () => {
+    const { userEvent } = renderWithProviders(
+      <ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Trigger by' }))
+
+    expect(screen.getAllByText('Console')).toHaveLength(2)
+    expect(screen.queryByText('CONSOLE')).not.toBeInTheDocument()
+  })
+
   it('should render Unknown when the initiator was not recorded', () => {
     mockDeploymentHistory = [
       {
