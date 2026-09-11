@@ -19,7 +19,7 @@ import {
   Section,
   useModal,
 } from '@qovery/shared/ui'
-import { prepareVariableImportRequest } from '@qovery/shared/util-js'
+import { ENVIRONMENT_VARIABLE_NAME_PATTERN, prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { AgenticWorkflowExecutionModeSelector } from '../../../agentic-workflow-execution-mode-selector/agentic-workflow-execution-mode-selector'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
 import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-deploy-environment'
@@ -73,7 +73,7 @@ export function areVariablesValid(variables: VariableData[]) {
 export function getInvalidVariableField({ variable, value, scope }: VariableData) {
   if (!scope) return 'scope' as const
   if (!value) return 'value' as const
-  if (!variable?.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) return 'variable' as const
+  if (!variable || !ENVIRONMENT_VARIABLE_NAME_PATTERN.test(variable)) return 'variable' as const
 
   return undefined
 }
