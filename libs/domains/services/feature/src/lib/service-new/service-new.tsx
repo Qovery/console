@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
@@ -7,7 +8,7 @@ import {
   type LifecycleTemplateListResponseResultsInner,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
-import { Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from '@qovery/shared/ui'
+import { Badge, Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
@@ -299,11 +300,23 @@ export function ServiceNew({
       ...AGENTIC_WORKFLOW_TEMPLATES.map((template) => ({
         title: template.title,
         description: template.description,
-        // BaseServiceCard overrides the icon className with a 20x20 box, so center
-        // the glyph via inline style (not overridden) and size/color the inner Icon.
+        showDescription: true,
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon iconName={template.iconName} iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
+            {template.logoPath ? (
+              <>
+                <img
+                  src={template.logoPath}
+                  alt=""
+                  className={clsx('size-full object-contain', template.darkLogoPath && 'dark:hidden')}
+                />
+                {template.darkLogoPath && (
+                  <img src={template.darkLogoPath} alt="" className="hidden size-full object-contain dark:block" />
+                )}
+              </>
+            ) : template.iconName ? (
+              <Icon iconName={template.iconName} iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
+            ) : null}
           </span>
         ),
         link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
@@ -314,9 +327,10 @@ export function ServiceNew({
       {
         title: 'Start from scratch',
         description: 'Start with a blank agent task and configure everything yourself.',
+        showDescription: true,
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon iconName="circle-plus" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
+            <Icon iconName="circle-plus" iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
           </span>
         ),
         link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
@@ -326,9 +340,10 @@ export function ServiceNew({
       {
         title: 'Need a specific agent? Contact us',
         description: 'Tell us which agent use case you need and we will help you set it up.',
+        showDescription: true,
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon iconName="paper-plane" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
+            <Icon iconName="paper-plane" iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
           </span>
         ),
         onClick: () => showPylonForm('request-ai-builder-portal'),
@@ -366,7 +381,17 @@ export function ServiceNew({
         {isAgenticWorkflowEnabled && agentUseCases.length > 0 && (
           <Section className="gap-4">
             <div className="flex flex-col gap-1">
-              <Heading>Agent use cases</Heading>
+              <div className="flex items-center gap-2">
+                <Heading>Agent use cases</Heading>
+                <Badge
+                  color="brand"
+                  variant="surface"
+                  size="sm"
+                  className="h-4 border-transparent bg-surface-brand-solid px-1 text-[8px] font-medium text-neutralInvert"
+                >
+                  BETA
+                </Badge>
+              </div>
               <p className="text-sm leading-5 text-neutral-subtle">
                 Start from a ready-made agent configuration and adjust it to your needs.
               </p>
