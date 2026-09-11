@@ -266,10 +266,8 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(createButton)
 
     expect(screen.getByText('Trigger required')).toHaveClass('text-negative')
-    expect(screen.getByRole('heading', { name: 'Configure triggers' })).toBeInTheDocument()
-    expect(screen.getByText('At least one trigger is required.')).toBeInTheDocument()
-    expect(screen.getByTestId('trigger-validation')).toHaveFocus()
-    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeDisabled()
+    expect(screen.queryByRole('heading', { name: 'Configure triggers' })).not.toBeInTheDocument()
+    expect(screen.queryByText('At least one trigger is required.')).not.toBeInTheDocument()
     expect(mockCreateService).not.toHaveBeenCalled()
   })
 

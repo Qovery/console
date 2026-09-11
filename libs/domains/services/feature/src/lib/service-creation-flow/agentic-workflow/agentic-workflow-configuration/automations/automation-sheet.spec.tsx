@@ -5,21 +5,6 @@ import { AutomationSheet } from './automation-sheet'
 const emptyAutomation: AgenticWorkflowAutomation = { id: 'automation-1', triggers: [], outputs: [] }
 
 describe('AutomationSheet', () => {
-  it('shows and focuses the missing trigger error until a trigger is added', async () => {
-    const { userEvent } = renderWithProviders(
-      <AutomationSheet automation={emptyAutomation} showTriggerError onClose={jest.fn()} onSave={jest.fn()} />
-    )
-
-    expect(screen.getByText('At least one trigger is required.')).toBeInTheDocument()
-    expect(screen.getByTestId('trigger-validation')).toHaveFocus()
-    expect(screen.getByTestId('trigger-validation')).toHaveClass('outline-negative')
-
-    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
-    await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
-
-    expect(screen.getByTestId('trigger-validation')).not.toHaveClass('outline-negative')
-  })
-
   it('requires at least one trigger before saving', async () => {
     const onSave = jest.fn()
     const { userEvent } = renderWithProviders(

@@ -1,8 +1,7 @@
-import { type ReactNode, useCallback, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
   Button,
-  Callout,
   DropdownMenu,
   ExternalLink,
   Heading,
@@ -276,7 +275,6 @@ export function AutomationSheet({
   onClose,
   onSave,
   section = 'all',
-  showTriggerError = false,
 }: {
   allowEmptyOutputUrl?: boolean
   automation: AgenticWorkflowAutomation
@@ -284,19 +282,11 @@ export function AutomationSheet({
   onClose: () => void
   onSave: (automation: AgenticWorkflowAutomation) => void
   section?: 'all' | 'triggers' | 'outputs'
-  showTriggerError?: boolean
 }) {
   const { closeModal, openModal } = useModal()
   const [draft, setDraft] = useState<AgenticWorkflowAutomation>(automation)
   const scheduleTrigger = draft.triggers.find((trigger) => trigger.type === 'schedule')
   const webhookTrigger = draft.triggers.find((trigger) => trigger.type === 'webhook')
-  const focusTriggerError = useCallback(
-    (element: HTMLDivElement | null) => {
-      if (showTriggerError) element?.focus()
-    },
-    [showTriggerError]
-  )
-
   const saveTrigger = (trigger: AgenticWorkflowAutomationTrigger) => {
     setDraft((current) => ({
       ...current,
@@ -368,16 +358,7 @@ export function AutomationSheet({
       />
       <div className="flex flex-1 flex-col gap-4 overflow-auto px-5 pb-5">
         {section !== 'outputs' ? (
-          <div
-            data-testid="trigger-validation"
-            ref={focusTriggerError}
-            tabIndex={-1}
-            className={
-              showTriggerError && draft.triggers.length === 0
-                ? 'outline-negative rounded-md outline outline-1'
-                : undefined
-            }
-          >
+          <div>
             <AutomationSection
               title="Triggers"
               description="At least one trigger is required. A trigger can be a schedule or a webhook."
@@ -408,14 +389,6 @@ export function AutomationSheet({
                 </DropdownMenu.Root>
               }
             >
-              {showTriggerError && draft.triggers.length === 0 ? (
-                <Callout.Root color="red">
-                  <Callout.Icon>
-                    <Icon iconName="circle-xmark" />
-                  </Callout.Icon>
-                  <Callout.Text>At least one trigger is required.</Callout.Text>
-                </Callout.Root>
-              ) : null}
               {draft.triggers.length ? (
                 <div className="flex flex-col gap-3">
                   {draft.triggers.map((trigger) =>

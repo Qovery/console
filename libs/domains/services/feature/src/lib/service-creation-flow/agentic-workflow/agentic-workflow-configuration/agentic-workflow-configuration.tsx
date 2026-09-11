@@ -298,7 +298,6 @@ export function AgenticWorkflowConfiguration() {
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
-  const [showTriggerError, setShowTriggerError] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
@@ -414,8 +413,6 @@ export function AgenticWorkflowConfiguration() {
     }
 
     if (!automationValid) {
-      setShowTriggerError(true)
-      setActiveSheet('triggers')
       return false
     }
 
@@ -953,11 +950,9 @@ export function AgenticWorkflowConfiguration() {
         <AutomationSheet
           automation={automation}
           section={activeSheet}
-          showTriggerError={showTriggerError}
           onClose={() => setActiveSheet(null)}
           onSave={(nextAutomation) => {
             form.setValue('automations', [nextAutomation], { shouldDirty: true })
-            setShowTriggerError((current) => current && nextAutomation.triggers.length === 0)
           }}
         />
       ) : null}
