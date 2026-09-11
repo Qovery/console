@@ -6,12 +6,11 @@ import { Badge, Heading, Section, TablePrimitives, Tooltip } from '@qovery/share
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
+import { tableGridLayoutClassName } from '../service-list/service-list'
 import { ServiceLastDeploymentCell, ServiceNameCell } from '../service-list/service-list-cells'
 import { ServiceStateChip } from '../service-state-chip/service-state-chip'
 
 const { Table } = TablePrimitives
-
-const tableGridLayoutClassName = 'grid w-full grid-cols-[minmax(280px,1.1fr)_minmax(260px,1fr)_minmax(280px,1fr)_130px]'
 
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
@@ -85,7 +84,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
         <Table.Root containerClassName="rounded-none border-x-0 border-b-0 border-t" className="w-full text-xs">
           <Table.Header className="border-neutral">
             <Table.Row className={`h-9 w-full ${tableGridLayoutClassName}`}>
-              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
+              <Table.ColumnHeaderCell className="col-span-3 flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Service
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
@@ -110,7 +109,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                   if (event.key === 'Enter') handleNavigateToService(service.id)
                 }}
               >
-                <Table.Cell className="flex h-full min-w-0 items-center gap-3 border-r border-neutral">
+                <Table.Cell className="col-span-3 flex h-full min-w-0 items-center gap-3 border-r border-neutral">
                   <div className="min-w-0 flex-1">
                     <ServiceNameCell service={service} environment={environment} />
                   </div>

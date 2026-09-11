@@ -81,6 +81,7 @@ describe('AgenticWorkflowServiceList', () => {
     expect(screen.getByText('Enabled')).toBeInTheDocument()
     expect(screen.getByText('Disabled')).toBeInTheDocument()
     expect(screen.getByText('1 enabled')).toBeInTheDocument()
+    expect(screen.getByText('Service').closest('th')).toHaveClass('col-span-3')
     expect(screen.getByText('Last operation')).toBeInTheDocument()
     expect(screen.queryByText('Model')).not.toBeInTheDocument()
     expect(screen.getByText('Trigger')).toBeInTheDocument()
