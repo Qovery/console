@@ -172,10 +172,13 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Agent use cases' })).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: /Incident Analyser/i })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: /Incident Analyzer with incident.io/i })).toHaveAttribute(
       'href',
-      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=incident-analyser'
+      '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=incident-io-analyzer'
     )
+    expect(screen.getByRole('link', { name: /Incident Analyzer with Honeybadger/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Jira Coding Agent/i })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Linear Coding Agent/i })).toBeInTheDocument()
   })
 
   it('should capture a PostHog event when an agent use case is selected', async () => {
@@ -185,9 +188,9 @@ describe('ServiceNew', () => {
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
 
-    await userEvent.click(screen.getByRole('link', { name: /Incident Analyser/i }))
+    await userEvent.click(screen.getByRole('link', { name: /Incident Analyzer with incident.io/i }))
 
-    expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'incident-analyser' })
+    expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'incident-io-analyzer' })
   })
 
   it('should open the Pylon contact form from the Agent use cases CTA card', async () => {
@@ -208,7 +211,7 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.queryByRole('heading', { name: 'Agent use cases' })).not.toBeInTheDocument()
-    expect(screen.queryByText('Incident Analyser')).not.toBeInTheDocument()
+    expect(screen.queryByText('Incident Analyzer with incident.io')).not.toBeInTheDocument()
   })
 
   it('should show base service descriptions in info tooltips', async () => {

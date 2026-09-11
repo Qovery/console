@@ -1,22 +1,32 @@
+import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { AGENTIC_WORKFLOW_TEMPLATES, getAgenticWorkflowTemplate } from './agentic-workflow-templates'
 
 describe('agentic-workflow-templates', () => {
-  it('exposes the Incident Analyser use case', () => {
-    const template = getAgenticWorkflowTemplate('incident-analyser')
-    expect(template).toBeDefined()
-    expect(template?.title).toBe('Incident Analyser')
-    expect(template?.seed.name).toBe('Incident Analyser')
-    expect(template?.seed.agentPrompt).toBeTruthy()
-    // The prompt must reference the seeded credentials so the agent actually uses them.
-    expect(template?.seed.agentPrompt).toContain('INCIDENT_IO_API_KEY')
-    expect(template?.seed.agentPrompt).toContain('SLACK_WEBHOOK_URL')
-    expect(template?.seed.cpu).toBe('200')
-    expect(template?.seed.memory).toBe('256')
-    expect(template?.variables?.map((variable) => variable.variable)).toEqual([
-      'INCIDENT_IO_API_KEY',
-      'SLACK_WEBHOOK_URL',
+  it.each([
+    ['incident-io-analyzer', 'INCIDENT_IO_API_KEY'],
+    ['honeybadger-incident-analyzer', 'HONEYBADGER_API_TOKEN'],
+  ])('preconfigures the %s incident analyzer', (id, credential) => {
+    const template = getAgenticWorkflowTemplate(id)
+
+    expect(template?.logoPath).toBeTruthy()
+    expect(template?.seed.executionMode).toBe(AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT)
+    expect(template?.seed.agentPrompt).toContain(credential)
+    expect(template?.seed.automations).toEqual([
+      expect.objectContaining({ triggers: [expect.objectContaining({ type: 'webhook' })] }),
     ])
-    expect(template?.variables?.every((variable) => variable.isSecret)).toBe(true)
+    expect(template?.variables?.map((variable) => variable.variable)).toContain(credential)
+  })
+
+  it.each([
+    ['jira-coding-agent', 'Jira Coding Agent', 'JIRA_API_TOKEN'],
+    ['linear-coding-agent', 'Linear Coding Agent', 'LINEAR_API_KEY'],
+  ])('exposes the %s template', (id, title, credential) => {
+    const template = getAgenticWorkflowTemplate(id)
+
+    expect(template?.title).toBe(title)
+    expect(template?.logoPath).toBeTruthy()
+    expect(template?.seed.agentPrompt).toContain(credential)
+    expect(template?.variables?.map((variable) => variable.variable)).toContain(credential)
   })
 
   it('exposes the Build & deployment optimizer use case', () => {
@@ -42,7 +52,7 @@ describe('agentic-workflow-templates', () => {
     const ids = AGENTIC_WORKFLOW_TEMPLATES.map((template) => template.id)
     expect(new Set(ids).size).toBe(ids.length)
     AGENTIC_WORKFLOW_TEMPLATES.forEach((template) => {
-      expect(template.iconName).toBeTruthy()
+      expect(template.iconName ?? template.logoPath).toBeTruthy()
     })
   })
 })
