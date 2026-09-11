@@ -18,7 +18,11 @@ import {
   Section,
   useModal,
 } from '@qovery/shared/ui'
-import { ENVIRONMENT_VARIABLE_NAME_PATTERN, prepareVariableImportRequest } from '@qovery/shared/util-js'
+import {
+  ENVIRONMENT_VARIABLE_NAME_PATTERN,
+  formatCronExpression,
+  prepareVariableImportRequest,
+} from '@qovery/shared/util-js'
 import { AgenticWorkflowExecutionModeSelector } from '../../../agentic-workflow-execution-mode-selector/agentic-workflow-execution-mode-selector'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
 import {
@@ -57,7 +61,14 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
 }
 
 export function summarizeTriggers(automation: AgenticWorkflowAutomation) {
-  return automation.triggers.map((trigger) => (trigger.type === 'schedule' ? 'Schedule' : 'Webhook')).join(' + ')
+  return automation.triggers
+    .map((trigger) => {
+      if (trigger.type === 'webhook') return 'Webhook'
+
+      const schedule = formatCronExpression(trigger.cronExpression) || trigger.cronExpression || 'Schedule'
+      return trigger.timezone ? `${schedule} (${trigger.timezone})` : schedule
+    })
+    .join(' + ')
 }
 
 export function areVariablesValid(variables: VariableData[]) {

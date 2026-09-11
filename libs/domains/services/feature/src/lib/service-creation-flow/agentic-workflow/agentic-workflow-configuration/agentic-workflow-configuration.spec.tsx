@@ -8,6 +8,7 @@ import {
   getInvalidVariableField,
   getJsonError,
   isGitRepositoryComplete,
+  summarizeTriggers,
 } from './agentic-workflow-configuration'
 
 const mockNavigate = jest.fn()
@@ -132,6 +133,19 @@ describe('AgenticWorkflowConfiguration validation', () => {
     expect(
       getInvalidVariableField({ variable: 'API KEY', value: 'secret', scope: 'AGENTIC_WORKFLOW', isSecret: true })
     ).toBe('variable')
+  })
+
+  it('should summarize schedule triggers with their configured value', () => {
+    expect(
+      summarizeTriggers({
+        id: 'automation-1',
+        triggers: [
+          { id: 'webhook-1', type: 'webhook' },
+          { id: 'schedule-1', type: 'schedule', cronExpression: '0 8 * * 1-5', timezone: 'Europe/Paris' },
+        ],
+        outputs: [],
+      })
+    ).toBe('Webhook + At 08:00 AM, Monday through Friday (Europe/Paris)')
   })
 })
 
