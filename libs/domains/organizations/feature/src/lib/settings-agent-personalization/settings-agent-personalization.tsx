@@ -29,6 +29,8 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteMcpServer } = useDeleteMcpServer()
+  const owner =
+    mcpServer.scope === McpServerScope.USER ? `Owner: ${mcpServer.owner_name ?? 'Unknown member'}` : undefined
   const onEdit = () => {
     openModal({
       content: <McpServerCreateEditModal mcpServer={mcpServer} onClose={closeModal} />,
@@ -64,8 +66,15 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
           <Heading level={3} className="min-w-0">
             <Truncate truncateLimit={60} text={mcpServer.name} />
           </Heading>
-          {mcpServer.description ? (
-            <Tooltip content={mcpServer.description}>
+          {mcpServer.description || owner ? (
+            <Tooltip
+              content={
+                <span className="flex flex-col gap-1">
+                  {mcpServer.description ? <span>{mcpServer.description}</span> : null}
+                  {owner ? <span>{owner}</span> : null}
+                </span>
+              }
+            >
               <span className="cursor-pointer" aria-label={`About ${mcpServer.name}`}>
                 <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
               </span>
@@ -73,9 +82,6 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
           ) : null}
         </div>
         <p className="break-all font-mono text-xs text-neutral-subtle">{mcpServer.url}</p>
-        {mcpServer.scope === McpServerScope.USER ? (
-          <p className="text-xs text-neutral-subtle">Owner: {mcpServer.owner_name ?? 'Unknown member'}</p>
-        ) : null}
       </Section>
       <div className="flex shrink-0 gap-2">
         {mcpServer.scope === McpServerScope.ORGANIZATION || mcpServer.attachable ? (

@@ -85,10 +85,10 @@ describe('SettingsAgentPersonalization', () => {
     expect(screen.getByText('No MCPs')).toBeInTheDocument()
   })
 
-  it('should render MCPs alphabetically with their URL, description tooltip, and actions', () => {
+  it('should render MCPs alphabetically with their URL, details tooltip, and actions', async () => {
     useMcpServersMock.mockReturnValue({ data: mcpServers })
 
-    renderWithProviders(<SettingsAgentPersonalization />)
+    const { userEvent } = renderWithProviders(<SettingsAgentPersonalization />)
 
     const rows = screen.getAllByTestId(/^mcp-server-/)
     expect(rows[0]).toHaveAttribute('data-testid', 'mcp-server-mcp-alpha')
@@ -96,12 +96,13 @@ describe('SettingsAgentPersonalization', () => {
     expect(rows[2]).toHaveAttribute('data-testid', 'mcp-server-mcp-zulu')
     expect(screen.getByText('Personal MCPs')).toBeInTheDocument()
     expect(screen.getByText('Organization MCPs')).toBeInTheDocument()
-    expect(screen.getByText('Owner: Rémi Bonnet')).toBeInTheDocument()
-    expect(screen.getByText('Owner: Romaric Philogène')).toBeInTheDocument()
+    expect(screen.queryByText('Owner: Rémi Bonnet')).not.toBeInTheDocument()
     expect(screen.getByText('https://zulu.example.com/mcp')).toBeInTheDocument()
     expect(screen.queryByText('Authorization')).not.toBeInTheDocument()
     expect(screen.queryByText('Second connector')).not.toBeInTheDocument()
     expect(screen.getByLabelText('About Zulu')).toBeInTheDocument()
+    await userEvent.hover(screen.getByLabelText('About Alpha'))
+    expect((await screen.findAllByText('Owner: Rémi Bonnet')).length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: 'Edit Zulu' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Edit Bravo' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Delete Bravo' })).toBeInTheDocument()
