@@ -302,7 +302,7 @@ export function ServiceNew({
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {template.logoPath ? (
-              <img src={template.logoPath} alt="" className="size-5" />
+              <img src={template.logoPath} alt="" className="size-5 object-contain" />
             ) : template.iconName ? (
               <Icon
                 iconName={template.iconName}
