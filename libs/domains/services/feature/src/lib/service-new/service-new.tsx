@@ -373,7 +373,7 @@ export function ServiceNew({
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <Heading>Agent use cases</Heading>
-                <Badge color="purple" variant="surface" size="sm">
+                <Badge color="brand" variant="surface" size="sm">
                   Beta
                 </Badge>
               </div>
