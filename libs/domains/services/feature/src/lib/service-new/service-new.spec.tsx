@@ -179,6 +179,12 @@ describe('ServiceNew', () => {
     expect(screen.getByRole('link', { name: /Incident Analyzer with Honeybadger/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Jira Coding Agent/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Linear Coding Agent/i })).toBeInTheDocument()
+    expect(
+      screen.getByText('Analyze incident.io incidents with deployment, code, logs, and metrics context.')
+    ).toBeInTheDocument()
+    expect(
+      screen.getByText('Turn a Jira issue into an implementation and a ready-to-review pull request.')
+    ).toBeInTheDocument()
   })
 
   it('should capture a PostHog event when an agent use case is selected', async () => {

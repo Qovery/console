@@ -299,6 +299,7 @@ export function ServiceNew({
       ...AGENTIC_WORKFLOW_TEMPLATES.map((template) => ({
         title: template.title,
         description: template.description,
+        showDescription: true,
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {template.logoPath ? (
@@ -320,6 +321,7 @@ export function ServiceNew({
       {
         title: 'Start from scratch',
         description: 'Start with a blank agent task and configure everything yourself.',
+        showDescription: true,
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Icon iconName="circle-plus" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
@@ -332,6 +334,7 @@ export function ServiceNew({
       {
         title: 'Need a specific agent? Contact us',
         description: 'Tell us which agent use case you need and we will help you set it up.',
+        showDescription: true,
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Icon iconName="paper-plane" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />

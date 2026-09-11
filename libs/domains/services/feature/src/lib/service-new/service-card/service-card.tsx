@@ -24,23 +24,33 @@ export type ServiceBlock = {
   onClick?: () => void
   disabledCTA?: ReactElement
   badge?: string
+  showDescription?: boolean
 }
 
-export function BaseServiceCard({ title, description, icon, link, search, onClick }: ServiceBlock) {
-  const className =
-    'flex h-14 w-full items-center justify-between gap-3 rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)] hover:bg-surface-neutral-subtle'
+export function BaseServiceCard({ title, description, icon, link, search, onClick, showDescription }: ServiceBlock) {
+  const className = clsx(
+    'flex w-full items-center justify-between gap-3 rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)] hover:bg-surface-neutral-subtle',
+    showDescription ? 'min-h-16' : 'h-14'
+  )
   const content = (
     <>
       <span className="flex min-w-0 items-center gap-1.5">
         {cloneElement(icon as ReactElement, { width: 20, height: 20, className: 'h-5 w-5 shrink-0' })}
-        <span className="truncate text-sm font-medium leading-5 text-neutral">{title}</span>
-        {(title === 'Lifecycle Job' || title === 'Cron Job') && (
-          <Tooltip content={description}>
-            <span role="img" aria-label={`${title} details`} className="inline-flex shrink-0">
-              <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-subtle" />
-            </span>
-          </Tooltip>
-        )}
+        <span className="min-w-0">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <span className="truncate text-sm font-medium leading-5 text-neutral">{title}</span>
+            {(title === 'Lifecycle Job' || title === 'Cron Job') && (
+              <Tooltip content={description}>
+                <span role="img" aria-label={`${title} details`} className="inline-flex shrink-0">
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-subtle" />
+                </span>
+              </Tooltip>
+            )}
+          </span>
+          {showDescription && (
+            <span className="block truncate text-xs leading-4 text-neutral-subtle">{description}</span>
+          )}
+        </span>
       </span>
       <Icon iconName="chevron-right" className="shrink-0 text-sm text-neutral-subtle" />
     </>
