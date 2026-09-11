@@ -19,7 +19,7 @@ export function AgenticWorkflowExecutionModeSelector({ onChange, value }: Agenti
         {
           mode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
           label: 'Clone environment',
-          description: 'Create an isolated temporary environment for every run.',
+          description: 'Create an isolated temporary environment for each run.',
           iconName: 'clone' as const,
         },
       ].map(({ mode, label, description, iconName }) => (
@@ -39,7 +39,7 @@ export function AgenticWorkflowExecutionModeSelector({ onChange, value }: Agenti
             </span>
             <span>
               <span className="block text-sm font-medium text-neutral">{label}</span>
-              <span className="mt-1 block text-xs text-neutral-subtle">{description}</span>
+              <span className="block text-xs text-neutral-subtle">{description}</span>
             </span>
           </span>
         </button>
