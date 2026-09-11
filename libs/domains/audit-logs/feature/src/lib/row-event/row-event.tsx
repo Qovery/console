@@ -8,9 +8,9 @@ import {
 import { useState } from 'react'
 import { match } from 'ts-pattern'
 import { type ValidTargetIds } from '@qovery/domains/audit-logs/data-access'
-import { EventOriginIcon } from '@qovery/shared/console-shared'
 import { CodeDiffEditor, CodeEditor, type DiffStats, Icon, Skeleton, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateFullFormat, dateUTCString } from '@qovery/shared/util-dates'
+import { EventOriginIcon } from '@qovery/shared/util-icons'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { getTargetTypeLabel } from '../utils/target-type-selection-utils'
 

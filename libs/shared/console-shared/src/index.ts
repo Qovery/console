@@ -3,4 +3,3 @@
 export * from './lib/settings-heading/settings-heading'
 export * from './lib/live-elapsed-duration-cell/live-elapsed-duration-cell'
 export * from './lib/resource-tree-list/resource-tree-list'
-export * from './lib/event-origin-icon/event-origin-icon'

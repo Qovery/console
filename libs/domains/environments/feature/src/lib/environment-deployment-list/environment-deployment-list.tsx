@@ -19,7 +19,6 @@ import {
 } from 'qovery-typescript-axios'
 import { Fragment, type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { EventOriginIcon } from '@qovery/shared/console-shared'
 // This import introduces a circular dependency with @qovery/shared/devops-copilot/feature.
 // Keep in mind for future refactoring if possible.
 // eslint-disable-next-line @nx/enforce-module-boundaries
@@ -41,6 +40,7 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
+import { EventOriginIcon } from '@qovery/shared/util-icons'
 import { isCancelBuildAvailable, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
 import { useCancelDeploymentQueueEnvironment } from '../hooks/use-cancel-deployment-queue-environment/use-cancel-deployment-queue-environment'

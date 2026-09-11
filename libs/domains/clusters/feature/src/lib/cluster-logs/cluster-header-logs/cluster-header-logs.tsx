@@ -8,11 +8,11 @@ import {
   OrganizationEventOrigin,
 } from 'qovery-typescript-axios'
 import { type RefObject, useContext } from 'react'
-import { EventOriginIcon } from '@qovery/shared/console-shared'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
 import { Button, Icon, Tooltip, Truncate } from '@qovery/shared/ui'
 import { dateDifference, dateFullFormat, dateUTCString, formatDuration } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
+import { EventOriginIcon } from '@qovery/shared/util-icons'
 import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
 
 function getOriginLabel(origin?: OrganizationEventOrigin | null) {

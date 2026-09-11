@@ -15,7 +15,6 @@ import clsx from 'clsx'
 import { type ClusterDeploymentHistory } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
-import { EventOriginIcon } from '@qovery/shared/console-shared'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import {
   Badge,
@@ -31,6 +30,7 @@ import {
   Truncate,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
+import { EventOriginIcon } from '@qovery/shared/util-icons'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
 import { ClusterDeploymentDurationCell } from './cluster-deployment-duration-cell'

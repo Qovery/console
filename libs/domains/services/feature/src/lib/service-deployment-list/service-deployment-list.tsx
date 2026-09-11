@@ -16,7 +16,6 @@ import { type DeploymentHistoryService, type Environment } from 'qovery-typescri
 import { type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
 import { isEditableServiceType } from '@qovery/domains/services/data-access'
-import { EventOriginIcon } from '@qovery/shared/console-shared'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import {
   Button,
@@ -36,6 +35,7 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
+import { EventOriginIcon } from '@qovery/shared/util-icons'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentQueueService } from '../hooks/use-cancel-deployment-queue-service/use-cancel-deployment-queue-service'
 import { useCancelDeploymentService } from '../hooks/use-cancel-deployment-service/use-cancel-deployment-service'
