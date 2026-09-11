@@ -72,4 +72,14 @@ describe('agentic-workflow-templates', () => {
       expect(template.iconName ?? template.logoPath).toBeTruthy()
     })
   })
+
+  it('places the build optimizer before coding agents', () => {
+    expect(AGENTIC_WORKFLOW_TEMPLATES.map((template) => template.id)).toEqual([
+      'incident-io-analyzer',
+      'honeybadger-incident-analyzer',
+      'build-optimizer',
+      'jira-coding-agent',
+      'linear-coding-agent',
+    ])
+  })
 })

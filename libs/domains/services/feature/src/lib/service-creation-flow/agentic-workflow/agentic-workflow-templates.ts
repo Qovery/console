@@ -89,6 +89,20 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     variables: [secretVariable('HONEYBADGER_API_TOKEN', 'API token used to read incidents from Honeybadger.')],
   },
   {
+    id: 'build-optimizer',
+    title: 'Build & deployment optimizer',
+    description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
+    iconName: 'gauge-high',
+    seed: {
+      name: 'Build & deployment optimizer',
+      description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
+      agentPrompt: BUILD_OPTIMIZER_PROMPT,
+      cpu: '200',
+      memory: '256',
+      whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
+    },
+  },
+  {
     id: 'jira-coding-agent',
     title: 'Jira Coding Agent',
     description: 'Turn a Jira issue into an implementation and a ready-to-review pull request.',
@@ -134,20 +148,6 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       whitelistHosts: 'api.linear.app,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
     variables: [secretVariable('LINEAR_API_KEY', 'API key used to read the Linear issue.')],
-  },
-  {
-    id: 'build-optimizer',
-    title: 'Build & deployment optimizer',
-    description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
-    iconName: 'gauge-high',
-    seed: {
-      name: 'Build & deployment optimizer',
-      description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
-      agentPrompt: BUILD_OPTIMIZER_PROMPT,
-      cpu: '200',
-      memory: '256',
-      whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
-    },
   },
 ]
 
