@@ -96,7 +96,9 @@ function McpServerPicker({
               Remove all
             </Button>
           </div>
-          <div>{connectedMcpServers.map((mcpServer) => mcpServerRow(mcpServer, true))}</div>
+          <div className="flex flex-col gap-2">
+            {connectedMcpServers.map((mcpServer) => mcpServerRow(mcpServer, true))}
+          </div>
         </section>
       ) : null}
       <section className="flex flex-col gap-2">
@@ -112,7 +114,9 @@ function McpServerPicker({
         {isLoading ? (
           <p className="px-2 text-sm text-neutral-subtle">Loading MCPs...</p>
         ) : disconnectedMcpServers.length > 0 ? (
-          <div>{disconnectedMcpServers.map((mcpServer) => mcpServerRow(mcpServer, false))}</div>
+          <div className="flex flex-col gap-2">
+            {disconnectedMcpServers.map((mcpServer) => mcpServerRow(mcpServer, false))}
+          </div>
         ) : search.trim() ? (
           <p className="px-2 text-sm text-neutral-subtle">No MCP matches this search.</p>
         ) : null}
