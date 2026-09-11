@@ -303,13 +303,9 @@ export function ServiceNew({
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {template.logoPath ? (
-              <img src={template.logoPath} alt="" className="size-5 object-contain" />
+              <img src={template.logoPath} alt="" className="size-full object-contain" />
             ) : template.iconName ? (
-              <Icon
-                iconName={template.iconName}
-                iconStyle="regular"
-                className="text-base text-[color:var(--brand-9)]"
-              />
+              <Icon iconName={template.iconName} iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
             ) : null}
           </span>
         ),
@@ -324,7 +320,7 @@ export function ServiceNew({
         showDescription: true,
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon iconName="circle-plus" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
+            <Icon iconName="circle-plus" iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
           </span>
         ),
         link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
@@ -337,7 +333,7 @@ export function ServiceNew({
         showDescription: true,
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon iconName="paper-plane" iconStyle="regular" className="text-base text-[color:var(--brand-9)]" />
+            <Icon iconName="paper-plane" iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
           </span>
         ),
         onClick: () => showPylonForm('request-ai-builder-portal'),
