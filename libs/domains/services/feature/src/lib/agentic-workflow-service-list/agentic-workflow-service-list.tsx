@@ -5,6 +5,7 @@ import { match } from 'ts-pattern'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { IconEnum } from '@qovery/shared/enums'
 import { Badge, CopyToClipboardButtonIcon, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
 import { ServiceLastDeploymentCell, ServiceNameCell } from '../service-list/service-list-cells'
@@ -36,7 +37,7 @@ function ModelCell({ service }: { service: AgenticWorkflow }) {
     .otherwise((model) => <span className="text-sm text-neutral-subtle">{model ?? 'Not configured'}</span>)
 }
 
-function WebhookCell({
+function TriggerCell({
   service,
   onAction,
 }: {
@@ -46,8 +47,19 @@ function WebhookCell({
   return (
     <div className="flex min-w-0 flex-1 items-center gap-2" onClick={onAction} onKeyDown={onAction}>
       <Tooltip content={service.webhook.url}>
-        <span className="min-w-0 flex-1 truncate font-mono text-xs text-neutral">{service.webhook.url}</span>
+        <span className="shrink-0 text-sm text-neutral">Webhook</span>
       </Tooltip>
+      {service.schedule && (
+        <>
+          <span className="text-neutral-subtle">+</span>
+          <span className="min-w-0 truncate text-sm text-neutral">
+            Schedule ·{' '}
+            {service.schedule.next_run_at
+              ? dateFullFormat(service.schedule.next_run_at, service.schedule.timezone, 'dd MMM, HH:mm')
+              : 'Paused'}
+          </span>
+        </>
+      )}
       <CopyToClipboardButtonIcon
         content={service.webhook.url}
         tooltipContent="Copy webhook URL"
@@ -111,7 +123,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                 Model
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Webhook
+                Trigger
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
                 Actions
@@ -142,7 +154,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                   <ModelCell service={service} />
                 </Table.Cell>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <WebhookCell service={service} onAction={stopRowNavigation} />
+                  <TriggerCell service={service} onAction={stopRowNavigation} />
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center">
                   <AgenticWorkflowServiceActions
