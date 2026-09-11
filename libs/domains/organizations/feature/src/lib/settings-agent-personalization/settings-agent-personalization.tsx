@@ -170,7 +170,7 @@ function McpServersList({ organizationId }: McpServersListProps) {
 
   return (
     <div className="space-y-4">
-      {mcpServerGroup('Personal MCPs', personalMcpServers, 'No personal MCPs.')}
+      {personalMcpServers.length > 0 ? mcpServerGroup('Personal MCPs', personalMcpServers, '') : null}
       {mcpServerGroup('Organization MCPs', organizationMcpServers, 'No organization MCPs.')}
     </div>
   )

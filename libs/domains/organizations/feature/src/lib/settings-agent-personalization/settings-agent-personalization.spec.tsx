@@ -109,6 +109,16 @@ describe('SettingsAgentPersonalization', () => {
     expect(screen.getByRole('button', { name: 'Delete Zulu' })).toBeInTheDocument()
   })
 
+  it('should hide the personal MCP section when there are no personal MCPs', () => {
+    useMcpServersMock.mockReturnValue({ data: [mcpServers[0]] })
+
+    renderWithProviders(<SettingsAgentPersonalization />)
+
+    expect(screen.queryByText('Personal MCPs')).not.toBeInTheDocument()
+    expect(screen.getByText('Organization MCPs')).toBeInTheDocument()
+    expect(screen.getByText('Zulu')).toBeInTheDocument()
+  })
+
   it('should open the create and edit modals', async () => {
     useMcpServersMock.mockReturnValue({ data: mcpServers })
     const { userEvent } = renderWithProviders(<SettingsAgentPersonalization />)
