@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type Cluster,
   type ClusterStatus,
@@ -415,6 +416,11 @@ export interface ClusterActionsProps {
 
 export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: ClusterActionsProps) {
   const navigate = useNavigate()
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
+  const clusterLogsLinkTarget = isClusterDeploymentHistoryEnabled
+    ? ('/organization/$organizationId/cluster/$clusterId/deployments' as const)
+    : ('/organization/$organizationId/cluster/$clusterId/cluster-logs' as const)
+  const clusterLogsLinkLabel = isClusterDeploymentHistoryEnabled ? 'Deployments' : 'Logs'
   const location = useLocation()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
   const { openModal, closeModal } = useModal()
@@ -494,16 +500,16 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
     .otherwise(() => <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />)
   const logsButton =
     variant === 'card' && cluster.kubernetes !== 'SELF_MANAGED' ? (
-      <Tooltip content="Logs">
+      <Tooltip content={clusterLogsLinkLabel}>
         <Button
-          aria-label="Logs"
+          aria-label={clusterLogsLinkLabel}
           color="neutral"
           variant="outline"
           size="md"
           iconOnly
           onClick={() =>
             navigate({
-              to: '/organization/$organizationId/cluster/$clusterId/cluster-logs',
+              to: clusterLogsLinkTarget,
               params: {
                 organizationId: cluster.organization.id,
                 clusterId: cluster.id,

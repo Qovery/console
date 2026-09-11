@@ -30,7 +30,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
           'mt-1 gap-3': isLoading,
         })}
       >
-        <Skeleton width="65%" height={20} show={isLoading}>
+        <Skeleton width="65%" height={32} show={isLoading}>
           <div className="flex h-8 items-center p-1.5">
             <span className="flex items-center gap-2.5">
               {kubeVersion &&
@@ -87,7 +87,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
           </div>
         </Skeleton>
         {cluster?.cloud_provider !== 'ON_PREMISE' && (
-          <Skeleton width="65%" height={20} show={isLoading} className="truncate">
+          <Skeleton width="65%" height={32} show={isLoading} className="truncate">
             <ExternalLink
               href="https://www.qovery.com/docs/configuration/clusters#faq"
               color="neutral"
@@ -102,7 +102,7 @@ export function ClusterCardSetup({ organizationId, clusterId }: ClusterCardSetup
             </ExternalLink>
           </Skeleton>
         )}
-        <Skeleton width="65%" height={20} show={isLoading}>
+        <Skeleton width="65%" height={32} show={isLoading}>
           <div
             title={cluster?.created_at ? dateUTCString(cluster.created_at) : undefined}
             className="flex h-8 items-center gap-2.5 p-1.5"

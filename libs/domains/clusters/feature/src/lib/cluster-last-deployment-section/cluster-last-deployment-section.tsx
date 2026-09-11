@@ -1,4 +1,5 @@
 import posthog from 'posthog-js'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type ClusterStateEnum,
   type ClusterStatus,
@@ -23,6 +24,7 @@ import {
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
 
 const DotSeparator = () => (
   <svg
@@ -73,10 +75,10 @@ function getDeploymentReasonLabel(reason?: ClusterStatus['reason']) {
 
 function ClusterLastDeploymentSkeleton() {
   return (
-    <div className="flex gap-2.5 rounded-lg border border-neutral bg-surface-neutral p-4">
-      <Skeleton width={100} height={16} />
-      <Skeleton width={24} height={16} />
-      <Skeleton width={112} height={16} />
+    <div className="flex items-center gap-2.5 rounded-lg border border-neutral bg-surface-neutral p-4">
+      <Skeleton width={100} height={24} />
+      <Skeleton width={24} height={24} />
+      <Skeleton width={112} height={24} />
     </div>
   )
 }
@@ -95,7 +97,7 @@ export function ClusterLastDeploymentSection({
   isLoading = false,
 }: ClusterLastDeploymentSectionProps) {
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
-  const hasLastDeployment = Boolean(clusterStatus?.last_deployment_date || clusterStatus?.last_execution_id)
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
   const isOngoing = match(clusterStatus?.status)
     .with(
       'BUILDING',
@@ -109,6 +111,15 @@ export function ClusterLastDeploymentSection({
       () => true
     )
     .otherwise(() => false)
+  // The deployment-history endpoint is only queried when the feature flag is on
+  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
+    organizationId,
+    clusterId,
+    enabled: isClusterDeploymentHistoryEnabled,
+    refetchInterval: isOngoing ? 5000 : undefined,
+  })
+  const lastDeployment = deploymentHistory[0]
+  const hasLastDeployment = Boolean(clusterStatus?.last_deployment_date || clusterStatus?.last_execution_id)
   const deploymentReasonLabel = getDeploymentReasonLabel(clusterStatus?.reason)
 
   const handleLaunchDiagnostic = () => {
@@ -132,14 +143,40 @@ export function ClusterLastDeploymentSection({
 
   return (
     <Section className="gap-3">
-      <Heading>Last deployment</Heading>
+      <div className="flex items-center justify-between gap-2">
+        <Heading>Last deployment</Heading>
+        {isClusterDeploymentHistoryEnabled && (
+          <Link
+            to="/organization/$organizationId/cluster/$clusterId/deployments"
+            params={{ organizationId, clusterId }}
+            color="neutral"
+            size="ssm"
+            className="gap-0.5 text-neutral-subtle hover:text-neutral"
+          >
+            See all deployments
+            <Icon iconName="angle-right" className="text-ssm" />
+          </Link>
+        )}
+      </div>
       {isLoading ? (
         <ClusterLastDeploymentSkeleton />
       ) : clusterStatus && hasLastDeployment ? (
         <div className="flex flex-col">
           <Link
-            to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
-            params={{ organizationId, clusterId }}
+            {...(!isClusterDeploymentHistoryEnabled
+              ? {
+                  to: '/organization/$organizationId/cluster/$clusterId/cluster-logs' as const,
+                  params: { organizationId, clusterId },
+                }
+              : lastDeployment
+                ? {
+                    to: '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId' as const,
+                    params: { organizationId, clusterId, deploymentId: lastDeployment.identifier.deployment_id },
+                  }
+                : {
+                    to: '/organization/$organizationId/cluster/$clusterId/deployments' as const,
+                    params: { organizationId, clusterId },
+                  })}
             className="relative flex rounded-lg border border-neutral bg-surface-neutral p-4 transition-colors hover:bg-surface-neutral-subtle"
           >
             <div className="flex flex-wrap items-center gap-2.5 text-sm text-neutral">

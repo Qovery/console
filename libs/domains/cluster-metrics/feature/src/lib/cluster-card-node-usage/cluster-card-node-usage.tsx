@@ -139,7 +139,7 @@ export function ClusterCardNodeUsage({ organizationId, clusterId }: ClusterCardN
             </Tooltip>
           ))}
       </div>
-      <Skeleton width="100%" height={20} show={!cluster || metricsNotAvailable}>
+      <Skeleton width="100%" height={8} show={!cluster || metricsNotAvailable}>
         <div className="flex w-full flex-col gap-2.5">
           {shouldDisplayNodeLimits && (
             <div className="flex items-center justify-between text-sm text-neutral-subtle">

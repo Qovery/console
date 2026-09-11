@@ -1,52 +1,77 @@
-import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
+import { Navigate, createFileRoute, useParams, useRouter } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useMemo, useRef } from 'react'
 import {
   ClusterHeaderLogs,
   ClusterLogsList,
+  getClusterDeploymentLogsRefetchInterval,
   useCluster,
-  useClusterLogs,
+  useClusterDeploymentHistory,
+  useClusterDeploymentLogs,
   useClusterStatus,
 } from '@qovery/domains/clusters/feature'
 import { Banner, EmptyState, ExternalLink, LoaderDots } from '@qovery/shared/ui'
 import { QOVERY_DOCS_URL } from '@qovery/shared/util-const'
 
-export const Route = createFileRoute('/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs')({
+export const Route = createFileRoute(
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
+)({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const { organizationId = '', clusterId = '' } = useParams({ strict: false })
+  const { organizationId = '', clusterId = '', deploymentId = '' } = useParams({ strict: false })
   const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
 
-  // When the feature flag is on, the legacy route only remains as a redirect to preserve old bookmarks/deep links
-  if (isClusterDeploymentHistoryEnabled) {
+  // When the feature flag is off, fall back to the legacy cluster logs page
+  // without mounting the deployment-history/logs queries
+  if (!isClusterDeploymentHistoryEnabled) {
     if (!organizationId || !clusterId) {
       return null
     }
 
     return (
       <Navigate
-        to="/organization/$organizationId/cluster/$clusterId/deployments"
+        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
         params={{ organizationId, clusterId }}
         replace
       />
     )
   }
 
-  return <LegacyClusterLogsPage organizationId={organizationId} clusterId={clusterId} />
+  return <ClusterDeploymentLogsPage organizationId={organizationId} clusterId={clusterId} deploymentId={deploymentId} />
 }
 
-function LegacyClusterLogsPage({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
+function ClusterDeploymentLogsPage({
+  organizationId,
+  clusterId,
+  deploymentId,
+}: {
+  organizationId: string
+  clusterId: string
+  deploymentId: string
+}) {
+  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
+    organizationId,
+    clusterId,
+    refetchInterval: (history) => {
+      const deployment = history?.find(({ identifier }) => identifier.deployment_id === deploymentId)
+      return getClusterDeploymentLogsRefetchInterval(deployment?.action_status)
+    },
+  })
+  const deployment = deploymentHistory.find(({ identifier }) => identifier.deployment_id === deploymentId)
+  const refetchInterval = getClusterDeploymentLogsRefetchInterval(deployment?.action_status)
   const {
     data: logs = [],
     isLoading: isLogsLoading,
     isFetched: isLogsFetched,
-  } = useClusterLogs({
+  } = useClusterDeploymentLogs({
     organizationId,
     clusterId,
-    refetchInterval: 3000,
+    deploymentId,
+    refetchInterval,
   })
+  const router = useRouter()
   const { data: cluster } = useCluster({ organizationId, clusterId })
   const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId })
 
@@ -64,7 +89,7 @@ function LegacyClusterLogsPage({ organizationId, clusterId }: { organizationId: 
         <div className="flex h-full flex-1 flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-3">
             <LoaderDots />
-            <p className="text-neutral">Cluster logs are loading…</p>
+            <p className="text-neutral">Deployment logs are loading…</p>
           </div>
         </div>
       ) : isLogsFetched && logs.length > 0 ? (
@@ -75,9 +100,16 @@ function LegacyClusterLogsPage({ organizationId, clusterId }: { organizationId: 
               clusterStatus={clusterStatus}
               data={logs}
               refScrollSection={refScrollSection}
+              executionId={deployment?.identifier.execution_id ?? deploymentId}
+              onBack={() => router.history.back()}
+              createdAt={deployment?.auditing_data.created_at}
+              origin={deployment?.auditing_data.origin}
+              triggeredBy={deployment?.auditing_data.triggered_by}
+              actionStatus={deployment?.action_status}
+              totalDuration={deployment?.total_duration}
             />
           </div>
-          {clusterStatus.status === 'DEPLOYING' && clusterStatus.reason === 'MAINTENANCE' && (
+          {deployment?.action_status === 'ONGOING' && deployment?.reason === 'MAINTENANCE' && (
             <Banner color="brand" className="shrink-0 gap-3">
               Qovery maintenance is in progress with no impact on your applications availability.
               <ExternalLink
@@ -96,7 +128,7 @@ function LegacyClusterLogsPage({ organizationId, clusterId }: { organizationId: 
           <EmptyState
             className="border-none bg-transparent"
             title="No logs found"
-            description="No logs found for this cluster. Please try again later."
+            description="No logs found for this deployment. Please try again later."
             icon="cube"
           />
         </div>

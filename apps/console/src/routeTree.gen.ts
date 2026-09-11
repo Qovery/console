@@ -69,6 +69,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/create/$slug/index'
 import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/settings/index'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/index'
 import { Route as AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRouteImport } from './routes/_authenticated/organization/$organizationId/settings/roles/edit/$roleId'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/general'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone'
@@ -93,6 +94,7 @@ import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdSetting
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/index'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
+import { Route as AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRouteImport } from './routes/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings/route'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview/route'
@@ -636,6 +638,14 @@ const AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute 
         AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute,
     } as any,
   )
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRouteImport.update(
+    {
+      id: '/cluster/$clusterId/deployments/',
+      path: '/cluster/$clusterId/deployments/',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
 const AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute =
   AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRouteImport.update(
     {
@@ -845,6 +855,14 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEdit
     {
       id: '/project/$projectId/deployment-rules/edit/$deploymentRuleId',
       path: '/project/$projectId/deployment-rules/edit/$deploymentRuleId',
+      getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
+    } as any,
+  )
+const AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute =
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRouteImport.update(
+    {
+      id: '/cluster/$clusterId/deployments/logs/$deploymentId',
+      path: '/cluster/$clusterId/deployments/logs/$deploymentId',
       getParentRoute: () => AuthenticatedOrganizationOrganizationIdRouteRoute,
     } as any,
   )
@@ -1908,6 +1926,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   '/organization/$organizationId/project/$projectId/settings/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
   '/organization/$organizationId/settings/roles/edit/$roleId': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
+  '/organization/$organizationId/cluster/$clusterId/deployments': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute
   '/organization/$organizationId/cluster/$clusterId/settings/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/organization/$organizationId/cluster/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
   '/organization/$organizationId/project/$projectId/deployment-rules': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute
@@ -1915,6 +1934,7 @@ export interface FileRoutesByFullPath {
   '/organization/$organizationId/project/$projectId/environment/$environmentId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren
   '/organization/$organizationId/project/$projectId/environment/$environmentId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRouteWithChildren
+  '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute
   '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
@@ -2098,10 +2118,12 @@ export interface FileRoutesByTo {
   '/organization/$organizationId/project/$projectId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   '/organization/$organizationId/project/$projectId/settings/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
   '/organization/$organizationId/settings/roles/edit/$roleId': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
+  '/organization/$organizationId/cluster/$clusterId/deployments': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute
   '/organization/$organizationId/cluster/$clusterId/settings': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/organization/$organizationId/cluster/create/$slug': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
   '/organization/$organizationId/project/$projectId/deployment-rules': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute
   '/organization/$organizationId/project/$projectId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsIndexRoute
+  '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute
   '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   '/organization/$organizationId/project/$projectId/environment/$environmentId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
@@ -2282,6 +2304,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsDangerZoneRoute
   '/_authenticated/organization/$organizationId/project/$projectId/settings/general': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdSettingsGeneralRoute
   '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId': typeof AuthenticatedOrganizationOrganizationIdSettingsRolesEditRoleIdRoute
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRoute
   '/_authenticated/organization/$organizationId/cluster/create/$slug/': typeof AuthenticatedOrganizationOrganizationIdClusterCreateSlugIndexRoute
   '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute
@@ -2289,6 +2312,7 @@ export interface FileRoutesById {
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRouteWithChildren
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId': typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute
   '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/': typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
@@ -2481,6 +2505,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/settings/danger-zone'
     | '/organization/$organizationId/project/$projectId/settings/general'
     | '/organization/$organizationId/settings/roles/edit/$roleId'
+    | '/organization/$organizationId/cluster/$clusterId/deployments'
     | '/organization/$organizationId/cluster/$clusterId/settings/'
     | '/organization/$organizationId/cluster/create/$slug/'
     | '/organization/$organizationId/project/$projectId/deployment-rules'
@@ -2488,6 +2513,7 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/settings'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
+    | '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
     | '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId'
@@ -2671,10 +2697,12 @@ export interface FileRouteTypes {
     | '/organization/$organizationId/project/$projectId/settings/danger-zone'
     | '/organization/$organizationId/project/$projectId/settings/general'
     | '/organization/$organizationId/settings/roles/edit/$roleId'
+    | '/organization/$organizationId/cluster/$clusterId/deployments'
     | '/organization/$organizationId/cluster/$clusterId/settings'
     | '/organization/$organizationId/cluster/create/$slug'
     | '/organization/$organizationId/project/$projectId/deployment-rules'
     | '/organization/$organizationId/project/$projectId/settings'
+    | '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
     | '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
     | '/organization/$organizationId/project/$projectId/environment/$environmentId'
@@ -2854,6 +2882,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/settings/danger-zone'
     | '/_authenticated/organization/$organizationId/project/$projectId/settings/general'
     | '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId'
+    | '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/'
     | '/_authenticated/organization/$organizationId/cluster/$clusterId/settings/'
     | '/_authenticated/organization/$organizationId/cluster/create/$slug/'
     | '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/'
@@ -2861,6 +2890,7 @@ export interface FileRouteTypes {
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/overview'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables'
+    | '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
     | '/_authenticated/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/deployments'
     | '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/'
@@ -3404,6 +3434,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdSettingsRouteRoute
     }
+    '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/': {
+      id: '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/'
+      path: '/cluster/$clusterId/deployments'
+      fullPath: '/organization/$organizationId/cluster/$clusterId/deployments'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
     '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId': {
       id: '/_authenticated/organization/$organizationId/settings/roles/edit/$roleId'
       path: '/roles/edit/$roleId'
@@ -3570,6 +3607,13 @@ declare module '@tanstack/react-router' {
       path: '/project/$projectId/deployment-rules/edit/$deploymentRuleId'
       fullPath: '/organization/$organizationId/project/$projectId/deployment-rules/edit/$deploymentRuleId'
       preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRouteImport
+      parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
+    }
+    '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId': {
+      id: '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
+      path: '/cluster/$clusterId/deployments/logs/$deploymentId'
+      fullPath: '/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
+      preLoaderRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRouteImport
       parentRoute: typeof AuthenticatedOrganizationOrganizationIdRouteRoute
     }
     '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/variables': {
@@ -5030,10 +5074,12 @@ interface AuthenticatedOrganizationOrganizationIdRouteRouteChildren {
   AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRouteWithChildren
+  AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute: typeof AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute
   AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute: typeof AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdIndexRoute
@@ -5102,6 +5148,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesCreateRoute,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesIndexRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdOverviewRouteRoute:
@@ -5110,6 +5158,8 @@ const AuthenticatedOrganizationOrganizationIdRouteRouteChildren: AuthenticatedOr
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdSettingsRouteRouteWithChildren,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdVariablesRouteRouteWithChildren,
+    AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute:
+      AuthenticatedOrganizationOrganizationIdClusterClusterIdDeploymentsLogsDeploymentIdRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute:
       AuthenticatedOrganizationOrganizationIdProjectProjectIdDeploymentRulesEditDeploymentRuleIdRoute,
     AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdDeploymentsRoute:

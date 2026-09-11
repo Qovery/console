@@ -1,6 +1,7 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { Link as RouterLink, useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { ClusterStateEnum, StateEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ClusterInstallationGuideModal, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
@@ -28,6 +29,10 @@ const ACTIVE_DEPLOYING_SERVICE_STATUSES: StateEnum[] = [StateEnum.DEPLOYING, Sta
 const ALL_DEPLOYING_SERVICE_STATUSES: StateEnum[] = [...QUEUED_SERVICE_STATUSES, ...ACTIVE_DEPLOYING_SERVICE_STATUSES]
 
 export function SectionOnboarding() {
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
+  const clusterLogsLinkTarget = isClusterDeploymentHistoryEnabled
+    ? ('/organization/$organizationId/cluster/$clusterId/deployments' as const)
+    : ('/organization/$organizationId/cluster/$clusterId/cluster-logs' as const)
   const { organizationId = '' } = useParams({ strict: false })
   const [localDismissed, setLocalDismissed] = useLocalStorage(`onboarding_section_dismissed_${organizationId}`, false)
   const { openModal, closeModal, enableAlertClickOutside } = useModal()
@@ -475,7 +480,7 @@ export function SectionOnboarding() {
                 <span className="text-ssm font-normal text-neutral-subtle">Deployment queued...</span>
               ) : isClusterDeploying ? (
                 <Link
-                  to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+                  to={clusterLogsLinkTarget}
                   params={{ organizationId, clusterId: deployingClusterStatus?.cluster_id ?? '' }}
                   color="brand"
                   underline
@@ -491,7 +496,7 @@ export function SectionOnboarding() {
                 </Link>
               ) : isClusterFailed ? (
                 <Link
-                  to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+                  to={clusterLogsLinkTarget}
                   params={{ organizationId, clusterId: failedClusterStatus?.cluster_id ?? '' }}
                   color="red"
                   underline
