@@ -1,16 +1,17 @@
+import posthog from 'posthog-js'
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { AgenticWorkflowCreationFlow } from '../agentic-workflow-context'
+import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
 import {
   AgenticWorkflowConfiguration,
   areVariablesValid,
+  getInvalidVariableField,
   getJsonError,
   isGitRepositoryComplete,
 } from './agentic-workflow-configuration'
 
 const mockNavigate = jest.fn()
 const mockCreateService = jest.fn()
-const mockDeployEnvironment = jest.fn()
 const mockImportVariables = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
@@ -25,10 +26,6 @@ jest.mock('../../../hooks/use-create-service/use-create-service', () => ({
   useCreateService: () => ({ isLoading: false, mutateAsync: mockCreateService }),
 }))
 
-jest.mock('../../../hooks/use-deploy-environment/use-deploy-environment', () => ({
-  useDeployEnvironment: () => ({ isLoading: false, mutateAsync: mockDeployEnvironment }),
-}))
-
 jest.mock('@qovery/domains/organizations/feature', () => ({
   GitBranchSettings: () => <div>Git branch</div>,
   GitProviderSetting: () => <div>Git provider</div>,
@@ -39,7 +36,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
-  VariableRow: () => <div>Variable</div>,
+  ...jest.requireActual('@qovery/domains/variables/feature'),
   useImportVariables: () => ({ isLoading: false, mutateAsync: mockImportVariables }),
 }))
 
@@ -67,12 +64,27 @@ jest.mock('../agentic-workflow-schedule-fields', () => ({
   AgenticWorkflowScheduleFields: () => <div>Schedule</div>,
 }))
 
-function renderConfiguration(onExit = jest.fn()) {
+function renderConfiguration({
+  onExit = jest.fn(),
+  seed,
+  variablesSeed,
+}: {
+  onExit?: () => void
+  seed?: Partial<AgenticWorkflowFormData>
+  variablesSeed?: Parameters<typeof AgenticWorkflowCreationFlow>[0]['variablesSeed']
+} = {}) {
   return renderWithProviders(
-    <AgenticWorkflowCreationFlow onExit={onExit}>
+    <AgenticWorkflowCreationFlow onExit={onExit} seed={seed} variablesSeed={variablesSeed}>
       <AgenticWorkflowConfiguration />
     </AgenticWorkflowCreationFlow>
   )
+}
+
+const validSeed: Partial<AgenticWorkflowFormData> = {
+  name: 'review-agent',
+  agentPrompt: 'Review incoming payloads.',
+  modelApiKey: 'sk-ant-test',
+  automations: [{ id: 'automation-1', triggers: [{ id: 'webhook-1', type: 'webhook' }], outputs: [] }],
 }
 
 describe('AgenticWorkflowConfiguration validation', () => {
@@ -111,13 +123,22 @@ describe('AgenticWorkflowConfiguration validation', () => {
       true
     )
   })
+
+  it('should resolve the first invalid variable field in focus order', () => {
+    expect(getInvalidVariableField({ variable: 'API_KEY', value: 'secret', isSecret: true })).toBe('scope')
+    expect(getInvalidVariableField({ variable: 'API_KEY', value: '', scope: 'AGENTIC_WORKFLOW', isSecret: true })).toBe(
+      'value'
+    )
+    expect(
+      getInvalidVariableField({ variable: 'API KEY', value: 'secret', scope: 'AGENTIC_WORKFLOW', isSecret: true })
+    ).toBe('variable')
+  })
 })
 
 describe('AgenticWorkflowConfiguration', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockCreateService.mockResolvedValue({ id: 'workflow-1' })
-    mockDeployEnvironment.mockResolvedValue(undefined)
     mockImportVariables.mockResolvedValue(undefined)
   })
 
@@ -137,7 +158,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
   it('should leave the creation page from the top-left back action', async () => {
     const onExit = jest.fn()
-    const { userEvent } = renderConfiguration(onExit)
+    const { userEvent } = renderConfiguration({ onExit })
 
     await userEvent.click(screen.getByRole('button', { name: 'Back' }))
 
@@ -159,6 +180,16 @@ describe('AgenticWorkflowConfiguration', () => {
 
     expect(screen.getByRole('heading', { name: 'Dockerfile fragment' })).toBeInTheDocument()
     expect(screen.queryByText('Advanced MCP configuration')).not.toBeInTheDocument()
+  })
+
+  it('should configure the execution mode from advanced settings', async () => {
+    const { userEvent } = renderConfiguration()
+
+    await userEvent.click(screen.getByRole('button', { name: /Advanced settings/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Clone environment/ }))
+
+    expect(screen.getByRole('button', { name: /Clone environment/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /In place/ })).toHaveAttribute('aria-pressed', 'false')
   })
 
   it('should configure context, provider, and automations from the main canvas', async () => {
@@ -196,10 +227,9 @@ describe('AgenticWorkflowConfiguration', () => {
   it('should surface validation feedback when a creation action is clicked with incomplete configuration', async () => {
     const { userEvent } = renderConfiguration()
     const createButton = screen.getByRole('button', { name: 'Create' })
-    const createAndDeployButton = screen.getByRole('button', { name: 'Create and deploy' })
 
     expect(createButton).toBeEnabled()
-    expect(createAndDeployButton).toBeEnabled()
+    expect(screen.queryByRole('button', { name: 'Create and deploy' })).not.toBeInTheDocument()
 
     await userEvent.click(createButton)
     expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
@@ -212,16 +242,59 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     expect(createButton).toBeEnabled()
-    expect(createAndDeployButton).toBeEnabled()
 
     await userEvent.click(createButton)
 
     expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
+    expect(screen.getByText('At least one trigger is required.')).toBeInTheDocument()
+    expect(screen.getByTestId('trigger-validation')).toHaveFocus()
     expect(screen.getByRole('button', { name: 'Apply changes' })).toBeDisabled()
     expect(mockCreateService).not.toHaveBeenCalled()
   })
 
-  it('should create without deploying when Create is clicked', async () => {
+  it('should show variable errors and focus the first invalid value', async () => {
+    const { userEvent } = renderConfiguration({
+      seed: validSeed,
+      variablesSeed: [
+        {
+          variable: 'INCIDENT_API_KEY',
+          value: '',
+          scope: 'AGENTIC_WORKFLOW',
+          isSecret: true,
+        },
+      ],
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() => {
+      expect(screen.getByText('Complete every environment variable name and value.')).toBeInTheDocument()
+      expect(screen.getByText('Please enter a value.')).toBeInTheDocument()
+      expect(screen.getByTestId('value')).toHaveFocus()
+    })
+    expect(mockCreateService).not.toHaveBeenCalled()
+  })
+
+  it('should focus the variable row when its invalid field has no text input', async () => {
+    const { userEvent } = renderConfiguration({
+      seed: validSeed,
+      variablesSeed: [
+        {
+          variable: 'CONFIG_FILE',
+          value: '',
+          scope: 'AGENTIC_WORKFLOW',
+          isSecret: false,
+          file: { path: '/tmp/config.json' },
+        },
+      ],
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() => expect(screen.getByTestId('variable-row')).toHaveFocus())
+  })
+
+  it('should create the agent task when Create is clicked', async () => {
     const { userEvent } = renderConfiguration()
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
@@ -241,23 +314,16 @@ describe('AgenticWorkflowConfiguration', () => {
         payload: expect.objectContaining({ enabled: true, execution_mode: AgenticWorkflowExecutionMode.IN_PLACE }),
       })
     )
-    expect(mockDeployEnvironment).not.toHaveBeenCalled()
+    expect(posthog.capture).toHaveBeenCalledWith('agent-task-form-submitted', { success: true })
   })
 
-  it('should deploy the created agent task when Create and deploy is clicked', async () => {
-    const { userEvent } = renderConfiguration()
+  it('should track a failed agent task creation', async () => {
+    mockCreateService.mockRejectedValueOnce(new Error('Creation failed'))
+    const { userEvent } = renderConfiguration({ seed: validSeed })
 
-    await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
-    await userEvent.type(screen.getByRole('textbox', { name: 'Instructions' }), 'Review incoming payloads.')
-    await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
-    await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
-    await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
-    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
-    await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Create and deploy' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-    await waitFor(() => expect(mockDeployEnvironment).toHaveBeenCalledWith({ environmentId: 'environment-1' }))
+    await waitFor(() => expect(posthog.capture).toHaveBeenCalledWith('agent-task-form-submitted', { success: false }))
+    expect(mockNavigate).not.toHaveBeenCalled()
   })
 })

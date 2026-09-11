@@ -104,7 +104,7 @@ export function AgenticWorkflowConnectionsSettings({
         ) : null}
       </AgenticWorkflowSettingsCard>
 
-      <AgenticWorkflowSettingsCard title="MCP" description="Select the organization MCPs this agent task can use.">
+      <AgenticWorkflowSettingsCard title="MCP" description="Select the MCPs this agent task can use.">
         <div className="flex flex-wrap gap-2">
           {availableMcpServers
             .filter(({ id }) => mcpServerIds.includes(id))

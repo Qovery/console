@@ -1,4 +1,4 @@
-import { type McpServerResponse } from 'qovery-typescript-axios'
+import { type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useCreateMcpServerHook from '../hooks/use-create-mcp-server/use-create-mcp-server'
 import * as useEditMcpServerHook from '../hooks/use-edit-mcp-server/use-edit-mcp-server'
@@ -47,6 +47,40 @@ describe('McpServerCreateEditModal', () => {
           description: 'GitHub tools',
           url: 'https://example.com/mcp',
           headers: { Authorization: 'Bearer secret' },
+          scope: McpServerScope.ORGANIZATION,
+        },
+      })
+    )
+  })
+
+  it('should default to a personal MCP and allow selecting the organization scope', async () => {
+    const { userEvent } = renderWithProviders(
+      <McpServerCreateEditModal
+        {...props}
+        scope={McpServerScope.USER}
+        scopeOptions={[McpServerScope.USER, McpServerScope.ORGANIZATION]}
+      />
+    )
+
+    expect(screen.getByText('Personal')).toBeInTheDocument()
+    expect(screen.getByText('Only you can attach this MCP to agent tasks.')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByLabelText('Scope'))
+    await userEvent.click(screen.getByText('Organization'))
+    expect(screen.getByText('Members of this organization can attach this MCP to agent tasks.')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Name'), 'Shared tools')
+    await userEvent.type(screen.getByLabelText('Server URL'), 'https://example.com/mcp')
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
+
+    await waitFor(() =>
+      expect(createMcpServer).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        mcpServerRequest: {
+          name: 'Shared tools',
+          description: undefined,
+          url: 'https://example.com/mcp',
+          headers: undefined,
+          scope: McpServerScope.ORGANIZATION,
         },
       })
     )
@@ -88,6 +122,8 @@ describe('McpServerCreateEditModal', () => {
       header_names: new Set(['Authorization']),
       created_at: '2026-08-01T10:00:00Z',
       updated_at: '2026-08-01T10:00:00Z',
+      scope: McpServerScope.ORGANIZATION,
+      attachable: true,
     }
     const { userEvent } = renderWithProviders(<McpServerCreateEditModal {...props} mcpServer={mcpServer} />)
 
@@ -107,6 +143,7 @@ describe('McpServerCreateEditModal', () => {
           description: 'GitHub tools',
           url: 'https://example.com/mcp',
           headers: { Authorization: 'Bearer new-secret' },
+          scope: undefined,
         },
       })
     )
