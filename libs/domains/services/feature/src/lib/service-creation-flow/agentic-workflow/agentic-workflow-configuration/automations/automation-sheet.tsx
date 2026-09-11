@@ -145,14 +145,14 @@ function ScheduledTriggerModal({
           <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
             {trigger ? 'Edit schedule trigger' : 'Add schedule trigger'}
           </Heading>
-          <p className="text-sm leading-5 text-neutral-subtle">Run this agent task automatically on a schedule.</p>
-        </div>
-        <div className="flex flex-col gap-4">
-          <div className="flex justify-end">
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+            <p className="text-sm leading-5 text-neutral-subtle">Run this agent task automatically on a schedule.</p>
             <ExternalLink href="https://crontab.guru/" size="sm">
               CRON expression builder
             </ExternalLink>
           </div>
+        </div>
+        <div className="flex flex-col gap-4">
           <InputText
             name="cron-expression"
             label="Cron expression"
