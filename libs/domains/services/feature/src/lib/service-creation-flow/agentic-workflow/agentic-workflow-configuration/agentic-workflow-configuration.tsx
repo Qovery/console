@@ -634,18 +634,6 @@ export function AgenticWorkflowConfiguration() {
           <div className="flex flex-col gap-3">
             <div>
               <Heading level={3} weight="medium">
-                Execution mode
-              </Heading>
-              <p className="mt-1 text-xs text-neutral-subtle">Choose how each agent task execution is isolated.</p>
-            </div>
-            <AgenticWorkflowExecutionModeSelector
-              value={values.executionMode}
-              onChange={(mode) => form.setValue('executionMode', mode, { shouldDirty: true })}
-            />
-          </div>
-          <div className="flex flex-col gap-3">
-            <div>
-              <Heading level={3} weight="medium">
                 Dockerfile fragment
               </Heading>
               <p className="mt-1 text-xs text-neutral-subtle">
@@ -694,6 +682,18 @@ export function AgenticWorkflowConfiguration() {
                 </Button>
               </div>
             )}
+          </div>
+          <div className="flex flex-col gap-3">
+            <div>
+              <Heading level={3} weight="medium">
+                Execution mode
+              </Heading>
+              <p className="mt-1 text-xs text-neutral-subtle">Choose how each agent task execution is isolated.</p>
+            </div>
+            <AgenticWorkflowExecutionModeSelector
+              value={values.executionMode}
+              onChange={(mode) => form.setValue('executionMode', mode, { shouldDirty: true })}
+            />
           </div>
         </div>
       </SettingsAccordionItem>

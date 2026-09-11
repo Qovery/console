@@ -27,13 +27,13 @@ export function AgenticWorkflowExecutionModeSelector({ onChange, value }: Agenti
           key={mode}
           type="button"
           aria-pressed={value === mode}
-          className={`rounded-lg border p-3 text-left transition-colors focus-visible:outline-2 ${value === mode ? 'border-brand bg-surface-brand-subtle hover:border-brand-strong' : 'border-neutral bg-surface-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle'}`}
+          className={`rounded-lg border p-2 text-left transition-colors focus-visible:outline-2 ${value === mode ? 'border-brand bg-surface-brand-subtle hover:border-brand-strong' : 'border-neutral bg-surface-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle'}`}
           onClick={() => onChange(mode)}
         >
-          <span className="flex items-center gap-3">
+          <span className="flex items-start gap-3">
             <span
               aria-hidden="true"
-              className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral-subtle text-neutral-subtle"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral-subtle text-neutral-subtle"
             >
               <Icon iconName={iconName} iconStyle="regular" />
             </span>
