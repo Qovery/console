@@ -302,6 +302,28 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(mockCreateService).not.toHaveBeenCalled()
   })
 
+  it('should open invalid environment variables before handling earlier validation errors', async () => {
+    const { userEvent } = renderConfiguration({
+      variablesSeed: [
+        {
+          variable: 'INCIDENT_API_KEY',
+          value: '',
+          scope: 'AGENTIC_WORKFLOW',
+          isSecret: true,
+        },
+      ],
+    })
+
+    const variablesTrigger = screen.getByRole('button', { name: /Environment variables/ })
+    await userEvent.click(variablesTrigger)
+    expect(variablesTrigger).toHaveAttribute('data-state', 'closed')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() => expect(variablesTrigger).toHaveAttribute('data-state', 'open'))
+    expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
+  })
+
   it('should focus the variable row when its invalid field has no text input', async () => {
     const { userEvent } = renderConfiguration({
       seed: validSeed,

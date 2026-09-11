@@ -381,6 +381,9 @@ export function AgenticWorkflowConfiguration() {
 
   const validateConfiguration = async () => {
     setShowValidationErrors(true)
+    if (!variablesValid) {
+      setOpenSettingsGroups((groups) => (groups.includes('variables') ? groups : [...groups, 'variables']))
+    }
 
     if (!values.name.trim()) {
       headerRef.current?.focusName()
