@@ -102,10 +102,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
             {enabledServicesCount} enabled
           </Badge>
         </div>
-        <Table.Root
-          containerClassName="rounded-none border-x-0 border-b-0 border-t"
-          className="w-full min-w-[1320px] overflow-x-scroll text-xs xl:overflow-auto"
-        >
+        <Table.Root containerClassName="rounded-none border-x-0 border-b-0 border-t" className="w-full text-xs">
           <Table.Header className="border-neutral">
             <Table.Row className={`h-9 w-full ${tableGridLayoutClassName}`}>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">

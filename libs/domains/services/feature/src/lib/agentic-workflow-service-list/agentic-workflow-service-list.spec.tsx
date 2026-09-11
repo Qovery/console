@@ -73,7 +73,7 @@ describe('AgenticWorkflowServiceList', () => {
         { id: 'application-1', name: 'API', service_type: 'APPLICATION', serviceType: 'APPLICATION' },
       ],
     })
-    const { userEvent } = renderWithProviders(<AgenticWorkflowServiceList environment={environment} />)
+    const { container, userEvent } = renderWithProviders(<AgenticWorkflowServiceList environment={environment} />)
 
     expect(screen.getByRole('heading', { name: 'Agent tasks' })).toBeInTheDocument()
     expect(screen.getByText('Review pull requests')).toBeInTheDocument()
@@ -84,6 +84,7 @@ describe('AgenticWorkflowServiceList', () => {
     expect(screen.getByText('Last operation')).toBeInTheDocument()
     expect(screen.getByText('Model')).toBeInTheDocument()
     expect(screen.getByText('Trigger')).toBeInTheDocument()
+    expect(container.querySelector('table')).not.toHaveClass('min-w-[1320px]', 'overflow-x-scroll')
     expect(screen.getByText('Claude')).toBeInTheDocument()
     expect(screen.getByText('Bedrock')).toBeInTheDocument()
     expect(screen.getAllByText('Webhook')).toHaveLength(2)
