@@ -78,7 +78,16 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
           <p className="break-all font-mono">{mcpServer.url}</p>
           {owner ? (
             <>
-              <span aria-hidden="true">·</span>
+              <svg
+                aria-hidden="true"
+                xmlns="http://www.w3.org/2000/svg"
+                width="5"
+                height="6"
+                fill="none"
+                viewBox="0 0 5 6"
+              >
+                <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)" />
+              </svg>
               <span className="shrink-0">{owner}</span>
             </>
           ) : null}
