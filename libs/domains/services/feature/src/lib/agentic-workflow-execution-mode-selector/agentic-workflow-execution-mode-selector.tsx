@@ -19,7 +19,7 @@ export function AgenticWorkflowExecutionModeSelector({ onChange, value }: Agenti
         {
           mode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
           label: 'Clone environment',
-          description: 'Create an isolated temporary environment for each run.',
+          description: 'Create an isolated environment for each run.',
           iconName: 'clone' as const,
         },
       ].map(({ mode, label, description, iconName }) => (
@@ -33,7 +33,7 @@ export function AgenticWorkflowExecutionModeSelector({ onChange, value }: Agenti
           <span className="flex items-start gap-3">
             <span
               aria-hidden="true"
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral-subtle text-neutral-subtle"
+              className="flex h-6 w-6 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral-subtle text-xs text-neutral-subtle"
             >
               <Icon iconName={iconName} iconStyle="regular" />
             </span>

@@ -455,12 +455,14 @@ export function AgenticWorkflowConfiguration() {
         })
       }
 
+      posthog.capture('agent-task-form-submitted', { success: true })
       posthog.capture('create-service', { selectedServiceType: 'agentic-workflow' })
       navigate({
         to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
         params: { organizationId, projectId, environmentId },
       })
     } catch {
+      posthog.capture('agent-task-form-submitted', { success: false })
       // Errors are surfaced by mutation notifications. Keep the created service ID so a retry does not duplicate it.
     }
   }

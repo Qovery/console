@@ -1,3 +1,4 @@
+import posthog from 'posthog-js'
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
@@ -313,5 +314,16 @@ describe('AgenticWorkflowConfiguration', () => {
         payload: expect.objectContaining({ enabled: true, execution_mode: AgenticWorkflowExecutionMode.IN_PLACE }),
       })
     )
+    expect(posthog.capture).toHaveBeenCalledWith('agent-task-form-submitted', { success: true })
+  })
+
+  it('should track a failed agent task creation', async () => {
+    mockCreateService.mockRejectedValueOnce(new Error('Creation failed'))
+    const { userEvent } = renderConfiguration({ seed: validSeed })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() => expect(posthog.capture).toHaveBeenCalledWith('agent-task-form-submitted', { success: false }))
+    expect(mockNavigate).not.toHaveBeenCalled()
   })
 })
