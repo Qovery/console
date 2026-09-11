@@ -4,6 +4,7 @@ import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../ag
 import {
   AgenticWorkflowConfiguration,
   areVariablesValid,
+  getInvalidVariableField,
   getJsonError,
   isGitRepositoryComplete,
 } from './agentic-workflow-configuration'
@@ -125,6 +126,16 @@ describe('AgenticWorkflowConfiguration validation', () => {
     expect(areVariablesValid([{ variable: 'API_URL', value: 'https://example.com', scope: 'AGENTIC_WORKFLOW' }])).toBe(
       true
     )
+  })
+
+  it('should resolve the first invalid variable field in focus order', () => {
+    expect(getInvalidVariableField({ variable: 'API_KEY', value: 'secret', isSecret: true })).toBe('scope')
+    expect(getInvalidVariableField({ variable: 'API_KEY', value: '', scope: 'AGENTIC_WORKFLOW', isSecret: true })).toBe(
+      'value'
+    )
+    expect(
+      getInvalidVariableField({ variable: 'API KEY', value: 'secret', scope: 'AGENTIC_WORKFLOW', isSecret: true })
+    ).toBe('variable')
   })
 })
 
@@ -263,10 +274,31 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-    expect(screen.getByText('Complete every environment variable name and value.')).toBeInTheDocument()
-    expect(screen.getByText('Please enter a value.')).toBeInTheDocument()
-    await waitFor(() => expect(screen.getByTestId('value')).toHaveFocus())
+    await waitFor(() => {
+      expect(screen.getByText('Complete every environment variable name and value.')).toBeInTheDocument()
+      expect(screen.getByText('Please enter a value.')).toBeInTheDocument()
+      expect(screen.getByTestId('value')).toHaveFocus()
+    })
     expect(mockCreateService).not.toHaveBeenCalled()
+  })
+
+  it('should focus the variable row when its invalid field has no text input', async () => {
+    const { userEvent } = renderConfiguration({
+      seed: validSeed,
+      variablesSeed: [
+        {
+          variable: 'CONFIG_FILE',
+          value: '',
+          scope: 'AGENTIC_WORKFLOW',
+          isSecret: false,
+          file: { path: '/tmp/config.json' },
+        },
+      ],
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() => expect(screen.getByTestId('variable-row')).toHaveFocus())
   })
 
   it('should create without deploying when Create is clicked', async () => {

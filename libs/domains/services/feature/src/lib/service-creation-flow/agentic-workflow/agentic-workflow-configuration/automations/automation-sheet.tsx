@@ -354,7 +354,11 @@ export function AutomationSheet({
           data-testid="trigger-validation"
           ref={focusTriggerError}
           tabIndex={-1}
-          className={showTriggerError ? 'outline-negative rounded-md outline outline-1' : undefined}
+          className={
+            showTriggerError && draft.triggers.length === 0
+              ? 'outline-negative rounded-md outline outline-1'
+              : undefined
+          }
         >
           <AutomationSection
             title="Triggers"

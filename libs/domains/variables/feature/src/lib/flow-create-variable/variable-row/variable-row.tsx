@@ -37,7 +37,7 @@ export function VariableRow(props: VariableRowProps) {
   const patternValidVariable = /^[a-zA-Z_][a-zA-Z0-9_]*$/
 
   return (
-    <div data-testid="variable-row" className="mb-3 w-full items-center">
+    <div data-testid="variable-row" data-variable-row-index={index} tabIndex={-1} className="mb-3 w-full items-center">
       <div key={index} data-testid="form-row" className="mb-3 grid max-w-full gap-3" style={{ gridTemplateColumns }}>
         <Controller
           name={`variables.${index}.variable`}

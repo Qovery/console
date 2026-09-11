@@ -22,6 +22,14 @@ const mcpServers = [
     owner_name: 'Romaric Philogène',
     attachable: false,
   },
+  {
+    id: 'm3',
+    name: 'Unknown owner tools',
+    url: 'https://unknown.example.com/mcp',
+    scope: McpServerScope.USER,
+    owner_name: null,
+    attachable: false,
+  },
 ] as McpServerResponse[]
 
 function setup(value: string[] = [], onChange = jest.fn(), onClose = jest.fn()) {
@@ -63,6 +71,7 @@ describe('McpSheet', () => {
     setup()
 
     expect(screen.getByText('Personal · Romaric Philogène · Not available to you')).toBeInTheDocument()
+    expect(screen.getByText('Personal · Unknown owner · Not available to you')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Romaric tools unavailable' })).toBeDisabled()
   })
 

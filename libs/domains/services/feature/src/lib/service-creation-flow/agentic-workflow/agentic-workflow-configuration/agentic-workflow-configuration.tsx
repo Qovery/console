@@ -67,10 +67,15 @@ export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
 }
 
 export function areVariablesValid(variables: VariableData[]) {
-  return variables.every(
-    ({ variable, value, scope }) =>
-      Boolean(variable?.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) && Boolean(value) && Boolean(scope)
-  )
+  return variables.every((variable) => getInvalidVariableField(variable) === undefined)
+}
+
+export function getInvalidVariableField({ variable, value, scope }: VariableData) {
+  if (!scope) return 'scope' as const
+  if (!value) return 'value' as const
+  if (!variable?.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) return 'variable' as const
+
+  return undefined
 }
 
 function SettingsAccordionItem({
@@ -408,16 +413,18 @@ export function AgenticWorkflowConfiguration() {
       await variablesForm.trigger()
 
       const invalidVariableIndex = variableValues.findIndex(
-        ({ variable, value, scope }) => !variable?.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/) || !value || !scope
+        (variable) => getInvalidVariableField(variable) !== undefined
       )
-      const invalidVariable = variableValues[invalidVariableIndex]
-      const invalidField = invalidVariable?.variable?.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/) ? 'value' : 'variable'
+      const invalidField = getInvalidVariableField(variableValues[invalidVariableIndex])
 
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {
-          document
-            .querySelector<HTMLInputElement>(`[name="variables.${invalidVariableIndex}.${invalidField}"]`)
-            ?.focus()
+          const invalidInput = document.querySelector<HTMLElement>(
+            `[name="variables.${invalidVariableIndex}.${invalidField}"]`
+          )
+          const variableRow = document.querySelector<HTMLElement>(`[data-variable-row-index="${invalidVariableIndex}"]`)
+          const focusTarget = invalidInput ?? variableRow
+          focusTarget?.focus()
         })
       })
       return false

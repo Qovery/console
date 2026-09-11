@@ -70,8 +70,8 @@ function McpServerPicker({
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium text-neutral">{mcpServer.name}</p>
           <p className="truncate text-xs text-neutral-subtle">
-            {mcpServer.scope === McpServerScope.USER && mcpServer.owner_name
-              ? `Personal · ${mcpServer.owner_name}`
+            {mcpServer.scope === McpServerScope.USER
+              ? `Personal · ${mcpServer.owner_name ?? 'Unknown owner'}`
               : 'Organization'}
             {!canToggle ? ' · Not available to you' : ''}
           </p>
