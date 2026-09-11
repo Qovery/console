@@ -10,6 +10,7 @@ import {
 import type { ReactNode } from 'react'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { type UseClusterDeploymentHistoryProps } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
 import { ClusterLastDeploymentSection } from './cluster-last-deployment-section'
 
 jest.mock('posthog-js/react', () => ({
@@ -34,27 +35,33 @@ jest.mock('@qovery/shared/ui', () => ({
   Link: ({ children, ...props }: { children?: ReactNode; [key: string]: unknown }) => <a {...props}>{children}</a>,
 }))
 
+let mockClusterDeploymentHistoryProps: UseClusterDeploymentHistoryProps | undefined
+
 jest.mock('../hooks/use-cluster-deployment-history/use-cluster-deployment-history', () => ({
-  useClusterDeploymentHistory: () => ({
-    data: [
-      {
-        identifier: {
-          deployment_id: 'deployment-1',
-          execution_id: 'execution-1',
-          cluster_id: 'cluster-1',
+  useClusterDeploymentHistory: (props: UseClusterDeploymentHistoryProps) => {
+    mockClusterDeploymentHistoryProps = props
+
+    return {
+      data: [
+        {
+          identifier: {
+            deployment_id: 'deployment-1',
+            execution_id: 'execution-1',
+            cluster_id: 'cluster-1',
+          },
+          auditing_data: {
+            created_at: '2026-08-10T12:30:00Z',
+          },
+          status: 'DEPLOYED',
+          action_status: 'SUCCESS',
+          trigger_action: 'DEPLOY',
+          reason: 'UNSPECIFIED',
+          total_duration: 'PT1M',
         },
-        auditing_data: {
-          created_at: '2026-08-10T12:30:00Z',
-        },
-        status: 'DEPLOYED',
-        action_status: 'SUCCESS',
-        trigger_action: 'DEPLOY',
-        reason: 'UNSPECIFIED',
-        total_duration: 'PT1M',
-      },
-    ],
-    isFetched: true,
-  }),
+      ],
+      isFetched: true,
+    }
+  },
 }))
 
 const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.Mock
@@ -87,6 +94,7 @@ describe('ClusterLastDeploymentSection', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     useFeatureFlagEnabledMock.mockReturnValue(true)
+    mockClusterDeploymentHistoryProps = undefined
   })
 
   it('renders the latest cluster deployment row linked to its deployment logs', () => {
@@ -112,6 +120,31 @@ describe('ClusterLastDeploymentSection', () => {
     const link = screen.getByText('See all deployments').closest('a')
 
     expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/deployments')
+  })
+
+  it('does not poll deployment history when the cluster is not deploying', () => {
+    renderWithProviders(
+      <ClusterLastDeploymentSection organizationId="org-1" clusterId="cluster-1" clusterStatus={baseClusterStatus} />
+    )
+
+    expect(mockClusterDeploymentHistoryProps).toEqual({
+      organizationId: 'org-1',
+      clusterId: 'cluster-1',
+      enabled: true,
+      refetchInterval: undefined,
+    })
+  })
+
+  it('polls deployment history while the cluster is deploying', () => {
+    renderWithProviders(
+      <ClusterLastDeploymentSection
+        organizationId="org-1"
+        clusterId="cluster-1"
+        clusterStatus={{ ...baseClusterStatus, status: ClusterStateEnum.DEPLOYING }}
+      />
+    )
+
+    expect(mockClusterDeploymentHistoryProps?.refetchInterval).toBe(5000)
   })
 
   describe('when the cluster-deployment-history feature flag is off', () => {

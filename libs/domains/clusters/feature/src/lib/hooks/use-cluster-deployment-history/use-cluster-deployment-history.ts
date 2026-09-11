@@ -7,6 +7,7 @@ export interface UseClusterDeploymentHistoryProps {
   pageSize?: number
   suspense?: boolean
   enabled?: boolean
+  refetchInterval?: number
 }
 
 export function useClusterDeploymentHistory({
@@ -15,12 +16,13 @@ export function useClusterDeploymentHistory({
   pageSize = 20,
   suspense = false,
   enabled = true,
+  refetchInterval,
 }: UseClusterDeploymentHistoryProps) {
   return useQuery({
     ...queries.clusters.deploymentHistory({ organizationId, clusterId, pageSize }),
     enabled: enabled && Boolean(organizationId) && Boolean(clusterId),
     suspense,
-    refetchInterval: 5000,
+    refetchInterval,
     retryOnMount: true,
     staleTime: 4500,
     notifyOnChangeProps: ['data'],

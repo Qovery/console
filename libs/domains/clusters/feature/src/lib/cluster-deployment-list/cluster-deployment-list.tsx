@@ -60,6 +60,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
     organizationId,
     clusterId,
     suspense: true,
+    refetchInterval: 5000,
   })
 
   const [sorting, setSorting] = useState<SortingState>([])
@@ -98,7 +99,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
                   <span onClick={stopRowNavigation} onMouseDown={stopRowNavigation} onKeyDown={stopRowNavigation}>
                     <CopyToClipboardButtonIcon
                       content={data.identifier.execution_id ?? data.identifier.deployment_id}
-                      tooltipContent="Copy deployment id"
+                      tooltipContent={data.identifier.execution_id ? 'Copy execution ID' : 'Copy deployment ID'}
                       className="shrink-0 opacity-0 transition-opacity group-hover:opacity-100"
                       iconClassName="text-xs"
                     />

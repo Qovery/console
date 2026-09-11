@@ -37,6 +37,7 @@ export function useDeploymentProgress({ organizationId, clusterId, cloudProvider
     organizationId,
     clusterId,
     enabled: isClusterDeploymentHistoryEnabled,
+    refetchInterval: 5000,
   })
   const latestDeploymentId = deploymentHistory[0]?.identifier.deployment_id ?? ''
   const { data: deploymentLogs } = useClusterDeploymentLogs({

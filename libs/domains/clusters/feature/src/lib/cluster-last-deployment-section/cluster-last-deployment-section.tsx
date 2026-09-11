@@ -98,14 +98,6 @@ export function ClusterLastDeploymentSection({
 }: ClusterLastDeploymentSectionProps) {
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
-  // The deployment-history endpoint is only queried when the feature flag is on
-  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
-    organizationId,
-    clusterId,
-    enabled: isClusterDeploymentHistoryEnabled,
-  })
-  const lastDeployment = deploymentHistory[0]
-  const hasLastDeployment = Boolean(clusterStatus?.last_deployment_date || clusterStatus?.last_execution_id)
   const isOngoing = match(clusterStatus?.status)
     .with(
       'BUILDING',
@@ -119,6 +111,15 @@ export function ClusterLastDeploymentSection({
       () => true
     )
     .otherwise(() => false)
+  // The deployment-history endpoint is only queried when the feature flag is on
+  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
+    organizationId,
+    clusterId,
+    enabled: isClusterDeploymentHistoryEnabled,
+    refetchInterval: isOngoing ? 5000 : undefined,
+  })
+  const lastDeployment = deploymentHistory[0]
+  const hasLastDeployment = Boolean(clusterStatus?.last_deployment_date || clusterStatus?.last_execution_id)
   const deploymentReasonLabel = getDeploymentReasonLabel(clusterStatus?.reason)
 
   const handleLaunchDiagnostic = () => {
