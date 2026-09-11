@@ -17,6 +17,23 @@ describe('agentic-workflow-templates', () => {
     expect(template?.variables?.map((variable) => variable.variable)).toContain(credential)
   })
 
+  it('configures Jira Cloud Basic authentication and tenant access', () => {
+    const template = getAgenticWorkflowTemplate('jira-coding-agent')
+
+    expect(template?.seed.agentPrompt).toContain('JIRA_EMAIL')
+    expect(template?.seed.agentPrompt).toContain('HTTP Basic auth')
+    expect(template?.seed.whitelistHosts?.split(',')).toContain('*.atlassian.net')
+    expect(template?.variables?.map((variable) => variable.variable)).toEqual([
+      'JIRA_BASE_URL',
+      'JIRA_EMAIL',
+      'JIRA_API_TOKEN',
+    ])
+  })
+
+  it.each(['jira-coding-agent', 'linear-coding-agent'])('allows the %s to reach the Bitbucket API', (id) => {
+    expect(getAgenticWorkflowTemplate(id)?.seed.whitelistHosts?.split(',')).toContain('api.bitbucket.org')
+  })
+
   it.each([
     ['jira-coding-agent', 'Jira Coding Agent', 'JIRA_API_TOKEN'],
     ['linear-coding-agent', 'Linear Coding Agent', 'LINEAR_API_KEY'],

@@ -21,7 +21,7 @@ const HONEYBADGER_PROMPT = `You are an on-call incident analyzer. When a Honeyba
 
 Use HONEYBADGER_API_TOKEN to fetch the fault, occurrence, project, and environment details that are missing from the trigger. Correlate them with recent deployments, configuration changes, merged pull requests, logs, metrics, and runbooks for the affected services. Identify the most likely root cause and blast radius, state your confidence and any gaps, then recommend the safest next action. If a fix is small and well understood, open a pull request but never merge it.`
 
-const JIRA_CODING_AGENT_PROMPT = `You are a coding agent working from a Jira issue. Use the issue supplied by the trigger and JIRA_API_TOKEN to retrieve any missing context from JIRA_BASE_URL.
+const JIRA_CODING_AGENT_PROMPT = `You are a coding agent working from a Jira issue. Use the issue supplied by the trigger and retrieve any missing context from JIRA_BASE_URL. Authenticate to Jira Cloud with HTTP Basic auth, using JIRA_EMAIL as the username and JIRA_API_TOKEN as the password.
 
 Understand the acceptance criteria, inspect the relevant repository and existing conventions, implement the smallest complete change, and run focused tests and linting. Open a pull request that links the Jira issue and summarizes the change and verification. Never merge the pull request or deploy without human approval.`
 
@@ -99,7 +99,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       agentPrompt: JIRA_CODING_AGENT_PROMPT,
       cpu: '200',
       memory: '256',
-      whitelistHosts: 'api.atlassian.com,atlassian.net,github.com,api.github.com,gitlab.com,bitbucket.org',
+      whitelistHosts:
+        'api.atlassian.com,*.atlassian.net,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
     variables: [
       {
@@ -108,6 +109,13 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
         isSecret: false,
         scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
         description: 'Base URL of the Jira site, for example https://company.atlassian.net.',
+      },
+      {
+        variable: 'JIRA_EMAIL',
+        value: '',
+        isSecret: false,
+        scope: APIVariableScopeEnum.AGENTIC_WORKFLOW,
+        description: 'Atlassian account email used with the Jira API token for Basic authentication.',
       },
       secretVariable('JIRA_API_TOKEN', 'API token used to read the Jira issue.'),
     ],
@@ -123,7 +131,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       agentPrompt: LINEAR_CODING_AGENT_PROMPT,
       cpu: '200',
       memory: '256',
-      whitelistHosts: 'api.linear.app,github.com,api.github.com,gitlab.com,bitbucket.org',
+      whitelistHosts: 'api.linear.app,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
     variables: [secretVariable('LINEAR_API_KEY', 'API key used to read the Linear issue.')],
   },
