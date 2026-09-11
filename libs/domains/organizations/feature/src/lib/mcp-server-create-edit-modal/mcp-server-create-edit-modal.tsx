@@ -1,7 +1,17 @@
 import { useParams } from '@tanstack/react-router'
-import { type McpServerRequest, type McpServerResponse } from 'qovery-typescript-axios'
+import { type McpServerRequest, type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useFieldArray, useForm } from 'react-hook-form'
-import { Button, Callout, Icon, InputText, InputTextArea, InputTextSmall, ModalCrud, useModal } from '@qovery/shared/ui'
+import {
+  Button,
+  Callout,
+  Icon,
+  InputSelect,
+  InputText,
+  InputTextArea,
+  InputTextSmall,
+  ModalCrud,
+  useModal,
+} from '@qovery/shared/ui'
 import { useCreateMcpServer } from '../hooks/use-create-mcp-server/use-create-mcp-server'
 import { useEditMcpServer } from '../hooks/use-edit-mcp-server/use-edit-mcp-server'
 
@@ -15,11 +25,14 @@ interface McpServerFormValues {
   description: string
   url: string
   headers: HeaderField[]
+  scope: McpServerScope
 }
 
 export interface McpServerCreateEditModalProps {
   onClose: (response?: McpServerResponse) => void
   mcpServer?: McpServerResponse
+  scope?: McpServerScope
+  scopeOptions?: McpServerScope[]
 }
 
 function isValidHttpsUrl(value: string) {
@@ -31,7 +44,12 @@ function isValidHttpsUrl(value: string) {
   }
 }
 
-export function McpServerCreateEditModal({ onClose, mcpServer }: McpServerCreateEditModalProps) {
+export function McpServerCreateEditModal({
+  onClose,
+  mcpServer,
+  scope = McpServerScope.ORGANIZATION,
+  scopeOptions,
+}: McpServerCreateEditModalProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const isEdit = mcpServer !== undefined
   const { enableAlertClickOutside } = useModal()
@@ -42,6 +60,7 @@ export function McpServerCreateEditModal({ onClose, mcpServer }: McpServerCreate
       description: mcpServer?.description ?? '',
       url: mcpServer?.url ?? '',
       headers: Array.from(mcpServer?.header_names ?? []).map((name) => ({ name, value: '' })),
+      scope,
     },
   })
 
@@ -64,6 +83,7 @@ export function McpServerCreateEditModal({ onClose, mcpServer }: McpServerCreate
       description: data.description.trim() || undefined,
       url: data.url.trim(),
       headers: Object.keys(headers).length > 0 ? headers : undefined,
+      scope: isEdit ? undefined : data.scope,
     }
 
     try {
@@ -88,6 +108,28 @@ export function McpServerCreateEditModal({ onClose, mcpServer }: McpServerCreate
         submitLabel={isEdit ? 'Save MCP' : 'Add MCP'}
       >
         <div className="space-y-4">
+          {!isEdit && scopeOptions ? (
+            <Controller
+              name="scope"
+              control={methods.control}
+              render={({ field }) => (
+                <InputSelect
+                  label="Scope"
+                  value={field.value}
+                  options={scopeOptions.map((scopeOption) => ({
+                    value: scopeOption,
+                    label: scopeOption === McpServerScope.USER ? 'Personal' : 'Organization',
+                  }))}
+                  hint={
+                    field.value === McpServerScope.USER
+                      ? 'Only you can attach this MCP to agent tasks.'
+                      : 'Members of this organization can attach this MCP to agent tasks.'
+                  }
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          ) : null}
           <Controller
             name="name"
             control={methods.control}

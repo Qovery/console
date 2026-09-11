@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { BlockContent, Button, Icon, InputSelectSmall, InputTextSmall, Tooltip } from '@qovery/shared/ui'
-import { generateScopeLabel } from '@qovery/shared/util-js'
+import { ENVIRONMENT_VARIABLE_NAME_PATTERN, generateScopeLabel } from '@qovery/shared/util-js'
 import { CodeEditorVariable } from '../../code-editor-variable/code-editor-variable'
 import { FieldVariableSuggestion } from '../../field-variable-suggestion/field-variable-suggestion'
 
@@ -14,11 +14,18 @@ export interface VariableRowProps {
   availableScopes: APIVariableScopeEnum[]
   gridTemplateColumns?: string
   showScope?: boolean
+  errorMessagePosition?: 'left' | 'bottom'
 }
 
 export function VariableRow(props: VariableRowProps) {
   const { environmentId = '' } = useParams({ strict: false })
-  const { index, availableScopes, gridTemplateColumns = '172px 172px 188px 2fr 1fr', showScope = true } = props
+  const {
+    index,
+    availableScopes,
+    gridTemplateColumns = '172px 172px 188px 2fr 1fr',
+    showScope = true,
+    errorMessagePosition = 'left',
+  } = props
   const { control, trigger, watch } = useFormContext<FlowVariableData>()
   const [openEditor, setOpenEditor] = useState(true)
   const watchSecret = watch().variables[index]?.isSecret
@@ -27,10 +34,9 @@ export function VariableRow(props: VariableRowProps) {
   const watchDescription = watch().variables[index]?.description
 
   const patternNoSpaces = /^[^\s]+$/
-  const patternValidVariable = /^[a-zA-Z_][a-zA-Z0-9_]*$/
 
   return (
-    <div data-testid="variable-row" className="mb-3 w-full items-center">
+    <div data-testid="variable-row" data-variable-row-index={index} tabIndex={-1} className="mb-3 w-full items-center">
       <div key={index} data-testid="form-row" className="mb-3 grid max-w-full gap-3" style={{ gridTemplateColumns }}>
         <Controller
           name={`variables.${index}.variable`}
@@ -43,7 +49,7 @@ export function VariableRow(props: VariableRowProps) {
               if (!patternNoSpaces.test(value)) {
                 return 'Variable name cannot contain spaces.'
               }
-              if (!patternValidVariable.test(value)) {
+              if (!ENVIRONMENT_VARIABLE_NAME_PATTERN.test(value)) {
                 return 'Variable name must start with a letter or underscore, and contain only letters, numbers, and underscores.'
               }
               return true
@@ -71,7 +77,7 @@ export function VariableRow(props: VariableRowProps) {
                 value={field.value}
                 error={error?.message}
                 label="Variable"
-                errorMessagePosition="left"
+                errorMessagePosition={errorMessagePosition}
               />
             )
           }
@@ -117,7 +123,7 @@ export function VariableRow(props: VariableRowProps) {
                   onChange: field.onChange,
                   value: field.value,
                   error: error?.message,
-                  errorMessagePosition: 'left',
+                  errorMessagePosition,
                   type: watchSecret ? 'password' : 'text',
                   hasShowPasswordButton: watchSecret,
                 }}

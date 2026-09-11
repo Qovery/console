@@ -1,3 +1,4 @@
+import { McpServerScope } from 'qovery-typescript-axios'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings-test-utils'
@@ -13,7 +14,15 @@ jest.mock('@tanstack/react-router', () => ({
 describe('AgenticWorkflowConnectionsSettings', () => {
   beforeEach(() => {
     useMcpServersSpy.mockReturnValue({
-      data: [{ id: 'mcp-1', name: 'Documentation', url: 'https://docs.example.com' }],
+      data: [
+        {
+          id: 'mcp-1',
+          name: 'Documentation',
+          url: 'https://docs.example.com',
+          scope: McpServerScope.ORGANIZATION,
+          attachable: true,
+        },
+      ],
       isLoading: false,
     })
   })

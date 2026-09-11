@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { type McpServerResponse } from 'qovery-typescript-axios'
+import { type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
 import { Suspense, useMemo } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
@@ -29,6 +29,8 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteMcpServer } = useDeleteMcpServer()
+  const owner =
+    mcpServer.scope === McpServerScope.USER ? `Owner: ${mcpServer.owner_name ?? 'Unknown member'}` : undefined
   const onEdit = () => {
     openModal({
       content: <McpServerCreateEditModal mcpServer={mcpServer} onClose={closeModal} />,
@@ -64,8 +66,15 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
           <Heading level={3} className="min-w-0">
             <Truncate truncateLimit={60} text={mcpServer.name} />
           </Heading>
-          {mcpServer.description ? (
-            <Tooltip content={mcpServer.description}>
+          {mcpServer.description || owner ? (
+            <Tooltip
+              content={
+                <span className="flex flex-col gap-1">
+                  {mcpServer.description ? <span>{mcpServer.description}</span> : null}
+                  {owner ? <span>{owner}</span> : null}
+                </span>
+              }
+            >
               <span className="cursor-pointer" aria-label={`About ${mcpServer.name}`}>
                 <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
               </span>
@@ -75,16 +84,18 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
         <p className="break-all font-mono text-xs text-neutral-subtle">{mcpServer.url}</p>
       </Section>
       <div className="flex shrink-0 gap-2">
-        <Button
-          size="md"
-          variant="outline"
-          color="neutral"
-          iconOnly
-          aria-label={`Edit ${mcpServer.name}`}
-          onClick={onEdit}
-        >
-          <Icon iconName="gear" iconStyle="regular" />
-        </Button>
+        {mcpServer.scope === McpServerScope.ORGANIZATION || mcpServer.attachable ? (
+          <Button
+            size="md"
+            variant="outline"
+            color="neutral"
+            iconOnly
+            aria-label={`Edit ${mcpServer.name}`}
+            onClick={onEdit}
+          >
+            <Icon iconName="gear" iconStyle="regular" />
+          </Button>
+        ) : null}
         <Button
           size="md"
           variant="outline"
@@ -130,20 +141,38 @@ function McpServersList({ organizationId }: McpServersListProps) {
     [mcpServers]
   )
 
-  return sortedMcpServers.length > 0 ? (
-    <BlockContent title="MCPs" classNameContent="p-0">
-      <ul>
-        {sortedMcpServers.map((mcpServer) => (
-          <McpServerRow key={mcpServer.id} organizationId={organizationId} mcpServer={mcpServer} />
-        ))}
-      </ul>
+  if (sortedMcpServers.length === 0) {
+    return (
+      <EmptyState
+        icon="plug"
+        title="No MCPs"
+        description="Add a personal MCP to give Qovery Agent access to your tools."
+      />
+    )
+  }
+
+  const personalMcpServers = sortedMcpServers.filter(({ scope }) => scope === McpServerScope.USER)
+  const organizationMcpServers = sortedMcpServers.filter(({ scope }) => scope === McpServerScope.ORGANIZATION)
+
+  const mcpServerGroup = (title: string, servers: McpServerResponse[], emptyMessage: string) => (
+    <BlockContent title={title} classNameContent="p-0">
+      {servers.length > 0 ? (
+        <ul>
+          {servers.map((mcpServer) => (
+            <McpServerRow key={mcpServer.id} organizationId={organizationId} mcpServer={mcpServer} />
+          ))}
+        </ul>
+      ) : (
+        <p className="p-4 text-sm text-neutral-subtle">{emptyMessage}</p>
+      )}
     </BlockContent>
-  ) : (
-    <EmptyState
-      icon="plug"
-      title="No MCPs"
-      description="Add an MCP to give Qovery Agent access to tools shared across your organization."
-    />
+  )
+
+  return (
+    <div className="space-y-4">
+      {mcpServerGroup('Personal MCPs', personalMcpServers, 'No personal MCPs.')}
+      {mcpServerGroup('Organization MCPs', organizationMcpServers, 'No organization MCPs.')}
+    </div>
   )
 }
 
@@ -154,7 +183,7 @@ export function SettingsAgentPersonalization() {
 
   const onAdd = () => {
     openModal({
-      content: <McpServerCreateEditModal onClose={closeModal} />,
+      content: <McpServerCreateEditModal scope={McpServerScope.USER} onClose={closeModal} />,
       options: {
         fakeModal: true,
         width: 680,
@@ -174,7 +203,9 @@ export function SettingsAgentPersonalization() {
         </div>
 
         <div className="max-w-content-with-navigation-left space-y-4">
-          <p className="text-sm text-neutral-subtle">MCPs are shared with every Qovery Agent in this organization.</p>
+          <p className="text-sm text-neutral-subtle">
+            Personal MCPs belong to one member. Organization MCPs are shared with the organization.
+          </p>
           <Suspense fallback={<McpServersSkeleton />}>
             <McpServersList organizationId={organizationId} />
           </Suspense>

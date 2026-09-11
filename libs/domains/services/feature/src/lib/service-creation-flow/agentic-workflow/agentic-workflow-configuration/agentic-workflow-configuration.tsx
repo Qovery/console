@@ -9,6 +9,7 @@ import { type VariableData } from '@qovery/shared/interfaces'
 import {
   Accordion,
   Button,
+  Callout,
   CodeEditor,
   Heading,
   Icon,
@@ -18,9 +19,9 @@ import {
   Section,
   useModal,
 } from '@qovery/shared/ui'
-import { prepareVariableImportRequest } from '@qovery/shared/util-js'
+import { ENVIRONMENT_VARIABLE_NAME_PATTERN, prepareVariableImportRequest } from '@qovery/shared/util-js'
+import { AgenticWorkflowExecutionModeSelector } from '../../../agentic-workflow-execution-mode-selector/agentic-workflow-execution-mode-selector'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
-import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-deploy-environment'
 import {
   type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
@@ -65,10 +66,15 @@ export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
 }
 
 export function areVariablesValid(variables: VariableData[]) {
-  return variables.every(
-    ({ variable, value, scope }) =>
-      Boolean(variable?.match(/^[a-zA-Z_][a-zA-Z0-9_]*$/)) && Boolean(value) && Boolean(scope)
-  )
+  return variables.every((variable) => getInvalidVariableField(variable) === undefined)
+}
+
+export function getInvalidVariableField({ variable, value, scope }: VariableData) {
+  if (!scope) return 'scope' as const
+  if (!value) return 'value' as const
+  if (!variable || !ENVIRONMENT_VARIABLE_NAME_PATTERN.test(variable)) return 'variable' as const
+
+  return undefined
 }
 
 function SettingsAccordionItem({
@@ -258,7 +264,6 @@ export function AgenticWorkflowConfiguration() {
   const { closeModal, openModal } = useModal()
   const { form, onExit, variablesForm } = useAgenticWorkflowCreateContext()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
-  const { isLoading: isDeploying, mutateAsync: deployEnvironment } = useDeployEnvironment({ projectId })
   const { isLoading: isImportingVariables, mutateAsync: importVariables } = useImportVariables()
   const {
     fields: variables,
@@ -283,6 +288,7 @@ export function AgenticWorkflowConfiguration() {
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
+  const [showTriggerError, setShowTriggerError] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
@@ -363,7 +369,7 @@ export function AgenticWorkflowConfiguration() {
     })
   }
 
-  const validateConfiguration = () => {
+  const validateConfiguration = async () => {
     setShowValidationErrors(true)
 
     if (!values.name.trim()) {
@@ -391,6 +397,7 @@ export function AgenticWorkflowConfiguration() {
     }
 
     if (!automationValid) {
+      setShowTriggerError(true)
       setActiveSheet('automation')
       return false
     }
@@ -401,14 +408,31 @@ export function AgenticWorkflowConfiguration() {
 
     if (firstInvalidGroup) {
       focusSettingsGroup(firstInvalidGroup)
+      await variablesForm.trigger()
+
+      const invalidVariableIndex = variableValues.findIndex(
+        (variable) => getInvalidVariableField(variable) !== undefined
+      )
+      const invalidField = getInvalidVariableField(variableValues[invalidVariableIndex])
+
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          const invalidInput = document.querySelector<HTMLElement>(
+            `[name="variables.${invalidVariableIndex}.${invalidField}"]`
+          )
+          const variableRow = document.querySelector<HTMLElement>(`[data-variable-row-index="${invalidVariableIndex}"]`)
+          const focusTarget = invalidInput ?? variableRow
+          focusTarget?.focus()
+        })
+      })
       return false
     }
 
     return true
   }
 
-  const handleSubmit = async (withDeploy: boolean) => {
-    if (!validateConfiguration()) return
+  const handleSubmit = async () => {
+    if (!(await validateConfiguration())) return
 
     try {
       if (!createdServiceIdRef.current) {
@@ -431,16 +455,14 @@ export function AgenticWorkflowConfiguration() {
         })
       }
 
-      if (withDeploy) {
-        await deployEnvironment({ environmentId })
-      }
-
+      posthog.capture('agent-task-form-submitted', { success: true })
       posthog.capture('create-service', { selectedServiceType: 'agentic-workflow' })
       navigate({
         to: '/organization/$organizationId/project/$projectId/environment/$environmentId/overview',
         params: { organizationId, projectId, environmentId },
       })
     } catch {
+      posthog.capture('agent-task-form-submitted', { success: false })
       // Errors are surfaced by mutation notifications. Keep the created service ID so a retry does not duplicate it.
     }
   }
@@ -535,6 +557,14 @@ export function AgenticWorkflowConfiguration() {
         summary={variables.length > 0 ? `${variables.length} configured` : undefined}
         invalid={showValidationErrors && settingsGroupsInvalid.variables}
       >
+        {showValidationErrors && !variablesValid ? (
+          <Callout.Root color="red">
+            <Callout.Icon>
+              <Icon iconName="circle-xmark" />
+            </Callout.Icon>
+            <Callout.Text>Complete every environment variable name and value.</Callout.Text>
+          </Callout.Root>
+        ) : null}
         <div className="flex flex-wrap gap-2">
           <Button
             type="button"
@@ -582,6 +612,7 @@ export function AgenticWorkflowConfiguration() {
                   availableScopes={[APIVariableScopeEnum.AGENTIC_WORKFLOW]}
                   gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 36px"
                   showScope={false}
+                  errorMessagePosition="bottom"
                   onDelete={removeVariable}
                 />
               ))}
@@ -648,31 +679,32 @@ export function AgenticWorkflowConfiguration() {
               </div>
             )}
           </div>
+          <div className="flex flex-col gap-3">
+            <div>
+              <Heading level={3} weight="medium">
+                Execution mode
+              </Heading>
+              <p className="mt-1 text-xs text-neutral-subtle">Choose how each agent task execution is isolated.</p>
+            </div>
+            <AgenticWorkflowExecutionModeSelector
+              value={values.executionMode}
+              onChange={(mode) => form.setValue('executionMode', mode, { shouldDirty: true })}
+            />
+          </div>
         </div>
       </SettingsAccordionItem>
     </Accordion.Root>
   )
 
   const creationActions = () => (
-    <div className="flex gap-2">
-      <Button
-        data-testid="button-create"
-        type="button"
-        variant="outline"
-        loading={isCreating || isImportingVariables}
-        onClick={() => handleSubmit(false)}
-      >
-        Create
-      </Button>
-      <Button
-        data-testid="button-create-deploy"
-        type="button"
-        loading={isCreating || isImportingVariables || isDeploying}
-        onClick={() => handleSubmit(true)}
-      >
-        Create and deploy
-      </Button>
-    </div>
+    <Button
+      data-testid="button-create"
+      type="button"
+      loading={isCreating || isImportingVariables}
+      onClick={handleSubmit}
+    >
+      Create
+    </Button>
   )
 
   return (
@@ -885,9 +917,11 @@ export function AgenticWorkflowConfiguration() {
       {activeSheet === 'automation' ? (
         <AutomationSheet
           automation={automation}
+          showTriggerError={showTriggerError}
           onClose={() => setActiveSheet(null)}
           onSave={(nextAutomation) => {
             form.setValue('automations', [nextAutomation], { shouldDirty: true })
+            setShowTriggerError(false)
           }}
         />
       ) : null}
