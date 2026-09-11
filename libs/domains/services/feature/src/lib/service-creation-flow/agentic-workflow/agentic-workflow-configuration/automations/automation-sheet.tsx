@@ -347,6 +347,7 @@ export function AutomationSheet({
   return (
     <OverlaySheet onClose={onClose}>
       <SheetHeader
+        withDivider
         title={
           section === 'triggers'
             ? 'Configure triggers'

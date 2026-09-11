@@ -11,12 +11,22 @@ describe('OverlaySheet', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Manage MCP' })).toBeInTheDocument()
-    expect(screen.getByRole('heading', { name: 'Manage MCP' }).closest('header')).toHaveClass(
+    expect(screen.getByRole('heading', { name: 'Manage MCP' }).closest('header')).not.toHaveClass('border-b')
+    expect(screen.getByText('Pick the MCPs')).toBeInTheDocument()
+    expect(screen.getByText('Sheet body')).toBeInTheDocument()
+  })
+
+  it('renders an optional full-width header divider', () => {
+    renderWithProviders(
+      <OverlaySheet onClose={jest.fn()}>
+        <SheetHeader withDivider title="Configure triggers" onClose={jest.fn()} />
+      </OverlaySheet>
+    )
+
+    expect(screen.getByRole('heading', { name: 'Configure triggers' }).closest('header')).toHaveClass(
       'border-b',
       'border-neutral'
     )
-    expect(screen.getByText('Pick the MCPs')).toBeInTheDocument()
-    expect(screen.getByText('Sheet body')).toBeInTheDocument()
   })
 
   it('closes from the header close button', async () => {

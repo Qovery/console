@@ -34,15 +34,21 @@ export function SheetHeader({
   description,
   onClose,
   title,
+  withDivider = false,
 }: {
   className?: string
   description?: ReactNode
   onClose: () => void
   title: string
+  withDivider?: boolean
 }) {
   return (
     <header
-      className={twMerge('flex items-start justify-between gap-4 border-b border-neutral px-5 pb-4 pt-5', className)}
+      className={twMerge(
+        'flex items-start justify-between gap-4 px-5 pb-4 pt-5',
+        withDivider ? 'border-b border-neutral' : undefined,
+        className
+      )}
     >
       <Section className="min-w-0 gap-1">
         <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
