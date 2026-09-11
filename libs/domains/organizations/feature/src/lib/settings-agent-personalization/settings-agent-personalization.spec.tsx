@@ -80,8 +80,8 @@ describe('SettingsAgentPersonalization', () => {
     expect(screen.getByRole('heading', { name: 'Agent personalization' })).toBeInTheDocument()
     expect(screen.getByText('Your personal settings for Qovery Agent')).toBeInTheDocument()
     expect(
-      screen.getByText('Personal MCPs belong to one member. Organization MCPs are shared with the organization.')
-    ).toBeInTheDocument()
+      screen.queryByText('Personal MCPs belong to one member. Organization MCPs are shared with the organization.')
+    ).not.toBeInTheDocument()
     expect(screen.getByText('No MCPs')).toBeInTheDocument()
   })
 
@@ -91,22 +91,32 @@ describe('SettingsAgentPersonalization', () => {
     const { userEvent } = renderWithProviders(<SettingsAgentPersonalization />)
 
     const rows = screen.getAllByTestId(/^mcp-server-/)
-    expect(rows[0]).toHaveAttribute('data-testid', 'mcp-server-mcp-alpha')
-    expect(rows[1]).toHaveAttribute('data-testid', 'mcp-server-mcp-bravo')
-    expect(rows[2]).toHaveAttribute('data-testid', 'mcp-server-mcp-zulu')
+    expect(rows[0]).toHaveAttribute('data-testid', 'mcp-server-mcp-zulu')
+    expect(rows[1]).toHaveAttribute('data-testid', 'mcp-server-mcp-alpha')
+    expect(rows[2]).toHaveAttribute('data-testid', 'mcp-server-mcp-bravo')
     expect(screen.getByText('Personal MCPs')).toBeInTheDocument()
     expect(screen.getByText('Organization MCPs')).toBeInTheDocument()
-    expect(screen.queryByText('Owner: Rémi Bonnet')).not.toBeInTheDocument()
+    expect(screen.getByText('Owner: Rémi Bonnet')).toHaveClass('min-w-0', 'truncate')
     expect(screen.getByText('https://zulu.example.com/mcp')).toBeInTheDocument()
     expect(screen.queryByText('Authorization')).not.toBeInTheDocument()
     expect(screen.queryByText('Second connector')).not.toBeInTheDocument()
     expect(screen.getByLabelText('About Zulu')).toBeInTheDocument()
     await userEvent.hover(screen.getByLabelText('About Alpha'))
-    expect((await screen.findAllByText('Owner: Rémi Bonnet')).length).toBeGreaterThan(0)
+    expect((await screen.findAllByText('First connector')).length).toBeGreaterThan(0)
     expect(screen.getByRole('button', { name: 'Edit Zulu' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Edit Bravo' })).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Delete Bravo' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Delete Zulu' })).toBeInTheDocument()
+  })
+
+  it('should hide the personal MCP section when there are no personal MCPs', () => {
+    useMcpServersMock.mockReturnValue({ data: [mcpServers[0]] })
+
+    renderWithProviders(<SettingsAgentPersonalization />)
+
+    expect(screen.queryByText('Personal MCPs')).not.toBeInTheDocument()
+    expect(screen.getByText('Organization MCPs')).toBeInTheDocument()
+    expect(screen.getByText('Zulu')).toBeInTheDocument()
   })
 
   it('should open the create and edit modals', async () => {

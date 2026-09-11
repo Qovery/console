@@ -91,12 +91,21 @@ describe('McpSheet', () => {
     expect(onChange).toHaveBeenCalledWith(['m1'])
   })
 
-  it('shows but does not attach another member personal MCP', () => {
+  it('hides MCPs that are not available to attach', () => {
     setup()
 
-    expect(screen.getByText('Personal · Romaric Philogène · Not available to you')).toBeInTheDocument()
-    expect(screen.getByText('Personal · Unknown owner · Not available to you')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Romaric tools unavailable' })).toBeDisabled()
+    expect(screen.queryByText('Romaric tools')).not.toBeInTheDocument()
+    expect(screen.queryByText('Unknown owner tools')).not.toBeInTheDocument()
+  })
+
+  it('keeps an unavailable connected MCP visible so it can be removed', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = setup(['m2'], onChange)
+
+    expect(screen.getByText('Personal · Romaric Philogène')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Remove Romaric tools' }))
+
+    expect(onChange).toHaveBeenCalledWith([])
   })
 
   it('closes from the Done button', async () => {

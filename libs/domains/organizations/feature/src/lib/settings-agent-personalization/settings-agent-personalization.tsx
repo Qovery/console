@@ -66,22 +66,35 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
           <Heading level={3} className="min-w-0">
             <Truncate truncateLimit={60} text={mcpServer.name} />
           </Heading>
-          {mcpServer.description || owner ? (
-            <Tooltip
-              content={
-                <span className="flex flex-col gap-1">
-                  {mcpServer.description ? <span>{mcpServer.description}</span> : null}
-                  {owner ? <span>{owner}</span> : null}
-                </span>
-              }
-            >
+          {mcpServer.description ? (
+            <Tooltip content={mcpServer.description}>
               <span className="cursor-pointer" aria-label={`About ${mcpServer.name}`}>
                 <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
               </span>
             </Tooltip>
           ) : null}
         </div>
-        <p className="break-all font-mono text-xs text-neutral-subtle">{mcpServer.url}</p>
+        <div className="flex min-w-0 items-center gap-2 text-xs text-neutral-subtle">
+          <p className="break-all font-mono">{mcpServer.url}</p>
+          {owner ? (
+            <>
+              <svg
+                aria-hidden="true"
+                className="shrink-0"
+                xmlns="http://www.w3.org/2000/svg"
+                width="5"
+                height="6"
+                fill="none"
+                viewBox="0 0 5 6"
+              >
+                <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)" />
+              </svg>
+              <Tooltip content={owner}>
+                <span className="min-w-0 truncate">{owner}</span>
+              </Tooltip>
+            </>
+          ) : null}
+        </div>
       </Section>
       <div className="flex shrink-0 gap-2">
         {mcpServer.scope === McpServerScope.ORGANIZATION || mcpServer.attachable ? (
@@ -170,8 +183,8 @@ function McpServersList({ organizationId }: McpServersListProps) {
 
   return (
     <div className="space-y-4">
-      {mcpServerGroup('Personal MCPs', personalMcpServers, 'No personal MCPs.')}
       {mcpServerGroup('Organization MCPs', organizationMcpServers, 'No organization MCPs.')}
+      {personalMcpServers.length > 0 ? mcpServerGroup('Personal MCPs', personalMcpServers, '') : null}
     </div>
   )
 }
@@ -202,10 +215,7 @@ export function SettingsAgentPersonalization() {
           </Button>
         </div>
 
-        <div className="max-w-content-with-navigation-left space-y-4">
-          <p className="text-sm text-neutral-subtle">
-            Personal MCPs belong to one member. Organization MCPs are shared with the organization.
-          </p>
+        <div className="max-w-content-with-navigation-left">
           <Suspense fallback={<McpServersSkeleton />}>
             <McpServersList organizationId={organizationId} />
           </Suspense>

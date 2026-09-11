@@ -1,9 +1,9 @@
-import { type ReactNode, useCallback, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
   Button,
-  Callout,
   DropdownMenu,
+  ExternalLink,
   Heading,
   Icon,
   InputText,
@@ -107,7 +107,7 @@ function AutomationSection({
   title: string
 }) {
   return (
-    <div className="flex flex-col gap-3 border-t border-neutral pt-4">
+    <div className="flex flex-col gap-3 pt-4">
       <div className="flex items-center gap-5">
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium leading-5 text-neutral">{title}</p>
@@ -144,7 +144,12 @@ function ScheduledTriggerModal({
           <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
             {trigger ? 'Edit schedule trigger' : 'Add schedule trigger'}
           </Heading>
-          <p className="text-sm leading-5 text-neutral-subtle">Run this agent task automatically on a schedule.</p>
+          <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1">
+            <p className="text-sm leading-5 text-neutral-subtle">Run this agent task automatically on a schedule.</p>
+            <ExternalLink href="https://crontab.guru/" size="sm">
+              CRON expression builder
+            </ExternalLink>
+          </div>
         </div>
         <div className="flex flex-col gap-4">
           <InputText
@@ -269,26 +274,19 @@ export function AutomationSheet({
   lockWebhookTrigger = false,
   onClose,
   onSave,
-  showTriggerError = false,
+  section = 'all',
 }: {
   allowEmptyOutputUrl?: boolean
   automation: AgenticWorkflowAutomation
   lockWebhookTrigger?: boolean
   onClose: () => void
   onSave: (automation: AgenticWorkflowAutomation) => void
-  showTriggerError?: boolean
+  section?: 'all' | 'triggers' | 'outputs'
 }) {
   const { closeModal, openModal } = useModal()
   const [draft, setDraft] = useState<AgenticWorkflowAutomation>(automation)
   const scheduleTrigger = draft.triggers.find((trigger) => trigger.type === 'schedule')
   const webhookTrigger = draft.triggers.find((trigger) => trigger.type === 'webhook')
-  const focusTriggerError = useCallback(
-    (element: HTMLDivElement | null) => {
-      if (showTriggerError) element?.focus()
-    },
-    [showTriggerError]
-  )
-
   const saveTrigger = (trigger: AgenticWorkflowAutomationTrigger) => {
     setDraft((current) => ({
       ...current,
@@ -348,115 +346,112 @@ export function AutomationSheet({
 
   return (
     <OverlaySheet onClose={onClose}>
-      <SheetHeader title="Configure automation" onClose={onClose} />
+      <SheetHeader
+        withDivider
+        title={
+          section === 'triggers'
+            ? 'Configure triggers'
+            : section === 'outputs'
+              ? 'Configure output'
+              : 'Configure automation'
+        }
+        onClose={onClose}
+      />
       <div className="flex flex-1 flex-col gap-4 overflow-auto px-5 pb-5">
-        <div
-          data-testid="trigger-validation"
-          ref={focusTriggerError}
-          tabIndex={-1}
-          className={
-            showTriggerError && draft.triggers.length === 0
-              ? 'outline-negative rounded-md outline outline-1'
-              : undefined
-          }
-        >
+        {section !== 'outputs' ? (
+          <div>
+            <AutomationSection
+              title="Triggers"
+              description="At least one trigger is required. A trigger can be a schedule or a webhook."
+              action={
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild>
+                    <Button type="button" variant="outline" color="neutral" size="sm">
+                      Add
+                      <Icon iconName="angle-down" />
+                    </Button>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content align="end" className="z-dropdown w-56">
+                    <DropdownMenu.Item
+                      icon={<Icon iconName="calendar-day" iconStyle="regular" />}
+                      disabled={Boolean(scheduleTrigger)}
+                      onSelect={() => openScheduleModal()}
+                    >
+                      On a schedule
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                      icon={<Icon iconName="webhook" />}
+                      disabled={Boolean(webhookTrigger)}
+                      onSelect={addWebhookTrigger}
+                    >
+                      From a webhook
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              }
+            >
+              {draft.triggers.length ? (
+                <div className="flex flex-col gap-3">
+                  {draft.triggers.map((trigger) =>
+                    trigger.type === 'webhook' ? (
+                      <AutomationItemCard
+                        key={trigger.id}
+                        icon={<Icon iconName="webhook" iconStyle="regular" />}
+                        title="Webhook"
+                        onRemove={lockWebhookTrigger ? undefined : () => removeTrigger(trigger.id)}
+                      >
+                        Runs when the agent task webhook is called.
+                      </AutomationItemCard>
+                    ) : (
+                      <AutomationItemCard
+                        key={trigger.id}
+                        icon={<Icon iconName="calendar-day" iconStyle="regular" />}
+                        title="Schedule"
+                        onEdit={() => openScheduleModal(trigger)}
+                        onRemove={() => removeTrigger(trigger.id)}
+                      >
+                        {triggerDescription(trigger)}
+                      </AutomationItemCard>
+                    )
+                  )}
+                </div>
+              ) : null}
+            </AutomationSection>
+          </div>
+        ) : null}
+        {section !== 'triggers' ? (
           <AutomationSection
-            title="Triggers"
-            description="At least one trigger is required. A trigger can be a schedule or a webhook."
+            title="Outputs"
+            description="Optional. Send the automation result to one or more webhooks."
             action={
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <Button type="button" variant="outline" color="neutral" size="sm">
-                    Add
-                    <Icon iconName="angle-down" />
-                  </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content align="end" className="z-dropdown w-56">
-                  <DropdownMenu.Item
-                    icon={<Icon iconName="calendar-day" iconStyle="regular" />}
-                    disabled={Boolean(scheduleTrigger)}
-                    onSelect={() => openScheduleModal()}
-                  >
-                    On a schedule
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    icon={<Icon iconName="webhook" />}
-                    disabled={Boolean(webhookTrigger)}
-                    onSelect={addWebhookTrigger}
-                  >
-                    From a webhook
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
+              <Button type="button" variant="outline" color="neutral" size="sm" onClick={() => openOutputModal()}>
+                <Icon iconName="circle-plus" iconStyle="regular" />
+                Add
+              </Button>
             }
           >
-            {showTriggerError && draft.triggers.length === 0 ? (
-              <Callout.Root color="red">
-                <Callout.Icon>
-                  <Icon iconName="circle-xmark" />
-                </Callout.Icon>
-                <Callout.Text>At least one trigger is required.</Callout.Text>
-              </Callout.Root>
-            ) : null}
-            {draft.triggers.length ? (
-              <div className="flex flex-col gap-3">
-                {draft.triggers.map((trigger) =>
-                  trigger.type === 'webhook' ? (
-                    <AutomationItemCard
-                      key={trigger.id}
-                      icon={<Icon iconName="webhook" iconStyle="regular" />}
-                      title="Webhook"
-                      onRemove={lockWebhookTrigger ? undefined : () => removeTrigger(trigger.id)}
-                    >
-                      Runs when the agent task webhook is called.
-                    </AutomationItemCard>
-                  ) : (
-                    <AutomationItemCard
-                      key={trigger.id}
-                      icon={<Icon iconName="calendar-day" iconStyle="regular" />}
-                      title="Schedule"
-                      onEdit={() => openScheduleModal(trigger)}
-                      onRemove={() => removeTrigger(trigger.id)}
-                    >
-                      {triggerDescription(trigger)}
-                    </AutomationItemCard>
-                  )
-                )}
+            {draft.outputs.length ? (
+              <div className="flex flex-col gap-2">
+                {draft.outputs.map((output, index) => (
+                  <AutomationItemCard
+                    key={index}
+                    icon={<Icon iconName="webhook" iconStyle="regular" />}
+                    title="Webhook"
+                    onEdit={() => openOutputModal(index)}
+                    onRemove={() =>
+                      setDraft((current) => ({
+                        ...current,
+                        outputs: current.outputs.filter((_, itemIndex) => itemIndex !== index),
+                      }))
+                    }
+                  >
+                    {output.url || output.name || 'No webhook URL'}
+                  </AutomationItemCard>
+                ))}
               </div>
             ) : null}
           </AutomationSection>
-        </div>
-        <AutomationSection
-          title="Outputs"
-          description="Optional. Send the automation result to one or more webhooks."
-          action={
-            <Button type="button" variant="outline" color="neutral" size="sm" onClick={() => openOutputModal()}>
-              <Icon iconName="circle-plus" iconStyle="regular" />
-              Add
-            </Button>
-          }
-        >
-          {draft.outputs.length ? (
-            <div className="flex flex-col gap-2">
-              {draft.outputs.map((output, index) => (
-                <AutomationItemCard
-                  key={index}
-                  icon={<Icon iconName="webhook" iconStyle="regular" />}
-                  title="Webhook"
-                  onEdit={() => openOutputModal(index)}
-                  onRemove={() =>
-                    setDraft((current) => ({
-                      ...current,
-                      outputs: current.outputs.filter((_, itemIndex) => itemIndex !== index),
-                    }))
-                  }
-                >
-                  {output.url || output.name || 'No webhook URL'}
-                </AutomationItemCard>
-              ))}
-            </div>
-          ) : null}
-        </AutomationSection>
+        ) : null}
       </div>
       <div className="flex justify-end gap-2 border-t border-neutral p-4">
         <Button type="button" variant="plain" color="neutral" size="md" onClick={onClose}>
@@ -465,7 +460,7 @@ export function AutomationSheet({
         <Button
           type="button"
           size="md"
-          disabled={draft.triggers.length === 0}
+          disabled={section !== 'outputs' && draft.triggers.length === 0}
           onClick={() => {
             onSave(draft)
             onClose()

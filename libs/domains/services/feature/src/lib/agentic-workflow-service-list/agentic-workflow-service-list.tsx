@@ -1,42 +1,22 @@
 import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
-import { match } from 'ts-pattern'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { IconEnum } from '@qovery/shared/enums'
-import { Badge, CopyToClipboardButtonIcon, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Badge, Heading, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { dateFullFormat } from '@qovery/shared/util-dates'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
+import { tableGridLayoutClassName } from '../service-list/service-list'
 import { ServiceLastDeploymentCell, ServiceNameCell } from '../service-list/service-list-cells'
 import { ServiceStateChip } from '../service-state-chip/service-state-chip'
 
 const { Table } = TablePrimitives
 
-const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(280px,1.1fr)_minmax(260px,1fr)_minmax(180px,0.7fr)_minmax(280px,1fr)_130px]'
-
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
 }
 
-function ModelCell({ service }: { service: AgenticWorkflow }) {
-  return match(service.model?.type)
-    .with('CLAUDE', () => (
-      <span className="flex items-center gap-2 text-sm text-neutral">
-        <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-5 w-5" />
-        Claude
-      </span>
-    ))
-    .with('BEDROCK', () => (
-      <span className="flex items-center gap-2 text-sm text-neutral">
-        <Icon name={IconEnum.AWS_GRAY} className="h-5 w-5" />
-        Bedrock
-      </span>
-    ))
-    .otherwise((model) => <span className="text-sm text-neutral-subtle">{model ?? 'Not configured'}</span>)
-}
-
-function WebhookCell({
+function TriggerCell({
   service,
   onAction,
 }: {
@@ -46,13 +26,19 @@ function WebhookCell({
   return (
     <div className="flex min-w-0 flex-1 items-center gap-2" onClick={onAction} onKeyDown={onAction}>
       <Tooltip content={service.webhook.url}>
-        <span className="min-w-0 flex-1 truncate font-mono text-xs text-neutral">{service.webhook.url}</span>
+        <span className="shrink-0 text-sm text-neutral">Webhook</span>
       </Tooltip>
-      <CopyToClipboardButtonIcon
-        content={service.webhook.url}
-        tooltipContent="Copy webhook URL"
-        className="shrink-0 text-neutral-subtle hover:text-neutral"
-      />
+      {service.schedule && (
+        <>
+          <span className="text-neutral-subtle">+</span>
+          <span className="min-w-0 truncate text-sm text-neutral">
+            Schedule ·{' '}
+            {service.schedule.next_run_at
+              ? dateFullFormat(service.schedule.next_run_at, service.schedule.timezone, 'dd MMM, HH:mm')
+              : 'Paused'}
+          </span>
+        </>
+      )}
     </div>
   )
 }
@@ -95,23 +81,17 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
             {enabledServicesCount} enabled
           </Badge>
         </div>
-        <Table.Root
-          containerClassName="rounded-none border-x-0 border-b-0 border-t"
-          className="w-full min-w-[1320px] overflow-x-scroll text-xs xl:overflow-auto"
-        >
+        <Table.Root containerClassName="rounded-none border-x-0 border-b-0 border-t" className="w-full text-xs">
           <Table.Header className="border-neutral">
             <Table.Row className={`h-9 w-full ${tableGridLayoutClassName}`}>
-              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
+              <Table.ColumnHeaderCell className="col-span-3 flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Service
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Last operation
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Model
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Webhook
+                Trigger
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
                 Actions
@@ -129,7 +109,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                   if (event.key === 'Enter') handleNavigateToService(service.id)
                 }}
               >
-                <Table.Cell className="flex h-full min-w-0 items-center gap-3 border-r border-neutral">
+                <Table.Cell className="col-span-3 flex h-full min-w-0 items-center gap-3 border-r border-neutral">
                   <div className="min-w-0 flex-1">
                     <ServiceNameCell service={service} environment={environment} />
                   </div>
@@ -139,10 +119,7 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                   <ServiceLastDeploymentCell service={service} environment={environment} />
                 </Table.Cell>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <ModelCell service={service} />
-                </Table.Cell>
-                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <WebhookCell service={service} onAction={stopRowNavigation} />
+                  <TriggerCell service={service} onAction={stopRowNavigation} />
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center">
                   <AgenticWorkflowServiceActions

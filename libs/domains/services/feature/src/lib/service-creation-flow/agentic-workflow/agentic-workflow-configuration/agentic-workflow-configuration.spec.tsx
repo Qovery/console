@@ -1,6 +1,6 @@
 import posthog from 'posthog-js'
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
 import {
   AgenticWorkflowConfiguration,
@@ -8,6 +8,7 @@ import {
   getInvalidVariableField,
   getJsonError,
   isGitRepositoryComplete,
+  summarizeTriggers,
 } from './agentic-workflow-configuration'
 
 const mockNavigate = jest.fn()
@@ -133,6 +134,19 @@ describe('AgenticWorkflowConfiguration validation', () => {
       getInvalidVariableField({ variable: 'API KEY', value: 'secret', scope: 'AGENTIC_WORKFLOW', isSecret: true })
     ).toBe('variable')
   })
+
+  it('should summarize schedule triggers with their configured value', () => {
+    expect(
+      summarizeTriggers({
+        id: 'automation-1',
+        triggers: [
+          { id: 'webhook-1', type: 'webhook' },
+          { id: 'schedule-1', type: 'schedule', cronExpression: '0 8 * * 1-5', timezone: 'Europe/Paris' },
+        ],
+        outputs: [],
+      })
+    ).toBe('Webhook + At 08:00 AM, Monday through Friday (Europe/Paris)')
+  })
 })
 
 describe('AgenticWorkflowConfiguration', () => {
@@ -192,7 +206,7 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('button', { name: /In place/ })).toHaveAttribute('aria-pressed', 'false')
   })
 
-  it('should configure context, provider, and automations from the main canvas', async () => {
+  it('should configure context, provider, triggers, and output from the main canvas', async () => {
     const { userEvent } = renderConfiguration()
 
     await userEvent.click(screen.getByRole('button', { name: /Add from Git repository/ }))
@@ -205,16 +219,22 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
-    expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
-    expect(screen.getByText('Triggers')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
+    expect(screen.getByRole('heading', { name: 'Configure triggers' })).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText('Triggers')).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).queryByText('Outputs')).not.toBeInTheDocument()
     expect(screen.queryByRole('switch', { name: 'Enable agent task' })).not.toBeInTheDocument()
 
-    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
+    await userEvent.click(screen.getByRole('button', { name: 'Add' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
     await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
 
     expect(screen.getByRole('button', { name: 'Webhook' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add output' }))
+    expect(screen.getByRole('heading', { name: 'Configure output' })).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText('Outputs')).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).queryByText('Triggers')).not.toBeInTheDocument()
   })
 
   it('should manage MCP from a side panel', async () => {
@@ -245,10 +265,9 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(createButton)
 
-    expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
-    expect(screen.getByText('At least one trigger is required.')).toBeInTheDocument()
-    expect(screen.getByTestId('trigger-validation')).toHaveFocus()
-    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeDisabled()
+    expect(screen.getByText('Trigger required')).toHaveClass('text-negative')
+    expect(screen.queryByRole('heading', { name: 'Configure triggers' })).not.toBeInTheDocument()
+    expect(screen.queryByText('At least one trigger is required.')).not.toBeInTheDocument()
     expect(mockCreateService).not.toHaveBeenCalled()
   })
 
@@ -265,14 +284,45 @@ describe('AgenticWorkflowConfiguration', () => {
       ],
     })
 
+    await userEvent.click(screen.getByRole('button', { name: /Environment variables/ }))
+    expect(screen.getByRole('button', { name: /Environment variables/ })).toHaveAttribute('data-state', 'closed')
+
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
     await waitFor(() => {
-      expect(screen.getByText('Complete every environment variable name and value.')).toBeInTheDocument()
-      expect(screen.getByText('Please enter a value.')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /Environment variables/ })).toHaveAttribute('data-state', 'open')
+      expect(screen.queryByText('Complete every environment variable name and value.')).not.toBeInTheDocument()
+      expect(screen.getByText('Environment variables').closest('button')).toHaveClass('bg-surface-negative-subtle')
+      expect(screen.queryByText('Please enter a value.')).not.toBeInTheDocument()
+      expect(screen.getByTestId('value').closest('[data-testid="input"]')).toHaveClass('input--error')
       expect(screen.getByTestId('value')).toHaveFocus()
     })
     expect(mockCreateService).not.toHaveBeenCalled()
+  })
+
+  it('should open invalid environment variables before handling earlier validation errors', async () => {
+    const { userEvent } = renderConfiguration({
+      variablesSeed: [
+        {
+          variable: 'INCIDENT_API_KEY',
+          value: '',
+          scope: 'AGENTIC_WORKFLOW',
+          isSecret: true,
+        },
+      ],
+    })
+
+    const variablesTrigger = screen.getByRole('button', { name: /Environment variables/ })
+    await userEvent.click(variablesTrigger)
+    expect(variablesTrigger).toHaveAttribute('data-state', 'closed')
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() => {
+      expect(variablesTrigger).toHaveAttribute('data-state', 'open')
+      expect(screen.getByTestId('value').closest('[data-testid="input"]')).toHaveClass('input--error')
+    })
+    expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
   })
 
   it('should focus the variable row when its invalid field has no text input', async () => {
@@ -302,8 +352,8 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
-    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
+    await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
     await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
