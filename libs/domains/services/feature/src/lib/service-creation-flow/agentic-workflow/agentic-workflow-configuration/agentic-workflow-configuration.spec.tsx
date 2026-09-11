@@ -320,7 +320,10 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-    await waitFor(() => expect(variablesTrigger).toHaveAttribute('data-state', 'open'))
+    await waitFor(() => {
+      expect(variablesTrigger).toHaveAttribute('data-state', 'open')
+      expect(screen.getByTestId('value').closest('[data-testid="input"]')).toHaveClass('input--error')
+    })
     expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
   })
 

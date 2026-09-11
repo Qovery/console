@@ -383,6 +383,10 @@ export function AgenticWorkflowConfiguration() {
     setShowValidationErrors(true)
     if (!variablesValid) {
       setOpenSettingsGroups((groups) => (groups.includes('variables') ? groups : [...groups, 'variables']))
+      await new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()))
+      })
+      await variablesForm.trigger()
     }
 
     if (!values.name.trim()) {
@@ -424,7 +428,6 @@ export function AgenticWorkflowConfiguration() {
       await new Promise<void>((resolve) => {
         window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()))
       })
-      await variablesForm.trigger()
 
       const invalidVariableIndex = variableValues.findIndex(
         (variable) => getInvalidVariableField(variable) !== undefined
