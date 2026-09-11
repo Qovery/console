@@ -11,7 +11,6 @@ import {
 
 const mockNavigate = jest.fn()
 const mockCreateService = jest.fn()
-const mockDeployEnvironment = jest.fn()
 const mockImportVariables = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
@@ -24,10 +23,6 @@ jest.mock('posthog-js', () => ({ capture: jest.fn() }))
 
 jest.mock('../../../hooks/use-create-service/use-create-service', () => ({
   useCreateService: () => ({ isLoading: false, mutateAsync: mockCreateService }),
-}))
-
-jest.mock('../../../hooks/use-deploy-environment/use-deploy-environment', () => ({
-  useDeployEnvironment: () => ({ isLoading: false, mutateAsync: mockDeployEnvironment }),
 }))
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
@@ -143,7 +138,6 @@ describe('AgenticWorkflowConfiguration', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockCreateService.mockResolvedValue({ id: 'workflow-1' })
-    mockDeployEnvironment.mockResolvedValue(undefined)
     mockImportVariables.mockResolvedValue(undefined)
   })
 
@@ -232,10 +226,9 @@ describe('AgenticWorkflowConfiguration', () => {
   it('should surface validation feedback when a creation action is clicked with incomplete configuration', async () => {
     const { userEvent } = renderConfiguration()
     const createButton = screen.getByRole('button', { name: 'Create' })
-    const createAndDeployButton = screen.getByRole('button', { name: 'Create and deploy' })
 
     expect(createButton).toBeEnabled()
-    expect(createAndDeployButton).toBeEnabled()
+    expect(screen.queryByRole('button', { name: 'Create and deploy' })).not.toBeInTheDocument()
 
     await userEvent.click(createButton)
     expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
@@ -248,7 +241,6 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     expect(createButton).toBeEnabled()
-    expect(createAndDeployButton).toBeEnabled()
 
     await userEvent.click(createButton)
 
@@ -301,7 +293,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await waitFor(() => expect(screen.getByTestId('variable-row')).toHaveFocus())
   })
 
-  it('should create without deploying when Create is clicked', async () => {
+  it('should create the agent task when Create is clicked', async () => {
     const { userEvent } = renderConfiguration()
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
@@ -321,23 +313,5 @@ describe('AgenticWorkflowConfiguration', () => {
         payload: expect.objectContaining({ enabled: true, execution_mode: AgenticWorkflowExecutionMode.IN_PLACE }),
       })
     )
-    expect(mockDeployEnvironment).not.toHaveBeenCalled()
-  })
-
-  it('should deploy the created agent task when Create and deploy is clicked', async () => {
-    const { userEvent } = renderConfiguration()
-
-    await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
-    await userEvent.type(screen.getByRole('textbox', { name: 'Instructions' }), 'Review incoming payloads.')
-    await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
-    await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
-    await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
-    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
-    await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Create and deploy' }))
-
-    await waitFor(() => expect(mockDeployEnvironment).toHaveBeenCalledWith({ environmentId: 'environment-1' }))
   })
 })

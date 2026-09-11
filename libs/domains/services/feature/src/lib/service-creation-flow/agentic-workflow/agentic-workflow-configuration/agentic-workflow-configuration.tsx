@@ -22,7 +22,6 @@ import {
 import { ENVIRONMENT_VARIABLE_NAME_PATTERN, prepareVariableImportRequest } from '@qovery/shared/util-js'
 import { AgenticWorkflowExecutionModeSelector } from '../../../agentic-workflow-execution-mode-selector/agentic-workflow-execution-mode-selector'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
-import { useDeployEnvironment } from '../../../hooks/use-deploy-environment/use-deploy-environment'
 import {
   type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
@@ -265,7 +264,6 @@ export function AgenticWorkflowConfiguration() {
   const { closeModal, openModal } = useModal()
   const { form, onExit, variablesForm } = useAgenticWorkflowCreateContext()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
-  const { isLoading: isDeploying, mutateAsync: deployEnvironment } = useDeployEnvironment({ projectId })
   const { isLoading: isImportingVariables, mutateAsync: importVariables } = useImportVariables()
   const {
     fields: variables,
@@ -433,7 +431,7 @@ export function AgenticWorkflowConfiguration() {
     return true
   }
 
-  const handleSubmit = async (withDeploy: boolean) => {
+  const handleSubmit = async () => {
     if (!(await validateConfiguration())) return
 
     try {
@@ -455,10 +453,6 @@ export function AgenticWorkflowConfiguration() {
           serviceType: 'AGENTIC_WORKFLOW',
           variableImportRequest,
         })
-      }
-
-      if (withDeploy) {
-        await deployEnvironment({ environmentId })
       }
 
       posthog.capture('create-service', { selectedServiceType: 'agentic-workflow' })
@@ -701,25 +695,14 @@ export function AgenticWorkflowConfiguration() {
   )
 
   const creationActions = () => (
-    <div className="flex gap-2">
-      <Button
-        data-testid="button-create"
-        type="button"
-        variant="outline"
-        loading={isCreating || isImportingVariables}
-        onClick={() => handleSubmit(false)}
-      >
-        Create
-      </Button>
-      <Button
-        data-testid="button-create-deploy"
-        type="button"
-        loading={isCreating || isImportingVariables || isDeploying}
-        onClick={() => handleSubmit(true)}
-      >
-        Create and deploy
-      </Button>
-    </div>
+    <Button
+      data-testid="button-create"
+      type="button"
+      loading={isCreating || isImportingVariables}
+      onClick={handleSubmit}
+    >
+      Create
+    </Button>
   )
 
   return (
