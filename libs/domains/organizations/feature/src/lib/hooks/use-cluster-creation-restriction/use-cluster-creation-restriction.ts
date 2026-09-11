@@ -22,7 +22,6 @@ export function useClusterCreationRestriction({ organizationId }: UseClusterCrea
 
   const billingDeploymentRestriction = organization?.billing_deployment_restriction
 
-  // Check if user is in active free trial (used by organization-free-trial-banner)
   const isInActiveFreeTrial = useMemo(
     () => isFetchedCurrentCost && isActiveFreeTrial(remainingTrialDays),
     [isFetchedCurrentCost, remainingTrialDays]
