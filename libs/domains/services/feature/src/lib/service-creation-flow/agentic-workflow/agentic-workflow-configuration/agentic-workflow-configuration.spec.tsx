@@ -286,9 +286,13 @@ describe('AgenticWorkflowConfiguration', () => {
       ],
     })
 
+    await userEvent.click(screen.getByRole('button', { name: /Environment variables/ }))
+    expect(screen.getByRole('button', { name: /Environment variables/ })).toHaveAttribute('data-state', 'closed')
+
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
     await waitFor(() => {
+      expect(screen.getByRole('button', { name: /Environment variables/ })).toHaveAttribute('data-state', 'open')
       expect(screen.queryByText('Complete every environment variable name and value.')).not.toBeInTheDocument()
       expect(screen.getByText('Environment variables').closest('button')).toHaveClass('bg-surface-negative-subtle')
       expect(screen.queryByText('Please enter a value.')).not.toBeInTheDocument()

@@ -418,6 +418,9 @@ export function AgenticWorkflowConfiguration() {
 
     if (firstInvalidGroup) {
       focusSettingsGroup(firstInvalidGroup)
+      await new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()))
+      })
       await variablesForm.trigger()
 
       const invalidVariableIndex = variableValues.findIndex(
