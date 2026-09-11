@@ -1,10 +1,8 @@
 import { useNavigate } from '@tanstack/react-router'
 import { type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent } from 'react'
-import { match } from 'ts-pattern'
 import { type AgenticWorkflow, isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { IconEnum } from '@qovery/shared/enums'
-import { Badge, Heading, Icon, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
+import { Badge, Heading, Section, TablePrimitives, Tooltip } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
 import { AgenticWorkflowServiceActions } from '../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { useServices } from '../hooks/use-services/use-services'
@@ -13,28 +11,10 @@ import { ServiceStateChip } from '../service-state-chip/service-state-chip'
 
 const { Table } = TablePrimitives
 
-const tableGridLayoutClassName =
-  'grid w-full grid-cols-[minmax(280px,1.1fr)_minmax(260px,1fr)_minmax(180px,0.7fr)_minmax(280px,1fr)_130px]'
+const tableGridLayoutClassName = 'grid w-full grid-cols-[minmax(280px,1.1fr)_minmax(260px,1fr)_minmax(280px,1fr)_130px]'
 
 export interface AgenticWorkflowServiceListProps {
   environment: Environment
-}
-
-function ModelCell({ service }: { service: AgenticWorkflow }) {
-  return match(service.model?.type)
-    .with('CLAUDE', () => (
-      <span className="flex items-center gap-2 text-sm text-neutral">
-        <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-5 w-5" />
-        Claude
-      </span>
-    ))
-    .with('BEDROCK', () => (
-      <span className="flex items-center gap-2 text-sm text-neutral">
-        <Icon name={IconEnum.AWS_GRAY} className="h-5 w-5" />
-        Bedrock
-      </span>
-    ))
-    .otherwise((model) => <span className="text-sm text-neutral-subtle">{model ?? 'Not configured'}</span>)
 }
 
 function TriggerCell({
@@ -112,9 +92,6 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                 Last operation
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
-                Model
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell className="flex h-full items-center border-r border-neutral text-neutral-subtle">
                 Trigger
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell className="flex h-full items-center text-neutral-subtle">
@@ -141,9 +118,6 @@ export function AgenticWorkflowServiceList({ environment }: AgenticWorkflowServi
                 </Table.Cell>
                 <Table.Cell className="flex h-full items-center border-r border-neutral">
                   <ServiceLastDeploymentCell service={service} environment={environment} />
-                </Table.Cell>
-                <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
-                  <ModelCell service={service} />
                 </Table.Cell>
                 <Table.Cell className="flex h-full min-w-0 items-center border-r border-neutral">
                   <TriggerCell service={service} onAction={stopRowNavigation} />
