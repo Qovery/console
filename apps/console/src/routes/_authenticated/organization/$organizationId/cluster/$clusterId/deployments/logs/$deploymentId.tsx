@@ -79,7 +79,7 @@ function ClusterDeploymentLogsPage({
         <div className="flex h-full flex-1 flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center gap-3">
             <LoaderDots />
-            <p className="text-neutral">Cluster logs are loading…</p>
+            <p className="text-neutral">Deployment logs are loading…</p>
           </div>
         </div>
       ) : isLogsFetched && logs.length > 0 ? (
