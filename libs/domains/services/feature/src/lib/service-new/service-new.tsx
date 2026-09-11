@@ -7,7 +7,7 @@ import {
   type LifecycleTemplateListResponseResultsInner,
 } from 'qovery-typescript-axios'
 import { type ReactNode, useMemo, useState } from 'react'
-import { Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from '@qovery/shared/ui'
+import { Badge, Button, Heading, Icon, InputSearch, Section, Skeleton, useModal } from '@qovery/shared/ui'
 import { useSupportChat } from '@qovery/shared/util-hooks'
 import { BlueprintDetailsPanel } from '../blueprint-details-panel/blueprint-details-panel'
 import { BlueprintQueryBoundary } from '../blueprint-query-boundary/blueprint-query-boundary'
@@ -371,7 +371,12 @@ export function ServiceNew({
         {isAgenticWorkflowEnabled && agentUseCases.length > 0 && (
           <Section className="gap-4">
             <div className="flex flex-col gap-1">
-              <Heading>Agent use cases</Heading>
+              <div className="flex items-center gap-2">
+                <Badge color="purple" variant="surface" size="sm">
+                  Beta
+                </Badge>
+                <Heading>Agent use cases</Heading>
+              </div>
               <p className="text-sm leading-5 text-neutral-subtle">
                 Start from a ready-made agent configuration and adjust it to your needs.
               </p>
