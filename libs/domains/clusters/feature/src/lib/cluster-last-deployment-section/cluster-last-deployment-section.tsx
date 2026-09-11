@@ -75,10 +75,10 @@ function getDeploymentReasonLabel(reason?: ClusterStatus['reason']) {
 
 function ClusterLastDeploymentSkeleton() {
   return (
-    <div className="flex gap-2.5 rounded-lg border border-neutral bg-surface-neutral p-4">
-      <Skeleton width={100} height={16} />
-      <Skeleton width={24} height={16} />
-      <Skeleton width={112} height={16} />
+    <div className="flex items-center gap-2.5 rounded-lg border border-neutral bg-surface-neutral p-4">
+      <Skeleton width={100} height={24} />
+      <Skeleton width={24} height={24} />
+      <Skeleton width={112} height={24} />
     </div>
   )
 }
