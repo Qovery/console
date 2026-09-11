@@ -420,6 +420,7 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
   const clusterLogsLinkTarget = isClusterDeploymentHistoryEnabled
     ? ('/organization/$organizationId/cluster/$clusterId/deployments' as const)
     : ('/organization/$organizationId/cluster/$clusterId/cluster-logs' as const)
+  const clusterLogsLinkLabel = isClusterDeploymentHistoryEnabled ? 'Deployments' : 'Logs'
   const location = useLocation()
   const showSelfManagedGuideKey = 'show-self-managed-guide'
   const { openModal, closeModal } = useModal()
@@ -499,9 +500,9 @@ export function ClusterActions({ cluster, clusterStatus, variant = 'default' }: 
     .otherwise(() => <MenuManageDeployment cluster={cluster} clusterStatus={clusterStatus} variant={variant} />)
   const logsButton =
     variant === 'card' && cluster.kubernetes !== 'SELF_MANAGED' ? (
-      <Tooltip content="Logs">
+      <Tooltip content={clusterLogsLinkLabel}>
         <Button
-          aria-label="Logs"
+          aria-label={clusterLogsLinkLabel}
           color="neutral"
           variant="outline"
           size="md"
