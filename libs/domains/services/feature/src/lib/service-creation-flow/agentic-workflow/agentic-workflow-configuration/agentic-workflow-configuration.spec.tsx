@@ -291,7 +291,8 @@ describe('AgenticWorkflowConfiguration', () => {
     await waitFor(() => {
       expect(screen.queryByText('Complete every environment variable name and value.')).not.toBeInTheDocument()
       expect(screen.getByText('Environment variables').closest('button')).toHaveClass('bg-surface-negative-subtle')
-      expect(screen.getByText('Please enter a value.')).toBeInTheDocument()
+      expect(screen.queryByText('Please enter a value.')).not.toBeInTheDocument()
+      expect(screen.getByTestId('value').closest('[data-testid="input"]')).toHaveClass('input--error')
       expect(screen.getByTestId('value')).toHaveFocus()
     })
     expect(mockCreateService).not.toHaveBeenCalled()

@@ -614,7 +614,7 @@ export function AgenticWorkflowConfiguration() {
                   availableScopes={[APIVariableScopeEnum.AGENTIC_WORKFLOW]}
                   gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 36px"
                   showScope={false}
-                  errorMessagePosition="bottom"
+                  errorMessagePosition="none"
                   onDelete={removeVariable}
                 />
               ))}
