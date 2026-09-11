@@ -60,7 +60,7 @@ export function BaseServiceCard({ title, description, icon, link, search, onClic
       </span>
       <span className="flex min-w-0 flex-col gap-1">
         <span className="text-sm font-medium leading-5 text-neutral">{title}</span>
-        <span className="line-clamp-3 text-xs leading-5 text-neutral-subtle">{description}</span>
+        <span className="line-clamp-3 text-xs font-normal leading-5 text-neutral-subtle">{description}</span>
       </span>
     </>
   )
