@@ -187,7 +187,7 @@ describe('SettingsBillingDetails', () => {
     expect(screen.getByText(/You are on the Business plan during your free trial/)).toBeInTheDocument()
     expect(screen.getAllByTestId('credit-card-row')).toHaveLength(3)
 
-    await userEvent.click(screen.getByText('Activate my plan'))
+    await userEvent.click(screen.getByText('Contact our Team'))
     expect(mockShowPylonForm).toHaveBeenCalledWith('ask-for-activation')
   })
 
