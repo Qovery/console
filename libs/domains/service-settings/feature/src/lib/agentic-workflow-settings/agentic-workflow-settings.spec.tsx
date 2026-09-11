@@ -7,6 +7,7 @@ import {
   agenticWorkflowJsonValidation,
   formatAgenticWorkflowRepositories,
   getGitRepositoryName,
+  getGitRepositoryProvider,
 } from './agentic-workflow-settings'
 
 const useGitTokensSpy = jest.spyOn(organizationsDomain, 'useGitTokens') as jest.Mock
@@ -100,6 +101,21 @@ describe('Agentic Workflow settings validation', () => {
     expect(getGitRepositoryName(url)).toBe(expected)
   })
 
+  it('uses the Git token provider for a self-hosted repository', () => {
+    expect(
+      getGitRepositoryProvider('https://gitlab.company.com/qovery/backend.git', 'token-1', [
+        {
+          id: 'token-1',
+          name: 'Company GitLab',
+          type: 'GITLAB',
+          created_at: '2026-09-10T00:00:00Z',
+          associated_services_count: 1,
+          git_api_url: 'https://gitlab.company.com/api/v4',
+        },
+      ])
+    ).toBe('GITLAB')
+  })
+
   it('uses the full repository URL in the edit payload', () => {
     expect(
       formatAgenticWorkflowRepositories([
@@ -129,7 +145,7 @@ describe('AgenticWorkflowSettings views', () => {
     jest.useFakeTimers()
     editService.mockReset()
     useServiceSpy.mockReturnValue({ data: service })
-    useGitTokensSpy.mockReturnValue({ data: [{ id: 'token-1', type: 'GITHUB' }] })
+    useGitTokensSpy.mockReturnValue({ data: [{ id: 'token-1', type: 'GITHUB' }], isLoading: false })
     useMcpServersSpy.mockReturnValue({
       data: [{ id: 'mcp-1', name: 'Documentation', url: 'https://docs.example.com' }],
       isLoading: false,
@@ -220,6 +236,26 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('heading', { name: 'Connections' })).toBeInTheDocument()
     expect(screen.getByText('qovery/console')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
+  })
+
+  it('prevents editing a private self-hosted repository until its provider is resolved', () => {
+    useServiceSpy.mockReturnValue({
+      data: {
+        ...service,
+        project_repositories: [
+          {
+            url: 'https://gitlab.company.com/qovery/backend.git',
+            branch: 'main',
+            git_token_id: 'token-1',
+          },
+        ],
+      },
+    })
+    useGitTokensSpy.mockReturnValue({ data: undefined, isLoading: true })
+
+    renderWithProviders(<AgenticWorkflowSettings page="connections" />)
+
+    expect(screen.getByRole('button', { name: 'Manage context' })).toBeDisabled()
   })
 
   it('preserves malformed legacy MCP JSON without blocking Connections changes', async () => {

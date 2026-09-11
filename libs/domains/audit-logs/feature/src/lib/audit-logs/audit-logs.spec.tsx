@@ -31,7 +31,7 @@ const props: AuditLogsProps = {
   events: eventsFactoryMock(10),
   setFilter: jest.fn(),
   filter: [{ key: 'origin', value: 'origin-1' }],
-  showIntercom: jest.fn(),
+  showChat: jest.fn(),
   organizationMaxLimitReached: false,
   organizationId: 'test-org-id',
   targetTypeSelectedItems: [],
@@ -119,13 +119,13 @@ describe.skip('PageGeneral', () => {
     expect(upgradeButton).toBeInTheDocument()
   })
 
-  it('should call showIntercom when clicking upgrade plan button', async () => {
+  it('should call showChat when clicking upgrade plan button', async () => {
     const { userEvent } = renderWithProviders(<AuditLogs {...props} organizationMaxLimitReached={true} />)
 
     const upgradeButton = screen.getByRole('button', { name: /Upgrade plan/i })
     await userEvent.click(upgradeButton)
 
-    expect(props.showIntercom).toHaveBeenCalled()
+    expect(props.showChat).toHaveBeenCalled()
   })
 
   it('should render locked placeholder rows when organizationMaxLimitReached', () => {

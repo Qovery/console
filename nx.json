@@ -14,9 +14,6 @@
           "env": "NX_PUBLIC_GTM"
         },
         {
-          "env": "NX_PUBLIC_INTERCOM"
-        },
-        {
           "env": "NX_PUBLIC_OAUTH_AUDIENCE"
         },
         {

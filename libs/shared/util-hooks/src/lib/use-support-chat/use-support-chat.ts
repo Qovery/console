@@ -1,9 +1,5 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useMatches } from '@tanstack/react-router'
-import { useCallback, useEffect, useMemo } from 'react'
-import { type IntercomProps, useIntercom } from 'react-use-intercom'
-
-type IntercomChatSettings = Partial<IntercomProps>
+import { useEffect, useMemo } from 'react'
 
 type PylonChatSettings = {
   app_id?: string
@@ -13,7 +9,6 @@ type PylonChatSettings = {
   avatar_url?: string
 }
 
-type ChatSettings = IntercomChatSettings | PylonChatSettings
 type PylonCommand = {
   (cmd: 'showTicketForm', formSlug: string): void
   (cmd: 'show' | 'hide'): void
@@ -24,7 +19,7 @@ type PylonCommand = {
 declare global {
   interface Window {
     pylon?: {
-      chat_settings: ChatSettings
+      chat_settings: PylonChatSettings
     }
     Pylon?: PylonCommand
   }
@@ -33,42 +28,20 @@ declare global {
 export function useSupportChat() {
   const { user } = useAuth0()
 
-  const { update: updateIntercom, shutdown: shutdownIntercom, showMessages: showIntercomMessenger } = useIntercom()
-  const matches = useMatches()
-
-  const service = useMemo(() => {
-    return matches.some((match) => match.routeId.startsWith('/_authenticated/onboarding')) ? 'intercom' : 'pylon'
-  }, [matches])
-
   const defaultChatParams = useMemo(() => {
-    let defaultChatParams = undefined
-
     if (!user) return undefined
 
-    if (service === 'pylon') {
-      defaultChatParams = {
-        app_id: process.env.NX_PUBLIC_PYLON_APP_ID,
-        email: user.email,
-        name: user.name,
-        email_hash: user['https://qovery.com/pylon_hash'],
-        avatar_url: user.picture,
-      }
-    } else {
-      defaultChatParams = {
-        email: user.email,
-        name: user.name,
-        userId: user.sub,
-        userHash: user['https://qovery.com/intercom_hash'],
-      }
+    return {
+      app_id: process.env.NX_PUBLIC_PYLON_APP_ID,
+      email: user.email,
+      name: user.name,
+      email_hash: user['https://qovery.com/pylon_hash'],
+      avatar_url: user.picture,
     }
-
-    return defaultChatParams
-  }, [service, user])
+  }, [user])
 
   const initChat = () => {
-    if (service === 'pylon') {
-      bootstrapPylon(defaultChatParams)
-    }
+    bootstrapPylon(defaultChatParams)
   }
 
   const whenPylonReady = (callback: () => void) => {
@@ -82,11 +55,7 @@ export function useSupportChat() {
   }
 
   const showChat = () => {
-    if (service === 'intercom') {
-      showIntercomMessenger()
-    } else {
-      whenPylonReady(() => window.Pylon?.('show'))
-    }
+    whenPylonReady(() => window.Pylon?.('show'))
   }
 
   const showPylonForm = (formSlug: string) => {
@@ -95,7 +64,7 @@ export function useSupportChat() {
 
   const isPylonReady = () => Boolean(window.Pylon && !window.Pylon.q)
 
-  const setPylonChatSettings = (settings?: ChatSettings) => {
+  const setPylonChatSettings = (settings?: PylonChatSettings) => {
     if (!settings) return
 
     window.pylon = {
@@ -103,7 +72,7 @@ export function useSupportChat() {
     }
   }
 
-  const bootstrapPylon = (settings?: ChatSettings) => {
+  const bootstrapPylon = (settings?: PylonChatSettings) => {
     setPylonChatSettings(settings)
 
     if (!window.Pylon) {
@@ -131,29 +100,15 @@ export function useSupportChat() {
     mainScriptTag?.parentNode?.insertBefore(tag, mainScriptTag)
   }
 
-  const updateUserInfo = useCallback(
-    (settings?: ChatSettings) => {
-      if (!settings) return
+  const updateUserInfo = (settings?: PylonChatSettings) => {
+    if (!settings) return
 
-      if (service === 'pylon') {
-        shutdownIntercom()
-        setPylonChatSettings({ ...defaultChatParams, ...settings })
-      } else {
-        window.Pylon?.('hide')
-        updateIntercom({ ...defaultChatParams, ...settings })
-      }
-    },
-    [defaultChatParams, service, shutdownIntercom, updateIntercom]
-  )
+    setPylonChatSettings({ ...defaultChatParams, ...settings })
+  }
 
   useEffect(() => {
-    if (service === 'pylon') {
-      bootstrapPylon(defaultChatParams)
-      return
-    }
-
-    updateUserInfo(defaultChatParams)
-  }, [defaultChatParams, service, updateUserInfo])
+    bootstrapPylon(defaultChatParams)
+  }, [defaultChatParams])
 
   return { updateUserInfo, showChat, initChat, showPylonForm }
 }

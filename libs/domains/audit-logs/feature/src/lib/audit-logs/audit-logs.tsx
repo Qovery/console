@@ -34,7 +34,7 @@ import {
 
 export interface AuditLogsProps {
   isLoading: boolean
-  showIntercom: () => void
+  showChat: () => void
   handleClearFilter: () => void
   organizationMaxLimitReached: boolean
   events?: OrganizationEventResponse[]
@@ -218,7 +218,7 @@ export function AuditLogs({
   handleClearFilter,
   organization,
   organizationId,
-  showIntercom,
+  showChat,
   organizationMaxLimitReached,
   queryParams,
   targetTypeSelectedItems,
@@ -329,7 +329,7 @@ export function AuditLogs({
               <div className="flex h-14 items-center justify-center border-b border-neutral">
                 <p className="flex items-center gap-3 text-sm text-neutral">
                   {auditLogsRetentionInDays} days limit reached.
-                  <Button type="button" variant="outline" onClick={() => showIntercom()}>
+                  <Button type="button" variant="outline" onClick={() => showChat()}>
                     <span>Upgrade plan</span>
                     <Icon iconName="arrow-up-right-from-square" className="text-neutral" />
                   </Button>

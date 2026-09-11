@@ -1,28 +1,13 @@
 import { useAuth0 } from '@auth0/auth0-react'
-import { useMatches } from '@tanstack/react-router'
 import { renderHook } from '@testing-library/react'
-import { useIntercom } from 'react-use-intercom'
 import { useSupportChat } from './use-support-chat'
 
 jest.mock('@auth0/auth0-react', () => ({
   useAuth0: jest.fn(),
 }))
 
-jest.mock('@tanstack/react-router', () => ({
-  useMatches: jest.fn(),
-}))
-
-jest.mock('react-use-intercom', () => ({
-  useIntercom: jest.fn(),
-}))
-
 describe('useSupportChat', () => {
   const mockUseAuth0 = jest.mocked(useAuth0)
-  const mockUseMatches = jest.mocked(useMatches)
-  const mockUseIntercom = jest.mocked(useIntercom)
-  const mockUpdateIntercom = jest.fn()
-  const mockShutdownIntercom = jest.fn()
-  const mockShowIntercomMessenger = jest.fn()
 
   beforeEach(() => {
     mockUseAuth0.mockReturnValue({
@@ -32,18 +17,8 @@ describe('useSupportChat', () => {
         picture: 'https://example.com/avatar.png',
         sub: 'auth0|user-123',
         'https://qovery.com/pylon_hash': 'secure-hash',
-        'https://qovery.com/intercom_hash': 'intercom-hash',
       },
     } as ReturnType<typeof useAuth0>)
-
-    mockUseMatches.mockReturnValue([{ routeId: '/_authenticated/organization/$organizationId' }] as ReturnType<
-      typeof useMatches
-    >)
-    mockUseIntercom.mockReturnValue({
-      update: mockUpdateIntercom,
-      shutdown: mockShutdownIntercom,
-      showMessages: mockShowIntercomMessenger,
-    } as ReturnType<typeof useIntercom>)
 
     document.body.innerHTML = '<script id="main-script"></script>'
     delete window.pylon
@@ -74,5 +49,45 @@ describe('useSupportChat', () => {
     result.current.showChat()
 
     expect(window.Pylon?.q).toEqual([['show']])
+  })
+
+  it('queues showTicketForm calls until the pylon script is loaded', () => {
+    const { result } = renderHook(() => useSupportChat())
+
+    result.current.showPylonForm('ask-for-activation')
+
+    expect(window.Pylon?.q).toEqual([['showTicketForm', 'ask-for-activation']])
+  })
+
+  it('calls pylon directly once the script is ready', () => {
+    const { result } = renderHook(() => useSupportChat())
+    window.Pylon = jest.fn() as unknown as typeof window.Pylon
+
+    result.current.showChat()
+
+    expect(window.Pylon).toHaveBeenCalledWith('show')
+  })
+
+  it('re-inserts the pylon script tag when initChat is called', () => {
+    const { result } = renderHook(() => useSupportChat())
+    document.getElementById('pylon-script')?.remove()
+
+    result.current.initChat()
+
+    expect(document.getElementById('pylon-script')).not.toBeNull()
+  })
+
+  it('merges settings into the pylon chat settings on updateUserInfo', () => {
+    const { result } = renderHook(() => useSupportChat())
+
+    result.current.updateUserInfo({ name: 'Override Name' })
+
+    expect(window.pylon?.chat_settings).toEqual({
+      app_id: process.env.NX_PUBLIC_PYLON_APP_ID,
+      email: 'user@qovery.com',
+      name: 'Override Name',
+      email_hash: 'secure-hash',
+      avatar_url: 'https://example.com/avatar.png',
+    })
   })
 })

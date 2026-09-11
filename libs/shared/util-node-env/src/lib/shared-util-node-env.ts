@@ -9,7 +9,6 @@ declare global {
       NX_PUBLIC_OAUTH_DOMAIN: string
       NX_PUBLIC_OAUTH_KEY: string
       NX_PUBLIC_OAUTH_AUDIENCE: string
-      NX_PUBLIC_INTERCOM: string
       NX_PUBLIC_POSTHOG: string
       NX_PUBLIC_POSTHOG_APIHOST: string
       NX_PUBLIC_GTM: string
@@ -30,7 +29,6 @@ export const NODE_ENV = process.env.NODE_ENV,
   OAUTH_DOMAIN = process.env.NX_PUBLIC_OAUTH_DOMAIN,
   OAUTH_KEY = process.env.NX_PUBLIC_OAUTH_KEY,
   OAUTH_AUDIENCE = process.env.NX_PUBLIC_OAUTH_AUDIENCE,
-  INTERCOM = process.env.NX_PUBLIC_INTERCOM,
   POSTHOG = process.env.NX_PUBLIC_POSTHOG,
   POSTHOG_APIHOST = process.env.NX_PUBLIC_POSTHOG_APIHOST,
   GTM = process.env.NX_PUBLIC_GTM,
