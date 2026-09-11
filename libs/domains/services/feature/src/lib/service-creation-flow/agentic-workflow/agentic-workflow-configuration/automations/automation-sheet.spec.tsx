@@ -42,6 +42,20 @@ describe('AutomationSheet', () => {
     )
   })
 
+  it('links to the CRON expression builder when configuring a schedule', async () => {
+    const { userEvent } = renderWithProviders(
+      <AutomationSheet automation={emptyAutomation} onClose={jest.fn()} onSave={jest.fn()} />
+    )
+
+    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
+    await userEvent.click(screen.getByRole('menuitem', { name: 'On a schedule' }))
+
+    expect(screen.getByRole('link', { name: 'CRON expression builder' })).toHaveAttribute(
+      'href',
+      'https://crontab.guru/'
+    )
+  })
+
   it('allows saving outputs independently from triggers', async () => {
     const onSave = jest.fn()
     const { userEvent } = renderWithProviders(

@@ -4,6 +4,7 @@ import {
   Button,
   Callout,
   DropdownMenu,
+  ExternalLink,
   Heading,
   Icon,
   InputText,
@@ -147,6 +148,11 @@ function ScheduledTriggerModal({
           <p className="text-sm leading-5 text-neutral-subtle">Run this agent task automatically on a schedule.</p>
         </div>
         <div className="flex flex-col gap-4">
+          <div className="flex justify-end">
+            <ExternalLink href="https://crontab.guru/" size="sm">
+              CRON expression builder
+            </ExternalLink>
+          </div>
           <InputText
             name="cron-expression"
             label="Cron expression"
