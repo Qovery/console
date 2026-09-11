@@ -1,6 +1,6 @@
 import { type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
-import { McpSheet } from './mcp-sheet'
+import { McpSheet, hasOrganizationMcpCreationPermission } from './mcp-sheet'
 
 jest.mock('@qovery/domains/organizations/feature', () => ({
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
@@ -51,6 +51,30 @@ function setup(value: string[] = [], onChange = jest.fn(), onClose = jest.fn()) 
 }
 
 describe('McpSheet', () => {
+  it.each([
+    { role: 'organization:org-1:admin', isQoveryAdminUser: false },
+    { role: 'organization:org-1:owner', isQoveryAdminUser: false },
+    { role: 'organization:org-1:viewer', isQoveryAdminUser: true },
+  ])('allows organization MCP creation for $role', ({ role, isQoveryAdminUser }) => {
+    expect(
+      hasOrganizationMcpCreationPermission({
+        isQoveryAdminUser,
+        organizationId: 'org-1',
+        roles: [role],
+      })
+    ).toBe(true)
+  })
+
+  it('does not allow organization MCP creation for a non-admin member', () => {
+    expect(
+      hasOrganizationMcpCreationPermission({
+        isQoveryAdminUser: false,
+        organizationId: 'org-1',
+        roles: ['organization:org-1:viewer'],
+      })
+    ).toBe(false)
+  })
+
   it('lists available MCP servers', () => {
     setup()
 

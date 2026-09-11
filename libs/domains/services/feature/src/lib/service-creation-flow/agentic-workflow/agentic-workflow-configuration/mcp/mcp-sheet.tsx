@@ -1,8 +1,28 @@
+import { useParams } from '@tanstack/react-router'
 import { type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { McpServerCreateEditModal } from '@qovery/domains/organizations/feature'
+import { useUserRole } from '@qovery/shared/iam/feature'
 import { Button, Heading, Icon, InputSearch, useModal } from '@qovery/shared/ui'
 import { OverlaySheet, SheetHeader } from '../sheet/overlay-sheet'
+
+export function hasOrganizationMcpCreationPermission({
+  isQoveryAdminUser,
+  organizationId,
+  roles,
+}: {
+  isQoveryAdminUser: boolean
+  organizationId: string
+  roles: string[]
+}) {
+  return (
+    isQoveryAdminUser ||
+    roles.some(
+      (role) =>
+        role.includes(`organization:${organizationId}:admin`) || role.includes(`organization:${organizationId}:owner`)
+    )
+  )
+}
 
 function McpServerPicker({
   createdMcpServers,
@@ -20,7 +40,14 @@ function McpServerPicker({
   value: string[]
 }) {
   const { closeModal, openModal } = useModal()
+  const { organizationId = '' } = useParams({ strict: false }) ?? {}
+  const { isQoveryAdminUser, roles } = useUserRole()
   const [search, setSearch] = useState('')
+  const canCreateOrganizationMcp = hasOrganizationMcpCreationPermission({
+    isQoveryAdminUser,
+    organizationId,
+    roles,
+  })
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
@@ -35,6 +62,7 @@ function McpServerPicker({
       content: (
         <McpServerCreateEditModal
           scope={McpServerScope.USER}
+          scopeOptions={[McpServerScope.USER, ...(canCreateOrganizationMcp ? [McpServerScope.ORGANIZATION] : [])]}
           onClose={(mcpServer) => {
             if (mcpServer) {
               onMcpServerCreated(mcpServer)

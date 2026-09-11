@@ -53,6 +53,39 @@ describe('McpServerCreateEditModal', () => {
     )
   })
 
+  it('should default to a personal MCP and allow selecting the organization scope', async () => {
+    const { userEvent } = renderWithProviders(
+      <McpServerCreateEditModal
+        {...props}
+        scope={McpServerScope.USER}
+        scopeOptions={[McpServerScope.USER, McpServerScope.ORGANIZATION]}
+      />
+    )
+
+    expect(screen.getByText('Personal')).toBeInTheDocument()
+    expect(screen.getByText('Only you can attach this MCP to agent tasks.')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByLabelText('Scope'))
+    await userEvent.click(screen.getByText('Organization'))
+    expect(screen.getByText('Members of this organization can attach this MCP to agent tasks.')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Name'), 'Shared tools')
+    await userEvent.type(screen.getByLabelText('Server URL'), 'https://example.com/mcp')
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
+
+    await waitFor(() =>
+      expect(createMcpServer).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        mcpServerRequest: {
+          name: 'Shared tools',
+          description: undefined,
+          url: 'https://example.com/mcp',
+          headers: undefined,
+          scope: McpServerScope.ORGANIZATION,
+        },
+      })
+    )
+  })
+
   it('should reject non-HTTPS URLs', async () => {
     const { userEvent } = renderWithProviders(<McpServerCreateEditModal {...props} />)
 
