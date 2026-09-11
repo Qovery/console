@@ -372,10 +372,10 @@ export function ServiceNew({
           <Section className="gap-4">
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
+                <Heading>Agent use cases</Heading>
                 <Badge color="purple" variant="surface" size="sm">
                   Beta
                 </Badge>
-                <Heading>Agent use cases</Heading>
               </div>
               <p className="text-sm leading-5 text-neutral-subtle">
                 Start from a ready-made agent configuration and adjust it to your needs.
