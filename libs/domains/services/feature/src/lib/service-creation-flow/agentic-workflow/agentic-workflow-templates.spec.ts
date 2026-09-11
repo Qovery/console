@@ -46,6 +46,13 @@ describe('agentic-workflow-templates', () => {
     expect(template?.variables?.map((variable) => variable.variable)).toContain(credential)
   })
 
+  it('provides theme-specific Linear logos', () => {
+    const template = getAgenticWorkflowTemplate('linear-coding-agent')
+
+    expect(template?.logoPath).toBe('/assets/agent-templates/linear-dark.svg')
+    expect(template?.darkLogoPath).toBe('/assets/agent-templates/linear-light.svg')
+  })
+
   it('exposes the Build & deployment optimizer use case', () => {
     const template = getAgenticWorkflowTemplate('build-optimizer')
     expect(template).toBeDefined()

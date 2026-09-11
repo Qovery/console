@@ -9,6 +9,7 @@ export interface AgenticWorkflowTemplate {
   description: string
   iconName?: IconName
   logoPath?: string
+  darkLogoPath?: string
   seed: Partial<AgenticWorkflowFormData>
   variables?: VariableData[]
 }
@@ -138,7 +139,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     id: 'linear-coding-agent',
     title: 'Linear Coding Agent',
     description: 'Turn a Linear issue into an implementation and a ready-to-review pull request.',
-    logoPath: '/assets/agent-templates/linear.svg',
+    logoPath: '/assets/agent-templates/linear-dark.svg',
+    darkLogoPath: '/assets/agent-templates/linear-light.svg',
     seed: {
       name: 'Linear Coding Agent',
       description: 'Turn a Linear issue into an implementation and a ready-to-review pull request.',

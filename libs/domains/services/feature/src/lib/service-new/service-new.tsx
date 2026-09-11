@@ -1,4 +1,5 @@
 import { useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
@@ -303,7 +304,16 @@ export function ServiceNew({
         icon: (
           <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             {template.logoPath ? (
-              <img src={template.logoPath} alt="" className="size-full object-contain" />
+              <>
+                <img
+                  src={template.logoPath}
+                  alt=""
+                  className={clsx('size-full object-contain', template.darkLogoPath && 'dark:hidden')}
+                />
+                {template.darkLogoPath && (
+                  <img src={template.darkLogoPath} alt="" className="hidden size-full object-contain dark:block" />
+                )}
+              </>
             ) : template.iconName ? (
               <Icon iconName={template.iconName} iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
             ) : null}
