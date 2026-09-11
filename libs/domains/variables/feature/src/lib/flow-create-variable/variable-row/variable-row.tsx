@@ -14,11 +14,18 @@ export interface VariableRowProps {
   availableScopes: APIVariableScopeEnum[]
   gridTemplateColumns?: string
   showScope?: boolean
+  errorMessagePosition?: 'left' | 'bottom'
 }
 
 export function VariableRow(props: VariableRowProps) {
   const { environmentId = '' } = useParams({ strict: false })
-  const { index, availableScopes, gridTemplateColumns = '172px 172px 188px 2fr 1fr', showScope = true } = props
+  const {
+    index,
+    availableScopes,
+    gridTemplateColumns = '172px 172px 188px 2fr 1fr',
+    showScope = true,
+    errorMessagePosition = 'left',
+  } = props
   const { control, trigger, watch } = useFormContext<FlowVariableData>()
   const [openEditor, setOpenEditor] = useState(true)
   const watchSecret = watch().variables[index]?.isSecret
@@ -71,7 +78,7 @@ export function VariableRow(props: VariableRowProps) {
                 value={field.value}
                 error={error?.message}
                 label="Variable"
-                errorMessagePosition="left"
+                errorMessagePosition={errorMessagePosition}
               />
             )
           }
@@ -117,7 +124,7 @@ export function VariableRow(props: VariableRowProps) {
                   onChange: field.onChange,
                   value: field.value,
                   error: error?.message,
-                  errorMessagePosition: 'left',
+                  errorMessagePosition,
                   type: watchSecret ? 'password' : 'text',
                   hasShowPasswordButton: watchSecret,
                 }}

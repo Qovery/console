@@ -5,6 +5,15 @@ import { AutomationSheet } from './automation-sheet'
 const emptyAutomation: AgenticWorkflowAutomation = { id: 'automation-1', triggers: [], outputs: [] }
 
 describe('AutomationSheet', () => {
+  it('shows and focuses the missing trigger error', () => {
+    renderWithProviders(
+      <AutomationSheet automation={emptyAutomation} showTriggerError onClose={jest.fn()} onSave={jest.fn()} />
+    )
+
+    expect(screen.getByText('At least one trigger is required.')).toBeInTheDocument()
+    expect(screen.getByTestId('trigger-validation')).toHaveFocus()
+  })
+
   it('requires at least one trigger before saving', async () => {
     const onSave = jest.fn()
     const { userEvent } = renderWithProviders(

@@ -1,6 +1,6 @@
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { AgenticWorkflowCreationFlow } from '../agentic-workflow-context'
+import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
 import {
   AgenticWorkflowConfiguration,
   areVariablesValid,
@@ -39,7 +39,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
-  VariableRow: () => <div>Variable</div>,
+  ...jest.requireActual('@qovery/domains/variables/feature'),
   useImportVariables: () => ({ isLoading: false, mutateAsync: mockImportVariables }),
 }))
 
@@ -67,12 +67,27 @@ jest.mock('../agentic-workflow-schedule-fields', () => ({
   AgenticWorkflowScheduleFields: () => <div>Schedule</div>,
 }))
 
-function renderConfiguration(onExit = jest.fn()) {
+function renderConfiguration({
+  onExit = jest.fn(),
+  seed,
+  variablesSeed,
+}: {
+  onExit?: () => void
+  seed?: Partial<AgenticWorkflowFormData>
+  variablesSeed?: Parameters<typeof AgenticWorkflowCreationFlow>[0]['variablesSeed']
+} = {}) {
   return renderWithProviders(
-    <AgenticWorkflowCreationFlow onExit={onExit}>
+    <AgenticWorkflowCreationFlow onExit={onExit} seed={seed} variablesSeed={variablesSeed}>
       <AgenticWorkflowConfiguration />
     </AgenticWorkflowCreationFlow>
   )
+}
+
+const validSeed: Partial<AgenticWorkflowFormData> = {
+  name: 'review-agent',
+  agentPrompt: 'Review incoming payloads.',
+  modelApiKey: 'sk-ant-test',
+  automations: [{ id: 'automation-1', triggers: [{ id: 'webhook-1', type: 'webhook' }], outputs: [] }],
 }
 
 describe('AgenticWorkflowConfiguration validation', () => {
@@ -137,7 +152,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
   it('should leave the creation page from the top-left back action', async () => {
     const onExit = jest.fn()
-    const { userEvent } = renderConfiguration(onExit)
+    const { userEvent } = renderConfiguration({ onExit })
 
     await userEvent.click(screen.getByRole('button', { name: 'Back' }))
 
@@ -159,6 +174,16 @@ describe('AgenticWorkflowConfiguration', () => {
 
     expect(screen.getByRole('heading', { name: 'Dockerfile fragment' })).toBeInTheDocument()
     expect(screen.queryByText('Advanced MCP configuration')).not.toBeInTheDocument()
+  })
+
+  it('should configure the execution mode from advanced settings', async () => {
+    const { userEvent } = renderConfiguration()
+
+    await userEvent.click(screen.getByRole('button', { name: /Advanced settings/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Clone environment/ }))
+
+    expect(screen.getByRole('button', { name: /Clone environment/ })).toHaveAttribute('aria-pressed', 'true')
+    expect(screen.getByRole('button', { name: /In place/ })).toHaveAttribute('aria-pressed', 'false')
   })
 
   it('should configure context, provider, and automations from the main canvas', async () => {
@@ -217,7 +242,30 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(createButton)
 
     expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
+    expect(screen.getByText('At least one trigger is required.')).toBeInTheDocument()
+    expect(screen.getByTestId('trigger-validation')).toHaveFocus()
     expect(screen.getByRole('button', { name: 'Apply changes' })).toBeDisabled()
+    expect(mockCreateService).not.toHaveBeenCalled()
+  })
+
+  it('should show variable errors and focus the first invalid value', async () => {
+    const { userEvent } = renderConfiguration({
+      seed: validSeed,
+      variablesSeed: [
+        {
+          variable: 'INCIDENT_API_KEY',
+          value: '',
+          scope: 'AGENTIC_WORKFLOW',
+          isSecret: true,
+        },
+      ],
+    })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    expect(screen.getByText('Complete every environment variable name and value.')).toBeInTheDocument()
+    expect(screen.getByText('Please enter a value.')).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByTestId('value')).toHaveFocus())
     expect(mockCreateService).not.toHaveBeenCalled()
   })
 

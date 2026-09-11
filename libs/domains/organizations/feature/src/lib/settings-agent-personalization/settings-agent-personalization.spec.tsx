@@ -1,8 +1,10 @@
-import { type McpServerResponse } from 'qovery-typescript-axios'
+import { type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
+import { type ReactElement } from 'react'
 import * as sharedUi from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useDeleteMcpServerHook from '../hooks/use-delete-mcp-server/use-delete-mcp-server'
 import * as useMcpServersHook from '../hooks/use-mcp-servers/use-mcp-servers'
+import { type McpServerCreateEditModalProps } from '../mcp-server-create-edit-modal/mcp-server-create-edit-modal'
 import { SettingsAgentPersonalization } from './settings-agent-personalization'
 
 const useMcpServersMock = jest.spyOn(useMcpServersHook, 'useMcpServers') as jest.Mock
@@ -28,6 +30,8 @@ const mcpServers: McpServerResponse[] = [
     header_names: new Set(['Authorization']),
     created_at: '2026-08-01T10:00:00Z',
     updated_at: '2026-08-02T10:00:00Z',
+    scope: McpServerScope.ORGANIZATION,
+    attachable: true,
   },
   {
     id: 'mcp-alpha',
@@ -37,6 +41,21 @@ const mcpServers: McpServerResponse[] = [
     header_names: new Set(),
     created_at: '2026-08-01T10:00:00Z',
     updated_at: '2026-08-02T10:00:00Z',
+    scope: McpServerScope.USER,
+    owner_name: 'Rémi Bonnet',
+    attachable: true,
+  },
+  {
+    id: 'mcp-bravo',
+    name: 'Bravo',
+    description: 'Another member connector',
+    url: 'https://bravo.example.com/mcp',
+    header_names: new Set(),
+    created_at: '2026-08-01T10:00:00Z',
+    updated_at: '2026-08-02T10:00:00Z',
+    scope: McpServerScope.USER,
+    owner_name: 'Romaric Philogène',
+    attachable: false,
   },
 ]
 
@@ -60,7 +79,9 @@ describe('SettingsAgentPersonalization', () => {
 
     expect(screen.getByRole('heading', { name: 'Agent personalization' })).toBeInTheDocument()
     expect(screen.getByText('Your personal settings for Qovery Agent')).toBeInTheDocument()
-    expect(screen.getByText('MCPs are shared with every Qovery Agent in this organization.')).toBeInTheDocument()
+    expect(
+      screen.getByText('Personal MCPs belong to one member. Organization MCPs are shared with the organization.')
+    ).toBeInTheDocument()
     expect(screen.getByText('No MCPs')).toBeInTheDocument()
   })
 
@@ -71,12 +92,19 @@ describe('SettingsAgentPersonalization', () => {
 
     const rows = screen.getAllByTestId(/^mcp-server-/)
     expect(rows[0]).toHaveAttribute('data-testid', 'mcp-server-mcp-alpha')
-    expect(rows[1]).toHaveAttribute('data-testid', 'mcp-server-mcp-zulu')
+    expect(rows[1]).toHaveAttribute('data-testid', 'mcp-server-mcp-bravo')
+    expect(rows[2]).toHaveAttribute('data-testid', 'mcp-server-mcp-zulu')
+    expect(screen.getByText('Personal MCPs')).toBeInTheDocument()
+    expect(screen.getByText('Organization MCPs')).toBeInTheDocument()
+    expect(screen.getByText('Owner: Rémi Bonnet')).toBeInTheDocument()
+    expect(screen.getByText('Owner: Romaric Philogène')).toBeInTheDocument()
     expect(screen.getByText('https://zulu.example.com/mcp')).toBeInTheDocument()
     expect(screen.queryByText('Authorization')).not.toBeInTheDocument()
     expect(screen.queryByText('Second connector')).not.toBeInTheDocument()
     expect(screen.getByLabelText('About Zulu')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Edit Zulu' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Edit Bravo' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Delete Bravo' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Delete Zulu' })).toBeInTheDocument()
   })
 
@@ -87,7 +115,9 @@ describe('SettingsAgentPersonalization', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
     await userEvent.click(screen.getByRole('button', { name: 'Edit Zulu' }))
 
+    const createModal = openModal.mock.calls[0][0].content as ReactElement<McpServerCreateEditModalProps>
     expect(openModal).toHaveBeenCalledTimes(2)
+    expect(createModal.props.scope).toBe(McpServerScope.USER)
     expect(openModal).toHaveBeenNthCalledWith(1, expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
     expect(openModal).toHaveBeenNthCalledWith(2, expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
   })

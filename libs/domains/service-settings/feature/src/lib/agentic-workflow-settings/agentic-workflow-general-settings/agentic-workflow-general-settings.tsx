@@ -1,6 +1,6 @@
-import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { Icon, InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
+import { AgenticWorkflowExecutionModeSelector } from '@qovery/domains/services/feature'
+import { InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
@@ -45,45 +45,10 @@ export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<A
         title="Execution mode"
         description="Choose how each agent task execution is isolated."
       >
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[
-            {
-              mode: AgenticWorkflowExecutionMode.IN_PLACE,
-              label: 'In place',
-              description: 'Concurrent runs share the current environment.',
-              iconName: 'server' as const,
-            },
-            {
-              mode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
-              label: 'Clone environment',
-              description: 'Create an isolated temporary environment for every run.',
-              iconName: 'clone' as const,
-            },
-          ].map(({ mode, label, description, iconName }) => (
-            <button
-              key={mode}
-              type="button"
-              aria-pressed={executionMode === mode}
-              className={`rounded-lg border p-4 text-left transition-colors focus-visible:outline-2 ${executionMode === mode ? 'border-brand bg-surface-brand-subtle hover:border-brand-strong' : 'border-neutral bg-surface-neutral hover:border-neutral-component hover:bg-surface-neutral-subtle'}`}
-              onClick={() =>
-                form.setValue('executionMode', mode as AgenticWorkflowExecutionMode, { shouldDirty: true })
-              }
-            >
-              <span className="flex items-start gap-3">
-                <span
-                  aria-hidden="true"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral-subtle text-neutral-subtle"
-                >
-                  <Icon iconName={iconName} iconStyle="regular" />
-                </span>
-                <span>
-                  <span className="block text-sm font-medium text-neutral">{label}</span>
-                  <span className="mt-1 block text-xs text-neutral-subtle">{description}</span>
-                </span>
-              </span>
-            </button>
-          ))}
-        </div>
+        <AgenticWorkflowExecutionModeSelector
+          value={executionMode}
+          onChange={(mode) => form.setValue('executionMode', mode, { shouldDirty: true })}
+        />
       </AgenticWorkflowSettingsCard>
       <AgenticWorkflowSettingsCard
         title="Resources"

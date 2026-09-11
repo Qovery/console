@@ -1,4 +1,4 @@
-import { type McpServerResponse } from 'qovery-typescript-axios'
+import { type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { McpServerCreateEditModal } from '@qovery/domains/organizations/feature'
 import { Button, Heading, Icon, InputSearch, useModal } from '@qovery/shared/ui'
@@ -34,6 +34,7 @@ function McpServerPicker({
     openModal({
       content: (
         <McpServerCreateEditModal
+          scope={McpServerScope.USER}
           onClose={(mcpServer) => {
             if (mcpServer) {
               onMcpServerCreated(mcpServer)
@@ -47,28 +48,40 @@ function McpServerPicker({
     })
   }
 
-  const mcpServerRow = (mcpServer: McpServerResponse, connected: boolean) => (
-    <button
-      key={mcpServer.id}
-      type="button"
-      className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong"
-      aria-label={connected ? `Remove ${mcpServer.name}` : `Add ${mcpServer.name}`}
-      onClick={() =>
-        onChange(connected ? value.filter((mcpServerId) => mcpServerId !== mcpServer.id) : [...value, mcpServer.id])
-      }
-    >
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral">
-        <Icon iconName="plug" iconStyle="regular" className="text-neutral-subtle" />
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-neutral">{mcpServer.name}</p>
-        <p className="truncate text-xs text-neutral-subtle">{mcpServer.url}</p>
-      </div>
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center">
-        <Icon iconName={connected ? 'circle-check' : 'plus'} className={connected ? 'text-positive' : undefined} />
-      </span>
-    </button>
-  )
+  const mcpServerRow = (mcpServer: McpServerResponse, connected: boolean) => {
+    const canToggle = connected || mcpServer.attachable
+
+    return (
+      <button
+        key={mcpServer.id}
+        type="button"
+        disabled={!canToggle}
+        className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
+        aria-label={
+          connected ? `Remove ${mcpServer.name}` : canToggle ? `Add ${mcpServer.name}` : `${mcpServer.name} unavailable`
+        }
+        onClick={() =>
+          onChange(connected ? value.filter((mcpServerId) => mcpServerId !== mcpServer.id) : [...value, mcpServer.id])
+        }
+      >
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded border border-neutral bg-surface-neutral">
+          <Icon iconName="plug" iconStyle="regular" className="text-neutral-subtle" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-medium text-neutral">{mcpServer.name}</p>
+          <p className="truncate text-xs text-neutral-subtle">
+            {mcpServer.scope === McpServerScope.USER && mcpServer.owner_name
+              ? `Personal · ${mcpServer.owner_name}`
+              : 'Organization'}
+            {!canToggle ? ' · Not available to you' : ''}
+          </p>
+        </div>
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center">
+          <Icon iconName={connected ? 'circle-check' : 'plus'} className={connected ? 'text-positive' : undefined} />
+        </span>
+      </button>
+    )
+  }
 
   return (
     <div className="flex flex-col gap-5">
@@ -127,11 +140,7 @@ export function McpSheet({
 }) {
   return (
     <OverlaySheet onClose={onClose}>
-      <SheetHeader
-        title="Manage MCP"
-        description="Select the organization MCPs this agent task can use."
-        onClose={onClose}
-      />
+      <SheetHeader title="Manage MCP" description="Select the MCPs this agent task can use." onClose={onClose} />
       <div className="flex flex-1 flex-col overflow-auto px-5 pb-5">
         <McpServerPicker
           createdMcpServers={createdMcpServers}
