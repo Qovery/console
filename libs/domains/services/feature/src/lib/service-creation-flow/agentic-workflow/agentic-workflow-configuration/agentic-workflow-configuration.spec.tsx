@@ -275,7 +275,8 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
     await waitFor(() => {
-      expect(screen.getByText('Complete every environment variable name and value.')).toBeInTheDocument()
+      expect(screen.queryByText('Complete every environment variable name and value.')).not.toBeInTheDocument()
+      expect(screen.getByText('Environment variables').closest('button')).toHaveClass('bg-surface-negative-subtle')
       expect(screen.getByText('Please enter a value.')).toBeInTheDocument()
       expect(screen.getByTestId('value')).toHaveFocus()
     })

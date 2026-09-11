@@ -9,7 +9,6 @@ import { type VariableData } from '@qovery/shared/interfaces'
 import {
   Accordion,
   Button,
-  Callout,
   CodeEditor,
   Heading,
   Icon,
@@ -90,7 +89,11 @@ function SettingsAccordionItem({
     <Accordion.Item value={value} className="border-b border-neutral last:rounded-b-none">
       <Accordion.Trigger
         data-settings-group={value}
-        className="w-full cursor-pointer justify-between gap-3 bg-background-secondary px-4 py-4 text-left focus-visible:bg-surface-neutral-subtle focus-visible:outline-none"
+        className={`w-full cursor-pointer justify-between gap-3 px-4 py-4 text-left focus-visible:outline-none ${
+          invalid
+            ? 'bg-surface-negative-subtle focus-visible:bg-surface-negative-subtle'
+            : 'bg-background-secondary focus-visible:bg-surface-neutral-subtle'
+        }`}
         iconClassName="order-2 ml-auto"
       >
         <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -101,7 +104,7 @@ function SettingsAccordionItem({
           {summary ? <span className="ml-auto truncate text-xs font-normal text-neutral-subtle">{summary}</span> : null}
         </div>
       </Accordion.Trigger>
-      <Accordion.Content className="bg-background-secondary">
+      <Accordion.Content className={invalid ? 'bg-surface-negative-subtle' : 'bg-background-secondary'}>
         <div className="flex flex-col gap-4 px-4 pb-5">{children}</div>
       </Accordion.Content>
     </Accordion.Item>
@@ -553,14 +556,6 @@ export function AgenticWorkflowConfiguration() {
         summary={variables.length > 0 ? `${variables.length} configured` : undefined}
         invalid={showValidationErrors && settingsGroupsInvalid.variables}
       >
-        {showValidationErrors && !variablesValid ? (
-          <Callout.Root color="red">
-            <Callout.Icon>
-              <Icon iconName="circle-xmark" />
-            </Callout.Icon>
-            <Callout.Text>Complete every environment variable name and value.</Callout.Text>
-          </Callout.Root>
-        ) : null}
         <div className="flex flex-wrap gap-2">
           <Button
             type="button"
@@ -705,7 +700,7 @@ export function AgenticWorkflowConfiguration() {
 
   return (
     <div className="flex min-h-0 w-full flex-col overflow-hidden bg-background">
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-neutral px-4 sm:px-6">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-neutral pl-4 pr-3.5">
         <Button type="button" color="neutral" variant="plain" aria-label="Back" iconOnly onClick={onExit}>
           <Icon iconName="arrow-left" />
         </Button>
