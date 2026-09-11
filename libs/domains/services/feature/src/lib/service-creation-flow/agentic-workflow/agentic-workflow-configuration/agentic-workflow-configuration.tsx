@@ -57,12 +57,8 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
   )
 }
 
-export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
-  const summary = automation.triggers
-    .map((trigger) => (trigger.type === 'schedule' ? 'Schedule' : 'Webhook'))
-    .join(' + ')
-  const outputCount = automation.outputs.length
-  return outputCount ? `${summary} → ${outputCount} output${outputCount > 1 ? 's' : ''}` : summary
+export function summarizeTriggers(automation: AgenticWorkflowAutomation) {
+  return automation.triggers.map((trigger) => (trigger.type === 'schedule' ? 'Schedule' : 'Webhook')).join(' + ')
 }
 
 export function areVariablesValid(variables: VariableData[]) {
@@ -284,7 +280,7 @@ export function AgenticWorkflowConfiguration() {
     return groups
   })
   const [providerModalOpen, setProviderModalOpen] = useState(false)
-  const [activeSheet, setActiveSheet] = useState<'mcp' | 'automation' | null>(null)
+  const [activeSheet, setActiveSheet] = useState<'mcp' | 'triggers' | 'outputs' | null>(null)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
@@ -398,7 +394,7 @@ export function AgenticWorkflowConfiguration() {
 
     if (!automationValid) {
       setShowTriggerError(true)
-      setActiveSheet('automation')
+      setActiveSheet('triggers')
       return false
     }
 
@@ -806,18 +802,42 @@ export function AgenticWorkflowConfiguration() {
                   Add MCP
                 </Button>
               </ConfigurationRow>
-              <ConfigurationRow label="Automations">
+              <ConfigurationRow label="Triggers">
                 <Button
                   type="button"
                   size="sm"
                   color="neutral"
                   variant="outline"
                   className="max-w-full"
-                  onClick={() => setActiveSheet('automation')}
+                  onClick={() => setActiveSheet('triggers')}
                 >
                   <Icon iconName="stopwatch" iconStyle="regular" />
                   <span className="truncate">
-                    {automation.triggers.length ? summarizeAutomation(automation) : 'Add automation'}
+                    {automation.triggers.length ? summarizeTriggers(automation) : 'Add trigger'}
+                  </span>
+                </Button>
+                {!automation.triggers.length ? (
+                  <span
+                    className={`text-xs ${showValidationErrors ? 'font-medium text-negative' : 'text-neutral-subtle'}`}
+                  >
+                    Trigger required
+                  </span>
+                ) : null}
+              </ConfigurationRow>
+              <ConfigurationRow label="Output">
+                <Button
+                  type="button"
+                  size="sm"
+                  color="neutral"
+                  variant="outline"
+                  className="max-w-full"
+                  onClick={() => setActiveSheet('outputs')}
+                >
+                  <Icon iconName="webhook" iconStyle="regular" />
+                  <span className="truncate">
+                    {automation.outputs.length
+                      ? `${automation.outputs.length} output${automation.outputs.length > 1 ? 's' : ''}`
+                      : 'Add output'}
                   </span>
                 </Button>
               </ConfigurationRow>
@@ -914,14 +934,15 @@ export function AgenticWorkflowConfiguration() {
         />
       ) : null}
 
-      {activeSheet === 'automation' ? (
+      {activeSheet === 'triggers' || activeSheet === 'outputs' ? (
         <AutomationSheet
           automation={automation}
+          section={activeSheet}
           showTriggerError={showTriggerError}
           onClose={() => setActiveSheet(null)}
           onSave={(nextAutomation) => {
             form.setValue('automations', [nextAutomation], { shouldDirty: true })
-            setShowTriggerError(false)
+            setShowTriggerError((current) => current && nextAutomation.triggers.length === 0)
           }}
         />
       ) : null}

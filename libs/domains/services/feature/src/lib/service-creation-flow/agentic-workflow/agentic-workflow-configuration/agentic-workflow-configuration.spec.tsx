@@ -1,6 +1,6 @@
 import posthog from 'posthog-js'
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
-import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
 import {
   AgenticWorkflowConfiguration,
@@ -192,7 +192,7 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('button', { name: /In place/ })).toHaveAttribute('aria-pressed', 'false')
   })
 
-  it('should configure context, provider, and automations from the main canvas', async () => {
+  it('should configure context, provider, triggers, and output from the main canvas', async () => {
     const { userEvent } = renderConfiguration()
 
     await userEvent.click(screen.getByRole('button', { name: /Add from Git repository/ }))
@@ -205,16 +205,22 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
-    expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
-    expect(screen.getByText('Triggers')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
+    expect(screen.getByRole('heading', { name: 'Configure triggers' })).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText('Triggers')).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).queryByText('Outputs')).not.toBeInTheDocument()
     expect(screen.queryByRole('switch', { name: 'Enable agent task' })).not.toBeInTheDocument()
 
-    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
+    await userEvent.click(screen.getByRole('button', { name: 'Add' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
     await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
 
     expect(screen.getByRole('button', { name: 'Webhook' })).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add output' }))
+    expect(screen.getByRole('heading', { name: 'Configure output' })).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).getByText('Outputs')).toBeInTheDocument()
+    expect(within(screen.getByRole('dialog')).queryByText('Triggers')).not.toBeInTheDocument()
   })
 
   it('should manage MCP from a side panel', async () => {
@@ -245,7 +251,8 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(createButton)
 
-    expect(screen.getByRole('heading', { name: 'Configure automation' })).toBeInTheDocument()
+    expect(screen.getByText('Trigger required')).toHaveClass('text-negative')
+    expect(screen.getByRole('heading', { name: 'Configure triggers' })).toBeInTheDocument()
     expect(screen.getByText('At least one trigger is required.')).toBeInTheDocument()
     expect(screen.getByTestId('trigger-validation')).toHaveFocus()
     expect(screen.getByRole('button', { name: 'Apply changes' })).toBeDisabled()
@@ -302,8 +309,8 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Add automation' }))
-    await userEvent.click(screen.getAllByRole('button', { name: 'Add' })[0])
+    await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
     await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))

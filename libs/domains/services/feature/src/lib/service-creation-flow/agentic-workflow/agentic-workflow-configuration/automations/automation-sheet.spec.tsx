@@ -42,6 +42,20 @@ describe('AutomationSheet', () => {
     )
   })
 
+  it('allows saving outputs independently from triggers', async () => {
+    const onSave = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <AutomationSheet automation={emptyAutomation} section="outputs" onClose={jest.fn()} onSave={onSave} />
+    )
+
+    expect(screen.getByRole('heading', { name: 'Configure output' })).toBeInTheDocument()
+    expect(screen.queryByText('Triggers')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeEnabled()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+    expect(onSave).toHaveBeenCalledWith(emptyAutomation)
+  })
+
   it('shows configured triggers and outputs when editing', () => {
     const automation: AgenticWorkflowAutomation = {
       id: 'automation-1',
