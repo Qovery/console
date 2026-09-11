@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { APIVariableScopeEnum, type McpServerResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useRef, useState } from 'react'
@@ -100,11 +101,10 @@ function SettingsAccordionItem({
     <Accordion.Item value={value} className="border-b border-neutral last:rounded-b-none">
       <Accordion.Trigger
         data-settings-group={value}
-        className={`w-full cursor-pointer justify-between gap-3 px-4 py-4 text-left focus-visible:outline-none ${
-          invalid
-            ? 'bg-surface-negative-subtle focus-visible:bg-surface-negative-subtle'
-            : 'bg-background-secondary focus-visible:bg-surface-neutral-subtle'
-        }`}
+        className={clsx('w-full cursor-pointer justify-between gap-3 px-4 py-4 text-left focus-visible:outline-none', {
+          'bg-surface-negative-subtle focus-visible:bg-surface-negative-subtle': invalid,
+          'bg-background-secondary focus-visible:bg-surface-neutral-subtle': !invalid,
+        })}
         iconClassName="order-2 ml-auto"
       >
         <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -717,7 +717,7 @@ export function AgenticWorkflowConfiguration() {
 
   return (
     <div className="flex min-h-0 w-full flex-col overflow-hidden bg-background">
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-neutral pl-4 pr-3.5">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-neutral px-4">
         <Button type="button" color="neutral" variant="plain" aria-label="Back" iconOnly onClick={onExit}>
           <Icon iconName="arrow-left" />
         </Button>
