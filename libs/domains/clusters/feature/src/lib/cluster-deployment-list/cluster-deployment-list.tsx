@@ -35,7 +35,6 @@ import { dateFullFormat } from '@qovery/shared/util-dates'
 import { twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
 import { ClusterDeploymentDurationCell } from './cluster-deployment-duration-cell'
-import { ClusterDeploymentListSkeleton } from './cluster-deployment-list-skeleton'
 
 const { Table } = TablePrimitives
 const interactiveRowTargetSelector = 'a,button,input,select,textarea,[role="button"],[role="menuitem"]'
@@ -56,7 +55,7 @@ export interface ClusterDeploymentListProps {
 export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDeploymentListProps) {
   const navigate = useNavigate()
 
-  const { data: deploymentHistory = [], isFetched: isFetchedDeploymentHistory } = useClusterDeploymentHistory({
+  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
     organizationId,
     clusterId,
     suspense: true,
@@ -264,9 +263,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
     },
   })
 
-  if (!isFetchedDeploymentHistory) return <ClusterDeploymentListSkeleton />
-
-  if (isFetchedDeploymentHistory && !deploymentHistory.length) {
+  if (!deploymentHistory.length) {
     return (
       <EmptyState
         icon="rocket"
