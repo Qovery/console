@@ -373,8 +373,13 @@ export function ServiceNew({
             <div className="flex flex-col gap-1">
               <div className="flex items-center gap-2">
                 <Heading>Agent use cases</Heading>
-                <Badge color="brand" variant="surface" size="sm">
-                  Beta
+                <Badge
+                  color="brand"
+                  variant="surface"
+                  size="sm"
+                  className="h-4 border-transparent bg-surface-brand-solid px-1 text-[8px] font-medium text-neutralInvert"
+                >
+                  BETA
                 </Badge>
               </div>
               <p className="text-sm leading-5 text-neutral-subtle">

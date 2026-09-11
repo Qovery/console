@@ -172,7 +172,7 @@ describe('ServiceNew', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Agent use cases' })).toBeInTheDocument()
-    expect(screen.getByText('Beta')).toBeInTheDocument()
+    expect(screen.getByText('BETA')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Incident Analyzer with incident.io/i })).toHaveAttribute(
       'href',
       '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=incident-io-analyzer'
