@@ -107,7 +107,7 @@ function AutomationSection({
   title: string
 }) {
   return (
-    <div className="flex flex-col gap-3 border-t border-neutral pt-4">
+    <div className="flex flex-col gap-3 pt-4">
       <div className="flex items-center gap-5">
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium leading-5 text-neutral">{title}</p>

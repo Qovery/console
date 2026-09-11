@@ -11,6 +11,10 @@ describe('OverlaySheet', () => {
     )
 
     expect(screen.getByRole('heading', { name: 'Manage MCP' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Manage MCP' }).closest('header')).toHaveClass(
+      'border-b',
+      'border-neutral'
+    )
     expect(screen.getByText('Pick the MCPs')).toBeInTheDocument()
     expect(screen.getByText('Sheet body')).toBeInTheDocument()
   })
