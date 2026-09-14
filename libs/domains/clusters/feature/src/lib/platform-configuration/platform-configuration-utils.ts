@@ -16,6 +16,7 @@ import {
 import { match } from 'ts-pattern'
 import {
   applyCatalogConfigurationDefaults,
+  formatCatalogKey,
   isCatalogObject,
   omitEmptyCatalogValues,
   toCatalogConfigurationValue,
@@ -222,4 +223,54 @@ export function isPlatformConfigurationReady(
   requirements: PlatformComponentInputRequirementResponse[]
 ) {
   return violations.length === 0 && requirements.every((requirement) => requirement.status === 'READY')
+}
+
+// Presentation selects a subset of fields; every read, resolve and write still targets its source.
+export function getPlatformComponentEditor(
+  template: PlatformTemplateSummaryResponse | undefined,
+  componentKey?: string,
+  sourceComponentKey?: string
+) {
+  const component = template ? findPlatformComponent(template, componentKey) : undefined
+  const layer = template?.layers.find((layer) => layer.components.some((candidate) => candidate.key === componentKey))
+  const sections = (component?.configurationSections ?? []).flatMap((section) => {
+    const source = layer?.components.find((candidate) => candidate.key === section.sourceComponentKey)
+    if (!source || source.key === componentKey) return []
+    const fieldKeys = new Set(section.fieldKeys)
+    return [
+      {
+        configurationComponent: source,
+        isFieldVisible: (field: FieldSchemaResponse) => fieldKeys.has(field.key),
+        label:
+          source.fields
+            .filter((field) => fieldKeys.has(field.key))
+            .map((field) => field.label)
+            .join(', ') || formatCatalogKey(source.key),
+      },
+    ]
+  })
+  // Only hide a source field when its destination exists in this layer.
+  const movedFields = new Set(
+    layer?.components.flatMap(
+      (destination) =>
+        destination.configurationSections
+          ?.filter((section) => section.sourceComponentKey === componentKey)
+          .flatMap((section) => section.fieldKeys) ?? []
+    )
+  )
+  const nativeSection = component
+    ? {
+        configurationComponent: component,
+        isFieldVisible: (field: FieldSchemaResponse) => !movedFields.has(field.key),
+        label: 'General configuration',
+      }
+    : undefined
+  const editors = nativeSection ? [nativeSection, ...sections] : sections
+  // With no native fields, open the declared section first. General configuration
+  // remains accessible for native cluster inputs even when there are no static fields.
+  const defaultEditor = component?.fields.some((field) => !movedFields.has(field.key))
+    ? nativeSection
+    : sections[0] ?? nativeSection
+  const editor = editors.find((section) => section.configurationComponent.key === sourceComponentKey) ?? defaultEditor
+  return { component, ...editor, sections: editors }
 }

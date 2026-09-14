@@ -6,7 +6,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
-import { type CatalogVariableValue } from '@qovery/shared/util-js'
+import { type CatalogVariableValue, formatCatalogKey } from '@qovery/shared/util-js'
 import { useClusterPlatformConfiguration } from './hooks/use-cluster-platform-configuration'
 import { usePlatformComponentConfiguration } from './hooks/use-platform-component-configuration'
 import { usePlatformTemplates } from './hooks/use-platform-templates'
@@ -19,8 +19,8 @@ import {
   clearRedactedValues,
   createPlatformConfigurationDraft,
   filterPlatformLayerSelections,
-  findPlatformComponent,
   getCurrentPlatformConfigurationPreview,
+  getPlatformComponentEditor,
   getRedactedComponentKeys,
   getRedactedFieldKeys,
   getTemplateId,
@@ -38,6 +38,7 @@ interface PlatformConfigurationProps {
 
 interface PlatformConfigurationState {
   componentKey?: string
+  sourceComponentKey?: string
   draft: PlatformConfigurationDraft
   templateId: string
 }
@@ -73,7 +74,12 @@ export function PlatformConfiguration({
   })
 
   const selectedTemplate = templates.find((template) => getTemplateId(template) === state?.templateId)
-  const selectedComponent = selectedTemplate ? findPlatformComponent(selectedTemplate, state?.componentKey) : undefined
+  const {
+    component: selectedComponent,
+    configurationComponent,
+    isFieldVisible,
+    sections,
+  } = getPlatformComponentEditor(selectedTemplate, state?.componentKey, state?.sourceComponentKey)
 
   // Re-seed when the selected template disappears from the list (e.g. the template
   // version was bumped between refetches, or templates arrived after an empty list).
@@ -96,17 +102,17 @@ export function PlatformConfiguration({
   // explicitly cleared; the resolver request must omit those so a cleared required
   // field surfaces as a violation instead of silently resurrecting its default.
   const { profileConfig, clusterInputs } = useMemo(() => {
-    const componentKey = selectedComponent?.key
+    const componentKey = configurationComponent?.key
     return {
-      profileConfig: selectedComponent
+      profileConfig: configurationComponent
         ? applyPlatformConfigurationDefaults(
-            selectedComponent.fields,
+            configurationComponent.fields,
             clearRedactedValues(state && componentKey ? state.draft.platform.managedConfig[componentKey] ?? {} : {})
           )
         : {},
       clusterInputs: state && componentKey ? state.draft.clusterInputs[componentKey] ?? {} : {},
     }
-  }, [selectedComponent, state])
+  }, [configurationComponent, state])
   const previewRequest = useMemo<PlatformComponentConfigurationPreviewRequest>(
     () => ({
       profileConfig: omitEmptyValues(profileConfig),
@@ -116,8 +122,8 @@ export function PlatformConfiguration({
     [profileConfig, clusterInputs]
   )
   const previewQuery = useMemo(
-    () => ({ componentKey: selectedComponent?.key, request: previewRequest }),
-    [previewRequest, selectedComponent?.key]
+    () => ({ componentKey: configurationComponent?.key, request: previewRequest }),
+    [previewRequest, configurationComponent?.key]
   )
   const debouncedPreviewQuery = useDebounce(previewQuery, 300)
   const isPreviewPending = debouncedPreviewQuery !== previewQuery
@@ -129,9 +135,9 @@ export function PlatformConfiguration({
     clusterId,
     componentKey: debouncedPreviewQuery.componentKey,
     request: debouncedPreviewQuery.request,
-    enabled: Boolean(selectedComponent) && debouncedPreviewQuery.componentKey === selectedComponent?.key,
+    enabled: Boolean(configurationComponent) && debouncedPreviewQuery.componentKey === configurationComponent?.key,
   })
-  const preview = getCurrentPlatformConfigurationPreview(previewData, selectedComponent?.key, isPreviewPending)
+  const preview = getCurrentPlatformConfigurationPreview(previewData, configurationComponent?.key, isPreviewPending)
 
   if (!state || !selectedTemplate) {
     return (
@@ -145,9 +151,9 @@ export function PlatformConfiguration({
   }
 
   const updateProfileConfig = (fieldKey: string, value: unknown) => {
-    if (!selectedComponent) return
+    if (!configurationComponent) return
 
-    const field = (preview?.fields ?? selectedComponent.fields).find((candidate) => candidate.key === fieldKey)
+    const field = (preview?.fields ?? configurationComponent.fields).find((candidate) => candidate.key === fieldKey)
     if (!field) return
 
     setState((current) =>
@@ -160,7 +166,7 @@ export function PlatformConfiguration({
                 ...current.draft.platform,
                 managedConfig: updateComponentValue(
                   current.draft.platform.managedConfig,
-                  selectedComponent.key,
+                  configurationComponent.key,
                   fieldKey,
                   toPlatformConfigurationValue(field, value)
                 ),
@@ -172,7 +178,7 @@ export function PlatformConfiguration({
   }
 
   const updateClusterInput = (fieldKey: string, value: CatalogVariableValue) => {
-    if (!selectedComponent) return
+    if (!configurationComponent) return
 
     setState((current) =>
       current
@@ -182,7 +188,7 @@ export function PlatformConfiguration({
               ...current.draft,
               clusterInputs: updateComponentValue(
                 current.draft.clusterInputs,
-                selectedComponent.key,
+                configurationComponent.key,
                 fieldKey,
                 String(value)
               ),
@@ -214,6 +220,39 @@ export function PlatformConfiguration({
     })
   }
 
+  const selectComponent = (componentKey: string, sourceComponentKey?: string) => {
+    const { configurationComponent: component } = getPlatformComponentEditor(
+      selectedTemplate,
+      componentKey,
+      sourceComponentKey
+    )
+    if (!component) return
+
+    setState((current) =>
+      current
+        ? {
+            ...current,
+            componentKey,
+            sourceComponentKey: component.key,
+            draft: {
+              ...current.draft,
+              platform: {
+                ...current.draft.platform,
+                managedConfig: {
+                  ...current.draft.platform.managedConfig,
+                  // Defaults shown by the editor must also survive saving or navigating back.
+                  [component.key]: applyPlatformConfigurationDefaults(
+                    component.fields,
+                    current.draft.platform.managedConfig[component.key] ?? {}
+                  ),
+                },
+              },
+            },
+          }
+        : current
+    )
+  }
+
   if (!selectedComponent) {
     return (
       <PlatformConfigurationCatalog
@@ -224,33 +263,7 @@ export function PlatformConfiguration({
         layerSelections={state.draft.platform.layerSelections}
         isSaving={isSaving}
         redactedComponentKeys={redactedComponentKeys}
-        onComponentSelect={(componentKey) => {
-          const component = findPlatformComponent(selectedTemplate, componentKey)
-          if (!component) return
-
-          setState((current) =>
-            current
-              ? {
-                  ...current,
-                  componentKey,
-                  draft: {
-                    ...current.draft,
-                    platform: {
-                      ...current.draft.platform,
-                      managedConfig: {
-                        ...current.draft.platform.managedConfig,
-                        // Defaults shown by the editor must also survive saving or navigating back.
-                        [componentKey]: applyPlatformConfigurationDefaults(
-                          component.fields,
-                          current.draft.platform.managedConfig[componentKey] ?? {}
-                        ),
-                      },
-                    },
-                  },
-                }
-              : current
-          )
-        }}
+        onComponentSelect={selectComponent}
         onLayerSelectionChange={(layerKey, enabled) =>
           setState((current) =>
             current
@@ -284,12 +297,37 @@ export function PlatformConfiguration({
         <Icon iconName="arrow-left" />
         Platform layers
       </Button>
+      {sections.length > 1 && (
+        <div className="flex flex-wrap gap-2" aria-label="Configuration sections">
+          {sections.map((section) => (
+            <Button
+              key={section.configurationComponent.key}
+              type="button"
+              variant="outline"
+              color="neutral"
+              aria-pressed={configurationComponent?.key === section.configurationComponent.key}
+              onClick={() => selectComponent(selectedComponent.key, section.configurationComponent.key)}
+            >
+              {section.label}
+            </Button>
+          ))}
+        </div>
+      )}
       <PlatformComponentConfiguration
-        component={selectedComponent}
+        key={`${selectedComponent.key}/${configurationComponent?.key}`}
+        component={{ ...selectedComponent, fields: configurationComponent?.fields ?? selectedComponent.fields }}
+        isFieldVisible={isFieldVisible}
+        clusterInputsLocation={
+          configurationComponent && configurationComponent.key !== selectedComponent.key
+            ? formatCatalogKey(configurationComponent.key)
+            : undefined
+        }
         preview={preview}
         profileConfig={profileConfig}
         redactedComponentKeys={redactedComponentKeys}
-        redactedFieldKeys={getRedactedFieldKeys(state.draft.platform.managedConfig[selectedComponent.key])}
+        redactedFieldKeys={getRedactedFieldKeys(
+          configurationComponent && state.draft.platform.managedConfig[configurationComponent.key]
+        )}
         clusterInputs={clusterInputs}
         hasPreviewError={hasPreviewError}
         isFetching={isFetching || isPreviewPending}

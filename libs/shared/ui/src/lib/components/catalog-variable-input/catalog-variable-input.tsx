@@ -75,6 +75,7 @@ export function CatalogVariableInput({
   if (field.allowedValues?.length) {
     return (
       <InputSelect
+        isSearchable
         inputId={inputId}
         label={field.label}
         value={typeof value === 'string' ? value : ''}

@@ -25,6 +25,8 @@ import {
 import { RedactedValuesCallout } from './redacted-values-callout'
 
 interface PlatformComponentConfigurationProps {
+  clusterInputsLocation?: string
+  isFieldVisible?: (field: FieldSchemaResponse) => boolean
   clusterInputs: Record<string, string>
   component: PlatformTemplateComponentResponse
   isFetching: boolean
@@ -51,6 +53,8 @@ function RequirementStatus({ status }: { status: PlatformComponentInputRequireme
 }
 
 export function PlatformComponentConfiguration({
+  clusterInputsLocation,
+  isFieldVisible,
   clusterInputs,
   component,
   hasPreviewError,
@@ -79,11 +83,12 @@ export function PlatformComponentConfiguration({
       fields: preview.fields,
     }
   }
-  const fields =
+  const allFields =
     preview?.fields ??
     (lastRequirementsRef.current?.componentKey === component.key
       ? lastRequirementsRef.current.fields
       : component.fields)
+  const fields = isFieldVisible ? allFields.filter(isFieldVisible) : allFields
   const requirements =
     preview?.requirements ??
     (lastRequirementsRef.current?.componentKey === component.key ? lastRequirementsRef.current.requirements : [])
@@ -111,7 +116,11 @@ export function PlatformComponentConfiguration({
 
       <RedactedValuesCallout className="mb-4" componentKeys={redactedComponentKeys} />
 
-      {!isFetching && !hasPreviewError && fields.length === 0 && requirements.length === 0 ? (
+      {!isFetching &&
+      !hasPreviewError &&
+      fields.length === 0 &&
+      requirements.length === 0 &&
+      violations.length === 0 ? (
         <Callout.Root color="neutral">
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
@@ -148,7 +157,22 @@ export function PlatformComponentConfiguration({
             </section>
           ) : null}
 
-          {requirements.length > 0 ? (
+          {clusterInputsLocation &&
+          requirements.some(
+            (requirement) =>
+              requirement.status === 'MISSING' || getFieldViolation(violations, requirement.key, 'clusterInputs')
+          ) ? (
+            <Callout.Root color="yellow">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                Complete the required cluster inputs in {clusterInputsLocation} before saving.
+              </Callout.Text>
+            </Callout.Root>
+          ) : null}
+
+          {!clusterInputsLocation && requirements.length > 0 ? (
             <section className="flex flex-col gap-3 border-t border-neutral pt-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
