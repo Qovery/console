@@ -30,6 +30,21 @@ describe('formatAgenticWorkflowRequest', () => {
     expect(formatAgenticWorkflowRequest(values).mcp_server_ids).toEqual(['mcp-1', 'mcp-2'])
   })
 
+  it('sends the resources selected in the creation flow', () => {
+    expect(formatAgenticWorkflowRequest(values).resources).toEqual({
+      cpu_milli: 2000,
+      ram_mib: 2048,
+      gpu: 0,
+      storage_gib: 10,
+    })
+    expect(formatAgenticWorkflowRequest({ ...values, cpu: '200', memory: '256', storage: '5' }).resources).toEqual({
+      cpu_milli: 200,
+      ram_mib: 256,
+      gpu: 0,
+      storage_gib: 5,
+    })
+  })
+
   it('derives the schedule from an automation schedule trigger', () => {
     expect(formatAgenticWorkflowRequest(values).schedule).toBeNull()
     expect(

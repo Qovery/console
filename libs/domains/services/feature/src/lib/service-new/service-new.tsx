@@ -20,6 +20,7 @@ import {
 } from '../blueprint-utils/blueprint-utils'
 import { useBlueprintCatalog } from '../hooks/use-blueprint-catalog/use-blueprint-catalog'
 import { AGENTIC_WORKFLOW_TEMPLATES } from '../service-creation-flow/agentic-workflow/agentic-workflow-templates'
+import { AgentTemplateRequestModal } from './agent-template-request-modal/agent-template-request-modal'
 import { BlueprintCard } from './blueprint-card/blueprint-card'
 import { BlueprintMissingModal } from './blueprint-missing-modal/blueprint-missing-modal'
 import { BaseServiceCard, Card, CardService, SectionByTag, type ServiceBlock } from './service-card/service-card'
@@ -222,6 +223,12 @@ export function ServiceNew({
   const isServiceCatalogEnabled = Boolean(useFeatureFlagEnabled('service-catalog'))
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
   const { showPylonForm } = useSupportChat()
+  const { openModal, closeModal } = useModal()
+
+  const openAgentTemplateRequestModal = () =>
+    openModal({
+      content: <AgentTemplateRequestModal organizationId={organizationId} onClose={closeModal} />,
+    })
 
   const serviceEmpty: ServiceBlock[] = useMemo(
     () => [
@@ -337,19 +344,8 @@ export function ServiceNew({
         onClick: () => posthog.capture('select-agent-use-case', { agentUseCase: 'from-scratch' }),
         cloud_provider: cloudProvider,
       },
-      {
-        title: 'Need a specific agent? Contact us',
-        description: 'Tell us which agent use case you need and we will help you set it up.',
-        showDescription: true,
-        icon: (
-          <span className="flex items-center justify-center text-brand">
-            <Icon iconName="paper-plane" iconStyle="regular" className="text-2xl" />
-          </span>
-        ),
-        onClick: () => showPylonForm('request-ai-builder-portal'),
-      },
     ],
-    [cloudProvider, environmentId, organizationId, projectId, showPylonForm]
+    [cloudProvider, environmentId, organizationId, projectId]
   )
 
   const [blueprintSearchInput, setBlueprintSearchInput] = useState('')
@@ -380,21 +376,33 @@ export function ServiceNew({
 
         {isAgenticWorkflowEnabled && agentUseCases.length > 0 && (
           <Section className="gap-4">
-            <div className="flex flex-col gap-1">
-              <div className="flex items-center gap-2">
-                <Heading>Agent use cases</Heading>
-                <Badge
-                  color="brand"
-                  variant="surface"
-                  size="sm"
-                  className="h-4 border-transparent bg-surface-brand-solid px-1 pt-[1px] text-[8px] font-semibold text-neutralInvert"
-                >
-                  BETA
-                </Badge>
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-col gap-1">
+                <div className="flex items-center gap-2">
+                  <Heading>Agent use cases</Heading>
+                  <Badge
+                    color="brand"
+                    variant="surface"
+                    size="sm"
+                    className="h-4 border-transparent bg-surface-brand-solid px-1 pt-[1px] text-[8px] font-semibold text-neutralInvert"
+                  >
+                    BETA
+                  </Badge>
+                </div>
+                <p className="text-sm leading-5 text-neutral-subtle">
+                  Start from a ready-made agent configuration and adjust it to your needs.
+                </p>
               </div>
-              <p className="text-sm leading-5 text-neutral-subtle">
-                Start from a ready-made agent configuration and adjust it to your needs.
-              </p>
+              <Button
+                type="button"
+                variant="outline"
+                color="neutral"
+                size="md"
+                className="h-9"
+                onClick={openAgentTemplateRequestModal}
+              >
+                Request a new template
+              </Button>
             </div>
             <div className="grid grid-cols-3 gap-3">
               {agentUseCases.map((useCase) => (

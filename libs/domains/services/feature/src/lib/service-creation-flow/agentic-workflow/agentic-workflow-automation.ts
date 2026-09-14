@@ -15,19 +15,16 @@ export function createAgenticWorkflowAutomation(
 ): AgenticWorkflowAutomation {
   return {
     id: 'automation',
-    triggers: [
-      { id: 'webhook', type: 'webhook' },
-      ...(schedule
-        ? [
-            {
-              id: 'schedule',
-              type: 'schedule' as const,
-              cronExpression: schedule.cron_expression,
-              timezone: schedule.timezone,
-            },
-          ]
-        : []),
-    ],
+    triggers: schedule
+      ? [
+          {
+            id: 'schedule',
+            type: 'schedule' as const,
+            cronExpression: schedule.cron_expression,
+            timezone: schedule.timezone,
+          },
+        ]
+      : [{ id: 'webhook', type: 'webhook' }],
     outputs: outputs.map(({ name, url, headers, instructions }) => ({
       name,
       url: url ?? null,

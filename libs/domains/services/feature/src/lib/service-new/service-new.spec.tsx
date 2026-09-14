@@ -206,16 +206,17 @@ describe('ServiceNew', () => {
     expect(posthog.capture).toHaveBeenCalledWith('select-agent-use-case', { agentUseCase: 'incident-io-analyzer' })
   })
 
-  it('should open the Pylon contact form from the Agent use cases CTA card', async () => {
+  it('should open the template request modal from the Agent use cases request button', async () => {
     mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'argentic-workflow')
 
     const { userEvent } = renderWithProviders(
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
 
-    await userEvent.click(screen.getByRole('button', { name: /Need a specific agent/i }))
+    await userEvent.click(screen.getByRole('button', { name: 'Request a new template' }))
 
-    expect(mockShowPylonForm).toHaveBeenCalledWith('request-ai-builder-portal')
+    expect(screen.getByRole('heading', { name: 'Request a new template' })).toBeInTheDocument()
+    expect(screen.getByText("Tell us which agent template you'd like Qovery to add next.")).toBeInTheDocument()
   })
 
   it('should hide the Agent use cases section when the agentic workflow flag is disabled', () => {

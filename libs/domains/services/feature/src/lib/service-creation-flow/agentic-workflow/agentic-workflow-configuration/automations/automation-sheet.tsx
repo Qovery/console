@@ -271,28 +271,22 @@ function WebhookOutputModal({
 export function AutomationSheet({
   allowEmptyOutputUrl = false,
   automation,
-  lockWebhookTrigger = false,
   onClose,
   onSave,
   section = 'all',
 }: {
   allowEmptyOutputUrl?: boolean
   automation: AgenticWorkflowAutomation
-  lockWebhookTrigger?: boolean
   onClose: () => void
   onSave: (automation: AgenticWorkflowAutomation) => void
   section?: 'all' | 'triggers' | 'outputs'
 }) {
   const { closeModal, openModal } = useModal()
   const [draft, setDraft] = useState<AgenticWorkflowAutomation>(automation)
-  const scheduleTrigger = draft.triggers.find((trigger) => trigger.type === 'schedule')
-  const webhookTrigger = draft.triggers.find((trigger) => trigger.type === 'webhook')
   const saveTrigger = (trigger: AgenticWorkflowAutomationTrigger) => {
     setDraft((current) => ({
       ...current,
-      triggers: current.triggers.some((item) => item.id === trigger.id)
-        ? current.triggers.map((item) => (item.id === trigger.id ? trigger : item))
-        : [...current.triggers, trigger],
+      triggers: [trigger],
     }))
   }
 
@@ -301,11 +295,13 @@ export function AutomationSheet({
   }
 
   const addWebhookTrigger = () => {
-    if (webhookTrigger) return
+    if (draft.triggers.length) return
     saveTrigger({ id: crypto.randomUUID(), type: 'webhook' })
   }
 
   const openScheduleModal = (trigger?: AgenticWorkflowAutomationTrigger) => {
+    if (!trigger && draft.triggers.length) return
+
     openModal({
       content: (
         <ScheduledTriggerModal
@@ -364,30 +360,27 @@ export function AutomationSheet({
               title="Triggers"
               description="At least one trigger is required. A trigger can be a schedule or a webhook."
               action={
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger asChild>
-                    <Button type="button" variant="outline" color="neutral" size="sm">
-                      Add
-                      <Icon iconName="angle-down" />
-                    </Button>
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content align="end" className="z-dropdown w-56">
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="calendar-day" iconStyle="regular" />}
-                      disabled={Boolean(scheduleTrigger)}
-                      onSelect={() => openScheduleModal()}
-                    >
-                      On a schedule
-                    </DropdownMenu.Item>
-                    <DropdownMenu.Item
-                      icon={<Icon iconName="webhook" />}
-                      disabled={Boolean(webhookTrigger)}
-                      onSelect={addWebhookTrigger}
-                    >
-                      From a webhook
-                    </DropdownMenu.Item>
-                  </DropdownMenu.Content>
-                </DropdownMenu.Root>
+                draft.triggers.length === 0 ? (
+                  <DropdownMenu.Root>
+                    <DropdownMenu.Trigger asChild>
+                      <Button type="button" variant="outline" color="neutral" size="sm">
+                        Add
+                        <Icon iconName="angle-down" />
+                      </Button>
+                    </DropdownMenu.Trigger>
+                    <DropdownMenu.Content align="end" className="z-dropdown w-56">
+                      <DropdownMenu.Item
+                        icon={<Icon iconName="calendar-day" iconStyle="regular" />}
+                        onSelect={() => openScheduleModal()}
+                      >
+                        On a schedule
+                      </DropdownMenu.Item>
+                      <DropdownMenu.Item icon={<Icon iconName="webhook" />} onSelect={addWebhookTrigger}>
+                        From a webhook
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Content>
+                  </DropdownMenu.Root>
+                ) : null
               }
             >
               {draft.triggers.length ? (
@@ -398,7 +391,7 @@ export function AutomationSheet({
                         key={trigger.id}
                         icon={<Icon iconName="webhook" iconStyle="regular" />}
                         title="Webhook"
-                        onRemove={lockWebhookTrigger ? undefined : () => removeTrigger(trigger.id)}
+                        onRemove={() => removeTrigger(trigger.id)}
                       >
                         Runs when the agent task webhook is called.
                       </AutomationItemCard>
