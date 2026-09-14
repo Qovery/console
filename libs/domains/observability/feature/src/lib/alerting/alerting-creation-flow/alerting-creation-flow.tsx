@@ -14,6 +14,7 @@ import { generateConditionDescription } from '../../util-alerting/generate-condi
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
 import {
+  QUERY_CERTIFICATE_RENEWAL_FAILED,
   QUERY_CPU,
   QUERY_HPA_ISSUE,
   QUERY_HTTP_ERROR_COMBINED,
@@ -31,7 +32,11 @@ const METRIC_LABELS: Record<MetricCategory, string> = {
   instance_restart: 'Instance restart',
   missing_instance: 'Missing instance',
   hpa_limit: 'Auto-scaling limit',
+  certificate_renewal_failed: 'Certificate renewal failed',
 }
+
+const CONTAINER_METRICS: MetricCategory[] = ['cpu', 'memory', 'missing_instance', 'instance_restart']
+const HTTP_METRICS: MetricCategory[] = ['http_error', 'http_latency']
 
 interface AlertingCreationFlowContextInterface {
   organizationId: string
@@ -170,18 +175,13 @@ export function AlertingCreationFlow({
   const handleComplete = async (alertsToCreate: AlertConfiguration[]) => {
     const activeAlerts = alertsToCreate.filter((alert) => !alert.skipped)
 
-    const hasPublicPort =
-      (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
-      (service?.ports || []).length > 0 &&
-      service?.ports?.some((p) => p.publicly_accessible)
+    const hasContainerMetric = activeAlerts.some((alert) => CONTAINER_METRICS.includes(alert.tag as MetricCategory))
+    const hasHttpMetric = activeAlerts.some((alert) => HTTP_METRICS.includes(alert.tag as MetricCategory))
+    const hasHpaMetric = activeAlerts.some((alert) => alert.tag === 'hpa_limit')
 
-    const hasAutoscaling =
-      (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
-      service?.min_running_instances !== service?.max_running_instances
-
-    if (!containerName) return
-    if (hasPublicPort && !(ingressName || httpRouteName)) return
-    if (hasAutoscaling && !hpaName) return
+    if (hasContainerMetric && !containerName) return
+    if (hasHttpMetric && !(ingressName || httpRouteName)) return
+    if (hasHpaMetric && !hpaName) return
 
     try {
       setIsLoading(true)
@@ -192,10 +192,12 @@ export function AlertingCreationFlow({
           .with('instance_restart', () => 1)
           .with('missing_instance', () => 1)
           .with('hpa_limit', () => 1)
+          .with('certificate_renewal_failed', () => 0)
           .otherwise(() => (alert.condition.threshold ?? 0) / 100)
 
         const unit = match(alert.tag)
           .with('http_latency', () => 'secs')
+          .with('certificate_renewal_failed', () => '')
           .otherwise(() => '%')
 
         const operator = isMissingInstance && isEditMode ? 'BELOW' : alert.condition.operator ?? 'ABOVE'
@@ -204,16 +206,18 @@ export function AlertingCreationFlow({
           .with('instance_restart', () => 'One or more instances restarted unexpectedly')
           .with('missing_instance', () => 'Missing one or more running instances for this service')
           .with('hpa_limit', () => 'Auto-scaling reached the maximum number of instances')
+          .with('certificate_renewal_failed', () => 'TLS certificate renewal failed or is overdue for this service')
           .otherwise(() => generateConditionDescription(func, operator, threshold, unit, alert.for_duration))
 
         const promql = match(alert.tag)
-          .with('cpu', () => QUERY_CPU(containerName))
-          .with('memory', () => QUERY_MEMORY(containerName))
-          .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
-          .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
+          .with('cpu', () => (containerName ? QUERY_CPU(containerName) : ''))
+          .with('memory', () => (containerName ? QUERY_MEMORY(containerName) : ''))
+          .with('missing_instance', () => (containerName ? QUERY_MISSING_INSTANCE(containerName) : ''))
+          .with('instance_restart', () => (containerName ? QUERY_INSTANCE_RESTART(containerName) : ''))
           .with('http_error', () => QUERY_HTTP_ERROR_COMBINED(ingressName || '', httpRouteName || ''))
           .with('http_latency', () => QUERY_HTTP_LATENCY_COMBINED(ingressName || '', httpRouteName || ''))
           .with('hpa_limit', () => (hpaName ? QUERY_HPA_ISSUE(hpaName) : alert.condition.promql || ''))
+          .with('certificate_renewal_failed', () => QUERY_CERTIFICATE_RENEWAL_FAILED(service.id))
           .otherwise(() => '')
 
         if (isEditMode) {

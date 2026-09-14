@@ -16,6 +16,7 @@ describe('formatMetricLabel', () => {
     expect(formatMetricLabel('missing_instance')).toBe('Missing instance')
     expect(formatMetricLabel('instance_restart')).toBe('Instance restart')
     expect(formatMetricLabel('hpa_limit')).toBe('Auto-scaling limit')
+    expect(formatMetricLabel('certificate_renewal_failed')).toBe('Certificate renewal failed')
   })
 })
 

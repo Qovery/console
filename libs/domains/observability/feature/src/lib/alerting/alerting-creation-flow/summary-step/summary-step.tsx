@@ -10,6 +10,7 @@ import { SeverityIndicator } from '../../severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import {
+  QUERY_CERTIFICATE_RENEWAL_FAILED,
   QUERY_CPU,
   QUERY_HTTP_ERROR_COMBINED,
   QUERY_HTTP_LATENCY_COMBINED,
@@ -160,12 +161,19 @@ export function SummaryStep() {
   const handleConfirm = async () => {
     const activeAlerts = alerts.filter((alert) => !alert.skipped)
 
-    if (!service || !environment || !containerName || !ingressName) return
+    const hasContainerMetric = activeAlerts.some((alert) =>
+      ['cpu', 'memory', 'missing_instance', 'instance_restart'].includes(alert.tag)
+    )
+    const hasHttpMetric = activeAlerts.some((alert) => ['http_error', 'http_latency'].includes(alert.tag))
+
+    if (!service || !environment) return
+    if (hasContainerMetric && !containerName) return
+    if (hasHttpMetric && !(ingressName || httpRouteName)) return
 
     try {
       setIsCreatingAlertRule(true)
       for (const alert of activeAlerts) {
-        const threshold = (alert.condition.threshold ?? 0) / 100
+        const threshold = alert.tag === 'certificate_renewal_failed' ? 0 : (alert.condition.threshold ?? 0) / 100
         const operator = alert.condition.operator ?? 'ABOVE'
         const func = alert.condition.function ?? 'NONE'
 
@@ -186,12 +194,13 @@ export function SummaryStep() {
               operator,
               threshold,
               promql: match(alert.tag)
-                .with('cpu', () => QUERY_CPU(containerName))
-                .with('memory', () => QUERY_MEMORY(containerName))
-                .with('missing_instance', () => QUERY_MISSING_INSTANCE(containerName))
-                .with('instance_restart', () => QUERY_INSTANCE_RESTART(containerName))
+                .with('cpu', () => (containerName ? QUERY_CPU(containerName) : ''))
+                .with('memory', () => (containerName ? QUERY_MEMORY(containerName) : ''))
+                .with('missing_instance', () => (containerName ? QUERY_MISSING_INSTANCE(containerName) : ''))
+                .with('instance_restart', () => (containerName ? QUERY_INSTANCE_RESTART(containerName) : ''))
                 .with('http_error', () => QUERY_HTTP_ERROR_COMBINED(ingressName || '', httpRouteName || ''))
                 .with('http_latency', () => QUERY_HTTP_LATENCY_COMBINED(ingressName || '', httpRouteName || ''))
+                .with('certificate_renewal_failed', () => QUERY_CERTIFICATE_RENEWAL_FAILED(service.id))
                 .otherwise(() => ''),
             },
             for_duration: alert.for_duration,

@@ -92,3 +92,47 @@ and on(namespace, horizontalpodautoscaler)
     horizontalpodautoscaler="${hpaName}"
   }
 )`
+
+const CERTIFICATE_OWNER_LABELS =
+  'qovery_com_associated_service_id, qovery_com_associated_service_type, qovery_com_environment_id, qovery_com_project_id'
+
+const CERTIFICATE_OWNER_BY_NAME = (serviceId: string) => `
+max by (exported_namespace, name, ${CERTIFICATE_OWNER_LABELS}) (
+  kube_certmanager_certificate_labels{qovery_com_associated_service_id="${serviceId}"}
+)`
+
+const CERTIFICATE_OWNER_BY_DOMAIN = (serviceId: string) => `
+max by (exported_namespace, domain, ${CERTIFICATE_OWNER_LABELS}) (
+  kube_certmanager_certificate_dns_names{qovery_com_associated_service_id="${serviceId}"}
+)`
+
+export const QUERY_CERTIFICATE_RENEWAL_FAILED = (serviceId: string) => `
+(
+  (
+    (
+      certmanager_certificate_renewal_timestamp_seconds{issuer_name="letsencrypt-qovery"} > 0
+    )
+    and on (exported_namespace, name)
+    (
+      time() - certmanager_certificate_renewal_timestamp_seconds{issuer_name="letsencrypt-qovery"} > 3600
+    )
+    and on (exported_namespace, name)
+    (
+      certmanager_certificate_expiration_timestamp_seconds{issuer_name="letsencrypt-qovery"} - time() > 0
+    )
+  )
+  or on (exported_namespace, name)
+  (
+    certmanager_certificate_ready_status{issuer_name="letsencrypt-qovery", condition="False"} == 1
+  )
+)
+and on (exported_namespace, name) group_left(${CERTIFICATE_OWNER_LABELS})
+${CERTIFICATE_OWNER_BY_NAME(serviceId)}
+or
+(
+  sum by (exported_namespace, domain, reason) (
+    certmanager_certificate_challenge_status{status=~"invalid|expired|errored"} == 1
+  )
+  and on (exported_namespace, domain) group_left(${CERTIFICATE_OWNER_LABELS})
+  ${CERTIFICATE_OWNER_BY_DOMAIN(serviceId)}
+)`

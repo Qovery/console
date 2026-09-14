@@ -32,6 +32,7 @@ const METRICS: Metric[] = [
   { id: 'missing_instance', label: 'Missing instance', iconName: 'server' },
   { id: 'instance_restart', label: 'Instance restart', iconName: 'cube' },
   { id: 'hpa_limit', label: 'Auto-scaling limit', iconName: 'up-right-and-down-left-from-center' },
+  { id: 'certificate_renewal_failed', label: 'Certificate renewal failed', iconName: 'certificate' },
 ]
 
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
@@ -46,11 +47,20 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
     (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
     service?.min_running_instances !== service?.max_running_instances
 
+  const canOwnCustomDomains =
+    !service ||
+    service.serviceType === 'APPLICATION' ||
+    service.serviceType === 'CONTAINER' ||
+    service.serviceType === 'HELM'
+
   const availableMetrics = METRICS.filter((metric) => {
     if (!hasPublicPort && (metric.id === 'http_error' || metric.id === 'http_latency')) {
       return false
     }
     if (!hasAutoscaling && metric.id === 'hpa_limit') {
+      return false
+    }
+    if (!canOwnCustomDomains && metric.id === 'certificate_renewal_failed') {
       return false
     }
     return true

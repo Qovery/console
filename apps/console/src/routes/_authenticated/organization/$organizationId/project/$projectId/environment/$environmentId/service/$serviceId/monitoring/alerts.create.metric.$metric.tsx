@@ -17,6 +17,7 @@ const METRIC_CATEGORIES: MetricCategory[] = [
   'missing_instance',
   'instance_restart',
   'hpa_limit',
+  'certificate_renewal_failed',
 ]
 
 export const Route = createFileRoute(

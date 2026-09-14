@@ -14,6 +14,7 @@ describe('CreateKeyAlertsModal', () => {
   const defaultService = {
     id: 'service-123',
     name: 'My Service',
+    serviceType: 'APPLICATION',
   }
 
   beforeEach(() => {
@@ -27,6 +28,18 @@ describe('CreateKeyAlertsModal', () => {
     expect(screen.getByText('Memory')).toBeInTheDocument()
     expect(screen.getByText('Missing instance')).toBeInTheDocument()
     expect(screen.getByText('Instance restart')).toBeInTheDocument()
+    expect(screen.getByText('Certificate renewal failed')).toBeInTheDocument()
+  })
+
+  it('should hide certificate renewal alerts for services that cannot own custom domains', () => {
+    renderWithProviders(
+      <CreateKeyAlertsModal
+        {...defaultProps}
+        service={{ ...defaultService, serviceType: 'DATABASE' } as unknown as AnyService}
+      />
+    )
+
+    expect(screen.queryByText('Certificate renewal failed')).not.toBeInTheDocument()
   })
 
   it('should pre-fill service name when service prop is provided', () => {
