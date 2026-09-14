@@ -387,7 +387,7 @@ export function ServiceNew({
                   color="brand"
                   variant="surface"
                   size="sm"
-                  className="h-4 border-transparent bg-surface-brand-solid px-1 text-[8px] font-medium text-neutralInvert"
+                  className="h-4 border-transparent bg-surface-brand-solid px-1 text-[8px] font-semibold text-neutralInvert"
                 >
                   BETA
                 </Badge>
