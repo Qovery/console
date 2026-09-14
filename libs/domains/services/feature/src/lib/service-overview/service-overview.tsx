@@ -225,7 +225,9 @@ function ServiceOverviewContent({
           <Section className="gap-8">
             <ServiceHeader environment={environment} service={service} />
             {hasNoMetrics && observabilityCallout}
-            {isAgenticWorkflow(service) && <AgenticWorkflowWebhookSection webhookUrl={service.webhook.url} />}
+            {isAgenticWorkflow(service) && !service.schedule && (
+              <AgenticWorkflowWebhookSection webhookUrl={service.webhook.url} />
+            )}
             {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
             {!isTerraformService && (isEditableService(service) || isAgenticWorkflow(service)) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />

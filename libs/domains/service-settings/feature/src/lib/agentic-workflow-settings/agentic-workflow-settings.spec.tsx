@@ -289,7 +289,7 @@ describe('AgenticWorkflowSettings views', () => {
     renderWithProviders(<AgenticWorkflowSettings page="automations" />)
 
     expect(screen.getByRole('heading', { name: 'Automations' })).toBeInTheDocument()
-    expect(screen.getByText('Webhook + schedule')).toBeInTheDocument()
+    expect(screen.getByText('Schedule')).toBeInTheDocument()
     expect(screen.getByText('1 output configured')).toBeInTheDocument()
   })
 

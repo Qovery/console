@@ -41,6 +41,29 @@ describe('AutomationSheet', () => {
     )
   })
 
+  it('allows only one trigger at a time', async () => {
+    const onSave = jest.fn()
+    const automation: AgenticWorkflowAutomation = {
+      ...emptyAutomation,
+      triggers: [{ id: 'schedule-1', type: 'schedule', cronExpression: '0 8 * * 1-5', timezone: 'Etc/UTC' }],
+    }
+    const { userEvent } = renderWithProviders(
+      <AutomationSheet automation={automation} section="triggers" onClose={jest.fn()} onSave={onSave} />
+    )
+
+    expect(screen.queryByRole('button', { name: 'Add' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Schedule actions' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Delete' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+
+    expect(onSave).toHaveBeenCalledWith({
+      ...emptyAutomation,
+      triggers: [expect.objectContaining({ type: 'webhook' })],
+    })
+  })
+
   it('allows saving outputs independently from triggers', async () => {
     const onSave = jest.fn()
     const { userEvent } = renderWithProviders(

@@ -18,11 +18,11 @@ export function AgenticWorkflowAutomationsSettings({
     <>
       <AgenticWorkflowSettingsCard
         title="Automation"
-        description="The webhook trigger is always available. Add a schedule or configure output webhooks."
+        description="Choose a webhook or schedule trigger and configure output webhooks."
       >
         <div className="flex items-center justify-between rounded-lg border border-neutral bg-surface-neutral p-4">
           <div>
-            <p className="text-sm font-medium text-neutral">Webhook{schedule ? ' + schedule' : ''}</p>
+            <p className="text-sm font-medium text-neutral">{schedule ? 'Schedule' : 'Webhook'}</p>
             <p className="text-xs text-neutral-subtle">
               {automation.outputs.length} output{automation.outputs.length === 1 ? '' : 's'} configured
             </p>
@@ -37,7 +37,6 @@ export function AgenticWorkflowAutomationsSettings({
         <AutomationSheet
           allowEmptyOutputUrl
           automation={automation}
-          lockWebhookTrigger
           onClose={() => setOpen(false)}
           onSave={(value) => form.setValue('automation', value, { shouldDirty: true })}
         />

@@ -21,7 +21,7 @@ describe('AgenticWorkflowAutomationsSettings', () => {
       </AgenticWorkflowSettingsFormHarness>
     )
 
-    expect(screen.getByText('Webhook + schedule')).toBeInTheDocument()
+    expect(screen.getByText('Schedule')).toBeInTheDocument()
     expect(screen.getByText('1 output configured')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
