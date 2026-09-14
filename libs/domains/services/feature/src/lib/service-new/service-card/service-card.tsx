@@ -29,12 +29,12 @@ export type ServiceBlock = {
 
 function resizeIcon(icon: ReactElement, size: 20 | 36) {
   const iconWithClassName = icon as ReactElement<{ className?: string; height?: number; width?: number }>
+  const className = twMerge(iconWithClassName.props.className, size === 20 ? 'h-5 w-5 shrink-0' : 'h-9 w-9 shrink-0')
 
-  return cloneElement(iconWithClassName, {
-    width: size,
-    height: size,
-    className: twMerge(iconWithClassName.props.className, size === 20 ? 'h-5 w-5 shrink-0' : 'h-9 w-9 shrink-0'),
-  })
+  // Agent use-case icons use a span wrapper, which is sized by classes rather than width/height attributes.
+  return icon.type === 'span'
+    ? cloneElement(iconWithClassName, { className })
+    : cloneElement(iconWithClassName, { width: size, height: size, className })
 }
 
 export function BaseServiceCard({ title, description, icon, link, search, onClick, showDescription }: ServiceBlock) {
