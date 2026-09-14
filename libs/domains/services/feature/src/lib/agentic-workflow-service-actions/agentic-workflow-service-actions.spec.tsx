@@ -102,6 +102,10 @@ describe('AgenticWorkflowServiceActions', () => {
 
     expect(triggerButton.compareDocumentPosition(actionsButton)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
 
+    await userEvent.hover(triggerButton)
+
+    expect(await screen.findByRole('tooltip')).toHaveTextContent('Trigger')
+
     await userEvent.click(triggerButton)
 
     expect(mockDeployAgenticWorkflow).toHaveBeenCalledWith({ agenticWorkflowId: 'workflow-1' })
