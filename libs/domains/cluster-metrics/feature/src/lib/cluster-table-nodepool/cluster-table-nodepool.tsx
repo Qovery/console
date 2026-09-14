@@ -9,6 +9,7 @@ import { calculatePercentage, pluralize, upperCaseFirstLetter } from '@qovery/sh
 import { ClusterTableNode } from '../cluster-table-node/cluster-table-node'
 import { useClusterMetrics } from '../hooks/use-cluster-metrics/use-cluster-metrics'
 import { calculateNodePoolMetrics, calculateUntrackedNodesMetrics } from './calculate-nodepool-metrics'
+import { getClusterNodePools } from './get-node-pools'
 
 export interface ClusterTableNodepoolProps {
   organizationId: string
@@ -286,8 +287,13 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
   })
   const { data: cluster } = useCluster({ organizationId, clusterId })
 
-  const nodePools = metrics?.node_pools
-  const nodes = metrics?.nodes || []
+  const reportedNodePools = metrics?.node_pools
+  const nodePools = useMemo(
+    () => getClusterNodePools(reportedNodePools, metrics?.nodes),
+    [reportedNodePools, metrics?.nodes]
+  )
+  const canEditLimits = cluster?.features?.some((feature) => feature.id === 'KARPENTER')
+  const nodes = useMemo(() => metrics?.nodes ?? [], [metrics?.nodes])
   const nodeWarnings = runningStatus?.computed_status?.node_warnings || {}
 
   // Find nodes that don't belong to any Karpenter nodepool (untracked nodes)
@@ -314,6 +320,7 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
             </div>
           </div>
           {nodePools.map((nodePool) => {
+            const hasPoolMetadata = reportedNodePools?.some((pool) => pool.name === nodePool.name)
             const metrics = calculateNodePoolMetrics(nodePool, nodes, nodeWarnings)
 
             const nodesHealthyPercentage = calculatePercentage(
@@ -378,7 +385,9 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                           <Tooltip content="Capacity">
                             <span className="font-medium text-neutral">{metrics.cpuUsed} vCPU</span>
                           </Tooltip>
-                          {metrics.cpuTotal ? (
+                          {!hasPoolMetadata ? (
+                            <span> (limit: unavailable)</span>
+                          ) : metrics.cpuTotal ? (
                             <span> (limit: {metrics.cpuTotal})</span>
                           ) : (
                             <span>
@@ -388,21 +397,22 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                           )}
                         </span>
                       </span>
-                      {match(cluster?.cloud_provider)
-                        .with('GCP', () => null)
-                        .with('ON_PREMISE', () => null)
-                        .otherwise(() => (
-                          <Tooltip content="Edit limits">
-                            <Link
-                              as="button"
-                              color="current"
-                              to="/organization/$organizationId/cluster/$clusterId/settings/resources"
-                              params={{ organizationId, clusterId }}
-                            >
-                              <Icon iconName="gear" iconStyle="regular" className="text-neutral-subtle" />
-                            </Link>
-                          </Tooltip>
-                        ))}
+                      {canEditLimits &&
+                        match(cluster?.cloud_provider)
+                          .with('GCP', () => null)
+                          .with('ON_PREMISE', () => null)
+                          .otherwise(() => (
+                            <Tooltip content="Edit limits">
+                              <Link
+                                as="button"
+                                color="current"
+                                to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                                params={{ organizationId, clusterId }}
+                              >
+                                <Icon iconName="gear" iconStyle="regular" className="text-neutral-subtle" />
+                              </Link>
+                            </Tooltip>
+                          ))}
                     </div>
                     <MetricProgressBar
                       type="cpu"
@@ -425,7 +435,9 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                           <Tooltip content="Capacity">
                             <span className="font-medium text-neutral">{metrics.memoryUsed} GB</span>
                           </Tooltip>
-                          {metrics.memoryTotal ? (
+                          {!hasPoolMetadata ? (
+                            <span> (limit: unavailable)</span>
+                          ) : metrics.memoryTotal ? (
                             ` (limit: ${metrics.memoryTotal})`
                           ) : (
                             <span>
@@ -435,21 +447,22 @@ export function ClusterTableNodepool({ organizationId, clusterId }: ClusterTable
                           )}
                         </span>
                       </span>
-                      {match(cluster?.cloud_provider)
-                        .with('GCP', () => null)
-                        .with('ON_PREMISE', () => null)
-                        .otherwise(() => (
-                          <Tooltip content="Edit limits">
-                            <Link
-                              as="button"
-                              color="current"
-                              to="/organization/$organizationId/cluster/$clusterId/settings/resources"
-                              params={{ organizationId, clusterId }}
-                            >
-                              <Icon iconName="gear" iconStyle="regular" className="text-neutral-subtle" />
-                            </Link>
-                          </Tooltip>
-                        ))}
+                      {canEditLimits &&
+                        match(cluster?.cloud_provider)
+                          .with('GCP', () => null)
+                          .with('ON_PREMISE', () => null)
+                          .otherwise(() => (
+                            <Tooltip content="Edit limits">
+                              <Link
+                                as="button"
+                                color="current"
+                                to="/organization/$organizationId/cluster/$clusterId/settings/resources"
+                                params={{ organizationId, clusterId }}
+                              >
+                                <Icon iconName="gear" iconStyle="regular" className="text-neutral-subtle" />
+                              </Link>
+                            </Tooltip>
+                          ))}
                     </div>
                     <MetricProgressBar
                       type="memory"
