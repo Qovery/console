@@ -240,6 +240,41 @@ describe('HelmRepositoryCreateEditModal', () => {
     })
   })
 
+  it('should strip trailing slash from OCI URL when editing a repository', async () => {
+    const { userEvent } = renderWithProviders(
+      <HelmRepositoryCreateEditModal
+        {...props}
+        isEdit
+        repository={{
+          id: '1111-1111-1111',
+          created_at: '',
+          updated_at: '',
+          name: 'my-oci-repository',
+          description: 'description',
+          url: 'oci://docker.io',
+          kind: 'OCI_GENERIC_CR',
+        }}
+      />
+    )
+
+    const inputUrl = screen.getByTestId('input-url')
+    await userEvent.clear(inputUrl)
+    await userEvent.type(inputUrl, 'oci://docker.io/')
+
+    const btn = screen.getByRole('button', { name: 'Confirm' })
+    expect(btn).toBeEnabled()
+
+    await userEvent.click(btn)
+
+    expect(useEditHelmRepositoryMockSpy().mutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        helmRepositoryRequest: expect.objectContaining({
+          url: 'oci://docker.io',
+        }),
+      })
+    )
+  })
+
   it('should submit the form to edit a repository', async () => {
     const { userEvent } = renderWithProviders(
       <HelmRepositoryCreateEditModal

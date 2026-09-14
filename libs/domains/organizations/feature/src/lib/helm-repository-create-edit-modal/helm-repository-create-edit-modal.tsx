@@ -16,6 +16,7 @@ import {
   ModalCrud,
   useModal,
 } from '@qovery/shared/ui'
+import { stripUrlTrailingSlash } from '@qovery/shared/util-js'
 import { useAvailableHelmRepositories } from '../hooks/use-available-helm-repositories/use-available-helm-repositories'
 import { useCreateHelmRepository } from '../hooks/use-create-helm-repository/use-create-helm-repository'
 import { useEditHelmRepository } from '../hooks/use-edit-helm-repository/use-edit-helm-repository'
@@ -115,8 +116,8 @@ export function HelmRepositoryCreateEditModal({
       }
     }
 
-    // Strip trailing slash(es): a URL like `oci://docker.io/` is rejected as invalid by the backend
-    const url = helmRepositoryRequest.url.replace(/\/+$/, '')
+    // A URL like `oci://docker.io/` is rejected as invalid by the backend
+    const url = stripUrlTrailingSlash(helmRepositoryRequest.url)
 
     try {
       if (repository) {
