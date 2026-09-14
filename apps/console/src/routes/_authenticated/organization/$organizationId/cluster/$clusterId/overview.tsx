@@ -4,6 +4,7 @@ import {
   ClusterCardNodeUsage,
   ClusterTableNode,
   ClusterTableNodepool,
+  getClusterNodePools,
   useClusterMetrics,
   useClusterMetricsSocket,
 } from '@qovery/domains/cluster-metrics/feature'
@@ -112,7 +113,9 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
 
   const isLoading = isClusterLoading || isClusterStatusLoading || !runningStatus || !clusterMetrics
 
-  const isKarpenter = cluster?.features?.find((feature) => feature.id === 'KARPENTER')
+  const showNodePools =
+    cluster?.features?.some((feature) => feature.id === 'KARPENTER') ||
+    getClusterNodePools(clusterMetrics?.node_pools, clusterMetrics?.nodes).length > 0
 
   return (
     <>
@@ -264,7 +267,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
               </div>
               {isLoading ? (
                 <TableSkeleton />
-              ) : isKarpenter ? (
+              ) : showNodePools ? (
                 <ClusterTableNodepool organizationId={organizationId} clusterId={clusterId} />
               ) : (
                 <div className="overflow-hidden rounded border border-neutral bg-surface-neutral">
