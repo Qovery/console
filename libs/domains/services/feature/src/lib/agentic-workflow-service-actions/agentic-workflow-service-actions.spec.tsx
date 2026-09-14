@@ -111,6 +111,12 @@ describe('AgenticWorkflowServiceActions', () => {
     expect(mockDeployAgenticWorkflow).toHaveBeenCalledWith({ agenticWorkflowId: 'workflow-1' })
   })
 
+  it('shows the trigger button in the service header', () => {
+    renderWithProviders(<AgenticWorkflowServiceActions environment={environment} service={service} variant="header" />)
+
+    expect(screen.getByRole('button', { name: 'Trigger' })).toBeInTheDocument()
+  })
+
   it('shows and copies service metadata', async () => {
     const { userEvent } = renderWithProviders(
       <AgenticWorkflowServiceActions environment={environment} service={service} />

@@ -63,21 +63,19 @@ export function AgenticWorkflowServiceActions({
 
   return (
     <div className="flex items-center gap-2" onClick={onAction}>
-      {variant === 'default' && (
-        <Tooltip content="Trigger">
-          <Button
-            aria-label="Trigger"
-            variant="outline"
-            size="sm"
-            iconOnly
-            loading={isDeploying}
-            onClick={() => deployAgenticWorkflow({ agenticWorkflowId: service.id })}
-            onKeyDown={onAction}
-          >
-            <Icon iconName="play" />
-          </Button>
-        </Tooltip>
-      )}
+      <Tooltip content="Trigger">
+        <Button
+          aria-label="Trigger"
+          variant="outline"
+          size={variant === 'header' ? 'md' : 'sm'}
+          iconOnly
+          loading={isDeploying}
+          onClick={() => deployAgenticWorkflow({ agenticWorkflowId: service.id })}
+          onKeyDown={onAction}
+        >
+          <Icon iconName="play" />
+        </Button>
+      </Tooltip>
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <Button
