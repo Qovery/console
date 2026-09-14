@@ -147,6 +147,38 @@ describe('ClusterTableNodepool', () => {
     })
   })
 
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
+  it('groups self-managed nodes by their labels when pool metadata is unavailable', async () => {
+    jest.useFakeTimers()
+    ;(useClusterMetrics as jest.Mock).mockReturnValue({
+      data: {
+        node_pools: [],
+        nodes: [
+          { ...mockMetrics.nodes[0], name: 'node-demo', labels: { 'karpenter.sh/nodepool': 'demo' } },
+          { ...mockMetrics.nodes[1], name: 'node-stable', labels: { 'karpenter.sh/nodepool': 'stable' } },
+          { ...mockMetrics.nodes[0], name: 'node-infra', labels: { 'node.qovery.com/infrastructure': 'true' } },
+        ],
+      },
+    })
+    const { userEvent: user } = renderWithProviders(
+      <ClusterTableNodepool organizationId="org-123" clusterId="cluster-456" />
+    )
+
+    expect(screen.getByText('Application node pools (2)')).toBeInTheDocument()
+    expect(screen.getByText('Demo nodepool')).toBeInTheDocument()
+    expect(screen.getByText('Stable nodepool')).toBeInTheDocument()
+    expect(screen.getAllByText('(limit: unavailable)')).toHaveLength(4)
+    expect(screen.queryByText('node-demo')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /Demo nodepool/ }))
+    expect(screen.getByText('node-demo')).toBeInTheDocument()
+    expect(screen.queryByText('node-stable')).not.toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /Karpenter node group/ }))
+    expect(screen.getByText('node-infra')).toBeInTheDocument()
+  })
+
   it('should render node pool with metrics correctly', () => {
     renderWithProviders(<ClusterTableNodepool organizationId="org-123" clusterId="cluster-456" />)
 
