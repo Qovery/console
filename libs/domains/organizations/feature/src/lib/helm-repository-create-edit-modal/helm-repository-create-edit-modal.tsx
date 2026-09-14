@@ -115,6 +115,9 @@ export function HelmRepositoryCreateEditModal({
       }
     }
 
+    // Strip trailing slash(es): a URL like `oci://docker.io/` is rejected as invalid by the backend
+    const url = helmRepositoryRequest.url.replace(/\/+$/, '')
+
     try {
       if (repository) {
         const response = await editHelmRepository({
@@ -122,6 +125,7 @@ export function HelmRepositoryCreateEditModal({
           helmRepositoryId: repository.id,
           helmRepositoryRequest: {
             ...helmRepositoryRequest,
+            url,
             config: config,
           },
         })
@@ -131,6 +135,7 @@ export function HelmRepositoryCreateEditModal({
           organizationId: organizationId,
           helmRepositoryRequest: {
             ...helmRepositoryRequest,
+            url,
             config: config,
           },
         })
