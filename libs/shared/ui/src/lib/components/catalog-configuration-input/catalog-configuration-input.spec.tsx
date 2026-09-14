@@ -83,4 +83,24 @@ describe('CatalogConfigurationInput', () => {
     await userEvent.type(input, '42')
     expect(JSON.parse(screen.getByRole('status').textContent ?? 'null')).toEqual([42])
   })
+
+  it('searches catalog choices in array rows without preselecting or replacing existing instances', async () => {
+    const { userEvent } = renderWithProviders(
+      <Editor
+        schema={{
+          ...field,
+          key: 'instanceTypes',
+          label: 'Instance types',
+          items: { type: 'string', constraints: { allowedValues: ['m5.large', 'c7i-flex.large'] } },
+        }}
+        initial={['m5.large']}
+      />
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Add item to Instance types' }))
+    expect(JSON.parse(screen.getByRole('status').textContent ?? 'null')).toEqual(['m5.large', ''])
+    await userEvent.type(screen.getByRole('combobox', { name: 'Instance types 2' }), 'c7i')
+    expect(screen.queryByRole('option', { name: 'm5.large' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByText('c7i-flex.large'))
+    expect(JSON.parse(screen.getByRole('status').textContent ?? 'null')).toEqual(['m5.large', 'c7i-flex.large'])
+  })
 })
