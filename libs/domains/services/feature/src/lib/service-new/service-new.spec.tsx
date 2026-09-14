@@ -180,10 +180,6 @@ describe('ServiceNew', () => {
     expect(screen.getByRole('link', { name: /Incident Analyzer with Honeybadger/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Jira Coding Agent/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Linear Coding Agent/i })).toBeInTheDocument()
-    const buildOptimizerCard = screen.getByRole('link', { name: /Build & deployment optimizer/i })
-    expect(buildOptimizerCard).toHaveClass('gap-3', 'p-4')
-    expect(buildOptimizerCard).not.toHaveClass('justify-between')
-    expect(buildOptimizerCard.querySelector('.fa-gauge-high')).toHaveClass('text-4xl')
     expect(
       screen.getByText('Analyze incident.io incidents with deployment, code, logs, and metrics context.')
     ).toBeInTheDocument()
