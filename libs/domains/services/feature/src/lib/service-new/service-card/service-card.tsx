@@ -30,7 +30,7 @@ export type ServiceBlock = {
 export function BaseServiceCard({ title, description, icon, link, search, onClick, showDescription }: ServiceBlock) {
   const className = clsx(
     'flex w-full rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)] hover:bg-surface-neutral-subtle',
-    showDescription ? 'min-h-40 flex-col items-start justify-between gap-4' : 'h-14 items-center justify-between gap-3'
+    showDescription ? 'min-h-40 flex-col items-start gap-3' : 'h-14 items-center justify-between gap-3'
   )
   const compactContent = (
     <>
