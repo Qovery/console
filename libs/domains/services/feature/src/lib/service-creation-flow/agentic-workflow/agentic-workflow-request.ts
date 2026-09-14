@@ -49,5 +49,11 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
     governance: {
       host_allowlist: formatWhitelistHosts(values.whitelistHosts),
     },
+    resources: {
+      cpu_milli: Number(values.cpu),
+      ram_mib: Number(values.memory),
+      gpu: 0,
+      storage_gib: Number(values.storage),
+    },
   }
 }

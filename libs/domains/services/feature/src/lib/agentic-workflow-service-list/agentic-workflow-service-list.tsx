@@ -25,19 +25,17 @@ function TriggerCell({
 }) {
   return (
     <div className="flex min-w-0 flex-1 items-center gap-2" onClick={onAction} onKeyDown={onAction}>
-      <Tooltip content={service.webhook.url}>
-        <span className="shrink-0 text-sm text-neutral">Webhook</span>
-      </Tooltip>
-      {service.schedule && (
-        <>
-          <span className="text-neutral-subtle">+</span>
-          <span className="min-w-0 truncate text-sm text-neutral">
-            Schedule ·{' '}
-            {service.schedule.next_run_at
-              ? dateFullFormat(service.schedule.next_run_at, service.schedule.timezone, 'dd MMM, HH:mm')
-              : 'Paused'}
-          </span>
-        </>
+      {service.schedule ? (
+        <span className="min-w-0 truncate text-sm text-neutral">
+          Schedule ·{' '}
+          {service.schedule.next_run_at
+            ? dateFullFormat(service.schedule.next_run_at, service.schedule.timezone, 'dd MMM, HH:mm')
+            : 'Paused'}
+        </span>
+      ) : (
+        <Tooltip content={service.webhook.url}>
+          <span className="shrink-0 text-sm text-neutral">Webhook</span>
+        </Tooltip>
       )}
     </div>
   )

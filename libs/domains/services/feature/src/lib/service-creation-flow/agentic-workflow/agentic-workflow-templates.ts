@@ -24,9 +24,13 @@ Use HONEYBADGER_API_TOKEN to fetch the fault, occurrence, project, and environme
 
 const JIRA_CODING_AGENT_PROMPT = `You are a coding agent working from a Jira issue. Use the issue supplied by the trigger and retrieve any missing context from JIRA_BASE_URL. Authenticate to Jira Cloud with HTTP Basic auth, using JIRA_EMAIL as the username and JIRA_API_TOKEN as the password.
 
+When receiving a Jira webhook, first check the current issue status and whether it has already been processed. Do not perform the same job twice.
+
 Understand the acceptance criteria, inspect the relevant repository and existing conventions, implement the smallest complete change, and run focused tests and linting. Open a pull request that links the Jira issue and summarizes the change and verification. Never merge the pull request or deploy without human approval.`
 
 const LINEAR_CODING_AGENT_PROMPT = `You are a coding agent working from a Linear issue. Use the issue supplied by the trigger and LINEAR_API_KEY to retrieve any missing context from Linear.
+
+When receiving a Linear webhook, first check the current issue status and whether it has already been processed. Do not perform the same job twice.
 
 Understand the acceptance criteria, inspect the relevant repository and existing conventions, implement the smallest complete change, and run focused tests and linting. Open a pull request that links the Linear issue and summarizes the change and verification. Never merge the pull request or deploy without human approval.`
 
@@ -42,6 +46,21 @@ const webhookAutomation = (id: string) => [
   {
     id: `${id}-automation`,
     triggers: [{ id: `${id}-webhook`, type: 'webhook' as const }],
+    outputs: [],
+  },
+]
+
+const weeklyScheduleAutomation = (id: string) => [
+  {
+    id: `${id}-automation`,
+    triggers: [
+      {
+        id: `${id}-schedule`,
+        type: 'schedule' as const,
+        cronExpression: '0 8 * * 1',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      },
+    ],
     outputs: [],
   },
 ]
@@ -100,6 +119,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       agentPrompt: BUILD_OPTIMIZER_PROMPT,
       cpu: '200',
       memory: '256',
+      automations: weeklyScheduleAutomation('build-optimizer'),
       whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
   },
@@ -114,6 +134,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       agentPrompt: JIRA_CODING_AGENT_PROMPT,
       cpu: '200',
       memory: '256',
+      executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
+      automations: webhookAutomation('jira'),
       whitelistHosts:
         'api.atlassian.com,*.atlassian.net,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
@@ -147,6 +169,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       agentPrompt: LINEAR_CODING_AGENT_PROMPT,
       cpu: '200',
       memory: '256',
+      executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
+      automations: webhookAutomation('linear'),
       whitelistHosts: 'api.linear.app,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
     variables: [secretVariable('LINEAR_API_KEY', 'API key used to read the Linear issue.')],

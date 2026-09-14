@@ -1,5 +1,5 @@
 import { useParams } from '@tanstack/react-router'
-import { type Environment } from 'qovery-typescript-axios'
+import { type AgenticWorkflowScheduleResponse, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import {
   type AnyService,
@@ -12,6 +12,7 @@ import {
 } from '@qovery/domains/services/data-access'
 import { OutputVariables } from '@qovery/domains/variables/feature'
 import { CopyToClipboardButtonIcon, Heading, Icon, InputText, Link, Navbar, Section } from '@qovery/shared/ui'
+import { formatCronExpression } from '@qovery/shared/util-js'
 import { useRunningStatus } from '../hooks/use-running-status/use-running-status'
 import { useService } from '../hooks/use-service/use-service'
 import { ScaledObjectStatus, type ScaledObjectStatusDto } from '../keda/scaled-object-status/scaled-object-status'
@@ -91,6 +92,25 @@ function AgenticWorkflowWebhookSection({ webhookUrl }: { webhookUrl: string }) {
         value={webhookUrl}
         disabled
         rightElement={<CopyToClipboardButtonIcon className="text-sm text-neutral" content={webhookUrl} />}
+      />
+    </Section>
+  )
+}
+
+function AgenticWorkflowScheduleSection({ schedule }: { schedule: AgenticWorkflowScheduleResponse }) {
+  const description = formatCronExpression(schedule.cron_expression) || schedule.cron_expression
+
+  return (
+    <Section className="gap-3">
+      <div className="flex flex-col gap-1">
+        <Heading>Schedule</Heading>
+        <p className="text-sm text-neutral-subtle">Run this agent task automatically on a schedule.</p>
+      </div>
+      <InputText
+        name="agentic-workflow-schedule"
+        label="Schedule"
+        value={`${description} (${schedule.timezone})`}
+        disabled
       />
     </Section>
   )
@@ -225,7 +245,12 @@ function ServiceOverviewContent({
           <Section className="gap-8">
             <ServiceHeader environment={environment} service={service} />
             {hasNoMetrics && observabilityCallout}
-            {isAgenticWorkflow(service) && <AgenticWorkflowWebhookSection webhookUrl={service.webhook.url} />}
+            {isAgenticWorkflow(service) &&
+              (service.schedule ? (
+                <AgenticWorkflowScheduleSection schedule={service.schedule} />
+              ) : (
+                <AgenticWorkflowWebhookSection webhookUrl={service.webhook.url} />
+              ))}
             {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
             {!isTerraformService && (isEditableService(service) || isAgenticWorkflow(service)) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />

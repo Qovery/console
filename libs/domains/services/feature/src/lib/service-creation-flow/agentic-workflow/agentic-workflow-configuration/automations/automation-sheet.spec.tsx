@@ -68,4 +68,29 @@ describe('AutomationSheet', () => {
     expect(screen.getByText('https://hooks.example.com')).toBeInTheDocument()
     expect(screen.queryByRole('switch', { name: 'Enable agent task' })).not.toBeInTheDocument()
   })
+
+  it('allows replacing a webhook with a schedule', async () => {
+    const onSave = jest.fn()
+    const automation: AgenticWorkflowAutomation = {
+      id: 'automation-1',
+      triggers: [{ id: 'trigger-1', type: 'webhook' }],
+      outputs: [],
+    }
+    const { userEvent } = renderWithProviders(
+      <AutomationSheet automation={automation} section="triggers" onClose={jest.fn()} onSave={onSave} />
+    )
+
+    expect(screen.queryByRole('button', { name: 'Add' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Webhook actions' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Delete' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'On a schedule' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+
+    expect(onSave).toHaveBeenCalledWith({
+      ...emptyAutomation,
+      triggers: [expect.objectContaining({ type: 'schedule' })],
+    })
+  })
 })
