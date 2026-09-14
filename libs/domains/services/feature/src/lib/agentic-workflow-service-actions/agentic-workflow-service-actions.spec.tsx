@@ -4,6 +4,7 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowServiceActions } from './agentic-workflow-service-actions'
 
 const mockDeleteService = jest.fn()
+const mockDeployAgenticWorkflow = jest.fn()
 const mockNavigate = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockCopyToClipboard = jest.fn()
@@ -40,6 +41,10 @@ jest.mock('@qovery/shared/ui', () => ({
 
 jest.mock('../hooks/use-delete-service/use-delete-service', () => ({
   useDeleteService: () => ({ mutateAsync: mockDeleteService }),
+}))
+
+jest.mock('../hooks/use-deploy-agentic-workflow/use-deploy-agentic-workflow', () => ({
+  useDeployAgenticWorkflow: () => ({ mutate: mockDeployAgenticWorkflow, isLoading: false }),
 }))
 
 jest.mock('@qovery/shared/util-hooks', () => ({
@@ -85,6 +90,21 @@ describe('AgenticWorkflowServiceActions', () => {
     expect(screen.getByRole('menuitem', { name: 'Service metadata' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'Delete' })).toBeInTheDocument()
     expect(screen.queryByRole('menuitem', { name: 'Redeploy' })).not.toBeInTheDocument()
+  })
+
+  it('triggers the workflow from the button to the left of the actions menu', async () => {
+    const { userEvent } = renderWithProviders(
+      <AgenticWorkflowServiceActions environment={environment} service={service} />
+    )
+
+    const triggerButton = screen.getByRole('button', { name: 'Trigger' })
+    const actionsButton = screen.getByRole('button', { name: 'Other actions for Review pull requests' })
+
+    expect(triggerButton.compareDocumentPosition(actionsButton)).toBe(Node.DOCUMENT_POSITION_FOLLOWING)
+
+    await userEvent.click(triggerButton)
+
+    expect(mockDeployAgenticWorkflow).toHaveBeenCalledWith({ agenticWorkflowId: 'workflow-1' })
   })
 
   it('shows and copies service metadata', async () => {

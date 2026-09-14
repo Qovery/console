@@ -5,6 +5,7 @@ import { type AgenticWorkflow } from '@qovery/domains/services/data-access'
 import { Button, DropdownMenu, Icon, Tooltip, useModalConfirmation } from '@qovery/shared/ui'
 import { useCopyToClipboard } from '@qovery/shared/util-hooks'
 import { useDeleteService } from '../hooks/use-delete-service/use-delete-service'
+import { useDeployAgenticWorkflow } from '../hooks/use-deploy-agentic-workflow/use-deploy-agentic-workflow'
 
 export interface AgenticWorkflowServiceActionsProps {
   environment: Environment
@@ -25,6 +26,10 @@ export function AgenticWorkflowServiceActions({
   const navigate = useNavigate()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteService } = useDeleteService({ organizationId, environmentId })
+  const { mutate: deployAgenticWorkflow, isLoading: isDeploying } = useDeployAgenticWorkflow({
+    environmentId,
+    serviceId: service.id,
+  })
   const [copiedMetadataLabel, setCopiedMetadataLabel] = useState<string>()
   const [, copyToClipboard] = useCopyToClipboard()
   const metadata = [
@@ -57,7 +62,18 @@ export function AgenticWorkflowServiceActions({
   }
 
   return (
-    <div onClick={onAction}>
+    <div className="flex items-center gap-2" onClick={onAction}>
+      {variant === 'default' && (
+        <Button
+          variant="outline"
+          size="sm"
+          loading={isDeploying}
+          onClick={() => deployAgenticWorkflow({ agenticWorkflowId: service.id })}
+          onKeyDown={onAction}
+        >
+          Trigger
+        </Button>
+      )}
       <DropdownMenu.Root>
         <DropdownMenu.Trigger asChild>
           <Button
