@@ -14,7 +14,6 @@ import {
 import clsx from 'clsx'
 import {
   type DeploymentHistoryEnvironmentV2,
-  OrganizationEventOrigin,
   type QueuedDeploymentRequestWithStages,
   StateEnum,
 } from 'qovery-typescript-axios'
@@ -24,7 +23,6 @@ import { P, match } from 'ts-pattern'
 // Keep in mind for future refactoring if possible.
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
-import { IconEnum } from '@qovery/shared/enums'
 import { ENVIRONMENT_LOGS_URL, ENVIRONMENT_STAGES_URL } from '@qovery/shared/routes'
 import {
   Button,
@@ -42,6 +40,7 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { dateFullFormat } from '@qovery/shared/util-dates'
+import { EventOriginIcon } from '@qovery/shared/util-icons'
 import { isCancelBuildAvailable, twMerge, upperCaseFirstLetter } from '@qovery/shared/util-js'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
 import { useCancelDeploymentQueueEnvironment } from '../hooks/use-cancel-deployment-queue-environment/use-cancel-deployment-queue-environment'
@@ -375,14 +374,7 @@ export function EnvironmentDeploymentList() {
           return (
             <div className="flex items-center gap-3">
               <div className="flex h-7 w-7 min-w-7 items-center justify-center rounded-full bg-surface-neutral-component text-neutral-subtle">
-                {match(origin)
-                  .with(OrganizationEventOrigin.GIT, () => <Icon iconName="code-branch" />)
-                  .with(OrganizationEventOrigin.CONSOLE, () => <Icon iconName="browser" />)
-                  .with(OrganizationEventOrigin.QOVERY_INTERNAL, () => <Icon iconName="wave-pulse" />)
-                  .with(OrganizationEventOrigin.API, () => <Icon iconName="cloud-arrow-up" />)
-                  .with(OrganizationEventOrigin.CLI, () => <Icon iconName="terminal" />)
-                  .with(OrganizationEventOrigin.TERRAFORM_PROVIDER, () => <Icon name={IconEnum.TERRAFORM} width="12" />)
-                  .otherwise(() => null)}
+                <EventOriginIcon origin={origin} />
               </div>
               <div className="flex flex-col gap-0.5 text-ssm">
                 <span className="whitespace-nowrap text-neutral">

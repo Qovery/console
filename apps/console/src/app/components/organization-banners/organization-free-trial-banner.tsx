@@ -42,7 +42,7 @@ export function OrganizationFreeTrialBanner() {
     <Banner
       color="brand"
       buttonIconRight="arrow-right"
-      buttonLabel="Activate my plan"
+      buttonLabel="Contact our Team"
       onClickButton={() => showPylonForm('ask-for-activation')}
     >
       {message}

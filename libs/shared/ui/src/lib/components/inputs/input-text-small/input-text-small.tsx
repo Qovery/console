@@ -9,7 +9,6 @@ import {
 } from 'react'
 import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
-import { IconAwesomeEnum } from '../../icon/icon-awesome.enum'
 import Tooltip from '../../tooltip/tooltip'
 
 export interface InputTextSmallProps {
@@ -26,7 +25,7 @@ export interface InputTextSmallProps {
   inputClassName?: string
   label?: string
   dataTestId?: string
-  errorMessagePosition?: 'left' | 'bottom'
+  errorMessagePosition?: 'left' | 'bottom' | 'none'
   hasShowPasswordButton?: boolean
   disabled?: boolean
   spellCheck?: boolean

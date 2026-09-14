@@ -89,7 +89,7 @@ describe('PageOrganizationBillingSummary', () => {
     expect(pageProps.onPromoCodeClick).toHaveBeenCalled()
   })
 
-  it('should always show Activate my plan during an active trial, even when a credit card exists', async () => {
+  it('should always show Contact our Team during an active trial, even when a credit card exists', async () => {
     const onActivateAccountClick = jest.fn()
     const { userEvent } = renderWithProviders(
       <PageOrganizationBillingSummary
@@ -100,7 +100,7 @@ describe('PageOrganizationBillingSummary', () => {
       />
     )
 
-    await userEvent.click(screen.getByText('Activate my plan'))
+    await userEvent.click(screen.getByText('Contact our Team'))
     expect(onActivateAccountClick).toHaveBeenCalled()
   })
 
@@ -134,7 +134,7 @@ describe('PageOrganizationBillingSummary', () => {
       <PageOrganizationBillingSummary {...pageProps} currentCost={{ ...currentCostMock, remaining_trial_day: 91 }} />
     )
 
-    expect(screen.queryByText('Activate my plan')).not.toBeInTheDocument()
+    expect(screen.queryByText('Contact our Team')).not.toBeInTheDocument()
     expect(screen.queryByText('Cancel free trial')).not.toBeInTheDocument()
   })
 

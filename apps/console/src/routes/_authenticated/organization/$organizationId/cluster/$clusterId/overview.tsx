@@ -132,10 +132,10 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-4">
               <div className="flex min-w-0 items-center gap-2">
-                <Skeleton width={40} height={40} show={!cluster} rounded>
+                <Skeleton width={64} height={64} show={!cluster} rounded>
                   <ClusterAvatar cluster={cluster} />
                 </Skeleton>
-                <Skeleton width={160} height={22} show={!cluster}>
+                <Skeleton width={160} height={32} show={!cluster}>
                   <Heading className="min-w-0 max-w-full truncate">{cluster?.name}</Heading>
                 </Skeleton>
               </div>
@@ -177,10 +177,16 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
                   </>
                 )
               ) : (
-                <Skeleton width={120} height={22} show />
+                <Skeleton width={80} height={24} show />
+              )}
+              {!cluster && (
+                <>
+                  <Skeleton width={120} height={24} />
+                  <Skeleton width={96} height={24} />
+                </>
               )}
               {cluster?.region !== 'on-premise' && cluster?.kubernetes !== 'PARTIALLY_MANAGED' && (
-                <Skeleton width={120} height={22} show={!cluster}>
+                <Skeleton width={72} height={24} show={!cluster}>
                   <Badge color="neutral" variant="surface">
                     {cluster?.region}
                   </Badge>
@@ -188,7 +194,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
               )}
               {cluster?.kubernetes !== 'SELF_MANAGED' && (
                 <>
-                  <Skeleton width={120} height={22} show={!cluster}>
+                  <Skeleton width={36} height={24} show={!cluster}>
                     {cluster?.kubernetes !== 'PARTIALLY_MANAGED' && cluster?.version && (
                       <Badge color="neutral" variant="surface">
                         {cluster?.version}
@@ -211,6 +217,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
                   GPU pool
                 </Badge>
               )}
+              {!cluster && <Skeleton width={60} height={24} />}
             </div>
           </div>
           <hr className="w-full border-neutral" />

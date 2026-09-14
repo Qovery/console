@@ -1,4 +1,5 @@
-import { createFileRoute, useParams } from '@tanstack/react-router'
+import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useMemo, useRef } from 'react'
 import {
   ClusterHeaderLogs,
@@ -16,7 +17,27 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
 
 function RouteComponent() {
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
 
+  // When the feature flag is on, the legacy route only remains as a redirect to preserve old bookmarks/deep links
+  if (isClusterDeploymentHistoryEnabled) {
+    if (!organizationId || !clusterId) {
+      return null
+    }
+
+    return (
+      <Navigate
+        to="/organization/$organizationId/cluster/$clusterId/deployments"
+        params={{ organizationId, clusterId }}
+        replace
+      />
+    )
+  }
+
+  return <LegacyClusterLogsPage organizationId={organizationId} clusterId={clusterId} />
+}
+
+function LegacyClusterLogsPage({ organizationId, clusterId }: { organizationId: string; clusterId: string }) {
   const {
     data: logs = [],
     isLoading: isLogsLoading,

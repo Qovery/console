@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   ClusterDeploymentStatusEnum,
   ClusterStateEnum,
@@ -14,11 +15,16 @@ const mockCluster = clusterFactoryMock(1)[0]
 const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockCopyToClipboard = jest.fn()
+const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.Mock
 let mockClusterStatus: ClusterStatus = {
   cluster_id: mockCluster.id,
   status: ClusterStateEnum.DEPLOYED,
   is_deployed: true,
 }
+
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
+}))
 
 jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
@@ -54,6 +60,7 @@ jest.mock('@qovery/shared/util-hooks', () => ({
 describe('ClusterActions', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    useFeatureFlagEnabledMock.mockReturnValue(true)
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     mockClusterStatus = {
       cluster_id: mockCluster.id,
@@ -302,5 +309,21 @@ describe('ClusterActions', () => {
         name: mockCluster.name,
       })
     )
+  })
+
+  it('labels the card action as deployments when it opens deployment history', () => {
+    renderWithProviders(<ClusterActions cluster={mockCluster} clusterStatus={mockClusterStatus} variant="card" />)
+
+    expect(screen.getByRole('button', { name: 'Deployments' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Logs' })).not.toBeInTheDocument()
+  })
+
+  it('labels the card action as logs when deployment history is disabled', () => {
+    useFeatureFlagEnabledMock.mockReturnValue(false)
+
+    renderWithProviders(<ClusterActions cluster={mockCluster} clusterStatus={mockClusterStatus} variant="card" />)
+
+    expect(screen.getByRole('button', { name: 'Logs' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Deployments' })).not.toBeInTheDocument()
   })
 })

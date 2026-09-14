@@ -1,0 +1,9 @@
+{
+  "name": "util-icons",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/shared/util-icons/src",
+  "projectType": "library",
+  "tags": ["scope:shared", "type:util"],
+  "// targets": "to see all targets run: nx show project util-icons --web",
+  "targets": {}
+}

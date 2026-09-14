@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster, type ClusterFeatureResponseValueObject, type ClusterStatus } from 'qovery-typescript-axios'
 import type { ReactNode } from 'react'
 import { timeAgo } from '@qovery/shared/util-dates'
@@ -6,6 +7,9 @@ import { useClusterRunningStatusSocket } from '../hooks/use-cluster-running-stat
 import { ClusterCard } from './cluster-card'
 
 jest.mock('../hooks/use-cluster-running-status-socket/use-cluster-running-status-socket')
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
+}))
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => jest.fn(),
@@ -23,6 +27,7 @@ jest.mock('@qovery/shared/util-dates', () => ({
 const mockUseClusterRunningStatusSocket = useClusterRunningStatusSocket as jest.MockedFunction<
   typeof useClusterRunningStatusSocket
 >
+const useFeatureFlagEnabledMock = useFeatureFlagEnabled as jest.Mock
 
 const mockCluster = {
   id: 'cluster-id',
@@ -46,6 +51,7 @@ const mockClusterDeploymentStatus = {
 describe('ClusterCard', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    useFeatureFlagEnabledMock.mockReturnValue(true)
     jest.mocked(timeAgo).mockReturnValue('2 months ago')
   })
 
@@ -214,6 +220,20 @@ describe('ClusterCard', () => {
 
     const link = screen.getByText('Invalid cloud credentials')
     expect(link).toBeInTheDocument()
+    expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/deployments')
+  })
+
+  it('should link to the legacy cluster logs page when the cluster-deployment-history feature flag is off', () => {
+    useFeatureFlagEnabledMock.mockReturnValue(false)
+
+    renderWithProviders(
+      <ClusterCard
+        cluster={mockCluster}
+        clusterDeploymentStatus={{ ...mockClusterDeploymentStatus, status: 'INVALID_CREDENTIALS' }}
+      />
+    )
+
+    const link = screen.getByText('Invalid cloud credentials')
     expect(link).toHaveAttribute('to', '/organization/$organizationId/cluster/$clusterId/cluster-logs')
   })
 })

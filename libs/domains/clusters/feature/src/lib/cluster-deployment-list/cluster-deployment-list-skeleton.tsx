@@ -1,0 +1,41 @@
+import { Skeleton, TablePrimitives } from '@qovery/shared/ui'
+
+const { Table } = TablePrimitives
+
+export function ClusterDeploymentListSkeleton() {
+  const columnSizes = ['420px', '196px', '120px', '250px']
+
+  return (
+    <Table.Root className="w-full border-b">
+      <Table.Header>
+        <Table.Row>
+          {[...Array(4)].map((_, index) => (
+            <Table.ColumnHeaderCell key={index} className="first:border-r" style={{ width: columnSizes[index] }}>
+              <Skeleton height={16} width={100} />
+            </Table.ColumnHeaderCell>
+          ))}
+        </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        {[...Array(20)].map((_, index) => (
+          <Table.Row key={index}>
+            {[...Array(4)].map((_, index) => (
+              <Table.Cell key={index} className="h-14 first:border-r" style={{ width: columnSizes[index] }}>
+                {index === 0 ? (
+                  <div className="flex flex-col gap-1">
+                    <Skeleton height={16} width={120} />
+                    <Skeleton height={16} width={240} />
+                  </div>
+                ) : (
+                  <Skeleton height={16} width={60} />
+                )}
+              </Table.Cell>
+            ))}
+          </Table.Row>
+        ))}
+      </Table.Body>
+    </Table.Root>
+  )
+}
+
+export default ClusterDeploymentListSkeleton

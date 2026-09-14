@@ -51,9 +51,9 @@ function McpServerPicker({
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
-  const matchingMcpServers = availableMcpServers.filter(({ name, url }) =>
-    `${name} ${url}`.toLowerCase().includes(search.trim().toLowerCase())
-  )
+  const matchingMcpServers = availableMcpServers
+    .filter(({ attachable, id }) => attachable || value.includes(id))
+    .filter(({ name, url }) => `${name} ${url}`.toLowerCase().includes(search.trim().toLowerCase()))
   const connectedMcpServers = matchingMcpServers.filter(({ id }) => value.includes(id))
   const disconnectedMcpServers = matchingMcpServers.filter(({ id }) => !value.includes(id))
 
@@ -77,17 +77,12 @@ function McpServerPicker({
   }
 
   const mcpServerRow = (mcpServer: McpServerResponse, connected: boolean) => {
-    const canToggle = connected || mcpServer.attachable
-
     return (
       <button
         key={mcpServer.id}
         type="button"
-        disabled={!canToggle}
-        className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-transparent"
-        aria-label={
-          connected ? `Remove ${mcpServer.name}` : canToggle ? `Add ${mcpServer.name}` : `${mcpServer.name} unavailable`
-        }
+        className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong"
+        aria-label={connected ? `Remove ${mcpServer.name}` : `Add ${mcpServer.name}`}
         onClick={() =>
           onChange(connected ? value.filter((mcpServerId) => mcpServerId !== mcpServer.id) : [...value, mcpServer.id])
         }
@@ -101,7 +96,6 @@ function McpServerPicker({
             {mcpServer.scope === McpServerScope.USER
               ? `Personal · ${mcpServer.owner_name ?? 'Unknown owner'}`
               : 'Organization'}
-            {!canToggle ? ' · Not available to you' : ''}
           </p>
         </div>
         <span className="flex h-7 w-7 shrink-0 items-center justify-center">

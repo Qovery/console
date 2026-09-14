@@ -1,0 +1,138 @@
+import { Navigate, createFileRoute, useParams, useRouter } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
+import { useMemo, useRef } from 'react'
+import {
+  ClusterHeaderLogs,
+  ClusterLogsList,
+  getClusterDeploymentLogsRefetchInterval,
+  useCluster,
+  useClusterDeploymentHistory,
+  useClusterDeploymentLogs,
+  useClusterStatus,
+} from '@qovery/domains/clusters/feature'
+import { Banner, EmptyState, ExternalLink, LoaderDots } from '@qovery/shared/ui'
+import { QOVERY_DOCS_URL } from '@qovery/shared/util-const'
+
+export const Route = createFileRoute(
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId'
+)({
+  component: RouteComponent,
+})
+
+function RouteComponent() {
+  const { organizationId = '', clusterId = '', deploymentId = '' } = useParams({ strict: false })
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
+
+  // When the feature flag is off, fall back to the legacy cluster logs page
+  // without mounting the deployment-history/logs queries
+  if (!isClusterDeploymentHistoryEnabled) {
+    if (!organizationId || !clusterId) {
+      return null
+    }
+
+    return (
+      <Navigate
+        to="/organization/$organizationId/cluster/$clusterId/cluster-logs"
+        params={{ organizationId, clusterId }}
+        replace
+      />
+    )
+  }
+
+  return <ClusterDeploymentLogsPage organizationId={organizationId} clusterId={clusterId} deploymentId={deploymentId} />
+}
+
+function ClusterDeploymentLogsPage({
+  organizationId,
+  clusterId,
+  deploymentId,
+}: {
+  organizationId: string
+  clusterId: string
+  deploymentId: string
+}) {
+  const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
+    organizationId,
+    clusterId,
+    refetchInterval: (history) => {
+      const deployment = history?.find(({ identifier }) => identifier.deployment_id === deploymentId)
+      return getClusterDeploymentLogsRefetchInterval(deployment?.action_status)
+    },
+  })
+  const deployment = deploymentHistory.find(({ identifier }) => identifier.deployment_id === deploymentId)
+  const refetchInterval = getClusterDeploymentLogsRefetchInterval(deployment?.action_status)
+  const {
+    data: logs = [],
+    isLoading: isLogsLoading,
+    isFetched: isLogsFetched,
+  } = useClusterDeploymentLogs({
+    organizationId,
+    clusterId,
+    deploymentId,
+    refetchInterval,
+  })
+  const router = useRouter()
+  const { data: cluster } = useCluster({ organizationId, clusterId })
+  const { data: clusterStatus } = useClusterStatus({ organizationId, clusterId })
+
+  const refScrollSection = useRef<HTMLDivElement>(null)
+  const firstLogTimestamp = logs[0]?.timestamp
+  const firstDate = useMemo(() => (firstLogTimestamp ? new Date(firstLogTimestamp) : undefined), [firstLogTimestamp])
+
+  if (!cluster || !clusterStatus) {
+    return null
+  }
+
+  return (
+    <div className="flex h-page-container w-full flex-col overflow-hidden">
+      {isLogsLoading && !isLogsFetched ? (
+        <div className="flex h-full flex-1 flex-col items-center justify-center">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <LoaderDots />
+            <p className="text-neutral">Deployment logs are loading…</p>
+          </div>
+        </div>
+      ) : isLogsFetched && logs.length > 0 ? (
+        <>
+          <div className="flex h-11 min-h-11 w-full items-center border-b border-neutral bg-background">
+            <ClusterHeaderLogs
+              cluster={cluster}
+              clusterStatus={clusterStatus}
+              data={logs}
+              refScrollSection={refScrollSection}
+              executionId={deployment?.identifier.execution_id ?? deploymentId}
+              onBack={() => router.history.back()}
+              createdAt={deployment?.auditing_data.created_at}
+              origin={deployment?.auditing_data.origin}
+              triggeredBy={deployment?.auditing_data.triggered_by}
+              actionStatus={deployment?.action_status}
+              totalDuration={deployment?.total_duration}
+            />
+          </div>
+          {deployment?.action_status === 'ONGOING' && deployment?.reason === 'MAINTENANCE' && (
+            <Banner color="brand" className="shrink-0 gap-3">
+              Qovery maintenance is in progress with no impact on your applications availability.
+              <ExternalLink
+                href={`${QOVERY_DOCS_URL}/getting-started/configuration/maintenance#update-strategy`}
+                color="brand"
+                underline
+              >
+                Maintenance strategy
+              </ExternalLink>
+            </Banner>
+          )}
+          <ClusterLogsList logs={logs} firstDate={firstDate} refScrollSection={refScrollSection} />
+        </>
+      ) : (
+        <div className="flex h-full w-full flex-col items-center justify-center">
+          <EmptyState
+            className="border-none bg-transparent"
+            title="No logs found"
+            description="No logs found for this deployment. Please try again later."
+            icon="cube"
+          />
+        </div>
+      )}
+    </div>
+  )
+}

@@ -158,7 +158,7 @@ export function PageOrganizationBillingSummary(props: PageOrganizationBillingSum
               </Callout.Text>
               <div className="flex gap-2">
                 <Button size="sm" variant="solid" color="red" onClick={() => props.onActivateAccountClick?.()}>
-                  Activate my plan
+                  Contact our Team
                 </Button>
                 {showErrorCallout && (
                   <Button size="sm" variant="solid" color="yellow" onClick={() => props.onCancelTrialClick?.()}>

@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
+import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { APIVariableScopeEnum, type McpServerResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useRef, useState } from 'react'
@@ -9,7 +10,6 @@ import { type VariableData } from '@qovery/shared/interfaces'
 import {
   Accordion,
   Button,
-  Callout,
   CodeEditor,
   Heading,
   Icon,
@@ -19,7 +19,11 @@ import {
   Section,
   useModal,
 } from '@qovery/shared/ui'
-import { ENVIRONMENT_VARIABLE_NAME_PATTERN, prepareVariableImportRequest } from '@qovery/shared/util-js'
+import {
+  ENVIRONMENT_VARIABLE_NAME_PATTERN,
+  formatCronExpression,
+  prepareVariableImportRequest,
+} from '@qovery/shared/util-js'
 import { AgenticWorkflowExecutionModeSelector } from '../../../agentic-workflow-execution-mode-selector/agentic-workflow-execution-mode-selector'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
 import {
@@ -57,12 +61,15 @@ export function isGitRepositoryComplete(repository: AgenticWorkflowGitRepository
   )
 }
 
-export function summarizeAutomation(automation: AgenticWorkflowAutomation) {
-  const summary = automation.triggers
-    .map((trigger) => (trigger.type === 'schedule' ? 'Schedule' : 'Webhook'))
+export function summarizeTriggers(automation: AgenticWorkflowAutomation) {
+  return automation.triggers
+    .map((trigger) => {
+      if (trigger.type === 'webhook') return 'Webhook'
+
+      const schedule = formatCronExpression(trigger.cronExpression) || trigger.cronExpression || 'Schedule'
+      return trigger.timezone ? `${schedule} (${trigger.timezone})` : schedule
+    })
     .join(' + ')
-  const outputCount = automation.outputs.length
-  return outputCount ? `${summary} → ${outputCount} output${outputCount > 1 ? 's' : ''}` : summary
 }
 
 export function areVariablesValid(variables: VariableData[]) {
@@ -94,7 +101,10 @@ function SettingsAccordionItem({
     <Accordion.Item value={value} className="border-b border-neutral last:rounded-b-none">
       <Accordion.Trigger
         data-settings-group={value}
-        className="w-full cursor-pointer justify-between gap-3 bg-background-secondary px-4 py-4 text-left focus-visible:bg-surface-neutral-subtle focus-visible:outline-none"
+        className={clsx('w-full cursor-pointer justify-between gap-3 px-4 py-4 text-left focus-visible:outline-none', {
+          'bg-surface-negative-subtle focus-visible:bg-surface-negative-subtle': invalid,
+          'bg-background-secondary focus-visible:bg-surface-neutral-subtle': !invalid,
+        })}
         iconClassName="order-2 ml-auto"
       >
         <div className="flex min-w-0 flex-1 items-center gap-3">
@@ -105,7 +115,7 @@ function SettingsAccordionItem({
           {summary ? <span className="ml-auto truncate text-xs font-normal text-neutral-subtle">{summary}</span> : null}
         </div>
       </Accordion.Trigger>
-      <Accordion.Content className="bg-background-secondary">
+      <Accordion.Content className={invalid ? 'bg-surface-negative-subtle' : 'bg-background-secondary'}>
         <div className="flex flex-col gap-4 px-4 pb-5">{children}</div>
       </Accordion.Content>
     </Accordion.Item>
@@ -284,11 +294,10 @@ export function AgenticWorkflowConfiguration() {
     return groups
   })
   const [providerModalOpen, setProviderModalOpen] = useState(false)
-  const [activeSheet, setActiveSheet] = useState<'mcp' | 'automation' | null>(null)
+  const [activeSheet, setActiveSheet] = useState<'mcp' | 'triggers' | 'outputs' | null>(null)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
-  const [showTriggerError, setShowTriggerError] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
@@ -371,6 +380,13 @@ export function AgenticWorkflowConfiguration() {
 
   const validateConfiguration = async () => {
     setShowValidationErrors(true)
+    if (!variablesValid) {
+      setOpenSettingsGroups((groups) => (groups.includes('variables') ? groups : [...groups, 'variables']))
+      await new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()))
+      })
+      await variablesForm.trigger()
+    }
 
     if (!values.name.trim()) {
       headerRef.current?.focusName()
@@ -397,8 +413,6 @@ export function AgenticWorkflowConfiguration() {
     }
 
     if (!automationValid) {
-      setShowTriggerError(true)
-      setActiveSheet('automation')
       return false
     }
 
@@ -408,7 +422,9 @@ export function AgenticWorkflowConfiguration() {
 
     if (firstInvalidGroup) {
       focusSettingsGroup(firstInvalidGroup)
-      await variablesForm.trigger()
+      await new Promise<void>((resolve) => {
+        window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()))
+      })
 
       const invalidVariableIndex = variableValues.findIndex(
         (variable) => getInvalidVariableField(variable) !== undefined
@@ -557,14 +573,6 @@ export function AgenticWorkflowConfiguration() {
         summary={variables.length > 0 ? `${variables.length} configured` : undefined}
         invalid={showValidationErrors && settingsGroupsInvalid.variables}
       >
-        {showValidationErrors && !variablesValid ? (
-          <Callout.Root color="red">
-            <Callout.Icon>
-              <Icon iconName="circle-xmark" />
-            </Callout.Icon>
-            <Callout.Text>Complete every environment variable name and value.</Callout.Text>
-          </Callout.Root>
-        ) : null}
         <div className="flex flex-wrap gap-2">
           <Button
             type="button"
@@ -612,7 +620,7 @@ export function AgenticWorkflowConfiguration() {
                   availableScopes={[APIVariableScopeEnum.AGENTIC_WORKFLOW]}
                   gridTemplateColumns="minmax(0, 1fr) minmax(0, 1fr) 36px"
                   showScope={false}
-                  errorMessagePosition="bottom"
+                  errorMessagePosition="none"
                   onDelete={removeVariable}
                 />
               ))}
@@ -709,7 +717,7 @@ export function AgenticWorkflowConfiguration() {
 
   return (
     <div className="flex min-h-0 w-full flex-col overflow-hidden bg-background">
-      <header className="flex h-16 shrink-0 items-center justify-between border-b border-neutral px-4 sm:px-6">
+      <header className="flex h-16 shrink-0 items-center justify-between border-b border-neutral px-4">
         <Button type="button" color="neutral" variant="plain" aria-label="Back" iconOnly onClick={onExit}>
           <Icon iconName="arrow-left" />
         </Button>
@@ -806,18 +814,42 @@ export function AgenticWorkflowConfiguration() {
                   Add MCP
                 </Button>
               </ConfigurationRow>
-              <ConfigurationRow label="Automations">
+              <ConfigurationRow label="Triggers">
                 <Button
                   type="button"
                   size="sm"
                   color="neutral"
                   variant="outline"
                   className="max-w-full"
-                  onClick={() => setActiveSheet('automation')}
+                  onClick={() => setActiveSheet('triggers')}
                 >
                   <Icon iconName="stopwatch" iconStyle="regular" />
                   <span className="truncate">
-                    {automation.triggers.length ? summarizeAutomation(automation) : 'Add automation'}
+                    {automation.triggers.length ? summarizeTriggers(automation) : 'Add trigger'}
+                  </span>
+                </Button>
+                {!automation.triggers.length ? (
+                  <span
+                    className={`text-xs ${showValidationErrors ? 'font-medium text-negative' : 'text-neutral-subtle'}`}
+                  >
+                    Trigger required
+                  </span>
+                ) : null}
+              </ConfigurationRow>
+              <ConfigurationRow label="Output">
+                <Button
+                  type="button"
+                  size="sm"
+                  color="neutral"
+                  variant="outline"
+                  className="max-w-full"
+                  onClick={() => setActiveSheet('outputs')}
+                >
+                  <Icon iconName="webhook" iconStyle="regular" />
+                  <span className="truncate">
+                    {automation.outputs.length
+                      ? `${automation.outputs.length} output${automation.outputs.length > 1 ? 's' : ''}`
+                      : 'Add output'}
                   </span>
                 </Button>
               </ConfigurationRow>
@@ -914,14 +946,13 @@ export function AgenticWorkflowConfiguration() {
         />
       ) : null}
 
-      {activeSheet === 'automation' ? (
+      {activeSheet === 'triggers' || activeSheet === 'outputs' ? (
         <AutomationSheet
           automation={automation}
-          showTriggerError={showTriggerError}
+          section={activeSheet}
           onClose={() => setActiveSheet(null)}
           onSave={(nextAutomation) => {
             form.setValue('automations', [nextAutomation], { shouldDirty: true })
-            setShowTriggerError(false)
           }}
         />
       ) : null}

@@ -86,10 +86,10 @@ const CLUSTER_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/overview',
   },
   {
-    id: 'cluster-logs',
-    label: 'Deployment Logs',
-    iconName: 'scroll',
-    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+    id: 'deployments',
+    label: 'Deployments',
+    iconName: 'rocket',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments',
   },
   {
     id: 'cloud-shell',
@@ -104,6 +104,20 @@ const CLUSTER_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   },
 ]
+
+// Legacy tab shown when the `cluster-deployment-history` feature flag is off
+const LEGACY_CLUSTER_LOGS_TAB: NavigationTab = {
+  id: 'cluster-logs',
+  label: 'Deployment Logs',
+  iconName: 'scroll',
+  routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+}
+
+function getClusterTabs(isClusterDeploymentHistoryEnabled: boolean): NavigationTab[] {
+  return isClusterDeploymentHistoryEnabled
+    ? CLUSTER_TABS
+    : CLUSTER_TABS.map((tab) => (tab.id === 'deployments' ? LEGACY_CLUSTER_LOGS_TAB : tab))
+}
 
 const PROJECT_TABS: NavigationTab[] = [
   {
@@ -335,6 +349,7 @@ function useNavigationContext(): NavigationContext | null {
   const pathname = location.pathname
   const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
+  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
@@ -374,7 +389,9 @@ function useNavigationContext(): NavigationContext | null {
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled)
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
-              : context.tabs
+              : context.type === 'cluster'
+                ? getClusterTabs(isClusterDeploymentHistoryEnabled)
+                : context.tabs
 
         return {
           type: context.type,
@@ -470,6 +487,7 @@ function NavigationBar({ context }: { context: NavigationContext }) {
 const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/alerts',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',

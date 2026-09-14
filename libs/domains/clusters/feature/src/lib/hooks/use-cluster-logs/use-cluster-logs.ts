@@ -5,12 +5,14 @@ interface UseClusterLogsProps {
   organizationId: string
   clusterId: string
   refetchInterval?: number
+  enabled?: boolean
 }
 
-export function useClusterLogs({ organizationId, clusterId, refetchInterval }: UseClusterLogsProps) {
+export function useClusterLogs({ organizationId, clusterId, refetchInterval, enabled = true }: UseClusterLogsProps) {
   return useQuery({
     ...queries.clusters.logs({ organizationId, clusterId }),
     refetchInterval,
+    enabled,
   })
 }
 

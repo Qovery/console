@@ -149,7 +149,7 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
                   </Callout.TextDescription>
                 </Callout.Text>
                 <Button size="sm" variant="solid" onClick={() => showPylonForm('ask-for-activation')}>
-                  Activate my plan
+                  Contact our Team
                 </Button>
               </Callout.Root>
             )}

@@ -14,7 +14,7 @@ export interface VariableRowProps {
   availableScopes: APIVariableScopeEnum[]
   gridTemplateColumns?: string
   showScope?: boolean
-  errorMessagePosition?: 'left' | 'bottom'
+  errorMessagePosition?: 'left' | 'bottom' | 'none'
 }
 
 export function VariableRow(props: VariableRowProps) {

@@ -1,20 +1,60 @@
 import download from 'downloadjs'
 import posthog from 'posthog-js'
-import { type Cluster, type ClusterLogs, type ClusterStatus } from 'qovery-typescript-axios'
+import {
+  type Cluster,
+  type ClusterLogs,
+  type ClusterStatus,
+  type DeploymentHistoryActionStatus,
+  OrganizationEventOrigin,
+} from 'qovery-typescript-axios'
 import { type RefObject, useContext } from 'react'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/feature'
-import { Badge, Button, CopyToClipboardButtonIcon, Icon, Tooltip } from '@qovery/shared/ui'
-import { trimId } from '@qovery/shared/util-js'
+import { Button, Icon, Tooltip, Truncate } from '@qovery/shared/ui'
+import { dateDifference, dateFullFormat, dateUTCString, formatDuration } from '@qovery/shared/util-dates'
+import { useIntervalTick } from '@qovery/shared/util-hooks'
+import { EventOriginIcon } from '@qovery/shared/util-icons'
+import { trimId, upperCaseFirstLetter } from '@qovery/shared/util-js'
+
+function getOriginLabel(origin?: OrganizationEventOrigin | null) {
+  if (!origin) return undefined
+
+  return origin === OrganizationEventOrigin.API || origin === OrganizationEventOrigin.CLI
+    ? origin
+    : upperCaseFirstLetter(origin.toLowerCase().replace('_', ' '))
+}
 
 export interface ClusterHeaderLogsProps {
   cluster: Cluster
   clusterStatus: ClusterStatus
   refScrollSection: RefObject<HTMLDivElement>
   data: ClusterLogs[]
+  executionId?: string
+  onBack?: () => void
+  createdAt?: string
+  origin?: OrganizationEventOrigin | null
+  triggeredBy?: string | null
+  actionStatus?: DeploymentHistoryActionStatus
+  totalDuration?: string | null
 }
 
-export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, data }: ClusterHeaderLogsProps) {
+export function ClusterHeaderLogs({
+  cluster,
+  clusterStatus,
+  refScrollSection,
+  data,
+  executionId,
+  onBack,
+  createdAt,
+  origin,
+  triggeredBy,
+  actionStatus,
+  totalDuration,
+}: ClusterHeaderLogsProps) {
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
+
+  const isDeploymentOngoing =
+    (actionStatus === 'ONGOING' || actionStatus === 'CANCELING' || actionStatus === 'EXECUTING') && Boolean(createdAt)
+  useIntervalTick(isDeploymentOngoing)
 
   const hasDeploymentError = [
     'BUILD_ERROR',
@@ -40,11 +80,52 @@ export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, da
     }
   }
 
-  const lastExecutionId = clusterStatus.last_execution_id ?? ''
+  const lastExecutionId = executionId ?? clusterStatus.last_execution_id ?? ''
 
   return (
     <div className="flex w-full items-center justify-between gap-2 pl-5 pr-3 text-sm">
       <div className="flex items-center gap-2">
+        {onBack && (
+          <Button onClick={onBack} variant="plain" iconOnly>
+            <Icon className="text-base" iconName="arrow-left" iconStyle="regular" />
+          </Button>
+        )}
+        {createdAt && (
+          <>
+            <span
+              className="flex items-center gap-1.5 truncate whitespace-nowrap font-normal text-neutral"
+              title={dateUTCString(createdAt)}
+            >
+              <Icon iconName="calendar" iconStyle="regular" className="text-sm text-neutral-subtle" />
+              {dateFullFormat(createdAt, undefined, 'dd MMM, HH:mm')}
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+              <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
+            </svg>
+          </>
+        )}
+        {(isDeploymentOngoing || totalDuration) && (
+          <>
+            <span className="flex items-center gap-1.5 whitespace-nowrap font-normal text-neutral">
+              <Icon iconName="stopwatch" iconStyle="regular" className="text-sm text-neutral-subtle" />
+              {isDeploymentOngoing && createdAt
+                ? dateDifference(new Date(), new Date(createdAt))
+                : formatDuration(totalDuration ?? '')}
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+              <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
+            </svg>
+          </>
+        )}
+        <Tooltip side="bottom" content={<span>Execution id: {lastExecutionId}</span>}>
+          <span className="flex items-center gap-1 truncate">
+            <Icon iconName="code" iconStyle="regular" className="text-sm text-neutral-subtle" />
+            <span className="truncate font-normal text-neutral">{trimId(lastExecutionId)}</span>
+          </span>
+        </Tooltip>
+        <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+          <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
+        </svg>
         <Tooltip
           side="bottom"
           content={
@@ -54,26 +135,23 @@ export function ClusterHeaderLogs({ cluster, clusterStatus, refScrollSection, da
             </span>
           }
         >
-          <Badge variant="surface" className="max-w-full whitespace-nowrap text-sm">
-            {cluster.version}
-          </Badge>
+          <span className="whitespace-nowrap font-normal text-neutral">{cluster.version}</span>
         </Tooltip>
-        <Tooltip side="bottom" content={<span>Execution id: {lastExecutionId}</span>}>
-          <span className="group flex items-center gap-1 truncate">
-            <Icon iconName="code" iconStyle="regular" className="text-sm text-neutral-subtle" />
-            <span className="flex items-center gap-0.5 truncate">
-              <span className="font-normal text-neutral">{trimId(lastExecutionId)}</span>
-              {lastExecutionId && (
-                <CopyToClipboardButtonIcon
-                  content={lastExecutionId}
-                  tooltipContent="Copy execution id"
-                  className="opacity-0 transition-opacity group-hover:opacity-100"
-                  iconClassName="text-xs"
-                />
-              )}
+        {(origin || triggeredBy) && (
+          <>
+            <svg xmlns="http://www.w3.org/2000/svg" width="5" height="6" fill="none" viewBox="0 0 5 6">
+              <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)"></circle>
+            </svg>
+            <span className="flex items-center gap-1.5 truncate whitespace-nowrap font-normal text-neutral">
+              <span className="text-sm text-neutral-subtle">
+                {origin ? <EventOriginIcon origin={origin} /> : <Icon iconName="user" iconStyle="regular" />}
+              </span>
+              {origin && <span>{getOriginLabel(origin)}</span>}
+              {triggeredBy && <span className="text-neutral-subtle">deployed by</span>}
+              {triggeredBy && <Truncate text={triggeredBy} truncateLimit={25} />}
             </span>
-          </span>
-        </Tooltip>
+          </>
+        )}
       </div>
       <div className="flex items-center gap-2">
         {hasDeploymentError && (

@@ -6,6 +6,10 @@ import ClusterDeploymentProgressCard, {
 } from './cluster-deployment-progress-card'
 import { useDeploymentProgress } from './use-deployment-progress'
 
+jest.mock('posthog-js/react', () => ({
+  useFeatureFlagEnabled: jest.fn(() => true),
+}))
+
 jest.mock('@qovery/domains/projects/feature', () => ({
   ...jest.requireActual('@qovery/domains/projects/feature'),
   useProjects: jest.fn(),

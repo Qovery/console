@@ -39,7 +39,7 @@ describe('AgenticWorkflowServiceList', () => {
     expect(container).toBeEmptyDOMElement()
   })
 
-  it('should render agentic workflows in their own section', () => {
+  it('should render agentic workflows with their triggers', async () => {
     mockUseServices.mockReturnValue({
       data: [
         {
@@ -48,6 +48,11 @@ describe('AgenticWorkflowServiceList', () => {
           enabled: true,
           model: { type: 'CLAUDE' },
           webhook: { url: 'https://api.qovery.com/workflows/workflow-1' },
+          schedule: {
+            cron_expression: '0 9 * * 1-5',
+            timezone: 'Europe/Paris',
+            next_run_at: '2026-09-14T07:00:00Z',
+          },
           service_type: 'AGENTIC_WORKFLOW',
           serviceType: 'AGENTIC_WORKFLOW',
           project_repositories: [
@@ -68,7 +73,7 @@ describe('AgenticWorkflowServiceList', () => {
         { id: 'application-1', name: 'API', service_type: 'APPLICATION', serviceType: 'APPLICATION' },
       ],
     })
-    renderWithProviders(<AgenticWorkflowServiceList environment={environment} />)
+    const { container, userEvent } = renderWithProviders(<AgenticWorkflowServiceList environment={environment} />)
 
     expect(screen.getByRole('heading', { name: 'Agent tasks' })).toBeInTheDocument()
     expect(screen.getByText('Review pull requests')).toBeInTheDocument()
@@ -76,13 +81,20 @@ describe('AgenticWorkflowServiceList', () => {
     expect(screen.getByText('Enabled')).toBeInTheDocument()
     expect(screen.getByText('Disabled')).toBeInTheDocument()
     expect(screen.getByText('1 enabled')).toBeInTheDocument()
+    expect(screen.getByText('Service').closest('th')).toHaveClass('col-span-3')
     expect(screen.getByText('Last operation')).toBeInTheDocument()
-    expect(screen.getByText('Model')).toBeInTheDocument()
-    expect(screen.getByText('Webhook')).toBeInTheDocument()
-    expect(screen.getByText('Claude')).toBeInTheDocument()
-    expect(screen.getByText('Bedrock')).toBeInTheDocument()
-    expect(screen.getByText('https://api.qovery.com/workflows/workflow-1')).toBeInTheDocument()
-    expect(screen.getByText('https://api.qovery.com/workflows/workflow-2')).toBeInTheDocument()
+    expect(screen.queryByText('Model')).not.toBeInTheDocument()
+    expect(screen.getByText('Trigger')).toBeInTheDocument()
+    expect(container.querySelector('table')).not.toHaveClass('min-w-[1320px]', 'overflow-x-scroll')
+    expect(screen.queryByText('Claude')).not.toBeInTheDocument()
+    expect(screen.queryByText('Bedrock')).not.toBeInTheDocument()
+    expect(screen.getAllByText('Webhook')).toHaveLength(2)
+    expect(screen.getByText('Schedule · 14 Sep, 09:00')).toBeInTheDocument()
+    expect(screen.queryByText('https://api.qovery.com/workflows/workflow-1')).not.toBeInTheDocument()
+
+    await userEvent.hover(screen.getAllByText('Webhook')[0])
+
+    expect((await screen.findAllByText('https://api.qovery.com/workflows/workflow-1')).length).toBeGreaterThan(0)
     expect(screen.queryByText('Git repositories')).not.toBeInTheDocument()
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Actions for workflow-1' })).toBeInTheDocument()

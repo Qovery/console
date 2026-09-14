@@ -5,6 +5,7 @@ import {
   type ClusterAdvancedSettings,
   type ClusterCloudProviderInfoRequest,
   type ClusterDeleteMode,
+  ClusterDeploymentHistoryApi,
   type ClusterDnsProviderRequest,
   type ClusterRequest,
   type ClusterRoutingTableRequest,
@@ -15,6 +16,7 @@ import {
 import { type ClusterMetricsDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
 
 const clusterApi = new ClustersApi()
+const clusterDeploymentHistoryApi = new ClusterDeploymentHistoryApi()
 const argoCdApi = new ArgoCDApi()
 const secretManagerApi = new SecretManagerAccessApi()
 const organizationApi = new OrganizationMainCallsApi()
@@ -87,6 +89,44 @@ export const clusters = createQueryKeys('clusters', {
     queryKey: [organizationId, clusterId],
     async queryFn() {
       const response = await clusterApi.listClusterLogs(organizationId, clusterId)
+      return response.data.results
+    },
+  }),
+  deploymentHistory: ({
+    organizationId,
+    clusterId,
+    pageSize,
+  }: {
+    organizationId: string
+    clusterId: string
+    pageSize?: number
+  }) => ({
+    queryKey: [organizationId, clusterId, pageSize],
+    async queryFn() {
+      const response = await clusterDeploymentHistoryApi.listClusterDeploymentHistoryV2(
+        organizationId,
+        clusterId,
+        pageSize
+      )
+      return response.data.results ?? []
+    },
+  }),
+  deploymentLogs: ({
+    organizationId,
+    clusterId,
+    deploymentId,
+  }: {
+    organizationId: string
+    clusterId: string
+    deploymentId: string
+  }) => ({
+    queryKey: [organizationId, clusterId, deploymentId],
+    async queryFn() {
+      const response = await clusterDeploymentHistoryApi.listClusterDeploymentLogs(
+        organizationId,
+        clusterId,
+        deploymentId
+      )
       return response.data.results
     },
   }),

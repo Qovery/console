@@ -37,6 +37,14 @@ describe('ClusterHeaderLogs', () => {
     expect(baseElement).toBeTruthy()
   })
 
+  it('should identify the deployment source and initiator', () => {
+    renderWithProviders(<ClusterHeaderLogs {...props} origin="CONSOLE" triggeredBy="Romain Billard" />)
+
+    expect(screen.getByText('Console')).toBeInTheDocument()
+    expect(screen.getByText('deployed by')).toBeInTheDocument()
+    expect(screen.getByText('Romain Billard')).toBeInTheDocument()
+  })
+
   it('should trigger scroll up on click', async () => {
     const { userEvent } = renderWithProviders(<ClusterHeaderLogs {...props} />)
     const scrollUpButton = screen.getByTestId('scroll-up-button')
