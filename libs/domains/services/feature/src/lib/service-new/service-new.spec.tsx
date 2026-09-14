@@ -181,7 +181,7 @@ describe('ServiceNew', () => {
     expect(screen.getByRole('link', { name: /Jira Coding Agent/i })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Linear Coding Agent/i })).toBeInTheDocument()
     const buildOptimizerCard = screen.getByRole('link', { name: /Build & deployment optimizer/i })
-    const buildOptimizerIcon = buildOptimizerCard.querySelector('.h-9.w-9.text-brand')
+    const buildOptimizerIcon = buildOptimizerCard.querySelector('.h-8.w-8.text-brand')
     expect(buildOptimizerIcon).toBeInTheDocument()
     expect(buildOptimizerIcon).not.toHaveAttribute('width')
     expect(buildOptimizerIcon).not.toHaveAttribute('height')

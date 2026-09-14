@@ -27,9 +27,9 @@ export type ServiceBlock = {
   showDescription?: boolean
 }
 
-function resizeIcon(icon: ReactElement, size: 20 | 36) {
+function resizeIcon(icon: ReactElement, size: 20 | 32) {
   const iconWithClassName = icon as ReactElement<{ className?: string; height?: number; width?: number }>
-  const className = twMerge(iconWithClassName.props.className, size === 20 ? 'h-5 w-5 shrink-0' : 'h-9 w-9 shrink-0')
+  const className = twMerge(iconWithClassName.props.className, size === 20 ? 'h-5 w-5 shrink-0' : 'h-8 w-8 shrink-0')
 
   // Agent use-case icons use a span wrapper, which is sized by classes rather than width/height attributes.
   return icon.type === 'span'
@@ -65,7 +65,7 @@ export function BaseServiceCard({ title, description, icon, link, search, onClic
   const detailedContent = (
     <>
       <span className="flex w-full items-start justify-between gap-3">
-        {resizeIcon(icon, 36)}
+        {resizeIcon(icon, 32)}
         <Icon iconName="chevron-right" className="shrink-0 text-sm text-neutral-subtle" />
       </span>
       <span className="flex w-full min-w-0 flex-col gap-1">
