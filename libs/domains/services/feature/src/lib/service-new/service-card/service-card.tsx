@@ -27,6 +27,16 @@ export type ServiceBlock = {
   showDescription?: boolean
 }
 
+function resizeIcon(icon: ReactElement, size: 20 | 36) {
+  const iconWithClassName = icon as ReactElement<{ className?: string; height?: number; width?: number }>
+
+  return cloneElement(iconWithClassName, {
+    width: size,
+    height: size,
+    className: twMerge(iconWithClassName.props.className, size === 20 ? 'h-5 w-5 shrink-0' : 'h-9 w-9 shrink-0'),
+  })
+}
+
 export function BaseServiceCard({ title, description, icon, link, search, onClick, showDescription }: ServiceBlock) {
   const className = clsx(
     'flex w-full rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)] hover:bg-surface-neutral-subtle',
@@ -35,7 +45,7 @@ export function BaseServiceCard({ title, description, icon, link, search, onClic
   const compactContent = (
     <>
       <span className="flex min-w-0 items-center gap-1.5">
-        {cloneElement(icon as ReactElement, { width: 20, height: 20, className: 'h-5 w-5 shrink-0' })}
+        {resizeIcon(icon, 20)}
         <span className="min-w-0">
           <span className="flex min-w-0 items-center gap-1.5">
             <span className="truncate text-sm font-medium leading-5 text-neutral">{title}</span>
@@ -55,10 +65,10 @@ export function BaseServiceCard({ title, description, icon, link, search, onClic
   const detailedContent = (
     <>
       <span className="flex w-full items-start justify-between gap-3">
-        {cloneElement(icon as ReactElement, { width: 36, height: 36, className: 'h-9 w-9 shrink-0' })}
+        {resizeIcon(icon, 36)}
         <Icon iconName="chevron-right" className="shrink-0 text-sm text-neutral-subtle" />
       </span>
-      <span className="flex min-w-0 flex-col gap-1">
+      <span className="flex w-full min-w-0 flex-col gap-1">
         <span className="text-sm font-medium leading-5 text-neutral">{title}</span>
         <span className="line-clamp-3 text-xs font-normal leading-5 text-neutral-subtle">{description}</span>
       </span>

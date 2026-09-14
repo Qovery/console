@@ -9,6 +9,7 @@ const mockNavigate = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockCopyToClipboard = jest.fn()
 const mockAuditLogsLink = jest.fn()
+let mockIsDeploying = false
 
 jest.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockNavigate,
@@ -44,7 +45,7 @@ jest.mock('../hooks/use-delete-service/use-delete-service', () => ({
 }))
 
 jest.mock('../hooks/use-deploy-agentic-workflow/use-deploy-agentic-workflow', () => ({
-  useDeployAgenticWorkflow: () => ({ mutate: mockDeployAgenticWorkflow, isLoading: false }),
+  useDeployAgenticWorkflow: () => ({ mutate: mockDeployAgenticWorkflow, isLoading: mockIsDeploying }),
 }))
 
 jest.mock('@qovery/shared/util-hooks', () => ({
@@ -67,6 +68,7 @@ describe('AgenticWorkflowServiceActions', () => {
 
   beforeEach(() => {
     jest.clearAllMocks()
+    mockIsDeploying = false
   })
 
   it('only exposes audit logs, metadata, and delete actions', async () => {
@@ -115,6 +117,14 @@ describe('AgenticWorkflowServiceActions', () => {
     renderWithProviders(<AgenticWorkflowServiceActions environment={environment} service={service} variant="header" />)
 
     expect(screen.getByRole('button', { name: 'Trigger' })).toBeInTheDocument()
+  })
+
+  it('disables the trigger button while a request is pending', () => {
+    mockIsDeploying = true
+
+    renderWithProviders(<AgenticWorkflowServiceActions environment={environment} service={service} />)
+
+    expect(screen.getByRole('button', { name: 'Trigger' })).toBeDisabled()
   })
 
   it('shows and copies service metadata', async () => {

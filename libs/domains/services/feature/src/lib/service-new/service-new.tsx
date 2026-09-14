@@ -302,7 +302,7 @@ export function ServiceNew({
         description: template.description,
         showDescription: true,
         icon: (
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span className="flex items-center justify-center text-brand">
             {template.logoPath ? (
               <>
                 <img
@@ -315,7 +315,7 @@ export function ServiceNew({
                 )}
               </>
             ) : template.iconName ? (
-              <Icon iconName={template.iconName} iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
+              <Icon iconName={template.iconName} iconStyle="regular" className="text-2xl" />
             ) : null}
           </span>
         ),
@@ -329,8 +329,8 @@ export function ServiceNew({
         description: 'Start with a blank agent task and configure everything yourself.',
         showDescription: true,
         icon: (
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon iconName="circle-plus" iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
+          <span className="flex items-center justify-center text-brand">
+            <Icon iconName="circle-plus" iconStyle="regular" className="text-2xl" />
           </span>
         ),
         link: getServicesPath(organizationId, projectId, environmentId, '/service/create/agentic-workflow'),
@@ -342,8 +342,8 @@ export function ServiceNew({
         description: 'Tell us which agent use case you need and we will help you set it up.',
         showDescription: true,
         icon: (
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Icon iconName="paper-plane" iconStyle="regular" className="text-2xl text-[color:var(--brand-9)]" />
+          <span className="flex items-center justify-center text-brand">
+            <Icon iconName="paper-plane" iconStyle="regular" className="text-2xl" />
           </span>
         ),
         onClick: () => showPylonForm('request-ai-builder-portal'),
@@ -387,7 +387,7 @@ export function ServiceNew({
                   color="brand"
                   variant="surface"
                   size="sm"
-                  className="h-4 border-transparent bg-surface-brand-solid px-1 text-[8px] font-semibold text-neutralInvert"
+                  className="h-4 border-transparent bg-surface-brand-solid px-1 pt-[1px] text-[8px] font-semibold text-neutralInvert"
                 >
                   BETA
                 </Badge>

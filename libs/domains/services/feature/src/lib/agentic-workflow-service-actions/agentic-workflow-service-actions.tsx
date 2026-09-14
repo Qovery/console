@@ -70,6 +70,7 @@ export function AgenticWorkflowServiceActions({
           size={variant === 'header' ? 'md' : 'sm'}
           iconOnly
           loading={isDeploying}
+          disabled={isDeploying}
           onClick={() => deployAgenticWorkflow({ agenticWorkflowId: service.id })}
           onKeyDown={onAction}
         >
