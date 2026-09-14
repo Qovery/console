@@ -6,6 +6,7 @@ import {
 import {
   applyPlatformConfigurationDefaults,
   createPlatformConfigurationDraft,
+  filterPlatformLayerSelections,
   getCurrentPlatformConfigurationPreview,
   isPlatformConfigurationReady,
   omitEmptyValues,
@@ -27,6 +28,19 @@ const field: FieldSchemaResponse = {
 }
 
 describe('platform configuration utils', () => {
+  it('drops retired layer selections without losing enabled or disabled choices', () => {
+    const selections = { karpenter: true, 'dns-certificates': false, 'karpenter-custom-configuration': true }
+    expect(filterPlatformLayerSelections([{ key: 'karpenter' }, { key: 'dns-certificates' }], selections)).toEqual({
+      karpenter: true,
+      'dns-certificates': false,
+    })
+    expect(selections).toEqual({ karpenter: true, 'dns-certificates': false, 'karpenter-custom-configuration': true })
+  })
+
+  it('does not invent layer selections that were not in the draft', () => {
+    expect(filterPlatformLayerSelections([{ key: 'karpenter' }], {})).toEqual({})
+  })
+
   it('maps cluster API context to the platform catalog context', () => {
     expect(toPlatformClusterMode('MANAGED')).toBe('QOVERY_MANAGED')
     expect(toPlatformClusterMode('SELF_MANAGED')).toBe('CUSTOMER_MANAGED')

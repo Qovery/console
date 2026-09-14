@@ -1,11 +1,20 @@
 import {
+  type FieldSchemaResponse,
   type PlatformComponentConfigurationResolutionResponse,
   type PlatformComponentInputRequirementResponse,
   type PlatformTemplateComponentResponse,
 } from 'qovery-typescript-axios'
 import { useRef } from 'react'
 import { match } from 'ts-pattern'
-import { Badge, Button, Callout, CatalogVariableInput, Heading, Icon } from '@qovery/shared/ui'
+import {
+  Badge,
+  Button,
+  Callout,
+  CatalogConfigurationInput,
+  CatalogVariableInput,
+  Heading,
+  Icon,
+} from '@qovery/shared/ui'
 import { type CatalogVariableValue, formatCatalogKey, getCatalogVariableValue } from '@qovery/shared/util-js'
 import {
   getFieldViolation,
@@ -21,13 +30,13 @@ interface PlatformComponentConfigurationProps {
   isSaving: boolean
   hasPreviewError: boolean
   onClusterInputChange: (key: string, value: CatalogVariableValue) => void
-  onProfileConfigChange: (key: string, value: CatalogVariableValue) => void
+  onProfileConfigChange: (key: string, value: unknown) => void
   onSave: () => void
   preview?: PlatformComponentConfigurationResolutionResponse
   profileConfig: Record<string, unknown>
 }
 
-function RequirementStatus({ status }: { status: 'MISSING' | 'READY' }) {
+function RequirementStatus({ status }: { status: PlatformComponentInputRequirementResponse['status'] }) {
   return match(status)
     .with('READY', () => null)
     .with('MISSING', () => (
@@ -50,22 +59,31 @@ export function PlatformComponentConfiguration({
   preview,
   profileConfig,
 }: PlatformComponentConfigurationProps) {
-  const fields = preview?.fields ?? component.fields
   // The preview is undefined while a new resolution is debounced/fetched. Keep the
   // last known requirements for the same component so their inputs (including the
   // one being typed into) don't unmount and lose focus on every keystroke.
   const lastRequirementsRef = useRef<{
     componentKey: string
     requirements: PlatformComponentInputRequirementResponse[]
+    fields: FieldSchemaResponse[]
   }>()
   if (preview) {
-    lastRequirementsRef.current = { componentKey: component.key, requirements: preview.requirements }
+    lastRequirementsRef.current = {
+      componentKey: component.key,
+      requirements: preview.requirements,
+      fields: preview.fields,
+    }
   }
+  const fields =
+    preview?.fields ??
+    (lastRequirementsRef.current?.componentKey === component.key
+      ? lastRequirementsRef.current.fields
+      : component.fields)
   const requirements =
     preview?.requirements ??
     (lastRequirementsRef.current?.componentKey === component.key ? lastRequirementsRef.current.requirements : [])
   const violations = preview?.violations ?? []
-  const unmappedViolations = getUnmappedViolations(violations, fields, requirements)
+  const unmappedViolations = getUnmappedViolations(violations, fields, requirements, profileConfig)
   const ready = preview ? isPlatformConfigurationReady(violations, requirements) : false
 
   return (
@@ -111,12 +129,11 @@ export function PlatformComponentConfiguration({
             <section className="flex flex-col gap-3">
               <Heading level={3}>Configuration</Heading>
               {fields.map((field) => (
-                <CatalogVariableInput
+                <CatalogConfigurationInput
                   key={field.key}
-                  booleanControl="checkbox"
-                  field={toCatalogVariableField(field)}
-                  value={getCatalogVariableValue(field, profileConfig[field.key])}
-                  error={getFieldViolation(violations, field.key)}
+                  field={field}
+                  value={profileConfig[field.key]}
+                  getError={(path) => getFieldViolation(violations, path)}
                   onChange={(value) => onProfileConfigChange(field.key, value)}
                 />
               ))}

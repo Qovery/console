@@ -1,4 +1,7 @@
-import { type ClusterPlatformBindingRequest } from 'qovery-typescript-axios'
+import {
+  type ClusterPlatformBindingRequest,
+  type PlatformComponentConfigurationPreviewRequest,
+} from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { Button, Callout, FunnelFlowBody, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
@@ -26,8 +29,8 @@ interface StepPlatformProps {
 
 interface ComponentDraft {
   componentKey: string
-  managedConfig: Record<string, unknown>
-  clusterInputs: Record<string, string>
+  managedConfig: NonNullable<PlatformComponentConfigurationPreviewRequest['profileConfig']>
+  clusterInputs: NonNullable<PlatformComponentConfigurationPreviewRequest['clusterInputs']>
 }
 
 export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatformProps) {
@@ -74,7 +77,7 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
     }),
     [componentDraft?.clusterInputs, componentDraft?.managedConfig, selectedComponent]
   )
-  const previewRequest = useMemo(
+  const previewRequest = useMemo<PlatformComponentConfigurationPreviewRequest>(
     () => ({
       profileConfig: omitEmptyValues(profileConfig),
       clusterInputs,
@@ -120,7 +123,7 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
     onSubmit()
   }
 
-  const updateProfileConfig = (fieldKey: string, value: CatalogVariableValue) => {
+  const updateProfileConfig = (fieldKey: string, value: unknown) => {
     if (!selectedComponent || !componentDraft) return
 
     const field = (preview?.fields ?? selectedComponent.fields).find((candidate) => candidate.key === fieldKey)

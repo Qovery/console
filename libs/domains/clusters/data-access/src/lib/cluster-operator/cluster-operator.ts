@@ -1,5 +1,5 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { ClusterOperatorApi } from 'qovery-typescript-axios'
+import { ClusterOperatorApi, type ClusterOperatorUpdateRequest } from 'qovery-typescript-axios'
 import { isHttpStatus } from '../http/is-http-status'
 
 const clusterOperatorApi = new ClusterOperatorApi()
@@ -38,8 +38,8 @@ export const clusterOperatorMutations = {
   }: {
     organizationId: string
     clusterId: string
-    chartVersion: string
-    imageVersion?: string | null
+    chartVersion: ClusterOperatorUpdateRequest['chart_version']
+    imageVersion?: ClusterOperatorUpdateRequest['image_version']
   }) {
     const response = await clusterOperatorApi.updateClusterOperator(organizationId, clusterId, {
       chart_version: chartVersion,
