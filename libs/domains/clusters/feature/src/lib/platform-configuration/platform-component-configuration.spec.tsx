@@ -2,6 +2,7 @@ import {
   type PlatformComponentConfigurationPreviewResponse,
   type PlatformTemplateComponentResponse,
 } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import selectEvent from 'react-select-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { PlatformComponentConfiguration } from './platform-component-configuration'
@@ -46,6 +47,46 @@ const defaultProps = {
 }
 
 describe('PlatformComponentConfiguration', () => {
+  it('keeps contextual object fields mounted while the next preview is pending', async () => {
+    jest.useFakeTimers()
+    const fields = [
+      {
+        key: 'ami',
+        label: 'AMI',
+        type: 'object' as const,
+        required: true,
+        sensitive: false,
+        fields: [
+          { key: 'id', label: 'AMI ID', type: 'string' as const, required: true, sensitive: false, constraints: {} },
+        ],
+      },
+    ]
+    function Editor() {
+      const [pending, setPending] = useState(false)
+      const [config, setConfig] = useState<Record<string, unknown>>({ ami: { id: 'ami-123' } })
+      return (
+        <PlatformComponentConfiguration
+          {...defaultProps}
+          preview={pending ? undefined : { ...preview, fields }}
+          isFetching={pending}
+          profileConfig={config}
+          onProfileConfigChange={(key, value) => {
+            setConfig({ [key]: value })
+            setPending(true)
+          }}
+        />
+      )
+    }
+    const { userEvent } = renderWithProviders(<Editor />)
+    const input = screen.getByRole('textbox', { name: 'AMI ID' })
+    await userEvent.type(input, '45')
+    expect(screen.getByRole('textbox', { name: 'AMI ID' })).toBe(input)
+    expect(input).toHaveFocus()
+    expect(input).toHaveValue('ami-12345')
+    expect(screen.getByRole('button', { name: 'Save configuration' })).toBeDisabled()
+    jest.useRealTimers()
+  })
+
   it('allows saving a valid configuration without showing a ready status', () => {
     renderWithProviders(<PlatformComponentConfiguration {...defaultProps} />)
 

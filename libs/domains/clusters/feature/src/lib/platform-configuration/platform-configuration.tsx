@@ -1,4 +1,8 @@
-import { type PlatformCloudVendor, type PlatformClusterMode } from 'qovery-typescript-axios'
+import {
+  type PlatformCloudVendor,
+  type PlatformClusterMode,
+  type PlatformComponentConfigurationPreviewRequest,
+} from 'qovery-typescript-axios'
 import { useEffect, useMemo, useState } from 'react'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
@@ -14,6 +18,7 @@ import {
   applyPlatformConfigurationDefaults,
   clearRedactedValues,
   createPlatformConfigurationDraft,
+  filterPlatformLayerSelections,
   findPlatformComponent,
   getCurrentPlatformConfigurationPreview,
   getRedactedComponentKeys,
@@ -102,7 +107,7 @@ export function PlatformConfiguration({
       clusterInputs: state && componentKey ? state.draft.clusterInputs[componentKey] ?? {} : {},
     }
   }, [selectedComponent, state])
-  const previewRequest = useMemo(
+  const previewRequest = useMemo<PlatformComponentConfigurationPreviewRequest>(
     () => ({
       profileConfig: omitEmptyValues(profileConfig),
       clusterInputs,
@@ -139,7 +144,7 @@ export function PlatformConfiguration({
     )
   }
 
-  const updateProfileConfig = (fieldKey: string, value: CatalogVariableValue) => {
+  const updateProfileConfig = (fieldKey: string, value: unknown) => {
     if (!selectedComponent) return
 
     const field = (preview?.fields ?? selectedComponent.fields).find((candidate) => candidate.key === fieldKey)
@@ -196,6 +201,7 @@ export function PlatformConfiguration({
         ...state.draft,
         platform: {
           ...state.draft.platform,
+          layerSelections: filterPlatformLayerSelections(selectedTemplate.layers, state.draft.platform.layerSelections),
           // '' entries are only display markers for cleared fields — never persist them.
           managedConfig: Object.fromEntries(
             Object.entries(state.draft.platform.managedConfig).map(([componentKey, values]) => [
@@ -218,7 +224,33 @@ export function PlatformConfiguration({
         layerSelections={state.draft.platform.layerSelections}
         isSaving={isSaving}
         redactedComponentKeys={redactedComponentKeys}
-        onComponentSelect={(componentKey) => setState((current) => (current ? { ...current, componentKey } : current))}
+        onComponentSelect={(componentKey) => {
+          const component = findPlatformComponent(selectedTemplate, componentKey)
+          if (!component) return
+
+          setState((current) =>
+            current
+              ? {
+                  ...current,
+                  componentKey,
+                  draft: {
+                    ...current.draft,
+                    platform: {
+                      ...current.draft.platform,
+                      managedConfig: {
+                        ...current.draft.platform.managedConfig,
+                        // Defaults shown by the editor must also survive saving or navigating back.
+                        [componentKey]: applyPlatformConfigurationDefaults(
+                          component.fields,
+                          current.draft.platform.managedConfig[componentKey] ?? {}
+                        ),
+                      },
+                    },
+                  },
+                }
+              : current
+          )
+        }}
         onLayerSelectionChange={(layerKey, enabled) =>
           setState((current) =>
             current

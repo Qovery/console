@@ -5,6 +5,7 @@ import { InputText } from '../inputs/input-text/input-text'
 import { InputToggle } from '../inputs/input-toggle/input-toggle'
 
 export interface CatalogVariableInputProps {
+  inputId?: string
   autoFocus?: boolean
   booleanControl?: 'checkbox' | 'toggle'
   error?: string
@@ -16,6 +17,7 @@ export interface CatalogVariableInputProps {
 
 export function CatalogVariableInput({
   autoFocus,
+  inputId,
   booleanControl = 'toggle',
   error,
   field,
@@ -73,6 +75,7 @@ export function CatalogVariableInput({
   if (field.allowedValues?.length) {
     return (
       <InputSelect
+        inputId={inputId}
         label={field.label}
         value={typeof value === 'string' ? value : ''}
         options={field.allowedValues.map((allowedValue) => ({ label: allowedValue, value: allowedValue }))}
@@ -91,6 +94,7 @@ export function CatalogVariableInput({
   return (
     <InputText
       name={field.key}
+      inputId={inputId}
       label={field.label}
       type={field.type === 'number' ? 'number' : field.sensitive ? 'password' : 'text'}
       value={typeof value === 'string' ? value : ''}
