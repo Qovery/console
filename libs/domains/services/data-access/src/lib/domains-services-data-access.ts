@@ -1,5 +1,4 @@
 import { createQueryKeys, type inferQueryKeys } from '@lukemorales/query-key-factory'
-import axios from 'axios'
 import {
   type AgenticWorkflowRequest,
   AgenticWorkflowsApi,
@@ -920,7 +919,7 @@ type EditAdvancedSettingsRequest = {
 
 export const mutations = {
   async deployAgenticWorkflow({ agenticWorkflowId }: { agenticWorkflowId: string }) {
-    const response = await axios.post<Status>(`/agenticWorkflow/${encodeURIComponent(agenticWorkflowId)}/deploy`)
+    const response = await agenticWorkflowsApi.deployAgenticWorkflow(agenticWorkflowId)
     return response.data
   },
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
