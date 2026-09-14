@@ -11,6 +11,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputTextProps {
+  inputId?: string
   name: string
   label: string
   value?: string | number | undefined
@@ -31,6 +32,7 @@ export interface InputTextProps {
 export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function InputText(props, ref) {
   const {
     name,
+    inputId,
     label,
     value = '',
     onChange,
@@ -116,14 +118,14 @@ export const InputText = forwardRef<HTMLInputElement, InputTextProps>(function I
           ref={inputRef}
         >
           <div className={twMerge(disabled && 'pointer-events-none')}>
-            <label htmlFor={label} className={labelClassName}>
+            <label htmlFor={inputId ?? label} className={labelClassName}>
               {label}
             </label>
             <input
               data-testid={dataTestId || 'input-text'}
               ref={ref}
               name={name}
-              id={label}
+              id={inputId ?? label}
               className={twMerge(
                 'input__value',
                 rightElement && '!pr-9',

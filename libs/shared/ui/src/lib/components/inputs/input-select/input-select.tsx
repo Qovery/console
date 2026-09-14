@@ -22,6 +22,7 @@ import { LoaderSpinner } from '../../loader-spinner/loader-spinner'
 import { Tooltip } from '../../tooltip/tooltip'
 
 export interface InputSelectProps {
+  inputId?: string
   className?: string
   label?: string
   value?: string | string[]
@@ -56,6 +57,7 @@ export interface InputSelectProps {
 
 export function InputSelect({
   className = '',
+  inputId,
   label,
   value,
   options,
@@ -283,7 +285,7 @@ export function InputSelect({
     },
     name: label,
     isLoading,
-    inputId: label,
+    inputId: inputId ?? label,
     menuPlacement,
     closeMenuOnSelect: !isMulti,
     onChange: handleChange,
@@ -356,7 +358,7 @@ export function InputSelect({
         )}
         {label && (
           <label
-            htmlFor={label}
+            htmlFor={inputId ?? label}
             className={twMerge(
               'input__label',
               hasFocus ? 'text-xs' : 'translate-y-[7px] text-sm',

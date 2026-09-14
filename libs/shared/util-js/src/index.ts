@@ -1,5 +1,6 @@
 export * from './lib/build-git-repo-url'
 export * from './lib/catalog-variable-field'
+export * from './lib/catalog-configuration-field'
 export * from './lib/compute-available-environment-variable-scope'
 export * from './lib/container-registry-kind-to-icon'
 export * from './lib/convert-memory-size'

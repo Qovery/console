@@ -1,6 +1,7 @@
 import {
   type CloudProviderEnum,
   type CloudVendorEnum,
+  type ClusterPlatformBindingRequest,
   type ClusterPlatformBindingResponse,
   type FieldSchemaResponse,
   type KubernetesEnum,
@@ -12,15 +13,15 @@ import {
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
-import { type CatalogVariableField, type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
+import {
+  applyCatalogConfigurationDefaults,
+  isCatalogObject,
+  omitEmptyCatalogValues,
+  toCatalogConfigurationValue,
+  toCatalogScalarField,
+} from '@qovery/shared/util-js'
 
-export interface PlatformConfigurationDraft {
-  templateKey: string
-  templateVersion: string
-  layerSelections: Record<string, boolean>
-  managedConfig: Record<string, Record<string, unknown>>
-  customerProvidedInputs: Record<string, Record<string, string>>
-}
+export type PlatformConfigurationDraft = Required<ClusterPlatformBindingRequest>
 
 export function toPlatformCloudVendor(
   cloudProvider: CloudProviderEnum | CloudVendorEnum | undefined
@@ -37,12 +38,6 @@ export function toPlatformClusterMode(kubernetes: KubernetesEnum | undefined): P
     .with('SELF_MANAGED', () => 'CUSTOMER_MANAGED' as const)
     .otherwise(() => undefined)
 }
-
-type PlatformFieldDescriptor = Pick<
-  FieldSchemaResponse,
-  'key' | 'label' | 'type' | 'description' | 'sensitive' | 'required' | 'constraints'
-> &
-  Partial<Pick<FieldSchemaResponse, 'defaultValue'>>
 
 export function getTemplateId(template: Pick<PlatformTemplateSummaryResponse, 'key' | 'version'>) {
   return `${template.key}@${template.version}`
@@ -85,6 +80,16 @@ export function createPlatformConfigurationDraft(
   }
 }
 
+// A republished template may remove a layer while its stored selection remains in the binding.
+// Filter only layer keys at save time; component drafts and customer inputs must stay untouched.
+export function filterPlatformLayerSelections(
+  layers: ReadonlyArray<Pick<PlatformTemplateSummaryResponse['layers'][number], 'key'>>,
+  selections: Record<string, boolean>
+): Record<string, boolean> {
+  const keys = new Set(layers.map((layer) => layer.key))
+  return Object.fromEntries(Object.entries(selections).filter(([key]) => keys.has(key)))
+}
+
 export function findPlatformComponent(template: PlatformTemplateSummaryResponse, componentKey?: string) {
   return template.layers.flatMap((layer) => layer.components).find((component) => component.key === componentKey)
 }
@@ -98,53 +103,21 @@ export function getCurrentPlatformConfigurationPreview(
   return preview
 }
 
-export function toCatalogVariableField(field: PlatformFieldDescriptor): CatalogVariableField {
-  return {
-    key: field.key,
-    label: field.label,
-    type: field.type,
-    description: field.description ?? undefined,
-    required: field.required,
-    sensitive: field.sensitive,
-    defaultValue: field.defaultValue ?? undefined,
-    allowedValues: field.constraints.allowedValues ?? undefined,
-    pattern: field.constraints.pattern ?? undefined,
-    minLength: field.constraints.minLength ?? undefined,
-    maxLength: field.constraints.maxLength ?? undefined,
-    min: field.constraints.min ?? undefined,
-    max: field.constraints.max ?? undefined,
-  }
-}
+export const toCatalogVariableField = toCatalogScalarField
 
 export function applyPlatformConfigurationDefaults(
   fields: FieldSchemaResponse[],
   values: Record<string, unknown>
 ): Record<string, unknown> {
-  const defaultValues = Object.fromEntries(
-    fields.flatMap((field) => {
-      const defaultValue = getCatalogVariableValue(field, undefined)
-      if (defaultValue === undefined) return []
-
-      return [[field.key, toPlatformConfigurationValue(field, defaultValue)]]
-    })
-  )
-
-  return { ...defaultValues, ...values }
+  return applyCatalogConfigurationDefaults(fields, values)
 }
 
-export function toPlatformConfigurationValue(field: Pick<FieldSchemaResponse, 'type'>, value: CatalogVariableValue) {
-  if (field.type !== 'number') return value
-  if (typeof value !== 'string') return undefined
-  // Keep the empty string: it marks a field the user explicitly cleared, so
-  // applyPlatformConfigurationDefaults must not resurrect the schema default.
-  if (value.trim() === '') return ''
-
-  const numberValue = Number(value)
-  return Number.isFinite(numberValue) ? numberValue : value
+export function toPlatformConfigurationValue(field: Pick<FieldSchemaResponse, 'type'>, value: unknown) {
+  return toCatalogConfigurationValue(field, value)
 }
 
 export function omitEmptyValues(values: Record<string, unknown>): Record<string, unknown> {
-  return Object.fromEntries(Object.entries(values).filter(([, value]) => value !== '' && value !== undefined))
+  return omitEmptyCatalogValues(values)
 }
 
 export function updateComponentValue<T>(
@@ -179,12 +152,35 @@ export function getFieldViolation(
 export function getUnmappedViolations(
   violations: PlatformComponentConfigurationViolationResponse[],
   fields: FieldSchemaResponse[],
-  requirements: PlatformComponentInputRequirementResponse[]
+  requirements: PlatformComponentInputRequirementResponse[],
+  values: Record<string, unknown> = {}
 ) {
   const mappedPaths = new Set([
     ...fields.map((field) => field.key),
     ...requirements.map((requirement) => `clusterInputs.${requirement.key}`),
   ])
+  const collect = (fields: FieldSchemaResponse[], values: Record<string, unknown>, prefix = '') => {
+    fields.forEach((field) => {
+      const path = prefix ? `${prefix}.${field.key}` : field.key
+      mappedPaths.add(path)
+      const value = values[field.key]
+      if (field.type === 'object') collect(field.fields, isCatalogObject(value) ? value : {}, path)
+      if (field.type === 'array' && Array.isArray(value)) {
+        const item = field.items
+        value.forEach((row, index) => {
+          const rowPath = `${path}[${index}]`
+          mappedPaths.add(rowPath)
+          if (item.type === 'object')
+            collect(
+              field.itemFields?.length === value.length ? field.itemFields[index] : item.fields,
+              isCatalogObject(row) ? row : {},
+              rowPath
+            )
+        })
+      }
+    })
+  }
+  collect(fields, values)
   return violations.filter((violation) => !mappedPaths.has(violation.fieldPath))
 }
 
