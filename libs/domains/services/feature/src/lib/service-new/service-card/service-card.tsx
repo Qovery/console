@@ -24,27 +24,57 @@ export type ServiceBlock = {
   onClick?: () => void
   disabledCTA?: ReactElement
   badge?: string
+  showDescription?: boolean
 }
 
-export function BaseServiceCard({ title, description, icon, link, search, onClick }: ServiceBlock) {
-  const className =
-    'flex h-14 w-full items-center justify-between gap-3 rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)] hover:bg-surface-neutral-subtle'
-  const content = (
+function resizeIcon(icon: ReactElement, size: 20 | 32) {
+  const iconWithClassName = icon as ReactElement<{ className?: string; height?: number; width?: number }>
+  const className = twMerge(iconWithClassName.props.className, size === 20 ? 'h-5 w-5 shrink-0' : 'h-8 w-8 shrink-0')
+
+  // Agent use-case icons use a span wrapper, which is sized by classes rather than width/height attributes.
+  return icon.type === 'span'
+    ? cloneElement(iconWithClassName, { className })
+    : cloneElement(iconWithClassName, { width: size, height: size, className })
+}
+
+export function BaseServiceCard({ title, description, icon, link, search, onClick, showDescription }: ServiceBlock) {
+  const className = clsx(
+    'flex w-full rounded-lg border border-neutral bg-surface-neutral p-4 text-left transition [box-shadow:0px_0px_4px_0px_rgba(0,0,0,0.01),0px_2px_3px_0px_rgba(0,0,0,0.02)] hover:bg-surface-neutral-subtle',
+    showDescription ? 'min-h-40 flex-col items-start justify-between gap-4' : 'h-14 items-center justify-between gap-3'
+  )
+  const compactContent = (
     <>
       <span className="flex min-w-0 items-center gap-1.5">
-        {cloneElement(icon as ReactElement, { width: 20, height: 20, className: 'h-5 w-5 shrink-0' })}
-        <span className="truncate text-sm font-medium leading-5 text-neutral">{title}</span>
-        {(title === 'Lifecycle Job' || title === 'Cron Job') && (
-          <Tooltip content={description}>
-            <span role="img" aria-label={`${title} details`} className="inline-flex shrink-0">
-              <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-subtle" />
-            </span>
-          </Tooltip>
-        )}
+        {resizeIcon(icon, 20)}
+        <span className="min-w-0">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <span className="truncate text-sm font-medium leading-5 text-neutral">{title}</span>
+            {(title === 'Lifecycle Job' || title === 'Cron Job') && (
+              <Tooltip content={description}>
+                <span role="img" aria-label={`${title} details`} className="inline-flex shrink-0">
+                  <Icon iconName="circle-info" iconStyle="regular" className="text-sm text-neutral-subtle" />
+                </span>
+              </Tooltip>
+            )}
+          </span>
+        </span>
       </span>
       <Icon iconName="chevron-right" className="shrink-0 text-sm text-neutral-subtle" />
     </>
   )
+  const detailedContent = (
+    <>
+      <span className="flex w-full items-start justify-between gap-3">
+        {resizeIcon(icon, 32)}
+        <Icon iconName="chevron-right" className="shrink-0 text-sm text-neutral-subtle" />
+      </span>
+      <span className="flex w-full min-w-0 flex-col gap-1">
+        <span className="text-sm font-medium leading-5 text-neutral">{title}</span>
+        <span className="line-clamp-3 text-xs font-normal leading-5 text-neutral-subtle">{description}</span>
+      </span>
+    </>
+  )
+  const content = showDescription ? detailedContent : compactContent
 
   if (link) {
     return (

@@ -918,6 +918,10 @@ type EditAdvancedSettingsRequest = {
 }
 
 export const mutations = {
+  async deployAgenticWorkflow({ agenticWorkflowId }: { agenticWorkflowId: string }) {
+    const response = await agenticWorkflowsApi.deployAgenticWorkflow(agenticWorkflowId)
+    return response.data
+  },
   async cloneService({ serviceId, serviceType, payload }: CloneServiceRequest) {
     const { mutation } = match(serviceType)
       .with('APPLICATION', (serviceType) => ({
