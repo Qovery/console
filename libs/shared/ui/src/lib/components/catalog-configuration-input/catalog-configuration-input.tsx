@@ -10,6 +10,7 @@ import {
 } from '@qovery/shared/util-js'
 import { Button } from '../button/button'
 import { CatalogVariableInput } from '../catalog-variable-input/catalog-variable-input'
+import { CatalogYamlInput } from './catalog-yaml-input'
 
 export interface CatalogConfigurationInputProps {
   field: FieldSchemaResponse
@@ -162,6 +163,15 @@ export function CatalogConfigurationInput({
         <ObjectInputs fields={object.fields} value={value} onChange={onChange} path={path} getError={getError} />
         {getError?.(path) ? <p className="mt-2 text-xs text-negative">{getError(path)}</p> : null}
       </fieldset>
+    ))
+    .with({ type: 'string', format: 'kubernetes-resource-yaml' }, (scalar) => (
+      <CatalogYamlInput
+        field={scalar}
+        value={String(getCatalogVariableValue(scalar, value) ?? '')}
+        error={getError?.(path)}
+        path={path}
+        onChange={onChange}
+      />
     ))
     .otherwise((scalar) => (
       <CatalogVariableInput
