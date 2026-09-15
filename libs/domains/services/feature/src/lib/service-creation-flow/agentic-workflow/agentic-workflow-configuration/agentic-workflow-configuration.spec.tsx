@@ -225,7 +225,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
     await userEvent.click(screen.getByRole('button', { name: /Add Qovery services/ }))
-    expect(screen.getByRole('heading', { name: 'Add Qovery services' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Import existing Qovery services' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Services to include' })).toBeInTheDocument()
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))

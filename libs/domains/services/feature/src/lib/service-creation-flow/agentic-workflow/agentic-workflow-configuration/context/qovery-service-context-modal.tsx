@@ -21,10 +21,10 @@ export function QoveryServiceContextModal({
     <Section className="gap-5 p-5">
       <div className="flex flex-col gap-1 pr-8">
         <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
-          Add Qovery services
+          Import existing Qovery services
         </Heading>
         <p className="text-sm leading-5 text-neutral-subtle">
-          Select services from this environment to give the agent their Qovery context.
+          Link Qovery services from this environment. The agent will use them as context.
         </p>
       </div>
       <div className="flex flex-col gap-2">
@@ -70,13 +70,8 @@ export function QoveryServiceContextModal({
           )}
         </div>
       </div>
-      <div className="flex items-center justify-between gap-2">
-        {selectedIds.length > 0 ? (
-          <Button type="button" variant="plain" color="red" size="md" onClick={() => setSelectedIds([])}>
-            Reset all
-          </Button>
-        ) : null}
-        <div className="ml-auto flex gap-2">
+      <div className="flex justify-end gap-2">
+        <div className="flex gap-2">
           <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
             Cancel
           </Button>
@@ -88,7 +83,7 @@ export function QoveryServiceContextModal({
               setOpen?.(false)
             }}
           >
-            Apply changes
+            Confirm
           </Button>
         </div>
       </div>

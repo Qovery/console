@@ -15,9 +15,8 @@ describe('QoveryServiceContextModal', () => {
 
     await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
     await userEvent.click(screen.getByRole('checkbox', { name: 'postgres' }))
-    expect(screen.getByRole('button', { name: 'Reset all' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Select all' })).not.toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
 
     expect(onSave).toHaveBeenCalledWith(services)
   })
@@ -35,37 +34,5 @@ describe('QoveryServiceContextModal', () => {
 
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeChecked()
     expect(screen.getByRole('button', { name: 'Select all' })).toBeInTheDocument()
-  })
-
-  it('hides the reset action when no service is selected', () => {
-    renderWithProviders(
-      <QoveryServiceContextModal
-        isLoading={false}
-        services={services}
-        value={[]}
-        onSave={jest.fn()}
-        setOpen={jest.fn()}
-      />
-    )
-
-    expect(screen.queryByRole('button', { name: 'Reset all' })).not.toBeInTheDocument()
-  })
-
-  it('resets all selected services', async () => {
-    const onSave = jest.fn()
-    const { userEvent } = renderWithProviders(
-      <QoveryServiceContextModal
-        isLoading={false}
-        services={services}
-        value={services}
-        onSave={onSave}
-        setOpen={jest.fn()}
-      />
-    )
-
-    await userEvent.click(screen.getByRole('button', { name: 'Reset all' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
-
-    expect(onSave).toHaveBeenCalledWith([])
   })
 })
