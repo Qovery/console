@@ -10,7 +10,7 @@ const mcpServers = [
   {
     id: 'm1',
     name: 'Qovery Read-only',
-    url: 'https://mcp.qovery.com',
+    url: 'https://mcp.qovery.com/mcp',
     scope: McpServerScope.ORGANIZATION,
     attachable: true,
   },
@@ -32,7 +32,13 @@ const mcpServers = [
   },
 ] as McpServerResponse[]
 
-function setup(value: string[] = [], onChange = jest.fn(), onClose = jest.fn()) {
+function setup(
+  value: string[] = [],
+  onChange = jest.fn(),
+  onClose = jest.fn(),
+  lockedMcpServerIds: string[] = [],
+  lockedMcpServerReason?: string
+) {
   return {
     onChange,
     onClose,
@@ -40,6 +46,8 @@ function setup(value: string[] = [], onChange = jest.fn(), onClose = jest.fn()) 
       <McpSheet
         createdMcpServers={[]}
         isLoading={false}
+        lockedMcpServerIds={lockedMcpServerIds}
+        lockedMcpServerReason={lockedMcpServerReason}
         mcpServers={mcpServers}
         value={value}
         onChange={onChange}
@@ -79,14 +87,22 @@ describe('McpSheet', () => {
     setup()
 
     expect(screen.getByRole('heading', { name: 'Manage MCP' })).toBeInTheDocument()
-    expect(screen.getByText('Qovery Read-only')).toBeInTheDocument()
+    expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
+  })
+
+  it('finds the Qovery MCP by its display name', async () => {
+    const { userEvent } = setup()
+
+    await userEvent.type(screen.getByPlaceholderText('Search MCP'), 'MCP Qovery')
+
+    expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
   })
 
   it('links a server when clicked', async () => {
     const onChange = jest.fn()
     const { userEvent } = setup([], onChange)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add Qovery Read-only' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP Qovery' }))
 
     expect(onChange).toHaveBeenCalledWith(['m1'])
   })
@@ -106,6 +122,42 @@ describe('McpSheet', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Remove Romaric tools' }))
 
     expect(onChange).toHaveBeenCalledWith([])
+  })
+
+  it('prevents removing an MCP required by Qovery service context', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = setup(['m1'], onChange, jest.fn(), ['m1'])
+    const requiredMcp = screen.getByRole('button', {
+      name: 'MCP Qovery: This MCP is required by the selected Qovery service context and cannot be removed.',
+    })
+
+    expect(requiredMcp).toBeDisabled()
+    await userEvent.hover(screen.getByText('MCP Qovery'))
+
+    expect(
+      await screen.findAllByText('This MCP is required by the selected Qovery service context and cannot be removed.')
+    ).not.toHaveLength(0)
+    expect(screen.getByRole('button', { name: 'Remove all' })).toBeDisabled()
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('explains when an MCP is required by the selected agent template', async () => {
+    const reason = 'This MCP is required by the selected agent template and cannot be removed.'
+    const { userEvent } = setup(['m1'], jest.fn(), jest.fn(), ['m1'], reason)
+
+    expect(screen.getByRole('button', { name: `MCP Qovery: ${reason}` })).toBeDisabled()
+    await userEvent.hover(screen.getByText('MCP Qovery'))
+
+    expect(await screen.findAllByText(reason)).not.toHaveLength(0)
+  })
+
+  it('keeps required MCPs when removing all other connections', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = setup(['m1', 'm2'], onChange, jest.fn(), ['m1'])
+
+    await userEvent.click(screen.getByRole('button', { name: 'Remove all' }))
+
+    expect(onChange).toHaveBeenCalledWith(['m1'])
   })
 
   it('closes from the Done button', async () => {

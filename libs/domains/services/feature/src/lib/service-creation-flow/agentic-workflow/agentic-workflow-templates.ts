@@ -10,6 +10,7 @@ export interface AgenticWorkflowTemplate {
   iconName?: IconName
   logoPath?: string
   darkLogoPath?: string
+  requiresQoveryMcp?: boolean
   seed: Partial<AgenticWorkflowFormData>
   variables?: VariableData[]
 }
@@ -79,6 +80,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     title: 'Incident Analyzer with incident.io',
     description: 'Analyze incident.io incidents with deployment, code, logs, and metrics context.',
     logoPath: '/assets/agent-templates/incident-io.svg',
+    requiresQoveryMcp: true,
     seed: {
       name: 'Incident Analyzer with incident.io',
       description: 'Analyze incident.io incidents with deployment, code, logs, and metrics context.',
@@ -96,6 +98,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     title: 'Incident Analyzer with Honeybadger',
     description: 'Analyze Honeybadger incidents with deployment, code, logs, and metrics context.',
     logoPath: '/assets/agent-templates/honeybadger.svg',
+    requiresQoveryMcp: true,
     seed: {
       name: 'Incident Analyzer with Honeybadger',
       description: 'Analyze Honeybadger incidents with deployment, code, logs, and metrics context.',
@@ -113,6 +116,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     title: 'Build & deployment optimizer',
     description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
     iconName: 'gauge-high',
+    requiresQoveryMcp: true,
     seed: {
       name: 'Build & deployment optimizer',
       description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',

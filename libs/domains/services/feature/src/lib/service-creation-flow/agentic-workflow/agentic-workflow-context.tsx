@@ -82,6 +82,12 @@ export interface AgenticWorkflowGitRepository {
   branch: string
 }
 
+export interface AgenticWorkflowContextService {
+  id: string
+  name: string
+  type: string
+}
+
 export interface AgenticWorkflowFormData {
   name: string
   description: string
@@ -93,6 +99,7 @@ export interface AgenticWorkflowFormData {
   mcpServerIds: string[]
   mcpJson: string
   gitRepositories: AgenticWorkflowGitRepository[]
+  contextServices: AgenticWorkflowContextService[]
   modelApiKey: string
   modelSettingsJson: string
   whitelistHosts: string
@@ -104,6 +111,7 @@ export interface AgenticWorkflowFormData {
 export interface AgenticWorkflowCreateContextInterface {
   form: UseFormReturn<AgenticWorkflowFormData>
   onExit: () => void
+  requiresQoveryMcp: boolean
   variablesForm: UseFormReturn<FlowVariableData>
 }
 
@@ -131,6 +139,7 @@ export function getAgenticWorkflowDefaults(): AgenticWorkflowFormData {
     mcpServerIds: [],
     mcpJson: '',
     gitRepositories: [],
+    contextServices: [],
     modelApiKey: '',
     modelSettingsJson: DEFAULT_MODEL_SETTINGS,
     whitelistHosts: '*',
@@ -145,12 +154,14 @@ export interface AgenticWorkflowCreationFlowProps extends PropsWithChildren {
   // A template use case pre-fills part of the form and its variables when the
   // flow is entered with a `?template=` param (see agentic-workflow-templates.ts).
   seed?: Partial<AgenticWorkflowFormData>
+  requiresQoveryMcp?: boolean
   variablesSeed?: FlowVariableData['variables']
 }
 
 export function AgenticWorkflowCreationFlow({
   children,
   onExit,
+  requiresQoveryMcp = false,
   seed,
   variablesSeed,
 }: AgenticWorkflowCreationFlowProps) {
@@ -175,6 +186,7 @@ export function AgenticWorkflowCreationFlow({
       value={{
         form,
         onExit,
+        requiresQoveryMcp,
         variablesForm,
       }}
     >

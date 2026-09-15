@@ -213,9 +213,9 @@ describe('ServiceNew', () => {
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Request a new template' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Request agent template' }))
 
-    expect(screen.getByRole('heading', { name: 'Request a new template' })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Request agent template' })).toBeInTheDocument()
     expect(screen.getByText("Tell us which agent template you'd like Qovery to add next.")).toBeInTheDocument()
   })
 
