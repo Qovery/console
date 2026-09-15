@@ -477,7 +477,10 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
     expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
     await userEvent.keyboard('{Escape}')
-    await userEvent.click(document.querySelectorAll<HTMLElement>('.modal__overlay')[1])
+    const backdrop = [...document.querySelectorAll<HTMLElement>('.modal__overlay')].at(-1)
+    expect(backdrop).toBeDefined()
+    if (!backdrop) throw new Error('Expected the service context modal backdrop')
+    await userEvent.click(backdrop)
     expect(screen.getByRole('heading', { name: 'Import existing Qovery services' })).toBeInTheDocument()
 
     creation.resolve({
