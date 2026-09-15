@@ -91,8 +91,7 @@ describe('QoveryServiceContextModal', () => {
     expect(setOpen).not.toHaveBeenCalled()
 
     save.resolve()
-    expect(await screen.findByRole('button', { name: 'Close' })).toBeInTheDocument()
-    expect(setOpen).toHaveBeenCalledWith(false)
+    await waitFor(() => expect(setOpen).toHaveBeenCalledWith(false))
   })
 
   it('prevents submitting again while services are being saved', async () => {

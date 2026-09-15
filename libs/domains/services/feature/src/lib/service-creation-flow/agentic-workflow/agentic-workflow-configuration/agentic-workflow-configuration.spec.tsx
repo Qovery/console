@@ -17,6 +17,7 @@ const mockImportVariables = jest.fn()
 const mockCreateQoveryMcpServer = jest.fn()
 const mockRefetchMcpServers = jest.fn()
 let mockMcpServers: Array<Record<string, unknown>> = []
+let mockMcpServersError = false
 let mockMcpServersLoading = false
 let mockCreateQoveryMcpServerLoading = false
 let mockContextServicesLoading = false
@@ -63,6 +64,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   }),
   useMcpServers: () => ({
     data: mockMcpServers,
+    isError: mockMcpServersError,
     isLoading: mockMcpServersLoading,
     refetch: mockRefetchMcpServers,
   }),
@@ -202,10 +204,11 @@ describe('AgenticWorkflowConfiguration', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockMcpServers = []
+    mockMcpServersError = false
     mockMcpServersLoading = false
     mockCreateQoveryMcpServerLoading = false
     mockContextServicesLoading = false
-    mockRefetchMcpServers.mockImplementation(async () => ({ data: mockMcpServers }))
+    mockRefetchMcpServers.mockImplementation(async () => ({ data: mockMcpServers, isError: false }))
     mockCreateQoveryMcpServer.mockResolvedValue({
       id: 'qovery-mcp',
       name: 'Qovery MCP',
@@ -355,6 +358,12 @@ describe('AgenticWorkflowConfiguration', () => {
   })
 
   it('should create and lock the Qovery MCP when Qovery service context is added', async () => {
+    mockCreateQoveryMcpServer.mockResolvedValue({
+      id: 'qovery-mcp',
+      name: 'Qovery MCP',
+      url: 'https://mcp.qovery.com/mcp',
+      scope: 'ORGANIZATION',
+    })
     const { userEvent } = renderConfiguration()
 
     await userEvent.click(screen.getByRole('button', { name: /Add Qovery services/ }))
@@ -537,6 +546,20 @@ describe('AgenticWorkflowConfiguration', () => {
     })
 
     expect(screen.getByRole('button', { name: 'Create' })).toBeDisabled()
+    expect(mockCreateQoveryMcpServer).not.toHaveBeenCalled()
+  })
+
+  it('should not create a Qovery MCP when the MCP server list cannot be loaded', async () => {
+    mockMcpServersError = true
+    mockRefetchMcpServers.mockResolvedValue({
+      data: undefined,
+      error: new Error('MCP servers failed to load'),
+      isError: true,
+    })
+
+    renderConfiguration({ requiresQoveryMcp: true })
+
+    await waitFor(() => expect(mockRefetchMcpServers).toHaveBeenCalled())
     expect(mockCreateQoveryMcpServer).not.toHaveBeenCalled()
   })
 

@@ -278,6 +278,7 @@ export function AgenticWorkflowConfiguration() {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const {
     data: mcpServers = [],
+    isError: areMcpServersError,
     isLoading: areMcpServersLoading,
     refetch: refetchMcpServers,
   } = useMcpServers({ organizationId })
@@ -351,17 +352,26 @@ export function AgenticWorkflowConfiguration() {
       ? 'This MCP is required by the selected Qovery service context and cannot be removed.'
       : undefined
   const ensureQoveryMcpServer = useCallback(async () => {
-    const loadedMcpServers = areMcpServersLoading ? (await refetchMcpServers()).data ?? [] : mcpServers
+    let loadedMcpServers = mcpServers
+    if (areMcpServersLoading || areMcpServersError) {
+      const result = await refetchMcpServers()
+      if (result.isError || !result.data) {
+        throw result.error ?? new Error('Unable to load MCP servers')
+      }
+      loadedMcpServers = result.data
+    }
     const existingQoveryMcpServer = [...loadedMcpServers, ...createdMcpServers].find(
       (mcpServer) => mcpServer.attachable && isQoveryMcpServer(mcpServer)
     )
     if (!qoveryMcpInitializationPromiseRef.current) {
       qoveryMcpInitializationPromiseRef.current = existingQoveryMcpServer
         ? Promise.resolve(existingQoveryMcpServer)
-        : createQoveryMcpServer({ organizationId }).catch((error) => {
-            qoveryMcpInitializationPromiseRef.current = undefined
-            throw error
-          })
+        : createQoveryMcpServer({ organizationId })
+            .then((mcpServer) => ({ ...mcpServer, attachable: true }))
+            .catch((error) => {
+              qoveryMcpInitializationPromiseRef.current = undefined
+              throw error
+            })
     }
 
     const mcpServer = await qoveryMcpInitializationPromiseRef.current
@@ -379,6 +389,7 @@ export function AgenticWorkflowConfiguration() {
 
     return mcpServer
   }, [
+    areMcpServersError,
     areMcpServersLoading,
     createQoveryMcpServer,
     createdMcpServers,

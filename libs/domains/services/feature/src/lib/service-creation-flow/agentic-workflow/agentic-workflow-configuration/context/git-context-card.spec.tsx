@@ -20,8 +20,8 @@ describe('GitContextCompactCard', () => {
     expect(screen.getByText('Qovery/console')).toBeInTheDocument()
   })
 
-  it('falls back to a generic Git label when no provider', () => {
-    renderWithProviders(<GitContextCompactCard repository="my-repo" onClick={jest.fn()} />)
+  it.each([undefined, null, ''])('falls back to a generic Git label when the provider is %s', (provider) => {
+    renderWithProviders(<GitContextCompactCard provider={provider} repository="my-repo" onClick={jest.fn()} />)
 
     expect(screen.getByText('GIT')).toBeInTheDocument()
   })

@@ -128,10 +128,10 @@ describe('AgenticWorkflowConnectionsSettings', () => {
       attachable: false,
     }
     const createdQoveryMcpServer = {
-      ...unavailableQoveryMcpServer,
       id: 'created-qovery-mcp',
+      name: 'qovery',
+      url: 'https://mcp.qovery.com/mcp',
       scope: McpServerScope.ORGANIZATION,
-      attachable: true,
     }
     const createQoveryMcpServer = jest.fn().mockResolvedValue(createdQoveryMcpServer)
     useMcpServersSpy.mockReturnValue({ data: [unavailableQoveryMcpServer], isLoading: false })
