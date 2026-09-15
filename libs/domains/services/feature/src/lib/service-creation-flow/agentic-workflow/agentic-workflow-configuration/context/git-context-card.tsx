@@ -1,12 +1,6 @@
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, Icon } from '@qovery/shared/ui'
 
-const PROVIDER_LABELS: Record<string, string> = {
-  BITBUCKET: 'Bitbucket',
-  GITHUB: 'GitHub',
-  GITLAB: 'GitLab',
-}
-
 export function GitContextCard({ onClick }: { onClick: () => void }) {
   return (
     <Button
@@ -42,7 +36,7 @@ export function GitContextCompactCard({
     <div className="relative flex h-[74px] w-full min-w-0 max-w-80 flex-col justify-between rounded-lg border border-neutral bg-surface-neutral p-3 pr-12">
       <span className="flex h-5 w-fit items-center gap-1 rounded bg-surface-neutral-component pl-1 pr-1.5 font-mono text-[10px] font-bold leading-5 text-neutral">
         <Icon name={provider ?? IconEnum.GIT} width={12} height={12} />
-        {provider ? PROVIDER_LABELS[provider] ?? provider : 'Git'}
+        {provider?.toUpperCase() ?? 'GIT'}
       </span>
       <div className="min-w-0 truncate text-sm text-neutral">{repository}</div>
       <Button

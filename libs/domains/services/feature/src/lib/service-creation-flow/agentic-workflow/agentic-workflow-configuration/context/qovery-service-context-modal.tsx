@@ -56,7 +56,7 @@ export function QoveryServiceContextModal({
               return (
                 <label
                   key={id}
-                  className="flex cursor-pointer items-center gap-2 rounded border border-neutral bg-surface-neutral px-3 py-2"
+                  className="flex h-11 cursor-pointer items-center gap-1 rounded border border-neutral bg-surface-neutral-subtle py-1.5 pl-1.5 pr-2"
                 >
                   <Icon name={type} width={20} height={20} />
                   <span className="min-w-0 flex-1 truncate text-sm font-medium text-neutral">{name}</span>
