@@ -1,4 +1,3 @@
-import { Modal } from '@qovery/shared/ui'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import { QoveryServiceContextModal } from './qovery-service-context-modal'
 
@@ -119,31 +118,6 @@ describe('QoveryServiceContextModal', () => {
 
     save.resolve()
     await waitFor(() => expect(confirmButton).toBeEnabled())
-  })
-
-  it('prevents backdrop and Escape dismissal while services are being saved', async () => {
-    const save = deferred<void>()
-    const { userEvent } = renderWithProviders(
-      <Modal defaultOpen fakeModal buttonClose={false}>
-        <QoveryServiceContextModal
-          isLoading={false}
-          services={services}
-          value={[services[0]]}
-          onSave={() => save.promise}
-        />
-      </Modal>
-    )
-
-    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
-    await userEvent.keyboard('{Escape}')
-    const backdrop = document.querySelector<HTMLElement>('.modal__overlay')
-    expect(backdrop).not.toBeNull()
-    await userEvent.click(backdrop as HTMLElement)
-
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
-
-    save.resolve()
-    await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument())
   })
 
   it('shows an error and stays open when saving fails', async () => {

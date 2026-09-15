@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button, Checkbox, Heading, Icon, Section } from '@qovery/shared/ui'
 import { type AgenticWorkflowContextService } from '../../agentic-workflow-context'
 
@@ -7,14 +7,12 @@ export function QoveryServiceContextModal({
   isLoading,
   onSave,
   services,
-  setCloseDisabled,
   setOpen,
   value,
 }: {
   isLoading: boolean
   onSave: (services: AgenticWorkflowContextService[]) => Promise<void> | void
   services: AgenticWorkflowContextService[]
-  setCloseDisabled?: (disabled: boolean) => void
   setOpen?: (open: boolean) => void
   value: AgenticWorkflowContextService[]
 }) {
@@ -23,28 +21,8 @@ export function QoveryServiceContextModal({
   const [saveError, setSaveError] = useState<string>()
   const hideSelectAll = isLoading || services.every(({ id }) => selectedIds.includes(id))
 
-  useEffect(() => {
-    setCloseDisabled?.(isSaving)
-
-    return () => setCloseDisabled?.(false)
-  }, [isSaving, setCloseDisabled])
-
   return (
     <Section className="gap-5 p-5">
-      {!isSaving ? (
-        <Button
-          type="button"
-          variant="plain"
-          color="neutral"
-          size="sm"
-          iconOnly
-          aria-label="Close"
-          className="absolute right-4 top-4 h-7 w-7 rounded-full text-neutral-disabled hover:bg-surface-neutral-componentHover hover:text-neutral"
-          onClick={() => setOpen?.(false)}
-        >
-          <Icon iconName="xmark" iconStyle="solid" />
-        </Button>
-      ) : null}
       <div className="flex flex-col gap-1 pr-8">
         <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
           Import existing Qovery services

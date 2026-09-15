@@ -455,7 +455,6 @@ export function AgenticWorkflowConfiguration() {
         />
       ),
       options: {
-        buttonClose: false,
         width: 488,
         fakeModal: true,
       },

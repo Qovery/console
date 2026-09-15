@@ -1,4 +1,4 @@
-import { type ReactNode, isValidElement, useCallback, useContext, useEffect, useState } from 'react'
+import { type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
 import { ModalContext, defaultContext } from '../modal-root'
 
 export interface UseModalProps {
@@ -6,7 +6,6 @@ export interface UseModalProps {
   options?: {
     width?: number
     fullScreen?: boolean
-    buttonClose?: boolean
     /**
      * This is a workaround to avoid radix dialog restriction.
      * Radix use [react-remove-scroll](https://www.npmjs.com/package/react-remove-scroll) to prevent wheel / scroll event directly on `<html>` node
@@ -52,9 +51,7 @@ export function useModal() {
         // Reset options with default values
         setOptionsModal(defaultContext.optionsModal)
       }
-      // A fragment is only needed for non-element content; preserving elements lets Modal inject its controls.
-      // eslint-disable-next-line react/jsx-no-useless-fragment
-      setContentModal(isValidElement(modal.content) ? modal.content : <>{modal.content}</>)
+      setContentModal(<>{modal.content}</>)
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 

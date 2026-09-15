@@ -1,5 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
-import { Fragment, type ReactElement, type ReactNode, cloneElement, useContext, useEffect, useState } from 'react'
+import { type ReactElement, type ReactNode, cloneElement, useContext, useEffect, useState } from 'react'
 import { Icon } from '../icon/icon'
 import useModalAlert from '../modal-alert/use-modal-alert/use-modal-alert'
 import { isToastInteraction } from '../toast/toast'
@@ -31,7 +31,6 @@ export interface ModalProps {
 
 export interface ModalContentProps {
   setOpen?: (open: boolean) => void
-  setCloseDisabled?: (disabled: boolean) => void
 }
 
 export const Modal = (props: ModalProps) => {
@@ -49,7 +48,6 @@ export const Modal = (props: ModalProps) => {
   } = props
 
   const [open, setOpen] = useState(defaultOpen)
-  const [closeDisabled, setCloseDisabled] = useState(false)
   const { setModalAlertOpen } = useModalAlert()
 
   const { setAlertModalChoice, enableAlertClickOutside, alertClickOutside, alertModalChoice } = useContext(ModalContext)
@@ -84,12 +82,6 @@ export const Modal = (props: ModalProps) => {
   ])
 
   const handleOutsideClick = (event: React.MouseEvent) => {
-    if (closeDisabled) {
-      event.preventDefault()
-      event.stopPropagation()
-      return
-    }
-
     if (isToastInteraction(event)) {
       event.preventDefault()
       event.stopPropagation()
@@ -104,33 +96,23 @@ export const Modal = (props: ModalProps) => {
     }
   }
 
-  const modalContentProps: ModalContentProps =
-    typeof children.type !== 'string' && children.type !== Fragment
-      ? {
-          setOpen: (children.props as ModalContentProps).setOpen ?? (setExternalOpen ? setExternalOpen : setOpen),
-          setCloseDisabled: (children.props as ModalContentProps).setCloseDisabled ?? setCloseDisabled,
-        }
-      : {}
-
   return (
     <Dialog.Root
       open={externalOpen ? externalOpen : open}
       onOpenChange={
         setExternalOpen
-          ? (nextOpen) => {
-              if (!nextOpen && closeDisabled) return
+          ? () => {
               if (alertClickOutside) {
                 setModalAlertOpen(true)
               } else {
-                setExternalOpen(nextOpen)
+                setExternalOpen(!externalOpen)
               }
             }
-          : (nextOpen) => {
-              if (!nextOpen && closeDisabled) return
+          : () => {
               if (alertClickOutside) {
                 setModalAlertOpen(true)
               } else {
-                setOpen(nextOpen)
+                setOpen(!open)
               }
             }
       }
@@ -170,7 +152,9 @@ export const Modal = (props: ModalProps) => {
           className={`modal__content fixed left-1/2 top-[84px] z-modal overflow-hidden rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
           <div className={`overflow-auto ${fullScreen ? 'h-full' : 'max-h-[80vh]'}`}>
-            {cloneElement(children, modalContentProps)}
+            {cloneElement(children, {
+              setOpen: setExternalOpen ? setExternalOpen : setOpen,
+            })}
             {buttonClose && (
               <Dialog.Close className="absolute right-4 top-4" asChild>
                 <button

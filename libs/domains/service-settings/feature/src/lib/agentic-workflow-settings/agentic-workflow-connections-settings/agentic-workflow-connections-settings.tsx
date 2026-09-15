@@ -141,7 +141,7 @@ export function AgenticWorkflowConnectionsSettings({
           }}
         />
       ),
-      options: { buttonClose: false, width: 488, fakeModal: true },
+      options: { width: 488, fakeModal: true },
     })
   }
 
