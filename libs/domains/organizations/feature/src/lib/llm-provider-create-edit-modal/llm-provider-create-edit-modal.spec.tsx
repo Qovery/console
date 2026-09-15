@@ -46,6 +46,17 @@ describe('LlmProviderCreateEditModal', () => {
     expect(onClose).toHaveBeenCalledWith({ id: 'provider-1' })
   })
 
+  it('should reject a whitespace-only token', async () => {
+    const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+    await userEvent.type(screen.getByLabelText('Name'), 'My Claude')
+    await userEvent.type(screen.getByLabelText('Token'), '   ')
+    await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
+
+    expect(await screen.findByText('Please enter a token.')).toBeInTheDocument()
+    expect(createLlmProvider).not.toHaveBeenCalled()
+  })
+
   it('should keep the stored token when editing with a blank value', async () => {
     const { userEvent } = renderWithProviders(
       <LlmProviderCreateEditModal

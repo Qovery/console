@@ -1,3 +1,4 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useParams } from '@tanstack/react-router'
 import {
   type LlmProviderResponse,
@@ -6,7 +7,7 @@ import {
   type McpServerResponse,
   McpServerScope,
 } from 'qovery-typescript-axios'
-import { Suspense, useMemo } from 'react'
+import { type ReactNode, Suspense, useMemo } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
   Badge,
@@ -156,14 +157,20 @@ function McpServersSkeleton() {
 interface LlmProviderRowProps {
   organizationId: string
   llmProvider: LlmProviderResponse
+  currentUserSub?: string
 }
 
-function LlmProviderRow({ organizationId, llmProvider }: LlmProviderRowProps) {
+function LlmProviderRow({ organizationId, llmProvider, currentUserSub }: LlmProviderRowProps) {
   const { openModal, closeModal } = useModal()
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteLlmProvider } = useDeleteLlmProvider()
   const owner =
-    llmProvider.scope === LlmProviderScope.USER ? `Owner: ${llmProvider.owner_name ?? 'You'}` : 'Organization'
+    llmProvider.scope === LlmProviderScope.USER
+      ? `Owner: ${llmProvider.owner_name ?? 'Unknown member'}`
+      : 'Organization'
+  const canManage =
+    llmProvider.scope === LlmProviderScope.ORGANIZATION ||
+    Boolean(currentUserSub && llmProvider.owner_user_sub === currentUserSub)
 
   const onEdit = () => {
     openModal({
@@ -206,28 +213,30 @@ function LlmProviderRow({ organizationId, llmProvider }: LlmProviderRowProps) {
         </div>
         <p className="text-xs text-neutral-subtle">{owner}</p>
       </Section>
-      <div className="flex shrink-0 gap-2">
-        <Button
-          size="md"
-          variant="outline"
-          color="neutral"
-          iconOnly
-          aria-label={`Edit ${llmProvider.name}`}
-          onClick={onEdit}
-        >
-          <Icon iconName="gear" iconStyle="regular" />
-        </Button>
-        <Button
-          size="md"
-          variant="outline"
-          color="neutral"
-          iconOnly
-          aria-label={`Delete ${llmProvider.name}`}
-          onClick={onDelete}
-        >
-          <Icon iconName="trash-can" iconStyle="regular" />
-        </Button>
-      </div>
+      {canManage ? (
+        <div className="flex shrink-0 gap-2">
+          <Button
+            size="md"
+            variant="outline"
+            color="neutral"
+            iconOnly
+            aria-label={`Edit ${llmProvider.name}`}
+            onClick={onEdit}
+          >
+            <Icon iconName="gear" iconStyle="regular" />
+          </Button>
+          <Button
+            size="md"
+            variant="outline"
+            color="neutral"
+            iconOnly
+            aria-label={`Delete ${llmProvider.name}`}
+            onClick={onDelete}
+          >
+            <Icon iconName="trash-can" iconStyle="regular" />
+          </Button>
+        </div>
+      ) : null}
     </li>
   )
 }
@@ -251,29 +260,38 @@ function LlmProvidersSkeleton() {
   )
 }
 
-function LlmProvidersList({ organizationId }: { organizationId: string }) {
-  const { data: llmProviders = [] } = useLlmProviders({ organizationId, suspense: true })
-  const sortedLlmProviders = useMemo(
-    () => [...llmProviders].sort((first, second) => first.name.localeCompare(second.name)),
-    [llmProviders]
-  )
+interface ScopedItem {
+  id: string
+  name: string
+  scope: string
+}
 
-  if (sortedLlmProviders.length === 0) {
-    return (
-      <EmptyState icon="key" title="No tokens" description="Add a provider token to authenticate your agent tasks." />
-    )
-  }
+interface ScopedItemsListProps<T extends ScopedItem> {
+  items: T[]
+  organizationScope: string
+  userScope: string
+  organizationTitle: string
+  organizationEmptyMessage: string
+  personalTitle: string
+  renderItem: (item: T) => ReactNode
+}
 
-  const personalProviders = sortedLlmProviders.filter(({ scope }) => scope === LlmProviderScope.USER)
-  const organizationProviders = sortedLlmProviders.filter(({ scope }) => scope === LlmProviderScope.ORGANIZATION)
-  const providerGroup = (title: string, providers: LlmProviderResponse[], emptyMessage: string) => (
+function ScopedItemsList<T extends ScopedItem>({
+  items,
+  organizationScope,
+  userScope,
+  organizationTitle,
+  organizationEmptyMessage,
+  personalTitle,
+  renderItem,
+}: ScopedItemsListProps<T>) {
+  const sortedItems = useMemo(() => [...items].sort((first, second) => first.name.localeCompare(second.name)), [items])
+  const personalItems = sortedItems.filter(({ scope }) => scope === userScope)
+  const organizationItems = sortedItems.filter(({ scope }) => scope === organizationScope)
+  const itemGroup = (title: string, groupedItems: T[], emptyMessage: string) => (
     <BlockContent title={title} classNameContent="p-0">
-      {providers.length > 0 ? (
-        <ul>
-          {providers.map((llmProvider) => (
-            <LlmProviderRow key={llmProvider.id} organizationId={organizationId} llmProvider={llmProvider} />
-          ))}
-        </ul>
+      {groupedItems.length > 0 ? (
+        <ul>{groupedItems.map(renderItem)}</ul>
       ) : (
         <p className="p-4 text-sm text-neutral-subtle">{emptyMessage}</p>
       )}
@@ -282,9 +300,39 @@ function LlmProvidersList({ organizationId }: { organizationId: string }) {
 
   return (
     <div className="space-y-4">
-      {providerGroup('Organization tokens', organizationProviders, 'No organization tokens.')}
-      {personalProviders.length > 0 ? providerGroup('Personal tokens', personalProviders, '') : null}
+      {itemGroup(organizationTitle, organizationItems, organizationEmptyMessage)}
+      {personalItems.length > 0 ? itemGroup(personalTitle, personalItems, '') : null}
     </div>
+  )
+}
+
+function LlmProvidersList({ organizationId }: { organizationId: string }) {
+  const { data: llmProviders = [] } = useLlmProviders({ organizationId, suspense: true })
+  const { user } = useAuth0()
+
+  if (llmProviders.length === 0) {
+    return (
+      <EmptyState icon="key" title="No tokens" description="Add a provider token to authenticate your agent tasks." />
+    )
+  }
+
+  return (
+    <ScopedItemsList
+      items={llmProviders}
+      organizationScope={LlmProviderScope.ORGANIZATION}
+      userScope={LlmProviderScope.USER}
+      organizationTitle="Organization tokens"
+      organizationEmptyMessage="No organization tokens."
+      personalTitle="Personal tokens"
+      renderItem={(llmProvider) => (
+        <LlmProviderRow
+          key={llmProvider.id}
+          organizationId={organizationId}
+          llmProvider={llmProvider}
+          currentUserSub={user?.sub}
+        />
+      )}
+    />
   )
 }
 
@@ -294,12 +342,8 @@ interface McpServersListProps {
 
 function McpServersList({ organizationId }: McpServersListProps) {
   const { data: mcpServers = [] } = useMcpServers({ organizationId, suspense: true })
-  const sortedMcpServers = useMemo(
-    () => [...mcpServers].sort((first, second) => first.name.localeCompare(second.name)),
-    [mcpServers]
-  )
 
-  if (sortedMcpServers.length === 0) {
+  if (mcpServers.length === 0) {
     return (
       <EmptyState
         icon="plug"
@@ -309,28 +353,18 @@ function McpServersList({ organizationId }: McpServersListProps) {
     )
   }
 
-  const personalMcpServers = sortedMcpServers.filter(({ scope }) => scope === McpServerScope.USER)
-  const organizationMcpServers = sortedMcpServers.filter(({ scope }) => scope === McpServerScope.ORGANIZATION)
-
-  const mcpServerGroup = (title: string, servers: McpServerResponse[], emptyMessage: string) => (
-    <BlockContent title={title} classNameContent="p-0">
-      {servers.length > 0 ? (
-        <ul>
-          {servers.map((mcpServer) => (
-            <McpServerRow key={mcpServer.id} organizationId={organizationId} mcpServer={mcpServer} />
-          ))}
-        </ul>
-      ) : (
-        <p className="p-4 text-sm text-neutral-subtle">{emptyMessage}</p>
-      )}
-    </BlockContent>
-  )
-
   return (
-    <div className="space-y-4">
-      {mcpServerGroup('Organization MCPs', organizationMcpServers, 'No organization MCPs.')}
-      {personalMcpServers.length > 0 ? mcpServerGroup('Personal MCPs', personalMcpServers, '') : null}
-    </div>
+    <ScopedItemsList
+      items={mcpServers}
+      organizationScope={McpServerScope.ORGANIZATION}
+      userScope={McpServerScope.USER}
+      organizationTitle="Organization MCPs"
+      organizationEmptyMessage="No organization MCPs."
+      personalTitle="Personal MCPs"
+      renderItem={(mcpServer) => (
+        <McpServerRow key={mcpServer.id} organizationId={organizationId} mcpServer={mcpServer} />
+      )}
+    />
   )
 }
 
@@ -359,9 +393,9 @@ export function SettingsAgentPersonalization() {
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="px-8 pb-8 pt-6">
-        <div className="relative">
+        <div className="relative flex flex-col lg:block">
           <SettingsHeading title="Agent personalization" description="Your personal settings for Qovery Agent" />
-          <div className="absolute right-0 top-0 flex gap-2">
+          <div className="-mt-4 mb-8 flex flex-wrap gap-2 lg:absolute lg:right-0 lg:top-0 lg:m-0">
             <Button size="md" variant="outline" color="neutral" onClick={onAddMcp}>
               <Icon iconName="circle-plus" iconStyle="regular" />
               Add MCP

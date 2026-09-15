@@ -136,7 +136,14 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
           <Controller
             name="credential"
             control={methods.control}
-            rules={isEdit ? undefined : { required: 'Please enter a token.' }}
+            rules={
+              isEdit
+                ? undefined
+                : {
+                    required: 'Please enter a token.',
+                    validate: (value) => Boolean(value.trim()) || 'Please enter a token.',
+                  }
+            }
             render={({ field, fieldState: { error } }) => (
               <InputText
                 label={isEdit ? 'Token (optional)' : 'Token'}
