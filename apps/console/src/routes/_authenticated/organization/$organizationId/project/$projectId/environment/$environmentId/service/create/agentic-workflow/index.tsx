@@ -13,6 +13,7 @@ function RouteComponent() {
     <Navigate
       to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/create/agentic-workflow/configuration"
       params={{ organizationId, projectId, environmentId }}
+      search={(search) => search}
       replace
     />
   )
