@@ -93,46 +93,42 @@ and on(namespace, horizontalpodautoscaler)
   }
 )`
 
-const CERTIFICATE_OWNER_LABELS =
-  'qovery_com_associated_service_id, qovery_com_associated_service_type, qovery_com_environment_id, qovery_com_project_id'
+const CERTIFICATE_MATCHER = (serviceId: string) => `qovery_com_associated_service_id="${serviceId}"`
 
-const CERTIFICATE_OWNER_BY_NAME = (serviceId: string) => `
-max by (namespace, name, ${CERTIFICATE_OWNER_LABELS}) (
-  kube_certmanager_certificate_labels{qovery_com_associated_service_id="${serviceId}"}
+const CERTIFICATE_RENEWAL_OVERDUE = (serviceId: string) => `
+(
+  kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 0
+)
+and on (namespace, name)
+(
+  time() - kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 3600
+)
+and on (namespace, name)
+(
+  kube_certmanager_certificate_expiration_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} - time() > 0
 )`
 
-const CERTIFICATE_OWNER_BY_DOMAIN = (serviceId: string) => `
-max by (namespace, domain, ${CERTIFICATE_OWNER_LABELS}) (
-  kube_certmanager_certificate_dns_names{qovery_com_associated_service_id="${serviceId}"}
+const CERTIFICATE_ISSUING_STUCK = (serviceId: string) => `
+(
+  kube_certmanager_certificate_condition{${CERTIFICATE_MATCHER(serviceId)}, condition="Issuing"} == 1
+)
+and on (namespace, name)
+(
+  kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 0
+)
+and on (namespace, name)
+(
+  time() - kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 3600
 )`
+
+const CERTIFICATE_NOT_READY = (serviceId: string) => `
+kube_certmanager_certificate_condition{${CERTIFICATE_MATCHER(serviceId)}, condition="Ready"} == 0`
 
 export const QUERY_CERTIFICATE_RENEWAL_FAILED = (serviceId: string) => `
 (
-  (
-    (
-      certmanager_certificate_renewal_timestamp_seconds{issuer_name="letsencrypt-qovery"} > 0
-    )
-    and on (namespace, name)
-    (
-      time() - certmanager_certificate_renewal_timestamp_seconds{issuer_name="letsencrypt-qovery"} > 3600
-    )
-    and on (namespace, name)
-    (
-      certmanager_certificate_expiration_timestamp_seconds{issuer_name="letsencrypt-qovery"} - time() > 0
-    )
-  )
+  ${CERTIFICATE_RENEWAL_OVERDUE(serviceId)}
   or on (namespace, name)
-  (
-    certmanager_certificate_ready_status{issuer_name="letsencrypt-qovery", condition="False"} == 1
-  )
-)
-and on (namespace, name) group_left(${CERTIFICATE_OWNER_LABELS})
-${CERTIFICATE_OWNER_BY_NAME(serviceId)}
-or
-(
-  sum by (namespace, domain, reason) (
-    certmanager_certificate_challenge_status{status=~"invalid|expired|errored"} == 1
-  )
-  and on (namespace, domain) group_left(${CERTIFICATE_OWNER_LABELS})
-  ${CERTIFICATE_OWNER_BY_DOMAIN(serviceId)}
+  ${CERTIFICATE_ISSUING_STUCK(serviceId)}
+  or on (namespace, name)
+  ${CERTIFICATE_NOT_READY(serviceId)}
 )`

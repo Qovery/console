@@ -16,11 +16,15 @@ describe('alert queries', () => {
   it('should scope certificate renewal failures to the selected service ownership labels', () => {
     const query = QUERY_CERTIFICATE_RENEWAL_FAILED('service-123')
 
-    expect(query).toContain('kube_certmanager_certificate_labels{qovery_com_associated_service_id="service-123"}')
-    expect(query).toContain('kube_certmanager_certificate_dns_names{qovery_com_associated_service_id="service-123"}')
-    expect(query).toContain('certmanager_certificate_renewal_timestamp_seconds')
-    expect(query).toContain('certmanager_certificate_ready_status')
-    expect(query).toContain('certmanager_certificate_challenge_status')
-    expect(query).toContain('and on (namespace, domain) group_left')
+    expect(query).toContain(
+      'kube_certmanager_certificate_condition{qovery_com_associated_service_id="service-123", condition="Issuing"}'
+    )
+    expect(query).toContain('kube_certmanager_certificate_renewal_timestamp_seconds')
+    expect(query).toContain('kube_certmanager_certificate_expiration_timestamp_seconds')
+    expect(query).toContain(
+      'kube_certmanager_certificate_condition{qovery_com_associated_service_id="service-123", condition="Ready"}'
+    )
+    expect(query).not.toContain('certmanager_certificate_challenge_status')
+    expect(query).not.toContain('group_left')
   })
 })
