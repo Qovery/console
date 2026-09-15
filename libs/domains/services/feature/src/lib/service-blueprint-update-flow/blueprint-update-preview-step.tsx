@@ -26,7 +26,7 @@ export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
   }, [requestPreview])
 
   return (
-    <BlueprintUpdatePreview
+    <BlueprintPreview
       clusterId={clusterId}
       previewId={previewId}
       onBack={onBack}
@@ -38,7 +38,7 @@ export function BlueprintUpdatePreviewStep({ onBack }: { onBack: () => void }) {
   )
 }
 
-function BlueprintUpdatePreview({
+export function BlueprintPreview({
   clusterId,
   loading,
   onBack,

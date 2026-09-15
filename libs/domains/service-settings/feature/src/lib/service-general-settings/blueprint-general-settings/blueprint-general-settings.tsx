@@ -1,10 +1,13 @@
 import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
-import { useMemo, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
+import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type BlueprintService } from '@qovery/domains/services/data-access'
 import {
   type BlueprintFieldValue,
   BlueprintManifestVariableInput,
+  BlueprintPreview,
   BlueprintSection,
+  BlueprintUpdateFlowShell,
   OverridesSectionCard,
   getDefaultFieldValue,
   getFallbackServiceIcon,
@@ -69,7 +72,7 @@ function getPersistedVariables(service: BlueprintService): PersistedVariable[] {
 
 export function BlueprintGeneralSettings({ service, environmentId, organizationId }: BlueprintGeneralSettingsProps) {
   const { data, isLoading } = useBlueprint({ blueprintId: service.blueprint_id })
-  console.log('data useBlueprint', data)
+  const { data: environment } = useEnvironment({ environmentId })
   const { mutateAsync: previewBlueprintUpdate, isLoading: isPreviewLoading } = usePreviewBlueprintUpdate()
   const { mutateAsync: updateBlueprint, isLoading: isUpdateLoading } = useUpdateBlueprint({
     environmentId,
@@ -82,6 +85,9 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
     serviceType: service.serviceType,
   })
   const [changes, setChanges] = useState<Record<string, BlueprintFieldValue>>({})
+  const [step, setStep] = useState<'review' | 'preview'>('review')
+  const [previewId, setPreviewId] = useState<string>()
+  const [previewError, setPreviewError] = useState(false)
 
   const details = isBlueprintSettingsDetails(data) ? data : undefined
   const { provider, serviceFamily, serviceVersion } = parseBlueprintTag(details?.tag)
@@ -96,6 +102,15 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
   const variablesByName = useMemo(
     () => new Map(getPersistedVariables(service).map((variable) => [variable.name, variable])),
     [service]
+  )
+  const manifestVariablesByName = useMemo(
+    () =>
+      new Map(
+        fields
+          .filter((field): field is BlueprintManifestVariableField => field.kind === 'variable')
+          .map((field) => [field.name, field])
+      ),
+    [fields]
   )
   const initialValues = useMemo(
     () =>
@@ -125,28 +140,49 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
       isFieldValid(field, values[field.name]) ||
       (field.is_secret && variablesByName.get(field.name)?.is_secret && changes[field.name] === undefined)
   )
-  const isSaving = isPreviewLoading || isUpdateLoading || isDeployLoading
+  const isSaving = isUpdateLoading || isDeployLoading
 
-  const save = async () => {
-    if (!details || !isValid) return
-
+  const payload = useMemo(() => {
     const variables = Object.fromEntries(
       Object.entries(changes).map(([name, value]) => [
         name,
-        { value: String(value), is_secret: variablesByName.get(name)?.is_secret ?? false },
+        { value: String(value), is_secret: manifestVariablesByName.get(name)?.is_secret ?? false },
       ])
     )
-    const payload = {
-      name: details.name,
-      tag: details.tag,
-      icon: service.icon_uri ?? getFallbackServiceIcon(service.service_type),
-      variables,
-    }
 
-    await previewBlueprintUpdate({ blueprintId: service.blueprint_id, payload })
+    return details
+      ? {
+          name: details.name,
+          tag: details.tag,
+          icon: service.icon_uri ?? getFallbackServiceIcon(service.service_type),
+          variables,
+        }
+      : undefined
+  }, [changes, details, manifestVariablesByName, service.icon_uri, service.service_type])
+
+  const requestPreview = useCallback(async () => {
+    if (!payload || !isValid) return
+
+    setPreviewError(false)
+    setPreviewId(undefined)
+    setStep('preview')
+
+    try {
+      const preview = await previewBlueprintUpdate({ blueprintId: service.blueprint_id, payload })
+      setPreviewId(preview?.preview_id)
+    } catch {
+      setPreviewError(true)
+    }
+  }, [isValid, payload, previewBlueprintUpdate, service.blueprint_id])
+
+  const confirmAndDeploy = async () => {
+    if (!details || !isValid) return
+    if (!payload) return
+
     await updateBlueprint({ blueprintId: service.blueprint_id, payload })
     await deployBlueprint({ blueprintId: service.blueprint_id })
     setChanges({})
+    setStep('review')
     toast('success', 'Blueprint update started')
   }
 
@@ -168,6 +204,22 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
           </p>
         </Section>
       </Section>
+    )
+  }
+
+  if (step === 'preview') {
+    return (
+      <BlueprintUpdateFlowShell currentStep={2} reviewTitle="Review configuration" onExit={() => setStep('review')}>
+        <BlueprintPreview
+          clusterId={environment?.cluster_id}
+          previewId={previewId}
+          previewError={previewError}
+          loading={isSaving}
+          onBack={() => setStep('review')}
+          onConfirm={confirmAndDeploy}
+          onRetry={requestPreview}
+        />
+      </BlueprintUpdateFlowShell>
     )
   }
 
@@ -206,11 +258,11 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
           <Button
             type="button"
             size="lg"
-            loading={isSaving}
+            loading={isPreviewLoading}
             disabled={!isValid || Object.keys(changes).length === 0}
-            onClick={save}
+            onClick={() => void requestPreview()}
           >
-            Save and deploy
+            Preview changes
           </Button>
         </div>
       </div>
