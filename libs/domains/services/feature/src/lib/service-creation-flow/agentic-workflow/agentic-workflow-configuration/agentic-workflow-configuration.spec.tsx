@@ -397,9 +397,9 @@ describe('AgenticWorkflowConfiguration', () => {
     await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
     await waitFor(() => expect(screen.queryByLabelText('Configuring MCP Qovery')).not.toBeInTheDocument())
     await userEvent.hover(screen.getByText('MCP Qovery'))
-    expect(
-      await screen.findAllByText('This MCP is required by the selected agent template and cannot be removed.')
-    ).not.toHaveLength(0)
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'This MCP is required by the selected agent template and cannot be removed.'
+    )
     expect(screen.queryByRole('button', { name: 'Remove MCP Qovery' })).not.toBeInTheDocument()
   })
 

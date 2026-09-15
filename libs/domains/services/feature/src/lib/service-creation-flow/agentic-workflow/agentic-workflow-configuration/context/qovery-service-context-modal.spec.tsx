@@ -93,6 +93,30 @@ describe('QoveryServiceContextModal', () => {
     expect(setOpen).toHaveBeenCalledWith(false)
   })
 
+  it('prevents submitting again while services are being saved', async () => {
+    const save = deferred<void>()
+    const onSave = jest.fn(() => save.promise)
+    const { userEvent } = renderWithProviders(
+      <QoveryServiceContextModal
+        isLoading={false}
+        services={services}
+        value={[services[0]]}
+        onSave={onSave}
+        setOpen={jest.fn()}
+      />
+    )
+
+    const confirmButton = screen.getByRole('button', { name: 'Confirm' })
+    confirmButton.focus()
+    await userEvent.keyboard(' ')
+
+    expect(confirmButton).toBeDisabled()
+    await userEvent.keyboard(' ')
+    expect(onSave).toHaveBeenCalledTimes(1)
+
+    save.resolve()
+  })
+
   it('prevents backdrop and Escape dismissal while services are being saved', async () => {
     const save = deferred<void>()
     const { userEvent } = renderWithProviders(

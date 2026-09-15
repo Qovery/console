@@ -162,10 +162,15 @@ export const Modal = (props: ModalProps) => {
           className={`modal__content fixed left-1/2 top-[84px] z-modal overflow-hidden rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
           <div className={`overflow-auto ${fullScreen ? 'h-full' : 'max-h-[80vh]'}`}>
-            {cloneElement(children, {
-              setOpen: setExternalOpen ? setExternalOpen : setOpen,
-              ...(typeof children.type !== 'string' && children.type !== Fragment ? { setCloseDisabled } : {}),
-            })}
+            {cloneElement(
+              children,
+              typeof children.type !== 'string' && children.type !== Fragment
+                ? {
+                    setOpen: setExternalOpen ? setExternalOpen : setOpen,
+                    setCloseDisabled,
+                  }
+                : {}
+            )}
             {buttonClose && (
               <Dialog.Close className="absolute right-4 top-4" asChild>
                 <button

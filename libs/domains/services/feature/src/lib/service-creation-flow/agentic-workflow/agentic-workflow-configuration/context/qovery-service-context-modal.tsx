@@ -114,6 +114,7 @@ export function QoveryServiceContextModal({
             type="button"
             size="md"
             loading={isSaving}
+            disabled={isSaving}
             onClick={async () => {
               setSaveError(undefined)
               setIsSaving(true)
