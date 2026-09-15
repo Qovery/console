@@ -40,6 +40,7 @@ import {
   OrganizationWebhookApi,
   type OrganizationWebhookCreateRequest,
   PlanEnum,
+  type QoveryMcpServerRequest,
   type TfVarsDiscoveryMode,
 } from 'qovery-typescript-axios'
 import { match } from 'ts-pattern'
@@ -646,6 +647,16 @@ export const mutations = {
     mcpServerRequest: McpServerRequest
   }) {
     const response = await mcpServersApi.createMcpServer(organizationId, mcpServerRequest)
+    return response.data
+  },
+  async createQoveryMcpServer({
+    organizationId,
+    qoveryMcpServerRequest,
+  }: {
+    organizationId: string
+    qoveryMcpServerRequest?: QoveryMcpServerRequest
+  }) {
+    const response = await mcpServersApi.createQoveryMcpServer(organizationId, qoveryMcpServerRequest)
     return response.data
   },
   async editMcpServer({

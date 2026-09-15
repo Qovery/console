@@ -10,7 +10,7 @@ const mcpServers = [
   {
     id: 'm1',
     name: 'Qovery Read-only',
-    url: 'https://mcp.qovery.com',
+    url: 'https://mcp.qovery.com/mcp',
     scope: McpServerScope.ORGANIZATION,
     attachable: true,
   },
@@ -32,7 +32,7 @@ const mcpServers = [
   },
 ] as McpServerResponse[]
 
-function setup(value: string[] = [], onChange = jest.fn(), onClose = jest.fn()) {
+function setup(value: string[] = [], onChange = jest.fn(), onClose = jest.fn(), lockedMcpServerIds: string[] = []) {
   return {
     onChange,
     onClose,
@@ -40,6 +40,7 @@ function setup(value: string[] = [], onChange = jest.fn(), onClose = jest.fn()) 
       <McpSheet
         createdMcpServers={[]}
         isLoading={false}
+        lockedMcpServerIds={lockedMcpServerIds}
         mcpServers={mcpServers}
         value={value}
         onChange={onChange}
@@ -106,6 +107,30 @@ describe('McpSheet', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Remove Romaric tools' }))
 
     expect(onChange).toHaveBeenCalledWith([])
+  })
+
+  it('prevents removing an MCP required by Qovery service context', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = setup(['m1'], onChange, jest.fn(), ['m1'])
+    const requiredMcp = screen.getByRole('button', { name: 'Qovery Read-only is required by Qovery service context' })
+
+    expect(requiredMcp).toBeDisabled()
+    await userEvent.hover(screen.getByText('Qovery Read-only'))
+
+    expect(
+      await screen.findAllByText('This MCP is required by the selected Qovery service context and cannot be removed.')
+    ).not.toHaveLength(0)
+    expect(screen.getByRole('button', { name: 'Remove all' })).toBeDisabled()
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('keeps required MCPs when removing all other connections', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = setup(['m1', 'm2'], onChange, jest.fn(), ['m1'])
+
+    await userEvent.click(screen.getByRole('button', { name: 'Remove all' }))
+
+    expect(onChange).toHaveBeenCalledWith(['m1'])
   })
 
   it('closes from the Done button', async () => {

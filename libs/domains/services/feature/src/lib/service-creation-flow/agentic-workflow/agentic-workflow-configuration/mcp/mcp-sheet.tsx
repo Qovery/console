@@ -3,7 +3,7 @@ import { type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { McpServerCreateEditModal } from '@qovery/domains/organizations/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
-import { Button, Heading, Icon, InputSearch, useModal } from '@qovery/shared/ui'
+import { Button, Heading, Icon, InputSearch, Tooltip, useModal } from '@qovery/shared/ui'
 import { OverlaySheet, SheetHeader } from '../sheet/overlay-sheet'
 
 export function hasOrganizationMcpCreationPermission({
@@ -27,6 +27,7 @@ export function hasOrganizationMcpCreationPermission({
 function McpServerPicker({
   createdMcpServers,
   isLoading,
+  lockedMcpServerIds,
   mcpServers,
   onChange,
   onMcpServerCreated,
@@ -34,6 +35,7 @@ function McpServerPicker({
 }: {
   createdMcpServers: McpServerResponse[]
   isLoading: boolean
+  lockedMcpServerIds: string[]
   mcpServers: McpServerResponse[]
   onChange: (value: string[]) => void
   onMcpServerCreated: (mcpServer: McpServerResponse) => void
@@ -56,6 +58,7 @@ function McpServerPicker({
     .filter(({ name, url }) => `${name} ${url}`.toLowerCase().includes(search.trim().toLowerCase()))
   const connectedMcpServers = matchingMcpServers.filter(({ id }) => value.includes(id))
   const disconnectedMcpServers = matchingMcpServers.filter(({ id }) => !value.includes(id))
+  const unlockedMcpServerIds = value.filter((id) => !lockedMcpServerIds.includes(id))
 
   const createMcpServer = () => {
     openModal({
@@ -77,12 +80,19 @@ function McpServerPicker({
   }
 
   const mcpServerRow = (mcpServer: McpServerResponse, connected: boolean) => {
-    return (
+    const locked = connected && lockedMcpServerIds.includes(mcpServer.id)
+    const row = (
       <button
-        key={mcpServer.id}
         type="button"
-        className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong"
-        aria-label={connected ? `Remove ${mcpServer.name}` : `Add ${mcpServer.name}`}
+        disabled={locked}
+        className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong disabled:cursor-not-allowed disabled:opacity-50"
+        aria-label={
+          locked
+            ? `${mcpServer.name} is required by Qovery service context`
+            : connected
+              ? `Remove ${mcpServer.name}`
+              : `Add ${mcpServer.name}`
+        }
         onClick={() =>
           onChange(connected ? value.filter((mcpServerId) => mcpServerId !== mcpServer.id) : [...value, mcpServer.id])
         }
@@ -103,6 +113,18 @@ function McpServerPicker({
         </span>
       </button>
     )
+
+    return locked ? (
+      <Tooltip
+        key={mcpServer.id}
+        content="This MCP is required by the selected Qovery service context and cannot be removed."
+        classNameTrigger="block"
+      >
+        <span>{row}</span>
+      </Tooltip>
+    ) : (
+      <span key={mcpServer.id}>{row}</span>
+    )
   }
 
   return (
@@ -114,7 +136,14 @@ function McpServerPicker({
             <Heading level={3} weight="medium">
               Connected ({connectedMcpServers.length})
             </Heading>
-            <Button type="button" size="sm" color="neutral" variant="plain" onClick={() => onChange([])}>
+            <Button
+              type="button"
+              size="sm"
+              color="neutral"
+              variant="plain"
+              disabled={unlockedMcpServerIds.length === 0}
+              onClick={() => onChange(value.filter((id) => lockedMcpServerIds.includes(id)))}
+            >
               Remove all
             </Button>
           </div>
@@ -150,6 +179,7 @@ function McpServerPicker({
 export function McpSheet({
   createdMcpServers,
   isLoading,
+  lockedMcpServerIds = [],
   mcpServers,
   onChange,
   onClose,
@@ -158,6 +188,7 @@ export function McpSheet({
 }: {
   createdMcpServers: McpServerResponse[]
   isLoading: boolean
+  lockedMcpServerIds?: string[]
   mcpServers: McpServerResponse[]
   onChange: (value: string[]) => void
   onClose: () => void
@@ -171,6 +202,7 @@ export function McpSheet({
         <McpServerPicker
           createdMcpServers={createdMcpServers}
           isLoading={isLoading}
+          lockedMcpServerIds={lockedMcpServerIds}
           mcpServers={mcpServers}
           value={value}
           onChange={onChange}

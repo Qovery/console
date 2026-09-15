@@ -111,6 +111,7 @@ export interface AgenticWorkflowFormData {
 export interface AgenticWorkflowCreateContextInterface {
   form: UseFormReturn<AgenticWorkflowFormData>
   onExit: () => void
+  requiresQoveryMcp: boolean
   variablesForm: UseFormReturn<FlowVariableData>
 }
 
@@ -153,12 +154,14 @@ export interface AgenticWorkflowCreationFlowProps extends PropsWithChildren {
   // A template use case pre-fills part of the form and its variables when the
   // flow is entered with a `?template=` param (see agentic-workflow-templates.ts).
   seed?: Partial<AgenticWorkflowFormData>
+  requiresQoveryMcp?: boolean
   variablesSeed?: FlowVariableData['variables']
 }
 
 export function AgenticWorkflowCreationFlow({
   children,
   onExit,
+  requiresQoveryMcp = false,
   seed,
   variablesSeed,
 }: AgenticWorkflowCreationFlowProps) {
@@ -183,6 +186,7 @@ export function AgenticWorkflowCreationFlow({
       value={{
         form,
         onExit,
+        requiresQoveryMcp,
         variablesForm,
       }}
     >

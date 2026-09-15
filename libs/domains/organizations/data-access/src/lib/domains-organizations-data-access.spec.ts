@@ -72,6 +72,16 @@ describe('MCP server mutations', () => {
     expect(result).toEqual(mockData)
   })
 
+  it('should create the read-only Qovery MCP server', async () => {
+    const mockData = { id: 'qovery-mcp', name: 'Qovery MCP', url: 'https://mcp.qovery.com/mcp' }
+    jest.spyOn(MCPServersApi.prototype, 'createQoveryMcpServer').mockResolvedValue({ data: mockData } as never)
+
+    const result = await mutations.createQoveryMcpServer({ organizationId: 'org-1' })
+
+    expect(MCPServersApi.prototype.createQoveryMcpServer).toHaveBeenCalledWith('org-1', undefined)
+    expect(result).toEqual(mockData)
+  })
+
   it('should edit an MCP server', async () => {
     const mockData = { id: 'mcp-1', ...mcpServerRequest }
     jest.spyOn(MCPServersApi.prototype, 'editMcpServer').mockResolvedValue({ data: mockData } as never)

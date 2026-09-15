@@ -2,9 +2,9 @@ import { useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { APIVariableScopeEnum, type McpServerResponse } from 'qovery-typescript-axios'
-import { type ReactNode, useRef, useState } from 'react'
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
-import { useMcpServers } from '@qovery/domains/organizations/feature'
+import { useCreateQoveryMcpServer, useMcpServers } from '@qovery/domains/organizations/feature'
 import { VariableRow, useImportVariables } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type VariableData } from '@qovery/shared/interfaces'
@@ -19,6 +19,7 @@ import {
   InputTextArea,
   Modal,
   Section,
+  Tooltip,
   useModal,
 } from '@qovery/shared/ui'
 import {
@@ -44,6 +45,7 @@ import { QoveryServiceContextCard, QoveryServiceContextCompactCard } from './con
 import { QoveryServiceContextModal } from './context/qovery-service-context-modal'
 import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header/agentic-workflow-header'
 import { McpSheet } from './mcp/mcp-sheet'
+import { isQoveryMcpServer } from './mcp/qovery-mcp-server'
 
 type SettingsGroup = 'general' | 'resources' | 'governance' | 'variables' | 'advanced'
 
@@ -279,7 +281,8 @@ export function AgenticWorkflowConfiguration() {
     useAgenticWorkflowContextServices(environmentId)
   const navigate = useNavigate()
   const { closeModal, openModal } = useModal()
-  const { form, onExit, variablesForm } = useAgenticWorkflowCreateContext()
+  const { form, onExit, requiresQoveryMcp, variablesForm } = useAgenticWorkflowCreateContext()
+  const { mutateAsync: createQoveryMcpServer } = useCreateQoveryMcpServer()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
   const { isLoading: isImportingVariables, mutateAsync: importVariables } = useImportVariables()
   const {
@@ -309,6 +312,7 @@ export function AgenticWorkflowConfiguration() {
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
   const createdServiceIdRef = useRef<string>()
+  const qoveryMcpInitializationStartedRef = useRef(false)
   const values = form.watch()
   const { dirtyFields } = form.formState
   const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
@@ -331,6 +335,35 @@ export function AgenticWorkflowConfiguration() {
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
+  const qoveryMcpServer = availableMcpServers.find(isQoveryMcpServer)
+  const ensureQoveryMcpServer = useCallback(async () => {
+    const existingQoveryMcpServer = [...mcpServers, ...createdMcpServers].find(isQoveryMcpServer)
+    const mcpServer =
+      existingQoveryMcpServer ??
+      (await createQoveryMcpServer({
+        organizationId,
+      }))
+
+    if (!existingQoveryMcpServer) {
+      setCreatedMcpServers((servers) =>
+        servers.some(({ id }) => id === mcpServer.id) ? servers : [...servers, mcpServer]
+      )
+    }
+
+    const selectedMcpServerIds = form.getValues('mcpServerIds')
+    if (!selectedMcpServerIds.includes(mcpServer.id)) {
+      form.setValue('mcpServerIds', [...selectedMcpServerIds, mcpServer.id], { shouldDirty: true })
+    }
+
+    return mcpServer
+  }, [createQoveryMcpServer, createdMcpServers, form, mcpServers, organizationId])
+
+  useEffect(() => {
+    if (!requiresQoveryMcp || areMcpServersLoading || qoveryMcpInitializationStartedRef.current) return
+
+    qoveryMcpInitializationStartedRef.current = true
+    void ensureQoveryMcpServer().catch(() => undefined)
+  }, [areMcpServersLoading, ensureQoveryMcpServer, requiresQoveryMcp])
   const openGitContext = (index?: number) => {
     const editingContext = typeof index === 'number' ? values.gitRepositories[index] : undefined
 
@@ -383,7 +416,10 @@ export function AgenticWorkflowConfiguration() {
           setOpen={(open) => {
             if (!open) closeModal()
           }}
-          onSave={(services) => form.setValue('contextServices', services, { shouldDirty: true })}
+          onSave={async (services) => {
+            if (services.length > 0) await ensureQoveryMcpServer()
+            form.setValue('contextServices', services, { shouldDirty: true })
+          }}
         />
       ),
       options: {
@@ -843,24 +879,32 @@ export function AgenticWorkflowConfiguration() {
                       className="flex h-7 max-w-full items-center rounded border border-neutral bg-surface-neutral pl-2 pr-1 text-ssm font-medium text-neutral"
                     >
                       <span className="truncate">{name}</span>
-                      <Button
-                        type="button"
-                        size="sm"
-                        color="neutral"
-                        variant="plain"
-                        iconOnly
-                        className="h-5 w-5 hover:bg-transparent"
-                        aria-label={`Remove ${name}`}
-                        onClick={() =>
-                          form.setValue(
-                            'mcpServerIds',
-                            values.mcpServerIds.filter((mcpServerId) => mcpServerId !== id),
-                            { shouldDirty: true }
-                          )
-                        }
+                      <Tooltip
+                        content="This MCP is required by the selected Qovery service context and cannot be removed."
+                        disabled={!(values.contextServices.length > 0 && qoveryMcpServer?.id === id)}
                       >
-                        <Icon iconName="xmark" className="text-xs" />
-                      </Button>
+                        <span>
+                          <Button
+                            type="button"
+                            size="sm"
+                            color="neutral"
+                            variant="plain"
+                            iconOnly
+                            disabled={values.contextServices.length > 0 && qoveryMcpServer?.id === id}
+                            className="h-5 w-5 hover:bg-transparent"
+                            aria-label={`Remove ${name}`}
+                            onClick={() =>
+                              form.setValue(
+                                'mcpServerIds',
+                                values.mcpServerIds.filter((mcpServerId) => mcpServerId !== id),
+                                { shouldDirty: true }
+                              )
+                            }
+                          >
+                            <Icon iconName="xmark" className="text-xs" />
+                          </Button>
+                        </span>
+                      </Tooltip>
                     </div>
                   ))}
                 <Button type="button" size="sm" color="neutral" variant="outline" onClick={() => setActiveSheet('mcp')}>
@@ -989,6 +1033,7 @@ export function AgenticWorkflowConfiguration() {
           isLoading={areMcpServersLoading}
           mcpServers={mcpServers}
           createdMcpServers={createdMcpServers}
+          lockedMcpServerIds={values.contextServices.length > 0 && qoveryMcpServer ? [qoveryMcpServer.id] : []}
           value={values.mcpServerIds}
           onChange={(value) => form.setValue('mcpServerIds', value, { shouldDirty: true })}
           onClose={() => setActiveSheet(null)}

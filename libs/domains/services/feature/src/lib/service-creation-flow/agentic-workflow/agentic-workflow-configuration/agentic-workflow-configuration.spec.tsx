@@ -14,6 +14,8 @@ import {
 const mockNavigate = jest.fn()
 const mockCreateService = jest.fn()
 const mockImportVariables = jest.fn()
+const mockCreateQoveryMcpServer = jest.fn()
+let mockMcpServers: Array<Record<string, unknown>> = []
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -43,7 +45,8 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   GitRepositorySetting: () => <div>Git repository</div>,
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
   McpServerSetting: () => <div>Organization MCP connectors</div>,
-  useMcpServers: () => ({ data: [], isLoading: false }),
+  useCreateQoveryMcpServer: () => ({ mutateAsync: mockCreateQoveryMcpServer }),
+  useMcpServers: () => ({ data: mockMcpServers, isLoading: false }),
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
@@ -79,13 +82,20 @@ function renderConfiguration({
   onExit = jest.fn(),
   seed,
   variablesSeed,
+  requiresQoveryMcp,
 }: {
   onExit?: () => void
   seed?: Partial<AgenticWorkflowFormData>
   variablesSeed?: Parameters<typeof AgenticWorkflowCreationFlow>[0]['variablesSeed']
+  requiresQoveryMcp?: boolean
 } = {}) {
   return renderWithProviders(
-    <AgenticWorkflowCreationFlow onExit={onExit} seed={seed} variablesSeed={variablesSeed}>
+    <AgenticWorkflowCreationFlow
+      onExit={onExit}
+      requiresQoveryMcp={requiresQoveryMcp}
+      seed={seed}
+      variablesSeed={variablesSeed}
+    >
       <AgenticWorkflowConfiguration />
     </AgenticWorkflowCreationFlow>
   )
@@ -99,6 +109,16 @@ const validSeed: Partial<AgenticWorkflowFormData> = {
 }
 
 describe('AgenticWorkflowConfiguration validation', () => {
+  beforeEach(() => {
+    mockMcpServers = []
+    mockCreateQoveryMcpServer.mockReset().mockResolvedValue({
+      id: 'qovery-mcp',
+      name: 'Qovery MCP',
+      url: 'https://mcp.qovery.com/mcp',
+      scope: 'ORGANIZATION',
+      attachable: true,
+    })
+  })
   it('should require valid JSON only when a required JSON field is empty or invalid', () => {
     expect(getJsonError('', false)).toBeUndefined()
     expect(getJsonError('', true)).toBe('Please enter a valid JSON configuration.')
@@ -162,6 +182,14 @@ describe('AgenticWorkflowConfiguration validation', () => {
 describe('AgenticWorkflowConfiguration', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockMcpServers = []
+    mockCreateQoveryMcpServer.mockResolvedValue({
+      id: 'qovery-mcp',
+      name: 'Qovery MCP',
+      url: 'https://mcp.qovery.com/mcp',
+      scope: 'ORGANIZATION',
+      attachable: true,
+    })
     mockCreateService.mockResolvedValue({ id: 'workflow-1' })
     mockImportVariables.mockResolvedValue(undefined)
   })
@@ -272,6 +300,47 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
     expect(screen.getByRole('heading', { name: 'Manage MCP' })).toBeInTheDocument()
+  })
+
+  it('should create and lock the Qovery MCP when Qovery service context is added', async () => {
+    const { userEvent } = renderConfiguration()
+
+    await userEvent.click(screen.getByRole('button', { name: /Add Qovery services/ }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
+
+    expect(screen.getByRole('button', { name: 'Qovery MCP is required by Qovery service context' })).toBeDisabled()
+  })
+
+  it('should automatically select an existing Qovery MCP without creating another one', async () => {
+    mockMcpServers = [
+      {
+        id: 'existing-qovery-mcp',
+        name: 'Qovery MCP',
+        url: 'https://mcp.qovery.com/mcp',
+        scope: 'ORGANIZATION',
+        attachable: true,
+      },
+    ]
+    const { userEvent } = renderConfiguration()
+
+    await userEvent.click(screen.getByRole('button', { name: /Add Qovery services/ }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
+
+    expect(mockCreateQoveryMcpServer).not.toHaveBeenCalled()
+    expect(screen.getByRole('button', { name: 'Qovery MCP is required by Qovery service context' })).toBeDisabled()
+  })
+
+  it('should create and select the Qovery MCP for templates that require it', async () => {
+    renderConfiguration({ requiresQoveryMcp: true })
+
+    await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
+    expect(screen.getByText('Qovery MCP')).toBeInTheDocument()
   })
 
   it('should surface validation feedback when a creation action is clicked with incomplete configuration', async () => {

@@ -30,6 +30,7 @@ function RouteComponent() {
 
   return (
     <AgenticWorkflowCreationFlow
+      requiresQoveryMcp={selectedTemplate?.requiresQoveryMcp}
       seed={selectedTemplate?.seed}
       variablesSeed={selectedTemplate?.variables}
       onExit={() =>

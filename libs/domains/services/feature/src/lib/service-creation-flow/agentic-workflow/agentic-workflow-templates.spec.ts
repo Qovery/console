@@ -70,6 +70,13 @@ describe('agentic-workflow-templates', () => {
     expect(template?.darkLogoPath).toBe('/assets/agent-templates/linear-light.svg')
   })
 
+  it.each(['incident-io-analyzer', 'honeybadger-incident-analyzer', 'build-optimizer'])(
+    'requires the Qovery MCP for the %s template',
+    (id) => {
+      expect(getAgenticWorkflowTemplate(id)?.requiresQoveryMcp).toBe(true)
+    }
+  )
+
   it('exposes the Build & deployment optimizer use case', () => {
     const template = getAgenticWorkflowTemplate('build-optimizer')
     expect(template).toBeDefined()

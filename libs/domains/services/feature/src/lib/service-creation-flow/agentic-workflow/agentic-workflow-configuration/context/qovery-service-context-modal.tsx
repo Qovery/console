@@ -11,12 +11,13 @@ export function QoveryServiceContextModal({
   value,
 }: {
   isLoading: boolean
-  onSave: (services: AgenticWorkflowContextService[]) => void
+  onSave: (services: AgenticWorkflowContextService[]) => Promise<void> | void
   services: AgenticWorkflowContextService[]
   setOpen?: (open: boolean) => void
   value: AgenticWorkflowContextService[]
 }) {
   const [selectedIds, setSelectedIds] = useState(value.map(({ id }) => id))
+  const [isSaving, setIsSaving] = useState(false)
   const hideSelectAll = isLoading || selectedIds.length === services.length
 
   return (
@@ -81,9 +82,15 @@ export function QoveryServiceContextModal({
           <Button
             type="button"
             size="md"
-            onClick={() => {
-              onSave(services.filter(({ id }) => selectedIds.includes(id)))
-              setOpen?.(false)
+            loading={isSaving}
+            onClick={async () => {
+              setIsSaving(true)
+              try {
+                await onSave(services.filter(({ id }) => selectedIds.includes(id)))
+                setOpen?.(false)
+              } finally {
+                setIsSaving(false)
+              }
             }}
           >
             Confirm
