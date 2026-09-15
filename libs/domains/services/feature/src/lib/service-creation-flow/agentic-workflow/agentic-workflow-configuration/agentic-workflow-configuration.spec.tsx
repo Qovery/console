@@ -53,7 +53,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   GitRepositorySetting: () => <div>Git repository</div>,
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
   McpServerSetting: () => <div>Organization MCP connectors</div>,
-  useCreateQoveryMcpServer: () => ({ mutateAsync: mockCreateQoveryMcpServer }),
+  useCreateQoveryMcpServer: () => ({ isLoading: false, mutateAsync: mockCreateQoveryMcpServer }),
   useMcpServers: () => ({ data: mockMcpServers, isLoading: false }),
 }))
 
@@ -348,7 +348,7 @@ describe('AgenticWorkflowConfiguration', () => {
     renderConfiguration({ requiresQoveryMcp: true })
 
     await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
-    expect(await screen.findByText('MCP Qovery')).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'Remove MCP Qovery' })).toBeInTheDocument()
   })
 
   it('should select an existing Qovery MCP using its origin URL for templates that require it', async () => {
@@ -397,6 +397,22 @@ describe('AgenticWorkflowConfiguration', () => {
     await waitFor(() =>
       expect(screen.queryByRole('heading', { name: 'Import existing Qovery services' })).not.toBeInTheDocument()
     )
+    expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(1)
+  })
+
+  it('should immediately show the preconfigured Qovery MCP while a template initializes it', async () => {
+    const creation = deferred<{
+      id: string
+      name: string
+      url: string
+      scope: string
+      attachable: boolean
+    }>()
+    mockCreateQoveryMcpServer.mockReturnValue(creation.promise)
+
+    renderConfiguration({ requiresQoveryMcp: true })
+
+    expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
     expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(1)
   })
 

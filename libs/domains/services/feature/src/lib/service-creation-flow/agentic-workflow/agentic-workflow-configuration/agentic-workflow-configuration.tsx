@@ -282,7 +282,7 @@ export function AgenticWorkflowConfiguration() {
   const navigate = useNavigate()
   const { closeModal, openModal } = useModal()
   const { form, onExit, requiresQoveryMcp, variablesForm } = useAgenticWorkflowCreateContext()
-  const { mutateAsync: createQoveryMcpServer } = useCreateQoveryMcpServer()
+  const { isLoading: isCreatingQoveryMcpServer, mutateAsync: createQoveryMcpServer } = useCreateQoveryMcpServer()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
   const { isLoading: isImportingVariables, mutateAsync: importVariables } = useImportVariables()
   const {
@@ -882,6 +882,20 @@ export function AgenticWorkflowConfiguration() {
                 ) : null}
               </ConfigurationRow>
               <ConfigurationRow label="MCP">
+                {requiresQoveryMcp && !qoveryMcpServer ? (
+                  <div className="flex h-7 max-w-full items-center gap-1 rounded border border-neutral bg-surface-neutral pl-2 pr-1 text-ssm font-medium text-neutral">
+                    <span className="truncate">MCP Qovery</span>
+                    {isCreatingQoveryMcpServer ? (
+                      <span className="flex h-5 w-5 items-center justify-center" aria-label="Configuring MCP Qovery">
+                        <Icon
+                          iconName="loader"
+                          iconStyle="regular"
+                          className="animate-spin text-xs text-neutral-subtle"
+                        />
+                      </span>
+                    ) : null}
+                  </div>
+                ) : null}
                 {availableMcpServers
                   .filter(({ id }) => values.mcpServerIds.includes(id))
                   .map((mcpServer) => {
