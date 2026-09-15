@@ -35,4 +35,22 @@ describe('QoveryServiceContextModal', () => {
 
     expect(screen.getByText('api')).toBeInTheDocument()
   })
+
+  it('resets all selected services', async () => {
+    const onSave = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <QoveryServiceContextModal
+        isLoading={false}
+        services={services}
+        value={services}
+        onSave={onSave}
+        setOpen={jest.fn()}
+      />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Reset all' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+
+    expect(onSave).toHaveBeenCalledWith([])
+  })
 })

@@ -37,20 +37,32 @@ export function QoveryServiceContextModal({
         isLoading={isLoading}
         onChange={(ids) => setSelectedIds(ids as string[])}
       />
-      <div className="flex justify-end gap-2">
-        <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
-          Cancel
-        </Button>
+      <div className="flex items-center justify-between gap-2">
         <Button
           type="button"
+          variant="plain"
+          color="neutral"
           size="md"
-          onClick={() => {
-            onSave(services.filter(({ id }) => selectedIds.includes(id)))
-            setOpen?.(false)
-          }}
+          disabled={selectedIds.length === 0}
+          onClick={() => setSelectedIds([])}
         >
-          Apply changes
+          Reset all
         </Button>
+        <div className="flex gap-2">
+          <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
+            Cancel
+          </Button>
+          <Button
+            type="button"
+            size="md"
+            onClick={() => {
+              onSave(services.filter(({ id }) => selectedIds.includes(id)))
+              setOpen?.(false)
+            }}
+          >
+            Apply changes
+          </Button>
+        </div>
       </div>
     </Section>
   )
