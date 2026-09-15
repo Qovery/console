@@ -24,6 +24,7 @@ import {
 } from './platform-configuration-utils'
 
 interface PlatformComponentConfigurationProps {
+  clusterInputsLocation?: string
   isFieldVisible?: (field: FieldSchemaResponse) => boolean
   clusterInputs: Record<string, string>
   component: PlatformTemplateComponentResponse
@@ -49,6 +50,7 @@ function RequirementStatus({ status }: { status: PlatformComponentInputRequireme
 }
 
 export function PlatformComponentConfiguration({
+  clusterInputsLocation,
   isFieldVisible,
   clusterInputs,
   component,
@@ -147,7 +149,22 @@ export function PlatformComponentConfiguration({
             </section>
           ) : null}
 
-          {requirements.length > 0 ? (
+          {clusterInputsLocation &&
+          requirements.some(
+            (requirement) =>
+              requirement.status === 'MISSING' || getFieldViolation(violations, requirement.key, 'clusterInputs')
+          ) ? (
+            <Callout.Root color="yellow">
+              <Callout.Icon>
+                <Icon iconName="circle-exclamation" iconStyle="regular" />
+              </Callout.Icon>
+              <Callout.Text>
+                Complete the required cluster inputs in {clusterInputsLocation} before saving.
+              </Callout.Text>
+            </Callout.Root>
+          ) : null}
+
+          {!clusterInputsLocation && requirements.length > 0 ? (
             <section className="flex flex-col gap-3 border-t border-neutral pt-4">
               <div className="flex items-center justify-between gap-3">
                 <div>
