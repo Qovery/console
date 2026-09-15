@@ -82,6 +82,12 @@ export interface AgenticWorkflowGitRepository {
   branch: string
 }
 
+export interface AgenticWorkflowContextService {
+  id: string
+  name: string
+  type: string
+}
+
 export interface AgenticWorkflowFormData {
   name: string
   description: string
@@ -93,6 +99,7 @@ export interface AgenticWorkflowFormData {
   mcpServerIds: string[]
   mcpJson: string
   gitRepositories: AgenticWorkflowGitRepository[]
+  contextServices: AgenticWorkflowContextService[]
   modelApiKey: string
   modelSettingsJson: string
   whitelistHosts: string
@@ -131,6 +138,7 @@ export function getAgenticWorkflowDefaults(): AgenticWorkflowFormData {
     mcpServerIds: [],
     mcpJson: '',
     gitRepositories: [],
+    contextServices: [],
     modelApiKey: '',
     modelSettingsJson: DEFAULT_MODEL_SETTINGS,
     whitelistHosts: '*',

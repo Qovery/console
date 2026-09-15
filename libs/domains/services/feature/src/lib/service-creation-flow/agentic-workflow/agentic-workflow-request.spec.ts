@@ -13,6 +13,7 @@ const values: AgenticWorkflowFormData = {
   mcpServerIds: ['mcp-1', 'mcp-2'],
   mcpJson: '',
   gitRepositories: [],
+  contextServices: [],
   modelApiKey: 'api-key',
   modelSettingsJson: '{}',
   whitelistHosts: '*',
@@ -109,6 +110,27 @@ describe('formatAgenticWorkflowRequest', () => {
         executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       }).execution_mode
     ).toBe(AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT)
+  })
+
+  it('appends selected Qovery services to the agent prompt', () => {
+    const request = formatAgenticWorkflowRequest({
+      ...values,
+      agentPrompt: 'Investigate the incident.\n',
+      contextServices: [
+        { id: 'application-1', name: 'api', type: 'APPLICATION' },
+        { id: 'database-1', name: 'postgres', type: 'DATABASE' },
+      ],
+    })
+
+    expect(request.agent_prompt).toBe(`Investigate the incident.
+
+## Context services
+- api (APPLICATION) — service ID: application-1
+- postgres (DATABASE) — service ID: database-1`)
+  })
+
+  it('keeps the agent prompt unchanged when no Qovery service is selected', () => {
+    expect(formatAgenticWorkflowRequest(values).agent_prompt).toBe('Review the pull request')
   })
 
   it('uses the full URL of a selected Git repository', () => {

@@ -27,6 +27,16 @@ jest.mock('../../../hooks/use-create-service/use-create-service', () => ({
   useCreateService: () => ({ isLoading: false, mutateAsync: mockCreateService }),
 }))
 
+jest.mock('../../../hooks/use-agentic-workflow-context-services/use-agentic-workflow-context-services', () => ({
+  useAgenticWorkflowContextServices: () => ({
+    data: [
+      { id: 'application-1', name: 'api', type: 'APPLICATION' },
+      { id: 'database-1', name: 'postgres', type: 'DATABASE' },
+    ],
+    isLoading: false,
+  }),
+}))
+
 jest.mock('@qovery/domains/organizations/feature', () => ({
   GitBranchSettings: () => <div>Git branch</div>,
   GitProviderSetting: () => <div>Git provider</div>,
@@ -211,6 +221,11 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /Add from Git repository/ }))
     expect(screen.getByRole('heading', { name: 'Add from Git repository' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+
+    await userEvent.click(screen.getByRole('button', { name: /Add Qovery services/ }))
+    expect(screen.getByRole('heading', { name: 'Add Qovery services' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Qovery services')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))

@@ -25,6 +25,7 @@ import {
   prepareVariableImportRequest,
 } from '@qovery/shared/util-js'
 import { AgenticWorkflowExecutionModeSelector } from '../../../agentic-workflow-execution-mode-selector/agentic-workflow-execution-mode-selector'
+import { useAgenticWorkflowContextServices } from '../../../hooks/use-agentic-workflow-context-services/use-agentic-workflow-context-services'
 import { useCreateService } from '../../../hooks/use-create-service/use-create-service'
 import {
   type AgenticWorkflowAutomation,
@@ -37,6 +38,8 @@ import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } f
 import { AutomationSheet } from './automations/automation-sheet'
 import { GitContextCard, GitContextCompactCard } from './context/git-context-card'
 import { GitContextModal } from './context/git-context-modal'
+import { QoveryServiceContextCard, QoveryServiceContextCompactCard } from './context/qovery-service-context-card'
+import { QoveryServiceContextModal } from './context/qovery-service-context-modal'
 import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header/agentic-workflow-header'
 import { McpSheet } from './mcp/mcp-sheet'
 
@@ -270,6 +273,8 @@ function DockerFragmentModal({ setOpen }: { setOpen?: (open: boolean) => void })
 export function AgenticWorkflowConfiguration() {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
   const { data: mcpServers = [], isLoading: areMcpServersLoading } = useMcpServers({ organizationId })
+  const { data: contextServices = [], isLoading: areContextServicesLoading } =
+    useAgenticWorkflowContextServices(environmentId)
   const navigate = useNavigate()
   const { closeModal, openModal } = useModal()
   const { form, onExit, variablesForm } = useAgenticWorkflowCreateContext()
@@ -357,6 +362,26 @@ export function AgenticWorkflowConfiguration() {
               { shouldDirty: true }
             )
           }
+        />
+      ),
+      options: {
+        width: 488,
+        fakeModal: true,
+      },
+    })
+  }
+
+  const openQoveryServiceContext = () => {
+    openModal({
+      content: (
+        <QoveryServiceContextModal
+          isLoading={areContextServicesLoading}
+          services={contextServices}
+          value={values.contextServices}
+          setOpen={(open) => {
+            if (!open) closeModal()
+          }}
+          onSave={(services) => form.setValue('contextServices', services, { shouldDirty: true })}
         />
       ),
       options: {
@@ -735,30 +760,38 @@ export function AgenticWorkflowConfiguration() {
             />
             <section aria-label="Context" className="flex flex-col gap-2 py-6">
               <h2 className="text-sm font-medium text-neutral-subtle">Context</h2>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {values.gitRepositories.some(isGitRepositoryComplete) ? (
+                  values.gitRepositories.map((repository, index) =>
+                    isGitRepositoryComplete(repository) ? (
+                      <GitContextCompactCard
+                        key={`${repository.repository}-${index}`}
+                        provider={repository.provider}
+                        repository={repository.gitRepository?.name || repository.repository}
+                        onClick={() => openGitContext(index)}
+                      />
+                    ) : null
+                  )
+                ) : (
+                  <GitContextCard onClick={() => openGitContext()} />
+                )}
+                {values.contextServices.length > 0 ? (
+                  <QoveryServiceContextCompactCard
+                    names={values.contextServices.map(({ name }) => name)}
+                    onClick={openQoveryServiceContext}
+                  />
+                ) : (
+                  <QoveryServiceContextCard onClick={openQoveryServiceContext} />
+                )}
+              </div>
               {values.gitRepositories.some(isGitRepositoryComplete) ? (
-                <>
-                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    {values.gitRepositories.map((repository, index) =>
-                      isGitRepositoryComplete(repository) ? (
-                        <GitContextCompactCard
-                          key={`${repository.repository}-${index}`}
-                          provider={repository.provider}
-                          repository={repository.gitRepository?.name || repository.repository}
-                          onClick={() => openGitContext(index)}
-                        />
-                      ) : null
-                    )}
-                  </div>
-                  <div className="flex">
-                    <Button type="button" variant="outline" color="neutral" size="sm" onClick={() => openGitContext()}>
-                      <Icon iconName="circle-plus" iconStyle="regular" />
-                      Add repository
-                    </Button>
-                  </div>
-                </>
-              ) : (
-                <GitContextCard onClick={() => openGitContext()} />
-              )}
+                <div className="flex">
+                  <Button type="button" variant="outline" color="neutral" size="sm" onClick={() => openGitContext()}>
+                    <Icon iconName="circle-plus" iconStyle="regular" />
+                    Add repository
+                  </Button>
+                </div>
+              ) : null}
             </section>
             <section aria-label="Agent task capabilities" className="border-t border-neutral py-3">
               <ConfigurationRow label="Provider">

@@ -9,6 +9,16 @@ function formatWhitelistHosts(value: string) {
     .filter(Boolean)
 }
 
+export function appendContextServicesToPrompt(
+  prompt: string,
+  contextServices: AgenticWorkflowFormData['contextServices']
+) {
+  if (contextServices.length === 0) return prompt
+
+  const services = contextServices.map(({ id, name, type }) => `- ${name} (${type}) — service ID: ${id}`).join('\n')
+  return `${prompt.trimEnd()}\n\n## Context services\n${services}`
+}
+
 export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequest {
   const scheduleTrigger = values.automations
     .flatMap((automation) => automation.triggers)
@@ -45,7 +55,7 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
       branch: repository.branch,
       git_token_id: repository.gitTokenId ?? '',
     })),
-    agent_prompt: values.agentPrompt,
+    agent_prompt: appendContextServicesToPrompt(values.agentPrompt, values.contextServices),
     governance: {
       host_allowlist: formatWhitelistHosts(values.whitelistHosts),
     },
