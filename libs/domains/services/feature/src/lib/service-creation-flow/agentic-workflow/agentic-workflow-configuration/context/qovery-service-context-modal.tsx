@@ -30,16 +30,17 @@ export function QoveryServiceContextModal({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-neutral">Services to include</h3>
-          <Button
-            type="button"
-            variant="plain"
-            color="neutral"
-            size="xs"
-            disabled={isLoading || selectedIds.length === services.length}
-            onClick={() => setSelectedIds(services.map(({ id }) => id))}
-          >
-            Select all
-          </Button>
+          {!isLoading && selectedIds.length < services.length ? (
+            <Button
+              type="button"
+              variant="plain"
+              color="neutral"
+              size="xs"
+              onClick={() => setSelectedIds(services.map(({ id }) => id))}
+            >
+              Select all
+            </Button>
+          ) : null}
         </div>
         <div className="flex max-h-72 flex-col gap-2 overflow-y-auto">
           {isLoading ? (

@@ -16,6 +16,7 @@ describe('QoveryServiceContextModal', () => {
     await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
     await userEvent.click(screen.getByRole('checkbox', { name: 'postgres' }))
     expect(screen.getByRole('button', { name: 'Reset all' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Select all' })).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
 
     expect(onSave).toHaveBeenCalledWith(services)
@@ -33,6 +34,7 @@ describe('QoveryServiceContextModal', () => {
     )
 
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeChecked()
+    expect(screen.getByRole('button', { name: 'Select all' })).toBeInTheDocument()
   })
 
   it('hides the reset action when no service is selected', () => {
