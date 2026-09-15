@@ -1,8 +1,15 @@
 import { useParams } from '@tanstack/react-router'
-import { type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
+import {
+  type LlmProviderResponse,
+  LlmProviderScope,
+  LlmProviderType,
+  type McpServerResponse,
+  McpServerScope,
+} from 'qovery-typescript-axios'
 import { Suspense, useMemo } from 'react'
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import {
+  Badge,
   BlockContent,
   Button,
   EmptyState,
@@ -16,8 +23,11 @@ import {
   useModalConfirmation,
 } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { useDeleteLlmProvider } from '../hooks/use-delete-llm-provider/use-delete-llm-provider'
 import { useDeleteMcpServer } from '../hooks/use-delete-mcp-server/use-delete-mcp-server'
+import { useLlmProviders } from '../hooks/use-llm-providers/use-llm-providers'
 import { useMcpServers } from '../hooks/use-mcp-servers/use-mcp-servers'
+import { LlmProviderCreateEditModal } from '../llm-provider-create-edit-modal/llm-provider-create-edit-modal'
 import { McpServerCreateEditModal } from '../mcp-server-create-edit-modal/mcp-server-create-edit-modal'
 
 interface McpServerRowProps {
@@ -143,6 +153,141 @@ function McpServersSkeleton() {
   )
 }
 
+interface LlmProviderRowProps {
+  organizationId: string
+  llmProvider: LlmProviderResponse
+}
+
+function LlmProviderRow({ organizationId, llmProvider }: LlmProviderRowProps) {
+  const { openModal, closeModal } = useModal()
+  const { openModalConfirmation } = useModalConfirmation()
+  const { mutateAsync: deleteLlmProvider } = useDeleteLlmProvider()
+  const owner =
+    llmProvider.scope === LlmProviderScope.USER ? `Owner: ${llmProvider.owner_name ?? 'You'}` : 'Organization'
+
+  const onEdit = () => {
+    openModal({
+      content: <LlmProviderCreateEditModal llmProvider={llmProvider} onClose={closeModal} />,
+      options: { fakeModal: true, width: 680 },
+    })
+  }
+
+  const onDelete = () => {
+    openModalConfirmation({
+      title: 'Delete token',
+      confirmationMethod: 'action',
+      name: llmProvider.name,
+      action: async () => {
+        try {
+          await deleteLlmProvider({ organizationId, llmProviderId: llmProvider.id })
+        } catch (error) {
+          console.error(error)
+        }
+      },
+    })
+  }
+
+  return (
+    <li
+      data-testid={`llm-provider-${llmProvider.id}`}
+      className="flex items-center justify-between gap-4 border-b border-neutral p-4 last:border-0"
+    >
+      <Section className="min-w-0 space-y-1">
+        <div className="flex items-center gap-2">
+          <Heading level={3} className="min-w-0">
+            <Truncate truncateLimit={60} text={llmProvider.name} />
+          </Heading>
+          <Badge color="neutral">{llmProvider.type === LlmProviderType.CLAUDE ? 'Claude' : 'Bedrock'}</Badge>
+          {llmProvider.has_credential ? (
+            <Badge color="green">Configured</Badge>
+          ) : (
+            <Badge color="yellow">No token</Badge>
+          )}
+        </div>
+        <p className="text-xs text-neutral-subtle">{owner}</p>
+      </Section>
+      <div className="flex shrink-0 gap-2">
+        <Button
+          size="md"
+          variant="outline"
+          color="neutral"
+          iconOnly
+          aria-label={`Edit ${llmProvider.name}`}
+          onClick={onEdit}
+        >
+          <Icon iconName="gear" iconStyle="regular" />
+        </Button>
+        <Button
+          size="md"
+          variant="outline"
+          color="neutral"
+          iconOnly
+          aria-label={`Delete ${llmProvider.name}`}
+          onClick={onDelete}
+        >
+          <Icon iconName="trash-can" iconStyle="regular" />
+        </Button>
+      </div>
+    </li>
+  )
+}
+
+function LlmProvidersSkeleton() {
+  return (
+    <BlockContent title="Tokens" classNameContent="p-0">
+      {[0, 1].map((index) => (
+        <div key={index} className="flex items-center justify-between gap-4 border-b border-neutral p-4 last:border-0">
+          <div className="space-y-2">
+            <Skeleton width={180} height={14} show />
+            <Skeleton width={100} height={12} show />
+          </div>
+          <div className="flex gap-2">
+            <Skeleton width={32} height={32} show />
+            <Skeleton width={32} height={32} show />
+          </div>
+        </div>
+      ))}
+    </BlockContent>
+  )
+}
+
+function LlmProvidersList({ organizationId }: { organizationId: string }) {
+  const { data: llmProviders = [] } = useLlmProviders({ organizationId, suspense: true })
+  const sortedLlmProviders = useMemo(
+    () => [...llmProviders].sort((first, second) => first.name.localeCompare(second.name)),
+    [llmProviders]
+  )
+
+  if (sortedLlmProviders.length === 0) {
+    return (
+      <EmptyState icon="key" title="No tokens" description="Add a provider token to authenticate your agent tasks." />
+    )
+  }
+
+  const personalProviders = sortedLlmProviders.filter(({ scope }) => scope === LlmProviderScope.USER)
+  const organizationProviders = sortedLlmProviders.filter(({ scope }) => scope === LlmProviderScope.ORGANIZATION)
+  const providerGroup = (title: string, providers: LlmProviderResponse[], emptyMessage: string) => (
+    <BlockContent title={title} classNameContent="p-0">
+      {providers.length > 0 ? (
+        <ul>
+          {providers.map((llmProvider) => (
+            <LlmProviderRow key={llmProvider.id} organizationId={organizationId} llmProvider={llmProvider} />
+          ))}
+        </ul>
+      ) : (
+        <p className="p-4 text-sm text-neutral-subtle">{emptyMessage}</p>
+      )}
+    </BlockContent>
+  )
+
+  return (
+    <div className="space-y-4">
+      {providerGroup('Organization tokens', organizationProviders, 'No organization tokens.')}
+      {personalProviders.length > 0 ? providerGroup('Personal tokens', personalProviders, '') : null}
+    </div>
+  )
+}
+
 interface McpServersListProps {
   organizationId: string
 }
@@ -194,7 +339,7 @@ export function SettingsAgentPersonalization() {
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
 
-  const onAdd = () => {
+  const onAddMcp = () => {
     openModal({
       content: <McpServerCreateEditModal scope={McpServerScope.USER} onClose={closeModal} />,
       options: {
@@ -204,18 +349,34 @@ export function SettingsAgentPersonalization() {
     })
   }
 
+  const onAddToken = () => {
+    openModal({
+      content: <LlmProviderCreateEditModal onClose={closeModal} />,
+      options: { fakeModal: true, width: 680 },
+    })
+  }
+
   return (
     <div className="flex w-full flex-col justify-between">
       <Section className="px-8 pb-8 pt-6">
         <div className="relative">
           <SettingsHeading title="Agent personalization" description="Your personal settings for Qovery Agent" />
-          <Button className="absolute right-0 top-0" size="md" onClick={onAdd}>
-            <Icon iconName="circle-plus" iconStyle="regular" />
-            Add MCP
-          </Button>
+          <div className="absolute right-0 top-0 flex gap-2">
+            <Button size="md" variant="outline" color="neutral" onClick={onAddMcp}>
+              <Icon iconName="circle-plus" iconStyle="regular" />
+              Add MCP
+            </Button>
+            <Button size="md" onClick={onAddToken}>
+              <Icon iconName="circle-plus" iconStyle="regular" />
+              Add token
+            </Button>
+          </div>
         </div>
 
-        <div className="max-w-content-with-navigation-left">
+        <div className="max-w-content-with-navigation-left space-y-6">
+          <Suspense fallback={<LlmProvidersSkeleton />}>
+            <LlmProvidersList organizationId={organizationId} />
+          </Suspense>
           <Suspense fallback={<McpServersSkeleton />}>
             <McpServersList organizationId={organizationId} />
           </Suspense>
