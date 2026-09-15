@@ -2,6 +2,10 @@ import { type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 import { parseAgenticWorkflowHeaders } from './agentic-workflow-headers'
 
+const CONTEXT_SERVICES_START_MARKER = '<!-- qovery-context-services:start -->'
+const CONTEXT_SERVICES_END_MARKER = '<!-- qovery-context-services:end -->'
+const DELIMITED_CONTEXT_SERVICES_BLOCK_PATTERN =
+  /\n\n<!-- qovery-context-services:start -->\n[\s\S]*?\n<!-- qovery-context-services:end -->/g
 const GENERATED_CONTEXT_SERVICES_BLOCK_PATTERN =
   /\n\n## Context services\n- [^\n]+ — service ID: [^\n]+(?:\n(?=- [^\n]+ — service ID: [^\n]+)- [^\n]+ — service ID: [^\n]+)*/g
 const EDITED_CONTEXT_SERVICES_BLOCK_PATTERN =
@@ -21,7 +25,7 @@ export function appendContextServicesToPrompt(
   if (contextServices.length === 0) return prompt
 
   const services = contextServices.map(({ id, name, type }) => `- ${name} (${type}) — service ID: ${id}`).join('\n')
-  return `${prompt.trimEnd()}\n\n## Context services\n${services}`
+  return `${prompt.trimEnd()}\n\n${CONTEXT_SERVICES_START_MARKER}\n## Context services\n${services}\n${CONTEXT_SERVICES_END_MARKER}`
 }
 
 export function replaceContextServicesInPrompt(
@@ -29,6 +33,7 @@ export function replaceContextServicesInPrompt(
   contextServices: AgenticWorkflowFormData['contextServices']
 ) {
   const promptWithoutContextServices = prompt
+    .replace(DELIMITED_CONTEXT_SERVICES_BLOCK_PATTERN, '')
     .replace(GENERATED_CONTEXT_SERVICES_BLOCK_PATTERN, '')
     .replace(EDITED_CONTEXT_SERVICES_BLOCK_PATTERN, '')
   return appendContextServicesToPrompt(promptWithoutContextServices, contextServices)

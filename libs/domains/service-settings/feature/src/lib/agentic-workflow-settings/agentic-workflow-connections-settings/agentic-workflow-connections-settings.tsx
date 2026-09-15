@@ -153,6 +153,7 @@ export function AgenticWorkflowConnectionsSettings({
       >
         {selectedContextServices.length ? (
           <QoveryServiceContextCompactCard
+            disabled={contextServicesLoading || isLoading}
             names={selectedContextServices.map(({ name }) => name)}
             onClick={openQoveryServiceContext}
           />

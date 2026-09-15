@@ -251,12 +251,12 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
   })
 
-  it('rebuilds the context services prompt block before saving', async () => {
+  it('rebuilds the context services prompt block and drops unavailable service IDs before saving', async () => {
     useServiceSpy.mockReturnValue({
       data: {
         ...service,
         agent_prompt: 'Investigate.\n\n## Context services\n- stale-api (APPLICATION) — service ID: stale-service',
-        context_service_ids: ['service-1'],
+        context_service_ids: ['service-1', 'deleted-service'],
       },
     })
     useContextServicesSpy.mockReturnValue({
@@ -273,7 +273,9 @@ describe('AgenticWorkflowSettings views', () => {
       expect(editService).toHaveBeenCalledWith({
         serviceId: 'workflow-1',
         payload: expect.objectContaining({
-          agent_prompt: 'Investigate.\n\n## Context services\n- api (APPLICATION) — service ID: service-1',
+          agent_prompt:
+            'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- api (APPLICATION) — service ID: service-1\n<!-- qovery-context-services:end -->',
+          context_service_ids: ['service-1'],
         }),
       })
     )

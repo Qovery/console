@@ -85,6 +85,9 @@ describe('QoveryServiceContextModal', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
 
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Select all' })).toBeDisabled()
+    expect(screen.getByRole('checkbox', { name: 'api' })).toBeDisabled()
+    expect(screen.getByRole('checkbox', { name: 'postgres' })).toBeDisabled()
     expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
     expect(setOpen).not.toHaveBeenCalled()
 
@@ -133,7 +136,9 @@ describe('QoveryServiceContextModal', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
     await userEvent.keyboard('{Escape}')
-    await userEvent.click(document.querySelectorAll<HTMLElement>('.modal__overlay')[1])
+    const backdrop = document.querySelector<HTMLElement>('.modal__overlay')
+    expect(backdrop).not.toBeNull()
+    await userEvent.click(backdrop as HTMLElement)
 
     expect(screen.getByRole('dialog')).toBeInTheDocument()
 

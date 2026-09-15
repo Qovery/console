@@ -343,7 +343,7 @@ export function AgenticWorkflowConfiguration() {
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
-  const qoveryMcpServer = availableMcpServers.find(isQoveryMcpServer)
+  const qoveryMcpServer = availableMcpServers.find((mcpServer) => mcpServer.attachable && isQoveryMcpServer(mcpServer))
   const isQoveryMcpSelected = Boolean(qoveryMcpServer && values.mcpServerIds.includes(qoveryMcpServer.id))
   const qoveryMcpLockReason = requiresQoveryMcp
     ? 'This MCP is required by the selected agent template and cannot be removed.'
@@ -352,7 +352,9 @@ export function AgenticWorkflowConfiguration() {
       : undefined
   const ensureQoveryMcpServer = useCallback(async () => {
     const loadedMcpServers = areMcpServersLoading ? (await refetchMcpServers()).data ?? [] : mcpServers
-    const existingQoveryMcpServer = [...loadedMcpServers, ...createdMcpServers].find(isQoveryMcpServer)
+    const existingQoveryMcpServer = [...loadedMcpServers, ...createdMcpServers].find(
+      (mcpServer) => mcpServer.attachable && isQoveryMcpServer(mcpServer)
+    )
     if (!qoveryMcpInitializationPromiseRef.current) {
       qoveryMcpInitializationPromiseRef.current = existingQoveryMcpServer
         ? Promise.resolve(existingQoveryMcpServer)

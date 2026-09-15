@@ -118,4 +118,28 @@ describe('AgenticWorkflowConnectionsSettings', () => {
     expect(settingsForm?.getValues('requiredMcpServerIds')).toEqual([qoveryMcpServer.id])
     expect(screen.getByText('Add Qovery services')).toBeInTheDocument()
   })
+
+  it.each([
+    { contextServicesLoading: true, mcpServersLoading: false },
+    { contextServicesLoading: false, mcpServersLoading: true },
+  ])(
+    'prevents editing persisted Qovery service context while dependencies are loading',
+    ({ contextServicesLoading, mcpServersLoading }) => {
+      useMcpServersSpy.mockReturnValue({ data: [], isLoading: mcpServersLoading })
+      useContextServicesSpy.mockReturnValue({
+        data: [{ id: 'service-1', name: 'api', type: 'APPLICATION' }],
+        isLoading: contextServicesLoading,
+      })
+
+      renderWithProviders(
+        <AgenticWorkflowSettingsFormHarness values={{ contextServiceIds: ['service-1'] }}>
+          {(form) => (
+            <AgenticWorkflowConnectionsSettings environmentId="environment-1" form={form} gitTokensLoading={false} />
+          )}
+        </AgenticWorkflowSettingsFormHarness>
+      )
+
+      expect(screen.getByRole('button', { name: 'Manage Qovery service context' })).toBeDisabled()
+    }
+  )
 })

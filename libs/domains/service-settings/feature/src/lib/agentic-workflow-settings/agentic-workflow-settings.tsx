@@ -187,6 +187,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       settings: data.modelSettings,
       ...(data.modelApiKey.trim() ? { api_key: data.modelApiKey.trim() } : {}),
     }
+    const selectedContextServices = contextServices.filter(({ id }) => data.contextServiceIds.includes(id))
 
     editService({
       serviceId,
@@ -200,14 +201,11 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           ? { cron_expression: schedule.cronExpression ?? '', timezone: schedule.timezone ?? 'Etc/UTC' }
           : null,
         model,
-        agent_prompt: replaceContextServicesInPrompt(
-          data.agentPrompt,
-          contextServices.filter(({ id }) => data.contextServiceIds.includes(id))
-        ),
+        agent_prompt: replaceContextServicesInPrompt(data.agentPrompt, selectedContextServices),
         project_repositories: formatAgenticWorkflowRepositories(data.repositories),
         mcp: data.mcp,
         mcp_servers: data.mcpServerIds.map((id) => ({ id, required: data.requiredMcpServerIds.includes(id) })),
-        context_service_ids: data.contextServiceIds,
+        context_service_ids: selectedContextServices.map(({ id }) => id),
         docker_fragment: data.dockerFragment,
         outputs: formatAgenticWorkflowAutomationOutputs(data.automation.outputs),
         governance: {

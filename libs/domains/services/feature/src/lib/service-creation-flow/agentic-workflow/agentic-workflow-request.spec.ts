@@ -127,9 +127,11 @@ describe('formatAgenticWorkflowRequest', () => {
 
     expect(request.agent_prompt).toBe(`Investigate the incident.
 
+<!-- qovery-context-services:start -->
 ## Context services
 - api (APPLICATION) — service ID: application-1
-- postgres (DATABASE) — service ID: database-1`)
+- postgres (DATABASE) — service ID: database-1
+<!-- qovery-context-services:end -->`)
     expect(request.context_service_ids).toEqual(['application-1', 'database-1'])
   })
 
@@ -143,7 +145,9 @@ describe('formatAgenticWorkflowRequest', () => {
         'Investigate.\n\n## Context services\n- old-api (APPLICATION) — service ID: old-service',
         [{ id: 'service-1', name: 'api', type: 'APPLICATION' }]
       )
-    ).toBe('Investigate.\n\n## Context services\n- api (APPLICATION) — service ID: service-1')
+    ).toBe(
+      'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- api (APPLICATION) — service ID: service-1\n<!-- qovery-context-services:end -->'
+    )
   })
 
   it('replaces existing generated context without duplicating it or removing following instructions', () => {
@@ -162,8 +166,10 @@ Always summarize the evidence for the on-call engineer.`,
 
 Always summarize the evidence for the on-call engineer.
 
+<!-- qovery-context-services:start -->
 ## Context services
-- api (APPLICATION) — service ID: service-1`)
+- api (APPLICATION) — service ID: service-1
+<!-- qovery-context-services:end -->`)
     expect(request.agent_prompt?.match(/## Context services/g)).toHaveLength(1)
   })
 
@@ -196,8 +202,34 @@ Keep the evidence concise.`,
 
 Keep the evidence concise.
 
+<!-- qovery-context-services:start -->
 ## Context services
-- api (APPLICATION) — service ID: service-1`)
+- api (APPLICATION) — service ID: service-1
+<!-- qovery-context-services:end -->`)
+  })
+
+  it('atomically replaces a delimited context section when a later service entry was edited', () => {
+    expect(
+      replaceContextServicesInPrompt(
+        `Investigate the incident.
+
+<!-- qovery-context-services:start -->
+## Context services
+- api (APPLICATION) — service ID: service-1
+- edited database entry
+<!-- qovery-context-services:end -->
+
+Keep the evidence concise.`,
+        [{ id: 'service-2', name: 'worker', type: 'APPLICATION' }]
+      )
+    ).toBe(`Investigate the incident.
+
+Keep the evidence concise.
+
+<!-- qovery-context-services:start -->
+## Context services
+- worker (APPLICATION) — service ID: service-2
+<!-- qovery-context-services:end -->`)
   })
 
   it('uses the full URL of a selected Git repository', () => {

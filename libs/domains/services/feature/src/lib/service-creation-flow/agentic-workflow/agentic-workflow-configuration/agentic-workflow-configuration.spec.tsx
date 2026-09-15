@@ -396,6 +396,32 @@ describe('AgenticWorkflowConfiguration', () => {
     ).toBeDisabled()
   })
 
+  it('should create an attachable Qovery MCP when the existing one cannot be attached', async () => {
+    mockMcpServers = [
+      {
+        id: 'unattachable-qovery-mcp',
+        name: 'Qovery MCP',
+        url: 'https://mcp.qovery.com/mcp',
+        scope: 'ORGANIZATION',
+        attachable: false,
+      },
+    ]
+    const { userEvent } = renderConfiguration()
+
+    await userEvent.click(screen.getByRole('button', { name: /Add Qovery services/ }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
+    expect(
+      screen.getByRole('button', {
+        name: 'MCP Qovery: This MCP is required by the selected Qovery service context and cannot be removed.',
+      })
+    ).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Add MCP Qovery' })).not.toBeInTheDocument()
+  })
+
   it('should create and select the Qovery MCP for templates that require it', async () => {
     const { userEvent } = renderConfiguration({ requiresQoveryMcp: true })
 

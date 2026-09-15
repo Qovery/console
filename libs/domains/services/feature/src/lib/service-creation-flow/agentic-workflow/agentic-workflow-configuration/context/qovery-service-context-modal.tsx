@@ -62,7 +62,7 @@ export function QoveryServiceContextModal({
             color="neutral"
             size="xs"
             aria-hidden={hideSelectAll}
-            disabled={hideSelectAll}
+            disabled={hideSelectAll || isSaving}
             className={clsx(hideSelectAll && 'pointer-events-none opacity-0')}
             onClick={() => setSelectedIds(services.map(({ id }) => id))}
           >
@@ -85,6 +85,7 @@ export function QoveryServiceContextModal({
                   <span className="min-w-0 flex-1 truncate text-sm font-medium text-neutral">{name}</span>
                   <Checkbox
                     checked={checked}
+                    disabled={isSaving}
                     onCheckedChange={(checked) =>
                       setSelectedIds((ids) =>
                         checked === true ? [...ids, id] : ids.filter((selectedId) => selectedId !== id)
