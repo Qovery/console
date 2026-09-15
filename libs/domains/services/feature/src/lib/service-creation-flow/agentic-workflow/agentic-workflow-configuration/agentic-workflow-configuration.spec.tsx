@@ -219,13 +219,12 @@ describe('AgenticWorkflowConfiguration', () => {
   it('should configure context, provider, triggers, and output from the main canvas', async () => {
     const { userEvent } = renderConfiguration()
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add context' }))
-    await userEvent.click(screen.getByRole('menuitem', { name: 'Git repository' }))
+    expect(screen.queryByRole('button', { name: 'Add context' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /Add from Git repository/ }))
     expect(screen.getByRole('heading', { name: 'Add from Git repository' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add context' }))
-    await userEvent.click(screen.getByRole('menuitem', { name: 'Qovery services' }))
+    await userEvent.click(screen.getByRole('button', { name: /Import from existing Qovery environment/ }))
     expect(screen.getByRole('heading', { name: 'Add Qovery services' })).toBeInTheDocument()
     expect(screen.getByLabelText('Qovery services')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
@@ -252,6 +251,19 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('heading', { name: 'Configure output' })).toBeInTheDocument()
     expect(within(screen.getByRole('dialog')).getByText('Outputs')).toBeInTheDocument()
     expect(within(screen.getByRole('dialog')).queryByText('Triggers')).not.toBeInTheDocument()
+  })
+
+  it('should replace empty context cards with the add context menu once a context is selected', async () => {
+    const { userEvent } = renderConfiguration({
+      seed: { contextServices: [{ id: 'application-1', name: 'api', type: 'APPLICATION' }] },
+    })
+
+    expect(screen.queryByRole('button', { name: /Add from Git repository/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Import from existing Qovery environment/ })).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add context' }))
+    expect(screen.getByRole('menuitem', { name: 'Git repository' })).toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: 'Qovery services' })).toBeInTheDocument()
   })
 
   it('should manage MCP from a side panel', async () => {

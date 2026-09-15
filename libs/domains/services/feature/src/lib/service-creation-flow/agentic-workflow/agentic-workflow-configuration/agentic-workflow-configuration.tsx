@@ -38,9 +38,9 @@ import {
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
 import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } from './agentic-workflow-prompt-editor'
 import { AutomationSheet } from './automations/automation-sheet'
-import { GitContextCompactCard } from './context/git-context-card'
+import { GitContextCard, GitContextCompactCard } from './context/git-context-card'
 import { GitContextModal } from './context/git-context-modal'
-import { QoveryServiceContextCompactCard } from './context/qovery-service-context-card'
+import { QoveryServiceContextCard, QoveryServiceContextCompactCard } from './context/qovery-service-context-card'
 import { QoveryServiceContextModal } from './context/qovery-service-context-modal'
 import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header/agentic-workflow-header'
 import { McpSheet } from './mcp/mcp-sheet'
@@ -762,31 +762,34 @@ export function AgenticWorkflowConfiguration() {
             />
             <section aria-label="Context" className="flex flex-col gap-2 py-6">
               <h2 className="text-sm font-medium text-neutral-subtle">Context</h2>
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger asChild>
-                  <Button type="button" variant="outline" color="neutral" size="sm" className="w-fit">
-                    Add context
-                    <Icon iconName="chevron-down" />
-                  </Button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content>
-                  <DropdownMenu.Item
-                    icon={<Icon name={IconEnum.GIT} width={16} height={16} />}
-                    onSelect={() => openGitContext()}
-                  >
-                    Git repository
-                  </DropdownMenu.Item>
-                  <DropdownMenu.Item
-                    icon={<Icon name={IconEnum.QOVERY} width={16} height={16} />}
-                    onSelect={openQoveryServiceContext}
-                  >
-                    Qovery services
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
+              {values.gitRepositories.some(isGitRepositoryComplete) || values.contextServices.length > 0 ? (
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger asChild>
+                    <Button type="button" variant="outline" color="neutral" size="sm" className="w-fit">
+                      Add context
+                      <Icon iconName="chevron-down" />
+                    </Button>
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content>
+                    <DropdownMenu.Item
+                      icon={<Icon name={IconEnum.GIT} width={16} height={16} />}
+                      onSelect={() => openGitContext()}
+                    >
+                      Git repository
+                    </DropdownMenu.Item>
+                    <DropdownMenu.Item
+                      icon={<Icon name={IconEnum.QOVERY} width={16} height={16} />}
+                      onSelect={openQoveryServiceContext}
+                    >
+                      Qovery services
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Content>
+                </DropdownMenu.Root>
+              ) : null}
               <div className="flex flex-wrap gap-3">
-                {values.gitRepositories.some(isGitRepositoryComplete)
-                  ? values.gitRepositories.map((repository, index) =>
+                {values.gitRepositories.some(isGitRepositoryComplete) || values.contextServices.length > 0 ? (
+                  <>
+                    {values.gitRepositories.map((repository, index) =>
                       isGitRepositoryComplete(repository) ? (
                         <GitContextCompactCard
                           key={`${repository.repository}-${index}`}
@@ -795,14 +798,20 @@ export function AgenticWorkflowConfiguration() {
                           onClick={() => openGitContext(index)}
                         />
                       ) : null
-                    )
-                  : null}
-                {values.contextServices.length > 0 ? (
-                  <QoveryServiceContextCompactCard
-                    names={values.contextServices.map(({ name }) => name)}
-                    onClick={openQoveryServiceContext}
-                  />
-                ) : null}
+                    )}
+                    {values.contextServices.length > 0 ? (
+                      <QoveryServiceContextCompactCard
+                        names={values.contextServices.map(({ name }) => name)}
+                        onClick={openQoveryServiceContext}
+                      />
+                    ) : null}
+                  </>
+                ) : (
+                  <>
+                    <QoveryServiceContextCard onClick={openQoveryServiceContext} />
+                    <GitContextCard onClick={() => openGitContext()} />
+                  </>
+                )}
               </div>
             </section>
             <section aria-label="Agent task capabilities" className="border-t border-neutral py-3">
