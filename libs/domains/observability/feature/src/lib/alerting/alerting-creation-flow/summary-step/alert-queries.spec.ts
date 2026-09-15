@@ -21,6 +21,6 @@ describe('alert queries', () => {
     expect(query).toContain('certmanager_certificate_renewal_timestamp_seconds')
     expect(query).toContain('certmanager_certificate_ready_status')
     expect(query).toContain('certmanager_certificate_challenge_status')
-    expect(query).toContain('and on (exported_namespace, domain) group_left')
+    expect(query).toContain('and on (namespace, domain) group_left')
   })
 })
