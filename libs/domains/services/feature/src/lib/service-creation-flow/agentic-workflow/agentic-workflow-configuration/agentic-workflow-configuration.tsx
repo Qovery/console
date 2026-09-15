@@ -414,6 +414,8 @@ export function AgenticWorkflowConfiguration() {
   }
 
   const openQoveryServiceContext = () => {
+    if (areContextServicesLoading) return
+
     openModal({
       content: (
         <QoveryServiceContextModal
@@ -810,7 +812,7 @@ export function AgenticWorkflowConfiguration() {
             />
             <section aria-label="Context" className="flex flex-col gap-2 py-6">
               <h2 className="text-sm font-medium text-neutral-subtle">Context</h2>
-              {values.gitRepositories.some(isGitRepositoryComplete) || values.contextServices.length > 0 ? (
+              {values.gitRepositories.length > 0 || values.contextServices.length > 0 ? (
                 <DropdownMenu.Root>
                   <DropdownMenu.Trigger asChild>
                     <Button type="button" variant="outline" color="neutral" size="sm" className="w-fit">
@@ -827,6 +829,7 @@ export function AgenticWorkflowConfiguration() {
                     </DropdownMenu.Item>
                     <DropdownMenu.Item
                       icon={<Icon name={IconEnum.QOVERY} width={16} height={16} />}
+                      disabled={areContextServicesLoading}
                       onSelect={openQoveryServiceContext}
                     >
                       Qovery services
@@ -835,20 +838,21 @@ export function AgenticWorkflowConfiguration() {
                 </DropdownMenu.Root>
               ) : null}
               <div className="flex flex-wrap gap-3">
-                {values.gitRepositories.some(isGitRepositoryComplete) || values.contextServices.length > 0 ? (
+                {values.gitRepositories.length > 0 || values.contextServices.length > 0 ? (
                   <>
-                    {values.gitRepositories.map((repository, index) =>
-                      isGitRepositoryComplete(repository) ? (
-                        <GitContextCompactCard
-                          key={`${repository.repository}-${index}`}
-                          provider={repository.provider}
-                          repository={repository.gitRepository?.name || repository.repository}
-                          onClick={() => openGitContext(index)}
-                        />
-                      ) : null
-                    )}
+                    {values.gitRepositories.map((repository, index) => (
+                      <GitContextCompactCard
+                        key={`${repository.repository}-${index}`}
+                        provider={repository.provider}
+                        repository={
+                          repository.gitRepository?.name || repository.repository || 'Configure Git repository'
+                        }
+                        onClick={() => openGitContext(index)}
+                      />
+                    ))}
                     {values.contextServices.length > 0 ? (
                       <QoveryServiceContextCompactCard
+                        disabled={areContextServicesLoading}
                         names={values.contextServices.map(({ name }) => name)}
                         onClick={openQoveryServiceContext}
                       />
@@ -856,7 +860,7 @@ export function AgenticWorkflowConfiguration() {
                   </>
                 ) : (
                   <>
-                    <QoveryServiceContextCard onClick={openQoveryServiceContext} />
+                    <QoveryServiceContextCard disabled={areContextServicesLoading} onClick={openQoveryServiceContext} />
                     <GitContextCard onClick={() => openGitContext()} />
                   </>
                 )}

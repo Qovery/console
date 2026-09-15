@@ -17,6 +17,7 @@ const mockImportVariables = jest.fn()
 const mockCreateQoveryMcpServer = jest.fn()
 let mockMcpServers: Array<Record<string, unknown>> = []
 let mockMcpServersLoading = false
+let mockContextServicesLoading = false
 
 function deferred<T>() {
   let resolve!: (value: T) => void
@@ -44,7 +45,7 @@ jest.mock('../../../hooks/use-agentic-workflow-context-services/use-agentic-work
       { id: 'application-1', name: 'api', type: 'APPLICATION' },
       { id: 'database-1', name: 'postgres', type: 'DATABASE' },
     ],
-    isLoading: false,
+    isLoading: mockContextServicesLoading,
   }),
 }))
 
@@ -193,6 +194,7 @@ describe('AgenticWorkflowConfiguration', () => {
     jest.clearAllMocks()
     mockMcpServers = []
     mockMcpServersLoading = false
+    mockContextServicesLoading = false
     mockCreateQoveryMcpServer.mockResolvedValue({
       id: 'qovery-mcp',
       name: 'Qovery MCP',
@@ -303,6 +305,28 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add context' }))
     expect(screen.getByRole('menuitem', { name: 'Git repository' })).toBeInTheDocument()
     expect(screen.getByRole('menuitem', { name: 'Qovery services' })).toBeInTheDocument()
+  })
+
+  it('should keep an incomplete Git repository editable', async () => {
+    const { userEvent } = renderConfiguration({
+      seed: { gitRepositories: [{ provider: 'GITHUB', repository: '', branch: '' }] },
+    })
+
+    expect(screen.getByText('Configure Git repository')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Manage context' }))
+
+    expect(screen.getByRole('heading', { name: 'Edit Git repository' })).toBeInTheDocument()
+  })
+
+  it('should prevent opening Qovery service context while services are loading', async () => {
+    mockContextServicesLoading = true
+    const { userEvent } = renderConfiguration()
+    const addQoveryServices = screen.getByRole('button', { name: /Add Qovery services/ })
+
+    expect(addQoveryServices).toBeDisabled()
+    await userEvent.click(addQoveryServices)
+
+    expect(screen.queryByRole('heading', { name: 'Import existing Qovery services' })).not.toBeInTheDocument()
   })
 
   it('should manage MCP from a side panel', async () => {

@@ -19,7 +19,7 @@ export function QoveryServiceContextModal({
   const [selectedIds, setSelectedIds] = useState(value.map(({ id }) => id))
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string>()
-  const hideSelectAll = isLoading || selectedIds.length === services.length
+  const hideSelectAll = isLoading || services.every(({ id }) => selectedIds.includes(id))
 
   return (
     <Section className="gap-5 p-5">
@@ -54,7 +54,7 @@ export function QoveryServiceContextModal({
             color="neutral"
             size="xs"
             aria-hidden={hideSelectAll}
-            tabIndex={hideSelectAll ? -1 : undefined}
+            disabled={hideSelectAll}
             className={clsx(hideSelectAll && 'pointer-events-none opacity-0')}
             onClick={() => setSelectedIds(services.map(({ id }) => id))}
           >

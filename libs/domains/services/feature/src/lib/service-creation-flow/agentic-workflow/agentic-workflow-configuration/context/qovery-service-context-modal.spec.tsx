@@ -46,6 +46,28 @@ describe('QoveryServiceContextModal', () => {
     expect(screen.getByRole('button', { name: 'Select all' })).toBeInTheDocument()
   })
 
+  it('keeps Select all available when only a stale service ID is selected', () => {
+    renderWithProviders(
+      <QoveryServiceContextModal
+        isLoading={false}
+        services={services}
+        value={[{ id: 'removed-service', name: 'removed', type: 'APPLICATION' }]}
+        onSave={jest.fn()}
+        setOpen={jest.fn()}
+      />
+    )
+
+    expect(screen.getByRole('button', { name: 'Select all' })).toBeInTheDocument()
+  })
+
+  it('removes the hidden Select all action from keyboard interaction', () => {
+    renderWithProviders(
+      <QoveryServiceContextModal isLoading={false} services={services} value={services} onSave={jest.fn()} />
+    )
+
+    expect(screen.getByText('Select all').closest('button')).toBeDisabled()
+  })
+
   it('prevents closing while services are being saved', async () => {
     const save = deferred<void>()
     const setOpen = jest.fn()
