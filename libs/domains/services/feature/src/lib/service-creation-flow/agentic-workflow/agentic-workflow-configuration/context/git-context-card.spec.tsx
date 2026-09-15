@@ -13,17 +13,17 @@ describe('GitContextCard', () => {
 })
 
 describe('GitContextCompactCard', () => {
-  it('shows a human-readable GitHub provider label and the repository', () => {
+  it('shows an uppercase GitHub provider label and the repository', () => {
     renderWithProviders(<GitContextCompactCard provider="GITHUB" repository="Qovery/console" onClick={jest.fn()} />)
 
-    expect(screen.getByText('GitHub')).toBeInTheDocument()
+    expect(screen.getByText('GITHUB')).toBeInTheDocument()
     expect(screen.getByText('Qovery/console')).toBeInTheDocument()
   })
 
   it('falls back to a generic Git label when no provider', () => {
     renderWithProviders(<GitContextCompactCard repository="my-repo" onClick={jest.fn()} />)
 
-    expect(screen.getByText('Git')).toBeInTheDocument()
+    expect(screen.getByText('GIT')).toBeInTheDocument()
   })
 
   it('calls onClick from the manage button', async () => {
@@ -32,7 +32,7 @@ describe('GitContextCompactCard', () => {
       <GitContextCompactCard provider="GITLAB" repository="my-repo" onClick={onClick} />
     )
 
-    expect(screen.getByText('GitLab')).toBeInTheDocument()
+    expect(screen.getByText('GITLAB')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Manage context' }))
 
     expect(onClick).toHaveBeenCalled()
