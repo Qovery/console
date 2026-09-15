@@ -1,5 +1,5 @@
 import clsx from 'clsx'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Checkbox, Heading, Icon, Section } from '@qovery/shared/ui'
 import { type AgenticWorkflowContextService } from '../../agentic-workflow-context'
 
@@ -7,12 +7,14 @@ export function QoveryServiceContextModal({
   isLoading,
   onSave,
   services,
+  setCloseDisabled,
   setOpen,
   value,
 }: {
   isLoading: boolean
   onSave: (services: AgenticWorkflowContextService[]) => Promise<void> | void
   services: AgenticWorkflowContextService[]
+  setCloseDisabled?: (disabled: boolean) => void
   setOpen?: (open: boolean) => void
   value: AgenticWorkflowContextService[]
 }) {
@@ -20,6 +22,12 @@ export function QoveryServiceContextModal({
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string>()
   const hideSelectAll = isLoading || services.every(({ id }) => selectedIds.includes(id))
+
+  useEffect(() => {
+    setCloseDisabled?.(isSaving)
+
+    return () => setCloseDisabled?.(false)
+  }, [isSaving, setCloseDisabled])
 
   return (
     <Section className="gap-5 p-5">

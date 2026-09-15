@@ -83,6 +83,14 @@ describe('McpSheet', () => {
     expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
   })
 
+  it('finds the Qovery MCP by its display name', async () => {
+    const { userEvent } = setup()
+
+    await userEvent.type(screen.getByPlaceholderText('Search MCP'), 'MCP Qovery')
+
+    expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
+  })
+
   it('links a server when clicked', async () => {
     const onChange = jest.fn()
     const { userEvent } = setup([], onChange)

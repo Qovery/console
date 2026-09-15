@@ -3,7 +3,9 @@ import { type McpServerResponse } from 'qovery-typescript-axios'
 export const QOVERY_MCP_SERVER_URL = 'https://mcp.qovery.com/mcp'
 const QOVERY_MCP_SERVER_ORIGIN = 'https://mcp.qovery.com'
 
-export function isQoveryMcpServer({ url }: Pick<McpServerResponse, 'url'>) {
+export function isQoveryMcpServer({ url }: { url?: McpServerResponse['url'] | null }) {
+  if (!url) return false
+
   const normalizedUrl = url.replace(/\/+$/, '')
   return normalizedUrl === QOVERY_MCP_SERVER_URL || normalizedUrl === QOVERY_MCP_SERVER_ORIGIN
 }

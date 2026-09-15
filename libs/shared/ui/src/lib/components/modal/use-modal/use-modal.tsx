@@ -1,4 +1,4 @@
-import { type ReactNode, useCallback, useContext, useEffect, useState } from 'react'
+import { type ReactNode, isValidElement, useCallback, useContext, useEffect, useState } from 'react'
 import { ModalContext, defaultContext } from '../modal-root'
 
 export interface UseModalProps {
@@ -52,7 +52,9 @@ export function useModal() {
         // Reset options with default values
         setOptionsModal(defaultContext.optionsModal)
       }
-      setContentModal(<>{modal.content}</>)
+      // A fragment is only needed for non-element content; preserving elements lets Modal inject its controls.
+      // eslint-disable-next-line react/jsx-no-useless-fragment
+      setContentModal(isValidElement(modal.content) ? modal.content : <>{modal.content}</>)
     }
   }, [modal, setContentModal, setOpenModal, setOptionsModal])
 

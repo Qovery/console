@@ -56,7 +56,11 @@ function McpServerPicker({
   )
   const matchingMcpServers = availableMcpServers
     .filter(({ attachable, id }) => attachable || value.includes(id))
-    .filter(({ name, url }) => `${name} ${url}`.toLowerCase().includes(search.trim().toLowerCase()))
+    .filter((mcpServer) =>
+      `${getMcpServerDisplayName(mcpServer)} ${mcpServer.name} ${mcpServer.url}`
+        .toLowerCase()
+        .includes(search.trim().toLowerCase())
+    )
   const connectedMcpServers = matchingMcpServers.filter(({ id }) => value.includes(id))
   const disconnectedMcpServers = matchingMcpServers.filter(({ id }) => !value.includes(id))
   const unlockedMcpServerIds = value.filter((id) => !lockedMcpServerIds.includes(id))

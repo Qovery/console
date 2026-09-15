@@ -276,7 +276,11 @@ function DockerFragmentModal({ setOpen }: { setOpen?: (open: boolean) => void })
 
 export function AgenticWorkflowConfiguration() {
   const { environmentId = '', organizationId = '', projectId = '' } = useParams({ strict: false })
-  const { data: mcpServers = [], isLoading: areMcpServersLoading } = useMcpServers({ organizationId })
+  const {
+    data: mcpServers = [],
+    isLoading: areMcpServersLoading,
+    refetch: refetchMcpServers,
+  } = useMcpServers({ organizationId })
   const { data: contextServices = [], isLoading: areContextServicesLoading } =
     useAgenticWorkflowContextServices(environmentId)
   const navigate = useNavigate()
@@ -307,6 +311,7 @@ export function AgenticWorkflowConfiguration() {
   const [activeSheet, setActiveSheet] = useState<'mcp' | 'triggers' | 'outputs' | null>(null)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
   const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
@@ -314,6 +319,7 @@ export function AgenticWorkflowConfiguration() {
   const createdServiceIdRef = useRef<string>()
   const qoveryMcpInitializationStartedRef = useRef(false)
   const qoveryMcpInitializationPromiseRef = useRef<Promise<McpServerResponse>>()
+  const submissionInFlightRef = useRef(false)
   const values = form.watch()
   const { dirtyFields } = form.formState
   const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
@@ -333,13 +339,15 @@ export function AgenticWorkflowConfiguration() {
   }
   const automation = values.automations[0] ?? createDefaultAutomation()
   const automationValid = automation.triggers.length > 0
+  const needsQoveryMcp = requiresQoveryMcp || values.contextServices.length > 0
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
   const qoveryMcpServer = availableMcpServers.find(isQoveryMcpServer)
   const isQoveryMcpSelected = Boolean(qoveryMcpServer && values.mcpServerIds.includes(qoveryMcpServer.id))
   const ensureQoveryMcpServer = useCallback(async () => {
-    const existingQoveryMcpServer = [...mcpServers, ...createdMcpServers].find(isQoveryMcpServer)
+    const loadedMcpServers = areMcpServersLoading ? (await refetchMcpServers()).data ?? [] : mcpServers
+    const existingQoveryMcpServer = [...loadedMcpServers, ...createdMcpServers].find(isQoveryMcpServer)
     if (!qoveryMcpInitializationPromiseRef.current) {
       qoveryMcpInitializationPromiseRef.current = existingQoveryMcpServer
         ? Promise.resolve(existingQoveryMcpServer)
@@ -363,7 +371,15 @@ export function AgenticWorkflowConfiguration() {
     }
 
     return mcpServer
-  }, [createQoveryMcpServer, createdMcpServers, form, mcpServers, organizationId])
+  }, [
+    areMcpServersLoading,
+    createQoveryMcpServer,
+    createdMcpServers,
+    form,
+    mcpServers,
+    organizationId,
+    refetchMcpServers,
+  ])
 
   useEffect(() => {
     if (!requiresQoveryMcp || areMcpServersLoading || qoveryMcpInitializationStartedRef.current) return
@@ -414,7 +430,7 @@ export function AgenticWorkflowConfiguration() {
   }
 
   const openQoveryServiceContext = () => {
-    if (areContextServicesLoading) return
+    if (areContextServicesLoading || areMcpServersLoading) return
 
     openModal({
       content: (
@@ -521,10 +537,15 @@ export function AgenticWorkflowConfiguration() {
   }
 
   const handleSubmit = async () => {
-    if (!(await validateConfiguration())) return
+    if (submissionInFlightRef.current) return
+
+    submissionInFlightRef.current = true
+    setIsSubmitting(true)
 
     try {
-      if (requiresQoveryMcp || form.getValues('contextServices').length > 0) {
+      if (!(await validateConfiguration())) return
+
+      if (needsQoveryMcp) {
         await ensureQoveryMcpServer()
       }
 
@@ -557,6 +578,9 @@ export function AgenticWorkflowConfiguration() {
     } catch {
       posthog.capture('agent-task-form-submitted', { success: false })
       // Errors are surfaced by mutation notifications. Keep the created service ID so a retry does not duplicate it.
+    } finally {
+      submissionInFlightRef.current = false
+      setIsSubmitting(false)
     }
   }
 
@@ -785,7 +809,8 @@ export function AgenticWorkflowConfiguration() {
     <Button
       data-testid="button-create"
       type="button"
-      loading={isCreating || isImportingVariables}
+      disabled={needsQoveryMcp && areMcpServersLoading}
+      loading={isCreating || isImportingVariables || isCreatingQoveryMcpServer || isSubmitting}
       onClick={handleSubmit}
     >
       Create
@@ -829,7 +854,7 @@ export function AgenticWorkflowConfiguration() {
                     </DropdownMenu.Item>
                     <DropdownMenu.Item
                       icon={<Icon name={IconEnum.QOVERY} width={16} height={16} />}
-                      disabled={areContextServicesLoading}
+                      disabled={areContextServicesLoading || areMcpServersLoading}
                       onSelect={openQoveryServiceContext}
                     >
                       Qovery services
@@ -852,7 +877,7 @@ export function AgenticWorkflowConfiguration() {
                     ))}
                     {values.contextServices.length > 0 ? (
                       <QoveryServiceContextCompactCard
-                        disabled={areContextServicesLoading}
+                        disabled={areContextServicesLoading || areMcpServersLoading}
                         names={values.contextServices.map(({ name }) => name)}
                         onClick={openQoveryServiceContext}
                       />
@@ -860,7 +885,10 @@ export function AgenticWorkflowConfiguration() {
                   </>
                 ) : (
                   <>
-                    <QoveryServiceContextCard disabled={areContextServicesLoading} onClick={openQoveryServiceContext} />
+                    <QoveryServiceContextCard
+                      disabled={areContextServicesLoading || areMcpServersLoading}
+                      onClick={openQoveryServiceContext}
+                    />
                     <GitContextCard onClick={() => openGitContext()} />
                   </>
                 )}
