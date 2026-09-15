@@ -226,7 +226,8 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /Import from existing Qovery environment/ }))
     expect(screen.getByRole('heading', { name: 'Add Qovery services' })).toBeInTheDocument()
-    expect(screen.getByLabelText('Qovery services')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Services to include' })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'api' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))

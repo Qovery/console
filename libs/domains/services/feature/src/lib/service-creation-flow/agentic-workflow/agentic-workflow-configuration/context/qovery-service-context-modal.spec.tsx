@@ -1,4 +1,3 @@
-import selectEvent from 'react-select-event'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { QoveryServiceContextModal } from './qovery-service-context-modal'
 
@@ -14,9 +13,8 @@ describe('QoveryServiceContextModal', () => {
       <QoveryServiceContextModal isLoading={false} services={services} value={[]} onSave={onSave} setOpen={jest.fn()} />
     )
 
-    await selectEvent.select(screen.getByLabelText('Qovery services'), ['api', 'postgres'], {
-      container: document.body,
-    })
+    await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'postgres' }))
     expect(screen.getByRole('button', { name: 'Reset all' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
 
@@ -34,7 +32,7 @@ describe('QoveryServiceContextModal', () => {
       />
     )
 
-    expect(screen.getByText('api')).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: 'api' })).toBeChecked()
   })
 
   it('hides the reset action when no service is selected', () => {

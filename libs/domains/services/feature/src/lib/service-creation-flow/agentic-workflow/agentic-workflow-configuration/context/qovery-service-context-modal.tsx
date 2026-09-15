@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Button, Heading, InputSelect, Section } from '@qovery/shared/ui'
+import { Button, Checkbox, Heading, Icon, Section } from '@qovery/shared/ui'
 import { type AgenticWorkflowContextService } from '../../agentic-workflow-context'
 
 export function QoveryServiceContextModal({
@@ -27,16 +27,48 @@ export function QoveryServiceContextModal({
           Select services from this environment to give the agent their Qovery context.
         </p>
       </div>
-      <InputSelect
-        isMulti
-        isSearchable
-        portal
-        label="Qovery services"
-        value={selectedIds}
-        options={services.map(({ id, name, type }) => ({ value: id, label: name, description: type }))}
-        isLoading={isLoading}
-        onChange={(ids) => setSelectedIds(ids as string[])}
-      />
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center justify-between">
+          <h3 className="text-sm font-medium text-neutral">Services to include</h3>
+          <Button
+            type="button"
+            variant="plain"
+            color="neutral"
+            size="xs"
+            disabled={isLoading || selectedIds.length === services.length}
+            onClick={() => setSelectedIds(services.map(({ id }) => id))}
+          >
+            Select all
+          </Button>
+        </div>
+        <div className="flex max-h-72 flex-col gap-2 overflow-y-auto">
+          {isLoading ? (
+            <p className="py-4 text-center text-sm text-neutral-subtle">Loading services...</p>
+          ) : (
+            services.map(({ id, name, type }) => {
+              const checked = selectedIds.includes(id)
+
+              return (
+                <label
+                  key={id}
+                  className="flex cursor-pointer items-center gap-2 rounded border border-neutral bg-surface-neutral px-3 py-2"
+                >
+                  <Icon name={type} width={20} height={20} />
+                  <span className="min-w-0 flex-1 truncate text-sm font-medium text-neutral">{name}</span>
+                  <Checkbox
+                    checked={checked}
+                    onCheckedChange={(checked) =>
+                      setSelectedIds((ids) =>
+                        checked === true ? [...ids, id] : ids.filter((selectedId) => selectedId !== id)
+                      )
+                    }
+                  />
+                </label>
+              )
+            })
+          )}
+        </div>
+      </div>
       <div className="flex items-center justify-between gap-2">
         {selectedIds.length > 0 ? (
           <Button type="button" variant="plain" color="red" size="md" onClick={() => setSelectedIds([])}>
