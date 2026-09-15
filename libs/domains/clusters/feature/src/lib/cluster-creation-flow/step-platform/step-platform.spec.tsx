@@ -231,7 +231,12 @@ describe('StepPlatform', () => {
           mandatory: false,
           enabledByDefault: true,
           components: [
-            { key: 'karpenter-crd', kind: 'HELM', fields: [] },
+            {
+              key: 'karpenter-crd',
+              kind: 'HELM',
+              fields: [],
+              configurationSections: [{ sourceComponentKey: 'karpenter-configuration', fieldKeys: ['resources'] }],
+            },
             { key: 'karpenter-configuration', kind: 'HELM', fields },
           ],
         },
@@ -277,16 +282,26 @@ describe('StepPlatform', () => {
     )
     await userEvent.click(screen.getByRole('button', { name: 'Karpenter crd HELM' }))
     expect(screen.getByRole('heading', { name: 'Karpenter crd' })).toBeInTheDocument()
-    expect(screen.getByText('YAML resources')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'YAML resources' })).toHaveAttribute('aria-pressed', 'true')
     expect(screen.queryByLabelText('Pools')).not.toBeInTheDocument()
     expect(mockUsePlatformTemplateComponentConfiguration).toHaveBeenLastCalledWith(
       expect.objectContaining({ componentKey: 'karpenter-configuration' })
     )
     await userEvent.click(screen.getByRole('button', { name: /Remove/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'General configuration' }))
+    await userEvent.click(screen.getByRole('button', { name: 'YAML resources' }))
+    expect(screen.queryByRole('button', { name: /Remove/ })).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Save configuration' }))
     expect(mockSetPlatformConfigurationData).toHaveBeenLastCalledWith({
       ...mockContextValue.platformConfigurationData,
-      managedConfig: { 'karpenter-configuration': { nodePools: [{ name: 'demo' }], resources: [] } },
+      managedConfig: {
+        'karpenter-crd': {},
+        'karpenter-configuration': { nodePools: [{ name: 'demo' }], resources: [] },
+      },
+      customerProvidedInputs: {
+        'karpenter-crd': {},
+        'karpenter-configuration': { 'aws.eksClusterName': 'existing-cluster' },
+      },
     })
   })
 

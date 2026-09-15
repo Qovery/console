@@ -8,6 +8,7 @@ import {
   createPlatformConfigurationDraft,
   filterPlatformLayerSelections,
   getCurrentPlatformConfigurationPreview,
+  getPlatformComponentEditor,
   isPlatformConfigurationReady,
   omitEmptyValues,
   toCatalogVariableField,
@@ -250,5 +251,62 @@ describe('platform configuration utils', () => {
         ]
       )
     ).toBe(false)
+  })
+})
+
+describe('catalog-declared configuration sections', () => {
+  const source = { key: 'storage-settings', kind: 'HELM' as const, fields: [field, { ...field, key: 'size' }] }
+  const destination = {
+    key: 'storage-controller',
+    kind: 'HELM' as const,
+    fields: [{ ...field, key: 'replicas' }],
+    configurationSections: [{ sourceComponentKey: source.key, fieldKeys: ['retention'] }],
+  }
+  const template: PlatformTemplateSummaryResponse = {
+    key: 'generic',
+    version: '1',
+    status: 'PUBLISHED',
+    layers: [
+      {
+        key: 'storage',
+        mandatory: false,
+        enabledByDefault: false,
+        modes: ['CUSTOMER_MANAGED'],
+        components: [source, destination],
+      },
+    ],
+  }
+
+  it('selects the declared owner without product names or YAML formats', () => {
+    const editor = getPlatformComponentEditor(template, destination.key, source.key)
+    expect(editor.component).toEqual(destination)
+    expect(editor.configurationComponent).toEqual(source)
+    expect(source.fields.filter(editor.isFieldVisible)).toEqual([field])
+  })
+
+  it('retains native configuration alongside external sections', () => {
+    const editor = getPlatformComponentEditor(template, destination.key)
+    expect(editor.configurationComponent).toEqual(destination)
+    expect(editor.sections.map((section) => section.configurationComponent.key)).toEqual([destination.key, source.key])
+  })
+
+  it('hides the moved fields only from their native editor', () => {
+    const editor = getPlatformComponentEditor(template, source.key)
+    expect(source.fields.filter(editor.isFieldVisible).map((field) => field.key)).toEqual(['size'])
+  })
+
+  it('does not move fields in catalogs without presentation metadata', () => {
+    const oldTemplate = {
+      ...template,
+      layers: [{ ...template.layers[0], components: [source, { ...destination, configurationSections: undefined }] }],
+    }
+    const editor = getPlatformComponentEditor(oldTemplate, source.key)
+    expect(source.fields.filter(editor.isFieldVisible)).toEqual(source.fields)
+    expect(getPlatformComponentEditor(oldTemplate, destination.key).configurationComponent?.key).toBe(destination.key)
+  })
+
+  it('ignores a missing owner without breaking the native editor', () => {
+    const invalid = { ...template, layers: [{ ...template.layers[0], components: [destination] }] }
+    expect(getPlatformComponentEditor(invalid, destination.key).configurationComponent).toEqual(destination)
   })
 })

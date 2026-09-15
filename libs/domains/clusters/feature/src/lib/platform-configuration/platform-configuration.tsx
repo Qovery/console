@@ -35,6 +35,7 @@ interface PlatformConfigurationProps {
 
 interface PlatformConfigurationState {
   componentKey?: string
+  sourceComponentKey?: string
   draft: PlatformConfigurationDraft
   templateId: string
 }
@@ -72,7 +73,8 @@ export function PlatformConfiguration({
     component: selectedComponent,
     configurationComponent,
     isFieldVisible,
-  } = getPlatformComponentEditor(selectedTemplate, state?.componentKey)
+    sections,
+  } = getPlatformComponentEditor(selectedTemplate, state?.componentKey, state?.sourceComponentKey)
 
   // Re-seed when the selected template disappears from the list (e.g. the template
   // version was bumped between refetches, or templates arrived after an empty list).
@@ -204,8 +206,12 @@ export function PlatformConfiguration({
       },
     })
 
-  const selectComponent = (componentKey: string) => {
-    const { configurationComponent: component } = getPlatformComponentEditor(selectedTemplate, componentKey)
+  const selectComponent = (componentKey: string, sourceComponentKey?: string) => {
+    const { configurationComponent: component } = getPlatformComponentEditor(
+      selectedTemplate,
+      componentKey,
+      sourceComponentKey
+    )
     if (!component) return
 
     setState((current) =>
@@ -213,6 +219,7 @@ export function PlatformConfiguration({
         ? {
             ...current,
             componentKey,
+            sourceComponentKey: component.key,
             draft: {
               ...current.draft,
               managedConfig: {
@@ -269,8 +276,24 @@ export function PlatformConfiguration({
         <Icon iconName="arrow-left" />
         Platform layers
       </Button>
+      {sections.length > 1 && (
+        <div className="flex flex-wrap gap-2" aria-label="Configuration sections">
+          {sections.map((section) => (
+            <Button
+              key={section.configurationComponent.key}
+              type="button"
+              variant="outline"
+              color="neutral"
+              aria-pressed={configurationComponent?.key === section.configurationComponent.key}
+              onClick={() => selectComponent(selectedComponent.key, section.configurationComponent.key)}
+            >
+              {section.label}
+            </Button>
+          ))}
+        </div>
+      )}
       <PlatformComponentConfiguration
-        key={selectedComponent.key}
+        key={`${selectedComponent.key}/${configurationComponent?.key}`}
         component={{ ...selectedComponent, fields: configurationComponent?.fields ?? selectedComponent.fields }}
         isFieldVisible={isFieldVisible}
         clusterInputsLocation={

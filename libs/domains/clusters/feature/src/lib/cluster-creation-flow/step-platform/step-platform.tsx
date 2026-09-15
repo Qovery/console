@@ -27,10 +27,15 @@ interface StepPlatformProps {
   onSubmit: () => void
 }
 
-interface ComponentDraft {
-  componentKey: string
+interface ComponentValues {
   managedConfig: NonNullable<PlatformComponentConfigurationPreviewRequest['profileConfig']>
   clusterInputs: NonNullable<PlatformComponentConfigurationPreviewRequest['clusterInputs']>
+}
+
+interface ComponentDraft extends ComponentValues {
+  componentKey: string
+  sourceComponentKey: string
+  pendingConfigurations: Record<string, ComponentValues>
 }
 
 export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatformProps) {
@@ -68,7 +73,8 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
     component: selectedComponent,
     configurationComponent,
     isFieldVisible,
-  } = getPlatformComponentEditor(template, componentDraft?.componentKey)
+    sections,
+  } = getPlatformComponentEditor(template, componentDraft?.componentKey, componentDraft?.sourceComponentKey)
   // profileConfig drives the form display and may contain '' for fields the user
   // explicitly cleared; the resolver request must omit those so a cleared required
   // field surfaces as a violation instead of silently resurrecting its default.
@@ -175,6 +181,11 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
 
     updateDraft((current) => {
       const customerProvidedInputs = { ...current.customerProvidedInputs }
+      const managedConfig = { ...current.managedConfig }
+      Object.entries(componentDraft.pendingConfigurations).forEach(([key, values]) => {
+        managedConfig[key] = omitEmptyValues(values.managedConfig)
+        customerProvidedInputs[key] = values.clusterInputs
+      })
       if (Object.keys(activeClusterInputs).length > 0) {
         customerProvidedInputs[configurationComponent.key] = activeClusterInputs
       } else {
@@ -184,7 +195,7 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
       return {
         ...current,
         managedConfig: {
-          ...current.managedConfig,
+          ...managedConfig,
           // '' entries are only display markers for cleared fields — never persist them.
           [configurationComponent.key]: omitEmptyValues(componentDraft.managedConfig),
         },
@@ -192,6 +203,27 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
       }
     })
     setComponentDraft(undefined)
+  }
+
+  const selectComponent = (componentKey: string, sourceComponentKey?: string) => {
+    if (!draft) return
+    const { configurationComponent: owner } = getPlatformComponentEditor(template, componentKey, sourceComponentKey)
+    if (!owner) return
+    const pendingConfigurations =
+      componentDraft?.componentKey === componentKey
+        ? {
+            ...componentDraft.pendingConfigurations,
+            [componentDraft.sourceComponentKey]: { managedConfig: profileConfig, clusterInputs },
+          }
+        : {}
+    const values = pendingConfigurations[owner.key]
+    setComponentDraft({
+      componentKey,
+      sourceComponentKey: owner.key,
+      pendingConfigurations,
+      managedConfig: values?.managedConfig ?? { ...draft.managedConfig?.[owner.key] },
+      clusterInputs: values?.clusterInputs ?? { ...draft.customerProvidedInputs?.[owner.key] },
+    })
   }
 
   return (
@@ -227,8 +259,24 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
               <Icon iconName="arrow-left" />
               Platform layers
             </Button>
+            {sections.length > 1 && (
+              <div className="flex flex-wrap gap-2" aria-label="Configuration sections">
+                {sections.map((section) => (
+                  <Button
+                    key={section.configurationComponent.key}
+                    type="button"
+                    variant="outline"
+                    color="neutral"
+                    aria-pressed={configurationComponent?.key === section.configurationComponent.key}
+                    onClick={() => selectComponent(selectedComponent.key, section.configurationComponent.key)}
+                  >
+                    {section.label}
+                  </Button>
+                ))}
+              </div>
+            )}
             <PlatformComponentConfiguration
-              key={selectedComponent.key}
+              key={`${selectedComponent.key}/${configurationComponent?.key}`}
               component={{ ...selectedComponent, fields: configurationComponent?.fields ?? selectedComponent.fields }}
               isFieldVisible={isFieldVisible}
               clusterInputsLocation={
@@ -256,15 +304,7 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
             layerSelections={draft.layerSelections ?? {}}
             description="Choose the platform layers that the Qovery operator will install on this cluster."
             isSaving={false}
-            onComponentSelect={(componentKey) => {
-              const { configurationComponent } = getPlatformComponentEditor(template, componentKey)
-              if (!configurationComponent) return
-              setComponentDraft({
-                componentKey,
-                managedConfig: { ...draft.managedConfig?.[configurationComponent.key] },
-                clusterInputs: { ...draft.customerProvidedInputs?.[configurationComponent.key] },
-              })
-            }}
+            onComponentSelect={selectComponent}
             onLayerSelectionChange={(layerKey, enabled) =>
               updateDraft((current) => ({
                 ...current,
