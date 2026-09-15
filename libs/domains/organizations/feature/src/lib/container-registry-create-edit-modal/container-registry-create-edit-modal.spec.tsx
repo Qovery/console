@@ -393,6 +393,36 @@ describe('ContainerRegistryCreateEditModal', () => {
     )
   }, 30000)
 
+  it('should strip trailing slash from registry URL on submit', async () => {
+    const { userEvent } = renderWithProviders(<ContainerRegistryCreateEditModal {...props} />)
+
+    const inputType = screen.getByLabelText('Type')
+    await selectEvent.select(inputType, 'GENERIC_CR', {
+      container: document.body,
+    })
+
+    const inputName = screen.getByLabelText('Registry name')
+    await userEvent.clear(inputName)
+    await userEvent.type(inputName, 'registry-name')
+
+    const inputUrl = screen.getByLabelText('Registry url')
+    await userEvent.clear(inputUrl)
+    await userEvent.type(inputUrl, 'https://my-registry.example.com/')
+
+    const btn = screen.getByRole('button', { name: 'Create' })
+    expect(btn).toBeEnabled()
+
+    await userEvent.click(btn)
+
+    expect(useCreateContainerRegistryMockSpy().mutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        containerRegistryRequest: expect.objectContaining({
+          url: 'https://my-registry.example.com',
+        }),
+      })
+    )
+  }, 30000)
+
   it('should set default registry type based on existing registry config', () => {
     expect(getContainerRegistryDefaultType(undefined)).toBe('STS')
 
@@ -571,5 +601,39 @@ describe('ContainerRegistryCreateEditModal', () => {
     )
 
     expect(props.onClose).toHaveBeenCalled()
+  })
+
+  it('should strip trailing slash from registry URL when editing a registry', async () => {
+    const { userEvent } = renderWithProviders(
+      <ContainerRegistryCreateEditModal
+        {...props}
+        isEdit
+        registry={{
+          id: '1111-1111-1111',
+          created_at: '',
+          updated_at: '',
+          name: 'my-registry',
+          url: 'https://my-registry.example.com',
+          kind: ContainerRegistryKindEnum.GENERIC_CR,
+        }}
+      />
+    )
+
+    const inputUrl = screen.getByLabelText('Registry url')
+    await userEvent.clear(inputUrl)
+    await userEvent.type(inputUrl, 'https://my-registry.example.com/')
+
+    const btn = screen.getByRole('button', { name: 'Confirm' })
+    expect(btn).toBeEnabled()
+
+    await userEvent.click(btn)
+
+    expect(useEditContainerRegistryMockSpy().mutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        containerRegistryRequest: expect.objectContaining({
+          url: 'https://my-registry.example.com',
+        }),
+      })
+    )
   })
 })
