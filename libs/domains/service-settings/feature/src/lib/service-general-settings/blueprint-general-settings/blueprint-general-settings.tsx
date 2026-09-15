@@ -1,5 +1,6 @@
+import * as Dialog from '@radix-ui/react-dialog'
 import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type BlueprintService } from '@qovery/domains/services/data-access'
 import {
@@ -7,7 +8,6 @@ import {
   BlueprintManifestVariableInput,
   BlueprintPreview,
   BlueprintSection,
-  BlueprintUpdateFlowShell,
   OverridesSectionCard,
   getDefaultFieldValue,
   getFallbackServiceIcon,
@@ -22,7 +22,7 @@ import {
   useUpdateBlueprint,
 } from '@qovery/domains/services/feature'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { Button, LoaderSpinner, Section, toast } from '@qovery/shared/ui'
+import { Button, LoaderSpinner, Section, toast, useModal } from '@qovery/shared/ui'
 
 interface PersistedVariable {
   name: string
@@ -71,6 +71,7 @@ function getPersistedVariables(service: BlueprintService): PersistedVariable[] {
 }
 
 export function BlueprintGeneralSettings({ service, environmentId, organizationId }: BlueprintGeneralSettingsProps) {
+  const { closeModal, openModal } = useModal()
   const { data, isLoading } = useBlueprint({ blueprintId: service.blueprint_id })
   const { data: environment } = useEnvironment({ environmentId })
   const { mutateAsync: previewBlueprintUpdate, isLoading: isPreviewLoading } = usePreviewBlueprintUpdate()
@@ -142,6 +143,11 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
   )
   const isSaving = isUpdateLoading || isDeployLoading
 
+  const closePreview = useCallback(() => {
+    closeModal()
+    setStep('review')
+  }, [closeModal])
+
   const payload = useMemo(() => {
     const variables = Object.fromEntries(
       Object.entries(changes).map(([name, value]) => [
@@ -175,16 +181,54 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
     }
   }, [isValid, payload, previewBlueprintUpdate, service.blueprint_id])
 
-  const confirmAndDeploy = async () => {
+  const confirmAndDeploy = useCallback(async () => {
     if (!details || !isValid) return
     if (!payload) return
 
     await updateBlueprint({ blueprintId: service.blueprint_id, payload })
     await deployBlueprint({ blueprintId: service.blueprint_id })
     setChanges({})
-    setStep('review')
+    closePreview()
     toast('success', 'Blueprint update started')
-  }
+  }, [closePreview, deployBlueprint, details, isValid, payload, service.blueprint_id, updateBlueprint])
+
+  useEffect(() => {
+    if (step !== 'preview') return
+
+    openModal({
+      content: (
+        <>
+          <Dialog.Title className="sr-only">Preview changes</Dialog.Title>
+          <BlueprintPreview
+            clusterId={environment?.cluster_id}
+            previewId={previewId}
+            previewError={previewError}
+            loading={isSaving}
+            layout="modal"
+            onBack={closePreview}
+            onConfirm={confirmAndDeploy}
+            onRetry={requestPreview}
+          />
+        </>
+      ),
+      options: {
+        buttonClose: false,
+        dismissible: false,
+        height: 'min(65vh, 680px)',
+        width: 'min(50vw, 900px)',
+      },
+    })
+  }, [
+    closePreview,
+    confirmAndDeploy,
+    environment?.cluster_id,
+    isSaving,
+    openModal,
+    previewError,
+    previewId,
+    requestPreview,
+    step,
+  ])
 
   if (isLoading || (details && isManifestLoading)) {
     return <LoaderSpinner className="mx-auto my-12" />
@@ -204,22 +248,6 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
           </p>
         </Section>
       </Section>
-    )
-  }
-
-  if (step === 'preview') {
-    return (
-      <BlueprintUpdateFlowShell currentStep={2} reviewTitle="Review configuration" onExit={() => setStep('review')}>
-        <BlueprintPreview
-          clusterId={environment?.cluster_id}
-          previewId={previewId}
-          previewError={previewError}
-          loading={isSaving}
-          onBack={() => setStep('review')}
-          onConfirm={confirmAndDeploy}
-          onRetry={requestPreview}
-        />
-      </BlueprintUpdateFlowShell>
     )
   }
 

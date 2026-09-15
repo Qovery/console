@@ -38,10 +38,15 @@ jest.mock('@qovery/domains/services/feature', () => ({
   ),
   OverridesSectionCard: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   BlueprintUpdateFlowShell: ({ children }: { children: ReactNode }) => <div>{children}</div>,
-  BlueprintPreview: ({ onConfirm }: { onConfirm: () => Promise<void> }) => (
-    <button type="button" onClick={() => void onConfirm()}>
-      Confirm & deploy update
-    </button>
+  BlueprintPreview: ({ onBack, onConfirm }: { onBack: () => void; onConfirm: () => Promise<void> }) => (
+    <>
+      <button type="button" onClick={onBack}>
+        Back to configuration
+      </button>
+      <button type="button" onClick={() => void onConfirm()}>
+        Confirm & deploy update
+      </button>
+    </>
   ),
 }))
 
@@ -115,5 +120,50 @@ describe('BlueprintGeneralSettings', () => {
       }),
     })
     expect(mockDeployBlueprint).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps the preview modal open until the user explicitly returns to the configuration', async () => {
+    mockUseBlueprintCatalogServiceManifest.mockReturnValue({
+      data: [
+        {
+          kind: 'variable',
+          name: 'database_name',
+          required: false,
+          is_secret: false,
+          type: { type: 'string' },
+        },
+      ],
+      isLoading: false,
+    })
+    mockUseBlueprint.mockReturnValue({
+      data: { name: service.name, tag: 'aws/postgres/17/1.0.0' },
+      isLoading: false,
+    })
+    mockPreviewBlueprintUpdate.mockResolvedValue({ preview_id: 'preview-id' })
+
+    const { userEvent } = renderWithProviders(
+      <BlueprintGeneralSettings service={service} environmentId="environment-id" organizationId="organization-id" />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit value' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Preview changes' }))
+
+    expect(screen.getByRole('dialog')).toHaveStyle({
+      height: 'min(65vh, 680px)',
+      width: 'min(50vw, 900px)',
+    })
+
+    await userEvent.click(screen.getByTestId('overlay'))
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    await userEvent.keyboard('{Escape}')
+
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Back to configuration' }))
+
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Preview changes' })).toBeEnabled()
   })
 })
