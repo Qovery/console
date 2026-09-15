@@ -4,7 +4,7 @@ import {
   type PlatformComponentInputRequirementResponse,
   type PlatformTemplateComponentResponse,
 } from 'qovery-typescript-axios'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { match } from 'ts-pattern'
 import {
   Badge,
@@ -24,6 +24,8 @@ import {
 } from './platform-configuration-utils'
 
 interface PlatformComponentConfigurationProps {
+  focusField?: string
+  onManageYamlResources?: () => void
   clusterInputs: Record<string, string>
   component: PlatformTemplateComponentResponse
   isFetching: boolean
@@ -48,6 +50,8 @@ function RequirementStatus({ status }: { status: PlatformComponentInputRequireme
 }
 
 export function PlatformComponentConfiguration({
+  focusField,
+  onManageYamlResources,
   clusterInputs,
   component,
   hasPreviewError,
@@ -86,6 +90,15 @@ export function PlatformComponentConfiguration({
   const unmappedViolations = getUnmappedViolations(violations, fields, requirements, profileConfig)
   const ready = preview ? isPlatformConfigurationReady(violations, requirements) : false
 
+  const focusTarget = useRef<HTMLDivElement>(null)
+  const didFocus = useRef(false)
+  useEffect(() => {
+    if (!focusTarget.current || didFocus.current) return
+    focusTarget.current.focus({ preventScroll: true })
+    focusTarget.current.scrollIntoView({ block: 'start' })
+    didFocus.current = true
+  }, [fields, focusField])
+
   return (
     <div className="rounded-lg border border-neutral bg-surface-neutral p-5">
       <div className="mb-5 flex items-start justify-between gap-3">
@@ -103,6 +116,17 @@ export function PlatformComponentConfiguration({
           </Badge>
         ) : null}
       </div>
+
+      {onManageYamlResources ? (
+        <div className="mb-5 flex flex-col items-start gap-2">
+          <p className="text-sm text-neutral-subtle">
+            Create NodePool and EC2NodeClass resources in Karpenter configuration.
+          </p>
+          <Button type="button" variant="outline" onClick={onManageYamlResources}>
+            Manage YAML resources
+          </Button>
+        </div>
+      ) : null}
 
       {!isFetching && !hasPreviewError && fields.length === 0 && requirements.length === 0 ? (
         <Callout.Root color="neutral">
@@ -129,13 +153,19 @@ export function PlatformComponentConfiguration({
             <section className="flex flex-col gap-3">
               <Heading level={3}>Configuration</Heading>
               {fields.map((field) => (
-                <CatalogConfigurationInput
+                <div
                   key={field.key}
-                  field={field}
-                  value={profileConfig[field.key]}
-                  getError={(path) => getFieldViolation(violations, path)}
-                  onChange={(value) => onProfileConfigChange(field.key, value)}
-                />
+                  ref={field.key === focusField ? focusTarget : undefined}
+                  tabIndex={-1}
+                  className="scroll-mt-5"
+                >
+                  <CatalogConfigurationInput
+                    field={field}
+                    value={profileConfig[field.key]}
+                    getError={(path) => getFieldViolation(violations, path)}
+                    onChange={(value) => onProfileConfigChange(field.key, value)}
+                  />
+                </div>
               ))}
             </section>
           ) : null}

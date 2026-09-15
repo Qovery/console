@@ -35,6 +35,7 @@ interface PlatformConfigurationProps {
 
 interface PlatformConfigurationState {
   componentKey?: string
+  focusField?: string
   draft: PlatformConfigurationDraft
   templateId: string
 }
@@ -200,6 +201,42 @@ export function PlatformConfiguration({
       },
     })
 
+  const selectComponent = (componentKey: string, focusField?: string) => {
+    const component = findPlatformComponent(selectedTemplate, componentKey)
+    if (!component) return
+
+    setState((current) =>
+      current
+        ? {
+            ...current,
+            componentKey,
+            focusField,
+            draft: {
+              ...current.draft,
+              managedConfig: {
+                ...current.draft.managedConfig,
+                // Defaults shown by the editor must also survive saving or navigating back.
+                [componentKey]: applyPlatformConfigurationDefaults(
+                  component.fields,
+                  current.draft.managedConfig[componentKey] ?? {}
+                ),
+              },
+            },
+          }
+        : current
+    )
+  }
+
+  // Temporary Karpenter navigation shortcut; configuration stays on its owning component.
+  const yamlComponent = findPlatformComponent(selectedTemplate, 'karpenter-configuration')
+  const hasYamlResources = yamlComponent?.fields.some(
+    (field) =>
+      field.key === 'resources' &&
+      field.type === 'array' &&
+      field.items.type === 'object' &&
+      field.items.fields.some((item) => item.type === 'string' && item.format === 'kubernetes-resource-yaml')
+  )
+
   if (!selectedComponent) {
     return (
       <PlatformConfigurationCatalog
@@ -209,30 +246,7 @@ export function PlatformConfiguration({
         cloudProvider={cloudProvider}
         layerSelections={state.draft.layerSelections}
         isSaving={isSaving}
-        onComponentSelect={(componentKey) => {
-          const component = findPlatformComponent(selectedTemplate, componentKey)
-          if (!component) return
-
-          setState((current) =>
-            current
-              ? {
-                  ...current,
-                  componentKey,
-                  draft: {
-                    ...current.draft,
-                    managedConfig: {
-                      ...current.draft.managedConfig,
-                      // Defaults shown by the editor must also survive saving or navigating back.
-                      [componentKey]: applyPlatformConfigurationDefaults(
-                        component.fields,
-                        current.draft.managedConfig[componentKey] ?? {}
-                      ),
-                    },
-                  },
-                }
-              : current
-          )
-        }}
+        onComponentSelect={selectComponent}
         onLayerSelectionChange={(layerKey, enabled) =>
           setState((current) =>
             current
@@ -264,7 +278,14 @@ export function PlatformConfiguration({
         Platform layers
       </Button>
       <PlatformComponentConfiguration
+        key={selectedComponent.key}
         component={selectedComponent}
+        focusField={state.focusField}
+        onManageYamlResources={
+          selectedComponent.key === 'karpenter-crd' && hasYamlResources
+            ? () => selectComponent('karpenter-configuration', 'resources')
+            : undefined
+        }
         preview={preview}
         profileConfig={profileConfig}
         clusterInputs={clusterInputs}

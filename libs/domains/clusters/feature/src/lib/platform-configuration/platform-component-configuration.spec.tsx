@@ -244,3 +244,42 @@ describe('PlatformComponentConfiguration', () => {
     expect(screen.getByText('Bucket from Bucket provisioner (Name)')).toBeInTheDocument()
   })
 })
+
+it('opens the YAML shortcut without saving the component', async () => {
+  jest.useFakeTimers()
+  const onManageYamlResources = jest.fn()
+  const onSave = jest.fn()
+  const { userEvent } = renderWithProviders(
+    <PlatformComponentConfiguration {...defaultProps} onSave={onSave} onManageYamlResources={onManageYamlResources} />
+  )
+  await userEvent.click(screen.getByRole('button', { name: 'Manage YAML resources' }))
+  expect(onManageYamlResources).toHaveBeenCalledTimes(1)
+  expect(onSave).not.toHaveBeenCalled()
+})
+
+it('focuses the requested section once even when the resolver refreshes', async () => {
+  jest.useFakeTimers()
+  const scrollIntoView = jest.fn()
+  const original = HTMLElement.prototype.scrollIntoView
+  HTMLElement.prototype.scrollIntoView = scrollIntoView
+  function Editor() {
+    const [fields, setFields] = useState(preview.fields)
+    return (
+      <>
+        <button onClick={() => setFields([...fields])}>Refresh preview</button>
+        <PlatformComponentConfiguration {...defaultProps} focusField="storage" preview={{ ...preview, fields }} />
+      </>
+    )
+  }
+  try {
+    const { userEvent } = renderWithProviders(<Editor />)
+    expect(document.activeElement).toContainElement(screen.getByText('Storage'))
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
+    await userEvent.click(screen.getByRole('button', { name: 'Refresh preview' }))
+    expect(scrollIntoView).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('button', { name: 'Refresh preview' })).toHaveFocus()
+  } finally {
+    HTMLElement.prototype.scrollIntoView = original
+    jest.useRealTimers()
+  }
+})
