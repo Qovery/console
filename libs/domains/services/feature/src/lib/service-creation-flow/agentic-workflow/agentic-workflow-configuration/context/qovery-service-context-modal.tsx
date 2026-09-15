@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import { useState } from 'react'
 import { Button, Checkbox, Heading, Icon, Section } from '@qovery/shared/ui'
 import { type AgenticWorkflowContextService } from '../../agentic-workflow-context'
@@ -16,6 +17,7 @@ export function QoveryServiceContextModal({
   value: AgenticWorkflowContextService[]
 }) {
   const [selectedIds, setSelectedIds] = useState(value.map(({ id }) => id))
+  const hideSelectAll = isLoading || selectedIds.length === services.length
 
   return (
     <Section className="gap-5 p-5">
@@ -30,17 +32,18 @@ export function QoveryServiceContextModal({
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-neutral">Services to include</h3>
-          {!isLoading && selectedIds.length < services.length ? (
-            <Button
-              type="button"
-              variant="plain"
-              color="neutral"
-              size="xs"
-              onClick={() => setSelectedIds(services.map(({ id }) => id))}
-            >
-              Select all
-            </Button>
-          ) : null}
+          <Button
+            type="button"
+            variant="plain"
+            color="neutral"
+            size="xs"
+            aria-hidden={hideSelectAll}
+            tabIndex={hideSelectAll ? -1 : undefined}
+            className={clsx(hideSelectAll && 'pointer-events-none opacity-0')}
+            onClick={() => setSelectedIds(services.map(({ id }) => id))}
+          >
+            Select all
+          </Button>
         </div>
         <div className="flex max-h-72 flex-col gap-2 overflow-y-auto">
           {isLoading ? (
