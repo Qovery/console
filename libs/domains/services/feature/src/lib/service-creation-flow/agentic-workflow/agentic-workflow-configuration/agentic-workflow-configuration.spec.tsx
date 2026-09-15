@@ -219,11 +219,13 @@ describe('AgenticWorkflowConfiguration', () => {
   it('should configure context, provider, triggers, and output from the main canvas', async () => {
     const { userEvent } = renderConfiguration()
 
-    await userEvent.click(screen.getByRole('button', { name: /Add from Git repository/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add context' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Git repository' }))
     expect(screen.getByRole('heading', { name: 'Add from Git repository' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
-    await userEvent.click(screen.getByRole('button', { name: /Add Qovery services/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add context' }))
+    await userEvent.click(screen.getByRole('menuitem', { name: 'Qovery services' }))
     expect(screen.getByRole('heading', { name: 'Add Qovery services' })).toBeInTheDocument()
     expect(screen.getByLabelText('Qovery services')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
