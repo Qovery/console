@@ -87,7 +87,7 @@ function McpServerPicker({
       <button
         type="button"
         disabled={locked}
-        className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong disabled:opacity-50"
         aria-label={
           locked
             ? `${displayName} is required by Qovery service context`

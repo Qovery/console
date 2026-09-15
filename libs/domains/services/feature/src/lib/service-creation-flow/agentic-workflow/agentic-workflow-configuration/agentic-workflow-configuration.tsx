@@ -881,7 +881,7 @@ export function AgenticWorkflowConfiguration() {
                       <div
                         className={clsx(
                           'flex h-7 max-w-full items-center rounded border border-neutral bg-surface-neutral pl-2 pr-1 text-ssm font-medium text-neutral',
-                          locked && 'cursor-not-allowed opacity-50'
+                          locked && 'opacity-50'
                         )}
                       >
                         <span className="truncate">{name}</span>
