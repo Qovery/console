@@ -34,7 +34,9 @@ export {
   hasBlueprintUpdateReviewSections,
 } from './blueprint-update-utils'
 export { BlueprintUpdatePreviewStep } from './blueprint-update-preview-step'
+export { BlueprintPreview } from './blueprint-update-preview-step'
 export { BlueprintUpdateReviewStep } from './blueprint-update-review-step'
+export { BlueprintUpdateFlowShell } from './blueprint-update-flow-shell'
 
 export interface BlueprintUpdateFlowProps extends PropsWithChildren {
   blueprintId: string

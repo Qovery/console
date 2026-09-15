@@ -2,7 +2,7 @@ import { type IconName, type IconStyle } from '@fortawesome/fontawesome-common-t
 import { useParams } from '@tanstack/react-router'
 import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
-import { isAgenticWorkflow, isEditableService } from '@qovery/domains/services/data-access'
+import { isAgenticWorkflow, isBlueprintService, isEditableService } from '@qovery/domains/services/data-access'
 import { useService } from '@qovery/domains/services/feature'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import { Sidebar } from '@qovery/shared/ui'
@@ -157,15 +157,19 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
             advancedSettingsLink,
             dangerZoneLink,
           ])
-          .with({ serviceType: 'TERRAFORM' }, () => [
-            generalLink,
-            terraformConfigurationLink,
-            terraformArgumentsLink,
-            resourcesLink,
-            deploymentRestrictionsLink,
-            advancedSettingsLink,
-            dangerZoneLink,
-          ])
+          .with({ serviceType: 'TERRAFORM' }, () =>
+            isBlueprintService(service)
+              ? [generalLink, resourcesLink, deploymentRestrictionsLink, advancedSettingsLink, dangerZoneLink]
+              : [
+                  generalLink,
+                  terraformConfigurationLink,
+                  terraformArgumentsLink,
+                  resourcesLink,
+                  deploymentRestrictionsLink,
+                  advancedSettingsLink,
+                  dangerZoneLink,
+                ]
+          )
           .with({ serviceType: 'JOB' }, (job) => [
             generalLink,
             ...(job.job_type === 'LIFECYCLE' && isJobGitSource(job.source) ? [dockerfileLink] : []),

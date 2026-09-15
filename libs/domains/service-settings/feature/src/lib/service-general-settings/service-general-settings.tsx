@@ -9,7 +9,7 @@ import {
   useAnnotationsGroups,
   useLabelsGroups,
 } from '@qovery/domains/organizations/feature'
-import { isEditableService } from '@qovery/domains/services/data-access'
+import { isBlueprintService, isEditableService } from '@qovery/domains/services/data-access'
 import {
   type ServiceGeneralData,
   buildServiceGeneralPayload,
@@ -22,6 +22,7 @@ import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, LoaderSpinner, Section, useModal } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { ApplicationGeneralSettings } from './application-general-settings/application-general-settings'
+import { BlueprintGeneralSettings } from './blueprint-general-settings/blueprint-general-settings'
 import { ContainerGeneralSettings } from './container-general-settings/container-general-settings'
 import { DatabaseGeneralSettings } from './database-general-settings/database-general-settings'
 import { HelmGeneralSettings } from './helm-general-settings/helm-general-settings'
@@ -132,6 +133,10 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
 
   if (!isEditableService(service)) {
     return null
+  }
+
+  if (isBlueprintService(service)) {
+    return <BlueprintGeneralSettings service={service} environmentId={environmentId} organizationId={organization.id} />
   }
 
   const headingDescription =

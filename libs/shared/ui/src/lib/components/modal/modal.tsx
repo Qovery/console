@@ -10,7 +10,9 @@ export interface ModalProps {
   trigger?: ReactNode
   defaultOpen?: boolean
   buttonClose?: boolean
+  dismissible?: boolean
   width?: number | string
+  height?: number | string
   fullScreen?: boolean
   className?: string
   externalOpen?: boolean
@@ -42,9 +44,11 @@ export const Modal = (props: ModalProps) => {
     className = '',
     defaultOpen = false,
     buttonClose = true,
+    dismissible = true,
     externalOpen = false,
     setExternalOpen,
     fakeModal = false,
+    height,
   } = props
 
   const [open, setOpen] = useState(defaultOpen)
@@ -82,6 +86,11 @@ export const Modal = (props: ModalProps) => {
   ])
 
   const handleOutsideClick = (event: React.MouseEvent) => {
+    if (!dismissible) {
+      event.preventDefault()
+      return
+    }
+
     if (isToastInteraction(event)) {
       event.preventDefault()
       event.stopPropagation()
@@ -102,6 +111,7 @@ export const Modal = (props: ModalProps) => {
       onOpenChange={
         setExternalOpen
           ? () => {
+              if (!dismissible) return
               if (alertClickOutside) {
                 setModalAlertOpen(true)
               } else {
@@ -109,6 +119,7 @@ export const Modal = (props: ModalProps) => {
               }
             }
           : () => {
+              if (!dismissible) return
               if (alertClickOutside) {
                 setModalAlertOpen(true)
               } else {
@@ -144,18 +155,24 @@ export const Modal = (props: ModalProps) => {
               event.stopPropagation()
             }
           }}
+          onEscapeKeyDown={(event) => {
+            if (!dismissible) event.preventDefault()
+          }}
           style={
             fullScreen
               ? { width: 'calc(100vw - 48px)', height: 'calc(100vh  - 48px)', top: 24 }
-              : { width: `${width}px` }
+              : {
+                  width: typeof width === 'number' ? `${width}px` : width,
+                  ...(height ? { height: typeof height === 'number' ? `${height}px` : height } : {}),
+                }
           }
           className={`modal__content fixed left-1/2 top-[84px] z-modal overflow-hidden rounded-md border border-neutral bg-background shadow-[0_0_32px_rgba(0,0,0,0.08)] ${className}`}
         >
-          <div className={`overflow-auto ${fullScreen ? 'h-full' : 'max-h-[80vh]'}`}>
+          <div className={`${fullScreen || height ? 'h-full overflow-hidden' : 'max-h-[80vh] overflow-auto'}`}>
             {cloneElement(children, {
               setOpen: setExternalOpen ? setExternalOpen : setOpen,
             })}
-            {buttonClose && (
+            {buttonClose && dismissible && (
               <Dialog.Close className="absolute right-4 top-4" asChild>
                 <button
                   type="button"

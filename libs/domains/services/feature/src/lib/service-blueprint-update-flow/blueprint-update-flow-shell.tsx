@@ -6,10 +6,14 @@ export function BlueprintUpdateFlowShell({
   children,
   currentStep,
   onExit,
+  previewTitle = 'Preview changes',
+  reviewTitle = 'Review update',
 }: {
   children: ReactNode
   currentStep: 1 | 2
   onExit: () => void
+  previewTitle?: string
+  reviewTitle?: string
 }) {
   return (
     <div className="absolute inset-0 left-0 top-0 flex min-h-0 flex-col bg-background">
@@ -19,9 +23,9 @@ export function BlueprintUpdateFlowShell({
             <LogoIcon width={28} height={28} />
           </div>
           <div className="flex items-center gap-2">
-            <StepIndicator completed={currentStep > 1} active={currentStep === 1} number={1} title="Review update" />
+            <StepIndicator completed={currentStep > 1} active={currentStep === 1} number={1} title={reviewTitle} />
             <Icon iconName="angle-right" className="text-xs text-neutral-subtle" />
-            <StepIndicator active={currentStep === 2} number={2} title="Preview changes" />
+            <StepIndicator active={currentStep === 2} number={2} title={previewTitle} />
           </div>
         </div>
         <div className="flex h-full items-center px-4">
