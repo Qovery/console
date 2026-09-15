@@ -16,6 +16,7 @@ const mockCreateService = jest.fn()
 const mockImportVariables = jest.fn()
 const mockCreateQoveryMcpServer = jest.fn()
 let mockMcpServers: Array<Record<string, unknown>> = []
+let mockMcpServersLoading = false
 
 function deferred<T>() {
   let resolve!: (value: T) => void
@@ -54,7 +55,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
   McpServerSetting: () => <div>Organization MCP connectors</div>,
   useCreateQoveryMcpServer: () => ({ isLoading: false, mutateAsync: mockCreateQoveryMcpServer }),
-  useMcpServers: () => ({ data: mockMcpServers, isLoading: false }),
+  useMcpServers: () => ({ data: mockMcpServers, isLoading: mockMcpServersLoading }),
 }))
 
 jest.mock('@qovery/domains/variables/feature', () => ({
@@ -191,6 +192,7 @@ describe('AgenticWorkflowConfiguration', () => {
   beforeEach(() => {
     jest.clearAllMocks()
     mockMcpServers = []
+    mockMcpServersLoading = false
     mockCreateQoveryMcpServer.mockResolvedValue({
       id: 'qovery-mcp',
       name: 'Qovery MCP',
@@ -364,7 +366,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
     renderConfiguration({ requiresQoveryMcp: true })
 
-    expect(await screen.findByText('MCP Qovery')).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: 'Remove MCP Qovery' })).toBeInTheDocument()
     expect(mockCreateQoveryMcpServer).not.toHaveBeenCalled()
   })
 
@@ -414,6 +416,24 @@ describe('AgenticWorkflowConfiguration', () => {
 
     expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
     expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(1)
+  })
+
+  it('should show the preconfigured Qovery MCP when it exists but is not selected yet', () => {
+    mockMcpServers = [
+      {
+        id: 'existing-qovery-mcp',
+        name: 'qovery',
+        url: 'https://mcp.qovery.com',
+        scope: 'ORGANIZATION',
+        attachable: true,
+      },
+    ]
+    mockMcpServersLoading = true
+
+    renderConfiguration({ requiresQoveryMcp: true })
+
+    expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
+    expect(mockCreateQoveryMcpServer).not.toHaveBeenCalled()
   })
 
   it('should wait for the required Qovery MCP before creating from a template', async () => {

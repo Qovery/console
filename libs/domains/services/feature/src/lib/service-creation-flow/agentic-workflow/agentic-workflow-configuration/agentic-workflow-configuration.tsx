@@ -337,6 +337,7 @@ export function AgenticWorkflowConfiguration() {
     (mcpServer, index, servers) => servers.findIndex(({ id }) => id === mcpServer.id) === index
   )
   const qoveryMcpServer = availableMcpServers.find(isQoveryMcpServer)
+  const isQoveryMcpSelected = Boolean(qoveryMcpServer && values.mcpServerIds.includes(qoveryMcpServer.id))
   const ensureQoveryMcpServer = useCallback(async () => {
     const existingQoveryMcpServer = [...mcpServers, ...createdMcpServers].find(isQoveryMcpServer)
     if (!qoveryMcpInitializationPromiseRef.current) {
@@ -882,7 +883,7 @@ export function AgenticWorkflowConfiguration() {
                 ) : null}
               </ConfigurationRow>
               <ConfigurationRow label="MCP">
-                {requiresQoveryMcp && !qoveryMcpServer ? (
+                {requiresQoveryMcp && !isQoveryMcpSelected ? (
                   <div className="flex h-7 max-w-full items-center gap-1 rounded border border-neutral bg-surface-neutral pl-2 pr-1 text-ssm font-medium text-neutral">
                     <span className="truncate">MCP Qovery</span>
                     {isCreatingQoveryMcpServer ? (
