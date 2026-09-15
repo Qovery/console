@@ -80,14 +80,14 @@ describe('McpSheet', () => {
     setup()
 
     expect(screen.getByRole('heading', { name: 'Manage MCP' })).toBeInTheDocument()
-    expect(screen.getByText('Qovery Read-only')).toBeInTheDocument()
+    expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
   })
 
   it('links a server when clicked', async () => {
     const onChange = jest.fn()
     const { userEvent } = setup([], onChange)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Add Qovery Read-only' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP Qovery' }))
 
     expect(onChange).toHaveBeenCalledWith(['m1'])
   })
@@ -112,10 +112,10 @@ describe('McpSheet', () => {
   it('prevents removing an MCP required by Qovery service context', async () => {
     const onChange = jest.fn()
     const { userEvent } = setup(['m1'], onChange, jest.fn(), ['m1'])
-    const requiredMcp = screen.getByRole('button', { name: 'Qovery Read-only is required by Qovery service context' })
+    const requiredMcp = screen.getByRole('button', { name: 'MCP Qovery is required by Qovery service context' })
 
     expect(requiredMcp).toBeDisabled()
-    await userEvent.hover(screen.getByText('Qovery Read-only'))
+    await userEvent.hover(screen.getByText('MCP Qovery'))
 
     expect(
       await screen.findAllByText('This MCP is required by the selected Qovery service context and cannot be removed.')

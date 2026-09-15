@@ -312,7 +312,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
     await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
 
-    expect(screen.getByRole('button', { name: 'Qovery MCP is required by Qovery service context' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'MCP Qovery is required by Qovery service context' })).toBeDisabled()
   })
 
   it('should automatically select an existing Qovery MCP without creating another one', async () => {
@@ -333,14 +333,14 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
 
     expect(mockCreateQoveryMcpServer).not.toHaveBeenCalled()
-    expect(screen.getByRole('button', { name: 'Qovery MCP is required by Qovery service context' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'MCP Qovery is required by Qovery service context' })).toBeDisabled()
   })
 
   it('should create and select the Qovery MCP for templates that require it', async () => {
     renderConfiguration({ requiresQoveryMcp: true })
 
     await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
-    expect(screen.getByText('Qovery MCP')).toBeInTheDocument()
+    expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
   })
 
   it('should surface validation feedback when a creation action is clicked with incomplete configuration', async () => {

@@ -5,3 +5,7 @@ export const QOVERY_MCP_SERVER_URL = 'https://mcp.qovery.com/mcp'
 export function isQoveryMcpServer({ url }: Pick<McpServerResponse, 'url'>) {
   return url.replace(/\/+$/, '') === QOVERY_MCP_SERVER_URL
 }
+
+export function getMcpServerDisplayName(mcpServer: Pick<McpServerResponse, 'name' | 'url'>) {
+  return isQoveryMcpServer(mcpServer) ? 'MCP Qovery' : mcpServer.name
+}

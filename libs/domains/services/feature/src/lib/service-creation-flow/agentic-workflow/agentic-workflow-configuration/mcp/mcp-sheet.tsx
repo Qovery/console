@@ -5,6 +5,7 @@ import { McpServerCreateEditModal } from '@qovery/domains/organizations/feature'
 import { useUserRole } from '@qovery/shared/iam/feature'
 import { Button, Heading, Icon, InputSearch, Tooltip, useModal } from '@qovery/shared/ui'
 import { OverlaySheet, SheetHeader } from '../sheet/overlay-sheet'
+import { getMcpServerDisplayName } from './qovery-mcp-server'
 
 export function hasOrganizationMcpCreationPermission({
   isQoveryAdminUser,
@@ -81,6 +82,7 @@ function McpServerPicker({
 
   const mcpServerRow = (mcpServer: McpServerResponse, connected: boolean) => {
     const locked = connected && lockedMcpServerIds.includes(mcpServer.id)
+    const displayName = getMcpServerDisplayName(mcpServer)
     const row = (
       <button
         type="button"
@@ -88,10 +90,10 @@ function McpServerPicker({
         className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong disabled:cursor-not-allowed disabled:opacity-50"
         aria-label={
           locked
-            ? `${mcpServer.name} is required by Qovery service context`
+            ? `${displayName} is required by Qovery service context`
             : connected
-              ? `Remove ${mcpServer.name}`
-              : `Add ${mcpServer.name}`
+              ? `Remove ${displayName}`
+              : `Add ${displayName}`
         }
         onClick={() =>
           onChange(connected ? value.filter((mcpServerId) => mcpServerId !== mcpServer.id) : [...value, mcpServer.id])
@@ -101,7 +103,7 @@ function McpServerPicker({
           <Icon iconName="plug" iconStyle="regular" className="text-neutral-subtle" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium text-neutral">{mcpServer.name}</p>
+          <p className="truncate text-sm font-medium text-neutral">{displayName}</p>
           <p className="truncate text-xs text-neutral-subtle">
             {mcpServer.scope === McpServerScope.USER
               ? `Personal · ${mcpServer.owner_name ?? 'Unknown owner'}`

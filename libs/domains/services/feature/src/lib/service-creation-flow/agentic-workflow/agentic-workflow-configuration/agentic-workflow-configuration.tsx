@@ -45,7 +45,7 @@ import { QoveryServiceContextCard, QoveryServiceContextCompactCard } from './con
 import { QoveryServiceContextModal } from './context/qovery-service-context-modal'
 import { AgenticWorkflowHeader, type AgenticWorkflowHeaderHandle } from './header/agentic-workflow-header'
 import { McpSheet } from './mcp/mcp-sheet'
-import { isQoveryMcpServer } from './mcp/qovery-mcp-server'
+import { getMcpServerDisplayName, isQoveryMcpServer } from './mcp/qovery-mcp-server'
 
 type SettingsGroup = 'general' | 'resources' | 'governance' | 'variables' | 'advanced'
 
@@ -873,24 +873,29 @@ export function AgenticWorkflowConfiguration() {
               <ConfigurationRow label="MCP">
                 {availableMcpServers
                   .filter(({ id }) => values.mcpServerIds.includes(id))
-                  .map(({ id, name }) => (
-                    <div
-                      key={id}
-                      className="flex h-7 max-w-full items-center rounded border border-neutral bg-surface-neutral pl-2 pr-1 text-ssm font-medium text-neutral"
-                    >
-                      <span className="truncate">{name}</span>
-                      <Tooltip
-                        content="This MCP is required by the selected Qovery service context and cannot be removed."
-                        disabled={!(values.contextServices.length > 0 && qoveryMcpServer?.id === id)}
+                  .map((mcpServer) => {
+                    const { id } = mcpServer
+                    const name = getMcpServerDisplayName(mcpServer)
+                    const locked = values.contextServices.length > 0 && qoveryMcpServer?.id === id
+                    const chip = (
+                      <div
+                        className={clsx(
+                          'flex h-7 max-w-full items-center rounded border border-neutral bg-surface-neutral pl-2 pr-1 text-ssm font-medium text-neutral',
+                          locked && 'cursor-not-allowed opacity-50'
+                        )}
                       >
-                        <span>
+                        <span className="truncate">{name}</span>
+                        {locked ? (
+                          <span className="flex h-5 w-5 items-center justify-center" aria-hidden="true">
+                            <Icon iconName="xmark" className="text-xs" />
+                          </span>
+                        ) : (
                           <Button
                             type="button"
                             size="sm"
                             color="neutral"
                             variant="plain"
                             iconOnly
-                            disabled={values.contextServices.length > 0 && qoveryMcpServer?.id === id}
                             className="h-5 w-5 hover:bg-transparent"
                             aria-label={`Remove ${name}`}
                             onClick={() =>
@@ -903,10 +908,22 @@ export function AgenticWorkflowConfiguration() {
                           >
                             <Icon iconName="xmark" className="text-xs" />
                           </Button>
-                        </span>
+                        )}
+                      </div>
+                    )
+
+                    return locked ? (
+                      <Tooltip
+                        key={id}
+                        content="This MCP is required by the selected Qovery service context and cannot be removed."
+                        classNameTrigger="block"
+                      >
+                        <div>{chip}</div>
                       </Tooltip>
-                    </div>
-                  ))}
+                    ) : (
+                      <div key={id}>{chip}</div>
+                    )
+                  })}
                 <Button type="button" size="sm" color="neutral" variant="outline" onClick={() => setActiveSheet('mcp')}>
                   <Icon iconName="circle-plus" iconStyle="regular" />
                   Add MCP
