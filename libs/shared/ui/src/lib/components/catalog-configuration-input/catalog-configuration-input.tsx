@@ -1,5 +1,5 @@
 import { type ArrayFieldSchemaResponse, type FieldSchemaResponse } from 'qovery-typescript-axios'
-import { useRef } from 'react'
+import { type ReactNode, useRef, useState } from 'react'
 import { match } from 'ts-pattern'
 import {
   applyCatalogConfigurationDefaults,
@@ -8,6 +8,7 @@ import {
   toCatalogConfigurationValue,
   toCatalogScalarField,
 } from '@qovery/shared/util-js'
+import { Accordion } from '../accordion/accordion'
 import { Button } from '../button/button'
 import { CatalogVariableInput } from '../catalog-variable-input/catalog-variable-input'
 import { CatalogYamlInput } from './catalog-yaml-input'
@@ -45,6 +46,85 @@ function ObjectInputs({
   )
 }
 
+function hasFieldError(
+  field: FieldSchemaResponse,
+  value: unknown,
+  path: string,
+  getError: CatalogConfigurationInputProps['getError']
+): boolean {
+  if (!getError) return false
+  if (getError(path)) return true
+  if (field.type === 'object') {
+    return field.fields.some((child) =>
+      hasFieldError(child, isCatalogObject(value) ? value[child.key] : undefined, `${path}.${child.key}`, getError)
+    )
+  }
+  if (field.type === 'array' && Array.isArray(value)) {
+    return value.some((row, index) => {
+      const rowPath = `${path}[${index}]`
+      if (getError?.(rowPath)) return true
+      return (
+        field.items.type === 'object' &&
+        (field.itemFields?.length === value.length ? field.itemFields[index] : field.items.fields).some((child) =>
+          hasFieldError(child, isCatalogObject(row) ? row[child.key] : undefined, `${rowPath}.${child.key}`, getError)
+        )
+      )
+    })
+  }
+  return false
+}
+
+function ObjectArrayItem({
+  fields,
+  value,
+  onChange,
+  path,
+  getError,
+  label,
+  sensitive,
+  initiallyOpen,
+  remove,
+}: Omit<CatalogConfigurationInputProps, 'field'> & {
+  fields: FieldSchemaResponse[]
+  path: string
+  label: string
+  sensitive: boolean
+  initiallyOpen: boolean
+  remove: ReactNode
+}) {
+  const [open, setOpen] = useState(initiallyOpen)
+  const nameField = fields.find((field) => field.key === 'name' && field.type === 'string' && !field.sensitive)
+  const name =
+    !sensitive && nameField && isCatalogObject(value) && typeof value.name === 'string' ? value.name.trim() : ''
+  const hasError =
+    Boolean(getError?.(path)) ||
+    fields.some((field) =>
+      hasFieldError(field, isCatalogObject(value) ? value[field.key] : undefined, `${path}.${field.key}`, getError)
+    )
+  return (
+    <Accordion.Root
+      type="single"
+      collapsible
+      value={open || hasError ? 'item' : ''}
+      onValueChange={(value) => setOpen(value === 'item')}
+    >
+      <Accordion.Item value="item" className="border-t border-neutral">
+        <div className="flex items-center gap-2">
+          <Accordion.Trigger className="min-w-0 flex-1 cursor-pointer gap-3 bg-transparent px-0 text-left outline-brand-strong focus-visible:outline-2">
+            <span className="min-w-0 break-all font-medium">{name || label}</span>
+            {hasError ? <span className="text-xs text-negative">Action required</span> : null}
+          </Accordion.Trigger>
+          {remove}
+        </div>
+        <Accordion.Content className="bg-transparent pb-3">
+          {getError?.(path) ? <p className="mb-2 text-xs text-negative">{getError(path)}</p> : null}
+          <ObjectInputs fields={fields} path={path} value={value} onChange={onChange} getError={getError} />
+        </Accordion.Content>
+      </Accordion.Item>
+    </Accordion.Root>
+  )
+}
+
 function ArrayInput({
   field,
   value,
@@ -55,6 +135,7 @@ function ArrayInput({
   const rows = Array.isArray(value) ? value : []
   const keys = useRef<number[]>([])
   const nextKey = useRef(0)
+  const addedKeys = useRef(new Set<number>())
   while (keys.current.length < rows.length) keys.current.push(nextKey.current++)
   keys.current.length = rows.length
   const error = getError?.(path)
@@ -71,52 +152,55 @@ function ArrayInput({
           const rowPath = `${path}[${index}]`
           const update = (next: unknown) =>
             onChange(rows.map((value, candidate) => (candidate === index ? next : value)))
+          const remove = (
+            <Button
+              type="button"
+              variant="plain"
+              size="sm"
+              disabled={rows.length <= min}
+              aria-label={`Remove ${field.label} ${index + 1}`}
+              onClick={() => {
+                addedKeys.current.delete(keys.current[index])
+                keys.current.splice(index, 1)
+                onChange(rows.filter((_, candidate) => candidate !== index))
+              }}
+            >
+              Remove
+            </Button>
+          )
+          if (field.items.type === 'object') {
+            return (
+              <ObjectArrayItem
+                key={keys.current[index]}
+                fields={field.itemFields?.length === rows.length ? field.itemFields[index] : field.items.fields}
+                value={row}
+                onChange={update}
+                path={rowPath}
+                getError={getError}
+                label={`${field.label} ${index + 1}`}
+                sensitive={field.sensitive}
+                initiallyOpen={addedKeys.current.has(keys.current[index])}
+                remove={remove}
+              />
+            )
+          }
           return (
             <fieldset key={keys.current[index]} className="min-w-0 border-t border-neutral pt-3">
               <legend className="text-sm font-medium">{`${field.label} ${index + 1}`}</legend>
-              <div className="mb-2 flex justify-end">
-                <Button
-                  type="button"
-                  variant="plain"
-                  size="sm"
-                  disabled={rows.length <= min}
-                  aria-label={`Remove ${field.label} ${index + 1}`}
-                  onClick={() => {
-                    keys.current.splice(index, 1)
-                    onChange(rows.filter((_, candidate) => candidate !== index))
-                  }}
-                >
-                  Remove
-                </Button>
-              </div>
-              {match(field.items)
-                .with({ type: 'object' }, (item) => (
-                  <>
-                    {getError?.(rowPath) ? <p className="mb-2 text-xs text-negative">{getError(rowPath)}</p> : null}
-                    <ObjectInputs
-                      fields={field.itemFields?.length === rows.length ? field.itemFields[index] : item.fields}
-                      path={rowPath}
-                      value={row}
-                      onChange={update}
-                      getError={getError}
-                    />
-                  </>
-                ))
-                .otherwise((item) => (
-                  <CatalogConfigurationInput
-                    field={{
-                      ...item,
-                      key: rowPath,
-                      label: `${field.label} ${index + 1}`,
-                      required: true,
-                      sensitive: field.sensitive,
-                    }}
-                    path={rowPath}
-                    value={row}
-                    onChange={update}
-                    getError={getError}
-                  />
-                ))}
+              <div className="mb-2 flex justify-end">{remove}</div>
+              <CatalogConfigurationInput
+                field={{
+                  ...field.items,
+                  key: rowPath,
+                  label: `${field.label} ${index + 1}`,
+                  required: true,
+                  sensitive: field.sensitive,
+                }}
+                path={rowPath}
+                value={row}
+                onChange={update}
+                getError={getError}
+              />
             </fieldset>
           )
         })}
@@ -137,6 +221,9 @@ function ArrayInput({
               : item.type === 'bool'
                 ? false
                 : ''
+          const key = nextKey.current++
+          keys.current.push(key)
+          addedKeys.current.add(key)
           onChange([...rows, initial])
         }}
       >
