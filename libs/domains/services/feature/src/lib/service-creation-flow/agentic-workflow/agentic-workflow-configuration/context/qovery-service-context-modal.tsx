@@ -38,17 +38,12 @@ export function QoveryServiceContextModal({
         onChange={(ids) => setSelectedIds(ids as string[])}
       />
       <div className="flex items-center justify-between gap-2">
-        <Button
-          type="button"
-          variant="plain"
-          color="red"
-          size="md"
-          disabled={selectedIds.length === 0}
-          onClick={() => setSelectedIds([])}
-        >
-          Reset all
-        </Button>
-        <div className="flex gap-2">
+        {selectedIds.length > 0 ? (
+          <Button type="button" variant="plain" color="red" size="md" onClick={() => setSelectedIds([])}>
+            Reset all
+          </Button>
+        ) : null}
+        <div className="ml-auto flex gap-2">
           <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
             Cancel
           </Button>
