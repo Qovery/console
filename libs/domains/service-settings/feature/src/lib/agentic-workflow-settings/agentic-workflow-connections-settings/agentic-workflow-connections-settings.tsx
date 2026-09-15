@@ -47,21 +47,26 @@ export function AgenticWorkflowConnectionsSettings({
     (server, index, servers) => servers.findIndex(({ id }) => id === server.id) === index
   )
   const selectedContextServices = contextServices.filter(({ id }) => contextServiceIds.includes(id))
-  const qoveryMcpServer = availableMcpServers.find(isQoveryMcpServer)
+  const qoveryMcpServer = availableMcpServers.find(
+    (mcpServer) => isQoveryMcpServer(mcpServer) && (mcpServer.attachable || mcpServerIds.includes(mcpServer.id))
+  )
   const qoveryMcpLockReason = contextServiceIds.length
     ? 'This MCP is required by the selected Qovery service context and cannot be removed.'
     : undefined
 
   const ensureQoveryMcpServer = async () => {
     const loadedMcpServers = isLoading ? (await refetchMcpServers()).data ?? [] : mcpServers
-    let mcpServer = [...loadedMcpServers, ...createdMcpServers].find(isQoveryMcpServer)
+    const selectedMcpServerIds = form.getValues('mcpServerIds')
+    let mcpServer = [...loadedMcpServers, ...createdMcpServers].find(
+      (mcpServer) =>
+        isQoveryMcpServer(mcpServer) && (mcpServer.attachable || selectedMcpServerIds.includes(mcpServer.id))
+    )
 
     if (!mcpServer) {
       mcpServer = await createQoveryMcpServer({ organizationId })
       setCreatedMcpServers((servers) => [...servers, mcpServer as McpServerResponse])
     }
 
-    const selectedMcpServerIds = form.getValues('mcpServerIds')
     if (!selectedMcpServerIds.includes(mcpServer.id)) {
       form.setValue('mcpServerIds', [...selectedMcpServerIds, mcpServer.id], { shouldDirty: true })
     }

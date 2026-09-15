@@ -121,8 +121,11 @@ export function agenticWorkflowJsonValidation(value: string) {
 export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
-  const { data: contextServices = [], isLoading: contextServicesLoading } =
-    useAgenticWorkflowContextServices(environmentId)
+  const {
+    data: contextServices = [],
+    isError: contextServicesError,
+    isLoading: contextServicesLoading,
+  } = useAgenticWorkflowContextServices(environmentId)
   const { mutate: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
@@ -201,11 +204,15 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           ? { cron_expression: schedule.cronExpression ?? '', timezone: schedule.timezone ?? 'Etc/UTC' }
           : null,
         model,
-        agent_prompt: replaceContextServicesInPrompt(data.agentPrompt, selectedContextServices),
+        agent_prompt: contextServicesError
+          ? data.agentPrompt
+          : replaceContextServicesInPrompt(data.agentPrompt, selectedContextServices),
         project_repositories: formatAgenticWorkflowRepositories(data.repositories),
         mcp: data.mcp,
         mcp_servers: data.mcpServerIds.map((id) => ({ id, required: data.requiredMcpServerIds.includes(id) })),
-        context_service_ids: selectedContextServices.map(({ id }) => id),
+        context_service_ids: contextServicesError
+          ? data.contextServiceIds
+          : selectedContextServices.map(({ id }) => id),
         docker_fragment: data.dockerFragment,
         outputs: formatAgenticWorkflowAutomationOutputs(data.automation.outputs),
         governance: {

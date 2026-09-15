@@ -119,6 +119,48 @@ describe('AgenticWorkflowConnectionsSettings', () => {
     expect(screen.getByText('Add Qovery services')).toBeInTheDocument()
   })
 
+  it('creates an attachable Qovery MCP instead of selecting an unavailable one', async () => {
+    const unavailableQoveryMcpServer = {
+      id: 'unavailable-qovery-mcp',
+      name: 'qovery',
+      url: 'https://mcp.qovery.com/mcp',
+      scope: McpServerScope.USER,
+      attachable: false,
+    }
+    const createdQoveryMcpServer = {
+      ...unavailableQoveryMcpServer,
+      id: 'created-qovery-mcp',
+      scope: McpServerScope.ORGANIZATION,
+      attachable: true,
+    }
+    const createQoveryMcpServer = jest.fn().mockResolvedValue(createdQoveryMcpServer)
+    useMcpServersSpy.mockReturnValue({ data: [unavailableQoveryMcpServer], isLoading: false })
+    useContextServicesSpy.mockReturnValue({
+      data: [{ id: 'service-1', name: 'api', type: 'APPLICATION' }],
+      isLoading: false,
+    })
+    useCreateQoveryMcpServerSpy.mockReturnValue({ mutateAsync: createQoveryMcpServer })
+    let settingsForm: UseFormReturn<AgenticWorkflowSettingsFormValues> | undefined
+    const { userEvent } = renderWithProviders(
+      <AgenticWorkflowSettingsFormHarness>
+        {(form) => {
+          settingsForm = form
+          return (
+            <AgenticWorkflowConnectionsSettings environmentId="environment-1" form={form} gitTokensLoading={false} />
+          )
+        }}
+      </AgenticWorkflowSettingsFormHarness>
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: /^Add Qovery services/ }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    expect(createQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'organization-1' })
+    expect(settingsForm?.getValues('mcpServerIds')).toEqual([createdQoveryMcpServer.id])
+    expect(settingsForm?.getValues('requiredMcpServerIds')).toEqual([createdQoveryMcpServer.id])
+  })
+
   it.each([
     { contextServicesLoading: true, mcpServersLoading: false },
     { contextServicesLoading: false, mcpServersLoading: true },

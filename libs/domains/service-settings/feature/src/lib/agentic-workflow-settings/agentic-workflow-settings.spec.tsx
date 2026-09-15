@@ -281,6 +281,30 @@ describe('AgenticWorkflowSettings views', () => {
     )
   })
 
+  it('preserves persisted service context when the context services query fails', async () => {
+    const agentPrompt =
+      'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- api (APPLICATION) — service ID: service-1\n<!-- qovery-context-services:end -->'
+    useServiceSpy.mockReturnValue({
+      data: { ...service, agent_prompt: agentPrompt, context_service_ids: ['service-1'] },
+    })
+    useContextServicesSpy.mockReturnValue({ data: undefined, isError: true, isLoading: false })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Description' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Description' }), 'Updated description')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          agent_prompt: agentPrompt,
+          context_service_ids: ['service-1'],
+        }),
+      })
+    )
+  })
+
   it('prevents editing a private self-hosted repository until its provider is resolved', () => {
     useServiceSpy.mockReturnValue({
       data: {
