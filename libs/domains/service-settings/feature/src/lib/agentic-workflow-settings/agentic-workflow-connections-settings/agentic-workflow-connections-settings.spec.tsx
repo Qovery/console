@@ -101,6 +101,14 @@ describe('AgenticWorkflowConnectionsSettings', () => {
     )
 
     expect(screen.getByText('api')).toBeInTheDocument()
+    const lockedMcpButton = screen.getByRole('button', {
+      name: /MCP Qovery: This MCP is required by the selected Qovery service context/,
+    })
+    expect(lockedMcpButton).toBeDisabled()
+    await userEvent.hover(lockedMcpButton.parentElement as HTMLElement)
+    expect(await screen.findByRole('tooltip')).toHaveTextContent(
+      'This MCP is required by the selected Qovery service context and cannot be removed.'
+    )
     await userEvent.click(screen.getByRole('button', { name: 'Manage Qovery service context' }))
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeChecked()
     await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))

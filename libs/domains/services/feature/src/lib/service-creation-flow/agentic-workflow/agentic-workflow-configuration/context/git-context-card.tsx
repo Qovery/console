@@ -1,3 +1,4 @@
+import { match } from 'ts-pattern'
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, Icon } from '@qovery/shared/ui'
 
@@ -32,11 +33,16 @@ export function GitContextCompactCard({
   provider?: string | null
   repository: string
 }) {
+  const providerLabel = match(provider)
+    .with('GITHUB', () => 'GitHub')
+    .with('GITLAB', () => 'GitLab')
+    .otherwise(() => 'Git')
+
   return (
     <div className="relative flex h-[74px] w-full min-w-0 max-w-80 flex-col justify-between rounded-lg border border-neutral bg-surface-neutral p-3 pr-12">
       <span className="flex h-5 w-fit items-center gap-1 rounded bg-surface-neutral-component pl-1 pr-1.5 font-mono text-[10px] font-bold leading-5 text-neutral">
         <Icon name={provider ?? IconEnum.GIT} width={12} height={12} />
-        {provider?.toUpperCase() ?? 'GIT'}
+        {providerLabel}
       </span>
       <div className="min-w-0 truncate text-sm text-neutral">{repository}</div>
       <Button

@@ -167,6 +167,39 @@ Always summarize the evidence for the on-call engineer.
     expect(request.agent_prompt?.match(/## Context services/g)).toHaveLength(1)
   })
 
+  it('preserves a markdown bullet following the generated context block', () => {
+    expect(
+      replaceContextServicesInPrompt(
+        `Investigate the incident.
+
+## Context services
+- old-api (APPLICATION) — service ID: old-service
+- Keep this user instruction`,
+        []
+      )
+    ).toBe(`Investigate the incident.
+- Keep this user instruction`)
+  })
+
+  it('replaces a context section whose generated service line was edited', () => {
+    expect(
+      replaceContextServicesInPrompt(
+        `Investigate the incident.
+
+## Context services
+- api changed by the user
+
+Keep the evidence concise.`,
+        [{ id: 'service-1', name: 'api', type: 'APPLICATION' }]
+      )
+    ).toBe(`Investigate the incident.
+
+Keep the evidence concise.
+
+## Context services
+- api (APPLICATION) — service ID: service-1`)
+  })
+
   it('uses the full URL of a selected Git repository', () => {
     const request = formatAgenticWorkflowRequest({
       ...values,

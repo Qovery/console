@@ -227,7 +227,7 @@ export function AgenticWorkflowConnectionsSettings({
 
               return locked ? (
                 <Tooltip key={id} content={qoveryMcpLockReason} classNameTrigger="block">
-                  {button}
+                  <span>{button}</span>
                 </Tooltip>
               ) : (
                 button

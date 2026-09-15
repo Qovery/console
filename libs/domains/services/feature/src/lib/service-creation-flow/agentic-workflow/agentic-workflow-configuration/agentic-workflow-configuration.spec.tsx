@@ -18,6 +18,7 @@ const mockCreateQoveryMcpServer = jest.fn()
 const mockRefetchMcpServers = jest.fn()
 let mockMcpServers: Array<Record<string, unknown>> = []
 let mockMcpServersLoading = false
+let mockCreateQoveryMcpServerLoading = false
 let mockContextServicesLoading = false
 
 function deferred<T>() {
@@ -56,7 +57,10 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   GitRepositorySetting: () => <div>Git repository</div>,
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
   McpServerSetting: () => <div>Organization MCP connectors</div>,
-  useCreateQoveryMcpServer: () => ({ isLoading: false, mutateAsync: mockCreateQoveryMcpServer }),
+  useCreateQoveryMcpServer: () => ({
+    isLoading: mockCreateQoveryMcpServerLoading,
+    mutateAsync: mockCreateQoveryMcpServer,
+  }),
   useMcpServers: () => ({
     data: mockMcpServers,
     isLoading: mockMcpServersLoading,
@@ -199,6 +203,7 @@ describe('AgenticWorkflowConfiguration', () => {
     jest.clearAllMocks()
     mockMcpServers = []
     mockMcpServersLoading = false
+    mockCreateQoveryMcpServerLoading = false
     mockContextServicesLoading = false
     mockRefetchMcpServers.mockImplementation(async () => ({ data: mockMcpServers }))
     mockCreateQoveryMcpServer.mockResolvedValue({
@@ -471,10 +476,15 @@ describe('AgenticWorkflowConfiguration', () => {
       attachable: boolean
     }>()
     mockCreateQoveryMcpServer.mockReturnValue(creation.promise)
+    mockCreateQoveryMcpServerLoading = true
 
     renderConfiguration({ requiresQoveryMcp: true })
 
     expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
+    expect(screen.getByLabelText('Configuring MCP Qovery')).toBeInTheDocument()
+    const createButton = screen.getByRole('button', { name: 'Create' })
+    expect(createButton).toHaveClass('pointer-events-none')
+    expect(within(createButton).getByTestId('spinner')).toBeInTheDocument()
     expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(1)
   })
 

@@ -13,6 +13,8 @@ import {
   createAgenticWorkflowAutomation,
   formatAgenticWorkflowAutomationOutputs,
   isGitRepositoryComplete,
+  replaceContextServicesInPrompt,
+  useAgenticWorkflowContextServices,
   useEditService,
   useService,
 } from '@qovery/domains/services/feature'
@@ -119,6 +121,8 @@ export function agenticWorkflowJsonValidation(value: string) {
 export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
+  const { data: contextServices = [], isLoading: contextServicesLoading } =
+    useAgenticWorkflowContextServices(environmentId)
   const { mutate: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
@@ -150,7 +154,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
             }
           }),
           mcp: workflow.mcp,
-          mcpServerIds: workflow.mcp_servers?.map(({ id }) => id) ?? workflow.mcp_server_ids,
+          mcpServerIds: workflow.mcp_servers?.length
+            ? workflow.mcp_servers.map(({ id }) => id)
+            : workflow.mcp_server_ids ?? [],
           requiredMcpServerIds: workflow.mcp_servers?.filter(({ required }) => required).map(({ id }) => id) ?? [],
           contextServiceIds: workflow.context_service_ids ?? [],
           dockerFragment: workflow.docker_fragment,
@@ -194,7 +200,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           ? { cron_expression: schedule.cronExpression ?? '', timezone: schedule.timezone ?? 'Etc/UTC' }
           : null,
         model,
-        agent_prompt: data.agentPrompt,
+        agent_prompt: replaceContextServicesInPrompt(
+          data.agentPrompt,
+          contextServices.filter(({ id }) => data.contextServiceIds.includes(id))
+        ),
         project_repositories: formatAgenticWorkflowRepositories(data.repositories),
         mcp: data.mcp,
         mcp_servers: data.mcpServerIds.map((id) => ({ id, required: data.requiredMcpServerIds.includes(id) })),
@@ -240,7 +249,14 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         {page === 'governance' ? <AgenticWorkflowGovernanceSettings form={form} /> : null}
         {page === 'advanced-settings' ? <AgenticWorkflowAdvancedSettings form={form} /> : null}
         <div className="flex justify-end pt-2">
-          <Button type="submit" size="lg" loading={isLoading} disabled={!form.formState.isDirty || !pageValid}>
+          <Button
+            type="submit"
+            size="lg"
+            loading={isLoading}
+            disabled={
+              !form.formState.isDirty || !pageValid || (values.contextServiceIds.length > 0 && contextServicesLoading)
+            }
+          >
             Save
           </Button>
         </div>
