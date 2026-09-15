@@ -252,7 +252,16 @@ describe('Karpenter YAML under CRDs', () => {
   async function openConfiguration(crd = true, yaml = true) {
     template.layers[0].components = [
       ...originalComponents,
-      ...(crd ? [{ key: 'karpenter-crd', kind: 'HELM' as const, fields: [] }] : []),
+      ...(crd
+        ? [
+            {
+              key: 'karpenter-crd',
+              kind: 'HELM' as const,
+              fields: [],
+              configurationSections: [{ sourceComponentKey: 'karpenter-configuration', fieldKeys: ['resources'] }],
+            },
+          ]
+        : []),
       ...(yaml ? [yamlComponent] : []),
     ]
     const { userEvent } = renderWithProviders(
@@ -279,6 +288,20 @@ describe('Karpenter YAML under CRDs', () => {
     await openConfiguration(false)
     expect(screen.getByLabelText('YAML resources')).toBeInTheDocument()
     expect(screen.getByLabelText('NodePools')).toBeInTheDocument()
+  })
+
+  it('preserves edits and changes resolver owner when switching configuration sections', async () => {
+    const userEvent = await openConfiguration()
+    await userEvent.click(screen.getByRole('button', { name: 'Edit YAML resources' }))
+    await userEvent.click(screen.getByRole('button', { name: 'General configuration' }))
+    expect(mockResolve).toHaveBeenLastCalledWith(
+      expect.objectContaining({ componentKey: 'karpenter-crd', enabled: true })
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'YAML resources' }))
+    expect(mockResolve).toHaveBeenLastCalledWith(
+      expect.objectContaining({ componentKey: 'karpenter-configuration', enabled: true })
+    )
+    expect(screen.getByLabelText('YAML resources')).toHaveValue(JSON.stringify([{ manifest: editedManifest }]))
   })
 
   it('resolves and saves YAML through its owner, preserving pools, AWS inputs and edits across navigation', async () => {
