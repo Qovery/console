@@ -31,10 +31,18 @@ export function AgenticWorkflowConnectionsSettings({
   environmentId: string
 }) {
   const { organizationId = '' } = useParams({ strict: false })
-  const { data: mcpServers = [], isLoading, refetch: refetchMcpServers } = useMcpServers({ organizationId })
+  const {
+    data: mcpServers = [],
+    isError: mcpServersError,
+    isLoading,
+    refetch: refetchMcpServers,
+  } = useMcpServers({ organizationId })
   const { mutateAsync: createQoveryMcpServer } = useCreateQoveryMcpServer()
-  const { data: contextServices = [], isLoading: contextServicesLoading } =
-    useAgenticWorkflowContextServices(environmentId)
+  const {
+    data: contextServices = [],
+    isError: contextServicesError,
+    isLoading: contextServicesLoading,
+  } = useAgenticWorkflowContextServices(environmentId)
   const { closeModal, openModal } = useModal()
   const [mcpSheetOpen, setMcpSheetOpen] = useState(false)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
@@ -53,7 +61,14 @@ export function AgenticWorkflowConnectionsSettings({
     : undefined
 
   const ensureQoveryMcpServer = async () => {
-    const loadedMcpServers = isLoading ? (await refetchMcpServers()).data ?? [] : mcpServers
+    let loadedMcpServers = mcpServers
+    if (isLoading || mcpServersError) {
+      const result = await refetchMcpServers()
+      if (result.isError || !result.data) {
+        throw result.error ?? new Error('Unable to load MCP servers')
+      }
+      loadedMcpServers = result.data
+    }
     let mcpServer = [...loadedMcpServers, ...createdMcpServers].find(
       (mcpServer) => mcpServer.attachable && isQoveryMcpServer(mcpServer)
     )
@@ -112,7 +127,7 @@ export function AgenticWorkflowConnectionsSettings({
   }
 
   const openQoveryServiceContext = () => {
-    if (contextServicesLoading || isLoading) return
+    if (contextServicesLoading || contextServicesError || isLoading) return
 
     openModal({
       content: (
@@ -155,12 +170,15 @@ export function AgenticWorkflowConnectionsSettings({
       >
         {selectedContextServices.length ? (
           <QoveryServiceContextCompactCard
-            disabled={contextServicesLoading || isLoading}
+            disabled={contextServicesLoading || contextServicesError || isLoading}
             names={selectedContextServices.map(({ name }) => name)}
             onClick={openQoveryServiceContext}
           />
         ) : (
-          <QoveryServiceContextCard disabled={contextServicesLoading || isLoading} onClick={openQoveryServiceContext} />
+          <QoveryServiceContextCard
+            disabled={contextServicesLoading || contextServicesError || isLoading}
+            onClick={openQoveryServiceContext}
+          />
         )}
       </AgenticWorkflowSettingsCard>
 

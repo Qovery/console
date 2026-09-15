@@ -145,6 +145,28 @@ describe('formatAgenticWorkflowRequest', () => {
     ).toBe('Investigate.\n\n## Context services\n- Keep this user instruction')
   })
 
+  it('replaces a complete legacy generated context block without removing following instructions', () => {
+    expect(
+      replaceContextServicesInPrompt(
+        `Investigate.
+
+## Context services
+- old-api (APPLICATION) — service ID: old-service
+- old-db (DATABASE) — service ID: old-database
+
+Keep the evidence concise.`,
+        [{ id: 'service-1', name: 'api', type: 'APPLICATION' }]
+      )
+    ).toBe(`Investigate.
+
+Keep the evidence concise.
+
+<!-- qovery-context-services:start -->
+## Context services
+- api (APPLICATION) — service ID: service-1
+<!-- qovery-context-services:end -->`)
+  })
+
   it('atomically replaces a delimited context section when a later service entry was edited', () => {
     expect(
       replaceContextServicesInPrompt(

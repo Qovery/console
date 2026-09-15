@@ -6,6 +6,8 @@ const CONTEXT_SERVICES_START_MARKER = '<!-- qovery-context-services:start -->'
 const CONTEXT_SERVICES_END_MARKER = '<!-- qovery-context-services:end -->'
 const DELIMITED_CONTEXT_SERVICES_BLOCK_PATTERN =
   /\n\n<!-- qovery-context-services:start -->\n[\s\S]*?\n<!-- qovery-context-services:end -->/g
+const LEGACY_CONTEXT_SERVICES_BLOCK_PATTERN =
+  /\n\n## Context services\n(?:- [^\n]+ — service ID: [^\n]+\n)*(?:- [^\n]+ — service ID: [^\n]+)(?=\n\n|$)/g
 
 function formatWhitelistHosts(value: string) {
   return value
@@ -28,7 +30,9 @@ export function replaceContextServicesInPrompt(
   prompt: string,
   contextServices: AgenticWorkflowFormData['contextServices']
 ) {
-  const promptWithoutContextServices = prompt.replace(DELIMITED_CONTEXT_SERVICES_BLOCK_PATTERN, '')
+  const promptWithoutContextServices = prompt
+    .replace(DELIMITED_CONTEXT_SERVICES_BLOCK_PATTERN, '')
+    .replace(LEGACY_CONTEXT_SERVICES_BLOCK_PATTERN, '')
   return appendContextServicesToPrompt(promptWithoutContextServices, contextServices)
 }
 
