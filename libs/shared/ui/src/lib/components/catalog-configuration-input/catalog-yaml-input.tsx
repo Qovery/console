@@ -20,7 +20,7 @@ interface CatalogYamlEditorProps {
   onClose: () => void
 }
 
-function CatalogYamlEditor({ field, value, onApply, onClose }: CatalogYamlEditorProps) {
+export function CatalogYamlEditor({ field, value, onApply, onClose }: CatalogYamlEditorProps) {
   const [content, setContent] = useState(value)
   const { enableAlertClickOutside } = useModal()
   const isDirty = content !== value
@@ -112,13 +112,6 @@ export function CatalogYamlInput({ field, value, onChange, error, path }: Catalo
         </Button>
       </div>
       {field.description ? <p className="text-ssm text-neutral-subtle">{field.description}</p> : null}
-      {value ? (
-        <pre className="max-h-40 overflow-auto rounded border border-neutral bg-surface-neutral p-3 text-xs">
-          <code>{value}</code>
-        </pre>
-      ) : (
-        <p className="text-sm text-neutral-subtle">No YAML configured.</p>
-      )}
       {error ? (
         <p id={`${path}-error`} role="alert" className="text-xs text-negative">
           {error}
