@@ -146,6 +146,27 @@ describe('formatAgenticWorkflowRequest', () => {
     ).toBe('Investigate.\n\n## Context services\n- api (APPLICATION) — service ID: service-1')
   })
 
+  it('replaces existing generated context without duplicating it or removing following instructions', () => {
+    const request = formatAgenticWorkflowRequest({
+      ...values,
+      agentPrompt: `Investigate the incident.
+
+## Context services
+- old-api (APPLICATION) — service ID: old-service
+
+Always summarize the evidence for the on-call engineer.`,
+      contextServices: [{ id: 'service-1', name: 'api', type: 'APPLICATION' }],
+    })
+
+    expect(request.agent_prompt).toBe(`Investigate the incident.
+
+Always summarize the evidence for the on-call engineer.
+
+## Context services
+- api (APPLICATION) — service ID: service-1`)
+    expect(request.agent_prompt?.match(/## Context services/g)).toHaveLength(1)
+  })
+
   it('uses the full URL of a selected Git repository', () => {
     const request = formatAgenticWorkflowRequest({
       ...values,

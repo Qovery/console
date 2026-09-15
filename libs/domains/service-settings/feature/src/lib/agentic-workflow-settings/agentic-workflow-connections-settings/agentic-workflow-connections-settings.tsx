@@ -1,6 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { type McpServerResponse } from 'qovery-typescript-axios'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
 import { useCreateQoveryMcpServer, useMcpServers } from '@qovery/domains/organizations/feature'
 import {
@@ -38,6 +38,7 @@ export function AgenticWorkflowConnectionsSettings({
   const { closeModal, openModal } = useModal()
   const [mcpSheetOpen, setMcpSheetOpen] = useState(false)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
+  const contextAddedRequiredMcpServerIdRef = useRef<string>()
   const repositories = form.watch('repositories')
   const mcpServerIds = form.watch('mcpServerIds')
   const contextServiceIds = form.watch('contextServiceIds')
@@ -67,6 +68,7 @@ export function AgenticWorkflowConnectionsSettings({
     const requiredMcpServerIds = form.getValues('requiredMcpServerIds')
     if (!requiredMcpServerIds.includes(mcpServer.id)) {
       form.setValue('requiredMcpServerIds', [...requiredMcpServerIds, mcpServer.id], { shouldDirty: true })
+      contextAddedRequiredMcpServerIdRef.current = mcpServer.id
     }
 
     return mcpServer
@@ -119,12 +121,14 @@ export function AgenticWorkflowConnectionsSettings({
           setOpen={(open) => !open && closeModal()}
           onSave={async (services) => {
             const mcpServer = services.length ? await ensureQoveryMcpServer() : qoveryMcpServer
-            if (!services.length && mcpServer) {
+            const mcpServerId = mcpServer?.id
+            if (!services.length && mcpServerId && mcpServerId === contextAddedRequiredMcpServerIdRef.current) {
               form.setValue(
                 'requiredMcpServerIds',
-                form.getValues('requiredMcpServerIds').filter((id) => id !== mcpServer.id),
+                form.getValues('requiredMcpServerIds').filter((id) => id !== mcpServerId),
                 { shouldDirty: true }
               )
+              contextAddedRequiredMcpServerIdRef.current = undefined
             }
             form.setValue('agentPrompt', replaceContextServicesInPrompt(form.getValues('agentPrompt'), services), {
               shouldDirty: true,
@@ -242,7 +246,7 @@ export function AgenticWorkflowConnectionsSettings({
           mcpServers={mcpServers}
           createdMcpServers={createdMcpServers}
           value={mcpServerIds}
-          lockedMcpServerId={qoveryMcpLockReason ? qoveryMcpServer?.id : undefined}
+          lockedMcpServerIds={qoveryMcpLockReason && qoveryMcpServer ? [qoveryMcpServer.id] : []}
           lockedMcpServerReason={qoveryMcpLockReason}
           onChange={(value) => form.setValue('mcpServerIds', value, { shouldDirty: true })}
           onClose={() => setMcpSheetOpen(false)}

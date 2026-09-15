@@ -2,6 +2,8 @@ import { type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 import { parseAgenticWorkflowHeaders } from './agentic-workflow-headers'
 
+const CONTEXT_SERVICES_BLOCK_PATTERN = /\n\n## Context services\n(?:- [^\n]+ — service ID: [^\n]+(?:\n(?=- ))?)+/g
+
 function formatWhitelistHosts(value: string) {
   return value
     .split(',')
@@ -23,7 +25,7 @@ export function replaceContextServicesInPrompt(
   prompt: string,
   contextServices: AgenticWorkflowFormData['contextServices']
 ) {
-  const promptWithoutContextServices = prompt.replace(/\n\n## Context services\n[\s\S]*$/, '')
+  const promptWithoutContextServices = prompt.replace(CONTEXT_SERVICES_BLOCK_PATTERN, '')
   return appendContextServicesToPrompt(promptWithoutContextServices, contextServices)
 }
 
@@ -67,7 +69,7 @@ export function formatAgenticWorkflowRequest(
       branch: repository.branch,
       git_token_id: repository.gitTokenId ?? '',
     })),
-    agent_prompt: appendContextServicesToPrompt(values.agentPrompt, values.contextServices),
+    agent_prompt: replaceContextServicesInPrompt(values.agentPrompt, values.contextServices),
     governance: {
       host_allowlist: formatWhitelistHosts(values.whitelistHosts),
     },

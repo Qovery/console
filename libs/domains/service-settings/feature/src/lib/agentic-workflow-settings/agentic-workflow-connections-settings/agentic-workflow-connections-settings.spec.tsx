@@ -1,7 +1,9 @@
 import { McpServerScope } from 'qovery-typescript-axios'
+import { type UseFormReturn } from 'react-hook-form'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import * as servicesDomain from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings-test-utils'
 import { AgenticWorkflowConnectionsSettings } from './agentic-workflow-connections-settings'
 
@@ -68,20 +70,44 @@ describe('AgenticWorkflowConnectionsSettings', () => {
   })
 
   it('shows and edits persisted Qovery service context', async () => {
+    const qoveryMcpServer = {
+      id: 'qovery-mcp',
+      name: 'qovery',
+      url: 'https://mcp.qovery.com/mcp',
+      scope: McpServerScope.ORGANIZATION,
+      attachable: true,
+    }
+    useMcpServersSpy.mockReturnValue({ data: [qoveryMcpServer], isLoading: false })
     useContextServicesSpy.mockReturnValue({
       data: [{ id: 'service-1', name: 'api', type: 'APPLICATION' }],
       isLoading: false,
     })
+    let settingsForm: UseFormReturn<AgenticWorkflowSettingsFormValues> | undefined
     const { userEvent } = renderWithProviders(
-      <AgenticWorkflowSettingsFormHarness values={{ contextServiceIds: ['service-1'] }}>
-        {(form) => (
-          <AgenticWorkflowConnectionsSettings environmentId="environment-1" form={form} gitTokensLoading={false} />
-        )}
+      <AgenticWorkflowSettingsFormHarness
+        values={{
+          contextServiceIds: ['service-1'],
+          mcpServerIds: [qoveryMcpServer.id],
+          requiredMcpServerIds: [qoveryMcpServer.id],
+        }}
+      >
+        {(form) => {
+          settingsForm = form
+          return (
+            <AgenticWorkflowConnectionsSettings environmentId="environment-1" form={form} gitTokensLoading={false} />
+          )
+        }}
       </AgenticWorkflowSettingsFormHarness>
     )
 
     expect(screen.getByText('api')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Manage Qovery service context' }))
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeChecked()
+    await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    expect(settingsForm?.getValues('contextServiceIds')).toEqual([])
+    expect(settingsForm?.getValues('requiredMcpServerIds')).toEqual([qoveryMcpServer.id])
+    expect(screen.getByText('Add Qovery services')).toBeInTheDocument()
   })
 })

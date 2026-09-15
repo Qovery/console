@@ -115,6 +115,7 @@ describe('QoveryServiceContextModal', () => {
     expect(onSave).toHaveBeenCalledTimes(1)
 
     save.resolve()
+    await waitFor(() => expect(confirmButton).toBeEnabled())
   })
 
   it('prevents backdrop and Escape dismissal while services are being saved', async () => {
