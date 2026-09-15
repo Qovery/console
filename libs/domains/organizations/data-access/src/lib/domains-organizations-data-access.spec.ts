@@ -1,4 +1,11 @@
-import { MCPServersApi, OrganizationMainCallsApi, OrganizationOnboardingStatusEnum } from 'qovery-typescript-axios'
+import {
+  LLMProvidersApi,
+  LlmProviderScope,
+  LlmProviderType,
+  MCPServersApi,
+  OrganizationMainCallsApi,
+  OrganizationOnboardingStatusEnum,
+} from 'qovery-typescript-axios'
 import { mutations, organizations } from './domains-organizations-data-access'
 
 describe('organizations.onboarding', () => {
@@ -92,5 +99,62 @@ describe('MCP server mutations', () => {
     await mutations.deleteMcpServer({ organizationId: 'org-1', mcpServerId: 'mcp-1' })
 
     expect(MCPServersApi.prototype.deleteMcpServer).toHaveBeenCalledWith('mcp-1')
+  })
+})
+
+describe('organizations.llmProviders', () => {
+  it('should return organization LLM providers', async () => {
+    const mockData = [{ id: 'provider-1', name: 'Claude' }]
+    jest
+      .spyOn(LLMProvidersApi.prototype, 'listLlmProviders')
+      .mockResolvedValue({ data: { results: mockData } } as never)
+
+    const query = organizations.llmProviders({ organizationId: 'org-1' })
+    const result = await query.queryFn({} as never)
+
+    expect(LLMProvidersApi.prototype.listLlmProviders).toHaveBeenCalledWith('org-1')
+    expect(result).toEqual(mockData)
+    expect(query.queryKey).toContain('org-1')
+  })
+})
+
+describe('LLM provider mutations', () => {
+  const llmProviderRequest = {
+    name: 'Claude',
+    type: LlmProviderType.CLAUDE,
+    credential: 'secret',
+    scope: LlmProviderScope.USER,
+  }
+
+  it('should create an LLM provider', async () => {
+    const mockData = { id: 'provider-1', ...llmProviderRequest }
+    jest.spyOn(LLMProvidersApi.prototype, 'createLlmProvider').mockResolvedValue({ data: mockData } as never)
+
+    const result = await mutations.createLlmProvider({ organizationId: 'org-1', llmProviderRequest })
+
+    expect(LLMProvidersApi.prototype.createLlmProvider).toHaveBeenCalledWith('org-1', llmProviderRequest)
+    expect(result).toEqual(mockData)
+  })
+
+  it('should edit an LLM provider', async () => {
+    const mockData = { id: 'provider-1', ...llmProviderRequest }
+    jest.spyOn(LLMProvidersApi.prototype, 'editLlmProvider').mockResolvedValue({ data: mockData } as never)
+
+    const result = await mutations.editLlmProvider({
+      organizationId: 'org-1',
+      llmProviderId: 'provider-1',
+      llmProviderRequest,
+    })
+
+    expect(LLMProvidersApi.prototype.editLlmProvider).toHaveBeenCalledWith('provider-1', llmProviderRequest)
+    expect(result).toEqual(mockData)
+  })
+
+  it('should delete an LLM provider', async () => {
+    jest.spyOn(LLMProvidersApi.prototype, 'deleteLlmProvider').mockResolvedValue({ data: undefined } as never)
+
+    await mutations.deleteLlmProvider({ organizationId: 'org-1', llmProviderId: 'provider-1' })
+
+    expect(LLMProvidersApi.prototype.deleteLlmProvider).toHaveBeenCalledWith('provider-1')
   })
 })

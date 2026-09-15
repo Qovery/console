@@ -1,24 +1,40 @@
-import { type McpServerResponse, McpServerScope } from 'qovery-typescript-axios'
-import { type ReactElement } from 'react'
+import {
+  type LlmProviderResponse,
+  LlmProviderScope,
+  LlmProviderType,
+  type McpServerResponse,
+  McpServerScope,
+} from 'qovery-typescript-axios'
+import { type ReactElement, type ReactNode } from 'react'
 import * as sharedUi from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import * as useDeleteLlmProviderHook from '../hooks/use-delete-llm-provider/use-delete-llm-provider'
 import * as useDeleteMcpServerHook from '../hooks/use-delete-mcp-server/use-delete-mcp-server'
+import * as useLlmProvidersHook from '../hooks/use-llm-providers/use-llm-providers'
 import * as useMcpServersHook from '../hooks/use-mcp-servers/use-mcp-servers'
 import { type McpServerCreateEditModalProps } from '../mcp-server-create-edit-modal/mcp-server-create-edit-modal'
 import { SettingsAgentPersonalization } from './settings-agent-personalization'
 
 const useMcpServersMock = jest.spyOn(useMcpServersHook, 'useMcpServers') as jest.Mock
 const useDeleteMcpServerMock = jest.spyOn(useDeleteMcpServerHook, 'useDeleteMcpServer') as jest.Mock
+const useLlmProvidersMock = jest.spyOn(useLlmProvidersHook, 'useLlmProviders') as jest.Mock
+const useDeleteLlmProviderMock = jest.spyOn(useDeleteLlmProviderHook, 'useDeleteLlmProvider') as jest.Mock
 const useModalMock = jest.spyOn(sharedUi, 'useModal') as jest.Mock
 const useModalConfirmationMock = jest.spyOn(sharedUi, 'useModalConfirmation') as jest.Mock
 const openModal = jest.fn()
 const closeModal = jest.fn()
 const openModalConfirmation = jest.fn()
 const deleteMcpServer = jest.fn()
+const deleteLlmProvider = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-1' }),
+}))
+
+jest.mock('@auth0/auth0-react', () => ({
+  Auth0Provider: ({ children }: { children: ReactNode }) => children,
+  useAuth0: () => ({ user: { sub: 'auth0|current-user' } }),
 }))
 
 const mcpServers: McpServerResponse[] = [
@@ -59,6 +75,43 @@ const mcpServers: McpServerResponse[] = [
   },
 ]
 
+const llmProviders: LlmProviderResponse[] = [
+  {
+    id: 'provider-claude',
+    name: 'Claude production',
+    description: '',
+    type: LlmProviderType.CLAUDE,
+    has_credential: true,
+    scope: LlmProviderScope.ORGANIZATION,
+    created_at: '2026-09-15T10:00:00Z',
+    updated_at: '2026-09-15T10:00:00Z',
+  },
+  {
+    id: 'provider-personal',
+    name: 'My Claude',
+    description: '',
+    type: LlmProviderType.CLAUDE,
+    has_credential: false,
+    scope: LlmProviderScope.USER,
+    owner_name: 'Rémi Bonnet',
+    owner_user_sub: 'auth0|current-user',
+    created_at: '2026-09-15T10:00:00Z',
+    updated_at: '2026-09-15T10:00:00Z',
+  },
+  {
+    id: 'provider-other-user',
+    name: 'Other Claude',
+    description: '',
+    type: LlmProviderType.CLAUDE,
+    has_credential: true,
+    scope: LlmProviderScope.USER,
+    owner_name: 'Another member',
+    owner_user_sub: 'auth0|other-user',
+    created_at: '2026-09-15T10:00:00Z',
+    updated_at: '2026-09-15T10:00:00Z',
+  },
+]
+
 describe('SettingsAgentPersonalization', () => {
   beforeEach(() => {
     jest.useFakeTimers()
@@ -66,6 +119,8 @@ describe('SettingsAgentPersonalization', () => {
     useModalMock.mockReturnValue({ openModal, closeModal })
     useModalConfirmationMock.mockReturnValue({ openModalConfirmation })
     useDeleteMcpServerMock.mockReturnValue({ mutateAsync: deleteMcpServer })
+    useDeleteLlmProviderMock.mockReturnValue({ mutateAsync: deleteLlmProvider })
+    useLlmProvidersMock.mockReturnValue({ data: [] })
   })
 
   afterEach(() => {
@@ -83,6 +138,7 @@ describe('SettingsAgentPersonalization', () => {
       screen.queryByText('Personal MCPs belong to one member. Organization MCPs are shared with the organization.')
     ).not.toBeInTheDocument()
     expect(screen.getByText('No MCPs')).toBeInTheDocument()
+    expect(screen.getByText('No tokens')).toBeInTheDocument()
   })
 
   it('should render MCPs alphabetically with their URL, details tooltip, and actions', async () => {
@@ -131,6 +187,46 @@ describe('SettingsAgentPersonalization', () => {
     expect(createModal.props.scope).toBe(McpServerScope.USER)
     expect(openModal).toHaveBeenNthCalledWith(1, expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
     expect(openModal).toHaveBeenNthCalledWith(2, expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
+  })
+
+  it('should keep page actions in normal flow below the large breakpoint', () => {
+    useMcpServersMock.mockReturnValue({ data: [] })
+
+    renderWithProviders(<SettingsAgentPersonalization />)
+
+    const actions = screen.getByRole('button', { name: 'Add token' }).parentElement
+    expect(actions).not.toHaveClass('absolute')
+    expect(actions).toHaveClass('-mt-4', 'mb-8', 'flex', 'flex-wrap', 'lg:absolute', 'lg:m-0')
+  })
+
+  it('should render and manage provider tokens', async () => {
+    useMcpServersMock.mockReturnValue({ data: [] })
+    useLlmProvidersMock.mockReturnValue({ data: llmProviders })
+    const { userEvent } = renderWithProviders(<SettingsAgentPersonalization />)
+
+    expect(screen.getByText('Organization tokens')).toBeInTheDocument()
+    expect(screen.getByText('Personal tokens')).toBeInTheDocument()
+    expect(screen.getAllByText('Claude')).toHaveLength(3)
+    expect(screen.getAllByText('Configured')).toHaveLength(2)
+    expect(screen.getByText('No token')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit My Claude' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Delete My Claude' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Edit Other Claude' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Delete Other Claude' })).not.toBeInTheDocument()
+    expect(screen.getByText('Owner: Another member')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Edit Claude production' }))
+    expect(openModal).toHaveBeenCalledTimes(2)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete Claude production' }))
+    const confirmation = openModalConfirmation.mock.calls[0][0]
+    await confirmation.action()
+    expect(confirmation).toEqual(expect.objectContaining({ title: 'Delete token', name: 'Claude production' }))
+    expect(deleteLlmProvider).toHaveBeenCalledWith({
+      organizationId: 'org-1',
+      llmProviderId: 'provider-claude',
+    })
   })
 
   it('should confirm deletion with the connector name and organization scope', async () => {
