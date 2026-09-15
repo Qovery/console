@@ -255,7 +255,8 @@ describe('AgenticWorkflowSettings views', () => {
     useServiceSpy.mockReturnValue({
       data: {
         ...service,
-        agent_prompt: 'Investigate.\n\n## Context services\n- stale-api (APPLICATION) — service ID: stale-service',
+        agent_prompt:
+          'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- stale-api (APPLICATION) — service ID: stale-service\n<!-- qovery-context-services:end -->',
         context_service_ids: ['service-1', 'deleted-service'],
       },
     })

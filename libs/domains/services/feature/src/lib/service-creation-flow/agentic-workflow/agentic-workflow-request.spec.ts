@@ -139,73 +139,10 @@ describe('formatAgenticWorkflowRequest', () => {
     expect(formatAgenticWorkflowRequest(values).agent_prompt).toBe('Review the pull request')
   })
 
-  it('replaces generated Qovery service context in an existing prompt', () => {
+  it('preserves an unmarked user-authored context section', () => {
     expect(
-      replaceContextServicesInPrompt(
-        'Investigate.\n\n## Context services\n- old-api (APPLICATION) — service ID: old-service',
-        [{ id: 'service-1', name: 'api', type: 'APPLICATION' }]
-      )
-    ).toBe(
-      'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- api (APPLICATION) — service ID: service-1\n<!-- qovery-context-services:end -->'
-    )
-  })
-
-  it('replaces existing generated context without duplicating it or removing following instructions', () => {
-    const request = formatAgenticWorkflowRequest({
-      ...values,
-      agentPrompt: `Investigate the incident.
-
-## Context services
-- old-api (APPLICATION) — service ID: old-service
-
-Always summarize the evidence for the on-call engineer.`,
-      contextServices: [{ id: 'service-1', name: 'api', type: 'APPLICATION' }],
-    })
-
-    expect(request.agent_prompt).toBe(`Investigate the incident.
-
-Always summarize the evidence for the on-call engineer.
-
-<!-- qovery-context-services:start -->
-## Context services
-- api (APPLICATION) — service ID: service-1
-<!-- qovery-context-services:end -->`)
-    expect(request.agent_prompt?.match(/## Context services/g)).toHaveLength(1)
-  })
-
-  it('preserves a markdown bullet following the generated context block', () => {
-    expect(
-      replaceContextServicesInPrompt(
-        `Investigate the incident.
-
-## Context services
-- old-api (APPLICATION) — service ID: old-service
-- Keep this user instruction`,
-        []
-      )
-    ).toBe(`Investigate the incident.
-- Keep this user instruction`)
-  })
-
-  it('replaces a context section whose generated service line was edited', () => {
-    expect(
-      replaceContextServicesInPrompt(
-        `Investigate the incident.
-
-## Context services
-- api changed by the user
-
-Keep the evidence concise.`,
-        [{ id: 'service-1', name: 'api', type: 'APPLICATION' }]
-      )
-    ).toBe(`Investigate the incident.
-
-Keep the evidence concise.
-
-<!-- qovery-context-services:start -->
-## Context services
-- api (APPLICATION) — service ID: service-1
-<!-- qovery-context-services:end -->`)
+      replaceContextServicesInPrompt('Investigate.\n\n## Context services\n- Keep this user instruction', [])
+    ).toBe('Investigate.\n\n## Context services\n- Keep this user instruction')
   })
 
   it('atomically replaces a delimited context section when a later service entry was edited', () => {
