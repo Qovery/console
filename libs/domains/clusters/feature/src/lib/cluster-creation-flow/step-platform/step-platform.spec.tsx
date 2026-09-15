@@ -1,5 +1,6 @@
 import {
   CloudProviderEnum,
+  type FieldSchemaResponse,
   type PlatformCloudVendor,
   type PlatformComponentConfigurationPreviewRequest,
   type PlatformTemplateSummaryResponse,
@@ -192,6 +193,101 @@ describe('StepPlatform', () => {
     jest.runOnlyPendingTimers()
     jest.useRealTimers()
     jest.restoreAllMocks()
+  })
+
+  it('edits custom YAML under CRDs without replacing the pool configuration during creation', async () => {
+    const fields: FieldSchemaResponse[] = [
+      { key: 'nodePools', type: 'string', label: 'Pools', required: false, sensitive: false, constraints: {} },
+      {
+        key: 'resources',
+        type: 'array',
+        constraints: {},
+        label: 'YAML resources',
+        required: false,
+        sensitive: false,
+        items: {
+          type: 'object',
+          fields: [
+            {
+              key: 'manifest',
+              type: 'string',
+              label: 'YAML manifest',
+              required: true,
+              sensitive: false,
+              constraints: {},
+              format: 'kubernetes-resource-yaml',
+            },
+          ],
+        },
+      },
+    ]
+    const template: PlatformTemplateSummaryResponse = {
+      ...mockTemplate,
+      layers: [
+        {
+          key: 'karpenter',
+          modes: ['CUSTOMER_MANAGED'],
+          providers: ['AWS'],
+          mandatory: false,
+          enabledByDefault: true,
+          components: [
+            { key: 'karpenter-crd', kind: 'HELM', fields: [] },
+            { key: 'karpenter-configuration', kind: 'HELM', fields },
+          ],
+        },
+      ],
+    }
+    mockUsePlatformTemplates.mockReturnValue({ data: [template], isLoading: false, isError: false })
+    mockUsePlatformTemplateComponentConfiguration.mockImplementation(({ componentKey }: ResolverHookProps) => ({
+      data: componentKey
+        ? {
+            componentKey,
+            fields,
+            requirements: [
+              {
+                key: 'aws.eksClusterName',
+                type: 'string',
+                scope: 'CLUSTER',
+                label: 'Cluster name',
+                required: true,
+                sensitive: false,
+                constraints: {},
+                status: 'READY',
+              },
+            ],
+            componentBindings: [],
+            violations: [],
+          }
+        : undefined,
+      isFetching: false,
+      isError: false,
+    }))
+    mockContextValue.platformConfigurationData = {
+      templateKey: template.key,
+      templateVersion: template.version,
+      layerSelections: { karpenter: true },
+      managedConfig: {
+        'karpenter-configuration': { nodePools: [{ name: 'demo' }], resources: [{ manifest: 'kind: NodePool' }] },
+      },
+      customerProvidedInputs: { 'karpenter-configuration': { 'aws.eksClusterName': 'existing-cluster' } },
+    }
+    const { userEvent } = renderWithProviders(
+      <StepPlatform organizationId="org-123" onPrevious={mockOnPrevious} onSubmit={mockOnSubmit} />,
+      { wrapper: Wrapper }
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Karpenter crd HELM' }))
+    expect(screen.getByRole('heading', { name: 'Karpenter crd' })).toBeInTheDocument()
+    expect(screen.getByText('YAML resources')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Pools')).not.toBeInTheDocument()
+    expect(mockUsePlatformTemplateComponentConfiguration).toHaveBeenLastCalledWith(
+      expect.objectContaining({ componentKey: 'karpenter-configuration' })
+    )
+    await userEvent.click(screen.getByRole('button', { name: /Remove/ }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save configuration' }))
+    expect(mockSetPlatformConfigurationData).toHaveBeenLastCalledWith({
+      ...mockContextValue.platformConfigurationData,
+      managedConfig: { 'karpenter-configuration': { nodePools: [{ name: 'demo' }], resources: [] } },
+    })
   })
 
   it('opens Loki configuration and stores edited values in the binding draft', async () => {

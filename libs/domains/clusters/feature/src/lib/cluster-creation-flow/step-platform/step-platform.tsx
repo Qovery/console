@@ -13,8 +13,8 @@ import { PlatformConfigurationCatalog } from '../../platform-configuration/platf
 import {
   applyPlatformConfigurationDefaults,
   createPlatformConfigurationDraft,
-  findPlatformComponent,
   getCurrentPlatformConfigurationPreview,
+  getPlatformComponentEditor,
   omitEmptyValues,
   toPlatformCloudVendor,
   toPlatformConfigurationValue,
@@ -64,18 +64,22 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
       ? platformConfigurationData
       : createPlatformConfigurationDraft(template, null)
     : undefined
-  const selectedComponent = template ? findPlatformComponent(template, componentDraft?.componentKey) : undefined
+  const {
+    component: selectedComponent,
+    configurationComponent,
+    isFieldVisible,
+  } = getPlatformComponentEditor(template, componentDraft?.componentKey)
   // profileConfig drives the form display and may contain '' for fields the user
   // explicitly cleared; the resolver request must omit those so a cleared required
   // field surfaces as a violation instead of silently resurrecting its default.
   const { profileConfig, clusterInputs } = useMemo(
     () => ({
-      profileConfig: selectedComponent
-        ? applyPlatformConfigurationDefaults(selectedComponent.fields, componentDraft?.managedConfig ?? {})
+      profileConfig: configurationComponent
+        ? applyPlatformConfigurationDefaults(configurationComponent.fields, componentDraft?.managedConfig ?? {})
         : {},
       clusterInputs: componentDraft?.clusterInputs ?? {},
     }),
-    [componentDraft?.clusterInputs, componentDraft?.managedConfig, selectedComponent]
+    [componentDraft?.clusterInputs, componentDraft?.managedConfig, configurationComponent]
   )
   const previewRequest = useMemo<PlatformComponentConfigurationPreviewRequest>(
     () => ({
@@ -86,8 +90,8 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
     [profileConfig, clusterInputs]
   )
   const previewQuery = useMemo(
-    () => ({ componentKey: selectedComponent?.key, request: previewRequest }),
-    [previewRequest, selectedComponent?.key]
+    () => ({ componentKey: configurationComponent?.key, request: previewRequest }),
+    [previewRequest, configurationComponent?.key]
   )
   const debouncedPreviewQuery = useDebounce(previewQuery, 300)
   const isPreviewPending = debouncedPreviewQuery !== previewQuery
@@ -103,9 +107,9 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
     clusterMode: 'CUSTOMER_MANAGED',
     cloudProvider,
     request: debouncedPreviewQuery.request,
-    enabled: Boolean(selectedComponent) && debouncedPreviewQuery.componentKey === selectedComponent?.key,
+    enabled: Boolean(configurationComponent) && debouncedPreviewQuery.componentKey === configurationComponent?.key,
   })
-  const preview = getCurrentPlatformConfigurationPreview(previewData, selectedComponent?.key, isPreviewPending)
+  const preview = getCurrentPlatformConfigurationPreview(previewData, configurationComponent?.key, isPreviewPending)
 
   useEffect(() => {
     const stepIndex = steps(generalData, isEngineV2SelfManaged).findIndex((step) => step.key === 'platform') + 1
@@ -124,9 +128,9 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
   }
 
   const updateProfileConfig = (fieldKey: string, value: unknown) => {
-    if (!selectedComponent || !componentDraft) return
+    if (!configurationComponent || !componentDraft) return
 
-    const field = (preview?.fields ?? selectedComponent.fields).find((candidate) => candidate.key === fieldKey)
+    const field = (preview?.fields ?? configurationComponent.fields).find((candidate) => candidate.key === fieldKey)
     if (!field) return
 
     const fieldValue = toPlatformConfigurationValue(field, value)
@@ -160,7 +164,7 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
   }
 
   const saveComponentConfiguration = () => {
-    if (!componentDraft || !preview) return
+    if (!componentDraft || !preview || !configurationComponent) return
 
     const activeClusterInputs: Record<string, string> = Object.fromEntries(
       preview.requirements.flatMap((requirement) => {
@@ -172,9 +176,9 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
     updateDraft((current) => {
       const customerProvidedInputs = { ...current.customerProvidedInputs }
       if (Object.keys(activeClusterInputs).length > 0) {
-        customerProvidedInputs[componentDraft.componentKey] = activeClusterInputs
+        customerProvidedInputs[configurationComponent.key] = activeClusterInputs
       } else {
-        delete customerProvidedInputs[componentDraft.componentKey]
+        delete customerProvidedInputs[configurationComponent.key]
       }
 
       return {
@@ -182,7 +186,7 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
         managedConfig: {
           ...current.managedConfig,
           // '' entries are only display markers for cleared fields — never persist them.
-          [componentDraft.componentKey]: omitEmptyValues(componentDraft.managedConfig),
+          [configurationComponent.key]: omitEmptyValues(componentDraft.managedConfig),
         },
         customerProvidedInputs,
       }
@@ -224,7 +228,9 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
               Platform layers
             </Button>
             <PlatformComponentConfiguration
-              component={selectedComponent}
+              key={selectedComponent.key}
+              component={{ ...selectedComponent, fields: configurationComponent?.fields ?? selectedComponent.fields }}
+              isFieldVisible={isFieldVisible}
               preview={preview}
               profileConfig={profileConfig}
               clusterInputs={clusterInputs}
@@ -245,13 +251,15 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
             layerSelections={draft.layerSelections ?? {}}
             description="Choose the platform layers that the Qovery operator will install on this cluster."
             isSaving={false}
-            onComponentSelect={(componentKey) =>
+            onComponentSelect={(componentKey) => {
+              const { configurationComponent } = getPlatformComponentEditor(template, componentKey)
+              if (!configurationComponent) return
               setComponentDraft({
                 componentKey,
-                managedConfig: { ...draft.managedConfig?.[componentKey] },
-                clusterInputs: { ...draft.customerProvidedInputs?.[componentKey] },
+                managedConfig: { ...draft.managedConfig?.[configurationComponent.key] },
+                clusterInputs: { ...draft.customerProvidedInputs?.[configurationComponent.key] },
               })
-            }
+            }}
             onLayerSelectionChange={(layerKey, enabled) =>
               updateDraft((current) => ({
                 ...current,

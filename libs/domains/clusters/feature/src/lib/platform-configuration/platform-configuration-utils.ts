@@ -190,3 +190,34 @@ export function isPlatformConfigurationReady(
 ) {
   return violations.length === 0 && requirements.every((requirement) => requirement.status === 'READY')
 }
+
+// Front-only Karpenter presentation: YAML is edited under CRDs but retains its configuration/Helm owner.
+export function getPlatformComponentEditor(
+  template: PlatformTemplateSummaryResponse | undefined,
+  componentKey?: string
+) {
+  const component = template ? findPlatformComponent(template, componentKey) : undefined
+  const yamlComponent = template ? findPlatformComponent(template, 'karpenter-configuration') : undefined
+  const crdComponent = template ? findPlatformComponent(template, 'karpenter-crd') : undefined
+  const hasYamlResources = yamlComponent?.fields.some(
+    (field) =>
+      field.key === 'resources' &&
+      field.type === 'array' &&
+      field.items.type === 'object' &&
+      field.items.fields.some((item) => item.type === 'string' && item.format === 'kubernetes-resource-yaml')
+  )
+  const showYamlInCrd = Boolean(hasYamlResources && crdComponent)
+  return {
+    component,
+    configurationComponent: showYamlInCrd && componentKey === 'karpenter-crd' ? yamlComponent : component,
+    isFieldVisible:
+      showYamlInCrd && componentKey === 'karpenter-crd'
+        ? isYamlResourcesField
+        : showYamlInCrd && componentKey === 'karpenter-configuration'
+          ? isPoolConfigurationField
+          : undefined,
+  }
+}
+
+const isYamlResourcesField = (field: FieldSchemaResponse) => field.key === 'resources'
+const isPoolConfigurationField = (field: FieldSchemaResponse) => !isYamlResourcesField(field)
