@@ -351,6 +351,23 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(await screen.findByText('MCP Qovery')).toBeInTheDocument()
   })
 
+  it('should select an existing Qovery MCP using its origin URL for templates that require it', async () => {
+    mockMcpServers = [
+      {
+        id: 'existing-qovery-mcp',
+        name: 'qovery',
+        url: 'https://mcp.qovery.com',
+        scope: 'ORGANIZATION',
+        attachable: true,
+      },
+    ]
+
+    renderConfiguration({ requiresQoveryMcp: true })
+
+    expect(await screen.findByText('MCP Qovery')).toBeInTheDocument()
+    expect(mockCreateQoveryMcpServer).not.toHaveBeenCalled()
+  })
+
   it('should share Qovery MCP initialization between a template and service context', async () => {
     const creation = deferred<{
       id: string

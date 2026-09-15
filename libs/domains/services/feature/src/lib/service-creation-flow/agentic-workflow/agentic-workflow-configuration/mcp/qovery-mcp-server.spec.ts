@@ -1,7 +1,12 @@
 import { getMcpServerDisplayName, isQoveryMcpServer } from './qovery-mcp-server'
 
 describe('isQoveryMcpServer', () => {
-  it.each(['https://mcp.qovery.com/mcp', 'https://mcp.qovery.com/mcp/'])('recognizes the Qovery MCP URL %s', (url) => {
+  it.each([
+    'https://mcp.qovery.com',
+    'https://mcp.qovery.com/',
+    'https://mcp.qovery.com/mcp',
+    'https://mcp.qovery.com/mcp/',
+  ])('recognizes the Qovery MCP URL %s', (url) => {
     expect(isQoveryMcpServer({ url })).toBe(true)
   })
 

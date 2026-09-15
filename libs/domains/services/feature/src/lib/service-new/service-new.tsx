@@ -401,7 +401,7 @@ export function ServiceNew({
                 className="h-9"
                 onClick={openAgentTemplateRequestModal}
               >
-                Request a new template
+                Request agent template
               </Button>
             </div>
             <div className="grid grid-cols-3 gap-3">
