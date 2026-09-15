@@ -760,7 +760,7 @@ export function AgenticWorkflowConfiguration() {
             />
             <section aria-label="Context" className="flex flex-col gap-2 py-6">
               <h2 className="text-sm font-medium text-neutral-subtle">Context</h2>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="flex flex-wrap gap-3">
                 {values.gitRepositories.some(isGitRepositoryComplete) ? (
                   values.gitRepositories.map((repository, index) =>
                     isGitRepositoryComplete(repository) ? (
