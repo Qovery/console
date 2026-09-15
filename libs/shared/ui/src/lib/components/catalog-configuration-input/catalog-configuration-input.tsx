@@ -11,6 +11,7 @@ import {
 import { Button } from '../button/button'
 import { CatalogVariableInput } from '../catalog-variable-input/catalog-variable-input'
 import { CatalogYamlInput } from './catalog-yaml-input'
+import { CatalogYamlResourceList } from './catalog-yaml-resource-list'
 
 export interface CatalogConfigurationInputProps {
   field: FieldSchemaResponse
@@ -153,9 +154,34 @@ export function CatalogConfigurationInput({
   getError,
 }: CatalogConfigurationInputProps) {
   return match(field)
-    .with({ type: 'array' }, (array) => (
-      <ArrayInput field={array} value={value} onChange={onChange} path={path} getError={getError} />
-    ))
+    .with({ type: 'array' }, (array) => {
+      const manifestField =
+        array.items.type === 'object' && array.items.fields.length === 1 ? array.items.fields[0] : undefined
+      if (
+        manifestField?.type === 'string' &&
+        manifestField.format === 'kubernetes-resource-yaml' &&
+        (!array.itemFields?.length ||
+          array.itemFields.every(
+            (fields) =>
+              fields.length === 1 &&
+              fields[0].key === manifestField.key &&
+              fields[0].type === 'string' &&
+              fields[0].format === 'kubernetes-resource-yaml'
+          ))
+      ) {
+        return (
+          <CatalogYamlResourceList
+            field={array}
+            manifestField={manifestField}
+            value={value}
+            onChange={onChange}
+            path={path}
+            getError={getError}
+          />
+        )
+      }
+      return <ArrayInput field={array} value={value} onChange={onChange} path={path} getError={getError} />
+    })
     .with({ type: 'object' }, (object) => (
       <fieldset className="min-w-0 border-l border-neutral pl-4">
         <legend className="mb-3 text-sm font-medium">{object.label}</legend>
