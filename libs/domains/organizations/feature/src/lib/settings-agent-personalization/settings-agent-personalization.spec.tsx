@@ -5,7 +5,7 @@ import {
   type McpServerResponse,
   McpServerScope,
 } from 'qovery-typescript-axios'
-import { type ReactElement } from 'react'
+import { type ReactElement, type ReactNode } from 'react'
 import * as sharedUi from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import * as useDeleteLlmProviderHook from '../hooks/use-delete-llm-provider/use-delete-llm-provider'
@@ -30,6 +30,11 @@ const deleteLlmProvider = jest.fn()
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useParams: () => ({ organizationId: 'org-1' }),
+}))
+
+jest.mock('@auth0/auth0-react', () => ({
+  Auth0Provider: ({ children }: { children: ReactNode }) => children,
+  useAuth0: () => ({ user: { sub: 'auth0|current-user' } }),
 }))
 
 const mcpServers: McpServerResponse[] = [
@@ -89,6 +94,19 @@ const llmProviders: LlmProviderResponse[] = [
     has_credential: false,
     scope: LlmProviderScope.USER,
     owner_name: 'Rémi Bonnet',
+    owner_user_sub: 'auth0|current-user',
+    created_at: '2026-09-15T10:00:00Z',
+    updated_at: '2026-09-15T10:00:00Z',
+  },
+  {
+    id: 'provider-other-user',
+    name: 'Other Claude',
+    description: '',
+    type: LlmProviderType.CLAUDE,
+    has_credential: true,
+    scope: LlmProviderScope.USER,
+    owner_name: 'Another member',
+    owner_user_sub: 'auth0|other-user',
     created_at: '2026-09-15T10:00:00Z',
     updated_at: '2026-09-15T10:00:00Z',
   },
@@ -171,6 +189,16 @@ describe('SettingsAgentPersonalization', () => {
     expect(openModal).toHaveBeenNthCalledWith(2, expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
   })
 
+  it('should keep page actions in normal flow below the large breakpoint', () => {
+    useMcpServersMock.mockReturnValue({ data: [] })
+
+    renderWithProviders(<SettingsAgentPersonalization />)
+
+    const actions = screen.getByRole('button', { name: 'Add token' }).parentElement
+    expect(actions).not.toHaveClass('absolute')
+    expect(actions).toHaveClass('-mt-4', 'mb-8', 'flex', 'flex-wrap', 'lg:absolute', 'lg:m-0')
+  })
+
   it('should render and manage provider tokens', async () => {
     useMcpServersMock.mockReturnValue({ data: [] })
     useLlmProvidersMock.mockReturnValue({ data: llmProviders })
@@ -178,9 +206,14 @@ describe('SettingsAgentPersonalization', () => {
 
     expect(screen.getByText('Organization tokens')).toBeInTheDocument()
     expect(screen.getByText('Personal tokens')).toBeInTheDocument()
-    expect(screen.getAllByText('Claude')).toHaveLength(2)
-    expect(screen.getByText('Configured')).toBeInTheDocument()
+    expect(screen.getAllByText('Claude')).toHaveLength(3)
+    expect(screen.getAllByText('Configured')).toHaveLength(2)
     expect(screen.getByText('No token')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Edit My Claude' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Delete My Claude' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Edit Other Claude' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Delete Other Claude' })).not.toBeInTheDocument()
+    expect(screen.getByText('Owner: Another member')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
     await userEvent.click(screen.getByRole('button', { name: 'Edit Claude production' }))
