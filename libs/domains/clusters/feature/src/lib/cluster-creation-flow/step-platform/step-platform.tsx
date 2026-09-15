@@ -5,7 +5,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { Button, Callout, FunnelFlowBody, Icon, LoaderSpinner, Section } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
-import { type CatalogVariableValue } from '@qovery/shared/util-js'
+import { type CatalogVariableValue, formatCatalogKey } from '@qovery/shared/util-js'
 import { usePlatformTemplateComponentConfiguration } from '../../platform-configuration/hooks/use-platform-template-component-configuration'
 import { usePlatformTemplates } from '../../platform-configuration/hooks/use-platform-templates'
 import { PlatformComponentConfiguration } from '../../platform-configuration/platform-component-configuration'
@@ -231,6 +231,11 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
               key={selectedComponent.key}
               component={{ ...selectedComponent, fields: configurationComponent?.fields ?? selectedComponent.fields }}
               isFieldVisible={isFieldVisible}
+              clusterInputsLocation={
+                configurationComponent && configurationComponent.key !== selectedComponent.key
+                  ? formatCatalogKey(configurationComponent.key)
+                  : undefined
+              }
               preview={preview}
               profileConfig={profileConfig}
               clusterInputs={clusterInputs}

@@ -268,3 +268,47 @@ it('hides fields from both the catalog and resolved schema while keeping their v
   expect(screen.getByText('Fix the pool configuration before saving.')).toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'Save configuration' })).toBeDisabled()
 })
+
+function renderHiddenClusterInputs(status: 'MISSING' | 'READY') {
+  return renderWithProviders(
+    <PlatformComponentConfiguration
+      {...defaultProps}
+      clusterInputsLocation="Karpenter configuration"
+      preview={{
+        ...preview,
+        requirements: [
+          {
+            key: 'aws.eksClusterName',
+            type: 'string',
+            scope: 'CLUSTER',
+            label: 'Existing EKS cluster name',
+            required: true,
+            sensitive: false,
+            constraints: {},
+            status,
+          },
+        ],
+      }}
+    />
+  )
+}
+
+it('hides missing cluster inputs but tells the user where to complete them before saving', () => {
+  renderHiddenClusterInputs('MISSING')
+  expect(screen.queryByText('Cluster inputs')).not.toBeInTheDocument()
+  expect(screen.queryByLabelText('Existing EKS cluster name')).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Save configuration' })).toBeDisabled()
+  expect(
+    screen.getByText('Complete the required cluster inputs in Karpenter configuration before saving.')
+  ).toBeInTheDocument()
+})
+
+it('allows saving when the hidden cluster inputs are ready', () => {
+  renderHiddenClusterInputs('READY')
+  expect(screen.queryByText('Cluster inputs')).not.toBeInTheDocument()
+  expect(screen.queryByLabelText('Existing EKS cluster name')).not.toBeInTheDocument()
+  expect(screen.getByRole('button', { name: 'Save configuration' })).toBeEnabled()
+  expect(
+    screen.queryByText('Complete the required cluster inputs in Karpenter configuration before saving.')
+  ).not.toBeInTheDocument()
+})

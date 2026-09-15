@@ -6,7 +6,7 @@ import {
 import { useEffect, useMemo, useState } from 'react'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
-import { type CatalogVariableValue } from '@qovery/shared/util-js'
+import { type CatalogVariableValue, formatCatalogKey } from '@qovery/shared/util-js'
 import { usePlatformBinding } from './hooks/use-platform-binding'
 import { usePlatformComponentConfiguration } from './hooks/use-platform-component-configuration'
 import { usePlatformTemplates } from './hooks/use-platform-templates'
@@ -273,6 +273,11 @@ export function PlatformConfiguration({
         key={selectedComponent.key}
         component={{ ...selectedComponent, fields: configurationComponent?.fields ?? selectedComponent.fields }}
         isFieldVisible={isFieldVisible}
+        clusterInputsLocation={
+          configurationComponent && configurationComponent.key !== selectedComponent.key
+            ? formatCatalogKey(configurationComponent.key)
+            : undefined
+        }
         preview={preview}
         profileConfig={profileConfig}
         clusterInputs={clusterInputs}
