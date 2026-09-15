@@ -313,6 +313,7 @@ export function AgenticWorkflowConfiguration() {
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
   const createdServiceIdRef = useRef<string>()
   const qoveryMcpInitializationStartedRef = useRef(false)
+  const qoveryMcpInitializationPromiseRef = useRef<Promise<McpServerResponse>>()
   const values = form.watch()
   const { dirtyFields } = form.formState
   const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
@@ -338,11 +339,16 @@ export function AgenticWorkflowConfiguration() {
   const qoveryMcpServer = availableMcpServers.find(isQoveryMcpServer)
   const ensureQoveryMcpServer = useCallback(async () => {
     const existingQoveryMcpServer = [...mcpServers, ...createdMcpServers].find(isQoveryMcpServer)
-    const mcpServer =
-      existingQoveryMcpServer ??
-      (await createQoveryMcpServer({
-        organizationId,
-      }))
+    if (!qoveryMcpInitializationPromiseRef.current) {
+      qoveryMcpInitializationPromiseRef.current = existingQoveryMcpServer
+        ? Promise.resolve(existingQoveryMcpServer)
+        : createQoveryMcpServer({ organizationId }).catch((error) => {
+            qoveryMcpInitializationPromiseRef.current = undefined
+            throw error
+          })
+    }
+
+    const mcpServer = await qoveryMcpInitializationPromiseRef.current
 
     if (!existingQoveryMcpServer) {
       setCreatedMcpServers((servers) =>
@@ -423,6 +429,7 @@ export function AgenticWorkflowConfiguration() {
         />
       ),
       options: {
+        buttonClose: false,
         width: 488,
         fakeModal: true,
       },
@@ -514,6 +521,10 @@ export function AgenticWorkflowConfiguration() {
     if (!(await validateConfiguration())) return
 
     try {
+      if (requiresQoveryMcp || form.getValues('contextServices').length > 0) {
+        await ensureQoveryMcpServer()
+      }
+
       if (!createdServiceIdRef.current) {
         const service = await createService({
           environmentId,

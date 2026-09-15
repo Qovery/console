@@ -18,10 +18,25 @@ export function QoveryServiceContextModal({
 }) {
   const [selectedIds, setSelectedIds] = useState(value.map(({ id }) => id))
   const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string>()
   const hideSelectAll = isLoading || selectedIds.length === services.length
 
   return (
     <Section className="gap-5 p-5">
+      {!isSaving ? (
+        <Button
+          type="button"
+          variant="plain"
+          color="neutral"
+          size="sm"
+          iconOnly
+          aria-label="Close"
+          className="absolute right-4 top-4 h-7 w-7 rounded-full text-neutral-disabled hover:bg-surface-neutral-componentHover hover:text-neutral"
+          onClick={() => setOpen?.(false)}
+        >
+          <Icon iconName="xmark" iconStyle="solid" />
+        </Button>
+      ) : null}
       <div className="flex flex-col gap-1 pr-8">
         <Heading level={2} className="text-xl font-medium leading-7 text-neutral">
           Import existing Qovery services
@@ -74,9 +89,17 @@ export function QoveryServiceContextModal({
           )}
         </div>
       </div>
+      {saveError ? <p className="text-sm text-negative">{saveError}</p> : null}
       <div className="flex justify-end gap-2">
         <div className="flex gap-2">
-          <Button type="button" variant="plain" color="neutral" size="md" onClick={() => setOpen?.(false)}>
+          <Button
+            type="button"
+            variant="plain"
+            color="neutral"
+            size="md"
+            disabled={isSaving}
+            onClick={() => setOpen?.(false)}
+          >
             Cancel
           </Button>
           <Button
@@ -84,10 +107,13 @@ export function QoveryServiceContextModal({
             size="md"
             loading={isSaving}
             onClick={async () => {
+              setSaveError(undefined)
               setIsSaving(true)
               try {
                 await onSave(services.filter(({ id }) => selectedIds.includes(id)))
                 setOpen?.(false)
+              } catch {
+                setSaveError('Unable to add the selected services. Try again.')
               } finally {
                 setIsSaving(false)
               }

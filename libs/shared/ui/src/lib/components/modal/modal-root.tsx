@@ -5,6 +5,7 @@ import Modal from './modal'
 interface ModalOptions {
   width?: number
   fullScreen?: boolean
+  buttonClose?: boolean
   /**
    * This is a workaround to avoid radix dialog restriction.
    * Radix use [react-remove-scroll](https://www.npmjs.com/package/react-remove-scroll) to prevent wheel / scroll event directly on `<html>` node
@@ -44,6 +45,7 @@ export const defaultContext = {
   optionsModal: {
     width: 488,
     fullScreen: false,
+    buttonClose: true,
     fakeModal: false,
   },
   alertClickOutside: false,

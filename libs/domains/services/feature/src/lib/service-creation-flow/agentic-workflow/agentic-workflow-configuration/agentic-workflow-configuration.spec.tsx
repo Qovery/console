@@ -17,6 +17,14 @@ const mockImportVariables = jest.fn()
 const mockCreateQoveryMcpServer = jest.fn()
 let mockMcpServers: Array<Record<string, unknown>> = []
 
+function deferred<T>() {
+  let resolve!: (value: T) => void
+  const promise = new Promise<T>((promiseResolve) => {
+    resolve = promiseResolve
+  })
+  return { promise, resolve }
+}
+
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: () => mockNavigate,
@@ -340,7 +348,82 @@ describe('AgenticWorkflowConfiguration', () => {
     renderConfiguration({ requiresQoveryMcp: true })
 
     await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
-    expect(screen.getByText('MCP Qovery')).toBeInTheDocument()
+    expect(await screen.findByText('MCP Qovery')).toBeInTheDocument()
+  })
+
+  it('should share Qovery MCP initialization between a template and service context', async () => {
+    const creation = deferred<{
+      id: string
+      name: string
+      url: string
+      scope: string
+      attachable: boolean
+    }>()
+    mockCreateQoveryMcpServer.mockReturnValue(creation.promise)
+    const { userEvent } = renderConfiguration({ requiresQoveryMcp: true })
+    await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(1))
+
+    await userEvent.click(screen.getByRole('button', { name: /Add Qovery services/ }))
+    await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
+
+    expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(1)
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()
+    creation.resolve({
+      id: 'qovery-mcp',
+      name: 'Qovery MCP',
+      url: 'https://mcp.qovery.com/mcp',
+      scope: 'ORGANIZATION',
+      attachable: true,
+    })
+    await waitFor(() =>
+      expect(screen.queryByRole('heading', { name: 'Import existing Qovery services' })).not.toBeInTheDocument()
+    )
+    expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(1)
+  })
+
+  it('should wait for the required Qovery MCP before creating from a template', async () => {
+    const creation = deferred<{
+      id: string
+      name: string
+      url: string
+      scope: string
+      attachable: boolean
+    }>()
+    mockCreateQoveryMcpServer.mockReturnValue(creation.promise)
+    const { userEvent } = renderConfiguration({ requiresQoveryMcp: true, seed: validSeed })
+    await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(1))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+    expect(mockCreateService).not.toHaveBeenCalled()
+
+    creation.resolve({
+      id: 'qovery-mcp',
+      name: 'Qovery MCP',
+      url: 'https://mcp.qovery.com/mcp',
+      scope: 'ORGANIZATION',
+      attachable: true,
+    })
+
+    await waitFor(() =>
+      expect(mockCreateService).toHaveBeenCalledWith(
+        expect.objectContaining({
+          payload: expect.objectContaining({ mcp_server_ids: ['qovery-mcp'] }),
+        })
+      )
+    )
+  })
+
+  it('should not create from a template when the required Qovery MCP cannot be initialized', async () => {
+    mockCreateQoveryMcpServer.mockRejectedValue(new Error('MCP creation failed'))
+    const { userEvent } = renderConfiguration({ requiresQoveryMcp: true, seed: validSeed })
+    await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(1))
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledTimes(2))
+    expect(mockCreateService).not.toHaveBeenCalled()
   })
 
   it('should surface validation feedback when a creation action is clicked with incomplete configuration', async () => {
