@@ -76,6 +76,8 @@ const service = {
   ],
   mcp: '{"mcpServers":{}}',
   mcp_server_ids: ['mcp-1'],
+  mcp_servers: [{ id: 'mcp-1', required: true }],
+  context_service_ids: [],
   docker_fragment: 'RUN apt-get update',
   outputs: [{ name: 'Audit log', url: null }],
   governance: { host_allowlist: ['api.github.com', 'status.example.com'] },
@@ -185,7 +187,8 @@ describe('AgenticWorkflowSettings views', () => {
           model: { type: AgenticWorkflowModelType.BEDROCK, settings: '{"temperature":0.2}' },
           mcp: '{"mcpServers":{}}',
           outputs: [{ name: 'Audit log', url: null }],
-          mcp_server_ids: ['mcp-1'],
+          mcp_servers: [{ id: 'mcp-1', required: true }],
+          context_service_ids: [],
           webhook_ip_allowlist: ['10.0.0.0/8'],
           schedule: {
             cron_expression: '0 8 * * 1-5',
@@ -269,7 +272,7 @@ describe('AgenticWorkflowSettings views', () => {
 
     expect(editService).toHaveBeenCalledWith({
       serviceId: 'workflow-1',
-      payload: expect.objectContaining({ mcp: '{invalid', mcp_server_ids: [] }),
+      payload: expect.objectContaining({ mcp: '{invalid', mcp_servers: [] }),
     })
   })
 

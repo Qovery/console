@@ -2,36 +2,75 @@ import { useParams } from '@tanstack/react-router'
 import { type McpServerResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
-import { useMcpServers } from '@qovery/domains/organizations/feature'
+import { useCreateQoveryMcpServer, useMcpServers } from '@qovery/domains/organizations/feature'
 import {
   GitContextCard,
   GitContextCompactCard,
   GitContextModal,
   McpSheet,
+  QoveryServiceContextCard,
+  QoveryServiceContextCompactCard,
+  QoveryServiceContextModal,
+  getMcpServerDisplayName,
   isGitRepositoryComplete,
+  isQoveryMcpServer,
+  replaceContextServicesInPrompt,
+  useAgenticWorkflowContextServices,
 } from '@qovery/domains/services/feature'
-import { Button, Icon, useModal } from '@qovery/shared/ui'
+import { Button, Icon, Tooltip, useModal } from '@qovery/shared/ui'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
 export function AgenticWorkflowConnectionsSettings({
   form,
   gitTokensLoading,
+  environmentId,
 }: {
   form: UseFormReturn<AgenticWorkflowSettingsFormValues>
   gitTokensLoading: boolean
+  environmentId: string
 }) {
   const { organizationId = '' } = useParams({ strict: false })
-  const { data: mcpServers = [], isLoading } = useMcpServers({ organizationId })
+  const { data: mcpServers = [], isLoading, refetch: refetchMcpServers } = useMcpServers({ organizationId })
+  const { mutateAsync: createQoveryMcpServer } = useCreateQoveryMcpServer()
+  const { data: contextServices = [], isLoading: contextServicesLoading } =
+    useAgenticWorkflowContextServices(environmentId)
   const { closeModal, openModal } = useModal()
   const [mcpSheetOpen, setMcpSheetOpen] = useState(false)
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
   const repositories = form.watch('repositories')
   const mcpServerIds = form.watch('mcpServerIds')
+  const contextServiceIds = form.watch('contextServiceIds')
   const repositoriesValid = repositories.every(isGitRepositoryComplete)
   const availableMcpServers = [...mcpServers, ...createdMcpServers].filter(
     (server, index, servers) => servers.findIndex(({ id }) => id === server.id) === index
   )
+  const selectedContextServices = contextServices.filter(({ id }) => contextServiceIds.includes(id))
+  const qoveryMcpServer = availableMcpServers.find(isQoveryMcpServer)
+  const qoveryMcpLockReason = contextServiceIds.length
+    ? 'This MCP is required by the selected Qovery service context and cannot be removed.'
+    : undefined
+
+  const ensureQoveryMcpServer = async () => {
+    const loadedMcpServers = isLoading ? (await refetchMcpServers()).data ?? [] : mcpServers
+    let mcpServer = [...loadedMcpServers, ...createdMcpServers].find(isQoveryMcpServer)
+
+    if (!mcpServer) {
+      mcpServer = await createQoveryMcpServer({ organizationId })
+      setCreatedMcpServers((servers) => [...servers, mcpServer as McpServerResponse])
+    }
+
+    const selectedMcpServerIds = form.getValues('mcpServerIds')
+    if (!selectedMcpServerIds.includes(mcpServer.id)) {
+      form.setValue('mcpServerIds', [...selectedMcpServerIds, mcpServer.id], { shouldDirty: true })
+    }
+    const requiredMcpServerIds = form.getValues('requiredMcpServerIds')
+    if (!requiredMcpServerIds.includes(mcpServer.id)) {
+      form.setValue('requiredMcpServerIds', [...requiredMcpServerIds, mcpServer.id], { shouldDirty: true })
+    }
+
+    return mcpServer
+  }
 
   const openGitContext = (index?: number) => {
     const repository = typeof index === 'number' ? repositories[index] : undefined
@@ -68,8 +107,56 @@ export function AgenticWorkflowConnectionsSettings({
     })
   }
 
+  const openQoveryServiceContext = () => {
+    if (contextServicesLoading || isLoading) return
+
+    openModal({
+      content: (
+        <QoveryServiceContextModal
+          isLoading={contextServicesLoading}
+          services={contextServices}
+          value={selectedContextServices}
+          setOpen={(open) => !open && closeModal()}
+          onSave={async (services) => {
+            const mcpServer = services.length ? await ensureQoveryMcpServer() : qoveryMcpServer
+            if (!services.length && mcpServer) {
+              form.setValue(
+                'requiredMcpServerIds',
+                form.getValues('requiredMcpServerIds').filter((id) => id !== mcpServer.id),
+                { shouldDirty: true }
+              )
+            }
+            form.setValue('agentPrompt', replaceContextServicesInPrompt(form.getValues('agentPrompt'), services), {
+              shouldDirty: true,
+            })
+            form.setValue(
+              'contextServiceIds',
+              services.map(({ id }) => id),
+              { shouldDirty: true }
+            )
+          }}
+        />
+      ),
+      options: { buttonClose: false, width: 488, fakeModal: true },
+    })
+  }
+
   return (
     <>
+      <AgenticWorkflowSettingsCard
+        title="Qovery context"
+        description="Select services from this environment that the agent task can use as context."
+      >
+        {selectedContextServices.length ? (
+          <QoveryServiceContextCompactCard
+            names={selectedContextServices.map(({ name }) => name)}
+            onClick={openQoveryServiceContext}
+          />
+        ) : (
+          <QoveryServiceContextCard disabled={contextServicesLoading || isLoading} onClick={openQoveryServiceContext} />
+        )}
+      </AgenticWorkflowSettingsCard>
+
       <AgenticWorkflowSettingsCard title="Git context" description="Link repositories the agent can use as context.">
         {repositories.length ? (
           <div className="grid gap-3 sm:grid-cols-2">
@@ -108,26 +195,40 @@ export function AgenticWorkflowConnectionsSettings({
         <div className="flex flex-wrap gap-2">
           {availableMcpServers
             .filter(({ id }) => mcpServerIds.includes(id))
-            .map(({ id, name }) => (
-              <Button
-                key={id}
-                type="button"
-                variant="outline"
-                color="neutral"
-                size="sm"
-                aria-label={`Remove ${name}`}
-                onClick={() =>
-                  form.setValue(
-                    'mcpServerIds',
-                    mcpServerIds.filter((current) => current !== id),
-                    { shouldDirty: true }
-                  )
-                }
-              >
-                {name}
-                <Icon iconName="xmark" />
-              </Button>
-            ))}
+            .map((mcpServer) => {
+              const { id } = mcpServer
+              const displayName = getMcpServerDisplayName(mcpServer)
+              const locked = Boolean(qoveryMcpLockReason && qoveryMcpServer?.id === id)
+              const button = (
+                <Button
+                  key={id}
+                  type="button"
+                  variant="outline"
+                  color="neutral"
+                  size="sm"
+                  disabled={locked}
+                  aria-label={locked ? `${displayName}: ${qoveryMcpLockReason}` : `Remove ${displayName}`}
+                  onClick={() =>
+                    form.setValue(
+                      'mcpServerIds',
+                      mcpServerIds.filter((current) => current !== id),
+                      { shouldDirty: true }
+                    )
+                  }
+                >
+                  {displayName}
+                  {!locked ? <Icon iconName="xmark" /> : null}
+                </Button>
+              )
+
+              return locked ? (
+                <Tooltip key={id} content={qoveryMcpLockReason} classNameTrigger="block">
+                  {button}
+                </Tooltip>
+              ) : (
+                button
+              )
+            })}
           <Button type="button" variant="outline" color="neutral" size="sm" onClick={() => setMcpSheetOpen(true)}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             Manage MCP
@@ -141,6 +242,8 @@ export function AgenticWorkflowConnectionsSettings({
           mcpServers={mcpServers}
           createdMcpServers={createdMcpServers}
           value={mcpServerIds}
+          lockedMcpServerId={qoveryMcpLockReason ? qoveryMcpServer?.id : undefined}
+          lockedMcpServerReason={qoveryMcpLockReason}
           onChange={(value) => form.setValue('mcpServerIds', value, { shouldDirty: true })}
           onClose={() => setMcpSheetOpen(false)}
           onMcpServerCreated={(server) => setCreatedMcpServers((servers) => [...servers, server])}

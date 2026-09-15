@@ -1,6 +1,6 @@
 import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
-import { formatAgenticWorkflowRequest } from './agentic-workflow-request'
+import { formatAgenticWorkflowRequest, replaceContextServicesInPrompt } from './agentic-workflow-request'
 
 const values: AgenticWorkflowFormData = {
   name: 'Review pull requests',
@@ -27,8 +27,11 @@ describe('formatAgenticWorkflowRequest', () => {
     expect(formatAgenticWorkflowRequest(values).enabled).toBe(true)
   })
 
-  it('sends the selected organization MCP server IDs', () => {
-    expect(formatAgenticWorkflowRequest(values).mcp_server_ids).toEqual(['mcp-1', 'mcp-2'])
+  it('sends selected MCP servers and their creation requirements', () => {
+    expect(formatAgenticWorkflowRequest(values, ['mcp-1']).mcp_servers).toEqual([
+      { id: 'mcp-1', required: true },
+      { id: 'mcp-2', required: false },
+    ])
   })
 
   it('sends the resources selected in the creation flow', () => {
@@ -127,10 +130,20 @@ describe('formatAgenticWorkflowRequest', () => {
 ## Context services
 - api (APPLICATION) — service ID: application-1
 - postgres (DATABASE) — service ID: database-1`)
+    expect(request.context_service_ids).toEqual(['application-1', 'database-1'])
   })
 
   it('keeps the agent prompt unchanged when no Qovery service is selected', () => {
     expect(formatAgenticWorkflowRequest(values).agent_prompt).toBe('Review the pull request')
+  })
+
+  it('replaces generated Qovery service context in an existing prompt', () => {
+    expect(
+      replaceContextServicesInPrompt(
+        'Investigate.\n\n## Context services\n- old-api (APPLICATION) — service ID: old-service',
+        [{ id: 'service-1', name: 'api', type: 'APPLICATION' }]
+      )
+    ).toBe('Investigate.\n\n## Context services\n- api (APPLICATION) — service ID: service-1')
   })
 
   it('uses the full URL of a selected Git repository', () => {

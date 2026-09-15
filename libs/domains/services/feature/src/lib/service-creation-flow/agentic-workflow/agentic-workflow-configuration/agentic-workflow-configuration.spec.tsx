@@ -534,7 +534,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await waitFor(() =>
       expect(mockCreateService).toHaveBeenCalledWith(
         expect.objectContaining({
-          payload: expect.objectContaining({ mcp_server_ids: ['qovery-mcp'] }),
+          payload: expect.objectContaining({ mcp_servers: [{ id: 'qovery-mcp', required: true }] }),
         })
       )
     )

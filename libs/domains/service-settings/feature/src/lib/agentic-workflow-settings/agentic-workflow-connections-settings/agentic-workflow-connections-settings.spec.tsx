@@ -1,10 +1,13 @@
 import { McpServerScope } from 'qovery-typescript-axios'
 import * as organizationsDomain from '@qovery/domains/organizations/feature'
+import * as servicesDomain from '@qovery/domains/services/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings-test-utils'
 import { AgenticWorkflowConnectionsSettings } from './agentic-workflow-connections-settings'
 
 const useMcpServersSpy = jest.spyOn(organizationsDomain, 'useMcpServers') as jest.Mock
+const useCreateQoveryMcpServerSpy = jest.spyOn(organizationsDomain, 'useCreateQoveryMcpServer') as jest.Mock
+const useContextServicesSpy = jest.spyOn(servicesDomain, 'useAgenticWorkflowContextServices') as jest.Mock
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -25,6 +28,8 @@ describe('AgenticWorkflowConnectionsSettings', () => {
       ],
       isLoading: false,
     })
+    useContextServicesSpy.mockReturnValue({ data: [], isLoading: false })
+    useCreateQoveryMcpServerSpy.mockReturnValue({ mutateAsync: jest.fn() })
   })
 
   it('renders Git context and MCPs with settings-specific confirmation labels', async () => {
@@ -49,7 +54,9 @@ describe('AgenticWorkflowConnectionsSettings', () => {
           dockerFragment: 'RUN apt-get update',
         }}
       >
-        {(form) => <AgenticWorkflowConnectionsSettings form={form} gitTokensLoading={false} />}
+        {(form) => (
+          <AgenticWorkflowConnectionsSettings environmentId="environment-1" form={form} gitTokensLoading={false} />
+        )}
       </AgenticWorkflowSettingsFormHarness>
     )
 
@@ -58,5 +65,23 @@ describe('AgenticWorkflowConnectionsSettings', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Manage context' }))
     expect(screen.getByRole('button', { name: 'Apply changes' })).toBeInTheDocument()
+  })
+
+  it('shows and edits persisted Qovery service context', async () => {
+    useContextServicesSpy.mockReturnValue({
+      data: [{ id: 'service-1', name: 'api', type: 'APPLICATION' }],
+      isLoading: false,
+    })
+    const { userEvent } = renderWithProviders(
+      <AgenticWorkflowSettingsFormHarness values={{ contextServiceIds: ['service-1'] }}>
+        {(form) => (
+          <AgenticWorkflowConnectionsSettings environmentId="environment-1" form={form} gitTokensLoading={false} />
+        )}
+      </AgenticWorkflowSettingsFormHarness>
+    )
+
+    expect(screen.getByText('api')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Manage Qovery service context' }))
+    expect(screen.getByRole('checkbox', { name: 'api' })).toBeChecked()
   })
 })

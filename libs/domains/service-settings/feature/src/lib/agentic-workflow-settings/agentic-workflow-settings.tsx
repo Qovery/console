@@ -37,6 +37,8 @@ export interface AgenticWorkflowSettingsFormValues {
   agentPrompt: string
   repositories: AgenticWorkflowGitRepository[]
   mcpServerIds: string[]
+  requiredMcpServerIds: string[]
+  contextServiceIds: string[]
   mcp: string
   dockerFragment: string
   automation: AgenticWorkflowAutomation
@@ -148,7 +150,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
             }
           }),
           mcp: workflow.mcp,
-          mcpServerIds: workflow.mcp_server_ids,
+          mcpServerIds: workflow.mcp_servers?.map(({ id }) => id) ?? workflow.mcp_server_ids,
+          requiredMcpServerIds: workflow.mcp_servers?.filter(({ required }) => required).map(({ id }) => id) ?? [],
+          contextServiceIds: workflow.context_service_ids ?? [],
           dockerFragment: workflow.docker_fragment,
           automation: createAgenticWorkflowAutomation(workflow.schedule, workflow.outputs),
           hostAllowlist: workflow.governance.host_allowlist.join(', '),
@@ -193,7 +197,8 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         agent_prompt: data.agentPrompt,
         project_repositories: formatAgenticWorkflowRepositories(data.repositories),
         mcp: data.mcp,
-        mcp_server_ids: data.mcpServerIds,
+        mcp_servers: data.mcpServerIds.map((id) => ({ id, required: data.requiredMcpServerIds.includes(id) })),
+        context_service_ids: data.contextServiceIds,
         docker_fragment: data.dockerFragment,
         outputs: formatAgenticWorkflowAutomationOutputs(data.automation.outputs),
         governance: {
@@ -225,7 +230,11 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           <AgenticWorkflowAiConfigurationSettings environmentId={environmentId} form={form} />
         ) : null}
         {page === 'connections' ? (
-          <AgenticWorkflowConnectionsSettings form={form} gitTokensLoading={gitTokensLoading} />
+          <AgenticWorkflowConnectionsSettings
+            environmentId={environmentId}
+            form={form}
+            gitTokensLoading={gitTokensLoading}
+          />
         ) : null}
         {page === 'automations' ? <AgenticWorkflowAutomationsSettings form={form} /> : null}
         {page === 'governance' ? <AgenticWorkflowGovernanceSettings form={form} /> : null}

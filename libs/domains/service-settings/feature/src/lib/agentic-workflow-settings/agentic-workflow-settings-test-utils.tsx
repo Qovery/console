@@ -13,6 +13,8 @@ export const SETTINGS_FORM_VALUES: AgenticWorkflowSettingsFormValues = {
   agentPrompt: 'Investigate the alert.',
   repositories: [],
   mcpServerIds: [],
+  requiredMcpServerIds: [],
+  contextServiceIds: [],
   mcp: '',
   dockerFragment: '',
   automation: { id: 'automation', triggers: [{ id: 'webhook', type: 'webhook' }], outputs: [] },

@@ -19,7 +19,18 @@ export function appendContextServicesToPrompt(
   return `${prompt.trimEnd()}\n\n## Context services\n${services}`
 }
 
-export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequest {
+export function replaceContextServicesInPrompt(
+  prompt: string,
+  contextServices: AgenticWorkflowFormData['contextServices']
+) {
+  const promptWithoutContextServices = prompt.replace(/\n\n## Context services\n[\s\S]*$/, '')
+  return appendContextServicesToPrompt(promptWithoutContextServices, contextServices)
+}
+
+export function formatAgenticWorkflowRequest(
+  values: AgenticWorkflowFormData,
+  requiredMcpServerIds: string[] = []
+): AgenticWorkflowRequest {
   const scheduleTrigger = values.automations
     .flatMap((automation) => automation.triggers)
     .find((trigger) => trigger.type === 'schedule')
@@ -38,7 +49,8 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
         }
       : null,
     mcp: values.mcpJson.trim() || undefined,
-    mcp_server_ids: values.mcpServerIds,
+    mcp_servers: values.mcpServerIds.map((id) => ({ id, required: requiredMcpServerIds.includes(id) })),
+    context_service_ids: values.contextServices.map(({ id }) => id),
     outputs: automationOutputs.map((output, index) => ({
       name: output.name?.trim() || `Output ${index + 1}`,
       url: output.url,

@@ -550,8 +550,10 @@ export function AgenticWorkflowConfiguration() {
     try {
       if (!(await validateConfiguration())) return
 
+      let requiredMcpServerIds: string[] = []
       if (needsQoveryMcp) {
-        await ensureQoveryMcpServer()
+        const qoveryMcpServer = await ensureQoveryMcpServer()
+        requiredMcpServerIds = [qoveryMcpServer.id]
       }
 
       if (!createdServiceIdRef.current) {
@@ -559,7 +561,7 @@ export function AgenticWorkflowConfiguration() {
           environmentId,
           payload: {
             serviceType: 'AGENTIC_WORKFLOW',
-            ...formatAgenticWorkflowRequest(form.getValues()),
+            ...formatAgenticWorkflowRequest(form.getValues(), requiredMcpServerIds),
           },
         })
         createdServiceIdRef.current = service.id
