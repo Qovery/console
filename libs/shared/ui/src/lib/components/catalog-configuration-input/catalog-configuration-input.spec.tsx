@@ -24,19 +24,16 @@ const field: ArrayFieldSchemaResponse = {
 function Editor({
   schema = field,
   initial = [{ name: 'first' }],
+  getError,
 }: {
   schema?: ArrayFieldSchemaResponse
   initial?: unknown[]
+  getError?: (path: string) => string | undefined
 }) {
   const [value, setValue] = useState<unknown>(initial)
   return (
     <>
-      <CatalogConfigurationInput
-        field={schema}
-        value={value}
-        onChange={setValue}
-        getError={(path) => (path === 'pools[1].name' ? 'Name already used' : undefined)}
-      />
+      <CatalogConfigurationInput field={schema} value={value} onChange={setValue} getError={getError} />
       <output>{JSON.stringify(value)}</output>
     </>
   )
@@ -47,11 +44,13 @@ describe('CatalogConfigurationInput', () => {
   afterEach(() => jest.useRealTimers())
 
   it('adds typed object rows, edits without losing siblings, and enforces collection limits', async () => {
-    const { userEvent } = renderWithProviders(<Editor />)
+    const { userEvent } = renderWithProviders(
+      <Editor getError={(path) => (path === 'pools[1].name' ? 'Name already used' : undefined)} />
+    )
     expect(screen.getByRole('button', { name: 'Remove NodePools 1' })).toBeDisabled()
     await userEvent.click(screen.getByRole('button', { name: 'Add item to NodePools' }))
     expect(screen.getByRole('button', { name: 'Add item to NodePools' })).toBeDisabled()
-    await userEvent.type(screen.getAllByRole('textbox', { name: 'Name' })[1], 'second')
+    await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'second')
     expect(JSON.parse(screen.getByRole('status').textContent ?? 'null')).toEqual([
       { name: 'first' },
       { name: 'second', size: 2 },
@@ -62,16 +61,76 @@ describe('CatalogConfigurationInput', () => {
     expect(screen.getByRole('spinbutton', { name: 'Size' })).toHaveValue(2)
   })
 
-  it('uses evaluated fields specific to each row', () => {
-    renderWithProviders(
+  it('uses evaluated fields specific to each row', async () => {
+    const { userEvent } = renderWithProviders(
       <Editor
         schema={{ ...field, itemFields: [[name], [name, { ...name, key: 'ami', label: 'AMI ID' }]] }}
         initial={[{ name: 'alias' }, { name: 'custom', ami: 'ami-123' }]}
       />
     )
+    await userEvent.click(screen.getByRole('button', { name: 'alias' }))
+    await userEvent.click(screen.getByRole('button', { name: 'custom' }))
     expect(screen.getAllByRole('textbox', { name: 'Name' })).toHaveLength(2)
     expect(screen.getByRole('textbox', { name: 'AMI ID' })).toHaveValue('ami-123')
     expect(screen.queryByRole('spinbutton')).not.toBeInTheDocument()
+  })
+
+  it('collapses existing objects by name and retains edits when reopened', async () => {
+    const { userEvent } = renderWithProviders(<Editor />)
+    expect(screen.getByRole('button', { name: 'first' })).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'first' }))
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Name' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'renamed')
+    await userEvent.click(screen.getByRole('button', { name: 'renamed' }))
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'renamed' }))
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('renamed')
+  })
+
+  it('opens newly added objects immediately without needing an error', async () => {
+    const { userEvent } = renderWithProviders(<Editor />)
+    await userEvent.click(screen.getByRole('button', { name: 'Add item to NodePools' }))
+    expect(screen.getByRole('button', { name: 'NodePools 2' })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('')
+    expect(screen.getByRole('button', { name: 'first' })).toHaveAttribute('aria-expanded', 'false')
+  })
+
+  it.each([true, false])(
+    'does not expose a sensitive name in the summary (collection sensitive: %s)',
+    (collectionSensitive) => {
+      renderWithProviders(
+        <Editor
+          schema={{
+            ...field,
+            sensitive: collectionSensitive,
+            items: { type: 'object', fields: [{ ...name, sensitive: !collectionSensitive }] },
+          }}
+        />
+      )
+      expect(screen.getByRole('button', { name: 'NodePools 1' })).toHaveAttribute('aria-expanded', 'false')
+      expect(screen.queryByText('first')).not.toBeInTheDocument()
+    }
+  )
+
+  it('reveals errors inside nested lists when validation arrives after initial rendering', () => {
+    const schema: ArrayFieldSchemaResponse = {
+      ...field,
+      items: { type: 'object', fields: [name, { ...field, key: 'children', label: 'Children' }] },
+    }
+    const initial = [{ name: 'parent', children: [{ name: 'child' }] }]
+    const { rerender } = renderWithProviders(<Editor schema={schema} initial={initial} />)
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument()
+    rerender(
+      <Editor
+        schema={schema}
+        initial={initial}
+        getError={(path) => (path === 'pools[0].children[0].name' ? 'Invalid child name' : undefined)}
+      />
+    )
+    expect(screen.getByText('Invalid child name')).toBeVisible()
+    expect(screen.getByRole('button', { name: 'parent Action required' })).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('button', { name: 'child Action required' })).toHaveAttribute('aria-expanded', 'true')
   })
 
   it('edits scalar arrays as typed values', async () => {
