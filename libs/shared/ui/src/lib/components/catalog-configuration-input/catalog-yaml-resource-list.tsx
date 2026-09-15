@@ -90,10 +90,10 @@ export function CatalogYamlResourceList({
       <h4 className="text-sm font-medium">{field.label}</h4>
       {field.description ? <p className="text-ssm text-neutral-subtle">{field.description}</p> : null}
       {groups.map((group) => (
-        <section key={group.key} aria-label={`${group.kind} ${group.apiVersion}`} className="min-w-0">
-          <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap items-baseline gap-2">
-              <h5 className="text-sm font-medium">{group.kind}</h5>
+        <section key={group.key} aria-label={`${group.kind} ${group.apiVersion}`} className="min-w-0 pt-2">
+          <div className="mb-3 flex flex-wrap items-center justify-between gap-2 border-b border-neutral pb-3">
+            <div className="flex flex-col gap-1">
+              <h5 className="text-base font-medium">{group.kind}</h5>
               <span className="text-xs text-neutral-subtle">{group.apiVersion}</span>
             </div>
             {group.template ? (
@@ -101,10 +101,11 @@ export function CatalogYamlResourceList({
                 type="button"
                 size="sm"
                 variant="outline"
+                aria-label={`Add ${group.kind}`}
                 disabled={addDisabled}
                 onClick={() => edit(group.template ?? '')}
               >
-                Add {group.kind}
+                Add
               </Button>
             ) : null}
           </div>
