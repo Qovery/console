@@ -32,7 +32,13 @@ const mcpServers = [
   },
 ] as McpServerResponse[]
 
-function setup(value: string[] = [], onChange = jest.fn(), onClose = jest.fn(), lockedMcpServerIds: string[] = []) {
+function setup(
+  value: string[] = [],
+  onChange = jest.fn(),
+  onClose = jest.fn(),
+  lockedMcpServerIds: string[] = [],
+  lockedMcpServerReason?: string
+) {
   return {
     onChange,
     onClose,
@@ -41,6 +47,7 @@ function setup(value: string[] = [], onChange = jest.fn(), onClose = jest.fn(), 
         createdMcpServers={[]}
         isLoading={false}
         lockedMcpServerIds={lockedMcpServerIds}
+        lockedMcpServerReason={lockedMcpServerReason}
         mcpServers={mcpServers}
         value={value}
         onChange={onChange}
@@ -120,7 +127,9 @@ describe('McpSheet', () => {
   it('prevents removing an MCP required by Qovery service context', async () => {
     const onChange = jest.fn()
     const { userEvent } = setup(['m1'], onChange, jest.fn(), ['m1'])
-    const requiredMcp = screen.getByRole('button', { name: 'MCP Qovery is required by Qovery service context' })
+    const requiredMcp = screen.getByRole('button', {
+      name: 'MCP Qovery: This MCP is required by the selected Qovery service context and cannot be removed.',
+    })
 
     expect(requiredMcp).toBeDisabled()
     await userEvent.hover(screen.getByText('MCP Qovery'))
@@ -130,6 +139,16 @@ describe('McpSheet', () => {
     ).not.toHaveLength(0)
     expect(screen.getByRole('button', { name: 'Remove all' })).toBeDisabled()
     expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('explains when an MCP is required by the selected agent template', async () => {
+    const reason = 'This MCP is required by the selected agent template and cannot be removed.'
+    const { userEvent } = setup(['m1'], jest.fn(), jest.fn(), ['m1'], reason)
+
+    expect(screen.getByRole('button', { name: `MCP Qovery: ${reason}` })).toBeDisabled()
+    await userEvent.hover(screen.getByText('MCP Qovery'))
+
+    expect(await screen.findAllByText(reason)).not.toHaveLength(0)
   })
 
   it('keeps required MCPs when removing all other connections', async () => {

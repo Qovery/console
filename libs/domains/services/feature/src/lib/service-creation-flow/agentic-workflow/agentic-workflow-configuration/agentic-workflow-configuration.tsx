@@ -345,6 +345,11 @@ export function AgenticWorkflowConfiguration() {
   )
   const qoveryMcpServer = availableMcpServers.find(isQoveryMcpServer)
   const isQoveryMcpSelected = Boolean(qoveryMcpServer && values.mcpServerIds.includes(qoveryMcpServer.id))
+  const qoveryMcpLockReason = requiresQoveryMcp
+    ? 'This MCP is required by the selected agent template and cannot be removed.'
+    : values.contextServices.length > 0
+      ? 'This MCP is required by the selected Qovery service context and cannot be removed.'
+      : undefined
   const ensureQoveryMcpServer = useCallback(async () => {
     const loadedMcpServers = areMcpServersLoading ? (await refetchMcpServers()).data ?? [] : mcpServers
     const existingQoveryMcpServer = [...loadedMcpServers, ...createdMcpServers].find(isQoveryMcpServer)
@@ -934,7 +939,7 @@ export function AgenticWorkflowConfiguration() {
                   .map((mcpServer) => {
                     const { id } = mcpServer
                     const name = getMcpServerDisplayName(mcpServer)
-                    const locked = values.contextServices.length > 0 && qoveryMcpServer?.id === id
+                    const locked = Boolean(qoveryMcpLockReason && qoveryMcpServer?.id === id)
                     const chip = (
                       <div
                         className={clsx(
@@ -971,11 +976,7 @@ export function AgenticWorkflowConfiguration() {
                     )
 
                     return locked ? (
-                      <Tooltip
-                        key={id}
-                        content="This MCP is required by the selected Qovery service context and cannot be removed."
-                        classNameTrigger="block"
-                      >
+                      <Tooltip key={id} content={qoveryMcpLockReason} classNameTrigger="block">
                         <div>{chip}</div>
                       </Tooltip>
                     ) : (
@@ -1108,7 +1109,8 @@ export function AgenticWorkflowConfiguration() {
           isLoading={areMcpServersLoading}
           mcpServers={mcpServers}
           createdMcpServers={createdMcpServers}
-          lockedMcpServerIds={values.contextServices.length > 0 && qoveryMcpServer ? [qoveryMcpServer.id] : []}
+          lockedMcpServerIds={qoveryMcpLockReason && qoveryMcpServer ? [qoveryMcpServer.id] : []}
+          lockedMcpServerReason={qoveryMcpLockReason}
           value={values.mcpServerIds}
           onChange={(value) => form.setValue('mcpServerIds', value, { shouldDirty: true })}
           onClose={() => setActiveSheet(null)}

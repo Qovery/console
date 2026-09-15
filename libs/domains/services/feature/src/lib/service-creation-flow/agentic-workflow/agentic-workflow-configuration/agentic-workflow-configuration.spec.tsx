@@ -359,7 +359,11 @@ describe('AgenticWorkflowConfiguration', () => {
     await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
     await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
 
-    expect(screen.getByRole('button', { name: 'MCP Qovery is required by Qovery service context' })).toBeDisabled()
+    expect(
+      screen.getByRole('button', {
+        name: 'MCP Qovery: This MCP is required by the selected Qovery service context and cannot be removed.',
+      })
+    ).toBeDisabled()
   })
 
   it('should automatically select an existing Qovery MCP without creating another one', async () => {
@@ -380,14 +384,23 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
 
     expect(mockCreateQoveryMcpServer).not.toHaveBeenCalled()
-    expect(screen.getByRole('button', { name: 'MCP Qovery is required by Qovery service context' })).toBeDisabled()
+    expect(
+      screen.getByRole('button', {
+        name: 'MCP Qovery: This MCP is required by the selected Qovery service context and cannot be removed.',
+      })
+    ).toBeDisabled()
   })
 
   it('should create and select the Qovery MCP for templates that require it', async () => {
-    renderConfiguration({ requiresQoveryMcp: true })
+    const { userEvent } = renderConfiguration({ requiresQoveryMcp: true })
 
     await waitFor(() => expect(mockCreateQoveryMcpServer).toHaveBeenCalledWith({ organizationId: 'org-1' }))
-    expect(await screen.findByRole('button', { name: 'Remove MCP Qovery' })).toBeInTheDocument()
+    await waitFor(() => expect(screen.queryByLabelText('Configuring MCP Qovery')).not.toBeInTheDocument())
+    await userEvent.hover(screen.getByText('MCP Qovery'))
+    expect(
+      await screen.findAllByText('This MCP is required by the selected agent template and cannot be removed.')
+    ).not.toHaveLength(0)
+    expect(screen.queryByRole('button', { name: 'Remove MCP Qovery' })).not.toBeInTheDocument()
   })
 
   it('should select an existing Qovery MCP using its origin URL for templates that require it', async () => {
@@ -401,9 +414,15 @@ describe('AgenticWorkflowConfiguration', () => {
       },
     ]
 
-    renderConfiguration({ requiresQoveryMcp: true })
+    const { userEvent } = renderConfiguration({ requiresQoveryMcp: true })
 
-    expect(await screen.findByRole('button', { name: 'Remove MCP Qovery' })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Add MCP' }))
+    expect(
+      screen.getByRole('button', {
+        name: 'MCP Qovery: This MCP is required by the selected agent template and cannot be removed.',
+      })
+    ).toBeDisabled()
+    expect(screen.queryByRole('button', { name: 'Remove MCP Qovery' })).not.toBeInTheDocument()
     expect(mockCreateQoveryMcpServer).not.toHaveBeenCalled()
   })
 

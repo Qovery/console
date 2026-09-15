@@ -29,6 +29,7 @@ function McpServerPicker({
   createdMcpServers,
   isLoading,
   lockedMcpServerIds,
+  lockedMcpServerReason,
   mcpServers,
   onChange,
   onMcpServerCreated,
@@ -37,6 +38,7 @@ function McpServerPicker({
   createdMcpServers: McpServerResponse[]
   isLoading: boolean
   lockedMcpServerIds: string[]
+  lockedMcpServerReason?: string
   mcpServers: McpServerResponse[]
   onChange: (value: string[]) => void
   onMcpServerCreated: (mcpServer: McpServerResponse) => void
@@ -94,7 +96,7 @@ function McpServerPicker({
         className="flex min-h-10 w-full items-center gap-3 rounded px-2 text-left hover:bg-surface-neutral-subtle focus-visible:outline-2 focus-visible:outline-neutral-strong disabled:opacity-50"
         aria-label={
           locked
-            ? `${displayName} is required by Qovery service context`
+            ? `${displayName}: ${lockedMcpServerReason}`
             : connected
               ? `Remove ${displayName}`
               : `Add ${displayName}`
@@ -121,11 +123,7 @@ function McpServerPicker({
     )
 
     return locked ? (
-      <Tooltip
-        key={mcpServer.id}
-        content="This MCP is required by the selected Qovery service context and cannot be removed."
-        classNameTrigger="block"
-      >
+      <Tooltip key={mcpServer.id} content={lockedMcpServerReason} classNameTrigger="block">
         <span>{row}</span>
       </Tooltip>
     ) : (
@@ -186,6 +184,7 @@ export function McpSheet({
   createdMcpServers,
   isLoading,
   lockedMcpServerIds = [],
+  lockedMcpServerReason = 'This MCP is required by the selected Qovery service context and cannot be removed.',
   mcpServers,
   onChange,
   onClose,
@@ -195,6 +194,7 @@ export function McpSheet({
   createdMcpServers: McpServerResponse[]
   isLoading: boolean
   lockedMcpServerIds?: string[]
+  lockedMcpServerReason?: string
   mcpServers: McpServerResponse[]
   onChange: (value: string[]) => void
   onClose: () => void
@@ -209,6 +209,7 @@ export function McpSheet({
           createdMcpServers={createdMcpServers}
           isLoading={isLoading}
           lockedMcpServerIds={lockedMcpServerIds}
+          lockedMcpServerReason={lockedMcpServerReason}
           mcpServers={mcpServers}
           value={value}
           onChange={onChange}
