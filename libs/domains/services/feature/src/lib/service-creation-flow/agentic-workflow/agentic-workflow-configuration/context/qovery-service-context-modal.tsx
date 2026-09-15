@@ -41,7 +41,7 @@ export function QoveryServiceContextModal({
         <Button
           type="button"
           variant="plain"
-          color="neutral"
+          color="red"
           size="md"
           disabled={selectedIds.length === 0}
           onClick={() => setSelectedIds([])}
