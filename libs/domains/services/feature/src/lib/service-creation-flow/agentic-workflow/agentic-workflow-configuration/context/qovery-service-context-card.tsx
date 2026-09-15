@@ -12,11 +12,9 @@ export function QoveryServiceContextCard({ onClick }: { onClick: () => void }) {
     >
       <Icon name={IconEnum.QOVERY} width={18} height={18} />
       <span className="flex flex-col gap-0.5">
-        <span className="text-ssm font-medium leading-[18px] text-neutral">
-          Import from existing Qovery environment
-        </span>
+        <span className="text-ssm font-medium leading-[18px] text-neutral">Add Qovery services</span>
         <span className="text-xs font-normal leading-4 text-neutral-subtle">
-          Import context from one of your real services running on Qovery.
+          Use services from this environment as context for the agent.
         </span>
       </span>
     </Button>

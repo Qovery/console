@@ -224,7 +224,7 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('heading', { name: 'Add from Git repository' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
-    await userEvent.click(screen.getByRole('button', { name: /Import from existing Qovery environment/ }))
+    await userEvent.click(screen.getByRole('button', { name: /Add Qovery services/ }))
     expect(screen.getByRole('heading', { name: 'Add Qovery services' })).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: 'Services to include' })).toBeInTheDocument()
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeInTheDocument()
@@ -260,7 +260,7 @@ describe('AgenticWorkflowConfiguration', () => {
     })
 
     expect(screen.queryByRole('button', { name: /Add from Git repository/ })).not.toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /Import from existing Qovery environment/ })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /Add Qovery services/ })).not.toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Add context' }))
     expect(screen.getByRole('menuitem', { name: 'Git repository' })).toBeInTheDocument()
