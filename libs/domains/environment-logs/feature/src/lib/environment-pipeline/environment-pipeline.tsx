@@ -31,7 +31,15 @@ function matchServicesWithStatuses(deploymentStages?: DeploymentStageWithService
   if (!deploymentStages) return []
 
   return deploymentStages.map((deploymentStage) => {
-    const serviceTypes = ['applications', 'databases', 'containers', 'jobs', 'helms', 'terraforms'] as const
+    const serviceTypes = [
+      'applications',
+      'databases',
+      'containers',
+      'jobs',
+      'helms',
+      'terraforms',
+      'agentic_workflows',
+    ] as const
 
     const services = serviceTypes
       .map((serviceType) => deploymentStage[serviceType])
