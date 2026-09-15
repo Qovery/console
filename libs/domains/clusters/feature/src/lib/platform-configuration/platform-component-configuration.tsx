@@ -4,7 +4,7 @@ import {
   type PlatformComponentInputRequirementResponse,
   type PlatformTemplateComponentResponse,
 } from 'qovery-typescript-axios'
-import { useEffect, useRef } from 'react'
+import { useRef } from 'react'
 import { match } from 'ts-pattern'
 import {
   Badge,
@@ -24,8 +24,7 @@ import {
 } from './platform-configuration-utils'
 
 interface PlatformComponentConfigurationProps {
-  focusField?: string
-  onManageYamlResources?: () => void
+  isFieldVisible?: (field: FieldSchemaResponse) => boolean
   clusterInputs: Record<string, string>
   component: PlatformTemplateComponentResponse
   isFetching: boolean
@@ -50,8 +49,7 @@ function RequirementStatus({ status }: { status: PlatformComponentInputRequireme
 }
 
 export function PlatformComponentConfiguration({
-  focusField,
-  onManageYamlResources,
+  isFieldVisible,
   clusterInputs,
   component,
   hasPreviewError,
@@ -78,26 +76,18 @@ export function PlatformComponentConfiguration({
       fields: preview.fields,
     }
   }
-  const fields =
+  const allFields =
     preview?.fields ??
     (lastRequirementsRef.current?.componentKey === component.key
       ? lastRequirementsRef.current.fields
       : component.fields)
+  const fields = isFieldVisible ? allFields.filter(isFieldVisible) : allFields
   const requirements =
     preview?.requirements ??
     (lastRequirementsRef.current?.componentKey === component.key ? lastRequirementsRef.current.requirements : [])
   const violations = preview?.violations ?? []
   const unmappedViolations = getUnmappedViolations(violations, fields, requirements, profileConfig)
   const ready = preview ? isPlatformConfigurationReady(violations, requirements) : false
-
-  const focusTarget = useRef<HTMLDivElement>(null)
-  const didFocus = useRef(false)
-  useEffect(() => {
-    if (!focusTarget.current || didFocus.current) return
-    focusTarget.current.focus({ preventScroll: true })
-    focusTarget.current.scrollIntoView({ block: 'start' })
-    didFocus.current = true
-  }, [fields, focusField])
 
   return (
     <div className="rounded-lg border border-neutral bg-surface-neutral p-5">
@@ -117,18 +107,11 @@ export function PlatformComponentConfiguration({
         ) : null}
       </div>
 
-      {onManageYamlResources ? (
-        <div className="mb-5 flex flex-col items-start gap-2">
-          <p className="text-sm text-neutral-subtle">
-            Create NodePool and EC2NodeClass resources in Karpenter configuration.
-          </p>
-          <Button type="button" variant="outline" onClick={onManageYamlResources}>
-            Manage YAML resources
-          </Button>
-        </div>
-      ) : null}
-
-      {!isFetching && !hasPreviewError && fields.length === 0 && requirements.length === 0 ? (
+      {!isFetching &&
+      !hasPreviewError &&
+      fields.length === 0 &&
+      requirements.length === 0 &&
+      violations.length === 0 ? (
         <Callout.Root color="neutral">
           <Callout.Icon>
             <Icon iconName="circle-info" iconStyle="regular" />
@@ -153,19 +136,13 @@ export function PlatformComponentConfiguration({
             <section className="flex flex-col gap-3">
               <Heading level={3}>Configuration</Heading>
               {fields.map((field) => (
-                <div
+                <CatalogConfigurationInput
                   key={field.key}
-                  ref={field.key === focusField ? focusTarget : undefined}
-                  tabIndex={-1}
-                  className="scroll-mt-5"
-                >
-                  <CatalogConfigurationInput
-                    field={field}
-                    value={profileConfig[field.key]}
-                    getError={(path) => getFieldViolation(violations, path)}
-                    onChange={(value) => onProfileConfigChange(field.key, value)}
-                  />
-                </div>
+                  field={field}
+                  value={profileConfig[field.key]}
+                  getError={(path) => getFieldViolation(violations, path)}
+                  onChange={(value) => onProfileConfigChange(field.key, value)}
+                />
               ))}
             </section>
           ) : null}

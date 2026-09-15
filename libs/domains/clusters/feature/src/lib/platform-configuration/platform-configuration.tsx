@@ -18,8 +18,8 @@ import {
   applyPlatformConfigurationDefaults,
   createPlatformConfigurationDraft,
   filterPlatformLayerSelections,
-  findPlatformComponent,
   getCurrentPlatformConfigurationPreview,
+  getPlatformComponentEditor,
   getTemplateId,
   omitEmptyValues,
   toPlatformConfigurationValue,
@@ -35,7 +35,6 @@ interface PlatformConfigurationProps {
 
 interface PlatformConfigurationState {
   componentKey?: string
-  focusField?: string
   draft: PlatformConfigurationDraft
   templateId: string
 }
@@ -69,7 +68,11 @@ export function PlatformConfiguration({
   })
 
   const selectedTemplate = templates.find((template) => getTemplateId(template) === state?.templateId)
-  const selectedComponent = selectedTemplate ? findPlatformComponent(selectedTemplate, state?.componentKey) : undefined
+  const {
+    component: selectedComponent,
+    configurationComponent,
+    isFieldVisible,
+  } = getPlatformComponentEditor(selectedTemplate, state?.componentKey)
 
   // Re-seed when the selected template disappears from the list (e.g. the template
   // version was bumped between refetches, or templates arrived after an empty list).
@@ -90,17 +93,17 @@ export function PlatformConfiguration({
   // explicitly cleared; the resolver request must omit those so a cleared required
   // field surfaces as a violation instead of silently resurrecting its default.
   const { profileConfig, clusterInputs } = useMemo(() => {
-    const componentKey = selectedComponent?.key
+    const componentKey = configurationComponent?.key
     return {
-      profileConfig: selectedComponent
+      profileConfig: configurationComponent
         ? applyPlatformConfigurationDefaults(
-            selectedComponent.fields,
+            configurationComponent.fields,
             state && componentKey ? state.draft.managedConfig[componentKey] ?? {} : {}
           )
         : {},
       clusterInputs: state && componentKey ? state.draft.customerProvidedInputs[componentKey] ?? {} : {},
     }
-  }, [selectedComponent, state])
+  }, [configurationComponent, state])
   const previewRequest = useMemo<PlatformComponentConfigurationPreviewRequest>(
     () => ({
       profileConfig: omitEmptyValues(profileConfig),
@@ -110,8 +113,8 @@ export function PlatformConfiguration({
     [profileConfig, clusterInputs]
   )
   const previewQuery = useMemo(
-    () => ({ componentKey: selectedComponent?.key, request: previewRequest }),
-    [previewRequest, selectedComponent?.key]
+    () => ({ componentKey: configurationComponent?.key, request: previewRequest }),
+    [previewRequest, configurationComponent?.key]
   )
   const debouncedPreviewQuery = useDebounce(previewQuery, 300)
   const isPreviewPending = debouncedPreviewQuery !== previewQuery
@@ -124,9 +127,9 @@ export function PlatformConfiguration({
     clusterId,
     componentKey: debouncedPreviewQuery.componentKey,
     request: debouncedPreviewQuery.request,
-    enabled: Boolean(selectedComponent) && debouncedPreviewQuery.componentKey === selectedComponent?.key,
+    enabled: Boolean(configurationComponent) && debouncedPreviewQuery.componentKey === configurationComponent?.key,
   })
-  const preview = getCurrentPlatformConfigurationPreview(previewData, selectedComponent?.key, isPreviewPending)
+  const preview = getCurrentPlatformConfigurationPreview(previewData, configurationComponent?.key, isPreviewPending)
 
   if (!state || !selectedTemplate) {
     return (
@@ -140,9 +143,9 @@ export function PlatformConfiguration({
   }
 
   const updateProfileConfig = (fieldKey: string, value: unknown) => {
-    if (!selectedComponent) return
+    if (!configurationComponent) return
 
-    const field = (preview?.fields ?? selectedComponent.fields).find((candidate) => candidate.key === fieldKey)
+    const field = (preview?.fields ?? configurationComponent.fields).find((candidate) => candidate.key === fieldKey)
     if (!field) return
 
     setState((current) =>
@@ -153,7 +156,7 @@ export function PlatformConfiguration({
               ...current.draft,
               managedConfig: updateComponentValue(
                 current.draft.managedConfig,
-                selectedComponent.key,
+                configurationComponent.key,
                 fieldKey,
                 toPlatformConfigurationValue(field, value)
               ),
@@ -164,7 +167,7 @@ export function PlatformConfiguration({
   }
 
   const updateClusterInput = (fieldKey: string, value: CatalogVariableValue) => {
-    if (!selectedComponent) return
+    if (!configurationComponent) return
 
     setState((current) =>
       current
@@ -174,7 +177,7 @@ export function PlatformConfiguration({
               ...current.draft,
               customerProvidedInputs: updateComponentValue(
                 current.draft.customerProvidedInputs,
-                selectedComponent.key,
+                configurationComponent.key,
                 fieldKey,
                 String(value)
               ),
@@ -201,8 +204,8 @@ export function PlatformConfiguration({
       },
     })
 
-  const selectComponent = (componentKey: string, focusField?: string) => {
-    const component = findPlatformComponent(selectedTemplate, componentKey)
+  const selectComponent = (componentKey: string) => {
+    const { configurationComponent: component } = getPlatformComponentEditor(selectedTemplate, componentKey)
     if (!component) return
 
     setState((current) =>
@@ -210,15 +213,14 @@ export function PlatformConfiguration({
         ? {
             ...current,
             componentKey,
-            focusField,
             draft: {
               ...current.draft,
               managedConfig: {
                 ...current.draft.managedConfig,
                 // Defaults shown by the editor must also survive saving or navigating back.
-                [componentKey]: applyPlatformConfigurationDefaults(
+                [component.key]: applyPlatformConfigurationDefaults(
                   component.fields,
-                  current.draft.managedConfig[componentKey] ?? {}
+                  current.draft.managedConfig[component.key] ?? {}
                 ),
               },
             },
@@ -226,16 +228,6 @@ export function PlatformConfiguration({
         : current
     )
   }
-
-  // Temporary Karpenter navigation shortcut; configuration stays on its owning component.
-  const yamlComponent = findPlatformComponent(selectedTemplate, 'karpenter-configuration')
-  const hasYamlResources = yamlComponent?.fields.some(
-    (field) =>
-      field.key === 'resources' &&
-      field.type === 'array' &&
-      field.items.type === 'object' &&
-      field.items.fields.some((item) => item.type === 'string' && item.format === 'kubernetes-resource-yaml')
-  )
 
   if (!selectedComponent) {
     return (
@@ -279,13 +271,8 @@ export function PlatformConfiguration({
       </Button>
       <PlatformComponentConfiguration
         key={selectedComponent.key}
-        component={selectedComponent}
-        focusField={state.focusField}
-        onManageYamlResources={
-          selectedComponent.key === 'karpenter-crd' && hasYamlResources
-            ? () => selectComponent('karpenter-configuration', 'resources')
-            : undefined
-        }
+        component={{ ...selectedComponent, fields: configurationComponent?.fields ?? selectedComponent.fields }}
+        isFieldVisible={isFieldVisible}
         preview={preview}
         profileConfig={profileConfig}
         clusterInputs={clusterInputs}
