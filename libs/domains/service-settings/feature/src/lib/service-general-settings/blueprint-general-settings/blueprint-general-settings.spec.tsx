@@ -1,4 +1,5 @@
-import { type ReactNode } from 'react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { type ReactNode, useState } from 'react'
 import { terraformFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintGeneralSettings } from './blueprint-general-settings'
@@ -8,6 +9,14 @@ const mockUseBlueprintCatalogServiceManifest = jest.fn()
 const mockPreviewBlueprintUpdate = jest.fn()
 const mockUpdateBlueprint = jest.fn()
 const mockDeployBlueprint = jest.fn()
+const service = {
+  ...terraformFactoryMock(1)[0],
+  blueprint_id: 'blueprint-id',
+  terraform_variables_source: {
+    tf_vars: [{ key: 'database_name', value: 'outdated-value', secret: false }],
+    tf_var_file_paths: [],
+  },
+}
 
 jest.mock('@qovery/domains/environments/feature', () => ({
   useEnvironment: () => ({ data: { cluster_id: 'cluster-id' } }),
@@ -25,10 +34,19 @@ jest.mock('@qovery/domains/services/feature', () => ({
   isFieldValid: () => true,
   isOptionalVariableField: (field: { required: boolean; kind: string }) => field.kind === 'variable' && !field.required,
   isRequiredVariableField: (field: { required: boolean; kind: string }) => field.kind === 'variable' && field.required,
-  BlueprintManifestVariableInput: ({ onChange }: { onChange: (value: string) => void }) => (
-    <button type="button" onClick={() => onChange('updated-value')}>
-      Edit value
-    </button>
+  BlueprintManifestVariableInput: ({
+    onChange,
+    value,
+  }: {
+    onChange: (value: string) => void
+    value: string | boolean | undefined
+  }) => (
+    <>
+      <span>Current value: {String(value ?? '')}</span>
+      <button type="button" onClick={() => onChange('updated-value')}>
+        Edit value
+      </button>
+    </>
   ),
   BlueprintSection: ({ title, children }: { title: string; children: ReactNode }) => (
     <div>
@@ -50,9 +68,23 @@ jest.mock('@qovery/domains/services/feature', () => ({
   ),
 }))
 
-describe('BlueprintGeneralSettings', () => {
-  const service = { ...terraformFactoryMock(1)[0], blueprint_id: 'blueprint-id' }
+function BlueprintGeneralSettingsHarness() {
+  const [queryClient] = useState(() => new QueryClient())
+  const [visible, setVisible] = useState(true)
 
+  return (
+    <QueryClientProvider client={queryClient}>
+      <button type="button" onClick={() => setVisible((current) => !current)}>
+        {visible ? 'Navigate to Overview' : 'Navigate to Settings'}
+      </button>
+      {visible ? (
+        <BlueprintGeneralSettings service={service} environmentId="environment-id" organizationId="organization-id" />
+      ) : null}
+    </QueryClientProvider>
+  )
+}
+
+describe('BlueprintGeneralSettings', () => {
   it('loads the catalog form from the Blueprint tag returned by the existing read endpoint', () => {
     mockUseBlueprintCatalogServiceManifest.mockReturnValue({ data: [], isLoading: false })
     mockUseBlueprint.mockReturnValue({
@@ -110,6 +142,7 @@ describe('BlueprintGeneralSettings', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Confirm & deploy update' }))
 
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     expect(mockUpdateBlueprint).toHaveBeenCalledTimes(1)
     expect(mockUpdateBlueprint).toHaveBeenCalledWith({
       blueprintId: 'blueprint-id',
@@ -120,6 +153,39 @@ describe('BlueprintGeneralSettings', () => {
       }),
     })
     expect(mockDeployBlueprint).toHaveBeenCalledTimes(1)
+  })
+
+  it('keeps confirmed non-secret values visible when Settings remounts before the service read model catches up', async () => {
+    mockUseBlueprintCatalogServiceManifest.mockReturnValue({
+      data: [
+        {
+          kind: 'variable',
+          name: 'database_name',
+          required: false,
+          is_secret: false,
+          type: { type: 'string' },
+        },
+      ],
+      isLoading: false,
+    })
+    mockUseBlueprint.mockReturnValue({
+      data: { name: service.name, tag: 'aws/postgres/17/1.0.0' },
+      isLoading: false,
+    })
+    mockPreviewBlueprintUpdate.mockResolvedValue({ preview_id: 'preview-id' })
+
+    const { userEvent } = renderWithProviders(<BlueprintGeneralSettingsHarness />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit value' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Preview changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm & deploy update' }))
+
+    expect(screen.getByText('Current value: updated-value')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Navigate to Overview' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Navigate to Settings' }))
+
+    expect(screen.getByText('Current value: updated-value')).toBeInTheDocument()
   })
 
   it('keeps the preview modal open until the user explicitly returns to the configuration', async () => {

@@ -1,4 +1,5 @@
 import * as Dialog from '@radix-ui/react-dialog'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
@@ -35,10 +36,25 @@ interface BlueprintSettingsDetails {
   tag: string
 }
 
+interface OptimisticBlueprintSettings {
+  values: Record<string, BlueprintFieldValue>
+  secretNames: string[]
+}
+
 interface BlueprintGeneralSettingsProps {
   service: BlueprintService
   environmentId: string
   organizationId: string
+}
+
+const EMPTY_OPTIMISTIC_BLUEPRINT_SETTINGS: OptimisticBlueprintSettings = {
+  values: {},
+  secretNames: [],
+}
+const OPTIMISTIC_BLUEPRINT_SETTINGS_CACHE_TIME_MS = 30 * 60 * 1000
+
+function getOptimisticBlueprintSettingsQueryKey(serviceId: string) {
+  return ['blueprint-settings', serviceId, 'optimistic-values'] as const
 }
 
 function isBlueprintSettingsDetails(data: unknown): data is BlueprintSettingsDetails {
@@ -68,6 +84,72 @@ function getPersistedVariables(service: BlueprintService): PersistedVariable[] {
         ]
       : []
   )
+}
+
+function useOptimisticBlueprintSettings({
+  serviceId,
+  persistedVariables,
+}: {
+  serviceId: string
+  persistedVariables: Map<string, PersistedVariable>
+}) {
+  const queryClient = useQueryClient()
+  const queryKey = useMemo(() => getOptimisticBlueprintSettingsQueryKey(serviceId), [serviceId])
+  const { data: optimisticSettings = EMPTY_OPTIMISTIC_BLUEPRINT_SETTINGS } = useQuery({
+    queryKey,
+    queryFn: () => EMPTY_OPTIMISTIC_BLUEPRINT_SETTINGS,
+    enabled: false,
+    cacheTime: OPTIMISTIC_BLUEPRINT_SETTINGS_CACHE_TIME_MS,
+  })
+
+  const update = useCallback(
+    (settings: OptimisticBlueprintSettings) => {
+      queryClient.setQueryData<OptimisticBlueprintSettings>(queryKey, (currentSettings) => ({
+        values: { ...currentSettings?.values, ...settings.values },
+        secretNames: [...new Set([...(currentSettings?.secretNames ?? []), ...settings.secretNames])],
+      }))
+    },
+    [queryClient, queryKey]
+  )
+
+  const remove = useCallback(
+    (settings: OptimisticBlueprintSettings) => {
+      queryClient.setQueryData<OptimisticBlueprintSettings>(queryKey, (currentSettings) => {
+        if (!currentSettings) return EMPTY_OPTIMISTIC_BLUEPRINT_SETTINGS
+
+        return {
+          values: Object.fromEntries(
+            Object.entries(currentSettings.values).filter(([name, value]) => settings.values[name] !== value)
+          ),
+          secretNames: currentSettings.secretNames.filter((name) => !settings.secretNames.includes(name)),
+        }
+      })
+    },
+    [queryClient, queryKey]
+  )
+
+  useEffect(() => {
+    const remainingValues = Object.fromEntries(
+      Object.entries(optimisticSettings.values).filter(
+        ([name, value]) => persistedVariables.get(name)?.value !== String(value)
+      )
+    ) as Record<string, BlueprintFieldValue>
+    const remainingSecretNames = optimisticSettings.secretNames.filter(
+      (name) => !persistedVariables.get(name)?.is_secret
+    )
+
+    if (
+      Object.keys(remainingValues).length !== Object.keys(optimisticSettings.values).length ||
+      remainingSecretNames.length !== optimisticSettings.secretNames.length
+    ) {
+      queryClient.setQueryData<OptimisticBlueprintSettings>(queryKey, {
+        values: remainingValues,
+        secretNames: remainingSecretNames,
+      })
+    }
+  }, [optimisticSettings, persistedVariables, queryClient, queryKey])
+
+  return { optimisticSettings, update, remove }
 }
 
 export function BlueprintGeneralSettings({ service, environmentId, organizationId }: BlueprintGeneralSettingsProps) {
@@ -104,6 +186,11 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
     () => new Map(getPersistedVariables(service).map((variable) => [variable.name, variable])),
     [service]
   )
+  const {
+    optimisticSettings: { values: optimisticChanges, secretNames: optimisticSecretNames },
+    update: updateOptimisticSettings,
+    remove: removeOptimisticSettings,
+  } = useOptimisticBlueprintSettings({ serviceId: service.id, persistedVariables: variablesByName })
   const manifestVariablesByName = useMemo(
     () =>
       new Map(
@@ -133,13 +220,15 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
       ),
     [fields, variablesByName]
   )
-  const values = { ...initialValues, ...changes }
+  const values = { ...initialValues, ...optimisticChanges, ...changes }
   const requiredFields = fields.filter(isRequiredVariableField)
   const optionalFields = fields.filter(isOptionalVariableField)
   const isValid = requiredFields.every(
     (field) =>
       isFieldValid(field, values[field.name]) ||
-      (field.is_secret && variablesByName.get(field.name)?.is_secret && changes[field.name] === undefined)
+      (field.is_secret &&
+        (variablesByName.get(field.name)?.is_secret || optimisticSecretNames.includes(field.name)) &&
+        changes[field.name] === undefined)
   )
   const isSaving = isUpdateLoading || isDeployLoading
 
@@ -185,12 +274,36 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
     if (!details || !isValid) return
     if (!payload) return
 
-    await updateBlueprint({ blueprintId: service.blueprint_id, payload })
-    await deployBlueprint({ blueprintId: service.blueprint_id })
+    const confirmedSecretNames = Object.keys(changes).filter((name) => manifestVariablesByName.get(name)?.is_secret)
+    const confirmedChanges = Object.fromEntries(
+      Object.entries(changes).filter(([name]) => !confirmedSecretNames.includes(name))
+    ) as Record<string, BlueprintFieldValue>
+
+    const confirmedSettings = { values: confirmedChanges, secretNames: confirmedSecretNames }
+    updateOptimisticSettings(confirmedSettings)
     setChanges({})
     closePreview()
-    toast('success', 'Blueprint update started')
-  }, [closePreview, deployBlueprint, details, isValid, payload, service.blueprint_id, updateBlueprint])
+
+    try {
+      await updateBlueprint({ blueprintId: service.blueprint_id, payload })
+      await deployBlueprint({ blueprintId: service.blueprint_id })
+      toast('success', 'Blueprint update started')
+    } catch {
+      removeOptimisticSettings(confirmedSettings)
+    }
+  }, [
+    changes,
+    closePreview,
+    deployBlueprint,
+    details,
+    isValid,
+    manifestVariablesByName,
+    payload,
+    removeOptimisticSettings,
+    service.blueprint_id,
+    updateOptimisticSettings,
+    updateBlueprint,
+  ])
 
   useEffect(() => {
     if (step !== 'preview') return
