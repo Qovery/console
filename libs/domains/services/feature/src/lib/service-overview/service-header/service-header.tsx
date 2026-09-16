@@ -24,7 +24,6 @@ import {
   ExternalLink,
   Heading,
   Icon,
-  Skeleton,
   Tooltip,
   Truncate,
   toast,
@@ -35,13 +34,11 @@ import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/share
 import { AgenticWorkflowServiceActions } from '../../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-service-actions'
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
-import { useBlueprintUpdateState } from '../../hooks/use-blueprint-update-state/use-blueprint-update-state'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
-import { BlueprintUpdateBadge } from '../../service-blueprint-update-flow/blueprint-update-badge'
-import { getBlueprintServiceVersion } from '../../service-blueprint-update-flow/blueprint-update-utils'
+import { BlueprintMetadata, BlueprintMetadataSkeleton } from '../../service-blueprint-update-flow/blueprint-metadata'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
 
@@ -163,84 +160,6 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
 
 interface ServiceHeaderMetadataProps {
   service: AnyService
-}
-
-function BlueprintUpdateBadgeSkeleton() {
-  return <Skeleton width={122} height={24} />
-}
-
-function BlueprintRepository({ gitRepository }: { gitRepository: ApplicationGitRepository }) {
-  if (!gitRepository.url || !gitRepository.name) {
-    return null
-  }
-
-  return (
-    <ExternalLink
-      href={buildGitProviderUrl(gitRepository.url)}
-      target="_blank"
-      rel="noopener noreferrer"
-      variant="outline"
-      color="neutral"
-      size="xs"
-      as="button"
-      className="text-nowrap"
-    >
-      {gitRepository.provider && <Icon width={12} name={gitRepository.provider} />}
-      <Truncate text={gitRepository.name} truncateLimit={17} />
-    </ExternalLink>
-  )
-}
-
-function BlueprintMetadataSkeleton({ gitRepository }: { gitRepository?: ApplicationGitRepository }) {
-  return (
-    <>
-      <Skeleton width={50} height={24} />
-      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
-      <BlueprintUpdateBadgeSkeleton />
-    </>
-  )
-}
-
-function BlueprintMetadata({
-  blueprintId,
-  gitRepository,
-  service,
-}: {
-  blueprintId: string
-  gitRepository?: ApplicationGitRepository
-  service: AnyService
-}) {
-  const { organizationId = '', projectId = '' } = useParams({ strict: false })
-  // `throwOnError: false` because react-query v4 makes suspense queries throw by default, and there
-  // is no boundary between here and the organization layout: a blueprint pinned to a tag the
-  // catalog cannot resolve would replace the whole overview with the generic error page.
-  const { blueprintUpdate, tag } = useBlueprintUpdateState({
-    blueprintId,
-    localTag: gitRepository?.branch,
-    suspense: true,
-    throwOnError: false,
-  })
-  const currentVersion = tag ? getBlueprintServiceVersion(tag) : undefined
-
-  return (
-    <>
-      {currentVersion && currentVersion !== 'default' && (
-        <Badge variant="outline" className="gap-1 whitespace-nowrap">
-          <ServiceAvatar service={service} size="custom" radius="none" serviceAvatarRadius="sm" className="h-3 w-3" />
-          <span>v{currentVersion}</span>
-        </Badge>
-      )}
-      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
-      {blueprintUpdate && (
-        <BlueprintUpdateBadge
-          blueprintUpdate={blueprintUpdate}
-          service={service}
-          organizationId={organizationId}
-          projectId={projectId}
-        />
-      )}
-    </>
-  )
 }
 
 function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {

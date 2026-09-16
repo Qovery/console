@@ -74,7 +74,7 @@ describe('BlueprintUpdateBadge', () => {
       />
     )
 
-    await userEvent.click(screen.getByRole('button', { name: 'Update available' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Blueprint update available' }))
 
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',

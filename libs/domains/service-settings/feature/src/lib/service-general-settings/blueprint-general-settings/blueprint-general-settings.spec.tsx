@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { type ReactNode, useState } from 'react'
-import { terraformFactoryMock } from '@qovery/shared/factories'
+import { helmFactoryMock, terraformFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintGeneralSettings } from './blueprint-general-settings'
 
@@ -9,6 +9,7 @@ const mockUseBlueprintCatalogServiceManifest = jest.fn()
 const mockPreviewBlueprintUpdate = jest.fn()
 const mockUpdateBlueprint = jest.fn()
 const mockDeployBlueprint = jest.fn()
+const mockBlueprintMetadata = jest.fn()
 const service = {
   ...terraformFactoryMock(1)[0],
   blueprint_id: 'blueprint-id',
@@ -66,6 +67,16 @@ jest.mock('@qovery/domains/services/feature', () => ({
       </button>
     </>
   ),
+  BlueprintMetadata: (props: unknown) => {
+    mockBlueprintMetadata(props)
+    return <span>Blueprint metadata</span>
+  },
+  BlueprintMetadataSkeleton: () => <span>Loading blueprint metadata</span>,
+  formatBlueprintName: (name: string) =>
+    name
+      .split('-')
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' '),
 }))
 
 function BlueprintGeneralSettingsHarness() {
@@ -88,7 +99,7 @@ describe('BlueprintGeneralSettings', () => {
   it('loads the catalog form from the Blueprint tag returned by the existing read endpoint', () => {
     mockUseBlueprintCatalogServiceManifest.mockReturnValue({ data: [], isLoading: false })
     mockUseBlueprint.mockReturnValue({
-      data: { name: service.name, tag: 'aws/postgres/17/1.0.0' },
+      data: { name: 'aws-rds-postgresql', tag: 'aws/postgres/17/1.0.0' },
       isLoading: false,
     })
 
@@ -97,9 +108,72 @@ describe('BlueprintGeneralSettings', () => {
     )
 
     expect(screen.getByText('Blueprint setup')).toBeInTheDocument()
+    expect(screen.getByText('Aws Rds Postgresql')).toBeInTheDocument()
+    expect(screen.getByText('Blueprint metadata')).toBeInTheDocument()
+    expect(mockBlueprintMetadata).toHaveBeenCalledWith(
+      expect.objectContaining({
+        blueprintId: 'blueprint-id',
+        gitRepository: service.terraform_files_source.git?.git_repository,
+        service,
+      })
+    )
     expect(mockUseBlueprintCatalogServiceManifest).toHaveBeenCalledWith(
       expect.objectContaining({ provider: 'aws', serviceFamily: 'postgres', serviceVersion: '17' })
     )
+  })
+
+  it('uses the Blueprint read model to prefill and preview updates for Helm Blueprint services', async () => {
+    const helmBlueprintService = { ...helmFactoryMock(1)[0], blueprint_id: 'helm-blueprint-id' }
+    mockUseBlueprintCatalogServiceManifest.mockReturnValue({ data: [], isLoading: false })
+    mockUseBlueprint.mockReturnValue({
+      data: {
+        name: 'rabbitmq',
+        tag: 'helm/rabbitmq/1.0.0',
+        variables: [{ name: 'replicas', value: '3', is_secret: false }],
+        manifest: {
+          results: [
+            {
+              kind: 'variable',
+              name: 'replicas',
+              required: true,
+              is_secret: false,
+              type: { type: 'string' },
+            },
+          ],
+        },
+      },
+      isLoading: false,
+    })
+    mockPreviewBlueprintUpdate.mockResolvedValue({ preview_id: 'preview-id' })
+
+    const { userEvent } = renderWithProviders(
+      <BlueprintGeneralSettings
+        service={helmBlueprintService}
+        environmentId="environment-id"
+        organizationId="organization-id"
+      />
+    )
+
+    expect(screen.getByText('Current value: 3')).toBeInTheDocument()
+    expect(mockBlueprintMetadata).toHaveBeenCalledWith(
+      expect.objectContaining({
+        blueprintId: 'helm-blueprint-id',
+        gitRepository: undefined,
+        service: helmBlueprintService,
+      })
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit value' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Preview changes' }))
+
+    expect(mockPreviewBlueprintUpdate).toHaveBeenCalledWith({
+      blueprintId: 'helm-blueprint-id',
+      payload: expect.objectContaining({
+        variables: {
+          replicas: { value: 'updated-value', is_secret: false },
+        },
+      }),
+    })
   })
 
   it('only persists and deploys after the user confirms the preview', async () => {

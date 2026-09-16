@@ -56,7 +56,7 @@ const withBlueprintTag = (service: Terraform, tag: string) =>
 describe('ServiceVersionCell', () => {
   it.each([
     { isUpToDate: true, status: 'Up to date' },
-    { isUpToDate: false, status: 'Update available' },
+    { isUpToDate: false, status: 'Blueprint update available' },
   ])('renders the $status state for a blueprint service', ({ isUpToDate, status }) => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({
       data: { is_up_to_date: isUpToDate, current_tag: 'AWS/mysql/8/2.3.4' },
@@ -93,7 +93,7 @@ describe('ServiceVersionCell', () => {
 
     expect(screen.getByText('RC test')).toBeInTheDocument()
     expect(screen.queryByText('v8')).not.toBeInTheDocument()
-    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+    expect(screen.queryByText('Blueprint update available')).not.toBeInTheDocument()
   })
 
   it('falls back to the pinned git branch when the update check cannot resolve the tag', () => {
@@ -124,7 +124,7 @@ describe('ServiceVersionCell', () => {
     )
 
     expect(screen.getByText('RC test')).toBeInTheDocument()
-    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+    expect(screen.queryByText('Blueprint update available')).not.toBeInTheDocument()
   })
 
   it('drops a stale update action for a released tag the check can no longer resolve', () => {
@@ -136,7 +136,7 @@ describe('ServiceVersionCell', () => {
 
     renderWithProviders(<ServiceVersionCell service={withBlueprintTag(blueprintService, 'AWS/mysql/8/2.3.4')} />)
 
-    expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+    expect(screen.queryByText('Blueprint update available')).not.toBeInTheDocument()
     expect(screen.queryByText('RC test')).not.toBeInTheDocument()
     // The major still comes off the pinned branch, so it survives the check failing.
     expect(screen.getByText('v8')).toBeInTheDocument()
@@ -242,7 +242,7 @@ describe('ServiceVersionCell', () => {
 
     const { userEvent } = renderWithProviders(<ServiceVersionCell service={blueprintService} />)
 
-    await userEvent.click(screen.getByRole('button', { name: 'Update available' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Blueprint update available' }))
 
     expect(
       await screen.findByRole('heading', { name: 'AWS S3 Bucket blueprint update from 1.2.3 to 2.0.0' })

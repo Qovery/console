@@ -66,7 +66,7 @@ export function BlueprintUpdateBadge({
     >
       <Badge variant="surface" color="sky" className="gap-1 whitespace-nowrap font-medium">
         <Icon className="h-3 w-3" iconName="arrow-rotate-right" iconStyle="regular" />
-        Update available
+        Blueprint update available
       </Badge>
     </button>
   )

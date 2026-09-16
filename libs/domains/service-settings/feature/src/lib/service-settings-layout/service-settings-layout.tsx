@@ -120,6 +120,13 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
   const automationsLink = linkItem('Automations', toSettingsPath(pathSettings, '/automations'), 'stopwatch')
   const governanceLink = linkItem('Governance', toSettingsPath(pathSettings, '/governance'), 'shield-halved')
   const outputsLink = linkItem('Outputs', toSettingsPath(pathSettings, '/outputs'), 'wave-pulse')
+  const blueprintSettingsLinks = [
+    generalLink,
+    blueprintConfigurationLink,
+    resourcesLink,
+    advancedSettingsLink,
+    dangerZoneLink,
+  ]
 
   const linksSettings: SidebarSettingsItem[] = isAgenticWorkflow(service)
     ? [
@@ -155,24 +162,22 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
             advancedSettingsLink,
             dangerZoneLink,
           ])
-          .with({ serviceType: 'HELM' }, (helm) => [
-            generalLink,
-            valuesOverrideLink,
-            networkingLink,
-            domainLink,
-            ...(isHelmGitSource(helm.source) ? [deploymentRestrictionsLink] : []),
-            advancedSettingsLink,
-            dangerZoneLink,
-          ])
-          .with({ serviceType: 'TERRAFORM' }, () =>
-            isBlueprintService(service)
-              ? [
+          .with({ serviceType: 'HELM' }, (helm) =>
+            isBlueprintService(helm)
+              ? blueprintSettingsLinks
+              : [
                   generalLink,
-                  blueprintConfigurationLink,
-                  resourcesLink,
+                  valuesOverrideLink,
+                  networkingLink,
+                  domainLink,
+                  ...(isHelmGitSource(helm.source) ? [deploymentRestrictionsLink] : []),
                   advancedSettingsLink,
                   dangerZoneLink,
                 ]
+          )
+          .with({ serviceType: 'TERRAFORM' }, () =>
+            isBlueprintService(service)
+              ? blueprintSettingsLinks
               : [
                   generalLink,
                   terraformConfigurationLink,

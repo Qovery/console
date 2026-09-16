@@ -1,15 +1,21 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { type BlueprintManifestVariableField } from 'qovery-typescript-axios'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  type BlueprintManifestResponseResultsInner,
+  type BlueprintManifestVariableField,
+} from 'qovery-typescript-axios'
+import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { type BlueprintService } from '@qovery/domains/services/data-access'
 import {
   type BlueprintFieldValue,
   BlueprintManifestVariableInput,
+  BlueprintMetadata,
+  BlueprintMetadataSkeleton,
   BlueprintPreview,
   BlueprintSection,
   OverridesSectionCard,
+  formatBlueprintName,
   getDefaultFieldValue,
   getFallbackServiceIcon,
   getFieldValidationError,
@@ -34,6 +40,10 @@ interface PersistedVariable {
 interface BlueprintSettingsDetails {
   name: string
   tag: string
+  variables?: PersistedVariable[]
+  manifest?: {
+    results: BlueprintManifestResponseResultsInner[]
+  }
 }
 
 interface OptimisticBlueprintSettings {
@@ -58,11 +68,16 @@ function getOptimisticBlueprintSettingsQueryKey(serviceId: string) {
 }
 
 function isBlueprintSettingsDetails(data: unknown): data is BlueprintSettingsDetails {
-  console.log('data', data)
   if (!data || typeof data !== 'object') return false
 
   const details = data as Partial<BlueprintSettingsDetails>
-  return typeof details.name === 'string' && typeof details.tag === 'string'
+  return (
+    typeof details.name === 'string' &&
+    typeof details.tag === 'string' &&
+    (details.variables === undefined || Array.isArray(details.variables)) &&
+    (details.manifest === undefined ||
+      (details.manifest !== null && Array.isArray(details.manifest.results)))
+  )
 }
 
 function parseBlueprintTag(tag: string | undefined) {
@@ -70,20 +85,12 @@ function parseBlueprintTag(tag: string | undefined) {
   return { provider, serviceFamily, serviceVersion }
 }
 
-function getPersistedVariables(service: BlueprintService): PersistedVariable[] {
-  if (service.serviceType !== 'TERRAFORM') return []
+function getPersistedVariables(details: BlueprintSettingsDetails): PersistedVariable[] {
+  return details.variables ?? []
+}
 
-  return service.terraform_variables_source.tf_vars.flatMap((variable) =>
-    variable.key
-      ? [
-          {
-            name: variable.key,
-            value: variable.secret ? null : variable.value ?? null,
-            is_secret: variable.secret ?? false,
-          },
-        ]
-      : []
-  )
+function getBlueprintGitRepository(service: BlueprintService) {
+  return service.serviceType === 'TERRAFORM' ? service.terraform_files_source?.git?.git_repository : undefined
 }
 
 function useOptimisticBlueprintSettings({
@@ -174,17 +181,19 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
 
   const details = isBlueprintSettingsDetails(data) ? data : undefined
   const { provider, serviceFamily, serviceVersion } = parseBlueprintTag(details?.tag)
-  const { data: fields = [], isLoading: isManifestLoading } = useBlueprintCatalogServiceManifest({
+  const manifestFields = details?.manifest?.results
+  const { data: catalogFields = [], isLoading: isCatalogManifestLoading } = useBlueprintCatalogServiceManifest({
     organizationId,
     provider,
     serviceFamily,
     serviceVersion,
     environmentId,
-    enabled: Boolean(details),
+    enabled: Boolean(details && !manifestFields),
   })
+  const fields = manifestFields ?? catalogFields
   const variablesByName = useMemo(
-    () => new Map(getPersistedVariables(service).map((variable) => [variable.name, variable])),
-    [service]
+    () => new Map((details ? getPersistedVariables(details) : []).map((variable) => [variable.name, variable])),
+    [details]
   )
   const {
     optimisticSettings: { values: optimisticChanges, secretNames: optimisticSecretNames },
@@ -343,7 +352,7 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
     step,
   ])
 
-  if (isLoading || (details && isManifestLoading)) {
+  if (isLoading || (details && !manifestFields && isCatalogManifestLoading)) {
     return <LoaderSpinner className="mx-auto my-12" />
   }
 
@@ -369,8 +378,16 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
       <SettingsHeading title="Blueprint configuration" description="Configure the inputs defined by this Blueprint." />
       <div className="max-w-content-with-navigation-left space-y-3">
         <BlueprintSection active iconName="circle-info" title="Service information">
-          <p className="text-sm text-neutral-subtle">{details.name}</p>
-          <p className="text-sm text-neutral-subtle">{details.tag}</p>
+          <p className="text-sm text-neutral-subtle">{formatBlueprintName(details.name)}</p>
+          <div className="mt-3 flex flex-wrap items-center gap-1">
+            <Suspense fallback={<BlueprintMetadataSkeleton gitRepository={getBlueprintGitRepository(service)} />}>
+              <BlueprintMetadata
+                blueprintId={service.blueprint_id}
+                gitRepository={getBlueprintGitRepository(service)}
+                service={service}
+              />
+            </Suspense>
+          </div>
         </BlueprintSection>
         <BlueprintSection active iconName="chart-bullet" title="Blueprint setup">
           {requiredFields.map((field, index) => (
