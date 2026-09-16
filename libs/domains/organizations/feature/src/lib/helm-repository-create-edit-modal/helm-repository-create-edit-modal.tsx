@@ -16,6 +16,7 @@ import {
   ModalCrud,
   useModal,
 } from '@qovery/shared/ui'
+import { stripUrlTrailingSlash } from '@qovery/shared/util-js'
 import { useAvailableHelmRepositories } from '../hooks/use-available-helm-repositories/use-available-helm-repositories'
 import { useCreateHelmRepository } from '../hooks/use-create-helm-repository/use-create-helm-repository'
 import { useEditHelmRepository } from '../hooks/use-edit-helm-repository/use-edit-helm-repository'
@@ -115,6 +116,9 @@ export function HelmRepositoryCreateEditModal({
       }
     }
 
+    // A URL like `oci://docker.io/` is rejected as invalid by the backend
+    const url = helmRepositoryRequest.url ? stripUrlTrailingSlash(helmRepositoryRequest.url) : helmRepositoryRequest.url
+
     try {
       if (repository) {
         const response = await editHelmRepository({
@@ -122,6 +126,7 @@ export function HelmRepositoryCreateEditModal({
           helmRepositoryId: repository.id,
           helmRepositoryRequest: {
             ...helmRepositoryRequest,
+            url,
             config: config,
           },
         })
@@ -131,6 +136,7 @@ export function HelmRepositoryCreateEditModal({
           organizationId: organizationId,
           helmRepositoryRequest: {
             ...helmRepositoryRequest,
+            url,
             config: config,
           },
         })

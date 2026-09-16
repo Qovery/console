@@ -1,7 +1,7 @@
 import { createAgenticWorkflowAutomation, formatAgenticWorkflowAutomationOutputs } from './agentic-workflow-automation'
 
 describe('agentic workflow automation adapters', () => {
-  it('hydrates the implicit webhook, schedule, and complete output data', () => {
+  it('hydrates a schedule instead of the implicit webhook and complete output data', () => {
     expect(
       createAgenticWorkflowAutomation({ cron_expression: '0 8 * * 1-5', timezone: 'Europe/Paris', next_run_at: null }, [
         {
@@ -14,7 +14,6 @@ describe('agentic workflow automation adapters', () => {
     ).toEqual({
       id: 'automation',
       triggers: [
-        { id: 'webhook', type: 'webhook' },
         {
           id: 'schedule',
           type: 'schedule',

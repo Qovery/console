@@ -189,6 +189,29 @@ describe('ServiceOverview', () => {
     expect(screen.getByLabelText('Webhook URL')).toHaveValue('https://api.qovery.com/agentic-workflow/webhook-1')
   })
 
+  it('renders the schedule instead of the webhook for a scheduled agentic workflow', () => {
+    mockUseService.mockReturnValue({
+      data: {
+        id: 'workflow-1',
+        service_type: 'AGENTIC_WORKFLOW',
+        serviceType: 'AGENTIC_WORKFLOW',
+        webhook: { url: 'https://api.qovery.com/agentic-workflow/webhook-1' },
+        schedule: {
+          cron_expression: '0 8 * * 1-5',
+          timezone: 'Europe/Paris',
+          next_run_at: '2026-09-14T06:00:00Z',
+        },
+      },
+    })
+
+    renderWithProviders(<ServiceOverview environment={environment} />)
+
+    expect(screen.queryByText('Webhook')).not.toBeInTheDocument()
+    expect(screen.queryByLabelText('Webhook URL')).not.toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Schedule' })).toBeInTheDocument()
+    expect(screen.getByLabelText('Schedule')).toHaveValue('At 08:00 AM, Monday through Friday (Europe/Paris)')
+  })
+
   it.each(['APPLICATION', 'CONTAINER', 'HELM', 'JOB'])('renders core overview blocks for %s service', (serviceType) => {
     mockUseService.mockReturnValue({
       data: {

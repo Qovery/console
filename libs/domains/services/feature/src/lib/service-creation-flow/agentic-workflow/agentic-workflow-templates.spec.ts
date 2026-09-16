@@ -34,6 +34,23 @@ describe('agentic-workflow-templates', () => {
     expect(getAgenticWorkflowTemplate(id)?.seed.whitelistHosts?.split(',')).toContain('api.bitbucket.org')
   })
 
+  it.each(['jira-coding-agent', 'linear-coding-agent'])('prevents duplicate processing in the %s prompt', (id) => {
+    const prompt = getAgenticWorkflowTemplate(id)?.seed.agentPrompt
+
+    expect(prompt).toContain('check the current issue status')
+    expect(prompt).toContain('whether it has already been processed')
+    expect(prompt).toContain('Do not perform the same job twice')
+  })
+
+  it.each(['jira-coding-agent', 'linear-coding-agent'])('preconfigures a webhook for the %s', (id) => {
+    const template = getAgenticWorkflowTemplate(id)
+
+    expect(template?.seed.executionMode).toBe(AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT)
+    expect(template?.seed.automations).toEqual([
+      expect.objectContaining({ triggers: [expect.objectContaining({ type: 'webhook' })] }),
+    ])
+  })
+
   it.each([
     ['jira-coding-agent', 'Jira Coding Agent', 'JIRA_API_TOKEN'],
     ['linear-coding-agent', 'Linear Coding Agent', 'LINEAR_API_KEY'],
@@ -53,6 +70,13 @@ describe('agentic-workflow-templates', () => {
     expect(template?.darkLogoPath).toBe('/assets/agent-templates/linear-light.svg')
   })
 
+  it.each(['incident-io-analyzer', 'honeybadger-incident-analyzer', 'build-optimizer'])(
+    'requires the Qovery MCP for the %s template',
+    (id) => {
+      expect(getAgenticWorkflowTemplate(id)?.requiresQoveryMcp).toBe(true)
+    }
+  )
+
   it('exposes the Build & deployment optimizer use case', () => {
     const template = getAgenticWorkflowTemplate('build-optimizer')
     expect(template).toBeDefined()
@@ -60,6 +84,17 @@ describe('agentic-workflow-templates', () => {
     expect(template?.seed.agentPrompt).toBeTruthy()
     expect(template?.seed.cpu).toBe('200')
     expect(template?.seed.memory).toBe('256')
+    expect(template?.seed.automations).toEqual([
+      expect.objectContaining({
+        triggers: [
+          expect.objectContaining({
+            type: 'schedule',
+            cronExpression: '0 8 * * 1',
+            timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+          }),
+        ],
+      }),
+    ])
     // Runs on Qovery, so it needs no user-provided credential.
     expect(template?.variables).toBeUndefined()
     // Least-privilege: must not inherit the wildcard host allowlist.

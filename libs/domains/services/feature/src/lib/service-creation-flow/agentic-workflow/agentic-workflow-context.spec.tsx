@@ -40,8 +40,17 @@ describe('AgenticWorkflowCreationFlow', () => {
     renderWithProviders(
       <AgenticWorkflowCreationFlow
         onExit={jest.fn()}
-        seed={{ name: 'Incident Analyser', agentPrompt: 'Investigate the incident', whitelistHosts: 'api.incident.io' }}
-        variablesSeed={[{ variable: 'INCIDENT_IO_API_KEY', value: '', isSecret: true }]}
+        selectedTemplate={{
+          id: 'incident-analyser',
+          title: 'Incident Analyser',
+          description: 'Investigate incidents',
+          seed: {
+            name: 'Incident Analyser',
+            agentPrompt: 'Investigate the incident',
+            whitelistHosts: 'api.incident.io',
+          },
+          variables: [{ variable: 'INCIDENT_IO_API_KEY', value: '', isSecret: true }],
+        }}
       >
         <FormDefaults />
       </AgenticWorkflowCreationFlow>

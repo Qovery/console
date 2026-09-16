@@ -7,6 +7,7 @@ import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { P, match } from 'ts-pattern'
 import { ExternalLink, ModalCrud, useModal } from '@qovery/shared/ui'
+import { stripUrlTrailingSlash } from '@qovery/shared/util-js'
 import ContainerRegistryForm from '../container-registry-form/container-registry-form'
 import { useCreateContainerRegistry } from '../hooks/use-create-container-registry/use-create-container-registry'
 import { useEditContainerRegistry } from '../hooks/use-edit-container-registry/use-edit-container-registry'
@@ -167,6 +168,7 @@ export function ContainerRegistryCreateEditModal({
       type,
       kind,
       config: { login_type, ...config },
+      url,
       ...rest
     } = containerRegistryRequest
     try {
@@ -175,6 +177,8 @@ export function ContainerRegistryCreateEditModal({
         containerRegistryRequest: {
           ...rest,
           kind,
+          // A URL like `https://ghcr.io/` is rejected as invalid by the backend
+          url: url ? stripUrlTrailingSlash(url) : url,
           config: getContainerRegistryPayloadConfig({
             type,
             kind,

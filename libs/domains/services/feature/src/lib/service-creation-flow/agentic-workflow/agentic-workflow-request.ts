@@ -2,6 +2,13 @@ import { type AgenticWorkflowRequest } from 'qovery-typescript-axios'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 import { parseAgenticWorkflowHeaders } from './agentic-workflow-headers'
 
+const CONTEXT_SERVICES_START_MARKER = '<!-- qovery-context-services:start -->'
+const CONTEXT_SERVICES_END_MARKER = '<!-- qovery-context-services:end -->'
+const DELIMITED_CONTEXT_SERVICES_BLOCK_PATTERN =
+  /\n\n<!-- qovery-context-services:start -->\n[\s\S]*?\n<!-- qovery-context-services:end -->/g
+const LEGACY_CONTEXT_SERVICES_BLOCK_PATTERN =
+  /\n\n## Context services\n(?:- [^\n]+ — service ID: [^\n]+\n)*(?:- [^\n]+ — service ID: [^\n]+)(?=\n\n|$)/g
+
 function formatWhitelistHosts(value: string) {
   return value
     .split(',')
@@ -9,7 +16,30 @@ function formatWhitelistHosts(value: string) {
     .filter(Boolean)
 }
 
-export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): AgenticWorkflowRequest {
+export function appendContextServicesToPrompt(
+  prompt: string,
+  contextServices: AgenticWorkflowFormData['contextServices']
+) {
+  if (contextServices.length === 0) return prompt
+
+  const services = contextServices.map(({ id, name, type }) => `- ${name} (${type}) — service ID: ${id}`).join('\n')
+  return `${prompt.trimEnd()}\n\n${CONTEXT_SERVICES_START_MARKER}\n## Context services\n${services}\n${CONTEXT_SERVICES_END_MARKER}`
+}
+
+export function replaceContextServicesInPrompt(
+  prompt: string,
+  contextServices: AgenticWorkflowFormData['contextServices']
+) {
+  const promptWithoutContextServices = prompt
+    .replace(DELIMITED_CONTEXT_SERVICES_BLOCK_PATTERN, '')
+    .replace(LEGACY_CONTEXT_SERVICES_BLOCK_PATTERN, '')
+  return appendContextServicesToPrompt(promptWithoutContextServices, contextServices)
+}
+
+export function formatAgenticWorkflowRequest(
+  values: AgenticWorkflowFormData,
+  requiredMcpServerIds: string[] = []
+): AgenticWorkflowRequest {
   const scheduleTrigger = values.automations
     .flatMap((automation) => automation.triggers)
     .find((trigger) => trigger.type === 'schedule')
@@ -28,7 +58,8 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
         }
       : null,
     mcp: values.mcpJson.trim() || undefined,
-    mcp_server_ids: values.mcpServerIds,
+    mcp_servers: values.mcpServerIds.map((id) => ({ id, required: requiredMcpServerIds.includes(id) })),
+    context_service_ids: values.contextServices.map(({ id }) => id),
     outputs: automationOutputs.map((output, index) => ({
       name: output.name?.trim() || `Output ${index + 1}`,
       url: output.url,
@@ -45,9 +76,15 @@ export function formatAgenticWorkflowRequest(values: AgenticWorkflowFormData): A
       branch: repository.branch,
       git_token_id: repository.gitTokenId ?? '',
     })),
-    agent_prompt: values.agentPrompt,
+    agent_prompt: replaceContextServicesInPrompt(values.agentPrompt, values.contextServices),
     governance: {
       host_allowlist: formatWhitelistHosts(values.whitelistHosts),
+    },
+    resources: {
+      cpu_milli: Number(values.cpu),
+      ram_mib: Number(values.memory),
+      gpu: 0,
+      storage_gib: Number(values.storage),
     },
   }
 }

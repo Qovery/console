@@ -200,6 +200,81 @@ describe('HelmRepositoryCreateEditModal', () => {
     })
   })
 
+  it('should strip trailing slash from OCI URL on submit', async () => {
+    props.repository = undefined
+
+    const { userEvent } = renderWithProviders(<HelmRepositoryCreateEditModal {...props} />)
+
+    const inputName = screen.getByTestId('input-name')
+    await userEvent.type(inputName, 'my-oci-repository')
+
+    const selectType = screen.getByLabelText('Kind')
+    await selectEvent.select(selectType, 'OCI_GENERIC_CR', { container: document.body })
+
+    const inputUrl = screen.getByTestId('input-url')
+    await userEvent.type(inputUrl, 'oci://docker.io/')
+
+    const button = await screen.findByRole('button', { name: /Create/i })
+    expect(button).toBeInTheDocument()
+    expect(button).toBeEnabled()
+
+    await userEvent.click(screen.getByTestId('submit-button'))
+
+    expect(useCreateHelmRepositoryMockSpy().mutateAsync).toHaveBeenCalledWith({
+      organizationId: '0000-0000-0000',
+      helmRepositoryRequest: {
+        name: 'my-oci-repository',
+        kind: 'OCI_GENERIC_CR',
+        description: undefined,
+        url: 'oci://docker.io',
+        config: {
+          access_key_id: undefined,
+          region: undefined,
+          scaleway_access_key: undefined,
+          scaleway_secret_key: undefined,
+          secret_access_key: undefined,
+          username: undefined,
+          password: undefined,
+        },
+      },
+    })
+  })
+
+  it('should strip trailing slash from OCI URL when editing a repository', async () => {
+    const { userEvent } = renderWithProviders(
+      <HelmRepositoryCreateEditModal
+        {...props}
+        isEdit
+        repository={{
+          id: '1111-1111-1111',
+          created_at: '',
+          updated_at: '',
+          name: 'my-oci-repository',
+          description: 'description',
+          url: 'oci://docker.io',
+          kind: 'OCI_GENERIC_CR',
+        }}
+      />
+    )
+
+    const inputUrl = screen.getByTestId('input-url')
+    await userEvent.clear(inputUrl)
+    await userEvent.type(inputUrl, 'oci://docker.io/')
+
+    const btn = screen.getByRole('button', { name: 'Confirm' })
+    expect(btn).toBeEnabled()
+
+    await userEvent.click(btn)
+
+    expect(useEditHelmRepositoryMockSpy().mutateAsync).toHaveBeenCalledWith(
+      expect.objectContaining({
+        helmRepositoryRequest: expect.objectContaining({
+          url: 'oci://docker.io',
+        }),
+      })
+    )
+  })
+
   it('should submit the form to edit a repository', async () => {
     const { userEvent } = renderWithProviders(
       <HelmRepositoryCreateEditModal

@@ -7,6 +7,7 @@ import {
 import { type PropsWithChildren, createContext, useContext, useState } from 'react'
 import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
+import { type AgenticWorkflowTemplate } from './agentic-workflow-templates'
 
 const DEFAULT_MODEL_SETTINGS = `{
   "provider": "anthropic",
@@ -82,6 +83,12 @@ export interface AgenticWorkflowGitRepository {
   branch: string
 }
 
+export interface AgenticWorkflowContextService {
+  id: string
+  name: string
+  type: string
+}
+
 export interface AgenticWorkflowFormData {
   name: string
   description: string
@@ -93,6 +100,7 @@ export interface AgenticWorkflowFormData {
   mcpServerIds: string[]
   mcpJson: string
   gitRepositories: AgenticWorkflowGitRepository[]
+  contextServices: AgenticWorkflowContextService[]
   modelApiKey: string
   modelSettingsJson: string
   whitelistHosts: string
@@ -104,6 +112,7 @@ export interface AgenticWorkflowFormData {
 export interface AgenticWorkflowCreateContextInterface {
   form: UseFormReturn<AgenticWorkflowFormData>
   onExit: () => void
+  requiresQoveryMcp: boolean
   variablesForm: UseFormReturn<FlowVariableData>
 }
 
@@ -131,6 +140,7 @@ export function getAgenticWorkflowDefaults(): AgenticWorkflowFormData {
     mcpServerIds: [],
     mcpJson: '',
     gitRepositories: [],
+    contextServices: [],
     modelApiKey: '',
     modelSettingsJson: DEFAULT_MODEL_SETTINGS,
     whitelistHosts: '*',
@@ -144,21 +154,18 @@ export interface AgenticWorkflowCreationFlowProps extends PropsWithChildren {
   onExit: () => void
   // A template use case pre-fills part of the form and its variables when the
   // flow is entered with a `?template=` param (see agentic-workflow-templates.ts).
-  seed?: Partial<AgenticWorkflowFormData>
-  variablesSeed?: FlowVariableData['variables']
+  selectedTemplate?: AgenticWorkflowTemplate
 }
 
-export function AgenticWorkflowCreationFlow({
-  children,
-  onExit,
-  seed,
-  variablesSeed,
-}: AgenticWorkflowCreationFlowProps) {
+export function AgenticWorkflowCreationFlow({ children, onExit, selectedTemplate }: AgenticWorkflowCreationFlowProps) {
   // useForm reads defaultValues once at mount, so freeze the seeded values to
   // stay stable even if the seed prop reference changes on a later re-render.
-  const [defaultValues] = useState<AgenticWorkflowFormData>(() => ({ ...getAgenticWorkflowDefaults(), ...seed }))
+  const [defaultValues] = useState<AgenticWorkflowFormData>(() => ({
+    ...getAgenticWorkflowDefaults(),
+    ...selectedTemplate?.seed,
+  }))
   const [variablesDefaultValues] = useState<FlowVariableData>(() => ({
-    variables: variablesSeed ?? [],
+    variables: selectedTemplate?.variables ?? [],
     externalSecrets: [],
   }))
   const variablesForm = useForm<FlowVariableData>({
@@ -175,6 +182,7 @@ export function AgenticWorkflowCreationFlow({
       value={{
         form,
         onExit,
+        requiresQoveryMcp: selectedTemplate?.requiresQoveryMcp ?? false,
         variablesForm,
       }}
     >

@@ -1,6 +1,6 @@
 import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
-import { formatAgenticWorkflowRequest } from './agentic-workflow-request'
+import { formatAgenticWorkflowRequest, replaceContextServicesInPrompt } from './agentic-workflow-request'
 
 const values: AgenticWorkflowFormData = {
   name: 'Review pull requests',
@@ -13,6 +13,7 @@ const values: AgenticWorkflowFormData = {
   mcpServerIds: ['mcp-1', 'mcp-2'],
   mcpJson: '',
   gitRepositories: [],
+  contextServices: [],
   modelApiKey: 'api-key',
   modelSettingsJson: '{}',
   whitelistHosts: '*',
@@ -26,8 +27,26 @@ describe('formatAgenticWorkflowRequest', () => {
     expect(formatAgenticWorkflowRequest(values).enabled).toBe(true)
   })
 
-  it('sends the selected organization MCP server IDs', () => {
-    expect(formatAgenticWorkflowRequest(values).mcp_server_ids).toEqual(['mcp-1', 'mcp-2'])
+  it('sends selected MCP servers and their creation requirements', () => {
+    expect(formatAgenticWorkflowRequest(values, ['mcp-1']).mcp_servers).toEqual([
+      { id: 'mcp-1', required: true },
+      { id: 'mcp-2', required: false },
+    ])
+  })
+
+  it('sends the resources selected in the creation flow', () => {
+    expect(formatAgenticWorkflowRequest(values).resources).toEqual({
+      cpu_milli: 2000,
+      ram_mib: 2048,
+      gpu: 0,
+      storage_gib: 10,
+    })
+    expect(formatAgenticWorkflowRequest({ ...values, cpu: '200', memory: '256', storage: '5' }).resources).toEqual({
+      cpu_milli: 200,
+      ram_mib: 256,
+      gpu: 0,
+      storage_gib: 5,
+    })
   })
 
   it('derives the schedule from an automation schedule trigger', () => {
@@ -94,6 +113,82 @@ describe('formatAgenticWorkflowRequest', () => {
         executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       }).execution_mode
     ).toBe(AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT)
+  })
+
+  it('appends selected Qovery services to the agent prompt', () => {
+    const request = formatAgenticWorkflowRequest({
+      ...values,
+      agentPrompt: 'Investigate the incident.\n',
+      contextServices: [
+        { id: 'application-1', name: 'api', type: 'APPLICATION' },
+        { id: 'database-1', name: 'postgres', type: 'DATABASE' },
+      ],
+    })
+
+    expect(request.agent_prompt).toBe(`Investigate the incident.
+
+<!-- qovery-context-services:start -->
+## Context services
+- api (APPLICATION) — service ID: application-1
+- postgres (DATABASE) — service ID: database-1
+<!-- qovery-context-services:end -->`)
+    expect(request.context_service_ids).toEqual(['application-1', 'database-1'])
+  })
+
+  it('keeps the agent prompt unchanged when no Qovery service is selected', () => {
+    expect(formatAgenticWorkflowRequest(values).agent_prompt).toBe('Review the pull request')
+  })
+
+  it('preserves an unmarked user-authored context section', () => {
+    expect(
+      replaceContextServicesInPrompt('Investigate.\n\n## Context services\n- Keep this user instruction', [])
+    ).toBe('Investigate.\n\n## Context services\n- Keep this user instruction')
+  })
+
+  it('replaces a complete legacy generated context block without removing following instructions', () => {
+    expect(
+      replaceContextServicesInPrompt(
+        `Investigate.
+
+## Context services
+- old-api (APPLICATION) — service ID: old-service
+- old-db (DATABASE) — service ID: old-database
+
+Keep the evidence concise.`,
+        [{ id: 'service-1', name: 'api', type: 'APPLICATION' }]
+      )
+    ).toBe(`Investigate.
+
+Keep the evidence concise.
+
+<!-- qovery-context-services:start -->
+## Context services
+- api (APPLICATION) — service ID: service-1
+<!-- qovery-context-services:end -->`)
+  })
+
+  it('atomically replaces a delimited context section when a later service entry was edited', () => {
+    expect(
+      replaceContextServicesInPrompt(
+        `Investigate the incident.
+
+<!-- qovery-context-services:start -->
+## Context services
+- api (APPLICATION) — service ID: service-1
+- edited database entry
+<!-- qovery-context-services:end -->
+
+Keep the evidence concise.`,
+        [{ id: 'service-2', name: 'worker', type: 'APPLICATION' }]
+      )
+    ).toBe(`Investigate the incident.
+
+Keep the evidence concise.
+
+<!-- qovery-context-services:start -->
+## Context services
+- worker (APPLICATION) — service ID: service-2
+<!-- qovery-context-services:end -->`)
   })
 
   it('uses the full URL of a selected Git repository', () => {

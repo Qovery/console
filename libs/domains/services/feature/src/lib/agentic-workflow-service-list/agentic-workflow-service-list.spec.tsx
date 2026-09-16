@@ -88,13 +88,13 @@ describe('AgenticWorkflowServiceList', () => {
     expect(container.querySelector('table')).not.toHaveClass('min-w-[1320px]', 'overflow-x-scroll')
     expect(screen.queryByText('Claude')).not.toBeInTheDocument()
     expect(screen.queryByText('Bedrock')).not.toBeInTheDocument()
-    expect(screen.getAllByText('Webhook')).toHaveLength(2)
+    expect(screen.getAllByText('Webhook')).toHaveLength(1)
     expect(screen.getByText('Schedule · 14 Sep, 09:00')).toBeInTheDocument()
     expect(screen.queryByText('https://api.qovery.com/workflows/workflow-1')).not.toBeInTheDocument()
 
-    await userEvent.hover(screen.getAllByText('Webhook')[0])
+    await userEvent.hover(screen.getByText('Webhook'))
 
-    expect((await screen.findAllByText('https://api.qovery.com/workflows/workflow-1')).length).toBeGreaterThan(0)
+    expect((await screen.findAllByText('https://api.qovery.com/workflows/workflow-2')).length).toBeGreaterThan(0)
     expect(screen.queryByText('Git repositories')).not.toBeInTheDocument()
     expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Actions for workflow-1' })).toBeInTheDocument()
