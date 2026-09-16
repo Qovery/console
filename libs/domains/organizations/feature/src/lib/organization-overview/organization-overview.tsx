@@ -1,12 +1,12 @@
 import { useParams } from '@tanstack/react-router'
-import { type PropsWithChildren } from 'react'
+import { type PropsWithChildren, type ReactNode } from 'react'
 import { Avatar, Heading, Section } from '@qovery/shared/ui'
 import useOrganization from '../hooks/use-organization/use-organization'
 import { SectionChangelog } from './section-changelog/section-changelog'
 import { SectionLinks } from './section-links/section-links'
 import { SectionOpenPolicyHighlight } from './section-open-policy-highlight/section-open-policy-highlight'
 
-export function OrganizationOverview({ children }: PropsWithChildren) {
+export function OrganizationOverview({ children, sidebarContent }: PropsWithChildren<{ sidebarContent?: ReactNode }>) {
   const { organizationId = '' }: { organizationId: string } = useParams({ strict: false })
   const { data: organization } = useOrganization({ organizationId, suspense: true })
 
@@ -29,6 +29,7 @@ export function OrganizationOverview({ children }: PropsWithChildren) {
         <div className="flex w-full flex-col gap-12 md:flex-row md:justify-between">
           <div className="flex w-full flex-col gap-8">{children}</div>
           <div className="flex w-full flex-col gap-8 md:max-w-96">
+            {sidebarContent}
             <SectionOpenPolicyHighlight />
             <SectionChangelog />
             <SectionLinks />
