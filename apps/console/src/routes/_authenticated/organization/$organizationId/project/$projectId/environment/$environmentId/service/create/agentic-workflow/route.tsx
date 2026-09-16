@@ -30,9 +30,7 @@ function RouteComponent() {
 
   return (
     <AgenticWorkflowCreationFlow
-      requiresQoveryMcp={selectedTemplate?.requiresQoveryMcp}
-      seed={selectedTemplate?.seed}
-      variablesSeed={selectedTemplate?.variables}
+      selectedTemplate={selectedTemplate}
       onExit={() =>
         navigate({
           to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/new',
