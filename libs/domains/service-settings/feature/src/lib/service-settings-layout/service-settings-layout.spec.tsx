@@ -45,7 +45,9 @@ describe('ServiceSettingsLayout', () => {
 
     expect(screen.queryByText('Terraform configuration')).not.toBeInTheDocument()
     expect(screen.queryByText('Terraform arguments')).not.toBeInTheDocument()
+    expect(screen.getByText('Blueprint configuration')).toBeInTheDocument()
     expect(screen.getByText('Resources')).toBeInTheDocument()
+    expect(screen.queryByText('Deployment restrictions')).not.toBeInTheDocument()
   })
 
   it('keeps Terraform-only settings for regular Terraform services', () => {
@@ -59,5 +61,7 @@ describe('ServiceSettingsLayout', () => {
 
     expect(screen.getByText('Terraform configuration')).toBeInTheDocument()
     expect(screen.getByText('Terraform arguments')).toBeInTheDocument()
+    expect(screen.queryByText('Blueprint configuration')).not.toBeInTheDocument()
+    expect(screen.getByText('Deployment restrictions')).toBeInTheDocument()
   })
 })

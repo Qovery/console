@@ -55,6 +55,11 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
   }
 
   const generalLink = linkItem('General', toSettingsPath(pathSettings, '/general'), 'gear')
+  const blueprintConfigurationLink = linkItem(
+    'Blueprint configuration',
+    toSettingsPath(pathSettings, '/blueprint-configuration'),
+    'sliders'
+  )
 
   const valuesOverrideLink: SidebarSettingsGroupItem = {
     title: 'Values',
@@ -161,7 +166,13 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
           ])
           .with({ serviceType: 'TERRAFORM' }, () =>
             isBlueprintService(service)
-              ? [generalLink, resourcesLink, deploymentRestrictionsLink, advancedSettingsLink, dangerZoneLink]
+              ? [
+                  generalLink,
+                  blueprintConfigurationLink,
+                  resourcesLink,
+                  advancedSettingsLink,
+                  dangerZoneLink,
+                ]
               : [
                   generalLink,
                   terraformConfigurationLink,
