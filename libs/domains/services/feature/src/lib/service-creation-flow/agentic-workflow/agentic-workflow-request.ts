@@ -68,7 +68,7 @@ export function formatAgenticWorkflowRequest(
     })),
     model: {
       type: values.aiModel,
-      api_key: values.modelApiKey,
+      llm_provider_id: values.llmProviderId,
       settings: values.modelSettingsJson,
     },
     project_repositories: values.gitRepositories.map((repository) => ({

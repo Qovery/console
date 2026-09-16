@@ -104,9 +104,17 @@ function RouteComponent() {
     icon: 'sparkles' as const,
     children: [
       { title: 'Copilot', to: `${pathSettings}/ai-copilot` },
-      ...(isAgenticWorkflowEnabled ? [{ title: 'Agents', to: `${pathSettings}/agents` }] : []),
       { title: 'Skills', to: `${pathSettings}/skills` },
-      { title: 'MCP server', to: `${pathSettings}/mcp-server` },
+    ],
+  }
+
+  const agentsLink = {
+    type: 'group',
+    title: 'Agents',
+    icon: 'robot' as const,
+    children: [
+      { title: 'Tokens', to: `${pathSettings}/agents/tokens` },
+      { title: 'MCPs', to: `${pathSettings}/agents/mcps` },
     ],
   }
 
@@ -129,6 +137,7 @@ function RouteComponent() {
     webhookLink,
     apiTokenLink,
     aiLink,
+    ...(isAgenticWorkflowEnabled ? [agentsLink] : []),
     ...(isOrganizationAdmin ? [dangerZoneLink] : []),
   ]
 

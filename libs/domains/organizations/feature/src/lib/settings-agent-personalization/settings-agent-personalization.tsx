@@ -84,28 +84,13 @@ function McpServerRow({ organizationId, mcpServer }: McpServerRowProps) {
               </span>
             </Tooltip>
           ) : null}
-        </div>
-        <div className="flex min-w-0 items-center gap-2 text-xs text-neutral-subtle">
-          <p className="break-all font-mono">{mcpServer.url}</p>
           {owner ? (
-            <>
-              <svg
-                aria-hidden="true"
-                className="shrink-0"
-                xmlns="http://www.w3.org/2000/svg"
-                width="5"
-                height="6"
-                fill="none"
-                viewBox="0 0 5 6"
-              >
-                <circle cx="2.5" cy="2.955" r="2.5" fill="var(--neutral-6)" />
-              </svg>
-              <Tooltip content={owner}>
-                <span className="min-w-0 truncate">{owner}</span>
-              </Tooltip>
-            </>
+            <Tooltip content={owner}>
+              <span className="min-w-0 truncate text-xs font-normal text-neutral-subtle">{owner}</span>
+            </Tooltip>
           ) : null}
         </div>
+        <p className="break-all font-mono text-xs text-neutral-subtle">{mcpServer.url}</p>
       </Section>
       <div className="flex shrink-0 gap-2">
         {mcpServer.scope === McpServerScope.ORGANIZATION || mcpServer.attachable ? (
@@ -167,7 +152,7 @@ function LlmProviderRow({ organizationId, llmProvider, currentUserSub }: LlmProv
   const owner =
     llmProvider.scope === LlmProviderScope.USER
       ? `Owner: ${llmProvider.owner_name ?? 'Unknown member'}`
-      : 'Organization'
+      : undefined
   const canManage =
     llmProvider.scope === LlmProviderScope.ORGANIZATION ||
     Boolean(currentUserSub && llmProvider.owner_user_sub === currentUserSub)
@@ -201,17 +186,29 @@ function LlmProviderRow({ organizationId, llmProvider, currentUserSub }: LlmProv
     >
       <Section className="min-w-0 space-y-1">
         <div className="flex items-center gap-2">
+          <img
+            src={
+              llmProvider.type === LlmProviderType.CLAUDE
+                ? '/assets/ai-tools/claude.svg'
+                : '/assets/devicon/bedrock.svg'
+            }
+            alt=""
+            aria-hidden="true"
+            className="h-5 w-5 rounded-sm"
+          />
           <Heading level={3} className="min-w-0">
             <Truncate truncateLimit={60} text={llmProvider.name} />
           </Heading>
-          <Badge color="neutral">{llmProvider.type === LlmProviderType.CLAUDE ? 'Claude' : 'Bedrock'}</Badge>
-          {llmProvider.has_credential ? (
-            <Badge color="green">Configured</Badge>
-          ) : (
-            <Badge color="yellow">No token</Badge>
-          )}
+          {llmProvider.description ? (
+            <Tooltip content={llmProvider.description}>
+              <span className="cursor-pointer" aria-label={`About ${llmProvider.name}`}>
+                <Icon iconName="circle-info" iconStyle="regular" className="text-neutral-subtle" />
+              </span>
+            </Tooltip>
+          ) : null}
+          {!llmProvider.has_credential ? <Badge color="yellow">No token</Badge> : null}
         </div>
-        <p className="text-xs text-neutral-subtle">{owner}</p>
+        {owner ? <p className="truncate text-xs text-neutral-subtle">{owner}</p> : null}
       </Section>
       {canManage ? (
         <div className="flex shrink-0 gap-2">
@@ -271,7 +268,6 @@ interface ScopedItemsListProps<T extends ScopedItem> {
   organizationScope: string
   userScope: string
   organizationTitle: string
-  organizationEmptyMessage: string
   personalTitle: string
   renderItem: (item: T) => ReactNode
 }
@@ -281,27 +277,22 @@ function ScopedItemsList<T extends ScopedItem>({
   organizationScope,
   userScope,
   organizationTitle,
-  organizationEmptyMessage,
   personalTitle,
   renderItem,
 }: ScopedItemsListProps<T>) {
   const sortedItems = useMemo(() => [...items].sort((first, second) => first.name.localeCompare(second.name)), [items])
   const personalItems = sortedItems.filter(({ scope }) => scope === userScope)
   const organizationItems = sortedItems.filter(({ scope }) => scope === organizationScope)
-  const itemGroup = (title: string, groupedItems: T[], emptyMessage: string) => (
+  const itemGroup = (title: string, groupedItems: T[]) => (
     <BlockContent title={title} classNameContent="p-0">
-      {groupedItems.length > 0 ? (
-        <ul>{groupedItems.map(renderItem)}</ul>
-      ) : (
-        <p className="p-4 text-sm text-neutral-subtle">{emptyMessage}</p>
-      )}
+      <ul>{groupedItems.map(renderItem)}</ul>
     </BlockContent>
   )
 
   return (
     <div className="space-y-4">
-      {itemGroup(organizationTitle, organizationItems, organizationEmptyMessage)}
-      {personalItems.length > 0 ? itemGroup(personalTitle, personalItems, '') : null}
+      {organizationItems.length > 0 ? itemGroup(organizationTitle, organizationItems) : null}
+      {personalItems.length > 0 ? itemGroup(personalTitle, personalItems) : null}
     </div>
   )
 }
@@ -322,8 +313,7 @@ function LlmProvidersList({ organizationId }: { organizationId: string }) {
       organizationScope={LlmProviderScope.ORGANIZATION}
       userScope={LlmProviderScope.USER}
       organizationTitle="Organization tokens"
-      organizationEmptyMessage="No organization tokens."
-      personalTitle="Personal tokens"
+      personalTitle="Personal token"
       renderItem={(llmProvider) => (
         <LlmProviderRow
           key={llmProvider.id}
@@ -359,7 +349,6 @@ function McpServersList({ organizationId }: McpServersListProps) {
       organizationScope={McpServerScope.ORGANIZATION}
       userScope={McpServerScope.USER}
       organizationTitle="Organization MCPs"
-      organizationEmptyMessage="No organization MCPs."
       personalTitle="Personal MCPs"
       renderItem={(mcpServer) => (
         <McpServerRow key={mcpServer.id} organizationId={organizationId} mcpServer={mcpServer} />
@@ -368,8 +357,39 @@ function McpServersList({ organizationId }: McpServersListProps) {
   )
 }
 
-export function SettingsAgentPersonalization() {
-  useDocumentTitle('Agent personalization - Organization settings')
+export function SettingsAgentTokens() {
+  useDocumentTitle('Agent tokens - Organization settings')
+  const { organizationId = '' } = useParams({ strict: false })
+  const { openModal, closeModal } = useModal()
+
+  const onAddToken = () => {
+    openModal({
+      content: <LlmProviderCreateEditModal onClose={closeModal} />,
+      options: { fakeModal: true, width: 680 },
+    })
+  }
+
+  return (
+    <Section className="px-8 pb-8 pt-6">
+      <div className="space-y-6">
+        <SettingsHeading title="Tokens" description="Configure the provider credentials used by your agent tasks.">
+          <Button size="md" onClick={onAddToken}>
+            <Icon iconName="circle-plus" iconStyle="regular" />
+            Add token
+          </Button>
+        </SettingsHeading>
+        <div className="max-w-content-with-navigation-left">
+          <Suspense fallback={<LlmProvidersSkeleton />}>
+            <LlmProvidersList organizationId={organizationId} />
+          </Suspense>
+        </div>
+      </div>
+    </Section>
+  )
+}
+
+export function SettingsAgentMcps() {
+  useDocumentTitle('Agent MCPs - Organization settings')
   const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
 
@@ -383,39 +403,21 @@ export function SettingsAgentPersonalization() {
     })
   }
 
-  const onAddToken = () => {
-    openModal({
-      content: <LlmProviderCreateEditModal onClose={closeModal} />,
-      options: { fakeModal: true, width: 680 },
-    })
-  }
-
   return (
-    <div className="flex w-full flex-col justify-between">
-      <Section className="px-8 pb-8 pt-6">
-        <div className="relative flex flex-col lg:block">
-          <SettingsHeading title="Agent personalization" description="Your personal settings for Qovery Agent" />
-          <div className="-mt-4 mb-8 flex flex-wrap gap-2 lg:absolute lg:right-0 lg:top-0 lg:m-0">
-            <Button size="md" variant="outline" color="neutral" onClick={onAddMcp}>
-              <Icon iconName="circle-plus" iconStyle="regular" />
-              Add MCP
-            </Button>
-            <Button size="md" onClick={onAddToken}>
-              <Icon iconName="circle-plus" iconStyle="regular" />
-              Add token
-            </Button>
-          </div>
-        </div>
-
-        <div className="max-w-content-with-navigation-left space-y-6">
-          <Suspense fallback={<LlmProvidersSkeleton />}>
-            <LlmProvidersList organizationId={organizationId} />
-          </Suspense>
+    <Section className="px-8 pb-8 pt-6">
+      <div className="space-y-6">
+        <SettingsHeading title="MCPs" description="Connect the tools and data sources available to your agent tasks.">
+          <Button size="md" onClick={onAddMcp}>
+            <Icon iconName="circle-plus" iconStyle="regular" />
+            Add MCP
+          </Button>
+        </SettingsHeading>
+        <div className="max-w-content-with-navigation-left">
           <Suspense fallback={<McpServersSkeleton />}>
             <McpServersList organizationId={organizationId} />
           </Suspense>
         </div>
-      </Section>
-    </div>
+      </div>
+    </Section>
   )
 }

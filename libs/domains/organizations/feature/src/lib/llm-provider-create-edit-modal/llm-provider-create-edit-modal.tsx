@@ -24,12 +24,14 @@ export interface LlmProviderCreateEditModalProps {
 }
 
 const PROVIDER_OPTIONS = [
-  { label: 'Anthropic Claude', value: LlmProviderType.CLAUDE },
   {
-    label: 'AWS Bedrock',
-    value: LlmProviderType.BEDROCK,
-    description: 'Coming soon',
-    isDisabled: true,
+    label: (
+      <span className="flex items-center gap-2">
+        <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-5 w-5" />
+        Anthropic Claude
+      </span>
+    ),
+    value: LlmProviderType.CLAUDE,
   },
 ]
 
@@ -130,7 +132,13 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
             name="type"
             control={methods.control}
             render={({ field }) => (
-              <InputSelect label="Provider" value={field.value} options={PROVIDER_OPTIONS} onChange={field.onChange} />
+              <InputSelect
+                label="Provider"
+                value={field.value}
+                options={PROVIDER_OPTIONS}
+                disabled
+                onChange={field.onChange}
+              />
             )}
           />
           <Controller
@@ -152,7 +160,6 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
                 onChange={field.onChange}
                 error={error?.message}
                 type="password"
-                hasShowPasswordButton
                 hint={isEdit ? 'Leave blank to keep the current token.' : 'Encrypted and never shown again.'}
               />
             )}

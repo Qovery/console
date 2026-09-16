@@ -3,14 +3,22 @@ import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings
 import { AgenticWorkflowAiConfigurationSettings } from './agentic-workflow-ai-configuration-settings'
 
 describe('AgenticWorkflowAiConfigurationSettings', () => {
-  it('renders the write-only API key, model settings, and instructions', () => {
+  it('renders the token, model settings, and instructions', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness>
-        {(form) => <AgenticWorkflowAiConfigurationSettings environmentId="environment-1" form={form} />}
+        {(form) => (
+          <AgenticWorkflowAiConfigurationSettings
+            environmentId="environment-1"
+            form={form}
+            llmProviders={[]}
+            organizationId="organization-1"
+          />
+        )}
       </AgenticWorkflowSettingsFormHarness>
     )
 
-    expect(screen.getByLabelText('API key')).toHaveValue('')
+    expect(screen.getByLabelText('Token')).toBeInTheDocument()
+    expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Instructions' })).not.toBeInTheDocument()
     const instructions = screen.getByRole('textbox', { name: 'Instructions' })
@@ -21,7 +29,14 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
   it('does not show an instructions error before the field is modified', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness values={{ agentPrompt: '' }}>
-        {(form) => <AgenticWorkflowAiConfigurationSettings environmentId="environment-1" form={form} />}
+        {(form) => (
+          <AgenticWorkflowAiConfigurationSettings
+            environmentId="environment-1"
+            form={form}
+            llmProviders={[]}
+            organizationId="organization-1"
+          />
+        )}
       </AgenticWorkflowSettingsFormHarness>
     )
 

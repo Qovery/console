@@ -16,11 +16,16 @@ jest.mock('@tanstack/react-router', () => ({
 
 describe('LlmProviderCreateEditModal', () => {
   beforeEach(() => {
+    jest.useFakeTimers()
     jest.clearAllMocks()
     createLlmProvider.mockResolvedValue({ id: 'provider-1' })
     editLlmProvider.mockResolvedValue({ id: 'provider-1' })
     useCreateLlmProviderMock.mockReturnValue({ mutateAsync: createLlmProvider, isLoading: false })
     useEditLlmProviderMock.mockReturnValue({ mutateAsync: editLlmProvider, isLoading: false })
+  })
+
+  afterEach(() => {
+    jest.useRealTimers()
   })
 
   it('should create a personal Claude token', async () => {
@@ -76,7 +81,9 @@ describe('LlmProviderCreateEditModal', () => {
 
     expect(screen.queryByLabelText('Scope')).not.toBeInTheDocument()
     expect(screen.getByText('Leave blank to keep the current token.')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+    const saveButton = screen.getByRole('button', { name: 'Save token' })
+    await waitFor(() => expect(saveButton).toBeEnabled())
+    await userEvent.click(saveButton)
 
     await waitFor(() =>
       expect(editLlmProvider).toHaveBeenCalledWith({
@@ -93,12 +100,12 @@ describe('LlmProviderCreateEditModal', () => {
     )
   })
 
-  it('should expose Bedrock as unavailable', async () => {
-    const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+  it('should select Claude by default and keep the provider locked', () => {
+    const { container } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
 
-    await userEvent.click(screen.getByLabelText('Provider'))
-
-    expect(screen.getByRole('option', { name: /AWS Bedrock/ })).toHaveAttribute('aria-disabled', 'true')
-    expect(screen.getByText('Coming soon')).toBeInTheDocument()
+    expect(container.querySelector('img[src="/assets/ai-tools/claude.svg"]')).toBeInTheDocument()
+    expect(screen.getByLabelText('Provider')).toBeDisabled()
+    expect(screen.getByText('Anthropic Claude')).toBeInTheDocument()
+    expect(screen.queryByText('AWS Bedrock')).not.toBeInTheDocument()
   })
 })

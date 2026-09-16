@@ -57,12 +57,18 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   GitBranchSettings: () => <div>Git branch</div>,
   GitProviderSetting: () => <div>Git provider</div>,
   GitRepositorySetting: () => <div>Git repository</div>,
+  LlmProviderSetting: ({ onChange }: { onChange: (value: string) => void }) => (
+    <button type="button" onClick={() => onChange('provider-1')}>
+      Select stored token
+    </button>
+  ),
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
   McpServerSetting: () => <div>Organization MCP connectors</div>,
   useCreateQoveryMcpServer: () => ({
     isLoading: mockCreateQoveryMcpServerLoading,
     mutateAsync: mockCreateQoveryMcpServer,
   }),
+  useLlmProviders: () => ({ data: [], isLoading: false }),
   useMcpServers: () => ({
     data: mockMcpServers,
     isError: mockMcpServersError,
@@ -133,7 +139,7 @@ function renderConfiguration({
 const validSeed: Partial<AgenticWorkflowFormData> = {
   name: 'review-agent',
   agentPrompt: 'Review incoming payloads.',
-  modelApiKey: 'sk-ant-test',
+  llmProviderId: 'provider-1',
   automations: [{ id: 'automation-1', triggers: [{ id: 'webhook-1', type: 'webhook' }], outputs: [] }],
 }
 
@@ -294,7 +300,8 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
-    expect(screen.getByLabelText('API key')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Select stored token' })).toBeInTheDocument()
+    expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
@@ -639,7 +646,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.type(screen.getByRole('textbox', { name: /Instructions/ }), 'Review incoming payloads.')
 
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
-    await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
+    await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     expect(createButton).toBeEnabled()
@@ -731,7 +738,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
     await userEvent.type(screen.getByRole('textbox', { name: 'Instructions' }), 'Review incoming payloads.')
     await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
-    await userEvent.type(screen.getByLabelText('API key'), 'sk-ant-test')
+    await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
     await userEvent.click(screen.getByRole('button', { name: 'Add' }))

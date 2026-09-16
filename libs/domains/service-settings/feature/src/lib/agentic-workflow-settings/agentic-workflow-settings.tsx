@@ -3,9 +3,10 @@ import {
   AgenticWorkflowExecutionMode,
   type AgenticWorkflowRequest,
   type GitTokenResponse,
+  LlmProviderType,
 } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
-import { useGitTokens } from '@qovery/domains/organizations/feature'
+import { useGitTokens, useLlmProviders } from '@qovery/domains/organizations/feature'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   type AgenticWorkflowAutomation,
@@ -34,7 +35,7 @@ export interface AgenticWorkflowSettingsFormValues {
   description: string
   enabled: boolean
   executionMode: AgenticWorkflowExecutionMode
-  modelApiKey: string
+  llmProviderId: string
   modelSettings: string
   agentPrompt: string
   repositories: AgenticWorkflowGitRepository[]
@@ -127,6 +128,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
     isLoading: contextServicesLoading,
   } = useAgenticWorkflowContextServices(environmentId)
   const { mutate: editService, isLoading } = useEditService({ organizationId, projectId, environmentId })
+  const { data: llmProviders = [] } = useLlmProviders({ organizationId, enabled: page === 'ai-configuration' })
   const content = PAGE_CONTENT[page]
   useDocumentTitle(`${content.title} - Service settings`)
   const workflow = service && isAgenticWorkflow(service) ? service : undefined
@@ -142,7 +144,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           description: workflow.description,
           enabled: workflow.enabled,
           executionMode: workflow.execution_mode ?? AgenticWorkflowExecutionMode.IN_PLACE,
-          modelApiKey: '',
+          llmProviderId: workflow.model.llm_provider_id ?? '',
           modelSettings: workflow.model.settings,
           agentPrompt: workflow.agent_prompt,
           repositories: workflow.project_repositories.map(({ url, branch, git_token_id }) => {
@@ -182,13 +184,15 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const pageValid =
     Boolean(values.name.trim()) &&
     (page !== 'ai-configuration' ||
-      (Boolean(values.agentPrompt.trim()) && agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
+      (Boolean(values.llmProviderId) &&
+        Boolean(values.agentPrompt.trim()) &&
+        agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
     (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
   const submit = form.handleSubmit((data) => {
     const model: AgenticWorkflowRequest['model'] = {
       type: workflow.model.type,
       settings: data.modelSettings,
-      ...(data.modelApiKey.trim() ? { api_key: data.modelApiKey.trim() } : {}),
+      llm_provider_id: data.llmProviderId,
     }
     const selectedContextServices = contextServices.filter(({ id }) => data.contextServiceIds.includes(id))
 
@@ -241,7 +245,14 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       <form onSubmit={submit} className="max-w-content-with-navigation-left space-y-4">
         {page === 'general' ? <AgenticWorkflowGeneralSettings form={form} /> : null}
         {page === 'ai-configuration' ? (
-          <AgenticWorkflowAiConfigurationSettings environmentId={environmentId} form={form} />
+          <AgenticWorkflowAiConfigurationSettings
+            environmentId={environmentId}
+            form={form}
+            llmProviders={llmProviders.filter(
+              ({ type, has_credential }) => type === LlmProviderType.CLAUDE && has_credential
+            )}
+            organizationId={organizationId}
+          />
         ) : null}
         {page === 'connections' ? (
           <AgenticWorkflowConnectionsSettings
