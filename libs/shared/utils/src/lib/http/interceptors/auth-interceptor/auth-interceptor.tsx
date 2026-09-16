@@ -1,6 +1,7 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { type AxiosInstance, type AxiosResponse } from 'axios'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
+import { SESSION_EXPIRED_REASON, isLoginPath } from '@qovery/shared/routes'
 import { NODE_ENV } from '@qovery/shared/util-node-env'
 
 export interface SerializedError {
@@ -11,27 +12,70 @@ export interface SerializedError {
   response?: AxiosResponse
 }
 
+export interface AuthInterceptorOptions {
+  navigateToLogin?: () => void
+  clearSession?: () => Promise<void>
+}
+
 const E2E_AUTH_TOKEN_STORAGE_KEY = 'qovery-e2e-auth-token'
 
-export function buildLoginRedirectUrl(pathname: string, search: string, hash: string) {
+export function buildLoginRedirectUrl(pathname: string, search: string, hash: string, reason?: string) {
   const redirect = `${pathname}${search}${hash}`
   const searchParams = new URLSearchParams({ redirect })
+
+  if (reason) {
+    searchParams.set('reason', reason)
+  }
 
   return `/login?${searchParams.toString()}`
 }
 
 function redirectToLogin() {
-  if (window.location.pathname.startsWith('/login')) return
-
-  window.location.assign(buildLoginRedirectUrl(window.location.pathname, window.location.search, window.location.hash))
+  window.location.assign(
+    buildLoginRedirectUrl(
+      window.location.pathname,
+      window.location.search,
+      window.location.hash,
+      SESSION_EXPIRED_REASON
+    )
+  )
 }
 
-export function useAuthInterceptor(
-  axiosInstance: AxiosInstance,
-  apiUrl: string,
-  navigateToLogin: () => void = redirectToLogin
-) {
-  const { getAccessTokenSilently } = useAuth0()
+// A dead session produces a burst of failures — two axios instances, three React Query retries per
+// query — and each one would otherwise clear the session and reload the page on its own.
+let pendingAuthFailure: Promise<void> | null = null
+
+function handleAuthFailure(clearSession: (() => Promise<void>) | undefined, navigateToLogin: () => void) {
+  // Bailing out here rather than inside navigateToLogin also protects the Auth0 callback, where a
+  // token request can reject while the session is still being created.
+  if (isLoginPath(window.location.pathname)) return Promise.resolve()
+
+  pendingAuthFailure ??= Promise.resolve()
+    .then(() => clearSession?.())
+    .catch(() => undefined)
+    .then(() => {
+      navigateToLogin()
+    })
+    .finally(() => {
+      pendingAuthFailure = null
+    })
+
+  return pendingAuthFailure
+}
+
+export function useAuthInterceptor(axiosInstance: AxiosInstance, apiUrl: string, options: AuthInterceptorOptions = {}) {
+  const { getAccessTokenSilently, logout } = useAuth0()
+  // Destructured out of `options` so callers that pass no options don't re-register on every render
+  const { navigateToLogin = redirectToLogin, clearSession } = options
+
+  const clearAuth0Session = useCallback(async () => {
+    if (clearSession) {
+      await clearSession()
+      return
+    }
+    // Wipes the cached user Auth0 keeps in localStorage, without a round-trip to the IdP
+    await logout({ openUrl: false })
+  }, [clearSession, logout])
 
   useEffect(() => {
     const requestInterceptor = axiosInstance.interceptors.request.use(async (config) => {
@@ -44,7 +88,9 @@ export function useAuthInterceptor(
       try {
         token = token || (await getAccessTokenSilently())
       } catch (e) {
-        navigateToLogin()
+        // Auth0 refusing to mint a token is definitive, so the session goes. Awaiting matters: a
+        // reload that outruns the teardown restores the dead session and the loop survives.
+        await handleAuthFailure(clearAuth0Session, navigateToLogin)
         return Promise.reject(e)
       }
 
@@ -67,7 +113,10 @@ export function useAuthInterceptor(
         }
 
         if (error.response?.status === 401) {
-          navigateToLogin()
+          // No session teardown here: getAccessTokenSilently already refreshes on expiry, so a 401
+          // is as likely to be one endpoint using 401 for 403 as it is a dead credential. The
+          // session-expired reason on the login URL is what keeps this from looping.
+          void handleAuthFailure(undefined, navigateToLogin)
         }
 
         // we reformat the error output to improve the dev experience
@@ -93,6 +142,7 @@ export function useAuthInterceptor(
     apiUrl,
     getAccessTokenSilently,
     navigateToLogin,
+    clearAuth0Session,
   ])
 
   const removeBaseUrl = (url = '') => {
