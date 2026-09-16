@@ -1,7 +1,7 @@
+import { act } from '@testing-library/react'
 import { type LlmProviderResponse, LlmProviderScope, LlmProviderType } from 'qovery-typescript-axios'
 import { type ReactElement } from 'react'
 import selectEvent from 'react-select-event'
-import { act } from '@testing-library/react'
 import * as sharedUi from '@qovery/shared/ui'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { type LlmProviderCreateEditModalProps } from '../llm-provider-create-edit-modal/llm-provider-create-edit-modal'

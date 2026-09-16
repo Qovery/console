@@ -24,8 +24,9 @@ describe('QoveryServiceContextModal', () => {
     )
 
     await userEvent.click(screen.getByRole('checkbox', { name: 'api' }))
+    expect(screen.getByRole('button', { name: 'Unselect all' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('checkbox', { name: 'postgres' }))
-    expect(screen.queryByRole('button', { name: 'Select all' })).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Unselect all' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
 
     expect(onSave).toHaveBeenCalledWith(services)
@@ -43,7 +44,7 @@ describe('QoveryServiceContextModal', () => {
     )
 
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeChecked()
-    expect(screen.getByRole('button', { name: 'Select all' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Unselect all' })).toBeInTheDocument()
   })
 
   it('keeps Select all available when only a stale service ID is selected', () => {
@@ -60,12 +61,16 @@ describe('QoveryServiceContextModal', () => {
     expect(screen.getByRole('button', { name: 'Select all' })).toBeInTheDocument()
   })
 
-  it('removes the hidden Select all action from keyboard interaction', () => {
-    renderWithProviders(
+  it('unselects all services when at least one service is selected', async () => {
+    const { userEvent } = renderWithProviders(
       <QoveryServiceContextModal isLoading={false} services={services} value={services} onSave={jest.fn()} />
     )
 
-    expect(screen.getByText('Select all').closest('button')).toBeDisabled()
+    await userEvent.click(screen.getByRole('button', { name: 'Unselect all' }))
+
+    expect(screen.getByRole('checkbox', { name: 'api' })).not.toBeChecked()
+    expect(screen.getByRole('checkbox', { name: 'postgres' })).not.toBeChecked()
+    expect(screen.getByRole('button', { name: 'Select all' })).toBeInTheDocument()
   })
 
   it('prevents closing while services are being saved', async () => {
@@ -84,7 +89,7 @@ describe('QoveryServiceContextModal', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
 
     expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
-    expect(screen.getByRole('button', { name: 'Select all' })).toBeDisabled()
+    expect(screen.getByRole('button', { name: 'Unselect all' })).toBeDisabled()
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeDisabled()
     expect(screen.getByRole('checkbox', { name: 'postgres' })).toBeDisabled()
     expect(screen.queryByRole('button', { name: 'Close' })).not.toBeInTheDocument()

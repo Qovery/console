@@ -150,9 +150,7 @@ function LlmProviderRow({ organizationId, llmProvider, currentUserSub }: LlmProv
   const { openModalConfirmation } = useModalConfirmation()
   const { mutateAsync: deleteLlmProvider } = useDeleteLlmProvider()
   const owner =
-    llmProvider.scope === LlmProviderScope.USER
-      ? `Owner: ${llmProvider.owner_name ?? 'Unknown member'}`
-      : undefined
+    llmProvider.scope === LlmProviderScope.USER ? `Owner: ${llmProvider.owner_name ?? 'Unknown member'}` : undefined
   const canManage =
     llmProvider.scope === LlmProviderScope.ORGANIZATION ||
     Boolean(currentUserSub && llmProvider.owner_user_sub === currentUserSub)
