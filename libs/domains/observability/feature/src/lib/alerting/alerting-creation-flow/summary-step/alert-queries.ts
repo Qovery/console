@@ -122,10 +122,20 @@ and on (namespace, name)
 )`
 
 const CERTIFICATE_NOT_READY = (serviceId: string) => `
-kube_certmanager_certificate_condition{${CERTIFICATE_MATCHER(serviceId)}, condition="Ready"} == 0`
+(
+  kube_certmanager_certificate_condition{${CERTIFICATE_MATCHER(serviceId)}, condition="Ready"} == 0
+)
+and on (namespace, name)
+(
+  kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 0
+)
+and on (namespace, name)
+(
+  time() - kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 3600
+)`
 
 export const QUERY_CERTIFICATE_RENEWAL_FAILED = (serviceId: string) => `
-(
+count(
   ${CERTIFICATE_RENEWAL_OVERDUE(serviceId)}
   or on (namespace, name)
   ${CERTIFICATE_ISSUING_STUCK(serviceId)}

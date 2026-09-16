@@ -1,4 +1,5 @@
 import { useNavigate, useParams, useRouterState } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type AlertTargetType } from 'qovery-typescript-axios'
 import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
@@ -9,6 +10,7 @@ import { useCreateAlertRule } from '../../../hooks/use-create-alert-rule/use-cre
 import { SeverityIndicator } from '../../severity-indicator/severity-indicator'
 import { useAlertingCreationFlowContext } from '../alerting-creation-flow'
 import { type AlertConfiguration } from '../alerting-creation-flow.types'
+import { CONTAINER_METRICS, HTTP_METRICS, canCreateCertificateRenewalAlert } from '../metric-availability'
 import {
   QUERY_CERTIFICATE_RENEWAL_FAILED,
   QUERY_CPU,
@@ -123,6 +125,10 @@ export function SummaryStep() {
   const { organizationId = '', serviceId = '' } = useParams({ strict: false })
 
   const { data: service } = useService({ serviceId })
+  const certificateEnabled = canCreateCertificateRenewalAlert(
+    useFeatureFlagEnabled('certificate-renewal-alert'),
+    service
+  )
   const { data: environment } = useEnvironment({ environmentId: service?.environment.id })
   const { mutateAsync: createAlertRule } = useCreateAlertRule({ organizationId })
 
@@ -161,12 +167,11 @@ export function SummaryStep() {
   const handleConfirm = async () => {
     const activeAlerts = alerts.filter((alert) => !alert.skipped)
 
-    const hasContainerMetric = activeAlerts.some((alert) =>
-      ['cpu', 'memory', 'missing_instance', 'instance_restart'].includes(alert.tag)
-    )
-    const hasHttpMetric = activeAlerts.some((alert) => ['http_error', 'http_latency'].includes(alert.tag))
+    const hasContainerMetric = activeAlerts.some((alert) => CONTAINER_METRICS.includes(alert.tag))
+    const hasHttpMetric = activeAlerts.some((alert) => HTTP_METRICS.includes(alert.tag))
 
     if (!service || !environment) return
+    if (!certificateEnabled && activeAlerts.some((alert) => alert.tag === 'certificate_renewal_failed')) return
     if (hasContainerMetric && !containerName) return
     if (hasHttpMetric && !(ingressName || httpRouteName)) return
 
@@ -237,6 +242,8 @@ export function SummaryStep() {
 
   const activeAlerts = activeAlertsWithIndex.map(({ alert }) => alert)
   const skippedAlerts = skippedAlertsWithIndex.map(({ alert }) => alert)
+  const hasUnavailableCertificateAlert =
+    !certificateEnabled && activeAlerts.some((alert) => alert.tag === 'certificate_renewal_failed')
 
   return (
     <FunnelFlowBody customContentWidth="max-w-[52rem]">
@@ -302,11 +309,23 @@ export function SummaryStep() {
           </div>
         )}
 
+        {hasUnavailableCertificateAlert && (
+          <p role="alert" className="text-sm text-negative">
+            Certificate renewal alerts are currently unavailable for this service. Exclude the certificate renewal alert
+            from this summary to create the remaining alerts.
+          </p>
+        )}
+
         <div className="flex w-full justify-between gap-2">
           <Button type="button" variant="plain" color="neutral" size="lg" onClick={handlePrevious}>
             Previous
           </Button>
-          <Button size="lg" onClick={handleConfirm} disabled={activeAlerts.length === 0} loading={isCreatingAlertRule}>
+          <Button
+            size="lg"
+            onClick={handleConfirm}
+            disabled={activeAlerts.length === 0 || hasUnavailableCertificateAlert}
+            loading={isCreatingAlertRule}
+          >
             Confirm and create
           </Button>
         </div>

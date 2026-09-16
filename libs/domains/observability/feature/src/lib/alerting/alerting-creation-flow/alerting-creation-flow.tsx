@@ -1,4 +1,5 @@
 import { subHours } from 'date-fns'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type AlertTargetType, type Environment } from 'qovery-typescript-axios'
 import { createContext, useContext, useMemo, useState } from 'react'
 import { match } from 'ts-pattern'
@@ -12,6 +13,7 @@ import { useHttpRouteName } from '../../hooks/use-http-route-name/use-http-route
 import { useIngressName } from '../../hooks/use-ingress-name/use-ingress-name'
 import { generateConditionDescription } from '../../util-alerting/generate-condition-description'
 import { type AlertConfiguration, type MetricCategory } from './alerting-creation-flow.types'
+import { CONTAINER_METRICS, HTTP_METRICS, canCreateCertificateRenewalAlert } from './metric-availability'
 import { MetricConfigurationStep } from './metric-configuration-step/metric-configuration-step'
 import {
   QUERY_CERTIFICATE_RENEWAL_FAILED,
@@ -34,9 +36,6 @@ const METRIC_LABELS: Record<MetricCategory, string> = {
   hpa_limit: 'Auto-scaling limit',
   certificate_renewal_failed: 'Certificate renewal failed',
 }
-
-const CONTAINER_METRICS: MetricCategory[] = ['cpu', 'memory', 'missing_instance', 'instance_restart']
-const HTTP_METRICS: MetricCategory[] = ['http_error', 'http_latency']
 
 interface AlertingCreationFlowContextInterface {
   organizationId: string
@@ -89,6 +88,10 @@ export function AlertingCreationFlow({
   onClose,
   onComplete,
 }: AlertingCreationFlowProps) {
+  const certificateEnabled = canCreateCertificateRenewalAlert(
+    useFeatureFlagEnabled('certificate-renewal-alert'),
+    service
+  )
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const [alerts, setAlerts] = useState<AlertConfiguration[]>(initialAlerts ?? [])
   const [isLoading, setIsLoading] = useState(false)
@@ -181,7 +184,14 @@ export function AlertingCreationFlow({
 
     if (hasContainerMetric && !containerName) return
     if (hasHttpMetric && !(ingressName || httpRouteName)) return
-    if (hasHpaMetric && !hpaName) return
+    if (
+      hasHpaMetric &&
+      !hpaName &&
+      (!isEditMode || activeAlerts.some((alert) => alert.tag === 'hpa_limit' && !alert.condition.promql))
+    )
+      return
+    if (!isEditMode && !certificateEnabled && activeAlerts.some((alert) => alert.tag === 'certificate_renewal_failed'))
+      return
 
     try {
       setIsLoading(true)
