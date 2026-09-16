@@ -1,10 +1,15 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import posthog from 'posthog-js'
-import { APIVariableScopeEnum, type McpServerResponse } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, LlmProviderType, type McpServerResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
-import { useCreateQoveryMcpServer, useMcpServers } from '@qovery/domains/organizations/feature'
+import {
+  LlmProviderSetting,
+  useCreateQoveryMcpServer,
+  useLlmProviders,
+  useMcpServers,
+} from '@qovery/domains/organizations/feature'
 import { VariableRow, useImportVariables } from '@qovery/domains/variables/feature'
 import { IconEnum } from '@qovery/shared/enums'
 import { type VariableData } from '@qovery/shared/interfaces'
@@ -15,6 +20,7 @@ import {
   DropdownMenu,
   Heading,
   Icon,
+  InputSelect,
   InputText,
   InputTextArea,
   Modal,
@@ -282,6 +288,7 @@ export function AgenticWorkflowConfiguration() {
     isLoading: areMcpServersLoading,
     refetch: refetchMcpServers,
   } = useMcpServers({ organizationId })
+  const { data: llmProviders = [], isLoading: areLlmProvidersLoading } = useLlmProviders({ organizationId })
   const { data: contextServices = [], isLoading: areContextServicesLoading } =
     useAgenticWorkflowContextServices(environmentId)
   const navigate = useNavigate()
@@ -314,7 +321,6 @@ export function AgenticWorkflowConfiguration() {
   const [dockerModalOpen, setDockerModalOpen] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showValidationErrors, setShowValidationErrors] = useState(false)
-  const modelApiKeyInputRef = useRef<HTMLInputElement>(null)
   const headerRef = useRef<AgenticWorkflowHeaderHandle>(null)
   const promptEditorRef = useRef<AgenticWorkflowPromptEditorHandle>(null)
   const createdServiceIdRef = useRef<string>()
@@ -329,8 +335,12 @@ export function AgenticWorkflowConfiguration() {
   const variablesValid = areVariablesValid(variableValues)
   const showNameError = (showValidationErrors || Boolean(dirtyFields.name)) && !values.name.trim()
   const showPromptError = (showValidationErrors || Boolean(dirtyFields.agentPrompt)) && !values.agentPrompt.trim()
-  const showModelApiKeyError = (showValidationErrors || Boolean(dirtyFields.modelApiKey)) && !values.modelApiKey.trim()
-  const providerConfigurationInvalid = !values.modelApiKey.trim() || Boolean(modelSettingsJsonError)
+  const hasModelCredential = Boolean(values.llmProviderId)
+  const showLlmProviderError = (showValidationErrors || Boolean(dirtyFields.llmProviderId)) && !hasModelCredential
+  const providerConfigurationInvalid = !hasModelCredential || Boolean(modelSettingsJsonError)
+  const availableLlmProviders = llmProviders.filter(
+    ({ type, has_credential }) => type === LlmProviderType.CLAUDE && has_credential
+  )
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
     resources: false,
@@ -506,9 +516,6 @@ export function AgenticWorkflowConfiguration() {
 
     if (providerConfigurationInvalid) {
       setProviderModalOpen(true)
-      window.requestAnimationFrame(() => {
-        window.requestAnimationFrame(() => modelApiKeyInputRef.current?.focus())
-      })
       return false
     }
 
@@ -925,11 +932,11 @@ export function AgenticWorkflowConfiguration() {
                   <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-4 w-4" />
                   Anthropic
                 </Button>
-                {!values.modelApiKey.trim() ? (
+                {!hasModelCredential ? (
                   <span
                     className={`text-xs ${showValidationErrors ? 'font-medium text-negative' : 'text-neutral-subtle'}`}
                   >
-                    API key required
+                    Token required
                   </span>
                 ) : null}
               </ConfigurationRow>
@@ -1045,7 +1052,6 @@ export function AgenticWorkflowConfiguration() {
             <section aria-label="Instructions" className="border-t border-neutral pt-6">
               <AgenticWorkflowPromptEditor
                 ref={promptEditorRef}
-                environmentId={environmentId}
                 prompt={values.agentPrompt}
                 promptError={showPromptError ? 'Please describe what the agent task should do.' : undefined}
                 variableKeys={variableValues.map((variable) => variable.variable ?? '').filter(Boolean)}
@@ -1072,16 +1078,14 @@ export function AgenticWorkflowConfiguration() {
             setOpen={setProviderModalOpen}
           >
             <Controller
-              name="modelApiKey"
+              name="llmProviderId"
               control={form.control}
               render={({ field }) => (
-                <InputText
-                  ref={modelApiKeyInputRef}
-                  name={field.name}
-                  label="API key"
-                  type="password"
+                <LlmProviderSetting
+                  llmProviders={availableLlmProviders}
+                  isLoading={areLlmProvidersLoading}
+                  error={showLlmProviderError ? 'Please select a token.' : undefined}
                   value={field.value}
-                  error={showModelApiKeyError ? 'Please enter an API key.' : undefined}
                   onChange={field.onChange}
                 />
               )}

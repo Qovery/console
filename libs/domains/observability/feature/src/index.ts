@@ -22,3 +22,7 @@ export * from './lib/hooks/use-ingress-name/use-ingress-name'
 export * from './lib/hooks/use-http-route-name/use-http-route-name'
 export * from './lib/hooks/use-hpa-name/use-hpa-name'
 export * from './lib/hooks/use-alerts/use-alerts'
+export {
+  canCreateCertificateRenewalAlert,
+  getSelectedAlertMetrics,
+} from './lib/alerting/alerting-creation-flow/metric-availability'

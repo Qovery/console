@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { useState } from 'react'
 import { Button, Checkbox, Heading, Icon, Section } from '@qovery/shared/ui'
 import { type AgenticWorkflowContextService } from '../../agentic-workflow-context'
@@ -19,7 +18,7 @@ export function QoveryServiceContextModal({
   const [selectedIds, setSelectedIds] = useState(value.map(({ id }) => id))
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState<string>()
-  const hideSelectAll = isLoading || services.every(({ id }) => selectedIds.includes(id))
+  const hasSelectedService = services.some(({ id }) => selectedIds.includes(id))
 
   return (
     <Section className="gap-5 p-5">
@@ -39,12 +38,10 @@ export function QoveryServiceContextModal({
             variant="plain"
             color="neutral"
             size="xs"
-            aria-hidden={hideSelectAll}
-            disabled={hideSelectAll || isSaving}
-            className={clsx(hideSelectAll && 'pointer-events-none opacity-0')}
-            onClick={() => setSelectedIds(services.map(({ id }) => id))}
+            disabled={isLoading || isSaving}
+            onClick={() => setSelectedIds(hasSelectedService ? [] : services.map(({ id }) => id))}
           >
-            Select all
+            {hasSelectedService ? 'Unselect all' : 'Select all'}
           </Button>
         </div>
         <div className="flex max-h-72 flex-col gap-2 overflow-y-auto">

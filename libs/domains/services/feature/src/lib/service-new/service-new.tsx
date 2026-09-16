@@ -386,7 +386,7 @@ export function ServiceNew({
                     size="sm"
                     className="h-4 border-transparent bg-surface-brand-solid px-1 pt-[1px] text-[8px] font-semibold text-neutralInvert"
                   >
-                    BETA
+                    NEW
                   </Badge>
                 </div>
                 <p className="text-sm leading-5 text-neutral-subtle">

@@ -92,3 +92,53 @@ and on(namespace, horizontalpodautoscaler)
     horizontalpodautoscaler="${hpaName}"
   }
 )`
+
+const CERTIFICATE_MATCHER = (serviceId: string) => `qovery_com_associated_service_id="${serviceId}"`
+
+const CERTIFICATE_RENEWAL_OVERDUE = (serviceId: string) => `
+(
+  kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 0
+)
+and on (namespace, name)
+(
+  time() - kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 3600
+)
+and on (namespace, name)
+(
+  kube_certmanager_certificate_expiration_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} - time() > 0
+)`
+
+const CERTIFICATE_ISSUING_STUCK = (serviceId: string) => `
+(
+  kube_certmanager_certificate_condition{${CERTIFICATE_MATCHER(serviceId)}, condition="Issuing"} == 1
+)
+and on (namespace, name)
+(
+  kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 0
+)
+and on (namespace, name)
+(
+  time() - kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 3600
+)`
+
+const CERTIFICATE_NOT_READY = (serviceId: string) => `
+(
+  kube_certmanager_certificate_condition{${CERTIFICATE_MATCHER(serviceId)}, condition="Ready"} == 0
+)
+and on (namespace, name)
+(
+  kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 0
+)
+and on (namespace, name)
+(
+  time() - kube_certmanager_certificate_renewal_timestamp_seconds{${CERTIFICATE_MATCHER(serviceId)}} > 3600
+)`
+
+export const QUERY_CERTIFICATE_RENEWAL_FAILED = (serviceId: string) => `
+count(
+  ${CERTIFICATE_RENEWAL_OVERDUE(serviceId)}
+  or on (namespace, name)
+  ${CERTIFICATE_ISSUING_STUCK(serviceId)}
+  or on (namespace, name)
+  ${CERTIFICATE_NOT_READY(serviceId)}
+)`

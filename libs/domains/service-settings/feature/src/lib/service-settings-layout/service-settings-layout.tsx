@@ -114,6 +114,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
   const connectionsLink = linkItem('Connections', toSettingsPath(pathSettings, '/connections'), 'plug')
   const automationsLink = linkItem('Automations', toSettingsPath(pathSettings, '/automations'), 'stopwatch')
   const governanceLink = linkItem('Governance', toSettingsPath(pathSettings, '/governance'), 'shield-halved')
+  const outputsLink = linkItem('Outputs', toSettingsPath(pathSettings, '/outputs'), 'wave-pulse')
 
   const linksSettings: SidebarSettingsItem[] = isAgenticWorkflow(service)
     ? [
@@ -121,6 +122,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
         aiConfigurationLink,
         connectionsLink,
         automationsLink,
+        outputsLink,
         governanceLink,
         advancedSettingsLink,
         dangerZoneLink,

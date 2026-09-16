@@ -1,6 +1,7 @@
+import { type LlmProviderResponse } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
+import { LlmProviderSetting } from '@qovery/domains/organizations/feature'
 import { AgenticWorkflowCodeEditorField, AgenticWorkflowPromptEditor } from '@qovery/domains/services/feature'
-import { InputText } from '@qovery/shared/ui'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
@@ -14,11 +15,11 @@ function getJsonError(value: string) {
 }
 
 export function AgenticWorkflowAiConfigurationSettings({
-  environmentId,
   form,
+  llmProviders,
 }: {
-  environmentId: string
   form: UseFormReturn<AgenticWorkflowSettingsFormValues>
+  llmProviders: LlmProviderResponse[]
 }) {
   return (
     <>
@@ -27,10 +28,10 @@ export function AgenticWorkflowAiConfigurationSettings({
         description="Configure the Anthropic credentials and cloud settings."
       >
         <Controller
-          name="modelApiKey"
+          name="llmProviderId"
           control={form.control}
           render={({ field }) => (
-            <InputText {...field} type="password" label="API key" hint="Leave empty to keep the current API key." />
+            <LlmProviderSetting llmProviders={llmProviders} value={field.value} onChange={field.onChange} />
           )}
         />
         <Controller
@@ -55,7 +56,6 @@ export function AgenticWorkflowAiConfigurationSettings({
           render={({ field, fieldState }) => (
             <AgenticWorkflowPromptEditor
               compact
-              environmentId={environmentId}
               prompt={field.value}
               promptError={fieldState.isDirty && !field.value.trim() ? 'Please enter instructions.' : undefined}
               variableKeys={[]}

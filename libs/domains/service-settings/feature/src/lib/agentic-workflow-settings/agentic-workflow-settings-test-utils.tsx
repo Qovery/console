@@ -8,7 +8,7 @@ export const SETTINGS_FORM_VALUES: AgenticWorkflowSettingsFormValues = {
   description: 'Investigates production incidents',
   enabled: true,
   executionMode: AgenticWorkflowExecutionMode.IN_PLACE,
-  modelApiKey: '',
+  llmProviderId: '',
   modelSettings: '{"provider":"anthropic"}',
   agentPrompt: 'Investigate the alert.',
   repositories: [],

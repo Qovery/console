@@ -101,7 +101,7 @@ export interface AgenticWorkflowFormData {
   mcpJson: string
   gitRepositories: AgenticWorkflowGitRepository[]
   contextServices: AgenticWorkflowContextService[]
-  modelApiKey: string
+  llmProviderId: string
   modelSettingsJson: string
   whitelistHosts: string
   dockerFragment: string
@@ -141,7 +141,7 @@ export function getAgenticWorkflowDefaults(): AgenticWorkflowFormData {
     mcpJson: '',
     gitRepositories: [],
     contextServices: [],
-    modelApiKey: '',
+    llmProviderId: '',
     modelSettingsJson: DEFAULT_MODEL_SETTINGS,
     whitelistHosts: '*',
     dockerFragment: '',

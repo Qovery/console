@@ -41,6 +41,7 @@ const METRIC_TYPE_OPTIONS: Record<MetricCategory, { label: string; value: AlertR
   missing_instance: COUNT_VALUES_OPTIONS,
   instance_restart: VALUES_OPTIONS,
   hpa_limit: COUNT_VALUES_OPTIONS,
+  certificate_renewal_failed: VALUES_OPTIONS,
 }
 
 const OPERATOR_OPTIONS: Value[] = Object.values(AlertRuleConditionOperator).map((operator) => ({
@@ -138,6 +139,15 @@ const METRIC_FIELD_CONFIG: Record<MetricCategory, MetricFieldConfig> = {
       operator: 'NONE',
       threshold: 1,
       duration: 'PT5M',
+    },
+  },
+  certificate_renewal_failed: {
+    hiddenFields: ['function', 'operator', 'threshold'],
+    defaults: {
+      function: 'MAX',
+      operator: 'ABOVE',
+      threshold: 0,
+      duration: 'PT15M',
     },
   },
 }
@@ -241,7 +251,7 @@ export function MetricConfigurationStep({
       },
       for_duration: defaultDuration,
       name: metricCategory ? `${metricCategory.replace(/_/g, ' ').toUpperCase()} alert` : '',
-      severity: 'MEDIUM',
+      severity: metricCategory === 'certificate_renewal_failed' ? 'HIGH' : 'MEDIUM',
       alert_receiver_ids: [],
       presentation: { summary: '' },
     }

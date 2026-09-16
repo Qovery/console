@@ -171,8 +171,9 @@ describe('ServiceNew', () => {
       <ServiceNew organizationId="org-1" projectId="project-1" environmentId="env-1" availableTemplates={[]} />
     )
 
-    expect(screen.getByRole('heading', { name: 'Agent use cases' })).toBeInTheDocument()
-    expect(screen.getByText('BETA')).toBeInTheDocument()
+    const agentUseCasesHeading = screen.getByRole('heading', { name: 'Agent use cases' })
+    expect(agentUseCasesHeading).toBeInTheDocument()
+    expect(within(agentUseCasesHeading.parentElement as HTMLElement).getByText('NEW')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /Incident Analyzer with incident.io/i })).toHaveAttribute(
       'href',
       '/organization/org-1/project/project-1/environment/env-1/service/create/agentic-workflow?template=incident-io-analyzer'

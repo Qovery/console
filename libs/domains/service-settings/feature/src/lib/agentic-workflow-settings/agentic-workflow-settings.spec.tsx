@@ -11,6 +11,7 @@ import {
 } from './agentic-workflow-settings'
 
 const useGitTokensSpy = jest.spyOn(organizationsDomain, 'useGitTokens') as jest.Mock
+const useLlmProvidersSpy = jest.spyOn(organizationsDomain, 'useLlmProviders') as jest.Mock
 const useMcpServersSpy = jest.spyOn(organizationsDomain, 'useMcpServers') as jest.Mock
 const useEditServiceSpy = jest.spyOn(servicesDomain, 'useEditService') as jest.Mock
 const useServiceSpy = jest.spyOn(servicesDomain, 'useService') as jest.Mock
@@ -65,6 +66,7 @@ const service = {
   },
   model: {
     type: AgenticWorkflowModelType.BEDROCK,
+    llm_provider_id: 'provider-1',
     settings: '{"temperature":0.2}',
   },
   agent_prompt: 'Investigate the alert.',
@@ -149,6 +151,7 @@ describe('AgenticWorkflowSettings views', () => {
     editService.mockReset()
     useServiceSpy.mockReturnValue({ data: service })
     useGitTokensSpy.mockReturnValue({ data: [{ id: 'token-1', type: 'GITHUB' }], isLoading: false })
+    useLlmProvidersSpy.mockReturnValue({ data: [] })
     useMcpServersSpy.mockReturnValue({
       data: [{ id: 'mcp-1', name: 'Documentation', url: 'https://docs.example.com' }],
       isLoading: false,
@@ -186,7 +189,11 @@ describe('AgenticWorkflowSettings views', () => {
         payload: expect.objectContaining({
           description: 'Updated description',
           execution_mode: AgenticWorkflowExecutionMode.IN_PLACE,
-          model: { type: AgenticWorkflowModelType.BEDROCK, settings: '{"temperature":0.2}' },
+          model: {
+            type: AgenticWorkflowModelType.BEDROCK,
+            llm_provider_id: 'provider-1',
+            settings: '{"temperature":0.2}',
+          },
           mcp: '{"mcpServers":{}}',
           outputs: [{ name: 'Audit log', url: null }],
           mcp_servers: [{ id: 'mcp-1', required: true }],
@@ -215,11 +222,12 @@ describe('AgenticWorkflowSettings views', () => {
     )
   })
 
-  it('renders AI configuration without exposing the write-only API key', () => {
+  it('renders AI configuration with a stored token only', () => {
     renderWithProviders(<AgenticWorkflowSettings page="ai-configuration" />)
 
     expect(screen.getByRole('heading', { name: 'AI configuration' })).toBeInTheDocument()
-    expect(screen.getByLabelText('API key')).toHaveValue('')
+    expect(screen.getByLabelText('Token')).toBeInTheDocument()
+    expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Cloud settings JSON' })).toHaveValue('{"temperature":0.2}')
     expect(screen.getByRole('textbox', { name: 'Instructions' })).toBeInTheDocument()
   })
@@ -353,11 +361,18 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument()
   })
 
-  it('renders Automations with the schedule and complete output count', () => {
+  it('renders Automations with the configured trigger', () => {
     renderWithProviders(<AgenticWorkflowSettings page="automations" />)
 
     expect(screen.getByRole('heading', { name: 'Automations' })).toBeInTheDocument()
     expect(screen.getByText('Schedule')).toBeInTheDocument()
+    expect(screen.queryByText('1 output configured')).not.toBeInTheDocument()
+  })
+
+  it('renders Outputs with the configured output count', () => {
+    renderWithProviders(<AgenticWorkflowSettings page="outputs" />)
+
+    expect(screen.getByRole('heading', { name: 'Outputs' })).toBeInTheDocument()
     expect(screen.getByText('1 output configured')).toBeInTheDocument()
   })
 

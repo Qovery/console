@@ -14,6 +14,8 @@ import {
   HelmRepositoriesApi,
   type HelmRepositoryRequest,
   type InviteMemberRequest,
+  LLMProvidersApi,
+  type LlmProviderRequest,
   MCPServersApi,
   type McpServerRequest,
   type MemberRoleUpdateRequest,
@@ -62,6 +64,7 @@ const billingApi = new BillingApi()
 const customRolesApi = new OrganizationCustomRoleApi()
 const membersApi = new MembersApi()
 const mcpServersApi = new MCPServersApi()
+const llmProvidersApi = new LLMProvidersApi()
 const githubAppApi = new GithubAppApi()
 const argoCdApi = new ArgoCDApi()
 
@@ -119,6 +122,13 @@ export const organizations = createQueryKeys('organizations', {
     queryKey: [organizationId],
     async queryFn() {
       const response = await mcpServersApi.listMcpServers(organizationId)
+      return response.data.results
+    },
+  }),
+  llmProviders: ({ organizationId }: { organizationId: string }) => ({
+    queryKey: [organizationId],
+    async queryFn() {
+      const response = await llmProvidersApi.listLlmProviders(organizationId)
       return response.data.results
     },
   }),
@@ -672,6 +682,31 @@ export const mutations = {
   },
   async deleteMcpServer({ mcpServerId }: { organizationId: string; mcpServerId: string }) {
     const response = await mcpServersApi.deleteMcpServer(mcpServerId)
+    return response.data
+  },
+  async createLlmProvider({
+    organizationId,
+    llmProviderRequest,
+  }: {
+    organizationId: string
+    llmProviderRequest: LlmProviderRequest
+  }) {
+    const response = await llmProvidersApi.createLlmProvider(organizationId, llmProviderRequest)
+    return response.data
+  },
+  async editLlmProvider({
+    llmProviderId,
+    llmProviderRequest,
+  }: {
+    organizationId: string
+    llmProviderId: string
+    llmProviderRequest: LlmProviderRequest
+  }) {
+    const response = await llmProvidersApi.editLlmProvider(llmProviderId, llmProviderRequest)
+    return response.data
+  },
+  async deleteLlmProvider({ llmProviderId }: { organizationId: string; llmProviderId: string }) {
+    const response = await llmProvidersApi.deleteLlmProvider(llmProviderId)
     return response.data
   },
   async deleteGitToken({ organizationId, gitTokenId }: { organizationId: string; gitTokenId: string }) {
