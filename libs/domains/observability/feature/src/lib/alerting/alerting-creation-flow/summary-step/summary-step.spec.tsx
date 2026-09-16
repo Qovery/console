@@ -1,3 +1,4 @@
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type AlertSeverity } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -6,6 +7,8 @@ import { type AlertConfiguration } from '../alerting-creation-flow.types'
 import { SummaryStep } from './summary-step'
 
 const mockMutateAsync = jest.fn()
+
+jest.mock('posthog-js/react', () => ({ useFeatureFlagEnabled: jest.fn() }))
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
@@ -89,6 +92,7 @@ const renderWithContext = (alerts: AlertConfiguration[], selectedMetrics: string
 describe('SummaryStep', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(false)
   })
 
   it('should render summary with service name and alerts', () => {
@@ -135,6 +139,33 @@ describe('SummaryStep', () => {
     expect(screen.getByText('No alerts included in creation')).toBeInTheDocument()
     expect(screen.getByText(/All alerts were skipped during setup/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /confirm and create/i })).toBeDisabled()
+  })
+
+  it.each([false, undefined])('explains and disables certificate creation when the flag is %s', (enabled) => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(enabled)
+    renderWithContext([createAlert({ tag: 'certificate_renewal_failed' }), createAlert({ id: 'cpu', tag: 'cpu' })])
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Exclude the certificate renewal alert')
+    expect(screen.getByRole('button', { name: /confirm and create/i })).toBeDisabled()
+    expect(mockMutateAsync).not.toHaveBeenCalled()
+  })
+
+  it('allows certificate confirmation when the feature is available', () => {
+    jest.mocked(useFeatureFlagEnabled).mockReturnValue(true)
+    renderWithContext([createAlert({ tag: 'certificate_renewal_failed' })])
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /confirm and create/i })).toBeEnabled()
+  })
+
+  it('allows other alerts when the unavailable certificate alert is excluded', () => {
+    renderWithContext([
+      createAlert({ tag: 'certificate_renewal_failed', skipped: true }),
+      createAlert({ id: 'cpu', tag: 'cpu' }),
+    ])
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /confirm and create/i })).toBeEnabled()
   })
 
   it('should enable confirm button when active alerts exist', () => {

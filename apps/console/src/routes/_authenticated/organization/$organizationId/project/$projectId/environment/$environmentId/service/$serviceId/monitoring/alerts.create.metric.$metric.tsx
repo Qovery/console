@@ -1,23 +1,17 @@
 import { Navigate, createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
-import { useMemo } from 'react'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { AlertingCreationFlow, type MetricCategory } from '@qovery/domains/observability/feature'
+import {
+  AlertingCreationFlow,
+  canCreateCertificateRenewalAlert,
+  getSelectedAlertMetrics,
+} from '@qovery/domains/observability/feature'
 import { useService } from '@qovery/domains/services/feature'
 import { LoaderSpinner } from '@qovery/shared/ui'
 
 interface AlertsCreateSearch {
   templates?: string
 }
-
-const METRIC_CATEGORIES: MetricCategory[] = [
-  'cpu',
-  'memory',
-  'http_error',
-  'http_latency',
-  'missing_instance',
-  'instance_restart',
-  'hpa_limit',
-]
 
 export const Route = createFileRoute(
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts/create/metric/$metric'
@@ -42,22 +36,11 @@ function RouteComponent() {
   const { data: environment, isFetched: isEnvironmentFetched } = useEnvironment({ environmentId })
   const { data: service, isFetched: isServiceFetched } = useService({ environmentId, serviceId })
 
-  const selectedMetrics = useMemo(() => {
-    const fromTemplates = (search.templates ?? '')
-      .split(',')
-      .map((item) => item.trim())
-      .filter((item): item is MetricCategory => METRIC_CATEGORIES.includes(item as MetricCategory))
-
-    if (fromTemplates.length > 0) {
-      return fromTemplates
-    }
-
-    if (METRIC_CATEGORIES.includes(metric as MetricCategory)) {
-      return [metric as MetricCategory]
-    }
-
-    return ['cpu' as MetricCategory]
-  }, [metric, search.templates])
+  const certificateEnabled = canCreateCertificateRenewalAlert(
+    useFeatureFlagEnabled('certificate-renewal-alert'),
+    service
+  )
+  const selectedMetrics = getSelectedAlertMetrics(metric, search.templates, certificateEnabled)
 
   if (!isEnvironmentFetched || !isServiceFetched) {
     return (

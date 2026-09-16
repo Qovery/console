@@ -8,6 +8,7 @@ export type MetricCategory =
   | 'missing_instance'
   | 'instance_restart'
   | 'hpa_limit'
+  | 'certificate_renewal_failed'
 
 export interface AlertConfiguration
   extends Omit<AlertRuleCreationRequest, 'organization_id' | 'cluster_id' | 'target' | 'enabled' | 'description'> {

@@ -1,10 +1,12 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useNavigate } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Icon, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 import { type MetricCategory } from '../alerting-creation-flow/alerting-creation-flow.types'
+import { canCreateCertificateRenewalAlert } from '../alerting-creation-flow/metric-availability'
 
 interface CreateKeyAlertsModalProps {
   onClose: () => void
@@ -32,10 +34,12 @@ const METRICS: Metric[] = [
   { id: 'missing_instance', label: 'Missing instance', iconName: 'server' },
   { id: 'instance_restart', label: 'Instance restart', iconName: 'cube' },
   { id: 'hpa_limit', label: 'Auto-scaling limit', iconName: 'up-right-and-down-left-from-center' },
+  { id: 'certificate_renewal_failed', label: 'Certificate renewal failed', iconName: 'file-signature' },
 ]
 
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
   const navigate = useNavigate()
+  const isCertificateRenewalAlertEnabled = useFeatureFlagEnabled('certificate-renewal-alert') === true
 
   const hasPublicPort =
     (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
@@ -51,6 +55,12 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
       return false
     }
     if (!hasAutoscaling && metric.id === 'hpa_limit') {
+      return false
+    }
+    if (
+      metric.id === 'certificate_renewal_failed' &&
+      !canCreateCertificateRenewalAlert(isCertificateRenewalAlertEnabled, service)
+    ) {
       return false
     }
     return true
@@ -80,10 +90,11 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
   const onSubmit = methods.handleSubmit((data) => {
     const environmentId = service?.environment?.id
     const serviceId = service?.id
-    const firstMetric = data.metrics[0]
+    const metrics = data.metrics.filter((metric) => availableMetrics.some((available) => available.id === metric))
+    const firstMetric = metrics[0]
     if (!environmentId || !serviceId || !firstMetric) return
 
-    const templatesParam = data.metrics.join(',')
+    const templatesParam = metrics.join(',')
 
     onClose()
     navigate({

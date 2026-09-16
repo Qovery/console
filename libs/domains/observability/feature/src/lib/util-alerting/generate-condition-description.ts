@@ -10,6 +10,7 @@ const METRIC_LABEL_OVERRIDES: Record<string, string> = {
   missing_instance: 'Missing instance',
   instance_restart: 'Instance restart',
   hpa_limit: 'Auto-scaling limit',
+  certificate_renewal_failed: 'Certificate renewal failed',
 }
 
 const OPERATOR_SYMBOLS: Record<AlertRuleConditionOperator, string> = {
