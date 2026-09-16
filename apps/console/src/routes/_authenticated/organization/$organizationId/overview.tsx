@@ -3,6 +3,7 @@ import { SectionProductionHealth, useClusters } from '@qovery/domains/clusters/f
 import { OrganizationOverview } from '@qovery/domains/organizations/feature'
 import { ProjectList } from '@qovery/domains/projects/feature'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
+import { SectionAgentTasksHighlight } from '../../../../app/components/section-agent-tasks-highlight/section-agent-tasks-highlight'
 import { SectionOnboarding } from '../../../../app/components/section-onboarding/section-onboarding'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/overview')({
@@ -17,7 +18,7 @@ function RouteComponent() {
 
   return (
     <div className="mt-6">
-      <OrganizationOverview>
+      <OrganizationOverview sidebarContent={<SectionAgentTasksHighlight />}>
         <SectionOnboarding />
         <SectionProductionHealth />
         {hasClusters ? <ProjectList /> : null}
