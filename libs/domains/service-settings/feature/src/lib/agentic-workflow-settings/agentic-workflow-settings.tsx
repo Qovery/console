@@ -246,12 +246,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         {page === 'general' ? <AgenticWorkflowGeneralSettings form={form} /> : null}
         {page === 'ai-configuration' ? (
           <AgenticWorkflowAiConfigurationSettings
-            environmentId={environmentId}
             form={form}
             llmProviders={llmProviders.filter(
               ({ type, has_credential }) => type === LlmProviderType.CLAUDE && has_credential
             )}
-            organizationId={organizationId}
           />
         ) : null}
         {page === 'connections' ? (

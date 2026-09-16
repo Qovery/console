@@ -1052,7 +1052,6 @@ export function AgenticWorkflowConfiguration() {
             <section aria-label="Instructions" className="border-t border-neutral pt-6">
               <AgenticWorkflowPromptEditor
                 ref={promptEditorRef}
-                environmentId={environmentId}
                 prompt={values.agentPrompt}
                 promptError={showPromptError ? 'Please describe what the agent task should do.' : undefined}
                 variableKeys={variableValues.map((variable) => variable.variable ?? '').filter(Boolean)}
@@ -1083,7 +1082,6 @@ export function AgenticWorkflowConfiguration() {
               control={form.control}
               render={({ field }) => (
                 <LlmProviderSetting
-                  organizationId={organizationId}
                   llmProviders={availableLlmProviders}
                   isLoading={areLlmProvidersLoading}
                   error={showLlmProviderError ? 'Please select a token.' : undefined}

@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { type LlmProviderResponse } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { InputSelect, useModal } from '@qovery/shared/ui'
@@ -7,19 +8,12 @@ export interface LlmProviderSettingProps {
   error?: string
   isLoading?: boolean
   llmProviders: LlmProviderResponse[]
-  organizationId: string
   value: string
   onChange: (value: string) => void
 }
 
-export function LlmProviderSetting({
-  error,
-  isLoading,
-  llmProviders,
-  organizationId,
-  value,
-  onChange,
-}: LlmProviderSettingProps) {
+export function LlmProviderSetting({ error, isLoading, llmProviders, value, onChange }: LlmProviderSettingProps) {
+  const { organizationId = '' } = useParams({ strict: false })
   const { openModal, closeModal } = useModal()
   const [createdLlmProvider, setCreatedLlmProvider] = useState<LlmProviderResponse>()
   const availableLlmProviders =

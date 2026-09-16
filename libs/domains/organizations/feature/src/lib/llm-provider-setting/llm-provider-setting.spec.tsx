@@ -11,6 +11,10 @@ const useModalMock = jest.spyOn(sharedUi, 'useModal') as jest.Mock
 const openModal = jest.fn()
 const closeModal = jest.fn()
 
+jest.mock('@tanstack/react-router', () => ({
+  useParams: () => ({ organizationId: 'organization-1' }),
+}))
+
 const llmProvider: LlmProviderResponse = {
   id: 'provider-1',
   name: 'Claude token',
@@ -30,9 +34,7 @@ describe('LlmProviderSetting', () => {
 
   it('should create a token and select it', () => {
     const onChange = jest.fn()
-    renderWithProviders(
-      <LlmProviderSetting llmProviders={[]} organizationId="organization-1" value="" onChange={onChange} />
-    )
+    renderWithProviders(<LlmProviderSetting llmProviders={[]} value="" onChange={onChange} />)
 
     expect(screen.getByRole('link', { name: 'Agents → Tokens' })).toHaveAttribute(
       'href',

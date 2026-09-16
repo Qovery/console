@@ -2,18 +2,15 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings-test-utils'
 import { AgenticWorkflowAiConfigurationSettings } from './agentic-workflow-ai-configuration-settings'
 
+jest.mock('@tanstack/react-router', () => ({
+  useParams: () => ({ environmentId: 'environment-1', organizationId: 'organization-1' }),
+}))
+
 describe('AgenticWorkflowAiConfigurationSettings', () => {
   it('renders the token, model settings, and instructions', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness>
-        {(form) => (
-          <AgenticWorkflowAiConfigurationSettings
-            environmentId="environment-1"
-            form={form}
-            llmProviders={[]}
-            organizationId="organization-1"
-          />
-        )}
+        {(form) => <AgenticWorkflowAiConfigurationSettings form={form} llmProviders={[]} />}
       </AgenticWorkflowSettingsFormHarness>
     )
 
@@ -29,14 +26,7 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
   it('does not show an instructions error before the field is modified', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness values={{ agentPrompt: '' }}>
-        {(form) => (
-          <AgenticWorkflowAiConfigurationSettings
-            environmentId="environment-1"
-            form={form}
-            llmProviders={[]}
-            organizationId="organization-1"
-          />
-        )}
+        {(form) => <AgenticWorkflowAiConfigurationSettings form={form} llmProviders={[]} />}
       </AgenticWorkflowSettingsFormHarness>
     )
 

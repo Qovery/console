@@ -15,15 +15,11 @@ function getJsonError(value: string) {
 }
 
 export function AgenticWorkflowAiConfigurationSettings({
-  environmentId,
   form,
   llmProviders,
-  organizationId,
 }: {
-  environmentId: string
   form: UseFormReturn<AgenticWorkflowSettingsFormValues>
   llmProviders: LlmProviderResponse[]
-  organizationId: string
 }) {
   return (
     <>
@@ -35,12 +31,7 @@ export function AgenticWorkflowAiConfigurationSettings({
           name="llmProviderId"
           control={form.control}
           render={({ field }) => (
-            <LlmProviderSetting
-              organizationId={organizationId}
-              llmProviders={llmProviders}
-              value={field.value}
-              onChange={field.onChange}
-            />
+            <LlmProviderSetting llmProviders={llmProviders} value={field.value} onChange={field.onChange} />
           )}
         />
         <Controller
@@ -65,7 +56,6 @@ export function AgenticWorkflowAiConfigurationSettings({
           render={({ field, fieldState }) => (
             <AgenticWorkflowPromptEditor
               compact
-              environmentId={environmentId}
               prompt={field.value}
               promptError={fieldState.isDirty && !field.value.trim() ? 'Please enter instructions.' : undefined}
               variableKeys={[]}
