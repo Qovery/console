@@ -1,5 +1,6 @@
 import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { useNavigate } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Icon, InputTextSmall, ModalCrud } from '@qovery/shared/ui'
@@ -37,6 +38,7 @@ const METRICS: Metric[] = [
 
 export function CreateKeyAlertsModal({ onClose, service, organizationId, projectId }: CreateKeyAlertsModalProps) {
   const navigate = useNavigate()
+  const isCertificateRenewalAlertEnabled = useFeatureFlagEnabled('certificate-renewal-alert') === true
 
   const hasPublicPort =
     (service?.serviceType === 'APPLICATION' || service?.serviceType === 'CONTAINER') &&
@@ -60,7 +62,7 @@ export function CreateKeyAlertsModal({ onClose, service, organizationId, project
     if (!hasAutoscaling && metric.id === 'hpa_limit') {
       return false
     }
-    if (!canOwnCustomDomains && metric.id === 'certificate_renewal_failed') {
+    if (metric.id === 'certificate_renewal_failed' && (!isCertificateRenewalAlertEnabled || !canOwnCustomDomains)) {
       return false
     }
     return true
