@@ -53,7 +53,14 @@ export interface AgenticWorkflowSettingsFormValues {
   storage: string
 }
 
-type SettingsPage = 'general' | 'ai-configuration' | 'connections' | 'automations' | 'governance' | 'advanced-settings'
+type SettingsPage =
+  | 'general'
+  | 'ai-configuration'
+  | 'connections'
+  | 'automations'
+  | 'outputs'
+  | 'governance'
+  | 'advanced-settings'
 
 interface AgenticWorkflowSettingsProps {
   page: SettingsPage
@@ -74,7 +81,11 @@ const PAGE_CONTENT: Record<SettingsPage, { title: string; description: string }>
   },
   automations: {
     title: 'Automations',
-    description: 'Configure when the agent task runs and where it sends its results.',
+    description: 'Configure when the agent task runs.',
+  },
+  outputs: {
+    title: 'Outputs',
+    description: 'Configure where the agent task sends its results.',
   },
   governance: {
     title: 'Governance',
@@ -259,7 +270,8 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
             gitTokensLoading={gitTokensLoading}
           />
         ) : null}
-        {page === 'automations' ? <AgenticWorkflowAutomationsSettings form={form} /> : null}
+        {page === 'automations' ? <AgenticWorkflowAutomationsSettings form={form} section="triggers" /> : null}
+        {page === 'outputs' ? <AgenticWorkflowAutomationsSettings form={form} section="outputs" /> : null}
         {page === 'governance' ? <AgenticWorkflowGovernanceSettings form={form} /> : null}
         {page === 'advanced-settings' ? <AgenticWorkflowAdvancedSettings form={form} /> : null}
         <div className="flex justify-end pt-2">

@@ -361,11 +361,18 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument()
   })
 
-  it('renders Automations with the schedule and complete output count', () => {
+  it('renders Automations with the configured trigger', () => {
     renderWithProviders(<AgenticWorkflowSettings page="automations" />)
 
     expect(screen.getByRole('heading', { name: 'Automations' })).toBeInTheDocument()
     expect(screen.getByText('Schedule')).toBeInTheDocument()
+    expect(screen.queryByText('1 output configured')).not.toBeInTheDocument()
+  })
+
+  it('renders Outputs with the configured output count', () => {
+    renderWithProviders(<AgenticWorkflowSettings page="outputs" />)
+
+    expect(screen.getByRole('heading', { name: 'Outputs' })).toBeInTheDocument()
     expect(screen.getByText('1 output configured')).toBeInTheDocument()
   })
 
