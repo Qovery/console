@@ -2,6 +2,7 @@ import posthog from 'posthog-js'
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
+import { type AgenticWorkflowTemplate } from '../agentic-workflow-templates'
 import {
   AgenticWorkflowConfiguration,
   areVariablesValid,
@@ -107,16 +108,23 @@ function renderConfiguration({
 }: {
   onExit?: () => void
   seed?: Partial<AgenticWorkflowFormData>
-  variablesSeed?: Parameters<typeof AgenticWorkflowCreationFlow>[0]['variablesSeed']
+  variablesSeed?: AgenticWorkflowTemplate['variables']
   requiresQoveryMcp?: boolean
 } = {}) {
+  const selectedTemplate =
+    seed || variablesSeed || requiresQoveryMcp
+      ? {
+          id: 'test-template',
+          title: 'Test template',
+          description: 'Template used by configuration tests',
+          seed: seed ?? {},
+          variables: variablesSeed,
+          requiresQoveryMcp,
+        }
+      : undefined
+
   return renderWithProviders(
-    <AgenticWorkflowCreationFlow
-      onExit={onExit}
-      requiresQoveryMcp={requiresQoveryMcp}
-      seed={seed}
-      variablesSeed={variablesSeed}
-    >
+    <AgenticWorkflowCreationFlow onExit={onExit} selectedTemplate={selectedTemplate}>
       <AgenticWorkflowConfiguration />
     </AgenticWorkflowCreationFlow>
   )
