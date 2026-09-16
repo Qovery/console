@@ -29,7 +29,7 @@ export function AgentTemplateRequestModal({ organizationId, onClose }: AgentTemp
   return (
     <FormProvider {...methods}>
       <ModalCrud
-        title="Request a new template"
+        title="Request agent template"
         description="Tell us which agent template you'd like Qovery to add next."
         onSubmit={handleSubmit}
         onClose={onClose}

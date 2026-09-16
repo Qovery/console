@@ -99,6 +99,7 @@ export * from './lib/hooks/use-parse-terraform-variables-from-git-repo/use-parse
 export * from './lib/hooks/use-list-tfvars-files-from-git-repo/use-list-tfvars-files-from-git-repo'
 export * from './lib/hooks/use-mcp-servers/use-mcp-servers'
 export * from './lib/hooks/use-create-mcp-server/use-create-mcp-server'
+export * from './lib/hooks/use-create-qovery-mcp-server/use-create-qovery-mcp-server'
 export * from './lib/hooks/use-edit-mcp-server/use-edit-mcp-server'
 export * from './lib/hooks/use-delete-mcp-server/use-delete-mcp-server'
 export * from './lib/invoice-banner/invoice-banner'

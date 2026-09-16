@@ -1,53 +1,50 @@
 import { IconEnum } from '@qovery/shared/enums'
 import { Button, Icon } from '@qovery/shared/ui'
 
-export function GitContextCard({ onClick }: { onClick: () => void }) {
+export function QoveryServiceContextCard({ disabled = false, onClick }: { disabled?: boolean; onClick: () => void }) {
   return (
     <Button
       type="button"
       variant="outline"
       color="neutral"
+      disabled={disabled}
       className="h-[140px] w-full max-w-80 flex-col items-start justify-between whitespace-normal rounded-lg p-4 text-left transition-colors active:scale-100"
       onClick={onClick}
     >
-      <Icon name={IconEnum.GIT} width={18} height={18} />
+      <Icon name={IconEnum.QOVERY} width={18} height={18} />
       <span className="flex flex-col gap-0.5">
-        <span className="text-ssm font-medium leading-[18px] text-neutral">Add from Git repository</span>
+        <span className="text-ssm font-medium leading-[18px] text-neutral">Add Qovery services</span>
         <span className="text-xs font-normal leading-4 text-neutral-subtle">
-          Add a Git repository to load as the agent&apos;s context.
+          Use services from this environment as context for the agent.
         </span>
       </span>
     </Button>
   )
 }
 
-export function GitContextCompactCard({
+export function QoveryServiceContextCompactCard({
   disabled = false,
+  names,
   onClick,
-  provider,
-  repository,
 }: {
   disabled?: boolean
+  names: string[]
   onClick: () => void
-  provider?: string | null
-  repository: string
 }) {
-  const providerLabel = provider ? provider.toUpperCase() : 'GIT'
-
   return (
     <div className="relative flex h-[74px] w-full min-w-0 max-w-80 flex-col justify-between rounded-lg border border-neutral bg-surface-neutral p-3 pr-12">
       <span className="flex h-5 w-fit items-center gap-1 rounded bg-surface-neutral-component pl-1 pr-1.5 font-mono text-[10px] font-bold leading-5 text-neutral">
-        <Icon name={provider || IconEnum.GIT} width={12} height={12} />
-        {providerLabel}
+        <Icon name={IconEnum.QOVERY} width={12} height={12} />
+        QOVERY SERVICE
       </span>
-      <div className="min-w-0 truncate text-sm text-neutral">{repository}</div>
+      <div className="min-w-0 truncate text-sm text-neutral">{names.join(', ')}</div>
       <Button
         type="button"
         variant="outline"
         color="neutral"
         size="xs"
         iconOnly
-        aria-label="Manage context"
+        aria-label="Manage Qovery service context"
         className="absolute right-3 top-1/2 -translate-y-1/2"
         disabled={disabled}
         onClick={onClick}

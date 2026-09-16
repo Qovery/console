@@ -14,6 +14,7 @@ const useGitTokensSpy = jest.spyOn(organizationsDomain, 'useGitTokens') as jest.
 const useMcpServersSpy = jest.spyOn(organizationsDomain, 'useMcpServers') as jest.Mock
 const useEditServiceSpy = jest.spyOn(servicesDomain, 'useEditService') as jest.Mock
 const useServiceSpy = jest.spyOn(servicesDomain, 'useService') as jest.Mock
+const useContextServicesSpy = jest.spyOn(servicesDomain, 'useAgenticWorkflowContextServices') as jest.Mock
 const editService = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
@@ -76,6 +77,8 @@ const service = {
   ],
   mcp: '{"mcpServers":{}}',
   mcp_server_ids: ['mcp-1'],
+  mcp_servers: [{ id: 'mcp-1', required: true }],
+  context_service_ids: [],
   docker_fragment: 'RUN apt-get update',
   outputs: [{ name: 'Audit log', url: null }],
   governance: { host_allowlist: ['api.github.com', 'status.example.com'] },
@@ -150,6 +153,7 @@ describe('AgenticWorkflowSettings views', () => {
       data: [{ id: 'mcp-1', name: 'Documentation', url: 'https://docs.example.com' }],
       isLoading: false,
     })
+    useContextServicesSpy.mockReturnValue({ data: [], isLoading: false })
     useEditServiceSpy.mockReturnValue({ mutate: editService, isLoading: false })
   })
 
@@ -185,7 +189,8 @@ describe('AgenticWorkflowSettings views', () => {
           model: { type: AgenticWorkflowModelType.BEDROCK, settings: '{"temperature":0.2}' },
           mcp: '{"mcpServers":{}}',
           outputs: [{ name: 'Audit log', url: null }],
-          mcp_server_ids: ['mcp-1'],
+          mcp_servers: [{ id: 'mcp-1', required: true }],
+          context_service_ids: [],
           webhook_ip_allowlist: ['10.0.0.0/8'],
           schedule: {
             cron_expression: '0 8 * * 1-5',
@@ -238,6 +243,69 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
   })
 
+  it('uses legacy MCP server IDs when the structured MCP list is empty', () => {
+    useServiceSpy.mockReturnValue({ data: { ...service, mcp_servers: [] } })
+
+    renderWithProviders(<AgenticWorkflowSettings page="connections" />)
+
+    expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
+  })
+
+  it('rebuilds the context services prompt block and drops unavailable service IDs before saving', async () => {
+    useServiceSpy.mockReturnValue({
+      data: {
+        ...service,
+        agent_prompt:
+          'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- stale-api (APPLICATION) — service ID: stale-service\n<!-- qovery-context-services:end -->',
+        context_service_ids: ['service-1', 'deleted-service'],
+      },
+    })
+    useContextServicesSpy.mockReturnValue({
+      data: [{ id: 'service-1', name: 'api', type: 'APPLICATION' }],
+      isLoading: false,
+    })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Description' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Description' }), 'Updated description')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          agent_prompt:
+            'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- api (APPLICATION) — service ID: service-1\n<!-- qovery-context-services:end -->',
+          context_service_ids: ['service-1'],
+        }),
+      })
+    )
+  })
+
+  it('preserves persisted service context when the context services query fails', async () => {
+    const agentPrompt =
+      'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- api (APPLICATION) — service ID: service-1\n<!-- qovery-context-services:end -->'
+    useServiceSpy.mockReturnValue({
+      data: { ...service, agent_prompt: agentPrompt, context_service_ids: ['service-1'] },
+    })
+    useContextServicesSpy.mockReturnValue({ data: undefined, isError: true, isLoading: false })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="general" />)
+
+    await userEvent.clear(screen.getByRole('textbox', { name: 'Description' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Description' }), 'Updated description')
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          agent_prompt: agentPrompt,
+          context_service_ids: ['service-1'],
+        }),
+      })
+    )
+  })
+
   it('prevents editing a private self-hosted repository until its provider is resolved', () => {
     useServiceSpy.mockReturnValue({
       data: {
@@ -269,7 +337,7 @@ describe('AgenticWorkflowSettings views', () => {
 
     expect(editService).toHaveBeenCalledWith({
       serviceId: 'workflow-1',
-      payload: expect.objectContaining({ mcp: '{invalid', mcp_server_ids: [] }),
+      payload: expect.objectContaining({ mcp: '{invalid', mcp_servers: [] }),
     })
   })
 
