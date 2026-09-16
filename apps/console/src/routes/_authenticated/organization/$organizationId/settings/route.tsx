@@ -110,11 +110,11 @@ function RouteComponent() {
 
   const agentsLink = {
     type: 'group',
-    title: 'Agents',
+    title: 'Agent',
     icon: 'robot' as const,
     children: [
-      { title: 'Tokens', to: `${pathSettings}/agents/tokens` },
-      { title: 'MCPs', to: `${pathSettings}/agents/mcps` },
+      { title: 'Token', to: `${pathSettings}/agents/tokens` },
+      { title: 'MCP', to: `${pathSettings}/agents/mcps` },
     ],
   }
 
