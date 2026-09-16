@@ -1,3 +1,4 @@
+import { useParams } from '@tanstack/react-router'
 import { forwardRef, useImperativeHandle, useRef } from 'react'
 import { useVariables } from '@qovery/domains/variables/feature'
 import { Icon, PromptEditor, type PromptEditorHandle, Tooltip } from '@qovery/shared/ui'
@@ -8,7 +9,6 @@ export interface AgenticWorkflowPromptEditorHandle {
 
 export interface AgenticWorkflowPromptEditorProps {
   compact?: boolean
-  environmentId: string
   onPromptChange: (value: string) => void
   prompt: string
   promptError?: string
@@ -18,10 +18,8 @@ export interface AgenticWorkflowPromptEditorProps {
 export const AgenticWorkflowPromptEditor = forwardRef<
   AgenticWorkflowPromptEditorHandle,
   AgenticWorkflowPromptEditorProps
->(function AgenticWorkflowPromptEditor(
-  { compact = false, environmentId, onPromptChange, prompt, promptError, variableKeys },
-  ref
-) {
+>(function AgenticWorkflowPromptEditor({ compact = false, onPromptChange, prompt, promptError, variableKeys }, ref) {
+  const { environmentId = '' } = useParams({ strict: false })
   const promptRef = useRef<PromptEditorHandle>(null)
   const { data: environmentVariables = [] } = useVariables({ parentId: environmentId, scope: 'ENVIRONMENT' })
   const suggestions = Array.from(new Set([...variableKeys, ...environmentVariables.map(({ key }) => key)])).map(

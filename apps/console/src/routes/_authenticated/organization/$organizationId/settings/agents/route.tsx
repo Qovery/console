@@ -1,7 +1,6 @@
-import { createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
+import { Outlet, createFileRoute, useNavigate, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useEffect } from 'react'
-import { SettingsAgentPersonalization } from '@qovery/domains/organizations/feature'
 
 export const Route = createFileRoute('/_authenticated/organization/$organizationId/settings/agents')({
   component: RouteComponent,
@@ -24,5 +23,5 @@ function RouteComponent() {
 
   if (!isAgenticWorkflowEnabled) return null
 
-  return <SettingsAgentPersonalization />
+  return <Outlet />
 }

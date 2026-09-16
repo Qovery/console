@@ -14,7 +14,7 @@ const values: AgenticWorkflowFormData = {
   mcpJson: '',
   gitRepositories: [],
   contextServices: [],
-  modelApiKey: 'api-key',
+  llmProviderId: 'provider-1',
   modelSettingsJson: '{}',
   whitelistHosts: '*',
   dockerFragment: '',
@@ -25,6 +25,14 @@ const values: AgenticWorkflowFormData = {
 describe('formatAgenticWorkflowRequest', () => {
   it('enables newly created agent tasks', () => {
     expect(formatAgenticWorkflowRequest(values).enabled).toBe(true)
+  })
+
+  it('sends the selected LLM provider', () => {
+    expect(formatAgenticWorkflowRequest(values).model).toEqual({
+      type: AgenticWorkflowModelType.CLAUDE,
+      llm_provider_id: 'provider-1',
+      settings: '{}',
+    })
   })
 
   it('sends selected MCP servers and their creation requirements', () => {
