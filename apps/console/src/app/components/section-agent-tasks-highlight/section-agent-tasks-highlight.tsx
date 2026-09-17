@@ -1,5 +1,4 @@
 import { useParams } from '@tanstack/react-router'
-import clsx from 'clsx'
 import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { CreateCloneEnvironmentModal, useEnvironments } from '@qovery/domains/environments/feature'
@@ -17,16 +16,8 @@ function TemplateCard({ template }: { template: AgenticWorkflowTemplate }) {
     <div className="flex h-28 w-full flex-col justify-between rounded-md border border-[rgba(100,45,255,0.08)] bg-surface-neutral p-3 text-left shadow-[0px_2.32px_6.19px_0px_rgba(100,45,255,0.08),0px_0px_4.64px_0px_rgba(100,45,255,0.01)]">
       <span className="flex h-5 w-5 shrink-0 items-center justify-center text-brand">
         {template.logoPath ? (
-          <>
-            <img
-              src={template.logoPath}
-              alt=""
-              className={clsx('size-full object-contain', template.darkLogoPath && 'dark:hidden')}
-            />
-            {template.darkLogoPath && (
-              <img src={template.darkLogoPath} alt="" className="hidden size-full object-contain dark:block" />
-            )}
-          </>
+          // The composition is always rendered in light mode, so always use the light logo.
+          <img src={template.logoPath} alt="" className="size-full object-contain" />
         ) : template.iconName ? (
           <Icon iconName={template.iconName} iconStyle="regular" className="text-xl" />
         ) : null}
@@ -70,12 +61,11 @@ export function SectionAgentTasksHighlight() {
 
   return (
     <Section className="flex justify-center">
-      <div className="relative h-[334px] w-full overflow-hidden rounded-lg border border-neutral bg-surface-neutral">
-        <img
-          src="/assets/agent-tasks/agent-tasks-gradient.jpg"
-          alt=""
-          className="pointer-events-none absolute inset-0 hidden h-full w-full object-cover dark:block"
-        />
+      {/* Force the whole composition to render in light mode, even when the app is in dark mode. */}
+      <div
+        data-theme="light"
+        className="relative h-[334px] w-full overflow-hidden rounded-lg border border-neutral bg-surface-neutral"
+      >
         <Button
           variant="plain"
           color="neutral"
