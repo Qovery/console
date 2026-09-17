@@ -425,6 +425,7 @@ module.exports = {
 
         'ping-small': 'pingSmall 1s linear infinite',
         'loader-dots': 'loaderDots 2s linear infinite',
+        'scroll-vertical': 'scrollVertical 40s linear infinite',
       },
       keyframes: {
         actionBarFadeIn: {
@@ -457,6 +458,10 @@ module.exports = {
             transform: 'scale(1.75)',
             opacity: '0',
           },
+        },
+        scrollVertical: {
+          from: { transform: 'translateY(-50%)' },
+          to: { transform: 'translateY(0)' },
         },
         shake: {
           '0%': { transform: 'rotate(0deg)' },

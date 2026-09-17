@@ -18,9 +18,9 @@ import {
   Button,
   CodeEditor,
   DropdownMenu,
+  ExternalLink,
   Heading,
   Icon,
-  InputSelect,
   InputText,
   InputTextArea,
   Modal,
@@ -43,6 +43,7 @@ import {
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
+import { AGENT_TASKS_DOC_LINK } from '../agentic-workflow-templates'
 import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } from './agentic-workflow-prompt-editor'
 import { AutomationSheet } from './automations/automation-sheet'
 import { GitContextCard, GitContextCompactCard } from './context/git-context-card'
@@ -293,7 +294,7 @@ export function AgenticWorkflowConfiguration() {
     useAgenticWorkflowContextServices(environmentId)
   const navigate = useNavigate()
   const { closeModal, openModal } = useModal()
-  const { form, onExit, requiresQoveryMcp, variablesForm } = useAgenticWorkflowCreateContext()
+  const { form, onExit, requiresQoveryMcp, variablesForm, selectedTemplate } = useAgenticWorkflowCreateContext()
   const { isLoading: isCreatingQoveryMcpServer, mutateAsync: createQoveryMcpServer } = useCreateQoveryMcpServer()
   const { isLoading: isCreating, mutateAsync: createService } = useCreateService({ organizationId })
   const { isLoading: isImportingVariables, mutateAsync: importVariables } = useImportVariables()
@@ -849,7 +850,12 @@ export function AgenticWorkflowConfiguration() {
         <Button type="button" color="neutral" variant="plain" aria-label="Back" iconOnly onClick={onExit}>
           <Icon iconName="arrow-left" />
         </Button>
-        <div className="flex items-center gap-2">{creationActions()}</div>
+        <div className="flex items-center gap-4">
+          <ExternalLink href={selectedTemplate?.docLink ?? AGENT_TASKS_DOC_LINK} size="xs">
+            Documentation
+          </ExternalLink>
+          {creationActions()}
+        </div>
       </header>
 
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto lg:flex-row lg:overflow-hidden">
