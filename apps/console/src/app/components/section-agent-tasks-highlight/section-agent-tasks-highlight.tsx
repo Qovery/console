@@ -16,7 +16,6 @@ function TemplateCard({ template }: { template: AgenticWorkflowTemplate }) {
     <div className="flex h-28 w-full flex-col justify-between rounded-md border border-[rgba(100,45,255,0.08)] bg-surface-neutral p-3 text-left shadow-[0px_2.32px_6.19px_0px_rgba(100,45,255,0.08),0px_0px_4.64px_0px_rgba(100,45,255,0.01)]">
       <span className="flex h-5 w-5 shrink-0 items-center justify-center text-brand">
         {template.logoPath ? (
-          // The composition is always rendered in light mode, so always use the light logo.
           <img src={template.logoPath} alt="" className="size-full object-contain" />
         ) : template.iconName ? (
           <Icon iconName={template.iconName} iconStyle="regular" className="text-xl" />
