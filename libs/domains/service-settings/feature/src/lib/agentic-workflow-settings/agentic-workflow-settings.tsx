@@ -1,6 +1,7 @@
 import { useParams } from '@tanstack/react-router'
 import {
   AgenticWorkflowExecutionMode,
+  type AgenticWorkflowModelType,
   type AgenticWorkflowRequest,
   type GitTokenResponse,
 } from 'qovery-typescript-axios'
@@ -199,8 +200,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
     (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
   const submit = form.handleSubmit((data) => {
+    const selectedProvider = llmProviders.find(({ id }) => id === data.llmProviderId)
     const model: AgenticWorkflowRequest['model'] = {
-      type: workflow.model.type,
+      // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
+      type: (selectedProvider?.type as AgenticWorkflowModelType) ?? workflow.model.type,
       settings: data.modelSettings,
       llm_provider_id: data.llmProviderId,
     }
