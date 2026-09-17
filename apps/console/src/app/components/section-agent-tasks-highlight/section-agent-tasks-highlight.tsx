@@ -60,7 +60,6 @@ export function SectionAgentTasksHighlight() {
 
   return (
     <Section className="flex justify-center">
-      {/* Force the whole composition to render in light mode, even when the app is in dark mode. */}
       <div
         data-theme="light"
         className="relative h-[334px] w-full overflow-hidden rounded-lg border border-neutral bg-surface-neutral"
