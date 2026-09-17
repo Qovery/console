@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router'
+import { Link, useParams } from '@tanstack/react-router'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Badge, ExternalLink, Icon, Skeleton, Truncate } from '@qovery/shared/ui'
@@ -34,12 +34,22 @@ function BlueprintRepository({ gitRepository }: { gitRepository: ApplicationGitR
   )
 }
 
-export function BlueprintMetadataSkeleton({ gitRepository }: { gitRepository?: ApplicationGitRepository }) {
+export function BlueprintMetadataSkeleton({
+  gitRepository,
+  showVersion = true,
+  showRepository = true,
+  showUpdateBadge = true,
+}: {
+  gitRepository?: ApplicationGitRepository
+  showVersion?: boolean
+  showRepository?: boolean
+  showUpdateBadge?: boolean
+}) {
   return (
     <>
-      <Skeleton width={50} height={24} />
-      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
-      <BlueprintUpdateBadgeSkeleton />
+      {showVersion && <Skeleton width={50} height={24} />}
+      {showRepository && gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
+      {showUpdateBadge && <BlueprintUpdateBadgeSkeleton />}
     </>
   )
 }
@@ -48,12 +58,20 @@ export function BlueprintMetadata({
   blueprintId,
   gitRepository,
   service,
+  linkVersionToSettings = false,
+  showVersion = true,
+  showRepository = true,
+  showUpdateBadge = true,
 }: {
   blueprintId: string
   gitRepository?: ApplicationGitRepository
   service: AnyService
+  linkVersionToSettings?: boolean
+  showVersion?: boolean
+  showRepository?: boolean
+  showUpdateBadge?: boolean
 }) {
-  const { organizationId = '', projectId = '' } = useParams({ strict: false })
+  const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   // `throwOnError: false` because react-query v4 makes suspense queries throw by default, and there
   // is no boundary between here and the organization layout: a blueprint pinned to a tag the
   // catalog cannot resolve would replace the whole overview with the generic error page.
@@ -64,17 +82,29 @@ export function BlueprintMetadata({
     throwOnError: false,
   })
   const currentVersion = tag ? getBlueprintServiceVersion(tag) : undefined
+  const versionBadge = currentVersion && currentVersion !== 'default' && (
+    <Badge variant="outline" className="gap-1 whitespace-nowrap">
+      <ServiceAvatar service={service} size="custom" radius="none" serviceAvatarRadius="sm" className="h-3 w-3" />
+      <span>v{currentVersion}</span>
+    </Badge>
+  )
 
   return (
     <>
-      {currentVersion && currentVersion !== 'default' && (
-        <Badge variant="outline" className="gap-1 whitespace-nowrap">
-          <ServiceAvatar service={service} size="custom" radius="none" serviceAvatarRadius="sm" className="h-3 w-3" />
-          <span>v{currentVersion}</span>
-        </Badge>
-      )}
-      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
-      {blueprintUpdate && (
+      {showVersion &&
+        (linkVersionToSettings ? (
+          <Link
+            to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/blueprint-configuration"
+            params={{ organizationId, projectId, environmentId, serviceId }}
+            className="inline-flex"
+          >
+            {versionBadge}
+          </Link>
+        ) : (
+          versionBadge
+        ))}
+      {showRepository && gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
+      {showUpdateBadge && blueprintUpdate && (
         <BlueprintUpdateBadge
           blueprintUpdate={blueprintUpdate}
           service={service}

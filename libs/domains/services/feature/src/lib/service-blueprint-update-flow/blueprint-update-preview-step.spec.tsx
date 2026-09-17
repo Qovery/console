@@ -172,6 +172,26 @@ describe('BlueprintUpdatePreviewStep', () => {
     expect(modalConfirmButton.closest('footer')).not.toHaveClass('fixed', 'max-w-[620px]')
   })
 
+  it('fills the modal content area while the preview is loading', () => {
+    jest.mocked(useBlueprintUpdatePreviewSocket).mockReturnValue({ outcome: { type: 'pending' } })
+
+    renderWithProviders(
+      <BlueprintPreview
+        layout="modal"
+        clusterId="cluster-id"
+        loading={false}
+        previewError={false}
+        previewId="preview-id"
+        onBack={jest.fn()}
+        onConfirm={jest.fn()}
+        onRetry={jest.fn()}
+      />
+    )
+
+    expect(screen.getByTestId('blueprint-preview-raw-output')).toHaveClass('flex-1', 'min-h-0')
+    expect(screen.getByTestId('blueprint-preview-modal-content').firstElementChild).toHaveClass('min-h-full', 'w-full')
+  })
+
   it('scrolls the modal content rather than an inner raw-output container', () => {
     jest.mocked(useBlueprintUpdatePreviewSocket).mockReturnValue({ outcome: { type: 'diff', rawOutput: '+ created' } })
 

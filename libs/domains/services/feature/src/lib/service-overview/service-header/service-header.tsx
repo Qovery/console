@@ -94,6 +94,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
   const isArgoCdService = isArgoCd(service)
   const isAgenticWorkflowService = isAgenticWorkflow(service)
+  const blueprintId = 'blueprint_id' in service ? service.blueprint_id : undefined
 
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
 
@@ -132,6 +133,20 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
             <span className="flex h-5 items-center rounded border border-argocd-subtle bg-surface-argocd-subtle px-0.5 text-xs font-bold uppercase text-argocd retina:border-[0.5px]">
               ARGOCD
             </span>
+          </>
+        )}
+        {blueprintId && (
+          <>
+            <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
+            <Suspense fallback={<BlueprintMetadataSkeleton showRepository={false} showUpdateBadge={false} />}>
+              <BlueprintMetadata
+                blueprintId={blueprintId}
+                service={service}
+                linkVersionToSettings
+                showRepository={false}
+                showUpdateBadge={false}
+              />
+            </Suspense>
           </>
         )}
         <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
@@ -217,14 +232,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
 
   return (
     <div className="mt-3 flex items-center gap-1">
-      {gitRepository &&
-        (blueprintId ? (
-          <Suspense fallback={<BlueprintMetadataSkeleton gitRepository={gitRepository} />}>
-            <BlueprintMetadata blueprintId={blueprintId} gitRepository={gitRepository} service={service} />
-          </Suspense>
-        ) : (
-          <GitRepository gitRepository={gitRepository} />
-        ))}
+      {gitRepository && !blueprintId && <GitRepository gitRepository={gitRepository} />}
       {isArgoCdService && 'manifest_revision' in service && service.manifest_revision && (
         <CopyToClipboard text={service.manifest_revision}>
           <Button type="button" variant="outline" color="neutral" size="xs" className="pl-1">
@@ -282,11 +290,6 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
             {helmRepository.chart_version}
           </Badge>
         </>
-      )}
-      {blueprintId && !gitRepository && (
-        <Suspense fallback={<BlueprintMetadataSkeleton />}>
-          <BlueprintMetadata blueprintId={blueprintId} service={service} />
-        </Suspense>
       )}
       {databaseSource && (
         <>

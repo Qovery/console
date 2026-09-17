@@ -141,13 +141,15 @@ function BlueprintUpdatePreviewContent({
         : 'h-[min(75vh,calc(100vh-320px))] min-h-[260px]'
       : 'min-h-[180px]'
 
+  const isModalPending = layout === 'modal' && outcome.type === 'pending'
   const body = (
-    <Section className="gap-4">
+    <Section className={isModalPending ? 'flex min-h-full w-full flex-1 flex-col gap-4' : 'gap-4'}>
       <Heading level={1}>Preview changes</Heading>
-      <Section className="gap-2">
+      <Section className={isModalPending ? 'flex min-h-0 flex-1 flex-col gap-2' : 'gap-2'}>
         <Heading level={3}>Raw output</Heading>
         <div
-          className={`${rawOutputContainerHeightClassName} flex flex-col ${layout === 'modal' ? 'overflow-visible' : 'overflow-auto'} rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
+          data-testid="blueprint-preview-raw-output"
+          className={`${rawOutputContainerHeightClassName} ${isModalPending ? 'min-h-0 flex-1' : ''} flex flex-col ${layout === 'modal' ? 'overflow-visible' : 'overflow-auto'} rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
         >
           {match(outcome)
             .with({ type: 'pending' }, () => <BlueprintUpdateRawOutputSkeleton />)
@@ -208,7 +210,7 @@ function BlueprintUpdatePreviewContent({
     return (
       <div className="relative flex h-full min-h-0 flex-col">
         <div data-testid="blueprint-preview-modal-content" className="min-h-0 flex-1 overflow-y-auto pb-20">
-          <div className="w-full px-8 py-8">{body}</div>
+          <div className={`${isModalPending ? 'flex min-h-full w-full' : 'w-full'} px-8 py-8`}>{body}</div>
         </div>
         {footer}
       </div>
@@ -263,7 +265,7 @@ function BlueprintUpdateRawOutput({ rawOutput }: { rawOutput: string }) {
 }
 
 function BlueprintUpdateRawOutputSkeleton() {
-  const skeletonLineWidths = ['46%', '28%', '72%', '64%', '82%', '34%']
+  const skeletonLineWidths = ['46%', '28%', '72%', '64%', '82%', '34%', '58%', '76%', '41%', '88%', '67%', '52%']
   const [messageIndex, setMessageIndex] = useState(0)
 
   useEffect(() => {
@@ -275,7 +277,7 @@ function BlueprintUpdateRawOutputSkeleton() {
   }, [])
 
   return (
-    <div aria-label="Waiting for preview output" className="flex flex-col gap-3">
+    <div aria-label="Waiting for preview output" className="flex min-h-0 flex-1 flex-col justify-between">
       <div className="mb-1 flex items-center gap-2 font-sans text-sm text-neutral-subtle">
         <Skeleton width={8} height={8} rounded />
         <span aria-live="polite">{PREVIEW_LOADING_MESSAGES[messageIndex]}</span>
