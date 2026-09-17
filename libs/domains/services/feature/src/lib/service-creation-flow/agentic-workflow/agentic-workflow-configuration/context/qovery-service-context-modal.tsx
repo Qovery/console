@@ -38,7 +38,7 @@ export function QoveryServiceContextModal({
             variant="plain"
             color="neutral"
             size="xs"
-            disabled={isLoading || isSaving}
+            disabled={isLoading || isSaving || services.length === 0}
             onClick={() => setSelectedIds(hasSelectedService ? [] : services.map(({ id }) => id))}
           >
             {hasSelectedService ? 'Unselect all' : 'Select all'}

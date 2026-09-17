@@ -1,7 +1,7 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import posthog from 'posthog-js'
-import { APIVariableScopeEnum, LlmProviderType, type McpServerResponse } from 'qovery-typescript-axios'
+import { APIVariableScopeEnum, type McpServerResponse } from 'qovery-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
 import {
@@ -339,9 +339,7 @@ export function AgenticWorkflowConfiguration() {
   const hasModelCredential = Boolean(values.llmProviderId)
   const showLlmProviderError = (showValidationErrors || Boolean(dirtyFields.llmProviderId)) && !hasModelCredential
   const providerConfigurationInvalid = !hasModelCredential || Boolean(modelSettingsJsonError)
-  const availableLlmProviders = llmProviders.filter(
-    ({ type, has_credential }) => type === LlmProviderType.CLAUDE && has_credential
-  )
+  const availableLlmProviders = llmProviders.filter(({ has_credential }) => has_credential)
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
     resources: false,

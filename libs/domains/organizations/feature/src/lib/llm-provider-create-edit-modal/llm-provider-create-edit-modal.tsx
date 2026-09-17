@@ -65,6 +65,9 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
   })
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
+  const providerChanged = isEdit && methods.watch('type') !== llmProvider.type
+  const credentialRequired = !isEdit || providerChanged
+
   const { mutateAsync: createLlmProvider, isLoading: isCreating } = useCreateLlmProvider()
   const { mutateAsync: editLlmProvider, isLoading: isEditing } = useEditLlmProvider()
 
@@ -141,34 +144,35 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
             name="type"
             control={methods.control}
             render={({ field }) => (
-              <InputSelect
-                label="Provider"
-                value={field.value}
-                options={PROVIDER_OPTIONS}
-                onChange={field.onChange}
-              />
+              <InputSelect label="Provider" value={field.value} options={PROVIDER_OPTIONS} onChange={field.onChange} />
             )}
           />
           <Controller
             name="credential"
             control={methods.control}
             rules={
-              isEdit
-                ? undefined
-                : {
+              credentialRequired
+                ? {
                     required: 'Please enter a token.',
                     validate: (value) => Boolean(value.trim()) || 'Please enter a token.',
                   }
+                : undefined
             }
             render={({ field, fieldState: { error } }) => (
               <InputText
-                label={isEdit ? 'Token (optional)' : 'Token'}
+                label={isEdit && !credentialRequired ? 'Token (optional)' : 'Token'}
                 name={field.name}
                 value={field.value}
                 onChange={field.onChange}
                 error={error?.message}
                 type="password"
-                hint={isEdit ? 'Leave blank to keep the current token.' : 'Encrypted and never shown again.'}
+                hint={
+                  providerChanged
+                    ? 'Enter a new token for the selected provider.'
+                    : isEdit
+                      ? 'Leave blank to keep the current token.'
+                      : 'Encrypted and never shown again.'
+                }
               />
             )}
           />
