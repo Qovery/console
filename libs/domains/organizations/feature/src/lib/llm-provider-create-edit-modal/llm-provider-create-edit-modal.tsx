@@ -33,6 +33,15 @@ const PROVIDER_OPTIONS = [
     ),
     value: LlmProviderType.CLAUDE,
   },
+  {
+    label: (
+      <span className="flex items-center gap-2">
+        <img src="/assets/ai-tools/bedrock.svg" alt="" aria-hidden="true" className="h-5 w-5" />
+        Amazon Bedrock
+      </span>
+    ),
+    value: LlmProviderType.BEDROCK,
+  },
 ]
 
 const SCOPE_OPTIONS = [
@@ -136,7 +145,6 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
                 label="Provider"
                 value={field.value}
                 options={PROVIDER_OPTIONS}
-                disabled
                 onChange={field.onChange}
               />
             )}

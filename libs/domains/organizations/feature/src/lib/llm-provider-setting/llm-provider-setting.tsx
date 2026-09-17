@@ -1,5 +1,6 @@
+import { useAuth0 } from '@auth0/auth0-react'
 import { useParams } from '@tanstack/react-router'
-import { type LlmProviderResponse } from 'qovery-typescript-axios'
+import { type LlmProviderResponse, LlmProviderScope } from 'qovery-typescript-axios'
 import { useState } from 'react'
 import { InputSelect, useModal } from '@qovery/shared/ui'
 import { LlmProviderCreateEditModal } from '../llm-provider-create-edit-modal/llm-provider-create-edit-modal'
@@ -14,12 +15,19 @@ export interface LlmProviderSettingProps {
 
 export function LlmProviderSetting({ error, isLoading, llmProviders, value, onChange }: LlmProviderSettingProps) {
   const { organizationId = '' } = useParams({ strict: false })
+  const { user } = useAuth0()
+  const currentUserSub = user?.sub
   const { openModal, closeModal } = useModal()
   const [createdLlmProvider, setCreatedLlmProvider] = useState<LlmProviderResponse>()
+  const usableLlmProviders = llmProviders.filter(
+    (llmProvider) =>
+      llmProvider.scope === LlmProviderScope.ORGANIZATION ||
+      Boolean(currentUserSub && llmProvider.owner_user_sub === currentUserSub)
+  )
   const availableLlmProviders =
-    createdLlmProvider && !llmProviders.some(({ id }) => id === createdLlmProvider.id)
-      ? [...llmProviders, createdLlmProvider]
-      : llmProviders
+    createdLlmProvider && !usableLlmProviders.some(({ id }) => id === createdLlmProvider.id)
+      ? [...usableLlmProviders, createdLlmProvider]
+      : usableLlmProviders
 
   const openCreateModal = () => {
     openModal({
@@ -56,7 +64,7 @@ export function LlmProviderSetting({ error, isLoading, llmProviders, value, onCh
       isLoading={isLoading}
       placeholder="Select a token"
       hint={
-        llmProviders.length === 0 && !isLoading ? (
+        availableLlmProviders.length === 0 && !isLoading ? (
           <span>
             No token is configured. Create one here or manage tokens in{' '}
             <a

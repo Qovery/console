@@ -47,7 +47,6 @@ export function AgentTemplateRequestModal({ organizationId, onClose }: AgentTemp
               value={field.value}
               onChange={field.onChange}
               error={error?.message}
-              hint="e.g. Incident response, pull request review, cost optimization..."
             />
           )}
         />

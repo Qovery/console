@@ -47,6 +47,8 @@ export function QoveryServiceContextModal({
         <div className="flex max-h-72 flex-col gap-2 overflow-y-auto">
           {isLoading ? (
             <p className="py-4 text-center text-sm text-neutral-subtle">Loading services...</p>
+          ) : services.length === 0 ? (
+            <p className="py-4 text-center text-sm text-neutral-subtle">No service available in this environment.</p>
           ) : (
             services.map(({ id, name, type }) => {
               const checked = selectedIds.includes(id)

@@ -26,11 +26,13 @@ export function GitContextCompactCard({
   onClick,
   provider,
   repository,
+  url,
 }: {
   disabled?: boolean
   onClick: () => void
   provider?: string | null
   repository: string
+  url?: string | null
 }) {
   const providerLabel = provider ? provider.toUpperCase() : 'GIT'
 
@@ -40,7 +42,19 @@ export function GitContextCompactCard({
         <Icon name={provider || IconEnum.GIT} width={12} height={12} />
         {providerLabel}
       </span>
-      <div className="min-w-0 truncate text-sm text-neutral">{repository}</div>
+      {url ? (
+        <a
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="min-w-0 max-w-max truncate text-sm text-neutral hover:underline"
+          onClick={(event) => event.stopPropagation()}
+        >
+          {repository}
+        </a>
+      ) : (
+        <div className="min-w-0 truncate text-sm text-neutral">{repository}</div>
+      )}
       <Button
         type="button"
         variant="outline"

@@ -904,6 +904,7 @@ export function AgenticWorkflowConfiguration() {
                         repository={
                           repository.gitRepository?.name || repository.repository || 'Configure Git repository'
                         }
+                        url={repository.gitRepository?.url ?? repository.repository}
                         onClick={() => openGitContext(index)}
                       />
                     ))}
