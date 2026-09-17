@@ -6,6 +6,7 @@ import { ClusterStateEnum, StateEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ClusterInstallationGuideModal, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal, useDeploymentRule, useEnvironments } from '@qovery/domains/environments/feature'
+import { useOnboardingCompletion } from '@qovery/domains/onboarding/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { useServiceStatuses, useServices } from '@qovery/domains/services/feature'
@@ -56,6 +57,10 @@ export function SectionOnboarding() {
     enabled: isOnboardingActive,
   })
   const { data: projects = [] } = useProjects({ organizationId, enabled: isOnboardingActive })
+  const { hasEnvironment, isServiceDeployed } = useOnboardingCompletion({
+    projectIds: projects.map(({ id }) => id),
+    enabled: isOnboardingActive,
+  })
 
   const firstProject = projects[0]
   const { data: environments = [] } = useEnvironments({ projectId: firstProject?.id ?? '' })
@@ -103,7 +108,6 @@ export function SectionOnboarding() {
   )
 
   const hasCluster = clusters.length > 0
-  const hasEnvironment = environments.length > 0
 
   const allServiceStatuses = useMemo(
     () => [
@@ -113,14 +117,11 @@ export function SectionOnboarding() {
       ...(serviceStatuses?.helms ?? []),
       ...(serviceStatuses?.databases ?? []),
       ...(serviceStatuses?.terraforms ?? []),
+      ...(serviceStatuses?.agentic_workflows ?? []),
     ],
     [serviceStatuses]
   )
   const hasService = services.length > 0
-  const isServiceDeployed = useMemo(
-    () => allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYED),
-    [allServiceStatuses]
-  )
   const isServiceQueued = useMemo(
     () => hasService && !isServiceDeployed && allServiceStatuses.some((s) => QUEUED_SERVICE_STATUSES.includes(s.state)),
     [hasService, isServiceDeployed, allServiceStatuses]
@@ -236,6 +237,7 @@ export function SectionOnboarding() {
     }
 
     completionModalOpenedRef.current = true
+    complete()
     enableAlertClickOutside(false)
 
     openModal({
@@ -257,7 +259,6 @@ export function SectionOnboarding() {
               <Button
                 type="button"
                 onClick={() => {
-                  complete()
                   closeModal()
                   showPylonForm('request-ai-builder-portal')
                 }}
@@ -277,7 +278,6 @@ export function SectionOnboarding() {
               size="md"
               className="gap-2"
               onClick={() => {
-                complete()
                 closeModal()
                 navigate({ to: '/organization/$organizationId/settings/members', params: { organizationId } })
               }}
@@ -638,7 +638,7 @@ export function SectionOnboarding() {
               >
                 Service stopped <Icon iconName="arrow-up-right" />
               </Link>
-            ) : hasEnvironment ? (
+            ) : firstProject && firstEnvironment ? (
               <Link
                 as="button"
                 size="sm"
@@ -647,8 +647,8 @@ export function SectionOnboarding() {
                 to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
                 params={{
                   organizationId,
-                  projectId: firstProject?.id ?? '',
-                  environmentId: firstEnvironment?.id ?? '',
+                  projectId: firstProject.id,
+                  environmentId: firstEnvironment.id,
                 }}
               >
                 <Icon iconName="circle-plus" />
@@ -674,7 +674,7 @@ export function SectionOnboarding() {
               </span>
               {isPreviewEnabled ? (
                 <Icon iconName="circle-check" className="text-sm text-positive" />
-              ) : isServiceDeployed ? (
+              ) : isServiceDeployed && firstProject && firstEnvironment ? (
                 <Link
                   as="button"
                   size="sm"
@@ -683,8 +683,8 @@ export function SectionOnboarding() {
                   to="/organization/$organizationId/project/$projectId/environment/$environmentId/settings/preview-environments"
                   params={{
                     organizationId,
-                    projectId: firstProject?.id ?? '',
-                    environmentId: firstEnvironment?.id ?? '',
+                    projectId: firstProject.id,
+                    environmentId: firstEnvironment.id,
                   }}
                 >
                   <Icon iconName="gear" />
