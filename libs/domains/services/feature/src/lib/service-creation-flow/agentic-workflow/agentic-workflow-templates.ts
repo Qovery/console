@@ -3,6 +3,10 @@ import { APIVariableScopeEnum, AgenticWorkflowExecutionMode } from 'qovery-types
 import { type VariableData } from '@qovery/shared/interfaces'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
 
+// Fallback documentation shown when the flow is not seeded from a specific
+// template (e.g. "Start from scratch").
+export const AGENT_TASKS_DOC_LINK = 'https://www.qovery.com/docs/configuration/agent-tasks/overview'
+
 export interface AgenticWorkflowTemplate {
   id: string
   title: string
@@ -10,6 +14,7 @@ export interface AgenticWorkflowTemplate {
   iconName?: IconName
   logoPath?: string
   darkLogoPath?: string
+  docLink?: string
   requiresQoveryMcp?: boolean
   seed: Partial<AgenticWorkflowFormData>
   variables?: VariableData[]
@@ -80,6 +85,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     title: 'Incident Analyzer with incident.io',
     description: 'Analyze incident.io incidents with deployment, code, logs, and metrics context.',
     logoPath: '/assets/agent-templates/incident-io.svg',
+    docLink: 'https://www.qovery.com/docs/configuration/agent-tasks/incident-analyser',
     requiresQoveryMcp: true,
     seed: {
       name: 'Incident Analyzer with incident.io',
@@ -98,6 +104,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     title: 'Incident Analyzer with Honeybadger',
     description: 'Analyze Honeybadger incidents with deployment, code, logs, and metrics context.',
     logoPath: '/assets/agent-templates/honeybadger.svg',
+    docLink: 'https://www.qovery.com/docs/configuration/agent-tasks/incident-analyser-honeybadger',
     requiresQoveryMcp: true,
     seed: {
       name: 'Incident Analyzer with Honeybadger',
@@ -116,6 +123,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     title: 'Build & deployment optimizer',
     description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
     iconName: 'gauge-high',
+    docLink: 'https://www.qovery.com/docs/configuration/agent-tasks/build-deployment-optimizer',
     requiresQoveryMcp: true,
     seed: {
       name: 'Build & deployment optimizer',
@@ -132,6 +140,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     title: 'Jira Coding Agent',
     description: 'Turn a Jira issue into an implementation and a ready-to-review pull request.',
     logoPath: '/assets/agent-templates/jira.svg',
+    docLink: 'https://www.qovery.com/docs/configuration/agent-tasks/jira-coding-agent',
     seed: {
       name: 'Jira Coding Agent',
       description: 'Turn a Jira issue into an implementation and a ready-to-review pull request.',
@@ -167,6 +176,7 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
     description: 'Turn a Linear issue into an implementation and a ready-to-review pull request.',
     logoPath: '/assets/agent-templates/linear-dark.svg',
     darkLogoPath: '/assets/agent-templates/linear-light.svg',
+    docLink: 'https://www.qovery.com/docs/configuration/agent-tasks/linear-coding-agent',
     seed: {
       name: 'Linear Coding Agent',
       description: 'Turn a Linear issue into an implementation and a ready-to-review pull request.',
