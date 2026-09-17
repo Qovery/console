@@ -57,7 +57,15 @@ jest.mock('@qovery/domains/services/feature', () => ({
       {children}
     </div>
   ),
-  OverridesSectionCard: ({ children }: { children: ReactNode }) => <div>{children}</div>,
+  OverridesSectionCard: ({
+    active,
+    children,
+    onClick,
+  }: {
+    active: boolean
+    children: ReactNode
+    onClick: () => void
+  }) => (active ? <div>{children}</div> : <button onClick={onClick}>Configure</button>),
   BlueprintUpdateFlowShell: ({ children }: { children: ReactNode }) => <div>{children}</div>,
   BlueprintPreview: ({ onBack, onConfirm }: { onBack: () => void; onConfirm: () => Promise<void> }) => (
     <>
@@ -209,6 +217,9 @@ describe('BlueprintGeneralSettings', () => {
       <BlueprintGeneralSettings service={service} environmentId="environment-id" organizationId="organization-id" />
     )
 
+    expect(screen.getByRole('button', { name: 'Configure' })).toBeInTheDocument()
+    expect(screen.queryByText('Current value:')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
     await userEvent.click(screen.getByRole('button', { name: 'Edit value' }))
     await userEvent.click(screen.getByRole('button', { name: 'Preview changes' }))
 
@@ -260,6 +271,7 @@ describe('BlueprintGeneralSettings', () => {
 
     const { userEvent } = renderWithProviders(<BlueprintGeneralSettingsHarness />)
 
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
     await userEvent.click(screen.getByRole('button', { name: 'Edit value' }))
     await userEvent.click(screen.getByRole('button', { name: 'Preview changes' }))
     await userEvent.click(screen.getByRole('button', { name: 'Confirm & deploy update' }))
@@ -269,6 +281,7 @@ describe('BlueprintGeneralSettings', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Navigate to Overview' }))
     await userEvent.click(screen.getByRole('button', { name: 'Navigate to Settings' }))
 
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
     expect(screen.getByText('Current value: updated-value')).toBeInTheDocument()
   })
 
@@ -295,6 +308,7 @@ describe('BlueprintGeneralSettings', () => {
       <BlueprintGeneralSettings service={service} environmentId="environment-id" organizationId="organization-id" />
     )
 
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
     await userEvent.click(screen.getByRole('button', { name: 'Edit value' }))
     await userEvent.click(screen.getByRole('button', { name: 'Preview changes' }))
 

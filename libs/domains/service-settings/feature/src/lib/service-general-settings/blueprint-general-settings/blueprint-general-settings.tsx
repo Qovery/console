@@ -175,6 +175,7 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
     serviceType: service.serviceType,
   })
   const [changes, setChanges] = useState<Record<string, BlueprintFieldValue>>({})
+  const [isOverridesExpanded, setIsOverridesExpanded] = useState(false)
   const [step, setStep] = useState<'review' | 'preview'>('review')
   const [previewId, setPreviewId] = useState<string>()
   const [previewError, setPreviewError] = useState(false)
@@ -405,7 +406,11 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
             />
           ))}
         </BlueprintSection>
-        <OverridesSectionCard active disabled={optionalFields.length === 0} onClick={() => undefined}>
+        <OverridesSectionCard
+          active={isOverridesExpanded}
+          disabled={optionalFields.length === 0}
+          onClick={() => setIsOverridesExpanded(true)}
+        >
           {optionalFields.map((field) => (
             <BlueprintManifestVariableInput
               key={field.name}
