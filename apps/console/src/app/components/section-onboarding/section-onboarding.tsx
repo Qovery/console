@@ -117,6 +117,7 @@ export function SectionOnboarding() {
       ...(serviceStatuses?.helms ?? []),
       ...(serviceStatuses?.databases ?? []),
       ...(serviceStatuses?.terraforms ?? []),
+      ...(serviceStatuses?.agentic_workflows ?? []),
     ],
     [serviceStatuses]
   )
@@ -637,7 +638,7 @@ export function SectionOnboarding() {
               >
                 Service stopped <Icon iconName="arrow-up-right" />
               </Link>
-            ) : hasEnvironment ? (
+            ) : firstProject && firstEnvironment ? (
               <Link
                 as="button"
                 size="sm"
@@ -646,8 +647,8 @@ export function SectionOnboarding() {
                 to="/organization/$organizationId/project/$projectId/environment/$environmentId/overview"
                 params={{
                   organizationId,
-                  projectId: firstProject?.id ?? '',
-                  environmentId: firstEnvironment?.id ?? '',
+                  projectId: firstProject.id,
+                  environmentId: firstEnvironment.id,
                 }}
               >
                 <Icon iconName="circle-plus" />
@@ -673,7 +674,7 @@ export function SectionOnboarding() {
               </span>
               {isPreviewEnabled ? (
                 <Icon iconName="circle-check" className="text-sm text-positive" />
-              ) : isServiceDeployed ? (
+              ) : isServiceDeployed && firstProject && firstEnvironment ? (
                 <Link
                   as="button"
                   size="sm"
@@ -682,8 +683,8 @@ export function SectionOnboarding() {
                   to="/organization/$organizationId/project/$projectId/environment/$environmentId/settings/preview-environments"
                   params={{
                     organizationId,
-                    projectId: firstProject?.id ?? '',
-                    environmentId: firstEnvironment?.id ?? '',
+                    projectId: firstProject.id,
+                    environmentId: firstEnvironment.id,
                   }}
                 >
                   <Icon iconName="gear" />

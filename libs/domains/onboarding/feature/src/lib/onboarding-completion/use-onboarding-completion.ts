@@ -13,6 +13,7 @@ interface EnvironmentServiceStatuses {
   helms?: ServiceDeploymentStatus[]
   databases?: ServiceDeploymentStatus[]
   terraforms?: ServiceDeploymentStatus[]
+  agentic_workflows?: ServiceDeploymentStatus[]
 }
 
 interface UseOnboardingCompletionProps {
@@ -33,6 +34,7 @@ export function hasAnyDeployedService(serviceStatusesByEnvironment: (Environment
       ...(serviceStatuses?.helms ?? []),
       ...(serviceStatuses?.databases ?? []),
       ...(serviceStatuses?.terraforms ?? []),
+      ...(serviceStatuses?.agentic_workflows ?? []),
     ].some(({ state }) => state === StateEnum.DEPLOYED)
   )
 }
@@ -49,6 +51,7 @@ export function useOnboardingCompletion({ projectIds, enabled }: UseOnboardingCo
     queries: environments.map(({ id: environmentId }) => ({
       ...queries.services.listStatuses(environmentId),
       enabled,
+      refetchInterval: enabled ? 3000 : undefined,
     })),
   })
 

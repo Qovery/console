@@ -1,5 +1,13 @@
+import { useQueries } from '@tanstack/react-query'
 import { StateEnum } from 'qovery-typescript-axios'
-import { hasAnyDeployedService, hasAnyEnvironment } from './use-onboarding-completion'
+import { renderHook } from '@qovery/shared/util-tests'
+import { hasAnyDeployedService, hasAnyEnvironment, useOnboardingCompletion } from './use-onboarding-completion'
+
+jest.mock('@tanstack/react-query', () => ({
+  useQueries: jest.fn(),
+}))
+
+const mockedUseQueries = jest.mocked(useQueries)
 
 describe('hasAnyEnvironment', () => {
   it('returns true when any project contains an environment', () => {
@@ -21,6 +29,10 @@ describe('hasAnyDeployedService', () => {
     ).toBe(true)
   })
 
+  it('returns true when an environment contains a deployed agentic workflow', () => {
+    expect(hasAnyDeployedService([{ agentic_workflows: [{ state: StateEnum.DEPLOYED }] }])).toBe(true)
+  })
+
   it('returns false when no environment has a deployed service', () => {
     expect(
       hasAnyDeployedService([
@@ -32,5 +44,35 @@ describe('hasAnyDeployedService', () => {
 
   it('returns false when service statuses are unavailable', () => {
     expect(hasAnyDeployedService([undefined])).toBe(false)
+  })
+})
+
+describe('useOnboardingCompletion', () => {
+  beforeEach(() => {
+    mockedUseQueries.mockReset()
+  })
+
+  it('polls service statuses while onboarding is active', () => {
+    mockedUseQueries
+      .mockReturnValueOnce([{ data: [{ id: 'environment-1' }] }] as never)
+      .mockReturnValueOnce([] as never)
+
+    renderHook(() => useOnboardingCompletion({ projectIds: ['project-1'], enabled: true }))
+
+    expect(mockedUseQueries).toHaveBeenNthCalledWith(2, {
+      queries: [expect.objectContaining({ enabled: true, refetchInterval: 3000 })],
+    })
+  })
+
+  it('stops polling service statuses when onboarding is inactive', () => {
+    mockedUseQueries
+      .mockReturnValueOnce([{ data: [{ id: 'environment-1' }] }] as never)
+      .mockReturnValueOnce([] as never)
+
+    renderHook(() => useOnboardingCompletion({ projectIds: ['project-1'], enabled: false }))
+
+    expect(mockedUseQueries).toHaveBeenNthCalledWith(2, {
+      queries: [expect.objectContaining({ enabled: false, refetchInterval: undefined })],
+    })
   })
 })
