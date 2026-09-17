@@ -47,7 +47,7 @@ describe('BlueprintUpdateBadge', () => {
       />
     )
 
-    expect(screen.getByText('Up to date')).toBeInTheDocument()
+    expect(screen.getByText('Blueprint is up to date')).toBeInTheDocument()
   })
 
   it('navigates to the review flow using the service identifiers', async () => {

@@ -55,7 +55,7 @@ const withBlueprintTag = (service: Terraform, tag: string) =>
 
 describe('ServiceVersionCell', () => {
   it.each([
-    { isUpToDate: true, status: 'Up to date' },
+    { isUpToDate: true, status: 'Blueprint is up to date' },
     { isUpToDate: false, status: 'Blueprint update available' },
   ])('renders the $status state for a blueprint service', ({ isUpToDate, status }) => {
     jest.mocked(useBlueprintUpdate).mockReturnValue({

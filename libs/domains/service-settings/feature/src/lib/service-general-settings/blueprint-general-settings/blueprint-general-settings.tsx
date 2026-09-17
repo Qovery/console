@@ -1,6 +1,7 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import {
+  type BlueprintConfigurationVariable,
   type BlueprintManifestResponseResultsInner,
   type BlueprintManifestVariableField,
 } from 'qovery-typescript-axios'
@@ -24,6 +25,7 @@ import {
   isRequiredVariableField,
   useBlueprint,
   useBlueprintCatalogServiceManifest,
+  useBlueprintVariables,
   useDeployBlueprint,
   usePreviewBlueprintUpdate,
   useUpdateBlueprint,
@@ -31,16 +33,9 @@ import {
 import { SettingsHeading } from '@qovery/shared/console-shared'
 import { Button, LoaderSpinner, Section, toast, useModal } from '@qovery/shared/ui'
 
-interface PersistedVariable {
-  name: string
-  value: string | null
-  is_secret: boolean
-}
-
 interface BlueprintSettingsDetails {
   name: string
   tag: string
-  variables?: PersistedVariable[]
   manifest?: {
     results: BlueprintManifestResponseResultsInner[]
   }
@@ -74,19 +69,13 @@ function isBlueprintSettingsDetails(data: unknown): data is BlueprintSettingsDet
   return (
     typeof details.name === 'string' &&
     typeof details.tag === 'string' &&
-    (details.variables === undefined || Array.isArray(details.variables)) &&
-    (details.manifest === undefined ||
-      (details.manifest !== null && Array.isArray(details.manifest.results)))
+    (details.manifest === undefined || (details.manifest !== null && Array.isArray(details.manifest.results)))
   )
 }
 
 function parseBlueprintTag(tag: string | undefined) {
   const [provider = '', serviceFamily = '', serviceVersion = ''] = tag?.split('/') ?? []
   return { provider, serviceFamily, serviceVersion }
-}
-
-function getPersistedVariables(details: BlueprintSettingsDetails): PersistedVariable[] {
-  return details.variables ?? []
 }
 
 function getBlueprintGitRepository(service: BlueprintService) {
@@ -98,7 +87,7 @@ function useOptimisticBlueprintSettings({
   persistedVariables,
 }: {
   serviceId: string
-  persistedVariables: Map<string, PersistedVariable>
+  persistedVariables: Map<string, BlueprintConfigurationVariable>
 }) {
   const queryClient = useQueryClient()
   const queryKey = useMemo(() => getOptimisticBlueprintSettingsQueryKey(serviceId), [serviceId])
@@ -159,9 +148,20 @@ function useOptimisticBlueprintSettings({
   return { optimisticSettings, update, remove }
 }
 
-export function BlueprintGeneralSettings({ service, environmentId, organizationId }: BlueprintGeneralSettingsProps) {
+export function BlueprintGeneralSettings(props: BlueprintGeneralSettingsProps) {
+  return (
+    <Suspense fallback={<LoaderSpinner className="mx-auto my-12" />}>
+      <BlueprintGeneralSettingsContent {...props} />
+    </Suspense>
+  )
+}
+
+function BlueprintGeneralSettingsContent({ service, environmentId, organizationId }: BlueprintGeneralSettingsProps) {
   const { closeModal, openModal } = useModal()
   const { data, isLoading } = useBlueprint({ blueprintId: service.blueprint_id })
+  const { data: persistedVariables = [], isLoading: isVariablesLoading } = useBlueprintVariables({
+    blueprintId: service.blueprint_id,
+  })
   const { data: environment } = useEnvironment({ environmentId })
   const { mutateAsync: previewBlueprintUpdate, isLoading: isPreviewLoading } = usePreviewBlueprintUpdate()
   const { mutateAsync: updateBlueprint, isLoading: isUpdateLoading } = useUpdateBlueprint({
@@ -182,18 +182,19 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
   const details = isBlueprintSettingsDetails(data) ? data : undefined
   const { provider, serviceFamily, serviceVersion } = parseBlueprintTag(details?.tag)
   const manifestFields = details?.manifest?.results
+  const isCatalogManifestEnabled = Boolean(details && !manifestFields)
   const { data: catalogFields = [], isLoading: isCatalogManifestLoading } = useBlueprintCatalogServiceManifest({
     organizationId,
     provider,
     serviceFamily,
     serviceVersion,
     environmentId,
-    enabled: Boolean(details && !manifestFields),
+    enabled: isCatalogManifestEnabled,
   })
   const fields = manifestFields ?? catalogFields
   const variablesByName = useMemo(
-    () => new Map((details ? getPersistedVariables(details) : []).map((variable) => [variable.name, variable])),
-    [details]
+    () => new Map(persistedVariables.map((variable) => [variable.name, variable])),
+    [persistedVariables]
   )
   const {
     optimisticSettings: { values: optimisticChanges, secretNames: optimisticSecretNames },
@@ -229,9 +230,98 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
       ),
     [fields, variablesByName]
   )
-  const values = { ...initialValues, ...optimisticChanges, ...changes }
+  const values = useMemo(
+    () => ({ ...initialValues, ...optimisticChanges, ...changes }),
+    [changes, initialValues, optimisticChanges]
+  )
   const requiredFields = fields.filter(isRequiredVariableField)
   const optionalFields = fields.filter(isOptionalVariableField)
+  const formValueSources = useMemo(
+    () =>
+      fields
+        .filter((field): field is BlueprintManifestVariableField => field.kind === 'variable')
+        .map((field) => {
+          const persistedVariable = variablesByName.get(field.name)
+
+          return {
+            field: field.name,
+            schema: manifestFields ? 'useBlueprint -> response.manifest.results' : 'useBlueprintCatalogServiceManifest',
+            value:
+              field.name in changes
+                ? 'local useState(changes)'
+                : field.name in optimisticChanges
+                  ? 'React Query optimistic Blueprint Settings cache'
+                  : persistedVariable
+                    ? 'useBlueprintVariables -> response[]'
+                    : 'getDefaultFieldValue(field)',
+            isSecret: field.is_secret,
+            hasValue: values[field.name] !== undefined && values[field.name] !== '',
+          }
+        }),
+    [changes, fields, manifestFields, optimisticChanges, values, variablesByName]
+  )
+  const blueprintEndpoint = `/blueprint/${encodeURIComponent(service.blueprint_id)}`
+  const serviceEndpoint =
+    service.serviceType === 'HELM'
+      ? `/helm/${encodeURIComponent(service.id)}`
+      : `/terraform/${encodeURIComponent(service.id)}`
+  const catalogManifestEndpoint = `/organization/${encodeURIComponent(
+    organizationId
+  )}/blueprint/catalog/${encodeURIComponent(provider)}/${encodeURIComponent(serviceFamily)}/${encodeURIComponent(
+    serviceVersion
+  )}/manifest?environmentId=${encodeURIComponent(environmentId)}`
+
+  useEffect(() => {
+    console.groupCollapsed('Blueprint configuration form data sources')
+    console.table([
+      {
+        hook: 'useService (settings route)',
+        endpoint: `GET ${serviceEndpoint}`,
+        enabled: true,
+        provides: 'Service prop for identity and metadata; it does not provide form field values',
+      },
+      {
+        hook: 'useBlueprint',
+        endpoint: `GET ${blueprintEndpoint}`,
+        enabled: true,
+        provides: 'Blueprint details and manifest fields',
+      },
+      {
+        hook: 'useBlueprintVariables',
+        endpoint: `GET ${blueprintEndpoint}/variables`,
+        enabled: true,
+        provides: 'Persisted Blueprint variables; secret values are omitted by the API',
+      },
+      {
+        hook: 'useBlueprintCatalogServiceManifest',
+        endpoint: `GET ${catalogManifestEndpoint}`,
+        enabled: isCatalogManifestEnabled,
+        provides: 'Catalog manifest fields only; used when useBlueprint has no manifest',
+      },
+    ])
+    console.table(formValueSources)
+    console.log('useService (settings route) payload', service)
+    console.log('useBlueprint payload', data)
+    console.log('useBlueprintVariables payload', persistedVariables)
+    console.log('useBlueprintCatalogServiceManifest payload', catalogFields)
+    console.log('React Query optimistic Blueprint Settings payload', optimisticChanges)
+    console.log('local useState(changes) payload', changes)
+    console.log('computed Blueprint form values payload', values)
+    console.groupEnd()
+  }, [
+    blueprintEndpoint,
+    catalogFields,
+    catalogManifestEndpoint,
+    changes,
+    data,
+    formValueSources,
+    isCatalogManifestEnabled,
+    optimisticChanges,
+    persistedVariables,
+    service,
+    serviceEndpoint,
+    values,
+  ])
   const isValid = requiredFields.every(
     (field) =>
       isFieldValid(field, values[field.name]) ||
@@ -352,7 +442,7 @@ export function BlueprintGeneralSettings({ service, environmentId, organizationI
     step,
   ])
 
-  if (isLoading || (details && !manifestFields && isCatalogManifestLoading)) {
+  if (isLoading || isVariablesLoading || (details && !manifestFields && isCatalogManifestLoading)) {
     return <LoaderSpinner className="mx-auto my-12" />
   }
 

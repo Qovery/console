@@ -35,7 +35,7 @@ export function BlueprintUpdateBadge({
     return (
       <Badge variant="surface" color="neutral" className="cursor-default gap-1 whitespace-nowrap font-medium">
         <Icon className="h-3 w-3" iconName="circle-check" iconStyle="regular" />
-        Up to date
+        Blueprint is up to date
       </Badge>
     )
   }

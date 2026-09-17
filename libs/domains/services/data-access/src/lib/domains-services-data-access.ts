@@ -16,6 +16,7 @@ import {
   ApplicationsApi,
   ArgoCDApi,
   BlueprintCatalogApi,
+  type BlueprintConfigurationVariable,
   type BlueprintCreateRequest,
   BlueprintMainCallsApi,
   type BlueprintUpdateRequest,
@@ -334,6 +335,13 @@ export const services = createQueryKeys('services', {
     queryKey: [blueprintId],
     async queryFn() {
       const response = await blueprintApi.getBlueprint(blueprintId)
+      return response.data
+    },
+  }),
+  blueprintVariables: ({ blueprintId }: { blueprintId: string }) => ({
+    queryKey: [blueprintId],
+    async queryFn(): Promise<BlueprintConfigurationVariable[]> {
+      const response = await blueprintApi.getBlueprintVariables(blueprintId)
       return response.data
     },
   }),

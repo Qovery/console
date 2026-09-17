@@ -5,6 +5,7 @@ import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { BlueprintGeneralSettings } from './blueprint-general-settings'
 
 const mockUseBlueprint = jest.fn()
+const mockUseBlueprintVariables = jest.fn().mockReturnValue({ data: [], isLoading: false })
 const mockUseBlueprintCatalogServiceManifest = jest.fn()
 const mockPreviewBlueprintUpdate = jest.fn()
 const mockUpdateBlueprint = jest.fn()
@@ -25,6 +26,7 @@ jest.mock('@qovery/domains/environments/feature', () => ({
 
 jest.mock('@qovery/domains/services/feature', () => ({
   useBlueprint: (...args: unknown[]) => mockUseBlueprint(...args),
+  useBlueprintVariables: (...args: unknown[]) => mockUseBlueprintVariables(...args),
   useBlueprintCatalogServiceManifest: (...args: unknown[]) => mockUseBlueprintCatalogServiceManifest(...args),
   usePreviewBlueprintUpdate: () => ({ mutateAsync: mockPreviewBlueprintUpdate, isLoading: false }),
   useUpdateBlueprint: () => ({ mutateAsync: mockUpdateBlueprint, isLoading: false }),
@@ -96,6 +98,10 @@ function BlueprintGeneralSettingsHarness() {
 }
 
 describe('BlueprintGeneralSettings', () => {
+  beforeEach(() => {
+    mockUseBlueprintVariables.mockReturnValue({ data: [], isLoading: false })
+  })
+
   it('loads the catalog form from the Blueprint tag returned by the existing read endpoint', () => {
     mockUseBlueprintCatalogServiceManifest.mockReturnValue({ data: [], isLoading: false })
     mockUseBlueprint.mockReturnValue({
@@ -142,6 +148,10 @@ describe('BlueprintGeneralSettings', () => {
           ],
         },
       },
+      isLoading: false,
+    })
+    mockUseBlueprintVariables.mockReturnValue({
+      data: [{ name: 'replicas', value: '3', is_secret: false }],
       isLoading: false,
     })
     mockPreviewBlueprintUpdate.mockResolvedValue({ preview_id: 'preview-id' })

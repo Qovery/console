@@ -467,7 +467,7 @@ describe('ServiceHeader', () => {
     )
     expect(screen.queryByText('GitHub')).not.toBeInTheDocument()
     expect(screen.queryByText('main')).not.toBeInTheDocument()
-    expect(screen.getByText('Up to date')).toBeInTheDocument()
+    expect(screen.getByText('Blueprint is up to date')).toBeInTheDocument()
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
   })
 
@@ -490,7 +490,7 @@ describe('ServiceHeader', () => {
     renderServiceHeader('terraform-mock')
 
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
-    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+    expect(screen.queryByText('Blueprint is up to date')).not.toBeInTheDocument()
   })
 
   it('still renders the header when the blueprint update check fails', () => {
@@ -500,7 +500,7 @@ describe('ServiceHeader', () => {
 
     expect(screen.getByRole('heading', { name: 'aws-s3-bucket' })).toBeInTheDocument()
     expect(screen.getByRole('link', { name: /qovery-blueprints/ })).toBeInTheDocument()
-    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+    expect(screen.queryByText('Blueprint is up to date')).not.toBeInTheDocument()
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
   })
 
@@ -555,7 +555,7 @@ describe('ServiceHeader', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /update available/i }))
 
-    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+    expect(screen.queryByText('Blueprint is up to date')).not.toBeInTheDocument()
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
       params: {
@@ -588,7 +588,7 @@ describe('ServiceHeader', () => {
 
     await userEvent.click(screen.getByRole('button', { name: /update available/i }))
 
-    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+    expect(screen.queryByText('Blueprint is up to date')).not.toBeInTheDocument()
     expect(
       await screen.findByRole('heading', { name: 'aws-s3-bucket blueprint update from 1.0 to 2.0' })
     ).toBeInTheDocument()
@@ -623,7 +623,7 @@ describe('ServiceHeader', () => {
     renderServiceHeader('application-mock')
 
     expect(mockUseBlueprintUpdate).not.toHaveBeenCalled()
-    expect(screen.queryByText('Up to date')).not.toBeInTheDocument()
+    expect(screen.queryByText('Blueprint is up to date')).not.toBeInTheDocument()
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
   })
 })
