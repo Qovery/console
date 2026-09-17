@@ -6,6 +6,7 @@ import { ClusterStateEnum, StateEnum } from 'qovery-typescript-axios'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ClusterInstallationGuideModal, useClusterStatuses, useClusters } from '@qovery/domains/clusters/feature'
 import { CreateCloneEnvironmentModal, useDeploymentRule, useEnvironments } from '@qovery/domains/environments/feature'
+import { useOnboardingCompletion } from '@qovery/domains/onboarding/feature'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { useProjects } from '@qovery/domains/projects/feature'
 import { useServiceStatuses, useServices } from '@qovery/domains/services/feature'
@@ -56,6 +57,10 @@ export function SectionOnboarding() {
     enabled: isOnboardingActive,
   })
   const { data: projects = [] } = useProjects({ organizationId, enabled: isOnboardingActive })
+  const { hasEnvironment, isServiceDeployed } = useOnboardingCompletion({
+    projectIds: projects.map(({ id }) => id),
+    enabled: isOnboardingActive,
+  })
 
   const firstProject = projects[0]
   const { data: environments = [] } = useEnvironments({ projectId: firstProject?.id ?? '' })
@@ -103,7 +108,6 @@ export function SectionOnboarding() {
   )
 
   const hasCluster = clusters.length > 0
-  const hasEnvironment = environments.length > 0
 
   const allServiceStatuses = useMemo(
     () => [
@@ -117,10 +121,6 @@ export function SectionOnboarding() {
     [serviceStatuses]
   )
   const hasService = services.length > 0
-  const isServiceDeployed = useMemo(
-    () => allServiceStatuses.some((s) => s.state === StateEnum.DEPLOYED),
-    [allServiceStatuses]
-  )
   const isServiceQueued = useMemo(
     () => hasService && !isServiceDeployed && allServiceStatuses.some((s) => QUEUED_SERVICE_STATUSES.includes(s.state)),
     [hasService, isServiceDeployed, allServiceStatuses]
