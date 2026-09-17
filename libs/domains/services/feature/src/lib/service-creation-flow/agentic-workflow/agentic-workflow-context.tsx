@@ -114,6 +114,7 @@ export interface AgenticWorkflowCreateContextInterface {
   onExit: () => void
   requiresQoveryMcp: boolean
   variablesForm: UseFormReturn<FlowVariableData>
+  selectedTemplate?: AgenticWorkflowTemplate
 }
 
 const AgenticWorkflowCreateContext = createContext<AgenticWorkflowCreateContextInterface | undefined>(undefined)
@@ -184,6 +185,7 @@ export function AgenticWorkflowCreationFlow({ children, onExit, selectedTemplate
         onExit,
         requiresQoveryMcp: selectedTemplate?.requiresQoveryMcp ?? false,
         variablesForm,
+        selectedTemplate,
       }}
     >
       <FormProvider {...form}>
