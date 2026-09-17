@@ -236,6 +236,7 @@ export function SectionOnboarding() {
     }
 
     completionModalOpenedRef.current = true
+    complete()
     enableAlertClickOutside(false)
 
     openModal({
@@ -257,7 +258,6 @@ export function SectionOnboarding() {
               <Button
                 type="button"
                 onClick={() => {
-                  complete()
                   closeModal()
                   showPylonForm('request-ai-builder-portal')
                 }}
@@ -277,7 +277,6 @@ export function SectionOnboarding() {
               size="md"
               className="gap-2"
               onClick={() => {
-                complete()
                 closeModal()
                 navigate({ to: '/organization/$organizationId/settings/members', params: { organizationId } })
               }}
