@@ -74,7 +74,7 @@ export function SectionAgentTasksHighlight() {
         <img
           src="/assets/agent-tasks/agent-tasks-gradient.jpg"
           alt=""
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+          className="pointer-events-none absolute inset-0 hidden h-full w-full object-cover dark:block"
         />
         <Button
           variant="plain"
