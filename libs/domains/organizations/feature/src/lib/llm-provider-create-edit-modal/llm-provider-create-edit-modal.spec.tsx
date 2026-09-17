@@ -100,12 +100,19 @@ describe('LlmProviderCreateEditModal', () => {
     )
   })
 
-  it('should select Claude by default and keep the provider locked', () => {
+  it('should select Claude by default and allow choosing another provider', () => {
     const { container } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
 
     expect(container.querySelector('img[src="/assets/ai-tools/claude.svg"]')).toBeInTheDocument()
-    expect(screen.getByLabelText('Provider')).toBeDisabled()
+    expect(screen.getByLabelText('Provider')).toBeEnabled()
     expect(screen.getByText('Anthropic Claude')).toBeInTheDocument()
-    expect(screen.queryByText('AWS Bedrock')).not.toBeInTheDocument()
+  })
+
+  it('should let the user pick Amazon Bedrock', async () => {
+    const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+    await userEvent.click(screen.getByLabelText('Provider'))
+
+    expect(await screen.findByText('Amazon Bedrock')).toBeInTheDocument()
   })
 })

@@ -188,7 +188,7 @@ function LlmProviderRow({ organizationId, llmProvider, currentUserSub }: LlmProv
             src={
               llmProvider.type === LlmProviderType.CLAUDE
                 ? '/assets/ai-tools/claude.svg'
-                : '/assets/devicon/bedrock.svg'
+                : '/assets/ai-tools/bedrock.svg'
             }
             alt=""
             aria-hidden="true"

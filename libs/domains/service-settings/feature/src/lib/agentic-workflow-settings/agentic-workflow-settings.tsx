@@ -1,9 +1,9 @@
 import { useParams } from '@tanstack/react-router'
 import {
   AgenticWorkflowExecutionMode,
+  type AgenticWorkflowModelType,
   type AgenticWorkflowRequest,
   type GitTokenResponse,
-  LlmProviderType,
 } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
 import { useGitTokens, useLlmProviders } from '@qovery/domains/organizations/feature'
@@ -200,8 +200,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
     (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
   const submit = form.handleSubmit((data) => {
+    const selectedProvider = llmProviders.find(({ id }) => id === data.llmProviderId)
     const model: AgenticWorkflowRequest['model'] = {
-      type: workflow.model.type,
+      // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
+      type: (selectedProvider?.type as AgenticWorkflowModelType) ?? workflow.model.type,
       settings: data.modelSettings,
       llm_provider_id: data.llmProviderId,
     }
@@ -258,9 +260,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         {page === 'ai-configuration' ? (
           <AgenticWorkflowAiConfigurationSettings
             form={form}
-            llmProviders={llmProviders.filter(
-              ({ type, has_credential }) => type === LlmProviderType.CLAUDE && has_credential
-            )}
+            llmProviders={llmProviders.filter(({ has_credential }) => has_credential)}
           />
         ) : null}
         {page === 'connections' ? (

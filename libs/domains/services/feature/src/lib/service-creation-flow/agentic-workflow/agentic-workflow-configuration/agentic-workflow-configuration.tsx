@@ -1,7 +1,12 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
 import clsx from 'clsx'
 import posthog from 'posthog-js'
-import { APIVariableScopeEnum, LlmProviderType, type McpServerResponse } from 'qovery-typescript-axios'
+import {
+  APIVariableScopeEnum,
+  type AgenticWorkflowModelType,
+  LlmProviderType,
+  type McpServerResponse,
+} from 'qovery-typescript-axios'
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
 import {
@@ -339,9 +344,9 @@ export function AgenticWorkflowConfiguration() {
   const hasModelCredential = Boolean(values.llmProviderId)
   const showLlmProviderError = (showValidationErrors || Boolean(dirtyFields.llmProviderId)) && !hasModelCredential
   const providerConfigurationInvalid = !hasModelCredential || Boolean(modelSettingsJsonError)
-  const availableLlmProviders = llmProviders.filter(
-    ({ type, has_credential }) => type === LlmProviderType.CLAUDE && has_credential
-  )
+  const availableLlmProviders = llmProviders.filter(({ has_credential }) => has_credential)
+  const selectedProvider = llmProviders.find(({ id }) => id === values.llmProviderId)
+  const isBedrockProvider = selectedProvider?.type === LlmProviderType.BEDROCK
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
     resources: false,
@@ -904,6 +909,7 @@ export function AgenticWorkflowConfiguration() {
                         repository={
                           repository.gitRepository?.name || repository.repository || 'Configure Git repository'
                         }
+                        url={repository.gitRepository?.url ?? repository.repository}
                         onClick={() => openGitContext(index)}
                       />
                     ))}
@@ -935,8 +941,13 @@ export function AgenticWorkflowConfiguration() {
                   variant="outline"
                   onClick={() => setProviderModalOpen(true)}
                 >
-                  <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-4 w-4" />
-                  Anthropic
+                  <img
+                    src={isBedrockProvider ? '/assets/ai-tools/bedrock.svg' : '/assets/ai-tools/claude.svg'}
+                    alt=""
+                    aria-hidden="true"
+                    className="h-4 w-4"
+                  />
+                  {isBedrockProvider ? 'Amazon Bedrock' : 'Anthropic'}
                 </Button>
                 {!hasModelCredential ? (
                   <span
@@ -1079,7 +1090,7 @@ export function AgenticWorkflowConfiguration() {
         <Modal externalOpen={providerModalOpen} setExternalOpen={setProviderModalOpen} width={520}>
           <ConfigurationModalContent
             title="Configure provider"
-            description="Configure the Anthropic credentials and cloud settings for the agent task."
+            description="Configure the model provider token and cloud settings for the agent task."
             confirmLabel="Save provider"
             setOpen={setProviderModalOpen}
           >
@@ -1092,7 +1103,14 @@ export function AgenticWorkflowConfiguration() {
                   isLoading={areLlmProvidersLoading}
                   error={showLlmProviderError ? 'Please select a token.' : undefined}
                   value={field.value}
-                  onChange={field.onChange}
+                  onChange={(providerId) => {
+                    field.onChange(providerId)
+                    // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
+                    const provider = availableLlmProviders.find(({ id }) => id === providerId)
+                    if (provider) {
+                      form.setValue('aiModel', provider.type as AgenticWorkflowModelType, { shouldDirty: true })
+                    }
+                  }}
                 />
               )}
             />
