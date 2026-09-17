@@ -66,6 +66,11 @@ export function SectionAgentTasksHighlight() {
         data-theme="light"
         className="relative h-[334px] w-full overflow-hidden rounded-lg border border-neutral bg-surface-neutral"
       >
+        <img
+          src="/assets/agent-tasks/agent-tasks-gradient.jpg"
+          alt=""
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover"
+        />
         <Button
           variant="plain"
           color="neutral"
