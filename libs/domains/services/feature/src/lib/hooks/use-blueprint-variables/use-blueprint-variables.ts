@@ -12,7 +12,6 @@ export function useBlueprintVariables({ blueprintId, enabled = true, suspense = 
     ...queries.services.blueprintVariables({ blueprintId }),
     enabled: enabled && Boolean(blueprintId),
     suspense,
-    staleTime: 0,
   })
 }
 
