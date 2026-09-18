@@ -16,6 +16,7 @@ import {
   ApplicationsApi,
   ArgoCDApi,
   BlueprintCatalogApi,
+  type BlueprintConfigurationVariable,
   type BlueprintCreateRequest,
   BlueprintMainCallsApi,
   type BlueprintUpdateRequest,
@@ -94,7 +95,7 @@ import {
   type TerraformStatusDto,
 } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
-import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ServiceTypeEnum, isHelmGitSource } from '@qovery/shared/enums'
 
 const environmentApi = new EnvironmentMainCallsApi()
 const environmentActionApi = new EnvironmentActionsApi()
@@ -244,6 +245,18 @@ export function isBlueprintService(service: AnyService): service is BlueprintSer
   return 'blueprint_id' in service && Boolean(service.blueprint_id)
 }
 
+export function getBlueprintGitRepository(service: BlueprintService) {
+  if (service.serviceType === 'TERRAFORM') {
+    return service.terraform_files_source?.git?.git_repository
+  }
+
+  if (service.serviceType === 'HELM' && isHelmGitSource(service.source)) {
+    return service.source.git?.git_repository
+  }
+
+  return undefined
+}
+
 export function isArgoCd(service?: AnyService): service is ArgoCd {
   return service?.service_type === 'ARGOCD_APP'
 }
@@ -334,6 +347,13 @@ export const services = createQueryKeys('services', {
     queryKey: [blueprintId],
     async queryFn() {
       const response = await blueprintApi.getBlueprint(blueprintId)
+      return response.data
+    },
+  }),
+  blueprintVariables: ({ blueprintId }: { blueprintId: string }) => ({
+    queryKey: [blueprintId],
+    async queryFn(): Promise<BlueprintConfigurationVariable[]> {
+      const response = await blueprintApi.getBlueprintVariables(blueprintId)
       return response.data
     },
   }),

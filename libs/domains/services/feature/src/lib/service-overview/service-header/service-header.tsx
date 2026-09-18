@@ -8,7 +8,13 @@ import {
   useCluster,
   useClusterRunningStatusSocket,
 } from '@qovery/domains/clusters/feature'
-import { type AnyService, isAgenticWorkflow, isArgoCd } from '@qovery/domains/services/data-access'
+import {
+  type AnyService,
+  getBlueprintGitRepository,
+  isAgenticWorkflow,
+  isArgoCd,
+  isBlueprintService,
+} from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -24,7 +30,6 @@ import {
   ExternalLink,
   Heading,
   Icon,
-  Skeleton,
   Tooltip,
   Truncate,
   toast,
@@ -35,13 +40,11 @@ import { containerRegistryKindToIcon, upperCaseFirstLetter } from '@qovery/share
 import { AgenticWorkflowServiceActions } from '../../agentic-workflow-service-actions/agentic-workflow-service-actions'
 import { ArgoCdServiceActions } from '../../argocd-service-actions/argocd-service-actions'
 import AutoDeployBadge from '../../auto-deploy-badge/auto-deploy-badge'
-import { useBlueprintUpdateState } from '../../hooks/use-blueprint-update-state/use-blueprint-update-state'
 import { useMasterCredentials } from '../../hooks/use-master-credentials/use-master-credentials'
 import { getDatabaseConnectionUri } from '../../service-access-modal/service-access-modal'
 import { ServiceActions } from '../../service-actions/service-actions'
 import { ServiceAvatar } from '../../service-avatar/service-avatar'
-import { BlueprintUpdateBadge } from '../../service-blueprint-update-flow/blueprint-update-badge'
-import { getBlueprintServiceVersion } from '../../service-blueprint-update-flow/blueprint-update-utils'
+import { BlueprintMetadata, BlueprintMetadataSkeleton } from '../../service-blueprint-update-flow/blueprint-metadata'
 import { ServiceLinksPopover } from '../../service-links-popover/service-links-popover'
 import { ServiceStateChip } from '../../service-state-chip/service-state-chip'
 
@@ -97,6 +100,8 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
   const isArgoCdService = isArgoCd(service)
   const isAgenticWorkflowService = isAgenticWorkflow(service)
+  const blueprintId = isBlueprintService(service) ? service.blueprint_id : undefined
+  const blueprintGitRepository = isBlueprintService(service) ? getBlueprintGitRepository(service) : undefined
 
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
 
@@ -137,6 +142,21 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
             </span>
           </>
         )}
+        {blueprintId && (
+          <>
+            <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
+            <Suspense fallback={<BlueprintMetadataSkeleton showRepository={false} showUpdateBadge={false} />}>
+              <BlueprintMetadata
+                blueprintId={blueprintId}
+                gitRepository={blueprintGitRepository}
+                service={service}
+                linkVersionToSettings
+                showRepository={false}
+                showUpdateBadge={false}
+              />
+            </Suspense>
+          </>
+        )}
         <span className="ml-2 mr-0.5 h-4 w-px shrink-0 bg-surface-neutral-component" />
         <div className="flex shrink-0 items-center gap-1 text-ssm">
           <ClusterAvatar cluster={cluster} size="sm" />
@@ -163,84 +183,6 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
 
 interface ServiceHeaderMetadataProps {
   service: AnyService
-}
-
-function BlueprintUpdateBadgeSkeleton() {
-  return <Skeleton width={122} height={24} />
-}
-
-function BlueprintRepository({ gitRepository }: { gitRepository: ApplicationGitRepository }) {
-  if (!gitRepository.url || !gitRepository.name) {
-    return null
-  }
-
-  return (
-    <ExternalLink
-      href={buildGitProviderUrl(gitRepository.url)}
-      target="_blank"
-      rel="noopener noreferrer"
-      variant="outline"
-      color="neutral"
-      size="xs"
-      as="button"
-      className="text-nowrap"
-    >
-      {gitRepository.provider && <Icon width={12} name={gitRepository.provider} />}
-      <Truncate text={gitRepository.name} truncateLimit={17} />
-    </ExternalLink>
-  )
-}
-
-function BlueprintMetadataSkeleton({ gitRepository }: { gitRepository?: ApplicationGitRepository }) {
-  return (
-    <>
-      <Skeleton width={50} height={24} />
-      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
-      <BlueprintUpdateBadgeSkeleton />
-    </>
-  )
-}
-
-function BlueprintMetadata({
-  blueprintId,
-  gitRepository,
-  service,
-}: {
-  blueprintId: string
-  gitRepository?: ApplicationGitRepository
-  service: AnyService
-}) {
-  const { organizationId = '', projectId = '' } = useParams({ strict: false })
-  // `throwOnError: false` because react-query v4 makes suspense queries throw by default, and there
-  // is no boundary between here and the organization layout: a blueprint pinned to a tag the
-  // catalog cannot resolve would replace the whole overview with the generic error page.
-  const { blueprintUpdate, tag } = useBlueprintUpdateState({
-    blueprintId,
-    localTag: gitRepository?.branch,
-    suspense: true,
-    throwOnError: false,
-  })
-  const currentVersion = tag ? getBlueprintServiceVersion(tag) : undefined
-
-  return (
-    <>
-      {currentVersion && currentVersion !== 'default' && (
-        <Badge variant="outline" className="gap-1 whitespace-nowrap">
-          <ServiceAvatar service={service} size="custom" radius="none" serviceAvatarRadius="sm" className="h-3 w-3" />
-          <span>v{currentVersion}</span>
-        </Badge>
-      )}
-      {gitRepository && <BlueprintRepository gitRepository={gitRepository} />}
-      {blueprintUpdate && (
-        <BlueprintUpdateBadge
-          blueprintUpdate={blueprintUpdate}
-          service={service}
-          organizationId={organizationId}
-          projectId={projectId}
-        />
-      )}
-    </>
-  )
 }
 
 function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
@@ -298,14 +240,7 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
 
   return (
     <div className="mt-3 flex items-center gap-1">
-      {gitRepository &&
-        (blueprintId ? (
-          <Suspense fallback={<BlueprintMetadataSkeleton gitRepository={gitRepository} />}>
-            <BlueprintMetadata blueprintId={blueprintId} gitRepository={gitRepository} service={service} />
-          </Suspense>
-        ) : (
-          <GitRepository gitRepository={gitRepository} />
-        ))}
+      {gitRepository && !blueprintId && <GitRepository gitRepository={gitRepository} />}
       {isArgoCdService && 'manifest_revision' in service && service.manifest_revision && (
         <CopyToClipboard text={service.manifest_revision}>
           <Button type="button" variant="outline" color="neutral" size="xs" className="pl-1">
@@ -363,11 +298,6 @@ function ServiceHeaderMetadata({ service }: ServiceHeaderMetadataProps) {
             {helmRepository.chart_version}
           </Badge>
         </>
-      )}
-      {blueprintId && !gitRepository && (
-        <Suspense fallback={<BlueprintMetadataSkeleton />}>
-          <BlueprintMetadata blueprintId={blueprintId} service={service} />
-        </Suspense>
       )}
       {databaseSource && (
         <>

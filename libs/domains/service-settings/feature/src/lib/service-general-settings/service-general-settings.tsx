@@ -9,7 +9,7 @@ import {
   useAnnotationsGroups,
   useLabelsGroups,
 } from '@qovery/domains/organizations/feature'
-import { isEditableService } from '@qovery/domains/services/data-access'
+import { isBlueprintService, isEditableService } from '@qovery/domains/services/data-access'
 import {
   type ServiceGeneralData,
   buildServiceGeneralPayload,
@@ -137,7 +137,9 @@ function ServiceGeneralSettingsContent({ organization }: ServiceGeneralSettingsP
   const headingDescription =
     service.serviceType === 'DATABASE'
       ? 'These general settings allow you to set up the database name, type and version.'
-      : 'These general settings allow you to set up the service name, its source and deployment parameters.'
+      : isBlueprintService(service)
+        ? 'These general settings allow you to set up the service name.'
+        : 'These general settings allow you to set up the service name, its source and deployment parameters.'
 
   const formContent = match(service)
     .with({ serviceType: 'APPLICATION' }, (application) => (

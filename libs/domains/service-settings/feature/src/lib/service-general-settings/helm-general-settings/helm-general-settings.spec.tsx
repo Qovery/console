@@ -35,4 +35,21 @@ describe('HelmGeneralSettings', () => {
     expect(screen.getByText('Source')).toBeInTheDocument()
     expect(screen.getByText('Deploy')).toBeInTheDocument()
   })
+
+  it('only renders the general section for Blueprint Helm services', () => {
+    const blueprintService = { ...service, blueprint_id: 'blueprint-id' }
+
+    renderWithProviders(
+      wrapWithReactHookForm(<HelmGeneralSettings service={blueprintService} organization={organization} />, {
+        defaultValues: {
+          name: blueprintService.name,
+          source_provider: 'HELM_REPOSITORY',
+        },
+      })
+    )
+
+    expect(screen.getByText('General')).toBeInTheDocument()
+    expect(screen.queryByText('Source')).not.toBeInTheDocument()
+    expect(screen.queryByText('Deploy')).not.toBeInTheDocument()
+  })
 })
