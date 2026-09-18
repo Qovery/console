@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import posthog from 'posthog-js'
 import { type ReactNode, useState } from 'react'
 import { helmFactoryMock, terraformFactoryMock } from '@qovery/shared/factories'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -11,6 +12,10 @@ const mockPreviewBlueprintUpdate = jest.fn()
 const mockUpdateBlueprint = jest.fn()
 const mockDeployBlueprint = jest.fn()
 const mockBlueprintMetadata = jest.fn()
+
+jest.mock('posthog-js', () => ({
+  capture: jest.fn(),
+}))
 const service = {
   ...terraformFactoryMock(1)[0],
   blueprint_id: 'blueprint-id',
@@ -108,6 +113,7 @@ function BlueprintGeneralSettingsHarness() {
 describe('BlueprintGeneralSettings', () => {
   beforeEach(() => {
     mockUseBlueprintVariables.mockReturnValue({ data: [], isLoading: false })
+    jest.mocked(posthog.capture).mockClear()
   })
 
   it('loads the catalog form from the Blueprint tag returned by the existing read endpoint', () => {
@@ -134,6 +140,11 @@ describe('BlueprintGeneralSettings', () => {
     expect(mockUseBlueprintCatalogServiceManifest).toHaveBeenCalledWith(
       expect.objectContaining({ provider: 'aws', serviceFamily: 'postgres', serviceVersion: '17' })
     )
+    expect(posthog.capture).toHaveBeenCalledWith('blueprint_settings_visited', {
+      blueprint_id: service.blueprint_id,
+      service_id: service.id,
+      service_type: service.serviceType,
+    })
   })
 
   it('uses the Blueprint read model to prefill and preview updates for Helm Blueprint services', async () => {
@@ -224,6 +235,11 @@ describe('BlueprintGeneralSettings', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Preview changes' }))
 
     expect(mockPreviewBlueprintUpdate).toHaveBeenCalledTimes(1)
+    expect(posthog.capture).toHaveBeenCalledWith('blueprint_settings_preview_triggered', {
+      blueprint_id: 'blueprint-id',
+      service_id: service.id,
+      service_type: service.serviceType,
+    })
     expect(mockPreviewBlueprintUpdate).toHaveBeenCalledWith({
       blueprintId: 'blueprint-id',
       payload: expect.objectContaining({
@@ -248,6 +264,11 @@ describe('BlueprintGeneralSettings', () => {
       }),
     })
     expect(mockDeployBlueprint).toHaveBeenCalledTimes(1)
+    expect(posthog.capture).toHaveBeenCalledWith('blueprint_settings_updated', {
+      blueprint_id: service.blueprint_id,
+      service_id: service.id,
+      service_type: service.serviceType,
+    })
   })
 
   it('keeps confirmed non-secret values visible when Settings remounts before the service read model catches up', async () => {

@@ -1,4 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
@@ -9,6 +10,10 @@ const mockNavigate = jest.fn()
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
   useNavigate: jest.fn(),
+}))
+
+jest.mock('posthog-js', () => ({
+  capture: jest.fn(),
 }))
 
 const service = {
@@ -76,6 +81,10 @@ describe('BlueprintUpdateBadge', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Blueprint update available' }))
 
+    expect(posthog.capture).toHaveBeenCalledWith('blueprint_update_available_button_clicked', {
+      service_id: service.id,
+      service_type: service.serviceType,
+    })
     expect(mockNavigate).toHaveBeenCalledWith({
       to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/update/blueprint',
       params: {

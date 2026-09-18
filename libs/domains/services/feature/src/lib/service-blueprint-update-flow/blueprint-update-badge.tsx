@@ -1,4 +1,5 @@
 import { useNavigate } from '@tanstack/react-router'
+import posthog from 'posthog-js'
 import { type BlueprintUpdateResponse } from 'qovery-typescript-axios'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { Badge, Icon, useModal } from '@qovery/shared/ui'
@@ -45,6 +46,11 @@ export function BlueprintUpdateBadge({
       type="button"
       className="rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
       onClick={() => {
+        posthog.capture('blueprint_update_available_button_clicked', {
+          service_id: service.id,
+          service_type: service.serviceType,
+        })
+
         if (hasBlueprintUpdateReviewSections(blueprintUpdate)) {
           openUpdateFlow()
           return

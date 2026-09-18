@@ -1,5 +1,6 @@
 import * as Dialog from '@radix-ui/react-dialog'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import posthog from 'posthog-js'
 import {
   type BlueprintConfigurationVariable,
   type BlueprintManifestResponseResultsInner,
@@ -246,6 +247,14 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
   )
   const isSaving = isUpdateLoading || isDeployLoading
 
+  useEffect(() => {
+    posthog.capture('blueprint_settings_visited', {
+      blueprint_id: service.blueprint_id,
+      service_id: service.id,
+      service_type: service.serviceType,
+    })
+  }, [service.blueprint_id, service.id, service.serviceType])
+
   const closePreview = useCallback(() => {
     closeModal()
     setStep('review')
@@ -272,6 +281,12 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
   const requestPreview = useCallback(async () => {
     if (!payload || !isValid) return
 
+    posthog.capture('blueprint_settings_preview_triggered', {
+      blueprint_id: service.blueprint_id,
+      service_id: service.id,
+      service_type: service.serviceType,
+    })
+
     setPreviewError(false)
     setPreviewId(undefined)
     setStep('preview')
@@ -282,7 +297,7 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
     } catch {
       setPreviewError(true)
     }
-  }, [isValid, payload, previewBlueprintUpdate, service.blueprint_id])
+  }, [isValid, payload, previewBlueprintUpdate, service.blueprint_id, service.id, service.serviceType])
 
   const confirmAndDeploy = useCallback(async () => {
     if (!details || !isValid) return
@@ -300,6 +315,11 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
 
     try {
       await updateBlueprint({ blueprintId: service.blueprint_id, payload })
+      posthog.capture('blueprint_settings_updated', {
+        blueprint_id: service.blueprint_id,
+        service_id: service.id,
+        service_type: service.serviceType,
+      })
       await deployBlueprint({ blueprintId: service.blueprint_id })
       toast('success', 'Blueprint update started')
     } catch {
@@ -315,6 +335,8 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
     payload,
     removeOptimisticSettings,
     service.blueprint_id,
+    service.id,
+    service.serviceType,
     updateOptimisticSettings,
     updateBlueprint,
   ])
