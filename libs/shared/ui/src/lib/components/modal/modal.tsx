@@ -39,7 +39,7 @@ export const Modal = (props: ModalProps) => {
   const {
     children,
     trigger,
-    width = '474',
+    width = 474,
     fullScreen = false,
     className = '',
     defaultOpen = false,
