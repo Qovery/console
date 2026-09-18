@@ -1,7 +1,7 @@
 import { type Organization, TerraformAutoDeployConfigTerraformActionEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { EditGitRepositorySettings } from '@qovery/domains/organizations/feature'
-import { type Terraform } from '@qovery/domains/services/data-access'
+import { type Terraform, isBlueprintService } from '@qovery/domains/services/data-access'
 import { AutoDeploySection, GeneralSetting } from '@qovery/domains/services/feature'
 import { Heading, InputSelect, Section } from '@qovery/shared/ui'
 
@@ -18,7 +18,7 @@ export interface TerraformGeneralSettingsProps {
 
 export function TerraformGeneralSettings({ service, organization }: TerraformGeneralSettingsProps) {
   const { control } = useFormContext()
-  const isBlueprintService = Boolean(service.blueprint_id)
+  const isBlueprint = isBlueprintService(service)
 
   return (
     <>
@@ -27,7 +27,7 @@ export function TerraformGeneralSettings({ service, organization }: TerraformGen
         <GeneralSetting label="Service name" service={service} />
       </Section>
 
-      {!isBlueprintService && (
+      {!isBlueprint && (
         <>
           <Section className="gap-4">
             <Heading>Source</Heading>
