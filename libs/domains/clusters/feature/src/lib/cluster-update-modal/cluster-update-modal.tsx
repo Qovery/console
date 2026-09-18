@@ -1,5 +1,4 @@
 import { useNavigate } from '@tanstack/react-router'
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import { Checkbox, Icon, InputTextSmall, ModalCrud, Tooltip, useModal } from '@qovery/shared/ui'
@@ -15,10 +14,6 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
   const { mutateAsync: deployCluster, isLoading } = useDeployCluster()
   const [, copyToClipboard] = useCopyToClipboard()
   const navigate = useNavigate()
-  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
-  const clusterLogsLinkTarget = isClusterDeploymentHistoryEnabled
-    ? ('/organization/$organizationId/cluster/$clusterId/deployments' as const)
-    : ('/organization/$organizationId/cluster/$clusterId/cluster-logs' as const)
   const methods = useForm<{ name: string; dryRun: boolean }>({
     mode: 'onChange',
     defaultValues: {
@@ -34,10 +29,10 @@ export function ClusterUpdateModal({ cluster }: ClusterUpdateModalProps) {
         dryRun: data['dryRun'],
       })
       closeModal()
-      // Redirecting to cluster's logs page if dry-run was selected
+      // Redirect to cluster deployments when dry-run is selected.
       if (data['dryRun']) {
         navigate({
-          to: clusterLogsLinkTarget,
+          to: '/organization/$organizationId/cluster/$clusterId/deployments',
           params: {
             organizationId: cluster.organization.id,
             clusterId: cluster.id,
