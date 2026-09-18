@@ -384,7 +384,7 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
       <div className="max-w-content-with-navigation-left space-y-3">
         <BlueprintSection active iconName="circle-info" title="Service information">
           <p className="text-sm text-neutral-subtle">{formatBlueprintName(details.name)}</p>
-          <div className="mt-3 flex flex-wrap items-center gap-1">
+          <div className="flex flex-wrap items-center gap-1">
             <Suspense fallback={<BlueprintMetadataSkeleton gitRepository={getBlueprintGitRepository(service)} />}>
               <BlueprintMetadata
                 blueprintId={service.blueprint_id}
