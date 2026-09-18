@@ -189,7 +189,7 @@ describe('BlueprintGeneralSettings', () => {
     expect(mockBlueprintMetadata).toHaveBeenCalledWith(
       expect.objectContaining({
         blueprintId: 'helm-blueprint-id',
-        gitRepository: undefined,
+        gitRepository: helmBlueprintService.source.git.git_repository,
         service: helmBlueprintService,
       })
     )

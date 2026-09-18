@@ -8,7 +8,7 @@ import {
 } from 'qovery-typescript-axios'
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react'
 import { useEnvironment } from '@qovery/domains/environments/feature'
-import { type BlueprintService } from '@qovery/domains/services/data-access'
+import { type BlueprintService, getBlueprintGitRepository } from '@qovery/domains/services/data-access'
 import {
   type BlueprintFieldValue,
   BlueprintManifestVariableInput,
@@ -77,10 +77,6 @@ function isBlueprintSettingsDetails(data: unknown): data is BlueprintSettingsDet
 function parseBlueprintTag(tag: string | undefined) {
   const [provider = '', serviceFamily = '', serviceVersion = ''] = tag?.split('/') ?? []
   return { provider, serviceFamily, serviceVersion }
-}
-
-function getBlueprintGitRepository(service: BlueprintService) {
-  return service.serviceType === 'TERRAFORM' ? service.terraform_files_source?.git?.git_repository : undefined
 }
 
 function useOptimisticBlueprintSettings({

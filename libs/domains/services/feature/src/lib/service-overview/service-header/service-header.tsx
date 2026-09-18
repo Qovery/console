@@ -8,7 +8,13 @@ import {
   useCluster,
   useClusterRunningStatusSocket,
 } from '@qovery/domains/clusters/feature'
-import { type AnyService, isAgenticWorkflow, isArgoCd } from '@qovery/domains/services/data-access'
+import {
+  type AnyService,
+  getBlueprintGitRepository,
+  isAgenticWorkflow,
+  isArgoCd,
+  isBlueprintService,
+} from '@qovery/domains/services/data-access'
 import {
   IconEnum,
   ServiceTypeEnum,
@@ -95,6 +101,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
   const isArgoCdService = isArgoCd(service)
   const isAgenticWorkflowService = isAgenticWorkflow(service)
   const blueprintId = 'blueprint_id' in service ? service.blueprint_id : undefined
+  const blueprintGitRepository = isBlueprintService(service) ? getBlueprintGitRepository(service) : undefined
 
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
 
@@ -141,6 +148,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
             <Suspense fallback={<BlueprintMetadataSkeleton showRepository={false} showUpdateBadge={false} />}>
               <BlueprintMetadata
                 blueprintId={blueprintId}
+                gitRepository={blueprintGitRepository}
                 service={service}
                 linkVersionToSettings
                 showRepository={false}

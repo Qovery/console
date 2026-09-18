@@ -95,7 +95,7 @@ import {
   type TerraformStatusDto,
 } from 'qovery-ws-typescript-axios'
 import { match } from 'ts-pattern'
-import { type ServiceTypeEnum } from '@qovery/shared/enums'
+import { type ServiceTypeEnum, isHelmGitSource } from '@qovery/shared/enums'
 
 const environmentApi = new EnvironmentMainCallsApi()
 const environmentActionApi = new EnvironmentActionsApi()
@@ -243,6 +243,18 @@ export function isHelm(service: AnyService): service is Helm {
 
 export function isBlueprintService(service: AnyService): service is BlueprintService {
   return 'blueprint_id' in service && Boolean(service.blueprint_id)
+}
+
+export function getBlueprintGitRepository(service: BlueprintService) {
+  if (service.serviceType === 'TERRAFORM') {
+    return service.terraform_files_source?.git?.git_repository
+  }
+
+  if (service.serviceType === 'HELM' && isHelmGitSource(service.source)) {
+    return service.source.git?.git_repository
+  }
+
+  return undefined
 }
 
 export function isArgoCd(service?: AnyService): service is ArgoCd {
