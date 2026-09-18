@@ -92,6 +92,7 @@ export function BlueprintMetadata({
   return (
     <>
       {showVersion &&
+        versionBadge &&
         (linkVersionToSettings ? (
           <Link
             to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/blueprint-configuration"
