@@ -224,6 +224,10 @@ describe('BlueprintGeneralSettings', () => {
       data: { name: service.name, tag: 'aws/postgres/17/1.0.0' },
       isLoading: false,
     })
+    mockUseBlueprintVariables.mockReturnValue({
+      data: [{ name: 'database_name', value: 'persisted-secret', is_secret: true }],
+      isLoading: false,
+    })
     mockPreviewBlueprintUpdate.mockResolvedValue({ preview_id: 'preview-id' })
 
     const { userEvent } = renderWithProviders(
@@ -233,6 +237,7 @@ describe('BlueprintGeneralSettings', () => {
     expect(screen.getByRole('button', { name: 'Configure' })).toBeInTheDocument()
     expect(screen.queryByText('Current value:')).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
+    expect(screen.getByText(/^Current value:\s*$/)).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Edit value' }))
     await userEvent.click(screen.getByRole('button', { name: 'Preview changes' }))
 

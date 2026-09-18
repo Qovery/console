@@ -120,13 +120,14 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
   const automationsLink = linkItem('Automations', toSettingsPath(pathSettings, '/automations'), 'stopwatch')
   const governanceLink = linkItem('Governance', toSettingsPath(pathSettings, '/governance'), 'shield-halved')
   const outputsLink = linkItem('Outputs', toSettingsPath(pathSettings, '/outputs'), 'wave-pulse')
-  const blueprintSettingsLinks = [
+  const blueprintTerraformSettingsLinks = [
     generalLink,
     blueprintConfigurationLink,
     resourcesLink,
     advancedSettingsLink,
     dangerZoneLink,
   ]
+  const blueprintHelmSettingsLinks = [generalLink, blueprintConfigurationLink, advancedSettingsLink, dangerZoneLink]
 
   const linksSettings: SidebarSettingsItem[] = isAgenticWorkflow(service)
     ? [
@@ -164,7 +165,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
           ])
           .with({ serviceType: 'HELM' }, (helm) =>
             isBlueprintService(helm)
-              ? blueprintSettingsLinks
+              ? blueprintHelmSettingsLinks
               : [
                   generalLink,
                   valuesOverrideLink,
@@ -177,7 +178,7 @@ export function ServiceSettingsLayout({ children }: ServiceSettingsLayoutProps) 
           )
           .with({ serviceType: 'TERRAFORM' }, () =>
             isBlueprintService(service)
-              ? blueprintSettingsLinks
+              ? blueprintTerraformSettingsLinks
               : [
                   generalLink,
                   terraformConfigurationLink,

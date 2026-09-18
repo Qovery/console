@@ -75,7 +75,7 @@ describe('ServiceSettingsLayout', () => {
     )
 
     expect(screen.getByText('Blueprint configuration')).toBeInTheDocument()
-    expect(screen.getByText('Resources')).toBeInTheDocument()
+    expect(screen.queryByText('Resources')).not.toBeInTheDocument()
     expect(screen.queryByText('Values')).not.toBeInTheDocument()
     expect(screen.queryByText('Networking')).not.toBeInTheDocument()
     expect(screen.queryByText('Domain')).not.toBeInTheDocument()
