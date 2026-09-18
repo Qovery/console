@@ -2,6 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Button, FunnelFlowBody, Heading, Icon, Section, Skeleton } from '@qovery/shared/ui'
+import { twMerge } from '@qovery/shared/util-js'
 import {
   type BlueprintUpdatePreviewOutcome,
   useBlueprintUpdatePreviewSocket,
@@ -134,22 +135,28 @@ function BlueprintUpdatePreviewContent({
   layout?: 'page' | 'modal'
 }) {
   const canConfirm = outcome.type === 'diff' || outcome.type === 'no-changes'
+  const isModalPending = layout === 'modal' && outcome.type === 'pending'
   const rawOutputContainerHeightClassName =
     outcome.type === 'diff'
       ? layout === 'modal'
         ? 'min-h-[220px]'
         : 'h-[min(75vh,calc(100vh-320px))] min-h-[260px]'
-      : 'min-h-[180px]'
-
-  const isModalPending = layout === 'modal' && outcome.type === 'pending'
+      : isModalPending
+        ? ''
+        : 'min-h-[180px]'
   const body = (
-    <Section className={isModalPending ? 'flex min-h-full w-full flex-1 flex-col gap-4' : 'gap-4'}>
+    <Section className={twMerge(isModalPending ? 'flex min-h-full w-full flex-1 flex-col gap-4' : 'gap-4')}>
       <Heading level={1}>Preview changes</Heading>
-      <Section className={isModalPending ? 'flex min-h-0 flex-1 flex-col gap-2' : 'gap-2'}>
+      <Section className={twMerge(isModalPending ? 'flex min-h-0 flex-1 flex-col gap-2' : 'gap-2')}>
         <Heading level={3}>Raw output</Heading>
         <div
           data-testid="blueprint-preview-raw-output"
-          className={`${rawOutputContainerHeightClassName} ${isModalPending ? 'min-h-0 flex-1' : ''} flex flex-col ${layout === 'modal' ? 'overflow-visible' : 'overflow-auto'} rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral`}
+          className={twMerge(
+            rawOutputContainerHeightClassName,
+            isModalPending && 'min-h-0 flex-1',
+            'flex flex-col rounded-lg border border-neutral bg-surface-neutral px-4 py-3 font-mono text-xs leading-5 text-neutral',
+            layout === 'modal' ? 'overflow-visible' : 'overflow-auto'
+          )}
         >
           {match(outcome)
             .with({ type: 'pending' }, () => <BlueprintUpdateRawOutputSkeleton />)
@@ -183,11 +190,11 @@ function BlueprintUpdatePreviewContent({
   )
   const footer = (
     <footer
-      className={
+      className={twMerge(
         layout === 'modal'
           ? 'absolute bottom-0 left-0 flex w-full gap-3 border-t border-neutral bg-background px-8 py-4'
           : 'fixed bottom-0 left-1/2 z-10 flex w-full max-w-[620px] -translate-x-1/2 gap-3 border-t border-neutral bg-background py-4'
-      }
+      )}
     >
       <Button type="button" size="lg" variant="outline" color="neutral" onClick={onBack}>
         {layout === 'modal' ? 'Cancel' : 'Back'}
@@ -210,7 +217,7 @@ function BlueprintUpdatePreviewContent({
     return (
       <div className="relative flex h-full min-h-0 flex-col">
         <div data-testid="blueprint-preview-modal-content" className="min-h-0 flex-1 overflow-y-auto pb-20">
-          <div className={`${isModalPending ? 'flex min-h-full w-full' : 'w-full'} px-8 py-8`}>{body}</div>
+          <div className={twMerge(isModalPending ? 'flex min-h-full w-full' : 'w-full', 'px-8 py-8')}>{body}</div>
         </div>
         {footer}
       </div>

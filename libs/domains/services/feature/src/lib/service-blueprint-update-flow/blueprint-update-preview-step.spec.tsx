@@ -189,6 +189,7 @@ describe('BlueprintUpdatePreviewStep', () => {
     )
 
     expect(screen.getByTestId('blueprint-preview-raw-output')).toHaveClass('flex-1', 'min-h-0')
+    expect(screen.getByTestId('blueprint-preview-raw-output')).not.toHaveClass('min-h-[180px]')
     expect(screen.getByTestId('blueprint-preview-modal-content').firstElementChild).toHaveClass('min-h-full', 'w-full')
   })
 
