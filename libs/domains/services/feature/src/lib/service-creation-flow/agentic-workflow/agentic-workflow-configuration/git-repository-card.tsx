@@ -74,7 +74,7 @@ export function GitRepositoryCard({
       </div>
       <FormProvider {...methods}>
         <div className="flex flex-col gap-3">
-          <GitProviderSetting organizationId={organizationId} />
+          <GitProviderSetting organizationId={organizationId} showAuthProviders={false} />
           {isPublicRepository ? (
             <GitPublicRepositorySettings hideRootPath />
           ) : (
