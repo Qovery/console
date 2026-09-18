@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Navigate, createFileRoute } from '@tanstack/react-router'
 import { useOrganization } from '@qovery/domains/organizations/feature'
 import { BlueprintGeneralSettings } from '@qovery/domains/service-settings/feature'
 import { isBlueprintService } from '@qovery/domains/services/data-access'
@@ -12,12 +12,26 @@ export const Route = createFileRoute(
 })
 
 function RouteComponent() {
-  const { organizationId, environmentId, serviceId } = Route.useParams()
+  const { organizationId, projectId, environmentId, serviceId } = Route.useParams()
   const { data: organization } = useOrganization({ organizationId, suspense: true })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   useDocumentTitle('Blueprint configuration - Service settings')
 
-  if (!organization || !service || !isBlueprintService(service)) {
+  if (!service) {
+    return null
+  }
+
+  if (!isBlueprintService(service)) {
+    return (
+      <Navigate
+        to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/overview"
+        params={{ organizationId, projectId, environmentId, serviceId }}
+        replace
+      />
+    )
+  }
+
+  if (!organization) {
     return null
   }
 
