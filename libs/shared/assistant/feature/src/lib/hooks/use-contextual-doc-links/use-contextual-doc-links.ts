@@ -1061,7 +1061,7 @@ const tanstackRouteAliases: Array<{ pattern: string; target: MappingPath }> = [
     target: '/organization/:organizationId/clusters/general',
   },
   {
-    // Legacy route (`cluster-deployment-history` feature flag off)
+    // Legacy route retained for bookmarked cluster logs URLs.
     pattern: '/organization/:organizationId/cluster/:clusterId/cluster-logs',
     target: '/organization/:organizationId/clusters/general',
   },
