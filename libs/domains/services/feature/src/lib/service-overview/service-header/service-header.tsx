@@ -100,7 +100,7 @@ function ServiceHeaderIdentity({ environment, service }: ServiceHeaderIdentityPr
   const { data: cluster } = useCluster({ organizationId, clusterId: environment.cluster_id, suspense: true })
   const isArgoCdService = isArgoCd(service)
   const isAgenticWorkflowService = isAgenticWorkflow(service)
-  const blueprintId = 'blueprint_id' in service ? service.blueprint_id : undefined
+  const blueprintId = isBlueprintService(service) ? service.blueprint_id : undefined
   const blueprintGitRepository = isBlueprintService(service) ? getBlueprintGitRepository(service) : undefined
 
   useClusterRunningStatusSocket({ organizationId, clusterId: environment.cluster_id })
