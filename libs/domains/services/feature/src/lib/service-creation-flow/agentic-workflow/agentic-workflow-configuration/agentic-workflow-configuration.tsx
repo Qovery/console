@@ -488,16 +488,8 @@ export function AgenticWorkflowConfiguration() {
     })
   }
 
-  const focusSettingsGroup = (group: SettingsGroup) => {
+  const openSettingsGroup = (group: SettingsGroup) => {
     setOpenSettingsGroups((groups) => (groups.includes(group) ? groups : [...groups, group]))
-
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        document
-          .querySelector<HTMLElement>(`[data-settings-panel="desktop"] [data-settings-group="${group}"]`)
-          ?.focus({ preventScroll: true })
-      })
-    })
   }
 
   const validateConfiguration = async () => {
@@ -540,24 +532,32 @@ export function AgenticWorkflowConfiguration() {
     )
 
     if (firstInvalidGroup) {
-      focusSettingsGroup(firstInvalidGroup)
-      await new Promise<void>((resolve) => {
-        window.requestAnimationFrame(() => window.requestAnimationFrame(() => resolve()))
-      })
+      openSettingsGroup(firstInvalidGroup)
 
-      const invalidVariableIndex = variableValues.findIndex(
-        (variable) => getInvalidVariableField(variable) !== undefined
-      )
-      const invalidField = getInvalidVariableField(variableValues[invalidVariableIndex])
+      const invalidVariableIndex =
+        firstInvalidGroup === 'variables'
+          ? variableValues.findIndex((variable) => getInvalidVariableField(variable) !== undefined)
+          : -1
+      const invalidField =
+        invalidVariableIndex >= 0 ? getInvalidVariableField(variableValues[invalidVariableIndex]) : undefined
 
+      // A single frame chain keeps the focus order deterministic: focusing the group trigger and
+      // the invalid field from two separate chains lets the trigger win under load.
       window.requestAnimationFrame(() => {
         window.requestAnimationFrame(() => {
-          const invalidInput = document.querySelector<HTMLElement>(
-            `[name="variables.${invalidVariableIndex}.${invalidField}"]`
+          const invalidInput =
+            invalidVariableIndex >= 0
+              ? document.querySelector<HTMLElement>(`[name="variables.${invalidVariableIndex}.${invalidField}"]`)
+              : null
+          const variableRow =
+            invalidVariableIndex >= 0
+              ? document.querySelector<HTMLElement>(`[data-variable-row-index="${invalidVariableIndex}"]`)
+              : null
+          const groupTrigger = document.querySelector<HTMLElement>(
+            `[data-settings-panel="desktop"] [data-settings-group="${firstInvalidGroup}"]`
           )
-          const variableRow = document.querySelector<HTMLElement>(`[data-variable-row-index="${invalidVariableIndex}"]`)
-          const focusTarget = invalidInput ?? variableRow
-          focusTarget?.focus()
+          const focusTarget = invalidInput ?? variableRow ?? groupTrigger
+          focusTarget?.focus({ preventScroll: true })
         })
       })
       return false
