@@ -238,7 +238,7 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
   )
   const requiredFields = fields.filter(isRequiredVariableField)
   const optionalFields = fields.filter(isOptionalVariableField)
-  const isValid = requiredFields.every(
+  const isValid = [...requiredFields, ...optionalFields].every(
     (field) =>
       isFieldValid(field, values[field.name]) ||
       (field.is_secret &&

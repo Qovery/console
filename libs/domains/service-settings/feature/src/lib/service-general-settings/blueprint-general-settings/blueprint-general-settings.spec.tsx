@@ -12,6 +12,7 @@ const mockPreviewBlueprintUpdate = jest.fn()
 const mockUpdateBlueprint = jest.fn()
 const mockDeployBlueprint = jest.fn()
 const mockBlueprintMetadata = jest.fn()
+const mockIsFieldValid = jest.fn(() => true)
 
 jest.mock('posthog-js', () => ({
   capture: jest.fn(),
@@ -39,7 +40,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
   getDefaultFieldValue: jest.fn(),
   getFallbackServiceIcon: jest.fn(),
   getFieldValidationError: jest.fn(),
-  isFieldValid: () => true,
+  isFieldValid: (...args: unknown[]) => mockIsFieldValid(...args),
   isOptionalVariableField: (field: { required: boolean; kind: string }) => field.kind === 'variable' && !field.required,
   isRequiredVariableField: (field: { required: boolean; kind: string }) => field.kind === 'variable' && field.required,
   BlueprintManifestVariableInput: ({
@@ -113,6 +114,7 @@ function BlueprintGeneralSettingsHarness() {
 describe('BlueprintGeneralSettings', () => {
   beforeEach(() => {
     mockUseBlueprintVariables.mockReturnValue({ data: [], isLoading: false })
+    mockIsFieldValid.mockReturnValue(true)
     jest.mocked(posthog.capture).mockClear()
   })
 
@@ -269,6 +271,36 @@ describe('BlueprintGeneralSettings', () => {
       service_id: service.id,
       service_type: service.serviceType,
     })
+  })
+
+  it('disables Preview when an optional field has an invalid value', async () => {
+    mockUseBlueprintCatalogServiceManifest.mockReturnValue({
+      data: [
+        {
+          kind: 'variable',
+          name: 'database_name',
+          required: false,
+          is_secret: false,
+          type: { type: 'string' },
+        },
+      ],
+      isLoading: false,
+    })
+    mockUseBlueprint.mockReturnValue({
+      data: { name: service.name, tag: 'aws/postgres/17/1.0.0' },
+      isLoading: false,
+    })
+    mockIsFieldValid.mockReturnValue(false)
+
+    const { userEvent } = renderWithProviders(
+      <BlueprintGeneralSettings service={service} environmentId="environment-id" organizationId="organization-id" />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Edit value' }))
+
+    expect(screen.getByRole('button', { name: 'Preview changes' })).toBeDisabled()
+    expect(mockPreviewBlueprintUpdate).not.toHaveBeenCalled()
   })
 
   it('keeps confirmed non-secret values visible when Settings remounts before the service read model catches up', async () => {
