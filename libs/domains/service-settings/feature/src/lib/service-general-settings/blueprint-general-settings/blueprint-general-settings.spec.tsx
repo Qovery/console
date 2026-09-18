@@ -278,6 +278,41 @@ describe('BlueprintGeneralSettings', () => {
     })
   })
 
+  it('keeps persisted optimistic values when deployment fails after the update succeeds', async () => {
+    mockUseBlueprintCatalogServiceManifest.mockReturnValue({
+      data: [
+        {
+          kind: 'variable',
+          name: 'database_name',
+          required: false,
+          is_secret: false,
+          type: { type: 'string' },
+        },
+      ],
+      isLoading: false,
+    })
+    mockUseBlueprint.mockReturnValue({
+      data: { name: service.name, tag: 'aws/postgres/17/1.0.0' },
+      isLoading: false,
+    })
+    mockPreviewBlueprintUpdate.mockResolvedValue({ preview_id: 'preview-id' })
+    mockUpdateBlueprint.mockResolvedValue(undefined)
+    mockDeployBlueprint.mockRejectedValue(new Error('deployment failed'))
+
+    const { userEvent } = renderWithProviders(
+      <BlueprintGeneralSettings service={service} environmentId="environment-id" organizationId="organization-id" />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Edit value' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Preview changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Confirm & deploy update' }))
+
+    expect(screen.getByText('Current value: updated-value')).toBeInTheDocument()
+    expect(mockUpdateBlueprint).toHaveBeenCalledTimes(1)
+    expect(mockDeployBlueprint).toHaveBeenCalledTimes(1)
+  })
+
   it('disables Preview when an optional field has an invalid value', async () => {
     mockUseBlueprintCatalogServiceManifest.mockReturnValue({
       data: [

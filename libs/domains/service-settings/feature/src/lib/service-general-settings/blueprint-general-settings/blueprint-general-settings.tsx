@@ -311,15 +311,22 @@ function BlueprintGeneralSettingsContent({ service, environmentId, organizationI
 
     try {
       await updateBlueprint({ blueprintId: service.blueprint_id, payload })
-      posthog.capture('blueprint_settings_updated', {
-        blueprint_id: service.blueprint_id,
-        service_id: service.id,
-        service_type: service.serviceType,
-      })
+    } catch {
+      removeOptimisticSettings(confirmedSettings)
+      return
+    }
+
+    posthog.capture('blueprint_settings_updated', {
+      blueprint_id: service.blueprint_id,
+      service_id: service.id,
+      service_type: service.serviceType,
+    })
+
+    try {
       await deployBlueprint({ blueprintId: service.blueprint_id })
       toast('success', 'Blueprint update started')
     } catch {
-      removeOptimisticSettings(confirmedSettings)
+      // The settings update already succeeded, so keep the optimistic values visible.
     }
   }, [
     changes,
