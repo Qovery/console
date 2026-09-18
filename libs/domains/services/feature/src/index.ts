@@ -122,7 +122,7 @@ export * from './lib/blueprint-manifest-variable-input/blueprint-manifest-variab
 export * from './lib/hooks/use-deploy-blueprint/use-deploy-blueprint'
 export * from './lib/service-blueprint-update-flow/blueprint-update-flow'
 export * from './lib/service-blueprint-update-flow/blueprint-metadata'
-export { getFallbackServiceIcon } from './lib/service-blueprint-update-flow/blueprint-update-utils'
+export * from './lib/service-blueprint-update-flow/blueprint-update-utils'
 export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-context'
 export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-automation'
 export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-templates'
