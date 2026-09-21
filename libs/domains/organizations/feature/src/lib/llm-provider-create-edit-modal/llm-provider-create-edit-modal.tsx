@@ -33,6 +33,15 @@ const PROVIDER_OPTIONS = [
     ),
     value: LlmProviderType.CLAUDE,
   },
+  {
+    label: (
+      <span className="flex items-center gap-2">
+        <img src="/assets/devicon/bedrock.svg" alt="" aria-hidden="true" className="h-5 w-5" />
+        Amazon Bedrock
+      </span>
+    ),
+    value: LlmProviderType.BEDROCK,
+  },
 ]
 
 const SCOPE_OPTIONS = [
@@ -55,6 +64,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
     },
   })
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
+  const selectedType = methods.watch('type')
 
   const { mutateAsync: createLlmProvider, isLoading: isCreating } = useCreateLlmProvider()
   const { mutateAsync: editLlmProvider, isLoading: isEditing } = useEditLlmProvider()
@@ -136,7 +146,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
                 label="Provider"
                 value={field.value}
                 options={PROVIDER_OPTIONS}
-                disabled
+                disabled={isEdit}
                 onChange={field.onChange}
               />
             )}
@@ -160,7 +170,13 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
                 onChange={field.onChange}
                 error={error?.message}
                 type="password"
-                hint={isEdit ? 'Leave blank to keep the current token.' : 'Encrypted and never shown again.'}
+                hint={
+                  isEdit
+                    ? 'Leave blank to keep the current token.'
+                    : selectedType === LlmProviderType.BEDROCK
+                      ? 'Encrypted and never shown again. Provide your AWS credentials (access key, secret key, region).'
+                      : 'Encrypted and never shown again.'
+                }
               />
             )}
           />

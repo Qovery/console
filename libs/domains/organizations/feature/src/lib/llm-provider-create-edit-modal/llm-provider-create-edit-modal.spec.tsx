@@ -100,12 +100,56 @@ describe('LlmProviderCreateEditModal', () => {
     )
   })
 
-  it('should select Claude by default and keep the provider locked', () => {
+  it('should select Claude by default and allow choosing a provider on create', () => {
     const { container } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
 
     expect(container.querySelector('img[src="/assets/ai-tools/claude.svg"]')).toBeInTheDocument()
-    expect(screen.getByLabelText('Provider')).toBeDisabled()
+    expect(screen.getByLabelText('Provider')).toBeEnabled()
     expect(screen.getByText('Anthropic Claude')).toBeInTheDocument()
-    expect(screen.queryByText('AWS Bedrock')).not.toBeInTheDocument()
+  })
+
+  it('should keep the provider locked when editing', () => {
+    renderWithProviders(
+      <LlmProviderCreateEditModal
+        onClose={jest.fn()}
+        llmProvider={{
+          id: 'provider-1',
+          name: 'Claude',
+          description: '',
+          type: LlmProviderType.CLAUDE,
+          has_credential: true,
+          scope: LlmProviderScope.USER,
+          created_at: '2026-09-15T10:00:00Z',
+          updated_at: '2026-09-15T10:00:00Z',
+        }}
+      />
+    )
+
+    expect(screen.getByLabelText('Provider')).toBeDisabled()
+  })
+
+  it('should create a Bedrock token', async () => {
+    const onClose = jest.fn()
+    const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={onClose} />)
+
+    await userEvent.type(screen.getByLabelText('Name'), 'My Bedrock')
+    await userEvent.click(screen.getByLabelText('Provider'))
+    await userEvent.click(screen.getByText('Amazon Bedrock'))
+    await userEvent.type(screen.getByLabelText('Token'), 'aws-secret')
+    await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
+
+    await waitFor(() =>
+      expect(createLlmProvider).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        llmProviderRequest: {
+          name: 'My Bedrock',
+          description: undefined,
+          type: LlmProviderType.BEDROCK,
+          credential: 'aws-secret',
+          scope: LlmProviderScope.USER,
+        },
+      })
+    )
+    expect(onClose).toHaveBeenCalledWith({ id: 'provider-1' })
   })
 })

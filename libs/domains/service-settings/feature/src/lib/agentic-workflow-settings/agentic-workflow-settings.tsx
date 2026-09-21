@@ -3,7 +3,6 @@ import {
   AgenticWorkflowExecutionMode,
   type AgenticWorkflowRequest,
   type GitTokenResponse,
-  LlmProviderType,
 } from 'qovery-typescript-axios'
 import { useForm } from 'react-hook-form'
 import { useGitTokens, useLlmProviders } from '@qovery/domains/organizations/feature'
@@ -258,9 +257,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         {page === 'ai-configuration' ? (
           <AgenticWorkflowAiConfigurationSettings
             form={form}
-            llmProviders={llmProviders.filter(
-              ({ type, has_credential }) => type === LlmProviderType.CLAUDE && has_credential
-            )}
+            llmProviders={llmProviders.filter(({ has_credential }) => has_credential)}
           />
         ) : null}
         {page === 'connections' ? (

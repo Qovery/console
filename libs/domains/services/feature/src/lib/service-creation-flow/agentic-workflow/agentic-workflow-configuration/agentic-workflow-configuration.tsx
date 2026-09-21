@@ -339,9 +339,14 @@ export function AgenticWorkflowConfiguration() {
   const hasModelCredential = Boolean(values.llmProviderId)
   const showLlmProviderError = (showValidationErrors || Boolean(dirtyFields.llmProviderId)) && !hasModelCredential
   const providerConfigurationInvalid = !hasModelCredential || Boolean(modelSettingsJsonError)
-  const availableLlmProviders = llmProviders.filter(
-    ({ type, has_credential }) => type === LlmProviderType.CLAUDE && has_credential
-  )
+  const availableLlmProviders = llmProviders.filter(({ has_credential }) => has_credential)
+  const selectedLlmProvider = llmProviders.find(({ id }) => id === values.llmProviderId)
+  const selectedLlmProviderIcon =
+    selectedLlmProvider?.type === LlmProviderType.BEDROCK
+      ? '/assets/devicon/bedrock.svg'
+      : '/assets/ai-tools/claude.svg'
+  const selectedLlmProviderLabel =
+    selectedLlmProvider?.type === LlmProviderType.BEDROCK ? 'Amazon Bedrock' : 'Anthropic'
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
     resources: false,
@@ -935,8 +940,8 @@ export function AgenticWorkflowConfiguration() {
                   variant="outline"
                   onClick={() => setProviderModalOpen(true)}
                 >
-                  <img src="/assets/ai-tools/claude.svg" alt="" aria-hidden="true" className="h-4 w-4" />
-                  Anthropic
+                  <img src={selectedLlmProviderIcon} alt="" aria-hidden="true" className="h-4 w-4" />
+                  {selectedLlmProviderLabel}
                 </Button>
                 {!hasModelCredential ? (
                   <span
@@ -1079,7 +1084,7 @@ export function AgenticWorkflowConfiguration() {
         <Modal externalOpen={providerModalOpen} setExternalOpen={setProviderModalOpen} width={520}>
           <ConfigurationModalContent
             title="Configure provider"
-            description="Configure the Anthropic credentials and cloud settings for the agent task."
+            description="Configure the model provider credentials and cloud settings for the agent task."
             confirmLabel="Save provider"
             setOpen={setProviderModalOpen}
           >
