@@ -58,6 +58,7 @@ describe('ClusterDeploymentList', () => {
     expect(screen.getByText('exec-123')).toBeInTheDocument()
     expect(screen.getByText('John Doe')).toBeInTheDocument()
     expect(screen.getByText('Console')).toBeInTheDocument()
+    expect(screen.queryByText('Dry run')).not.toBeInTheDocument()
   })
 
   it('should render a maintenance badge when reason is MAINTENANCE', () => {
