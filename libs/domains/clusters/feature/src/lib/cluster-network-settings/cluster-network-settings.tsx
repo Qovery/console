@@ -238,7 +238,7 @@ function CrudModal(props: {
         name="target"
         control={control}
         rules={{
-          required: 'Please enter an target.',
+          validate: (value: string) => value?.trim().length > 0 || 'Please enter an target.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
@@ -256,7 +256,7 @@ function CrudModal(props: {
         name="destination"
         control={control}
         rules={{
-          required: 'Please enter an destination.',
+          validate: (value: string) => value?.trim().length > 0 || 'Please enter an destination.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
@@ -302,7 +302,7 @@ const handleSubmitRoutingTable = (
   const target: string | undefined = data['target']?.trim()
 
   if (currentRoute) {
-    currentRoutes = currentRoutes.filter((route) => route.destination !== destination)
+    currentRoutes = currentRoutes.filter((route) => route.destination !== currentRoute.destination)
   }
 
   return [
