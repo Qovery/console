@@ -199,8 +199,9 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
     (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
   const submit = form.handleSubmit((data) => {
+    const selectedLlmProviderType = llmProviders.find(({ id }) => id === data.llmProviderId)?.type
     const model: AgenticWorkflowRequest['model'] = {
-      type: workflow.model.type,
+      type: selectedLlmProviderType ?? workflow.model.type,
       settings: data.modelSettings,
       llm_provider_id: data.llmProviderId,
     }

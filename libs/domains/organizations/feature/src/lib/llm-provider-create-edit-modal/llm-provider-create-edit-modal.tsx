@@ -174,7 +174,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
                   isEdit
                     ? 'Leave blank to keep the current token.'
                     : selectedType === LlmProviderType.BEDROCK
-                      ? 'Encrypted and never shown again. Provide your AWS credentials (access key, secret key, region).'
+                      ? 'Encrypted and never shown again. Paste the credential your Bedrock integration expects.'
                       : 'Encrypted and never shown again.'
                 }
               />

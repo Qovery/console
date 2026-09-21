@@ -128,6 +128,46 @@ describe('LlmProviderCreateEditModal', () => {
     expect(screen.getByLabelText('Provider')).toBeDisabled()
   })
 
+  it('should show the Bedrock provider and keep it locked when editing a Bedrock token', async () => {
+    const { container, userEvent } = renderWithProviders(
+      <LlmProviderCreateEditModal
+        onClose={jest.fn()}
+        llmProvider={{
+          id: 'provider-1',
+          name: 'Bedrock',
+          description: '',
+          type: LlmProviderType.BEDROCK,
+          has_credential: true,
+          scope: LlmProviderScope.USER,
+          created_at: '2026-09-15T10:00:00Z',
+          updated_at: '2026-09-15T10:00:00Z',
+        }}
+      />
+    )
+
+    expect(container.querySelector('img[src="/assets/devicon/bedrock.svg"]')).toBeInTheDocument()
+    expect(screen.getByText('Amazon Bedrock')).toBeInTheDocument()
+    expect(screen.getByLabelText('Provider')).toBeDisabled()
+
+    const saveButton = screen.getByRole('button', { name: 'Save token' })
+    await waitFor(() => expect(saveButton).toBeEnabled())
+    await userEvent.click(saveButton)
+
+    await waitFor(() =>
+      expect(editLlmProvider).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        llmProviderId: 'provider-1',
+        llmProviderRequest: {
+          name: 'Bedrock',
+          description: undefined,
+          type: LlmProviderType.BEDROCK,
+          credential: undefined,
+          scope: undefined,
+        },
+      })
+    )
+  })
+
   it('should create a Bedrock token', async () => {
     const onClose = jest.fn()
     const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={onClose} />)

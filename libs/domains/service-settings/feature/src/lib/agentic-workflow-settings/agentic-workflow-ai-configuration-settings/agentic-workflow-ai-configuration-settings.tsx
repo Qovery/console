@@ -25,7 +25,7 @@ export function AgenticWorkflowAiConfigurationSettings({
     <>
       <AgenticWorkflowSettingsCard
         title="Provider"
-        description="Configure the Anthropic credentials and cloud settings."
+        description="Configure the model provider credentials and cloud settings for the agent task."
       >
         <Controller
           name="llmProviderId"

@@ -582,11 +582,16 @@ export function AgenticWorkflowConfiguration() {
       }
 
       if (!createdServiceIdRef.current) {
+        const formValues = form.getValues()
+        const selectedProviderType = llmProviders.find(({ id }) => id === formValues.llmProviderId)?.type
         const service = await createService({
           environmentId,
           payload: {
             serviceType: 'AGENTIC_WORKFLOW',
-            ...formatAgenticWorkflowRequest(form.getValues(), requiredMcpServerIds),
+            ...formatAgenticWorkflowRequest(
+              { ...formValues, aiModel: selectedProviderType ?? formValues.aiModel },
+              requiredMcpServerIds
+            ),
           },
         })
         createdServiceIdRef.current = service.id
