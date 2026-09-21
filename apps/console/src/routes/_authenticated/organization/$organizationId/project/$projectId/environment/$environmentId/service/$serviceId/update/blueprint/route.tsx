@@ -23,6 +23,12 @@ function RouteComponent() {
       params: { organizationId, projectId, environmentId, serviceId },
     })
   }, [environmentId, navigate, organizationId, projectId, serviceId])
+  const navigateToBlueprintSettings = useCallback(() => {
+    navigate({
+      to: '/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/settings/blueprint-configuration',
+      params: { organizationId, projectId, environmentId, serviceId },
+    })
+  }, [environmentId, navigate, organizationId, projectId, serviceId])
 
   useEffect(() => {
     if (service && !blueprintId) navigateToOverview()
@@ -37,7 +43,7 @@ function RouteComponent() {
       currentStep={currentStep}
       environmentId={environmentId}
       service={service}
-      onExit={navigateToOverview}
+      onExit={navigateToBlueprintSettings}
     >
       <Outlet />
     </BlueprintUpdateFlow>

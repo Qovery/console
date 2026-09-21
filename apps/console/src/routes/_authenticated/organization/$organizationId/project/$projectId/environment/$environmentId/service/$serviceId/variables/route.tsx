@@ -3,7 +3,7 @@ import { Outlet, createFileRoute, useMatchRoute, useNavigate } from '@tanstack/r
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { Suspense, useEffect } from 'react'
 import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
-import { useService } from '@qovery/domains/services/feature'
+import { hasTerraformVariablesTab, useService } from '@qovery/domains/services/feature'
 import { Badge, Heading, Icon, LoaderSpinner, Navbar, Section } from '@qovery/shared/ui'
 
 export const Route = createFileRoute(
@@ -82,7 +82,8 @@ function RouteComponent() {
 
   if (shouldRedirect) return null
 
-  const serviceTabs = service?.serviceType === 'TERRAFORM' ? [...tabs, terraformTab] : tabs
+  const hasTerraformVariables = hasTerraformVariablesTab(service)
+  const serviceTabs = hasTerraformVariables ? [...tabs, terraformTab] : tabs
   const activeTabId = serviceTabs.find((tab) => matchRoute({ to: tab.routeId }))?.id
 
   return (
@@ -105,7 +106,7 @@ function RouteComponent() {
                     <TabLabel label={tab.label} isNew={tab.id === 'external-secrets'} />
                   </Navbar.Item>
                 ))}
-                {service?.serviceType === 'TERRAFORM' && (
+                {hasTerraformVariables && (
                   <>
                     <div aria-hidden className="mx-4 h-5 border-l border-neutral" />
                     <Navbar.Item id={terraformTab.id} to={terraformTab.routeId}>

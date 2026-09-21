@@ -47,5 +47,6 @@ describe('Modal', () => {
     const modal = screen.getByRole('dialog')
 
     expect(modal).toBeInTheDocument()
+    expect(modal).toHaveStyle({ width: '474px' })
   })
 })

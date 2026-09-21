@@ -6,7 +6,7 @@ import {
   useBlueprintUpdatePreviewSocket,
 } from '../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket'
 import { useBlueprintUpdateFlowContext } from './blueprint-update-context'
-import { BlueprintUpdatePreviewStep } from './blueprint-update-preview-step'
+import { BlueprintPreview, BlueprintUpdatePreviewStep } from './blueprint-update-preview-step'
 
 jest.mock('../hooks/use-blueprint-update-preview-socket/use-blueprint-update-preview-socket', () => ({
   useBlueprintUpdatePreviewSocket: jest.fn(),
@@ -151,5 +151,65 @@ describe('BlueprintUpdatePreviewStep', () => {
     })
 
     expect(screen.getByText('Analyzing the planned changes')).toBeInTheDocument()
+  })
+
+  it('anchors actions within the modal layout instead of the viewport', () => {
+    renderWithProviders(
+      <BlueprintPreview
+        layout="modal"
+        loading={false}
+        previewError={false}
+        onBack={jest.fn()}
+        onConfirm={jest.fn()}
+        onRetry={jest.fn()}
+      />
+    )
+
+    const modalConfirmButton = screen.getByRole('button', { name: 'Confirm & Deploy changes' })
+
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeInTheDocument()
+    expect(modalConfirmButton.closest('footer')).toHaveClass('absolute', 'bottom-0', 'w-full')
+    expect(modalConfirmButton.closest('footer')).not.toHaveClass('fixed', 'max-w-[620px]')
+  })
+
+  it('fills the modal content area while the preview is loading', () => {
+    jest.mocked(useBlueprintUpdatePreviewSocket).mockReturnValue({ outcome: { type: 'pending' } })
+
+    renderWithProviders(
+      <BlueprintPreview
+        layout="modal"
+        clusterId="cluster-id"
+        loading={false}
+        previewError={false}
+        previewId="preview-id"
+        onBack={jest.fn()}
+        onConfirm={jest.fn()}
+        onRetry={jest.fn()}
+      />
+    )
+
+    expect(screen.getByTestId('blueprint-preview-raw-output')).toHaveClass('flex-1', 'min-h-0')
+    expect(screen.getByTestId('blueprint-preview-raw-output')).not.toHaveClass('min-h-[180px]')
+    expect(screen.getByTestId('blueprint-preview-modal-content').firstElementChild).toHaveClass('min-h-full', 'w-full')
+  })
+
+  it('scrolls the modal content rather than an inner raw-output container', () => {
+    jest.mocked(useBlueprintUpdatePreviewSocket).mockReturnValue({ outcome: { type: 'diff', rawOutput: '+ created' } })
+
+    renderWithProviders(
+      <BlueprintPreview
+        layout="modal"
+        clusterId="cluster-id"
+        loading={false}
+        previewError={false}
+        previewId="preview-id"
+        onBack={jest.fn()}
+        onConfirm={jest.fn()}
+        onRetry={jest.fn()}
+      />
+    )
+
+    expect(screen.getByTestId('blueprint-preview-modal-content')).toHaveClass('flex-1', 'overflow-y-auto')
+    expect(screen.getByText('+ created').closest('div')).not.toHaveClass('overflow-auto')
   })
 })

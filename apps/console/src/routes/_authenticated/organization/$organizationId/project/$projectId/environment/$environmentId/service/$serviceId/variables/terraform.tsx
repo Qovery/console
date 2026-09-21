@@ -7,7 +7,7 @@ import {
   TerraformVariablesTable,
   useTerraformVariablesContext,
 } from '@qovery/domains/service-terraform/feature'
-import { type Terraform } from '@qovery/domains/services/data-access'
+import { type Terraform, isBlueprintService } from '@qovery/domains/services/data-access'
 import { type TerraformGeneralData, useEditService, useService } from '@qovery/domains/services/feature'
 import { Button, LoaderSpinner } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
@@ -87,7 +87,7 @@ function RouteComponent() {
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
   useDocumentTitle('Terraform variables - Service')
 
-  if (service?.serviceType !== 'TERRAFORM') {
+  if (!service || isBlueprintService(service) || service.serviceType !== 'TERRAFORM') {
     return null
   }
 

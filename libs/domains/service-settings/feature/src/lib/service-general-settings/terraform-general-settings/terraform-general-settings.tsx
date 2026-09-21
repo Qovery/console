@@ -1,7 +1,7 @@
 import { type Organization, TerraformAutoDeployConfigTerraformActionEnum } from 'qovery-typescript-axios'
 import { Controller, useFormContext } from 'react-hook-form'
 import { EditGitRepositorySettings } from '@qovery/domains/organizations/feature'
-import { type Terraform } from '@qovery/domains/services/data-access'
+import { type Terraform, isBlueprintService } from '@qovery/domains/services/data-access'
 import { AutoDeploySection, GeneralSetting } from '@qovery/domains/services/feature'
 import { Heading, InputSelect, Section } from '@qovery/shared/ui'
 
@@ -18,6 +18,7 @@ export interface TerraformGeneralSettingsProps {
 
 export function TerraformGeneralSettings({ service, organization }: TerraformGeneralSettingsProps) {
   const { control } = useFormContext()
+  const isBlueprint = isBlueprintService(service)
 
   return (
     <>
@@ -26,36 +27,39 @@ export function TerraformGeneralSettings({ service, organization }: TerraformGen
         <GeneralSetting label="Service name" service={service} />
       </Section>
 
-      <Section className="gap-4">
-        <Heading>Source</Heading>
-        <EditGitRepositorySettings
-          organizationId={organization.id}
-          gitRepository={service.terraform_files_source?.git?.git_repository}
-          rootPathLabel="Terraform root folder path"
-          rootPathHint="Provide the folder path where the Terraform code is located in the repository."
-          showEditAction={!service.blueprint_id}
-        />
-      </Section>
+      {!isBlueprint && (
+        <>
+          <Section className="gap-4">
+            <Heading>Source</Heading>
+            <EditGitRepositorySettings
+              organizationId={organization.id}
+              gitRepository={service.terraform_files_source?.git?.git_repository}
+              rootPathLabel="Terraform root folder path"
+              rootPathHint="Provide the folder path where the Terraform code is located in the repository."
+            />
+          </Section>
 
-      <Section className="gap-4">
-        <Heading>Build and deploy</Heading>
-        <AutoDeploySection serviceId={service.id} source="TERRAFORM">
-          <Controller
-            name="terraform_action"
-            control={control}
-            render={({ field, fieldState: { error } }) => (
-              <InputSelect
-                label="Triggered action"
-                options={triggeredActionItems}
-                onChange={field.onChange}
-                value={field.value}
-                error={error?.message}
-                portal
+          <Section className="gap-4">
+            <Heading>Build and deploy</Heading>
+            <AutoDeploySection serviceId={service.id} source="TERRAFORM">
+              <Controller
+                name="terraform_action"
+                control={control}
+                render={({ field, fieldState: { error } }) => (
+                  <InputSelect
+                    label="Triggered action"
+                    options={triggeredActionItems}
+                    onChange={field.onChange}
+                    value={field.value}
+                    error={error?.message}
+                    portal
+                  />
+                )}
               />
-            )}
-          />
-        </AutoDeploySection>
-      </Section>
+            </AutoDeploySection>
+          </Section>
+        </>
+      )}
     </>
   )
 }

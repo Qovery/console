@@ -1,11 +1,9 @@
-import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { useMemo } from 'react'
 import { useClusterDeploymentHistory } from '../hooks/use-cluster-deployment-history/use-cluster-deployment-history'
 import {
   getClusterDeploymentLogsRefetchInterval,
   useClusterDeploymentLogs,
 } from '../hooks/use-cluster-deployment-logs/use-cluster-deployment-logs'
-import { useClusterLogs } from '../hooks/use-cluster-logs/use-cluster-logs'
 
 // XXX: This code need to be refactored and improved
 // From https://github.com/Qovery/console/pull/2176
@@ -34,12 +32,9 @@ export function useDeploymentProgress({ organizationId, clusterId, cloudProvider
   currentStepLabel: string
   state: LifecycleState
 } {
-  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
-  // Only one of the two log sources is queried at a time, depending on the feature flag
   const { data: deploymentHistory = [] } = useClusterDeploymentHistory({
     organizationId,
     clusterId,
-    enabled: isClusterDeploymentHistoryEnabled,
     refetchInterval: 5000,
   })
   const latestDeploymentId = deploymentHistory[0]?.identifier.deployment_id ?? ''
@@ -48,16 +43,7 @@ export function useDeploymentProgress({ organizationId, clusterId, cloudProvider
     clusterId,
     deploymentId: latestDeploymentId,
     refetchInterval: getClusterDeploymentLogsRefetchInterval(deploymentHistory[0]?.action_status),
-    enabled: isClusterDeploymentHistoryEnabled,
   })
-  const { data: legacyClusterLogs } = useClusterLogs({
-    organizationId,
-    clusterId,
-    refetchInterval: 3000,
-    enabled: !isClusterDeploymentHistoryEnabled,
-  })
-  const clusterLogs = isClusterDeploymentHistoryEnabled ? deploymentLogs : legacyClusterLogs
-
   const providerCode = useMemo(() => {
     switch (cloudProvider) {
       case 'AWS':
@@ -74,7 +60,7 @@ export function useDeploymentProgress({ organizationId, clusterId, cloudProvider
   }, [cloudProvider])
 
   const { highestStepIndex, installationComplete, state } = useMemo(() => {
-    if (!clusterLogs || clusterLogs.length === 0) {
+    if (!deploymentLogs || deploymentLogs.length === 0) {
       return { highestStepIndex: 0, installationComplete: false, state: 'idle' as LifecycleState }
     }
 
@@ -85,13 +71,13 @@ export function useDeploymentProgress({ organizationId, clusterId, cloudProvider
       'RetrieveClusterResources',
       'ValidateSystemRequirements',
     ])
-    const hasStarted = clusterLogs.some((log) => log.step && startSteps.has(log.step))
+    const hasStarted = deploymentLogs.some((log) => log.step && startSteps.has(log.step))
 
     let maxIndex = 0
     let isComplete = false
     let isFailed = false
 
-    for (const log of clusterLogs) {
+    for (const log of deploymentLogs) {
       const userLogMessage = (log.error as { user_log_message?: string } | undefined)?.user_log_message ?? ''
       const safeMessage = log.message?.safe_message ?? ''
       const message = userLogMessage || safeMessage
@@ -144,7 +130,7 @@ export function useDeploymentProgress({ organizationId, clusterId, cloudProvider
       installationComplete: isComplete,
       state: computedState,
     }
-  }, [clusterLogs, providerCode])
+  }, [deploymentLogs, providerCode])
 
   const steps = useMemo(() => {
     return DEPLOYMENT_STEPS.map((label, index) => {

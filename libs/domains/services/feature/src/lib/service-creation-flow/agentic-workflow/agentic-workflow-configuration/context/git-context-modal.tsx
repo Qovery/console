@@ -62,7 +62,7 @@ export function GitContextModal({
           </p>
         </div>
         <div className="flex flex-col gap-3">
-          <GitProviderSetting organizationId={organizationId} portal />
+          <GitProviderSetting organizationId={organizationId} showAuthProviders={false} portal />
           {isPublicRepository ? (
             <GitPublicRepositorySettings hideRootPath />
           ) : (

@@ -105,20 +105,6 @@ const CLUSTER_TABS: NavigationTab[] = [
   },
 ]
 
-// Legacy tab shown when the `cluster-deployment-history` feature flag is off
-const LEGACY_CLUSTER_LOGS_TAB: NavigationTab = {
-  id: 'cluster-logs',
-  label: 'Deployment Logs',
-  iconName: 'scroll',
-  routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
-}
-
-function getClusterTabs(isClusterDeploymentHistoryEnabled: boolean): NavigationTab[] {
-  return isClusterDeploymentHistoryEnabled
-    ? CLUSTER_TABS
-    : CLUSTER_TABS.map((tab) => (tab.id === 'deployments' ? LEGACY_CLUSTER_LOGS_TAB : tab))
-}
-
 const PROJECT_TABS: NavigationTab[] = [
   {
     id: 'overview',
@@ -349,7 +335,6 @@ function useNavigationContext(): NavigationContext | null {
   const pathname = location.pathname
   const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
-  const isClusterDeploymentHistoryEnabled = Boolean(useFeatureFlagEnabled('cluster-deployment-history'))
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
@@ -389,9 +374,7 @@ function useNavigationContext(): NavigationContext | null {
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled)
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
-              : context.type === 'cluster'
-                ? getClusterTabs(isClusterDeploymentHistoryEnabled)
-                : context.tabs
+              : context.tabs
 
         return {
           type: context.type,

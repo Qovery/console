@@ -1,5 +1,5 @@
 import { match } from 'ts-pattern'
-import { type ServiceType } from '@qovery/domains/services/data-access'
+import { type AnyService, type ServiceType, isBlueprintService } from '@qovery/domains/services/data-access'
 
 export type ServiceVariableScope = 'APPLICATION' | 'CONTAINER' | 'JOB' | 'HELM' | 'TERRAFORM' | 'AGENTIC_WORKFLOW'
 
@@ -20,4 +20,8 @@ export function getServiceVariableScope(
     .with('TERRAFORM', () => 'TERRAFORM' as const)
     .with('AGENTIC_WORKFLOW', () => 'AGENTIC_WORKFLOW' as const)
     .otherwise(() => fallbackScope)
+}
+
+export function hasTerraformVariablesTab(service?: AnyService) {
+  return service?.serviceType === 'TERRAFORM' && !isBlueprintService(service)
 }

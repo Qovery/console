@@ -22,6 +22,10 @@ describe('TerraformGeneralSettings', () => {
   const service = terraformFactoryMock(1)[0]
   const organization = organizationFactoryMock(1)[0]
 
+  beforeEach(() => {
+    mockEditGitRepositorySettings.mockClear()
+  })
+
   it('should render main sections', () => {
     renderWithProviders(
       wrapWithReactHookForm(<TerraformGeneralSettings service={service} organization={organization} />, {
@@ -37,7 +41,7 @@ describe('TerraformGeneralSettings', () => {
     expect(screen.getByText('Build and deploy')).toBeInTheDocument()
   })
 
-  it('hides the source edit action for blueprint services', () => {
+  it('renders only the general section for blueprint services', () => {
     renderWithProviders(
       wrapWithReactHookForm(
         <TerraformGeneralSettings service={{ ...service, blueprint_id: 'blueprint-id' }} organization={organization} />,
@@ -50,6 +54,9 @@ describe('TerraformGeneralSettings', () => {
       )
     )
 
-    expect(mockEditGitRepositorySettings).toHaveBeenLastCalledWith(expect.objectContaining({ showEditAction: false }))
+    expect(screen.getByText('General')).toBeInTheDocument()
+    expect(screen.queryByText('Source')).not.toBeInTheDocument()
+    expect(screen.queryByText('Build and deploy')).not.toBeInTheDocument()
+    expect(mockEditGitRepositorySettings).not.toHaveBeenCalled()
   })
 })
