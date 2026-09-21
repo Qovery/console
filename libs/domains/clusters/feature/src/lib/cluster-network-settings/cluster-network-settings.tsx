@@ -238,7 +238,7 @@ function CrudModal(props: {
         name="target"
         control={control}
         rules={{
-          validate: (value: string) => value?.trim().length > 0 || 'Please enter an target.',
+          validate: (value: string) => value?.trim().length > 0 || 'Please enter a target.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
@@ -256,7 +256,7 @@ function CrudModal(props: {
         name="destination"
         control={control}
         rules={{
-          validate: (value: string) => value?.trim().length > 0 || 'Please enter an destination.',
+          validate: (value: string) => value?.trim().length > 0 || 'Please enter a destination.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
