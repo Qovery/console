@@ -238,7 +238,7 @@ function CrudModal(props: {
         name="target"
         control={control}
         rules={{
-          required: 'Please enter an target.',
+          validate: (value: string) => value?.trim().length > 0 || 'Please enter a target.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
@@ -256,7 +256,7 @@ function CrudModal(props: {
         name="destination"
         control={control}
         rules={{
-          required: 'Please enter an destination.',
+          validate: (value: string) => value?.trim().length > 0 || 'Please enter a destination.',
         }}
         render={({ field, fieldState: { error } }) => (
           <InputText
@@ -298,16 +298,18 @@ const handleSubmitRoutingTable = (
   currentRoute?: ClusterRoutingTableResultsInner
 ) => {
   let currentRoutes = [...routes]
+  const destination: string = data['destination'].trim()
+  const target: string = data['target'].trim()
 
   if (currentRoute) {
-    currentRoutes = currentRoutes.filter((route) => route.destination !== data['destination'])
+    currentRoutes = currentRoutes.filter((route) => route.destination !== currentRoute.destination)
   }
 
   return [
     ...currentRoutes,
     {
-      destination: data['destination'],
-      target: data['target'],
+      destination,
+      target,
       description: data['description'],
     },
   ]
