@@ -298,16 +298,18 @@ const handleSubmitRoutingTable = (
   currentRoute?: ClusterRoutingTableResultsInner
 ) => {
   let currentRoutes = [...routes]
+  const destination: string | undefined = data['destination']?.trim()
+  const target: string | undefined = data['target']?.trim()
 
   if (currentRoute) {
-    currentRoutes = currentRoutes.filter((route) => route.destination !== data['destination'])
+    currentRoutes = currentRoutes.filter((route) => route.destination !== destination)
   }
 
   return [
     ...currentRoutes,
     {
-      destination: data['destination'],
-      target: data['target'],
+      destination,
+      target,
       description: data['description'],
     },
   ]
