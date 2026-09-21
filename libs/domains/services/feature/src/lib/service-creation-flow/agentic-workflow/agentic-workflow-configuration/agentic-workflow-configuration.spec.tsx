@@ -298,7 +298,7 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
-    await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add provider' }))
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Select stored token' })).toBeInTheDocument()
     expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
@@ -645,7 +645,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
     await userEvent.type(screen.getByRole('textbox', { name: /Instructions/ }), 'Review incoming payloads.')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add provider' }))
     await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
@@ -737,7 +737,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
     await userEvent.type(screen.getByRole('textbox', { name: 'Instructions' }), 'Review incoming payloads.')
-    await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add provider' }))
     await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))

@@ -934,27 +934,36 @@ export function AgenticWorkflowConfiguration() {
             </section>
             <section aria-label="Agent task capabilities" className="border-t border-neutral py-3">
               <ConfigurationRow label="Provider">
-                <Button
-                  type="button"
-                  size="sm"
-                  color="neutral"
-                  variant="outline"
-                  onClick={() => setProviderModalOpen(true)}
-                >
-                  <img
-                    src={isBedrockProvider ? '/assets/ai-tools/bedrock.svg' : '/assets/ai-tools/claude.svg'}
-                    alt=""
-                    aria-hidden="true"
-                    className="h-4 w-4"
-                  />
-                  {isBedrockProvider ? 'Amazon Bedrock' : 'Anthropic'}
-                </Button>
-                {!hasModelCredential ? (
-                  <span
-                    className={`text-xs ${showValidationErrors ? 'font-medium text-negative' : 'text-neutral-subtle'}`}
+                {hasModelCredential ? (
+                  <Button
+                    type="button"
+                    size="sm"
+                    color="neutral"
+                    variant="outline"
+                    onClick={() => setProviderModalOpen(true)}
                   >
-                    Token required
-                  </span>
+                    <img
+                      src={isBedrockProvider ? '/assets/ai-tools/bedrock.svg' : '/assets/ai-tools/claude.svg'}
+                      alt=""
+                      aria-hidden="true"
+                      className="h-4 w-4"
+                    />
+                    {isBedrockProvider ? 'Amazon Bedrock' : 'Anthropic'}
+                  </Button>
+                ) : (
+                  <Button
+                    type="button"
+                    size="sm"
+                    color="neutral"
+                    variant="outline"
+                    onClick={() => setProviderModalOpen(true)}
+                  >
+                    <Icon iconName="circle-plus" iconStyle="regular" />
+                    Add provider
+                  </Button>
+                )}
+                {!hasModelCredential && showValidationErrors ? (
+                  <span className="text-xs font-medium text-negative">Token required</span>
                 ) : null}
               </ConfigurationRow>
               <ConfigurationRow label="MCP">
