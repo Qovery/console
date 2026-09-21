@@ -65,6 +65,19 @@ describe('ClusterDeploymentList', () => {
     expect(screen.getByText('Maintenance')).toBeInTheDocument()
   })
 
+  it('should render a dry run badge when the deployment is a dry run', () => {
+    mockDeploymentHistory = [
+      {
+        ...defaultDeploymentHistory[0],
+        is_dry_run: true,
+      } as ClusterDeploymentHistory,
+    ]
+
+    renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
+
+    expect(screen.getByText('Dry run')).toBeInTheDocument()
+  })
+
   it('should display trigger filters in title case', async () => {
     const { userEvent } = renderWithProviders(
       <ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />

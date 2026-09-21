@@ -160,6 +160,11 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
                     Maintenance
                   </Badge>
                 )}
+                {'is_dry_run' in data && data.is_dry_run === true && (
+                  <Badge color="neutral" variant="surface" className="font-medium">
+                    Dry run
+                  </Badge>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 {data.action_status === 'ERROR' && (
