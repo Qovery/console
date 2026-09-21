@@ -3,7 +3,7 @@ import posthog from 'posthog-js'
 import { type ApplicationGitRepository } from 'qovery-typescript-axios'
 import { type MouseEvent, Suspense, useContext } from 'react'
 import { P, match } from 'ts-pattern'
-import { type AnyService, getDeployableServiceType } from '@qovery/domains/services/data-access'
+import { type AnyService, getDeployableServiceType, isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import { DevopsCopilotContext } from '@qovery/shared/devops-copilot/context'
 import { isHelmGitSource, isJobGitSource } from '@qovery/shared/enums'
 import {
@@ -20,6 +20,7 @@ import {
 import { dateUTCString, timeAgo } from '@qovery/shared/util-dates'
 import { useIntervalTick } from '@qovery/shared/util-hooks'
 import { upperCaseFirstLetter } from '@qovery/shared/util-js'
+import { useDeployAgenticWorkflow } from '../../hooks/use-deploy-agentic-workflow/use-deploy-agentic-workflow'
 import { useDeployService } from '../../hooks/use-deploy-service/use-deploy-service'
 import { useDeploymentHistory } from '../../hooks/use-deployment-history/use-deployment-history'
 import { LastCommitAuthor, type LastCommitAuthorProps } from '../../last-commit-author/last-commit-author'
@@ -65,10 +66,15 @@ export function ServiceLastDeploymentSkeleton() {
 
 function ServiceLastDeploymentContent({ serviceId, serviceType, service }: ServiceLastDeploymentProps) {
   const { organizationId = '', projectId = '', environmentId = '' } = useParams({ strict: false })
+  const isAgentTask = service ? isAgenticWorkflow(service) : false
   const { mutate: deployService } = useDeployService({
     organizationId,
     projectId,
     environmentId,
+  })
+  const { mutate: deployAgenticWorkflow, isLoading: isTriggeringAgentTask } = useDeployAgenticWorkflow({
+    environmentId,
+    serviceId,
   })
   const { setDevopsCopilotOpen, sendMessageRef } = useContext(DevopsCopilotContext)
   const { data: deploymentHistory = [] } = useDeploymentHistory({
@@ -95,14 +101,29 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
         size="sm"
         icon="play"
         iconStyle="solid"
-        title={`${upperCaseFirstLetter(service?.service_type ?? 'Service')} has never been deployed`}
-        description={`Deploy the ${service?.service_type?.toLowerCase() ?? 'service'} first`}
+        title={
+          isAgentTask
+            ? 'This agent task has never been executed'
+            : `${upperCaseFirstLetter(service?.service_type ?? 'Service')} has never been deployed`
+        }
+        description={
+          isAgentTask
+            ? 'Run the agent task first'
+            : `Deploy the ${service?.service_type?.toLowerCase() ?? 'service'} first`
+        }
       >
         <Button
           color="neutral"
           variant="outline"
           size="md"
+          loading={isAgentTask ? isTriggeringAgentTask : undefined}
+          disabled={isAgentTask ? isTriggeringAgentTask : undefined}
           onClick={() => {
+            if (isAgentTask) {
+              deployAgenticWorkflow({ agenticWorkflowId: serviceId })
+              return
+            }
+
             const deployableServiceType = getDeployableServiceType(serviceType)
 
             if (!deployableServiceType) {
@@ -115,8 +136,8 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
             })
           }}
         >
-          <Icon iconName="rocket" />
-          Deploy now
+          <Icon iconName={isAgentTask ? 'play' : 'rocket'} />
+          {isAgentTask ? 'Run now' : 'Deploy now'}
         </Button>
       </EmptyState>
     )
@@ -226,7 +247,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
           ) : null}
         </div>
       </Link>
-      {lastDeployment.status_details.status === 'ERROR' && (
+      {lastDeployment.status_details.status === 'ERROR' && !isAgentTask && (
         <div className="-mt-3 flex items-center justify-between gap-3 rounded-b-lg border border-neutral bg-surface-brand-subtle px-4 pb-3 pt-6 text-ssm text-brand">
           <div className="flex min-w-0 items-center gap-1.5">
             <Icon iconName="sparkles" iconStyle="solid" className="shrink-0" />

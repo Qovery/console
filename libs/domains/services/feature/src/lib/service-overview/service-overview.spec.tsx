@@ -187,6 +187,9 @@ describe('ServiceOverview', () => {
     expect(screen.getByText('service-instance')).toBeInTheDocument()
     expect(screen.getByText('Webhook')).toBeInTheDocument()
     expect(screen.getByLabelText('Webhook URL')).toHaveValue('https://api.qovery.com/agentic-workflow/webhook-1')
+    expect(screen.getByRole('heading', { name: 'Last execution' })).toBeInTheDocument()
+    expect(screen.getByText('See all executions')).toBeInTheDocument()
+    expect(screen.getByText('service-last-deployment')).toBeInTheDocument()
   })
 
   it('renders the schedule instead of the webhook for a scheduled agentic workflow', () => {
