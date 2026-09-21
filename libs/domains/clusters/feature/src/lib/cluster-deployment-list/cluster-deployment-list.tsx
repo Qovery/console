@@ -160,7 +160,7 @@ export function ClusterDeploymentList({ organizationId, clusterId }: ClusterDepl
                     Maintenance
                   </Badge>
                 )}
-                {'is_dry_run' in data && data.is_dry_run === true && (
+                {data.is_dry_run && (
                   <Badge color="neutral" variant="surface" className="font-medium">
                     Dry run
                   </Badge>

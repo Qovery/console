@@ -19,6 +19,7 @@ const defaultDeploymentHistory: ClusterDeploymentHistory[] = [
     status: 'DEPLOYED',
     action_status: 'SUCCESS',
     trigger_action: 'DEPLOY',
+    is_dry_run: false,
     reason: 'MAINTENANCE',
     total_duration: 'PT16.503S',
   },
@@ -70,7 +71,7 @@ describe('ClusterDeploymentList', () => {
       {
         ...defaultDeploymentHistory[0],
         is_dry_run: true,
-      } as ClusterDeploymentHistory,
+      },
     ]
 
     renderWithProviders(<ClusterDeploymentList organizationId="org-123" clusterId="cluster-123" />)
