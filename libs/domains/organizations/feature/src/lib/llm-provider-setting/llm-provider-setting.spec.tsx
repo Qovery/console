@@ -76,4 +76,30 @@ describe('LlmProviderSetting', () => {
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
     expect(onChange).toHaveBeenCalledWith('provider-1')
   })
+
+  it('should keep a selected token and dependent settings visible when the token is absent from the available list', () => {
+    renderWithProviders(
+      <LlmProviderSetting displayEmptyState llmProviders={[]} value="provider-1" onChange={jest.fn()}>
+        <div>Cloud settings JSON</div>
+      </LlmProviderSetting>
+    )
+
+    expect(screen.getByLabelText('Token')).toBeInTheDocument()
+    expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
+    expect(screen.queryByText('No token available')).not.toBeInTheDocument()
+  })
+
+  it('should display the validation error in the empty state', () => {
+    renderWithProviders(
+      <LlmProviderSetting
+        displayEmptyState
+        error="Please select a token."
+        llmProviders={[]}
+        value=""
+        onChange={jest.fn()}
+      />
+    )
+
+    expect(screen.getByRole('alert')).toHaveTextContent('Please select a token.')
+  })
 })

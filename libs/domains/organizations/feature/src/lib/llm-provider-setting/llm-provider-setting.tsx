@@ -59,19 +59,26 @@ export function LlmProviderSetting({
     })
   }
 
-  if (displayEmptyState && availableLlmProviders.length === 0 && !isLoading) {
+  if (displayEmptyState && !value && availableLlmProviders.length === 0 && !isLoading) {
     return (
-      <EmptyState
-        icon="key"
-        title="No token available"
-        description="You don't have a model provider token yet. Add one to configure this agent task."
-        size="sm"
-      >
-        <Button type="button" size="md" color="neutral" onClick={openCreateModal}>
-          <Icon iconName="circle-plus" iconStyle="regular" />
-          New token
-        </Button>
-      </EmptyState>
+      <div className="flex flex-col gap-1">
+        <EmptyState
+          icon="key"
+          title="No token available"
+          description="You don't have a model provider token yet. Add one to configure this agent task."
+          size="sm"
+        >
+          <Button type="button" size="md" color="neutral" onClick={openCreateModal}>
+            <Icon iconName="circle-plus" iconStyle="regular" />
+            New token
+          </Button>
+        </EmptyState>
+        {error ? (
+          <p role="alert" className="px-3 text-xs text-negative">
+            {error}
+          </p>
+        ) : null}
+      </div>
     )
   }
 
