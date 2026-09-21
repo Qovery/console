@@ -1108,6 +1108,7 @@ export function AgenticWorkflowConfiguration() {
               control={form.control}
               render={({ field }) => (
                 <LlmProviderSetting
+                  displayEmptyState
                   llmProviders={availableLlmProviders}
                   isLoading={areLlmProvidersLoading}
                   error={showLlmProviderError ? 'Please select a token.' : undefined}
@@ -1120,35 +1121,36 @@ export function AgenticWorkflowConfiguration() {
                       form.setValue('aiModel', provider.type as AgenticWorkflowModelType, { shouldDirty: true })
                     }
                   }}
-                />
-              )}
-            />
-            <Controller
-              name="modelSettingsJson"
-              control={form.control}
-              render={({ field }) => (
-                <AgenticWorkflowCodeEditorField
-                  name={field.name}
-                  label="Cloud settings JSON"
-                  language="json"
-                  value={field.value}
-                  error={modelSettingsJsonError}
-                  hint={
-                    <>
-                      Configure the cloud model runtime. Read the{' '}
-                      <a
-                        href="https://code.claude.com/docs/en/settings"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="font-medium text-brand hover:underline"
-                      >
-                        Claude Code settings documentation
-                      </a>
-                      .
-                    </>
-                  }
-                  onChange={field.onChange}
-                />
+                >
+                  <Controller
+                    name="modelSettingsJson"
+                    control={form.control}
+                    render={({ field }) => (
+                      <AgenticWorkflowCodeEditorField
+                        name={field.name}
+                        label="Cloud settings JSON"
+                        language="json"
+                        value={field.value}
+                        error={modelSettingsJsonError}
+                        hint={
+                          <>
+                            Configure the cloud model runtime. Read the{' '}
+                            <a
+                              href="https://code.claude.com/docs/en/settings"
+                              target="_blank"
+                              rel="noreferrer"
+                              className="font-medium text-brand hover:underline"
+                            >
+                              Claude Code settings documentation
+                            </a>
+                            .
+                          </>
+                        }
+                        onChange={field.onChange}
+                      />
+                    )}
+                  />
+                </LlmProviderSetting>
               )}
             />
           </ConfigurationModalContent>

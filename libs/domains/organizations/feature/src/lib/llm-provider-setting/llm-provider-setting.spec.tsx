@@ -51,4 +51,29 @@ describe('LlmProviderSetting', () => {
     expect(onChange).toHaveBeenCalledWith('provider-1')
     expect(closeModal).toHaveBeenCalled()
   })
+
+  it('should replace the selector and dependent settings with a create token action when no token is available', async () => {
+    const onChange = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <LlmProviderSetting displayEmptyState llmProviders={[]} value="" onChange={onChange}>
+        <div>Cloud settings JSON</div>
+      </LlmProviderSetting>
+    )
+
+    expect(screen.queryByLabelText('Token')).not.toBeInTheDocument()
+    expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
+    expect(
+      screen.getByText("You don't have a model provider token yet. Add one to configure this agent task.")
+    ).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'New token' }))
+    expect(openModal).toHaveBeenCalledWith(expect.objectContaining({ options: { fakeModal: true, width: 680 } }))
+
+    const modal = openModal.mock.calls[0][0].content as ReactElement<LlmProviderCreateEditModalProps>
+    act(() => modal.props.onClose(llmProvider))
+
+    expect(screen.getByLabelText('Token')).toBeInTheDocument()
+    expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
+    expect(onChange).toHaveBeenCalledWith('provider-1')
+  })
 })

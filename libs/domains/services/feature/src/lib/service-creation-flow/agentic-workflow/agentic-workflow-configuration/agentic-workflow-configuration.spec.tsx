@@ -1,5 +1,6 @@
 import posthog from 'posthog-js'
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
 import { type AgenticWorkflowTemplate } from '../agentic-workflow-templates'
@@ -57,10 +58,13 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   GitBranchSettings: () => <div>Git branch</div>,
   GitProviderSetting: () => <div>Git provider</div>,
   GitRepositorySetting: () => <div>Git repository</div>,
-  LlmProviderSetting: ({ onChange }: { onChange: (value: string) => void }) => (
-    <button type="button" onClick={() => onChange('provider-1')}>
-      Select stored token
-    </button>
+  LlmProviderSetting: ({ children, onChange }: { children?: ReactNode; onChange: (value: string) => void }) => (
+    <>
+      <button type="button" onClick={() => onChange('provider-1')}>
+        Select stored token
+      </button>
+      {children}
+    </>
   ),
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
   McpServerSetting: () => <div>Organization MCP connectors</div>,
