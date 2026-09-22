@@ -14,7 +14,7 @@ export function LoadingIndicator({ loadingText, plan, showPlans, onTogglePlans }
   const tempPlanSteps = plan.filter((p) => p.messageId === 'temp')
 
   return (
-    <div className="relative top-2 mt-auto">
+    <div className="relative">
       <div className="group flex cursor-pointer items-center gap-2" onClick={() => onTogglePlans('temp')}>
         <AnimatedGradientText className="w-fit text-ssm font-medium">{loadingText}</AnimatedGradientText>
         {tempPlanSteps.length > 0 && (
