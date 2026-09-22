@@ -73,6 +73,7 @@ export function CatalogVariableInput({
   if (field.allowedValues?.length) {
     return (
       <InputSelect
+        portal
         isSearchable
         inputId={inputId}
         label={field.label}

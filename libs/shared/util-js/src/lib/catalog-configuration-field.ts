@@ -66,16 +66,47 @@ export function applyCatalogConfigurationDefaults(
   return result
 }
 
-/** Keep array indices stable: empty scalar items must reach validation, not disappear. */
-export function omitEmptyCatalogValues(values: Record<string, unknown>): Record<string, unknown> {
-  const clean = (value: unknown): unknown => {
-    if (Array.isArray(value)) return value.map(clean)
-    if (isCatalogObject(value)) return omitEmptyCatalogValues(value)
+function preservesEmptyString(field: FieldSchemaResponse | undefined): boolean {
+  if (field?.type !== 'string' || !field.required || (field.constraints.minLength ?? 0) > 0) return false
+  if (field.constraints.allowedValues && !field.constraints.allowedValues.includes('')) return false
+  try {
+    return !field.constraints.pattern || new RegExp(field.constraints.pattern).test('')
+  } catch {
+    return false
+  }
+}
+
+/** Keep array indices stable and preserve required empty strings allowed by the schema (such as valueless taints). */
+export function omitEmptyCatalogValues(
+  values: Record<string, unknown>,
+  fields: FieldSchemaResponse[] = []
+): Record<string, unknown> {
+  const clean = (value: unknown, field?: FieldSchemaResponse): unknown => {
+    if (Array.isArray(value))
+      return value.map((row, index) => {
+        if (field?.type === 'array' && field.items.type === 'object' && isCatalogObject(row)) {
+          return omitEmptyCatalogValues(
+            row,
+            field.itemFields?.length === value.length ? field.itemFields[index] : field.items.fields
+          )
+        }
+        return clean(row)
+      })
+    if (isCatalogObject(value)) return omitEmptyCatalogValues(value, field?.type === 'object' ? field.fields : [])
     return value
   }
   return Object.fromEntries(
     Object.entries(values)
-      .filter(([, value]) => value !== '' && value !== undefined)
-      .map(([key, value]) => [key, clean(value)])
+      .filter(
+        ([key, value]) =>
+          value !== undefined && (value !== '' || preservesEmptyString(fields.find((field) => field.key === key)))
+      )
+      .map(([key, value]) => [
+        key,
+        clean(
+          value,
+          fields.find((field) => field.key === key)
+        ),
+      ])
   )
 }

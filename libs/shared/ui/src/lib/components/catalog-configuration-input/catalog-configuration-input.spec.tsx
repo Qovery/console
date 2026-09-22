@@ -143,6 +143,42 @@ describe('CatalogConfigurationInput', () => {
     expect(JSON.parse(screen.getByRole('status').textContent ?? 'null')).toEqual([42])
   })
 
+  it('shows enum choices outside the clipping object accordion and saves the selected effect', async () => {
+    const effects = ['NoSchedule', 'PreferNoSchedule', 'NoExecute']
+    const { container, userEvent } = renderWithProviders(
+      <Editor
+        schema={{
+          ...field,
+          key: 'tolerations',
+          label: 'Tolerations',
+          items: {
+            type: 'object',
+            fields: [
+              { ...name, key: 'key', label: 'Taint key' },
+              { ...name, key: 'value', label: 'Taint value' },
+              { ...name, key: 'effect', label: 'Effect', constraints: { allowedValues: effects } },
+            ],
+          },
+        }}
+        initial={[]}
+      />
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Add item to Tolerations' }))
+    await userEvent.type(screen.getByRole('textbox', { name: 'Taint key' }), 'node.qovery.com/infrastructure')
+    await userEvent.type(screen.getByRole('textbox', { name: 'Taint value' }), 'true')
+    await userEvent.click(screen.getByRole('combobox', { name: 'Effect' }))
+
+    for (const effect of effects) {
+      expect(screen.getByRole('option', { name: effect })).toBeInTheDocument()
+    }
+    expect(container).not.toContainElement(screen.getByRole('listbox'))
+
+    await userEvent.click(screen.getByText('NoSchedule'))
+    expect(JSON.parse(screen.getByRole('status').textContent ?? 'null')).toEqual([
+      { key: 'node.qovery.com/infrastructure', value: 'true', effect: 'NoSchedule' },
+    ])
+  })
+
   it('searches catalog choices in array rows without preselecting or replacing existing instances', async () => {
     const { userEvent } = renderWithProviders(
       <Editor

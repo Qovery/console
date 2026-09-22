@@ -92,6 +92,8 @@ export function filterPlatformLayerSelections(
 }
 
 export function findPlatformComponent(template: PlatformTemplateSummaryResponse, componentKey?: string) {
+  const bootstrapComponent = template.bootstrapComponent
+  if (bootstrapComponent && bootstrapComponent.key === componentKey) return bootstrapComponent
   return template.layers.flatMap((layer) => layer.components).find((component) => component.key === componentKey)
 }
 
@@ -117,8 +119,11 @@ export function toPlatformConfigurationValue(field: Pick<FieldSchemaResponse, 't
   return toCatalogConfigurationValue(field, value)
 }
 
-export function omitEmptyValues(values: Record<string, unknown>): Record<string, unknown> {
-  return omitEmptyCatalogValues(values)
+export function omitEmptyValues(
+  values: Record<string, unknown>,
+  fields: FieldSchemaResponse[] = []
+): Record<string, unknown> {
+  return omitEmptyCatalogValues(values, fields)
 }
 
 export function updateComponentValue<T>(

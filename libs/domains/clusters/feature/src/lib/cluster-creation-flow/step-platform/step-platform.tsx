@@ -13,6 +13,7 @@ import { PlatformConfigurationCatalog } from '../../platform-configuration/platf
 import {
   applyPlatformConfigurationDefaults,
   createPlatformConfigurationDraft,
+  findPlatformComponent,
   getCurrentPlatformConfigurationPreview,
   getPlatformComponentEditor,
   omitEmptyValues,
@@ -89,11 +90,11 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
   )
   const previewRequest = useMemo<PlatformComponentConfigurationPreviewRequest>(
     () => ({
-      profileConfig: omitEmptyValues(profileConfig),
+      profileConfig: omitEmptyValues(profileConfig, configurationComponent?.fields),
       clusterInputs,
       componentOutputs: {},
     }),
-    [profileConfig, clusterInputs]
+    [profileConfig, clusterInputs, configurationComponent?.fields]
   )
   const previewQuery = useMemo(
     () => ({ componentKey: configurationComponent?.key, request: previewRequest }),
@@ -183,7 +184,10 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
       const customerProvidedInputs = { ...current.customerProvidedInputs }
       const managedConfig = { ...current.managedConfig }
       Object.entries(componentDraft.pendingConfigurations).forEach(([key, values]) => {
-        managedConfig[key] = omitEmptyValues(values.managedConfig)
+        managedConfig[key] = omitEmptyValues(
+          values.managedConfig,
+          template ? findPlatformComponent(template, key)?.fields : undefined
+        )
         customerProvidedInputs[key] = values.clusterInputs
       })
       if (Object.keys(activeClusterInputs).length > 0) {
@@ -196,8 +200,8 @@ export function StepPlatform({ organizationId, onPrevious, onSubmit }: StepPlatf
         ...current,
         managedConfig: {
           ...managedConfig,
-          // '' entries are only display markers for cleared fields — never persist them.
-          [configurationComponent.key]: omitEmptyValues(componentDraft.managedConfig),
+          // Preserve required empty values such as valueless tolerations.
+          [configurationComponent.key]: omitEmptyValues(componentDraft.managedConfig, configurationComponent.fields),
         },
         customerProvidedInputs,
       }

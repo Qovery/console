@@ -29,6 +29,21 @@ const field: FieldSchemaResponse = {
 }
 
 describe('platform configuration utils', () => {
+  it('opens the bootstrap component through the same editor as layer components', () => {
+    const bootstrapComponent = { key: 'bootstrap-controller', kind: 'HELM' as const, fields: [field] }
+    const template: PlatformTemplateSummaryResponse = {
+      key: 'generic',
+      version: '1',
+      status: 'PUBLISHED',
+      layers: [],
+      bootstrapComponent,
+    }
+    const editor = getPlatformComponentEditor(template, bootstrapComponent.key)
+    expect(editor.configurationComponent).toEqual(bootstrapComponent)
+    expect(editor.sections).toHaveLength(1)
+    expect(editor.isFieldVisible?.(field)).toBe(true)
+    expect(getPlatformComponentEditor({ ...template, bootstrapComponent: null }).component).toBeUndefined()
+  })
   it('drops retired layer selections without losing enabled or disabled choices', () => {
     const selections = { karpenter: true, 'dns-certificates': false, 'karpenter-custom-configuration': true }
     expect(filterPlatformLayerSelections([{ key: 'karpenter' }, { key: 'dns-certificates' }], selections)).toEqual({

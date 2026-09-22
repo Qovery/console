@@ -23,6 +23,51 @@ const fields: FieldSchemaResponse[] = [
 ]
 
 describe('structured catalog values', () => {
+  it('preserves valueless taints while omitting cleared selectors and invalid blank keys', () => {
+    const fields: FieldSchemaResponse[] = [
+      { key: 'selector', type: 'string', label: 'Selector', required: false, sensitive: false, constraints: {} },
+      {
+        key: 'tolerations',
+        type: 'array',
+        label: 'Tolerations',
+        required: false,
+        sensitive: false,
+        constraints: { uniqueItems: false },
+        items: {
+          type: 'object',
+          fields: [
+            {
+              key: 'key',
+              type: 'string',
+              label: 'Key',
+              required: true,
+              sensitive: false,
+              constraints: { minLength: 1 },
+            },
+            {
+              key: 'value',
+              type: 'string',
+              label: 'Value',
+              required: true,
+              sensitive: false,
+              constraints: { pattern: '[a-z]*' },
+            },
+            {
+              key: 'effect',
+              type: 'string',
+              label: 'Effect',
+              required: true,
+              sensitive: false,
+              constraints: { allowedValues: ['NoSchedule'] },
+            },
+          ],
+        },
+      },
+    ]
+    expect(omitEmptyCatalogValues({ selector: '', tolerations: [{ key: '', value: '', effect: '' }] }, fields)).toEqual(
+      { tolerations: [{ value: '' }] }
+    )
+  })
   it('applies defaults within rows without resurrecting an explicitly cleared value', () => {
     expect(applyCatalogConfigurationDefaults(fields, { pools: [{}, { size: '' }, { size: 7 }] })).toEqual({
       pools: [{ size: 3 }, { size: '' }, { size: 7 }],

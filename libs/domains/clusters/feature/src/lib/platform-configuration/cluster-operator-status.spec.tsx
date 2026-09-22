@@ -1,4 +1,4 @@
-import { fireEvent, renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { ClusterOperatorStatus } from './cluster-operator-status'
 import * as operatorHooks from './hooks/use-cluster-operator'
 
@@ -6,6 +6,7 @@ describe('ClusterOperatorStatus', () => {
   const updateOperator = jest.fn()
 
   beforeEach(() => {
+    jest.useFakeTimers()
     jest.spyOn(operatorHooks, 'useUpdateClusterOperator').mockReturnValue({
       mutate: updateOperator,
       isLoading: false,
@@ -13,11 +14,13 @@ describe('ClusterOperatorStatus', () => {
   })
 
   afterEach(() => {
+    jest.runOnlyPendingTimers()
+    jest.useRealTimers()
     updateOperator.mockReset()
     jest.restoreAllMocks()
   })
 
-  it('shows connection and image and chart drift information', () => {
+  it('shows connection and image and chart drift information', async () => {
     jest.spyOn(operatorHooks, 'useClusterOperatorStatus').mockReturnValue({
       data: {
         organization_id: 'org-123',
@@ -34,7 +37,9 @@ describe('ClusterOperatorStatus', () => {
       isError: false,
     } as ReturnType<typeof operatorHooks.useClusterOperatorStatus>)
 
-    renderWithProviders(<ClusterOperatorStatus organizationId="org-123" clusterId="cluster-123" />)
+    const { userEvent } = renderWithProviders(
+      <ClusterOperatorStatus organizationId="org-123" clusterId="cluster-123" />
+    )
 
     expect(screen.getByText('Update available')).toBeInTheDocument()
     expect(screen.getByText('v1.202.0')).toBeInTheDocument()
@@ -42,7 +47,7 @@ describe('ClusterOperatorStatus', () => {
     expect(screen.getByText('0.2.0')).toBeInTheDocument()
     expect(screen.getByText('Target: 0.2.1')).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole('button', { name: 'Update Operator' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Update Operator' }))
     expect(updateOperator).toHaveBeenCalledWith({
       organizationId: 'org-123',
       clusterId: 'cluster-123',
@@ -70,7 +75,7 @@ describe('ClusterOperatorStatus', () => {
 
     renderWithProviders(<ClusterOperatorStatus organizationId="org-123" clusterId="cluster-123" />)
 
-    expect(screen.getByText('Up to date')).toBeInTheDocument()
+    expect(screen.getByText('Versions current')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Update Operator' })).toBeEnabled()
   })
 
@@ -86,5 +91,23 @@ describe('ClusterOperatorStatus', () => {
     expect(screen.getByText('Not attached')).toBeInTheDocument()
     expect(screen.getByText('Never')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Update Operator' })).not.toBeInTheDocument()
+  })
+
+  it.each([
+    { isLoading: false, isError: false },
+    { isLoading: true, isError: false },
+    { isLoading: false, isError: true },
+  ])('keeps configuration available without a connection (%o)', async (state) => {
+    const onConfigure = jest.fn()
+    jest.spyOn(operatorHooks, 'useClusterOperatorStatus').mockReturnValue({
+      data: null,
+      ...state,
+    } as ReturnType<typeof operatorHooks.useClusterOperatorStatus>)
+    const { userEvent } = renderWithProviders(
+      <ClusterOperatorStatus organizationId="org-123" clusterId="cluster-123" onConfigure={onConfigure} />
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Configure Operator' }))
+    expect(onConfigure).toHaveBeenCalledTimes(1)
+    expect(updateOperator).not.toHaveBeenCalled()
   })
 })

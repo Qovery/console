@@ -4,11 +4,13 @@ import {
   type PlatformClusterMode,
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { match } from 'ts-pattern'
 import { Accordion, Badge, Button, Checkbox, Heading, Icon } from '@qovery/shared/ui'
 import { formatCatalogKey } from '@qovery/shared/util-js'
 
 interface PlatformConfigurationCatalogProps {
+  bootstrapContent?: ReactNode
   binding: ClusterPlatformBindingResponse | null | undefined
   cloudProvider?: PlatformCloudVendor
   clusterMode?: PlatformClusterMode
@@ -32,6 +34,7 @@ function layerStatusColor(status: ClusterPlatformBindingResponse['layers'][numbe
 }
 
 export function PlatformConfigurationCatalog({
+  bootstrapContent,
   binding,
   cloudProvider,
   clusterMode,
@@ -45,8 +48,34 @@ export function PlatformConfigurationCatalog({
   saveLabel = 'Save layers',
   template,
 }: PlatformConfigurationCatalogProps) {
+  const bootstrapComponent = template.bootstrapComponent
   return (
     <div className="flex max-w-4xl flex-col gap-6">
+      {bootstrapContent ??
+        (bootstrapComponent && clusterMode !== 'QOVERY_MANAGED' ? (
+          <section className="flex items-start justify-between gap-4 rounded-lg border border-neutral p-4">
+            <div className="flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <Heading level={2}>Qovery Operator</Heading>
+                <Badge size="sm" variant="surface" color="neutral">
+                  Mandatory
+                </Badge>
+              </div>
+              <p className="text-sm text-neutral-subtle">
+                Configure the Operator before installing it on your cluster.
+              </p>
+            </div>
+            <Button
+              type="button"
+              variant="outline"
+              color="neutral"
+              aria-label="Configure Operator"
+              onClick={() => onComponentSelect(bootstrapComponent.key)}
+            >
+              Configure
+            </Button>
+          </section>
+        ) : null)}
       <div className="flex flex-col gap-1">
         <Heading level={2}>Platform layers</Heading>
         <p className="text-sm text-neutral-subtle">{description}</p>

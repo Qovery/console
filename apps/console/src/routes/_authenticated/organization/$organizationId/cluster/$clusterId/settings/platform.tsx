@@ -1,7 +1,6 @@
 import { Navigate, createFileRoute, useParams } from '@tanstack/react-router'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
-  ClusterOperatorStatus,
   PLATFORM_CONFIGURATION_FEATURE_FLAG,
   PlatformConfiguration,
   toPlatformCloudVendor,
@@ -36,6 +35,10 @@ function RouteComponent() {
   })
   const clusterMode = toPlatformClusterMode(cluster?.kubernetes)
   const cloudProvider = toPlatformCloudVendor(cluster?.cloud_provider)
+  const description =
+    clusterMode === 'CUSTOMER_MANAGED'
+      ? 'Configure the Operator and platform layers. Apply Operator settings with Update Operator; layer settings apply on the next cluster deployment.'
+      : 'Choose platform layers and configure their components. Changes are applied on the next cluster deployment.'
 
   if (isPlatformConfigurationEnabled === undefined) return null
 
@@ -44,10 +47,7 @@ function RouteComponent() {
   if (isPlatformBindingError) {
     return (
       <Section className="p-8">
-        <SettingsHeading
-          title="Platform configuration"
-          description="Choose platform layers and configure their components. Changes are applied on the next cluster deployment."
-        />
+        <SettingsHeading title="Platform configuration" description={description} />
         <Callout.Root color="red" className="max-w-content-with-navigation-left">
           <Callout.Icon>
             <Icon iconName="circle-exclamation" iconStyle="regular" />
@@ -76,16 +76,8 @@ function RouteComponent() {
 
   return (
     <Section className="p-8">
-      <SettingsHeading
-        title="Platform configuration"
-        description="Choose platform layers and configure their components. Changes are applied on the next cluster deployment."
-      />
+      <SettingsHeading title="Platform configuration" description={description} />
       <div className="max-w-content-with-navigation-left">
-        {clusterMode === 'CUSTOMER_MANAGED' ? (
-          <div className="mb-6">
-            <ClusterOperatorStatus organizationId={organizationId} clusterId={clusterId} />
-          </div>
-        ) : null}
         <PlatformConfiguration
           key={clusterId}
           organizationId={organizationId}

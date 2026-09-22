@@ -6,7 +6,6 @@ import {
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
 import { type PropsWithChildren } from 'react'
-import selectEvent from 'react-select-event'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   ClusterContainerCreateContext,
@@ -195,6 +194,95 @@ describe('StepPlatform', () => {
     jest.restoreAllMocks()
   })
 
+  it('configures the Operator before creation and preserves valueless tolerations', async () => {
+    const fields: FieldSchemaResponse[] = [
+      {
+        key: 'nodeSelectorValue',
+        type: 'string',
+        label: 'Node label value',
+        required: false,
+        sensitive: false,
+        constraints: { minLength: 1 },
+      },
+      {
+        key: 'tolerations',
+        type: 'array',
+        label: 'Tolerations',
+        required: false,
+        sensitive: false,
+        constraints: { uniqueItems: false },
+        items: {
+          type: 'object',
+          fields: [
+            {
+              key: 'value',
+              type: 'string',
+              label: 'Taint value',
+              required: true,
+              sensitive: false,
+              constraints: { pattern: '[a-z]*' },
+            },
+          ],
+        },
+      },
+    ]
+    mockUsePlatformTemplates.mockReturnValue({
+      data: [{ ...mockTemplate, bootstrapComponent: { key: 'bootstrap-controller', kind: 'HELM', fields } }],
+      isLoading: false,
+      isError: false,
+    })
+    mockContextValue.platformConfigurationData = {
+      templateKey: mockTemplate.key,
+      templateVersion: mockTemplate.version,
+      layerSelections: { 'log-infrastructure': true },
+      managedConfig: {
+        'bootstrap-controller': {
+          nodeSelectorValue: 'old',
+          tolerations: [{ key: 'nodepool/stable', value: '', effect: 'NoSchedule' }],
+        },
+        loki: { retention: 4 },
+      },
+      customerProvidedInputs: {},
+    }
+    mockUsePlatformTemplateComponentConfiguration.mockImplementation(({ componentKey }: ResolverHookProps) => ({
+      data: componentKey
+        ? { componentKey, fields, requirements: [], componentBindings: [], violations: [] }
+        : undefined,
+      isError: false,
+      isFetching: false,
+    }))
+    const { userEvent } = renderWithProviders(
+      <StepPlatform organizationId="org-123" onPrevious={mockOnPrevious} onSubmit={mockOnSubmit} />,
+      { wrapper: Wrapper }
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Configure Operator' }))
+    await userEvent.clear(screen.getByLabelText('Node label value'))
+    await userEvent.type(screen.getByLabelText('Node label value'), 'stable')
+    expect(mockUsePlatformTemplateComponentConfiguration).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        componentKey: 'bootstrap-controller',
+        request: expect.objectContaining({
+          profileConfig: {
+            nodeSelectorValue: 'stable',
+            tolerations: [{ key: 'nodepool/stable', value: '', effect: 'NoSchedule' }],
+          },
+        }),
+      })
+    )
+    await userEvent.click(screen.getByRole('button', { name: 'Save configuration' }))
+    expect(mockSetPlatformConfigurationData).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        managedConfig: {
+          'bootstrap-controller': {
+            nodeSelectorValue: 'stable',
+            tolerations: [{ key: 'nodepool/stable', value: '', effect: 'NoSchedule' }],
+          },
+          loki: { retention: 4 },
+        },
+      })
+    )
+  })
+
   it('edits custom YAML under CRDs without replacing the pool configuration during creation', async () => {
     const fields: FieldSchemaResponse[] = [
       { key: 'nodePools', type: 'string', label: 'Pools', required: false, sensitive: false, constraints: {} },
@@ -347,7 +435,8 @@ describe('StepPlatform', () => {
     )
 
     await userEvent.click(screen.getByRole('button', { name: 'Loki HELM' }))
-    await selectEvent.select(screen.getByLabelText('Storage'), 'gcs')
+    await userEvent.click(screen.getByRole('combobox', { name: 'Storage' }))
+    await userEvent.click(screen.getByText('gcs'))
 
     const bucketInput = screen.getByLabelText('GCS bucket name')
     const serviceAccountInput = screen.getByLabelText('GCP service account email')

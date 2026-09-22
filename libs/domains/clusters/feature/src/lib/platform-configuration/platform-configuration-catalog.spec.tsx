@@ -64,6 +64,43 @@ const defaultProps = {
 }
 
 describe('PlatformConfigurationCatalog', () => {
+  it('shows the mandatory Operator before the layers and selects its catalog key', async () => {
+    const { userEvent } = renderWithProviders(
+      <PlatformConfigurationCatalog
+        {...defaultProps}
+        template={{ ...template, bootstrapComponent: { key: 'bootstrap-controller', kind: 'HELM', fields: [] } }}
+        binding={null}
+        clusterMode="CUSTOMER_MANAGED"
+      />
+    )
+    expect(screen.getAllByRole('heading').map((heading) => heading.textContent)).toEqual([
+      'Qovery Operator',
+      'Platform layers',
+    ])
+    expect(screen.getAllByRole('checkbox')).toHaveLength(1)
+    await userEvent.click(screen.getByRole('button', { name: 'Configure Operator' }))
+    expect(defaultProps.onComponentSelect).toHaveBeenCalledWith('bootstrap-controller')
+    expect(defaultProps.onLayerSelectionChange).not.toHaveBeenCalled()
+  })
+
+  it.each([undefined, null])('accepts old templates without a bootstrap component (%s)', (bootstrapComponent) => {
+    renderWithProviders(
+      <PlatformConfigurationCatalog {...defaultProps} template={{ ...template, bootstrapComponent }} />
+    )
+    expect(screen.queryByRole('button', { name: 'Configure Operator' })).not.toBeInTheDocument()
+  })
+
+  it('keeps bootstrap configuration out of the Qovery-managed flow', () => {
+    renderWithProviders(
+      <PlatformConfigurationCatalog
+        {...defaultProps}
+        clusterMode="QOVERY_MANAGED"
+        template={{ ...template, bootstrapComponent: { key: 'bootstrap-controller', kind: 'HELM', fields: [] } }}
+      />
+    )
+    expect(screen.queryByRole('button', { name: 'Configure Operator' })).not.toBeInTheDocument()
+  })
+
   beforeEach(() => {
     jest.useFakeTimers()
     jest.clearAllMocks()
