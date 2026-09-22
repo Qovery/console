@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { match } from 'ts-pattern'
 import { Badge, Icon, Popover, Skeleton, Tooltip } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
+import { getClusterQuotaWarning } from '../cluster-quota-warning/cluster-quota-warning'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 
 function ClusterRunningStatusDot({ className, status }: { className: string; status: string }) {
@@ -39,6 +40,8 @@ export function ClusterRunningStatusIndicator({
     organizationId: cluster.organization.id,
     clusterId: cluster.id,
   })
+
+  const quotaWarning = getClusterQuotaWarning(runningStatus)
 
   useEffect(() => {
     if (runningStatus === undefined) {
@@ -127,7 +130,10 @@ export function ClusterRunningStatusIndicator({
     )
     .with({ global_status: 'WARNING' }, (s) =>
       type === 'dot' ? (
-        <ClusterRunningStatusDot status="Warning" className="border-warning-subtle bg-surface-warning-solid" />
+        <ClusterRunningStatusDot
+          status={quotaWarning ? 'Quota issue' : 'Warning'}
+          className="border-warning-subtle bg-surface-warning-solid"
+        />
       ) : (
         <Popover.Root open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <Popover.Trigger disabled={!isFeatureFlag}>

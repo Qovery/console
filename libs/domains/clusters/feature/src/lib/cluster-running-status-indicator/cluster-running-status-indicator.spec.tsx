@@ -1,6 +1,7 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
+import { activeQuotaWarning } from '../cluster-quota-warning/cluster-quota-warning.fixture'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { ClusterRunningStatusIndicator } from './cluster-running-status-indicator'
 
@@ -163,6 +164,39 @@ describe('ClusterRunningStatusIndicator', () => {
 
     expect(screen.getByText('warning')).toBeInTheDocument()
     expect(screen.getByText('2')).toBeInTheDocument()
+  })
+
+  it('should render a "Quota issue" dot when a quota warning is active and type is dot', () => {
+    mockUseClusterRunningStatus.mockReturnValue({
+      data: {
+        computed_status: {
+          global_status: 'WARNING',
+          node_warnings: {},
+          quota_warning: activeQuotaWarning,
+        },
+      },
+      isLoading: false,
+    })
+
+    renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} type="dot" />)
+
+    expect(screen.getByLabelText('Quota issue')).toBeInTheDocument()
+  })
+
+  it('should render a "Warning" dot when the warning is not a quota issue and type is dot', () => {
+    mockUseClusterRunningStatus.mockReturnValue({
+      data: {
+        computed_status: {
+          global_status: 'WARNING',
+          node_warnings: { 'node-1': [] },
+        },
+      },
+      isLoading: false,
+    })
+
+    renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} type="dot" />)
+
+    expect(screen.getByLabelText('Warning')).toBeInTheDocument()
   })
 
   it('should use the warning color for the warning badge chevron', () => {
