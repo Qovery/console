@@ -224,7 +224,6 @@ export function ClusterProfileFeature({
   onActiveComponentChange,
 }: ClusterProfileFeatureProps) {
   const [search, setSearch] = useState('')
-  const [isEnabled, setIsEnabled] = useState(true)
   const [values, setValues] = useState<Record<string, string>>({
     'Resource profile': 'CHART_DEFAULT',
     Storage: 'PVC',
@@ -267,9 +266,6 @@ export function ClusterProfileFeature({
           <p className="truncate font-medium text-neutral">Qovery infra engines prod static ip</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <Button variant="outline" color="neutral" size="sm" iconOnly aria-label="More cluster actions">
-            <Icon iconName="ellipsis" />
-          </Button>
           <Button variant="outline" color="neutral" size="sm" disabled>
             Deploy
           </Button>
@@ -380,7 +376,7 @@ export function ClusterProfileFeature({
         </aside>
 
         <main className="min-w-0 flex-1 overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
-          <div className="flex items-start justify-between gap-4 border-b border-neutral bg-surface-neutral px-4 pb-2 pt-4">
+          <div className="flex items-start justify-between gap-4 bg-surface-neutral px-4 pb-2 pt-4">
             <div className="min-w-0">
               <Heading level={2} className="!text-base font-medium leading-6">
                 {activeLayer?.label ?? 'Log infra'}
@@ -392,13 +388,7 @@ export function ClusterProfileFeature({
               </p>
             </div>
             <div className="flex shrink-0 items-center gap-2">
-              <InputToggle
-                small
-                value={isEnabled}
-                onChange={setIsEnabled}
-                ariaLabel="Enable log infrastructure"
-                className="mt-0.5"
-              />
+              <InputToggle small value disabled ariaLabel="Enable log infrastructure" className="mt-0.5" />
               <Button variant="outline" color="neutral" size="sm" disabled>
                 <Icon iconName="arrow-rotate-left" />
                 Restore all

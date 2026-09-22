@@ -72,10 +72,7 @@ describe('ClusterProfileFeature', () => {
     await userEvent.click(highAvailability)
     expect(highAvailability).not.toBeChecked()
 
-    const toggle = screen.getByRole('switch', { name: 'Enable log infrastructure' })
-    expect(toggle).toBeChecked()
-    await userEvent.click(toggle)
-    expect(toggle).not.toBeChecked()
+    expect(screen.getByRole('switch', { name: 'Enable log infrastructure' })).toBeDisabled()
   })
 
   it('uses the URL-selected component as the active sidebar item', async () => {
