@@ -15,7 +15,7 @@ import clsx from 'clsx'
 import { type DeploymentHistoryService, type Environment } from 'qovery-typescript-axios'
 import { type KeyboardEvent, type MouseEvent, useCallback, useMemo, useState } from 'react'
 import { P, match } from 'ts-pattern'
-import { isEditableServiceType } from '@qovery/domains/services/data-access'
+import { isAgenticWorkflow, isEditableServiceType } from '@qovery/domains/services/data-access'
 import { DevopsCopilotTroubleshootTrigger } from '@qovery/shared/devops-copilot/feature'
 import {
   Button,
@@ -69,6 +69,7 @@ export const isDeploymentHistory = (data: unknown): data is DeploymentHistorySer
 export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploymentListProps) {
   const navigate = useNavigate()
   const { data: service } = useService({ environmentId: environment?.id, serviceId, suspense: true })
+  const isAgentTask = isAgenticWorkflow(service)
   const deploymentHistoryServiceType = isEditableServiceType(service?.service_type) ? service.service_type : undefined
 
   const { data: deploymentHistory = [], isFetched: isFetchedDeloymentHistory } = useDeploymentHistory({
@@ -484,9 +485,13 @@ export function ServiceDeploymentList({ environment, serviceId }: ServiceDeploym
   ) {
     return (
       <EmptyState
-        icon="rocket"
-        title="No deployment started"
-        description="Manage the deployments by using the “Play” button in the header above"
+        icon={isAgentTask ? 'play' : 'rocket'}
+        title={isAgentTask ? 'No execution started' : 'No deployment started'}
+        description={
+          isAgentTask
+            ? 'Run the agent task by using the “Play” button in the header above'
+            : 'Manage the deployments by using the “Play” button in the header above'
+        }
         className="mt-2 pt-10"
       />
     )

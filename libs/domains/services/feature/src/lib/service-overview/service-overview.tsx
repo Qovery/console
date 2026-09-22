@@ -2,6 +2,7 @@ import { useParams } from '@tanstack/react-router'
 import { type AgenticWorkflowScheduleResponse, type Environment } from 'qovery-typescript-axios'
 import { type ReactNode, Suspense, useMemo, useState } from 'react'
 import {
+  type AgenticWorkflow,
   type AnyService,
   type EditableService,
   type Job,
@@ -36,12 +37,14 @@ function ServiceLastDeploymentSection({
   service,
 }: {
   environment: Environment
-  service: EditableService
+  service: EditableService | AgenticWorkflow
 }) {
+  const isAgentTask = isAgenticWorkflow(service)
+
   return (
     <Section className="gap-3">
       <div className="flex items-center justify-between gap-2">
-        <Heading>Last deployment</Heading>
+        <Heading>{isAgentTask ? 'Last execution' : 'Last deployment'}</Heading>
         <Link
           to="/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/deployments"
           params={{
@@ -54,7 +57,7 @@ function ServiceLastDeploymentSection({
           size="ssm"
           className="gap-0.5 text-neutral-subtle hover:text-neutral"
         >
-          See all deployments
+          {isAgentTask ? 'See all executions' : 'See all deployments'}
           <Icon iconName="angle-right" className="text-ssm" />
         </Link>
       </div>
@@ -251,7 +254,9 @@ function ServiceOverviewContent({
               ) : (
                 <AgenticWorkflowWebhookSection webhookUrl={service.webhook.url} />
               ))}
-            {isEditableService(service) && <ServiceLastDeploymentSection environment={environment} service={service} />}
+            {(isEditableService(service) || isAgenticWorkflow(service)) && (
+              <ServiceLastDeploymentSection environment={environment} service={service} />
+            )}
             {!isTerraformService && (isEditableService(service) || isAgenticWorkflow(service)) && (
               <ServiceInstancesSection jobStatusesCallout={jobStatusesCallout} service={service} />
             )}

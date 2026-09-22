@@ -1,5 +1,6 @@
 import posthog from 'posthog-js'
 import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
+import { type ReactNode } from 'react'
 import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/util-tests'
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
 import { type AgenticWorkflowTemplate } from '../agentic-workflow-templates'
@@ -22,6 +23,7 @@ let mockMcpServersError = false
 let mockMcpServersLoading = false
 let mockCreateQoveryMcpServerLoading = false
 let mockContextServicesLoading = false
+let mockLlmProviders: Array<{ id: string; has_credential: boolean; type: string }> = []
 
 function deferred<T>() {
   let resolve!: (value: T) => void
@@ -57,18 +59,44 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
   GitBranchSettings: () => <div>Git branch</div>,
   GitProviderSetting: () => <div>Git provider</div>,
   GitRepositorySetting: () => <div>Git repository</div>,
-  LlmProviderSetting: ({ onChange }: { onChange: (value: string) => void }) => (
-    <button type="button" onClick={() => onChange('provider-1')}>
-      Select stored token
-    </button>
-  ),
+  LlmProviderSetting: ({
+    children,
+    displayEmptyState,
+    error,
+    isLoading,
+    llmProviders,
+    onChange,
+    value,
+  }: {
+    children?: ReactNode
+    displayEmptyState?: boolean
+    error?: string
+    isLoading?: boolean
+    llmProviders: Array<{ id: string }>
+    onChange: (value: string) => void
+    value: string
+  }) =>
+    displayEmptyState && !value && llmProviders.length === 0 && !isLoading ? (
+      <div>
+        <p>No token available</p>
+        <button type="button">New token</button>
+        {error ? <p role="alert">{error}</p> : null}
+      </div>
+    ) : (
+      <>
+        <button type="button" onClick={() => onChange('provider-1')}>
+          Select stored token
+        </button>
+        {children}
+      </>
+    ),
   McpServerCreateEditModal: () => <div>Create MCP server</div>,
   McpServerSetting: () => <div>Organization MCP connectors</div>,
   useCreateQoveryMcpServer: () => ({
     isLoading: mockCreateQoveryMcpServerLoading,
     mutateAsync: mockCreateQoveryMcpServer,
   }),
-  useLlmProviders: () => ({ data: [], isLoading: false }),
+  useLlmProviders: () => ({ data: mockLlmProviders, isLoading: false }),
   useMcpServers: () => ({
     data: mockMcpServers,
     isError: mockMcpServersError,
@@ -222,6 +250,7 @@ describe('AgenticWorkflowConfiguration', () => {
     mockMcpServersLoading = false
     mockCreateQoveryMcpServerLoading = false
     mockContextServicesLoading = false
+    mockLlmProviders = [{ id: 'provider-1', has_credential: true, type: 'CLAUDE' }]
     mockRefetchMcpServers.mockImplementation(async () => ({ data: mockMcpServers, isError: false }))
     mockCreateQoveryMcpServer.mockResolvedValue({
       id: 'qovery-mcp',
@@ -298,7 +327,7 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('checkbox', { name: 'api' })).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Cancel' }))
 
-    await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add provider' }))
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Select stored token' })).toBeInTheDocument()
     expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
@@ -321,6 +350,20 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('heading', { name: 'Configure output' })).toBeInTheDocument()
     expect(within(screen.getByRole('dialog')).getByText('Outputs')).toBeInTheDocument()
     expect(within(screen.getByRole('dialog')).queryByText('Triggers')).not.toBeInTheDocument()
+  })
+
+  it('should show the provider empty state when no token is available', async () => {
+    mockLlmProviders = []
+    const { userEvent } = renderConfiguration()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add provider' }))
+
+    expect(screen.getByText('No token available')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'New token' })).toBeInTheDocument()
+    expect(screen.getByRole('alert')).toHaveTextContent('Please select a token.')
+    expect(screen.queryByRole('button', { name: 'Select stored token' })).not.toBeInTheDocument()
+    expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
   })
 
   it('should replace empty context cards with the add context menu once a context is selected', async () => {
@@ -645,7 +688,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
     await userEvent.type(screen.getByRole('textbox', { name: /Instructions/ }), 'Review incoming payloads.')
 
-    await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add provider' }))
     await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
@@ -737,7 +780,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
     await userEvent.type(screen.getByRole('textbox', { name: 'Instructions' }), 'Review incoming payloads.')
-    await userEvent.click(screen.getByRole('button', { name: 'Anthropic' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Add provider' }))
     await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))

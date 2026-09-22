@@ -80,6 +80,7 @@ const defaultDeploymentQueue = [
 
 let mockDeploymentHistory = defaultDeploymentHistory
 let mockDeploymentQueue = defaultDeploymentQueue
+let mockServiceType = 'APPLICATION'
 const mockNavigate = jest.fn()
 
 jest.mock('@tanstack/react-router', () => {
@@ -110,8 +111,8 @@ jest.mock('../hooks/use-deployment-queue/use-deployment-queue', () => ({
 jest.mock('../hooks/use-service/use-service', () => ({
   useService: () => ({
     data: {
-      serviceType: 'APPLICATION',
-      service_type: 'APPLICATION',
+      serviceType: mockServiceType,
+      service_type: mockServiceType,
       job_type: 'CRON',
     },
     isFetched: true,
@@ -123,6 +124,7 @@ describe('ServiceDeploymentList', () => {
     jest.clearAllMocks()
     mockDeploymentHistory = defaultDeploymentHistory
     mockDeploymentQueue = defaultDeploymentQueue
+    mockServiceType = 'APPLICATION'
   })
 
   it('should render columns and deployment data', async () => {
@@ -178,5 +180,16 @@ describe('ServiceDeploymentList', () => {
     expect(
       screen.getByText('Manage the deployments by using the “Play” button in the header above')
     ).toBeInTheDocument()
+  })
+
+  it('should render an execution empty state for an agent task', () => {
+    mockDeploymentHistory = []
+    mockDeploymentQueue = []
+    mockServiceType = 'AGENTIC_WORKFLOW'
+
+    renderWithProviders(<ServiceDeploymentList environment={mockEnvironment} serviceId="service-123" />)
+
+    expect(screen.getByText('No execution started')).toBeInTheDocument()
+    expect(screen.getByText('Run the agent task by using the “Play” button in the header above')).toBeInTheDocument()
   })
 })

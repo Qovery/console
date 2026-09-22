@@ -5,14 +5,24 @@ import { ServiceLastDeployment } from './service-last-deployment'
 
 const mockUseDeploymentHistory = jest.fn()
 const mockLastCommit = jest.fn()
+const mockDeployAgenticWorkflow = jest.fn()
+const mockDeployService = jest.fn()
 
 jest.mock('@tanstack/react-router', () => ({
   ...jest.requireActual('@tanstack/react-router'),
-  useParams: () => ({ organizationId: 'org-1', projectId: 'proj-1' }),
+  useParams: () => ({ organizationId: 'org-1', projectId: 'proj-1', environmentId: 'env-1' }),
 }))
 
 jest.mock('../../hooks/use-deployment-history/use-deployment-history', () => ({
   useDeploymentHistory: (params: unknown) => mockUseDeploymentHistory(params),
+}))
+
+jest.mock('../../hooks/use-deploy-agentic-workflow/use-deploy-agentic-workflow', () => ({
+  useDeployAgenticWorkflow: () => ({ mutate: mockDeployAgenticWorkflow, isLoading: false }),
+}))
+
+jest.mock('../../hooks/use-deploy-service/use-deploy-service', () => ({
+  useDeployService: () => ({ mutate: mockDeployService }),
 }))
 
 jest.mock('../../last-commit/last-commit', () => ({
@@ -84,13 +94,15 @@ describe('ServiceLastDeployment', () => {
     jest.clearAllMocks()
   })
 
-  it('renders an empty state when no deployment exists', () => {
+  it('renders an empty state and deploys the service when no deployment exists', async () => {
     mockUseDeploymentHistory.mockReturnValue({
       data: [],
       isFetched: true,
     })
 
-    renderWithProviders(<ServiceLastDeployment serviceId="service-123" serviceType="APPLICATION" />)
+    const { userEvent } = renderWithProviders(
+      <ServiceLastDeployment serviceId="service-123" serviceType="APPLICATION" />
+    )
 
     const emptyState = screen.getByText('Service has never been deployed').closest('.rounded-lg')
 
@@ -98,7 +110,10 @@ describe('ServiceLastDeployment', () => {
     expect(screen.getByText('Deploy the service first')).toBeInTheDocument()
     expect(emptyState).toHaveClass('px-4', 'py-4')
     expect(emptyState).not.toHaveClass('h-56')
-    expect(screen.getByRole('button', { name: /deploy now/i })).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /deploy now/i }))
+
+    expect(mockDeployService).toHaveBeenCalledWith({ serviceId: 'service-123', serviceType: 'APPLICATION' })
+    expect(mockDeployAgenticWorkflow).not.toHaveBeenCalled()
   })
 
   it('renders service type name in description when service has service_type', () => {
@@ -117,6 +132,62 @@ describe('ServiceLastDeployment', () => {
 
     expect(screen.getByText('Helm has never been deployed')).toBeInTheDocument()
     expect(screen.getByText('Deploy the helm first')).toBeInTheDocument()
+  })
+
+  it('renders an agent task specific empty state and triggers the agent task on click', async () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [],
+      isFetched: true,
+    })
+
+    const { userEvent } = renderWithProviders(
+      <ServiceLastDeployment
+        serviceId="workflow-123"
+        serviceType="AGENTIC_WORKFLOW"
+        service={{ id: 'workflow-123', name: 'my-agent', service_type: 'AGENTIC_WORKFLOW' } as never}
+      />
+    )
+
+    expect(screen.getByText('This agent task has never been executed')).toBeInTheDocument()
+    expect(screen.getByText('Run the agent task first')).toBeInTheDocument()
+
+    const runButton = screen.getByRole('button', { name: /run now/i })
+    expect(runButton).toBeInTheDocument()
+
+    await userEvent.click(runButton)
+
+    expect(mockDeployAgenticWorkflow).toHaveBeenCalledWith({ agenticWorkflowId: 'workflow-123' })
+    expect(mockDeployService).not.toHaveBeenCalled()
+  })
+
+  it('does not offer a deployment diagnostic for a failed agent task execution', () => {
+    mockUseDeploymentHistory.mockReturnValue({
+      data: [
+        {
+          ...baseDeployment,
+          status_details: { ...baseDeployment.status_details, status: 'ERROR' },
+        },
+      ],
+      isFetched: true,
+    })
+
+    renderWithProviders(
+      <ServiceLastDeployment
+        serviceId="workflow-123"
+        serviceType="AGENTIC_WORKFLOW"
+        service={
+          {
+            id: 'workflow-123',
+            name: 'my-agent',
+            serviceType: 'AGENTIC_WORKFLOW',
+            service_type: 'AGENTIC_WORKFLOW',
+          } as never
+        }
+      />
+    )
+
+    expect(screen.queryByText(/deployment error/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /launch diagnostic/i })).not.toBeInTheDocument()
   })
 
   it('renders the image tag version pill when deployment details contains an image tag', () => {
