@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { mutations } from '@qovery/domains/organizations/data-access'
 import { queries } from '@qovery/state/util-queries'
 
-export function useDeleteCreditCard() {
+export function useDeleteCreditCard({ notifyOnError = true } = {}) {
   const queryClient = useQueryClient()
 
   return useMutation(mutations.deleteCreditCard, {
@@ -15,9 +15,7 @@ export function useDeleteCreditCard() {
       notifyOnSuccess: {
         title: 'Credit card successfully removed',
       },
-      notifyOnError: {
-        title: 'Error while removing credit card',
-      },
+      notifyOnError: notifyOnError ? { title: 'Error while removing credit card' } : false,
     },
   })
 }
