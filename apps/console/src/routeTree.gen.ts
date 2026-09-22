@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SidebarTestRouteImport } from './routes/sidebar-test'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LoginIndexRouteImport } from './routes/login/index'
@@ -211,6 +212,11 @@ import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnviron
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsAlertIdEditRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts.$alertId.edit'
 import { Route as AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironmentIdServiceServiceIdMonitoringAlertsCreateMetricMetricRouteImport } from './routes/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/service/$serviceId/monitoring/alerts.create.metric.$metric'
 
+const SidebarTestRoute = SidebarTestRouteImport.update({
+  id: '/sidebar-test',
+  path: '/sidebar-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -1877,6 +1883,7 @@ const AuthenticatedOrganizationOrganizationIdProjectProjectIdEnvironmentEnvironm
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/sidebar-test': typeof SidebarTestRoute
   '/organization': typeof AuthenticatedOrganizationRouteRouteWithChildren
   '/helm-default-values': typeof AuthenticatedHelmDefaultValuesRoute
   '/preview-code': typeof AuthenticatedPreviewCodeRoute
@@ -2079,6 +2086,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/sidebar-test': typeof SidebarTestRoute
   '/helm-default-values': typeof AuthenticatedHelmDefaultValuesRoute
   '/preview-code': typeof AuthenticatedPreviewCodeRoute
   '/login/auth0-callback': typeof LoginAuth0CallbackRoute
@@ -2260,6 +2268,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/sidebar-test': typeof SidebarTestRoute
   '/_authenticated/organization': typeof AuthenticatedOrganizationRouteRouteWithChildren
   '/_authenticated/helm-default-values': typeof AuthenticatedHelmDefaultValuesRoute
   '/_authenticated/preview-code': typeof AuthenticatedPreviewCodeRoute
@@ -2464,6 +2473,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/sidebar-test'
     | '/organization'
     | '/helm-default-values'
     | '/preview-code'
@@ -2666,6 +2676,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/sidebar-test'
     | '/helm-default-values'
     | '/preview-code'
     | '/login/auth0-callback'
@@ -2846,6 +2857,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/sidebar-test'
     | '/_authenticated/organization'
     | '/_authenticated/helm-default-values'
     | '/_authenticated/preview-code'
@@ -3050,12 +3062,20 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  SidebarTestRoute: typeof SidebarTestRoute
   LoginAuth0CallbackRoute: typeof LoginAuth0CallbackRoute
   LoginIndexRoute: typeof LoginIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sidebar-test': {
+      id: '/sidebar-test'
+      path: '/sidebar-test'
+      fullPath: '/sidebar-test'
+      preLoaderRoute: typeof SidebarTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -5352,6 +5372,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  SidebarTestRoute: SidebarTestRoute,
   LoginAuth0CallbackRoute: LoginAuth0CallbackRoute,
   LoginIndexRoute: LoginIndexRoute,
 }
