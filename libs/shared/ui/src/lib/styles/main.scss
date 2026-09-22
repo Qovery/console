@@ -181,8 +181,10 @@ svg:focus,
   min-height: 20px !important;
 }
 
-.chargebee-field-wrapper input {
-  color: green;
+:root[data-theme='dark'] .chargebee-field-wrapper iframe,
+:root.dark .chargebee-field-wrapper iframe,
+[data-theme='dark'] .chargebee-field-wrapper iframe {
+  filter: invert(0.93) hue-rotate(180deg);
 }
 
 /* Scroll shadow */

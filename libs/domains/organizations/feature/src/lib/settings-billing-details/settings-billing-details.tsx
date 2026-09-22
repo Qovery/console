@@ -2,12 +2,11 @@ import { CardCVV, CardComponent, CardExpiry, CardNumber, Provider } from '@charg
 import { type default as FieldContainer } from '@chargebee/chargebee-js-react-wrapper/dist/components/FieldContainer'
 import { type default as CbInstance } from '@chargebee/chargebee-js-types/cb-types/models/cb-instance'
 import { useParams } from '@tanstack/react-router'
-import { type BillingInfoRequest, type CreditCard } from 'qovery-typescript-axios'
+import { type BillingInfo, type BillingInfoRequest, type CreditCard } from 'qovery-typescript-axios'
 import { Suspense, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { SettingsHeading } from '@qovery/shared/console-shared'
-import { countries } from '@qovery/shared/enums'
-import { Callout, IconFlag, toastError, useModalConfirmation } from '@qovery/shared/ui'
+import { Callout, toast, toastError, useModalConfirmation } from '@qovery/shared/ui'
 import { BlockContent, Button, Icon, InputCreditCard, InputText, Section, Skeleton } from '@qovery/shared/ui'
 import { useDocumentTitle, useSupportChat } from '@qovery/shared/util-hooks'
 import { formatPlanDisplay, isActiveFreeTrial } from '@qovery/shared/util-js'
@@ -21,14 +20,49 @@ import { useDeleteCreditCard } from '../hooks/use-delete-credit-card/use-delete-
 import { useEditBillingInfo } from '../hooks/use-edit-billing-info/use-edit-billing-info'
 import BillingDetails from './billing-details/billing-details'
 
+function formatBillingInfo(data: BillingInfoRequest): BillingInfoRequest {
+  return {
+    first_name: data.first_name.trim(),
+    last_name: data.last_name.trim(),
+    company: data.company?.trim() || undefined,
+    email: data.email.trim(),
+    address: data.address.trim(),
+    city: data.city.trim(),
+    zip: data.zip.trim(),
+    country_code: data.country_code,
+    state: data.state?.trim() || undefined,
+    vat_number: data.vat_number?.trim() || undefined,
+  }
+}
+
+function formatBillingInfoFormValues(data?: BillingInfo): BillingInfoRequest {
+  return {
+    first_name: data?.first_name ?? '',
+    last_name: data?.last_name ?? '',
+    company: data?.company ?? undefined,
+    email: data?.email ?? '',
+    address: data?.address ?? '',
+    city: data?.city ?? '',
+    zip: data?.zip ?? '',
+    country_code: data?.country_code ?? '',
+    state: data?.state ?? undefined,
+    vat_number: data?.vat_number ?? undefined,
+  }
+}
+
+function getVatNumberError(error: SerializedError) {
+  return error.message?.match(/^vat_number\s*:\s*(.+)$/i)?.[1]
+}
+
 function SettingsBillingDetailsContent({ organizationId }: { organizationId: string }) {
   const { openModalConfirmation } = useModalConfirmation()
   const { data: creditCards = [] } = useCreditCards({ organizationId, suspense: true })
   const { mutateAsync: deleteCreditCard } = useDeleteCreditCard()
+  const { mutateAsync: deleteReplacedCreditCard } = useDeleteCreditCard({ notifyOnError: false })
   const { data: billingInfo } = useBillingInfo({ organizationId, suspense: true })
   const { data: currentCost } = useCurrentCost({ organizationId, suspense: true })
   const { mutateAsync: editBillingInfo } = useEditBillingInfo()
-  const { mutateAsync: addCreditCard } = useAddCreditCard()
+  const { mutateAsync: addCreditCard } = useAddCreditCard({ notifyOnError: false })
   const { showPylonForm } = useSupportChat()
 
   const isInActiveFreeTrial = isActiveFreeTrial(currentCost?.remaining_trial_day)
@@ -37,24 +71,18 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
   const [editInProcess, setEditInProcess] = useState(false)
   const [cbInstance, setCbInstance] = useState<CbInstance | null>(null)
   const [isCardReady, setIsCardReady] = useState(false)
+  const [isCardComplete, setIsCardComplete] = useState(false)
   const [editingCardId, setEditingCardId] = useState<string | null>(null)
   const cardRef = useRef<FieldContainer>(null)
 
-  const countryValues = countries.map((country) => ({
-    label: country.name,
-    value: country.code,
-    icon: <IconFlag code={country.code} />,
-  }))
-
   const methods = useForm<BillingInfoRequest>({
-    mode: 'onChange',
-    values: billingInfo as BillingInfoRequest,
+    mode: 'all',
+    values: formatBillingInfoFormValues(billingInfo),
   })
 
   const handleAddCard = async (cardId?: string) => {
     setShowAddCard(true)
     setEditingCardId(cardId || null)
-    console.log(showAddCard)
 
     try {
       const instance = await loadChargebee()
@@ -67,11 +95,12 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
   const handleCancelAddCard = () => {
     setShowAddCard(false)
     setIsCardReady(false)
+    setIsCardComplete(false)
     setCbInstance(null)
     setEditingCardId(null)
   }
 
-  const onSubmit = methods.handleSubmit(async (data) => {
+  const saveBillingDetails = async (data: BillingInfoRequest) => {
     if (!organizationId) return
 
     setEditInProcess(true)
@@ -79,9 +108,9 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
     try {
       const response = await editBillingInfo({
         organizationId,
-        billingInfoRequest: data,
+        billingInfoRequest: formatBillingInfo(data),
       })
-      methods.reset(response as BillingInfoRequest)
+      methods.reset(formatBillingInfoFormValues(response))
 
       if (showAddCard && isCardReady && cardRef.current) {
         const tokenData = await cardRef.current.tokenize({})
@@ -102,20 +131,42 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
         })
 
         if (editingCardId) {
-          await deleteCreditCard({ organizationId, creditCardId: editingCardId })
+          await deleteReplacedCreditCard({ organizationId, creditCardId: editingCardId })
         }
 
         setShowAddCard(false)
         setIsCardReady(false)
+        setIsCardComplete(false)
         setCbInstance(null)
         setEditingCardId(null)
       }
     } catch (error) {
-      toastError(error as unknown as SerializedError)
+      const serializedError = error as unknown as SerializedError
+      const vatNumberError = getVatNumberError(serializedError)
+
+      if (vatNumberError) {
+        methods.setError('vat_number', { type: 'server', message: vatNumberError })
+      }
+
+      toastError(
+        serializedError,
+        showAddCard ? (editingCardId ? 'Unable to update card' : 'Unable to add card') : undefined,
+        vatNumberError
+      )
     } finally {
       setEditInProcess(false)
     }
-  })
+  }
+
+  const onInvalidBillingDetails = () => {
+    toast(
+      'error',
+      showAddCard ? 'Unable to add card' : 'Unable to save billing details',
+      'Review the highlighted billing fields and try again.'
+    )
+  }
+
+  const submitBillingDetails = methods.handleSubmit(saveBillingDetails, onInvalidBillingDetails)
 
   const onDeleteCreditCard = (creditCard: CreditCard) => {
     openModalConfirmation({
@@ -237,6 +288,9 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
                           locale="en"
                           currency="USD"
                           onReady={() => setIsCardReady(true)}
+                          onChange={(event) =>
+                            setIsCardComplete(Boolean((event as unknown as { complete?: boolean }).complete))
+                          }
                         >
                           <div className="chargebee-field-wrapper">
                             <label className="chargebee-field-label">Card Number</label>
@@ -279,9 +333,14 @@ function SettingsBillingDetailsContent({ organizationId }: { organizationId: str
                 )}
               </div>
 
-              <div className="my-6 border-t border-neutral" />
+              <div className="-mx-4 my-6 border-t border-neutral" />
 
-              <BillingDetails countryValues={countryValues} editInProcess={editInProcess} onSubmit={onSubmit} />
+              <BillingDetails
+                editInProcess={editInProcess}
+                submitDisabled={showAddCard && (!isCardReady || !isCardComplete)}
+                submitLabel={showAddCard ? (editingCardId ? 'Update card' : 'Add card') : 'Save'}
+                onSubmit={submitBillingDetails}
+              />
             </BlockContent>
           </div>
         </Section>
@@ -313,7 +372,7 @@ function SettingsBillingDetailsSkeleton() {
               </div>
             </div>
 
-            <div className="my-6 border-t border-neutral" />
+            <div className="-mx-4 my-6 border-t border-neutral" />
 
             <div className="space-y-3" data-testid="billing-details-skeleton">
               <div className="flex items-start gap-3">
