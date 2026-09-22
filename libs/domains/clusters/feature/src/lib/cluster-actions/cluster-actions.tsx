@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from '@tanstack/react-router'
+import { useFeatureFlagEnabled } from 'posthog-js/react'
 import {
   type Cluster,
   type ClusterStatus,

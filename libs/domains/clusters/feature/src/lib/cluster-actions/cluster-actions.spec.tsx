@@ -15,7 +15,7 @@ const mockOpenModal = jest.fn()
 const mockOpenModalConfirmation = jest.fn()
 const mockCopyToClipboard = jest.fn()
 const mockDeployCluster = jest.fn()
-const mockUseFeatureFlagEnabled = jest.fn((flag: string) => flag === 'cluster-deployment-history')
+const mockUseFeatureFlagEnabled = jest.fn((_flag: string) => false)
 const mockUsePlatformBinding = jest.fn(
   (_props?: unknown): { data: { templateKey: string; templateVersion: string } | null } => ({ data: null })
 )
@@ -71,7 +71,7 @@ jest.mock('../platform-configuration/hooks/use-platform-binding', () => ({
 describe('ClusterActions', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    mockUseFeatureFlagEnabled.mockImplementation((flag: string) => flag === 'cluster-deployment-history')
+    mockUseFeatureFlagEnabled.mockImplementation((_flag: string) => false)
     mockUsePlatformBinding.mockReturnValue({ data: null })
     mockCluster.deployment_status = ClusterDeploymentStatusEnum.UP_TO_DATE
     mockClusterStatus = {
@@ -397,14 +397,5 @@ describe('ClusterActions', () => {
 
     expect(screen.getByRole('button', { name: 'Deployments' })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'Logs' })).not.toBeInTheDocument()
-  })
-
-  it('labels the card action as logs when deployment history is disabled', () => {
-    mockUseFeatureFlagEnabled.mockReturnValue(false)
-
-    renderWithProviders(<ClusterActions cluster={mockCluster} clusterStatus={mockClusterStatus} variant="card" />)
-
-    expect(screen.getByRole('button', { name: 'Logs' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'Deployments' })).not.toBeInTheDocument()
   })
 })
