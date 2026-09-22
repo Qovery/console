@@ -1,17 +1,27 @@
 import { type BillingInfoRequest } from 'qovery-typescript-axios'
 import { type FormEventHandler } from 'react'
-import { Controller, useFormContext } from 'react-hook-form'
-import { type Value } from '@qovery/shared/interfaces'
-import { Button, InputSelect, InputText } from '@qovery/shared/ui'
+import { Controller, useFormContext, useWatch } from 'react-hook-form'
+import { EU_COUNTRY_CODES, countries } from '@qovery/shared/enums'
+import { Button, IconFlag, InputSelect, InputText } from '@qovery/shared/ui'
+import { validatePostalCode, validateRequiredField, validateVatNumber } from './billing-details-validation'
 
 export interface BillingDetailsProps {
   onSubmit?: FormEventHandler<HTMLFormElement>
   editInProcess?: boolean
-  countryValues?: Value[]
+  submitDisabled?: boolean
+  submitLabel?: string
 }
 
-export function BillingDetails(props: BillingDetailsProps) {
-  const { control, formState } = useFormContext<BillingInfoRequest>()
+const countryValues = countries.map((country) => ({
+  label: country.name,
+  value: country.code,
+  icon: <IconFlag code={country.code} />,
+}))
+
+export function BillingDetails({ onSubmit, editInProcess, submitDisabled, submitLabel = 'Save' }: BillingDetailsProps) {
+  const { clearErrors, control, formState } = useFormContext<BillingInfoRequest>()
+  const countryCode = useWatch({ control, name: 'country_code' })
+  const isEuCountry = EU_COUNTRY_CODES.has(countryCode)
 
   return (
     <>
@@ -20,7 +30,7 @@ export function BillingDetails(props: BillingDetailsProps) {
         <Controller
           control={control}
           name="first_name"
-          rules={{ required: 'Please provide a first name' }}
+          rules={{ validate: (value) => validateRequiredField(value, 'Please provide a first name') }}
           render={({ field }) => (
             <InputText
               className="mb-3 min-w-0 flex-1"
@@ -28,6 +38,7 @@ export function BillingDetails(props: BillingDetailsProps) {
               label="First name"
               value={field.value}
               onChange={field.onChange}
+              onBlur={field.onBlur}
               error={formState.errors.first_name?.message}
             />
           )}
@@ -35,7 +46,7 @@ export function BillingDetails(props: BillingDetailsProps) {
         <Controller
           control={control}
           name="last_name"
-          rules={{ required: 'Please provide a last name' }}
+          rules={{ validate: (value) => validateRequiredField(value, 'Please provide a last name') }}
           render={({ field }) => (
             <InputText
               className="mb-3 min-w-0 flex-1"
@@ -43,6 +54,7 @@ export function BillingDetails(props: BillingDetailsProps) {
               label="Last name"
               value={field.value}
               onChange={field.onChange}
+              onBlur={field.onBlur}
               error={formState.errors.last_name?.message}
             />
           )}
@@ -59,20 +71,22 @@ export function BillingDetails(props: BillingDetailsProps) {
               label="Company name (optional)"
               value={field.value}
               onChange={field.onChange}
+              onBlur={field.onBlur}
             />
           )}
         />
         <Controller
           control={control}
           name="vat_number"
-          rules={{ required: 'Please provide a VAT number' }}
+          rules={{ validate: (value) => validateVatNumber(value, countryCode) }}
           render={({ field }) => (
             <InputText
               className="mb-3 min-w-0 flex-1"
               name={field.name}
-              label="VAT number"
+              label={`VAT number${isEuCountry ? '' : ' (optional)'}`}
               value={field.value}
               onChange={field.onChange}
+              onBlur={field.onBlur}
               error={formState.errors.vat_number?.message}
             />
           )}
@@ -81,7 +95,7 @@ export function BillingDetails(props: BillingDetailsProps) {
       <Controller
         control={control}
         name="email"
-        rules={{ required: 'Please provide a billing email' }}
+        rules={{ validate: (value) => validateRequiredField(value, 'Please provide a billing email') }}
         render={({ field }) => (
           <InputText
             className="mb-3 min-w-0 flex-1"
@@ -89,6 +103,7 @@ export function BillingDetails(props: BillingDetailsProps) {
             label="Billing email"
             value={field.value}
             onChange={field.onChange}
+            onBlur={field.onBlur}
             error={formState.errors.email?.message}
           />
         )}
@@ -96,7 +111,7 @@ export function BillingDetails(props: BillingDetailsProps) {
       <Controller
         control={control}
         name="address"
-        rules={{ required: 'Please provide an address' }}
+        rules={{ validate: (value) => validateRequiredField(value, 'Please provide an address') }}
         render={({ field }) => (
           <InputText
             className="mb-3 min-w-0 flex-1"
@@ -104,6 +119,7 @@ export function BillingDetails(props: BillingDetailsProps) {
             label="Address"
             value={field.value}
             onChange={field.onChange}
+            onBlur={field.onBlur}
             error={formState.errors.address?.message}
           />
         )}
@@ -112,7 +128,7 @@ export function BillingDetails(props: BillingDetailsProps) {
         <Controller
           control={control}
           name="city"
-          rules={{ required: 'Please provide a city' }}
+          rules={{ validate: (value) => validateRequiredField(value, 'Please provide a city') }}
           render={({ field }) => (
             <InputText
               className="mb-3 min-w-0 flex-1"
@@ -120,6 +136,7 @@ export function BillingDetails(props: BillingDetailsProps) {
               label="City"
               value={field.value}
               onChange={field.onChange}
+              onBlur={field.onBlur}
               error={formState.errors.city?.message}
             />
           )}
@@ -127,14 +144,15 @@ export function BillingDetails(props: BillingDetailsProps) {
         <Controller
           control={control}
           name="zip"
-          rules={{ required: 'Please provide a zip code' }}
+          rules={{ validate: (value) => validatePostalCode(value, countryCode) }}
           render={({ field }) => (
             <InputText
               className="mb-3 min-w-0 flex-1"
               name={field.name}
-              label="Zip code"
+              label="Postal code"
               value={field.value}
               onChange={field.onChange}
+              onBlur={field.onBlur}
               error={formState.errors.zip?.message}
             />
           )}
@@ -148,10 +166,13 @@ export function BillingDetails(props: BillingDetailsProps) {
           render={({ field }) => (
             <InputSelect
               className="flex-1"
-              options={props.countryValues ?? []}
+              options={countryValues}
               label="Country"
               value={field.value}
-              onChange={field.onChange}
+              onChange={(value) => {
+                field.onChange(value)
+                clearErrors(['vat_number', 'zip'])
+              }}
               isSearchable
               error={formState.errors.country_code?.message}
             />
@@ -167,6 +188,7 @@ export function BillingDetails(props: BillingDetailsProps) {
               label="State (optional)"
               value={field.value}
               onChange={field.onChange}
+              onBlur={field.onBlur}
             />
           )}
         />
@@ -176,10 +198,11 @@ export function BillingDetails(props: BillingDetailsProps) {
           data-testid="submit-button"
           type="submit"
           size="lg"
-          loading={props.editInProcess}
-          onClick={props.onSubmit as () => void}
+          loading={editInProcess}
+          disabled={submitDisabled}
+          onClick={onSubmit as () => void}
         >
-          Save
+          {submitLabel}
         </Button>
       </div>
     </>

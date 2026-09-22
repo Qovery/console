@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 import { type SignUpRequest } from 'qovery-typescript-axios'
 import { useContext, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useCreateOrganization, useEditBillingInfo, useOrganizations } from '@qovery/domains/organizations/feature'
+import { useCreateOrganization, useOrganizations } from '@qovery/domains/organizations/feature'
 import { useCreateProject } from '@qovery/domains/projects/feature'
 import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-up/feature'
 import { useAuth } from '@qovery/shared/auth'
@@ -24,32 +24,15 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   const { organization_name, project_name, admin_email, selectedPlan, phone } = useContext(ContextOnboarding)
   const { mutateAsync: createOrganization } = useCreateOrganization()
   const { mutateAsync: createProject } = useCreateProject({ silently: true })
-  const { mutateAsync: editBillingInfo } = useEditBillingInfo({ silently: true })
+  const { data: userSignUp } = useUserSignUp()
   const methods = useForm<{ project_name: string; organization_name: string }>({
     defaultValues: {
       organization_name,
       project_name: project_name || 'main',
     },
   })
-  const { data: userSignUp } = useUserSignUp()
   const { mutateAsync: createUserSignUp } = useCreateUserSignUp()
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const updateBillingInfo = async (organizationId: string) => {
-    await editBillingInfo({
-      organizationId,
-      billingInfoRequest: {
-        first_name: userSignUp?.first_name ?? '',
-        last_name: userSignUp?.last_name ?? '',
-        company: userSignUp?.company_name ?? '',
-        email: admin_email.length > 0 ? admin_email : user?.email ?? '',
-        address: '',
-        city: 'NEW YORK CITY',
-        zip: '10001',
-        country_code: 'US',
-      },
-    })
-  }
 
   const updateSignUpStep = async () => {
     const hasRequiredSignUpFields = !!userSignUp?.first_name && !!userSignUp?.last_name && !!userSignUp?.user_email
@@ -104,8 +87,6 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
 
       // Note: Refresh tokens do not work in private browsers without our Auth0 domain and Safari (private and normal mode)
       await getAccessTokenSilently({ cacheMode: 'off' })
-
-      await updateBillingInfo(organization.id)
 
       await createProject({
         organizationId: organization.id,
