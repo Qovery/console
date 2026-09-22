@@ -98,6 +98,12 @@ const CLUSTER_TABS: NavigationTab[] = [
     routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
   },
   {
+    id: 'profile',
+    label: 'Profile',
+    iconName: 'layer-group',
+    routeId: '/_authenticated/organization/$organizationId/cluster/$clusterId/profile',
+  },
+  {
     id: 'settings',
     label: 'Settings',
     iconName: 'gear-complex',
