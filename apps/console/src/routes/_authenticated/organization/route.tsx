@@ -4,7 +4,7 @@ import posthog from 'posthog-js'
 import { useFeatureFlagEnabled } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
 import { Suspense, useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { useClusters } from '@qovery/domains/clusters/feature'
+import { ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG, useClusters } from '@qovery/domains/clusters/feature'
 import { useEnvironment } from '@qovery/domains/environments/feature'
 import { useProject } from '@qovery/domains/projects/feature'
 import { type AnyService, isAgenticWorkflow, isArgoCd, isManagedDatabase } from '@qovery/domains/services/data-access'
@@ -341,6 +341,9 @@ function useNavigationContext(): NavigationContext | null {
   const pathname = location.pathname
   const organizationId = typeof params.organizationId === 'string' ? params.organizationId : ''
   const isAgenticWorkflowEnabled = Boolean(useFeatureFlagEnabled('argentic-workflow'))
+  const isEngineV2PlatformConfigurationEnabled = Boolean(
+    useFeatureFlagEnabled(ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG)
+  )
   const { data: service } = useServiceSummary({
     environmentId: params.environmentId,
     serviceId: params.serviceId,
@@ -380,7 +383,9 @@ function useNavigationContext(): NavigationContext | null {
             ? getServiceTabs(service, currentCluster, isAgenticWorkflowEnabled)
             : context.type === 'organization'
               ? context.tabs.filter((tab) => hasAlerting || tab.id !== 'alerts')
-              : context.tabs
+              : context.type === 'cluster'
+                ? context.tabs.filter((tab) => isEngineV2PlatformConfigurationEnabled || tab.id !== 'profile')
+                : context.tabs
 
         return {
           type: context.type,
@@ -478,6 +483,7 @@ const fullWidthRouteIds: FileRouteTypes['id'][] = [
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cluster-logs',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/deployments/logs/$deploymentId',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/cloud-shell',
+  '/_authenticated/organization/$organizationId/cluster/$clusterId/profile',
   '/_authenticated/organization/$organizationId/cluster/$clusterId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/settings',
   '/_authenticated/organization/$organizationId/project/$projectId/environment/$environmentId/settings',
