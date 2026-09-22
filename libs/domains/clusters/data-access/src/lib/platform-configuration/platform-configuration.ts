@@ -1,5 +1,11 @@
 import { createQueryKeys } from '@lukemorales/query-key-factory'
-import { type PlatformCloudVendor, type PlatformClusterMode, PlatformConfigurationApi } from 'qovery-typescript-axios'
+import {
+  type PlatformCloudVendor,
+  type PlatformClusterMode,
+  type PlatformComponentConfigurationPreviewRequest,
+  PlatformConfigurationApi,
+} from 'qovery-typescript-axios'
+import { isHttpStatus } from '../http/is-http-status'
 
 const platformConfigurationApi = new PlatformConfigurationApi()
 
@@ -17,6 +23,40 @@ export const platformConfiguration = createQueryKeys('platformConfiguration', {
     async queryFn() {
       const response = await platformConfigurationApi.listPlatformTemplates(organizationId, clusterMode, cloudProvider)
       return response.data.results
+    },
+  }),
+  binding: ({ organizationId, clusterId }: { organizationId: string; clusterId: string }) => ({
+    queryKey: [organizationId, clusterId],
+    async queryFn() {
+      try {
+        const response = await platformConfigurationApi.getClusterPlatformBinding(organizationId, clusterId)
+        return response.data
+      } catch (error) {
+        if (isHttpStatus(error, 404)) return null
+        throw error
+      }
+    },
+  }),
+  componentConfiguration: ({
+    organizationId,
+    clusterId,
+    componentKey,
+    request,
+  }: {
+    organizationId: string
+    clusterId: string
+    componentKey: string
+    request: PlatformComponentConfigurationPreviewRequest
+  }) => ({
+    queryKey: [organizationId, clusterId, componentKey, request],
+    async queryFn() {
+      const response = await platformConfigurationApi.resolvePlatformComponentConfiguration(
+        organizationId,
+        clusterId,
+        componentKey,
+        request
+      )
+      return response.data
     },
   }),
 })

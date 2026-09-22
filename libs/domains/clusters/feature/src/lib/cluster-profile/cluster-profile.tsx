@@ -1,8 +1,31 @@
-import { type PlatformTemplateSummaryResponse } from 'qovery-typescript-axios'
-import { type ReactNode, useState } from 'react'
+import { useParams } from '@tanstack/react-router'
+import {
+  type PlatformComponentConfigurationResolutionResponse,
+  type PlatformTemplateComponentResponse,
+  type PlatformTemplateSummaryResponse,
+} from 'qovery-typescript-axios'
+import { useMemo, useState } from 'react'
+import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Button, Heading, Icon, InputToggle } from '@qovery/shared/ui'
+import { Badge, Button, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
+import { useDebounce } from '@qovery/shared/util-hooks'
+import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
+import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
+import { usePlatformBinding } from '../platform-configuration/hooks/use-platform-binding'
+import { usePlatformComponentConfigurations } from '../platform-configuration/hooks/use-platform-component-configurations'
+import {
+  type PlatformFieldDescriptor,
+  applyPlatformConfigurationDefaults,
+  getFieldViolation,
+  isPlatformScalarField,
+  omitEmptyValues,
+  toCatalogVariableField,
+  toPlatformCloudVendor,
+  toPlatformClusterMode,
+  toPlatformConfigurationValue,
+  updateComponentValue,
+} from '../platform-configuration/platform-configuration-utils'
 
 export const ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG = 'engine-v2-platform-configuration'
 
@@ -12,18 +35,25 @@ type ProfileTab = {
   iconName: 'scroll' | 'code'
 }
 
-type ConfigurationRowProps = {
+type ProfileComponent = PlatformTemplateComponentResponse & {
+  id: string
   label: string
-  description: string
-  children: ReactNode
+}
+
+type ProfileSection = {
+  id: string
+  label: string
+  component: ProfileComponent
+  fieldKeys?: readonly string[]
 }
 
 type ProfileTreeItem = {
   id: string
   label: string
+  description?: string | null
   status: 'none' | 'disabled' | 'dot'
   state: 'disabled' | 'default'
-  children?: readonly { id: string; key: string; label: string }[]
+  children?: readonly ProfileComponent[]
 }
 
 function formatProfileLabel(value: string) {
@@ -41,9 +71,11 @@ function getProfileTree(template: PlatformTemplateSummaryResponse | undefined): 
       return {
         id: layer.key,
         label,
+        description: layer.description,
         status: normalizedLabel === 'infrastructure' ? 'disabled' : normalizedLabel === 'gateway api' ? 'dot' : 'none',
         state: isDisabled ? 'disabled' : 'default',
         children: layer.components.map((component) => ({
+          ...component,
           id: `${layer.key}/${component.key}`,
           key: component.key,
           label: formatProfileLabel(component.key),
@@ -78,128 +110,6 @@ function getDefaultProfileComponent(profileTree: ProfileTreeItem[]) {
   )
 }
 
-const RESOURCE_ROWS = [
-  {
-    label: 'Resource profile',
-    description:
-      'How are CPU/memory budget applied to the active Loki workloads. CHART_DEFAULT will keep the chart behavior, while the presets apply Qovery’s versioned budgets.',
-    options: ['CHART_DEFAULT', 'SMALL', 'MEDIUM', 'LARGE'],
-  },
-  {
-    label: 'Storage',
-    description: 'Storage backend used by Loki.',
-    options: ['PVC', 's3', 'gcs', 'azure'],
-  },
-]
-
-function ConfigurationRow({ label, description, children }: ConfigurationRowProps) {
-  return (
-    <div className="flex flex-col items-start gap-4 border-b border-neutral p-4 last:border-b-0 md:flex-row md:justify-between">
-      <div className="min-w-0 flex-1">
-        <p className="text-sm text-neutral">{label}</p>
-        <p className="text-sm text-neutral-subtle">{description}</p>
-      </div>
-      <div className="w-full shrink-0 md:max-w-[400px] md:flex-1">{children}</div>
-    </div>
-  )
-}
-
-function ConfigurationSelect({
-  label,
-  options,
-  value,
-  onChange,
-}: {
-  label: string
-  options: string[]
-  value: string
-  onChange: (value: string) => void
-}) {
-  return (
-    <div className="relative">
-      <select
-        aria-label={label}
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="focus-visible:ring-brand-strong/30 h-10 w-full appearance-none rounded border border-neutral bg-surface-neutral px-3 pr-9 text-sm text-neutral outline-none transition-colors focus-visible:border-brand-strong focus-visible:ring-2"
-      >
-        {options.map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-      <Icon
-        iconName="angle-down"
-        iconStyle="solid"
-        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-neutral-subtle"
-      />
-    </div>
-  )
-}
-
-function ResourceRows({
-  values,
-  onChange,
-}: {
-  values: Record<string, string>
-  onChange: (label: string, value: string) => void
-}) {
-  return (
-    <div className="flex flex-col">
-      {RESOURCE_ROWS.map((row) => (
-        <ConfigurationRow key={row.label} label={row.label} description={row.description}>
-          <ConfigurationSelect
-            label={row.label}
-            options={row.options}
-            value={values[row.label] ?? row.options[0]}
-            onChange={(value) => onChange(row.label, value)}
-          />
-        </ConfigurationRow>
-      ))}
-    </div>
-  )
-}
-
-function LokiConfiguration({
-  values,
-  onChange,
-}: {
-  values: Record<string, string>
-  onChange: (label: string, value: string) => void
-}) {
-  const [retentionPeriod, setRetentionPeriod] = useState('12')
-  const [highAvailability, setHighAvailability] = useState(true)
-
-  return (
-    <div className="flex flex-col">
-      <ConfigurationRow label="Retention period" description="Whole number of weeks to retain Loki logs.">
-        <input
-          aria-label="Retention period"
-          type="number"
-          min="1"
-          value={retentionPeriod}
-          onChange={(event) => setRetentionPeriod(event.target.value)}
-          className="focus-visible:ring-brand-strong/30 h-10 w-full rounded border border-neutral bg-surface-neutral px-3 text-sm text-neutral outline-none transition-colors focus-visible:border-brand-strong focus-visible:ring-2"
-        />
-      </ConfigurationRow>
-      <ConfigurationRow
-        label="High availability"
-        description="Uses Loki simple-scalable mode and requires object storage."
-      >
-        <InputToggle
-          small
-          value={highAvailability}
-          onChange={setHighAvailability}
-          ariaLabel="High availability"
-          className="md:justify-end"
-        />
-      </ConfigurationRow>
-      <ResourceRows values={values} onChange={onChange} />
-    </div>
-  )
-}
-
 function TreeStatus({ status }: { status: ProfileTreeItem['status'] }) {
   if (status === 'disabled') {
     return <Icon iconName="circle-minus" className="text-neutral-disabled" />
@@ -210,6 +120,135 @@ function TreeStatus({ status }: { status: ProfileTreeItem['status'] }) {
   }
 
   return null
+}
+
+function getProfileSections(
+  component: ProfileComponent | undefined,
+  layer: ProfileTreeItem | undefined
+): ProfileSection[] {
+  if (!component) return []
+
+  const sections: ProfileSection[] = [
+    {
+      id: component.key,
+      label: formatProfileLabel(component.key),
+      component,
+    },
+  ]
+
+  for (const configurationSection of component.configurationSections ?? []) {
+    const sourceComponent = layer?.children?.find(({ key }) => key === configurationSection.sourceComponentKey)
+    if (!sourceComponent) continue
+
+    sections.push({
+      id: `${component.key}/${sourceComponent.key}`,
+      label: formatProfileLabel(sourceComponent.key),
+      component: sourceComponent,
+      fieldKeys: configurationSection.fieldKeys,
+    })
+  }
+
+  return sections
+}
+
+function getSectionFields(section: ProfileSection, preview?: PlatformComponentConfigurationResolutionResponse) {
+  const fields = (preview?.fields ?? section.component.fields).filter(isPlatformScalarField)
+  if (!section.fieldKeys) return fields
+
+  return fields.filter((field) => section.fieldKeys?.includes(field.key))
+}
+
+function RequirementStatus({ status }: { status: 'MISSING' | 'READY' }) {
+  return status === 'MISSING' ? (
+    <Badge size="sm" variant="surface" color="yellow">
+      Action required
+    </Badge>
+  ) : null
+}
+
+function ProfileConfigurationSkeleton() {
+  return (
+    <div role="status" aria-label="Loading configuration" className="flex flex-col gap-4 p-4">
+      <Skeleton width="28%" height={20} />
+      <Skeleton width="100%" height={64} />
+      <Skeleton width="100%" height={64} />
+      <Skeleton width="100%" height={64} />
+    </div>
+  )
+}
+
+function ProfileConfigurationSection({
+  section,
+  preview,
+  profileConfig,
+  clusterInputs,
+  onProfileConfigChange,
+  onClusterInputChange,
+}: {
+  section: ProfileSection
+  preview?: PlatformComponentConfigurationResolutionResponse
+  profileConfig: Record<string, unknown>
+  clusterInputs: Record<string, string>
+  onProfileConfigChange: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
+  onClusterInputChange: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
+}) {
+  const fields = getSectionFields(section, preview)
+  const requirements = preview?.requirements ?? []
+  const violations = preview?.violations ?? []
+
+  return (
+    <section className="flex flex-col gap-3 border-b border-neutral p-4 last:border-b-0">
+      <div>
+        <Heading level={3}>{section.label}</Heading>
+        {section.component.description ? (
+          <p className="mt-1 text-sm text-neutral-subtle">{section.component.description}</p>
+        ) : null}
+      </div>
+
+      {fields.map((field) => (
+        <CatalogVariableInput
+          key={field.key}
+          booleanControl="checkbox"
+          field={toCatalogVariableField(field)}
+          value={getCatalogVariableValue(field, profileConfig[field.key])}
+          error={getFieldViolation(violations, field.key)}
+          onChange={(value) => onProfileConfigChange(section.component.key, field, value)}
+        />
+      ))}
+
+      {requirements.length > 0 ? (
+        <div className="flex flex-col gap-3 border-t border-neutral pt-4">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <Heading level={3}>Cluster inputs</Heading>
+              <p className="mt-1 text-ssm text-neutral-subtle">
+                Values required from this cluster for the selected configuration.
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              {requirements.map((requirement) => (
+                <RequirementStatus key={requirement.key} status={requirement.status} />
+              ))}
+            </div>
+          </div>
+          {requirements.map((requirement) => (
+            <CatalogVariableInput
+              key={requirement.key}
+              booleanControl="checkbox"
+              field={toCatalogVariableField(requirement)}
+              value={getCatalogVariableValue(requirement, clusterInputs[requirement.key])}
+              error={getFieldViolation(violations, requirement.key, 'clusterInputs')}
+              onChange={(value) => onClusterInputChange(section.component.key, requirement, value)}
+            />
+          ))}
+        </div>
+      ) : null}
+
+      {!fields.length && !requirements.length ? (
+        <p className="text-sm text-neutral-subtle">This component does not require any configuration.</p>
+      ) : null}
+    </section>
+  )
 }
 
 type ClusterProfileFeatureProps = {
@@ -223,13 +262,43 @@ export function ClusterProfileFeature({
   activeComponentKey: requestedComponentKey,
   onActiveComponentChange,
 }: ClusterProfileFeatureProps) {
+  const { clusterId = '' } = useParams({ strict: false })
   const [search, setSearch] = useState('')
-  const [values, setValues] = useState<Record<string, string>>({
-    'Resource profile': 'CHART_DEFAULT',
-    Storage: 'PVC',
+  const [profileValues, setProfileValues] = useState<Record<string, Record<string, unknown>>>({})
+  const [clusterInputs, setClusterInputs] = useState<Record<string, Record<string, string>>>({})
+  const {
+    data: cluster,
+    isError: isClusterError,
+    isLoading: isClusterLoading,
+  } = useCluster({
+    organizationId,
+    clusterId,
   })
-  const { data: templates, isError, isLoading } = usePlatformTemplates({ organizationId })
-  const profileTree = getProfileTree(templates?.[0])
+  const clusterMode = toPlatformClusterMode(cluster?.kubernetes)
+  const cloudProvider = toPlatformCloudVendor(cluster?.cloud_provider)
+  const {
+    data: templates,
+    isError: isTemplateError,
+    isLoading: isTemplateLoading,
+  } = usePlatformTemplates({
+    organizationId,
+    clusterMode,
+    cloudProvider,
+    enabled: Boolean(clusterMode && cloudProvider),
+  })
+  const {
+    data: binding,
+    isError: isBindingError,
+    isLoading: isBindingLoading,
+  } = usePlatformBinding({ organizationId, clusterId })
+  const selectedTemplate = useMemo(
+    () =>
+      templates?.find(
+        (template) => template.key === binding?.templateKey && template.version === binding?.templateVersion
+      ) ?? templates?.[0],
+    [binding?.templateKey, binding?.templateVersion, templates]
+  )
+  const profileTree = useMemo(() => getProfileTree(selectedTemplate), [selectedTemplate])
   const requestedComponent = findProfileComponent(profileTree, requestedComponentKey)
   const requestedLayer = findProfileLayer(profileTree, requestedComponentKey)
   const defaultComponent = getDefaultProfileComponent(profileTree)
@@ -244,6 +313,58 @@ export function ClusterProfileFeature({
       label: component.label,
       iconName: getComponentIconName(component.key),
     })) ?? []
+  const profileSections = useMemo(
+    () => getProfileSections(activeComponent, activeLayer),
+    [activeComponent, activeLayer]
+  )
+  const profileConfigs = useMemo(
+    () =>
+      Object.fromEntries(
+        profileSections.map((section) => {
+          const persistedValues = binding?.managedConfig?.[section.component.key] ?? {}
+          const localValues = profileValues[section.component.key] ?? {}
+          return [
+            section.component.key,
+            applyPlatformConfigurationDefaults(section.component.fields, { ...persistedValues, ...localValues }),
+          ]
+        })
+      ),
+    [binding?.managedConfig, profileSections, profileValues]
+  )
+  const resolvedClusterInputs = useMemo(
+    () =>
+      Object.fromEntries(
+        profileSections.map((section) => [
+          section.component.key,
+          { ...binding?.customerProvidedInputs?.[section.component.key], ...clusterInputs[section.component.key] },
+        ])
+      ),
+    [binding?.customerProvidedInputs, clusterInputs, profileSections]
+  )
+  const previewRequests = useMemo(
+    () =>
+      Object.fromEntries(
+        profileSections.map((section) => [
+          section.component.key,
+          {
+            profileConfig: omitEmptyValues(profileConfigs[section.component.key] ?? {}),
+            clusterInputs: resolvedClusterInputs[section.component.key] ?? {},
+            componentOutputs: {},
+          },
+        ])
+      ),
+    [profileConfigs, profileSections, resolvedClusterInputs]
+  )
+  const debouncedPreviewRequests = useDebounce(previewRequests, 300)
+  const componentQueries = usePlatformComponentConfigurations({
+    organizationId,
+    clusterId,
+    requests: debouncedPreviewRequests,
+    enabled: Boolean(profileSections.length),
+  })
+  const previewsByComponent = Object.fromEntries(
+    componentQueries.flatMap((query) => (query.data ? [[query.data.componentKey, query.data]] : []))
+  )
 
   const normalizedSearch = search.trim().toLowerCase()
   const visibleTree = normalizedSearch
@@ -254,16 +375,30 @@ export function ClusterProfileFeature({
       )
     : profileTree
 
-  const updateValue = (label: string, value: string) => {
-    setValues((currentValues) => ({ ...currentValues, [label]: value }))
+  const updateProfileConfig = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
+    setProfileValues((currentValues) =>
+      updateComponentValue(currentValues, componentKey, field.key, toPlatformConfigurationValue(field, value))
+    )
   }
+
+  const updateClusterInput = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
+    setClusterInputs((currentValues) => updateComponentValue(currentValues, componentKey, field.key, String(value)))
+  }
+
+  const isLoading = isClusterLoading || isTemplateLoading || isBindingLoading
+  const isError = isClusterError || isTemplateError || isBindingError
+  const isResolving = componentQueries.some((query) => query.isFetching)
+  const hasResolverError = componentQueries.some((query) => query.isError)
+  const activePreview = activeComponent ? previewsByComponent[activeComponent.key] : undefined
+  const isConfigurationLoading =
+    Boolean(activeComponent) && (isResolving || activePreview?.componentKey !== activeComponent?.key)
 
   return (
     <div className="min-h-[calc(100dvh-8rem)] bg-background-secondary text-sm">
       <header className="flex min-h-11 items-center justify-between gap-4 bg-surface-neutral px-4 py-2">
         <div className="flex min-w-0 items-center gap-2">
           <Icon name={IconEnum.AWS} width={20} height={20} />
-          <p className="truncate font-medium text-neutral">Qovery infra engines prod static ip</p>
+          <p className="truncate font-medium text-neutral">{cluster?.name ?? 'Cluster'}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Button variant="outline" color="neutral" size="sm" disabled>
@@ -381,11 +516,9 @@ export function ClusterProfileFeature({
               <Heading level={2} className="!text-base font-medium leading-6">
                 {activeLayer?.label ?? 'Log infra'}
               </Heading>
-              <p className="mt-0.5 text-xs text-neutral-subtle">
-                {activeLayer?.label.toLowerCase() === 'log infra'
-                  ? 'Collects logs from everything running on this cluster and makes them searchable in Qovery'
-                  : 'Configure the components running on this cluster'}
-              </p>
+              {activeLayer?.description ? (
+                <p className="mt-0.5 text-xs text-neutral-subtle">{activeLayer.description}</p>
+              ) : null}
             </div>
             <div className="flex shrink-0 items-center gap-2">
               <InputToggle small value disabled ariaLabel="Enable log infrastructure" className="mt-0.5" />
@@ -425,10 +558,24 @@ export function ClusterProfileFeature({
           </div>
 
           <div id={`${activeComponent?.key ?? 'profile'}-configuration`} role="tabpanel" className="min-h-[480px]">
-            {activeComponent?.key.toLowerCase() === 'loki' ? (
-              <LokiConfiguration values={values} onChange={updateValue} />
+            {hasResolverError ? (
+              <div className="border-b border-neutral px-4 py-3 text-sm text-negative">
+                Configuration could not be checked. Refresh the page and try again.
+              </div>
+            ) : isConfigurationLoading ? (
+              <ProfileConfigurationSkeleton />
             ) : (
-              <ResourceRows values={values} onChange={updateValue} />
+              profileSections.map((section) => (
+                <ProfileConfigurationSection
+                  key={section.id}
+                  section={section}
+                  preview={previewsByComponent[section.component.key]}
+                  profileConfig={profileConfigs[section.component.key] ?? {}}
+                  clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
+                  onProfileConfigChange={updateProfileConfig}
+                  onClusterInputChange={updateClusterInput}
+                />
+              ))
             )}
           </div>
         </main>

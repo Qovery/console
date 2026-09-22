@@ -7,6 +7,7 @@ interface UsePlatformTemplatesProps {
   clusterMode?: PlatformClusterMode
   cloudProvider?: PlatformCloudVendor
   enabled?: boolean
+  suspense?: boolean
 }
 
 export function usePlatformTemplates({
@@ -14,9 +15,11 @@ export function usePlatformTemplates({
   clusterMode,
   cloudProvider,
   enabled = true,
+  suspense = false,
 }: UsePlatformTemplatesProps) {
   return useQuery({
     ...queries.platformConfiguration.templates({ organizationId, clusterMode, cloudProvider }),
     enabled: enabled && Boolean(organizationId),
+    suspense,
   })
 }
