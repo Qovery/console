@@ -107,4 +107,19 @@ describe('AutomationSheet', () => {
     expect(screen.getByRole('button', { name: 'Close' })).toBeDisabled()
     expect(onClose).not.toHaveBeenCalled()
   })
+
+  it('announces save failures', async () => {
+    const { userEvent } = renderWithProviders(
+      <AutomationSheet
+        automation={emptyAutomation}
+        section="outputs"
+        onClose={jest.fn()}
+        onSave={jest.fn().mockRejectedValue(new Error('Unable to save'))}
+      />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to save these settings. Try again.')
+  })
 })

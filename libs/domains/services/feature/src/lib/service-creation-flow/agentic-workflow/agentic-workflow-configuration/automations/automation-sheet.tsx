@@ -449,7 +449,11 @@ export function AutomationSheet({
           </AutomationSection>
         ) : null}
       </div>
-      {saveError ? <p className="px-4 text-sm text-negative">Unable to save these settings. Try again.</p> : null}
+      {saveError ? (
+        <p role="alert" className="px-4 text-sm text-negative">
+          Unable to save these settings. Try again.
+        </p>
+      ) : null}
       <div className="flex justify-end gap-2 border-t border-neutral p-4">
         <Button type="button" variant="plain" color="neutral" size="md" disabled={isSaving} onClick={onClose}>
           Cancel

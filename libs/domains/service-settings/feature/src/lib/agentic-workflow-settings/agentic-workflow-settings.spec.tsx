@@ -330,6 +330,29 @@ describe('AgenticWorkflowSettings views', () => {
     )
   })
 
+  it('preserves persisted service context during an unrelated overlay save while context services are loading', async () => {
+    const agentPrompt =
+      'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- api (APPLICATION) — service ID: service-1\n<!-- qovery-context-services:end -->'
+    useServiceSpy.mockReturnValue({
+      data: { ...service, agent_prompt: agentPrompt, context_service_ids: ['service-1'] },
+    })
+    useContextServicesSpy.mockReturnValue({ data: undefined, isLoading: true })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="advanced-settings" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete Dockerfile fragment' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          agent_prompt: agentPrompt,
+          context_service_ids: ['service-1'],
+          docker_fragment: '',
+        }),
+      })
+    )
+  })
+
   it('prevents editing a private self-hosted repository until its provider is resolved', () => {
     useServiceSpy.mockReturnValue({
       data: {

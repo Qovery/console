@@ -237,7 +237,11 @@ export function McpSheet({
           onMcpServerCreated={onMcpServerCreated}
         />
       </div>
-      {saveError ? <p className="px-4 text-sm text-negative">Unable to save the MCP selection. Try again.</p> : null}
+      {saveError ? (
+        <p role="alert" className="px-4 text-sm text-negative">
+          Unable to save the MCP selection. Try again.
+        </p>
+      ) : null}
       <div className="border-t border-neutral p-4">
         <Button
           type="button"

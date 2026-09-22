@@ -221,10 +221,11 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       llm_provider_id: data.llmProviderId,
     }
     const selectedContextServices = contextServices.filter(({ id }) => data.contextServiceIds.includes(id))
-    const contextServiceIds = contextServicesError
+    const preserveContextServices = contextServicesError || contextServicesLoading
+    const contextServiceIds = preserveContextServices
       ? data.contextServiceIds
       : selectedContextServices.map(({ id }) => id)
-    const agentPrompt = contextServicesError
+    const agentPrompt = preserveContextServices
       ? data.agentPrompt
       : replaceContextServicesInPrompt(data.agentPrompt, selectedContextServices)
 

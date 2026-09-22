@@ -77,7 +77,11 @@ export function QoveryServiceContextModal({
           )}
         </div>
       </div>
-      {saveError ? <p className="text-sm text-negative">{saveError}</p> : null}
+      {saveError ? (
+        <p role="alert" className="text-sm text-negative">
+          {saveError}
+        </p>
+      ) : null}
       <div className="flex justify-end gap-2">
         <div className="flex gap-2">
           <Button
