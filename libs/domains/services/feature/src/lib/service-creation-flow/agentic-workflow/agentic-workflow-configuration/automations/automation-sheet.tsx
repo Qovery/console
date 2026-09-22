@@ -343,7 +343,7 @@ export function AutomationSheet({
   }
 
   return (
-    <OverlaySheet onClose={onClose}>
+    <OverlaySheet dismissible={!isSaving} onClose={onClose}>
       <SheetHeader
         withDivider
         title={
@@ -353,6 +353,7 @@ export function AutomationSheet({
               ? 'Configure output'
               : 'Configure automation'
         }
+        disabled={isSaving}
         onClose={onClose}
       />
       <div className="flex flex-1 flex-col gap-4 overflow-auto px-5 pb-5">

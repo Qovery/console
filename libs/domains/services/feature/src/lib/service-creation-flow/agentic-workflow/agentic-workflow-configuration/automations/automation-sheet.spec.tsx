@@ -93,4 +93,18 @@ describe('AutomationSheet', () => {
       triggers: [expect.objectContaining({ type: 'schedule' })],
     })
   })
+
+  it('prevents dismissal while saving', async () => {
+    const onClose = jest.fn()
+    const onSave = jest.fn(() => new Promise<void>(() => undefined))
+    const { userEvent } = renderWithProviders(
+      <AutomationSheet automation={emptyAutomation} section="outputs" onClose={onClose} onSave={onSave} />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+    await userEvent.keyboard('{Escape}')
+
+    expect(screen.getByRole('button', { name: 'Close' })).toBeDisabled()
+    expect(onClose).not.toHaveBeenCalled()
+  })
 })

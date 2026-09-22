@@ -151,7 +151,7 @@ describe('Agentic Workflow settings validation', () => {
       automation: { triggers: [], outputs: [] },
     } as unknown as Parameters<typeof hasAgenticWorkflowSettingsChanges>[0]
 
-    expect(hasAgenticWorkflowSettingsChanges(currentValues, { automation: currentValues.automation })).toBe(false)
+    expect(hasAgenticWorkflowSettingsChanges(currentValues, { automation: { triggers: [], outputs: [] } })).toBe(false)
     expect(
       hasAgenticWorkflowSettingsChanges(currentValues, {
         automation: { triggers: [{ id: 'webhook', type: 'webhook' }], outputs: [] },

@@ -33,6 +33,7 @@ export interface ModalProps {
 
 export interface ModalContentProps {
   setOpen?: (open: boolean) => void
+  setModalDismissible?: (dismissible: boolean) => void
 }
 
 export const Modal = (props: ModalProps) => {
@@ -52,6 +53,7 @@ export const Modal = (props: ModalProps) => {
   } = props
 
   const [open, setOpen] = useState(defaultOpen)
+  const [contentDismissible, setContentDismissible] = useState(true)
   const { setModalAlertOpen } = useModalAlert()
 
   const { setAlertModalChoice, enableAlertClickOutside, alertClickOutside, alertModalChoice } = useContext(ModalContext)
@@ -85,8 +87,10 @@ export const Modal = (props: ModalProps) => {
     setAlertModalChoice,
   ])
 
+  const isDismissible = dismissible && contentDismissible
+
   const handleOutsideClick = (event: React.MouseEvent) => {
-    if (!dismissible) {
+    if (!isDismissible) {
       event.preventDefault()
       return
     }
@@ -111,7 +115,7 @@ export const Modal = (props: ModalProps) => {
       onOpenChange={
         setExternalOpen
           ? () => {
-              if (!dismissible) return
+              if (!isDismissible) return
               if (alertClickOutside) {
                 setModalAlertOpen(true)
               } else {
@@ -119,7 +123,7 @@ export const Modal = (props: ModalProps) => {
               }
             }
           : () => {
-              if (!dismissible) return
+              if (!isDismissible) return
               if (alertClickOutside) {
                 setModalAlertOpen(true)
               } else {
@@ -156,7 +160,7 @@ export const Modal = (props: ModalProps) => {
             }
           }}
           onEscapeKeyDown={(event) => {
-            if (!dismissible) event.preventDefault()
+            if (!isDismissible) event.preventDefault()
           }}
           style={
             fullScreen
@@ -171,8 +175,9 @@ export const Modal = (props: ModalProps) => {
           <div className={`${fullScreen || height ? 'h-full overflow-hidden' : 'max-h-[80vh] overflow-auto'}`}>
             {cloneElement(children, {
               setOpen: setExternalOpen ? setExternalOpen : setOpen,
+              setModalDismissible: setContentDismissible,
             })}
-            {buttonClose && dismissible && (
+            {buttonClose && isDismissible && (
               <Dialog.Close className="absolute right-4 top-4" asChild>
                 <button
                   type="button"

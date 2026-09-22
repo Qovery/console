@@ -6,12 +6,14 @@ export function QoveryServiceContextModal({
   isLoading,
   onSave,
   services,
+  setModalDismissible,
   setOpen,
   value,
 }: {
   isLoading: boolean
   onSave: (services: AgenticWorkflowContextService[]) => Promise<void> | void
   services: AgenticWorkflowContextService[]
+  setModalDismissible?: (dismissible: boolean) => void
   setOpen?: (open: boolean) => void
   value: AgenticWorkflowContextService[]
 }) {
@@ -96,6 +98,7 @@ export function QoveryServiceContextModal({
             onClick={async () => {
               setSaveError(undefined)
               setIsSaving(true)
+              setModalDismissible?.(false)
               try {
                 await onSave(services.filter(({ id }) => selectedIds.includes(id)))
                 setOpen?.(false)
@@ -103,6 +106,7 @@ export function QoveryServiceContextModal({
                 setSaveError('Unable to add the selected services. Try again.')
               } finally {
                 setIsSaving(false)
+                setModalDismissible?.(true)
               }
             }}
           >

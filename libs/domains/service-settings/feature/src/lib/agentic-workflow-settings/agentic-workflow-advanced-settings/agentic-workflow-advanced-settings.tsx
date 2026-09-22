@@ -8,6 +8,7 @@ function CodeConfigurationModal({
   description,
   language,
   onSave,
+  setModalDismissible,
   setOpen,
   title,
   value,
@@ -15,6 +16,7 @@ function CodeConfigurationModal({
   description: string
   language: string
   onSave: (value: string) => Promise<void>
+  setModalDismissible?: (dismissible: boolean) => void
   setOpen: (open: boolean) => void
   title: string
   value: string
@@ -50,6 +52,7 @@ function CodeConfigurationModal({
           onClick={async () => {
             setSaveError(false)
             setIsSaving(true)
+            setModalDismissible?.(false)
             try {
               await onSave(draft)
               setOpen(false)
@@ -57,6 +60,7 @@ function CodeConfigurationModal({
               setSaveError(true)
             } finally {
               setIsSaving(false)
+              setModalDismissible?.(true)
             }
           }}
         >
@@ -77,6 +81,7 @@ export function AgenticWorkflowAdvancedSettings({
   onSave?: SaveAgenticWorkflowSettings
 }) {
   const [codeModalOpen, setCodeModalOpen] = useState(false)
+  const [deleteError, setDeleteError] = useState(false)
   const dockerFragment = form.watch('dockerFragment')
   const saveSettings: SaveAgenticWorkflowSettings =
     onSave ??
@@ -105,13 +110,26 @@ export function AgenticWorkflowAdvancedSettings({
               size="xs"
               iconOnly
               loading={isSaving}
+              disabled={isSaving}
               aria-label="Delete Dockerfile fragment"
-              onClick={() => void saveSettings({ dockerFragment: '' })}
+              onClick={async () => {
+                setDeleteError(false)
+                try {
+                  await saveSettings({ dockerFragment: '' })
+                } catch {
+                  setDeleteError(true)
+                }
+              }}
             >
               <Icon iconName="trash-can" iconStyle="regular" />
             </Button>
           ) : null}
         </div>
+        {deleteError ? (
+          <p role="alert" className="text-sm text-negative">
+            Unable to delete the Dockerfile fragment. Try again.
+          </p>
+        ) : null}
       </AgenticWorkflowSettingsCard>
       {codeModalOpen ? (
         <Modal externalOpen setExternalOpen={setCodeModalOpen} width={720} className="max-w-[calc(100vw-2rem)]">

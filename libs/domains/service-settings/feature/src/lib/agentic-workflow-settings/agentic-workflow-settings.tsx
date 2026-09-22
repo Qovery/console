@@ -221,6 +221,12 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
       llm_provider_id: data.llmProviderId,
     }
     const selectedContextServices = contextServices.filter(({ id }) => data.contextServiceIds.includes(id))
+    const contextServiceIds = contextServicesError
+      ? data.contextServiceIds
+      : selectedContextServices.map(({ id }) => id)
+    const agentPrompt = contextServicesError
+      ? data.agentPrompt
+      : replaceContextServicesInPrompt(data.agentPrompt, selectedContextServices)
 
     await editService({
       serviceId,
@@ -234,15 +240,11 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           ? { cron_expression: schedule.cronExpression ?? '', timezone: schedule.timezone ?? 'Etc/UTC' }
           : null,
         model,
-        agent_prompt: contextServicesError
-          ? data.agentPrompt
-          : replaceContextServicesInPrompt(data.agentPrompt, selectedContextServices),
+        agent_prompt: agentPrompt,
         project_repositories: formatAgenticWorkflowRepositories(data.repositories),
         mcp: data.mcp,
         mcp_servers: data.mcpServerIds.map((id) => ({ id, required: data.requiredMcpServerIds.includes(id) })),
-        context_service_ids: contextServicesError
-          ? data.contextServiceIds
-          : selectedContextServices.map(({ id }) => id),
+        context_service_ids: contextServiceIds,
         docker_fragment: data.dockerFragment,
         outputs: formatAgenticWorkflowAutomationOutputs(data.automation.outputs),
         governance: {
@@ -263,7 +265,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
         },
       },
     })
-    form.reset(data)
+    form.reset({ ...data, agentPrompt, contextServiceIds })
   }
   const saveSettings: SaveAgenticWorkflowSettings = async (updatedValues) => {
     if (!hasAgenticWorkflowSettingsChanges(form.getValues(), updatedValues)) return

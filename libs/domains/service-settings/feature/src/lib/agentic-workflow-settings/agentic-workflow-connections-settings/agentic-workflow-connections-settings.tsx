@@ -47,7 +47,7 @@ export function AgenticWorkflowConnectionsSettings({
     isError: contextServicesError,
     isLoading: contextServicesLoading,
   } = useAgenticWorkflowContextServices(environmentId)
-  const { closeModal, openModal } = useModal()
+  const { closeModal, openModal, setModalDismissible } = useModal()
   const [mcpSheetOpen, setMcpSheetOpen] = useState(false)
   const [mcpDraft, setMcpDraft] = useState<string[]>([])
   const [createdMcpServers, setCreatedMcpServers] = useState<McpServerResponse[]>([])
@@ -98,17 +98,15 @@ export function AgenticWorkflowConnectionsSettings({
       content: (
         <GitContextModal
           context={repository}
+          setModalDismissible={setModalDismissible}
           submitLabel="Save"
           setOpen={(open) => !open && closeModal()}
           onRemove={
             typeof index === 'number'
-              ? () => {
-                  void saveSettings({
+              ? () =>
+                  saveSettings({
                     repositories: repositories.filter((_, currentIndex) => currentIndex !== index),
                   })
-                    .then(closeModal)
-                    .catch(() => undefined)
-                }
               : undefined
           }
           onSave={(nextRepository) =>
@@ -133,6 +131,7 @@ export function AgenticWorkflowConnectionsSettings({
         <QoveryServiceContextModal
           isLoading={contextServicesLoading}
           services={contextServices}
+          setModalDismissible={setModalDismissible}
           value={selectedContextServices}
           setOpen={(open) => !open && closeModal()}
           onSave={async (services) => {
@@ -143,9 +142,10 @@ export function AgenticWorkflowConnectionsSettings({
               nextRequiredMcpServerIds = nextRequiredMcpServerIds.filter((id) => id !== mcpServerId)
               contextAddedRequiredMcpServerIdRef.current = undefined
             }
-            const nextMcpServerIds = mcpServerId
-              ? [...new Set([...form.getValues('mcpServerIds'), mcpServerId])]
-              : form.getValues('mcpServerIds')
+            const nextMcpServerIds =
+              services.length && mcpServerId
+                ? [...new Set([...form.getValues('mcpServerIds'), mcpServerId])]
+                : form.getValues('mcpServerIds')
             if (services.length && mcpServerId && !nextRequiredMcpServerIds.includes(mcpServerId)) {
               nextRequiredMcpServerIds = [...nextRequiredMcpServerIds, mcpServerId]
               contextAddedRequiredMcpServerIdRef.current = mcpServerId

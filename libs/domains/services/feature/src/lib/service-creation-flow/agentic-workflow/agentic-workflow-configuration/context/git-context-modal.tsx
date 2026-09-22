@@ -25,12 +25,14 @@ export function GitContextModal({
   context,
   onRemove,
   onSave,
+  setModalDismissible,
   setOpen,
   submitLabel,
 }: {
   context?: AgenticWorkflowGitRepository
-  onRemove?: () => void
+  onRemove?: () => Promise<void> | void
   onSave: (context: AgenticWorkflowGitRepository) => Promise<void> | void
+  setModalDismissible?: (dismissible: boolean) => void
   setOpen?: (open: boolean) => void
   submitLabel?: string
 }) {
@@ -54,6 +56,20 @@ export function GitContextModal({
   const [isSaving, setIsSaving] = useState(false)
   const [saveError, setSaveError] = useState(false)
   const close = () => setOpen?.(false)
+  const runSave = async (save: () => Promise<void> | void) => {
+    setSaveError(false)
+    setIsSaving(true)
+    setModalDismissible?.(false)
+    try {
+      await save()
+      close()
+    } catch {
+      setSaveError(true)
+    } finally {
+      setIsSaving(false)
+      setModalDismissible?.(true)
+    }
+  }
 
   return (
     <FormProvider {...methods}>
@@ -92,11 +108,22 @@ export function GitContextModal({
             </>
           )}
         </div>
-        {saveError ? <p className="text-sm text-negative">Unable to save this repository. Try again.</p> : null}
+        {saveError ? (
+          <p role="alert" className="text-sm text-negative">
+            Unable to save this repository. Try again.
+          </p>
+        ) : null}
         <div className="flex items-center justify-between">
           <div>
             {onRemove ? (
-              <Button type="button" variant="plain" color="red" size="md" onClick={onRemove}>
+              <Button
+                type="button"
+                variant="plain"
+                color="red"
+                size="md"
+                disabled={isSaving}
+                onClick={() => void runSave(onRemove)}
+              >
                 Remove
               </Button>
             ) : null}
@@ -109,11 +136,10 @@ export function GitContextModal({
               type="button"
               size="md"
               loading={isSaving}
+              disabled={isSaving}
               onClick={methods.handleSubmit(async (values) => {
-                setSaveError(false)
-                setIsSaving(true)
-                try {
-                  await onSave({
+                await runSave(() =>
+                  onSave({
                     provider: values.provider,
                     gitTokenId: values.git_token_id,
                     gitTokenName: values.git_token_name,
@@ -122,12 +148,7 @@ export function GitContextModal({
                     gitRepository: values.git_repository,
                     branch: values.branch,
                   })
-                  close()
-                } catch {
-                  setSaveError(true)
-                } finally {
-                  setIsSaving(false)
-                }
+                )
               })}
             >
               {submitLabel ?? (context ? 'Apply changes' : 'Add repository')}
