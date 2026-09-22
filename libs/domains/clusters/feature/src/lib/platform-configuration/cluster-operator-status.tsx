@@ -7,12 +7,13 @@ import { useClusterOperatorStatus, useUpdateClusterOperator } from './hooks/use-
 interface ClusterOperatorStatusProps {
   clusterId: string
   organizationId: string
+  onConfigure?: () => void
 }
 
 function statusDisplay(status: ClusterOperatorFleetStatus) {
   return match(status)
     .with('CURRENT', () => ({
-      label: 'Up to date',
+      label: 'Versions current',
       color: 'green' as const,
       chipStatus: 'DEPLOYED' as const,
       description: 'The Operator is connected and runs the selected image and Helm chart versions.',
@@ -71,14 +72,20 @@ function Version({ installed, target }: { installed?: string | null; target?: st
   )
 }
 
-export function ClusterOperatorStatus({ clusterId, organizationId }: ClusterOperatorStatusProps) {
+export function ClusterOperatorStatus({ clusterId, organizationId, onConfigure }: ClusterOperatorStatusProps) {
   const { data, isLoading, isError, refetch } = useClusterOperatorStatus({ organizationId, clusterId })
   const { mutate: updateOperator, isLoading: isUpdating } = useUpdateClusterOperator()
+  const configureButton = onConfigure ? (
+    <Button type="button" size="sm" variant="outline" aria-label="Configure Operator" onClick={onConfigure}>
+      Configure
+    </Button>
+  ) : null
 
   if (isLoading) {
     return (
-      <div className="flex min-h-28 items-center justify-center rounded-lg border border-neutral">
+      <div className="flex min-h-28 items-center justify-between gap-4 rounded-lg border border-neutral p-4">
         <LoaderSpinner className="w-4" />
+        {configureButton}
       </div>
     )
   }
@@ -94,6 +101,7 @@ export function ClusterOperatorStatus({ clusterId, organizationId }: ClusterOper
           <Button size="xs" className="mt-3" onClick={() => void refetch()}>
             Retry
           </Button>
+          {configureButton}
         </Callout.Text>
       </Callout.Root>
     )
@@ -110,6 +118,7 @@ export function ClusterOperatorStatus({ clusterId, organizationId }: ClusterOper
           <p className="text-sm text-neutral-subtle">{display.description}</p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          {configureButton}
           <Badge size="sm" variant="surface" color={display.color} className="gap-1.5">
             <StatusChip status={display.chipStatus} disabledTooltip />
             {display.label}

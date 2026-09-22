@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Button, Callout, Icon } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, formatCatalogKey } from '@qovery/shared/util-js'
+import { ClusterOperatorStatus } from './cluster-operator-status'
 import { useClusterPlatformConfiguration } from './hooks/use-cluster-platform-configuration'
 import { usePlatformComponentConfiguration } from './hooks/use-platform-component-configuration'
 import { usePlatformTemplates } from './hooks/use-platform-templates'
@@ -19,6 +20,7 @@ import {
   clearRedactedValues,
   createPlatformConfigurationDraft,
   filterPlatformLayerSelections,
+  findPlatformComponent,
   getCurrentPlatformConfigurationPreview,
   getPlatformComponentEditor,
   getRedactedComponentKeys,
@@ -115,11 +117,12 @@ export function PlatformConfiguration({
   }, [configurationComponent, state])
   const previewRequest = useMemo<PlatformComponentConfigurationPreviewRequest>(
     () => ({
-      profileConfig: omitEmptyValues(profileConfig),
+      profileConfig: omitEmptyValues(profileConfig, configurationComponent?.fields),
+      replaceProfileConfig: true,
       clusterInputs,
       componentOutputs: {},
     }),
-    [profileConfig, clusterInputs]
+    [profileConfig, clusterInputs, configurationComponent?.fields]
   )
   const previewQuery = useMemo(
     () => ({ componentKey: configurationComponent?.key, request: previewRequest }),
@@ -198,6 +201,7 @@ export function PlatformConfiguration({
     )
   }
 
+  const bootstrapComponent = selectedTemplate.bootstrapComponent
   const redactedComponentKeys = getRedactedComponentKeys(state.draft.platform.managedConfig)
   const saveConfiguration = () => {
     if (redactedComponentKeys.length > 0) return
@@ -208,11 +212,11 @@ export function PlatformConfiguration({
         platform: {
           ...state.draft.platform,
           layerSelections: filterPlatformLayerSelections(selectedTemplate.layers, state.draft.platform.layerSelections),
-          // '' entries are only display markers for cleared fields — never persist them.
+          // Remove cleared fields while preserving required empty values allowed by their schema.
           managedConfig: Object.fromEntries(
             Object.entries(state.draft.platform.managedConfig).map(([componentKey, values]) => [
               componentKey,
-              omitEmptyValues(values),
+              omitEmptyValues(values, findPlatformComponent(selectedTemplate, componentKey)?.fields),
             ])
           ),
         },
@@ -256,6 +260,15 @@ export function PlatformConfiguration({
   if (!selectedComponent) {
     return (
       <PlatformConfigurationCatalog
+        bootstrapContent={
+          clusterMode === 'CUSTOMER_MANAGED' ? (
+            <ClusterOperatorStatus
+              organizationId={organizationId}
+              clusterId={clusterId}
+              onConfigure={bootstrapComponent ? () => selectComponent(bootstrapComponent.key) : undefined}
+            />
+          ) : undefined
+        }
         template={selectedTemplate}
         configuration={configuration}
         clusterMode={clusterMode}
@@ -312,6 +325,16 @@ export function PlatformConfiguration({
             </Button>
           ))}
         </div>
+      )}
+      {selectedComponent.key === selectedTemplate.bootstrapComponent?.key && (
+        <Callout.Root color="sky">
+          <Callout.Icon>
+            <Icon iconName="circle-info" iconStyle="regular" />
+          </Callout.Icon>
+          <Callout.Text>
+            Save these settings, then use Update Operator to apply them. Saving does not update the running Operator.
+          </Callout.Text>
+        </Callout.Root>
       )}
       <PlatformComponentConfiguration
         key={`${selectedComponent.key}/${configurationComponent?.key}`}

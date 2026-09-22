@@ -155,6 +155,7 @@ jest.mock('./platform-configuration-catalog', () => ({
     </>
   ),
 }))
+jest.mock('./cluster-operator-status', () => ({ ClusterOperatorStatus: () => null }))
 jest.mock('./platform-component-configuration', () => ({
   PlatformComponentConfiguration: ({
     onSave,
@@ -321,6 +322,7 @@ describe('Karpenter YAML under CRDs', () => {
             nodePools: [{ name: 'demo', spotEnabled: true }],
             resources: [{ manifest: initialManifest }],
           },
+          replaceProfileConfig: true,
           clusterInputs: { 'aws.eksClusterName': 'existing-cluster' },
           componentOutputs: {},
         },
