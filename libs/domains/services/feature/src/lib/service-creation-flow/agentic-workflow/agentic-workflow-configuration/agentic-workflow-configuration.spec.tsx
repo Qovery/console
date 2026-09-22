@@ -342,7 +342,7 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Add' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(screen.getByRole('button', { name: 'Webhook' })).toBeInTheDocument()
 
@@ -786,7 +786,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
     await userEvent.click(screen.getByRole('button', { name: 'Add' }))
     await userEvent.click(screen.getByRole('menuitem', { name: 'From a webhook' }))
-    await userEvent.click(screen.getByRole('button', { name: 'Apply changes' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
     await waitFor(() => expect(mockCreateService).toHaveBeenCalledTimes(1))
