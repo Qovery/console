@@ -189,6 +189,8 @@ export function McpSheet({
   onChange,
   onClose,
   onMcpServerCreated,
+  onSave,
+  isSaving = false,
   value,
 }: {
   createdMcpServers: McpServerResponse[]
@@ -199,8 +201,12 @@ export function McpSheet({
   onChange: (value: string[]) => void
   onClose: () => void
   onMcpServerCreated: (mcpServer: McpServerResponse) => void
+  onSave?: () => Promise<void> | void
+  isSaving?: boolean
   value: string[]
 }) {
+  const [saveError, setSaveError] = useState(false)
+
   return (
     <OverlaySheet onClose={onClose}>
       <SheetHeader title="Manage MCP" description="Select the MCPs this agent task can use." onClose={onClose} />
@@ -216,9 +222,24 @@ export function McpSheet({
           onMcpServerCreated={onMcpServerCreated}
         />
       </div>
+      {saveError ? <p className="px-4 text-sm text-negative">Unable to save the MCP selection. Try again.</p> : null}
       <div className="border-t border-neutral p-4">
-        <Button type="button" className="w-full justify-center" size="lg" onClick={onClose}>
-          Done
+        <Button
+          type="button"
+          className="w-full justify-center"
+          size="lg"
+          loading={isSaving}
+          onClick={async () => {
+            setSaveError(false)
+            try {
+              if (onSave) await onSave()
+              onClose()
+            } catch {
+              setSaveError(true)
+            }
+          }}
+        >
+          {onSave ? 'Save' : 'Done'}
         </Button>
       </div>
     </OverlaySheet>

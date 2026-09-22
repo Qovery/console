@@ -1,5 +1,6 @@
 import { useParams } from '@tanstack/react-router'
 import { type GitProviderEnum, type GitRepository } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import {
   GitBranchSettings,
@@ -25,11 +26,13 @@ export function GitContextModal({
   onRemove,
   onSave,
   setOpen,
+  submitLabel,
 }: {
   context?: AgenticWorkflowGitRepository
   onRemove?: () => void
-  onSave: (context: AgenticWorkflowGitRepository) => void
+  onSave: (context: AgenticWorkflowGitRepository) => Promise<void> | void
   setOpen?: (open: boolean) => void
+  submitLabel?: string
 }) {
   const { organizationId = '' } = useParams({ strict: false })
   const methods = useForm<GitContextForm>({
@@ -48,6 +51,8 @@ export function GitContextModal({
   const gitTokenId = methods.watch('git_token_id') ?? undefined
   const repository = methods.watch('repository')
   const isPublicRepository = methods.watch('is_public_repository')
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState(false)
   const close = () => setOpen?.(false)
 
   return (
@@ -87,6 +92,7 @@ export function GitContextModal({
             </>
           )}
         </div>
+        {saveError ? <p className="text-sm text-negative">Unable to save this repository. Try again.</p> : null}
         <div className="flex items-center justify-between">
           <div>
             {onRemove ? (
@@ -96,26 +102,35 @@ export function GitContextModal({
             ) : null}
           </div>
           <div className="flex gap-2">
-            <Button type="button" variant="plain" color="neutral" size="md" onClick={close}>
+            <Button type="button" variant="plain" color="neutral" size="md" disabled={isSaving} onClick={close}>
               Cancel
             </Button>
             <Button
               type="button"
               size="md"
-              onClick={methods.handleSubmit((values) => {
-                onSave({
-                  provider: values.provider,
-                  gitTokenId: values.git_token_id,
-                  gitTokenName: values.git_token_name,
-                  isPublicRepository: values.is_public_repository,
-                  repository: values.repository,
-                  gitRepository: values.git_repository,
-                  branch: values.branch,
-                })
-                close()
+              loading={isSaving}
+              onClick={methods.handleSubmit(async (values) => {
+                setSaveError(false)
+                setIsSaving(true)
+                try {
+                  await onSave({
+                    provider: values.provider,
+                    gitTokenId: values.git_token_id,
+                    gitTokenName: values.git_token_name,
+                    isPublicRepository: values.is_public_repository,
+                    repository: values.repository,
+                    gitRepository: values.git_repository,
+                    branch: values.branch,
+                  })
+                  close()
+                } catch {
+                  setSaveError(true)
+                } finally {
+                  setIsSaving(false)
+                }
               })}
             >
-              {context ? 'Apply changes' : 'Add repository'}
+              {submitLabel ?? (context ? 'Apply changes' : 'Add repository')}
             </Button>
           </div>
         </div>
