@@ -95,6 +95,23 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
 
   useIntervalTick(isOngoing)
 
+  const handleDeployService = () => {
+    const deployableServiceType = getDeployableServiceType(serviceType)
+
+    if (!deployableServiceType) {
+      return
+    }
+
+    deployService({
+      serviceId,
+      serviceType: deployableServiceType,
+    })
+  }
+
+  const handleRunAgentTask = () => {
+    deployAgenticWorkflow({ agenticWorkflowId: serviceId })
+  }
+
   if (!lastDeployment) {
     return (
       <EmptyState
@@ -118,23 +135,7 @@ function ServiceLastDeploymentContent({ serviceId, serviceType, service }: Servi
           size="md"
           loading={isAgentTask ? isTriggeringAgentTask : undefined}
           disabled={isAgentTask ? isTriggeringAgentTask : undefined}
-          onClick={() => {
-            if (isAgentTask) {
-              deployAgenticWorkflow({ agenticWorkflowId: serviceId })
-              return
-            }
-
-            const deployableServiceType = getDeployableServiceType(serviceType)
-
-            if (!deployableServiceType) {
-              return
-            }
-
-            deployService({
-              serviceId,
-              serviceType: deployableServiceType,
-            })
-          }}
+          onClick={isAgentTask ? handleRunAgentTask : handleDeployService}
         >
           <Icon iconName={isAgentTask ? 'play' : 'rocket'} />
           {isAgentTask ? 'Run now' : 'Deploy now'}
