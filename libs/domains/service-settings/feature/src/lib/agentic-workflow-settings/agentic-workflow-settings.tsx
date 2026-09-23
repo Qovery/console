@@ -12,6 +12,7 @@ import { isAgenticWorkflow } from '@qovery/domains/services/data-access'
 import {
   type AgenticWorkflowAutomation,
   type AgenticWorkflowGitRepository,
+  areAgenticWorkflowResourcesValid,
   createAgenticWorkflowAutomation,
   formatAgenticWorkflowAutomationOutputs,
   isGitRepositoryComplete,
@@ -205,6 +206,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const values = form.watch()
   const pageValid =
     Boolean(values.name.trim()) &&
+    (page !== 'general' || areAgenticWorkflowResourcesValid(values.cpu, values.ram)) &&
     (page !== 'ai-configuration' ||
       (Boolean(values.llmProviderId) &&
         Boolean(values.agentPrompt.trim()) &&

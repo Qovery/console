@@ -2,6 +2,7 @@ import { type IconName } from '@fortawesome/fontawesome-common-types'
 import { APIVariableScopeEnum, AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
 import { type VariableData } from '@qovery/shared/interfaces'
 import { type AgenticWorkflowFormData } from './agentic-workflow-context'
+import { AGENTIC_WORKFLOW_MIN_CPU_MILLI, AGENTIC_WORKFLOW_MIN_RAM_MIB } from './agentic-workflow-resources'
 
 // Fallback documentation shown when the flow is not seeded from a specific
 // template (e.g. "Start from scratch").
@@ -91,8 +92,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Incident Analyzer with incident.io',
       description: 'Analyze incident.io incidents with deployment, code, logs, and metrics context.',
       agentPrompt: INCIDENT_IO_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       whitelistHosts: 'api.incident.io',
       automations: webhookAutomation('incident-io'),
@@ -110,8 +111,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Incident Analyzer with Honeybadger',
       description: 'Analyze Honeybadger incidents with deployment, code, logs, and metrics context.',
       agentPrompt: HONEYBADGER_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       whitelistHosts: 'app.honeybadger.io,api.honeybadger.io',
       automations: webhookAutomation('honeybadger'),
@@ -129,8 +130,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Build & deployment optimizer',
       description: 'Analyse build and deployment times, identify optimization levers, and open a PR with the changes.',
       agentPrompt: BUILD_OPTIMIZER_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       automations: weeklyScheduleAutomation('build-optimizer'),
       whitelistHosts: 'github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
     },
@@ -145,8 +146,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Jira Coding Agent',
       description: 'Turn a Jira issue into an implementation and a ready-to-review pull request.',
       agentPrompt: JIRA_CODING_AGENT_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       automations: webhookAutomation('jira'),
       whitelistHosts:
@@ -181,8 +182,8 @@ export const AGENTIC_WORKFLOW_TEMPLATES: AgenticWorkflowTemplate[] = [
       name: 'Linear Coding Agent',
       description: 'Turn a Linear issue into an implementation and a ready-to-review pull request.',
       agentPrompt: LINEAR_CODING_AGENT_PROMPT,
-      cpu: '200',
-      memory: '256',
+      cpu: String(AGENTIC_WORKFLOW_MIN_CPU_MILLI),
+      memory: String(AGENTIC_WORKFLOW_MIN_RAM_MIB),
       executionMode: AgenticWorkflowExecutionMode.CLONE_ENVIRONMENT,
       automations: webhookAutomation('linear'),
       whitelistHosts: 'api.linear.app,github.com,api.github.com,gitlab.com,bitbucket.org,api.bitbucket.org',
