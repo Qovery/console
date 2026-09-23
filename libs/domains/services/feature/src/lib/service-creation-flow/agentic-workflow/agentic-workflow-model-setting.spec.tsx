@@ -92,19 +92,23 @@ describe('AgenticWorkflowModelSetting', () => {
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'claude-opus' })
   })
 
-  it('keeps Bedrock settings visible', () => {
+  it('keeps Bedrock settings visible and initializes valid model settings', async () => {
+    const onChange = jest.fn()
+
     renderWithProviders(
       <AgenticWorkflowModelSetting
         bedrockSettings={<div>Cloud settings JSON</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.BEDROCK}
         settings="{}"
-        onChange={jest.fn()}
+        onChange={onChange}
       />
     )
 
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
     expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
+    expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'eu.anthropic.claude-opus-5' })
   })
 
   it('does not show model settings before a token is selected', () => {

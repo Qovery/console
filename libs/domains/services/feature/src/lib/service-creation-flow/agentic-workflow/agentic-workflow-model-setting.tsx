@@ -3,6 +3,8 @@ import { type ReactNode, useEffect } from 'react'
 import { useLlmProviderModels } from '@qovery/domains/organizations/feature'
 import { InputSelect } from '@qovery/shared/ui'
 
+const DEFAULT_BEDROCK_MODEL = 'eu.anthropic.claude-opus-5'
+
 function parseModelSettings(value: string): Record<string, unknown> | undefined {
   try {
     const settings: unknown = JSON.parse(value)
@@ -56,8 +58,10 @@ export function AgenticWorkflowModelSetting({
   useEffect(() => {
     if (isClaude && !currentModel && firstModelId) {
       onChange(updateAgenticWorkflowModel(settings, firstModelId))
+    } else if (hasLlmProvider && providerType === LlmProviderType.BEDROCK && !currentModel) {
+      onChange(updateAgenticWorkflowModel(settings, DEFAULT_BEDROCK_MODEL))
     }
-  }, [currentModel, firstModelId, isClaude, onChange, settings])
+  }, [currentModel, firstModelId, hasLlmProvider, isClaude, onChange, providerType, settings])
 
   if (!hasLlmProvider) return null
   if (!isClaude) return bedrockSettings
