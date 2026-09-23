@@ -1,6 +1,6 @@
 import { LlmProviderType } from 'qovery-typescript-axios'
 import selectEvent from 'react-select-event'
-import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   AgenticWorkflowModelSetting,
   getAgenticWorkflowModel,
@@ -69,6 +69,27 @@ describe('AgenticWorkflowModelSetting', () => {
     })
 
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ provider: 'anthropic', model: 'claude-sonnet' })
+  })
+
+  it('selects the first Claude model by default', async () => {
+    mockModels = [
+      { id: 'claude-opus', display_name: 'Claude Opus', created_at: null },
+      { id: 'claude-sonnet', display_name: 'Claude Sonnet', created_at: null },
+    ]
+    const onChange = jest.fn()
+
+    renderWithProviders(
+      <AgenticWorkflowModelSetting
+        bedrockSettings={<div>Bedrock settings</div>}
+        llmProviderId="provider-1"
+        providerType={LlmProviderType.CLAUDE}
+        settings="{}"
+        onChange={onChange}
+      />
+    )
+
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
+    expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'claude-opus' })
   })
 
   it('keeps Bedrock settings visible', () => {

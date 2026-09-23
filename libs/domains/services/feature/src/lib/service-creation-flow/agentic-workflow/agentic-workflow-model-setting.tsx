@@ -1,5 +1,5 @@
 import { LlmProviderType, type LlmProviderType as LlmProviderTypeValue } from 'qovery-typescript-axios'
-import { type ReactNode } from 'react'
+import { type ReactNode, useEffect } from 'react'
 import { useLlmProviderModels } from '@qovery/domains/organizations/feature'
 import { Button, InputSelect } from '@qovery/shared/ui'
 
@@ -51,10 +51,18 @@ export function AgenticWorkflowModelSetting({
     enabled: isClaude,
   })
 
+  const currentModel = getAgenticWorkflowModel(settings)
+  const firstModelId = models[0]?.id
+
+  useEffect(() => {
+    if (isClaude && !currentModel && firstModelId) {
+      onChange(updateAgenticWorkflowModel(settings, firstModelId))
+    }
+  }, [currentModel, firstModelId, isClaude, onChange, settings])
+
   if (!hasLlmProvider) return null
   if (!isClaude) return bedrockSettings
 
-  const currentModel = getAgenticWorkflowModel(settings)
   const modelOptions = models.map(({ id, display_name }) => ({ value: id, label: display_name }))
   const options =
     currentModel && !models.some(({ id }) => id === currentModel)
