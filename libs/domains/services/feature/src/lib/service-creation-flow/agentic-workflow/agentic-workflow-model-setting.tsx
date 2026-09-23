@@ -39,7 +39,8 @@ export function AgenticWorkflowModelSetting({
   settings,
   onChange,
 }: AgenticWorkflowModelSettingProps) {
-  const isClaude = providerType === LlmProviderType.CLAUDE
+  const hasLlmProvider = Boolean(llmProviderId)
+  const isClaude = hasLlmProvider && providerType === LlmProviderType.CLAUDE
   const {
     data: models = [],
     isError,
@@ -50,6 +51,7 @@ export function AgenticWorkflowModelSetting({
     enabled: isClaude,
   })
 
+  if (!hasLlmProvider) return null
   if (!isClaude) return bedrockSettings
 
   const currentModel = getAgenticWorkflowModel(settings)

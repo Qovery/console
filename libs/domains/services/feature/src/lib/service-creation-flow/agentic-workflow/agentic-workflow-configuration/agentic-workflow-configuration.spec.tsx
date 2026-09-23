@@ -332,8 +332,10 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Select stored token' })).toBeInTheDocument()
     expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
-    expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
     expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
+    expect(screen.getByLabelText('Model')).toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))

@@ -84,6 +84,21 @@ describe('AgenticWorkflowModelSetting', () => {
     expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
   })
 
+  it('does not show model settings before a token is selected', () => {
+    renderWithProviders(
+      <AgenticWorkflowModelSetting
+        bedrockSettings={<div>Cloud settings JSON</div>}
+        llmProviderId=""
+        providerType={LlmProviderType.CLAUDE}
+        settings="{}"
+        onChange={jest.fn()}
+      />
+    )
+
+    expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
+    expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
+  })
+
   it('shows an empty state when Claude returns no models', () => {
     renderWithProviders(
       <AgenticWorkflowModelSetting
