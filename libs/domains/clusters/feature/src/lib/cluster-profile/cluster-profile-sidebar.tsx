@@ -33,7 +33,7 @@ function LayerIcon({ className = '' }: { className?: string }) {
   )
 }
 
-function LayerItemGlyph() {
+export function ClusterProfileItemIcon() {
   return <Icon name={IconEnum.HELM_OFFICIAL} width="14" height="14" className="shrink-0" aria-hidden="true" />
 }
 
@@ -122,7 +122,7 @@ function LayerSectionRow({
                 />
               </span>
               <span className="flex min-w-0 items-center gap-1.5 py-1">
-                <LayerItemGlyph />
+                <ClusterProfileItemIcon />
                 <span className="truncate">{item.label}</span>
               </span>
             </button>

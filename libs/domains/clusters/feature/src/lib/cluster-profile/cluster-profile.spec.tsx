@@ -183,6 +183,12 @@ describe('ClusterProfileFeature', () => {
       screen.getByText('Collects logs from everything running on this cluster and makes them searchable in Qovery')
     ).toBeInTheDocument()
     expect(screen.getByRole('tab', { name: 'Loki' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tab', { name: 'Loki' }).querySelector('svg')?.outerHTML).toBe(
+      screen.getByRole('button', { name: 'Loki' }).querySelector('svg')?.outerHTML
+    )
+    expect(screen.getByRole('tab', { name: 'Alloy' }).querySelector('svg')?.outerHTML).toBe(
+      screen.getByRole('button', { name: 'Alloy' }).querySelector('svg')?.outerHTML
+    )
     expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toHaveValue(12)
     expect(screen.getByRole('combobox', { name: 'Resource profile' })).toBeInTheDocument()
     expect(screen.getByRole('combobox', { name: 'Storage' })).toBeInTheDocument()

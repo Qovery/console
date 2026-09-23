@@ -27,14 +27,17 @@ import {
   toPlatformConfigurationValue,
   updateComponentValue,
 } from '../platform-configuration/platform-configuration-utils'
-import { ClusterProfileSidebar, type ClusterProfileSidebarLayer } from './cluster-profile-sidebar'
+import {
+  ClusterProfileItemIcon,
+  ClusterProfileSidebar,
+  type ClusterProfileSidebarLayer,
+} from './cluster-profile-sidebar'
 
 export const ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG = 'engine-v2-platform-configuration'
 
 type ProfileTab = {
   id: string
   label: string
-  iconName: 'scroll' | 'code'
 }
 
 type ProfileComponent = PlatformTemplateComponentResponse & {
@@ -83,10 +86,6 @@ function getProfileTree(template: PlatformTemplateSummaryResponse | undefined): 
       }
     }) ?? []
   )
-}
-
-function getComponentIconName(componentKey: string): ProfileTab['iconName'] {
-  return componentKey.toLowerCase() === 'loki' ? 'scroll' : 'code'
 }
 
 function findProfileComponent(profileTree: ProfileTreeItem[], requestedKey?: string) {
@@ -313,7 +312,6 @@ export function ClusterProfileFeature({
     activeLayer?.children?.map((component) => ({
       id: component.key,
       label: component.label,
-      iconName: getComponentIconName(component.key),
     })) ?? []
   const profileSections = useMemo(
     () => getProfileSections(activeComponent, activeLayer),
@@ -509,7 +507,7 @@ export function ClusterProfileFeature({
                       : 'text-neutral-subtle hover:text-neutral'
                   }`}
                 >
-                  <Icon iconName={tab.iconName} className="text-xs" />
+                  <ClusterProfileItemIcon />
                   {tab.label}
                 </button>
               )
