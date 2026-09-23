@@ -7,7 +7,7 @@ import {
 import { useMemo, useState } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
-import { Badge, Button, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
+import { Badge, Button, EmptyState, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
@@ -227,7 +227,14 @@ function ProfileConfigurationSection({
       ) : null}
 
       {!fields.length && !requirements.length ? (
-        <p className="p-4 text-sm text-neutral-subtle">This component does not require any configuration.</p>
+        <div className="flex flex-col items-start p-4">
+          <EmptyState
+            icon="circle-check"
+            title={<span className="font-normal leading-5">No configuration needed for this component</span>}
+            variant="positive"
+            className="h-auto w-full p-8 shadow-sm"
+          />
+        </div>
       ) : null}
     </section>
   )
