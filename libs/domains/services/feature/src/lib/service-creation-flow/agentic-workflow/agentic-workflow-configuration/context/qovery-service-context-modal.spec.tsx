@@ -140,7 +140,7 @@ describe('QoveryServiceContextModal', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Confirm' }))
     save.reject(new Error('MCP creation failed'))
 
-    expect(await screen.findByText('Unable to add the selected services. Try again.')).toBeInTheDocument()
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to add the selected services. Try again.')
     expect(screen.getByRole('button', { name: 'Confirm' })).toBeEnabled()
     expect(setOpen).not.toHaveBeenCalled()
   })

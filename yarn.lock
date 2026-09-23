@@ -2126,15 +2126,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@elgorditosalsero/react-gtm-hook@npm:2.6.0":
-  version: 2.6.0
-  resolution: "@elgorditosalsero/react-gtm-hook@npm:2.6.0"
-  peerDependencies:
-    react: ^16.13.1 || ^17.0.0 || 18
-  checksum: 609bd24c42f8e9e3b2b4e83c6291d5df3ec4b71e1260bec80a083b057825c67881f69c729afcf8885d962af14b1ba5b107e82a9261a4fd4dcfc11ee9a15d5da4
-  languageName: node
-  linkType: hard
-
 "@emnapi/core@npm:^1.1.0, @emnapi/core@npm:^1.4.3, @emnapi/core@npm:^1.5.0":
   version: 1.5.0
   resolution: "@emnapi/core@npm:1.5.0"
@@ -6313,7 +6304,6 @@ __metadata:
     "@codemirror/commands": 6.11.0
     "@codemirror/state": 6.7.1
     "@codemirror/view": 6.43.9
-    "@elgorditosalsero/react-gtm-hook": 2.6.0
     "@fortawesome/fontawesome-svg-core": 6.5.2
     "@juggle/resize-observer": 3.4.0
     "@lukemorales/query-key-factory": 1.3.2
@@ -6438,8 +6428,8 @@ __metadata:
     prettier: 3.2.5
     prettier-plugin-tailwindcss: 0.5.14
     pretty-quick: 4.0.0
-    qovery-typescript-axios: 1.1.980
-    qovery-ws-typescript-axios: 0.1.646
+    qovery-typescript-axios: 1.1.981
+    qovery-ws-typescript-axios: 0.1.666
     react: 18.3.1
     react-country-flag: 3.0.2
     react-datepicker: 4.12.0
@@ -25964,21 +25954,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qovery-typescript-axios@npm:1.1.980":
-  version: 1.1.980
-  resolution: "qovery-typescript-axios@npm:1.1.980"
+"qovery-typescript-axios@npm:1.1.981":
+  version: 1.1.981
+  resolution: "qovery-typescript-axios@npm:1.1.981"
   dependencies:
     axios: 1.18.1
-  checksum: 696b175a1356a2dfd125244fcb273f035235d0b1ebec155f11875bc489eba1b81db9de94141aaca5060e50e5e77d8ad76912886080f98bc191ec66b2ba17d450
+  checksum: bd345d8dac96cb78e4092524d9a596aa786c91878c5cc623f1ffa1dab022b3c0e2d63f1e6cbf6ebafe0c0b1bf7025bf88e95e6020187629ddca46ad508d0cc05
   languageName: node
   linkType: hard
 
-"qovery-ws-typescript-axios@npm:0.1.646":
-  version: 0.1.646
-  resolution: "qovery-ws-typescript-axios@npm:0.1.646"
+"qovery-ws-typescript-axios@npm:0.1.666":
+  version: 0.1.666
+  resolution: "qovery-ws-typescript-axios@npm:0.1.666"
   dependencies:
     axios: 1.18.1
-  checksum: e9d4be31695558009d0a0169164e4f4b94a808bc19654d852aebfd3b68dc80f50af0d272d0acebd60786bfcbe4f0b7e7231047ae9ab6ec1f6621986de7eaa2ff
+  checksum: a42c5693bf272bb083dab2df1d0c7cac453c3cd50bbc088a21f355641cee61efab38362ec4b6702913d8eb01d412682de86d223395d8bef8682e87cee54d0ec0
   languageName: node
   linkType: hard
 

@@ -278,11 +278,13 @@ export function AutomationSheet({
   allowEmptyOutputUrl?: boolean
   automation: AgenticWorkflowAutomation
   onClose: () => void
-  onSave: (automation: AgenticWorkflowAutomation) => void
+  onSave: (automation: AgenticWorkflowAutomation) => Promise<void> | void
   section?: 'all' | 'triggers' | 'outputs'
 }) {
   const { closeModal, openModal } = useModal()
   const [draft, setDraft] = useState<AgenticWorkflowAutomation>(automation)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveError, setSaveError] = useState(false)
   const saveTrigger = (trigger: AgenticWorkflowAutomationTrigger) => {
     setDraft((current) => ({
       ...current,
@@ -341,7 +343,7 @@ export function AutomationSheet({
   }
 
   return (
-    <OverlaySheet onClose={onClose}>
+    <OverlaySheet dismissible={!isSaving} onClose={onClose}>
       <SheetHeader
         withDivider
         title={
@@ -351,6 +353,7 @@ export function AutomationSheet({
               ? 'Configure output'
               : 'Configure automation'
         }
+        disabled={isSaving}
         onClose={onClose}
       />
       <div className="flex flex-1 flex-col gap-4 overflow-auto px-5 pb-5">
@@ -446,20 +449,34 @@ export function AutomationSheet({
           </AutomationSection>
         ) : null}
       </div>
+      {saveError ? (
+        <p role="alert" className="px-4 text-sm text-negative">
+          Unable to save these settings. Try again.
+        </p>
+      ) : null}
       <div className="flex justify-end gap-2 border-t border-neutral p-4">
-        <Button type="button" variant="plain" color="neutral" size="md" onClick={onClose}>
+        <Button type="button" variant="plain" color="neutral" size="md" disabled={isSaving} onClick={onClose}>
           Cancel
         </Button>
         <Button
           type="button"
           size="md"
-          disabled={section !== 'outputs' && draft.triggers.length === 0}
-          onClick={() => {
-            onSave(draft)
-            onClose()
+          loading={isSaving}
+          disabled={isSaving || (section !== 'outputs' && draft.triggers.length === 0)}
+          onClick={async () => {
+            setSaveError(false)
+            setIsSaving(true)
+            try {
+              await onSave(draft)
+              onClose()
+            } catch {
+              setSaveError(true)
+            } finally {
+              setIsSaving(false)
+            }
           }}
         >
-          Apply changes
+          Save
         </Button>
       </div>
     </OverlaySheet>

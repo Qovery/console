@@ -1,4 +1,3 @@
-import { GTMProvider } from '@elgorditosalsero/react-gtm-hook'
 import { Provider as TooltipProvider } from '@radix-ui/react-tooltip'
 import * as Sentry from '@sentry/react'
 import {
@@ -35,6 +34,8 @@ import { ThemeProvider } from './app/components/theme-provider/theme-provider'
 import { Auth0Wrapper, useAuth0Context } from './auth/auth0'
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
+import { loadGoogleTagManager } from './utils/google-tag-manager'
+import { loadSnitcher } from './utils/snitcher'
 
 type ToastArgs = {
   status?: ToastStatus
@@ -45,6 +46,7 @@ type ToastArgs = {
 }
 
 const SENTRY_DSN = 'https://666b0bd18086c3b730597ee1b8c97eb0@o471935.ingest.us.sentry.io/4507661194625024'
+const SNITCHER_PROFILE_ID = '8429550'
 
 let isSentryInitialized = false
 
@@ -91,6 +93,13 @@ posthog.init(POSTHOG, {
   api_host: POSTHOG_APIHOST,
   capture_pageview: 'history_change',
 })
+
+// Tag scripts are loaded as external scripts (no inline snippet) to comply with the CSP
+if (GTM) {
+  loadGoogleTagManager(GTM)
+  // Snitcher was previously injected by a GTM Custom HTML tag, so it keeps following the GTM setup
+  loadSnitcher(SNITCHER_PROFILE_ID)
+}
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -209,21 +218,18 @@ function App() {
 }
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
-const gtmParams = { id: GTM }
 
 root.render(
   <StrictMode>
-    <GTMProvider state={gtmParams}>
-      <FlatProviders
-        providers={[
-          ThemeProvider,
-          TooltipProvider,
-          Auth0Wrapper,
-          makeProvider(QueryClientProvider, { client: queryClient }),
-        ]}
-      >
-        <App />
-      </FlatProviders>
-    </GTMProvider>
+    <FlatProviders
+      providers={[
+        ThemeProvider,
+        TooltipProvider,
+        Auth0Wrapper,
+        makeProvider(QueryClientProvider, { client: queryClient }),
+      ]}
+    >
+      <App />
+    </FlatProviders>
   </StrictMode>
 )

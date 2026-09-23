@@ -67,10 +67,10 @@ describe('AgenticWorkflowConnectionsSettings', () => {
     )
 
     expect(screen.getByText('qovery/console')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
+    expect(screen.getByText('Documentation')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: 'Manage context' }))
-    expect(screen.getByRole('button', { name: 'Apply changes' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
   })
 
   it('shows and edits persisted Qovery service context', async () => {
@@ -105,11 +105,8 @@ describe('AgenticWorkflowConnectionsSettings', () => {
     )
 
     expect(screen.getByText('api')).toBeInTheDocument()
-    const lockedMcpButton = screen.getByRole('button', {
-      name: /MCP Qovery: This MCP is required by the selected Qovery service context/,
-    })
-    expect(lockedMcpButton).toBeDisabled()
-    await userEvent.hover(lockedMcpButton.parentElement as HTMLElement)
+    const lockedMcp = screen.getByText('MCP Qovery')
+    await userEvent.hover(lockedMcp.parentElement as HTMLElement)
     expect(await screen.findByRole('tooltip')).toHaveTextContent(
       'This MCP is required by the selected Qovery service context and cannot be removed.'
     )

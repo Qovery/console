@@ -35,6 +35,7 @@ export function AgenticWorkflowSettingsFormHarness({
 }) {
   const form = useForm<AgenticWorkflowSettingsFormValues>({
     defaultValues: { ...SETTINGS_FORM_VALUES, ...values },
+    mode: 'onChange',
   })
 
   return children(form)
