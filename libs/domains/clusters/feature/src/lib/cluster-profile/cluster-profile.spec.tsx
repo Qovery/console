@@ -177,7 +177,7 @@ describe('ClusterProfileFeature', () => {
     })
     expect(screen.getByRole('banner')).not.toHaveClass('border-b')
     expect(container.querySelectorAll('.fa-circle-check')).toHaveLength(1)
-    expect(container.querySelectorAll('.fa-circle-minus')).toHaveLength(1)
+    expect(container.querySelectorAll('.fa-circle-minus')).toHaveLength(2)
     expect(screen.getByRole('heading', { name: 'Log infra' })).toBeInTheDocument()
     expect(
       screen.getByText('Collects logs from everything running on this cluster and makes them searchable in Qovery')
@@ -236,7 +236,7 @@ describe('ClusterProfileFeature', () => {
       />
     )
 
-    expect(screen.getByRole('button', { name: 'Log infra' })).toHaveAttribute('aria-current', 'page')
+    expect(screen.getByRole('button', { name: 'Log infra' }).closest('li')).toHaveClass('bg-surface-neutral-component')
     expect(screen.getByRole('button', { name: 'Alloy' })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('tab', { name: 'Alloy' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('button', { name: 'Loki' })).not.toHaveAttribute('aria-current', 'page')

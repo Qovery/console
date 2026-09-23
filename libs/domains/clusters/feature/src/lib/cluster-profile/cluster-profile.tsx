@@ -26,6 +26,7 @@ import {
   toPlatformConfigurationValue,
   updateComponentValue,
 } from '../platform-configuration/platform-configuration-utils'
+import { ClusterProfileSidebar, type ClusterProfileSidebarLayer } from './cluster-profile-sidebar'
 
 export const ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG = 'engine-v2-platform-configuration'
 
@@ -51,9 +52,8 @@ type ProfileTreeItem = {
   id: string
   label: string
   description?: string | null
-  status: 'none' | 'disabled' | 'dot'
-  state: 'disabled' | 'default'
-  children?: readonly ProfileComponent[]
+  status: 'disabled' | 'success' | 'warning'
+  children: readonly ProfileComponent[]
 }
 
 function formatProfileLabel(value: string) {
@@ -72,8 +72,7 @@ function getProfileTree(template: PlatformTemplateSummaryResponse | undefined): 
         id: layer.key,
         label,
         description: layer.description,
-        status: normalizedLabel === 'infrastructure' ? 'disabled' : normalizedLabel === 'gateway api' ? 'dot' : 'none',
-        state: isDisabled ? 'disabled' : 'default',
+        status: isDisabled ? 'disabled' : normalizedLabel === 'gateway api' ? 'warning' : 'success',
         children: layer.components.map((component) => ({
           ...component,
           id: `${layer.key}/${component.key}`,
@@ -108,18 +107,6 @@ function getDefaultProfileComponent(profileTree: ProfileTreeItem[]) {
     profileTree.find((item) => item.label.toLowerCase() === 'log infra')?.children?.[0] ??
     profileTree.find((item) => item.children?.length)?.children?.[0]
   )
-}
-
-function TreeStatus({ status }: { status: ProfileTreeItem['status'] }) {
-  if (status === 'disabled') {
-    return <Icon iconName="circle-minus" className="text-neutral-disabled" />
-  }
-
-  if (status === 'dot') {
-    return <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-surface-brand-solid" />
-  }
-
-  return null
 }
 
 function getProfileSections(
@@ -365,15 +352,20 @@ export function ClusterProfileFeature({
   const previewsByComponent = Object.fromEntries(
     componentQueries.flatMap((query) => (query.data ? [[query.data.componentKey, query.data]] : []))
   )
-
-  const normalizedSearch = search.trim().toLowerCase()
-  const visibleTree = normalizedSearch
-    ? profileTree.filter(
-        (item) =>
-          item.label.toLowerCase().includes(normalizedSearch) ||
-          item.children?.some((child) => child.label.toLowerCase().includes(normalizedSearch))
-      )
-    : profileTree
+  const sidebarLayers = useMemo<ClusterProfileSidebarLayer[]>(
+    () =>
+      profileTree.map((item) => ({
+        id: item.id,
+        label: item.label,
+        status: item.status,
+        items: item.children.map((child) => ({
+          id: child.key,
+          key: child.key,
+          label: child.label,
+        })),
+      })),
+    [profileTree]
+  )
 
   const updateProfileConfig = (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => {
     setProfileValues((currentValues) =>
@@ -393,6 +385,15 @@ export function ClusterProfileFeature({
   const isConfigurationLoading =
     Boolean(activeComponent) && (isResolving || activePreview?.componentKey !== activeComponent?.key)
 
+  const handleSelectSection = (sectionId: string) => {
+    const firstItem = profileTree.find((item) => item.id === sectionId)?.children[0]
+    onActiveComponentChange?.(firstItem?.key ?? sectionId)
+  }
+
+  const handleSelectItem = (itemId: string) => {
+    onActiveComponentChange?.(itemId)
+  }
+
   return (
     <div className="min-h-[calc(100dvh-8rem)] bg-background-secondary text-sm">
       <header className="flex min-h-11 items-center justify-between gap-4 bg-surface-neutral px-4 py-2">
@@ -408,107 +409,17 @@ export function ClusterProfileFeature({
       </header>
 
       <div className="flex min-h-[calc(100dvh-10.75rem)] items-stretch pr-4">
-        <aside className="hidden w-[272px] shrink-0 flex-col bg-background-secondary lg:flex">
-          <div className="p-3">
-            <div className="relative flex items-center">
-              <Icon iconName="magnifying-glass" className="absolute left-2 text-xs text-neutral-subtle" />
-              <input
-                aria-label="Search layers"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search..."
-                className="focus-visible:ring-brand-strong/30 h-7 w-full rounded-md border border-neutral bg-surface-neutral pl-7 pr-2 text-xs text-neutral outline-none placeholder:text-neutral-subtle focus-visible:border-brand-strong focus-visible:ring-2"
-              />
-            </div>
-          </div>
-
-          <div className="flex h-8 items-center px-3">
-            <p className="font-medium text-neutral">Layers</p>
-          </div>
-
-          <nav aria-label="Infrastructure layers" className="flex min-h-0 flex-1 flex-col overflow-y-auto px-3 pb-4">
-            {isLoading ? <p className="px-2 py-1 text-xs text-neutral-subtle">Loading layers...</p> : null}
-            {isError ? <p className="px-2 py-1 text-xs text-negative">Unable to load layers.</p> : null}
-            {!isLoading && !isError && visibleTree.length === 0 ? (
-              <p className="px-2 py-1 text-xs text-neutral-subtle">No layers available.</p>
-            ) : null}
-            {visibleTree.map((item) => {
-              const isActiveLayer = item.id === activeLayer?.id
-              const selectComponent = item.children?.[0]?.key ?? item.id
-
-              return (
-                <div key={item.id} className={isActiveLayer ? 'rounded bg-surface-neutral-component' : undefined}>
-                  <div className="flex items-center justify-between gap-2 rounded px-3 py-1 text-neutral">
-                    <button
-                      type="button"
-                      aria-current={isActiveLayer ? 'page' : undefined}
-                      onClick={() => onActiveComponentChange?.(selectComponent)}
-                      className="focus-visible:ring-brand-strong flex min-w-0 flex-1 items-center gap-1.5 text-left outline-none focus-visible:ring-2"
-                    >
-                      <Icon
-                        iconName="layer-group"
-                        className={item.state === 'disabled' ? 'text-neutral-disabled' : 'text-neutral-subtle'}
-                      />
-                      <span className={item.state === 'disabled' ? 'truncate text-neutral-disabled' : 'truncate'}>
-                        {item.label}
-                      </span>
-                    </button>
-                    <TreeStatus status={item.status} />
-                  </div>
-                  {item.children && (
-                    <div className="flex flex-col">
-                      {item.children.map((child, childIndex) => {
-                        const childTextClass =
-                          item.state === 'disabled'
-                            ? 'text-neutral-disabled'
-                            : child.key === activeComponent?.key
-                              ? 'text-neutral'
-                              : 'text-neutral-subtle'
-
-                        return (
-                          <div
-                            key={child.id}
-                            className="flex h-7 min-w-0 items-center gap-1.5 overflow-hidden rounded px-3"
-                          >
-                            <span className="relative h-7 w-3.5 shrink-0">
-                              <span
-                                className={`absolute left-1/2 top-0 h-7 -translate-x-1/2 border-l ${
-                                  isActiveLayer
-                                    ? 'border-neutral-invert'
-                                    : item.state === 'disabled'
-                                      ? 'border-neutral'
-                                      : 'border-neutral-component'
-                                }`}
-                              />
-                            </span>
-                            <button
-                              type="button"
-                              aria-current={child.key === activeComponent?.key ? 'page' : undefined}
-                              onClick={() => onActiveComponentChange?.(child.key)}
-                              className={`focus-visible:ring-brand-strong flex min-w-0 flex-1 items-center gap-1.5 py-1 text-left outline-none focus-visible:ring-2 ${childTextClass}`}
-                            >
-                              <Icon iconName="wrench" className="shrink-0 text-xs" />
-                              <span className="truncate">{child.label}</span>
-                            </button>
-                          </div>
-                        )
-                      })}
-                    </div>
-                  )}
-                </div>
-              )
-            })}
-          </nav>
-          <div className="flex items-center justify-between p-3">
-            <div className="flex items-center gap-2 text-neutral">
-              <span>Qovery operator</span>
-              <Icon iconName="circle-check" className="text-positive" />
-            </div>
-            <Button variant="outline" color="neutral" size="xs" iconOnly aria-label="Qovery operator settings">
-              <Icon iconName="gear" />
-            </Button>
-          </div>
-        </aside>
+        <ClusterProfileSidebar
+          layers={sidebarLayers}
+          search={search}
+          selectedSectionId={activeLayer?.id}
+          selectedItemId={activeComponent?.key}
+          isLoading={isLoading}
+          isError={isError}
+          onSearchChange={setSearch}
+          onSelectSection={handleSelectSection}
+          onSelectItem={handleSelectItem}
+        />
 
         <main className="min-w-0 flex-1 overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
           <div className="flex items-start justify-between gap-4 bg-surface-neutral px-4 pb-2 pt-4">

@@ -3,6 +3,7 @@ import { twMerge } from '@qovery/shared/util-js'
 import Icon from '../../icon/icon'
 
 export interface InputSearchProps {
+  ariaLabel?: string
   placeholder?: string
   className?: string
   onChange?: (value: string) => void
@@ -14,6 +15,7 @@ export interface InputSearchProps {
 
 export function InputSearch(props: InputSearchProps) {
   const {
+    ariaLabel,
     placeholder = '',
     className = '',
     onChange,
@@ -57,6 +59,7 @@ export function InputSearch(props: InputSearchProps) {
             customSize
           )}
           type="text"
+          aria-label={ariaLabel}
           placeholder={placeholder}
           disabled={false}
           onChange={(e) => getValue(e.currentTarget.value)}
