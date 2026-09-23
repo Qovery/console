@@ -88,7 +88,7 @@ const service = {
   webhook_ip_allowlist: ['10.0.0.0/8'],
   resources: {
     cpu_milli: 1000,
-    ram_mib: 2046,
+    ram_mib: 2048,
     gpu: 0,
     storage_gib: 20,
   },
@@ -186,7 +186,7 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('Incident assistant')
     expect(screen.getByRole('textbox', { name: 'Description' })).toHaveValue('Investigates production incidents')
     expect(screen.getByRole('spinbutton', { name: 'CPU (mCPU)' })).toHaveValue(1000)
-    expect(screen.getByRole('spinbutton', { name: 'Memory (MiB)' })).toHaveValue(2046)
+    expect(screen.getByRole('spinbutton', { name: 'Memory (MiB)' })).toHaveValue(2048)
     expect(screen.getByRole('spinbutton', { name: 'GPU' })).toHaveValue(0)
     expect(screen.getByRole('spinbutton', { name: 'Storage (GiB)' })).toHaveValue(20)
     expect(screen.getByRole('button', { name: /In place/ })).toHaveAttribute('aria-pressed', 'true')

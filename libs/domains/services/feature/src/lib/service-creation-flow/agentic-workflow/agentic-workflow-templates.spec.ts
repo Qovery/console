@@ -83,7 +83,7 @@ describe('agentic-workflow-templates', () => {
     expect(template?.title).toBe('Build & deployment optimizer')
     expect(template?.seed.agentPrompt).toBeTruthy()
     expect(template?.seed.cpu).toBe('1000')
-    expect(template?.seed.memory).toBe('2046')
+    expect(template?.seed.memory).toBe('2048')
     expect(template?.seed.automations).toEqual([
       expect.objectContaining({
         triggers: [
@@ -115,10 +115,10 @@ describe('agentic-workflow-templates', () => {
     })
   })
 
-  it('allocates at least 1000 mCPU and 2046 MiB of memory to every template', () => {
+  it('allocates at least 1000 mCPU and 2048 MiB of memory to every template', () => {
     AGENTIC_WORKFLOW_TEMPLATES.forEach((template) => {
       expect(Number(template.seed.cpu)).toBeGreaterThanOrEqual(1000)
-      expect(Number(template.seed.memory)).toBeGreaterThanOrEqual(2046)
+      expect(Number(template.seed.memory)).toBeGreaterThanOrEqual(2048)
     })
   })
 

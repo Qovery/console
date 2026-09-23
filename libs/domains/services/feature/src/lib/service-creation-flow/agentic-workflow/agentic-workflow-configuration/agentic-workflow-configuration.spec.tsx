@@ -714,7 +714,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.type(memoryInput, '2045')
 
     expect(screen.getByText('CPU must be at least 1000 mCPU.')).toBeInTheDocument()
-    expect(screen.getByText('Memory must be at least 2046 MiB.')).toBeInTheDocument()
+    expect(screen.getByText('Memory must be at least 2048 MiB.')).toBeInTheDocument()
 
     await userEvent.clear(cpuInput)
     await userEvent.clear(memoryInput)

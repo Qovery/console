@@ -11,7 +11,7 @@ describe('AgenticWorkflowGeneralSettings', () => {
     )
 
     expect(screen.getByText('CPU (mCPU) must be at least 1000.')).toBeInTheDocument()
-    expect(screen.getByText('Memory (MiB) must be at least 2046.')).toBeInTheDocument()
+    expect(screen.getByText('Memory (MiB) must be at least 2048.')).toBeInTheDocument()
   })
 
   it('renders identity, execution mode, and resources', async () => {
@@ -32,7 +32,7 @@ describe('AgenticWorkflowGeneralSettings', () => {
     await userEvent.type(memoryInput, '2045')
 
     expect(screen.getByText('CPU (mCPU) must be at least 1000.')).toBeInTheDocument()
-    expect(screen.getByText('Memory (MiB) must be at least 2046.')).toBeInTheDocument()
+    expect(screen.getByText('Memory (MiB) must be at least 2048.')).toBeInTheDocument()
 
     await userEvent.clear(cpuInput)
     await userEvent.clear(memoryInput)
