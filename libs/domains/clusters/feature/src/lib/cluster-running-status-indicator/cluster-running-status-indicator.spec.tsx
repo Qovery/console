@@ -40,6 +40,10 @@ describe('ClusterRunningStatusIndicator', () => {
     jest.clearAllMocks()
   })
 
+  afterEach(() => {
+    jest.useRealTimers()
+  })
+
   it('should render a positive dot when global status is RUNNING and type is dot', () => {
     mockUseClusterRunningStatus.mockReturnValue({
       data: {
@@ -198,7 +202,6 @@ describe('ClusterRunningStatusIndicator', () => {
   })
 
   it('should display an active quota warning without the feature flag', async () => {
-    jest.useFakeTimers()
     mockUseClusterRunningStatus.mockReturnValue({
       data: {
         computed_status: {
@@ -222,8 +225,6 @@ describe('ClusterRunningStatusIndicator', () => {
     expect(quotaWarning.closest('div')).toHaveClass('before:self-stretch')
     expect(quotaWarning.closest('div')).not.toHaveClass('before:h-full', 'before:min-h-7')
     expect(screen.getByText(/AWS refused to create new nodes/)).toBeInTheDocument()
-
-    jest.useRealTimers()
   })
 
   it('should render a "Warning" dot when the warning is not a quota issue and type is dot', () => {
