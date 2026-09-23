@@ -155,11 +155,23 @@ function RequirementStatus({ status }: { status: 'MISSING' | 'READY' }) {
 
 function ProfileConfigurationSkeleton() {
   return (
-    <div role="status" aria-label="Loading configuration" className="flex flex-col gap-4 p-4">
-      <Skeleton width="28%" height={20} />
-      <Skeleton width="100%" height={64} />
-      <Skeleton width="100%" height={64} />
-      <Skeleton width="100%" height={64} />
+    <div role="status" aria-label="Loading configuration" className="flex flex-col">
+      {[0, 1, 2, 3, 4].map((row) => (
+        <div
+          key={row}
+          className="flex flex-col gap-4 border-b border-neutral p-4 md:flex-row md:items-start md:justify-between"
+        >
+          <div className="min-w-0 flex-1">
+            <Skeleton width={row === 1 ? '32%' : '40%'} height={20} />
+            <div className="mt-2">
+              <Skeleton width={row === 2 ? '82%' : '68%'} height={12} />
+            </div>
+          </div>
+          <div className="w-full shrink-0 md:w-[400px]">
+            <Skeleton className="h-10 w-full rounded" />
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
