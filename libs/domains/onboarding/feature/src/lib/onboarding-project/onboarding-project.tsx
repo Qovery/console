@@ -1,4 +1,3 @@
-import { useGTMDispatch } from '@elgorditosalsero/react-gtm-hook'
 import { useNavigate } from '@tanstack/react-router'
 import posthog from 'posthog-js'
 import { type SignUpRequest } from 'qovery-typescript-axios'
@@ -13,13 +12,13 @@ import { useDocumentTitle } from '@qovery/shared/util-hooks'
 import { type SerializedError } from '@qovery/shared/utils'
 import { ContextOnboarding } from '../container/container'
 import { StepProject } from '../step-project/step-project'
+import { pushToDataLayer } from '../utils/data-layer'
 
 export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   useDocumentTitle('Onboarding Organization - Qovery')
 
   const navigate = useNavigate()
   const { user, getAccessTokenSilently } = useAuth()
-  const sendDataToGTM = useGTMDispatch()
   const { data: organizations = [] } = useOrganizations()
   const { organization_name, project_name, admin_email, selectedPlan, phone } = useContext(ContextOnboarding)
   const { mutateAsync: createOrganization } = useCreateOrganization()
@@ -105,7 +104,7 @@ export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
         phone,
         use_cases: userSignUp?.user_questions ? userSignUp.user_questions.split(',') : [],
       })
-      await sendDataToGTM({ event: 'onboarding-organization-created', plan: selectedPlan })
+      pushToDataLayer({ event: 'onboarding-organization-created', plan: selectedPlan })
       navigate({ to: '/organization/$organizationId/overview', params: { organizationId: organization.id } })
       toast('success', 'Your organization and project have been created')
     } catch (error) {

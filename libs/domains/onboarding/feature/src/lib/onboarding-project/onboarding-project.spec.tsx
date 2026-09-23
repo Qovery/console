@@ -11,10 +11,6 @@ jest.mock('@tanstack/react-router', () => ({
   useNavigate: () => mockedUsedNavigate,
 }))
 
-jest.mock('@elgorditosalsero/react-gtm-hook', () => ({
-  useGTMDispatch: () => jest.fn(),
-}))
-
 jest.mock('@qovery/shared/auth', () => ({
   ...jest.requireActual('@qovery/shared/auth'),
   useAuth: () => ({
@@ -54,6 +50,7 @@ const { useUserSignUp } = jest.requireMock('@qovery/domains/users-sign-up/featur
 describe('OnboardingProject', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    delete window.dataLayer
     mockCreateOrganization.mockResolvedValue({ id: 'organization-id' })
     mockCreateProject.mockResolvedValue(undefined)
     mockCreateUserSignUp.mockResolvedValue(undefined)
@@ -102,5 +99,26 @@ describe('OnboardingProject', () => {
       organizationId: 'organization-id',
       projectRequest: { name: 'main' },
     })
+  })
+
+  it('should push the organization creation event to the GTM dataLayer', async () => {
+    const { userEvent } = renderWithProviders(<OnboardingProject />)
+
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(window.dataLayer).toContainEqual({ event: 'onboarding-organization-created', plan: 'BUSINESS_2025' })
+  })
+
+  it('should not push the GTM event when the organization creation fails', async () => {
+    mockCreateOrganization.mockRejectedValue({ code: '409' })
+    const { userEvent } = renderWithProviders(<OnboardingProject />)
+
+    await userEvent.type(screen.getByLabelText('Organization name'), 'Acme')
+    await userEvent.click(screen.getByRole('button', { name: 'Continue' }))
+
+    expect(window.dataLayer ?? []).not.toContainEqual(
+      expect.objectContaining({ event: 'onboarding-organization-created' })
+    )
   })
 })
