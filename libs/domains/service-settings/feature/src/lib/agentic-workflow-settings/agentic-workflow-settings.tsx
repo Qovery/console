@@ -204,13 +204,15 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   if (!workflow) return null
 
   const values = form.watch()
+  const selectedProvider = llmProviders.find(({ id }) => id === values.llmProviderId)
+  const selectedProviderType = selectedProvider?.type ?? workflow.model.type
   const pageValid =
     Boolean(values.name.trim()) &&
     (page !== 'general' || areAgenticWorkflowResourcesValid(values.cpu, values.ram)) &&
     (page !== 'ai-configuration' ||
       (Boolean(values.llmProviderId) &&
         Boolean(values.agentPrompt.trim()) &&
-        agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
+        (selectedProviderType !== 'BEDROCK' || agenticWorkflowJsonValidation(values.modelSettings) === true))) &&
     (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
   const persistSettings: SaveAgenticWorkflowSettings = async (updatedValues) => {
     const data = { ...form.getValues(), ...updatedValues }
@@ -286,6 +288,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           <AgenticWorkflowAiConfigurationSettings
             form={form}
             llmProviders={llmProviders.filter(({ has_credential }) => has_credential)}
+            modelType={workflow.model.type}
           />
         ) : null}
         {page === 'connections' ? (

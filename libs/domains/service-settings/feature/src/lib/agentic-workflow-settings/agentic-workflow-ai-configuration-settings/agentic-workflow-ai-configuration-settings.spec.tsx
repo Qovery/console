@@ -1,3 +1,10 @@
+import {
+  AgenticWorkflowModelType,
+  type LlmProviderResponse,
+  LlmProviderScope,
+  LlmProviderType,
+} from 'qovery-typescript-axios'
+import * as organizationsDomain from '@qovery/domains/organizations/feature'
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
 import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings-test-utils'
 import { AgenticWorkflowAiConfigurationSettings } from './agentic-workflow-ai-configuration-settings'
@@ -6,11 +13,33 @@ jest.mock('@tanstack/react-router', () => ({
   useParams: () => ({ environmentId: 'environment-1', organizationId: 'organization-1' }),
 }))
 
+const useLlmProviderModelsSpy = jest.spyOn(organizationsDomain, 'useLlmProviderModels') as jest.Mock
+
+const claudeProvider: LlmProviderResponse = {
+  id: 'provider-1',
+  name: 'Claude token',
+  type: LlmProviderType.CLAUDE,
+  scope: LlmProviderScope.ORGANIZATION,
+  has_credential: true,
+  created_at: '2026-09-23T00:00:00Z',
+  updated_at: '2026-09-23T00:00:00Z',
+}
+
 describe('AgenticWorkflowAiConfigurationSettings', () => {
+  beforeEach(() => {
+    useLlmProviderModelsSpy.mockReturnValue({ data: [], isError: false, isLoading: false, refetch: jest.fn() })
+  })
+
   it('renders the token, model settings, and instructions', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness>
-        {(form) => <AgenticWorkflowAiConfigurationSettings form={form} llmProviders={[]} />}
+        {(form) => (
+          <AgenticWorkflowAiConfigurationSettings
+            form={form}
+            llmProviders={[]}
+            modelType={AgenticWorkflowModelType.BEDROCK}
+          />
+        )}
       </AgenticWorkflowSettingsFormHarness>
     )
 
@@ -26,11 +55,59 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
   it('does not show an instructions error before the field is modified', () => {
     renderWithProviders(
       <AgenticWorkflowSettingsFormHarness values={{ agentPrompt: '' }}>
-        {(form) => <AgenticWorkflowAiConfigurationSettings form={form} llmProviders={[]} />}
+        {(form) => (
+          <AgenticWorkflowAiConfigurationSettings
+            form={form}
+            llmProviders={[]}
+            modelType={AgenticWorkflowModelType.BEDROCK}
+          />
+        )}
       </AgenticWorkflowSettingsFormHarness>
     )
 
     expect(screen.getByRole('textbox', { name: 'Instructions' })).toHaveAttribute('aria-invalid', 'false')
     expect(screen.queryByText('Please enter instructions.')).not.toBeInTheDocument()
+  })
+
+  it('shows the model selector instead of cloud settings for Claude', () => {
+    useLlmProviderModelsSpy.mockReturnValue({
+      data: [{ id: 'claude-sonnet', display_name: 'Claude Sonnet', created_at: null }],
+      isError: false,
+      isLoading: false,
+      refetch: jest.fn(),
+    })
+
+    renderWithProviders(
+      <AgenticWorkflowSettingsFormHarness
+        values={{ llmProviderId: claudeProvider.id, modelSettings: '{"model":"claude-sonnet"}' }}
+      >
+        {(form) => (
+          <AgenticWorkflowAiConfigurationSettings
+            form={form}
+            llmProviders={[claudeProvider]}
+            modelType={AgenticWorkflowModelType.CLAUDE}
+          />
+        )}
+      </AgenticWorkflowSettingsFormHarness>
+    )
+
+    expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
+  })
+
+  it('shows only the requested example in an empty Bedrock field', () => {
+    renderWithProviders(
+      <AgenticWorkflowSettingsFormHarness values={{ modelSettings: '' }}>
+        {(form) => (
+          <AgenticWorkflowAiConfigurationSettings
+            form={form}
+            llmProviders={[]}
+            modelType={AgenticWorkflowModelType.BEDROCK}
+          />
+        )}
+      </AgenticWorkflowSettingsFormHarness>
+    )
+
+    expect(screen.getByText(/"model": "eu\.anthropic\.claude-opus-5"/)).toBeInTheDocument()
   })
 })

@@ -97,6 +97,7 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
     mutateAsync: mockCreateQoveryMcpServer,
   }),
   useLlmProviders: () => ({ data: mockLlmProviders, isLoading: false }),
+  useLlmProviderModels: () => ({ data: [], isError: false, isLoading: false, refetch: jest.fn() }),
   useMcpServers: () => ({
     data: mockMcpServers,
     isError: mockMcpServersError,
@@ -331,7 +332,8 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Select stored token' })).toBeInTheDocument()
     expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
-    expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
+    expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))

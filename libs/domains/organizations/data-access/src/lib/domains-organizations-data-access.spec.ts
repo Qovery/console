@@ -61,6 +61,22 @@ describe('organizations.mcpServers', () => {
   })
 })
 
+describe('organizations.llmProviderModels', () => {
+  it('should return the models available for the LLM provider', async () => {
+    const mockData = [{ id: 'claude-sonnet-4', display_name: 'Claude Sonnet 4', created_at: null }]
+    jest
+      .spyOn(LLMProvidersApi.prototype, 'listLlmProviderModels')
+      .mockResolvedValue({ data: { results: mockData } } as never)
+
+    const query = organizations.llmProviderModels({ llmProviderId: 'provider-1' })
+    const result = await query.queryFn({} as never)
+
+    expect(LLMProvidersApi.prototype.listLlmProviderModels).toHaveBeenCalledWith('provider-1')
+    expect(result).toEqual(mockData)
+    expect(query.queryKey).toContain('provider-1')
+  })
+})
+
 describe('MCP server mutations', () => {
   const mcpServerRequest = {
     name: 'GitHub',

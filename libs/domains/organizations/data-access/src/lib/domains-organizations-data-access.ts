@@ -132,6 +132,13 @@ export const organizations = createQueryKeys('organizations', {
       return response.data.results
     },
   }),
+  llmProviderModels: ({ llmProviderId }: { llmProviderId: string }) => ({
+    queryKey: [llmProviderId],
+    async queryFn() {
+      const response = await llmProvidersApi.listLlmProviderModels(llmProviderId)
+      return response.data.results
+    },
+  }),
   containerRegistry: ({
     organizationId,
     containerRegistryId,

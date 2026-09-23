@@ -103,6 +103,7 @@ export * from './lib/hooks/use-create-qovery-mcp-server/use-create-qovery-mcp-se
 export * from './lib/hooks/use-edit-mcp-server/use-edit-mcp-server'
 export * from './lib/hooks/use-delete-mcp-server/use-delete-mcp-server'
 export * from './lib/hooks/use-llm-providers/use-llm-providers'
+export * from './lib/hooks/use-llm-provider-models/use-llm-provider-models'
 export * from './lib/hooks/use-create-llm-provider/use-create-llm-provider'
 export * from './lib/hooks/use-edit-llm-provider/use-edit-llm-provider'
 export * from './lib/hooks/use-delete-llm-provider/use-delete-llm-provider'

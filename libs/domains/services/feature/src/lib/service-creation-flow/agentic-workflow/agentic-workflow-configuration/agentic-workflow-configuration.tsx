@@ -47,6 +47,7 @@ import {
   createDefaultAutomation,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
+import { AgenticWorkflowModelSetting } from '../agentic-workflow-model-setting'
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
 import {
   AGENTIC_WORKFLOW_MIN_CPU_MILLI,
@@ -340,7 +341,6 @@ export function AgenticWorkflowConfiguration() {
   const submissionInFlightRef = useRef(false)
   const values = form.watch()
   const { dirtyFields } = form.formState
-  const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
   const variableValues = variablesForm.watch('variables')
   const variablesValid = areVariablesValid(variableValues)
@@ -349,10 +349,12 @@ export function AgenticWorkflowConfiguration() {
   const showPromptError = (showValidationErrors || Boolean(dirtyFields.agentPrompt)) && !values.agentPrompt.trim()
   const hasModelCredential = Boolean(values.llmProviderId)
   const showLlmProviderError = (showValidationErrors || Boolean(dirtyFields.llmProviderId)) && !hasModelCredential
-  const providerConfigurationInvalid = !hasModelCredential || Boolean(modelSettingsJsonError)
   const availableLlmProviders = llmProviders.filter(({ has_credential }) => has_credential)
   const selectedProvider = llmProviders.find(({ id }) => id === values.llmProviderId)
-  const isBedrockProvider = selectedProvider?.type === LlmProviderType.BEDROCK
+  const selectedProviderType = selectedProvider?.type ?? values.aiModel
+  const isBedrockProvider = selectedProviderType === LlmProviderType.BEDROCK
+  const modelSettingsJsonError = isBedrockProvider ? getJsonError(values.modelSettingsJson, true) : undefined
+  const providerConfigurationInvalid = !hasModelCredential || Boolean(modelSettingsJsonError)
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
     resources: !resourcesValid,
@@ -1125,7 +1127,7 @@ export function AgenticWorkflowConfiguration() {
         <Modal externalOpen={providerModalOpen} setExternalOpen={setProviderModalOpen} width={520}>
           <ConfigurationModalContent
             title="Configure provider"
-            description="Configure the model provider token and cloud settings for the agent task."
+            description="Configure the model provider token and model settings for the agent task."
             confirmLabel="Save provider"
             setOpen={setProviderModalOpen}
           >
@@ -1152,27 +1154,22 @@ export function AgenticWorkflowConfiguration() {
                     name="modelSettingsJson"
                     control={form.control}
                     render={({ field }) => (
-                      <AgenticWorkflowCodeEditorField
-                        name={field.name}
-                        label="Cloud settings JSON"
-                        language="json"
-                        value={field.value}
-                        error={modelSettingsJsonError}
-                        hint={
-                          <>
-                            Configure the cloud model runtime. Read the{' '}
-                            <a
-                              href="https://code.claude.com/docs/en/settings"
-                              target="_blank"
-                              rel="noreferrer"
-                              className="font-medium text-brand hover:underline"
-                            >
-                              Claude Code settings documentation
-                            </a>
-                            .
-                          </>
-                        }
+                      <AgenticWorkflowModelSetting
+                        llmProviderId={values.llmProviderId}
+                        providerType={selectedProviderType}
+                        settings={field.value}
                         onChange={field.onChange}
+                        bedrockSettings={
+                          <AgenticWorkflowCodeEditorField
+                            name={field.name}
+                            label="Cloud settings JSON"
+                            language="json"
+                            value={field.value}
+                            error={modelSettingsJsonError}
+                            placeholder={'{\n  "model": "eu.anthropic.claude-opus-5"\n}'}
+                            onChange={field.onChange}
+                          />
+                        }
                       />
                     )}
                   />
