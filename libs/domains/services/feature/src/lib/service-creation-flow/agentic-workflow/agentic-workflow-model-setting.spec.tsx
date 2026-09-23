@@ -95,7 +95,7 @@ describe('AgenticWorkflowModelSetting', () => {
   it('keeps Bedrock settings visible and initializes valid model settings', async () => {
     const onChange = jest.fn()
 
-    renderWithProviders(
+    const { rerender } = renderWithProviders(
       <AgenticWorkflowModelSetting
         bedrockSettings={<div>Cloud settings JSON</div>}
         llmProviderId="provider-1"
@@ -109,6 +109,35 @@ describe('AgenticWorkflowModelSetting', () => {
     expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'eu.anthropic.claude-opus-5' })
+
+    onChange.mockClear()
+    rerender(
+      <AgenticWorkflowModelSetting
+        bedrockSettings={<div>Cloud settings JSON</div>}
+        llmProviderId="provider-1"
+        providerType={LlmProviderType.BEDROCK}
+        settings={'{"model":'}
+        onChange={onChange}
+      />
+    )
+
+    expect(onChange).not.toHaveBeenCalled()
+  })
+
+  it('does not replace initially invalid Bedrock settings', () => {
+    const onChange = jest.fn()
+
+    renderWithProviders(
+      <AgenticWorkflowModelSetting
+        bedrockSettings={<div>Cloud settings JSON</div>}
+        llmProviderId="provider-1"
+        providerType={LlmProviderType.BEDROCK}
+        settings={'{"model":'}
+        onChange={onChange}
+      />
+    )
+
+    expect(onChange).not.toHaveBeenCalled()
   })
 
   it('does not show model settings before a token is selected', () => {

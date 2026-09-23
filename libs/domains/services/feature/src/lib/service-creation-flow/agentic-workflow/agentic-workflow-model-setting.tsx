@@ -1,5 +1,5 @@
 import { LlmProviderType, type LlmProviderType as LlmProviderTypeValue } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect } from 'react'
+import { type ReactNode, useEffect, useRef } from 'react'
 import { useLlmProviderModels } from '@qovery/domains/organizations/feature'
 import { InputSelect } from '@qovery/shared/ui'
 
@@ -41,6 +41,7 @@ export function AgenticWorkflowModelSetting({
   settings,
   onChange,
 }: AgenticWorkflowModelSettingProps) {
+  const initializedDefaults = useRef(new Set<string>())
   const hasLlmProvider = Boolean(llmProviderId)
   const isClaude = hasLlmProvider && providerType === LlmProviderType.CLAUDE
   const {
@@ -52,16 +53,40 @@ export function AgenticWorkflowModelSetting({
     enabled: isClaude,
   })
 
+  const parsedSettings = parseModelSettings(settings)
   const currentModel = getAgenticWorkflowModel(settings)
   const firstModelId = models[0]?.id
+  const hasInvalidSettings = Boolean(settings.trim()) && !parsedSettings
 
   useEffect(() => {
-    if (isClaude && !currentModel && firstModelId) {
+    if (!hasLlmProvider || !providerType) return
+
+    const initializationKey = `${llmProviderId}:${providerType}`
+    if (initializedDefaults.current.has(initializationKey)) return
+
+    if (currentModel || hasInvalidSettings) {
+      initializedDefaults.current.add(initializationKey)
+      return
+    }
+
+    if (isClaude && firstModelId) {
+      initializedDefaults.current.add(initializationKey)
       onChange(updateAgenticWorkflowModel(settings, firstModelId))
-    } else if (hasLlmProvider && providerType === LlmProviderType.BEDROCK && !currentModel) {
+    } else if (providerType === LlmProviderType.BEDROCK) {
+      initializedDefaults.current.add(initializationKey)
       onChange(updateAgenticWorkflowModel(settings, DEFAULT_BEDROCK_MODEL))
     }
-  }, [currentModel, firstModelId, hasLlmProvider, isClaude, onChange, providerType, settings])
+  }, [
+    currentModel,
+    firstModelId,
+    hasInvalidSettings,
+    hasLlmProvider,
+    isClaude,
+    llmProviderId,
+    onChange,
+    providerType,
+    settings,
+  ])
 
   if (!hasLlmProvider) return null
   if (!isClaude) return bedrockSettings
