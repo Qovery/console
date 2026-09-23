@@ -14,6 +14,7 @@ import {
   ClusterAvatar,
   ClusterLastDeploymentSection,
   ClusterNeedRedeployFlag,
+  ClusterQuotaWarningCallout,
   ClusterRunningStatusIndicator,
   ClusterType,
   hasGpuInstance,
@@ -222,6 +223,7 @@ function ClusterOverview({ organizationId, clusterId }: { organizationId: string
           </div>
           <hr className="w-full border-neutral" />
         </div>
+        <ClusterQuotaWarningCallout />
         <ClusterLastDeploymentSection
           organizationId={organizationId}
           clusterId={clusterId}
