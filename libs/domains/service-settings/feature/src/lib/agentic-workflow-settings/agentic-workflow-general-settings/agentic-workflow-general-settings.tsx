@@ -91,11 +91,13 @@ export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<A
                     label={label}
                     error={
                       error?.message ??
-                      (!field.value
-                        ? requiredMessage
-                        : minimum !== undefined && Number(field.value) < minimum
-                          ? minimumError
-                          : undefined)
+                      (minimum === undefined
+                        ? undefined
+                        : !field.value
+                          ? requiredMessage
+                          : Number(field.value) < minimum
+                            ? minimumError
+                            : undefined)
                     }
                   />
                 )}

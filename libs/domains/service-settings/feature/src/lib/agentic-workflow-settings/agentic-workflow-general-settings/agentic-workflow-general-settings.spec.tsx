@@ -39,6 +39,11 @@ describe('AgenticWorkflowGeneralSettings', () => {
     expect(screen.getByText('CPU is required.')).toBeInTheDocument()
     expect(screen.getByText('Memory is required.')).toBeInTheDocument()
 
+    await userEvent.clear(screen.getByRole('spinbutton', { name: 'GPU' }))
+    await userEvent.clear(screen.getByRole('spinbutton', { name: 'Storage (GiB)' }))
+    expect(screen.queryByText('GPU is required.')).not.toBeInTheDocument()
+    expect(screen.queryByText('Storage (GiB) is required.')).not.toBeInTheDocument()
+
     await userEvent.click(screen.getByRole('button', { name: /Clone environment/ }))
 
     expect(screen.getByRole('button', { name: /Clone environment/ })).toHaveAttribute('aria-pressed', 'true')
