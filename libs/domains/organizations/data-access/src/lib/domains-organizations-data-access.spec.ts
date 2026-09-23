@@ -69,9 +69,13 @@ describe('organizations.llmProviderModels', () => {
       .mockResolvedValue({ data: { results: mockData } } as never)
 
     const query = organizations.llmProviderModels({ llmProviderId: 'provider-1' })
-    const result = await query.queryFn({} as never)
+    const signal = new AbortController().signal
+    const result = await query.queryFn({ signal } as never)
 
-    expect(LLMProvidersApi.prototype.listLlmProviderModels).toHaveBeenCalledWith('provider-1')
+    expect(LLMProvidersApi.prototype.listLlmProviderModels).toHaveBeenCalledWith('provider-1', {
+      signal,
+      timeout: 15_000,
+    })
     expect(result).toEqual(mockData)
     expect(query.queryKey).toContain('provider-1')
   })

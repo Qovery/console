@@ -10,5 +10,6 @@ export function useLlmProviderModels({ llmProviderId, enabled = true }: UseLlmPr
   return useQuery({
     ...queries.organizations.llmProviderModels({ llmProviderId }),
     enabled: enabled && Boolean(llmProviderId),
+    retry: false,
   })
 }
