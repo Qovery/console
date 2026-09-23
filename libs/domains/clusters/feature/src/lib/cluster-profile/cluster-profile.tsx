@@ -4,12 +4,13 @@ import {
   type PlatformTemplateComponentResponse,
   type PlatformTemplateSummaryResponse,
 } from 'qovery-typescript-axios'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { CatalogVariableInput } from '@qovery/shared/console-shared'
 import { IconEnum } from '@qovery/shared/enums'
 import { Badge, Button, EmptyState, Heading, Icon, InputToggle, Skeleton } from '@qovery/shared/ui'
 import { useDebounce } from '@qovery/shared/util-hooks'
 import { type CatalogVariableValue, getCatalogVariableValue } from '@qovery/shared/util-js'
+import { NODE_ENV } from '@qovery/shared/util-node-env'
 import { useCluster } from '../hooks/use-cluster/use-cluster'
 import { usePlatformTemplates } from '../hooks/use-platform-templates/use-platform-templates'
 import { usePlatformBinding } from '../platform-configuration/hooks/use-platform-binding'
@@ -363,6 +364,24 @@ export function ClusterProfileFeature({
     requests: debouncedPreviewRequests,
     enabled: Boolean(profileSections.length),
   })
+  const loggedSchemaResponses = useRef(new WeakSet<object>())
+
+  useEffect(() => {
+    if (NODE_ENV === 'production') return
+
+    if (templates && !loggedSchemaResponses.current.has(templates)) {
+      loggedSchemaResponses.current.add(templates)
+      console.log('[Cluster profile] Platform template catalog API response', templates)
+    }
+
+    componentQueries.forEach(({ data }) => {
+      if (!data || loggedSchemaResponses.current.has(data)) return
+
+      loggedSchemaResponses.current.add(data)
+      console.log(`[Cluster profile] Component configuration API response (${data.componentKey})`, data)
+    })
+  }, [componentQueries, templates])
+
   const previewsByComponent = Object.fromEntries(
     componentQueries.flatMap((query) => (query.data ? [[query.data.componentKey, query.data]] : []))
   )
