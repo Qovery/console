@@ -718,6 +718,9 @@ describe('AgenticWorkflowConfiguration', () => {
 
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
+    const resourcesTrigger = screen.getByRole('button', { name: /Resources/ })
+    expect(resourcesTrigger).toHaveAttribute('data-state', 'open')
+    expect(resourcesTrigger).toHaveClass('bg-surface-negative-subtle')
     expect(mockCreateService).not.toHaveBeenCalled()
   })
 

@@ -60,21 +60,37 @@ export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<A
         description="Configure the compute resources allocated to the agent task."
       >
         <div className="grid gap-3 sm:grid-cols-2">
-          {RESOURCE_FIELDS.map(({ name, label, ...rules }) => (
-            <Controller
-              key={name}
-              name={name}
-              control={form.control}
-              rules={
-                'min' in rules
-                  ? { min: { value: rules.min, message: `${label} must be at least ${rules.min}.` } }
-                  : undefined
-              }
-              render={({ field, fieldState: { error } }) => (
-                <InputText {...field} type="number" label={label} error={error?.message} />
-              )}
-            />
-          ))}
+          {RESOURCE_FIELDS.map(({ name, label, ...rules }) => {
+            const minimum = 'min' in rules ? rules.min : undefined
+            const minimumError = minimum === undefined ? undefined : `${label} must be at least ${minimum}.`
+            const validationRules =
+              minimum === undefined
+                ? undefined
+                : {
+                    required: `${label} must be at least ${minimum}.`,
+                    min: { value: minimum, message: `${label} must be at least ${minimum}.` },
+                  }
+
+            return (
+              <Controller
+                key={name}
+                name={name}
+                control={form.control}
+                rules={validationRules}
+                render={({ field, fieldState: { error } }) => (
+                  <InputText
+                    {...field}
+                    type="number"
+                    label={label}
+                    error={
+                      error?.message ??
+                      (minimum !== undefined && Number(field.value) < minimum ? minimumError : undefined)
+                    }
+                  />
+                )}
+              />
+            )
+          })}
         </div>
       </AgenticWorkflowSettingsCard>
     </>

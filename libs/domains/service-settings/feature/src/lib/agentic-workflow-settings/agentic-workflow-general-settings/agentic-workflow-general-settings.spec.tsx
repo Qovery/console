@@ -3,6 +3,17 @@ import { AgenticWorkflowSettingsFormHarness } from '../agentic-workflow-settings
 import { AgenticWorkflowGeneralSettings } from './agentic-workflow-general-settings'
 
 describe('AgenticWorkflowGeneralSettings', () => {
+  it('shows errors for existing resources below the minimums', () => {
+    renderWithProviders(
+      <AgenticWorkflowSettingsFormHarness values={{ cpu: '500', ram: '1024' }}>
+        {(form) => <AgenticWorkflowGeneralSettings form={form} />}
+      </AgenticWorkflowSettingsFormHarness>
+    )
+
+    expect(screen.getByText('CPU (mCPU) must be at least 1000.')).toBeInTheDocument()
+    expect(screen.getByText('Memory (MiB) must be at least 2046.')).toBeInTheDocument()
+  })
+
   it('renders identity, execution mode, and resources', async () => {
     const { userEvent } = renderWithProviders(
       <AgenticWorkflowSettingsFormHarness>
@@ -22,6 +33,9 @@ describe('AgenticWorkflowGeneralSettings', () => {
 
     expect(screen.getByText('CPU (mCPU) must be at least 1000.')).toBeInTheDocument()
     expect(screen.getByText('Memory (MiB) must be at least 2046.')).toBeInTheDocument()
+
+    await userEvent.clear(cpuInput)
+    expect(screen.getByText('CPU (mCPU) must be at least 1000.')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: /Clone environment/ }))
 

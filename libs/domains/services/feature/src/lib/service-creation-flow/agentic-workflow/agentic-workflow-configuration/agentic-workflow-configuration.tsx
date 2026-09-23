@@ -643,12 +643,17 @@ export function AgenticWorkflowConfiguration() {
         />
       </SettingsAccordionItem>
 
-      <SettingsAccordionItem value="resources" title="Resources" invalid={false}>
+      <SettingsAccordionItem
+        value="resources"
+        title="Resources"
+        invalid={showValidationErrors && settingsGroupsInvalid.resources}
+      >
         <div className="grid gap-3">
           <Controller
             name="cpu"
             control={form.control}
             rules={{
+              required: `CPU must be at least ${AGENTIC_WORKFLOW_MIN_CPU_MILLI} mCPU.`,
               min: {
                 value: AGENTIC_WORKFLOW_MIN_CPU_MILLI,
                 message: `CPU must be at least ${AGENTIC_WORKFLOW_MIN_CPU_MILLI} mCPU.`,
@@ -669,6 +674,7 @@ export function AgenticWorkflowConfiguration() {
             name="memory"
             control={form.control}
             rules={{
+              required: `Memory must be at least ${AGENTIC_WORKFLOW_MIN_RAM_MIB} MiB.`,
               min: {
                 value: AGENTIC_WORKFLOW_MIN_RAM_MIB,
                 message: `Memory must be at least ${AGENTIC_WORKFLOW_MIN_RAM_MIB} MiB.`,
