@@ -1,7 +1,7 @@
 import { useFeatureFlagVariantKey } from 'posthog-js/react'
 import { type Cluster } from 'qovery-typescript-axios'
+import { type ClusterQuotaWarningDto } from 'qovery-ws-typescript-axios'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
-import { activeQuotaWarning } from '../cluster-quota-warning/cluster-quota-warning.fixture'
 import { useClusterRunningStatus } from '../hooks/use-cluster-running-status/use-cluster-running-status'
 import { ClusterRunningStatusIndicator } from './cluster-running-status-indicator'
 
@@ -19,6 +19,20 @@ const mockCluster = {
   status: 'DEPLOYED',
   is_demo: false,
 } as Cluster
+
+const activeQuotaWarning = {
+  status: 'ACTIVE',
+  provider: 'AWS',
+  source: 'KARPENTER_EVENT',
+  quota_code: 'MaxSpotInstanceCountExceeded',
+  quota_name: 'Spot Instance requests',
+  resource: 'EC2 Spot instances',
+  region: null,
+  message: 'AWS refused to create new nodes because the Spot Instance requests quota has been reached.',
+  suggested_action: 'Request an AWS quota increase, then retry or wait for the cluster to scale again.',
+  detected_at: 1790004098000,
+  last_seen_at: 1790004098000,
+} satisfies ClusterQuotaWarningDto
 
 // TODO: Remove skip test when feature is available for all users 100%
 describe('ClusterRunningStatusIndicator', () => {
@@ -166,7 +180,7 @@ describe('ClusterRunningStatusIndicator', () => {
     expect(screen.getByText('2')).toBeInTheDocument()
   })
 
-  it('should render a "Quota issue" dot when a quota warning is active and type is dot', () => {
+  it('should render the affected resource in the quota warning dot when type is dot', () => {
     mockUseClusterRunningStatus.mockReturnValue({
       data: {
         computed_status: {
@@ -180,7 +194,36 @@ describe('ClusterRunningStatusIndicator', () => {
 
     renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} type="dot" />)
 
-    expect(screen.getByLabelText('Quota issue')).toBeInTheDocument()
+    expect(screen.getByLabelText('Quota issue: EC2 Spot instances')).toBeInTheDocument()
+  })
+
+  it('should display an active quota warning without the feature flag', async () => {
+    jest.useFakeTimers()
+    mockUseClusterRunningStatus.mockReturnValue({
+      data: {
+        computed_status: {
+          global_status: 'WARNING',
+          node_warnings: {},
+          quota_warning: activeQuotaWarning,
+        },
+      },
+      isLoading: false,
+    })
+
+    const { container, userEvent } = renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} />)
+
+    expect(screen.getByText('1')).toHaveClass('bg-surface-warning-solidHover')
+    expect(screen.getByText('warning')).toBeInTheDocument()
+    expect(container.querySelector('.bg-surface-positive-solid')).not.toBeInTheDocument()
+
+    await userEvent.click(screen.getByText('warning'))
+
+    const quotaWarning = await screen.findByText(/AWS quota issue: EC2 Spot instances/)
+    expect(quotaWarning.closest('div')).toHaveClass('before:self-stretch')
+    expect(quotaWarning.closest('div')).not.toHaveClass('before:h-full', 'before:min-h-7')
+    expect(screen.getByText(/AWS refused to create new nodes/)).toBeInTheDocument()
+
+    jest.useRealTimers()
   })
 
   it('should render a "Warning" dot when the warning is not a quota issue and type is dot', () => {
@@ -215,7 +258,7 @@ describe('ClusterRunningStatusIndicator', () => {
 
     const { container } = renderWithProviders(<ClusterRunningStatusIndicator cluster={mockCluster} />)
 
-    expect(container.querySelector('.text-surface-warning-solid')).toBeInTheDocument()
+    expect(container.querySelector('.text-warning')).toBeInTheDocument()
   })
 
   it.skip('should render "Error" badge with count when global status is ERROR', () => {

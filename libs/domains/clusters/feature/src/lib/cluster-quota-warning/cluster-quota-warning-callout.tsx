@@ -13,18 +13,20 @@ export function ClusterQuotaWarningCallout() {
   }
 
   return (
-    <Callout.Root color="yellow">
+    <Callout.Root color="yellow" className="items-start">
       <Callout.Icon>
         <Icon iconName="triangle-exclamation" iconStyle="regular" />
       </Callout.Icon>
       <Callout.Text>
         <Callout.TextHeading>
-          {quotaWarning.provider} quota issue: {quotaWarning.quota_name}
+          {quotaWarning.provider} quota issue: {quotaWarning.quota_name ?? quotaWarning.quota_code}
         </Callout.TextHeading>
         <Callout.TextDescription className="flex flex-col gap-1">
           <span>{quotaWarning.message}</span>
-          <span>Impacted resource: {quotaWarning.resource}</span>
-          <span>{quotaWarning.suggested_action}</span>
+          <span>
+            {quotaWarning.resource && <>Impacted resource: {quotaWarning.resource}. </>}
+            {quotaWarning.suggested_action}
+          </span>
         </Callout.TextDescription>
       </Callout.Text>
     </Callout.Root>

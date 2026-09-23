@@ -1,8 +1,21 @@
-import { type ClusterStatusDto } from 'qovery-ws-typescript-axios'
-import { type ClusterQuotaWarning, getClusterQuotaWarning } from './cluster-quota-warning'
-import { activeQuotaWarning } from './cluster-quota-warning.fixture'
+import { type ClusterQuotaWarningDto, type ClusterStatusDto } from 'qovery-ws-typescript-axios'
+import { getClusterQuotaWarning } from './cluster-quota-warning'
 
-function buildRunningStatus(quota_warning?: Partial<ClusterQuotaWarning> | null): ClusterStatusDto {
+const activeQuotaWarning = {
+  status: 'ACTIVE',
+  provider: 'AWS',
+  source: 'KARPENTER_EVENT',
+  quota_code: 'MaxSpotInstanceCountExceeded',
+  quota_name: 'Spot Instance requests',
+  resource: 'EC2 Spot instances',
+  region: null,
+  message: 'AWS refused to create new nodes because the Spot Instance requests quota has been reached.',
+  suggested_action: 'Request an AWS quota increase, then retry or wait for the cluster to scale again.',
+  detected_at: 1790004098000,
+  last_seen_at: 1790004098000,
+} satisfies ClusterQuotaWarningDto
+
+function buildRunningStatus(quota_warning?: Partial<ClusterQuotaWarningDto> | null): ClusterStatusDto {
   return {
     computed_status: {
       global_status: 'WARNING',

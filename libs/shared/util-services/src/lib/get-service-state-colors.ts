@@ -12,7 +12,7 @@ export function getServiceStateColor(state?: ServiceStateDto, returnType: 'backg
       .with('ERROR', () => 'text-negative')
       .with('STARTING', 'STOPPING', () => 'text-info')
       .with('WARNING', () => 'text-warning')
-      .with('STOPPED', undefined, () => 'text-neutral')
+      .with('STOPPED', 'UNAVAILABLE', undefined, () => 'text-neutral')
       .exhaustive()
   } else {
     return match(state)
@@ -20,7 +20,7 @@ export function getServiceStateColor(state?: ServiceStateDto, returnType: 'backg
       .with('ERROR', () => 'bg-surface-negative-solid')
       .with('STARTING', 'STOPPING', () => 'bg-surface-info-solid')
       .with('WARNING', () => 'bg-surface-warning-solid')
-      .with('STOPPED', undefined, () => 'bg-surface-neutral-solid')
+      .with('STOPPED', 'UNAVAILABLE', undefined, () => 'bg-surface-neutral-solid')
       .exhaustive()
   }
 }
