@@ -702,6 +702,25 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(mockCreateService).not.toHaveBeenCalled()
   })
 
+  it('should prevent resources below the Agent Task minimums', async () => {
+    const { userEvent } = renderConfiguration({ seed: validSeed })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Resources' }))
+    const cpuInput = screen.getByRole('spinbutton', { name: 'CPU (mCPU)' })
+    const memoryInput = screen.getByRole('spinbutton', { name: 'Memory (MiB)' })
+    await userEvent.clear(cpuInput)
+    await userEvent.type(cpuInput, '999')
+    await userEvent.clear(memoryInput)
+    await userEvent.type(memoryInput, '2045')
+
+    expect(screen.getByText('CPU must be at least 1000 mCPU.')).toBeInTheDocument()
+    expect(screen.getByText('Memory must be at least 2046 MiB.')).toBeInTheDocument()
+
+    await userEvent.click(screen.getByRole('button', { name: 'Create' }))
+
+    expect(mockCreateService).not.toHaveBeenCalled()
+  })
+
   it('should show variable errors and focus the first invalid value', async () => {
     const { userEvent } = renderConfiguration({
       seed: validSeed,

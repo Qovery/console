@@ -13,6 +13,16 @@ describe('AgenticWorkflowGeneralSettings', () => {
     expect(screen.getByRole('textbox', { name: 'Name' })).toHaveValue('Incident assistant')
     expect(screen.getByRole('spinbutton', { name: 'CPU (mCPU)' })).toHaveValue(2000)
 
+    const cpuInput = screen.getByRole('spinbutton', { name: 'CPU (mCPU)' })
+    const memoryInput = screen.getByRole('spinbutton', { name: 'Memory (MiB)' })
+    await userEvent.clear(cpuInput)
+    await userEvent.type(cpuInput, '999')
+    await userEvent.clear(memoryInput)
+    await userEvent.type(memoryInput, '2045')
+
+    expect(screen.getByText('CPU (mCPU) must be at least 1000.')).toBeInTheDocument()
+    expect(screen.getByText('Memory (MiB) must be at least 2046.')).toBeInTheDocument()
+
     await userEvent.click(screen.getByRole('button', { name: /Clone environment/ }))
 
     expect(screen.getByRole('button', { name: /Clone environment/ })).toHaveAttribute('aria-pressed', 'true')

@@ -48,6 +48,11 @@ import {
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
+import {
+  AGENTIC_WORKFLOW_MIN_CPU_MILLI,
+  AGENTIC_WORKFLOW_MIN_RAM_MIB,
+  areAgenticWorkflowResourcesValid,
+} from '../agentic-workflow-resources'
 import { AGENT_TASKS_DOC_LINK } from '../agentic-workflow-templates'
 import { AgenticWorkflowPromptEditor, type AgenticWorkflowPromptEditorHandle } from './agentic-workflow-prompt-editor'
 import { AutomationSheet } from './automations/automation-sheet'
@@ -339,6 +344,7 @@ export function AgenticWorkflowConfiguration() {
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
   const variableValues = variablesForm.watch('variables')
   const variablesValid = areVariablesValid(variableValues)
+  const resourcesValid = areAgenticWorkflowResourcesValid(values.cpu, values.memory)
   const showNameError = (showValidationErrors || Boolean(dirtyFields.name)) && !values.name.trim()
   const showPromptError = (showValidationErrors || Boolean(dirtyFields.agentPrompt)) && !values.agentPrompt.trim()
   const hasModelCredential = Boolean(values.llmProviderId)
@@ -349,7 +355,7 @@ export function AgenticWorkflowConfiguration() {
   const isBedrockProvider = selectedProvider?.type === LlmProviderType.BEDROCK
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
-    resources: false,
+    resources: !resourcesValid,
     governance: false,
     variables: !variablesValid,
     advanced: false,
@@ -642,26 +648,40 @@ export function AgenticWorkflowConfiguration() {
           <Controller
             name="cpu"
             control={form.control}
-            render={({ field }) => (
+            rules={{
+              min: {
+                value: AGENTIC_WORKFLOW_MIN_CPU_MILLI,
+                message: `CPU must be at least ${AGENTIC_WORKFLOW_MIN_CPU_MILLI} mCPU.`,
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
               <InputText
                 name={field.name}
                 label="CPU (mCPU)"
                 type="number"
                 value={field.value}
                 onChange={field.onChange}
+                error={error?.message}
               />
             )}
           />
           <Controller
             name="memory"
             control={form.control}
-            render={({ field }) => (
+            rules={{
+              min: {
+                value: AGENTIC_WORKFLOW_MIN_RAM_MIB,
+                message: `Memory must be at least ${AGENTIC_WORKFLOW_MIN_RAM_MIB} MiB.`,
+              },
+            }}
+            render={({ field, fieldState: { error } }) => (
               <InputText
                 name={field.name}
-                label="Memory (MB)"
+                label="Memory (MiB)"
                 type="number"
                 value={field.value}
                 onChange={field.onChange}
+                error={error?.message}
               />
             )}
           />

@@ -1,17 +1,22 @@
 import { Controller, type UseFormReturn } from 'react-hook-form'
-import { AgenticWorkflowExecutionModeSelector } from '@qovery/domains/services/feature'
+import {
+  AGENTIC_WORKFLOW_MIN_CPU_MILLI,
+  AGENTIC_WORKFLOW_MIN_RAM_MIB,
+  AgenticWorkflowExecutionModeSelector,
+} from '@qovery/domains/services/feature'
 import { InputText, InputTextArea, InputToggle } from '@qovery/shared/ui'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
 const RESOURCE_FIELDS = [
-  { name: 'cpu', label: 'CPU (mCPU)' },
-  { name: 'ram', label: 'Memory (MiB)' },
+  { name: 'cpu', label: 'CPU (mCPU)', min: AGENTIC_WORKFLOW_MIN_CPU_MILLI },
+  { name: 'ram', label: 'Memory (MiB)', min: AGENTIC_WORKFLOW_MIN_RAM_MIB },
   { name: 'gpu', label: 'GPU' },
   { name: 'storage', label: 'Storage (GiB)' },
 ] as const satisfies ReadonlyArray<{
   name: keyof Pick<AgenticWorkflowSettingsFormValues, 'cpu' | 'ram' | 'gpu' | 'storage'>
   label: string
+  min?: number
 }>
 
 export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<AgenticWorkflowSettingsFormValues> }) {
@@ -55,12 +60,19 @@ export function AgenticWorkflowGeneralSettings({ form }: { form: UseFormReturn<A
         description="Configure the compute resources allocated to the agent task."
       >
         <div className="grid gap-3 sm:grid-cols-2">
-          {RESOURCE_FIELDS.map(({ name, label }) => (
+          {RESOURCE_FIELDS.map(({ name, label, ...rules }) => (
             <Controller
               key={name}
               name={name}
               control={form.control}
-              render={({ field }) => <InputText {...field} type="number" label={label} />}
+              rules={
+                'min' in rules
+                  ? { min: { value: rules.min, message: `${label} must be at least ${rules.min}.` } }
+                  : undefined
+              }
+              render={({ field, fieldState: { error } }) => (
+                <InputText {...field} type="number" label={label} error={error?.message} />
+              )}
             />
           ))}
         </div>
