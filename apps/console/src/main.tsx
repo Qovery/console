@@ -16,7 +16,6 @@ import * as ReactDOM from 'react-dom/client'
 import { FlatProviders, makeProvider } from 'react-flat-providers'
 import { devopsCopilotAxios } from '@qovery/shared/devops-copilot/data-access'
 import { LoaderSpinner, type ToastStatus, toast, toastError } from '@qovery/shared/ui'
-import { loadGoogleTagManager, loadSnitcher } from '@qovery/shared/util-js'
 import {
   DEVOPS_COPILOT_API_BASE_URL,
   GIT_SHA,
@@ -35,6 +34,8 @@ import { ThemeProvider } from './app/components/theme-provider/theme-provider'
 import { Auth0Wrapper, useAuth0Context } from './auth/auth0'
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
+import { loadGoogleTagManager } from './utils/google-tag-manager'
+import { loadSnitcher } from './utils/snitcher'
 
 type ToastArgs = {
   status?: ToastStatus

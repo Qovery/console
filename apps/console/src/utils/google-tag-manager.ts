@@ -19,8 +19,3 @@ export function loadGoogleTagManager(id: string) {
   script.src = `https://www.googletagmanager.com/gtm.js?id=${encodeURIComponent(id)}`
   document.head.appendChild(script)
 }
-
-export function pushToDataLayer(data: Record<string, unknown>) {
-  window.dataLayer = window.dataLayer ?? []
-  window.dataLayer.push(data)
-}

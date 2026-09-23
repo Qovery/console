@@ -9,10 +9,10 @@ import { useCreateUserSignUp, useUserSignUp } from '@qovery/domains/users-sign-u
 import { useAuth } from '@qovery/shared/auth'
 import { toast, toastError } from '@qovery/shared/ui'
 import { useDocumentTitle } from '@qovery/shared/util-hooks'
-import { pushToDataLayer } from '@qovery/shared/util-js'
 import { type SerializedError } from '@qovery/shared/utils'
 import { ContextOnboarding } from '../container/container'
 import { StepProject } from '../step-project/step-project'
+import { pushToDataLayer } from '../utils/data-layer'
 
 export function OnboardingProject({ previousUrl }: { previousUrl?: string }) {
   useDocumentTitle('Onboarding Organization - Qovery')

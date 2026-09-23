@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { loadGoogleTagManager, pushToDataLayer } from './google-tag-manager'
+import { afterEach, describe, expect, it } from '@jest/globals'
+import { loadGoogleTagManager } from './google-tag-manager'
 
 describe('loadGoogleTagManager', () => {
   afterEach(() => {
@@ -39,25 +40,5 @@ describe('loadGoogleTagManager', () => {
 
     expect(document.head.querySelectorAll('script')).toHaveLength(1)
     expect(window.dataLayer).toHaveLength(1)
-  })
-})
-
-describe('pushToDataLayer', () => {
-  afterEach(() => {
-    delete window.dataLayer
-  })
-
-  it('pushes the event to the existing dataLayer', () => {
-    window.dataLayer = [{ event: 'gtm.js' }]
-
-    pushToDataLayer({ event: 'onboarding-organization-created', plan: 'TEAM' })
-
-    expect(window.dataLayer).toEqual([{ event: 'gtm.js' }, { event: 'onboarding-organization-created', plan: 'TEAM' }])
-  })
-
-  it('creates the dataLayer when GTM is not loaded', () => {
-    pushToDataLayer({ event: 'onboarding-organization-created' })
-
-    expect(window.dataLayer).toEqual([{ event: 'onboarding-organization-created' }])
   })
 })

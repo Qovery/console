@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { afterEach, describe, expect, it } from '@jest/globals'
 import { loadSnitcher } from './snitcher'
 
 describe('loadSnitcher', () => {
