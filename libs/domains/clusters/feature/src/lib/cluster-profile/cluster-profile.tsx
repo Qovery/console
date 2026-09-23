@@ -397,7 +397,7 @@ export function ClusterProfileFeature({
   }
 
   return (
-    <div className="min-h-[calc(100dvh-8rem)] bg-background-secondary text-sm">
+    <div className="flex h-page-container min-h-0 flex-col overflow-hidden bg-background-secondary text-sm">
       <header className="flex min-h-11 items-center justify-between gap-4 bg-surface-neutral px-4 py-2">
         <div className="flex min-w-0 items-center gap-2">
           <Icon name={IconEnum.AWS} width={20} height={20} />
@@ -410,7 +410,7 @@ export function ClusterProfileFeature({
         </div>
       </header>
 
-      <div className="flex min-h-[calc(100dvh-10.75rem)] items-stretch pr-4">
+      <div className="flex min-h-0 flex-1 items-stretch pr-4">
         <ClusterProfileSidebar
           layers={sidebarLayers}
           search={search}
@@ -423,7 +423,7 @@ export function ClusterProfileFeature({
           onSelectItem={handleSelectItem}
         />
 
-        <main className="min-w-0 flex-1 overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
+        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
           <div className="flex items-start justify-between gap-4 bg-surface-neutral px-4 pb-2 pt-4">
             <div className="min-w-0">
               <Heading level={2} className="!text-base font-medium leading-6">
@@ -470,7 +470,11 @@ export function ClusterProfileFeature({
             })}
           </div>
 
-          <div id={`${activeComponent?.key ?? 'profile'}-configuration`} role="tabpanel" className="min-h-[480px]">
+          <div
+            id={`${activeComponent?.key ?? 'profile'}-configuration`}
+            role="tabpanel"
+            className="min-h-0 flex-1 overflow-y-auto"
+          >
             {hasResolverError ? (
               <div className="border-b border-neutral px-4 py-3 text-sm text-negative">
                 Configuration could not be checked. Refresh the page and try again.
