@@ -5,6 +5,7 @@ import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/uti
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
 import { type AgenticWorkflowTemplate } from '../agentic-workflow-templates'
 import {
+  AgenticWorkflowCodeEditorField,
   AgenticWorkflowConfiguration,
   areVariablesValid,
   getInvalidVariableField,
@@ -171,6 +172,25 @@ const validSeed: Partial<AgenticWorkflowFormData> = {
   llmProviderId: 'provider-1',
   automations: [{ id: 'automation-1', triggers: [{ id: 'webhook-1', type: 'webhook' }], outputs: [] }],
 }
+
+describe('AgenticWorkflowCodeEditorField', () => {
+  it('preserves line breaks in JSON placeholders', () => {
+    const placeholder = '{\n  "model": "eu.anthropic.claude-opus-5"\n}'
+
+    const { container } = renderWithProviders(
+      <AgenticWorkflowCodeEditorField
+        label="Cloud settings JSON"
+        language="json"
+        name="modelSettingsJson"
+        value=""
+        placeholder={placeholder}
+        onChange={jest.fn()}
+      />
+    )
+
+    expect(container.querySelector('.whitespace-pre')).toHaveTextContent('"model": "eu.anthropic.claude-opus-5"')
+  })
+})
 
 describe('AgenticWorkflowConfiguration validation', () => {
   beforeEach(() => {

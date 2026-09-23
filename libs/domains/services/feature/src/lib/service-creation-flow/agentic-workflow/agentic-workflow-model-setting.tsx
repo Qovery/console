@@ -1,7 +1,7 @@
 import { LlmProviderType, type LlmProviderType as LlmProviderTypeValue } from 'qovery-typescript-axios'
 import { type ReactNode, useEffect } from 'react'
 import { useLlmProviderModels } from '@qovery/domains/organizations/feature'
-import { Button, InputSelect } from '@qovery/shared/ui'
+import { InputSelect } from '@qovery/shared/ui'
 
 function parseModelSettings(value: string): Record<string, unknown> | undefined {
   try {
@@ -45,7 +45,6 @@ export function AgenticWorkflowModelSetting({
     data: models = [],
     isError,
     isLoading,
-    refetch,
   } = useLlmProviderModels({
     llmProviderId,
     enabled: isClaude,
@@ -85,13 +84,6 @@ export function AgenticWorkflowModelSetting({
           if (typeof nextValue === 'string') onChange(updateAgenticWorkflowModel(settings, nextValue))
         }}
       />
-      {isError ? (
-        <div>
-          <Button type="button" size="sm" variant="outline" color="neutral" onClick={() => void refetch()}>
-            Retry
-          </Button>
-        </div>
-      ) : null}
     </div>
   )
 }

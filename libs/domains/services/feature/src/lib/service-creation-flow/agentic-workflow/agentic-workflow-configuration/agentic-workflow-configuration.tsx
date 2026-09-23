@@ -229,7 +229,7 @@ export function AgenticWorkflowCodeEditorField({
         }`}
       >
         {placeholder && !value.trim() && (
-          <div className="pointer-events-none absolute left-[62px] top-[7px] z-10 max-w-[calc(100%-76px)] text-xs leading-5 text-neutral-subtle">
+          <div className="pointer-events-none absolute left-[62px] top-[7px] z-10 max-w-[calc(100%-76px)] whitespace-pre text-xs leading-5 text-neutral-subtle">
             {placeholder}
           </div>
         )}

@@ -136,9 +136,9 @@ describe('AgenticWorkflowModelSetting', () => {
     expect(screen.getByText('No model is available for this token.')).toBeInTheDocument()
   })
 
-  it('shows a loading state and allows retrying errors', async () => {
+  it('shows loading and error states without a retry action', () => {
     mockIsError = true
-    const { userEvent, rerender } = renderWithProviders(
+    const { rerender } = renderWithProviders(
       <AgenticWorkflowModelSetting
         bedrockSettings={<div>Bedrock settings</div>}
         llmProviderId="provider-1"
@@ -149,8 +149,7 @@ describe('AgenticWorkflowModelSetting', () => {
     )
 
     expect(screen.getByText('Unable to load models.')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Retry' }))
-    expect(mockRefetch).toHaveBeenCalledTimes(1)
+    expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
 
     mockIsError = false
     mockIsLoading = true
