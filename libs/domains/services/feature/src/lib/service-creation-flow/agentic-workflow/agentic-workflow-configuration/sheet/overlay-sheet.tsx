@@ -2,7 +2,15 @@ import { type ReactNode, useEffect } from 'react'
 import { Button, Heading, Icon, Section, Sheet } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
 
-export function OverlaySheet({ children, onClose }: { children: ReactNode; onClose: () => void }) {
+export function OverlaySheet({
+  children,
+  dismissible = true,
+  onClose,
+}: {
+  children: ReactNode
+  dismissible?: boolean
+  onClose: () => void
+}) {
   // Lock the page scroll while the sheet is open.
   useEffect(() => {
     const previousOverflow = document.body.style.overflow
@@ -13,14 +21,17 @@ export function OverlaySheet({ children, onClose }: { children: ReactNode; onClo
   }, [])
 
   return (
-    <div className="fixed inset-0 z-modal flex justify-end bg-background-overlay" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-modal flex justify-end bg-background-overlay"
+      onClick={() => dismissible && onClose()}
+    >
       <div className="h-full" onClick={(event) => event.stopPropagation()}>
         <Sheet
           open
           role="dialog"
           aria-modal
           className="w-[520px] max-w-[calc(100vw-24px)] shadow-none"
-          onClose={onClose}
+          onClose={dismissible ? onClose : undefined}
         >
           {children}
         </Sheet>
@@ -32,12 +43,14 @@ export function OverlaySheet({ children, onClose }: { children: ReactNode; onClo
 export function SheetHeader({
   className,
   description,
+  disabled = false,
   onClose,
   title,
   withDivider = false,
 }: {
   className?: string
   description?: ReactNode
+  disabled?: boolean
   onClose: () => void
   title: string
   withDivider?: boolean
@@ -56,7 +69,16 @@ export function SheetHeader({
         </Heading>
         {description ? <p className="max-w-[440px] text-sm leading-5 text-neutral-subtle">{description}</p> : null}
       </Section>
-      <Button type="button" variant="plain" color="neutral" size="xs" iconOnly aria-label="Close" onClick={onClose}>
+      <Button
+        type="button"
+        variant="plain"
+        color="neutral"
+        size="xs"
+        iconOnly
+        aria-label="Close"
+        disabled={disabled}
+        onClick={onClose}
+      >
         <Icon iconName="xmark" />
       </Button>
     </header>

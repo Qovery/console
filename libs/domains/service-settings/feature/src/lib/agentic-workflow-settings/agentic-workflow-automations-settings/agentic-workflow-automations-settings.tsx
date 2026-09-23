@@ -2,18 +2,25 @@ import { useState } from 'react'
 import { type UseFormReturn } from 'react-hook-form'
 import { AutomationSheet } from '@qovery/domains/services/feature'
 import { Button, Icon } from '@qovery/shared/ui'
-import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
+import { type AgenticWorkflowSettingsFormValues, type SaveAgenticWorkflowSettings } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
 
 export function AgenticWorkflowAutomationsSettings({
   form,
+  onSave,
   section,
 }: {
   form: UseFormReturn<AgenticWorkflowSettingsFormValues>
+  onSave?: SaveAgenticWorkflowSettings
   section: 'triggers' | 'outputs'
 }) {
   const [open, setOpen] = useState(false)
   const automation = form.watch('automation')
+  const saveSettings: SaveAgenticWorkflowSettings =
+    onSave ??
+    (async (values) => {
+      form.reset({ ...form.getValues(), ...values })
+    })
   const schedule = automation.triggers.find((trigger) => trigger.type === 'schedule')
   const isOutputs = section === 'outputs'
 
@@ -47,7 +54,7 @@ export function AgenticWorkflowAutomationsSettings({
           automation={automation}
           section={section}
           onClose={() => setOpen(false)}
-          onSave={(value) => form.setValue('automation', value, { shouldDirty: true })}
+          onSave={(value) => saveSettings({ automation: value })}
         />
       ) : null}
     </>

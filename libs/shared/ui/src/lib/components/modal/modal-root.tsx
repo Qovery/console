@@ -21,7 +21,7 @@ interface DefaultContextProps {
   openModal: boolean
   setOpenModal: (openModal: boolean) => void
   setContentModal: Dispatch<SetStateAction<JSX.Element>>
-  setOptionsModal: (optionsModal: ModalOptions) => void
+  setOptionsModal: Dispatch<SetStateAction<ModalOptions>>
   optionsModal: ModalOptions
   alertClickOutside: boolean
   enableAlertClickOutside: (mustConfirm: boolean) => void

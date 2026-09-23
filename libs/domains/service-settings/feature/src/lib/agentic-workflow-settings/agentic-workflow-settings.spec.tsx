@@ -8,6 +8,7 @@ import {
   formatAgenticWorkflowRepositories,
   getGitRepositoryName,
   getGitRepositoryProvider,
+  hasAgenticWorkflowSettingsChanges,
 } from './agentic-workflow-settings'
 
 const useGitTokensSpy = jest.spyOn(organizationsDomain, 'useGitTokens') as jest.Mock
@@ -143,6 +144,20 @@ describe('Agentic Workflow settings validation', () => {
       },
     ])
   })
+
+  it('detects changes only in the settings provided by an overlay', () => {
+    const currentValues = {
+      name: 'Incident assistant',
+      automation: { triggers: [], outputs: [] },
+    } as unknown as Parameters<typeof hasAgenticWorkflowSettingsChanges>[0]
+
+    expect(hasAgenticWorkflowSettingsChanges(currentValues, { automation: { triggers: [], outputs: [] } })).toBe(false)
+    expect(
+      hasAgenticWorkflowSettingsChanges(currentValues, {
+        automation: { triggers: [{ id: 'webhook', type: 'webhook' }], outputs: [] },
+      })
+    ).toBe(true)
+  })
 })
 
 describe('AgenticWorkflowSettings views', () => {
@@ -157,7 +172,7 @@ describe('AgenticWorkflowSettings views', () => {
       isLoading: false,
     })
     useContextServicesSpy.mockReturnValue({ data: [], isLoading: false })
-    useEditServiceSpy.mockReturnValue({ mutate: editService, isLoading: false })
+    useEditServiceSpy.mockReturnValue({ mutateAsync: editService, isLoading: false })
   })
 
   afterEach(() => {
@@ -248,7 +263,8 @@ describe('AgenticWorkflowSettings views', () => {
 
     expect(screen.getByRole('heading', { name: 'Connections' })).toBeInTheDocument()
     expect(screen.getByText('qovery/console')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
+    expect(screen.getByText('Documentation')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument()
   })
 
   it('uses legacy MCP server IDs when the structured MCP list is empty', () => {
@@ -256,7 +272,7 @@ describe('AgenticWorkflowSettings views', () => {
 
     renderWithProviders(<AgenticWorkflowSettings page="connections" />)
 
-    expect(screen.getByRole('button', { name: 'Remove Documentation' })).toBeInTheDocument()
+    expect(screen.getByText('Documentation')).toBeInTheDocument()
   })
 
   it('rebuilds the context services prompt block and drops unavailable service IDs before saving', async () => {
@@ -314,6 +330,29 @@ describe('AgenticWorkflowSettings views', () => {
     )
   })
 
+  it('preserves persisted service context during an unrelated overlay save while context services are loading', async () => {
+    const agentPrompt =
+      'Investigate.\n\n<!-- qovery-context-services:start -->\n## Context services\n- api (APPLICATION) — service ID: service-1\n<!-- qovery-context-services:end -->'
+    useServiceSpy.mockReturnValue({
+      data: { ...service, agent_prompt: agentPrompt, context_service_ids: ['service-1'] },
+    })
+    useContextServicesSpy.mockReturnValue({ data: undefined, isLoading: true })
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="advanced-settings" />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Delete Dockerfile fragment' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({
+          agent_prompt: agentPrompt,
+          context_service_ids: ['service-1'],
+          docker_fragment: '',
+        }),
+      })
+    )
+  })
+
   it('prevents editing a private self-hosted repository until its provider is resolved', () => {
     useServiceSpy.mockReturnValue({
       data: {
@@ -334,14 +373,13 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('button', { name: 'Manage context' })).toBeDisabled()
   })
 
-  it('preserves malformed legacy MCP JSON without blocking Connections changes', async () => {
+  it('preserves malformed legacy MCP JSON when saving Connections changes', async () => {
     useServiceSpy.mockReturnValue({ data: { ...service, mcp: '{invalid' } })
     const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="connections" />)
 
+    await userEvent.click(screen.getByRole('button', { name: 'Manage MCP' }))
     await userEvent.click(screen.getByRole('button', { name: 'Remove Documentation' }))
-    const saveButton = screen.getByRole('button', { name: 'Save' })
-    expect(saveButton).toBeEnabled()
-    await userEvent.click(saveButton)
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
 
     expect(editService).toHaveBeenCalledWith({
       serviceId: 'workflow-1',
@@ -358,7 +396,7 @@ describe('AgenticWorkflowSettings views', () => {
 
     expect(screen.getByRole('heading', { name: 'Manage MCP' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'New MCP' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'Done' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument()
   })
 
   it('renders Automations with the configured trigger', () => {
@@ -367,6 +405,16 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('heading', { name: 'Automations' })).toBeInTheDocument()
     expect(screen.getByText('Schedule')).toBeInTheDocument()
     expect(screen.queryByText('1 output configured')).not.toBeInTheDocument()
+  })
+
+  it('does not save unchanged Automations from the side panel', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="automations" />)
+
+    expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Configure' }))
+    await userEvent.click(screen.getByRole('button', { name: 'Save' }))
+
+    expect(editService).not.toHaveBeenCalled()
   })
 
   it('renders Outputs with the configured output count', () => {
@@ -382,5 +430,19 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('heading', { name: 'Governance' })).toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Domain allowlist' })).toHaveValue('api.github.com, status.example.com')
     expect(screen.queryByRole('textbox', { name: 'Webhook IP allowlist' })).not.toBeInTheDocument()
+  })
+
+  it('deletes the Dockerfile fragment without a page-level save', async () => {
+    const { userEvent } = renderWithProviders(<AgenticWorkflowSettings page="advanced-settings" />)
+
+    expect(screen.queryByRole('button', { name: 'Save' })).not.toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Delete Dockerfile fragment' }))
+
+    await waitFor(() =>
+      expect(editService).toHaveBeenCalledWith({
+        serviceId: 'workflow-1',
+        payload: expect.objectContaining({ docker_fragment: '' }),
+      })
+    )
   })
 })

@@ -55,4 +55,21 @@ describe('GitContextModal', () => {
 
     expect(onRemove).toHaveBeenCalled()
   })
+
+  it('keeps the modal open and announces a removal failure', async () => {
+    const setOpen = jest.fn()
+    const { userEvent } = renderWithProviders(
+      <GitContextModal
+        context={{ repository: 'Qovery/console', branch: 'main' }}
+        onRemove={jest.fn().mockRejectedValue(new Error('Unable to save'))}
+        onSave={jest.fn()}
+        setOpen={setOpen}
+      />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Remove' }))
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('Unable to save this repository. Try again.')
+    expect(setOpen).not.toHaveBeenCalled()
+  })
 })
