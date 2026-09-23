@@ -197,7 +197,7 @@ describe('ClusterProfileFeature', () => {
     expect(screen.getByRole('tab', { name: 'Loki' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toHaveValue(12)
 
-    const highAvailability = screen.getByRole('checkbox', { name: 'High availability' })
+    const highAvailability = screen.getByRole('switch', { name: 'High availability' })
     expect(highAvailability).not.toBeChecked()
     await userEvent.click(highAvailability)
     expect(highAvailability).toBeChecked()

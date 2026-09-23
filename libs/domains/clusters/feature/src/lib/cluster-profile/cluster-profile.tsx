@@ -184,19 +184,13 @@ function ProfileConfigurationSection({
   const violations = preview?.violations ?? []
 
   return (
-    <section className="flex flex-col gap-3 border-b border-neutral p-4 last:border-b-0">
-      <div>
-        <Heading level={3}>{section.label}</Heading>
-        {section.component.description ? (
-          <p className="mt-1 text-sm text-neutral-subtle">{section.component.description}</p>
-        ) : null}
-      </div>
-
+    <section className="flex flex-col">
       {fields.map((field) => (
         <CatalogVariableInput
           key={field.key}
-          booleanControl="checkbox"
+          booleanControl="toggle"
           field={toCatalogVariableField(field)}
+          layout="row"
           value={getCatalogVariableValue(field, profileConfig[field.key])}
           error={getFieldViolation(violations, field.key)}
           onChange={(value) => onProfileConfigChange(section.component.key, field, value)}
@@ -204,7 +198,7 @@ function ProfileConfigurationSection({
       ))}
 
       {requirements.length > 0 ? (
-        <div className="flex flex-col gap-3 border-t border-neutral pt-4">
+        <div className="flex flex-col border-t border-neutral">
           <div className="flex items-center justify-between gap-3">
             <div>
               <Heading level={3}>Cluster inputs</Heading>
@@ -221,8 +215,9 @@ function ProfileConfigurationSection({
           {requirements.map((requirement) => (
             <CatalogVariableInput
               key={requirement.key}
-              booleanControl="checkbox"
+              booleanControl="toggle"
               field={toCatalogVariableField(requirement)}
+              layout="row"
               value={getCatalogVariableValue(requirement, clusterInputs[requirement.key])}
               error={getFieldViolation(violations, requirement.key, 'clusterInputs')}
               onChange={(value) => onClusterInputChange(section.component.key, requirement, value)}
@@ -232,7 +227,7 @@ function ProfileConfigurationSection({
       ) : null}
 
       {!fields.length && !requirements.length ? (
-        <p className="text-sm text-neutral-subtle">This component does not require any configuration.</p>
+        <p className="p-4 text-sm text-neutral-subtle">This component does not require any configuration.</p>
       ) : null}
     </section>
   )

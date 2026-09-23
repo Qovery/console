@@ -6,6 +6,7 @@ import Icon from '../../icon/icon'
 export interface InputSelectSmallProps {
   name: string
   label?: string
+  ariaLabel?: string
   items: Value[]
   getValue?: (name: string, value: Value | null) => void
   className?: string
@@ -20,6 +21,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
   const {
     name,
     label,
+    ariaLabel,
     items,
     defaultValue,
     className = '',
@@ -54,6 +56,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
       <select
         data-testid={dataTestId || 'input-select-small'}
         name={name}
+        aria-label={ariaLabel ?? (!label ? name : undefined)}
         value={value}
         disabled={disabled}
         className={twMerge(
@@ -70,7 +73,7 @@ export function InputSelectSmall(props: InputSelectSmallProps) {
       </select>
       <Icon
         iconName="chevron-down"
-        className="pointer-events-none absolute right-3 top-2.5 translate-y-0.5 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
+        className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs leading-3 text-neutral-subtle group-hover:text-neutral"
       />
     </div>
   )
