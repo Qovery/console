@@ -683,9 +683,11 @@ describe('AgenticWorkflowConfiguration', () => {
 
     expect(createButton).toBeEnabled()
     expect(screen.queryByRole('button', { name: 'Create and deploy' })).not.toBeInTheDocument()
+    expect(screen.getByText('Provider required')).toHaveClass('text-neutral-subtle')
 
     await userEvent.click(createButton)
     expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
+    expect(screen.getByText('Provider required')).toHaveClass('text-negative')
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
     await userEvent.type(screen.getByRole('textbox', { name: /Instructions/ }), 'Review incoming payloads.')
@@ -695,6 +697,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     expect(createButton).toBeEnabled()
+    expect(screen.queryByText('Provider required')).not.toBeInTheDocument()
 
     await userEvent.click(createButton)
 

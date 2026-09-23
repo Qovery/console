@@ -990,8 +990,12 @@ export function AgenticWorkflowConfiguration() {
                     Add provider
                   </Button>
                 )}
-                {!hasModelCredential && showValidationErrors ? (
-                  <span className="text-xs font-medium text-negative">Token required</span>
+                {!hasModelCredential ? (
+                  <span
+                    className={`text-xs ${showValidationErrors ? 'font-medium text-negative' : 'text-neutral-subtle'}`}
+                  >
+                    Provider required
+                  </span>
                 ) : null}
               </ConfigurationRow>
               <ConfigurationRow label="MCP">
