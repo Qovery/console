@@ -716,6 +716,12 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByText('CPU must be at least 1000 mCPU.')).toBeInTheDocument()
     expect(screen.getByText('Memory must be at least 2046 MiB.')).toBeInTheDocument()
 
+    await userEvent.clear(cpuInput)
+    await userEvent.clear(memoryInput)
+
+    expect(screen.getByText('CPU is required.')).toBeInTheDocument()
+    expect(screen.getByText('Memory is required.')).toBeInTheDocument()
+
     await userEvent.click(screen.getByRole('button', { name: 'Create' }))
 
     const resourcesTrigger = screen.getByRole('button', { name: /Resources/ })

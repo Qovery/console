@@ -35,7 +35,9 @@ describe('AgenticWorkflowGeneralSettings', () => {
     expect(screen.getByText('Memory (MiB) must be at least 2046.')).toBeInTheDocument()
 
     await userEvent.clear(cpuInput)
-    expect(screen.getByText('CPU (mCPU) must be at least 1000.')).toBeInTheDocument()
+    await userEvent.clear(memoryInput)
+    expect(screen.getByText('CPU is required.')).toBeInTheDocument()
+    expect(screen.getByText('Memory is required.')).toBeInTheDocument()
 
     await userEvent.click(screen.getByRole('button', { name: /Clone environment/ }))
 

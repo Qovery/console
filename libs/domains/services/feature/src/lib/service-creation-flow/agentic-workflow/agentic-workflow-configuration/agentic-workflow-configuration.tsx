@@ -653,7 +653,7 @@ export function AgenticWorkflowConfiguration() {
             name="cpu"
             control={form.control}
             rules={{
-              required: `CPU must be at least ${AGENTIC_WORKFLOW_MIN_CPU_MILLI} mCPU.`,
+              required: 'CPU is required.',
               min: {
                 value: AGENTIC_WORKFLOW_MIN_CPU_MILLI,
                 message: `CPU must be at least ${AGENTIC_WORKFLOW_MIN_CPU_MILLI} mCPU.`,
@@ -674,7 +674,7 @@ export function AgenticWorkflowConfiguration() {
             name="memory"
             control={form.control}
             rules={{
-              required: `Memory must be at least ${AGENTIC_WORKFLOW_MIN_RAM_MIB} MiB.`,
+              required: 'Memory is required.',
               min: {
                 value: AGENTIC_WORKFLOW_MIN_RAM_MIB,
                 message: `Memory must be at least ${AGENTIC_WORKFLOW_MIN_RAM_MIB} MiB.`,
