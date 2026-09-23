@@ -96,6 +96,7 @@ export function LlmProviderSetting({
         isClearable
         isSearchable
         isLoading={isLoading}
+        portal
         placeholder="Select a token"
         hint={
           availableLlmProviders.length === 0 && !isLoading ? (

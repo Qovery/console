@@ -64,7 +64,9 @@ describe('AgenticWorkflowModelSetting', () => {
 
     expect(screen.getByLabelText('Model')).toBeInTheDocument()
     expect(screen.queryByText('Bedrock settings')).not.toBeInTheDocument()
-    await selectEvent.select(screen.getByLabelText('Model'), 'Claude Sonnet')
+    await selectEvent.select(screen.getByLabelText('Model'), 'Claude Sonnet', {
+      container: document.body,
+    })
 
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ provider: 'anthropic', model: 'claude-sonnet' })
   })

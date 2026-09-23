@@ -71,6 +71,7 @@ export function AgenticWorkflowModelSetting({
         hint={!isLoading && !isError && models.length === 0 ? 'No model is available for this token.' : undefined}
         isLoading={isLoading}
         isSearchable
+        portal
         placeholder="Select a model"
         onChange={(nextValue) => {
           if (typeof nextValue === 'string') onChange(updateAgenticWorkflowModel(settings, nextValue))
