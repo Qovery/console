@@ -110,9 +110,7 @@ export function LlmProviderSetting({
               </a>
               .
             </span>
-          ) : (
-            'Select the token this agent task will use.'
-          )
+          ) : undefined
         }
         menuListButton={{
           title: 'Select token',
