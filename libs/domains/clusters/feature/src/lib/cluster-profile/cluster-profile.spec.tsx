@@ -136,10 +136,10 @@ function createResolution(componentKey: string): PlatformComponentConfigurationR
   }
 }
 
-function createComponentQueries(componentKeys: string[], isFetching = false) {
+function createComponentQueries(componentKeys: string[], isFetching = false, isError = false) {
   return componentKeys.map((componentKey) => ({
     data: createResolution(componentKey),
-    isError: false,
+    isError,
     isFetching,
   })) as ReturnType<typeof usePlatformComponentConfigurations>
 }
@@ -224,6 +224,49 @@ describe('ClusterProfileFeature', () => {
 
     expect(screen.getByRole('status', { name: 'Loading configuration' })).toBeInTheDocument()
     expect(screen.queryByRole('spinbutton', { name: 'Retention period' })).not.toBeInTheDocument()
+  })
+
+  it('shows the skeleton until the selected component has a resolved configuration', () => {
+    mockUsePlatformComponentConfigurations.mockReturnValue([
+      { data: undefined, isError: false, isFetching: true },
+    ] as ReturnType<typeof usePlatformComponentConfigurations>)
+
+    renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+
+    expect(screen.getByRole('status', { name: 'Loading configuration' })).toBeInTheDocument()
+    expect(screen.queryByRole('spinbutton', { name: 'Retention period' })).not.toBeInTheDocument()
+  })
+
+  it('keeps the form visible while a field edit triggers a resolver refetch', async () => {
+    const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+    const highAvailability = screen.getByRole('switch', { name: 'High availability' })
+
+    await userEvent.click(highAvailability)
+
+    expect(highAvailability).toBeChecked()
+    expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toBeInTheDocument()
+    expect(screen.queryByRole('status', { name: 'Loading configuration' })).not.toBeInTheDocument()
+  })
+
+  it('keeps the last resolved form visible when a background resolver refresh fails', () => {
+    mockUsePlatformComponentConfigurations.mockReturnValue(createComponentQueries(['loki'], false, true))
+
+    renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+
+    expect(screen.getByRole('alert')).toHaveTextContent('The last resolved fields are still shown.')
+    expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toBeInTheDocument()
+  })
+
+  it('does not replace the active form with an error from an undisplayed component', () => {
+    mockUsePlatformComponentConfigurations.mockReturnValue([
+      ...createComponentQueries(['loki']),
+      ...createComponentQueries(['alloy'], false, true),
+    ])
+
+    renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+    expect(screen.getByRole('spinbutton', { name: 'Retention period' })).toBeInTheDocument()
   })
 
   it('uses the URL-selected component as the active sidebar item', async () => {

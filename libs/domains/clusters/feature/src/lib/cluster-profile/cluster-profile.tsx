@@ -364,10 +364,17 @@ export function ClusterProfileFeature({
     requests: debouncedPreviewRequests,
     enabled: Boolean(profileSections.length),
   })
+  const requestedComponentKeys = Object.keys(debouncedPreviewRequests)
+  const componentQueriesByKey = Object.fromEntries(
+    requestedComponentKeys.flatMap((componentKey, index) => {
+      const query = componentQueries[index]
+      return query ? [[componentKey, query]] : []
+    })
+  )
   const loggedSchemaResponses = useRef(new WeakSet<object>())
 
   useEffect(() => {
-    if (NODE_ENV === 'production') return
+    if (NODE_ENV !== 'development') return
 
     if (templates && !loggedSchemaResponses.current.has(templates)) {
       loggedSchemaResponses.current.add(templates)
@@ -412,11 +419,19 @@ export function ClusterProfileFeature({
 
   const isLoading = isClusterLoading || isTemplateLoading || isBindingLoading
   const isError = isClusterError || isTemplateError || isBindingError
-  const isResolving = componentQueries.some((query) => query.isFetching)
-  const hasResolverError = componentQueries.some((query) => query.isError)
-  const activePreview = activeComponent ? previewsByComponent[activeComponent.key] : undefined
-  const isConfigurationLoading =
-    Boolean(activeComponent) && (isResolving || activePreview?.componentKey !== activeComponent?.key)
+  const displayedComponentKeys = [...new Set(profileSections.map((section) => section.component.key))]
+  const displayedComponentKeySet = new Set(displayedComponentKeys)
+  const hasResolvedConfiguration = displayedComponentKeys.every(
+    (componentKey) => previewsByComponent[componentKey]?.componentKey === componentKey
+  )
+  const hasResolverError =
+    displayedComponentKeys.some((componentKey) => componentQueriesByKey[componentKey]?.isError) ||
+    componentQueries.some(
+      (query) => query.isError && query.data && displayedComponentKeySet.has(query.data.componentKey)
+    )
+  const isConfigurationLoading = Boolean(activeComponent) && !hasResolvedConfiguration
+  const isInitialResolverError = hasResolverError && !hasResolvedConfiguration
+  const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
 
   const handleSelectSection = (sectionId: string) => {
     const firstItem = profileTree.find((item) => item.id === sectionId)?.children[0]
@@ -506,24 +521,31 @@ export function ClusterProfileFeature({
             role="tabpanel"
             className="min-h-0 flex-1 overflow-y-auto"
           >
-            {hasResolverError ? (
-              <div className="border-b border-neutral px-4 py-3 text-sm text-negative">
+            {isInitialResolverError ? (
+              <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
                 Configuration could not be checked. Refresh the page and try again.
               </div>
             ) : isConfigurationLoading ? (
               <ProfileConfigurationSkeleton />
             ) : (
-              profileSections.map((section) => (
-                <ProfileConfigurationSection
-                  key={section.id}
-                  section={section}
-                  preview={previewsByComponent[section.component.key]}
-                  profileConfig={profileConfigs[section.component.key] ?? {}}
-                  clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
-                  onProfileConfigChange={updateProfileConfig}
-                  onClusterInputChange={updateClusterInput}
-                />
-              ))
+              <>
+                {isBackgroundResolverError ? (
+                  <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
+                    Configuration could not be refreshed. The last resolved fields are still shown.
+                  </div>
+                ) : null}
+                {profileSections.map((section) => (
+                  <ProfileConfigurationSection
+                    key={section.id}
+                    section={section}
+                    preview={previewsByComponent[section.component.key]}
+                    profileConfig={profileConfigs[section.component.key] ?? {}}
+                    clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
+                    onProfileConfigChange={updateProfileConfig}
+                    onClusterInputChange={updateClusterInput}
+                  />
+                ))}
+              </>
             )}
           </div>
         </main>
