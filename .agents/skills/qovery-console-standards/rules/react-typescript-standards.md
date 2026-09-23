@@ -24,6 +24,14 @@ tags: [react, typescript, components, imports, state]
 - Use `clsx` or `twMerge` from `@qovery/shared/util-js` for conditional classes
 - Prefer Radix UI components when available
 
+## Route Parameters
+
+- In a component scoped to a TanStack Router route, read identifiers already present in the URL with `useParams({ strict: false })`.
+- Do not pass `organizationId`, `projectId`, `environmentId`, `clusterId`, or `serviceId` through route/page props solely so a descendant can fetch its own data.
+- Default optional route parameters when a downstream hook requires a string, for example: `const { organizationId = '', clusterId = '' } = useParams({ strict: false })`.
+- Keep identifiers as explicit props when the component is reusable outside that route, must render an arbitrary resource, or the identifier is not a route parameter.
+- In unit tests, mock `useParams` with the relevant route identifiers and verify their use when it is part of the component contract.
+
 ## State Management
 
 - Use React Query for API calls and server state

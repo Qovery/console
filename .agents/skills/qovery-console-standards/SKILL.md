@@ -46,6 +46,7 @@ Reference these guidelines when:
 
 - Inline type imports: `import { type Foo, bar } from './module'`
 - Functional components only, no `React.FC`, destructure props in signature
+- Route-scoped components read URL identifiers with TanStack Router `useParams({ strict: false })`; do not forward route IDs through props solely for data access
 - React Query for server state, `clsx`/`twMerge` for conditional classes
 
 ### Styling
