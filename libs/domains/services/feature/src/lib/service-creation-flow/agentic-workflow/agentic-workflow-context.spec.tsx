@@ -16,6 +16,7 @@ function FormDefaults() {
       <span data-testid="storage">{values.storage}</span>
       <span data-testid="whitelist-hosts">{values.whitelistHosts}</span>
       <span data-testid="execution-mode">{values.executionMode}</span>
+      <span data-testid="model-settings">{values.modelSettingsJson}</span>
       <span data-testid="variables">{variables.map((variable) => variable.variable).join(',')}</span>
     </>
   )
@@ -34,6 +35,7 @@ describe('AgenticWorkflowCreationFlow', () => {
     expect(screen.getByTestId('storage')).toHaveTextContent('10')
     expect(screen.getByTestId('whitelist-hosts')).toHaveTextContent('*')
     expect(screen.getByTestId('execution-mode')).toHaveTextContent(AgenticWorkflowExecutionMode.IN_PLACE)
+    expect(screen.getByTestId('model-settings')).toBeEmptyDOMElement()
   })
 
   it('should merge a template seed over the defaults', () => {
