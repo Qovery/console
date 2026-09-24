@@ -166,7 +166,7 @@ describe('AgenticWorkflowModelSetting', () => {
       />
     )
 
-    expect(screen.getByText('Unable to load models.')).toBeInTheDocument()
+    expect(screen.getByText('We couldn’t load models for this token.')).toBeInTheDocument()
     expect(screen.getByLabelText('Model')).toHaveValue('')
   })
 
@@ -182,7 +182,7 @@ describe('AgenticWorkflowModelSetting', () => {
       />
     )
 
-    expect(screen.getByText('Unable to load models.')).toBeInTheDocument()
+    expect(screen.getByText('We couldn’t load models for this token.')).toBeInTheDocument()
     expect(screen.getByLabelText('Model')).toHaveValue('')
     expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
 
