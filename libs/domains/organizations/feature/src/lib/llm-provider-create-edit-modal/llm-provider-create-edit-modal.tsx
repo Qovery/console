@@ -198,7 +198,6 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
                   onChange={field.onChange}
                   error={error?.message}
                   placeholder="eu-west-1"
-                  hint="Controls which Bedrock models are available."
                 />
               )}
             />
