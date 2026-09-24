@@ -208,19 +208,6 @@ export function ClusterProfileSidebar({
         </nav>
       </div>
 
-      <footer className="flex shrink-0 items-center justify-between bg-background-secondary p-3">
-        <div className="flex items-center gap-2 text-sm font-medium">
-          <span>Qovery operator</span>
-          <Icon iconName="circle-check" iconStyle="regular" className="text-sm text-positive" />
-        </div>
-        <button
-          type="button"
-          aria-label="Qovery operator information"
-          className="focus-visible:ring-brand flex h-6 w-6 items-center justify-center rounded border border-neutral bg-surface-neutral-component text-neutral-subtle outline-none hover:bg-surface-neutral-componentHover hover:text-neutral focus-visible:ring-2"
-        >
-          <Icon iconName="circle-info" iconStyle="regular" className="text-xs" />
-        </button>
-      </footer>
     </aside>
   )
 }

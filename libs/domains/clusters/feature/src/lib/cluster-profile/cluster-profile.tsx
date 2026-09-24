@@ -519,32 +519,35 @@ export function ClusterProfileFeature({
             role="tabpanel"
             className="min-h-0 flex-1 overflow-y-auto"
           >
-            {isInitialResolverError ? (
-              <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
-                Configuration could not be checked. Refresh the page and try again.
-              </div>
-            ) : isConfigurationLoading ? (
-              <ProfileConfigurationSkeleton />
-            ) : (
-              <>
-                {isBackgroundResolverError ? (
-                  <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
-                    Configuration could not be refreshed. The last resolved fields are still shown.
-                  </div>
-                ) : null}
-                {profileSections.map((section) => (
-                  <ProfileConfigurationSection
-                    key={section.id}
-                    section={section}
-                    preview={previewsByComponent[section.component.key]}
-                    profileConfig={profileConfigs[section.component.key] ?? {}}
-                    clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
-                    onProfileConfigChange={updateProfileConfig}
-                    onClusterInputChange={updateClusterInput}
-                  />
-                ))}
-              </>
-            )}
+            <div className="flex min-h-full flex-col">
+              {isInitialResolverError ? (
+                <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
+                  Configuration could not be checked. Refresh the page and try again.
+                </div>
+              ) : isConfigurationLoading ? (
+                <ProfileConfigurationSkeleton />
+              ) : (
+                <>
+                  {isBackgroundResolverError ? (
+                    <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
+                      Configuration could not be refreshed. The last resolved fields are still shown.
+                    </div>
+                  ) : null}
+                  {profileSections.map((section) => (
+                    <ProfileConfigurationSection
+                      key={section.id}
+                      section={section}
+                      preview={previewsByComponent[section.component.key]}
+                      profileConfig={profileConfigs[section.component.key] ?? {}}
+                      clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
+                      onProfileConfigChange={updateProfileConfig}
+                      onClusterInputChange={updateClusterInput}
+                    />
+                  ))}
+                </>
+              )}
+              <div aria-hidden="true" className="h-8 shrink-0" />
+            </div>
           </div>
         </main>
       </div>

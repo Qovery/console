@@ -176,7 +176,7 @@ describe('ClusterProfileFeature', () => {
       enabled: true,
     })
     expect(screen.getByRole('banner')).not.toHaveClass('border-b')
-    expect(container.querySelectorAll('.fa-circle-check')).toHaveLength(1)
+    expect(container.querySelectorAll('.fa-circle-check')).toHaveLength(0)
     expect(container.querySelectorAll('.fa-circle-minus')).toHaveLength(2)
     expect(screen.getByRole('heading', { name: 'Log infra' })).toBeInTheDocument()
     expect(
