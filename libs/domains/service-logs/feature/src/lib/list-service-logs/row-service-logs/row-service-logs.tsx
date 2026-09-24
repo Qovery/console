@@ -25,6 +25,7 @@ import {
 } from '@qovery/shared/util-js'
 import { mergeServiceLogsParams } from '../../search-service-logs/search-service-logs-utils'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
+import { formatObjectLogMessage } from './format-object-log-message'
 import './style.scss'
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -173,6 +174,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
 
   const levelLowercase = log.level?.toLowerCase()
   const isErrorOrCritical = levelLowercase === 'error' || levelLowercase === 'critical'
+  const message = formatObjectLogMessage(log.message)
 
   return (
     <>
@@ -264,7 +266,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           </Table.Cell>
         )}
         <Table.Cell className="h-min min-h-7 w-full pb-1 pl-1.5 pr-4 pt-[0.4rem] align-top font-code font-bold">
-          {renderHighlightedMessage(log.message, highlightedText)}
+          {renderHighlightedMessage(message, highlightedText)}
         </Table.Cell>
       </Table.Row>
       {isExpanded && (

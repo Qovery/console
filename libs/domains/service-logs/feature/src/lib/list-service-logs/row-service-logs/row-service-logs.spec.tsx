@@ -67,6 +67,42 @@ describe('RowServiceLogs', () => {
     expect(screen.getByText('Test log message')).toBeInTheDocument()
   })
 
+  it('renders JSON object messages with two-space indentation', () => {
+    const message = '{"message":"Started","context":{"attempt":2},"ports":[80,443]}'
+    const formattedMessage = `{
+  "message": "Started",
+  "context": {
+    "attempt": 2
+  },
+  "ports": [
+    80,
+    443
+  ]
+}`
+
+    const { container } = renderRowServiceLogs({ ...mockLog, message })
+
+    expect(container.querySelector('[data-log-message="true"]')?.textContent).toBe(formattedMessage)
+  })
+
+  it('highlights search text in a formatted JSON object message', () => {
+    renderRowServiceLogs({ ...mockLog, message: '{"message":"Started"}' }, false, 'Started')
+
+    expect(screen.getByText('Started').closest('mark')).toBeInTheDocument()
+    expect(screen.getByText(/"message":/).closest('[data-log-message="true"]')).toHaveTextContent(
+      '{ "message": "Started" }'
+    )
+  })
+
+  it.each(['["Started"]', '"Started"', '42', 'true', 'null', '{"message":"Started"', 'Started successfully'])(
+    'keeps non-object message %s unchanged',
+    (message) => {
+      const { container } = renderRowServiceLogs({ ...mockLog, message })
+
+      expect(container.querySelector('[data-log-message="true"]')?.textContent).toBe(message)
+    }
+  )
+
   it('toggles expanded state on click', async () => {
     const { userEvent } = renderRowServiceLogs()
 
