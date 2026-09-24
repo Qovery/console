@@ -463,7 +463,7 @@ export function ClusterProfileFeature({
           onSelectItem={handleSelectItem}
         />
 
-        <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
+        <section className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden rounded-t-xl border-x border-t border-neutral bg-background">
           <div className="flex items-start justify-between gap-4 bg-surface-neutral px-4 pb-2 pt-4">
             <div className="min-w-0">
               <Heading level={2} className="!text-base font-medium leading-6">
@@ -542,10 +542,9 @@ export function ClusterProfileFeature({
                   ))}
                 </>
               )}
-              <div aria-hidden="true" className="h-8 shrink-0" />
             </div>
           </div>
-        </main>
+        </section>
       </div>
     </div>
   )
