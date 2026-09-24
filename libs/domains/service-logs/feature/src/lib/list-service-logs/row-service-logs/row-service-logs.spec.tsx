@@ -94,6 +94,12 @@ describe('RowServiceLogs', () => {
     )
   })
 
+  it('highlights a compact raw JSON match after formatting', () => {
+    renderRowServiceLogs({ ...mockLog, message: '{"message":"Started","attempt":2}' }, false, '"message":"Started"')
+
+    expect(screen.getByText('"message": "Started"').closest('mark')).toBeInTheDocument()
+  })
+
   it.each(['["Started"]', '"Started"', '42', 'true', 'null', '{"message":"Started"', 'Started successfully'])(
     'keeps non-object message %s unchanged',
     (message) => {

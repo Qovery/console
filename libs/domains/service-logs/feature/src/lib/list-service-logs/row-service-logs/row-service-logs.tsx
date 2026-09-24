@@ -1,6 +1,6 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import clsx from 'clsx'
-import { type MouseEvent, type ReactNode, useCallback, useState } from 'react'
+import { type MouseEvent, type ReactNode, useCallback, useMemo, useState } from 'react'
 import { type NormalizedServiceLog } from '@qovery/domains/service-logs/data-access'
 import { type AnyService } from '@qovery/domains/services/data-access'
 import { type ServiceLogsParams } from '@qovery/shared/router'
@@ -25,7 +25,7 @@ import {
 } from '@qovery/shared/util-js'
 import { mergeServiceLogsParams } from '../../search-service-logs/search-service-logs-utils'
 import { useServiceLogsContext } from '../service-logs-context/service-logs-context'
-import { formatObjectLogMessage } from './format-object-log-message'
+import { type HighlightRange, findHighlightRanges, formatObjectLogMessage } from './format-object-log-message'
 import './style.scss'
 
 const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -37,11 +37,15 @@ const TRAILING_URL_PUNCTUATION_REGEX = /[),.;!?]+$/
 
 function renderHighlightedText(
   text: string,
-  searchTerm: string | null | undefined,
+  textStart: number,
+  highlightRanges: HighlightRange[],
   key: string,
   renderAnsi = true
 ): ReactNode {
-  if (!searchTerm || !text.toLowerCase().includes(searchTerm.toLowerCase())) {
+  const textEnd = textStart + text.length
+  const ranges = highlightRanges.filter(({ start, end }) => start < textEnd && end > textStart)
+
+  if (ranges.length === 0) {
     if (!renderAnsi) return text
 
     return (
@@ -51,27 +55,41 @@ function renderHighlightedText(
     )
   }
 
-  const parts = text.split(new RegExp(`(${searchTerm.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'))
+  const parts = ranges.flatMap(({ start, end }, index) => {
+    const previousEnd = ranges[index - 1]?.end ?? textStart
+    const localStart = Math.max(start, textStart) - textStart
+    const localEnd = Math.min(end, textEnd) - textStart
+    return [
+      { text: text.slice(Math.max(previousEnd, textStart) - textStart, localStart), highlighted: false },
+      { text: text.slice(localStart, localEnd), highlighted: true },
+    ]
+  })
+  const lastEnd = Math.min(ranges[ranges.length - 1]?.end ?? textStart, textEnd) - textStart
+  parts.push({ text: text.slice(lastEnd), highlighted: false })
 
-  return parts.map((part, index) =>
-    part.toLowerCase() === searchTerm.toLowerCase() ? (
-      <mark
-        key={`${key}-${index}`}
-        style={{
-          color: '#000',
-          background: 'rgb(255, 153, 0)',
-        }}
-      >
-        {part}
-      </mark>
-    ) : renderAnsi ? (
+  return parts.map((part, index) => {
+    if (part.highlighted) {
+      return (
+        <mark
+          key={`${key}-${index}`}
+          style={{
+            color: '#000',
+            background: 'rgb(255, 153, 0)',
+          }}
+        >
+          {part.text}
+        </mark>
+      )
+    }
+
+    if (!renderAnsi) return part.text
+
+    return (
       <Ansi key={`${key}-${index}`} linkify={false}>
-        {part}
+        {part.text}
       </Ansi>
-    ) : (
-      part
     )
-  )
+  })
 }
 
 export interface RowServiceLogsProps {
@@ -122,7 +140,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
     if (!isNginx && !isEnvoy) setIsExpanded(!isExpanded)
   }
 
-  const renderHighlightedMessage = (message: string, searchTerm: string | null | undefined) => {
+  const renderHighlightedMessage = (message: string, highlightRanges: HighlightRange[]) => {
     const content: ReactNode[] = []
     let currentIndex = 0
 
@@ -132,7 +150,14 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
       const startIndex = match.index ?? 0
 
       if (startIndex > currentIndex) {
-        content.push(renderHighlightedText(message.slice(currentIndex, startIndex), searchTerm, `text-${currentIndex}`))
+        content.push(
+          renderHighlightedText(
+            message.slice(currentIndex, startIndex),
+            currentIndex,
+            highlightRanges,
+            `text-${currentIndex}`
+          )
+        )
       }
 
       content.push(
@@ -144,14 +169,19 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           aria-label={url}
           className="underline"
         >
-          {renderHighlightedText(url, searchTerm, `url-text-${startIndex}`, false)}
+          {renderHighlightedText(url, startIndex, highlightRanges, `url-text-${startIndex}`, false)}
         </a>
       )
 
       const trailingPunctuation = matchedUrl.slice(url.length)
       if (trailingPunctuation) {
         content.push(
-          renderHighlightedText(trailingPunctuation, searchTerm, `trailing-punctuation-${startIndex + url.length}`)
+          renderHighlightedText(
+            trailingPunctuation,
+            startIndex + url.length,
+            highlightRanges,
+            `trailing-punctuation-${startIndex + url.length}`
+          )
         )
       }
 
@@ -159,7 +189,9 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
     }
 
     if (currentIndex < message.length) {
-      content.push(renderHighlightedText(message.slice(currentIndex), searchTerm, `text-${currentIndex}`))
+      content.push(
+        renderHighlightedText(message.slice(currentIndex), currentIndex, highlightRanges, `text-${currentIndex}`)
+      )
     }
 
     return (
@@ -174,7 +206,11 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
 
   const levelLowercase = log.level?.toLowerCase()
   const isErrorOrCritical = levelLowercase === 'error' || levelLowercase === 'critical'
-  const message = formatObjectLogMessage(log.message)
+  const formattedLogMessage = useMemo(() => formatObjectLogMessage(log.message), [log.message])
+  const highlightRanges = useMemo(
+    () => findHighlightRanges(log.message, formattedLogMessage, highlightedText),
+    [formattedLogMessage, highlightedText, log.message]
+  )
 
   return (
     <>
@@ -266,7 +302,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           </Table.Cell>
         )}
         <Table.Cell className="h-min min-h-7 w-full pb-1 pl-1.5 pr-4 pt-[0.4rem] align-top font-code font-bold">
-          {renderHighlightedMessage(message, highlightedText)}
+          {renderHighlightedMessage(formattedLogMessage.message, highlightRanges)}
         </Table.Cell>
       </Table.Row>
       {isExpanded && (
