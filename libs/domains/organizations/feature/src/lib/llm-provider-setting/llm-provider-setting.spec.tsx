@@ -48,7 +48,27 @@ describe('LlmProviderSetting', () => {
     const modal = openModal.mock.calls[0][0].content as ReactElement<LlmProviderCreateEditModalProps>
     act(() => modal.props.onClose(llmProvider))
 
-    expect(onChange).toHaveBeenCalledWith('provider-1')
+    expect(onChange).toHaveBeenCalledWith('provider-1', llmProvider)
+    expect(closeModal).toHaveBeenCalled()
+  })
+
+  it('should edit the selected token from the selector', async () => {
+    const onChange = jest.fn()
+    const organizationProvider = { ...llmProvider, scope: LlmProviderScope.ORGANIZATION }
+    const { userEvent } = renderWithProviders(
+      <LlmProviderSetting llmProviders={[organizationProvider]} value={organizationProvider.id} onChange={onChange} />
+    )
+
+    await userEvent.click(screen.getByRole('button', { name: 'Edit token' }))
+
+    const modal = openModal.mock.calls[0][0].content as ReactElement<LlmProviderCreateEditModalProps>
+    expect(modal.props.llmProvider).toEqual(organizationProvider)
+
+    const updatedProvider = { ...organizationProvider, name: 'Updated token', type: LlmProviderType.BEDROCK }
+    act(() => modal.props.onClose(updatedProvider))
+
+    expect(screen.getByText(/Updated token/)).toBeInTheDocument()
+    expect(onChange).toHaveBeenCalledWith(organizationProvider.id, updatedProvider)
     expect(closeModal).toHaveBeenCalled()
   })
 
@@ -74,7 +94,7 @@ describe('LlmProviderSetting', () => {
 
     expect(screen.getByLabelText('Token')).toBeInTheDocument()
     expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
-    expect(onChange).toHaveBeenCalledWith('provider-1')
+    expect(onChange).toHaveBeenCalledWith('provider-1', llmProvider)
   })
 
   it('should keep a selected token and dependent settings visible when the token is absent from the available list', () => {

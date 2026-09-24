@@ -138,6 +138,7 @@ export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-con
 export * from './lib/hooks/use-agentic-workflow-context-services/use-agentic-workflow-context-services'
 export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-configuration/git-repository-card'
 export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-request'
+export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-model-setting'
 export * from './lib/service-creation-flow/agentic-workflow/agentic-workflow-resources'
 export * from './lib/application-container-healthchecks/application-container-healthchecks-form/application-container-healthchecks-form'
 export * from './lib/application-container-healthchecks/healthchecks-utils'

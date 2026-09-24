@@ -9,38 +9,6 @@ import { FormProvider, type UseFormReturn, useForm } from 'react-hook-form'
 import { type FlowVariableData } from '@qovery/shared/interfaces'
 import { type AgenticWorkflowTemplate } from './agentic-workflow-templates'
 
-const DEFAULT_MODEL_SETTINGS = `{
-  "provider": "anthropic",
-  "models": [
-    {
-      "name": "claude-sonnet-4"
-    },
-    {
-      "name": "claude-haiku-4"
-    }
-  ],
-  "extendedThinking": false,
-  "tools": [
-    "Agent",
-    "Bash",
-    "Edit",
-    "Glob",
-    "Grep",
-    "LSP",
-    "NotebookEdit",
-    "Read",
-    "Skill",
-    "TaskCreate",
-    "TaskGet",
-    "TaskList",
-    "TaskUpdate",
-    "TodoWrite",
-    "WebFetch",
-    "WebSearch",
-    "Write"
-  ]
-}`
-
 export interface AgenticWorkflowOutput {
   name?: string
   url: string | null
@@ -143,7 +111,7 @@ export function getAgenticWorkflowDefaults(): AgenticWorkflowFormData {
     gitRepositories: [],
     contextServices: [],
     llmProviderId: '',
-    modelSettingsJson: DEFAULT_MODEL_SETTINGS,
+    modelSettingsJson: '',
     whitelistHosts: '*',
     dockerFragment: '',
     automations: [],

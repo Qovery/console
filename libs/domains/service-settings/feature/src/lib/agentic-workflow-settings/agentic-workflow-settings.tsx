@@ -38,6 +38,7 @@ export interface AgenticWorkflowSettingsFormValues {
   enabled: boolean
   executionMode: AgenticWorkflowExecutionMode
   llmProviderId: string
+  modelType: AgenticWorkflowModelType
   modelSettings: string
   agentPrompt: string
   repositories: AgenticWorkflowGitRepository[]
@@ -134,15 +135,6 @@ export function formatAgenticWorkflowRepositories(repositories: AgenticWorkflowG
   }))
 }
 
-export function agenticWorkflowJsonValidation(value: string) {
-  try {
-    JSON.parse(value)
-    return true
-  } catch {
-    return 'Invalid JSON format.'
-  }
-}
-
 export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
@@ -169,6 +161,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           enabled: workflow.enabled,
           executionMode: workflow.execution_mode ?? AgenticWorkflowExecutionMode.IN_PLACE,
           llmProviderId: workflow.model.llm_provider_id ?? '',
+          modelType: workflow.model.type,
           modelSettings: workflow.model.settings,
           agentPrompt: workflow.agent_prompt,
           repositories: workflow.project_repositories.map(({ url, branch, git_token_id }) => {
@@ -207,18 +200,14 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   const pageValid =
     Boolean(values.name.trim()) &&
     (page !== 'general' || areAgenticWorkflowResourcesValid(values.cpu, values.ram)) &&
-    (page !== 'ai-configuration' ||
-      (Boolean(values.llmProviderId) &&
-        Boolean(values.agentPrompt.trim()) &&
-        agenticWorkflowJsonValidation(values.modelSettings) === true)) &&
+    (page !== 'ai-configuration' || (Boolean(values.llmProviderId) && Boolean(values.agentPrompt.trim()))) &&
     (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
   const persistSettings: SaveAgenticWorkflowSettings = async (updatedValues) => {
     const data = { ...form.getValues(), ...updatedValues }
     const schedule = data.automation.triggers.find((trigger) => trigger.type === 'schedule')
-    const selectedProvider = llmProviders.find(({ id }) => id === data.llmProviderId)
     const model: AgenticWorkflowRequest['model'] = {
       // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
-      type: (selectedProvider?.type as AgenticWorkflowModelType) ?? workflow.model.type,
+      type: data.modelType,
       settings: data.modelSettings,
       llm_provider_id: data.llmProviderId,
     }
@@ -286,6 +275,7 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
           <AgenticWorkflowAiConfigurationSettings
             form={form}
             llmProviders={llmProviders.filter(({ has_credential }) => has_credential)}
+            modelType={workflow.model.type}
           />
         ) : null}
         {page === 'connections' ? (

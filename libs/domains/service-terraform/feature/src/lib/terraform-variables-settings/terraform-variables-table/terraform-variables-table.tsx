@@ -67,6 +67,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   const { environmentId = '' } = useParams({ strict: false })
   const [isCellHovered, setIsCellHovered] = useState(false)
   const [focusedCell, setFocusedCell] = useState<string | undefined>(undefined)
+  const error = errors.get(variable.id)
   const isCellFocused = useCallback((cell: 'key' | 'value') => focusedCell === cell, [focusedCell])
   const isMultiline = useMemo(() => variable.value.includes('\n') || variable.value.length > 30, [variable.value])
   const textareaValueRef = useRef<HTMLTextAreaElement | null>(null)
@@ -74,8 +75,8 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
     return isMultiline ? `${Math.min(Math.max(variable.value.split('\n').length * 20 + 24, 44), 120)}px` : 'auto'
   }, [isMultiline, variable.value])
   const isSecretPlaceholder = useMemo(() => {
-    return variable.secret && !isCellFocused('value')
-  }, [variable.secret, isCellFocused])
+    return variable.secret && variable.value.trim().length > 0 && !isCellFocused('value')
+  }, [variable.secret, variable.value, isCellFocused])
 
   const focusValueTextarea = useCallback(() => {
     if (textareaValueRef.current) {
@@ -84,8 +85,6 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
   }, [])
 
   const onValueCellClick = useCallback(() => {
-    // If variable is not a secret, focus the textarea.
-    // In case of a secret, we want to let the user explicitly click on the edit icon to edit the secret value.
     if (!isSecretPlaceholder) {
       focusValueTextarea()
     }
@@ -152,9 +151,9 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 </span>
               </Tooltip>
             )}
-            {errors.get(variable.id)?.field === 'key' && (
-              <Tooltip content={errors.get(variable.id)?.message}>
-                <div className="mr-3">
+            {error && (
+              <Tooltip content={error.message}>
+                <div className="ml-auto mr-3">
                   <Icon iconName="circle-exclamation" iconStyle="regular" className="text-negative" />
                 </div>
               </Tooltip>
@@ -180,8 +179,7 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
               'relative z-0 flex h-full w-full items-center border border-transparent after:pointer-events-none after:absolute after:-left-[1px] after:-top-[1px] after:bottom-0 after:right-0 after:-z-10 after:h-[calc(100%+2px)] after:w-[calc(100%+2px)] group-hover:after:bg-surface-neutral-component',
               isCellFocused('value') &&
                 'after:bg-surface-neutral-component group-hover:after:bg-surface-neutral-component',
-              !isSecretPlaceholder && 'cursor-text',
-              errors.get(variable.id)?.field === 'value' && 'border-surface-negative'
+              !isSecretPlaceholder && 'cursor-text'
             )}
             onClick={onValueCellClick}
           >
@@ -266,13 +264,6 @@ const VariableRow = ({ variable }: { variable: UIVariable }) => {
                 >
                   <Icon className="text-xs" iconName="rotate-left" iconStyle="regular" />
                 </button>
-              )}
-              {errors.get(variable.id)?.field === 'value' && (
-                <Tooltip content={errors.get(variable.id)?.message}>
-                  <span className="px-1">
-                    <Icon className="text-xs text-negative" iconName="circle-exclamation" iconStyle="regular" />
-                  </span>
-                </Tooltip>
               )}
             </div>
           </div>

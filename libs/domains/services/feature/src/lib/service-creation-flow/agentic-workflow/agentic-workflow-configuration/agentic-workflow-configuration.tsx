@@ -12,6 +12,7 @@ import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
 import {
   LlmProviderSetting,
   useCreateQoveryMcpServer,
+  useLlmProviderModels,
   useLlmProviders,
   useMcpServers,
 } from '@qovery/domains/organizations/feature'
@@ -47,6 +48,11 @@ import {
   createDefaultAutomation,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
+import {
+  AgenticWorkflowModelSetting,
+  getAgenticWorkflowModel,
+  updateAgenticWorkflowModel,
+} from '../agentic-workflow-model-setting'
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
 import {
   AGENTIC_WORKFLOW_MIN_CPU_MILLI,
@@ -228,7 +234,7 @@ export function AgenticWorkflowCodeEditorField({
         }`}
       >
         {placeholder && !value.trim() && (
-          <div className="pointer-events-none absolute left-[62px] top-[7px] z-10 max-w-[calc(100%-76px)] text-xs leading-5 text-neutral-subtle">
+          <div className="pointer-events-none absolute left-[62px] top-[7px] z-10 max-w-[calc(100%-76px)] whitespace-pre text-xs leading-5 text-neutral-subtle">
             {placeholder}
           </div>
         )}
@@ -340,7 +346,6 @@ export function AgenticWorkflowConfiguration() {
   const submissionInFlightRef = useRef(false)
   const values = form.watch()
   const { dirtyFields } = form.formState
-  const modelSettingsJsonError = getJsonError(values.modelSettingsJson, true)
   const gitRepositoriesValid = values.gitRepositories.every(isGitRepositoryComplete)
   const variableValues = variablesForm.watch('variables')
   const variablesValid = areVariablesValid(variableValues)
@@ -348,11 +353,21 @@ export function AgenticWorkflowConfiguration() {
   const showNameError = (showValidationErrors || Boolean(dirtyFields.name)) && !values.name.trim()
   const showPromptError = (showValidationErrors || Boolean(dirtyFields.agentPrompt)) && !values.agentPrompt.trim()
   const hasModelCredential = Boolean(values.llmProviderId)
+  const {
+    data: availableModels = [],
+    isError: modelsError,
+    isFetching: areModelsFetching,
+  } = useLlmProviderModels({
+    llmProviderId: values.llmProviderId,
+    enabled: hasModelCredential,
+  })
+  const selectedModel = getAgenticWorkflowModel(values.modelSettingsJson)
+  const hasSelectedModel = availableModels.some(({ id }) => id === selectedModel)
   const showLlmProviderError = (showValidationErrors || Boolean(dirtyFields.llmProviderId)) && !hasModelCredential
-  const providerConfigurationInvalid = !hasModelCredential || Boolean(modelSettingsJsonError)
   const availableLlmProviders = llmProviders.filter(({ has_credential }) => has_credential)
-  const selectedProvider = llmProviders.find(({ id }) => id === values.llmProviderId)
-  const isBedrockProvider = selectedProvider?.type === LlmProviderType.BEDROCK
+  const selectedProviderType = values.aiModel
+  const isBedrockProvider = selectedProviderType === LlmProviderType.BEDROCK
+  const providerConfigurationInvalid = !hasModelCredential
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
     resources: !resourcesValid,
@@ -988,8 +1003,12 @@ export function AgenticWorkflowConfiguration() {
                     Add provider
                   </Button>
                 )}
-                {!hasModelCredential && showValidationErrors ? (
-                  <span className="text-xs font-medium text-negative">Token required</span>
+                {!hasModelCredential ? (
+                  <span
+                    className={`text-xs ${showValidationErrors ? 'font-medium text-negative' : 'text-neutral-subtle'}`}
+                  >
+                    Provider required
+                  </span>
                 ) : null}
               </ConfigurationRow>
               <ConfigurationRow label="MCP">
@@ -1125,8 +1144,9 @@ export function AgenticWorkflowConfiguration() {
         <Modal externalOpen={providerModalOpen} setExternalOpen={setProviderModalOpen} width={520}>
           <ConfigurationModalContent
             title="Configure provider"
-            description="Configure the model provider token and cloud settings for the agent task."
+            description="Configure the model provider token and model settings for the agent task."
             confirmLabel="Save provider"
+            doneDisabled={!hasModelCredential || areModelsFetching || modelsError || !hasSelectedModel}
             setOpen={setProviderModalOpen}
           >
             <Controller
@@ -1139,10 +1159,17 @@ export function AgenticWorkflowConfiguration() {
                   isLoading={areLlmProvidersLoading}
                   error={showLlmProviderError ? 'Please select a token.' : undefined}
                   value={field.value}
-                  onChange={(providerId) => {
+                  onChange={(providerId, llmProvider) => {
+                    const provider = llmProvider ?? availableLlmProviders.find(({ id }) => id === providerId)
+                    const providerChanged = providerId !== field.value || provider?.type !== values.aiModel
+
                     field.onChange(providerId)
+                    if (providerChanged) {
+                      form.setValue('modelSettingsJson', updateAgenticWorkflowModel(values.modelSettingsJson, ''), {
+                        shouldDirty: true,
+                      })
+                    }
                     // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
-                    const provider = availableLlmProviders.find(({ id }) => id === providerId)
                     if (provider) {
                       form.setValue('aiModel', provider.type as AgenticWorkflowModelType, { shouldDirty: true })
                     }
@@ -1152,26 +1179,10 @@ export function AgenticWorkflowConfiguration() {
                     name="modelSettingsJson"
                     control={form.control}
                     render={({ field }) => (
-                      <AgenticWorkflowCodeEditorField
-                        name={field.name}
-                        label="Cloud settings JSON"
-                        language="json"
-                        value={field.value}
-                        error={modelSettingsJsonError}
-                        hint={
-                          <>
-                            Configure the cloud model runtime. Read the{' '}
-                            <a
-                              href="https://code.claude.com/docs/en/settings"
-                              target="_blank"
-                              rel="noreferrer"
-                              className="font-medium text-brand hover:underline"
-                            >
-                              Claude Code settings documentation
-                            </a>
-                            .
-                          </>
-                        }
+                      <AgenticWorkflowModelSetting
+                        llmProviderId={values.llmProviderId}
+                        providerType={selectedProviderType}
+                        settings={field.value}
                         onChange={field.onChange}
                       />
                     )}
