@@ -1,11 +1,13 @@
 import { useParams } from '@tanstack/react-router'
 import {
+  CloudProviderEnum,
   type LlmProviderRequest,
   type LlmProviderResponse,
   LlmProviderScope,
   LlmProviderType,
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useCreateLlmProvider } from '../hooks/use-create-llm-provider/use-create-llm-provider'
 import { useEditLlmProvider } from '../hooks/use-edit-llm-provider/use-edit-llm-provider'
@@ -50,7 +52,28 @@ const SCOPE_OPTIONS = [
   { label: 'Organization', value: LlmProviderScope.ORGANIZATION },
 ]
 
-const AWS_REGION_PATTERN = /^[a-z]{2}(-gov)?-[a-z]+-[0-9]+$/
+function BedrockRegionSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const { data: cloudProviders = [], isError, isLoading } = useCloudProviders()
+  const awsRegions = cloudProviders.find(({ short_name }) => short_name === CloudProviderEnum.AWS)?.regions ?? []
+  const options = awsRegions.map(({ city, name }) => ({ label: `${city} (${name})`, value: name }))
+
+  if (value && !options.some(({ value: region }) => region === value)) {
+    options.push({ label: value, value })
+  }
+
+  return (
+    <InputSelect
+      label="AWS region"
+      value={value}
+      onChange={(nextValue) => onChange(typeof nextValue === 'string' ? nextValue : '')}
+      options={options}
+      isLoading={isLoading}
+      error={isError ? 'Couldn’t load AWS regions.' : undefined}
+      isSearchable
+      portal
+    />
+  )
+}
 
 export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProviderCreateEditModalProps) {
   const { organizationId = '' } = useParams({ strict: false })
@@ -186,19 +209,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
             <Controller
               name="region"
               control={methods.control}
-              rules={{
-                validate: (value) =>
-                  !value.trim() || AWS_REGION_PATTERN.test(value.trim()) || 'Please enter a valid AWS region.',
-              }}
-              render={({ field, fieldState: { error } }) => (
-                <InputText
-                  label="AWS region"
-                  name={field.name}
-                  value={field.value}
-                  onChange={field.onChange}
-                  error={error?.message}
-                />
-              )}
+              render={({ field }) => <BedrockRegionSelect {...field} />}
             />
           ) : null}
           <Controller

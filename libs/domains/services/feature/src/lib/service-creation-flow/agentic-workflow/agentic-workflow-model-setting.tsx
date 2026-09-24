@@ -97,10 +97,13 @@ export function AgenticWorkflowModelSetting({
 
   const modelOptions = models.map(({ id, display_name }) => ({ value: id, label: display_name }))
   const hasModelsError = isError || (!isLoading && models.length === 0)
-  const modelsError =
-    providerType === LlmProviderType.BEDROCK
-      ? 'We couldn’t load models. Check that this token’s AWS credentials are valid.'
+  const modelsError = isError
+    ? providerType === LlmProviderType.BEDROCK
+      ? 'We couldn’t load models. Check this token’s AWS credentials and region.'
       : 'We couldn’t load models. Check that this token’s API key is valid.'
+    : providerType === LlmProviderType.BEDROCK
+      ? 'No models are available in this AWS region. Select another region in the token settings.'
+      : 'No models are available for this token.'
 
   return (
     <div className="flex flex-col gap-2">

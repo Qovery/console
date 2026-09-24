@@ -184,11 +184,11 @@ describe('AgenticWorkflowModelSetting', () => {
       />
     )
 
-    expect(screen.getByText('We couldn’t load models. Check that this token’s API key is valid.')).toBeInTheDocument()
+    expect(screen.getByText('No models are available for this token.')).toBeInTheDocument()
     expect(screen.getByLabelText('Model')).toHaveValue('')
   })
 
-  it('shows a Bedrock credential error when no models are returned', () => {
+  it('suggests changing the Bedrock region when no models are returned', () => {
     renderWithProviders(
       <AgenticWorkflowModelSetting
         llmProviderId="provider-1"
@@ -199,7 +199,7 @@ describe('AgenticWorkflowModelSetting', () => {
     )
 
     expect(
-      screen.getByText('We couldn’t load models. Check that this token’s AWS credentials are valid.')
+      screen.getByText('No models are available in this AWS region. Select another region in the token settings.')
     ).toBeInTheDocument()
     expect(screen.getByLabelText('Model')).toHaveValue('')
   })
