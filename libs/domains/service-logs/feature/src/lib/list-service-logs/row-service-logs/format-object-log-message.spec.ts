@@ -31,6 +31,14 @@ describe('formatObjectLogMessage', () => {
 }`)
   })
 
+  it('returns the formatted ranges for object keys', () => {
+    const formattedLogMessage = formatObjectLogMessage('{"message":"Started","context":{"attempt":2}}')
+
+    expect(
+      formattedLogMessage.keyRanges?.map(({ start, end }) => formattedLogMessage.message.slice(start, end))
+    ).toEqual(['"message"', '"context"', '"attempt"'])
+  })
+
   it.each([
     ['invalid JSON', '{"message":"Started"'],
     ['an array', '["Started"]'],

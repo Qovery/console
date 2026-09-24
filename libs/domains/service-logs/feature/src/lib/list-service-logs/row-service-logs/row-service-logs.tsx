@@ -39,11 +39,12 @@ function renderHighlightedText(
   text: string,
   textStart: number,
   highlightRanges: HighlightRange[],
+  keyRanges: HighlightRange[],
   key: string,
   renderAnsi = true
 ): ReactNode {
   const textEnd = textStart + text.length
-  const ranges = highlightRanges.filter(({ start, end }) => start < textEnd && end > textStart)
+  const ranges = [...highlightRanges, ...keyRanges].filter(({ start, end }) => start < textEnd && end > textStart)
 
   if (ranges.length === 0) {
     if (!renderAnsi) return text
@@ -55,17 +56,24 @@ function renderHighlightedText(
     )
   }
 
-  const parts = ranges.flatMap(({ start, end }, index) => {
-    const previousEnd = ranges[index - 1]?.end ?? textStart
-    const localStart = Math.max(start, textStart) - textStart
-    const localEnd = Math.min(end, textEnd) - textStart
-    return [
-      { text: text.slice(Math.max(previousEnd, textStart) - textStart, localStart), highlighted: false },
-      { text: text.slice(localStart, localEnd), highlighted: true },
-    ]
+  const boundaries = new Set([0, text.length])
+  for (const { start, end } of ranges) {
+    boundaries.add(Math.max(start, textStart) - textStart)
+    boundaries.add(Math.min(end, textEnd) - textStart)
+  }
+
+  const sortedBoundaries = Array.from(boundaries).sort((a, b) => a - b)
+  const parts = sortedBoundaries.slice(0, -1).map((start, index) => {
+    const end = sortedBoundaries[index + 1] ?? start
+    const globalStart = textStart + start
+    const globalEnd = textStart + end
+
+    return {
+      text: text.slice(start, end),
+      highlighted: highlightRanges.some((range) => range.start < globalEnd && range.end > globalStart),
+      isKey: keyRanges.some((range) => range.start < globalEnd && range.end > globalStart),
+    }
   })
-  const lastEnd = Math.min(ranges[ranges.length - 1]?.end ?? textStart, textEnd) - textStart
-  parts.push({ text: text.slice(lastEnd), highlighted: false })
 
   return parts.map((part, index) => {
     if (part.highlighted) {
@@ -79,6 +87,14 @@ function renderHighlightedText(
         >
           {part.text}
         </mark>
+      )
+    }
+
+    if (part.isKey) {
+      return (
+        <span key={`${key}-${index}`} className="text-accent1">
+          {part.text}
+        </span>
       )
     }
 
@@ -141,6 +157,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
   }
 
   const renderHighlightedMessage = (message: string, highlightRanges: HighlightRange[]) => {
+    const keyRanges = formattedLogMessage.keyRanges ?? []
     const content: ReactNode[] = []
     let currentIndex = 0
 
@@ -155,6 +172,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             message.slice(currentIndex, startIndex),
             currentIndex,
             highlightRanges,
+            keyRanges,
             `text-${currentIndex}`
           )
         )
@@ -169,7 +187,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
           aria-label={url}
           className="underline"
         >
-          {renderHighlightedText(url, startIndex, highlightRanges, `url-text-${startIndex}`, false)}
+          {renderHighlightedText(url, startIndex, highlightRanges, keyRanges, `url-text-${startIndex}`, false)}
         </a>
       )
 
@@ -180,6 +198,7 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
             trailingPunctuation,
             startIndex + url.length,
             highlightRanges,
+            keyRanges,
             `trailing-punctuation-${startIndex + url.length}`
           )
         )
@@ -190,7 +209,13 @@ export function RowServiceLogs({ log, hasMultipleContainers, highlightedText, se
 
     if (currentIndex < message.length) {
       content.push(
-        renderHighlightedText(message.slice(currentIndex), currentIndex, highlightRanges, `text-${currentIndex}`)
+        renderHighlightedText(
+          message.slice(currentIndex),
+          currentIndex,
+          highlightRanges,
+          keyRanges,
+          `text-${currentIndex}`
+        )
       )
     }
 

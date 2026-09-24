@@ -85,19 +85,41 @@ describe('RowServiceLogs', () => {
     expect(container.querySelector('[data-log-message="true"]')?.textContent).toBe(formattedMessage)
   })
 
+  it('renders JSON object keys with the accent color', () => {
+    const { container } = renderRowServiceLogs({
+      ...mockLog,
+      message: '{"message":"Started","context":{"attempt":2}}',
+    })
+
+    expect(Array.from(container.querySelectorAll('.text-accent1')).map((element) => element.textContent)).toEqual([
+      '"message"',
+      '"context"',
+      '"attempt"',
+    ])
+    expect(container.querySelector('[data-log-message="true"]')).toHaveTextContent('"message": "Started"')
+  })
+
   it('highlights search text in a formatted JSON object message', () => {
     renderRowServiceLogs({ ...mockLog, message: '{"message":"Started"}' }, false, 'Started')
 
     expect(screen.getByText('Started').closest('mark')).toBeInTheDocument()
-    expect(screen.getByText(/"message":/).closest('[data-log-message="true"]')).toHaveTextContent(
+    expect(screen.getByText('Started').closest('[data-log-message="true"]')).toHaveTextContent(
       '{ "message": "Started" }'
     )
   })
 
   it('highlights a compact raw JSON match after formatting', () => {
-    renderRowServiceLogs({ ...mockLog, message: '{"message":"Started","attempt":2}' }, false, '"message":"Started"')
+    const { container } = renderRowServiceLogs(
+      { ...mockLog, message: '{"message":"Started","attempt":2}' },
+      false,
+      '"message":"Started"'
+    )
 
-    expect(screen.getByText('"message": "Started"').closest('mark')).toBeInTheDocument()
+    expect(
+      Array.from(container.querySelectorAll('mark'))
+        .map((element) => element.textContent)
+        .join('')
+    ).toBe('"message": "Started"')
   })
 
   it.each(['["Started"]', '"Started"', '42', 'true', 'null', '{"message":"Started"', 'Started successfully'])(

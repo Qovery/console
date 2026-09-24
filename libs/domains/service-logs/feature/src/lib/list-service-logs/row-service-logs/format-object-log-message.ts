@@ -1,11 +1,12 @@
-export interface FormattedLogMessage {
-  message: string
-  sourceMap?: number[]
-}
-
 export interface HighlightRange {
   start: number
   end: number
+}
+
+export interface FormattedLogMessage {
+  message: string
+  sourceMap?: number[]
+  keyRanges?: HighlightRange[]
 }
 
 function nextNonWhitespaceCharacter(message: string, start: number) {
@@ -39,7 +40,9 @@ export function formatObjectLogMessage(message: string): FormattedLogMessage {
   let indentation = 0
   let isInsideString = false
   let isEscaped = false
+  let currentStringStart = 0
   const sourceMap = Array.from<number>({ length: message.length }).fill(-1)
+  const keyRanges: HighlightRange[] = []
 
   const appendSourceCharacter = (character: string, sourceIndex: number) => {
     sourceMap[sourceIndex] = formattedMessage.length
@@ -62,6 +65,9 @@ export function formatObjectLogMessage(message: string): FormattedLogMessage {
         isEscaped = true
       } else if (character === '"') {
         isInsideString = false
+        if (nextNonWhitespaceCharacter(message, index + 1) === ':') {
+          keyRanges.push({ start: currentStringStart, end: formattedMessage.length })
+        }
       }
 
       continue
@@ -71,6 +77,7 @@ export function formatObjectLogMessage(message: string): FormattedLogMessage {
 
     if (character === '"') {
       isInsideString = true
+      currentStringStart = formattedMessage.length
       appendSourceCharacter(character, index)
       continue
     }
@@ -105,7 +112,7 @@ export function formatObjectLogMessage(message: string): FormattedLogMessage {
     }
   }
 
-  return { message: formattedMessage, sourceMap }
+  return { message: formattedMessage, sourceMap, keyRanges }
 }
 
 export function findHighlightRanges(
