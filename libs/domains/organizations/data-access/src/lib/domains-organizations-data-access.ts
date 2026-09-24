@@ -137,7 +137,6 @@ export const organizations = createQueryKeys('organizations', {
     async queryFn({ signal }) {
       const response = await llmProvidersApi.listLlmProviderModels(llmProviderId, {
         signal,
-        timeout: 15_000,
       })
       return response.data.results
     },

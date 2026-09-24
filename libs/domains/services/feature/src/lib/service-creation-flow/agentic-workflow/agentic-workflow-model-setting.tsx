@@ -38,6 +38,7 @@ export function AgenticWorkflowModelSetting({
   onChange,
 }: AgenticWorkflowModelSettingProps) {
   const initializedDefaults = useRef(new Set<string>())
+  const activeProviderKey = useRef(`${llmProviderId}:${providerType ?? ''}`)
   const hasLlmProvider = Boolean(llmProviderId)
   const hasModelProvider = hasLlmProvider && Boolean(providerType)
   const {
@@ -56,10 +57,19 @@ export function AgenticWorkflowModelSetting({
   useEffect(() => {
     if (!hasModelProvider || !providerType) return
 
-    const initializationKey = `${llmProviderId}:${providerType}`
+    const initializationKey = `${llmProviderId}:${providerType ?? ''}`
     if (initializedDefaults.current.has(initializationKey)) return
 
     if (isLoading || isError) return
+
+    if (activeProviderKey.current !== initializationKey) {
+      if (!firstModelId) return
+
+      activeProviderKey.current = initializationKey
+      initializedDefaults.current.add(initializationKey)
+      onChange(updateAgenticWorkflowModel(settings, firstModelId))
+      return
+    }
 
     if (hasCurrentModel) {
       initializedDefaults.current.add(initializationKey)

@@ -115,7 +115,9 @@ describe('LlmProviderCreateEditModal', () => {
     await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
     await userEvent.type(screen.getByLabelText('Name'), 'EU Bedrock')
     await userEvent.type(screen.getByLabelText('Token'), 'aws-credentials')
-    await userEvent.type(screen.getByLabelText('AWS region (optional)'), 'eu-west-1')
+    await selectEvent.select(screen.getByLabelText('AWS region'), 'Europe (Ireland) eu-west-1', {
+      container: document.body,
+    })
     await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
 
     await waitFor(() =>
@@ -133,14 +135,27 @@ describe('LlmProviderCreateEditModal', () => {
     )
   })
 
-  it('should reject an invalid Bedrock region', async () => {
+  it('should select eu-west-1 as the default AWS region', async () => {
     const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
 
     await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
-    await userEvent.type(screen.getByLabelText('AWS region (optional)'), 'europe')
+    expect(screen.getByText('Europe (Ireland) eu-west-1')).toBeInTheDocument()
+    await userEvent.type(screen.getByLabelText('Name'), 'Default Bedrock')
+    await userEvent.type(screen.getByLabelText('Token'), 'aws-credentials')
     await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
 
-    expect(await screen.findByText('Please enter a valid AWS region.')).toBeInTheDocument()
-    expect(createLlmProvider).not.toHaveBeenCalled()
+    await waitFor(() =>
+      expect(createLlmProvider).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        llmProviderRequest: {
+          name: 'Default Bedrock',
+          description: undefined,
+          type: LlmProviderType.BEDROCK,
+          credential: 'aws-credentials',
+          region: 'eu-west-1',
+          scope: LlmProviderScope.USER,
+        },
+      })
+    )
   })
 })

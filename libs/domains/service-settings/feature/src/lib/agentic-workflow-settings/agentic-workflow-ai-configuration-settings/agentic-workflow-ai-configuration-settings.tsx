@@ -15,7 +15,7 @@ export function AgenticWorkflowAiConfigurationSettings({
   modelType: AgenticWorkflowModelType
 }) {
   const llmProviderId = form.watch('llmProviderId')
-  const selectedProvider = llmProviders.find(({ id }) => id === llmProviderId)
+  const currentModelType = form.watch('modelType')
 
   return (
     <>
@@ -27,7 +27,17 @@ export function AgenticWorkflowAiConfigurationSettings({
           name="llmProviderId"
           control={form.control}
           render={({ field }) => (
-            <LlmProviderSetting llmProviders={llmProviders} value={field.value} onChange={field.onChange} />
+            <LlmProviderSetting
+              llmProviders={llmProviders}
+              value={field.value}
+              onChange={(providerId, llmProvider) => {
+                field.onChange(providerId)
+                const provider = llmProvider ?? llmProviders.find(({ id }) => id === providerId)
+                if (provider) {
+                  form.setValue('modelType', provider.type as AgenticWorkflowModelType, { shouldDirty: true })
+                }
+              }}
+            />
           )}
         />
         <Controller
@@ -36,7 +46,7 @@ export function AgenticWorkflowAiConfigurationSettings({
           render={({ field }) => (
             <AgenticWorkflowModelSetting
               llmProviderId={llmProviderId}
-              providerType={selectedProvider?.type ?? modelType}
+              providerType={currentModelType ?? modelType}
               settings={field.value}
               onChange={field.onChange}
             />

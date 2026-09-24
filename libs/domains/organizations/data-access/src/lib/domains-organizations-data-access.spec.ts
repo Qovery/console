@@ -74,7 +74,6 @@ describe('organizations.llmProviderModels', () => {
 
     expect(LLMProvidersApi.prototype.listLlmProviderModels).toHaveBeenCalledWith('provider-1', {
       signal,
-      timeout: 15_000,
     })
     expect(result).toEqual(mockData)
     expect(query.queryKey).toContain('provider-1')

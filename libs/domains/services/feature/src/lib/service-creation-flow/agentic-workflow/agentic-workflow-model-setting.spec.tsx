@@ -1,4 +1,5 @@
 import { LlmProviderType } from 'qovery-typescript-axios'
+import { useState } from 'react'
 import selectEvent from 'react-select-event'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
@@ -85,6 +86,38 @@ describe('AgenticWorkflowModelSetting', () => {
         onChange={onChange}
       />
     )
+
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
+    expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'claude-opus' })
+  })
+
+  it('selects the first model when switching tokens even if the previous model is still available', async () => {
+    mockModels = [
+      { id: 'claude-opus', display_name: 'Claude Opus', created_at: null },
+      { id: 'claude-sonnet', display_name: 'Claude Sonnet', created_at: null },
+    ]
+    const onChange = jest.fn()
+    function ModelSettingHarness() {
+      const [llmProviderId, setLlmProviderId] = useState('provider-1')
+
+      return (
+        <>
+          <button type="button" onClick={() => setLlmProviderId('provider-2')}>
+            Switch token
+          </button>
+          <AgenticWorkflowModelSetting
+            llmProviderId={llmProviderId}
+            providerType={LlmProviderType.CLAUDE}
+            settings={'{"model":"claude-sonnet"}'}
+            onChange={onChange}
+          />
+        </>
+      )
+    }
+    const { userEvent } = renderWithProviders(<ModelSettingHarness />)
+
+    expect(onChange).not.toHaveBeenCalled()
+    await userEvent.click(screen.getByRole('button', { name: 'Switch token' }))
 
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'claude-opus' })

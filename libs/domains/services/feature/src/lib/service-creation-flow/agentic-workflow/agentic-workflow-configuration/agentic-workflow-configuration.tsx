@@ -12,6 +12,7 @@ import { Controller, FormProvider, useFieldArray } from 'react-hook-form'
 import {
   LlmProviderSetting,
   useCreateQoveryMcpServer,
+  useLlmProviderModels,
   useLlmProviders,
   useMcpServers,
 } from '@qovery/domains/organizations/feature'
@@ -47,7 +48,11 @@ import {
   createDefaultAutomation,
   useAgenticWorkflowCreateContext,
 } from '../agentic-workflow-context'
-import { AgenticWorkflowModelSetting } from '../agentic-workflow-model-setting'
+import {
+  AgenticWorkflowModelSetting,
+  getAgenticWorkflowModel,
+  updateAgenticWorkflowModel,
+} from '../agentic-workflow-model-setting'
 import { formatAgenticWorkflowRequest } from '../agentic-workflow-request'
 import {
   AGENTIC_WORKFLOW_MIN_CPU_MILLI,
@@ -348,10 +353,19 @@ export function AgenticWorkflowConfiguration() {
   const showNameError = (showValidationErrors || Boolean(dirtyFields.name)) && !values.name.trim()
   const showPromptError = (showValidationErrors || Boolean(dirtyFields.agentPrompt)) && !values.agentPrompt.trim()
   const hasModelCredential = Boolean(values.llmProviderId)
+  const {
+    data: availableModels = [],
+    isError: modelsError,
+    isFetching: areModelsFetching,
+  } = useLlmProviderModels({
+    llmProviderId: values.llmProviderId,
+    enabled: hasModelCredential,
+  })
+  const selectedModel = getAgenticWorkflowModel(values.modelSettingsJson)
+  const hasSelectedModel = availableModels.some(({ id }) => id === selectedModel)
   const showLlmProviderError = (showValidationErrors || Boolean(dirtyFields.llmProviderId)) && !hasModelCredential
   const availableLlmProviders = llmProviders.filter(({ has_credential }) => has_credential)
-  const selectedProvider = llmProviders.find(({ id }) => id === values.llmProviderId)
-  const selectedProviderType = selectedProvider?.type ?? values.aiModel
+  const selectedProviderType = values.aiModel
   const isBedrockProvider = selectedProviderType === LlmProviderType.BEDROCK
   const providerConfigurationInvalid = !hasModelCredential
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
@@ -1132,6 +1146,7 @@ export function AgenticWorkflowConfiguration() {
             title="Configure provider"
             description="Configure the model provider token and model settings for the agent task."
             confirmLabel="Save provider"
+            doneDisabled={!hasModelCredential || areModelsFetching || modelsError || !hasSelectedModel}
             setOpen={setProviderModalOpen}
           >
             <Controller
@@ -1144,10 +1159,17 @@ export function AgenticWorkflowConfiguration() {
                   isLoading={areLlmProvidersLoading}
                   error={showLlmProviderError ? 'Please select a token.' : undefined}
                   value={field.value}
-                  onChange={(providerId) => {
+                  onChange={(providerId, llmProvider) => {
+                    const provider = llmProvider ?? availableLlmProviders.find(({ id }) => id === providerId)
+                    const providerChanged = providerId !== field.value || provider?.type !== values.aiModel
+
                     field.onChange(providerId)
+                    if (providerChanged) {
+                      form.setValue('modelSettingsJson', updateAgenticWorkflowModel(values.modelSettingsJson, ''), {
+                        shouldDirty: true,
+                      })
+                    }
                     // Keep the model type aligned with the selected token's provider (Claude, Bedrock, ...)
-                    const provider = availableLlmProviders.find(({ id }) => id === providerId)
                     if (provider) {
                       form.setValue('aiModel', provider.type as AgenticWorkflowModelType, { shouldDirty: true })
                     }

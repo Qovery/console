@@ -12,7 +12,7 @@ export interface LlmProviderSettingProps {
   isLoading?: boolean
   llmProviders: LlmProviderResponse[]
   value: string
-  onChange: (value: string) => void
+  onChange: (value: string, llmProvider?: LlmProviderResponse) => void
 }
 
 export function LlmProviderSetting({
@@ -28,25 +28,28 @@ export function LlmProviderSetting({
   const { user } = useAuth0()
   const currentUserSub = user?.sub
   const { openModal, closeModal } = useModal()
-  const [createdLlmProvider, setCreatedLlmProvider] = useState<LlmProviderResponse>()
+  const [localLlmProvider, setLocalLlmProvider] = useState<LlmProviderResponse>()
   const usableLlmProviders = llmProviders.filter(
     (llmProvider) =>
       llmProvider.scope === LlmProviderScope.ORGANIZATION ||
       Boolean(currentUserSub && llmProvider.owner_user_sub === currentUserSub)
   )
-  const availableLlmProviders =
-    createdLlmProvider && !usableLlmProviders.some(({ id }) => id === createdLlmProvider.id)
-      ? [...usableLlmProviders, createdLlmProvider]
-      : usableLlmProviders
+  const availableLlmProviders = localLlmProvider
+    ? usableLlmProviders.some(({ id }) => id === localLlmProvider.id)
+      ? usableLlmProviders.map((provider) => (provider.id === localLlmProvider.id ? localLlmProvider : provider))
+      : [...usableLlmProviders, localLlmProvider]
+    : usableLlmProviders
+  const selectedLlmProvider = availableLlmProviders.find(({ id }) => id === value)
 
-  const openCreateModal = () => {
+  const openProviderModal = (llmProvider?: LlmProviderResponse) => {
     openModal({
       content: (
         <LlmProviderCreateEditModal
+          llmProvider={llmProvider}
           onClose={(response) => {
             if (response) {
-              setCreatedLlmProvider(response)
-              onChange(response.id)
+              setLocalLlmProvider(response)
+              onChange(response.id, response)
             }
             closeModal()
           }}
@@ -68,7 +71,7 @@ export function LlmProviderSetting({
           description="You don't have a model provider token yet. Add one to configure this agent task."
           size="sm"
         >
-          <Button type="button" size="md" color="neutral" onClick={openCreateModal}>
+          <Button type="button" size="md" color="neutral" onClick={() => openProviderModal()}>
             <Icon iconName="circle-plus" iconStyle="regular" />
             New token
           </Button>
@@ -84,41 +87,65 @@ export function LlmProviderSetting({
 
   return (
     <>
-      <InputSelect
-        label="Token"
-        error={error}
-        value={value}
-        options={availableLlmProviders.map(({ id, name, description }) => ({
-          value: id,
-          label: name,
-          description,
-        }))}
-        isClearable
-        isSearchable
-        isLoading={isLoading}
-        portal
-        placeholder="Select a token"
-        hint={
-          availableLlmProviders.length === 0 && !isLoading ? (
-            <span>
-              No token is configured. Create one here or manage tokens in{' '}
-              <a
-                className="font-medium text-brand hover:underline"
-                href={`/organization/${organizationId}/settings/agents/tokens`}
-              >
-                Agents → Tokens
-              </a>
-              .
-            </span>
-          ) : undefined
-        }
-        menuListButton={{
-          title: 'Select token',
-          label: 'New token',
-          onClick: openCreateModal,
-        }}
-        onChange={(nextValue) => onChange(typeof nextValue === 'string' ? nextValue : '')}
-      />
+      <div className="flex items-start gap-2">
+        <div className="min-w-0 flex-1">
+          <InputSelect
+            label="Token"
+            error={error}
+            value={value}
+            options={availableLlmProviders.map(({ id, name, description }) => ({
+              value: id,
+              label: name,
+              description,
+            }))}
+            isClearable
+            isSearchable
+            isLoading={isLoading}
+            portal
+            placeholder="Select a token"
+            hint={
+              availableLlmProviders.length === 0 && !isLoading ? (
+                <span>
+                  No token is configured. Create one here or manage tokens in{' '}
+                  <a
+                    className="font-medium text-brand hover:underline"
+                    href={`/organization/${organizationId}/settings/agents/tokens`}
+                  >
+                    Agents → Tokens
+                  </a>
+                  .
+                </span>
+              ) : undefined
+            }
+            menuListButton={{
+              title: 'Select token',
+              label: 'New token',
+              onClick: () => openProviderModal(),
+            }}
+            onChange={(nextValue) => {
+              const providerId = typeof nextValue === 'string' ? nextValue : ''
+              onChange(
+                providerId,
+                availableLlmProviders.find(({ id }) => id === providerId)
+              )
+            }}
+          />
+        </div>
+        {selectedLlmProvider ? (
+          <Button
+            type="button"
+            size="lg"
+            variant="outline"
+            color="neutral"
+            iconOnly
+            className="h-[52px] w-[52px]"
+            aria-label="Edit token"
+            onClick={() => openProviderModal(selectedLlmProvider)}
+          >
+            <Icon iconName="pen" iconStyle="regular" />
+          </Button>
+        ) : null}
+      </div>
       {children}
     </>
   )

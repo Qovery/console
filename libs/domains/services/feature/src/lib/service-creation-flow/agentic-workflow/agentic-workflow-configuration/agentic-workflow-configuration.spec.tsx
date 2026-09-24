@@ -98,7 +98,12 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
     mutateAsync: mockCreateQoveryMcpServer,
   }),
   useLlmProviders: () => ({ data: mockLlmProviders, isLoading: false }),
-  useLlmProviderModels: () => ({ data: [], isError: false, isLoading: false, refetch: jest.fn() }),
+  useLlmProviderModels: () => ({
+    data: [{ id: 'claude-opus', display_name: 'Claude Opus', created_at: null }],
+    isError: false,
+    isLoading: false,
+    refetch: jest.fn(),
+  }),
   useMcpServers: () => ({
     data: mockMcpServers,
     isError: mockMcpServersError,
@@ -354,9 +359,12 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
     expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
     expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save provider' })).toBeDisabled()
     await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
     expect(screen.getByLabelText('Model')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
+    const saveProviderButton = screen.getByRole('button', { name: 'Save provider' })
+    await waitFor(() => expect(saveProviderButton).toBeEnabled())
+    await userEvent.click(saveProviderButton)
 
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
     expect(screen.getByRole('heading', { name: 'Configure triggers' })).toBeInTheDocument()
