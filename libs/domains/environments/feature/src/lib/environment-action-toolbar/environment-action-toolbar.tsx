@@ -23,6 +23,7 @@ import {
   isStopAvailable,
 } from '@qovery/shared/util-js'
 import { CreateCloneEnvironmentModal } from '../create-clone-environment-modal/create-clone-environment-modal'
+import { DeployByVersionModal } from '../deploy-by-version-modal/deploy-by-version-modal'
 import { useCancelDeploymentEnvironment } from '../hooks/use-cancel-deployment-environment/use-cancel-deployment-environment'
 import { useDeleteEnvironment } from '../hooks/use-delete-environment/use-delete-environment'
 import { useDeployEnvironment } from '../hooks/use-deploy-environment/use-deploy-environment'
@@ -31,7 +32,6 @@ import { useEnvironmentServices } from '../hooks/use-environment-services/use-en
 import { useStopEnvironment } from '../hooks/use-stop-environment/use-stop-environment'
 import useUninstallEnvironment from '../hooks/use-uninstall-environment/use-uninstall-environment'
 import { TerraformExportModal } from '../terraform-export-modal/terraform-export-modal'
-import { UpdateAllModal } from '../update-all-modal/update-all-modal'
 
 type ActionToolbarVariant = 'default' | 'header'
 const NAMESPACE_VARIABLE_NAME = 'QOVERY_KUBERNETES_NAMESPACE_NAME'
@@ -177,9 +177,9 @@ export function MenuManageDeployment({
     })
   }
 
-  const openUpdateAllModal = () => {
+  const openDeployByVersionModal = () => {
     openModal({
-      content: <UpdateAllModal environment={environment} />,
+      content: <DeployByVersionModal environment={environment} />,
       options: {
         width: 676,
       },
@@ -283,8 +283,8 @@ export function MenuManageDeployment({
           .otherwise(() => (
             <>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item icon={<Icon iconName="rotate" />} onSelect={openUpdateAllModal}>
-                Deploy latest version for..
+              <DropdownMenu.Item icon={<Icon iconName="code-branch" />} onSelect={openDeployByVersionModal}>
+                Deploy by version
               </DropdownMenu.Item>
             </>
           ))}

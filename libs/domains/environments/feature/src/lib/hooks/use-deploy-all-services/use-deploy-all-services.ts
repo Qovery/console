@@ -56,7 +56,7 @@ export function useDeployAllServices() {
           },
         } = variables as Parameters<typeof mutations.deployAllServices>[0]
         return {
-          title: 'Your services are being updated',
+          title: 'Your services are being deployed',
           labelAction: 'See deployment logs',
           callback() {
             navigate({
