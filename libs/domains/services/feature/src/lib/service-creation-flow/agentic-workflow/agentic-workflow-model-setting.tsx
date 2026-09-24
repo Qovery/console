@@ -114,7 +114,7 @@ export function AgenticWorkflowModelSetting({
         label="Model"
         value={hasCurrentModel ? currentModel : ''}
         options={modelOptions}
-        error={hasModelsError ? 'We couldn’t load models for this token.' : undefined}
+        error={hasModelsError ? 'We couldn’t load models. Check that this token’s API key is valid.' : undefined}
         isLoading={isLoading}
         isSearchable
         portal
