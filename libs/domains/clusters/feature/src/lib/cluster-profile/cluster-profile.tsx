@@ -221,20 +221,7 @@ function ProfileConfigurationSection({
       ))}
 
       {requirements.length > 0 ? (
-        <div className="flex flex-col border-t border-neutral">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <Heading level={3}>Cluster inputs</Heading>
-              <p className="mt-1 text-ssm text-neutral-subtle">
-                Values required from this cluster for the selected configuration.
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              {requirements.map((requirement) => (
-                <RequirementStatus key={requirement.key} status={requirement.status} />
-              ))}
-            </div>
-          </div>
+        <div className="flex flex-col">
           {requirements.map((requirement) => (
             <CatalogVariableInput
               key={requirement.key}
