@@ -50,43 +50,7 @@ const SCOPE_OPTIONS = [
   { label: 'Organization', value: LlmProviderScope.ORGANIZATION },
 ]
 
-const BEDROCK_REGION_OPTIONS = [
-  { label: 'US East (N. Virginia) — us-east-1', value: 'us-east-1' },
-  { label: 'US East (Ohio) — us-east-2', value: 'us-east-2' },
-  { label: 'US West (N. California) — us-west-1', value: 'us-west-1' },
-  { label: 'US West (Oregon) — us-west-2', value: 'us-west-2' },
-  { label: 'Canada (Central) — ca-central-1', value: 'ca-central-1' },
-  { label: 'Canada West (Calgary) — ca-west-1', value: 'ca-west-1' },
-  { label: 'Mexico (Central) — mx-central-1', value: 'mx-central-1' },
-  { label: 'Europe (Frankfurt) — eu-central-1', value: 'eu-central-1' },
-  { label: 'Europe (Zurich) — eu-central-2', value: 'eu-central-2' },
-  { label: 'Europe (Stockholm) — eu-north-1', value: 'eu-north-1' },
-  { label: 'Europe (Milan) — eu-south-1', value: 'eu-south-1' },
-  { label: 'Europe (Spain) — eu-south-2', value: 'eu-south-2' },
-  { label: 'Europe (Ireland) — eu-west-1', value: 'eu-west-1' },
-  { label: 'Europe (London) — eu-west-2', value: 'eu-west-2' },
-  { label: 'Europe (Paris) — eu-west-3', value: 'eu-west-3' },
-  { label: 'Asia Pacific (Taipei) — ap-east-2', value: 'ap-east-2' },
-  { label: 'Asia Pacific (Tokyo) — ap-northeast-1', value: 'ap-northeast-1' },
-  { label: 'Asia Pacific (Seoul) — ap-northeast-2', value: 'ap-northeast-2' },
-  { label: 'Asia Pacific (Osaka) — ap-northeast-3', value: 'ap-northeast-3' },
-  { label: 'Asia Pacific (Mumbai) — ap-south-1', value: 'ap-south-1' },
-  { label: 'Asia Pacific (Hyderabad) — ap-south-2', value: 'ap-south-2' },
-  { label: 'Asia Pacific (Singapore) — ap-southeast-1', value: 'ap-southeast-1' },
-  { label: 'Asia Pacific (Sydney) — ap-southeast-2', value: 'ap-southeast-2' },
-  { label: 'Asia Pacific (Jakarta) — ap-southeast-3', value: 'ap-southeast-3' },
-  { label: 'Asia Pacific (Melbourne) — ap-southeast-4', value: 'ap-southeast-4' },
-  { label: 'Asia Pacific (Malaysia) — ap-southeast-5', value: 'ap-southeast-5' },
-  { label: 'Asia Pacific (New Zealand) — ap-southeast-6', value: 'ap-southeast-6' },
-  { label: 'Asia Pacific (Thailand) — ap-southeast-7', value: 'ap-southeast-7' },
-  { label: 'Israel (Tel Aviv) — il-central-1', value: 'il-central-1' },
-  { label: 'Middle East (UAE) — me-central-1', value: 'me-central-1' },
-  { label: 'Middle East (Bahrain) — me-south-1', value: 'me-south-1' },
-  { label: 'Africa (Cape Town) — af-south-1', value: 'af-south-1' },
-  { label: 'South America (São Paulo) — sa-east-1', value: 'sa-east-1' },
-  { label: 'AWS GovCloud (US-East) — us-gov-east-1', value: 'us-gov-east-1' },
-  { label: 'AWS GovCloud (US-West) — us-gov-west-1', value: 'us-gov-west-1' },
-].map(({ label, value }) => ({ label: label.replace(' — ', ' '), value }))
+const AWS_REGION_PATTERN = /^[a-z]{2}(-gov)?-[a-z]+-[0-9]+$/
 
 export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProviderCreateEditModalProps) {
   const { organizationId = '' } = useParams({ strict: false })
@@ -108,10 +72,6 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
   const providerChanged = isEdit && methods.watch('type') !== llmProvider.type
   const providerType = methods.watch('type')
   const credentialRequired = !isEdit || providerChanged
-  const regionOptions =
-    llmProvider?.region && !BEDROCK_REGION_OPTIONS.some(({ value }) => value === llmProvider.region)
-      ? [...BEDROCK_REGION_OPTIONS, { label: `${llmProvider.region} (existing region)`, value: llmProvider.region }]
-      : BEDROCK_REGION_OPTIONS
 
   const { mutateAsync: createLlmProvider, isLoading: isCreating } = useCreateLlmProvider()
   const { mutateAsync: editLlmProvider, isLoading: isEditing } = useEditLlmProvider()
@@ -226,14 +186,17 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
             <Controller
               name="region"
               control={methods.control}
-              render={({ field }) => (
-                <InputSelect
+              rules={{
+                validate: (value) =>
+                  !value.trim() || AWS_REGION_PATTERN.test(value.trim()) || 'Please enter a valid AWS region.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
                   label="AWS region"
+                  name={field.name}
                   value={field.value}
                   onChange={field.onChange}
-                  options={regionOptions}
-                  isSearchable
-                  portal
+                  error={error?.message}
                 />
               )}
             />
