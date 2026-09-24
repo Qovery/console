@@ -57,6 +57,7 @@ export function AgenticWorkflowModelSetting({
   const currentModel = getAgenticWorkflowModel(settings)
   const firstModelId = models[0]?.id
   const hasInvalidSettings = Boolean(settings.trim()) && !parsedSettings
+  const hasCurrentModel = models.some(({ id }) => id === currentModel)
 
   useEffect(() => {
     if (!hasLlmProvider || !providerType) return
@@ -64,24 +65,37 @@ export function AgenticWorkflowModelSetting({
     const initializationKey = `${llmProviderId}:${providerType}`
     if (initializedDefaults.current.has(initializationKey)) return
 
-    if (currentModel || hasInvalidSettings) {
+    if (hasInvalidSettings) {
       initializedDefaults.current.add(initializationKey)
       return
     }
 
-    if (isClaude && firstModelId) {
+    if (providerType === LlmProviderType.BEDROCK) {
       initializedDefaults.current.add(initializationKey)
-      onChange(updateAgenticWorkflowModel(settings, firstModelId))
-    } else if (providerType === LlmProviderType.BEDROCK) {
-      initializedDefaults.current.add(initializationKey)
-      onChange(updateAgenticWorkflowModel(settings, DEFAULT_BEDROCK_MODEL))
+      if (!currentModel) onChange(updateAgenticWorkflowModel(settings, DEFAULT_BEDROCK_MODEL))
+      return
     }
+
+    if (!isClaude || isLoading || isError) return
+
+    if (hasCurrentModel) {
+      initializedDefaults.current.add(initializationKey)
+      return
+    }
+
+    if (!firstModelId) return
+
+    initializedDefaults.current.add(initializationKey)
+    onChange(updateAgenticWorkflowModel(settings, firstModelId))
   }, [
     currentModel,
     firstModelId,
+    hasCurrentModel,
     hasInvalidSettings,
     hasLlmProvider,
     isClaude,
+    isError,
+    isLoading,
     llmProviderId,
     onChange,
     providerType,
@@ -92,19 +106,15 @@ export function AgenticWorkflowModelSetting({
   if (!isClaude) return bedrockSettings
 
   const modelOptions = models.map(({ id, display_name }) => ({ value: id, label: display_name }))
-  const options =
-    currentModel && !models.some(({ id }) => id === currentModel)
-      ? [{ value: currentModel, label: currentModel }, ...modelOptions]
-      : modelOptions
+  const hasModelsError = isError || (!isLoading && models.length === 0)
 
   return (
     <div className="flex flex-col gap-2">
       <InputSelect
         label="Model"
-        value={currentModel}
-        options={options}
-        error={isError ? 'Unable to load models.' : undefined}
-        hint={!isLoading && !isError && models.length === 0 ? 'No model is available for this token.' : undefined}
+        value={hasCurrentModel ? currentModel : ''}
+        options={modelOptions}
+        error={hasModelsError ? 'Unable to load models.' : undefined}
         isLoading={isLoading}
         isSearchable
         portal

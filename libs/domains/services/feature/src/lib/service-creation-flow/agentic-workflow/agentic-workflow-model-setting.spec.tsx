@@ -83,7 +83,7 @@ describe('AgenticWorkflowModelSetting', () => {
         bedrockSettings={<div>Bedrock settings</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
-        settings="{}"
+        settings={'{"model":"eu.anthropic.claude-opus-5"}'}
         onChange={onChange}
       />
     )
@@ -155,18 +155,19 @@ describe('AgenticWorkflowModelSetting', () => {
     expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
   })
 
-  it('shows an empty state when Claude returns no models', () => {
+  it('shows an error with no selected value when Claude returns no models', () => {
     renderWithProviders(
       <AgenticWorkflowModelSetting
         bedrockSettings={<div>Bedrock settings</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
-        settings="{}"
+        settings={'{"model":"eu.anthropic.claude-opus-5"}'}
         onChange={jest.fn()}
       />
     )
 
-    expect(screen.getByText('No model is available for this token.')).toBeInTheDocument()
+    expect(screen.getByText('Unable to load models.')).toBeInTheDocument()
+    expect(screen.getByLabelText('Model')).toHaveValue('')
   })
 
   it('shows loading and error states without a retry action', () => {
@@ -182,6 +183,7 @@ describe('AgenticWorkflowModelSetting', () => {
     )
 
     expect(screen.getByText('Unable to load models.')).toBeInTheDocument()
+    expect(screen.getByLabelText('Model')).toHaveValue('')
     expect(screen.queryByRole('button', { name: 'Retry' })).not.toBeInTheDocument()
 
     mockIsError = false
