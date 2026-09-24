@@ -149,7 +149,7 @@ describe('EnvironmentActionToolbar', () => {
     expect(mockOpenModalConfirmation).not.toHaveBeenCalled()
   })
 
-  it('should open deploy by version without modal scroll locking the dropdown', async () => {
+  it('should open deploy by version with the fake-modal option so the dropdown is not scroll-locked', async () => {
     const { userEvent } = renderWithProviders(<EnvironmentActionToolbar environment={mockEnvironment} />)
 
     await userEvent.click(screen.getByLabelText(/manage deployment/i))
