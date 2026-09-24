@@ -1,4 +1,5 @@
 import { LlmProviderScope, LlmProviderType } from 'qovery-typescript-axios'
+import selectEvent from 'react-select-event'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import * as useCreateLlmProviderHook from '../hooks/use-create-llm-provider/use-create-llm-provider'
 import * as useEditLlmProviderHook from '../hooks/use-edit-llm-provider/use-edit-llm-provider'
@@ -108,11 +109,38 @@ describe('LlmProviderCreateEditModal', () => {
     expect(screen.getByText('Anthropic Claude')).toBeInTheDocument()
   })
 
-  it('should let the user pick Amazon Bedrock', async () => {
+  it('should create an Amazon Bedrock token with its region', async () => {
     const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
 
-    await userEvent.click(screen.getByLabelText('Provider'))
+    await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
+    await userEvent.type(screen.getByLabelText('Name'), 'EU Bedrock')
+    await userEvent.type(screen.getByLabelText('Token'), 'aws-credentials')
+    await userEvent.type(screen.getByLabelText('AWS region (optional)'), 'eu-west-1')
+    await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
 
-    expect(await screen.findByText('Amazon Bedrock')).toBeInTheDocument()
+    await waitFor(() =>
+      expect(createLlmProvider).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        llmProviderRequest: {
+          name: 'EU Bedrock',
+          description: undefined,
+          type: LlmProviderType.BEDROCK,
+          credential: 'aws-credentials',
+          region: 'eu-west-1',
+          scope: LlmProviderScope.USER,
+        },
+      })
+    )
+  })
+
+  it('should reject an invalid Bedrock region', async () => {
+    const { userEvent } = renderWithProviders(<LlmProviderCreateEditModal onClose={jest.fn()} />)
+
+    await selectEvent.select(screen.getByLabelText('Provider'), 'Amazon Bedrock')
+    await userEvent.type(screen.getByLabelText('AWS region (optional)'), 'europe')
+    await userEvent.click(screen.getByRole('button', { name: 'Add token' }))
+
+    expect(await screen.findByText('Please enter a valid AWS region.')).toBeInTheDocument()
+    expect(createLlmProvider).not.toHaveBeenCalled()
   })
 })

@@ -15,8 +15,14 @@ interface LlmProviderFormValues {
   description: string
   type: LlmProviderType
   credential: string
+  region: string
   scope: LlmProviderScope
 }
+
+type LlmProviderRequestWithRegion = LlmProviderRequest & { region?: string | null }
+type LlmProviderResponseWithRegion = LlmProviderResponse & { region?: string | null }
+
+const AWS_REGION_PATTERN = /^[a-z]{2}(-gov)?-[a-z]+-[0-9]+$/
 
 export interface LlmProviderCreateEditModalProps {
   onClose: (response?: LlmProviderResponse) => void
@@ -60,12 +66,14 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
       description: llmProvider?.description ?? '',
       type: llmProvider?.type ?? LlmProviderType.CLAUDE,
       credential: '',
+      region: (llmProvider as LlmProviderResponseWithRegion | undefined)?.region ?? '',
       scope: llmProvider?.scope ?? LlmProviderScope.USER,
     },
   })
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const providerChanged = isEdit && methods.watch('type') !== llmProvider.type
+  const providerType = methods.watch('type')
   const credentialRequired = !isEdit || providerChanged
 
   const { mutateAsync: createLlmProvider, isLoading: isCreating } = useCreateLlmProvider()
@@ -73,11 +81,12 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
 
   const onSubmit = methods.handleSubmit(async (data) => {
     const credential = data.credential.trim()
-    const llmProviderRequest: LlmProviderRequest = {
+    const llmProviderRequest: LlmProviderRequestWithRegion = {
       name: data.name.trim(),
       description: data.description.trim() || undefined,
       type: data.type,
       credential: credential || undefined,
+      ...(data.type === LlmProviderType.BEDROCK ? { region: data.region.trim() || null } : {}),
       scope: isEdit ? undefined : data.scope,
     }
 
@@ -176,6 +185,27 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
               />
             )}
           />
+          {providerType === LlmProviderType.BEDROCK ? (
+            <Controller
+              name="region"
+              control={methods.control}
+              rules={{
+                validate: (value) =>
+                  !value.trim() || AWS_REGION_PATTERN.test(value.trim()) || 'Please enter a valid AWS region.',
+              }}
+              render={({ field, fieldState: { error } }) => (
+                <InputText
+                  label="AWS region (optional)"
+                  name={field.name}
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={error?.message}
+                  placeholder="eu-west-1"
+                  hint="Controls which Bedrock models are available."
+                />
+              )}
+            />
+          ) : null}
           <Controller
             name="description"
             control={methods.control}
