@@ -1,60 +1,71 @@
 import { renderWithProviders, screen } from '@qovery/shared/util-tests'
+import { useLastDeployedCommit } from '../hooks/use-last-deployed-commit/use-last-deployed-commit'
 import { SelectCommitModal } from './select-commit-modal'
 
-jest.mock('@qovery/shared/util-dates', () => {
-  const actual = jest.requireActual('@qovery/shared/util-dates')
-  return {
-    ...actual,
-    /** Relative time drifts between runs; snapshot must stay stable. */
-    timeAgo: () => '0 seconds',
-    /**
-     * `commitsByDay` keys use local `toDateString()` but `dateToFormat` uses UTC — CI vs dev timezones
-     * otherwise flip the header (e.g. Apr 02 vs Apr 03).
-     */
-    dateToFormat: (date: string, format: string) => {
-      if (format === 'MMM dd, yyyy') {
-        return 'Apr 03, 2026'
-      }
-      return actual.dateToFormat(date, format)
-    },
-  }
-})
+jest.mock('@qovery/shared/util-dates', () => ({
+  ...jest.requireActual('@qovery/shared/util-dates'),
+  timeAgo: () => '0 seconds',
+}))
 
 jest.mock('../hooks/use-last-deployed-commit/use-last-deployed-commit', () => {
   return {
     ...jest.requireActual('../hooks/use-last-deployed-commit/use-last-deployed-commit'),
-    useLastDeployedCommit: () => ({
+    useLastDeployedCommit: jest.fn(),
+  }
+})
+
+const mockedUseLastDeployedCommit = jest.mocked(useLastDeployedCommit)
+
+describe('SelectCommitModal', () => {
+  beforeEach(() => {
+    mockedUseLastDeployedCommit.mockReturnValue({
       data: {
         commits: [
-          {
-            created_at: '2026-04-03T13:25:12.247Z',
-            author_name: 'foo',
-            git_commit_id: '123',
-            message: 'lorem',
-            tag: '',
-          },
-          {
-            created_at: '2026-04-03T13:25:12.247Z',
-            author_name: 'foo',
-            git_commit_id: '456',
-            message: 'ipsum',
-            tag: '',
-          },
+          { created_at: '2024-01-01T00:00:00Z', author_name: 'foo', git_commit_id: '123', message: 'lorem', tag: '' },
+          { created_at: '2024-01-02T00:00:00Z', author_name: 'foo', git_commit_id: '456', message: 'ipsum', tag: '' },
         ],
         delta: 1,
         deployedCommit: {
-          created_at: '2026-04-03T13:25:12.247Z',
+          created_at: '2024-01-02T00:00:00Z',
           author_name: 'foo',
           git_commit_id: '456',
           message: 'ipsum',
           tag: '',
         },
       },
-    }),
-  }
-})
+      isLoading: false,
+      isError: false,
+      isFetching: false,
+      isSuccess: true,
+      error: null,
+      status: 'success',
+      fetchStatus: 'idle',
+    })
+  })
 
-describe('SelectCommitModal', () => {
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('should match snapshot', () => {
+    const onCancel = jest.fn()
+    const onSubmit = jest.fn()
+    const { container } = renderWithProviders(
+      <SelectCommitModal
+        title="Deploy other version"
+        description="Type a version to deploy"
+        submitLabel="Deploy"
+        serviceId="1"
+        serviceType="APPLICATION"
+        gitRepository={{}}
+        onCancel={onCancel}
+        onSubmit={onSubmit}
+      >
+        For X service
+      </SelectCommitModal>
+    )
+    expect(container).toMatchSnapshot()
+  })
   it('should call cancel properly', async () => {
     const onCancel = jest.fn()
     const onSubmit = jest.fn()
@@ -96,10 +107,30 @@ describe('SelectCommitModal', () => {
     await userEvent.click(screen.getByRole('button', { name: /Deploy/i }))
     expect(onSubmit).toHaveBeenCalledWith('123')
   })
-  it('should match snapshot', () => {
-    const onCancel = jest.fn()
-    const onSubmit = jest.fn()
-    const { container } = renderWithProviders(
+
+  it('should show empty state and hide search when no commits are returned', () => {
+    mockedUseLastDeployedCommit.mockReturnValueOnce({
+      data: {
+        commits: [],
+        delta: 0,
+        deployedCommit: {
+          created_at: '2024-01-02T00:00:00Z',
+          author_name: 'foo',
+          git_commit_id: '456',
+          message: 'ipsum',
+          tag: '',
+        },
+      },
+      isLoading: false,
+      isError: false,
+      isFetching: false,
+      isSuccess: true,
+      error: null,
+      status: 'success',
+      fetchStatus: 'idle',
+    })
+
+    renderWithProviders(
       <SelectCommitModal
         title="Deploy other version"
         description="Type a version to deploy"
@@ -107,12 +138,14 @@ describe('SelectCommitModal', () => {
         serviceId="1"
         serviceType="APPLICATION"
         gitRepository={{}}
-        onCancel={onCancel}
-        onSubmit={onSubmit}
+        onCancel={jest.fn()}
+        onSubmit={jest.fn()}
       >
         For X service
       </SelectCommitModal>
     )
-    expect(container).toMatchSnapshot()
+
+    expect(screen.queryByPlaceholderText(/search by commit message or commit id/i)).not.toBeInTheDocument()
+    expect(screen.getByText(/No commit available/i)).toBeInTheDocument()
   })
 })

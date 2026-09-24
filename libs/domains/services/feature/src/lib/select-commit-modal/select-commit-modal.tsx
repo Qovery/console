@@ -40,6 +40,7 @@ export function SelectCommitModal({
 
   const [search, setSearch] = useState('')
   const [targetCommitId, setTargetCommitId] = useState<string | undefined>()
+  const hasCommits = (data.commits?.length ?? 0) > 0
 
   const commitsByDay = useMemo(
     () =>
@@ -81,7 +82,7 @@ export function SelectCommitModal({
         {children}
       </div>
 
-      <InputSearch placeholder="Search by commit message or commit id" onChange={setSearch} />
+      {hasCommits && <InputSearch placeholder="Search by commit message or commit id" onChange={setSearch} />}
 
       {isLoading || Object.keys(filterCommits).length > 0 ? (
         <RadioGroup.Root onValueChange={setTargetCommitId}>
@@ -90,7 +91,7 @@ export function SelectCommitModal({
               <div key={date} className="pl-2">
                 <div className="relative pl-5 text-sm font-medium text-neutral-subtle">
                   <Icon iconName="code-commit" className="absolute left-0 top-1 -translate-x-1/2 text-neutral-subtle" />
-                  {pluralize(commits.length, 'Commit')} on {dateToFormat(date, 'MMM dd, yyyy')}
+                  {`${pluralize(commits.length, 'Commit')} on ${dateToFormat(date, 'MMM dd, yyyy')}`}
                 </div>
                 <div className="border-l border-neutral pb-5 pl-5 pt-3">
                   {commits.map(
@@ -168,6 +169,15 @@ export function SelectCommitModal({
             ))}
           </ScrollShadowWrapper>
         </RadioGroup.Root>
+      ) : !hasCommits ? (
+        <div className="pb-16">
+          <div className="border-neutral-250 rounded border bg-neutral-100 px-3 py-6 text-center">
+            <Icon iconName="wave-pulse" className="text-neutral-350" />
+            <p className="text-neutral-350 mt-1 text-xs font-medium">
+              No commit available. This branch might have been deleted.
+            </p>
+          </div>
+        </div>
       ) : (
         <div className="px-3 py-6 pb-[60px] text-center">
           <Icon iconName="wave-pulse" className="text-neutral" />

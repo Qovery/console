@@ -182,6 +182,7 @@ export function MenuManageDeployment({
       content: <UpdateAllModal environment={environment} />,
       options: {
         width: 676,
+        fakeModal: true,
       },
     })
   }
@@ -283,8 +284,8 @@ export function MenuManageDeployment({
           .otherwise(() => (
             <>
               <DropdownMenu.Separator />
-              <DropdownMenu.Item icon={<Icon iconName="rotate" />} onSelect={openUpdateAllModal}>
-                Deploy latest version for..
+              <DropdownMenu.Item icon={<Icon iconName="code-branch" />} onSelect={openUpdateAllModal}>
+                Deploy by version
               </DropdownMenu.Item>
             </>
           ))}
