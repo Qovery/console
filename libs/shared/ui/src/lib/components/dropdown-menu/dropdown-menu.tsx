@@ -172,14 +172,12 @@ const DropdownMenuItem = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Item
   }
 )
 
-interface DropdownMenuContentProps extends ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> {
-  container?: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Portal>['container']
-}
+interface DropdownMenuContentProps extends ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> {}
 
 const DropdownMenuContent = forwardRef<ElementRef<typeof DropdownMenuPrimitive.Content>, DropdownMenuContentProps>(
-  function DropdownMenuContent({ children, sideOffset = 8, align = 'start', className, container, ...props }, ref) {
+  function DropdownMenuContent({ children, sideOffset = 8, align = 'start', className, ...props }, ref) {
     return (
-      <DropdownMenuPrimitive.Portal container={container}>
+      <DropdownMenuPrimitive.Portal>
         <DropdownMenuPrimitive.Content
           {...props}
           sideOffset={sideOffset}

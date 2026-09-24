@@ -1,4 +1,3 @@
-import { useCallback, useState } from 'react'
 // eslint-disable-next-line @nx/enforce-module-boundaries
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { Button, Checkbox, DropdownMenu, Icon, Tooltip, Truncate } from '@qovery/shared/ui'
@@ -125,16 +124,10 @@ function VersionSelector({
   disabled: boolean
   onChange: (version: string) => void
 }) {
-  const [portalContainer, setPortalContainer] = useState<HTMLElement>()
-  const setTriggerRef = useCallback((trigger: HTMLButtonElement | null) => {
-    if (trigger) setPortalContainer(trigger.closest<HTMLElement>('[role="dialog"]') ?? undefined)
-  }, [])
-
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger asChild>
         <Button
-          ref={setTriggerRef}
           type="button"
           size="xs"
           color="neutral"
@@ -152,7 +145,6 @@ function VersionSelector({
       </DropdownMenu.Trigger>
       <DropdownMenu.Content
         align="end"
-        container={portalContainer}
         data-testid="version-options"
         className="z-dropdown max-h-[248px] w-80 gap-0 overflow-y-auto overflow-x-hidden overscroll-contain rounded-md p-0"
       >

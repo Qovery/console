@@ -181,6 +181,7 @@ export function MenuManageDeployment({
     openModal({
       content: <DeployByVersionModal environment={environment} />,
       options: {
+        fakeModal: true,
         width: 676,
       },
     })

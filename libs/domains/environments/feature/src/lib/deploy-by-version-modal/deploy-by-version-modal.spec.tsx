@@ -222,11 +222,7 @@ describe('DeployByVersionModal', () => {
         })),
       },
     ]
-    const { userEvent } = renderWithProviders(
-      <div role="dialog">
-        <DeployByVersionModal environment={mockEnvironment} />
-      </div>
-    )
+    const { userEvent } = renderWithProviders(<DeployByVersionModal environment={mockEnvironment} />)
 
     await userEvent.click(screen.getByRole('button', { name: 'Select a version for Infrastructure' }))
 
@@ -239,7 +235,6 @@ describe('DeployByVersionModal', () => {
       'overflow-y-auto',
       'overscroll-contain'
     )
-    expect(screen.getByRole('dialog')).toContainElement(screen.getByTestId('version-options'))
   })
 
   it('selects a different version from the dropdown', async () => {
