@@ -457,13 +457,55 @@ describe('ClusterProfileFeature', () => {
     })
   })
 
-  it('filters the layer tree from the search input', async () => {
-    const { userEvent } = renderWithProviders(<ClusterProfileFeature organizationId="organization-id" />)
-    const search = screen.getByRole('textbox', { name: 'Search layers' })
+  describe('search', () => {
+    it('reports search input changes', async () => {
+      const onSearchChange = jest.fn()
+      const { userEvent } = renderWithProviders(
+        <ClusterProfileFeature organizationId="organization-id" onSearchChange={onSearchChange} />
+      )
 
-    await userEvent.type(search, 'network')
+      await userEvent.type(screen.getByRole('textbox', { name: 'Search layers' }), 'n')
 
-    expect(screen.getByText('Network')).toBeInTheDocument()
-    expect(screen.queryByText('Qovery stack')).not.toBeInTheDocument()
+      expect(onSearchChange).toHaveBeenCalledWith('n')
+    })
+
+    it('keeps the whole layer when its label matches', () => {
+      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" search="network" />)
+
+      expect(screen.getByRole('textbox', { name: 'Search layers' })).toHaveValue('network')
+      expect(screen.getByRole('button', { name: 'Network' })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'Envoy' })).toHaveAttribute('aria-current', 'page')
+      expect(screen.queryByRole('button', { name: 'Qovery stack' })).not.toBeInTheDocument()
+    })
+
+    it('filters components and fields matching the search', () => {
+      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" search="Resource" />)
+
+      expect(screen.getByRole('button', { name: 'Loki' })).toHaveAttribute('aria-current', 'page')
+      // Alloy renders the Loki resource profile through a configuration section.
+      expect(screen.getByRole('button', { name: 'Alloy' })).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: 'Network' })).not.toBeInTheDocument()
+      expect(screen.getByText('Resource', { selector: 'mark' })).toBeInTheDocument()
+      expect(screen.queryByRole('spinbutton', { name: 'Retention period' })).not.toBeInTheDocument()
+    })
+
+    it('selects the first matching component when the URL one does not match', () => {
+      renderWithProviders(
+        <ClusterProfileFeature organizationId="organization-id" activeComponentKey="loki" search="certificate name" />
+      )
+
+      expect(screen.getByRole('button', { name: 'Envoy' })).toHaveAttribute('aria-current', 'page')
+      expect(screen.getByRole('tab', { name: 'Envoy' })).toHaveAttribute('aria-selected', 'true')
+      expect(screen.queryByRole('tab', { name: 'Loki' })).not.toBeInTheDocument()
+    })
+
+    it('shows empty states when nothing matches', () => {
+      renderWithProviders(<ClusterProfileFeature organizationId="organization-id" search="CPUza" />)
+
+      expect(screen.getByText('No results found. Review your search or applied filters.')).toBeInTheDocument()
+      expect(screen.getByText('No settings found matching your search and filters.')).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Log infra' })).toBeInTheDocument()
+      expect(screen.queryByRole('tab')).not.toBeInTheDocument()
+    })
   })
 })

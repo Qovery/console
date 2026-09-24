@@ -8,13 +8,14 @@ export const Route = createFileRoute('/_authenticated/organization/$organization
   component: RouteComponent,
   validateSearch: z.object({
     component: z.string().optional(),
+    search: z.string().optional(),
   }),
 })
 
 function RouteComponent() {
   useDocumentTitle('Cluster - Profile')
   const { organizationId = '', clusterId = '' } = useParams({ strict: false })
-  const { component } = Route.useSearch()
+  const { component, search } = Route.useSearch()
   const navigate = Route.useNavigate()
   const isProfileEnabled = Boolean(useFeatureFlagEnabled(ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG))
 
@@ -32,7 +33,13 @@ function RouteComponent() {
     <ClusterProfileFeature
       organizationId={organizationId}
       activeComponentKey={component}
-      onActiveComponentChange={(nextComponent) => navigate({ search: { component: nextComponent } })}
+      search={search}
+      onActiveComponentChange={(nextComponent) =>
+        navigate({ search: (previous) => ({ ...previous, component: nextComponent }) })
+      }
+      onSearchChange={(nextSearch) =>
+        navigate({ search: (previous) => ({ ...previous, search: nextSearch || undefined }), replace: true })
+      }
     />
   )
 }

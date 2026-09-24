@@ -1,5 +1,6 @@
 import {
   Checkbox,
+  HighlightText,
   InputSelect,
   InputSelectSmall,
   InputText,
@@ -14,6 +15,8 @@ export interface CatalogVariableInputProps {
   booleanControl?: 'checkbox' | 'toggle'
   error?: string
   field: CatalogVariableField
+  // Search text highlighted in the label and description (row layout only).
+  highlight?: string
   layout?: 'card' | 'row'
   onChange: (value: CatalogVariableValue) => void
   value: CatalogVariableValue | undefined
@@ -22,17 +25,22 @@ export interface CatalogVariableInputProps {
 const DESCRIPTION_TRUNCATE_LIMIT = 200
 const formatDescription = (description: string) => description.replace(/([.!?])\s+/g, '$1\n')
 
-export function CatalogVariableDescription({ description }: { description: string }) {
+export function CatalogVariableDescription({ description, highlight }: { description: string; highlight?: string }) {
   const formattedDescription = formatDescription(description)
 
   return (
     <p className="line-clamp-3 whitespace-pre-line text-sm text-neutral-subtle">
-      <Truncate
-        text={formattedDescription}
-        truncateLimit={DESCRIPTION_TRUNCATE_LIMIT}
-        defaultTooltipLimit={formattedDescription.length + 1}
-        classNameContent="max-w-lg whitespace-pre-line"
-      />
+      {highlight?.trim() ? (
+        // Truncating could hide the match, so the full description is shown while searching.
+        <HighlightText text={formattedDescription} highlight={highlight} />
+      ) : (
+        <Truncate
+          text={formattedDescription}
+          truncateLimit={DESCRIPTION_TRUNCATE_LIMIT}
+          defaultTooltipLimit={formattedDescription.length + 1}
+          classNameContent="max-w-lg whitespace-pre-line"
+        />
+      )}
     </p>
   )
 }
@@ -108,14 +116,19 @@ function CatalogVariableInputRow({
   booleanControl,
   error,
   field,
+  highlight,
   onChange,
   value,
 }: Omit<CatalogVariableInputProps, 'layout'>) {
   return (
     <div className="flex flex-col gap-4 border-b border-neutral p-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0 flex-1">
-        <p className="text-sm text-neutral">{field.label}</p>
-        {field.description ? <CatalogVariableDescription description={field.description} /> : null}
+        <p className="text-sm text-neutral">
+          <HighlightText text={field.label} highlight={highlight} />
+        </p>
+        {field.description ? (
+          <CatalogVariableDescription description={field.description} highlight={highlight} />
+        ) : null}
       </div>
       <div className={field.type === 'bool' ? 'flex shrink-0 flex-col items-end' : 'w-full shrink-0 md:w-[400px]'}>
         <CatalogVariableControl
@@ -139,6 +152,7 @@ export function CatalogVariableInput({
   booleanControl = 'toggle',
   error,
   field,
+  highlight,
   layout = 'card',
   onChange,
   value,
@@ -150,6 +164,7 @@ export function CatalogVariableInput({
         booleanControl={booleanControl}
         error={error}
         field={field}
+        highlight={highlight}
         onChange={onChange}
         value={value}
       />

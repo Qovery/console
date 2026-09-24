@@ -1,7 +1,7 @@
 import { type FieldSchemaResponse, type PlatformComponentConfigurationViolationResponse } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { CatalogVariableDescription, CatalogVariableInput } from '@qovery/shared/console-shared'
-import { Button, Icon, useModal } from '@qovery/shared/ui'
+import { Button, HighlightText, Icon, useModal } from '@qovery/shared/ui'
 import { getCatalogSummaryFieldValue, getCatalogVariableValue } from '@qovery/shared/util-js'
 import {
   type PlatformArrayField,
@@ -27,6 +27,7 @@ interface ProfileConfigurationFieldProps {
   path: string
   value: unknown
   violations: Violations
+  highlight?: string
   onChange: (value: unknown) => void
 }
 
@@ -37,17 +38,23 @@ function FieldError({ error }: { error?: string }) {
 function CompositeFieldHeader({
   field,
   error,
+  highlight,
   children,
 }: {
   field: PlatformArrayField | PlatformObjectField
   error?: string
+  highlight?: string
   children?: ReactNode
 }) {
   return (
     <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
       <div className="min-w-0 flex-1">
-        <p className="text-sm text-neutral">{field.label}</p>
-        {field.description ? <CatalogVariableDescription description={field.description} /> : null}
+        <p className="text-sm text-neutral">
+          <HighlightText text={field.label} highlight={highlight} />
+        </p>
+        {field.description ? (
+          <CatalogVariableDescription description={field.description} highlight={highlight} />
+        ) : null}
         <FieldError error={error} />
       </div>
       {children}
@@ -60,12 +67,14 @@ function NestedFields({
   path,
   value,
   violations,
+  highlight,
   onChange,
 }: {
   fields: FieldSchemaResponse[]
   path: string
   value: unknown
   violations: Violations
+  highlight?: string
   onChange: (value: Record<string, unknown>) => void
 }) {
   const values = isPlainObject(value) ? value : {}
@@ -79,6 +88,7 @@ function NestedFields({
           path={getPlatformFieldPath(path, childField.key)}
           value={values[childField.key]}
           violations={violations}
+          highlight={highlight}
           onChange={(childValue) => {
             const { [childField.key]: _, ...otherValues } = values
             onChange(childValue === undefined ? otherValues : { ...otherValues, [childField.key]: childValue })
@@ -94,13 +104,21 @@ function ProfileObjectField({
   path,
   value,
   violations,
+  highlight,
   onChange,
 }: Omit<ProfileConfigurationFieldProps, 'field'> & { field: PlatformObjectField }) {
   return (
     <div className="flex flex-col gap-3 border-b border-neutral p-4">
-      <CompositeFieldHeader field={field} error={getFieldViolation(violations, path)} />
+      <CompositeFieldHeader field={field} error={getFieldViolation(violations, path)} highlight={highlight} />
       <div className="overflow-hidden rounded-md border border-neutral">
-        <NestedFields fields={field.fields} path={path} value={value} violations={violations} onChange={onChange} />
+        <NestedFields
+          fields={field.fields}
+          path={path}
+          value={value}
+          violations={violations}
+          highlight={highlight}
+          onChange={onChange}
+        />
       </div>
     </div>
   )
@@ -133,6 +151,7 @@ function ProfileArrayField({
   path,
   value,
   violations,
+  highlight,
   onChange,
 }: Omit<ProfileConfigurationFieldProps, 'field'> & { field: PlatformArrayField }) {
   const { openModal, closeModal } = useModal()
@@ -185,8 +204,12 @@ function ProfileArrayField({
     <div className="flex flex-col gap-4 border-b border-neutral p-4">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="min-w-0 flex-1">
-          <p className="text-sm text-neutral">{field.label}</p>
-          {field.description ? <CatalogVariableDescription description={field.description} /> : null}
+          <p className="text-sm text-neutral">
+            <HighlightText text={field.label} highlight={highlight} />
+          </p>
+          {field.description ? (
+            <CatalogVariableDescription description={field.description} highlight={highlight} />
+          ) : null}
           <FieldError error={error} />
         </div>
         <div className="flex shrink-0 flex-col items-end gap-1">
@@ -270,14 +293,33 @@ export function ProfileConfigurationField({
   path,
   value,
   violations,
+  highlight,
   onChange,
 }: ProfileConfigurationFieldProps) {
   if (isPlatformArrayField(field)) {
-    return <ProfileArrayField field={field} path={path} value={value} violations={violations} onChange={onChange} />
+    return (
+      <ProfileArrayField
+        field={field}
+        path={path}
+        value={value}
+        violations={violations}
+        highlight={highlight}
+        onChange={onChange}
+      />
+    )
   }
 
   if (isPlatformObjectField(field)) {
-    return <ProfileObjectField field={field} path={path} value={value} violations={violations} onChange={onChange} />
+    return (
+      <ProfileObjectField
+        field={field}
+        path={path}
+        value={value}
+        violations={violations}
+        highlight={highlight}
+        onChange={onChange}
+      />
+    )
   }
 
   if (!isPlatformScalarField(field)) return null
@@ -290,6 +332,7 @@ export function ProfileConfigurationField({
       layout="row"
       value={getCatalogVariableValue(field, value)}
       error={getFieldViolation(violations, path)}
+      highlight={highlight}
       onChange={(nextValue) => onChange(toPlatformConfigurationValue(field, nextValue))}
     />
   )

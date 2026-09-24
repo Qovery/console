@@ -133,21 +133,8 @@ function LayerSectionRow({
   )
 }
 
-function filterLayers(layers: readonly ClusterProfileSidebarLayer[], search: string) {
-  const query = search.trim().toLocaleLowerCase()
-  if (!query) return layers
-
-  return layers.flatMap((section) => {
-    const sectionMatches = section.label.toLocaleLowerCase().includes(query)
-    const items = sectionMatches
-      ? section.items
-      : section.items.filter((item) => item.label.toLocaleLowerCase().includes(query))
-
-    return sectionMatches || items.length > 0 ? [{ ...section, items }] : []
-  })
-}
-
 export interface ClusterProfileSidebarProps {
+  // Layers already filtered by the search.
   layers: readonly ClusterProfileSidebarLayer[]
   search: string
   selectedSectionId?: string
@@ -170,8 +157,7 @@ export function ClusterProfileSidebar({
   onSelectSection,
   onSelectItem,
 }: ClusterProfileSidebarProps) {
-  const filteredLayers = filterLayers(layers, search)
-  const showEmptyState = !isLoading && !isError && filteredLayers.length === 0
+  const showEmptyState = !isLoading && !isError && layers.length === 0
 
   return (
     <aside aria-label="Cluster layers" className="hidden w-[272px] shrink-0 flex-col bg-background-secondary lg:flex">
@@ -180,8 +166,7 @@ export function ClusterProfileSidebar({
           ariaLabel="Search layers"
           placeholder="Search…"
           customSize="h-7 text-ssm"
-          isEmpty={showEmptyState}
-          emptyContent={<p className="px-3 py-6 text-center text-xs text-neutral-subtle">No matching layer</p>}
+          defaultValue={search}
           onChange={onSearchChange}
         />
       </div>
@@ -192,8 +177,13 @@ export function ClusterProfileSidebar({
           <ul>
             {isLoading ? <p className="px-3 py-1 text-xs text-neutral-subtle">Loading layers...</p> : null}
             {isError ? <p className="px-3 py-1 text-xs text-negative">Unable to load layers.</p> : null}
+            {showEmptyState ? (
+              <p className="px-3 py-1 text-ssm text-neutral-subtle">
+                No results found. Review your search or applied filters.
+              </p>
+            ) : null}
             {!isLoading && !isError
-              ? filteredLayers.map((section) => (
+              ? layers.map((section) => (
                   <LayerSectionRow
                     key={section.id}
                     section={section}

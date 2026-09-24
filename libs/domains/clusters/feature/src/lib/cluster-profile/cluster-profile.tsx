@@ -33,6 +33,12 @@ import {
   type ClusterProfileSidebarLayer,
 } from './cluster-profile-sidebar'
 import { ProfileConfigurationField } from './profile-configuration-field'
+import {
+  fieldMatchesProfileSearch,
+  filterFieldsByProfileSearch,
+  matchesProfileSearch,
+  normalizeProfileSearch,
+} from './profile-search'
 
 export const ENGINE_V2_PLATFORM_CONFIGURATION_FEATURE_FLAG = 'engine-v2-platform-configuration'
 
@@ -51,6 +57,8 @@ type ProfileSection = {
   label: string
   component: ProfileComponent
   fieldKeys?: readonly string[]
+  // Search restricting the displayed fields; unset when the whole component matched.
+  fieldSearch?: string
 }
 
 type ProfileTreeItem = {
@@ -106,13 +114,45 @@ function findProfileLayer(profileTree: ProfileTreeItem[], requestedKey?: string)
 function getDefaultProfileComponent(profileTree: ProfileTreeItem[]) {
   return (
     profileTree.find((item) => item.label.toLowerCase() === 'log infra')?.children?.[0] ??
+    profileTree.find((item) => item.status !== 'disabled' && item.children?.length)?.children?.[0] ??
     profileTree.find((item) => item.children?.length)?.children?.[0]
   )
 }
 
+// Layers and components matching the search, directly or through one of their fields.
+function filterProfileTree(profileTree: ProfileTreeItem[], query: string): ProfileTreeItem[] {
+  if (!query) return profileTree
+
+  return profileTree.flatMap((layer) => {
+    if (matchesProfileSearch(layer, query)) return [layer]
+
+    const children = layer.children.filter(
+      (component) =>
+        matchesProfileSearch(component, query) ||
+        getProfileSections(component, layer).some((section) =>
+          getSectionFields(section).some((field) => fieldMatchesProfileSearch(field, query))
+        )
+    )
+    return children.length ? [{ ...layer, children }] : []
+  })
+}
+
+function resolveActiveProfileSelection(profileTree: ProfileTreeItem[], requestedKey?: string) {
+  const requestedComponent = findProfileComponent(profileTree, requestedKey)
+  const requestedLayer = findProfileLayer(profileTree, requestedKey)
+  const defaultComponent = getDefaultProfileComponent(profileTree)
+  const layer =
+    requestedLayer ??
+    profileTree.find((item) => item.children?.some((child) => child.id === requestedComponent?.id)) ??
+    profileTree.find((item) => item.children?.some((child) => child.id === defaultComponent?.id))
+
+  return { layer, component: requestedComponent ?? layer?.children?.[0] ?? defaultComponent }
+}
+
 function getProfileSections(
   component: ProfileComponent | undefined,
-  layer: ProfileTreeItem | undefined
+  layer: ProfileTreeItem | undefined,
+  fieldSearch?: string
 ): ProfileSection[] {
   if (!component) return []
 
@@ -121,6 +161,7 @@ function getProfileSections(
       id: component.key,
       label: formatProfileLabel(component.key),
       component,
+      fieldSearch,
     },
   ]
 
@@ -133,6 +174,7 @@ function getProfileSections(
       label: formatProfileLabel(sourceComponent.key),
       component: sourceComponent,
       fieldKeys: configurationSection.fieldKeys,
+      fieldSearch,
     })
   }
 
@@ -140,10 +182,11 @@ function getProfileSections(
 }
 
 function getSectionFields(section: ProfileSection, preview?: PlatformComponentConfigurationResolutionResponse) {
-  const fields = (preview?.fields ?? section.component.fields).filter(isSupportedPlatformField)
-  if (!section.fieldKeys) return fields
+  const fields = (preview?.fields ?? section.component.fields).filter(
+    (field) => isSupportedPlatformField(field) && (!section.fieldKeys || section.fieldKeys.includes(field.key))
+  )
 
-  return fields.filter((field) => section.fieldKeys?.includes(field.key))
+  return section.fieldSearch ? filterFieldsByProfileSearch(fields, section.fieldSearch) : fields
 }
 
 function RequirementStatus({ status }: { status: 'MISSING' | 'READY' }) {
@@ -179,6 +222,7 @@ function ProfileConfigurationSkeleton() {
 
 function ProfileConfigurationSection({
   section,
+  highlight,
   preview,
   profileConfig,
   clusterInputs,
@@ -186,6 +230,7 @@ function ProfileConfigurationSection({
   onClusterInputChange,
 }: {
   section: ProfileSection
+  highlight?: string
   preview?: PlatformComponentConfigurationResolutionResponse
   profileConfig: Record<string, unknown>
   clusterInputs: Record<string, string>
@@ -193,12 +238,17 @@ function ProfileConfigurationSection({
   onClusterInputChange: (componentKey: string, field: PlatformFieldDescriptor, value: CatalogVariableValue) => void
 }) {
   const fields = getSectionFields(section, preview)
-  const requirements = preview?.requirements ?? []
+  const allRequirements = preview?.requirements ?? []
+  const requirements = section.fieldSearch
+    ? allRequirements.filter((requirement) => matchesProfileSearch(requirement, section.fieldSearch ?? ''))
+    : allRequirements
   const violations = preview?.violations ?? []
   // Sections showing a subset of a source component's fields would surface that component's other violations.
   const unmappedViolations = section.fieldKeys
     ? []
-    : getUnmappedViolations(violations, fields, profileConfig, requirements)
+    : getUnmappedViolations(violations, fields, profileConfig, allRequirements)
+
+  if (section.fieldSearch && !fields.length && !requirements.length) return null
 
   return (
     <section className="flex flex-col">
@@ -216,6 +266,7 @@ function ProfileConfigurationSection({
           path={field.key}
           value={profileConfig[field.key]}
           violations={violations}
+          highlight={highlight}
           onChange={(value) => onProfileConfigChange(section.component.key, field.key, value)}
         />
       ))}
@@ -230,6 +281,7 @@ function ProfileConfigurationSection({
               layout="row"
               value={getCatalogVariableValue(requirement, clusterInputs[requirement.key])}
               error={getFieldViolation(violations, requirement.key, 'clusterInputs')}
+              highlight={highlight}
               onChange={(value) => onClusterInputChange(section.component.key, requirement, value)}
             />
           ))}
@@ -253,16 +305,19 @@ function ProfileConfigurationSection({
 type ClusterProfileFeatureProps = {
   organizationId: string
   activeComponentKey?: string
+  search?: string
   onActiveComponentChange?: (componentKey: string) => void
+  onSearchChange?: (search: string) => void
 }
 
 export function ClusterProfileFeature({
   organizationId,
   activeComponentKey: requestedComponentKey,
+  search = '',
   onActiveComponentChange,
+  onSearchChange,
 }: ClusterProfileFeatureProps) {
   const { clusterId = '' } = useParams({ strict: false })
-  const [search, setSearch] = useState('')
   const [profileValues, setProfileValues] = useState<Record<string, Record<string, unknown>>>({})
   const [clusterInputs, setClusterInputs] = useState<Record<string, Record<string, string>>>({})
   const {
@@ -298,22 +353,36 @@ export function ClusterProfileFeature({
     [binding?.templateKey, binding?.templateVersion, templates]
   )
   const profileTree = useMemo(() => getProfileTree(selectedTemplate), [selectedTemplate])
-  const requestedComponent = findProfileComponent(profileTree, requestedComponentKey)
-  const requestedLayer = findProfileLayer(profileTree, requestedComponentKey)
-  const defaultComponent = getDefaultProfileComponent(profileTree)
-  const activeLayer =
-    requestedLayer ??
-    profileTree.find((item) => item.children?.some((child) => child.id === requestedComponent?.id)) ??
-    profileTree.find((item) => item.children?.some((child) => child.id === defaultComponent?.id))
-  const activeComponent = requestedComponent ?? activeLayer?.children?.[0] ?? defaultComponent
+  const searchQuery = normalizeProfileSearch(search)
+  const visibleProfileTree = useMemo(() => filterProfileTree(profileTree, searchQuery), [profileTree, searchQuery])
+  // The header keeps showing a layer when nothing matches the search.
+  const { layer: activeLayer, component: activeComponent } = resolveActiveProfileSelection(
+    visibleProfileTree,
+    requestedComponentKey
+  )
+  const headerLayer = activeLayer ?? resolveActiveProfileSelection(profileTree, requestedComponentKey).layer
+  // Fields are only filtered when the match comes from them, not from the layer or component itself.
+  const fieldSearch =
+    activeLayer &&
+    activeComponent &&
+    !matchesProfileSearch(activeLayer, searchQuery) &&
+    !matchesProfileSearch(activeComponent, searchQuery)
+      ? searchQuery
+      : undefined
   const profileTabs: ProfileTab[] =
     activeLayer?.children?.map((component) => ({
       id: component.key,
       label: component.label,
     })) ?? []
   const profileSections = useMemo(
-    () => getProfileSections(activeComponent, activeLayer),
-    [activeComponent, activeLayer]
+    () =>
+      getProfileSections(
+        activeComponent,
+        // Configuration sections can source components the search filtered out of the layer.
+        profileTree.find((item) => item.id === activeLayer?.id),
+        fieldSearch
+      ),
+    [activeComponent, activeLayer?.id, fieldSearch, profileTree]
   )
   const profileConfigs = useMemo(
     () =>
@@ -390,7 +459,7 @@ export function ClusterProfileFeature({
   )
   const sidebarLayers = useMemo<ClusterProfileSidebarLayer[]>(
     () =>
-      profileTree.map((item) => ({
+      visibleProfileTree.map((item) => ({
         id: item.id,
         label: item.label,
         status: item.status,
@@ -400,7 +469,7 @@ export function ClusterProfileFeature({
           label: child.label,
         })),
       })),
-    [profileTree]
+    [visibleProfileTree]
   )
 
   const updateProfileConfig = (componentKey: string, fieldKey: string, value: unknown) => {
@@ -428,7 +497,7 @@ export function ClusterProfileFeature({
   const isBackgroundResolverError = hasResolverError && hasResolvedConfiguration
 
   const handleSelectSection = (sectionId: string) => {
-    const firstItem = profileTree.find((item) => item.id === sectionId)?.children[0]
+    const firstItem = visibleProfileTree.find((item) => item.id === sectionId)?.children[0]
     onActiveComponentChange?.(firstItem?.key ?? sectionId)
   }
 
@@ -458,7 +527,7 @@ export function ClusterProfileFeature({
           selectedItemId={activeComponent?.key}
           isLoading={isLoading}
           isError={isError}
-          onSearchChange={setSearch}
+          onSearchChange={(nextSearch) => onSearchChange?.(nextSearch)}
           onSelectSection={handleSelectSection}
           onSelectItem={handleSelectItem}
         />
@@ -467,10 +536,10 @@ export function ClusterProfileFeature({
           <div className="flex items-start justify-between gap-4 bg-surface-neutral px-4 pb-2 pt-4">
             <div className="min-w-0">
               <Heading level={2} className="!text-base font-medium leading-6">
-                {activeLayer?.label ?? 'Log infra'}
+                {headerLayer?.label ?? 'Log infra'}
               </Heading>
-              {activeLayer?.description ? (
-                <p className="mt-0.5 text-xs text-neutral-subtle">{activeLayer.description}</p>
+              {headerLayer?.description ? (
+                <p className="mt-0.5 text-xs text-neutral-subtle">{headerLayer.description}</p>
               ) : null}
             </div>
             <div className="flex shrink-0 items-center gap-2">
@@ -484,7 +553,7 @@ export function ClusterProfileFeature({
 
           <div
             role="tablist"
-            aria-label={`${activeLayer?.label ?? 'Profile'} configuration`}
+            aria-label={`${headerLayer?.label ?? 'Profile'} configuration`}
             className="flex items-center gap-4 border-b border-neutral bg-surface-neutral px-4"
           >
             {profileTabs.map((tab) => {
@@ -516,7 +585,17 @@ export function ClusterProfileFeature({
             className="min-h-0 flex-1 overflow-y-auto"
           >
             <div className="flex min-h-full flex-col">
-              {isInitialResolverError ? (
+              {searchQuery && !isLoading && !activeComponent ? (
+                <div className="p-4">
+                  <EmptyState
+                    icon="wave-pulse"
+                    title={
+                      <span className="font-normal leading-5">No settings found matching your search and filters.</span>
+                    }
+                    className="h-auto w-full p-8 shadow-sm"
+                  />
+                </div>
+              ) : isInitialResolverError ? (
                 <div role="alert" className="border-b border-neutral px-4 py-3 text-sm text-negative">
                   Configuration could not be checked. Refresh the page and try again.
                 </div>
@@ -533,6 +612,7 @@ export function ClusterProfileFeature({
                     <ProfileConfigurationSection
                       key={section.id}
                       section={section}
+                      highlight={searchQuery}
                       preview={previewsByComponent[section.component.key]}
                       profileConfig={profileConfigs[section.component.key] ?? {}}
                       clusterInputs={resolvedClusterInputs[section.component.key] ?? {}}
