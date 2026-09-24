@@ -19,9 +19,6 @@ interface LlmProviderFormValues {
   scope: LlmProviderScope
 }
 
-type LlmProviderRequestWithRegion = LlmProviderRequest & { region?: string | null }
-type LlmProviderResponseWithRegion = LlmProviderResponse & { region?: string | null }
-
 const AWS_REGION_PATTERN = /^[a-z]{2}(-gov)?-[a-z]+-[0-9]+$/
 
 export interface LlmProviderCreateEditModalProps {
@@ -66,7 +63,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
       description: llmProvider?.description ?? '',
       type: llmProvider?.type ?? LlmProviderType.CLAUDE,
       credential: '',
-      region: (llmProvider as LlmProviderResponseWithRegion | undefined)?.region ?? '',
+      region: llmProvider?.region ?? '',
       scope: llmProvider?.scope ?? LlmProviderScope.USER,
     },
   })
@@ -81,7 +78,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
 
   const onSubmit = methods.handleSubmit(async (data) => {
     const credential = data.credential.trim()
-    const llmProviderRequest: LlmProviderRequestWithRegion = {
+    const llmProviderRequest: LlmProviderRequest = {
       name: data.name.trim(),
       description: data.description.trim() || undefined,
       type: data.type,
