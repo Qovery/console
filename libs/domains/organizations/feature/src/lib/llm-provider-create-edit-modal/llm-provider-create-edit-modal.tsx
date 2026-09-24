@@ -1,11 +1,13 @@
 import { useParams } from '@tanstack/react-router'
 import {
+  CloudProviderEnum,
   type LlmProviderRequest,
   type LlmProviderResponse,
   LlmProviderScope,
   LlmProviderType,
 } from 'qovery-typescript-axios'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
+import { useCloudProviders } from '@qovery/domains/cloud-providers/feature'
 import { InputSelect, InputText, InputTextArea, ModalCrud, useModal } from '@qovery/shared/ui'
 import { useCreateLlmProvider } from '../hooks/use-create-llm-provider/use-create-llm-provider'
 import { useEditLlmProvider } from '../hooks/use-edit-llm-provider/use-edit-llm-provider'
@@ -15,6 +17,7 @@ interface LlmProviderFormValues {
   description: string
   type: LlmProviderType
   credential: string
+  region: string
   scope: LlmProviderScope
 }
 
@@ -49,6 +52,29 @@ const SCOPE_OPTIONS = [
   { label: 'Organization', value: LlmProviderScope.ORGANIZATION },
 ]
 
+function BedrockRegionSelect({ value, onChange }: { value: string; onChange: (value: string) => void }) {
+  const { data: cloudProviders = [], isError, isLoading } = useCloudProviders()
+  const awsRegions = cloudProviders.find(({ short_name }) => short_name === CloudProviderEnum.AWS)?.regions ?? []
+  const options = awsRegions.map(({ city, name }) => ({ label: `${city} (${name})`, value: name }))
+
+  if (value && !options.some(({ value: region }) => region === value)) {
+    options.push({ label: value, value })
+  }
+
+  return (
+    <InputSelect
+      label="AWS region"
+      value={value}
+      onChange={(nextValue) => onChange(typeof nextValue === 'string' ? nextValue : '')}
+      options={options}
+      isLoading={isLoading}
+      error={isError ? 'Couldn’t load AWS regions.' : undefined}
+      isSearchable
+      portal
+    />
+  )
+}
+
 export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProviderCreateEditModalProps) {
   const { organizationId = '' } = useParams({ strict: false })
   const isEdit = llmProvider !== undefined
@@ -60,12 +86,14 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
       description: llmProvider?.description ?? '',
       type: llmProvider?.type ?? LlmProviderType.CLAUDE,
       credential: '',
+      region: llmProvider?.type === LlmProviderType.BEDROCK ? llmProvider.region ?? '' : 'eu-west-1',
       scope: llmProvider?.scope ?? LlmProviderScope.USER,
     },
   })
   methods.watch(() => enableAlertClickOutside(methods.formState.isDirty))
 
   const providerChanged = isEdit && methods.watch('type') !== llmProvider.type
+  const providerType = methods.watch('type')
   const credentialRequired = !isEdit || providerChanged
 
   const { mutateAsync: createLlmProvider, isLoading: isCreating } = useCreateLlmProvider()
@@ -78,6 +106,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
       description: data.description.trim() || undefined,
       type: data.type,
       credential: credential || undefined,
+      ...(data.type === LlmProviderType.BEDROCK ? { region: data.region.trim() || null } : {}),
       scope: isEdit ? undefined : data.scope,
     }
 
@@ -176,6 +205,13 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
               />
             )}
           />
+          {providerType === LlmProviderType.BEDROCK ? (
+            <Controller
+              name="region"
+              control={methods.control}
+              render={({ field }) => <BedrockRegionSelect {...field} />}
+            />
+          ) : null}
           <Controller
             name="description"
             control={methods.control}

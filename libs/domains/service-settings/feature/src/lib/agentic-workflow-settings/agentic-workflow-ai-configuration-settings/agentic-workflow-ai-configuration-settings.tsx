@@ -1,49 +1,53 @@
-import { type LlmProviderResponse } from 'qovery-typescript-axios'
+import { type AgenticWorkflowModelType, type LlmProviderResponse } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { LlmProviderSetting } from '@qovery/domains/organizations/feature'
-import { AgenticWorkflowCodeEditorField, AgenticWorkflowPromptEditor } from '@qovery/domains/services/feature'
+import { AgenticWorkflowModelSetting, AgenticWorkflowPromptEditor } from '@qovery/domains/services/feature'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
-
-function getJsonError(value: string) {
-  try {
-    JSON.parse(value)
-    return undefined
-  } catch {
-    return 'Invalid JSON format.'
-  }
-}
 
 export function AgenticWorkflowAiConfigurationSettings({
   form,
   llmProviders,
+  modelType,
 }: {
   form: UseFormReturn<AgenticWorkflowSettingsFormValues>
   llmProviders: LlmProviderResponse[]
+  modelType: AgenticWorkflowModelType
 }) {
+  const llmProviderId = form.watch('llmProviderId')
+  const currentModelType = form.watch('modelType')
+
   return (
     <>
       <AgenticWorkflowSettingsCard
         title="Provider"
-        description="Configure the model provider token and cloud settings."
+        description="Configure the model provider token and model settings."
       >
         <Controller
           name="llmProviderId"
           control={form.control}
           render={({ field }) => (
-            <LlmProviderSetting llmProviders={llmProviders} value={field.value} onChange={field.onChange} />
+            <LlmProviderSetting
+              llmProviders={llmProviders}
+              value={field.value}
+              onChange={(providerId, llmProvider) => {
+                field.onChange(providerId)
+                const provider = llmProvider ?? llmProviders.find(({ id }) => id === providerId)
+                if (provider) {
+                  form.setValue('modelType', provider.type as AgenticWorkflowModelType, { shouldDirty: true })
+                }
+              }}
+            />
           )}
         />
         <Controller
           name="modelSettings"
           control={form.control}
           render={({ field }) => (
-            <AgenticWorkflowCodeEditorField
-              name={field.name}
-              label="Cloud settings JSON"
-              language="json"
-              value={field.value}
-              error={getJsonError(field.value)}
+            <AgenticWorkflowModelSetting
+              llmProviderId={llmProviderId}
+              providerType={currentModelType ?? modelType}
+              settings={field.value}
               onChange={field.onChange}
             />
           )}

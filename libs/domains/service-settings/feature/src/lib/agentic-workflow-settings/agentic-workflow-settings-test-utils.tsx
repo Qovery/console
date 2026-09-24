@@ -1,4 +1,4 @@
-import { AgenticWorkflowExecutionMode } from 'qovery-typescript-axios'
+import { AgenticWorkflowExecutionMode, AgenticWorkflowModelType } from 'qovery-typescript-axios'
 import { type ReactNode } from 'react'
 import { type UseFormReturn, useForm } from 'react-hook-form'
 import { type AgenticWorkflowSettingsFormValues } from './agentic-workflow-settings'
@@ -9,6 +9,7 @@ export const SETTINGS_FORM_VALUES: AgenticWorkflowSettingsFormValues = {
   enabled: true,
   executionMode: AgenticWorkflowExecutionMode.IN_PLACE,
   llmProviderId: '',
+  modelType: AgenticWorkflowModelType.CLAUDE,
   modelSettings: '{"provider":"anthropic"}',
   agentPrompt: 'Investigate the alert.',
   repositories: [],

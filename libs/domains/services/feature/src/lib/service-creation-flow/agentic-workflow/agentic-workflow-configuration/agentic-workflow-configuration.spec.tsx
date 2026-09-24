@@ -5,6 +5,7 @@ import { renderWithProviders, screen, waitFor, within } from '@qovery/shared/uti
 import { AgenticWorkflowCreationFlow, type AgenticWorkflowFormData } from '../agentic-workflow-context'
 import { type AgenticWorkflowTemplate } from '../agentic-workflow-templates'
 import {
+  AgenticWorkflowCodeEditorField,
   AgenticWorkflowConfiguration,
   areVariablesValid,
   getInvalidVariableField,
@@ -97,6 +98,12 @@ jest.mock('@qovery/domains/organizations/feature', () => ({
     mutateAsync: mockCreateQoveryMcpServer,
   }),
   useLlmProviders: () => ({ data: mockLlmProviders, isLoading: false }),
+  useLlmProviderModels: () => ({
+    data: [{ id: 'claude-opus', display_name: 'Claude Opus', created_at: null }],
+    isError: false,
+    isLoading: false,
+    refetch: jest.fn(),
+  }),
   useMcpServers: () => ({
     data: mockMcpServers,
     isError: mockMcpServersError,
@@ -170,6 +177,25 @@ const validSeed: Partial<AgenticWorkflowFormData> = {
   llmProviderId: 'provider-1',
   automations: [{ id: 'automation-1', triggers: [{ id: 'webhook-1', type: 'webhook' }], outputs: [] }],
 }
+
+describe('AgenticWorkflowCodeEditorField', () => {
+  it('preserves line breaks in JSON placeholders', () => {
+    const placeholder = '{\n  "model": "eu.anthropic.claude-opus-5"\n}'
+
+    const { container } = renderWithProviders(
+      <AgenticWorkflowCodeEditorField
+        label="Cloud settings JSON"
+        language="json"
+        name="modelSettingsJson"
+        value=""
+        placeholder={placeholder}
+        onChange={jest.fn()}
+      />
+    )
+
+    expect(container.querySelector('.whitespace-pre')).toHaveTextContent('"model": "eu.anthropic.claude-opus-5"')
+  })
+})
 
 describe('AgenticWorkflowConfiguration validation', () => {
   beforeEach(() => {
@@ -331,8 +357,14 @@ describe('AgenticWorkflowConfiguration', () => {
     expect(screen.getByRole('heading', { name: 'Configure provider' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'Select stored token' })).toBeInTheDocument()
     expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
-    expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
-    await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
+    expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
+    expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'Save provider' })).toBeDisabled()
+    await userEvent.click(screen.getByRole('button', { name: 'Select stored token' }))
+    expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    const saveProviderButton = screen.getByRole('button', { name: 'Save provider' })
+    await waitFor(() => expect(saveProviderButton).toBeEnabled())
+    await userEvent.click(saveProviderButton)
 
     await userEvent.click(screen.getByRole('button', { name: 'Add trigger' }))
     expect(screen.getByRole('heading', { name: 'Configure triggers' })).toBeInTheDocument()
@@ -681,9 +713,11 @@ describe('AgenticWorkflowConfiguration', () => {
 
     expect(createButton).toBeEnabled()
     expect(screen.queryByRole('button', { name: 'Create and deploy' })).not.toBeInTheDocument()
+    expect(screen.getByText('Provider required')).toHaveClass('text-neutral-subtle')
 
     await userEvent.click(createButton)
     expect(screen.getByText('Please enter an agent task name.')).toBeInTheDocument()
+    expect(screen.getByText('Provider required')).toHaveClass('text-negative')
 
     await userEvent.type(screen.getByRole('textbox', { name: 'Name' }), 'review-agent')
     await userEvent.type(screen.getByRole('textbox', { name: /Instructions/ }), 'Review incoming payloads.')
@@ -693,6 +727,7 @@ describe('AgenticWorkflowConfiguration', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Save provider' }))
 
     expect(createButton).toBeEnabled()
+    expect(screen.queryByText('Provider required')).not.toBeInTheDocument()
 
     await userEvent.click(createButton)
 

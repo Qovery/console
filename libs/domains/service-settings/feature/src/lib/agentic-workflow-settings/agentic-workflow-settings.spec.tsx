@@ -4,7 +4,6 @@ import * as servicesDomain from '@qovery/domains/services/feature'
 import { renderWithProviders, screen, waitFor } from '@qovery/shared/util-tests'
 import {
   AgenticWorkflowSettings,
-  agenticWorkflowJsonValidation,
   formatAgenticWorkflowRepositories,
   getGitRepositoryName,
   getGitRepositoryProvider,
@@ -13,6 +12,7 @@ import {
 
 const useGitTokensSpy = jest.spyOn(organizationsDomain, 'useGitTokens') as jest.Mock
 const useLlmProvidersSpy = jest.spyOn(organizationsDomain, 'useLlmProviders') as jest.Mock
+const useLlmProviderModelsSpy = jest.spyOn(organizationsDomain, 'useLlmProviderModels') as jest.Mock
 const useMcpServersSpy = jest.spyOn(organizationsDomain, 'useMcpServers') as jest.Mock
 const useEditServiceSpy = jest.spyOn(servicesDomain, 'useEditService') as jest.Mock
 const useServiceSpy = jest.spyOn(servicesDomain, 'useService') as jest.Mock
@@ -95,10 +95,6 @@ const service = {
 }
 
 describe('Agentic Workflow settings validation', () => {
-  it('rejects malformed JSON', () => {
-    expect(agenticWorkflowJsonValidation('{')).toBe('Invalid JSON format.')
-  })
-
   it.each([
     ['https://github.com/qovery/console.git', 'qovery/console'],
     ['https://gitlab.com/qovery/backend', 'qovery/backend'],
@@ -167,6 +163,11 @@ describe('AgenticWorkflowSettings views', () => {
     useServiceSpy.mockReturnValue({ data: service })
     useGitTokensSpy.mockReturnValue({ data: [{ id: 'token-1', type: 'GITHUB' }], isLoading: false })
     useLlmProvidersSpy.mockReturnValue({ data: [] })
+    useLlmProviderModelsSpy.mockReturnValue({
+      data: [{ id: 'eu.anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null }],
+      isError: false,
+      isLoading: false,
+    })
     useMcpServersSpy.mockReturnValue({
       data: [{ id: 'mcp-1', name: 'Documentation', url: 'https://docs.example.com' }],
       isLoading: false,
@@ -243,7 +244,8 @@ describe('AgenticWorkflowSettings views', () => {
     expect(screen.getByRole('heading', { name: 'AI configuration' })).toBeInTheDocument()
     expect(screen.getByLabelText('Token')).toBeInTheDocument()
     expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'Cloud settings JSON' })).toHaveValue('{"temperature":0.2}')
+    expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    expect(screen.queryByRole('textbox', { name: 'Cloud settings JSON' })).not.toBeInTheDocument()
     expect(screen.getByRole('textbox', { name: 'Instructions' })).toBeInTheDocument()
   })
 
