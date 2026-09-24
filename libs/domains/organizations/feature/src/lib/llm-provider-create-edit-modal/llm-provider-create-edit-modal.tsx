@@ -86,7 +86,7 @@ export function LlmProviderCreateEditModal({ onClose, llmProvider }: LlmProvider
       description: llmProvider?.description ?? '',
       type: llmProvider?.type ?? LlmProviderType.CLAUDE,
       credential: '',
-      region: llmProvider?.region ?? 'eu-west-1',
+      region: llmProvider?.type === LlmProviderType.BEDROCK ? llmProvider.region ?? '' : 'eu-west-1',
       scope: llmProvider?.scope ?? LlmProviderScope.USER,
     },
   })

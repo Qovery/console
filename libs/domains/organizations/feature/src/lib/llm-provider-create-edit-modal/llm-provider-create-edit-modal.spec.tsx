@@ -194,4 +194,41 @@ describe('LlmProviderCreateEditModal', () => {
 
     expect(screen.getByText('us-east-1')).toBeInTheDocument()
   })
+
+  it('preserves an empty region when saving an existing Bedrock token', async () => {
+    const { userEvent } = renderWithProviders(
+      <LlmProviderCreateEditModal
+        onClose={jest.fn()}
+        llmProvider={{
+          id: 'provider-1',
+          name: 'Bedrock',
+          type: LlmProviderType.BEDROCK,
+          region: null,
+          has_credential: true,
+          scope: LlmProviderScope.USER,
+          created_at: '2026-09-15T10:00:00Z',
+          updated_at: '2026-09-15T10:00:00Z',
+        }}
+      />
+    )
+
+    expect(screen.getByLabelText('AWS region')).toHaveValue('')
+    await waitFor(() => expect(screen.getByRole('button', { name: 'Save token' })).toBeEnabled())
+    await userEvent.click(screen.getByRole('button', { name: 'Save token' }))
+
+    await waitFor(() =>
+      expect(editLlmProvider).toHaveBeenCalledWith({
+        organizationId: 'org-1',
+        llmProviderId: 'provider-1',
+        llmProviderRequest: {
+          name: 'Bedrock',
+          description: undefined,
+          type: LlmProviderType.BEDROCK,
+          credential: undefined,
+          region: null,
+          scope: undefined,
+        },
+      })
+    )
+  })
 })
