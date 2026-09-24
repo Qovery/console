@@ -44,7 +44,9 @@ function renderHighlightedText(
   renderAnsi = true
 ): ReactNode {
   const textEnd = textStart + text.length
-  const ranges = [...highlightRanges, ...keyRanges].filter(({ start, end }) => start < textEnd && end > textStart)
+  const visibleHighlightRanges = highlightRanges.filter(({ start, end }) => start < textEnd && end > textStart)
+  const visibleKeyRanges = keyRanges.filter(({ start, end }) => start < textEnd && end > textStart)
+  const ranges = [...visibleHighlightRanges, ...visibleKeyRanges]
 
   if (ranges.length === 0) {
     if (!renderAnsi) return text
@@ -63,15 +65,27 @@ function renderHighlightedText(
   }
 
   const sortedBoundaries = Array.from(boundaries).sort((a, b) => a - b)
+  let highlightRangeIndex = 0
+  let keyRangeIndex = 0
   const parts = sortedBoundaries.slice(0, -1).map((start, index) => {
     const end = sortedBoundaries[index + 1] ?? start
     const globalStart = textStart + start
     const globalEnd = textStart + end
 
+    while ((visibleHighlightRanges[highlightRangeIndex]?.end ?? Infinity) <= globalStart) {
+      highlightRangeIndex++
+    }
+    while ((visibleKeyRanges[keyRangeIndex]?.end ?? Infinity) <= globalStart) {
+      keyRangeIndex++
+    }
+
+    const highlightRange = visibleHighlightRanges[highlightRangeIndex]
+    const keyRange = visibleKeyRanges[keyRangeIndex]
+
     return {
       text: text.slice(start, end),
-      highlighted: highlightRanges.some((range) => range.start < globalEnd && range.end > globalStart),
-      isKey: keyRanges.some((range) => range.start < globalEnd && range.end > globalStart),
+      highlighted: Boolean(highlightRange && highlightRange.start < globalEnd),
+      isKey: Boolean(keyRange && keyRange.start < globalEnd),
     }
   })
 
