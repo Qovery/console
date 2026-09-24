@@ -93,6 +93,29 @@ const services = {
     blueprint_id: 'blueprint-id',
     tag: 'aws/s3/1.2',
   },
+  'helm-blueprint-mock': {
+    id: 'helm-blueprint-mock',
+    serviceType: 'HELM',
+    service_type: 'HELM',
+    name: 'tf-bp-redis',
+    description: '',
+    icon_uri: 'app://qovery-console/redis',
+    environment: {
+      id: 'environment-id',
+    },
+    source: {
+      repository: {
+        repository: {
+          id: 'repository-id',
+          name: 'blueprint-redis-01a0d3cb-3b16-7e62-9b66-3462d6f1d59e',
+          url: 'https://groundhog2k.github.io/helm-charts/',
+        },
+        chart_name: 'redis',
+        chart_version: '2.4.1',
+      },
+    },
+    blueprint_id: 'blueprint-id',
+  },
   'agentic-workflow-mock': {
     id: 'agentic-workflow-mock',
     serviceType: 'AGENTIC_WORKFLOW',
@@ -376,6 +399,7 @@ describe('ServiceHeader', () => {
       | 'job-mock'
       | 'argocd-mock'
       | 'terraform-mock'
+      | 'helm-blueprint-mock'
       | 'agentic-workflow-mock'
   ) => renderWithProviders(<ServiceHeader environment={environment} service={services[serviceId] as AnyService} />)
 
@@ -471,6 +495,14 @@ describe('ServiceHeader', () => {
     expect(screen.queryByText('Blueprint is up to date')).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /Blueprint update available/i })).not.toBeInTheDocument()
     expect(screen.queryByText('Update available')).not.toBeInTheDocument()
+  })
+
+  it('hides the engine-generated chart repository of a helm blueprint', () => {
+    renderServiceHeader('helm-blueprint-mock')
+
+    expect(screen.queryByText(/blueprint-redis-/)).not.toBeInTheDocument()
+    expect(screen.getByText('redis')).toBeInTheDocument()
+    expect(screen.getByText('2.4.1')).toBeInTheDocument()
   })
 
   it('drops a cached update once the blueprint update check starts failing', () => {
