@@ -1,5 +1,6 @@
 import { LlmProviderType, type LlmProviderType as LlmProviderTypeValue } from 'qovery-typescript-axios'
 import { useEffect, useRef } from 'react'
+import { match } from 'ts-pattern'
 import { useLlmProviderModels } from '@qovery/domains/organizations/feature'
 import { InputSelect } from '@qovery/shared/ui'
 
@@ -97,13 +98,15 @@ export function AgenticWorkflowModelSetting({
 
   const modelOptions = models.map(({ id, display_name }) => ({ value: id, label: display_name }))
   const hasModelsError = isError || (!isLoading && models.length === 0)
-  const modelsError = isError
-    ? providerType === LlmProviderType.BEDROCK
-      ? 'We couldn’t load models. Check this token’s AWS credentials and region.'
-      : 'We couldn’t load models. Check that this token’s API key is valid.'
-    : providerType === LlmProviderType.BEDROCK
-      ? 'No models are available in this AWS region. Select another region in the token settings.'
-      : 'No models are available for this token.'
+  const modelsError = match([isError, providerType === LlmProviderType.BEDROCK])
+    .with([true, true], () => 'We couldn’t load models. Check this token’s AWS credentials and region.')
+    .with([true, false], () => 'We couldn’t load models. Check that this token’s API key is valid.')
+    .with(
+      [false, true],
+      () => 'No models are available in this AWS region. Select another region in the token settings.'
+    )
+    .with([false, false], () => 'No models are available for this token.')
+    .exhaustive()
 
   return (
     <div className="flex flex-col gap-2">
