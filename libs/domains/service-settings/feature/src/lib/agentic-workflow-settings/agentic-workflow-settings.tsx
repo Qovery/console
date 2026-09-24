@@ -134,15 +134,6 @@ export function formatAgenticWorkflowRepositories(repositories: AgenticWorkflowG
   }))
 }
 
-export function agenticWorkflowJsonValidation(value: string) {
-  try {
-    JSON.parse(value)
-    return true
-  } catch {
-    return 'Invalid JSON format.'
-  }
-}
-
 export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) {
   const { organizationId = '', projectId = '', environmentId = '', serviceId = '' } = useParams({ strict: false })
   const { data: service } = useService({ environmentId, serviceId, suspense: true })
@@ -204,15 +195,10 @@ export function AgenticWorkflowSettings({ page }: AgenticWorkflowSettingsProps) 
   if (!workflow) return null
 
   const values = form.watch()
-  const selectedProvider = llmProviders.find(({ id }) => id === values.llmProviderId)
-  const selectedProviderType = selectedProvider?.type ?? workflow.model.type
   const pageValid =
     Boolean(values.name.trim()) &&
     (page !== 'general' || areAgenticWorkflowResourcesValid(values.cpu, values.ram)) &&
-    (page !== 'ai-configuration' ||
-      (Boolean(values.llmProviderId) &&
-        Boolean(values.agentPrompt.trim()) &&
-        (selectedProviderType !== 'BEDROCK' || agenticWorkflowJsonValidation(values.modelSettings) === true))) &&
+    (page !== 'ai-configuration' || (Boolean(values.llmProviderId) && Boolean(values.agentPrompt.trim()))) &&
     (page !== 'connections' || values.repositories.every(isGitRepositoryComplete))
   const persistSettings: SaveAgenticWorkflowSettings = async (updatedValues) => {
     const data = { ...form.getValues(), ...updatedValues }

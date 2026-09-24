@@ -353,8 +353,7 @@ export function AgenticWorkflowConfiguration() {
   const selectedProvider = llmProviders.find(({ id }) => id === values.llmProviderId)
   const selectedProviderType = selectedProvider?.type ?? values.aiModel
   const isBedrockProvider = selectedProviderType === LlmProviderType.BEDROCK
-  const modelSettingsJsonError = isBedrockProvider ? getJsonError(values.modelSettingsJson, true) : undefined
-  const providerConfigurationInvalid = !hasModelCredential || Boolean(modelSettingsJsonError)
+  const providerConfigurationInvalid = !hasModelCredential
   const settingsGroupsInvalid: Record<SettingsGroup, boolean> = {
     general: false,
     resources: !resourcesValid,
@@ -1163,17 +1162,6 @@ export function AgenticWorkflowConfiguration() {
                         providerType={selectedProviderType}
                         settings={field.value}
                         onChange={field.onChange}
-                        bedrockSettings={
-                          <AgenticWorkflowCodeEditorField
-                            name={field.name}
-                            label="Cloud settings JSON"
-                            language="json"
-                            value={field.value}
-                            error={modelSettingsJsonError}
-                            placeholder={'{\n  "model": "eu.anthropic.claude-opus-5"\n}'}
-                            onChange={field.onChange}
-                          />
-                        }
                       />
                     )}
                   />

@@ -1,22 +1,9 @@
 import { type AgenticWorkflowModelType, type LlmProviderResponse } from 'qovery-typescript-axios'
 import { Controller, type UseFormReturn } from 'react-hook-form'
 import { LlmProviderSetting } from '@qovery/domains/organizations/feature'
-import {
-  AgenticWorkflowCodeEditorField,
-  AgenticWorkflowModelSetting,
-  AgenticWorkflowPromptEditor,
-} from '@qovery/domains/services/feature'
+import { AgenticWorkflowModelSetting, AgenticWorkflowPromptEditor } from '@qovery/domains/services/feature'
 import { type AgenticWorkflowSettingsFormValues } from '../agentic-workflow-settings'
 import { AgenticWorkflowSettingsCard } from '../agentic-workflow-settings-card'
-
-function getJsonError(value: string) {
-  try {
-    JSON.parse(value)
-    return undefined
-  } catch {
-    return 'Invalid JSON format.'
-  }
-}
 
 export function AgenticWorkflowAiConfigurationSettings({
   form,
@@ -52,17 +39,6 @@ export function AgenticWorkflowAiConfigurationSettings({
               providerType={selectedProvider?.type ?? modelType}
               settings={field.value}
               onChange={field.onChange}
-              bedrockSettings={
-                <AgenticWorkflowCodeEditorField
-                  name={field.name}
-                  label="Cloud settings JSON"
-                  language="json"
-                  value={field.value}
-                  error={getJsonError(field.value)}
-                  placeholder={'{\n  "model": "eu.anthropic.claude-opus-5"\n}'}
-                  onChange={field.onChange}
-                />
-              }
             />
           )}
         />

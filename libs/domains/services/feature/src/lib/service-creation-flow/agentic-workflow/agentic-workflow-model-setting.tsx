@@ -1,9 +1,7 @@
 import { LlmProviderType, type LlmProviderType as LlmProviderTypeValue } from 'qovery-typescript-axios'
-import { type ReactNode, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useLlmProviderModels } from '@qovery/domains/organizations/feature'
 import { InputSelect } from '@qovery/shared/ui'
-
-const DEFAULT_BEDROCK_MODEL = 'eu.anthropic.claude-opus-5'
 
 function parseModelSettings(value: string): Record<string, unknown> | undefined {
   try {
@@ -27,7 +25,6 @@ export function updateAgenticWorkflowModel(value: string, model: string) {
 }
 
 export interface AgenticWorkflowModelSettingProps {
-  bedrockSettings: ReactNode
   llmProviderId: string
   providerType?: LlmProviderTypeValue
   settings: string
@@ -35,7 +32,6 @@ export interface AgenticWorkflowModelSettingProps {
 }
 
 export function AgenticWorkflowModelSetting({
-  bedrockSettings,
   llmProviderId,
   providerType,
   settings,
@@ -43,40 +39,27 @@ export function AgenticWorkflowModelSetting({
 }: AgenticWorkflowModelSettingProps) {
   const initializedDefaults = useRef(new Set<string>())
   const hasLlmProvider = Boolean(llmProviderId)
-  const isClaude = hasLlmProvider && providerType === LlmProviderType.CLAUDE
+  const hasModelProvider = hasLlmProvider && Boolean(providerType)
   const {
     data: models = [],
     isError,
     isLoading,
   } = useLlmProviderModels({
     llmProviderId,
-    enabled: isClaude,
+    enabled: hasModelProvider,
   })
 
-  const parsedSettings = parseModelSettings(settings)
   const currentModel = getAgenticWorkflowModel(settings)
   const firstModelId = models[0]?.id
-  const hasInvalidSettings = Boolean(settings.trim()) && !parsedSettings
   const hasCurrentModel = models.some(({ id }) => id === currentModel)
 
   useEffect(() => {
-    if (!hasLlmProvider || !providerType) return
+    if (!hasModelProvider || !providerType) return
 
     const initializationKey = `${llmProviderId}:${providerType}`
     if (initializedDefaults.current.has(initializationKey)) return
 
-    if (hasInvalidSettings) {
-      initializedDefaults.current.add(initializationKey)
-      return
-    }
-
-    if (providerType === LlmProviderType.BEDROCK) {
-      initializedDefaults.current.add(initializationKey)
-      if (!currentModel) onChange(updateAgenticWorkflowModel(settings, DEFAULT_BEDROCK_MODEL))
-      return
-    }
-
-    if (!isClaude || isLoading || isError) return
+    if (isLoading || isError) return
 
     if (hasCurrentModel) {
       initializedDefaults.current.add(initializationKey)
@@ -91,9 +74,7 @@ export function AgenticWorkflowModelSetting({
     currentModel,
     firstModelId,
     hasCurrentModel,
-    hasInvalidSettings,
-    hasLlmProvider,
-    isClaude,
+    hasModelProvider,
     isError,
     isLoading,
     llmProviderId,
@@ -102,11 +83,14 @@ export function AgenticWorkflowModelSetting({
     settings,
   ])
 
-  if (!hasLlmProvider) return null
-  if (!isClaude) return bedrockSettings
+  if (!hasModelProvider) return null
 
   const modelOptions = models.map(({ id, display_name }) => ({ value: id, label: display_name }))
   const hasModelsError = isError || (!isLoading && models.length === 0)
+  const modelsError =
+    providerType === LlmProviderType.BEDROCK
+      ? 'We couldn’t load models. Check that this token’s AWS credentials are valid.'
+      : 'We couldn’t load models. Check that this token’s API key is valid.'
 
   return (
     <div className="flex flex-col gap-2">
@@ -114,7 +98,7 @@ export function AgenticWorkflowModelSetting({
         label="Model"
         value={hasCurrentModel ? currentModel : ''}
         options={modelOptions}
-        error={hasModelsError ? 'We couldn’t load models. Check that this token’s API key is valid.' : undefined}
+        error={hasModelsError ? modelsError : undefined}
         isLoading={isLoading}
         isSearchable
         portal

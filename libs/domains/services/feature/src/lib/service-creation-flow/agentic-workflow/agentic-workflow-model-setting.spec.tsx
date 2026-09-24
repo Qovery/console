@@ -54,7 +54,6 @@ describe('AgenticWorkflowModelSetting', () => {
 
     renderWithProviders(
       <AgenticWorkflowModelSetting
-        bedrockSettings={<div>Bedrock settings</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
         settings={'{"provider":"anthropic","model":"claude-haiku"}'}
@@ -80,7 +79,6 @@ describe('AgenticWorkflowModelSetting', () => {
 
     renderWithProviders(
       <AgenticWorkflowModelSetting
-        bedrockSettings={<div>Bedrock settings</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
         settings={'{"model":"eu.anthropic.claude-opus-5"}'}
@@ -92,12 +90,15 @@ describe('AgenticWorkflowModelSetting', () => {
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'claude-opus' })
   })
 
-  it('keeps Bedrock settings visible and initializes valid model settings', async () => {
+  it('lists Bedrock models and serializes the first model', async () => {
+    mockModels = [
+      { id: 'eu.anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null },
+      { id: 'eu.anthropic.claude-sonnet-4', display_name: 'Claude Sonnet 4', created_at: null },
+    ]
     const onChange = jest.fn()
 
-    const { rerender } = renderWithProviders(
+    renderWithProviders(
       <AgenticWorkflowModelSetting
-        bedrockSettings={<div>Cloud settings JSON</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.BEDROCK}
         settings="{}"
@@ -105,31 +106,17 @@ describe('AgenticWorkflowModelSetting', () => {
       />
     )
 
-    expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
-    expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Model')).toBeInTheDocument()
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
     expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'eu.anthropic.claude-opus-5' })
-
-    onChange.mockClear()
-    rerender(
-      <AgenticWorkflowModelSetting
-        bedrockSettings={<div>Cloud settings JSON</div>}
-        llmProviderId="provider-1"
-        providerType={LlmProviderType.BEDROCK}
-        settings={'{"model":'}
-        onChange={onChange}
-      />
-    )
-
-    expect(onChange).not.toHaveBeenCalled()
   })
 
-  it('does not replace initially invalid Bedrock settings', () => {
+  it('repairs invalid Bedrock settings with the first available model', async () => {
+    mockModels = [{ id: 'eu.anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null }]
     const onChange = jest.fn()
 
     renderWithProviders(
       <AgenticWorkflowModelSetting
-        bedrockSettings={<div>Cloud settings JSON</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.BEDROCK}
         settings={'{"model":'}
@@ -137,13 +124,13 @@ describe('AgenticWorkflowModelSetting', () => {
       />
     )
 
-    expect(onChange).not.toHaveBeenCalled()
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1))
+    expect(JSON.parse(onChange.mock.calls[0][0])).toEqual({ model: 'eu.anthropic.claude-opus-5' })
   })
 
   it('does not show model settings before a token is selected', () => {
     renderWithProviders(
       <AgenticWorkflowModelSetting
-        bedrockSettings={<div>Cloud settings JSON</div>}
         llmProviderId=""
         providerType={LlmProviderType.CLAUDE}
         settings="{}"
@@ -152,13 +139,11 @@ describe('AgenticWorkflowModelSetting', () => {
     )
 
     expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
-    expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
   })
 
   it('shows an error with no selected value when Claude returns no models', () => {
     renderWithProviders(
       <AgenticWorkflowModelSetting
-        bedrockSettings={<div>Bedrock settings</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
         settings={'{"model":"eu.anthropic.claude-opus-5"}'}
@@ -170,11 +155,26 @@ describe('AgenticWorkflowModelSetting', () => {
     expect(screen.getByLabelText('Model')).toHaveValue('')
   })
 
+  it('shows a Bedrock credential error when no models are returned', () => {
+    renderWithProviders(
+      <AgenticWorkflowModelSetting
+        llmProviderId="provider-1"
+        providerType={LlmProviderType.BEDROCK}
+        settings="{}"
+        onChange={jest.fn()}
+      />
+    )
+
+    expect(
+      screen.getByText('We couldn’t load models. Check that this token’s AWS credentials are valid.')
+    ).toBeInTheDocument()
+    expect(screen.getByLabelText('Model')).toHaveValue('')
+  })
+
   it('shows loading and error states without a retry action', () => {
     mockIsError = true
     const { rerender } = renderWithProviders(
       <AgenticWorkflowModelSetting
-        bedrockSettings={<div>Bedrock settings</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
         settings="{}"
@@ -190,7 +190,6 @@ describe('AgenticWorkflowModelSetting', () => {
     mockIsLoading = true
     rerender(
       <AgenticWorkflowModelSetting
-        bedrockSettings={<div>Bedrock settings</div>}
         llmProviderId="provider-1"
         providerType={LlmProviderType.CLAUDE}
         settings="{}"

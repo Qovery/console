@@ -25,6 +25,13 @@ const claudeProvider: LlmProviderResponse = {
   updated_at: '2026-09-23T00:00:00Z',
 }
 
+const bedrockProvider: LlmProviderResponse = {
+  ...claudeProvider,
+  id: 'provider-2',
+  name: 'Bedrock token',
+  type: LlmProviderType.BEDROCK,
+}
+
 describe('AgenticWorkflowAiConfigurationSettings', () => {
   beforeEach(() => {
     useLlmProviderModelsSpy.mockReturnValue({ data: [], isError: false, isLoading: false, refetch: jest.fn() })
@@ -45,7 +52,7 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
 
     expect(screen.getByLabelText('Token')).toBeInTheDocument()
     expect(screen.queryByLabelText('API key')).not.toBeInTheDocument()
-    expect(screen.getByText('Cloud settings JSON')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Model')).not.toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Instructions' })).not.toBeInTheDocument()
     const instructions = screen.getByRole('textbox', { name: 'Instructions' })
     expect(instructions).toBeInTheDocument()
@@ -95,19 +102,26 @@ describe('AgenticWorkflowAiConfigurationSettings', () => {
     expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
   })
 
-  it('shows only the requested example in an empty Bedrock field', () => {
+  it('shows the model selector for Bedrock', () => {
+    useLlmProviderModelsSpy.mockReturnValue({
+      data: [{ id: 'eu.anthropic.claude-opus-5', display_name: 'Claude Opus 5', created_at: null }],
+      isError: false,
+      isLoading: false,
+    })
+
     renderWithProviders(
-      <AgenticWorkflowSettingsFormHarness values={{ modelSettings: '' }}>
+      <AgenticWorkflowSettingsFormHarness values={{ llmProviderId: bedrockProvider.id, modelSettings: '' }}>
         {(form) => (
           <AgenticWorkflowAiConfigurationSettings
             form={form}
-            llmProviders={[]}
+            llmProviders={[bedrockProvider]}
             modelType={AgenticWorkflowModelType.BEDROCK}
           />
         )}
       </AgenticWorkflowSettingsFormHarness>
     )
 
-    expect(screen.getByText(/"model": "eu\.anthropic\.claude-opus-5"/)).toBeInTheDocument()
+    expect(screen.getByLabelText('Model')).toBeInTheDocument()
+    expect(screen.queryByText('Cloud settings JSON')).not.toBeInTheDocument()
   })
 })
