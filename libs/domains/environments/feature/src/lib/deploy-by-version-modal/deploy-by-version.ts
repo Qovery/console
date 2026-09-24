@@ -43,6 +43,8 @@ export interface VersionOption {
   value: string
   message?: string
   tag?: string
+  isDisabled?: boolean
+  disabledReason?: string
 }
 
 export type DeployByVersionService = VersionedService & {
@@ -190,10 +192,26 @@ export function versionsToOptions(versions: string[]): VersionOption[] {
   return sortVersions(versions).map((value) => ({ value }))
 }
 
+export function containerVersionsToOptions(versions: string[]): VersionOption[] {
+  return versionsToOptions(versions).map((option) =>
+    option.value === 'latest'
+      ? {
+          ...option,
+          isDisabled: true,
+          disabledReason: 'Image tag cannot be latest to ensure consistent deployment',
+        }
+      : option
+  )
+}
+
+export function getFirstDeployableVersion(service: DeployByVersionService): VersionOption | undefined {
+  return service.versions.find(({ isDisabled }) => !isDisabled)
+}
+
 export function createInitialSelections(services: DeployByVersionService[]): ServiceVersionSelections {
   return Object.fromEntries(
     services.map((service) => {
-      const latestVersion = service.versions[0]?.value ?? ''
+      const latestVersion = getFirstDeployableVersion(service)?.value ?? ''
       return [
         service.id,
         {
@@ -211,7 +229,8 @@ export function buildDeployByVersionPayload(
 ): DeployAllRequest {
   return services.reduce<DeployAllRequest>((payload, service) => {
     const selection = selections[service.id]
-    if (!selection?.selected || !selection.version || service.isSkipped) return payload
+    const selectedVersion = service.versions.find(({ value }) => value === selection?.version)
+    if (!selection?.selected || !selectedVersion || selectedVersion.isDisabled || service.isSkipped) return payload
 
     return match(service)
       .with({ serviceType: 'APPLICATION', sourceType: 'git' }, ({ id }) => ({

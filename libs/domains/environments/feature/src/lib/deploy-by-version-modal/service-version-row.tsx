@@ -3,7 +3,12 @@ import { useCallback, useState } from 'react'
 import { ServiceAvatar } from '@qovery/domains/services/feature'
 import { Button, Checkbox, DropdownMenu, Icon, Tooltip, Truncate } from '@qovery/shared/ui'
 import { twMerge } from '@qovery/shared/util-js'
-import { type DeployByVersionService, type ServiceVersionSelections, type VersionOption } from './deploy-by-version'
+import {
+  type DeployByVersionService,
+  type ServiceVersionSelections,
+  type VersionOption,
+  getFirstDeployableVersion,
+} from './deploy-by-version'
 
 function Version({ service, value, latest }: { service: DeployByVersionService; value?: string; latest?: boolean }) {
   if (!value) return <span className="text-neutral-subtle">Not deployed</span>
@@ -43,28 +48,45 @@ function VersionServiceAvatar({ service }: { service: DeployByVersionService }) 
 
 function VersionOptionButton({
   option,
+  isGit,
   selected,
   onChange,
 }: {
   option: VersionOption
+  isGit: boolean
   selected: boolean
   onChange: (version: string) => void
 }) {
   return (
     <DropdownMenu.Item
       color="neutral"
+      disabled={option.isDisabled}
       className={twMerge(
         'h-[62px] w-full shrink-0 cursor-pointer flex-col items-start justify-center gap-0.5 rounded-none border-b border-neutral px-3 py-3 text-left font-normal last:border-b-0 hover:bg-surface-neutral-subtle data-[highlighted]:bg-surface-neutral-subtle',
-        selected && 'bg-surface-neutral-subtle'
+        selected && 'bg-surface-neutral-subtle',
+        option.isDisabled &&
+          'cursor-not-allowed hover:bg-transparent data-[disabled]:pointer-events-auto data-[highlighted]:bg-transparent'
       )}
       onSelect={() => onChange(option.value)}
     >
-      <span className="flex min-w-0 items-center gap-1 text-sm font-normal leading-5 text-neutral">
-        <span className="shrink-0">{option.value.slice(0, 7)}</span>
+      <span
+        className={twMerge(
+          'flex min-w-0 items-center gap-1 text-sm font-normal leading-5 text-neutral',
+          option.isDisabled && 'text-neutral-disabled'
+        )}
+      >
+        <span className="truncate">{isGit ? option.value.slice(0, 7) : option.value}</span>
         {selected && <Icon iconName="check" className="shrink-0 text-sm text-positive" />}
       </span>
-      {option.message && (
-        <span className="w-full truncate text-ssm font-normal leading-4 text-neutral-subtle">{option.message}</span>
+      {(option.message || option.disabledReason) && (
+        <span
+          className={twMerge(
+            'w-full truncate text-ssm font-normal leading-4 text-neutral-subtle',
+            option.isDisabled && 'text-neutral-disabled'
+          )}
+        >
+          {option.message ?? option.disabledReason}
+        </span>
       )}
     </DropdownMenu.Item>
   )
@@ -80,7 +102,13 @@ function VersionOptions({
   onChange: (version: string) => void
 }) {
   return service.versions.map((option) => (
-    <VersionOptionButton key={option.value} option={option} selected={option.value === value} onChange={onChange} />
+    <VersionOptionButton
+      key={option.value}
+      option={option}
+      isGit={service.sourceType === 'git'}
+      selected={option.value === value}
+      onChange={onChange}
+    />
   ))
 }
 
@@ -115,7 +143,7 @@ function VersionSelector({
           aria-label={`Select a version for ${service.name}`}
           className={twMerge('group justify-between', selected && 'border-brand-subtle')}
         >
-          <Version service={service} value={value} latest={value === service.versions[0]?.value} />
+          <Version service={service} value={value} latest={value === getFirstDeployableVersion(service)?.value} />
           <Icon
             iconName="chevron-down"
             className="shrink-0 text-ssm transition-transform duration-200 ease-[cubic-bezier(0.87,_0,_0.13,_1)] group-data-[state=open]:rotate-180"
@@ -145,7 +173,7 @@ export function ServiceVersionRow({
   onToggle: () => void
   onVersionChange: (version: string) => void
 }) {
-  const hasVersions = service.versions.length > 0
+  const hasVersions = Boolean(getFirstDeployableVersion(service))
   const disabled = service.isSkipped || !hasVersions
   const tooltip = service.isSkipped
     ? 'This service is skipped and cannot be deployed at environment level.'
@@ -192,7 +220,7 @@ export function ServiceVersionRow({
             <Version
               service={service}
               value={service.currentVersion}
-              latest={service.currentVersion === service.versions[0]?.value}
+              latest={service.currentVersion === getFirstDeployableVersion(service)?.value}
             />
           </span>
           <Icon iconName="arrow-right" className="text-ssm text-neutral-subtle" />

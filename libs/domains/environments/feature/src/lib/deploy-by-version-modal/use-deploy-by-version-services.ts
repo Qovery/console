@@ -10,6 +10,7 @@ import {
   type HelmRepositoryVersionedService,
   type VersionedService,
   commitsToVersionOptions,
+  containerVersionsToOptions,
   toVersionedService,
   versionsToOptions,
 } from './deploy-by-version'
@@ -105,7 +106,7 @@ export function useDeployByVersionServices({ environmentId, organizationId }: Us
           const query = containerResults.get(id)
           const versions = query?.data?.find(({ image_name }) => image_name === imageName)?.versions ?? []
           return {
-            versions: versionsToOptions(versions),
+            versions: containerVersionsToOptions(versions),
             hasVersionError: query?.isError,
           }
         })

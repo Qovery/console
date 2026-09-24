@@ -1,5 +1,5 @@
 import { type Environment } from 'qovery-typescript-axios'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, Icon, LoaderSpinner, useModal } from '@qovery/shared/ui'
 import { useDeployAllServices } from '../hooks/use-deploy-all-services/use-deploy-all-services'
 import {
@@ -8,6 +8,7 @@ import {
   buildDeployByVersionPayload,
   countDeployByVersionServices,
   createInitialSelections,
+  getFirstDeployableVersion,
 } from './deploy-by-version'
 import { ServiceVersionRow } from './service-version-row'
 import { useDeployByVersionServices } from './use-deploy-by-version-services'
@@ -71,21 +72,32 @@ function DeployByVersionForm({
   environment,
   services,
 }: DeployByVersionModalProps & { services: DeployByVersionService[] }) {
-  const { closeModal } = useModal()
+  const { closeModal, setModalDismissible } = useModal()
   const { mutate: deployAllServices, isLoading } = useDeployAllServices()
   const [selections, setSelections] = useState<ServiceVersionSelections>(() => createInitialSelections(services))
 
   const outdatedServices = services.filter(
-    (service) => service.versions[0]?.value && service.versions[0].value !== service.currentVersion
+    (service) => getFirstDeployableVersion(service)?.value !== service.currentVersion
   )
   const upToDateServices = services.filter(
-    (service) => service.versions[0]?.value && service.versions[0].value === service.currentVersion
+    (service) => getFirstDeployableVersion(service)?.value === service.currentVersion
   )
   const payload = useMemo(() => buildDeployByVersionPayload(services, selections), [selections, services])
   const selectedCount = countDeployByVersionServices(payload)
   const allOutdatedSelected = outdatedServices
     .filter(({ isSkipped }) => !isSkipped)
     .every(({ id }) => selections[id].selected)
+
+  useEffect(() => {
+    setModalDismissible(!isLoading)
+  }, [isLoading, setModalDismissible])
+
+  useEffect(
+    () => () => {
+      setModalDismissible(true)
+    },
+    [setModalDismissible]
+  )
 
   const toggleService = (serviceId: string) => {
     setSelections((current) => ({
@@ -117,8 +129,14 @@ function DeployByVersionForm({
 
   const onSubmit = (event: React.FormEvent) => {
     event.preventDefault()
-    if (selectedCount === 0) return
-    deployAllServices({ environment, payload }, { onSuccess: closeModal })
+    if (selectedCount === 0 || isLoading) return
+    setModalDismissible(false)
+    deployAllServices(
+      { environment, payload },
+      {
+        onSuccess: closeModal,
+      }
+    )
   }
 
   return (
@@ -149,10 +167,10 @@ function DeployByVersionForm({
       </div>
 
       <div className="flex justify-end gap-2 border-t border-neutral px-5 py-4">
-        <Button type="button" color="neutral" variant="plain" size="lg" onClick={closeModal}>
+        <Button type="button" color="neutral" variant="plain" size="lg" disabled={isLoading} onClick={closeModal}>
           Cancel
         </Button>
-        <Button type="submit" size="lg" disabled={selectedCount === 0} loading={isLoading}>
+        <Button type="submit" size="lg" disabled={selectedCount === 0 || isLoading} loading={isLoading}>
           {selectedCount === 0
             ? 'No services to update'
             : `Update ${selectedCount} service${selectedCount === 1 ? '' : 's'}`}
@@ -172,11 +190,13 @@ export function DeployByVersionModal({ environment }: DeployByVersionModalProps)
     environmentId: environment.id,
     organizationId: environment.organization.id,
   })
-  const servicesWithVersions = services.filter(({ versions }) => versions.length > 0)
+  const servicesWithVersions = services.filter((service) => getFirstDeployableVersion(service))
   const hasVersionErrors = services.some(({ hasVersionError }) => hasVersionError)
 
   const formKey = servicesWithVersions
-    .map(({ id, currentVersion, isSkipped, versions }) => `${id}:${currentVersion}:${versions[0]?.value}:${isSkipped}`)
+    .map((service) =>
+      [service.id, service.currentVersion, getFirstDeployableVersion(service)?.value, service.isSkipped].join(':')
+    )
     .join('|')
 
   if (!isLoading && !isError && servicesWithVersions.length > 0) {

@@ -6,6 +6,8 @@ import { DeployByVersionModal } from './deploy-by-version-modal'
 const mockEnvironment = environmentFactoryMock(1)[0]
 const mockDeployAllServices = jest.fn()
 const mockCloseModal = jest.fn()
+const mockSetModalDismissible = jest.fn()
+let mockDeployIsLoading = false
 
 const unavailableService: DeployByVersionService = {
   id: 'unavailable',
@@ -56,7 +58,7 @@ jest.mock('@qovery/domains/services/feature', () => ({
 
 jest.mock('@qovery/shared/ui', () => ({
   ...jest.requireActual('@qovery/shared/ui'),
-  useModal: () => ({ closeModal: mockCloseModal }),
+  useModal: () => ({ closeModal: mockCloseModal, setModalDismissible: mockSetModalDismissible }),
 }))
 
 jest.mock('./use-deploy-by-version-services', () => ({
@@ -64,7 +66,7 @@ jest.mock('./use-deploy-by-version-services', () => ({
 }))
 
 jest.mock('../hooks/use-deploy-all-services/use-deploy-all-services', () => ({
-  useDeployAllServices: () => ({ mutate: mockDeployAllServices, isLoading: false }),
+  useDeployAllServices: () => ({ mutate: mockDeployAllServices, isLoading: mockDeployIsLoading }),
 }))
 
 describe('DeployByVersionModal', () => {
@@ -72,6 +74,10 @@ describe('DeployByVersionModal', () => {
     jest.useFakeTimers()
     jest.clearAllMocks()
     mockServices = defaultServices
+    mockDeployIsLoading = false
+    mockDeployAllServices.mockImplementation((_variables: unknown, options: { onSuccess?: () => void }) => {
+      options.onSuccess?.()
+    })
   })
 
   afterEach(() => {
@@ -95,7 +101,8 @@ describe('DeployByVersionModal', () => {
       },
       { onSuccess: mockCloseModal }
     )
-    expect(mockCloseModal).not.toHaveBeenCalled()
+    expect(mockSetModalDismissible).toHaveBeenLastCalledWith(false)
+    expect(mockCloseModal).toHaveBeenCalledTimes(1)
   })
 
   it('allows an up-to-date service to be selected explicitly', async () => {
@@ -165,6 +172,46 @@ describe('DeployByVersionModal', () => {
     expect(screen.getByTestId('version-options').querySelector('.fa-code-commit')).not.toBeInTheDocument()
   })
 
+  it('renders complete non-Git versions and prevents selecting the mutable latest tag', async () => {
+    mockServices = [
+      {
+        id: 'container',
+        name: 'Container',
+        iconUri: 'app://qovery-console/container',
+        serviceType: 'CONTAINER',
+        sourceType: 'container',
+        currentVersion: 'release-2026-09-alpha',
+        containerRegistryId: 'registry',
+        imageName: 'image',
+        versions: [
+          { value: 'release-2026-09-alpha' },
+          { value: 'release-2026-09-beta' },
+          {
+            value: 'latest',
+            isDisabled: true,
+            disabledReason: 'Image tag cannot be latest to ensure consistent deployment',
+          },
+        ],
+        isSkipped: false,
+      },
+    ]
+    const { userEvent } = renderWithProviders(<DeployByVersionModal environment={mockEnvironment} />)
+    const checkbox = screen.getByRole('checkbox', { name: 'Container' })
+
+    await userEvent.click(screen.getByRole('button', { name: 'Select a version for Container' }))
+
+    expect(screen.getByRole('menuitem', { name: 'release-2026-09-alpha' })).toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: 'release-2026-09-beta' })).toBeInTheDocument()
+    const latest = screen.getByRole('menuitem', {
+      name: 'latest Image tag cannot be latest to ensure consistent deployment',
+    })
+    expect(latest).toHaveAttribute('data-disabled')
+
+    await userEvent.click(latest)
+
+    expect(checkbox).not.toBeChecked()
+  })
+
   it('renders every fetched version in a natively scrollable four-row menu', async () => {
     mockServices = [
       {
@@ -215,11 +262,35 @@ describe('DeployByVersionModal', () => {
     )
   })
 
+  it('locks modal dismissal and prevents duplicate submission while deployment is pending', async () => {
+    mockDeployAllServices.mockImplementation(() => undefined)
+    const { rerender, userEvent } = renderWithProviders(<DeployByVersionModal environment={mockEnvironment} />)
+
+    await userEvent.click(screen.getByRole('button', { name: 'Update 1 service' }))
+    expect(mockDeployAllServices).toHaveBeenCalledTimes(1)
+    expect(mockSetModalDismissible).toHaveBeenLastCalledWith(false)
+
+    mockDeployIsLoading = true
+    rerender(<DeployByVersionModal environment={mockEnvironment} />)
+
+    const submit = screen.getByRole('button', { name: 'Update 1 service' })
+    expect(screen.getByRole('button', { name: 'Cancel' })).toBeDisabled()
+    expect(submit).toBeDisabled()
+    submit.focus()
+    await userEvent.keyboard('{Enter}')
+    expect(mockDeployAllServices).toHaveBeenCalledTimes(1)
+    expect(mockCloseModal).not.toHaveBeenCalled()
+
+    mockDeployIsLoading = false
+    rerender(<DeployByVersionModal environment={mockEnvironment} />)
+    expect(mockSetModalDismissible).toHaveBeenLastCalledWith(true)
+  })
+
   it('does not show services without selectable versions', () => {
     renderWithProviders(<DeployByVersionModal environment={mockEnvironment} />)
 
+    expect(screen.getAllByTestId('service-version-row')).toHaveLength(2)
     expect(screen.queryByText('Unavailable service')).not.toBeInTheDocument()
-    expect(screen.queryByText(/unavailable versions/i)).not.toBeInTheDocument()
   })
 
   it('groups the header and service sections in the modal padded content area', () => {

@@ -4,10 +4,12 @@ import {
   type DeployByVersionService,
   buildDeployByVersionPayload,
   commitsToVersionOptions,
+  containerVersionsToOptions,
   countDeployByVersionServices,
   createInitialSelections,
   sortVersions,
   toVersionedService,
+  versionsToOptions,
 } from './deploy-by-version'
 
 const services: DeployByVersionService[] = [
@@ -152,6 +154,40 @@ describe('deploy by version', () => {
 
     expect(sortVersions(versions)).toEqual(['v2.0.0', '1.9.0', 'latest'])
     expect(versions).toEqual(['latest', '1.9.0', 'v2.0.0'])
+  })
+
+  it('disables the mutable latest tag only for container versions', () => {
+    expect(containerVersionsToOptions(['latest', '1.0.0'])).toEqual([
+      { value: '1.0.0' },
+      {
+        value: 'latest',
+        isDisabled: true,
+        disabledReason: 'Image tag cannot be latest to ensure consistent deployment',
+      },
+    ])
+    expect(versionsToOptions(['latest'])).toEqual([{ value: 'latest' }])
+  })
+
+  it('selects the first deployable version and rejects disabled selections from the payload', () => {
+    const container = {
+      ...services[1],
+      versions: [{ value: 'latest', isDisabled: true }, { value: '2.0.0' }],
+    } satisfies DeployByVersionService
+    const containerJob = {
+      ...services[3],
+      versions: [{ value: 'latest', isDisabled: true }],
+    } satisfies DeployByVersionService
+    const selections = createInitialSelections([container, containerJob])
+
+    expect(selections).toEqual({
+      container: { selected: true, version: '2.0.0' },
+      'container-job': { selected: false, version: '' },
+    })
+
+    selections.container = { selected: true, version: 'latest' }
+    selections['container-job'] = { selected: true, version: 'latest' }
+
+    expect(buildDeployByVersionPayload([container, containerJob], selections)).toEqual({})
   })
 
   it('preserves commit metadata for the version menu', () => {
