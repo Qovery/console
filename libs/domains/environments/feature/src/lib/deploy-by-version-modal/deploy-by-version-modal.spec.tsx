@@ -288,12 +288,16 @@ describe('DeployByVersionModal', () => {
     expect(screen.queryByText('Unavailable service')).not.toBeInTheDocument()
   })
 
-  it('groups the header and service sections in the modal padded content area', () => {
+  it('keeps the actions visible while the modal content scrolls', () => {
     renderWithProviders(<DeployByVersionModal environment={mockEnvironment} />)
 
     const modalMainContent = screen.getByTestId('modal-main-content')
+    const form = modalMainContent.closest('form')
+    const actions = screen.getByRole('button', { name: 'Cancel' }).parentElement
 
-    expect(modalMainContent).toHaveClass('p-6')
+    expect(form).toHaveClass('flex', 'max-h-[80vh]', 'flex-col')
+    expect(modalMainContent).toHaveClass('min-h-0', 'flex-1', 'overflow-y-auto', 'p-6')
+    expect(actions).toHaveClass('shrink-0', 'border-t', 'bg-background')
     expect(modalMainContent).toContainElement(screen.getByRole('heading', { name: 'Deploy by version' }))
     expect(modalMainContent).toContainElement(screen.getByText('1 outdated service'))
     expect(modalMainContent).toContainElement(screen.getByText('1 up to date service'))

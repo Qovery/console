@@ -140,8 +140,8 @@ function DeployByVersionForm({
   }
 
   return (
-    <form onSubmit={onSubmit}>
-      <div className="p-6" data-testid="modal-main-content">
+    <form className="flex max-h-[80vh] flex-col" onSubmit={onSubmit}>
+      <div className="min-h-0 flex-1 overflow-y-auto p-6" data-testid="modal-main-content">
         <DeployByVersionHeader />
         <ServiceSection
           title={outdatedServices.length === 1 ? 'outdated service' : 'outdated services'}
@@ -166,7 +166,7 @@ function DeployByVersionForm({
         />
       </div>
 
-      <div className="flex justify-end gap-2 border-t border-neutral px-5 py-4">
+      <div className="flex shrink-0 justify-end gap-2 border-t border-neutral bg-background px-5 py-4">
         <Button type="button" color="neutral" variant="plain" size="lg" disabled={isLoading} onClick={closeModal}>
           Cancel
         </Button>
